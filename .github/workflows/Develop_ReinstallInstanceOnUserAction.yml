@@ -8,8 +8,8 @@ env:
     MAIN_HOST: ${{ secrets.MAIN_HOST}}
     MAIN_SSH_USERNAME: ${{ secrets.MAIN_SSH_USERNAME}}
 jobs:
-    create_instance:
-        name: Create Instance on Opened or Reopened PR
+    reinstall_instance:
+        name: Reinstall Instance on User Action
         runs-on: ubuntu-latest
         steps:
             - name: Extract branch name
