@@ -29,20 +29,25 @@ jobs:
               run: ssh-keyscan -H $MAIN_HOST  >> ~/.ssh/known_hosts
             - name: Get Available database name
               run: 
-                DATABASE_NAME=$(ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "mysql -h 127.0.0.1 -u '${{ secrets.DEVELOP_DB_USERNAME }}' --password='${{ secrets.DEVELOP_DB_PASSWORD }}' -N -e 'select schema_name
-                from information_schema.schemata
-                where
-                  SCHEMA_NAME not in (
-                  SELECT
-                    TABLE_SCHEMA
-                  from information_schema.tables
-                  where table_name like \"stic%\"
-                  group by TABLE_SCHEMA
-                  )
-                and SCHEMA_NAME like \"mydevelop%\"
-                order by SCHEMA_NAME LIMIT 1'") &&
+                DATABASE_NAME=$(ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "echo 'yes'") &&
                 echo $DATABASE_NAME &&
                 (echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_ENV)
+            # - name: Get Available database name
+            #   run: 
+            #     DATABASE_NAME=$(ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "mysql -h 127.0.0.1 -u '${{ secrets.DEVELOP_DB_USERNAME }}' --password='${{ secrets.DEVELOP_DB_PASSWORD }}' -N -e 'select schema_name
+            #     from information_schema.schemata
+            #     where
+            #       SCHEMA_NAME not in (
+            #       SELECT
+            #         TABLE_SCHEMA
+            #       from information_schema.tables
+            #       where table_name like \"stic%\"
+            #       group by TABLE_SCHEMA
+            #       )
+            #     and SCHEMA_NAME like \"mydevelop%\"
+            #     order by SCHEMA_NAME LIMIT 1'") &&
+            #     echo $DATABASE_NAME &&
+            #     (echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_ENV)
             - name: Extract branch clean
               run: echo 'BRANCH_CLEAN='`echo ${{ env.BRANCH }} | sed -e 's/[^a-zA-Z0-9_/]//g'` >> $GITHUB_ENV
             - name: Set current date as env variable
