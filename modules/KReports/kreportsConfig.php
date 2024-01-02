@@ -173,6 +173,7 @@ $excludedModules = array(
     'stic_Settings',
     'stic_Validation_Actions',
     'stic_Web_Forms',
+    'stic_Custom_Views',
     'Studio',
     'SugarFavorites',
     'SugarFeed',
