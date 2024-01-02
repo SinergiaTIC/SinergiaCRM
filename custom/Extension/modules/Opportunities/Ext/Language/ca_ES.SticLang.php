@@ -83,5 +83,15 @@ $mod_strings['LBL_TOTAL_OPPORTUNITIES'] = 'Total de Subvencions';
 $mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = 'Subvencions guanyades';
 $mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importa Subvencions';
 
+// Cadenes per a la notificació de noves subvencions
+$mod_strings['LBL_OPPORTUNITIES_NOTIFY_TAB'] = "Notificació";
+$mod_strings['LBL_STIC_PUBLISHABLE'] = "Publicable";
+$mod_strings['LBL_STIC_SENDTO_PROSPECTLIST_ID'] = "Públic Objectiu per l'enviament (ID)";
+$mod_strings['LBL_STIC_SENDTO_PROSPECTLIST'] = "Públic Objectiu per l'enviament";
+$mod_strings['LBL_STIC_SEND_DATE'] = "Data d'enviament";
+$mod_strings['LBL_STIC_EMAIL_TEMPLATE_EMAILTEMPLATE_ID'] = "Plantilla de correu electrònic (ID)";
+$mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = "Plantilla de correu electrònic";
+$mod_strings['LBL_STIC_OPPORTUNITY_URL'] = "URL de la convocatòria";
+$mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = "Informació addicional";
 // Cadenes adaptades Ajuts
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';
