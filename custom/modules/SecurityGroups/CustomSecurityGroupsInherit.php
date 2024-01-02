@@ -11,7 +11,7 @@ class CustomSecurityGroupsInherit
         if (!$bean->fetched_row) {
             global $sugar_config;
             $rulesBean = self::getModuleRule($bean->module_name);
-
+ 
             if (!empty($rulesBean)) {
                 include_once 'modules/SecurityGroups/SecurityGroup.php';
                 include_once 'SticInclude/Utils.php';
