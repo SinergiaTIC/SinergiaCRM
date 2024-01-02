@@ -90,8 +90,26 @@ class EventInscriptionMailer extends WebFormMailer
                 break;
             case EventInscriptionBO::CONTACT_NEW:
             case EventInscriptionBO::CONTACT_UNIQUE:
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
-                $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
+
+                // STIC 20230905 - ART - Enable custom email template for assigned user
+                // STIC#1224
+                // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
+                //     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
+                $paymentMailer = new PaymentMailer();
+
+                // Function that verify if the form have the 'custom_assigned_email_template' input
+                if(!empty($_REQUEST['custom_assigned_email_template'])) {
+                    if($this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), null, $this->payment)) {
+                        return;
+                    }
+                // If the form doesn't have the input send the generic email
+                } else { 
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
+                    $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
+                    $html .= $paymentMailer->paymentToHTML($this->payment);
+                }
+                // End STIC 20230920
+
                 break;
         }
 
@@ -131,24 +149,47 @@ class EventInscriptionMailer extends WebFormMailer
                 break;
             case EventInscriptionBO::ACCOUNT_NEW:
             case EventInscriptionBO::ACCOUNT_UNIQUE:
-                $html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
+
+                // STIC 20230905 - ART - Enable custom email template for assigned user
+                // STIC#1224
+                //$html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
+                $paymentMailer = new PaymentMailer();
+
+                // Function that verify if the form have the 'custom_assigned_email_template' input
+                if(!empty($_REQUEST['custom_assigned_email_template'])) {
+                    if($this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), $accountObject, $this->payment)) {
+                        return;
+                    }
+                // If the form doesn't have the input send the generic email
+                } else {
+                    $html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
+                    $html .= $paymentMailer->paymentToHTML($this->payment);
+                }
+                // End STIC 20230920
+                
                 break;
             case EventInscriptionBO::ACCOUNT_NO_DATA:
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  The form does not include organizational data.");
         }
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data ...");
-        if ($this->payment == null) {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data have not been included.");
-        } else {
-            $paymentMailer = new PaymentMailer();
-            $html .= $paymentMailer->paymentToHTML($this->payment);
-            $this->subject = "{$this->payment->transaction_code} - {$this->subject}"; // If there is linked payment, include the payment number in the subject of the mail
-        }
-        $this->body = $html;
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
-        return $this->send();
+        // STIC 20231220 - ART - Enable custom email template for assigned user
+        // STIC#1224
+        if(empty($_REQUEST['custom_assigned_email_template'])) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data ...");
+            if ($this->payment == null) {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data have not been included.");
+            } else {
+                $paymentMailer = new PaymentMailer();
+                $html .= $paymentMailer->paymentToHTML($this->payment);
+                $this->subject = "{$this->payment->transaction_code} - {$this->subject}"; // If there is linked payment, include the payment number in the subject of the mail
+            }
+            $this->body = $html;
+
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
+            return $this->send();
+        }
+        // End STIC 20231220
     }
 
     /**
@@ -174,6 +215,44 @@ class EventInscriptionMailer extends WebFormMailer
             $lang);
     }
 
+    // STIC 20230905 - ART - Enable custom email template for assigned user
+    // STIC#1224
+    /**
+     * Function to parse the email
+     *
+     * @param $templateId id of the template
+     * @param $account data of the account
+     * @param $payment data of the payment
+     * @param $replacementObjects array with the object
+     * @param $lang
+     * @return void
+     */
+    public function parsingEmail($templateId, $account, $payment, $replacementObjects, $lang){
+        // Function to get the object
+        if (!empty($account)) {
+            $replacementObjects[] = $account;
+        }
+
+        if (!empty($payment)) {
+            $replacementObjects[] = $payment;
+            if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
+                $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
+                foreach ($relatedBeans as $fpBean) {
+                    $replacementObjects[] = $fpBean;
+                }
+            }
+        }
+
+        // Parse the template
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template [{$templateId}]...");
+
+        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
+            return false;
+        }
+    }
+    // End STIC 20230921 - ART
+
     /**
      * Send the notification email to the registered user
      */
@@ -197,31 +276,101 @@ class EventInscriptionMailer extends WebFormMailer
         $replacementObjects[1] = $event;
         $replacementObjects[2] = $inscription;
 
-        if (!empty($account)) {
-            $replacementObjects[] = $account;
-        }
+        // STIC 20230905 - ART - Enable custom email template for assigned user
+        // STIC#1224
+        // if (!empty($account)) {
+        //     $replacementObjects[] = $account;
+        // }
 
-        if (!empty($payment)) {
-            $replacementObjects[] = $payment;
-            if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
-                $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
-                foreach ($relatedBeans as $fpBean) {
-                    $replacementObjects[] = $fpBean;
-                }
-            }
-        }
+        // if (!empty($payment)) {
+        //     $replacementObjects[] = $payment;
+        //     if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
+        //         $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
+        //         foreach ($relatedBeans as $fpBean) {
+        //             $replacementObjects[] = $fpBean;
+        //         }
+        //     }
+        // }
 
         // Parse the template
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template ...");
-        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
-            return false;
-        }
+        // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template ...");
+        // if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
+        //     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
+        //     return false;
+        // }
+
+        // Function to parse the email
+        $this->parsingEmail($templateId, $account, $payment, $replacementObjects, $lang);
+        // End STIC 20230921 - ART
 
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
         return $this->send();
     }
+
+
+    // STIC 20230905 - ART - Enable custom email template for assigned user
+    // STIC#1224
+    /**
+     * Send the notification email to the assigned user
+     *
+     * @param $templateId id of the template
+     * @param $objContactWeb data of the contact from the form
+     * @param $event data of the event
+     * @param $inscription data of the inscription
+     * @param $account data of the account if this exist
+     * @param $payment data of the payment
+     * @param $lang
+     * @return void
+     */
+    protected function sendAssignedUserMail($templateId, $objWeb, $event, $inscription, $account = null, $payment, $lang = null)
+    {
+        // Reset the recipient list
+        $this->resetDest();
+
+        // Get the candidates from the form
+        $candidates = $this->eventInscriptionBO->getContactCandidates();
+        $objWeb = array_pop($candidates);
+
+        // Get the accounts of the candidates from the form
+        $candidates = $this->eventInscriptionBO->getAccountCandidates();
+        $account = (!empty($candidates) ? array_pop($candidates) : null);
+
+        // Add the recipient
+        $user = BeanFactory::getBean('Users', $_REQUEST['assigned_user_id']);
+        // Use the primary address of the assigned user
+        $userEmail = $user->emailAddress->getPrimaryAddress($user);
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Adding recipient [{$userEmail}] ...");
+        $this->addMailsDest($userEmail);
+
+        // Get the Contact from the CRM
+        include_once 'SticInclude/Utils.php';
+        $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_contacts'); 
+
+        // Build the array of objects to parse
+        $replacementObjects = array();
+        $replacementObjects[0] = $objWeb;
+        $replacementObjects[1] = $event;
+        $replacementObjects[2] = $inscription;
+        $replacementObjects[3] = $user;
+        $replacementObjects[4] = $contactBean;
+
+        // If there is an attached document it is added to the array
+        if(!empty($contactBean->documents)){
+            $documents = $contactBean->documents->tempBeans;
+            foreach($documents as $key => $valueDocument) {
+                $replacementObjects[5] = $valueDocument;
+            }
+        }
+
+        // Function to parse the email
+        $this->parsingEmail($templateId, $account, $payment, $replacementObjects, $lang);
+
+        // Send the mail
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
+        return $this->send();
+    }
+    // End STIC 20230920
 
     /**
      * Prepare the necessary information for deferred mail delivery

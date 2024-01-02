@@ -50,34 +50,53 @@ class DonationMailer extends WebFormMailer
                 break;
             case DonationBO::DONATOR_NEW:
             case DonationBO::DONATOR_UNIQUE:
-                $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
+                
+                // STIC 20230905 - ART - Enable custom email template for assigned user
+                // STIC#1224 
+                // $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
+                $paymentMailer = new PaymentMailer();
+
+                // Function that verify if the form have the 'custom_assigned_email_template' input
+                if(!empty($_REQUEST['custom_assigned_email_template'])) {
+                    if($this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $payment)) {
+                        return;
+                    }
+                // If the form doesn't have the input send the generic email
+                } else {
+                    $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
+                    $html .= $paymentMailer->paymentToHTML($payment);
+                }
+                // End STIC 20230920
+                
                 break;
         }
 
-        $paymentMailer = new PaymentMailer();
-        $html .= $paymentMailer->paymentToHTML($payment);
+        // STIC 20231220 - ART - Enable custom email template for assigned user
+        // STIC#1224
+        if(empty($_REQUEST['custom_assigned_email_template'])) {
+            // Link the attached form files to the mail
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Linking the attached documents of the form to the mail to be sent to the administrator ...");
+            $documents = $donator->documents->tempBeans;
 
-        // Link the attached form files to the mail
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Linking the attached documents of the form to the mail to be sent to the administrator ...");
-        $documents = $donator->documents->tempBeans;
+            if ($documents) {
+                $html .= '<span style="font-weight: bold;">';
+                $html .= $this->translate('LBL_ATTACHMENTS_WEBFORM');
+                $html .= '</span>';
+                $html .= '<table>';
 
-        if ($documents) {
-            $html .= '<span style="font-weight: bold;">';
-            $html .= $this->translate('LBL_ATTACHMENTS_WEBFORM');
-            $html .= '</span>';
-            $html .= '<table>';
-
-            foreach ($documents as $key => $value) {
-                $your_url = $GLOBALS['sugar_config']['site_url'] . "/index.php?module=Documents&action=DetailView&record=" . $value->id;
-                $html .= '<tr><td><a href="' . $your_url . '">' . $value->document_name . '</a></td></tr>';
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  File name: " . $value->document_name . " - File URL: " . $your_url);
+                foreach ($documents as $key => $value) {
+                    $your_url = $GLOBALS['sugar_config']['site_url'] . "/index.php?module=Documents&action=DetailView&record=" . $value->id;
+                    $html .= '<tr><td><a href="' . $your_url . '">' . $value->document_name . '</a></td></tr>';
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  File name: " . $value->document_name . " - File URL: " . $your_url);
+                }
+                $html .= '</table><br><br>';
             }
-            $html .= '</table><br><br>';
-        }
-        $this->body = $html;
-        $this->subject = "{$payment->transaction_code} - {$this->subject}";
 
-        return $this->send();
+            $this->body = $html;
+            $this->subject = "{$payment->transaction_code} - {$this->subject}";
+            return $this->send();
+        }
+        // End STIC 20231220
     }
 
     /**
@@ -230,6 +249,38 @@ class DonationMailer extends WebFormMailer
         return $html;
     }
 
+    // STIC 20230905 - ART - Enable custom email template for assigned user
+    // STIC#1224
+    /**
+     * Function to parse the email
+     *
+     * @param $templateId id of the template
+     * @param $payment data of the payment
+     * @param $replacementObjects array with the object
+     * @param $lang
+     * @return void
+     */
+    public function parsingEmail($templateId, $payment, $replacementObjects, $lang){
+        $payment = $replacementObjects[1];
+
+        // Function to get the object
+        if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
+            $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
+            foreach ($relatedBeans as $fpBean) {
+                $replacementObjects[] = $fpBean;
+            }
+        }
+
+        // Parse the template
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template [{$templateId}]...");
+
+        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
+            return false;
+        }
+    }
+    // End STIC 20231205 - ART
+
     /**
      * Send the notification email to the registered user
      */
@@ -251,23 +302,82 @@ class DonationMailer extends WebFormMailer
         $replacementObjects = array();
         $replacementObjects[0] = $objWeb;
         $replacementObjects[1] = $payment;
-        if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
-            $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
-            foreach ($relatedBeans as $fpBean) {
-                $replacementObjects[] = $fpBean;
-            }
-        }
+
+        // STIC 20230905 - ART - Enable custom email template for assigned user
+        // STIC#1224
+        // if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
+        //     $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
+        //     foreach ($relatedBeans as $fpBean) {
+        //         $replacementObjects[] = $fpBean;
+        //     }
+        // }
 
         // Parse the template
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template...");
+        // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template [{$templateId}]...");
 
-        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
-            return false;
-        }
+        // if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
+        //     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
+        //     return false;
+        // }
+
+        // Function to parse the email
+        $this->parsingEmail($templateId, $replacementObjects[1], $replacementObjects, $lang);
+        // End STIC 20231205 - ART
 
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
         return $this->send();
     }
+    
+    // STIC 20230905 - ART - Enable custom email template for assigned user
+    // STIC#1224
+    /**
+     * Send the notification email to the assigned user
+     *
+     * @param $templateId id of the template
+     * @param $objWeb data from the form
+     * @param $payment data of the payment
+     * @param $lang
+     * @return void
+     */
+    public function sendAssignedUserMail($templateId, $objWeb, $payment, $lang = null)
+    {
+        // Reset the recipient list
+        $this->resetDest();
+
+        // Add the recipient
+        $user = BeanFactory::getBean('Users', $_REQUEST['assigned_user_id']);
+        // Use the primary address of the assigned user
+        $userEmail = $user->emailAddress->getPrimaryAddress($user);
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Adding recipient [{$userEmail}] ...");
+        $this->addMailsDest($userEmail);
+
+        // Get the Contact from the CRM
+        include_once 'SticInclude/Utils.php';
+        $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_contacts');
+
+        // Build the array of objects to parse
+        $replacementObjects = array();
+        $replacementObjects[0] = $objWeb;
+        $replacementObjects[1] = $payment;
+        $replacementObjects[2] = $user;
+        $replacementObjects[3] = $contactBean;
+
+        // If there is an attached document it is added to the array
+        if(!empty($contactBean->documents)){
+            $documents = $contactBean->documents->tempBeans;
+            foreach($documents as $key => $valueDocument) {
+                $replacementObjects[4] = $valueDocument;
+            }
+        }
+
+        // Function to parse the email
+        $this->parsingEmail($templateId, $replacementObjects[1], $replacementObjects, $lang);
+
+        // Send the mail
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
+        return $this->send();
+    }
+    // End STIC 20231205 - ART
 }
