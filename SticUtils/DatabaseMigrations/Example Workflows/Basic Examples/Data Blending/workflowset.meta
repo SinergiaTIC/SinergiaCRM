@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><KNIMEMetaInfo nrOfElements="3">
+<element form="text" read-only="false" name="Author">KNIME</element>
+<element form="date" name="Creation Date" read-only="false">29/6/2016</element>
+<element form="multiline" name="Comments" read-only="false">Data Blending and ETL&#13;
+&#13;
+Task. Starting from different data sources this workflow shows how to blend data (extract value from multiple data sources) and how to make efficient ETL (Extract, Transform and Loading) with KNIME Analytics Platform.&#13;
+&#13;
+URL: Learning Hub http://www.knime.org/learning-hub&#13;
+TAG: Sources, SQLite, Data Blending, ETL</element>
+</KNIMEMetaInfo>

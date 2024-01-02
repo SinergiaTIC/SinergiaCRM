@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="workflow.knime">
+<entry key="created_by" type="xstring" value="3.5.0.v201710060824"/>
+<entry key="version" type="xstring" value="3.1.0"/>
+<entry key="name" type="xstring" isnull="true" value=""/>
+<config key="authorInformation">
+<entry key="authored-by" type="xstring" value="&lt;unknown&gt;"/>
+<entry key="authored-when" type="xstring" value="1970-01-01 01:00:00 +0100"/>
+<entry key="lastEdited-by" type="xstring" value="Vincenzo"/>
+<entry key="lastEdited-when" type="xstring" value="2017-11-17 17:02:54 +0100"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="IDLE"/>
+<config key="workflow_credentials"/>
+<config key="annotations">
+<config key="annotation_0">
+<entry key="text" type="xstring" value="          Data Reading%%00013%%00010%%00013%%00010Read the adult data set file. There is one row for each person, plus demographic info and the income group. The file is located in TheData/Basics/"/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="41"/>
+<entry key="y-coordinate" type="xint" value="200"/>
+<entry key="width" type="xint" value="181"/>
+<entry key="height" type="xint" value="142"/>
+<entry key="alignment" type="xstring" value="LEFT"/>
+<entry key="borderSize" type="xint" value="4"/>
+<entry key="borderColor" type="xint" value="16751466"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles">
+<config key="style_0">
+<entry key="start" type="xint" value="0"/>
+<entry key="length" type="xint" value="24"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_1">
+<entry key="start" type="xint" value="24"/>
+<entry key="length" type="xint" value="148"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+</config>
+</config>
+<config key="annotation_1">
+<entry key="text" type="xstring" value="  Graphical Properties%%00013%%00010%%00013%%00010Assign colors by income group."/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="221"/>
+<entry key="y-coordinate" type="xint" value="200"/>
+<entry key="width" type="xint" value="161"/>
+<entry key="height" type="xint" value="142"/>
+<entry key="alignment" type="xstring" value="LEFT"/>
+<entry key="borderSize" type="xint" value="4"/>
+<entry key="borderColor" type="xint" value="6992891"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles">
+<config key="style_0">
+<entry key="start" type="xint" value="0"/>
+<entry key="length" type="xint" value="24"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_1">
+<entry key="start" type="xint" value="24"/>
+<entry key="length" type="xint" value="32"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+</config>
+</config>
+<config key="annotation_2">
+<entry key="text" type="xstring" value="Simple Reporting Example%%00013%%00010%%00013%%00010Reports are a great way to describe, visualize, and share KPIs (Key Performance Indicators). The open source version of BIRT is installed as a reporting tool with KNIME Analytics Platform Reporting extension. This workflow illustrates a basic reporting example from the adult data set.%%00013%%00010%%00013%%00010Task Based on values from the adult data set (census data), this workflow builds a report to show the distribution of income over the workclass.%%00013%%00010%%00013%%00010Learning Hub http://www.knime.org/learning-hub contains useful links, e.g. tutorials, videos, books, slides, etc... for each kind of data analytics topic.%%00013%%00010"/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="40"/>
+<entry key="y-coordinate" type="xint" value="40"/>
+<entry key="width" type="xint" value="1021"/>
+<entry key="height" type="xint" value="141"/>
+<entry key="alignment" type="xstring" value="LEFT"/>
+<entry key="borderSize" type="xint" value="4"/>
+<entry key="borderColor" type="xint" value="16766976"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles">
+<config key="style_0">
+<entry key="start" type="xint" value="0"/>
+<entry key="length" type="xint" value="26"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_1">
+<entry key="start" type="xint" value="26"/>
+<entry key="length" type="xint" value="291"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_2">
+<entry key="start" type="xint" value="317"/>
+<entry key="length" type="xint" value="4"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_3">
+<entry key="start" type="xint" value="321"/>
+<entry key="length" type="xint" value="144"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_4">
+<entry key="start" type="xint" value="465"/>
+<entry key="length" type="xint" value="12"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_5">
+<entry key="start" type="xint" value="477"/>
+<entry key="length" type="xint" value="144"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+</config>
+</config>
+<config key="annotation_3">
+<entry key="text" type="xstring" value="                               Pre-processing %%00013%%00010 %%00013%%00010 - Pivot the variable income, group per work class and aggregate (count) by age%%00013%%00010- Sort the data (ascending) by workclass"/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="381"/>
+<entry key="y-coordinate" type="xint" value="200"/>
+<entry key="width" type="xint" value="344"/>
+<entry key="height" type="xint" value="142"/>
+<entry key="alignment" type="xstring" value="LEFT"/>
+<entry key="borderSize" type="xint" value="4"/>
+<entry key="borderColor" type="xint" value="16766976"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles">
+<config key="style_0">
+<entry key="start" type="xint" value="0"/>
+<entry key="length" type="xint" value="45"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_1">
+<entry key="start" type="xint" value="45"/>
+<entry key="length" type="xint" value="127"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+</config>
+</config>
+<config key="annotation_4">
+<entry key="text" type="xstring" value="Display the results in a Report%%00013%%00010%%00013%%00010Export the results together with work class income to the report."/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="724"/>
+<entry key="y-coordinate" type="xint" value="200"/>
+<entry key="width" type="xint" value="337"/>
+<entry key="height" type="xint" value="141"/>
+<entry key="alignment" type="xstring" value="LEFT"/>
+<entry key="borderSize" type="xint" value="4"/>
+<entry key="borderColor" type="xint" value="14649867"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles">
+<config key="style_0">
+<entry key="start" type="xint" value="0"/>
+<entry key="length" type="xint" value="31"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_1">
+<entry key="start" type="xint" value="31"/>
+<entry key="length" type="xint" value="4"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="9"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_2">
+<entry key="start" type="xint" value="35"/>
+<entry key="length" type="xint" value="65"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+</config>
+</config>
+<config key="annotation_5">
+<entry key="text" type="xstring" value="Try this:%%00013%%00010%%00013%%00010Create your own report:%%00013%%000101) Execute the entire workflow%%00013%%000102) Click the “Open the report” button in the toolbar (make sure that the KNIME Report Designer extension is installed. If not, go to File, then Install KNIME Extensions/KNIME Report Designer)%%00013%%000103) Select “Run” from the Report environment%%00013%%000104) Choose your preferred format to see the final report.%%00013%%00010Note: If you have changed the KNIME Workbench, click View/Reset Perspective to see all panels in the Report Designer."/>
+<entry key="bgcolor" type="xint" value="16777088"/>
+<entry key="x-coordinate" type="xint" value="841"/>
+<entry key="y-coordinate" type="xint" value="360"/>
+<entry key="width" type="xint" value="221"/>
+<entry key="height" type="xint" value="301"/>
+<entry key="alignment" type="xstring" value="LEFT"/>
+<entry key="borderSize" type="xint" value="2"/>
+<entry key="borderColor" type="xint" value="16777088"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles">
+<config key="style_0">
+<entry key="start" type="xint" value="0"/>
+<entry key="length" type="xint" value="13"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="1"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+<config key="style_1">
+<entry key="start" type="xint" value="13"/>
+<entry key="length" type="xint" value="470"/>
+<entry key="fontname" type="xstring" value="Arial"/>
+<entry key="fontstyle" type="xint" value="0"/>
+<entry key="fontsize" type="xint" value="10"/>
+<entry key="fgcolor" type="xint" value="0"/>
+</config>
+</config>
+</config>
+</config>
+<config key="nodes">
+<config key="node_2">
+<entry key="id" type="xint" value="2"/>
+<entry key="node_settings_file" type="xstring" value="Color Manager (#2)/settings.xml"/>
+<entry key="node_is_meta" type="xboolean" value="false"/>
+<entry key="node_type" type="xstring" value="NativeNode"/>
+<entry key="ui_classname" type="xstring" value="org.knime.core.node.workflow.NodeUIInformation"/>
+<config key="ui_settings">
+<config key="extrainfo.node.bounds">
+<entry key="array-size" type="xint" value="4"/>
+<entry key="0" type="xint" value="275"/>
+<entry key="1" type="xint" value="409"/>
+<entry key="2" type="xint" value="91"/>
+<entry key="3" type="xint" value="78"/>
+</config>
+</config>
+</config>
+<config key="node_15">
+<entry key="id" type="xint" value="15"/>
+<entry key="node_settings_file" type="xstring" value="Sorter (#15)/settings.xml"/>
+<entry key="node_is_meta" type="xboolean" value="false"/>
+<entry key="node_type" type="xstring" value="NativeNode"/>
+<entry key="ui_classname" type="xstring" value="org.knime.core.node.workflow.NodeUIInformation"/>
+<config key="ui_settings">
+<config key="extrainfo.node.bounds">
+<entry key="array-size" type="xint" value="4"/>
+<entry key="0" type="xint" value="625"/>
+<entry key="1" type="xint" value="397"/>
+<entry key="2" type="xint" value="50"/>
+<entry key="3" type="xint" value="78"/>
+</config>
+</config>
+</config>
+<config key="node_16">
+<entry key="id" type="xint" value="16"/>
+<entry key="node_settings_file" type="xstring" value="to Report (#16)/settings.xml"/>
+<entry key="node_is_meta" type="xboolean" value="false"/>
+<entry key="node_type" type="xstring" value="NativeNode"/>
+<entry key="ui_classname" type="xstring" value="org.knime.core.node.workflow.NodeUIInformation"/>
+<config key="ui_settings">
+<config key="extrainfo.node.bounds">
+<entry key="array-size" type="xint" value="4"/>
+<entry key="0" type="xint" value="765"/>
+<entry key="1" type="xint" value="397"/>
+<entry key="2" type="xint" value="89"/>
+<entry key="3" type="xint" value="78"/>
+</config>
+</config>
+</config>
+<config key="node_17">
+<entry key="id" type="xint" value="17"/>
+<entry key="node_settings_file" type="xstring" value="Pivoting (#17)/settings.xml"/>
+<entry key="node_is_meta" type="xboolean" value="false"/>
+<entry key="node_type" type="xstring" value="NativeNode"/>
+<entry key="ui_classname" type="xstring" value="org.knime.core.node.workflow.NodeUIInformation"/>
+<config key="ui_settings">
+<config key="extrainfo.node.bounds">
+<entry key="array-size" type="xint" value="4"/>
+<entry key="0" type="xint" value="465"/>
+<entry key="1" type="xint" value="397"/>
+<entry key="2" type="xint" value="50"/>
+<entry key="3" type="xint" value="78"/>
+</config>
+</config>
+</config>
+<config key="node_18">
+<entry key="id" type="xint" value="18"/>
+<entry key="node_settings_file" type="xstring" value="File Reader (#18)/settings.xml"/>
+<entry key="node_is_meta" type="xboolean" value="false"/>
+<entry key="node_type" type="xstring" value="NativeNode"/>
+<entry key="ui_classname" type="xstring" value="org.knime.core.node.workflow.NodeUIInformation"/>
+<config key="ui_settings">
+<config key="extrainfo.node.bounds">
+<entry key="array-size" type="xint" value="4"/>
+<entry key="0" type="xint" value="103"/>
+<entry key="1" type="xint" value="409"/>
+<entry key="2" type="xint" value="69"/>
+<entry key="3" type="xint" value="78"/>
+</config>
+</config>
+</config>
+</config>
+<config key="connections">
+<config key="connection_0">
+<entry key="sourceID" type="xint" value="2"/>
+<entry key="destID" type="xint" value="17"/>
+<entry key="sourcePort" type="xint" value="1"/>
+<entry key="destPort" type="xint" value="1"/>
+</config>
+<config key="connection_1">
+<entry key="sourceID" type="xint" value="15"/>
+<entry key="destID" type="xint" value="16"/>
+<entry key="sourcePort" type="xint" value="1"/>
+<entry key="destPort" type="xint" value="1"/>
+</config>
+<config key="connection_2">
+<entry key="sourceID" type="xint" value="17"/>
+<entry key="destID" type="xint" value="15"/>
+<entry key="sourcePort" type="xint" value="1"/>
+<entry key="destPort" type="xint" value="1"/>
+</config>
+<config key="connection_3">
+<entry key="sourceID" type="xint" value="18"/>
+<entry key="destID" type="xint" value="2"/>
+<entry key="sourcePort" type="xint" value="1"/>
+<entry key="destPort" type="xint" value="1"/>
+</config>
+</config>
+<config key="workflow_editor_settings">
+<entry key="workflow.editor.snapToGrid" type="xboolean" value="false"/>
+<entry key="workflow.editor.ShowGrid" type="xboolean" value="true"/>
+<entry key="workflow.editor.gridX" type="xint" value="20"/>
+<entry key="workflow.editor.gridY" type="xint" value="20"/>
+<entry key="workflow.editor.zoomLevel" type="xdouble" value="1.0"/>
+<entry key="workflow.editor.curvedConnections" type="xboolean" value="true"/>
+<entry key="workflow.editor.connectionWidth" type="xint" value="2"/>
+</config>
+</config>

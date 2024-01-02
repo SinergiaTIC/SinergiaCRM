@@ -214,7 +214,6 @@ class SearchResults
                 if (method_exists($relId, "getFocus")) {
                     // STIC-Custom 20220510 AAM - Related bean ID isn't returned properly using getFocus() function
                     // Instead, let's use the usual method
-                    // STIC#731
                     // $relId = $relId->getFocus()->id;
                     if (!$obj->load_relationship($link)) {
                         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed retrieving relationship data');

@@ -344,50 +344,50 @@ $mod_strings = array(
     'LBL_NEW_PANEL' => 'Nou panell',
     'LBL_NEW_ROW' => 'Nova fila',
     'LBL_PACKAGE_DELETED' => 'Paquet eliminat',
-    'LBL_PUBLISHING' => 'Publicant...',
+    'LBL_PUBLISHING' => 'Publicant ...',
     'LBL_PUBLISHED' => 'Publicat',
     'LBL_SELECT_FILE' => 'Seleccionar Arxiu',
     'LBL_SUBPANELS' => 'Subpanells',
     'LBL_SUBPANEL' => 'Subpanell',
     'LBL_SUBPANEL_TITLE' => 'Títol:',
-    'LBL_SEARCH_FORMS' => 'Cerca',
+    'LBL_SEARCH_FORMS' => 'Cercar',
     'LBL_SEARCH' => 'Cerca',
     'LBL_SEARCH_BUTTON' => 'Cerca',
     'LBL_FILTER' => 'Filtre',
-    'LBL_TOOLBOX' => "Caixa d'eines",
+    'LBL_TOOLBOX' => 'Caixa d\'Eines',
     'LBL_QUICKCREATE' => 'Creació ràpida',
     'LBL_EDIT_DROPDOWNS' => 'Editar una llista desplegable global',
     'LBL_ADD_DROPDOWN' => 'afegir una nova llista desplegable global',
     'LBL_BLANK' => '-buit-',
     'LBL_TAB_ORDER' => 'ordre de tabulació',
     'LBL_TABDEF_TYPE' => 'Tipus de visualització',
-    'LBL_TABDEF_TYPE_HELP' => "Seleccioneu la forma en què s'ha de mostrar aquesta secció. Aquesta opció només tindrà efecte si heu habilitat el mode Pestanyes a la vista.",
+    'LBL_TABDEF_TYPE_HELP' => 'Seleccioni la forma en que s\'ha de mostrar aquesta secció. Aquesta opció només tindrà efecte si ha habilitat el mode pestanyes per aquesta vista.',
     'LBL_TABDEF_TYPE_OPTION_TAB' => 'Pestanya',
     'LBL_TABDEF_TYPE_OPTION_PANEL' => 'Panell',
     'LBL_TABDEF_TYPE_OPTION_HELP' => 'Seleccioneu Panell perquè el panell es mostri a la vista inicial o en la vista del panell anterior que s\'hagi seleccionat com Pestaña. <br/> Seleccioneu Pestanya per mostrar el panell en una pestanya independent. Quan s\'ha seleccionat un panell com Pestaña, els següents panells seleccionats com Panell es mostraran a la vista d\'aquesta pestanya. <br/> Sempre que seleccioni un panell com Pestaña serà el primer panell a mostrar en aquesta Pestaña. <br/> Si es selecciona com Pestaña el segon panell o posteriors, el primer panell s\'establirà automàticament com Pestanya si s\'hagués seleccionat anteriorment com Panell.',
-    'LBL_TABDEF_COLLAPSE' => 'Redueix ',
-    'LBL_TABDEF_COLLAPSE_HELP' => 'Marqueu la casella per tal que el panell aparegui plegat per defecte.',
+    'LBL_TABDEF_COLLAPSE' => 'Reduir ',
+    'LBL_TABDEF_COLLAPSE_HELP' => 'Seleccionar per fer que l\'estat per defecte d\'aquest panell sigui plegat.',
     'LBL_DROPDOWN_TITLE_NAME' => 'Nom',
     'LBL_DROPDOWN_LANGUAGE' => 'Idioma',
-    'LBL_DROPDOWN_ITEMS' => "Llista d'elements",
-    'LBL_DROPDOWN_ITEM_NAME' => "Nom de l'element",
-    'LBL_DROPDOWN_ITEM_LABEL' => "Etiqueta de visualització",
-    'LBL_SYNC_TO_DETAILVIEW' => 'Sincronitza amb la vista de detall',
-    'LBL_SYNC_TO_DETAILVIEW_HELP' => "Seleccioneu aquesta opció per sincronitzar el disseny de la vista d'edició amb el corresponent disseny de la vista de detall. Mentre la sincronització estigui activada no es podran fer canvis a la vista de detall, que sempre es mostrarà igual que la d'edició.",
-    'LBL_SYNC_TO_DETAILVIEW_NOTICE' => "La vista de detall està sincronitzada amb la vista d'edició, de manera que la disposició dels camps que veieu aquí reflecteix el que hi ha a l'altra vista. Els canvis que feu aquí no es conservaran. Si voleu modificar només aquesta vista, desactiveu la sincronització amb la vista d'edició.",
-    'LBL_COPY_FROM_EDITVIEW' => "Copia la vista d'edició",
-    'LBL_DROPDOWN_BLANK_WARNING' => "Cal introduir un valor tant pel nom de l'element com per l'etiqueta de visualització. Per afegir un element en blanc, feu clic a Agrega, sense introduir cap valor pel nom de l'element ni per l'etiqueta de visualització.",
+    'LBL_DROPDOWN_ITEMS' => 'Llista d\'elements',
+    'LBL_DROPDOWN_ITEM_NAME' => 'Nom de l\'element',
+    'LBL_DROPDOWN_ITEM_LABEL' => 'Mostrar etiqueta',
+    'LBL_SYNC_TO_DETAILVIEW' => 'Sincronitza amb la vista detallada',
+    'LBL_SYNC_TO_DETAILVIEW_HELP' => 'Seleccioneu aquesta opció per sincronitzar el disseny de la vista d\'Edició amb el corresponent disseny de la vista de Detall. Els camps i la seva col·locació a la vista de Detall seran sincronitzats i guardats automàticament a la vista de Detall en prémer a Desa or Guardar i Desplegar a la vista de Edició. No es podran realitzar canvis en el disseny de la vista de Detall.',
+    'LBL_SYNC_TO_DETAILVIEW_NOTICE' => 'Aquest Vista detallada és sincronització amb la Edita la vista corresponent. <br>Camps i col·locació de camp en aquest Vista detallada que reflecteixen els camps i col. locació de camp en la Edita la vista. <br>Els canvis a la Vista detallada no pot ser salvat o desplegat en aquesta pàgina. Feu canvis o no sincronitzeu els dissenys en Edita la vista.',
+    'LBL_COPY_FROM_EDITVIEW' => 'Copiar de la vista d\'edició',
+    'LBL_DROPDOWN_BLANK_WARNING' => 'Els valors són necessaris tant per el nom de l\'element com per la etiqueta de visualització. Per afegir un element en blanc, faci clic a Agregar, sense entrar cap valor pel nom de l\'element ni per l\'etiqueta de visualització.',
     'LBL_DROPDOWN_KEY_EXISTS' => 'La clau ja existeix a la llista',
-    'LBL_NO_SAVE_ACTION' => "No s'ha trobat l'opció Desa per aquesta vista.",
+    'LBL_NO_SAVE_ACTION' => 'No s\'ha pogut trobar la opció desar per aquesta vista.',
     'LBL_BADLY_FORMED_DOCUMENT' => 'Studio2:establishLocation: document mal format.',
 
 
 //RELATIONSHIPS
     'LBL_MODULE' => 'Mòdul',
     'LBL_LHS_MODULE' => 'Mòdul principal',
-    'LBL_CUSTOM_RELATIONSHIPS' => "* relació creada a l'Estudi",
+    'LBL_CUSTOM_RELATIONSHIPS' => '* relació creada a l\'estudi',
     'LBL_RELATIONSHIPS' => 'Relacions',
-    'LBL_RELATIONSHIP_EDIT' => 'Edita la relació',
+    'LBL_RELATIONSHIP_EDIT' => 'Editar relació',
     'LBL_REL_NAME' => 'Nom',
     'LBL_REL_LABEL' => 'Etiqueta',
     'LBL_REL_TYPE' => 'Tipus',
@@ -397,11 +397,12 @@ $mod_strings = array(
     'LBL_RELATIONSHIP_ROLE_COLUMN' => 'Columna',
     'LBL_RELATIONSHIP_ROLE_VALUE' => 'Valor',
     'LBL_SUBPANEL_FROM' => 'Subpanell de',
-    'LBL_RELATIONSHIP_ONLY' => 'No es crearà cap element visible per a la relació atès que ja existia anteriorment una relació entre els dos mòduls.',
+    'LBL_RELATIONSHIP_ONLY' => 'No es crearà cap element visible per aquesta relació, ja que existia anteriorment una relació visible entre aquests dos mòduls.',
     'LBL_ONETOONE' => 'Un a un',
     'LBL_ONETOMANY' => 'Un a molts',
     'LBL_MANYTOONE' => 'Molts a un',
     'LBL_MANYTOMANY' => 'Molts a molts',
+
 
 //STUDIO QUESTIONS
     'LBL_QUESTION_EDIT' => 'Seleccioneu el mòdul a editar.',
@@ -413,7 +414,6 @@ $mod_strings = array(
     'LBL_QUESTION_EDITOR' => 'Seleccioneu una eina.',
     'LBL_QUESTION_DASHLET' => 'Seleccioneu el disseny de Dashlet a editar.',
     'LBL_QUESTION_POPUP' => 'Seleccioneu el disseny de finestra emergent a editar.',
-
 //CUSTOM FIELDS
     'LBL_NAME' => 'Nom',
     'LBL_LABELS' => 'Etiquetes',
@@ -439,7 +439,6 @@ $mod_strings = array(
     'LBL_SECTION_FIELDEDITOR' => 'Editar camp',
     'LBL_SECTION_DEPLOY' => 'Desplegar',
     'LBL_SECTION_MODULE' => 'Mòdul',
-
 //WIZARDS
 
 //LIST VIEW EDITOR
@@ -581,7 +580,7 @@ $mod_strings = array(
     'LBL_JS_VALIDATE_REL_LABEL' => "Afegiu l\'etiqueta que serà mostrada als subpanells.", // Excepció d'escapat 
 
 //CONFIRM
-    'LBL_CONFIRM_FIELD_DELETE' => 'Si elimineu el camp personalitzat esborrareu també la informació que el camp conté a la base de dades. El camp ja no apareixerà a les vistes del mòdul.\n\nVoleu continuar?',
+    'LBL_CONFIRM_FIELD_DELETE' => 'La supressió del camp personalitzat eliminarà tant el camp personalitzat i totes les dades relacionades amb el camp personalitzat a la base de dades. El camp serà ja no apareixerà a les distribucions de mòduls. Voleu continuar?',
 
     'LBL_CONFIRM_RELATIONSHIP_DELETE' => 'Segur que voleu eliminar aquesta relació?',
     'LBL_CONFIRM_DONT_SAVE' => 'Hi ha canvis pendents de ser desats, voleu desar-los ara?',

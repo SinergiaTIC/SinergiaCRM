@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<met:KNIMEMetaInfo xmlns:met="http://www.knime.org/2.9/metainfo">
+  <met:element form="text" name="Author">KNIME</met:element>
+  <met:element form="date" name="Creation Date">26/2/2015</met:element>
+  <met:element form="multiline" name="Comments">Market Basket Analysis: Building Association Rules
+
+This workflow builds a recommandation engine for market basket analysis using the Borgelt version of the Apriori algorithm.
+
+URL: Market Basket Analysis and Recommandation Engines https://www.knime.org/knime-applications/market-basket-analysis-and-recommendation-engines
+
+BLOG: Market Basket Analysis and Recommandation Engines https://www.knime.org/blog/market-basket-analysis-and-recommendation-engines
+
+TAG: retail, association rules, recommandation engine, market basket analysis, MBA, Apriori algorithm, Borgelt, data collection, Quickform</met:element>
+</met:KNIMEMetaInfo>

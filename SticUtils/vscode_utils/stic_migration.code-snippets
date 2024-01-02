@@ -1,0 +1,1341 @@
+{
+  // Place your global snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+  // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+  // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+  // used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+  // Placeholders with the same ids are connected.
+  // Example:
+  // range options
+  "date_range_options": {
+    "scope": "php,sql",
+    "prefix": "stic_range_date_options",
+    "body": ["'options' => 'date_range_search_dom',", "'enable_range_search' => true,"]
+  },
+  "number_range_options": {
+    "scope": "php,sql",
+    "prefix": "stic_range_number_options",
+    "body": ["'options' => 'numeric_range_search_dom',", "'enable_range_search' => true,"]
+  },
+  "date_range_config": {
+    "scope": "php,sql",
+    "prefix": "stic_range_date_config",
+    "body": [
+      "'range_$1' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),",
+      "'start_range_$1' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),",
+      "'end_range_$1' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),"
+    ]
+  },
+  "number_range_config": {
+    "scope": "php,sql",
+    "prefix": "stic_range_number_config",
+    "body": [
+      "'range_$1' => array('query_type' => 'default', 'enable_range_search' => true),",
+      "'start_range_$1' => array('query_type' => 'default', 'enable_range_search' => true),",
+      "'end_range_$1' => array('query_type' => 'default', 'enable_range_search' => true),"
+    ]
+  },
+  "merge_config": {
+    "scope": "php,sql",
+    "prefix": "stic_merge_config",
+    "body": ["'duplicate_merge' => 'enabled',", "'merge_filter' => 'enabled',"]
+  },
+  "stic_settings": {
+    "scope": "php,sql",
+    "prefix": "stic_settings",
+    "body": ["require_once 'modules/stic_Settings/Utils.php';", "stic_SettingsUtils::getSetting('settingName');", "stic_SettingsUtils::getSettingsByType('type');"]
+  },
+  "stic_utils_include": {
+    "scope": "php,sql",
+    "prefix": "stic_utils_include",
+    "body": ["include_once 'SticInclude/Utils.php';"]
+  },
+  "stic_utils1": {
+    "scope": "php,sql",
+    "prefix": "SticUtils::getRelatedBeanObject",
+    "body": ["SticUtils:: getRelatedBeanObject(\\$bean, 'relatedName');"]
+  },
+  "stic_utils2": {
+    "scope": "php,sql",
+    "prefix": "SticUtils::clearText",
+    "body": ["SticUtils::clearText('text');"]
+  },
+  // CONTACTS
+  "contacts_relationships_tiporelacion": {
+    "scope": "php,sql",
+    "prefix": "tiporelacion",
+    "body": ["relationship_type"]
+  },
+  "contacts_relationships_fechaalta_c": {
+    "scope": "php,sql",
+    "prefix": "fechaalta_c",
+    "body": ["start_date"]
+  },
+  "contacts_relationships_fechabaja": {
+    "scope": "php,sql",
+    "prefix": "fechabaja",
+    "body": ["end_date"]
+  },
+  "contacts_relationships_motivobaja_c": {
+    "scope": "php,sql",
+    "prefix": "motivobaja_c",
+    "body": ["end_reason"]
+  },
+  "contacts_relationships_otrosmotivos_c": {
+    "scope": "php,sql",
+    "prefix": "otrosmotivos_c",
+    "body": ["other_end_reasons"]
+  },
+  "contacts_relationships_roles_c": {
+    "scope": "php,sql",
+    "prefix": "roles_c",
+    "body": ["role"]
+  },
+  "contacts_relationships_observaciones": {
+    "scope": "php,sql",
+    "prefix": "observaciones",
+    "body": [""]
+  },
+  // ACCOUNTS
+  "accounts_relationships_tiporelacion": {
+    "scope": "php,sql",
+    "prefix": "tiporelacion",
+    "body": ["relationship_type"]
+  },
+  "accounts_relationships_fechaalta_c": {
+    "scope": "php,sql",
+    "prefix": "fechaalta_c",
+    "body": ["start_date"]
+  },
+  "accounts_relationships_fechabaja": {
+    "scope": "php,sql",
+    "prefix": "fechabaja",
+    "body": ["end_date"]
+  },
+  "accounts_relationships_motivobaja_c": {
+    "scope": "php,sql",
+    "prefix": "motivobaja_c",
+    "body": ["end_reason"]
+  },
+  "accounts_relationships_otrosmotivos_c": {
+    "scope": "php,sql",
+    "prefix": "otrosmotivos_c",
+    "body": ["other_end_reasons"]
+  },
+  "accounts_relationships_roles_c": {
+    "scope": "php,sql",
+    "prefix": "roles_c",
+    "body": ["role"]
+  },
+  "accounts_relationships_observaciones": {
+    "scope": "php,sql",
+    "prefix": "observaciones",
+    "body": [""]
+  },
+  // EVENTS
+  "events_tipo": {
+    "scope": "php,sql",
+    "prefix": "tipo",
+    "body": ["type"]
+  },
+  "events_estado": {
+    "scope": "php,sql",
+    "prefix": "estado",
+    "body": ["status"]
+  },
+  "events_fechainicio": {
+    "scope": "php,sql",
+    "prefix": "fechainicio",
+    "body": ["start_date"]
+  },
+  "events_fechafin": {
+    "scope": "php,sql",
+    "prefix": "fechafin",
+    "body": ["end_date"]
+  },
+  "events_informacionhorario": {
+    "scope": "php,sql",
+    "prefix": "informacionhorario",
+    "body": ["timetable"]
+  },
+  "events_nombreubicacion": {
+    "scope": "php,sql",
+    "prefix": "nombreubicacion",
+    "body": ["location"]
+  },
+  "events_direccion": {
+    "scope": "php,sql",
+    "prefix": "direccion",
+    "body": ["address"]
+  },
+  "events_codigopostal": {
+    "scope": "php,sql",
+    "prefix": "codigopostal",
+    "body": ["postal_code"]
+  },
+  "events_provincia": {
+    "scope": "php,sql",
+    "prefix": "provincia",
+    "body": ["state"]
+  },
+  "events_comarca": {
+    "scope": "php,sql",
+    "prefix": "comarca",
+    "body": ["county"]
+  },
+  "events_municipio": {
+    "scope": "php,sql",
+    "prefix": "municipio",
+    "body": ["city"]
+  },
+  "events_comunidadautonoma": {
+    "scope": "php,sql",
+    "prefix": "comunidadautonoma",
+    "body": ["region"]
+  },
+  "events_pais": {
+    "scope": "php,sql",
+    "prefix": "pais",
+    "body": ["country"]
+  },
+  "events_motivodescarte": {
+    "scope": "php,sql",
+    "prefix": "motivodescarte",
+    "body": ["discard_reason"]
+  },
+  "events_conclusiones": {
+    "scope": "php,sql",
+    "prefix": "conclusiones",
+    "body": [""]
+  },
+  "events_numeromaximo": {
+    "scope": "php,sql",
+    "prefix": "numeromaximo",
+    "body": ["max_attendees"]
+  },
+  "events_numeroinscrinoinvitados": {
+    "scope": "php,sql",
+    "prefix": "numeroinscrinoinvitados",
+    "body": ["status_not_invited"]
+  },
+  "events_numeroinscriinvitados": {
+    "scope": "php,sql",
+    "prefix": "numeroinscriinvitados",
+    "body": ["status_invited"]
+  },
+  "events_numeroinscriconfirmados": {
+    "scope": "php,sql",
+    "prefix": "numeroinscriconfirmados",
+    "body": ["status_confirmed"]
+  },
+  "events_numeroinscrirechazados": {
+    "scope": "php,sql",
+    "prefix": "numeroinscrirechazados",
+    "body": ["status_rejected"]
+  },
+  "events_numeroinscriquizas": {
+    "scope": "php,sql",
+    "prefix": "numeroinscriquizas",
+    "body": ["status_maybe"]
+  },
+  "events_numeroinscrinoparticipa": {
+    "scope": "php,sql",
+    "prefix": "numeroinscrinoparticipa",
+    "body": ["status_didnt_take_part"]
+  },
+  "events_numeroinscriparticipa": {
+    "scope": "php,sql",
+    "prefix": "numeroinscriparticipa",
+    "body": ["status_took_part"]
+  },
+  "events_presupuesto": {
+    "scope": "php,sql",
+    "prefix": "presupuesto",
+    "body": ["budget"]
+  },
+  "events_currency_id": {
+    "scope": "php,sql",
+    "prefix": "currency_id",
+    "body": ["currency_id"]
+  },
+  "events_costeesperado": {
+    "scope": "php,sql",
+    "prefix": "costeesperado",
+    "body": ["expected_cost"]
+  },
+  "events_costereal": {
+    "scope": "php,sql",
+    "prefix": "costereal",
+    "body": ["actual_cost"]
+  },
+  "events_ingresosesperados": {
+    "scope": "php,sql",
+    "prefix": "ingresosesperados",
+    "body": ["expected_income"]
+  },
+  "events_ingresosreales": {
+    "scope": "php,sql",
+    "prefix": "ingresosreales",
+    "body": ["actual_income"]
+  },
+  "events_importeasistencia": {
+    "scope": "php,sql",
+    "prefix": "importeasistencia",
+    "body": ["price"]
+  },
+  "events_numeroinscriasistentesreal": {
+    "scope": "php,sql",
+    "prefix": "numeroinscriasistentesreal",
+    "body": ["attendees"]
+  },
+  "events_total_hours": {
+    "scope": "php,sql",
+    "prefix": "total_hours",
+    "body": ["total_hours"]
+  },
+  "events_numero_inscripciones_baja": {
+    "scope": "php,sql",
+    "prefix": "numero_inscripciones_baja",
+    "body": ["status_drop_out"]
+  },
+  // REGISTRATIONS
+  "registrations_estado": {
+    "scope": "php,sql",
+    "prefix": "estado",
+    "body": ["status"]
+  },
+  "registrations_registration_date": {
+    "scope": "php,sql",
+    "prefix": "registration_date",
+    "body": ["registration_date"]
+  },
+  "registrations_motivonoparticipa": {
+    "scope": "php,sql",
+    "prefix": "motivonoparticipa",
+    "body": ["not_participating_reason"]
+  },
+  "registrations_motivorechazado": {
+    "scope": "php,sql",
+    "prefix": "motivorechazado",
+    "body": ["rejection_reason"]
+  },
+  "registrations_tipoparticipacion": {
+    "scope": "php,sql",
+    "prefix": "tipoparticipacion",
+    "body": ["participation_type"]
+  },
+  "registrations_necesidadesespeciales": {
+    "scope": "php,sql",
+    "prefix": "necesidadesespeciales",
+    "body": ["special_needs"]
+  },
+  "registrations_descripcionnecesidades": {
+    "scope": "php,sql",
+    "prefix": "descripcionnecesidades",
+    "body": ["special_needs_description"]
+  },
+  "registrations_attendance_percentage": {
+    "scope": "php,sql",
+    "prefix": "attendance_percentage",
+    "body": ["attendance_percentage"]
+  },
+  "registrations_attended_hours": {
+    "scope": "php,sql",
+    "prefix": "attended_hours",
+    "body": ["attended_hours"]
+  },
+  "session_day_week": {
+    "scope": "php,sql",
+    "prefix": "day_week",
+    "body": ["weekday"]
+  },
+  // PAYMENT COMMITMENTS
+  "payment_commitments_tipopago": {
+    "scope": "php,sql",
+    "prefix": "tipopago",
+    "body": ["payment_type"]
+  },
+  "payment_commitments_numerocuenta": {
+    "scope": "php,sql",
+    "prefix": "numerocuenta",
+    "body": ["bank_account"]
+  },
+  "payment_commitments_numeroreferenciatarjeta": {
+    "scope": "php,sql",
+    "prefix": "numeroreferenciatarjeta",
+    "body": [""]
+  },
+  "payment_commitments_canal": {
+    "scope": "php,sql",
+    "prefix": "canal",
+    "body": ["channel"]
+  },
+  "payment_commitments_periodicidad": {
+    "scope": "php,sql",
+    "prefix": "periodicidad",
+    "body": ["periodicity"]
+  },
+  "payment_commitments_importe": {
+    "scope": "php,sql",
+    "prefix": "importe",
+    "body": ["amount"]
+  },
+  "payment_commitments_fechaprimerpago": {
+    "scope": "php,sql",
+    "prefix": "fechaprimerpago",
+    "body": ["first_payment_date"]
+  },
+  "payment_commitments_fechabaja": {
+    "scope": "php,sql",
+    "prefix": "fechabaja",
+    "body": ["end_date"]
+  },
+  "payment_commitments_mediopago": {
+    "scope": "php,sql",
+    "prefix": "mediopago",
+    "body": ["payment_method"]
+  },
+  "payment_commitments_tipo_movimiento": {
+    "scope": "php,sql",
+    "prefix": "tipo_movimiento",
+    "body": ["transaction_type"]
+  },
+  "payment_commitments_fecha_firma": {
+    "scope": "php,sql",
+    "prefix": "fecha_firma",
+    "body": ["signature_date"]
+  },
+  "payment_commitments_mandato_id_c": {
+    "scope": "php,sql",
+    "prefix": "mandato_id_c",
+    "body": ["mandate"]
+  },
+  "payment_commitments_destino_c": {
+    "scope": "php,sql",
+    "prefix": "destino_c",
+    "body": ["destination"]
+  },
+  "payment_commitments_cuotaanualizada_c": {
+    "scope": "php,sql",
+    "prefix": "cuotaanualizada_c",
+    "body": ["annualized_fee"]
+  },
+  "payment_commitments_annio_caducidad_tarjeta_c": {
+    "scope": "php,sql",
+    "prefix": "annio_caducidad_tarjeta_c",
+    "body": [""]
+  },
+  "payment_commitments_mes_caducidad_tarjeta_c": {
+    "scope": "php,sql",
+    "prefix": "mes_caducidad_tarjeta_c",
+    "body": [""]
+  },
+  "payment_commitments_origen_c": {
+    "scope": "php,sql",
+    "prefix": "origen_c",
+    "body": [""]
+  },
+  "payment_commitments_annio_c": {
+    "scope": "php,sql",
+    "prefix": "annio_c",
+    "body": [""]
+  },
+  "payment_commitments_dia_presentacion_c": {
+    "scope": "php,sql",
+    "prefix": "dia_presentacion_c",
+    "body": ["segmentation"]
+  },
+  "payment_commitments_numeroiban_c": {
+    "scope": "php,sql",
+    "prefix": "numeroiban_c",
+    "body": [""]
+  },
+  "payment_commitments_donativoenespecie_c": {
+    "scope": "php,sql",
+    "prefix": "donativoenespecie_c",
+    "body": ["in_kind_donation"]
+  },
+  "payment_commitments_concepto_recibo_c": {
+    "scope": "php,sql",
+    "prefix": "concepto_recibo_c",
+    "body": ["banking_concept"]
+  },
+  "payment_commitments_estado_c": {
+    "scope": "php,sql",
+    "prefix": "estado_c",
+    "body": [""]
+  },
+  // PAYMENTS
+  "payment_importe": {
+    "scope": "php,sql",
+    "prefix": "importe",
+    "body": ["amount"]
+  },
+  "payment_estado": {
+    "scope": "php,sql",
+    "prefix": "estado",
+    "body": ["status"]
+  },
+  "payment_devolucionlinea": {
+    "scope": "php,sql",
+    "prefix": "devolucionlinea",
+    "body": ["c19_rejected_reason"]
+  },
+  "payment_fechalinecobro": {
+    "scope": "php,sql",
+    "prefix": "fechalinecobro",
+    "body": ["payment_date"]
+  },
+  "payment_numerocuenta": {
+    "scope": "php,sql",
+    "prefix": "numerocuenta",
+    "body": ["bank_account"]
+  },
+  "payment_numeroreferenciatarjeta": {
+    "scope": "php,sql",
+    "prefix": "numeroreferenciatarjeta",
+    "body": [""]
+  },
+  "payment_mediopago": {
+    "scope": "php,sql",
+    "prefix": "mediopago",
+    "body": ["payment_method"]
+  },
+  "payment_tipopago": {
+    "scope": "php,sql",
+    "prefix": "tipopago",
+    "body": ["payment_type"]
+  },
+  "payment_tipo_movimiento": {
+    "scope": "php,sql",
+    "prefix": "tipo_movimiento",
+    "body": ["transaction_type"]
+  },
+  "payment_182_excluded": {
+    "scope": "php,sql",
+    "prefix": "182_excluded",
+    "body": ["m182_excluded"]
+  },
+  "transaction_code_pago": {
+    "scope": "php,sql",
+    "prefix": "id_pago",
+    "body": ["c19_payment_number"]
+  },
+  "payment_mandato_id_c": {
+    "scope": "php,sql",
+    "prefix": "mandato_id_c",
+    "body": ["mandate"]
+  },
+  "payment_motivo_devolucion_sepa_c": {
+    "scope": "php,sql",
+    "prefix": "motivo_devolucion_sepa_c",
+    "body": ["sepa_rejected_reason"]
+  },
+  "payment_numero_iban_c": {
+    "scope": "php,sql",
+    "prefix": "numero_iban_c",
+    "body": [""]
+  },
+  "payment_concepto_recibo_c": {
+    "scope": "php,sql",
+    "prefix": "concepto_recibo_c",
+    "body": ["banking_concept"]
+  },
+  "payment_fechadevolucion_c": {
+    "scope": "php,sql",
+    "prefix": "fechadevolucion_c",
+    "body": ["rejection_date"]
+  },
+  "payment_dia_presentacion_c": {
+    "scope": "php,sql",
+    "prefix": "dia_presentacion_c",
+    "body": ["segmentation"]
+  },
+  "payment_descripcionespecie_c": {
+    "scope": "php,sql",
+    "prefix": "descripcionespecie_c",
+    "body": ["in_kind_description"]
+  },
+  "payment_devoluciontarjeta_c": {
+    "scope": "php,sql",
+    "prefix": "devoluciontarjeta_c",
+    "body": [""]
+  },
+  "payment_fechadonativo_c": {
+    "scope": "php,sql",
+    "prefix": "fechadonativo_c",
+    "body": [""]
+  },
+  "payment_fechaanulacion_c": {
+    "scope": "php,sql",
+    "prefix": "fechaanulacion_c",
+    "body": [""]
+  },
+  "remittance_fecharemesa": {
+    "scope": "php,sql",
+    "prefix": "fecharemesa",
+    "body": ["remittance_date"]
+  },
+  "remittance_fechacargofichero": {
+    "scope": "php,sql",
+    "prefix": "fechacargofichero",
+    "body": ["charge_date"]
+  },
+  "remittance_estado": {
+    "scope": "php,sql",
+    "prefix": "estado",
+    "body": ["status"]
+  },
+  "remittance_iban": {
+    "scope": "php,sql",
+    "prefix": "iban",
+    "body": ["iban"]
+  },
+  "remittance_tipo": {
+    "scope": "php,sql",
+    "prefix": "tipo",
+    "body": ["type"]
+  },
+  "remittance_log": {
+    "scope": "php,sql",
+    "prefix": "log",
+    "body": ["log"]
+  },
+  // Other (comenzar el prefix por stic)
+  "Accounts_acronimo_c": {
+    "scope": "php,sql",
+    "prefix": "acronimo_c",
+    "body": ["stic_acronym_c"]
+  },
+  "Accounts_comarcadireccionsecundaria_c": {
+    "scope": "php,sql",
+    "prefix": "comarcadireccionsecundaria_c",
+    "body": ["stic_alternative_county_c"]
+  },
+  "Accounts_tipo_direccion_alternativa_c": {
+    "scope": "php,sql",
+    "prefix": "tipo_direccion_alternativa_c",
+    "body": ["stic_alternative_address_type_c"]
+  },
+  "Accounts_ccaa_alternativa_c": {
+    "scope": "php,sql",
+    "prefix": "ccaa_alternativa_c",
+    "body": ["stic_alternative_region_c"]
+  },
+  "Accounts_puertaalternativa_c": {
+    "scope": "php,sql",
+    "prefix": "puertaalternativa_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_pisoalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "pisoalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_numeroalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "numeroalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_escaleraalternativa_c": {
+    "scope": "php,sql",
+    "prefix": "escaleraalternativa_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_telefonoalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "telefonoalternativo_c",
+    "body": ["stic_alternative_telephone_c"]
+  },
+  "Accounts_viaalternativa_c": {
+    "scope": "php,sql",
+    "prefix": "viaalternativa_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_tipoviaalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "tipoviaalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_categoria_c": {
+    "scope": "php,sql",
+    "prefix": "categoria_c",
+    "body": ["stic_category_c"]
+  },
+  "Accounts_cif_c": {
+    "scope": "php,sql",
+    "prefix": "identification_number",
+    "body": ["stic_identification_number"]
+  },
+  "Accounts_codigo_c": {
+    "scope": "php,sql",
+    "prefix": "codigo_c",
+    "body": ["stic_code_c"]
+  },
+  "Accounts_currency_id": {
+    "scope": "php,sql",
+    "prefix": "currency_id",
+    "body": ["stic_currency_id_c"]
+  },
+  "Accounts_facebook_c": {
+    "scope": "php,sql",
+    "prefix": "facebook_c",
+    "body": ["stic_facebook_c"]
+  },
+  "Accounts_idioma_c": {
+    "scope": "php,sql",
+    "prefix": "idioma_c",
+    "body": ["stic_language_c"]
+  },
+  "Accounts_linkedin_c": {
+    "scope": "php,sql",
+    "prefix": "linkedin_c",
+    "body": ["stic_linkedin_c"]
+  },
+  "Accounts_comarcadireccionprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "comarcadireccionprincipal_c",
+    "body": ["stic_main_county_c"]
+  },
+  "Accounts_tipo_direccion_principal_c": {
+    "scope": "php,sql",
+    "prefix": "tipo_direccion_principal_c",
+    "body": ["stic_main_address_type_c"]
+  },
+  "Accounts_ccaa_principal_c": {
+    "scope": "php,sql",
+    "prefix": "ccaa_principal_c",
+    "body": ["stic_main_region_c"]
+  },
+  "Accounts_puertaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "puertaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_pisoprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "pisoprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_numeroprinicpal_c": {
+    "scope": "php,sql",
+    "prefix": "numeroprinicpal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_escaleraprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "escaleraprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_viaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "viaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_tipoviaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "tipoviaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Accounts_tiporelacion_c": {
+    "scope": "php,sql",
+    "prefix": "tiporelacion_c",
+    "body": ["stic_relationship_type_c"]
+  },
+  "Accounts_motivodevolucioncorreo_c": {
+    "scope": "php,sql",
+    "prefix": "motivodevolucioncorreo_c",
+    "body": ["stic_return_mail_reason_c"]
+  },
+  "Accounts_stic_182_error_c": {
+    "scope": "php,sql",
+    "prefix": "stic_182_error_c",
+    "body": ["stic_182_error_c"]
+  },
+  "Accounts_stic_182_excluded_c": {
+    "scope": "php,sql",
+    "prefix": "stic_182_excluded_c",
+    "body": ["stic_182_excluded_c"]
+  },
+  "Accounts_subcategoria_c": {
+    "scope": "php,sql",
+    "prefix": "subcategoria_c",
+    "body": ["stic_subcategory_c"]
+  },
+  "Accounts_totaldonaciones_c": {
+    "scope": "php,sql",
+    "prefix": "totaldonaciones_c",
+    "body": ["stic_total_donations_c"]
+  },
+  "Accounts_twitter_c": {
+    "scope": "php,sql",
+    "prefix": "twitter_c",
+    "body": ["stic_twitter_c"]
+  },
+  "Contacts_edad_c": {
+    "scope": "php,sql",
+    "prefix": "edad_c",
+    "body": ["stic_age_c"]
+  },
+  "Contacts_comarcaotradireccion_c": {
+    "scope": "php,sql",
+    "prefix": "comarcaotradireccion_c",
+    "body": ["stic_alternative_county_c"]
+  },
+  "Contacts_tipodireccionpostalalternati_c": {
+    "scope": "php,sql",
+    "prefix": "tipodireccionpostalalternati_c",
+    "body": ["stic_alternative_address_type_c"]
+  },
+  "Contacts_ccaa_alternativa_c": {
+    "scope": "php,sql",
+    "prefix": "ccaa_alternativa_c",
+    "body": ["stic_alternative_region_c"]
+  },
+  "Contacts_puertaalternativa_c": {
+    "scope": "php,sql",
+    "prefix": "puertaalternativa_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_pisoalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "pisoalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_numeroalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "numeroalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_escaleraalternativa_c": {
+    "scope": "php,sql",
+    "prefix": "escaleraalternativa_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_viaalternativa_c": {
+    "scope": "php,sql",
+    "prefix": "viaalternativa_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_tipoviaalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "tipoviaalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_disponibilidad_c": {
+    "scope": "php,sql",
+    "prefix": "disponibilidad_c",
+    "body": ["stic_availability_c"]
+  },
+  "Contacts_canal_c": {
+    "scope": "php,sql",
+    "prefix": "canal_c",
+    "body": ["stic_channel_c"]
+  },
+  "Contacts_codigo_c": {
+    "scope": "php,sql",
+    "prefix": "codigo_c",
+    "body": ["stic_code_c"]
+  },
+  "Contacts_comentarios_c": {
+    "scope": "php,sql",
+    "prefix": "comentarios_c",
+    "body": ["stic_comments_c"]
+  },
+  "Contacts_currency_id": {
+    "scope": "php,sql",
+    "prefix": "currency_id",
+    "body": ["stic_currency_id_c"]
+  },
+  "Contacts_derivacion_c": {
+    "scope": "php,sql",
+    "prefix": "derivacion_c",
+    "body": ["stic_derivation_c"]
+  },
+  "Contacts_noenviarcorreopostal_c": {
+    "scope": "php,sql",
+    "prefix": "noenviarcorreopostal_c",
+    "body": ["stic_do_not_send_postal_mail_c"]
+  },
+  "Contacts_situacionlaboral_c": {
+    "scope": "php,sql",
+    "prefix": "situacionlaboral_c",
+    "body": ["stic_employment_situation_c"]
+  },
+  "Contacts_facebook_c": {
+    "scope": "php,sql",
+    "prefix": "facebook_c",
+    "body": ["stic_facebook_c"]
+  },
+  "Contacts_sexo_c": {
+    "scope": "php,sql",
+    "prefix": "sexo_c",
+    "body": ["stic_gender_c"]
+  },
+  "Contacts_googlemas_c": {
+    "scope": "php,sql",
+    "prefix": "googlemas_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_numeroidentificacion_c": {
+    "scope": "php,sql",
+    "prefix": "numeroidentificacion_c",
+    "body": ["stic_identification_number_c"]
+  },
+  "Contacts_tipoidentificacion_c": {
+    "scope": "php,sql",
+    "prefix": "tipoidentificacion_c",
+    "body": ["stic_identification_type_c"]
+  },
+  "Contacts_idioma_c": {
+    "scope": "php,sql",
+    "prefix": "idioma_c",
+    "body": ["stic_language_c"]
+  },
+  "Contacts_linkedin_c": {
+    "scope": "php,sql",
+    "prefix": "linkedin_c",
+    "body": ["stic_linkedin_c"]
+  },
+  "Contacts_comarcaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "comarcaprincipal_c",
+    "body": ["stic_main_county_c"]
+  },
+  "Contacts_tipodireccionpostal_c": {
+    "scope": "php,sql",
+    "prefix": "tipodireccionpostal_c",
+    "body": ["stic_main_address_type_c"]
+  },
+  "Contacts_ccaa_c": {
+    "scope": "php,sql",
+    "prefix": "ccaa_c",
+    "body": ["stic_main_region_c"]
+  },
+  "Contacts_puertaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "puertaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_pisoprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "pisoprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_numeroprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "numeroprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_escaleraprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "escaleraprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_viaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "viaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_tipoviaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "tipoviaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_otrosectorprofesional_c": {
+    "scope": "php,sql",
+    "prefix": "otrosectorprofesional_c",
+    "body": ["stic_other_professional_sector_c"]
+  },
+  "Contacts_incidenciapago_c": {
+    "scope": "php,sql",
+    "prefix": "incidenciapago_c",
+    "body": ["stic_payment_incidence_c"]
+  },
+  "Contacts_fotografia_c": {
+    "scope": "php,sql",
+    "prefix": "fotografia_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Contacts_canalcontactopreferido_c": {
+    "scope": "php,sql",
+    "prefix": "canalcontactopreferido_c",
+    "body": ["stic_preferred_contact_channel_c"]
+  },
+  "Contacts_sectorprofesion_c": {
+    "scope": "php,sql",
+    "prefix": "sectorprofesion_c",
+    "body": ["stic_professional_sector_c"]
+  },
+  "Contacts_tiporelacion_c": {
+    "scope": "php,sql",
+    "prefix": "tiporelacion_c",
+    "body": ["stic_relationship_type_c"]
+  },
+  "Contacts_motivodevulocioncorreo_c": {
+    "scope": "php,sql",
+    "prefix": "motivodevulocioncorreo_c",
+    "body": ["stic_return_mail_reason_c"]
+  },
+  "Contacts_stic_182_error_c": {
+    "scope": "php,sql",
+    "prefix": "stic_182_error_c",
+    "body": ["stic_182_error_c"]
+  },
+  "Contacts_stic_182_excluded_c": {
+    "scope": "php,sql",
+    "prefix": "stic_182_excluded_c",
+    "body": ["stic_182_excluded_c"]
+  },
+  "Contacts_totaldonaciones_c": {
+    "scope": "php,sql",
+    "prefix": "totaldonaciones_c",
+    "body": ["stic_total_donations_c"]
+  },
+  "Contacts_twitter_c": {
+    "scope": "php,sql",
+    "prefix": "twitter_c",
+    "body": ["stic_twitter_c"]
+  },
+  "Documents_enlacedocumentocompartido_c": {
+    "scope": "php,sql",
+    "prefix": "enlacedocumentocompartido_c",
+    "body": ["stic_shared_document_link_c"]
+  },
+  "Leads_numerocuenta_c": {
+    "scope": "php,sql",
+    "prefix": "numerocuenta_c",
+    "body": ["stic_account_number_c"]
+  },
+  "Leads_comarcaotradireccion_c": {
+    "scope": "php,sql",
+    "prefix": "comarcaotradireccion_c",
+    "body": ["stic_alternative_county_c"]
+  },
+  "Leads_tipodireccionpostalalterna_c": {
+    "scope": "php,sql",
+    "prefix": "tipodireccionpostalalterna_c",
+    "body": ["stic_alternative_address_type_c"]
+  },
+  "Leads_ccaa_alternativa_c": {
+    "scope": "php,sql",
+    "prefix": "ccaa_alternativa_c",
+    "body": ["stic_alternative_region_c"]
+  },
+  "Leads_puertaalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "puertaalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_pisoalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "pisoalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_numeroalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "numeroalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_escaleraalternativa_c": {
+    "scope": "php,sql",
+    "prefix": "escaleraalternativa_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_viaalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "viaalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_tipoviaalternativo_c": {
+    "scope": "php,sql",
+    "prefix": "tipoviaalternativo_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_importe_c": {
+    "scope": "php,sql",
+    "prefix": "importe_c",
+    "body": ["stic_amount_c"]
+  },
+  "Leads_canal_c": {
+    "scope": "php,sql",
+    "prefix": "canal_c",
+    "body": ["stic_channel_c"]
+  },
+  "Leads_comentarios_c": {
+    "scope": "php,sql",
+    "prefix": "comentarios_c",
+    "body": ["stic_comments_c"]
+  },
+  "Leads_currency_id": {
+    "scope": "php,sql",
+    "prefix": "currency_id",
+    "body": ["stic_currency_id_c"]
+  },
+  "Leads_derivacion_c": {
+    "scope": "php,sql",
+    "prefix": "derivacion_c",
+    "body": ["stic_derivation_c"]
+  },
+  "Leads_noenviarcorreo_c": {
+    "scope": "php,sql",
+    "prefix": "noenviarcorreo_c",
+    "body": ["stic_do_not_send_mail_c"]
+  },
+  "Leads_situacionlaboral_c": {
+    "scope": "php,sql",
+    "prefix": "situacionlaboral_c",
+    "body": ["stic_employment_situation_c"]
+  },
+  "Leads_facebook_c": {
+    "scope": "php,sql",
+    "prefix": "facebook_c",
+    "body": ["stic_facebook_c"]
+  },
+  "Leads_sexo_c": {
+    "scope": "php,sql",
+    "prefix": "sexo_c",
+    "body": ["stic_gender_c"]
+  },
+  "Leads_googlemas_c": {
+    "scope": "php,sql",
+    "prefix": "googlemas_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_numeroidentificacion_c": {
+    "scope": "php,sql",
+    "prefix": "numeroidentificacion_c",
+    "body": ["stic_identification_number_c"]
+  },
+  "Leads_tipoidentificacion_c": {
+    "scope": "php,sql",
+    "prefix": "tipoidentificacion_c",
+    "body": ["stic_identification_type_c"]
+  },
+  "Leads_idioma_c": {
+    "scope": "php,sql",
+    "prefix": "idioma_c",
+    "body": ["stic_language_c"]
+  },
+  "Leads_linkedin_c": {
+    "scope": "php,sql",
+    "prefix": "linkedin_c",
+    "body": ["stic_linkedin_c"]
+  },
+  "Leads_comarcadireccion_c": {
+    "scope": "php,sql",
+    "prefix": "comarcadireccion_c",
+    "body": ["stic_main_county_c"]
+  },
+  "Leads_tipodireccionpostal_c": {
+    "scope": "php,sql",
+    "prefix": "tipodireccionpostal_c",
+    "body": ["stic_main_address_type_c"]
+  },
+  "Leads_ccaa_c": {
+    "scope": "php,sql",
+    "prefix": "ccaa_c",
+    "body": ["stic_main_region_c"]
+  },
+  "Leads_puertaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "puertaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_pisoprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "pisoprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_numeroprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "numeroprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_escaleraprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "escaleraprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_viaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "viaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_tipoviaprincipal_c": {
+    "scope": "php,sql",
+    "prefix": "tipoviaprincipal_c",
+    "body": ["stic_NOT_EXIST"]
+  },
+  "Leads_otrosector_c": {
+    "scope": "php,sql",
+    "prefix": "otrosector_c",
+    "body": ["stic_other_sector_c"]
+  },
+  "Leads_mediopago_c": {
+    "scope": "php,sql",
+    "prefix": "mediopago_c",
+    "body": ["stic_payment_method_c"]
+  },
+  "Leads_tipopago_c": {
+    "scope": "php,sql",
+    "prefix": "tipopago_c",
+    "body": ["stic_payment_type_c"]
+  },
+  "Leads_periodicidad_c": {
+    "scope": "php,sql",
+    "prefix": "periodicidad_c",
+    "body": ["stic_periodicity_c"]
+  },
+  "Leads_sectorprofesion_c": {
+    "scope": "php,sql",
+    "prefix": "sectorprofesion_c",
+    "body": ["stic_professional_sector_c"]
+  },
+  "Leads_tiporelacion_c": {
+    "scope": "php,sql",
+    "prefix": "tiporelacion_c",
+    "body": ["stic_relationship_type_c"]
+  },
+  "Leads_motivodevolucioncorreo_c": {
+    "scope": "php,sql",
+    "prefix": "motivodevolucioncorreo_c",
+    "body": ["stic_return_mail_reason_c"]
+  },
+  "Leads_twitter_c": {
+    "scope": "php,sql",
+    "prefix": "twitter_c",
+    "body": ["stic_twitter_c"]
+  },
+  "Opportunities_fechaanticipo_c": {
+    "scope": "php,sql",
+    "prefix": "fechaanticipo_c",
+    "body": ["stic_advance_date_c"]
+  },
+  "Opportunities_fechacobro_c": {
+    "scope": "php,sql",
+    "prefix": "fechacobro_c",
+    "body": ["stic_paymentn_date_c"]
+  },
+  "Opportunities_fechajustificacion_c": {
+    "scope": "php,sql",
+    "prefix": "fechajustificacion_c",
+    "body": ["stic_justification_date_c"]
+  },
+  "Opportunities_fechapresentacion_c": {
+    "scope": "php,sql",
+    "prefix": "fechapresentacion_c",
+    "body": ["stic_presentation_date_c"]
+  },
+  "Opportunities_fecharesolucion_c": {
+    "scope": "php,sql",
+    "prefix": "fecharesolucion_c",
+    "body": ["stic_resolution_date_c"]
+  },
+  "Opportunities_importe_cobrado_c": {
+    "scope": "php,sql",
+    "prefix": "importe_cobrado_c",
+    "body": ["stic_amount_charged_c"]
+  },
+  "Opportunities_importeconcedido_c": {
+    "scope": "php,sql",
+    "prefix": "importeconcedido_c",
+    "body": ["stic_amount_awarded_c"]
+  },
+  "Opportunities_destino_c": {
+    "scope": "php,sql",
+    "prefix": "destino_c",
+    "body": ["stic_destination_c"]
+  },
+  "Opportunities_documentacionaentregar_c": {
+    "scope": "php,sql",
+    "prefix": "documentacionaentregar_c",
+    "body": ["stic_documentation_to_deliver_c"]
+  },
+  "Opportunities_estado_c": {
+    "scope": "php,sql",
+    "prefix": "estado_c",
+    "body": ["stic_status_c"]
+  },
+  "Opportunities_tiposubvencion_c": {
+    "scope": "php,sql",
+    "prefix": "tiposubvencion_c",
+    "body": ["stic_subvention_type_c"]
+  },
+  "Project_ubicacion_c": {
+    "scope": "php,sql",
+    "prefix": "ubicacion_c",
+    "body": ["stic_location_c"]
+  },
+  "ModuleNameredk_Constantes": {
+    "scope": "php,sql",
+    "prefix": "redk_Constantes",
+    "body": ["stic_Settings"]
+  },
+  "ModuleNameredk_Historico_Relacion_Contactos": {
+    "scope": "php,sql",
+    "prefix": "redk_Historico_Relacion_Contactos",
+    "body": ["stic_Contacts_Relationships"]
+  },
+  "ModuleNameredk_Historico_Relacion_Cuentas": {
+    "scope": "php,sql",
+    "prefix": "redk_Historico_Relacion_Cuentas",
+    "body": ["stic_Accounts_Relationships"]
+  },
+  "ModuleNameredk_Formas_de_Pago": {
+    "scope": "php,sql",
+    "prefix": "redk_Formas_de_Pago",
+    "body": ["stic_Payment_Commitments"]
+  },
+  "ModuleNameredk_Pagos": {
+    "scope": "php,sql",
+    "prefix": "redk_Pagos",
+    "body": ["stic_Payments"]
+  },
+  "ModuleNameredk_Remesas": {
+    "scope": "php,sql",
+    "prefix": "redk_Remesas",
+    "body": ["stic_Remittances"]
+  },
+  "ModuleNameredk_Eventos": {
+    "scope": "php,sql",
+    "prefix": "redk_Eventos",
+    "body": ["stic_Events"]
+  },
+  "ModuleNameredk_Inscripciones": {
+    "scope": "php,sql",
+    "prefix": "redk_Inscripciones",
+    "body": ["stic_Registrations"]
+  },
+  "ModuleNamestic_Attendances": {
+    "scope": "php,sql",
+    "prefix": "stic_Attendances",
+    "body": ["stic_Attendances"]
+  },
+  "ModuleNamestic_Sessions": {
+    "scope": "php,sql",
+    "prefix": "stic_Sessions",
+    "body": ["stic_Sessions"]
+  },
+  "ModuleNameSTIC_WebForm": {
+    "scope": "php,sql",
+    "prefix": "STIC_WebForm",
+    "body": ["stic_Web_Forms"]
+  },
+  "ModuleNamestic_DataAnalyzer": {
+    "scope": "php,sql",
+    "prefix": "stic_DataAnalyzer",
+    "body": ["stic_Data_Validator"]
+  },
+  "ModuleNamestic_DataCheckAction": {
+    "scope": "php,sql",
+    "prefix": "stic_DataCheckAction",
+    "body": ["stic_Validation_Actions"]
+  },
+  "salidalog": {
+    "scope": "php",
+    "prefix": "log",
+    "body": ["\\$GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '.'.${1:Text to log.}');"],
+    "description": "Log de Sinergiacrm"
+  }
+}

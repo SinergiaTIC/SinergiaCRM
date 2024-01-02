@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 $mod_strings['LBL_ASSIGNED_TO_ID'] = 'Assigned to (ID)';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Assigned to';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Assigned to';
@@ -79,7 +58,6 @@ $mod_strings['LBL_STIC_REGISTRATIONS_ACCOUNTS_FROM_STIC_REGISTRATIONS_TITLE'] = 
 $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Target Lists';
 $mod_strings['LBL_ACCOUNT_IDENTIFICATION_NUMBER_ERROR'] = 'The identification number is not valid. A valid Spanish organization NIF is expected.';
 $mod_strings['LBL_STIC_PERSONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_PERSONAL_ENVIRONMENT_TITLE']='Personal environment relationships of which the organization is a part';
-$mod_strings['LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE'] = 'Centers';
 
 // Labour Insertion strings
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -144,6 +122,3 @@ $mod_strings['LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE'] = 'Bookings'
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
-
-// Grants strings
-$mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Grants';

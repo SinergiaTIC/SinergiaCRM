@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><KNIMEMetaInfo nrOfElements="3">
+<element form="text" read-only="false" name="Author">KNIME</element>
+<element form="date" name="Creation Date" read-only="false">11/2/2016</element>
+<element form="multiline" name="Comments" read-only="false">Basic Customer Segmentation&#13;
+&#13;
+This workflow implements a basic customer segmentation through a clustering procedure. No input is required from business analyst.&#13;
+&#13;
+URL: Customer Segmentation comfortably from a Web Browser https://www.knime.org/files/white-papers/customer_segmentation.pdf&#13;
+TAG: clustering, k-Means, customer segmentation</element>
+</KNIMEMetaInfo>

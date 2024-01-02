@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<config key="dbTable_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_dbmetadata"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="dbTable">
+<entry key="schema" type="xstring" value="mybetasuitecrm"/>
+<entry key="table" type="xstring" value="calls"/>
+</config>
+<config key="failOnError_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="failOnError" type="xboolean" value="true"/>
+<config key="batchSize_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_integer"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="batchSize" type="xint" value="1000"/>
+<config key="disableDbDataPort_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="disableDbDataPort" type="xboolean" value="false"/>
+<config key="showStatus_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="showStatus" type="xboolean" value="true"/>
+<config key="knime_to_external_mapping_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_dataTypeMapping"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="knime_to_external_mapping"/>
+<config key="setColumns">
+<entry key="filter-type" type="xstring" value="STANDARD"/>
+<config key="included_names">
+<entry key="array-size" type="xint" value="28"/>
+<entry key="0" type="xstring" value="id"/>
+<entry key="1" type="xstring" value="name"/>
+<entry key="2" type="xstring" value="date_entered"/>
+<entry key="3" type="xstring" value="date_modified"/>
+<entry key="4" type="xstring" value="modified_user_id"/>
+<entry key="5" type="xstring" value="created_by"/>
+<entry key="6" type="xstring" value="description"/>
+<entry key="7" type="xstring" value="deleted"/>
+<entry key="8" type="xstring" value="assigned_user_id"/>
+<entry key="9" type="xstring" value="duration_hours"/>
+<entry key="10" type="xstring" value="duration_minutes"/>
+<entry key="11" type="xstring" value="date_start"/>
+<entry key="12" type="xstring" value="date_end"/>
+<entry key="13" type="xstring" value="parent_type"/>
+<entry key="14" type="xstring" value="status"/>
+<entry key="15" type="xstring" value="direction"/>
+<entry key="16" type="xstring" value="parent_id"/>
+<entry key="17" type="xstring" value="reminder_time"/>
+<entry key="18" type="xstring" value="email_reminder_time"/>
+<entry key="19" type="xstring" value="email_reminder_sent"/>
+<entry key="20" type="xstring" value="outlook_id"/>
+<entry key="21" type="xstring" value="repeat_type"/>
+<entry key="22" type="xstring" value="repeat_interval"/>
+<entry key="23" type="xstring" value="repeat_dow"/>
+<entry key="24" type="xstring" value="repeat_until"/>
+<entry key="25" type="xstring" value="repeat_count"/>
+<entry key="26" type="xstring" value="repeat_parent_id"/>
+<entry key="27" type="xstring" value="recurring_source"/>
+</config>
+<config key="excluded_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<entry key="enforce_option" type="xstring" value="EnforceInclusion"/>
+<config key="name_pattern">
+<entry key="pattern" type="xstring" value=""/>
+<entry key="type" type="xstring" value="Wildcard"/>
+<entry key="caseSensitive" type="xboolean" value="true"/>
+</config>
+<config key="datatype">
+<config key="typelist">
+<entry key="org.knime.core.data.StringValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.time.localdatetime.LocalDateTimeValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.BooleanValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.IntValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.time.localdate.LocalDateValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.DoubleValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.LongValue" type="xboolean" value="false"/>
+<entry key="org.knime.core.data.date.DateAndTimeValue" type="xboolean" value="false"/>
+</config>
+</config>
+</config>
+<config key="dropExisting_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_boolean"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<entry key="dropExisting" type="xboolean" value="false"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<entry key="factory" type="xstring" value="org.knime.database.node.io.write.DBWriteNodeFactory"/>
+<entry key="node-name" type="xstring" value="DB Writer"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME database nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.database.nodes"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="4.1.0.v201911301831"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Database"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.database.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="4.1.1.v202002010716"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="DB Writer"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+<config key="port_2">
+<entry key="index" type="xint" value="2"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>

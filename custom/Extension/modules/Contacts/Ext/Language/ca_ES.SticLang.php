@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 $mod_strings['LBL_ASSIGNED_TO_ID'] = 'Assignat a (ID)';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Assignat a';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Assignat a';
@@ -101,7 +80,6 @@ $mod_strings['LBL_PROJECTS_RESOURCES'] = 'Recursos de projectes';
 $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de plantilles de projectes';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Genera Candidatures';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccioneu una oferta laboral a la finestra emergent';
-$mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centre';
 
 // Cadenes Inserció Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -219,6 +197,3 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 // Medication
 $mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Registre de medicació";
 $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescripcions";
-
-// Ajuts
-$mod_strings['LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';

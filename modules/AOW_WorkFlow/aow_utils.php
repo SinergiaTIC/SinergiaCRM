@@ -397,7 +397,6 @@ function getModuleField(
         // STIC-Custom 20220414 AAM - If value is a number, it should display all the decimals the user wrote on wf creation.
         // This needs to be here cause the field is formatted by the template function sugar_number_format.
         // If that function is modified, it could affect mistakenly in other areas of the system.
-        // STIC#636
         switch ($vardef['type']) {
             case 'double':
             case 'decimal':

@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 $mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
@@ -79,7 +58,6 @@ $mod_strings['LBL_STIC_REGISTRATIONS_ACCOUNTS_FROM_STIC_REGISTRATIONS_TITLE'] = 
 $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Listas de Público Obxectivo';
 $mod_strings['LBL_ACCOUNT_IDENTIFICATION_NUMBER_ERROR'] = 'O número de identificación non é correcto. Debe ser un NIF de persoa xurídica válido.';
 $mod_strings['LBL_STIC_PERSONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_PERSONAL_ENVIRONMENT_TITLE']='Relacións da contorna persoal das que a organización forma parte';
-$mod_strings['LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE'] = 'Centros';
 
 // Cadeas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -170,6 +148,3 @@ $mod_strings['LNK_IMPORT_ACCOUNTS'] = 'Importar Organizacións';
 $mod_strings['MSG_DUPLICATE'] = 'O rexistro que está a punto de crear podería ser un duplicado doutra organización existente. Os rexistros de organización con nomes similares lístanse a continuación. Para confirmar a creación desta organización faga clic en Gardar. En caso contrario, pulse Cancelar.';
 $mod_strings['MSG_SHOW_DUPLICATES'] = 'O rexistro que está a punto de crear podería ser un duplicado doutra organización existente. Os rexistros de organización con nomes similares lístanse a continuación. Para confirmar a creación desta organización faga clic en Gardar. En caso contrario, pulse Cancelar.';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizacións';
-
-// Cadeas Ayudas
-$mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';

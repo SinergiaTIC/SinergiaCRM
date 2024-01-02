@@ -203,7 +203,6 @@ class actionComputeField extends actionBase
         array_walk(
             $displayFieldValues,
             // STIC-Custom AAM 20220314 - Wrong usage of function and Array
-            // STIC#635
             // function ($val) use ($bean, $fieldName) {
                 // $val = $GLOBALS['app_list_strings'][$bean->field_defs[$fieldName]['options'][$bean->$fieldName]];
             function (&$val) use ($bean, $fieldName) {
@@ -638,7 +637,6 @@ class actionComputeField extends actionBase
 
         foreach ($linkedFields as $key => $value) {
             // STIC-Custom 20211027 AAM - Adding exception for EmailAddress relationship, so email appears in calculated fields
-            // STIC#710
             // if (!isset($value['link_type']) || $value['link_type'] != "one") {
             if ((!isset($value['link_type']) || $value['link_type'] != "one") && $key != 'email_addresses') {
                 continue;

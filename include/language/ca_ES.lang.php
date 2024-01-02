@@ -2182,7 +2182,7 @@ $app_strings = array(
     'LBL_SUBTHEME_OPTIONS_NIGHT' => 'Nit',
     'LBL_SUBTHEME_OPTIONS_NOON' => 'Migdia', 
 
-    'LBL_CONFIRM_DISREGARD_DRAFT_TITLE' => 'Descarta l\'esborrany',
+    'LBL_CONFIRM_DISREGARD_DRAFT_TITLE' => 'Descartar el esborrany',
     'LBL_CONFIRM_DISREGARD_DRAFT_BODY' => 'Amb aquesta operació se suprimirà aquest missatge, voleu continuar?',
     'LBL_CONFIRM_DISREGARD_EMAIL_TITLE' => 'Sortir del diàleg del compositor',
     'LBL_CONFIRM_DISREGARD_EMAIL_BODY' => 'Sortint del diàleg del compositor tota l\'informació entrada es perdrà, segur que vols continuar sortint?',
@@ -2198,17 +2198,17 @@ $app_strings = array(
     'ERR_OPT_IN_TPL_NOT_SET' => 'La plantilla d\'email per Autoritzat a enviar no està configurada. Si us plau configureu a la configuració del correu electrònic.',
     'ERR_OPT_IN_RELATION_INCORRECT' => 'Autoritzar a enviar requereix l\'e-mail a compte/contacte/Potencial/Objectiu',
 
-    'LBL_SECURITYGROUP_NONINHERITABLE' => 'Grup no heretable',
+    'LBL_SECURITYGROUP_NONINHERITABLE' => 'Grup no inheretable',
     'LBL_PRIMARY_GROUP' => "Grup principal",
 
     // footer
-    'LBL_SUITE_TOP' => 'Torna a l\'inici',
-    'LBL_SUITE_SUPERCHARGED' => 'Sobrealimentat per SuiteCRM',
+    'LBL_SUITE_TOP' => 'Tornar a l\'inici',
+    'LBL_SUITE_SUPERCHARGED' => 'Sobrealimentats per SuiteCRM',
     'LBL_SUITE_POWERED_BY' => 'Desenvolupat per SugarCRM',
-    'LBL_SUITE_DESC1' => 'SuiteCRM ha estat desenvolupat per <a href="https://salesagility.com">SalesAgility</a>. El programari es proporciona TAL COM ÉS, sense cap garantia. Sota llicència AGPLv3.',
-    'LBL_SUITE_DESC2' => 'Aquest programa és programari lliure. Podeu redistribuir-lo i/o modificar-lo segons els termes de la Llicència Pública General Affero de GNU versió 3, publicada per la Free Software Foundation, incloent-hi qualsevol permís addicional indicat a la capçalera del codi font.',
-    'LBL_SUITE_DESC3' => 'SuiteCRM és una marca registrada de SalesAgility Ltd. Tots els noms d\'altres empreses i productes poden ser marques registrades de les respectives empreses amb les quals s\'associen.',
-    'LBL_GENERATE_PASSWORD_BUTTON_TITLE' => 'Restableix la contrasenya',
+    'LBL_SUITE_DESC1' => 'SuiteCRM ha estat escrit i ensamblat per <a href="https://salesagility.com"> SalesAgility</a>. El programa es subministra TAL QUAL ES, sense garantia. Sota llicència AGPLv3.',
+    'LBL_SUITE_DESC2' => 'Aquest programa és programari lliure; por distribuir-lo i/o modificar-lo solar els termes de la GNU Affero General Public License versió 3 publicada per la Freeman Software Foundation, incloent el permiís addicional a la capçalera del codi font.',
+    'LBL_SUITE_DESC3' => 'SuiteCRM és una marca registrada de SalesAgility Ltd. Tots els noms d\'altres empreses i productes poden ser marques registrades de les respectives empreses amb les que s\'associen.',
+    'LBL_GENERATE_PASSWORD_BUTTON_TITLE' => 'Restablir contrasenya',
     'LBL_SEND_CONFIRM_OPT_IN_EMAIL' => 'Enviar confirmació Autoritzat a enviar a l\'E-mail',
     'LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON' => 'Confirmar Autoritzat a enviar per enviament de correu electrònic només per a comptes/contactes/Potencials/Prospectes',
     'LBL_CONFIRM_OPT_IN_IS_DISABLED' => 'Confirmar Autoritzat a enviar per enviament de correu electrònic està inhabilitada, permetre confirmar Autoritzat a enviar opció en configuració d\'E-mail o contactar amb l\'administrador.',

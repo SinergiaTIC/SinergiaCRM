@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><KNIMEMetaInfo nrOfElements="3">
+<element form="text" read-only="false" name="Author">KNIME</element>
+<element form="date" name="Creation Date" read-only="false">29/6/2016</element>
+<element form="multiline" name="Comments" read-only="false">Sentiment Analysis (Classification) of Documents&#13;
+&#13;
+This workflow shows how to import text from a csv file, convert it to documents, preprocess the documents and show how to visualize a tag cloud based on positive and negative terms.&#13;
+&#13;
+TAG: Sentiment Analysis, Dictionary Based, Positive Words, Negative Words, Tag Cloud</element>
+</KNIMEMetaInfo>

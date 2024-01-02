@@ -33,5 +33,4 @@ $sugar_config['host_name'] = '@@HOST_NAME@@'; // subdomain.domain.org
 $sugar_config['site_url'] = '@@SITE_URL@@'; // https://subdomain.domain.org/
 $sugar_config['unique_key'] = '@@UNIQUE_KEY@@'; // 32 alphanumeric characters. Only lowercase letters and numbers, example: '5nuns3c1te64tkjfr6thv4q0elxlwe8d'
 $sugar_config['cron']['allowed_cron_users'][] = '@@WEB_SYSTEM_USER@@'; // System user with access to installation files. Usually www-data
-$sugar_config['stic_install_locked'] = true; // Deactivate to allow installation through SticInstall.php
 // END of configuration

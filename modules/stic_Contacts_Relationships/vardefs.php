@@ -1,12 +1,18 @@
 <?php
 /**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * SugarCRM Community Edition is a customer relationship management program developed by
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
+ *
+ * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
+ * Copyright (C) 2011 - 2018 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -18,7 +24,18 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA.
  *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
+ * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
+ * reasonably feasible for technical reasons, the Appropriate Legal Notices must
+ * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
 $dictionary['stic_Contacts_Relationships'] = array(
@@ -249,38 +266,6 @@ $dictionary['stic_Contacts_Relationships'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_CONTACTS_RELATIONSHIPS_PROJECT_FROM_STIC_CONTACTS_RELATIONSHIPS_TITLE',
         ),
-        // Centers relationship Vardef
-        'stic_centers_stic_contacts_relationships' => array (
-            'name' => 'stic_centers_stic_contacts_relationships',
-            'type' => 'link',
-            'relationship' => 'stic_centers_stic_contacts_relationships',
-            'source' => 'non-db',
-            'module' => 'stic_Centers',
-            'bean_name' => 'stic_Centers',
-            'vname' => 'LBL_STIC_CENTERS_STIC_CONTACTS_RELATIONSHIPS_FROM_STIC_CENTERS_TITLE',
-            'id_name' => 'stic_centers_stic_contacts_relationshipsstic_centers_ida',
-        ),
-          'stic_centers_stic_contacts_relationships_name' => array (
-            'name' => 'stic_centers_stic_contacts_relationships_name',
-            'type' => 'relate',
-            'source' => 'non-db',
-            'vname' => 'LBL_STIC_CENTERS_STIC_CONTACTS_RELATIONSHIPS_FROM_STIC_CENTERS_TITLE',
-            'save' => true,
-            'id_name' => 'stic_centers_stic_contacts_relationshipsstic_centers_ida',
-            'link' => 'stic_centers_stic_contacts_relationships',
-            'table' => 'stic_centers',
-            'module' => 'stic_Centers',
-            'rname' => 'name',
-          ),
-          'stic_centers_stic_contacts_relationshipsstic_centers_ida' => array (
-            'name' => 'stic_centers_stic_contacts_relationshipsstic_centers_ida',
-            'type' => 'link',
-            'relationship' => 'stic_centers_stic_contacts_relationships',
-            'source' => 'non-db',
-            'reportable' => false,
-            'side' => 'right',
-            'vname' => 'LBL_STIC_CENTERS_STIC_CONTACTS_RELATIONSHIPS_FROM_STIC_CONTACTS_RELATIONSHIPS_TITLE',
-          ),
     ),
     'relationships' => array(
     ),

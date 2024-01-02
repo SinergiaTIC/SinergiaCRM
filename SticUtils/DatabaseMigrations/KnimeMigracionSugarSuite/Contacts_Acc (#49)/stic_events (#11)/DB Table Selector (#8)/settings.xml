@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<config key="dbTable_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_dbmetadata"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="dbTable">
+<entry key="schema" type="xstring" value="myjuantest"/>
+<entry key="table" type="xstring" value=""/>
+</config>
+<entry key="sql_statement" type="xstring" value="SELECT%%00010  id,%%00010  name as name,%%00010  assigned_user_id as assigned_user_id,%%00010  modified_user_id as modified_user_id,%%00010  created_by as created_by,%%00010  date_entered as date_entered,%%00010  date_modified as date_modified,%%00010  deleted as deleted,%%00010  description as description,%%00010  tipo as type,%%00010  estado as status,%%00010  fechainicio as start_date,%%00010  fechafin as end_date,%%00010  informacionhorario as timetable,%%00010  nombreubicacion as location,%%00010  direccion as address,%%00010  codigopostal as postal_code,%%00010  provincia as state,%%00010  comarca as county,%%00010  municipio as city,%%00010  comunidadautonoma as region,%%00010  pais as country,%%00010  motivodescarte as discard_reason,%%00010  numeromaximo as max_attendees,%%00010  numeroinscrinoinvitados as status_not_invited,%%00010  numeroinscriinvitados as status_invited,%%00010  numeroinscriconfirmados as status_confirmed,%%00010  numeroinscrirechazados as status_rejected,%%00010  numeroinscriquizas as status_maybe,%%00010  numeroinscrinoparticipa as status_didnt_take_part,%%00010  numeroinscriparticipa as status_took_part,%%00010  presupuesto as budget,%%00010  currency_id as currency_id,%%00010  costeesperado as expected_cost,%%00010  costereal as actual_cost,%%00010  ingresosesperados as expected_income,%%00010  ingresosreales as actual_income,%%00010  importeasistencia as price,%%00010  notificarconfirmacion as notify_confirmation,%%00010  numeroinscriasistentesreal as attendees,%%00010  total_hours as total_hours,%%00010  numero_inscripciones_baja as status_drop_out%%00010FROM redk_eventos%%00010where%%00010  deleted = 0;"/>
+<entry key="custom_query" type="xboolean" value="true"/>
+<config key="external_to_knime_mapping_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_dataTypeMapping"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="external_to_knime_mapping"/>
+</config>
+<config key="nodeAnnotation">
+<entry key="text" type="xstring" value=""/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="99"/>
+<entry key="y-coordinate" type="xint" value="182"/>
+<entry key="width" type="xint" value="134"/>
+<entry key="height" type="xint" value="19"/>
+<entry key="alignment" type="xstring" value="CENTER"/>
+<entry key="borderSize" type="xint" value="0"/>
+<entry key="borderColor" type="xint" value="16777215"/>
+<entry key="defFontSize" type="xint" value="11"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<entry key="factory" type="xstring" value="org.knime.database.node.utility.tableselector.DBTableSelectNodeFactory"/>
+<entry key="node-name" type="xstring" value="DB Table Selector"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME database nodes"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.database.nodes"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="4.1.0.v201911301831"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Database"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.database.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="4.1.1.v202002010716"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="DB Table Selector"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>

@@ -83,14 +83,12 @@ class javascript
     }
 
     // STIC-Custom 20220224 - Translating Datetime string to smarty for avoiding single quote sintax errors
-    // STIC#617
     // Replicating solution as in addField() function
     // public function addSpecialField($dispField, $realField, $type, $required, $prefix = '')
     public function addSpecialField($dispField, $realField, $type, $required, $prefix = '', $translate = false)
     {
         if (isset($this->sugarbean->field_name_map[$realField]['vname'])) {
             // STIC-Custom 20220224 - Translating Datetime string to smarty for avoiding single quote sintax errors
-            // STIC#617
             // Replicating solution as in addField() function
             $vname = $this->sugarbean->field_name_map[$realField]['vname'];
             if ($translate) {
@@ -294,7 +292,6 @@ class javascript
                 if (isset($value['type']) && ($value['type'] == 'datetimecombo' || $value['type'] == 'datetime')) {
                     $isRequired = (isset($value['required']) && $value['required']) ? 'true' : 'false';
                     // STIC-Custom 20220224 - Translating Datetime string to smarty for avoiding single quote sintax errors
-                    // STIC#617
                     // Replicating solution as in addField() function
                     // $this->addSpecialField($value['name'] . '_date', $value['name'], 'datetime', $isRequired);
                     $this->addSpecialField($value['name'] . '_date', $value['name'], 'datetime', $isRequired, $prefix, $translate);

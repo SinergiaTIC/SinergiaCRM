@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="db_session">
+<config key="Session Info">
+<entry key="sessionID" type="xstring" value="eadc8f30-c119-4d08-a3d8-6cea9907eb30"/>
+<entry key="dbTypeId" type="xstring" value="mysql"/>
+<entry key="dialectId" type="xstring" value="mysql"/>
+<entry key="dbURL" type="xstring" value="jdbc:mysql://betasuitecrm.sinergiacrm.org:3306/mybetasuitecrm"/>
+<entry key="authenticationType" type="xstring" value="USER_PWD"/>
+<entry key="dbUser" type="xstring" value="mybetasuit"/>
+<entry key="dbPassword" type="xpassword" value="01477F606F45B2B6F3FCC7D176B54F2137"/>
+</config>
+<config key="Driver Definition">
+<entry key="driverId" type="xstring" value="MySQL 5"/>
+<entry key="driverName" type="xstring" value="MySQL 5"/>
+<entry key="driverVersion" type="xstring" value="5.1.0"/>
+<entry key="driverClass" type="xstring" value="com.mysql.jdbc.Driver"/>
+<entry key="driverDescription" type="xstring" value=""/>
+<entry key="driverOrigin" type="xstring" value="EXTENSION"/>
+</config>
+<config key="Attributes"/>
+</config>

@@ -172,14 +172,14 @@ global $current_user;
 $current_user = new User();
 $current_user->getSystemUser();
 
-// Repairing roles
+echo '<h3>Repairing roles</h3>';
 include 'modules/ACL/install_actions.php';
 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Repairing roles');
 
-// Rebuilding relationships
+echo '<h3>Rebuilding relationships</h3>';
 include 'modules/Administration/RebuildRelationship.php';
 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Rebuilding relationships');
 
-// Repairing indexes
+echo '<h3>Repairing indexes</h3>';
 include "modules/Administration/RepairIndex.php";
 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Repairing indexes');

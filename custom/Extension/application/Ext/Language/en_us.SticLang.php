@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 
 // App general strings
 $app_strings['LBL_STIC_MAIL_RETURN_REASON'] = 'Mail returning reason';
@@ -35,10 +14,6 @@ $app_strings['LBL_IMPORT_VALIDATION'] = 'Validate import';
 $app_strings['LBL_PRINT_AS_PDF'] = 'Generate PDF document';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'An error has occurred';
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Show in list view';
-$app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Nonprofitized by SinergiaCRM';
-$app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM has been developed by SinergiaTIC Association. The software is provided AS IS, without any warranty. Under the AGPLv3 license. For more information, visit <a href="https://www.sinergiacrm.org">SinergiaCRM website</a>.';
-$app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'This program is free software. You are allowed to redistribute and/or modify it under the terms of the GNU Affero General Public License version 3, published by the Free Software Foundation, including any additional permissions indicated in the source code header.';
-$app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'All names of other companies and products mentioned here may be trademarks of their respective associated companies.';
 
 // SinergiaCRM update alert
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'SinergiaCRM update succesfully completed';
@@ -74,7 +49,7 @@ $app_list_strings['moduleList']['Accounts'] = 'Accounts';
 $app_list_strings['moduleList']['Contacts'] = 'Contacts';
 $app_list_strings['moduleList']['Leads'] = 'Leads';
 $app_list_strings['moduleList']['Opportunities'] = 'Opportunities';
-$app_list_strings['moduleList']['AOS_PDF_Templates'] = 'PDF Templates';
+$app_list_strings['moduleList']['AOS_PDF_Templates'] = 'PDF Templates'; 
 $app_list_strings['moduleList']['FP_events'] = 'Events-FP'; // Change the name of this module to avoid confusion with stic_Events
 $app_list_strings['moduleList']['stic_Accounts_Relationships'] = 'Accounts Relationships';
 $app_list_strings['moduleList']['stic_Attendances'] = 'Attendances';
@@ -107,8 +82,6 @@ $app_list_strings['moduleList']['stic_Bookings_Calendar'] = 'Bookings Calendar';
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicines';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescriptions';
-$app_list_strings['moduleList']['stic_Grants'] = 'Grants';
-$app_list_strings['moduleList']['stic_Centers'] = 'Centers';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -141,8 +114,6 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Resource';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicine';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescription';
-$app_list_strings['moduleListSingular']['stic_Grants'] = 'Grant';
-$app_list_strings['moduleListSingular']['stic_Centers'] = 'Center';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -172,7 +143,6 @@ $app_list_strings['parent_type_display']['stic_Resources'] = 'Resources';
 $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicines';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescriptions';
-$app_list_strings['parent_type_display']['stic_Centers'] = 'Centers';
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display']['Leads'] = 'Leads';
@@ -202,8 +172,6 @@ $app_list_strings['record_type_display']['stic_Resources'] = 'Resources';
 $app_list_strings['record_type_display']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['record_type_display']['stic_Medication'] = 'Medicines';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescriptions';
-$app_list_strings['record_type_display']['stic_Grants'] = 'Grants';
-$app_list_strings['record_type_display']['stic_Centers'] = 'Centers';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Leads';
@@ -233,8 +201,6 @@ $app_list_strings['record_type_display_notes']['stic_Resources'] = 'Resources';
 $app_list_strings['record_type_display_notes']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicines';
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescriptions';
-$app_list_strings['record_type_display_notes']['stic_Grants'] = 'Grants';
-$app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centers';
 
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3123,53 +3089,6 @@ $app_list_strings['stic_medication_administered_list']['refused'] = 'No. Refused
 $app_list_strings['stic_medication_administered_list']['out_of_stock'] = 'No. Out of stock';
 $app_list_strings['stic_medication_administered_list']['other'] = 'No. Other';
 
-// Grants: Grant types
-$app_list_strings['stic_grants_types_list'][''] = '';
-$app_list_strings['stic_grants_types_list']['public'] = 'Public';
-$app_list_strings['stic_grants_types_list']['private'] = 'Private';
-$app_list_strings['stic_grants_types_list']['own'] = 'Own';
-$app_list_strings['stic_grants_types_list']['other'] = 'Other';
-
-// Grants: Grant subtypes
-$app_list_strings['stic_grants_subtypes_list'][''] = '';
-$app_list_strings['stic_grants_subtypes_list']['public_bse'] = 'Bono social eléctrico';
-$app_list_strings['stic_grants_subtypes_list']['public_imv'] = 'Ingreso mínimo vital';
-$app_list_strings['stic_grants_subtypes_list']['public_rgc'] = 'Renta garantizada de ciudadanía';
-$app_list_strings['stic_grants_subtypes_list']['public_retirement'] = 'Retirement';
-$app_list_strings['stic_grants_subtypes_list']['public_disability'] = 'Disability';
-$app_list_strings['stic_grants_subtypes_list']['public_scolarship'] = 'Scolarship';
-$app_list_strings['stic_grants_subtypes_list']['public_family'] = 'Family structure';
-$app_list_strings['stic_grants_subtypes_list']['public_housing'] = 'Housing';
-$app_list_strings['stic_grants_subtypes_list']['public_loan'] = 'Loan';
-$app_list_strings['stic_grants_subtypes_list']['public_other'] = 'Other';
-$app_list_strings['stic_grants_subtypes_list']['private_discount'] = 'Discount';
-$app_list_strings['stic_grants_subtypes_list']['private_direct'] = 'Direct grant';
-$app_list_strings['stic_grants_subtypes_list']['private_loan'] = 'Loan';
-$app_list_strings['stic_grants_subtypes_list']['private_other'] = 'Other';
-$app_list_strings['stic_grants_subtypes_list']['own_discount'] = 'Discount';
-$app_list_strings['stic_grants_subtypes_list']['own_direct'] = 'Direct grant';
-$app_list_strings['stic_grants_subtypes_list']['own_loan'] = 'Loan';
-$app_list_strings['stic_grants_subtypes_list']['own_other'] = 'Other';
-
-// Grants: Periodicities
-$app_list_strings['stic_grants_periodicities_list'][''] = '';
-$app_list_strings['stic_grants_periodicities_list']['weekly'] = 'Weekly';
-$app_list_strings['stic_grants_periodicities_list']['fortnightly'] = 'Fortnightly';
-$app_list_strings['stic_grants_periodicities_list']['monthly'] = 'Monthly';
-$app_list_strings['stic_grants_periodicities_list']['bimonthly'] = 'Bimonthly';
-$app_list_strings['stic_grants_periodicities_list']['quarterly'] = 'Quarterly';
-$app_list_strings['stic_grants_periodicities_list']['four_monthly'] = 'Four-monthly';
-$app_list_strings['stic_grants_periodicities_list']['half_yearly'] = 'Half-yearly';
-$app_list_strings['stic_grants_periodicities_list']['annual'] = 'Annual';
-$app_list_strings['stic_grants_periodicities_list']['punctual'] = 'Punctual';
-
-// Center: Type
-$app_list_strings['stic_centers_types_list'][''] = '';
-$app_list_strings['stic_centers_types_list']['administrative'] = 'Administrative';
-$app_list_strings['stic_centers_types_list']['residential'] = 'Residential';
-$app_list_strings['stic_centers_types_list']['attention_point'] = 'Attention point';
-$app_list_strings['stic_centers_types_list']['training'] = 'Training';
-$app_list_strings['stic_centers_types_list']['other'] = 'Other';
 
 // SuiteCRM Core modifications
 

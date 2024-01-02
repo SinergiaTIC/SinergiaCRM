@@ -1,31 +1,15 @@
 <?php
-/**
+/* * *******************************************************************************
  * This file is part of KReporter. KReporter is an enhancement developed
  * by Christian Knoll. All rights are (c) 2012 by Christian Knoll
  *
- * This file has been modified by SinergiaTIC in SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This Version of the KReporter is licensed software and may only be used in
+ * alignment with the License Agreement received with this Software.
+ * This Software is copyrighted and may not be further distributed without
+ * witten consent of Christian Knoll
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
- * along with this program; if not, see http://www.gnu.org/licenses
- * or write to the Free Software Foundation,Inc., 51 Franklin Street,
- * Fifth Floor, Boston, MA 02110-1301  USA
- *
- * You can contact Christian Knoll at info@kreporter.org
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
-
+ * You can contact us at info@kreporter.org
+ * ****************************************************************************** */
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array(
@@ -641,7 +625,7 @@ $mod_strings = array(
     'LBL_TARGETLISTEXPORT_SELECTION' => 'Select a prospect list in the popup window',
     'LBL_TARGETLISTEXPORT_LOADING' => 'Please wait while exporting data to prospect list...',
     'LBL_TARGETLISTEXPORT_ALERT_TITLE' => 'Select an export mode:',
-    'LBL_TARGETLISTEXPORT_ALERT_DESCRIPTION' => '1) Cumulative: The original content of the list will be kept and the records from the report that are not currently there will be added.<br><br>2) Replacement: The existing list will be emptied and filled with the records of the report.<br><br>Note: the choice of the export mode only generates effects in case the destination is a pre-existing list. If in the next step you choose to create a new list, the result will be the same regardless of the method chosen.',
+    'LBL_TARGETLISTEXPORT_ALERT_DESCRIPTION' => '1) Cumulative: The original contents of the list will be kept and the records of the report that are not currently there will be added.<br><br>2) Replacement: The existing list will be emptied and filled with the records of the report.',
     'LBL_TARGETLISTEXPORT_ALERT_CUMULATIVE' => 'Cumulative',
     'LBL_TARGETLISTEXPORT_ALERT_REPLACEMENT' => 'Replacement',
     'LBL_TARGETLISTEXPORT_ALERT_CANCEL' => 'Cancel',

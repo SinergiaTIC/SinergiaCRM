@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<met:KNIMEMetaInfo xmlns:met="http://www.knime.org/2.9/metainfo">
+  <met:element form="text" name="Author">KNIME</met:element>
+  <met:element form="date" name="Creation Date">19/4/2015</met:element>
+  <met:element form="multiline" name="Comments">Training a Churn Predictor
+
+This workflow is an example of how to build a basic PMML model for a churn prediction using a Decision Tree algorithm.
+
+URL: Churn Prediction https://www.knime.org/knime-applications/churn-prediction</met:element>
+</met:KNIMEMetaInfo>

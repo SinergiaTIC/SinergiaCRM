@@ -1,0 +1,949 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<config key="session_info">
+<entry key="version" type="xint" value="1"/>
+<entry key="db_type" type="xstring" value="sqlite"/>
+<entry key="db_dialect" type="xstring" value="sqlite"/>
+<entry key="db_driver" type="xstring" value="SQLite"/>
+<config key="attributes">
+<config key="java.lang.Boolean">
+<entry key="knime.db.connection.restore" type="xboolean" value="true"/>
+</config>
+</config>
+</config>
+<config key="sqlite-connection">
+<entry key="location" type="xstring" value="FILE"/>
+<entry key="path" type="xstring" value="knime://knime.workflow/../../TheData/Misc/WebActivity.sqlite"/>
+<entry key="in_memory_database_name" type="xstring" value="temporary"/>
+</config>
+<config key="external_to_knime_mapping_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_dataTypeMapping"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="external_to_knime_mapping">
+<config key="type_to_type_mapping_rules">
+<config key="type_to_type_mapping_rule_0">
+<entry key="external_type" type="xstring" value="BOOLEAN"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Boolean"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.BooleanCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.BooleanCell$BooleanCellFactory.create(class java.lang.Boolean)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Boolean"/>
+<entry key="production_path_converter_dst" type="xstring" value="Boolean value"/>
+<entry key="production_path_converter_name" type="xstring" value="Boolean"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="BOOLEAN-&gt;java.lang.Boolean"/>
+<entry key="production_path_producer_src" type="xstring" value="BOOLEAN"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Boolean"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Boolean"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_1">
+<entry key="external_type" type="xstring" value="BIT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Boolean"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.BooleanCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.BooleanCell$BooleanCellFactory.create(class java.lang.Boolean)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Boolean"/>
+<entry key="production_path_converter_dst" type="xstring" value="Boolean value"/>
+<entry key="production_path_converter_name" type="xstring" value="Boolean"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="BIT-&gt;java.lang.Boolean"/>
+<entry key="production_path_producer_src" type="xstring" value="BIT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Boolean"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Boolean"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_2">
+<entry key="external_type" type="xstring" value="TINYINT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Integer"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.IntCell$IntCellFactory.create(class java.lang.Integer)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Integer"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (integer)"/>
+<entry key="production_path_converter_name" type="xstring" value="Integer"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="TINYINT-&gt;java.lang.Integer"/>
+<entry key="production_path_producer_src" type="xstring" value="TINYINT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Integer"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Integer"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_3">
+<entry key="external_type" type="xstring" value="SMALLINT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Integer"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.IntCell$IntCellFactory.create(class java.lang.Integer)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Integer"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (integer)"/>
+<entry key="production_path_converter_name" type="xstring" value="Integer"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="SMALLINT-&gt;java.lang.Integer"/>
+<entry key="production_path_producer_src" type="xstring" value="SMALLINT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Integer"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Integer"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_4">
+<entry key="external_type" type="xstring" value="INTEGER"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Integer"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.IntCell$IntCellFactory.create(class java.lang.Integer)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Integer"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (integer)"/>
+<entry key="production_path_converter_name" type="xstring" value="Integer"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="INTEGER-&gt;java.lang.Integer"/>
+<entry key="production_path_producer_src" type="xstring" value="INTEGER"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Integer"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Integer"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_5">
+<entry key="external_type" type="xstring" value="BIGINT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Long"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.LongCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.LongCell$LongCellFactory.create(class java.lang.Long)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Long"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (long)"/>
+<entry key="production_path_converter_name" type="xstring" value="Long"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="BIGINT-&gt;java.lang.Long"/>
+<entry key="production_path_producer_src" type="xstring" value="BIGINT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Long"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Long"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_6">
+<entry key="external_type" type="xstring" value="FLOAT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Double"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.DoubleCell$DoubleCellFactory.create(class java.lang.Double)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (double)"/>
+<entry key="production_path_converter_name" type="xstring" value="Double"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="FLOAT-&gt;java.lang.Double"/>
+<entry key="production_path_producer_src" type="xstring" value="FLOAT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Double"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_7">
+<entry key="external_type" type="xstring" value="REAL"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Double"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.DoubleCell$DoubleCellFactory.create(class java.lang.Double)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (double)"/>
+<entry key="production_path_converter_name" type="xstring" value="Double"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="REAL-&gt;java.lang.Double"/>
+<entry key="production_path_producer_src" type="xstring" value="REAL"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Double"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_8">
+<entry key="external_type" type="xstring" value="DOUBLE"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Double"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.DoubleCell$DoubleCellFactory.create(class java.lang.Double)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (double)"/>
+<entry key="production_path_converter_name" type="xstring" value="Double"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="DOUBLE-&gt;java.lang.Double"/>
+<entry key="production_path_producer_src" type="xstring" value="DOUBLE"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Double"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_9">
+<entry key="external_type" type="xstring" value="NUMERIC"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Double"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.DoubleCell$DoubleCellFactory.create(class java.lang.Double)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (double)"/>
+<entry key="production_path_converter_name" type="xstring" value="Double"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="NUMERIC-&gt;java.lang.Double"/>
+<entry key="production_path_producer_src" type="xstring" value="NUMERIC"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Double"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_10">
+<entry key="external_type" type="xstring" value="DECIMAL"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.Double"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.DoubleCell$DoubleCellFactory.create(class java.lang.Double)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_converter_dst" type="xstring" value="Number (double)"/>
+<entry key="production_path_converter_name" type="xstring" value="Double"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="DECIMAL-&gt;java.lang.Double"/>
+<entry key="production_path_producer_src" type="xstring" value="DECIMAL"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.Double"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.Double"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_11">
+<entry key="external_type" type="xstring" value="DATE"/>
+<entry key="intermediate_type" type="xstring" value="java.time.LocalDate"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.localdate.LocalDateCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.time.localdate.LocalDateCellFactory.create(class java.time.LocalDate)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.time.LocalDate"/>
+<entry key="production_path_converter_dst" type="xstring" value="Local Date"/>
+<entry key="production_path_converter_name" type="xstring" value="LocalDate"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="DATE-&gt;java.time.LocalDate"/>
+<entry key="production_path_producer_src" type="xstring" value="DATE"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.time.LocalDate"/>
+<entry key="production_path_producer_name" type="xstring" value="java.time.LocalDate"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_12">
+<entry key="external_type" type="xstring" value="TIME"/>
+<entry key="intermediate_type" type="xstring" value="java.time.LocalTime"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.localtime.LocalTimeCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.time.localtime.LocalTimeCellFactory.create(class java.time.LocalTime)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.time.LocalTime"/>
+<entry key="production_path_converter_dst" type="xstring" value="Local Time"/>
+<entry key="production_path_converter_name" type="xstring" value="LocalTime"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="TIME-&gt;java.time.LocalTime"/>
+<entry key="production_path_producer_src" type="xstring" value="TIME"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.time.LocalTime"/>
+<entry key="production_path_producer_name" type="xstring" value="java.time.LocalTime"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_13">
+<entry key="external_type" type="xstring" value="TIMESTAMP"/>
+<entry key="intermediate_type" type="xstring" value="java.time.LocalDateTime"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.localdatetime.LocalDateTimeCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.time.localdatetime.LocalDateTimeCellFactory.create(class java.time.LocalDateTime)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.time.LocalDateTime"/>
+<entry key="production_path_converter_dst" type="xstring" value="Local Date Time"/>
+<entry key="production_path_converter_name" type="xstring" value="LocalDateTime"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="TIMESTAMP-&gt;java.time.LocalDateTime"/>
+<entry key="production_path_producer_src" type="xstring" value="TIMESTAMP"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.time.LocalDateTime"/>
+<entry key="production_path_producer_name" type="xstring" value="java.time.LocalDateTime"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_14">
+<entry key="external_type" type="xstring" value="TIME_WITH_TIMEZONE"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="TIME_WITH_TIMEZONE-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="TIME_WITH_TIMEZONE"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_15">
+<entry key="external_type" type="xstring" value="TIMESTAMP_WITH_TIMEZONE"/>
+<entry key="intermediate_type" type="xstring" value="java.time.ZonedDateTime"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.zoneddatetime.ZonedDateTimeCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.time.zoneddatetime.ZonedDateTimeCellFactory.create(class java.time.ZonedDateTime)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.time.ZonedDateTime"/>
+<entry key="production_path_converter_dst" type="xstring" value="Zoned Date Time"/>
+<entry key="production_path_converter_name" type="xstring" value="ZonedDateTime"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="TIMESTAMP_WITH_TIMEZONE-&gt;java.time.ZonedDateTime"/>
+<entry key="production_path_producer_src" type="xstring" value="TIMESTAMP_WITH_TIMEZONE"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.time.ZonedDateTime"/>
+<entry key="production_path_producer_name" type="xstring" value="java.time.ZonedDateTime"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_16">
+<entry key="external_type" type="xstring" value="CHAR"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="CHAR-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="CHAR"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_17">
+<entry key="external_type" type="xstring" value="VARCHAR"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="VARCHAR-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="VARCHAR"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_18">
+<entry key="external_type" type="xstring" value="LONGVARCHAR"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="LONGVARCHAR-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="LONGVARCHAR"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_19">
+<entry key="external_type" type="xstring" value="CLOB"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="CLOB-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="CLOB"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_20">
+<entry key="external_type" type="xstring" value="NCHAR"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="NCHAR-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="NCHAR"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_21">
+<entry key="external_type" type="xstring" value="NVARCHAR"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="NVARCHAR-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="NVARCHAR"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_22">
+<entry key="external_type" type="xstring" value="LONGNVARCHAR"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="LONGNVARCHAR-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="LONGNVARCHAR"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_23">
+<entry key="external_type" type="xstring" value="NCLOB"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="NCLOB-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="NCLOB"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_24">
+<entry key="external_type" type="xstring" value="BLOB"/>
+<entry key="intermediate_type" type="xstring" value="java.io.InputStream"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.blob.BinaryObjectDataCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.blob.BinaryObjectCellFactory.create(class java.io.InputStream)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_converter_dst" type="xstring" value="Binary object"/>
+<entry key="production_path_converter_name" type="xstring" value="InputStream"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="BLOB-&gt;java.io.InputStream"/>
+<entry key="production_path_producer_src" type="xstring" value="BLOB"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_producer_name" type="xstring" value="java.io.InputStream"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_25">
+<entry key="external_type" type="xstring" value="BINARY"/>
+<entry key="intermediate_type" type="xstring" value="java.io.InputStream"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.blob.BinaryObjectDataCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.blob.BinaryObjectCellFactory.create(class java.io.InputStream)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_converter_dst" type="xstring" value="Binary object"/>
+<entry key="production_path_converter_name" type="xstring" value="InputStream"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="BINARY-&gt;java.io.InputStream"/>
+<entry key="production_path_producer_src" type="xstring" value="BINARY"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_producer_name" type="xstring" value="java.io.InputStream"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_26">
+<entry key="external_type" type="xstring" value="VARBINARY"/>
+<entry key="intermediate_type" type="xstring" value="java.io.InputStream"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.blob.BinaryObjectDataCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.blob.BinaryObjectCellFactory.create(class java.io.InputStream)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_converter_dst" type="xstring" value="Binary object"/>
+<entry key="production_path_converter_name" type="xstring" value="InputStream"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="VARBINARY-&gt;java.io.InputStream"/>
+<entry key="production_path_producer_src" type="xstring" value="VARBINARY"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_producer_name" type="xstring" value="java.io.InputStream"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_27">
+<entry key="external_type" type="xstring" value="LONGVARBINARY"/>
+<entry key="intermediate_type" type="xstring" value="java.io.InputStream"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.blob.BinaryObjectDataCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.blob.BinaryObjectCellFactory.create(class java.io.InputStream)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_converter_dst" type="xstring" value="Binary object"/>
+<entry key="production_path_converter_name" type="xstring" value="InputStream"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="LONGVARBINARY-&gt;java.io.InputStream"/>
+<entry key="production_path_producer_src" type="xstring" value="LONGVARBINARY"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.io.InputStream"/>
+<entry key="production_path_producer_name" type="xstring" value="java.io.InputStream"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_28">
+<entry key="external_type" type="xstring" value="SQLXML"/>
+<entry key="intermediate_type" type="xstring" value="org.w3c.dom.Document"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.xml.XMLCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.xml.XMLCellFactory.create(interface org.w3c.dom.Document)"/>
+<entry key="production_path_converter_src" type="xstring" value="org.w3c.dom.Document"/>
+<entry key="production_path_converter_dst" type="xstring" value="XML"/>
+<entry key="production_path_converter_name" type="xstring" value="Document (XML)"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="SQLXML-&gt;org.w3c.dom.Document"/>
+<entry key="production_path_producer_src" type="xstring" value="SQLXML"/>
+<entry key="production_path_producer_dst" type="xstring" value="org.w3c.dom.Document"/>
+<entry key="production_path_producer_name" type="xstring" value="org.w3c.dom.Document"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_29">
+<entry key="external_type" type="xstring" value="ARRAY"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="ARRAY-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="ARRAY"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_30">
+<entry key="external_type" type="xstring" value="NULL"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="NULL-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="NULL"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_31">
+<entry key="external_type" type="xstring" value="OTHER"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="OTHER-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="OTHER"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_32">
+<entry key="external_type" type="xstring" value="ROWID"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="ROWID-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="ROWID"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_33">
+<entry key="external_type" type="xstring" value="DISTINCT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="DISTINCT-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="DISTINCT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_34">
+<entry key="external_type" type="xstring" value="STRUCT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="STRUCT-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="STRUCT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_35">
+<entry key="external_type" type="xstring" value="REF"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="REF-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="REF"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_36">
+<entry key="external_type" type="xstring" value="DATALINK"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="DATALINK-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="DATALINK"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_37">
+<entry key="external_type" type="xstring" value="REF_CURSOR"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="REF_CURSOR-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="REF_CURSOR"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_38">
+<entry key="external_type" type="xstring" value="JAVA_OBJECT"/>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="production_path_converter" type="xstring" value="org.knime.core.data.def.StringCell$StringCellFactory.createCell(class java.lang.String)"/>
+<entry key="production_path_converter_src" type="xstring" value="java.lang.String"/>
+<entry key="production_path_converter_dst" type="xstring" value="String"/>
+<entry key="production_path_converter_name" type="xstring" value="String"/>
+<config key="production_path_converter_config"/>
+<entry key="production_path_producer" type="xstring" value="JAVA_OBJECT-&gt;java.lang.String"/>
+<entry key="production_path_producer_src" type="xstring" value="JAVA_OBJECT"/>
+<entry key="production_path_producer_dst" type="xstring" value="java.lang.String"/>
+<entry key="production_path_producer_name" type="xstring" value="java.lang.String"/>
+<config key="production_path_producer_config"/>
+</config>
+</config>
+</config>
+<config key="knime_to_external_mapping_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_dataTypeMapping"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="knime_to_external_mapping">
+<config key="type_to_type_mapping_rules">
+<config key="type_to_type_mapping_rule_0">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<entry key="external_type" type="xstring" value="VARCHAR"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(StringValue,class java.lang.String,String)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.StringValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.lang.String"/>
+<entry key="consumption_path_converter_name" type="xstring" value="String"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.lang.String-&gt;VARCHAR"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.lang.String"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="VARCHAR"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="VARCHAR"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_1">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.BooleanCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.lang.Boolean"/>
+<entry key="external_type" type="xstring" value="BOOLEAN"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(BooleanValue,class java.lang.Boolean,Boolean)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.BooleanValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.lang.Boolean"/>
+<entry key="consumption_path_converter_name" type="xstring" value="Boolean"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.lang.Boolean-&gt;BOOLEAN"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.lang.Boolean"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="BOOLEAN"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="BOOLEAN"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_2">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.lang.Integer"/>
+<entry key="external_type" type="xstring" value="INTEGER"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(IntValue,class java.lang.Integer,Integer)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.IntValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.lang.Integer"/>
+<entry key="consumption_path_converter_name" type="xstring" value="Integer"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.lang.Integer-&gt;INTEGER"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.lang.Integer"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="INTEGER"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="INTEGER"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_3">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.LongCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.lang.Long"/>
+<entry key="external_type" type="xstring" value="BIGINT"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(LongValue,class java.lang.Long,Long)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.LongValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.lang.Long"/>
+<entry key="consumption_path_converter_name" type="xstring" value="Long"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.lang.Long-&gt;BIGINT"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.lang.Long"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="BIGINT"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="BIGINT"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_4">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.lang.Double"/>
+<entry key="external_type" type="xstring" value="DOUBLE"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(DoubleValue,class java.lang.Double,Double)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.DoubleValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.lang.Double"/>
+<entry key="consumption_path_converter_name" type="xstring" value="Double"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.lang.Double-&gt;DOUBLE"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.lang.Double"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="DOUBLE"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="DOUBLE"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_5">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.localdate.LocalDateCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.time.LocalDate"/>
+<entry key="external_type" type="xstring" value="DATE"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(LocalDateValue,class java.time.LocalDate,LocalDate)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.time.localdate.LocalDateValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.time.LocalDate"/>
+<entry key="consumption_path_converter_name" type="xstring" value="LocalDate"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.time.LocalDate-&gt;DATE"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.time.LocalDate"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="DATE"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="DATE"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_6">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.localtime.LocalTimeCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.time.LocalTime"/>
+<entry key="external_type" type="xstring" value="TIME"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(LocalTimeValue,class java.time.LocalTime,LocalTime)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.time.localtime.LocalTimeValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.time.LocalTime"/>
+<entry key="consumption_path_converter_name" type="xstring" value="LocalTime"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.time.LocalTime-&gt;TIME"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.time.LocalTime"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="TIME"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="TIME"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_7">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.localdatetime.LocalDateTimeCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.time.LocalDateTime"/>
+<entry key="external_type" type="xstring" value="TIMESTAMP"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(LocalDateTimeValue,class java.time.LocalDateTime,LocalDateTime)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.time.localdatetime.LocalDateTimeValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.time.LocalDateTime"/>
+<entry key="consumption_path_converter_name" type="xstring" value="LocalDateTime"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.time.LocalDateTime-&gt;TIMESTAMP"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.time.LocalDateTime"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="TIMESTAMP"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="TIMESTAMP"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_8">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.zoneddatetime.ZonedDateTimeCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.time.ZonedDateTime"/>
+<entry key="external_type" type="xstring" value="TIMESTAMP_WITH_TIMEZONE"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(ZonedDateTimeValue,class java.time.ZonedDateTime,ZonedDateTime)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.time.zoneddatetime.ZonedDateTimeValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.time.ZonedDateTime"/>
+<entry key="consumption_path_converter_name" type="xstring" value="ZonedDateTime"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.time.ZonedDateTime-&gt;TIMESTAMP_WITH_TIMEZONE"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.time.ZonedDateTime"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="TIMESTAMP_WITH_TIMEZONE"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="TIMESTAMP_WITH_TIMEZONE"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_9">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.duration.DurationCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<entry key="external_type" type="xstring" value="VARCHAR"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(DataValue,class java.lang.String,String (toString()))"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.DataValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.lang.String"/>
+<entry key="consumption_path_converter_name" type="xstring" value="String (toString())"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.lang.String-&gt;VARCHAR"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.lang.String"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="VARCHAR"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="VARCHAR"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_10">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.time.period.PeriodCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.lang.String"/>
+<entry key="external_type" type="xstring" value="VARCHAR"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(DataValue,class java.lang.String,String (toString()))"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.DataValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.lang.String"/>
+<entry key="consumption_path_converter_name" type="xstring" value="String (toString())"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.lang.String-&gt;VARCHAR"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.lang.String"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="VARCHAR"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="VARCHAR"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+<config key="type_to_type_mapping_rule_11">
+<config key="type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.blob.BinaryObjectDataCell"/>
+</config>
+<entry key="intermediate_type" type="xstring" value="java.io.InputStream"/>
+<entry key="external_type" type="xstring" value="BINARY"/>
+<entry key="consumption_path_converter" type="xstring" value="org.knime.core.data.convert.java.SimpleDataCellToJavaConverterFactory(BinaryObjectDataValue,class java.io.InputStream,InputStream)"/>
+<entry key="consumption_path_converter_src" type="xstring" value="org.knime.core.data.blob.BinaryObjectDataValue"/>
+<entry key="consumption_path_converter_dst" type="xstring" value="java.io.InputStream"/>
+<entry key="consumption_path_converter_name" type="xstring" value="InputStream"/>
+<config key="consumption_path_converter_config"/>
+<entry key="consumption_path_consumer" type="xstring" value="java.io.InputStream-&gt;BINARY"/>
+<entry key="consumption_path_consumer_src" type="xstring" value="java.io.InputStream"/>
+<entry key="consumption_path_consumer_dst" type="xstring" value="BINARY"/>
+<entry key="consumption_path_consumer_name" type="xstring" value="BINARY"/>
+<config key="consumption_path_consumer_config"/>
+</config>
+</config>
+</config>
+</config>
+<config key="nodeAnnotation">
+<entry key="text" type="xstring" value="Reading %%00013%%00010WebActivity.sqlite"/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="65"/>
+<entry key="y-coordinate" type="xint" value="618"/>
+<entry key="width" type="xint" value="106"/>
+<entry key="height" type="xint" value="30"/>
+<entry key="alignment" type="xstring" value="CENTER"/>
+<entry key="borderSize" type="xint" value="0"/>
+<entry key="borderColor" type="xint" value="16777215"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<entry key="factory" type="xstring" value="org.knime.database.extension.sqlite.node.connector.SQLiteDBConnectorNodeFactory"/>
+<entry key="node-name" type="xstring" value="SQLite Connector"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME database extensions"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.database.extensions"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="4.1.0.v201912031025"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Database"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.database.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="4.1.0.v201912031025"/>
+<config key="factory_settings"/>
+<entry key="name" type="xstring" value="SQLite Connector"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>

@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 
 //prevents directly accessing this file from a web browser
 if (!defined('sugarEntry') || !sugarEntry) {
@@ -150,55 +129,6 @@ class stic_GoalsController extends SugarController {
         }
         SugarApplication::redirect("index.php?module=stic_Goals&action=DetailView&record={$currentGoalId}");
 
-    }
-
-        /**
-     * Action to retrieve the Contact or Familiy associated with the selected Assessments
-     * This action is called from "relateDestinationGoal" javascript function (modules/stic_Goals/Utils.js)
-     *
-     * @return void
-     */
-    public function action_getContactOrFamilyFromAssessment() {
-
-        $assessmentId = $_POST["assessmentId"];
-        
-        $response['code'] = 'No data';
-        $db = DBManagerFactory::getInstance();
-
-        $sql = "SELECT 'contact' AS type, stic_assessments_contactscontacts_ida AS id, concat(con.first_name, ' ', con.last_name) AS name
-        FROM stic_assessments_contacts_c asscon
-        JOIN contacts con ON con.id = asscon.stic_assessments_contactscontacts_ida 
-        WHERE stic_assessments_contactsstic_assessments_idb = '{$assessmentId}'
-        AND asscon.deleted = 0";
-        $result = $db->query($sql);
-        if($row = $result->fetch_assoc()) {
-            $response['code'] = 'OK';
-            $response['data']['stic_goals_contactscontacts_ida'] = $row['id'];
-            $response['data']['stic_goals_contacts_name'] = $row['name'];
-        }
-        else {
-            $response['data']['stic_goals_contactscontacts_ida'] = '';
-            $response['data']['stic_goals_contacts_name'] = '';
-        }
-        
-        $sql = "SELECT 'family' AS type, stic_families_stic_assessmentsstic_families_ida as id, fam.name
-        FROM stic_families_stic_assessments_c famass
-        JOIN stic_families fam ON fam.id = famass.stic_families_stic_assessmentsstic_families_ida 
-        WHERE stic_families_stic_assessmentsstic_assessments_idb = '{$assessmentId}'
-        AND famass.deleted = 0";
-        $result = $db->query($sql);
-        if($row = $result->fetch_assoc()) {
-            $response['code'] = 'OK';
-            $response['data']['stic_families_stic_goalsstic_families_ida'] = $row['id'];
-            $response['data']['stic_families_stic_goals_name'] = $row['name'];
-        }
-        else {
-            $response['data']['stic_families_stic_goalsstic_families_ida'] = '';
-            $response['data']['stic_families_stic_goals_name'] = '';
-        }
-
-        echo json_encode($response);
-        exit;
     }
 
 }

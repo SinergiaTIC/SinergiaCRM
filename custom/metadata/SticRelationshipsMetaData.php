@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 
 $dictionary["leads_documents_1"] = array(
     'true_relationship_type' => 'many-to-many',
@@ -4868,965 +4847,341 @@ $dictionary["stic_families_stic_goals"] = array(
     ),
 );
 
-$dictionary["stic_medication_log_contacts"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_medication_log_contacts' => array(
-            'lhs_module' => 'Contacts',
-            'lhs_table' => 'contacts',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Medication_Log',
-            'rhs_table' => 'stic_medication_log',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_medication_log_contacts_c',
-            'join_key_lhs' => 'stic_medication_log_contactscontacts_ida',
-            'join_key_rhs' => 'stic_medication_log_contactsstic_medication_log_idb',
-        ),
+$dictionary["stic_medication_log_contacts"] = array (
+  'true_relationship_type' => 'one-to-many',
+  'relationships' => 
+  array (
+    'stic_medication_log_contacts' => 
+    array (
+      'lhs_module' => 'Contacts',
+      'lhs_table' => 'contacts',
+      'lhs_key' => 'id',
+      'rhs_module' => 'stic_Medication_Log',
+      'rhs_table' => 'stic_medication_log',
+      'rhs_key' => 'id',
+      'relationship_type' => 'many-to-many',
+      'join_table' => 'stic_medication_log_contacts_c',
+      'join_key_lhs' => 'stic_medication_log_contactscontacts_ida',
+      'join_key_rhs' => 'stic_medication_log_contactsstic_medication_log_idb',
     ),
-    'table' => 'stic_medication_log_contacts_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_medication_log_contactscontacts_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_medication_log_contactsstic_medication_log_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
+  ),
+  'table' => 'stic_medication_log_contacts_c',
+  'fields' => 
+  array (
+    0 => 
+    array (
+      'name' => 'id',
+      'type' => 'varchar',
+      'len' => 36,
     ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_medication_log_contactsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_medication_log_contacts_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_medication_log_contactscontacts_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_medication_log_contacts_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_medication_log_contactsstic_medication_log_idb',
-            ),
-        ),
+    1 => 
+    array (
+      'name' => 'date_modified',
+      'type' => 'datetime',
     ),
+    2 => 
+    array (
+      'name' => 'deleted',
+      'type' => 'bool',
+      'len' => '1',
+      'default' => '0',
+      'required' => true,
+    ),
+    3 => 
+    array (
+      'name' => 'stic_medication_log_contactscontacts_ida',
+      'type' => 'varchar',
+      'len' => 36,
+    ),
+    4 => 
+    array (
+      'name' => 'stic_medication_log_contactsstic_medication_log_idb',
+      'type' => 'varchar',
+      'len' => 36,
+    ),
+  ),
+  'indices' => 
+  array (
+    0 => 
+    array (
+      'name' => 'stic_medication_log_contactsspk',
+      'type' => 'primary',
+      'fields' => 
+      array (
+        0 => 'id',
+      ),
+    ),
+    1 => 
+    array (
+      'name' => 'stic_medication_log_contacts_ida1',
+      'type' => 'index',
+      'fields' => 
+      array (
+        0 => 'stic_medication_log_contactscontacts_ida',
+      ),
+    ),
+    2 => 
+    array (
+      'name' => 'stic_medication_log_contacts_alt',
+      'type' => 'alternate_key',
+      'fields' => 
+      array (
+        0 => 'stic_medication_log_contactsstic_medication_log_idb',
+      ),
+    ),
+  ),
 );
 
-$dictionary["stic_prescription_contacts"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_prescription_contacts' => array(
-            'lhs_module' => 'Contacts',
-            'lhs_table' => 'contacts',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Prescription',
-            'rhs_table' => 'stic_prescription',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_prescription_contacts_c',
-            'join_key_lhs' => 'stic_prescription_contactscontacts_ida',
-            'join_key_rhs' => 'stic_prescription_contactsstic_prescription_idb',
-        ),
+$dictionary["stic_prescription_contacts"] = array (
+  'true_relationship_type' => 'one-to-many',
+  'relationships' => 
+  array (
+    'stic_prescription_contacts' => 
+    array (
+      'lhs_module' => 'Contacts',
+      'lhs_table' => 'contacts',
+      'lhs_key' => 'id',
+      'rhs_module' => 'stic_Prescription',
+      'rhs_table' => 'stic_prescription',
+      'rhs_key' => 'id',
+      'relationship_type' => 'many-to-many',
+      'join_table' => 'stic_prescription_contacts_c',
+      'join_key_lhs' => 'stic_prescription_contactscontacts_ida',
+      'join_key_rhs' => 'stic_prescription_contactsstic_prescription_idb',
     ),
-    'table' => 'stic_prescription_contacts_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_prescription_contactscontacts_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_prescription_contactsstic_prescription_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
+  ),
+  'table' => 'stic_prescription_contacts_c',
+  'fields' => 
+  array (
+    0 => 
+    array (
+      'name' => 'id',
+      'type' => 'varchar',
+      'len' => 36,
     ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_prescription_contactsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_prescription_contacts_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_prescription_contactscontacts_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_prescription_contacts_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_prescription_contactsstic_prescription_idb',
-            ),
-        ),
+    1 => 
+    array (
+      'name' => 'date_modified',
+      'type' => 'datetime',
     ),
+    2 => 
+    array (
+      'name' => 'deleted',
+      'type' => 'bool',
+      'len' => '1',
+      'default' => '0',
+      'required' => true,
+    ),
+    3 => 
+    array (
+      'name' => 'stic_prescription_contactscontacts_ida',
+      'type' => 'varchar',
+      'len' => 36,
+    ),
+    4 => 
+    array (
+      'name' => 'stic_prescription_contactsstic_prescription_idb',
+      'type' => 'varchar',
+      'len' => 36,
+    ),
+  ),
+  'indices' => 
+  array (
+    0 => 
+    array (
+      'name' => 'stic_prescription_contactsspk',
+      'type' => 'primary',
+      'fields' => 
+      array (
+        0 => 'id',
+      ),
+    ),
+    1 => 
+    array (
+      'name' => 'stic_prescription_contacts_ida1',
+      'type' => 'index',
+      'fields' => 
+      array (
+        0 => 'stic_prescription_contactscontacts_ida',
+      ),
+    ),
+    2 => 
+    array (
+      'name' => 'stic_prescription_contacts_alt',
+      'type' => 'alternate_key',
+      'fields' => 
+      array (
+        0 => 'stic_prescription_contactsstic_prescription_idb',
+      ),
+    ),
+  ),
 );
 
-$dictionary["stic_prescription_stic_medication"] = array(
+$dictionary["stic_prescription_stic_medication"] = array (
     'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_prescription_stic_medication' => array(
-            'lhs_module' => 'stic_Medication',
-            'lhs_table' => 'stic_medication',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Prescription',
-            'rhs_table' => 'stic_prescription',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_prescription_stic_medication_c',
-            'join_key_lhs' => 'stic_prescription_stic_medicationstic_medication_ida',
-            'join_key_rhs' => 'stic_prescription_stic_medicationstic_prescription_idb',
-        ),
+    'relationships' => 
+    array (
+      'stic_prescription_stic_medication' => 
+      array (
+        'lhs_module' => 'stic_Medication',
+        'lhs_table' => 'stic_medication',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Prescription',
+        'rhs_table' => 'stic_prescription',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_prescription_stic_medication_c',
+        'join_key_lhs' => 'stic_prescription_stic_medicationstic_medication_ida',
+        'join_key_rhs' => 'stic_prescription_stic_medicationstic_prescription_idb',
+      ),
     ),
     'table' => 'stic_prescription_stic_medication_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_prescription_stic_medicationstic_medication_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_prescription_stic_medicationstic_prescription_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_prescription_stic_medicationstic_medication_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_prescription_stic_medicationstic_prescription_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
     ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_prescription_stic_medicationspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_prescription_stic_medicationspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
         ),
-        1 => array(
-            'name' => 'stic_prescription_stic_medication_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_prescription_stic_medicationstic_medication_ida',
-            ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_prescription_stic_medication_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_prescription_stic_medicationstic_medication_ida',
         ),
-        2 => array(
-            'name' => 'stic_prescription_stic_medication_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_prescription_stic_medicationstic_prescription_idb',
-            ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_prescription_stic_medication_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_prescription_stic_medicationstic_prescription_idb',
         ),
+      ),
     ),
-);
-$dictionary["stic_medication_log_stic_prescription"] = array(
+  );
+  $dictionary["stic_medication_log_stic_prescription"] = array (
     'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_medication_log_stic_prescription' => array(
-            'lhs_module' => 'stic_Prescription',
-            'lhs_table' => 'stic_prescription',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Medication_Log',
-            'rhs_table' => 'stic_medication_log',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_medication_log_stic_prescription_c',
-            'join_key_lhs' => 'stic_medication_log_stic_prescriptionstic_prescription_ida',
-            'join_key_rhs' => 'stic_medication_log_stic_prescriptionstic_medication_log_idb',
-        ),
+    'relationships' => 
+    array (
+      'stic_medication_log_stic_prescription' => 
+      array (
+        'lhs_module' => 'stic_Prescription',
+        'lhs_table' => 'stic_prescription',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Medication_Log',
+        'rhs_table' => 'stic_medication_log',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_medication_log_stic_prescription_c',
+        'join_key_lhs' => 'stic_medication_log_stic_prescriptionstic_prescription_ida',
+        'join_key_rhs' => 'stic_medication_log_stic_prescriptionstic_medication_log_idb',
+      ),
     ),
     'table' => 'stic_medication_log_stic_prescription_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_medication_log_stic_prescriptionstic_prescription_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_medication_log_stic_prescriptionstic_medication_log_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_medication_log_stic_prescriptionstic_prescription_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_medication_log_stic_prescriptionstic_medication_log_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
     ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_medication_log_stic_prescriptionspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_medication_log_stic_prescriptionspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
         ),
-        1 => array(
-            'name' => 'stic_medication_log_stic_prescription_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_medication_log_stic_prescriptionstic_prescription_ida',
-            ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_medication_log_stic_prescription_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_medication_log_stic_prescriptionstic_prescription_ida',
         ),
-        2 => array(
-            'name' => 'stic_medication_log_stic_prescription_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_medication_log_stic_prescriptionstic_medication_log_idb',
-            ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_medication_log_stic_prescription_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_medication_log_stic_prescriptionstic_medication_log_idb',
         ),
+      ),
     ),
-);
-$dictionary["stic_centers_accounts"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_centers_accounts' => array(
-            'lhs_module' => 'Accounts',
-            'lhs_table' => 'accounts',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Centers',
-            'rhs_table' => 'stic_centers',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_centers_accounts_c',
-            'join_key_lhs' => 'stic_centers_accountsaccounts_ida',
-            'join_key_rhs' => 'stic_centers_accountsstic_centers_idb',
-        ),
-    ),
-    'table' => 'stic_centers_accounts_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_centers_accountsaccounts_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_centers_accountsstic_centers_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_centers_accountsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_centers_accounts_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_centers_accountsaccounts_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_centers_accounts_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_centers_accountsstic_centers_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_centers_contacts"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_centers_contacts' => array(
-            'lhs_module' => 'stic_Centers',
-            'lhs_table' => 'stic_centers',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Contacts',
-            'rhs_table' => 'contacts',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_centers_contacts_c',
-            'join_key_lhs' => 'stic_centers_contactsstic_centers_ida',
-            'join_key_rhs' => 'stic_centers_contactscontacts_idb',
-        ),
-    ),
-    'table' => 'stic_centers_contacts_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_centers_contactsstic_centers_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_centers_contactscontacts_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_centers_contactsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_centers_contacts_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_centers_contactsstic_centers_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_centers_contacts_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_centers_contactscontacts_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_centers_project"] = array(
-    'true_relationship_type' => 'many-to-many',
-    'relationships' => array(
-        'stic_centers_project' => array(
-            'lhs_module' => 'stic_Centers',
-            'lhs_table' => 'stic_centers',
-            'lhs_key' => 'id',
-            'rhs_module' => 'Project',
-            'rhs_table' => 'project',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_centers_project_c',
-            'join_key_lhs' => 'stic_centers_projectstic_centers_ida',
-            'join_key_rhs' => 'stic_centers_projectproject_idb',
-        ),
-    ),
-    'table' => 'stic_centers_project_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_centers_projectstic_centers_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_centers_projectproject_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_centers_projectspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_centers_project_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_centers_projectstic_centers_ida',
-                1 => 'stic_centers_projectproject_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_centers_stic_contacts_relationships"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_centers_stic_contacts_relationships' => array(
-            'lhs_module' => 'stic_Centers',
-            'lhs_table' => 'stic_centers',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Contacts_Relationships',
-            'rhs_table' => 'stic_contacts_relationships',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_centers_stic_contacts_relationships_c',
-            'join_key_lhs' => 'stic_centers_stic_contacts_relationshipsstic_centers_ida',
-            'join_key_rhs' => 'stic_centea017onships_idb',
-        ),
-    ),
-    'table' => 'stic_centers_stic_contacts_relationships_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_centers_stic_contacts_relationshipsstic_centers_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_centea017onships_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_centers_stic_contacts_relationshipsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_centers_stic_contacts_relationships_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_centers_stic_contacts_relationshipsstic_centers_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_centers_stic_contacts_relationships_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_centea017onships_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_centers_stic_events"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_centers_stic_events' => array(
-            'lhs_module' => 'stic_Centers',
-            'lhs_table' => 'stic_centers',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Events',
-            'rhs_table' => 'stic_events',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_centers_stic_events_c',
-            'join_key_lhs' => 'stic_centers_stic_eventsstic_centers_ida',
-            'join_key_rhs' => 'stic_centers_stic_eventsstic_events_idb',
-        ),
-    ),
-    'table' => 'stic_centers_stic_events_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_centers_stic_eventsstic_centers_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_centers_stic_eventsstic_events_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_centers_stic_eventsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_centers_stic_events_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_centers_stic_eventsstic_centers_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_centers_stic_events_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_centers_stic_eventsstic_events_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_grants_accounts"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_grants_accounts' => array(
-            'lhs_module' => 'Accounts',
-            'lhs_table' => 'accounts',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Grants',
-            'rhs_table' => 'stic_grants',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_grants_accounts_c',
-            'join_key_lhs' => 'stic_grants_accountsaccounts_ida',
-            'join_key_rhs' => 'stic_grants_accountsstic_grants_idb',
-        ),
-    ),
-    'table' => 'stic_grants_accounts_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_grants_accountsaccounts_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_grants_accountsstic_grants_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_grants_accountsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_grants_accounts_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_grants_accountsaccounts_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_grants_accounts_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_grants_accountsstic_grants_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_grants_contacts"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_grants_contacts' => array(
-            'lhs_module' => 'Contacts',
-            'lhs_table' => 'contacts',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Grants',
-            'rhs_table' => 'stic_grants',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_grants_contacts_c',
-            'join_key_lhs' => 'stic_grants_contactscontacts_ida',
-            'join_key_rhs' => 'stic_grants_contactsstic_grants_idb',
-        ),
-    ),
-    'table' => 'stic_grants_contacts_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_grants_contactscontacts_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_grants_contactsstic_grants_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_grants_contactsspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_grants_contacts_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_grants_contactscontacts_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_grants_contacts_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_grants_contactsstic_grants_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_grants_opportunities"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_grants_opportunities' => array(
-            'lhs_module' => 'Opportunities',
-            'lhs_table' => 'opportunities',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Grants',
-            'rhs_table' => 'stic_grants',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_grants_opportunities_c',
-            'join_key_lhs' => 'stic_grants_opportunitiesopportunities_ida',
-            'join_key_rhs' => 'stic_grants_opportunitiesstic_grants_idb',
-        ),
-    ),
-    'table' => 'stic_grants_opportunities_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_grants_opportunitiesopportunities_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_grants_opportunitiesstic_grants_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_grants_opportunitiesspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_grants_opportunities_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_grants_opportunitiesopportunities_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_grants_opportunities_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_grants_opportunitiesstic_grants_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_grants_project"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_grants_project' => array(
-            'lhs_module' => 'Project',
-            'lhs_table' => 'project',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Grants',
-            'rhs_table' => 'stic_grants',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_grants_project_c',
-            'join_key_lhs' => 'stic_grants_projectproject_ida',
-            'join_key_rhs' => 'stic_grants_projectstic_grants_idb',
-        ),
-    ),
-    'table' => 'stic_grants_project_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_grants_projectproject_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_grants_projectstic_grants_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_grants_projectspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_grants_project_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_grants_projectproject_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_grants_project_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_grants_projectstic_grants_idb',
-            ),
-        ),
-    ),
-);
-$dictionary["stic_grants_stic_families"] = array(
-    'true_relationship_type' => 'one-to-many',
-    'relationships' => array(
-        'stic_grants_stic_families' => array(
-            'lhs_module' => 'stic_Families',
-            'lhs_table' => 'stic_families',
-            'lhs_key' => 'id',
-            'rhs_module' => 'stic_Grants',
-            'rhs_table' => 'stic_grants',
-            'rhs_key' => 'id',
-            'relationship_type' => 'many-to-many',
-            'join_table' => 'stic_grants_stic_families_c',
-            'join_key_lhs' => 'stic_grants_stic_familiesstic_families_ida',
-            'join_key_rhs' => 'stic_grants_stic_familiesstic_grants_idb',
-        ),
-    ),
-    'table' => 'stic_grants_stic_families_c',
-    'fields' => array(
-        0 => array(
-            'name' => 'id',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        1 => array(
-            'name' => 'date_modified',
-            'type' => 'datetime',
-        ),
-        2 => array(
-            'name' => 'deleted',
-            'type' => 'bool',
-            'len' => '1',
-            'default' => '0',
-            'required' => true,
-        ),
-        3 => array(
-            'name' => 'stic_grants_stic_familiesstic_families_ida',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        4 => array(
-            'name' => 'stic_grants_stic_familiesstic_grants_idb',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-    ),
-    'indices' => array(
-        0 => array(
-            'name' => 'stic_grants_stic_familiesspk',
-            'type' => 'primary',
-            'fields' => array(
-                0 => 'id',
-            ),
-        ),
-        1 => array(
-            'name' => 'stic_grants_stic_families_ida1',
-            'type' => 'index',
-            'fields' => array(
-                0 => 'stic_grants_stic_familiesstic_families_ida',
-            ),
-        ),
-        2 => array(
-            'name' => 'stic_grants_stic_families_alt',
-            'type' => 'alternate_key',
-            'fields' => array(
-                0 => 'stic_grants_stic_familiesstic_grants_idb',
-            ),
-        ),
-    ),
-);
+  ); 

@@ -599,7 +599,7 @@ $mod_strings = array(
     'LBL_JS_VALIDATE_REL_LABEL' => 'Etiqueta - por favor, agregue la etiqueta que será mostrada sobre el subpanel',
 
 //CONFIRM
-    'LBL_CONFIRM_FIELD_DELETE' => 'Al eliminar este campo personalizado, eliminará tanto el campo como todos los datos que este contenga en la base de datos. El campo ya no aparecerá en ninguna de las vistas del módulo.\\n\\n¿Desea continuar?',
+    'LBL_CONFIRM_FIELD_DELETE' => 'Al eliminar este campo personalizado, eliminará tanto el campo personalizado como todos los datos de la base de datos relacionados con el campo personalizado. El campo ya no aparecerá en ninguno de los diseños de módulos. ¿Desea continuar?<br /><br />Al eliminar este campo personalizado, eliminará tanto el campo personalizado como todos los datos en la base de datos relacionados con el campo personalizado. El campo ya no aparecerá en ninguno de los diseños de módulos, y no estará disponible en los Informes.\n\nEl cambio en los Informes será visto tras cerrar la sesión y abrir una nueva, y todos los informes que contengan el campo tendrán que ser actualizados para poder ser ejecutados.\n\n¿Desea continuar?',
 
     'LBL_CONFIRM_RELATIONSHIP_DELETE' => '¿Está seguro de que desea eliminar esta relación?',
     'LBL_CONFIRM_DONT_SAVE' => 'Hay cambios pendientes de ser guardados, ¿desea guardarlos ahora?',

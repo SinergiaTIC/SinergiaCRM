@@ -184,15 +184,7 @@ class ExternalReporting
         if (in_array('Project', $modulesList)) {
             $modulesList['ProjectTask'] = 'ProjectTask';
         }
-
-        // If Surveys module is enabled, we automatically activate the related Surveys modules
-        if (in_array('Surveys', $modulesList)) {
-            $modulesList['SurveyResponses'] = 'SurveyResponses';
-            $modulesList['SurveyQuestions'] = 'SurveyQuestions';
-            $modulesList['SurveyQuestionOptions'] = 'SurveyQuestionOptions';
-            $modulesList['SurveyQuestionResponses'] = 'SurveyQuestionResponses';
-        }
-
+        
         // If Surveys module is enabled, we automatically activate the related Surveys modules
         if (in_array('Surveys', $modulesList)) {
             $modulesList['SurveyResponses'] = 'SurveyResponses';
@@ -300,7 +292,7 @@ class ExternalReporting
                 if ($this->showOnlyFieldsInDetailView) {
                     if (!in_array($fieldV['name'], $detailViewVisibleFields)
                         // If the field is not in the detailview we exclude it, except the ID & name & full_name fields, which must always be included. Array EventincludedModules modules are always included too.
-                        && !in_array($fieldV['type'], ['id', 'fullname', 'name'])
+                         && !in_array($fieldV['type'], ['id', 'fullname', 'name'])
                     ) {
                         continue;
                     }
@@ -501,7 +493,6 @@ class ExternalReporting
                                         'target_table' => "{$this->viewPrefix}_{$fieldV['targetModule']}",
                                         'target_column' => 'id',
                                         'info' => 'relate',
-                                        'label' => $fieldV['label'],
                                     ]
                                 );
                             }
@@ -905,13 +896,6 @@ class ExternalReporting
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA rebuild script finished in {$totalTime} seconds.");
         $this->info .= "<b>Rebuild ejecutado en {$totalTime} segundos. </b>";
 
-        //Adding config values
-        $this->addMetadataRecord('sda_def_config', ['key' => 'rebuild_file_date', 'value' => $fechaFormateada]);
-        $this->addMetadataRecord('sda_def_config', ['key' => 'rebuild_duration', 'value' => $totalTime]);
-
-        // Add other config values that do not depend on the variables of this function
-        $this->addConfigValues();
-
         // The text output is shown only if REQUEST print_debug exists
         if (isset($_REQUEST['print_debug'])) {
             echo $this->info;
@@ -1022,7 +1006,6 @@ class ExternalReporting
                     'target_table' => "{$this->viewPrefix}_{$field['table']}",
                     'target_column' => 'id',
                     'info' => 'link_lhs',
-                    'label' => $field['label'],
                 ]
             );
 
@@ -1044,7 +1027,6 @@ class ExternalReporting
                     'target_table' => "{$this->viewPrefix}_{$field['table']}",
                     'target_column' => 'id',
                     'info' => 'link_rhs',
-                    'label' => $field['label'],
 
                 ]
             );
@@ -1114,9 +1096,9 @@ class ExternalReporting
     {
         $db = DBManagerFactory::getInstance();
 
-        // All values to be inserted in MySQL escape to avoid syntax errors
-        foreach ($values as $key => $value) {
-            $values[$key] = addslashes($value);
+        // if label is present, add slashes to prevent mysql sintax errors
+        if ($values['label']) {
+            $values['label'] = addslashes($values['label']);
         }
 
         $columnKeys = '`' . implode('`,`', array_keys($values)) . '`';
@@ -1279,11 +1261,10 @@ class ExternalReporting
                             `source_column` VARCHAR(64) NOT NULL,
                             `target_table` VARCHAR(64) NOT NULL,
                             `target_column` VARCHAR(64) NOT NULL,
-                            `label` VARCHAR(255) NOT NULL,
                             `info` VARCHAR(255) NOT NULL
                         ) ENGINE = MyISAM;';
 
-        // 4) eda_def_enumerations
+        // 3) eda_def_enumerations
         $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_enumerations`';
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_enumerations` (
                             -- `id` CHAR(64) NOT NULL,
@@ -1299,7 +1280,7 @@ class ExternalReporting
                             `info` VARCHAR(255) NOT NULL
                         ) ENGINE = MyISAM;';
 
-        // 5) eda_def_permissions
+        // 3) eda_def_permissions
         $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions`';
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_permissions` (
                             `user_name` VARCHAR(64) NOT NULL,
@@ -1310,57 +1291,12 @@ class ExternalReporting
                             `stic_permission_source` VARCHAR (20) NOT NULL
                         ) ENGINE = MyISAM;';
 
-        // 6) sda_def_config
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_config`';
-        $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_config` (
-                            `key` VARCHAR(64) NOT NULL,
-                            `value` VARCHAR(64) NOT NULL
-                        ) ENGINE = MyISAM;';
-
         foreach ($sqlMetadata as $key => $value) {
             if (!$db->query($value)) {
                 die("<div style=color:red;>Error running  {$sqlMetadata} <br>" . $db->last_error . "</div>");
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] running Query: [{$sqlMetadata}]");
 
             };
-        }
-    }
-
-    /**
-     * Adds configuration values to the sda_def_config table.
-     * This function aggregates different types of configuration values,
-     * including CRM version, current datetime, and custom settings from $sugar_config['stic_sinergiada'].
-     */
-    public function addConfigValues()
-    {
-        global $sugar_config;
-        $tmpConfigValues = [];
-
-        // Add the CRM version to the config values
-        $tmpConfigValues['sinergiacrm_version'] = $sugar_config['sinergiacrm_version'];
-
-        // Add the current date and time to the config values
-        $tmpConfigValues['last_rebuild'] = date('Y-m-d H:i:s');
-
-        // Iterate over 'stic_sinergiada' settings and add them to the config values
-        foreach ($sugar_config['stic_sinergiada'] as $key => $value) {
-            if (is_array($value)) {
-                // If the setting is an array, add each sub-element with a composite key
-                foreach ($value as $key2 => $value2) {
-                    $tmpConfigValues["sda_{$key}_{$key2}"] = $value2;
-                }
-            } else {
-                // If the setting is not an array, add it directly with a simple key
-                $tmpConfigValues["sda_{$key}"] = $value;
-            }
-        }
-
-        // Add each gathered config value to the metadata record
-        foreach ($tmpConfigValues as $key => $value) {
-            $this->addMetadataRecord('sda_def_config', [
-                'key' => $key,
-                'value' => $value,
-            ]);
         }
     }
 

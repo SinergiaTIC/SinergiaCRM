@@ -411,61 +411,6 @@ class AOW_WorkFlow extends Basic
                     $condition_module,
                     $query
                 );
-            // STIC CUSTOM 20231120 JBL - Erroneus Query in Workflow when related fields are in other table but same module
-            // STIC#1306
-            } else if (isset($data['source']) && $data['source'] == 'non-db' && $data['type'] == 'relate' && !empty($data['link'])) {
-                $rel = $data['link'];
-                if (!isset($query['join'][$rel])) {
-                    if ($condition_module->load_relationship($rel)) {
-                        $join = $condition_module->$rel->getJoin([
-                            'join_type' => 'LEFT JOIN',
-                            'join_table_alias' => str_replace('.', '_', $rel),
-                            'left_join_table_alias' => $table_alias,
-                            'right_join_table_alias' => $table_alias
-                        ], true);
-                        $query['join'][$rel] = $join['join'];
-                        $query['select'][] = $join['select'] . " AS '" . str_replace('.', '_', $rel) . "_id'";
-                    }
-                }
-                $relObject = $condition_module->$rel;
-            
-                if (!empty($relObject)) {
-                    if ($relObject->getRelationshipObject()->type == 'one-to-many') {
-                        $field = $table_alias . '.' . $data['id_name'];
-                    } else {
-                        $targetTable = $relObject->getRelationshipObject()->getRelationshipTable();
-                        $field = $targetTable . '.' . $data['id_name'];
-                    }
-                } else {
-                    $field = $table_alias . '.' . $condition->field;
-                }
-            } else if (isset($data['source']) && $data['source'] == 'non-db' && $data['type'] == 'relate') {
-                $relModule = $data['module'];
-                $relBean = BeanFactory::getBean($relModule);
-                $relAlias = $data['id'];
-                $id_name = $data['id_name'];
-                $parentFieldDef = $condition_module->getFieldDefinition($data['id_name']);
-                if (!empty($parentFieldDef['source']) && $parentFieldDef['source'] == 'custom_fields') {
-                    $query = $this->build_flow_custom_query_join(
-                        $table_alias,
-                        $table_alias . '_cstm',
-                        $condition_module,
-                        $query
-                    );
-                    $table_alias = $table_alias . '_cstm';
-                }
-                $primaryKey = $relBean->getPrimaryFieldDefinition();
-                if (!isset($query['join'][$relAlias])) {
-                    $query['join'][$relAlias] = ' LEFT JOIN ' . $relBean->getTableName()
-                        . ' ' . $relAlias . ' ON ' . $table_alias . '.' . $id_name . ' = ' . $relAlias . '.' . $primaryKey['name'];
-                }
-                $field = $relAlias . '.' . $data['rname'];
-                $relFieldDef = $relBean->getFieldDefinition($data['rname']);
-            
-                if (isset($relFieldDef['db_concat_fields'])) {
-                    $field = $this->db->concat($relAlias, $relFieldDef['db_concat_fields']);
-                }
-            // End STIC CUSTOM
             } else {
                 $field = $table_alias.'.'.$condition->field;
             }
@@ -526,7 +471,6 @@ class AOW_WorkFlow extends Basic
                             $value = 'Curdate()';
                         }
                     // STIC-Custom AAM 20210419 - Modification to add the condition Anniversary.
-                    // STIC#712
                     } else if($params[0] == 'anniversary'){
                         if($sugar_config['dbconfig']['db_type'] == 'mssql'){ 
                             // We keep this condition, although SinergiaCRM doesn't use MSSQL
@@ -820,7 +764,6 @@ class AOW_WorkFlow extends Basic
                             $value = date('Y-m-d');
                             $field = strtotime(date('Y-m-d', $field));
                         // STIC-Custom AAM 20210419 - Modification to add the condition Anniversary.
-                        // STIC#712
                         } else if($params[0] == 'anniversary'){
                             $dateType = 'date'; 
                             // In order the "anniversary" option can be handled in a similar way

@@ -1,24 +1,3 @@
-{* 
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- *}
 {literal}
     <style>
         .modal-calendar-filters {
@@ -98,30 +77,6 @@
                                             <select multiple id="stic_sessions_color" name="stic_sessions_color[]" tabindex="102">
                                                 {$stic_sessions_color}
                                             </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row" style="width:60%;">
-                                            {$MOD.LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS}
-                                        </td>
-                                        <td>
-                                            <input type='text' class='sqsEnabled' name='stic_sessions_stic_centers_name'
-                                                id='stic_sessions_stic_centers_name' autocomplete='off'
-                                                value='{$stic_sessions_stic_centers_name}' title='' tabindex='3'>
-                                            <input type='hidden' name='stic_sessions_stic_centers_id'
-                                                id='stic_sessions_stic_centers_id'
-                                                value='{$stic_sessions_stic_centers_id}'>
-                                            <span class='id-ff multiple'>
-                                                <button title='{$MOD.LBL_SELECT_BUTTON_TITLE}' type='button'
-                                                    class='button' name='btn_1'
-                                                    onclick='openSelectPopup("stic_Centers", "stic_sessions_stic_centers")'>
-                                                    <span class='suitepicon suitepicon-action-select'></span>
-                                                </button>
-                                                <button type='button' name='btn_1' class='button lastChild'
-                                                    onclick='clearRow(this.form, "stic_sessions_stic_centers")'>
-                                                    <span class='suitepicon suitepicon-action-clear'></span>
-                                                </button>
-                                            </span>
                                         </td>
                                     </tr>
                                     <tr>

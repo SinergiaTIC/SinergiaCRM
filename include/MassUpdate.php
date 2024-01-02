@@ -217,7 +217,6 @@ eoq;
 
                 if (($this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) && strlen($value) == 0)
                     // STIC-Custom 20230519 PCS - Enabling massupdate for dynamicenum
-                    // STIC#1109
                     // || ($this->sugarbean->field_defs[$post]['type'] == 'enum' && $value == '__SugarMassUpdateClearField__') // Set to '' if it's an explicit clear
                     || (($this->sugarbean->field_defs[$post]['type'] == 'enum' || $this->sugarbean->field_defs[$post]['type'] == 'dynamicenum') && $value == '__SugarMassUpdateClearField__') // Set to '' if it's an explicit clear
                     //END STIC-Custom

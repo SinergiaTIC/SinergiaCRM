@@ -1,0 +1,21 @@
+
+{
+    "MinSupport-124": {
+        "@class": "org.knime.js.base.node.configuration.input.dbl.DoubleDialogNodeRepresentation",
+        "label": "Minimum Support",
+        "description": "Minimum support for frequent item set mining.",
+        "required": true,
+        "defaultValue": {
+            "@class": "org.knime.js.base.node.configuration.input.dbl.DoubleDialogNodeValue",
+            "double": 2.5
+        },
+        "currentValue": {
+            "@class": "org.knime.js.base.node.configuration.input.dbl.DoubleDialogNodeValue",
+            "double": 2.5
+        },
+        "usemin": false,
+        "usemax": false,
+        "min": 0.0,
+        "max": 1.0
+    }
+}

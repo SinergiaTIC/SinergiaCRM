@@ -38,6 +38,8 @@ jobs:
               uses: thollander/actions-comment-pull-request@v1
               with:
                 message: |
-                    Actions executed at: ${{ env.NOW }}.
-                comment_includes: 'Actions executed at:'
+                    Instancia de develop cargada: https://develop.sinergiacrm.org/${{ env.BRANCH_CLEAN }}
+                    Nombre de la base de datos: ${{ env.DATABASE_NAME }}
+                    **La instancia y la Base de datos se han borrado de develop, con fecha ${{ env.NOW }}**
+                comment_includes: 'Instancia de develop cargada:'
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 
 $dictionary['Account']['fields']['stic_acronym_c'] = array(
     'id' => 'Accountsstic_acronym_c',
@@ -1920,30 +1899,6 @@ $dictionary["Account"]["fields"]["stic_bookings_accounts"] = array (
     'source' => 'non-db',
     'side' => 'right',
     'vname' => 'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE',
-);
-
-// Grants relationship Vardef
-$dictionary["Account"]["fields"]["stic_grants_accounts"] = array (
-    'name' => 'stic_grants_accounts',
-    'type' => 'link',
-    'relationship' => 'stic_grants_accounts',
-    'source' => 'non-db',
-    'module' => 'stic_Grants',
-    'bean_name' => 'stic_Grants',
-    'side' => 'right',
-    'vname' => 'LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE',
-);
-  
-// Centers relationship Vardef
-$dictionary["Account"]["fields"]["stic_centers_accounts"] = array (
-    'name' => 'stic_centers_accounts',
-    'type' => 'link',
-    'relationship' => 'stic_centers_accounts',
-    'source' => 'non-db',
-    'module' => 'stic_Centers',
-    'bean_name' => 'stic_Centers',
-    'side' => 'right',
-    'vname' => 'LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE',
 );
 
 $dictionary['Account']['fields']['account_type']['massupdate'] = 0;

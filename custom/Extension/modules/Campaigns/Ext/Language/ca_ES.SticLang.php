@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 $mod_strings['LBL_ASSIGNED_TO_ID'] = 'Assignat a (ID)';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Assignat a';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Assignat a';
@@ -53,7 +32,3 @@ $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organitzacions';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interessats';
 $mod_strings['LBL_OPPORTUNITY_SUBPANEL_TITLE'] = 'Subvencions';
 $mod_strings['LBL_LEADS_DELETED_SINCE_CREATED'] = '{0} interessats creats a través d\'aquesta campanya han estat eliminats.';
-$mod_strings['LBL_WEBFORMS_INCLUDES_RECAPTCHA'] = 'Inclou validació reCAPTCHA al formulari';
-$mod_strings['LBL_WEBFORMS_CHOOSE_RECAPTCHA'] = 'Configuració de reCAPTCHA:';
-$mod_strings['LBL_WEBFORMS_RECAPTCHA_KO_URL'] = "URL de redirecció en cas d'error de reCAPTCHA:";
-$mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'Per poder incloure validació reCAPTCHA al formulari cal tenir-lo correctament configurat. Més informació a: <a href="https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA" target="_blank">https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA</a>';

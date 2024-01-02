@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 // created: 2023-02-17 14:56:16
 $GLOBALS['tabStructure'] = array(
     'LBL_GROUPTAB_MAIN' => array(
@@ -30,7 +9,6 @@ $GLOBALS['tabStructure'] = array(
             2 => 'Leads',
             3 => 'stic_Contacts_Relationships',
             4 => 'stic_Accounts_Relationships',
-            5 => 'stic_Centers',
         ),
     ),
     'LBL_GROUPTAB_ACTIVITIES' => array(
@@ -79,11 +57,10 @@ $GLOBALS['tabStructure'] = array(
             1 => 'stic_Goals',
             2 => 'stic_Personal_Environment',
             3 => 'stic_FollowUps',
-            4 => 'stic_Grants',
-            5 => 'stic_Families',
-            6 => 'stic_Medication',
-            7 => 'stic_Prescription',
-            8 => 'stic_Medication_Log',
+            4 => 'stic_Families',
+            5 => 'stic_Medication',
+            6 => 'stic_Prescription',
+            7 => 'stic_Medication_Log',
         ),
     ),
     'LBL_GROUPTAB_LABOURINSERTION' => array(

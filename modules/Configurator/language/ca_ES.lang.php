@@ -1,13 +1,11 @@
 <?php
 /**
+ *
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
- *
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ * Copyright (C) 2011 - 2019 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -29,18 +27,15 @@
  * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
  * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
  *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- * 
  * The interactive user interfaces in modified source and object code versions
  * of this program must display Appropriate Legal Notices, as required under
  * Section 5 of the GNU Affero General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo. 
- * If the display of the logos is not reasonably feasible for technical reasons, 
- * the Appropriate Legal Notices must display the words "Powered by SugarCRM", 
- * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
+ * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
+ * reasonably feasible for technical reasons, the Appropriate Legal Notices must
+ * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
 if (!defined('sugarEntry') || !sugarEntry) {
@@ -98,7 +93,7 @@ $mod_strings = array(
     'LBL_PROXY_PASSWORD' => 'Clau de pas',
     'LBL_PROXY_PORT' => 'Port',
     'LBL_PROXY_TITLE' => 'Configuració del Proxy',
-    'LBL_PROXY_USERNAME' => "Nom d\'Usuari", // STIC-Custom 2020/08/07 - Escaping exception. Do not touch. STIC#49
+    'LBL_PROXY_USERNAME' => "Nom d\'Usuari", // STIC 2020/08/07 - Escaping exception. Do not touch.
     'LBL_RESTORE_BUTTON_LABEL' => 'Restaurar',
     'LBL_SYSTEM_SETTINGS' => 'Configuració',
     'LBL_USE_REAL_NAMES' => 'Mostrar nom complet (no id usuari)',

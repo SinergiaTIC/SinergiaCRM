@@ -198,5 +198,4 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Usersinc_reference_entity_c', 'Users', 'inc_reference_entity_c'),
 ('Usersinc_reference_group_c', 'Users', 'inc_reference_group_c'),
 ('Usersinc_reference_officer_c', 'Users', 'inc_reference_officer_c'),
-('Usersinc_incorpora_user_c', 'Users', 'inc_incorpora_user_c'),
-('Userssda_allowed_c', 'Users', 'sda_allowed_c');
+('Usersinc_incorpora_user_c', 'Users', 'inc_incorpora_user_c');

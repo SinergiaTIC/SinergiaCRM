@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="settings.xml">
+<entry key="node_file" type="xstring" value="settings.xml"/>
+<config key="flow_stack"/>
+<config key="internal_node_subsettings">
+<entry key="memory_policy" type="xstring" value="CacheSmallInMemory"/>
+</config>
+<config key="model">
+<entry key="SHEET_NAME" type="xstring" isnull="true" value=""/>
+<entry key="READ_ALL_DATA" type="xboolean" value="true"/>
+<entry key="FIRST_ROW" type="xint" value="1"/>
+<entry key="LAST_ROW" type="xint" value="0"/>
+<entry key="FIRST_COL" type="xstring" value="A"/>
+<entry key="LAST_COL" type="xstring" isnull="true" value=""/>
+<entry key="HAS_COL_HDRS" type="xboolean" value="true"/>
+<entry key="COL_HDR_ROW" type="xint" value="1"/>
+<entry key="INDEX_CONTINUOUS" type="xboolean" value="true"/>
+<entry key="INDEX_JUMP_SKIPS" type="xboolean" value="false"/>
+<entry key="HAS_ROW_HDRS" type="xboolean" value="false"/>
+<entry key="ROW_HDR_COL" type="xstring" value="A"/>
+<entry key="MISS_VAL_PATTERN" type="xstring" isnull="true" value=""/>
+<entry key="SKIP_EMPTY_COLS" type="xboolean" value="true"/>
+<entry key="SKIP_EMPTY_ROWS" type="xboolean" value="true"/>
+<entry key="SKIP_HIDDEN_COLS" type="xboolean" value="true"/>
+<entry key="KEEP_XL_HDR" type="xboolean" value="false"/>
+<entry key="UNIQUIFY_ROWID" type="xboolean" value="false"/>
+<entry key="FORMULA_ERR_USE_PATTERN" type="xboolean" value="true"/>
+<entry key="FORMULA_ERR_PATTERN" type="xstring" value="#XL_EVAL_ERROR#"/>
+<entry key="REEVALUATE_FORMULAE" type="xboolean" value="false"/>
+<entry key="TIMEOUT_IN_SECONDS" type="xint" value="1"/>
+<entry key="NO_PREVIEW" type="xboolean" value="false"/>
+<config key="FILE_CHOOSER_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_FileChooserGen2"/>
+<entry key="EnabledStatus" type="xboolean" value="true"/>
+</config>
+<config key="FILE_CHOOSER">
+<entry key="filesystem" type="xstring" value="Custom URL"/>
+<entry key="knime_filesystem" type="xstring" value="knime.workflow"/>
+<entry key="knime_mountpoint_filesystem" type="xstring" isnull="true" value=""/>
+<entry key="path_or_url" type="xstring" value="knime://knime.workflow/../../../TheData/Customers/CallsData.xls"/>
+<entry key="include_subfolders" type="xboolean" value="false"/>
+<entry key="filter_files_extension" type="xboolean" value="true"/>
+<entry key="filter_expression_extension" type="xstring" value="xls;xlsx"/>
+<entry key="filter_case_sensitive_extension" type="xboolean" value="false"/>
+<entry key="filter_files_name" type="xboolean" value="false"/>
+<entry key="filter_expression_name" type="xstring" value="*"/>
+<entry key="filter_case_sensitive_name" type="xboolean" value="false"/>
+<entry key="filter_mode" type="xstring" value="WILDCARD"/>
+<entry key="filter_hidden_files" type="xboolean" value="true"/>
+</config>
+<config key="fileOrFolderModel_Internals">
+<entry key="SettingsModelID" type="xstring" value="SMID_string"/>
+<entry key="EnabledStatus" type="xboolean" value="false"/>
+</config>
+<entry key="fileOrFolderModel" type="xstring" value="FILE"/>
+<entry key="XLS_SettingsForSpecID" type="xstring" value="SettingsID:FILECustom URL?-110101101-111001#XL_EVAL_ERROR#010"/>
+<config key="XLS_DataTableSpec">
+<entry key="spec_name" type="xstring" value="knime://knime.workflow/../../../TheData/Customers/CallsData.xls [default]"/>
+<entry key="number_columns" type="xint" value="16"/>
+<config key="column_spec_0">
+<entry key="column_name" type="xstring" value="VMail Message"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_1">
+<entry key="column_name" type="xstring" value="Day Mins"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_2">
+<entry key="column_name" type="xstring" value="Eve Mins"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_3">
+<entry key="column_name" type="xstring" value="Night Mins"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_4">
+<entry key="column_name" type="xstring" value="Intl Mins"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_5">
+<entry key="column_name" type="xstring" value="CustServ Calls"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_6">
+<entry key="column_name" type="xstring" value="Day Calls"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_7">
+<entry key="column_name" type="xstring" value="Day Charge"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_8">
+<entry key="column_name" type="xstring" value="Eve Calls"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_9">
+<entry key="column_name" type="xstring" value="Eve Charge"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_10">
+<entry key="column_name" type="xstring" value="Night Calls"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_11">
+<entry key="column_name" type="xstring" value="Night Charge"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_12">
+<entry key="column_name" type="xstring" value="Intl Calls"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_13">
+<entry key="column_name" type="xstring" value="Intl Charge"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_14">
+<entry key="column_name" type="xstring" value="Area Code"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.IntCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+<config key="column_spec_15">
+<entry key="column_name" type="xstring" value="Phone"/>
+<config key="element_names">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="column_type">
+<entry key="cell_class" type="xstring" value="org.knime.core.data.def.StringCell"/>
+</config>
+<config key="column_domain"/>
+<config key="column_properties"/>
+<config key="meta_data"/>
+</config>
+</config>
+</config>
+<config key="nodeAnnotation">
+<entry key="text" type="xstring" value="Reading%%00013%%00010CallsData.xls"/>
+<entry key="bgcolor" type="xint" value="16777215"/>
+<entry key="x-coordinate" type="xint" value="87"/>
+<entry key="y-coordinate" type="xint" value="519"/>
+<entry key="width" type="xint" value="106"/>
+<entry key="height" type="xint" value="30"/>
+<entry key="alignment" type="xstring" value="CENTER"/>
+<entry key="borderSize" type="xint" value="0"/>
+<entry key="borderColor" type="xint" value="16777215"/>
+<entry key="defFontSize" type="xint" value="9"/>
+<entry key="annotation-version" type="xint" value="20151123"/>
+<config key="styles"/>
+</config>
+<entry key="customDescription" type="xstring" isnull="true" value=""/>
+<entry key="state" type="xstring" value="CONFIGURED"/>
+<entry key="factory" type="xstring" value="org.knime.ext.poi2.node.read4.XLSReaderNodeFactory"/>
+<entry key="node-name" type="xstring" value="Excel Reader (XLS)"/>
+<entry key="node-bundle-name" type="xstring" value="KNIME POI (xls/xlsx) Plug-in"/>
+<entry key="node-bundle-symbolic-name" type="xstring" value="org.knime.ext.poi2"/>
+<entry key="node-bundle-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-bundle-version" type="xstring" value="4.1.0.v201912021719"/>
+<entry key="node-feature-name" type="xstring" value="KNIME Excel Support"/>
+<entry key="node-feature-symbolic-name" type="xstring" value="org.knime.features.ext.poi.feature.group"/>
+<entry key="node-feature-vendor" type="xstring" value="KNIME AG, Zurich, Switzerland"/>
+<entry key="node-feature-version" type="xstring" value="4.1.0.v201912021719"/>
+<config key="factory_settings"/>
+<config key="node_creation_config">
+<config key="File System Connection"/>
+<config key="Data table"/>
+</config>
+<entry key="name" type="xstring" value="Excel Reader (XLS)"/>
+<entry key="hasContent" type="xboolean" value="false"/>
+<entry key="isInactive" type="xboolean" value="false"/>
+<config key="ports">
+<config key="port_1">
+<entry key="index" type="xint" value="1"/>
+<entry key="port_dir_location" type="xstring" isnull="true" value=""/>
+</config>
+</config>
+<config key="filestores">
+<entry key="file_store_location" type="xstring" isnull="true" value=""/>
+<entry key="file_store_id" type="xstring" isnull="true" value=""/>
+</config>
+</config>

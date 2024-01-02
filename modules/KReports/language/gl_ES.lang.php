@@ -1,31 +1,15 @@
 <?php
-/**
+/* * *******************************************************************************
  * This file is part of KReporter. KReporter is an enhancement developed
  * by Christian Knoll. All rights are (c) 2012 by Christian Knoll
  *
- * This file has been modified by SinergiaTIC in SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * This Version of the KReporter is licensed software and may only be used in
+ * alignment with the License Agreement received with this Software.
+ * This Software is copyrighted and may not be further distributed without
+ * witten consent of Christian Knoll
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
- * along with this program; if not, see http://www.gnu.org/licenses
- * or write to the Free Software Foundation,Inc., 51 Franklin Street,
- * Fifth Floor, Boston, MA 02110-1301  USA
- *
- * You can contact Christian Knoll at info@kreporter.org
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
-
+ * You can contact us at info@kreporter.org
+ * ****************************************************************************** */
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array(
@@ -614,10 +598,10 @@ $mod_strings = array(
 
     // STIC-Custom 20230710 AAM - Improving export to LPO
     // STIC#1010
-    'LBL_TARGETLISTEXPORT_SELECTION' => 'Seleccione unha lista de público obxectivo na ventá emerxente',
-    'LBL_TARGETLISTEXPORT_LOADING' => 'Por favor, espere mentres se exportan os datos á lista de público obxectivo...',
+    'LBL_TARGETLISTEXPORT_SELECTION' => 'Seleccione una lista de público objetivo en la ventana emergente',
+    'LBL_TARGETLISTEXPORT_LOADING' => 'Por favor, espere mientras se exportan los datos a la lista de público objetivo...',
     'LBL_TARGETLISTEXPORT_ALERT_TITLE' => 'Seleccione un modo de exportación:',
-    'LBL_TARGETLISTEXPORT_ALERT_DESCRIPTION' => '1) Acumulativo: Se mantendrá el contenido original de la lista y se añadirán los registros del informe que actualmente no están en ella.<br><br>2) Sustitutivo: Se vaciará la lista existente y se rellenará con los registros del informe. Nota: A elección do modo de exportación só xera efectos no caso de que o destino sexa unha lista preexistente. Se no seguinte paso escolle crear unha lista nova, o resultado será o mesmo independentemente do método elixido.',
+    'LBL_TARGETLISTEXPORT_ALERT_DESCRIPTION' => '1) Acumulativo: Se mantendrá el contenido original de la lista y se añadirán los registros del informe que actualmente no están en ella.<br><br>2) Sustitutivo: Se vaciará la lista existente y se rellenará con los registros del informe.',
     'LBL_TARGETLISTEXPORT_ALERT_CUMULATIVE' => 'Acumulativo',
     'LBL_TARGETLISTEXPORT_ALERT_REPLACEMENT' => 'Sustitutivo',
     'LBL_TARGETLISTEXPORT_ALERT_CANCEL' => 'Cancelar',

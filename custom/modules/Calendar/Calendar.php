@@ -1,47 +1,4 @@
 <?php
-/**
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
- *
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- * 
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo. 
- * If the display of the logos is not reasonably feasible for technical reasons, 
- * the Appropriate Legal Notices must display the words "Powered by SugarCRM", 
- * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
- */
 
 /**
  * STIC 20210430 AAM - Custom Calendar
@@ -212,7 +169,6 @@ class CustomCalendar extends Calendar
     /**
      * STIC-Custom 20211015 - Includes/excludes the stic_Sessions records from the activities array according to filters values.
      * Current existing filters:
-     * - stic_sessions_stic_centers
      * - stic_sessions_stic_events
      * - stic_sessions_contacts
      * - stic_sessions_projects
@@ -229,7 +185,6 @@ class CustomCalendar extends Calendar
             'stic_sessions_activity_type' => $current_user->getPreference('calendar_stic_sessions_activity_type'),
             'stic_sessions_stic_events_type' => $current_user->getPreference('calendar_stic_sessions_stic_events_type'),
             'stic_sessions_stic_events' => $current_user->getPreference('calendar_stic_sessions_stic_events_id'),
-            'stic_sessions_stic_centers' => $current_user->getPreference('calendar_stic_sessions_stic_centers_id'),
             'stic_sessions_responsible' => $current_user->getPreference('calendar_stic_sessions_responsible_id'),
             'stic_sessions_contacts' => $current_user->getPreference('calendar_stic_sessions_contacts_id'),
             'stic_sessions_projects' => $current_user->getPreference('calendar_stic_sessions_projects_id'),
@@ -289,7 +244,6 @@ class CustomCalendar extends Calendar
                                     }
                                     break;
                                 }
-                                
                                 case 'stic_sessions_contacts': {
                                     // A SQL query is used because we need to find the contacts linked to the event registrations
                                     $query = "SELECT
@@ -332,25 +286,6 @@ class CustomCalendar extends Calendar
                                         } else {
                                             $projectBean = array_pop($eventBean->$projectRelationship->getBeans());
                                             if ($projectBean->id != $filterValue) {
-                                                // If the session record does not match the filter value, remove it from the activities array
-                                                unset($activitiesArray[$userKey][$activityKey]);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                }
-                                case 'stic_sessions_stic_centers': {
-                                    $eventRelationship = 'stic_sessions_stic_events';
-                                    $centersRelationship = 'stic_centers_stic_events';
-                                    if (!$bean->load_relationship($eventRelationship)) {
-                                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading stic_sessions_stic_events relationship: ' . $eventRelationship);
-                                    } else {
-                                        $eventBean = array_pop($bean->$eventRelationship->getBeans());
-                                        if (!$eventBean->load_relationship($centersRelationship)) {
-                                            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading stic_centers_stic_events relationship: ' . $centersRelationship);
-                                        } else {
-                                            $centersBean = array_pop($eventBean->$centersRelationship->getBeans());
-                                            if ($centersBean->id != $filterValue) {
                                                 // If the session record does not match the filter value, remove it from the activities array
                                                 unset($activitiesArray[$userKey][$activityKey]);
                                             }

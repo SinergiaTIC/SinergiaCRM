@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 $module_name = 'stic_Events';
 $viewdefs [$module_name] = 
 array (
@@ -111,15 +90,6 @@ array (
         array (
           0 => 
           array (
-            'name' => 'stic_centers_stic_events_name',
-            'label' => 'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE',
-          ),
-          1 => '',
-        ),
-        5 => 
-        array (
-          0 => 
-          array (
             'name' => 'max_attendees',
             'label' => 'LBL_MAX_ATTENDEES',
           ),
@@ -129,7 +99,7 @@ array (
             'label' => 'LBL_ATTENDEES',
           ),
         ),
-        6 => 
+        5 => 
         array (
           0 => 
           array (
@@ -143,7 +113,7 @@ array (
             'help' => NULL,
           ),
         ),
-        7 => 
+        6 => 
         array (
           0 => 
           array (
@@ -157,7 +127,7 @@ array (
             'label' => 'LBL_SESSION_AMOUNT',
           ),
         ),
-        8 => 
+        7 => 
         array (
           0 => 
           array (
@@ -166,7 +136,7 @@ array (
           ),
           1 => '',
         ),
-        9 => 
+        8 => 
         array (
           0 => 
           array (

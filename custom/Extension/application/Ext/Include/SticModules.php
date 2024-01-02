@@ -1,25 +1,4 @@
 <?php
-/**
- * This file is part of SinergiaCRM.
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
 
 // Custom modules list
 $moduleList[] = 'stic_Accounts_Relationships';
@@ -52,8 +31,6 @@ $moduleList[] = 'stic_Resources';
 $moduleList[] = 'stic_Medication_Log';
 $moduleList[] = 'stic_Medication';
 $moduleList[] = 'stic_Prescription';
-$moduleList[] = 'stic_Grants';
-$moduleList[] = 'stic_Centers';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -87,8 +64,6 @@ $beanList['stic_Resources'] = 'stic_Resources';
 $beanList['stic_Medication_Log'] = 'stic_Medication_Log';
 $beanList['stic_Medication'] = 'stic_Medication';
 $beanList['stic_Prescription'] = 'stic_Prescription';
-$beanList['stic_Grants'] = 'stic_Grants';
-$beanList['stic_Centers'] = 'stic_Centers';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -121,8 +96,6 @@ $beanFiles['stic_Resources'] = 'modules/stic_Resources/stic_Resources.php';
 $beanFiles['stic_Medication_Log'] = 'modules/stic_Medication_Log/stic_Medication_Log.php';
 $beanFiles['stic_Medication'] = 'modules/stic_Medication/stic_Medication.php';
 $beanFiles['stic_Prescription'] = 'modules/stic_Prescription/stic_Prescription.php';
-$beanFiles['stic_Grants'] = 'modules/stic_Grants/stic_Grants.php';
-$beanFiles['stic_Centers'] = 'modules/stic_Centers/stic_Centers.php';
 
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels

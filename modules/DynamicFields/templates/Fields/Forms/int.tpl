@@ -133,7 +133,7 @@ formsWithFieldLogic=null;
 </tr>
 <script>
 	// STIC-Custom 20230919 MHP - Create dynamic tag for text 'Invalid logic'
-	// STIC#1221
+	// STIC#
 	// formsWithFieldLogic=new addToValidateFieldLogic('popup_form_id', 'int_min', 'int_max', 'int_default', 'int_len', 'int', 'Invalid Logic.');
 	formsWithFieldLogic=new addToValidateFieldLogic('popup_form_id', 'int_min', 'int_max', 'int_default', 'int_len', 'int', '{sugar_translate module="DynamicFields" label="LBL_INVALID_LOGIC"}');
 	// END STIC-Custom
