@@ -44,3 +44,6 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
+
+// Run a Workflow from a Record
+$entry_point_registry['runFlowFromRecord'] = array('file' => 'modules/AOW_WorkFlow/RunFlowFromRecord.php', 'auth' => false);
