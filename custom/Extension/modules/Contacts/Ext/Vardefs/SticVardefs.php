@@ -2366,17 +2366,17 @@ $dictionary["Contact"]["fields"]["stic_sepe_incidents_contacts"] = array(
 );
 
 // Bookings relationship Vardef
-$dictionary["Contact"]["fields"]["stic_bookings_contacts"] = array(
+$dictionary["Contact"]["fields"]["stic_bookings_contacts"] = array (
     'name' => 'stic_bookings_contacts',
     'type' => 'link',
     'relationship' => 'stic_bookings_contacts',
     'source' => 'non-db',
     'side' => 'right',
     'vname' => 'LBL_STIC_BOOKINGS_CONTACTS_FROM_STIC_BOOKINGS_TITLE',
-);
+);  
 
 // Medication Relationships
-$dictionary["Contact"]["fields"]["stic_prescription_contacts"] = array(
+$dictionary["Contact"]["fields"]["stic_prescription_contacts"] = array (
     'name' => 'stic_prescription_contacts',
     'type' => 'link',
     'relationship' => 'stic_prescription_contacts',
@@ -2384,57 +2384,13 @@ $dictionary["Contact"]["fields"]["stic_prescription_contacts"] = array(
     'side' => 'right',
     'vname' => 'LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE',
 );
-$dictionary["Contact"]["fields"]["stic_medication_log_contacts"] = array(
+$dictionary["Contact"]["fields"]["stic_medication_log_contacts"] = array (
     'name' => 'stic_medication_log_contacts',
     'type' => 'link',
     'relationship' => 'stic_medication_log_contacts',
     'source' => 'non-db',
     'side' => 'right',
     'vname' => 'LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE',
-);
-
-// Grants Relationships
-$dictionary["Contact"]["fields"]["stic_grants_contacts"] = array(
-    'name' => 'stic_grants_contacts',
-    'type' => 'link',
-    'relationship' => 'stic_grants_contacts',
-    'source' => 'non-db',
-    'module' => 'stic_Grants',
-    'bean_name' => 'stic_Grants',
-    'side' => 'right',
-    'vname' => 'LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE',
-);
-// Centers Relationships
-$dictionary["Contact"]["fields"]["stic_centers_contacts"] = array(
-    'name' => 'stic_centers_contacts',
-    'type' => 'link',
-    'relationship' => 'stic_centers_contacts',
-    'source' => 'non-db',
-    'module' => 'stic_Centers',
-    'bean_name' => 'stic_Centers',
-    'vname' => 'LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE',
-    'id_name' => 'stic_centers_contactsstic_centers_ida',
-);
-$dictionary["Contact"]["fields"]["stic_centers_contacts_name"] = array(
-    'name' => 'stic_centers_contacts_name',
-    'type' => 'relate',
-    'source' => 'non-db',
-    'vname' => 'LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE',
-    'save' => true,
-    'id_name' => 'stic_centers_contactsstic_centers_ida',
-    'link' => 'stic_centers_contacts',
-    'table' => 'stic_centers',
-    'module' => 'stic_Centers',
-    'rname' => 'name',
-);
-$dictionary["Contact"]["fields"]["stic_centers_contactsstic_centers_ida"] = array(
-    'name' => 'stic_centers_contactsstic_centers_ida',
-    'type' => 'link',
-    'relationship' => 'stic_centers_contacts',
-    'source' => 'non-db',
-    'reportable' => false,
-    'side' => 'right',
-    'vname' => 'LBL_STIC_CENTERS_CONTACTS_FROM_CONTACTS_TITLE',
 );
 
 // Modified properties in native fields
@@ -2566,5 +2522,5 @@ $dictionary['Contact']['fields']['am_projecttemplates_resources']['vname'] = 'LB
 
 // Enabling massupdate for core fields
 // STIC#981
-$dictionary['Contact']['fields']['primary_address_postalcode']['inline_edit'] = true;
-$dictionary['Contact']['fields']['do_not_call']['massupdate'] = '1';
+$dictionary['Contact']['fields']['primary_address_postalcode']['inline_edit']=true;
+$dictionary['Contact']['fields']['do_not_call']['massupdate']='1';

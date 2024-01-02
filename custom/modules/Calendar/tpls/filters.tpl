@@ -102,30 +102,6 @@
                                     </tr>
                                     <tr>
                                         <td scope="row" style="width:60%;">
-                                            {$MOD.LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS}
-                                        </td>
-                                        <td>
-                                            <input type='text' class='sqsEnabled' name='stic_sessions_stic_centers_name'
-                                                id='stic_sessions_stic_centers_name' autocomplete='off'
-                                                value='{$stic_sessions_stic_centers_name}' title='' tabindex='3'>
-                                            <input type='hidden' name='stic_sessions_stic_centers_id'
-                                                id='stic_sessions_stic_centers_id'
-                                                value='{$stic_sessions_stic_centers_id}'>
-                                            <span class='id-ff multiple'>
-                                                <button title='{$MOD.LBL_SELECT_BUTTON_TITLE}' type='button'
-                                                    class='button' name='btn_1'
-                                                    onclick='openSelectPopup("stic_Centers", "stic_sessions_stic_centers")'>
-                                                    <span class='suitepicon suitepicon-action-select'></span>
-                                                </button>
-                                                <button type='button' name='btn_1' class='button lastChild'
-                                                    onclick='clearRow(this.form, "stic_sessions_stic_centers")'>
-                                                    <span class='suitepicon suitepicon-action-clear'></span>
-                                                </button>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row" style="width:60%;">
                                             {$MOD.LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS}
                                         </td>
                                         <td>

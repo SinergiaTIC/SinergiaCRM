@@ -79,10 +79,6 @@ relatedFilters = {
         elementId: 'stic_sessions_stic_events',
         module: 'stic_Events',
     },
-    'stic_Sessions_stic_Centers': {
-        elementId: 'stic_sessions_stic_centers',
-        module: 'stic_Centers',
-    },
     'stic_Sessions_responsible': {
         elementId: 'stic_sessions_responsible',
         module: 'Contacts',

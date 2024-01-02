@@ -73,7 +73,7 @@ $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
 $app_list_strings['moduleList']['Contacts'] = 'Persones';
 $app_list_strings['moduleList']['Leads'] = 'Interessats';
 $app_list_strings['moduleList']['Opportunities'] = 'Subvencions';
-$app_list_strings['moduleList']['AOS_PDF_Templates'] = 'Plantilles PDF';
+$app_list_strings['moduleList']['AOS_PDF_Templates'] = 'Plantilles PDF'; 
 $app_list_strings['moduleList']['FP_events'] = 'Esdeveniments-FP'; // Change the name of this module to avoid confusion with stic_Events
 $app_list_strings['moduleList']['stic_Accounts_Relationships'] = 'Relacions amb Organitzacions';
 $app_list_strings['moduleList']['stic_Attendances'] = 'Assistències';
@@ -106,8 +106,6 @@ $app_list_strings['moduleList']['stic_Bookings_Calendar'] = 'Calendari de Reserv
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Registre de medicació';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicaments';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescripcions mèdiques';
-$app_list_strings['moduleList']['stic_Grants'] = 'Ajuts';
-$app_list_strings['moduleList']['stic_Centers'] = 'Centres';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -140,8 +138,6 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurs';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Registre de medicació';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicament';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescripció mèdica';
-$app_list_strings['moduleListSingular']['stic_Grants'] = 'Ajut';
-$app_list_strings['moduleListSingular']['stic_Centers'] = 'Centre';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -171,7 +167,6 @@ $app_list_strings['parent_type_display']['stic_Resources'] = 'Recursos';
 $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Registre de medicació';
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicaments';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescripcions mèdiques';
-$app_list_strings['parent_type_display']['stic_Centers'] = 'Centres';
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display']['Leads'] = 'Interessats';
@@ -201,8 +196,6 @@ $app_list_strings['record_type_display']['stic_Resources'] = 'Recursos';
 $app_list_strings['record_type_display']['stic_Medication_Log'] = 'Registre de medicació';
 $app_list_strings['record_type_display']['stic_Medication'] = 'Medicaments';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescripcions mèdiques';
-$app_list_strings['record_type_display']['stic_Grants'] = 'Ajuts';
-$app_list_strings['record_type_display']['stic_Centers'] = 'Centres';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interessats';
@@ -232,8 +225,6 @@ $app_list_strings['record_type_display_notes']['stic_Resources'] = 'Recursos';
 $app_list_strings['record_type_display_notes']['stic_Medication_Log'] = 'Registre de medicació';
 $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicaments';
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescripcions mèdiques';
-$app_list_strings['record_type_display_notes']['stic_Grants'] = 'Ajuts';
-$app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centres';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -1071,7 +1062,7 @@ $app_list_strings['stic_sepe_contract_type_list']['401'] = 'Durada determinada t
 $app_list_strings['stic_sepe_contract_type_list']['501'] = 'Durada determinada temps parcial';
 $app_list_strings['stic_sepe_contract_type_list']['005'] = 'Fix discontinu';
 
-// Candidatures: Motius de final de contracte
+// Candidatures: Motius de final de contracte 
 $app_list_strings['stic_contract_end_reason_list'][''] = '';
 $app_list_strings['stic_contract_end_reason_list']['expiration'] = 'Finalització contracte';
 $app_list_strings['stic_contract_end_reason_list']['fair_dismissal'] = 'Acomiadament procedent';
@@ -3122,53 +3113,6 @@ $app_list_strings['stic_medication_administered_list']['refused'] = 'No. Refusat
 $app_list_strings['stic_medication_administered_list']['out_of_stock'] = 'No. Sense existències';
 $app_list_strings['stic_medication_administered_list']['other'] = 'No. Altres casuses';
 
-// Ajuts: Tipus d'ajuts
-$app_list_strings['stic_grants_types_list'][''] = '';
-$app_list_strings['stic_grants_types_list']['public'] = 'Administracions públiques';
-$app_list_strings['stic_grants_types_list']['private'] = 'Institucions privades';
-$app_list_strings['stic_grants_types_list']['own'] = 'Pròpia entitat';
-$app_list_strings['stic_grants_types_list']['other'] = 'Altres';
-
-// Ajuts: Subtipus d'ajuts
-$app_list_strings['stic_grants_subtypes_list'][''] = '';
-$app_list_strings['stic_grants_subtypes_list']['public_bse'] = 'Bo social elèctric';
-$app_list_strings['stic_grants_subtypes_list']['public_imv'] = 'Ingrés mínim vital';
-$app_list_strings['stic_grants_subtypes_list']['public_rgc'] = 'Renda garantida de ciutadania';
-$app_list_strings['stic_grants_subtypes_list']['public_retirement'] = 'Jubilació';
-$app_list_strings['stic_grants_subtypes_list']['public_disability'] = 'Discapacitat';
-$app_list_strings['stic_grants_subtypes_list']['public_scolarship'] = 'Estudis';
-$app_list_strings['stic_grants_subtypes_list']['public_family'] = 'Estructura familiar';
-$app_list_strings['stic_grants_subtypes_list']['public_housing'] = 'Habitatge';
-$app_list_strings['stic_grants_subtypes_list']['public_loan'] = 'Préstec';
-$app_list_strings['stic_grants_subtypes_list']['public_other'] = 'Altres';
-$app_list_strings['stic_grants_subtypes_list']['private_discount'] = 'Descomptes';
-$app_list_strings['stic_grants_subtypes_list']['private_direct'] = 'Ajudes directes';
-$app_list_strings['stic_grants_subtypes_list']['private_loan'] = 'Préstec';
-$app_list_strings['stic_grants_subtypes_list']['private_other'] = 'Altres';
-$app_list_strings['stic_grants_subtypes_list']['own_discount'] = 'Descomptes';
-$app_list_strings['stic_grants_subtypes_list']['own_direct'] = 'Ajudes directes';
-$app_list_strings['stic_grants_subtypes_list']['own_loan'] = 'Préstec';
-$app_list_strings['stic_grants_subtypes_list']['own_other'] = 'Altres';
-
-// Ajuts: Periodicitats
-$app_list_strings['stic_grants_periodicities_list'][''] = '';
-$app_list_strings['stic_grants_periodicities_list']['weekly'] = 'Setmanal';
-$app_list_strings['stic_grants_periodicities_list']['fortnightly'] = 'Quinzenal';
-$app_list_strings['stic_grants_periodicities_list']['monthly'] = 'Mensual';
-$app_list_strings['stic_grants_periodicities_list']['bimonthly'] = 'Bimestral';
-$app_list_strings['stic_grants_periodicities_list']['quarterly'] = 'Trimestral';
-$app_list_strings['stic_grants_periodicities_list']['four_monthly'] = 'Quadrimestral';
-$app_list_strings['stic_grants_periodicities_list']['half_yearly'] = 'Semestral';
-$app_list_strings['stic_grants_periodicities_list']['annual'] = 'Anual';
-$app_list_strings['stic_grants_periodicities_list']['punctual'] = 'Puntual';
-
-// Centres: Tipus de centre
-$app_list_strings['stic_centers_types_list'][''] = '';
-$app_list_strings['stic_centers_types_list']['administrative'] = 'Administratiu';
-$app_list_strings['stic_centers_types_list']['residential'] = 'Residencial';
-$app_list_strings['stic_centers_types_list']['attention_point'] = "Punt d'atenció";
-$app_list_strings['stic_centers_types_list']['training'] = 'Formació';
-$app_list_strings['stic_centers_types_list']['other'] = 'Altres';
 
 // Modificacions del core de SuiteCRM
 

@@ -52,8 +52,6 @@ $moduleList[] = 'stic_Resources';
 $moduleList[] = 'stic_Medication_Log';
 $moduleList[] = 'stic_Medication';
 $moduleList[] = 'stic_Prescription';
-$moduleList[] = 'stic_Grants';
-$moduleList[] = 'stic_Centers';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -87,8 +85,6 @@ $beanList['stic_Resources'] = 'stic_Resources';
 $beanList['stic_Medication_Log'] = 'stic_Medication_Log';
 $beanList['stic_Medication'] = 'stic_Medication';
 $beanList['stic_Prescription'] = 'stic_Prescription';
-$beanList['stic_Grants'] = 'stic_Grants';
-$beanList['stic_Centers'] = 'stic_Centers';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -121,8 +117,6 @@ $beanFiles['stic_Resources'] = 'modules/stic_Resources/stic_Resources.php';
 $beanFiles['stic_Medication_Log'] = 'modules/stic_Medication_Log/stic_Medication_Log.php';
 $beanFiles['stic_Medication'] = 'modules/stic_Medication/stic_Medication.php';
 $beanFiles['stic_Prescription'] = 'modules/stic_Prescription/stic_Prescription.php';
-$beanFiles['stic_Grants'] = 'modules/stic_Grants/stic_Grants.php';
-$beanFiles['stic_Centers'] = 'modules/stic_Centers/stic_Centers.php';
 
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels

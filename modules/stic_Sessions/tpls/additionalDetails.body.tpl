@@ -77,14 +77,6 @@
     </div>
 {/if}
 
-{if !empty($FIELD.EVENT_CENTER_ID)}
-    <div>
-        <strong>{$PARAM.LBL_EVENT_CENTER}:</strong>
-        <a href="index.php?module=stic_Centers&action=DetailView&record={$FIELD.EVENT_CENTER_ID}">{$FIELD.EVENT_CENTER_NAME}</a>
-
-    </div>
-{/if}
-
 {if !empty($FIELD.ACTIVITY_TYPE)}
     <div>
         <strong>{$PARAM.LBL_ACTIVITY_TYPE}:</strong>

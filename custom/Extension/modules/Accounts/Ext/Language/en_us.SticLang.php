@@ -79,7 +79,6 @@ $mod_strings['LBL_STIC_REGISTRATIONS_ACCOUNTS_FROM_STIC_REGISTRATIONS_TITLE'] = 
 $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Target Lists';
 $mod_strings['LBL_ACCOUNT_IDENTIFICATION_NUMBER_ERROR'] = 'The identification number is not valid. A valid Spanish organization NIF is expected.';
 $mod_strings['LBL_STIC_PERSONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_PERSONAL_ENVIRONMENT_TITLE']='Personal environment relationships of which the organization is a part';
-$mod_strings['LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE'] = 'Centers';
 
 // Labour Insertion strings
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -144,6 +143,3 @@ $mod_strings['LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE'] = 'Bookings'
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
-
-// Grants strings
-$mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Grants';

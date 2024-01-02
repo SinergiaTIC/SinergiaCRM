@@ -1,11 +1,20 @@
 @font-face {
     font-family: "suitepicon";
-    src: url("suitepicon.eot?3515dd4aaa0a9aff063b8724492abe75?#iefix") format("embedded-opentype"),
-url("suitepicon.woff2?3515dd4aaa0a9aff063b8724492abe75") format("woff2"),
-url("suitepicon.woff?3515dd4aaa0a9aff063b8724492abe75") format("woff"),
-url("suitepicon.ttf?3515dd4aaa0a9aff063b8724492abe75") format("truetype"),
-url("suitepicon.svg?3515dd4aaa0a9aff063b8724492abe75#suitepicon") format("svg");
-}
+    // STIC-Custom 20231218 JBL - Versioning Style resources in order to reload resources without cleaning browser cache
+	// #1075 
+    // src: url("suitepicon.eot?f0676562847c82f0320abe75196d6471?#iefix") format("embedded-opentype"),
+    //      url("suitepicon.woff2?f0676562847c82f0320abe75196d6471") format("woff2"),
+    //      url("suitepicon.woff?f0676562847c82f0320abe75196d6471") format("woff"),
+    //      url("suitepicon.ttf?f0676562847c82f0320abe75196d6471") format("truetype"),
+    //      url("suitepicon.svg?f0676562847c82f0320abe75196d6471#suitepicon") format("svg");
+    $random-number: random($limit: 10000);
+    src: url("suitepicon.eot?f0676562847c82f0320abe75196d6471?#iefix?c=#{$random-number}") format("embedded-opentype"),
+         url("suitepicon.woff2?f0676562847c82f0320abe75196d6471?c=#{$random-number}") format("woff2"),
+         url("suitepicon.woff?f0676562847c82f0320abe75196d6471?c=#{$random-number}") format("woff"),
+         url("suitepicon.ttf?f0676562847c82f0320abe75196d6471?c=#{$random-number}") format("truetype"),
+         url("suitepicon.svg?f0676562847c82f0320abe75196d6471#suitepicon?c=#{$random-number}") format("svg");
+    // END STIC-Custom
+    }
 
 i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
     font-family: suitepicon !important;
@@ -318,10 +327,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-admin-module-loader:before {
     content: "\f164";
 }
-.suitepicon-admin-oauth2:before {
+.suitepicon-admin-oauth-keys:before {
     content: "\f165";
 }
-.suitepicon-admin-oauth-keys:before {
+.suitepicon-admin-oauth2:before {
     content: "\f166";
 }
 .suitepicon-admin-outbound-email:before {
@@ -480,16 +489,16 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-campaigntrackers:before {
     content: "\f19a";
 }
-.suitepicon-module-cases:before {
+.suitepicon-module-case-updates:before {
     content: "\f19b";
 }
-.suitepicon-module-case-updates:before {
+.suitepicon-module-cases:before {
     content: "\f19c";
 }
-.suitepicon-module-companyc:before {
+.suitepicon-module-company:before {
     content: "\f19d";
 }
-.suitepicon-module-company:before {
+.suitepicon-module-companyc:before {
     content: "\f19e";
 }
 .suitepicon-module-contacts:before {
@@ -513,10 +522,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-editview:before {
     content: "\f1a5";
 }
-.suitepicon-module-email-marketing2:before {
+.suitepicon-module-email-marketing:before {
     content: "\f1a6";
 }
-.suitepicon-module-email-marketing:before {
+.suitepicon-module-email-marketing2:before {
     content: "\f1a7";
 }
 .suitepicon-module-emails:before {
@@ -612,28 +621,28 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-sale:before {
     content: "\f1c6";
 }
-.suitepicon-module-schedulers:before {
+.suitepicon-module-sales:before {
     content: "\f1c7";
 }
-.suitepicon-module-securitygroups:before {
+.suitepicon-module-schedulers:before {
     content: "\f1c8";
 }
-.suitepicon-module-spots:before {
+.suitepicon-module-securitygroups:before {
     content: "\f1c9";
 }
-.suitepicon-module-stic-accounts-relationships:before {
+.suitepicon-module-spots:before {
     content: "\f1ca";
 }
-.suitepicon-module-stic-assessments:before {
+.suitepicon-module-stic-accounts-relationships:before {
     content: "\f1cb";
 }
-.suitepicon-module-stic-attendances:before {
+.suitepicon-module-stic-assessments:before {
     content: "\f1cc";
 }
-.suitepicon-module-stic-bookings:before {
+.suitepicon-module-stic-attendances:before {
     content: "\f1cd";
 }
-.suitepicon-module-stic-centers:before {
+.suitepicon-module-stic-bookings:before {
     content: "\f1ce";
 }
 .suitepicon-module-stic-contacts-relationships:before {
@@ -651,84 +660,81 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-stic-goals:before {
     content: "\f1d3";
 }
-.suitepicon-module-stic-grants:before {
+.suitepicon-module-stic-job-applications:before {
     content: "\f1d4";
 }
-.suitepicon-module-stic-job-applications:before {
+.suitepicon-module-stic-job-offers:before {
     content: "\f1d5";
 }
-.suitepicon-module-stic-job-offers:before {
+.suitepicon-module-stic-medication-log:before {
     content: "\f1d6";
 }
-.suitepicon-module-stic-medication-log:before {
+.suitepicon-module-stic-medication:before {
     content: "\f1d7";
 }
-.suitepicon-module-stic-medication:before {
+.suitepicon-module-stic-payment-commitments:before {
     content: "\f1d8";
 }
-.suitepicon-module-stic-payment-commitments:before {
+.suitepicon-module-stic-payments-aggregated:before {
     content: "\f1d9";
 }
-.suitepicon-module-stic-payments-aggregated:before {
+.suitepicon-module-stic-payments:before {
     content: "\f1da";
 }
-.suitepicon-module-stic-payments:before {
+.suitepicon-module-stic-personal-environment:before {
     content: "\f1db";
 }
-.suitepicon-module-stic-personal-environment:before {
+.suitepicon-module-stic-prescription:before {
     content: "\f1dc";
 }
-.suitepicon-module-stic-prescription:before {
+.suitepicon-module-stic-registrations:before {
     content: "\f1dd";
 }
-.suitepicon-module-stic-registrations:before {
+.suitepicon-module-stic-remittances:before {
     content: "\f1de";
 }
-.suitepicon-module-stic-remittances:before {
+.suitepicon-module-stic-resources:before {
     content: "\f1df";
 }
-.suitepicon-module-stic-resources:before {
+.suitepicon-module-stic-sepe-actions:before {
     content: "\f1e0";
 }
-.suitepicon-module-stic-sepe-actions:before {
+.suitepicon-module-stic-sepe-files:before {
     content: "\f1e1";
 }
-.suitepicon-module-stic-sepe-files:before {
+.suitepicon-module-stic-sepe-incidents:before {
     content: "\f1e2";
 }
-.suitepicon-module-stic-sepe-incidents:before {
+.suitepicon-module-stic-sessions:before {
     content: "\f1e3";
 }
-.suitepicon-module-stic-sessions:before {
+.suitepicon-module-stic-validation-actions:before {
     content: "\f1e4";
 }
-.suitepicon-module-stic-validation-actions:before {
+.suitepicon-module-subpanels:before {
     content: "\f1e5";
 }
-.suitepicon-module-subpanels:before {
+.suitepicon-module-survey-responses:before {
     content: "\f1e6";
 }
-.suitepicon-module-survey-responses:before {
+.suitepicon-module-surveys:before {
     content: "\f1e7";
 }
-.suitepicon-module-surveys:before {
+.suitepicon-module-targets:before {
     content: "\f1e8";
 }
-.suitepicon-module-targets:before {
+.suitepicon-module-tasks:before {
     content: "\f1e9";
 }
-.suitepicon-module-tasks:before {
+.suitepicon-module-users:before {
     content: "\f1ea";
 }
-.suitepicon-module-users:before {
+.suitepicon-template-company:before {
     content: "\f1eb";
 }
-.suitepicon-template-company:before {
+.suitepicon-template-file:before {
     content: "\f1ec";
 }
-.suitepicon-template-file:before {
-    content: "\f1ed";
-}
 .suitepicon-template-issue:before {
-    content: "\f1ee";
+    content: "\f1ed";
 }

@@ -40,26 +40,7 @@ function additionalDetailsstic_Sessions($fields, SugarBean $bean = null, $params
 
     } else {
         global $current_language;
-        include_once 'SticInclude/Utils.php';
-        $relatedBean = SticUtils::getRelatedBeanObject($bean, 'stic_sessions_stic_events');
-        $centerName = $relatedBean->stic_centers_stic_events_name;
-        $centerId = $relatedBean->stic_centers_stic_eventsstic_centers_ida;
-        $fields['EVENT_CENTER_NAME'] = $centerName;
-        $fields['EVENT_CENTER_ID'] = $centerId;
-        // if ($bean->load_relationship('stic_sessions_stic_events')) {
-        //     $resourcesBeans = $bean->stic_sessions_stic_events->getBeans();
-        //     $fields['RESOURCE_COUNT'] = count($resourcesBeans);
-        //     $fields['SHOW_BUTTONS'] = true;
-        //     if (!$fields['RESOURCE_NAME'] || !$fields['RESOURCE_ID']) {
-        //         $fields['SHOW_BUTTONS'] = false;
-        //         $fields['RESOURCES_LIST'] = array();
-        //         foreach ($resourcesBeans as $resourceBean) {
-        //             $fields['RESOURCES_LIST'][] = array('name' => $resourceBean->name, 'id' => $resourceBean->id);
-        //         }
-        //     }
-        // }
         $mod_strings = return_module_language($current_language, $bean->module_name);
-        $mod_strings['LBL_EVENT_CENTER'] = return_module_language($current_language, $relatedBean->module_name)['LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE'];
         return additional_details($fields, $bean, $mod_strings);
     }    
 }

@@ -61,7 +61,7 @@ class checkFamilyActiveStatus extends DataCheckFunction
      */
     public function doAction($records, stic_Validation_Actions $actionBean) 
     {
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Update checkActiveStatus (stic_Families)");
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Update checkPCActiveStatus (stic_Payment_Commitments)");
         return true;
     }
 }

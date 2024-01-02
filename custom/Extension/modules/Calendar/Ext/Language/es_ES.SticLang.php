@@ -26,7 +26,6 @@ $mod_strings['LBL_FILTERS_CROSS_REMOVE_FILTERS_TOOLTIP'] = 'Quitar filtros';
 
 $mod_strings['LBL_FILTERS_SESSIONS_TITLE'] = 'Sesiones';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS'] = 'Evento';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS'] = 'Centro vinculado al evento';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS_TYPE'] = 'Tipo de evento';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_ACTIVITY_TYPE'] = 'Tipo de actividad';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_COLOR'] = 'Color';

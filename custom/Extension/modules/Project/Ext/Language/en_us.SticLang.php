@@ -56,7 +56,3 @@ $mod_strings['LBL_VALIDATE_COMPLETE_REQUIRED'] = 'Percentage complete is require
 $mod_strings['LBL_VALIDATE_COMPLETE_NUMBER'] = 'Enter a number.';
 $mod_strings['LBL_VALIDATE_COMPLETE_MAX'] = 'Maximum value is 100.';
 $mod_strings['LBL_DELETE_TASK_CONFIRM'] = 'Are you sure you want to delete this task?';
-
-// Strings Grants
-$mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Grants';
-$mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centers';

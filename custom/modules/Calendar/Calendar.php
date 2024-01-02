@@ -212,7 +212,6 @@ class CustomCalendar extends Calendar
     /**
      * STIC-Custom 20211015 - Includes/excludes the stic_Sessions records from the activities array according to filters values.
      * Current existing filters:
-     * - stic_sessions_stic_centers
      * - stic_sessions_stic_events
      * - stic_sessions_contacts
      * - stic_sessions_projects
@@ -229,7 +228,6 @@ class CustomCalendar extends Calendar
             'stic_sessions_activity_type' => $current_user->getPreference('calendar_stic_sessions_activity_type'),
             'stic_sessions_stic_events_type' => $current_user->getPreference('calendar_stic_sessions_stic_events_type'),
             'stic_sessions_stic_events' => $current_user->getPreference('calendar_stic_sessions_stic_events_id'),
-            'stic_sessions_stic_centers' => $current_user->getPreference('calendar_stic_sessions_stic_centers_id'),
             'stic_sessions_responsible' => $current_user->getPreference('calendar_stic_sessions_responsible_id'),
             'stic_sessions_contacts' => $current_user->getPreference('calendar_stic_sessions_contacts_id'),
             'stic_sessions_projects' => $current_user->getPreference('calendar_stic_sessions_projects_id'),
@@ -289,7 +287,6 @@ class CustomCalendar extends Calendar
                                     }
                                     break;
                                 }
-                                
                                 case 'stic_sessions_contacts': {
                                     // A SQL query is used because we need to find the contacts linked to the event registrations
                                     $query = "SELECT
@@ -332,25 +329,6 @@ class CustomCalendar extends Calendar
                                         } else {
                                             $projectBean = array_pop($eventBean->$projectRelationship->getBeans());
                                             if ($projectBean->id != $filterValue) {
-                                                // If the session record does not match the filter value, remove it from the activities array
-                                                unset($activitiesArray[$userKey][$activityKey]);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                }
-                                case 'stic_sessions_stic_centers': {
-                                    $eventRelationship = 'stic_sessions_stic_events';
-                                    $centersRelationship = 'stic_centers_stic_events';
-                                    if (!$bean->load_relationship($eventRelationship)) {
-                                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading stic_sessions_stic_events relationship: ' . $eventRelationship);
-                                    } else {
-                                        $eventBean = array_pop($bean->$eventRelationship->getBeans());
-                                        if (!$eventBean->load_relationship($centersRelationship)) {
-                                            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading stic_centers_stic_events relationship: ' . $centersRelationship);
-                                        } else {
-                                            $centersBean = array_pop($eventBean->$centersRelationship->getBeans());
-                                            if ($centersBean->id != $filterValue) {
                                                 // If the session record does not match the filter value, remove it from the activities array
                                                 unset($activitiesArray[$userKey][$activityKey]);
                                             }

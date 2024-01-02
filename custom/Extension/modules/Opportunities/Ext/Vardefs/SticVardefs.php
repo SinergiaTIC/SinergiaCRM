@@ -341,19 +341,7 @@ $dictionary["Opportunity"]["fields"]["project_opportunities_1project_ida"] = arr
     'side' => 'right',
     'vname' => 'LBL_PROJECT_OPPORTUNITIES_1_FROM_OPPORTUNITIES_TITLE',
 );
-
-// Grants relationship Vardef
-$dictionary["Opportunity"]["fields"]["stic_grants_opportunities"] = array (
-      'name' => 'stic_grants_opportunities',
-      'type' => 'link',
-      'relationship' => 'stic_grants_opportunities',
-      'source' => 'non-db',
-      'module' => 'stic_Grants',
-      'bean_name' => 'stic_Grants',
-      'side' => 'right',
-      'vname' => 'LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE',
-);
-
+    
 // Base fields from the module
 $dictionary['Opportunity']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 $dictionary['Opportunity']['fields']['description']['massupdate'] = 0;

@@ -26,7 +26,6 @@ $mod_strings['LBL_FILTERS_CROSS_REMOVE_FILTERS_TOOLTIP'] = 'Treu els filtres';
 
 $mod_strings['LBL_FILTERS_SESSIONS_TITLE'] = 'Sessions';
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS'] = 'Esdeveniment';
-$mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_CENTERS'] = "Centre vinculat a l'esdeveniment";
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_STIC_EVENTS_TYPE'] = "Tipus d'esdeveniment";
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_ACTIVITY_TYPE'] = "Tipus d'activitat";
 $mod_strings['LBL_FILTERS_STIC_SESSIONS_COLOR'] = 'Color';

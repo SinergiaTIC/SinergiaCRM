@@ -81,7 +81,7 @@ $app_list_strings['moduleList']['Accounts'] = 'Organizacións';
 $app_list_strings['moduleList']['Contacts'] = 'Persoas';
 $app_list_strings['moduleList']['Leads'] = 'Interesados';
 $app_list_strings['moduleList']['Opportunities'] = 'Subvencións';
-$app_list_strings['moduleList']['AOS_PDF_Templates'] = 'Plantillas PDF';
+$app_list_strings['moduleList']['AOS_PDF_Templates'] = 'Plantillas PDF'; 
 $app_list_strings['moduleList']['FP_events'] = 'Eventos-FP'; // Rename the module to avoid conflicts with SinergiaTIC Events module
 $app_list_strings['moduleList']['stic_Accounts_Relationships'] = 'Relacións con Organizacións';
 $app_list_strings['moduleList']['stic_Attendances'] = 'Asistencias';
@@ -114,8 +114,6 @@ $app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescricións médicas';
-$app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
-$app_list_strings['moduleList']['stic_Centers'] = 'Centros';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -140,8 +138,6 @@ $app_list_strings['moduleListSingular']['stic_Families'] = 'Unidade familiar';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicamento';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescrición médica';
-$app_list_strings['moduleListSingular']['stic_Grants'] = 'Ayuda';
-$app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
@@ -179,7 +175,6 @@ $app_list_strings['parent_type_display']['stic_Resources'] = 'Recursos';
 $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescriciónes médicas';
-$app_list_strings['parent_type_display']['stic_Centers'] = 'Centros';
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -209,8 +204,6 @@ $app_list_strings['record_type_display']['stic_Resources'] = 'Recursos';
 $app_list_strings['record_type_display']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['record_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescricións médicas';
-$app_list_strings['record_type_display']['stic_Grants'] = 'Ayudas';
-$app_list_strings['record_type_display']['stic_Centers'] = 'Centros';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -240,8 +233,6 @@ $app_list_strings['record_type_display_notes']['stic_Resources'] = 'Recursos';
 $app_list_strings['record_type_display_notes']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescricións médicas';
-$app_list_strings['record_type_display_notes']['stic_Grants'] = 'Ayudas';
-$app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centros';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3130,53 +3121,6 @@ $app_list_strings['stic_medication_administered_list']['refused'] = 'Non. Rexeit
 $app_list_strings['stic_medication_administered_list']['out_of_stock'] = 'Non. Sen existencias';
 $app_list_strings['stic_medication_administered_list']['other'] = 'Non. Outras causas';
 
-// Ayudas: Tipos de ayudas
-$app_list_strings['stic_grants_types_list'][''] = '';
-$app_list_strings['stic_grants_types_list']['public'] = 'Administraciones públicas';
-$app_list_strings['stic_grants_types_list']['private'] = 'Instituciones privadas';
-$app_list_strings['stic_grants_types_list']['own'] = 'Propia entidad';
-$app_list_strings['stic_grants_types_list']['other'] = 'Otras';
-
-// Ayudas: Subtipos de ayudas
-$app_list_strings['stic_grants_subtypes_list'][''] = '';
-$app_list_strings['stic_grants_subtypes_list']['public_bse'] = 'Bono social eléctrico';
-$app_list_strings['stic_grants_subtypes_list']['public_imv'] = 'Ingreso mínimo vital';
-$app_list_strings['stic_grants_subtypes_list']['public_rgc'] = 'Renta garantizada de ciudadanía';
-$app_list_strings['stic_grants_subtypes_list']['public_retirement'] = 'Jubilación';
-$app_list_strings['stic_grants_subtypes_list']['public_disability'] = 'Discapacidad';
-$app_list_strings['stic_grants_subtypes_list']['public_scolarship'] = 'Estudios';
-$app_list_strings['stic_grants_subtypes_list']['public_family'] = 'Estructura familiar';
-$app_list_strings['stic_grants_subtypes_list']['public_housing'] = 'Vivienda';
-$app_list_strings['stic_grants_subtypes_list']['public_loan'] = 'Préstamo';
-$app_list_strings['stic_grants_subtypes_list']['public_other'] = 'Otras';
-$app_list_strings['stic_grants_subtypes_list']['private_discount'] = 'Descuentos';
-$app_list_strings['stic_grants_subtypes_list']['private_direct'] = 'Ayudas directas';
-$app_list_strings['stic_grants_subtypes_list']['private_loan'] = 'Préstamo';
-$app_list_strings['stic_grants_subtypes_list']['private_other'] = 'Otras';
-$app_list_strings['stic_grants_subtypes_list']['own_discount'] = 'Descuentos';
-$app_list_strings['stic_grants_subtypes_list']['own_direct'] = 'Ayudas directas';
-$app_list_strings['stic_grants_subtypes_list']['own_loan'] = 'Préstamo';
-$app_list_strings['stic_grants_subtypes_list']['own_other'] = 'Otras';
-
-// Ayudas: Periodicidades
-$app_list_strings['stic_grants_periodicities_list'][''] = '';
-$app_list_strings['stic_grants_periodicities_list']['weekly'] = 'Semanal';
-$app_list_strings['stic_grants_periodicities_list']['fortnightly'] = 'Quincenal';
-$app_list_strings['stic_grants_periodicities_list']['monthly'] = 'Mensual';
-$app_list_strings['stic_grants_periodicities_list']['bimonthly'] = 'Bimestral';
-$app_list_strings['stic_grants_periodicities_list']['quarterly'] = 'Trimestral';
-$app_list_strings['stic_grants_periodicities_list']['four_monthly'] = 'Cuatrimestral';
-$app_list_strings['stic_grants_periodicities_list']['half_yearly'] = 'Semestral';
-$app_list_strings['stic_grants_periodicities_list']['annual'] = 'Anual';
-$app_list_strings['stic_grants_periodicities_list']['punctual'] = 'Puntual';
-
-// Centros: Tipo de centro
-$app_list_strings['stic_centers_types_list'][''] = '';
-$app_list_strings['stic_centers_types_list']['administrative'] = 'Administrativo';
-$app_list_strings['stic_centers_types_list']['residential'] = 'Residencial';
-$app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de atención';
-$app_list_strings['stic_centers_types_list']['training'] = 'Formación';
-$app_list_strings['stic_centers_types_list']['other'] = 'Otros';
 
 // Modificaciones del core de SuiteCRM
 

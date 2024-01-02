@@ -93,7 +93,6 @@ if (!isEmptyFolder("SticUpdates/Migrations/")) {
     try {
         $connection = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDatabase", $mysqlUser, $mysqlPassword);
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $connection->exec("SET NAMES 'utf8'"); // Setting codification
     } catch (PDOException $e) {
         die("Connection Error: " . $e->getMessage());
     }

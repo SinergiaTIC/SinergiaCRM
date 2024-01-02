@@ -76,5 +76,4 @@ $mod_strings = array(
     'LBL_STIC_CONTACTS_RELATIONSHIPS_PROJECT_FROM_PROJECT_TITLE' => 'Projecte',
     'LBL_DEFAULT_PANEL' => 'Dades generals',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
-    'LBL_STIC_CENTERS_STIC_CONTACTS_RELATIONSHIPS_FROM_STIC_CENTERS_TITLE' => 'Centre',
 );

@@ -56,7 +56,3 @@ $mod_strings['LBL_VALIDATE_COMPLETE_REQUIRED'] = 'El percentatge de tasca comple
 $mod_strings['LBL_VALIDATE_COMPLETE_NUMBER'] =  'Indiqueu un valor numèric.';
 $mod_strings['LBL_VALIDATE_COMPLETE_MAX'] = 'El valor màxim possible és 100.';
 $mod_strings['LBL_DELETE_TASK_CONFIRM'] = 'Segur que voleu esborrar aquesta tasca?';
-
-// Cadenes adaptades Ajuts
-$mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';
-$mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centres';

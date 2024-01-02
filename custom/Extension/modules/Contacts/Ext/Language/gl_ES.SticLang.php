@@ -101,7 +101,6 @@ $mod_strings['LBL_PROJECTS_RESOURCES'] = 'Recursos do proxecto';
 $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de modelos de proxectos';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Xerar Candidaturas';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione unha oferta laboral na ventá emerxente';
-$mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
 
 // Cadeas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -219,6 +218,3 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direccións de correo";
 // Medication
 $mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Rexistro de medicación";
 $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescricións";
-
-// Cadeas de Ayudas
-$mod_strings['LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';

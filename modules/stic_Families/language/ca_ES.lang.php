@@ -77,7 +77,6 @@ $mod_strings = array(
     'LBL_STIC_FAMILIES_DOCUMENTS_FROM_DOCUMENTS_TITLE' => 'Documents',
     'LBL_STIC_FAMILIES_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE' => 'Valoracions',
     'LBL_STIC_FAMILIES_STIC_GOALS_FROM_STIC_GOALS_TITLE' => 'Objectius',
-    'LBL_STIC_GRANTS_STIC_FAMILIES_FROM_STIC_GRANTS_TITLE' => 'Ajuts',
     'LBL_START_DATE_ERROR' => "La data d'alta ha de ser igual o anterior a la data de baixa.",
     'LBL_END_DATE_ERROR' => "La data de baixa ha de ser igual o posterior a la data d'alta.",
 );

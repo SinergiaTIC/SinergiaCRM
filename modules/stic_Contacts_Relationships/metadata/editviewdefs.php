@@ -95,13 +95,6 @@ array(
                 ),
                 5 => array(
                     0 => array(
-                        'name' => 'stic_centers_stic_contacts_relationships_name',
-                        'label' => 'LBL_STIC_CENTERS_STIC_CONTACTS_RELATIONSHIPS_FROM_STIC_CENTERS_TITLE',
-                    ),
-                    1 => '',
-                ),
-                6 => array(
-                    0 => array(
                         'name' => 'description',
                         'comment' => 'Full text of the note',
                         'label' => 'LBL_DESCRIPTION',

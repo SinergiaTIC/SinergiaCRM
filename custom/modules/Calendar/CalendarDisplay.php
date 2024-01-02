@@ -229,7 +229,6 @@ class CustomCalendarDisplay extends CalendarDisplay
         $sticSessionsActivityType = $current_user->getPreference('calendar_stic_sessions_activity_type');
         $sticSessionsSticEventsType = $current_user->getPreference('calendar_stic_sessions_stic_events_type');
         $sticSessionsSticEventId = $current_user->getPreference('calendar_stic_sessions_stic_events_id');
-        $sticSessionsSticCenterId = $current_user->getPreference('calendar_stic_sessions_stic_centers_id');
         $sticSessionsResponsibleId = $current_user->getPreference('calendar_stic_sessions_responsible_id');
         $sticSessionsContactId = $current_user->getPreference('calendar_stic_sessions_contacts_id');
         $sticSessionsProjectId = $current_user->getPreference('calendar_stic_sessions_projects_id');
@@ -251,11 +250,6 @@ class CustomCalendarDisplay extends CalendarDisplay
             $eventBean = BeanFactory::getBean('stic_Events', $sticSessionsSticEventId);
             $ss->assign('stic_sessions_stic_events_name', $eventBean->name);
             $ss->assign('stic_sessions_stic_events_id', $sticSessionsSticEventId);
-        }
-        if ($sticSessionsSticCenterId) {
-            $centerBean = BeanFactory::getBean('stic_Centers', $sticSessionsSticCenterId);
-            $ss->assign('stic_sessions_stic_centers_name', $centerBean->name);
-            $ss->assign('stic_sessions_stic_centers_id', $sticSessionsSticCenterId);
         }
         if ($sticSessionsResponsibleId) {
             $contactBean = BeanFactory::getBean('Contacts', $sticSessionsResponsibleId);
@@ -290,7 +284,7 @@ class CustomCalendarDisplay extends CalendarDisplay
             $ss->assign('stic_followups_projects_id', $sticFollowUpsProjectId);
         }
         if (
-            $sticSessionsSticEventsType || $sticSessionsSticEventId || $sticSessionsSticCenterId || $sticSessionsResponsibleId || $sticSessionsContactId || $sticSessionsProjectId ||
+            $sticSessionsSticEventsType || $sticSessionsSticEventId || $sticSessionsResponsibleId || $sticSessionsContactId || $sticSessionsProjectId ||
             $sticSessionsColor || $sticSessionsActivityType || $sticFollowUpsColor || $sticFollowUpsContactId || $sticFollowUpsProjectId || $sticFollowUpsType
         ) {
             $ss->assign('applied_filters', true);

@@ -284,15 +284,6 @@ array (
         array (
           0 => 
           array (
-            'name' => 'stic_centers_contacts_name',
-            'label' => 'LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE',
-          ),
-          1 => '',
-        ),
-        8 => 
-        array (
-          0 => 
-          array (
             'name' => 'description',
             'label' => 'LBL_DESCRIPTION',
           ),

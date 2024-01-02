@@ -111,15 +111,6 @@ array (
         array (
           0 => 
           array (
-            'name' => 'stic_centers_stic_events_name',
-            'label' => 'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE',
-          ),
-          1 => '',
-        ),
-        5 => 
-        array (
-          0 => 
-          array (
             'name' => 'max_attendees',
             'label' => 'LBL_MAX_ATTENDEES',
           ),
@@ -129,7 +120,7 @@ array (
             'label' => 'LBL_ATTENDEES',
           ),
         ),
-        6 => 
+        5 => 
         array (
           0 => 
           array (
@@ -143,7 +134,7 @@ array (
             'help' => NULL,
           ),
         ),
-        7 => 
+        6 => 
         array (
           0 => 
           array (
@@ -157,7 +148,7 @@ array (
             'label' => 'LBL_SESSION_AMOUNT',
           ),
         ),
-        8 => 
+        7 => 
         array (
           0 => 
           array (
@@ -166,7 +157,7 @@ array (
           ),
           1 => '',
         ),
-        9 => 
+        8 => 
         array (
           0 => 
           array (

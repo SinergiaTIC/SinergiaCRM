@@ -78,7 +78,6 @@ $mod_strings['LBL_STIC_ACCOUNTS_RELATIONSHIPS_ACCOUNTS_FROM_STIC_ACCOUNTS_RELATI
 $mod_strings['LBL_STIC_REGISTRATIONS_ACCOUNTS_FROM_STIC_REGISTRATIONS_TITLE'] = 'Inscripcions';
 $mod_strings['LBL_ACCOUNT_IDENTIFICATION_NUMBER_ERROR'] = "El número d'identificació no és correcte. Cal que sigui un NIF de persona jurídica vàlid.";
 $mod_strings['LBL_STIC_PERSONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_PERSONAL_ENVIRONMENT_TITLE'] = "Relacions d'entorn personal de les quals l'organització forma part";
-$mod_strings['LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE'] = 'Centres';
 
 
 // Cadenes Inserció Laboral
@@ -171,6 +170,3 @@ $mod_strings['LNK_IMPORT_ACCOUNTS'] = 'Importa Organitzacions';
 $mod_strings['MSG_DUPLICATE'] = "El registre que esteu a punt de crear podria ser un duplicat d'una altra organització existent. Els registres d'organització amb noms similars es llisten a continuació. Per confirmar la creació d'aquesta organització feu clic a Desa. En cas contrari, cliqueu Cancel·la.";
 $mod_strings['MSG_SHOW_DUPLICATES'] = "El registre que esteu a punt de crear podria ser un duplicat d'una altra organització existent. Els registres d'organització amb noms similars es llisten a continuació. Per confirmar la creació d'aquesta organització feu clic a Desa. En cas contrari, cliqueu Cancel·la.";
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organitzacions';
-
-// Cadenes Ajuts
-$mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';

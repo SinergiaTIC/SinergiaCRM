@@ -84,7 +84,6 @@ $mod_strings['LBL_PROJECTS_RESOURCES'] = 'Project resources';
 $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Project templates resources';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Generate Job Applications';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Select a job offer in the popup window';
-$mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Center';
 
 // Labour Insertion Strings
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -160,6 +159,3 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Email addresses list';
 // Medication
 $mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = 'Medication Log';
 $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = 'Prescriptions';
-
-// Grants
-$mod_strings['LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE'] = 'Grants';

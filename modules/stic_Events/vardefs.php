@@ -680,38 +680,6 @@ $dictionary['stic_Events'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_SESSIONS_STIC_EVENTS_FROM_STIC_SESSIONS_TITLE',
         ),
-        // Centers relationship Vardef
-        'stic_centers_stic_events' => array (
-            'name' => 'stic_centers_stic_events',
-            'type' => 'link',
-            'relationship' => 'stic_centers_stic_events',
-            'source' => 'non-db',
-            'module' => 'stic_Centers',
-            'bean_name' => 'stic_Centers',
-            'vname' => 'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE',
-            'id_name' => 'stic_centers_stic_eventsstic_centers_ida',
-        ),
-          'stic_centers_stic_events_name' => array (
-            'name' => 'stic_centers_stic_events_name',
-            'type' => 'relate',
-            'source' => 'non-db',
-            'vname' => 'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE',
-            'save' => true,
-            'id_name' => 'stic_centers_stic_eventsstic_centers_ida',
-            'link' => 'stic_centers_stic_events',
-            'table' => 'stic_centers',
-            'module' => 'stic_Centers',
-            'rname' => 'name',
-          ),
-          'stic_centers_stic_eventsstic_centers_ida' => array (
-            'name' => 'stic_centers_stic_eventsstic_centers_ida',
-            'type' => 'link',
-            'relationship' => 'stic_centers_stic_events',
-            'source' => 'non-db',
-            'reportable' => false,
-            'side' => 'right',
-            'vname' => 'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_EVENTS_TITLE',
-          ),
 
     ),
     'relationships' => array(

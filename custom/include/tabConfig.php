@@ -30,7 +30,6 @@ $GLOBALS['tabStructure'] = array(
             2 => 'Leads',
             3 => 'stic_Contacts_Relationships',
             4 => 'stic_Accounts_Relationships',
-            5 => 'stic_Centers',
         ),
     ),
     'LBL_GROUPTAB_ACTIVITIES' => array(
@@ -79,11 +78,10 @@ $GLOBALS['tabStructure'] = array(
             1 => 'stic_Goals',
             2 => 'stic_Personal_Environment',
             3 => 'stic_FollowUps',
-            4 => 'stic_Grants',
-            5 => 'stic_Families',
-            6 => 'stic_Medication',
-            7 => 'stic_Prescription',
-            8 => 'stic_Medication_Log',
+            4 => 'stic_Families',
+            5 => 'stic_Medication',
+            6 => 'stic_Prescription',
+            7 => 'stic_Medication_Log',
         ),
     ),
     'LBL_GROUPTAB_LABOURINSERTION' => array(

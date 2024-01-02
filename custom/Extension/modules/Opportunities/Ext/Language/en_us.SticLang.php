@@ -55,6 +55,3 @@ $mod_strings['LBL_PROJECTS_SUBPANEL_TITLE'] = 'Projects';
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_SUBJECT'] = '[CRM reminder] Deadline for the opportunity: ';
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_1'] = 'There is an approaching deadline for the opportunity: ';
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = ". Please, click on the following link to review it.";
-
-//Strings for Grants
-$mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Grants';

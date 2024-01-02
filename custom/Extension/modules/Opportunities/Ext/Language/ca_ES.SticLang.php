@@ -82,6 +82,3 @@ $mod_strings['LBL_MY_CLOSED_OPPORTUNITIES'] = 'Les meves Subvencions tancades';
 $mod_strings['LBL_TOTAL_OPPORTUNITIES'] = 'Total de Subvencions';
 $mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = 'Subvencions guanyades';
 $mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importa Subvencions';
-
-// Cadenes adaptades Ajuts
-$mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';

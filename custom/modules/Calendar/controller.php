@@ -35,7 +35,6 @@ class CustomCalendarController extends CalendarController
         $current_user->setPreference('calendar_stic_sessions_activity_type', $_POST['stic_sessions_activity_type']);
         $current_user->setPreference('calendar_stic_sessions_stic_events_type', $_POST['stic_sessions_stic_events_type']);
         $current_user->setPreference('calendar_stic_sessions_stic_events_id', $_POST['stic_sessions_stic_events_id']);
-        $current_user->setPreference('calendar_stic_sessions_stic_centers_id', $_POST['stic_sessions_stic_centers_id']);
         $current_user->setPreference('calendar_stic_sessions_responsible_id', $_POST['stic_sessions_responsible_id']);
         $current_user->setPreference('calendar_stic_sessions_contacts_id', $_POST['stic_sessions_contacts_id']);
         $current_user->setPreference('calendar_stic_sessions_projects_id', $_POST['stic_sessions_projects_id']);

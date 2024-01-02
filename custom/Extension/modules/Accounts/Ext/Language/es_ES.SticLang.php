@@ -79,7 +79,6 @@ $mod_strings['LBL_STIC_REGISTRATIONS_ACCOUNTS_FROM_STIC_REGISTRATIONS_TITLE'] = 
 $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Listas de Público Objetivo';
 $mod_strings['LBL_ACCOUNT_IDENTIFICATION_NUMBER_ERROR'] = 'El número de identificación no es correcto. Debe ser un NIF de persona jurídica válido.';
 $mod_strings['LBL_STIC_PERSONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_PERSONAL_ENVIRONMENT_TITLE']='Relaciones de entorno personal de las que la organización forma parte';
-$mod_strings['LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE'] = 'Centros';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -170,7 +169,3 @@ $mod_strings['LNK_IMPORT_ACCOUNTS'] = 'Importar Organizaciones';
 $mod_strings['MSG_DUPLICATE'] = 'El registro que está a punto de crear podría ser un duplicado de otra organización existente. Los registros de organización con nombres similares se listan a continuación. Para confirmar la creación de esta organización haga clic en Guardar. En caso contrario, pulse Cancelar.';
 $mod_strings['MSG_SHOW_DUPLICATES'] = 'El registro que está a punto de crear podría ser un duplicado de otra organización existente. Los registros de organización con nombres similares se listan a continuación. Para confirmar la creación de esta organización haga clic en Guardar. En caso contrario, pulse Cancelar.';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizaciones';
-
-// Cadenas Ayudas
-
-$mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';

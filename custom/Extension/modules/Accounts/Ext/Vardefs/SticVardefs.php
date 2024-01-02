@@ -1922,30 +1922,6 @@ $dictionary["Account"]["fields"]["stic_bookings_accounts"] = array (
     'vname' => 'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE',
 );
 
-// Grants relationship Vardef
-$dictionary["Account"]["fields"]["stic_grants_accounts"] = array (
-    'name' => 'stic_grants_accounts',
-    'type' => 'link',
-    'relationship' => 'stic_grants_accounts',
-    'source' => 'non-db',
-    'module' => 'stic_Grants',
-    'bean_name' => 'stic_Grants',
-    'side' => 'right',
-    'vname' => 'LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE',
-);
-  
-// Centers relationship Vardef
-$dictionary["Account"]["fields"]["stic_centers_accounts"] = array (
-    'name' => 'stic_centers_accounts',
-    'type' => 'link',
-    'relationship' => 'stic_centers_accounts',
-    'source' => 'non-db',
-    'module' => 'stic_Centers',
-    'bean_name' => 'stic_Centers',
-    'side' => 'right',
-    'vname' => 'LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE',
-);
-
 $dictionary['Account']['fields']['account_type']['massupdate'] = 0;
 $dictionary['Account']['fields']['account_type']['studio'] = false;
 

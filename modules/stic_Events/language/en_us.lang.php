@@ -101,7 +101,6 @@ $mod_strings = array(
     'LBL_STIC_REGISTRATIONS_STIC_EVENTS_FROM_STIC_REGISTRATIONS_TITLE' => 'Registrations',
     'LBL_STIC_SESSIONS_STIC_EVENTS_FROM_STIC_SESSIONS_TITLE' => 'Sessions',
     'LBL_TOTAL_HOURS_TITLE' => 'For events with sessions, Total hours field will be automatically set by adding session durations. For events with no sessions, Total hours field can be set manually if needed.',
-    'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_CENTERS_TITLE' => 'Center',
 
     // Periodic sessions creation wizard
     'LBL_CANCEL_BUTTON' => 'Cancel',
