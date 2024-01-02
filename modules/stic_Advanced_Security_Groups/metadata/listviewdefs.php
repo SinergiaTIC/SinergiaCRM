@@ -14,9 +14,17 @@ array(
         'label' => 'LBL_NAME_LBL',
         'default' => true,
         'link' => true,
-      
+
     ),
-       'INHERIT_ASSIGNED' => array(
+    'ACTIVE' => array(
+        'type' => 'bool',
+        'align' => 'center',
+        'default' => true,
+        'studio' => 'visible',
+        'label' => 'LBL_ACTIVE',
+        'width' => '10%',
+    ),
+    'INHERIT_ASSIGNED' => array(
         'type' => 'bool',
         'align' => 'center',
         'default' => true,

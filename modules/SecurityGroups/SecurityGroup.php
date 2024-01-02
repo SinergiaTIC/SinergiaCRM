@@ -188,6 +188,21 @@ class SecurityGroup extends SecurityGroup_sugar
     public static function inherit($focus, $isUpdate)
     {
         global $sugar_config;
+
+        // STIC-CUSTOM JCH 2024-02-02 Do not apply inheritance rules if a custom rule is defined.
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
+        // Check for a custom rule for the module in the database
+        $customRuleQuery = "SELECT count(*) FROM stic_advanced_security_groups WHERE name='{$focus->module_dir}' AND active=true";
+        $customRuleCount = $focus->db->getOne($customRuleQuery);
+
+        // If a custom rule is defined (count is 1), exit the function
+        // This prevents the application of default inheritance rules
+        // defined in the SinergiaCRM configuration for this module
+        if ($customRuleCount == 1) {
+            return;
+        }
+        // END STIC CUSTOM
+
         self::assign_default_groups($focus, $isUpdate); //this must be first because it does not check for dups
         // STIC custom - JCH - 20221128 - Don't apply assigned user inheritance when saving an existing record
         // STIC#929
@@ -237,17 +252,17 @@ class SecurityGroup extends SecurityGroup_sugar
                 if ($defaultGroup['module'] == 'All' || $defaultGroup['module'] == $focus->module_dir) {
                     if ($focus->module_dir == 'Users') {
                         $query = 'insert into securitygroups_users(id,date_modified,deleted,securitygroup_id,user_id,noninheritable) '
-                            . "select distinct '" . create_guid() . "'," . $focus->db->convert(
-                                '',
-                                'today'
-                            ) . ",0,g.id,'$focus->id',1 "
+                        . "select distinct '" . create_guid() . "'," . $focus->db->convert(
+                            '',
+                            'today'
+                        ) . ",0,g.id,'$focus->id',1 "
                             . 'from securitygroups g '
                             . "left join securitygroups_users d on d.securitygroup_id = g.id and d.user_id = '$focus->id' and d.deleted = 0 "
                             . "where d.id is null and g.id = '" . $defaultGroup['securitygroup_id'] . "' and g.deleted = 0 ";
                     } else {
                         $query = 'insert into securitygroups_records(id,securitygroup_id,record_id,module,date_modified,deleted) '
-                            . "select distinct '" . create_guid() . "',g.id,'$focus->id','$focus->module_dir',"
-                            . $focus->db->convert('', 'today') . ',0 '
+                        . "select distinct '" . create_guid() . "',g.id,'$focus->id','$focus->module_dir',"
+                        . $focus->db->convert('', 'today') . ',0 '
                             . 'from securitygroups g '
                             . "left join securitygroups_records d on d.securitygroup_id = g.id and d.record_id = '$focus->id' and d.module = '$focus->module_dir' and d.deleted = 0 "
                             . "where d.id is null and g.id = '" . $defaultGroup['securitygroup_id'] . "' and g.deleted = 0 ";
@@ -286,15 +301,15 @@ class SecurityGroup extends SecurityGroup_sugar
                 // STIC-Custom EPS 20230914 When the bean has a different creator than current_user, use the creator specified by the bean
                 // STIC#1220
                 // $currentUserId = isset($current_user->id) ? $focus->db->quote($current_user->id) : null;
-                if (isset($focus->created_by) && $focus->created_by!= '') {
+                if (isset($focus->created_by) && $focus->created_by != '') {
                     $currentUserId = $focus->db->quote($focus->created_by);
                 } else {
                     $currentUserId = isset($current_user->id) ? $focus->db->quote($current_user->id) : null;
-                }    
+                }
                 // END STIC-Custom
-                $recordId =  $focus->db->quote($focus->id);
+                $recordId = $focus->db->quote($focus->id);
                 $query .= ",u.securitygroup_id,'$recordId','$focus->module_dir',"
-                    . $focus->db->convert('', 'today') . ',0 '
+                . $focus->db->convert('', 'today') . ',0 '
                     . 'from securitygroups_users u '
                     . 'inner join securitygroups g on u.securitygroup_id = g.id and g.deleted = 0 and (g.noninheritable is null or g.noninheritable <> 1) '
                     . "left join securitygroups_records d on d.securitygroup_id = u.securitygroup_id and d.record_id = '$recordId' and d.module = '$focus->module_dir' and d.deleted = 0 "
@@ -318,7 +333,7 @@ class SecurityGroup extends SecurityGroup_sugar
     {
         global $sugar_config;
         if (isset($sugar_config['securitysuite_inherit_assigned']) && $sugar_config['securitysuite_inherit_assigned'] == true && $isUpdate == false) {
-    // END STIC
+            // END STIC
             if (!empty($focus->assigned_user_id)) {
                 $assigned_user_id = $focus->db->quote($focus->assigned_user_id);
                 //inherit only for those that support Security Groups
@@ -332,9 +347,9 @@ class SecurityGroup extends SecurityGroup_sugar
                     } elseif ($focus->db->dbType == 'mssql') {
                         $query .= ' lower(newid()) ';
                     }
-                    $recordId =  $focus->db->quote($focus->id);
+                    $recordId = $focus->db->quote($focus->id);
                     $query .= ",u.securitygroup_id,'$recordId','$focus->module_dir',"
-                        . $focus->db->convert('', 'today') . ',0 '
+                    . $focus->db->convert('', 'today') . ',0 '
                         . 'from securitygroups_users u '
                         . 'inner join securitygroups g on u.securitygroup_id = g.id and g.deleted = 0 and (g.noninheritable is null or g.noninheritable <> 1) '
                         . "left join securitygroups_records d on d.securitygroup_id = u.securitygroup_id and d.record_id = '$recordId' and d.module = '$focus->module_dir' and d.deleted = 0 "
@@ -373,11 +388,11 @@ class SecurityGroup extends SecurityGroup_sugar
             $parent_type = '';
             $parent_id = '';
 
-            // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)  
+            // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)
             // STIC#725
             // if (isset($_REQUEST['relate_to']) && isset($_REQUEST['relate_id'])) {
             if (!empty($_REQUEST['relate_to']) && !empty($_REQUEST['relate_id'])) {
-            // END STIC
+                // END STIC
                 //relate_to is not guaranteed to be a module name anymore.
                 //if it isn't load the relationship and find the module name that way
                 if (!in_array($_REQUEST['relate_to'], array_keys($security_modules))) {
@@ -389,11 +404,11 @@ class SecurityGroup extends SecurityGroup_sugar
                         $focus_module_dir,
                         $focus->db
                     );
-                    // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)  
+                    // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)
                     // STIC#725
                     // if (isset($rel)) {
                     if (isset($rel_module)) {
-                    // END STIC
+                        // END STIC
                         $parent_type = $rel_module;
                         $parent_id = $_REQUEST['relate_id'];
                     }
@@ -402,11 +417,11 @@ class SecurityGroup extends SecurityGroup_sugar
                     $parent_id = $_REQUEST['relate_id'];
                 }
             }
-            // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)  
+            // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)
             // STIC#725
             // if (isset($_SESSION['portal_id'])) {
             elseif (isset($_SESSION['portal_id'])) {
-            // END STIC
+                // END STIC
                 $parent_id = $_SESSION['user_id']; //soap stores contact id in user_id field
                 $parent_type = 'Contacts';
             }
@@ -416,7 +431,7 @@ class SecurityGroup extends SecurityGroup_sugar
             // STIC#725
             // if ((empty($parent_type) || empty($parent_id)) && isset($_REQUEST['parent_type']) && isset($_REQUEST['parent_id'])) {
             elseif ((empty($parent_type) || empty($parent_id)) && isset($_REQUEST['parent_type']) && isset($_REQUEST['parent_id'])) {
-            // END STIC
+                // END STIC
                 $parent_type = $_REQUEST['parent_type'];
                 $parent_id = $_REQUEST['parent_id'];
             }
@@ -429,19 +444,18 @@ class SecurityGroup extends SecurityGroup_sugar
                 $parent_type = $_REQUEST['return_module'];
                 $parent_id = $_REQUEST['return_id'];
             }
-                        
+
             if (!empty($parent_type) && !empty($parent_id)) {
                 self::inherit_parentQuery(
-                    $focus, 
-                    $parent_type, 
-                    $parent_id, 
-                    $focus_id, 
+                    $focus,
+                    $parent_type,
+                    $parent_id,
+                    $focus_id,
                     $focus_module_dir
                 );
-            } 
+            }
             // END STIC
             //end if parent type/id
-
 
             /* need to find relate fields...for example for Cases look to see if account_id is set */
             //allow inheritance for all relate field types....iterate through and inherit each related field
@@ -463,40 +477,40 @@ class SecurityGroup extends SecurityGroup_sugar
                         //     $focus_module_dir
                         // );
                         // END STIC
-                    } elseif (isset($_SESSION['portal_id']) && isset($_SESSION[$def['id_name']])) { //soap account
-                     
+                    } elseif (isset($_SESSION['portal_id']) && isset($_SESSION[$def['id_name']])) {
+                        //soap account
+
                         $relate_parent_id = $_SESSION[$def['id_name']];
                         $relate_parent_type = $def['module'];
-                    
-                    // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)
-                    // STIC#725  
-                    // Solved STIC#156
-                    // If the relationship with the main record is created by code, none of the previous conditions 
-                    // will apply but inheritance from parent record should be done, too.
-                    // This solution has been proposed and "approved" in SugarOutfitters SecuritySuite support page 
-                    // https://www.sugaroutfitters.com/support/securitysuite/4527
-                    //             self::inherit_parentQuery(
-                    //                 $focus,
-                    //                 $relate_parent_type,
-                    //                 $relate_parent_id,
-                    //                 $focus_id,
-                    //                 $focus_module_dir
-                    //             );
-                    //         }
-                    //     }
-                    // }
 
-                    // if (!empty($parent_type) && !empty($parent_id)) {
-                    //     self::inherit_parentQuery($focus, $parent_type, $parent_id, $focus_id, $focus_module_dir);
-                    // } //end if parent type/id
-                    } elseif($def['type'] == 'relate' && isset($focus->{$def['id_name']})) {
+                        // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)
+                        // STIC#725
+                        // Solved STIC#156
+                        // If the relationship with the main record is created by code, none of the previous conditions
+                        // will apply but inheritance from parent record should be done, too.
+                        // This solution has been proposed and "approved" in SugarOutfitters SecuritySuite support page
+                        // https://www.sugaroutfitters.com/support/securitysuite/4527
+                        //             self::inherit_parentQuery(
+                        //                 $focus,
+                        //                 $relate_parent_type,
+                        //                 $relate_parent_id,
+                        //                 $focus_id,
+                        //                 $focus_module_dir
+                        //             );
+                        //         }
+                        //     }
+                        // }
+
+                        // if (!empty($parent_type) && !empty($parent_id)) {
+                        //     self::inherit_parentQuery($focus, $parent_type, $parent_id, $focus_id, $focus_module_dir);
+                        // } //end if parent type/id
+                    } elseif ($def['type'] == 'relate' && isset($focus->{$def['id_name']})) {
                         $relate_parent_id = $focus->{$def['id_name']};
                         $relate_parent_type = $def['module'];
-                   
+
                     }
-                                        
-                    if(!empty($relate_parent_id) && !empty($relate_parent_type))
-                    {
+
+                    if (!empty($relate_parent_id) && !empty($relate_parent_type)) {
                         self::inherit_parentQuery(
                             $focus,
                             $relate_parent_type,
@@ -505,14 +519,13 @@ class SecurityGroup extends SecurityGroup_sugar
                             $focus_module_dir
                         );
                     }
-                    
+
                     // Reset variables
                     $relate_parent_id = '';
                     $relate_parent_type = '';
                     // STIC END
                 }
             }
-
 
         } //end if new record
     }
@@ -540,16 +553,16 @@ class SecurityGroup extends SecurityGroup_sugar
             $query .= ' lower(newid()) ';
         }
         // STIC-Custom - JCH - 20220503 - Reapply fix parent record inheritance (#259)
-        // STIC#725  
-        $query .= ",r.securitygroup_id,'$focus_id','$focus_module_dir','" . gmdate('Y-m-d H:i:s')  ."'". ',0 '
+        // STIC#725
+        $query .= ",r.securitygroup_id,'$focus_id','$focus_module_dir','" . gmdate('Y-m-d H:i:s') . "'" . ',0 '
         // END STIC
-            . 'from securitygroups_records r '
-            . 'inner join securitygroups g on r.securitygroup_id = g.id and g.deleted = 0 and (g.noninheritable is null or g.noninheritable <> 1) '
-            . "left join securitygroups_records d on d.securitygroup_id = r.securitygroup_id and d.record_id = '"
-            . $focus->db->quote($focus_id) . "' and d.module = '"
-            . $focus->db->quote($focus_module_dir) . "' and d.deleted = 0 "
-            . "where d.id is null and r.module = '" . $focus->db->quote($parent_type) . "' "
-            . "and r.record_id = '" . $focus->db->quote($parent_id) . "' "
+        . 'from securitygroups_records r '
+        . 'inner join securitygroups g on r.securitygroup_id = g.id and g.deleted = 0 and (g.noninheritable is null or g.noninheritable <> 1) '
+        . "left join securitygroups_records d on d.securitygroup_id = r.securitygroup_id and d.record_id = '"
+        . $focus->db->quote($focus_id) . "' and d.module = '"
+        . $focus->db->quote($focus_module_dir) . "' and d.deleted = 0 "
+        . "where d.id is null and r.module = '" . $focus->db->quote($parent_type) . "' "
+        . "and r.record_id = '" . $focus->db->quote($parent_id) . "' "
             . 'and r.deleted = 0 ';
         $GLOBALS['log']->debug("SecuritySuite: Inherit from Parent: $query");
         $focus->db->query($query, true);
@@ -582,8 +595,8 @@ class SecurityGroup extends SecurityGroup_sugar
         $moduleName = $db->quote($module);
         if (isset($row) && $row['results'] == 1) {
             $query = 'insert into securitygroups_records(id,securitygroup_id,record_id,module,date_modified,deleted) '
-                . "select distinct '" . create_guid() . "',u.securitygroup_id,'$recordId','$moduleName',"
-                . $db->convert('', 'today') . ',0 '
+            . "select distinct '" . create_guid() . "',u.securitygroup_id,'$recordId','$moduleName',"
+            . $db->convert('', 'today') . ',0 '
                 . 'from securitygroups_users u '
                 . 'inner join securitygroups g on u.securitygroup_id = g.id and g.deleted = 0 and (g.noninheritable is null or g.noninheritable <> 1) '
                 . "left join securitygroups_records d on d.securitygroup_id = u.securitygroup_id and d.record_id = '$recordId' and d.module = '$moduleName' and d.deleted = 0 "
@@ -642,7 +655,7 @@ class SecurityGroup extends SecurityGroup_sugar
             $default_groups[$row['id']] = array(
                 'group' => $row['name'],
                 'module' => $row['module'],
-                'securitygroup_id' => $row['securitygroup_id']
+                'securitygroup_id' => $row['securitygroup_id'],
             );
         }
 
@@ -666,7 +679,7 @@ class SecurityGroup extends SecurityGroup_sugar
         }
         $query .= ",'" . htmlspecialchars($group_id, ENT_QUOTES) . "', '" . htmlspecialchars(
             $module,
-                ENT_QUOTES
+            ENT_QUOTES
         ) . "'," . $db->convert('', 'today') . ',0 )';
 
         $GLOBALS['log']->debug("SecuritySuite: Save Default Group: $query");
@@ -681,7 +694,7 @@ class SecurityGroup extends SecurityGroup_sugar
         $db = DBManagerFactory::getInstance();
 
         $query = "DELETE FROM securitygroups_default WHERE id = '" . htmlspecialchars($default_id,
-                ENT_QUOTES | ENT_HTML5) . "' ";
+            ENT_QUOTES | ENT_HTML5) . "' ";
         $db->query($query);
     }
 
@@ -713,7 +726,7 @@ class SecurityGroup extends SecurityGroup_sugar
                 }
 
                 if (isset($app_list_strings['moduleList'][$row['rhs_module']])) {
-                    $security_modules[$row['rhs_module']] = $app_list_strings['moduleList'][$row['rhs_module']];//rost fix
+                    $security_modules[$row['rhs_module']] = $app_list_strings['moduleList'][$row['rhs_module']]; //rost fix
                 }
             } else {
                 if (in_array($row['lhs_module'], $module_blacklist)) {
@@ -760,10 +773,10 @@ class SecurityGroup extends SecurityGroup_sugar
         }
         $db = DBManagerFactory::getInstance();
         $query = 'insert into securitygroups_records(id,securitygroup_id,record_id,module,date_modified,deleted) '
-            . "values( '" . create_guid() . "','" . $securitygroup_id . "','$record_id','$module'," . $db->convert(
-                '',
-                'today'
-            ) . ',0) ';
+        . "values( '" . create_guid() . "','" . $securitygroup_id . "','$record_id','$module'," . $db->convert(
+            '',
+            'today'
+        ) . ',0) ';
         $GLOBALS['log']->debug("SecuritySuite: addGroupToRecord: $query");
         $db->query($query, true);
     }
@@ -918,7 +931,6 @@ order by securitygroups_users.primary_group desc ";
                 }
             }
         }
-
 
         return $parent_groups;
     }

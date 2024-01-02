@@ -78,6 +78,7 @@ $mod_strings = array (
   'LBL_MODULO' => 'modulo',
   'LBL_RULES' => 'Reglas de herencia',
   'LBL_MODULE' => 'module',
+  'LBL_ACTIVE' => 'Activo',
   'LBL_INHERIT_ASSIGNED' => 'Usuario asignado',
   'LBL_INHERIT_PARENT' => 'Heredar del registro padre',
   'LBL_INHERIT_CREATOR' => 'Heredar del usuario creador',
@@ -85,7 +86,7 @@ $mod_strings = array (
   'LBL_INHERIT_FROM_MODULES' => 'custom rules module',
   'LBL_CUSTOM_RULES_PATH' => 'custom rules field',
   'LBL_INHERIT_CUSTOM' => 'Heredar de un módulo y campo especifico',
-  'LBL_INHERIT_FROM_MODULES' => 'Relación a través de la que hereda',
+  'LBL_INHERIT_FROM_MODULES' => 'Relaciones a través de las que hereda',
   'LBL_NON_INHERIT_FROM_SECURITY_GROUPS' => 'GS no heredable',
   'LBL_COMMENTS' => 'Observaciones',
 );
