@@ -114,6 +114,7 @@ $app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescricións médicas';
+$app_list_strings['moduleList']['stic_Advanced_Security_Groups'] = 'Reglas personalizadas de herencia de grupo';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
@@ -140,6 +141,7 @@ $app_list_strings['moduleListSingular']['stic_Families'] = 'Unidade familiar';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicamento';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescrición médica';
+$app_list_strings['moduleListSingular']['stic_Advanced_Security_Groups'] = 'Regras personalizadas de herdanza de grupo';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Ayuda';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
@@ -3254,3 +3256,12 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunións';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencións';
 $app_list_strings['map_relate_type_list']['Project'] = 'Proxectos';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Obxectivo';
+
+
+// SG Inheritance Rules list
+$app_list_strings['stic_custom_inheritance_rules_list'][''] = '';
+$app_list_strings['stic_custom_inheritance_rules_list']['default_groups'] = 'Grupos por defecto';
+$app_list_strings['stic_custom_inheritance_rules_list']['parent'] = 'Registro padre';
+$app_list_strings['stic_custom_inheritance_rules_list']['assigned'] = 'Usuario asignado';
+$app_list_strings['stic_custom_inheritance_rules_list']['creator'] = 'Usuario creador';
+$app_list_strings['stic_custom_inheritance_rules_list']['custom'] = 'Regla personalizada';
