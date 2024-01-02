@@ -1,9 +1,5 @@
-name: Develop - Create Instance on Opened or Reopened PR
+name: Develop - Reinstall Instance on User Action
 on:
-    pull_request:
-        types: [opened, reopened]
-        branches: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
-            - '**' # matches every branch
     workflow_dispatch:
 env:
     DEVELOP_HOST: ${{ secrets.DEVELOP_HOST}}
