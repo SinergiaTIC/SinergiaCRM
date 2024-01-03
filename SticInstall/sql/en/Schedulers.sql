@@ -38,7 +38,7 @@ INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modi
 ('88aa01ca-94a1-4313-a24e-a0a637dcf029', 'Registrations - Relationships validation', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '88aa01ca-94a1-4313-a24e-a0a637dcf029', 0, 10),
 ('375431dc-a6bb-4c0b-ab4c-af1a06229ee4', 'Remittances - Main data validation', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '375431dc-a6bb-4c0b-ab4c-af1a06229ee4', 0, 25),
 ('b07eefb3-20fb-4993-abea-66ce0aa71649', 'Remittances - Relationships validation', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b07eefb3-20fb-4993-abea-66ce0aa71649', 0, 20),
-('10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'Families - Set active/inactive records', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 0, 30);
+('10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'Families - Set active/inactive records', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 0, 30),
 ('b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'Grants - Set active/inactive records', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 0, 30);
 
 INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
