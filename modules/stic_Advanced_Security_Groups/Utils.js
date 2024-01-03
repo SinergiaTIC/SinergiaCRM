@@ -16,9 +16,36 @@ switch (viewType()) {
 
 
     $(document).ready(function () {
-      // convert to selectize
-      $('select[name=name], select#inherit_from_modules, select#non_inherit_from_security_groups').selectize();
+      // Initialize selectize for specific select elements
+      $('select[name=name], select#non_inherit_from_security_groups').selectize();
+      $('select#inherit_from_modules').selectize({
+        onInitialize: function () {
+          // Trigger a change event upon initialization
+          this.trigger('change', this.getValue(), true);
+        },
+        onChange: function (value, isOnInitialize) {
+          // Handle the change event for selectize
+          if (value.length > 0) {
+            // Uncheck the checkbox if any selectize item is selected
+            $('#inherit_parent').prop('checked', false);
+          }
+        }
+      })
+
+      // Additional document ready function to handle checkbox state change
+      $(document).ready(function () {
+        // Event listener for checkbox state change
+        $('#inherit_parent').change(function () {
+          // Clear the selectize input if checkbox is checked
+          if (this.checked) {
+            $('#inherit_from_modules')[0].selectize.clear()
+          }
+        });
+
+
+      });
     })
+
 
     break;
   case "detail":

@@ -10,22 +10,28 @@ class CustomSecurityGroupsInherit
         }
         if (!$bean->fetched_row) {
             global $sugar_config;
-            $rulesBean = self::getModuleRule($bean->module_name);
 
+            $rulesBean = self::getModuleRule($bean->module_name);
+            
+            // Comprobamos si hay una regla definida y activa de herencia para el módulo.
             if (!empty($rulesBean)) {
+                $inheritCandidates = [];
+                
+                // Creamos un array en el que guardaremos todos pares módulo-id para recuperar los grupos de los que ha de heredarse
                 include_once 'modules/SecurityGroups/SecurityGroup.php';
                 include_once 'SticInclude/Utils.php';
 
                 // Check if the inheritance of the assigned user is enabled
                 if ($rulesBean->inherit_assigned == 1) {
+                    $inheritCandidates[]=['Users',$bean->assigned_user_id];
                     // Temporarily enable the inheritance setting
-                    $sugar_config['securitysuite_inherit_assigned'] = true;
+                    // $sugar_config['securitysuite_inherit_assigned'] = true;
 
                     // Apply the inheritance logic for the assigned user
-                    SecurityGroup::inherit_assigned($bean, false);
+                    // SecurityGroup::inherit_assigned($bean, false);
 
                     // Reset the inheritance setting to its original state
-                    $sugar_config['securitysuite_inherit_assigned'] = false;
+                    // $sugar_config['securitysuite_inherit_assigned'] = false;
                 } else {
                     // Check if the inheritance setting is enabled
                     if ($sugar_config['securitysuite_inherit_assigned'] == true) {
@@ -88,18 +94,18 @@ class CustomSecurityGroupsInherit
                 // Si se han establecido reglas de herencia de algún módulo relacioando la aplicamos
 
                 $finalSGtoInherit = array();
+
                 $bean->load_relationship('SecurityGroups');
 
-                for ($i = 10; $i > 0; $i--) {
-                    $customInherit = '';
-                    $customInherit = $rulesBean->{"inherit_from_modules_" . $i};
+                // Obtenemos los valores de inherit_from_modules a partir del control multienum
+                $modulesToInherit = unencodeMultienum($rulesBean->inherit_from_modules);
 
-                    if (!empty($customInherit) && (is_string($bean->$customInherit))) {
-                        $finalSGtoInherit[] = $bean->$customInherit;
+                foreach ($modulesToInherit as $customInherit) {
+                    if (!empty($customInherit) && is_string($customInherit)) {
+                        $finalSGtoInherit[] = $customInherit;
                     } else if (!empty($customInherit)) {
                         $relatedSG = '';
                         $customInheritBean = SticUtils::getRelatedBeanObject($bean, $customInherit);
-                        //$GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': relatedField: '.$customInheritBean->id);
                         if (!empty($customInheritBean->id)) {
                             $relatedSG = self::getRelatedSG($customInheritBean->id);
                             foreach ($relatedSG as $relSG) {
@@ -108,6 +114,25 @@ class CustomSecurityGroupsInherit
                         }
                     }
                 }
+
+                // for ($i = 10; $i > 0; $i--) {
+                //     $customInherit = '';
+                //     $customInherit = $rulesBean->{"inherit_from_modules_" . $i};
+
+                //     if (!empty($customInherit) && (is_string($bean->$customInherit))) {
+                //         $finalSGtoInherit[] = $bean->$customInherit;
+                //     } else if (!empty($customInherit)) {
+                //         $relatedSG = '';
+                //         $customInheritBean = SticUtils::getRelatedBeanObject($bean, $customInherit);
+                //         //$GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': relatedField: '.$customInheritBean->id);
+                //         if (!empty($customInheritBean->id)) {
+                //             $relatedSG = self::getRelatedSG($customInheritBean->id);
+                //             foreach ($relatedSG as $relSG) {
+                //                 $finalSGtoInherit[] = $relSG;
+                //             }
+                //         }
+                //     }
+                // }
 
                 //$exemptInherit = $rulesBean->non_inherit_from_security_groups;
 
@@ -169,7 +194,7 @@ class CustomSecurityGroupsInherit
     public static function getModuleRule($moduleName)
     {
         global $db;
-        $ruleId = $db->getOne("SELECT id FROM stic_advanced_security_groups WHERE name='{$moduleName}' AND deleted=0 ORDER BY date_entered DESC LIMIT 1");
+        $ruleId = $db->getOne("SELECT id FROM stic_advanced_security_groups WHERE name='{$moduleName}' AND deleted=0 AND active=true");
         $rulesBean = BeanFactory::getBean('stic_Advanced_Security_Groups', $ruleId);
         return $rulesBean;
 

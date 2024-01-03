@@ -40,14 +40,14 @@ array(
         'label' => 'LBL_INHERIT_CREATOR',
         'width' => '10%',
     ),
-    // 'INHERIT_PARENT' => array(
-    //     'type' => 'bool',
-    //     'align' => 'center',
-    //     'default' => true,
-    //     'studio' => 'visible',
-    //     'label' => 'LBL_INHERIT_PARENT',
-    //     'width' => '10%',
-    // ),
+    'INHERIT_PARENT' => array(
+        'type' => 'bool',
+        'align' => 'center',
+        'default' => true,
+        'studio' => 'visible',
+        'label' => 'LBL_INHERIT_PARENT',
+        'width' => '10%',
+    ),
     'INHERIT_FROM_MODULES' => array(
         'type' => 'multienum',
         'default' => true,

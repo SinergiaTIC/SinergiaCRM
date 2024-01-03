@@ -38,11 +38,10 @@ array(
 
                     ),
                     1 => array('name' => 'active',
-                        'label' => 'LBL_ACTIVE'
-
+                        'label' => 'LBL_ACTIVE',
 
                     ),
-                ), 
+                ),
                 1 => array(
                     0 => array(
                         'name' => 'inherit_assigned',
@@ -51,14 +50,13 @@ array(
                     1 => array(
                         'name' => 'inherit_creator',
                         'label' => 'LBL_INHERIT_CREATOR',
+                    )),
+                2 => array(
+                    1 => array('name' => 'inherit_parent',
+                        'label' => 'LBL_INHERIT_PARENT',
                     ),
-                    // 2 => array(
-                    //     'name' => 'inherit_parent',
-                    //     'studio' => 'visible',
-                    //     'label' => 'LBL_INHERIT_PARENT',
-                    // ),
-
                 ),
+
                 4 => array(
                     0 => array(
                         'name' => 'inherit_from_modules',
@@ -72,7 +70,6 @@ array(
                     ),
 
                 ),
-                
 
             ),
 
