@@ -42,7 +42,7 @@ array(
 
 
                     ),
-                ),
+                ), 
                 1 => array(
                     0 => array(
                         'name' => 'inherit_assigned',
