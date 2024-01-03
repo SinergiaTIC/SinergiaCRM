@@ -78,8 +78,7 @@ class CustomSecurityGroupsInherit
                         // Log a message indicating that the inheritance rule does not apply
                         // due to the configuration setting
                         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' .
-                            "The variablrsos	24/07/2023 11:20	13/07/2023 15:22	
-                            ￼		PROPUESTAS - HE	No	No	No	e {sugar_config['securitysuite_inherit_parent']} " .
+                            "The variable {sugar_config['securitysuite_inherit_parent']} " .
                             "is set to true, indicating that the inheritance rule for the " .
                             "parent defined in the stic_Advanced_Security_Groups module " .
                             "does not apply");

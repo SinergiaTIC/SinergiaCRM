@@ -4,22 +4,17 @@ $viewdefs[$module_name] =
 array(
     'EditView' => array(
         'templateMeta' => array(
-            'maxColumns' => '3',
-            'maxColumnsBasic' => '3',
+            'maxColumns' => '2',
+            'maxColumnsBasic' => '2',
             'widths' => array(
                 0 => array(
-                    'label' => '15',
-                    'field' => '15',
+                    'label' => '25',
+                    'field' => '25',
                 ),
                 1 => array(
-                    'label' => '15',
-                    'field' => '15',
+                    'label' => '25',
+                    'field' => '25',
                 ),
-                2 => array(
-                    'label' => '15',
-                    'field' => '15',
-                ),
-                
             ),
             'useTabs' => true,
             'tabDefs' => array(
@@ -39,26 +34,29 @@ array(
                 0 => array(
                     0 => array('name' => 'name_lbl',
                         'type' => 'readonly',
-                        'customCode' => '<h1>{$fields.name_lbl.value}</h1>',
+                        'customCode' => '<span style="padding:2px 4px;font-weight:bold;background-color:green;color:white;">{$fields.name_lbl.value}</span>',
+
+                    ),
+                    1 => array('name' => 'active',
+                        'label' => 'LBL_ACTIVE'
+
 
                     ),
                 ),
                 1 => array(
                     0 => array(
                         'name' => 'inherit_assigned',
-                        'studio' => 'visible',
                         'label' => 'LBL_INHERIT_ASSIGNED',
                     ),
                     1 => array(
                         'name' => 'inherit_creator',
-                        'studio' => 'visible',
                         'label' => 'LBL_INHERIT_CREATOR',
                     ),
-                    2 => array(
-                        'name' => 'inherit_parent',
-                        'studio' => 'visible',
-                        'label' => 'LBL_INHERIT_PARENT',
-                    ),
+                    // 2 => array(
+                    //     'name' => 'inherit_parent',
+                    //     'studio' => 'visible',
+                    //     'label' => 'LBL_INHERIT_PARENT',
+                    // ),
 
                 ),
                 4 => array(
@@ -67,16 +65,14 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_INHERIT_FROM_MODULES',
                     ),
-
-                ),
-                5 => array(
-                    0 => array(
+                    1 => array(
                         'name' => 'non_inherit_from_security_groups',
                         'studio' => 'visible',
                         'label' => 'LBL_NON_INHERIT_FROM_SECURITY_GROUPS',
                     ),
-                    1 => '',
+
                 ),
+                
 
             ),
 
