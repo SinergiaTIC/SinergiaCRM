@@ -189,7 +189,7 @@ class SecurityGroup extends SecurityGroup_sugar
     {
         global $sugar_config;
 
-        // STIC-CUSTOM JCH 2024-02-02 Do not apply global inheritance rules if a custom rule is defined for current module.
+        // STIC-CUSTOM JCH 2024-02-02 Do not apply global inheritance rules if a custom rule is defined for current module and $sugar_config['stic_advanced_security_groups_enabled'] === true.
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
         // Check for a custom rule for the module in stic_Advanced_Security_Groups
         $customRuleQuery = "SELECT count(*) FROM stic_advanced_security_groups WHERE name='{$focus->module_dir}' AND deleted=0 AND active=true";
@@ -197,7 +197,7 @@ class SecurityGroup extends SecurityGroup_sugar
 
         // If a custom rule is defined for current module, exit the function
         // This prevents the application of default inheritance global rules
-        if ($customRuleCount == 1) {
+        if ($customRuleCount == 1 && $sugar_config['stic_advanced_security_groups_enabled'] === true) {
             return;
         }
         // END STIC CUSTOM

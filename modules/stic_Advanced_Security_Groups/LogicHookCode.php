@@ -13,6 +13,12 @@ class stic_Advanced_Security_Groups_Rules
      */
     public function after_save(&$bean, $event, $arguments)
     {
+        // Skip processing if $sugar_config['stic_advanced_security_groups_enabled'] is disabled
+        global $sugar_config;
+        if ($sugar_config['stic_advanced_security_groups_enabled'] === false) {
+            return;
+        }
+
         // Skip processing for the 'SugarFeed' module
         if (in_array($bean->module_name, ['SugarFeed'])) {
             return;
