@@ -21,15 +21,16 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
+if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-global $mod_strings, $app_strings, $sugar_config;
- 
-// if(ACLController::checkAccess('stic_Advanced_Security_Groups', 'edit', true)){
-//     $module_menu[]=array('index.php?module=stic_Advanced_Security_Groups&action=EditView&return_module=stic_Advanced_Security_Groups&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Advanced_Security_Groups');
-// }
-if(ACLController::checkAccess('stic_Advanced_Security_Groups', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Advanced_Security_Groups&action=index&return_module=stic_Advanced_Security_Groups&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Advanced_Security_Groups');
+global $mod_strings, $app_strings, $sugar_config, $current_user, $current_language;
+
+if (is_admin($current_user)) {
+    $admin_mod_strings = return_module_language($current_language, 'Administration');
+    $module_menu[] = array('index.php?module=stic_Advanced_Security_Groups&action=index&return_module=stic_Advanced_Security_Groups&return_action=DetailView', $mod_strings['LNK_LIST'], 'View', 'stic_Advanced_Security_Groups');
+    $module_menu[] = array("index.php?module=Users&action=index&return_module=SecurityGroups&return_action=ListView", $admin_mod_strings['LBL_MANAGE_USERS_TITLE'], "Create");
+    $module_menu[] = array("index.php?module=ACLRoles&action=index&return_module=SecurityGroups&return_action=ListView", $admin_mod_strings['LBL_MANAGE_ROLES_TITLE'], "Role_Management");
+    $module_menu[] = array("index.php?module=SecurityGroups&action=config&return_module=SecurityGroups&return_action=ListView", $admin_mod_strings['LBL_CONFIG_SECURITYGROUPS_TITLE'], "Security_Suite_Settings");
 }
