@@ -20,15 +20,30 @@
 // print_r($rulesbean2->id);die();
 
 global $current_user;
-
 $bean = BeanFactory::newBean($_REQUEST['modulo']);
 $bean->set_created_by = false;
-
-$bean->name = rand();
 $bean->assigned_user_id = 2;
 $bean->created_by = 1;
-$bean->stic_events_projectproject_ida = '304778dc-b17b-4bc3-6190-62a209a952fb';
-$bean->stic_centers_stic_eventsstic_centers_ida = '155f0177-315a-6f66-74b3-65818cd1cb8c';
+$bean->name = rand();
+
+
+switch ($_REQUEST['modulo']) {
+    case 'stic_Events':
+        $bean->stic_centers_stic_eventsstic_centers_ida = '155f0177-315a-6f66-74b3-65818cd1cb8c';
+        $bean->stic_events_projectproject_ida = '304778dc-b17b-4bc3-6190-62a209a952fb';
+        
+        break;
+    case 'stic_Contacts_Relationships':
+        $bean->stic_contacts_relationships_contactscontacts_ida='9e840dc9-9544-1649-b346-658ea9bec796';
+        $bean->stic_centers_stic_contacts_relationshipsstic_centers_ida = '155f0177-315a-6f66-74b3-65818cd1cb8c';
+        $bean->stic_contacts_relationships_projectproject_ida = '304778dc-b17b-4bc3-6190-62a209a952fb';
+        
+        break;
+    
+    default:
+        # code...
+        break;
+}
 $bean->save();
 // var_dump($bean);die();
 SugarApplication::redirect("index.php?module={$_REQUEST['modulo']}&action=detailview&record={$bean->id}");

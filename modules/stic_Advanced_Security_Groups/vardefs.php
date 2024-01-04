@@ -187,7 +187,7 @@ $dictionary['stic_Advanced_Security_Groups'] = array(
         ),
 
         'inherit_assigned' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'inherit_assigned',
             'vname' => 'LBL_INHERIT_ASSIGNED',
             'type' => 'bool',
@@ -211,7 +211,7 @@ $dictionary['stic_Advanced_Security_Groups'] = array(
             'popupHelp' => 'LBL_INHERIT_ASSIGNED_CUSTOM_INFO',
         ),
         'inherit_creator' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'inherit_creator',
             'vname' => 'LBL_INHERIT_CREATOR',
             'type' => 'bool',
@@ -235,7 +235,7 @@ $dictionary['stic_Advanced_Security_Groups'] = array(
             'popupHelp' => 'LBL_INHERIT_CREATOR_CUSTOM_INFO',
         ),
         'inherit_parent' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'inherit_parent',
             'vname' => 'LBL_INHERIT_PARENT',
             'type' => 'bool',

@@ -16,40 +16,51 @@ class CustomSecurityGroupsInherit
             // Comprobamos si hay una regla definida y activa de herencia para el módulo.
             if (!empty($rulesBean) && $rulesBean->active == 1) {
 
-                // Creamos un array en el que guardaremos todos pares módulo-id para recuperar los grupos de los que ha de heredarse
-                $inheritCandidates = [];
-
                 $securityGroupsCandidatesToInherit = [];
 
                 require_once 'modules/SecurityGroups/SecurityGroup.php';
                 require_once 'SticInclude/Utils.php';
                 require_once 'modules/stic_Advanced_Security_Groups/Utils.php';
 
-                // Check if the inheritance of the assigned user is enabled
+                // Get security groups for assigned user if enabled
                 if ($rulesBean->inherit_assigned == 1) {
-                    $inheritCandidates[] = ['Users' => $bean->assigned_user_id];
+                    $userGroups = SecurityGroup::getUserSecurityGroups($bean->assigned_user_id);
+
+                    if (!empty($userGroups)) {
+                        foreach ($userGroups as $group) {
+                            $securityGroupsCandidatesToInherit = array_merge(
+                                $securityGroupsCandidatesToInherit,
+                                [['record_id' => $bean->id, 'securitygroup_id' => $group['id']]]
+                            );
+                        }
+                    }
                 }
 
-                // Check if the inheritance of the creator is enabled
+                // Get security groups for creator user if enabled
                 if ($rulesBean->inherit_creator == 1) {
-                    $inheritCandidates[] = ['Users' => $bean->created_by];
+                    $userGroups = SecurityGroup::getUserSecurityGroups($bean->created_by);
+
+                    if (!empty($userGroups)) {
+                        foreach ($userGroups as $group) {
+                            $securityGroupsCandidatesToInherit = array_merge(
+                                $securityGroupsCandidatesToInherit,
+                                [['record_id' => $bean->id, 'securitygroup_id' => $group['id']]]
+                            );
+                        }
+                    }
                 }
 
-                // if the inheritance of the parent is enabled (for all modules or only for some modules)
+                // get security groups for parent records if the inheritance of the parent is enabled (for all modules or only for some modules)
                 $allRelatedModules = stic_Advanced_Security_GroupsUtils::getRelatedModulesList($bean->module_dir, 'module_names');
                 $filteredRelatedModules = unencodeMultienum($rulesBean->inherit_from_modules);
-                // var_dump($allRelatedModules);
-                // var_dump($filteredRelatedModules);
-
                 foreach ($allRelatedModules as $value) {
                     if (!empty($bean->{$value['field']})) {
                         if ($rulesBean->inherit_parent == 1 || in_array($value['relationship'], $filteredRelatedModules)) {
-                            // $inheritCandidates[] = $bean->{$value['field']};
                             $currentRecordGroups = self::getRelatedSG($bean->{$value['field']});
                             foreach ($currentRecordGroups as $val2) {
                                 $securityGroupsCandidatesToInherit = array_merge(
                                     $securityGroupsCandidatesToInherit,
-                                    [['module' => $value['module'], 'record_id' => $bean->{$value['field']}, 'securitygroup_id' => $val2]]
+                                    [['record_id' => $bean->id, 'securitygroup_id' => $val2]]
                                 );
                             }
 
@@ -57,15 +68,37 @@ class CustomSecurityGroupsInherit
                     }
                 }
 
-                // CReamos un array con los grupos que no son heredables en ningún caso para el módulo actual
+                // Creamos un array con los grupos que no son heredables en ningún caso para el módulo actual
                 $notInheritableGroups = unencodeMultienum($rulesBean->non_inherit_from_security_groups);
+                // Añadimos los grupos de seguridad definidos como NO heredables de forma global
+                $result=$bean->db->query("SELECT id FROM securitygroups where deleted=0 and noninheritable=1");
+                foreach ($result as $row) {
+                    $notInheritableGroups[]=$row['id'];
+                }
 
-                // var_dump($inheritCandidates);
+
+
+
+
+
+                // Añadimos los grupos de seguridad al registro, exluyendo los no heredables
+                $securityGroupBean = BeanFactory::newBean('SecurityGroups');
+                foreach ($securityGroupsCandidatesToInherit as $key => $item) {
+                    if (!in_array($item['securitygroup_id'], $notInheritableGroups)) {
+                        $securityGroupBean->addGroupToRecord($bean->module_name, $item['record_id'], $item['securitygroup_id']);
+                    }                   
+                }
+
+                // Añadimos los grupos por defecto definidos en la configuración general para el módulo
+                SecurityGroup::assign_default_groups($bean, $false);
+
+                // This code is only for develop purposes and must be comment in production
+                foreach ($securityGroupsCandidatesToInherit as $key => $sg) {
+                    $securityGroupsCandidatesToInherit[$key]['grupo'] = $bean->db->getOne("SELECT name from securitygroups WHERE id='{$sg['securitygroup_id']}'");
+                }
                 var_dump('$securityGroupsCandidatesToInherit', $securityGroupsCandidatesToInherit);
                 var_dump('$notInheritableGroups', $notInheritableGroups);
-                die();
-                // 155f0177-315a-6f66-74b3-65818cd1cb8c
-                // }
+                // die();
 
                 // if inheritance of the parent is enabled only for specific modules
                 // Obtenemos los valores de inherit_from_modules a partir del control multienum (for all modules or only for some modules)
