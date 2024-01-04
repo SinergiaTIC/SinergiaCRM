@@ -8,88 +8,96 @@ class CustomSecurityGroupsInherit
         if (in_array($bean->module_name, ['SugarFeed'])) {
             return;
         }
+
         if (!$bean->fetched_row) {
-            global $sugar_config;
 
             $rulesBean = self::getModuleRule($bean->module_name);
-            
+
             // Comprobamos si hay una regla definida y activa de herencia para el módulo.
-            if (!empty($rulesBean)) {
-                $inheritCandidates = [];
-                
+            if (!empty($rulesBean) && $rulesBean->active == 1) {
+
                 // Creamos un array en el que guardaremos todos pares módulo-id para recuperar los grupos de los que ha de heredarse
-                include_once 'modules/SecurityGroups/SecurityGroup.php';
-                include_once 'SticInclude/Utils.php';
+                $inheritCandidates = [];
+
+                $securityGroupsCandidatesToInherit = [];
+
+                require_once 'modules/SecurityGroups/SecurityGroup.php';
+                require_once 'SticInclude/Utils.php';
+                require_once 'modules/stic_Advanced_Security_Groups/Utils.php';
 
                 // Check if the inheritance of the assigned user is enabled
                 if ($rulesBean->inherit_assigned == 1) {
-                    $inheritCandidates[]=['Users',$bean->assigned_user_id];
-                    // Temporarily enable the inheritance setting
-                    // $sugar_config['securitysuite_inherit_assigned'] = true;
-
-                    // Apply the inheritance logic for the assigned user
-                    // SecurityGroup::inherit_assigned($bean, false);
-
-                    // Reset the inheritance setting to its original state
-                    // $sugar_config['securitysuite_inherit_assigned'] = false;
-                } else {
-                    // Check if the inheritance setting is enabled
-                    if ($sugar_config['securitysuite_inherit_assigned'] == true) {
-                        // Log a message indicating that the inheritance rule does not apply
-                        // due to the configuration setting
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' .
-                            "The variable {sugar_config['securitysuite_inherit_assigned']} " .
-                            "is set to true, indicating that the inheritance rule for the " .
-                            "assigned user defined in the stic_Advanced_Security_Groups module " .
-                            "does not apply");
-                    }
+                    $inheritCandidates[] = ['Users' => $bean->assigned_user_id];
                 }
 
                 // Check if the inheritance of the creator is enabled
                 if ($rulesBean->inherit_creator == 1) {
-                    // Temporarily enable the inheritance setting
-                    $sugar_config['securitysuite_inherit_creator'] = true;
+                    $inheritCandidates[] = ['Users' => $bean->created_by];
+                }
 
-                    // Apply the inheritance logic for the creator
-                    SecurityGroup::inherit_creator($bean, false);
+                // if the inheritance of the parent is enabled (for all modules or only for some modules)
+                $allRelatedModules = stic_Advanced_Security_GroupsUtils::getRelatedModulesList($bean->module_dir, 'module_names');
+                $filteredRelatedModules = unencodeMultienum($rulesBean->inherit_from_modules);
+                // var_dump($allRelatedModules);
+                // var_dump($filteredRelatedModules);
 
-                    // Reset the inheritance setting to its original state
-                    $sugar_config['securitysuite_inherit_creator'] = false;
-                } else {
-                    // Check if the inheritance setting is enabled
-                    if ($sugar_config['securitysuite_inherit_creator'] == true) {
-                        // Log a message indicating that the inheritance rule does not apply
-                        // due to the configuration setting
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' .
-                            "The variable {sugar_config['securitysuite_inherit_creator']} " .
-                            "is set to true, indicating that the inheritance rule for the " .
-                            "creator defined in the stic_Advanced_Security_Groups module " .
-                            "does not apply");
+                foreach ($allRelatedModules as $value) {
+                    if (!empty($bean->{$value['field']})) {
+                        if ($rulesBean->inherit_parent == 1 || in_array($value['relationship'], $filteredRelatedModules)) {
+                            // $inheritCandidates[] = $bean->{$value['field']};
+                            $currentRecordGroups = self::getRelatedSG($bean->{$value['field']});
+                            foreach ($currentRecordGroups as $val2) {
+                                $securityGroupsCandidatesToInherit = array_merge(
+                                    $securityGroupsCandidatesToInherit,
+                                    [['module' => $value['module'], 'record_id' => $bean->{$value['field']}, 'securitygroup_id' => $val2]]
+                                );
+                            }
+
+                        }
                     }
                 }
 
-                // Check if the inheritance of the parent is enabled
-                if ($rulesBean->inherit_parent == 1) {
-                    // Temporarily enable the inheritance setting
-                    $sugar_config['securitysuite_inherit_parent'] = true;
+                // CReamos un array con los grupos que no son heredables en ningún caso para el módulo actual
+                $notInheritableGroups = unencodeMultienum($rulesBean->non_inherit_from_security_groups);
 
-                    // Apply the inheritance logic for the parent
-                    SecurityGroup::inherit_parent($bean, false);
+                // var_dump($inheritCandidates);
+                var_dump('$securityGroupsCandidatesToInherit', $securityGroupsCandidatesToInherit);
+                var_dump('$notInheritableGroups', $notInheritableGroups);
+                die();
+                // 155f0177-315a-6f66-74b3-65818cd1cb8c
+                // }
 
-                    // Reset the inheritance setting to its original state
-                    $sugar_config['securitysuite_inherit_parent'] = false;
-                } else {
-                    // Check if the inheritance setting is enabled
-                    if ($sugar_config['securitysuite_inherit_parent'] == true) {
-                        // Log a message indicating that the inheritance rule does not apply
-                        // due to the configuration setting
-                        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' .
-                            "The variable {sugar_config['securitysuite_inherit_parent']} " .
-                            "is set to true, indicating that the inheritance rule for the " .
-                            "parent defined in the stic_Advanced_Security_Groups module " .
-                            "does not apply");
-                    }
-                }
+                // if inheritance of the parent is enabled only for specific modules
+                // Obtenemos los valores de inherit_from_modules a partir del control multienum (for all modules or only for some modules)
+
+                // if (!empty($filteredRelatedModules)) {
+
+                //     $someRelatedModules = stic_Advanced_Security_GroupsUtils::getRelatedModulesList($bean->module_dir, 'module_names');
+                //     foreach ($someRelatedModules as $key => $value) {
+                //         # code...
+                //     }
+                // }
+
+                //     // Temporarily enable the inheritance setting
+                //     $sugar_config['securitysuite_inherit_parent'] = true;
+
+                //     // Apply the inheritance logic for the parent
+                //     // SecurityGroup::inherit_parent($bean, false);
+
+                //     // Reset the inheritance setting to its original state
+                //     $sugar_config['securitysuite_inherit_parent'] = false;
+                // } else {
+                //     // Check if the inheritance setting is enabled
+                //     if ($sugar_config['securitysuite_inherit_parent'] == true) {
+                //         // Log a message indicating that the inheritance rule does not apply
+                //         // due to the configuration setting
+                //         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' .
+                //             "The variable {sugar_config['securitysuite_inherit_parent']} " .
+                //             "is set to true, indicating that the inheritance rule for the " .
+                //             "parent defined in the stic_Advanced_Security_Groups module " .
+                //             "does not apply");
+                //     }
+                // }
 
                 // Si se han establecido reglas de herencia de algún módulo relacioando la aplicamos
 
@@ -97,10 +105,8 @@ class CustomSecurityGroupsInherit
 
                 $bean->load_relationship('SecurityGroups');
 
-                // Obtenemos los valores de inherit_from_modules a partir del control multienum
-                $modulesToInherit = unencodeMultienum($rulesBean->inherit_from_modules);
+                foreach ($filteredRelatedModules as $customInherit) {
 
-                foreach ($modulesToInherit as $customInherit) {
                     if (!empty($customInherit) && is_string($customInherit)) {
                         $finalSGtoInherit[] = $customInherit;
                     } else if (!empty($customInherit)) {
@@ -136,28 +142,28 @@ class CustomSecurityGroupsInherit
 
                 //$exemptInherit = $rulesBean->non_inherit_from_security_groups;
 
-                $finalExemptInherit = array();
+                // $notInheritableGroups = array();
 
-                for ($i = 5; $i > 0; $i--) {
-                    $exemptInherit = '';
-                    $exemptInherit = $rulesBean->{"non_inherit_from_security_groups_" . $i};
-                    if (!empty($exemptInherit)) {
-                        $finalExemptInherit[] = $exemptInherit;
-                    }
-                }
+                // for ($i = 5; $i > 0; $i--) {
+                //     $exemptInherit = '';
+                //     $exemptInherit = $rulesBean->{"non_inherit_from_security_groups_" . $i};
+                //     if (!empty($exemptInherit)) {
+                //         $notInheritableGroups[] = $exemptInherit;
+                //     }
+                // }
 
                 if (!empty($finalSGtoInherit)) {
                     //$finalSGtoInherit = array_unique($finalSGtoInherit);
                     $finalSGtoInherit = array_unique($finalSGtoInherit);
 
-                    if (!empty($finalExemptInherit)) {
-                        $finalExemptInherit = array_unique($finalExemptInherit);
+                    if (!empty($notInheritableGroups)) {
+                        $notInheritableGroups = array_unique($notInheritableGroups);
                         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': exemptInherit: ' . $exemptInherit);
                         //$finalSGtoInherit.indexOf($exemptInherit);
-                        /*foreach (array_diff($finalSGtoInherit, $finalExemptInherit) as $key) {
+                        /*foreach (array_diff($finalSGtoInherit, $notInheritableGroups) as $key) {
                         unset($finalSGtoInherit[$key]);
                         }*/
-                        $finalSGtoInherit = array_diff($finalSGtoInherit, $finalExemptInherit);
+                        $finalSGtoInherit = array_diff($finalSGtoInherit, $notInheritableGroups);
                     }
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': relatedSG: ' . print_r($finalSGtoInherit, true));
 
@@ -167,6 +173,22 @@ class CustomSecurityGroupsInherit
                 }
             }
         }
+    }
+
+    public static function getRelatedSG($relatedID)
+    {
+        global $db;
+        $relatedIDs = array();
+        $result = $db->query("SELECT DISTINCT securitygroup_id
+                            FROM securitygroups_records sr
+                                LEFT JOIN securitygroups sg ON sr.securitygroup_id=sg.id
+                            WHERE sr.record_id='{$relatedID}'
+                            AND sr.deleted=0
+                            AND sg.noninheritable=0");
+        foreach ($result as $row) {
+            $relatedIDs[] = $row['securitygroup_id'];
+        }
+        return $relatedIDs;
     }
 
     /**
@@ -198,17 +220,6 @@ class CustomSecurityGroupsInherit
         $rulesBean = BeanFactory::getBean('stic_Advanced_Security_Groups', $ruleId);
         return $rulesBean;
 
-    }
-
-    public static function getRelatedSG($relatedID)
-    {
-        global $db;
-        $relatedIDs = array();
-        $result = $db->query("SELECT DISTINCT securitygroup_id FROM securitygroups_records sr left join securitygroups sg on sr.securitygroup_id=sg.id WHERE sr.record_id='{$relatedID}' AND sr.deleted=0 AND sg.noninheritable=0");
-        foreach ($result as $row) {
-            $relatedIDs[] = $row['securitygroup_id'];
-        }
-        return $relatedIDs;
     }
 
     public static function checkrelatedField($relatedID, $bean)

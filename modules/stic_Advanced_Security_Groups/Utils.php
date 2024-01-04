@@ -14,41 +14,120 @@ if (!is_admin($current_user)) {
 
 class stic_Advanced_Security_GroupsUtils
 {
+
+    /**
+     * Genera y devuelve un array con los módulos filtrados.
+     *
+     * @return array Array de módulos filtrados.
+     */
+    public static function generateFilteredModuleArray()
+    {
+        global $app_list_strings;
+        $systemTabs = TabController::get_system_tabs();
+        $resArray = array();
+
+        foreach ($app_list_strings['moduleList'] as $key => $val) {
+            if (!in_array($key, $GLOBALS['modInvisList']) && in_array($key, $systemTabs) && $key != 'Home') {
+                $resArray[$key] = $val;
+            } else {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $key . ' Module discarded');
+            }
+        }
+
+        asort($resArray);
+        return $resArray;
+    }
+
+    public static function setCustomFilteredModuleList()
+    {
+        $resArray = self::generateFilteredModuleArray();
+
+        // Nombre de la lista que se generará
+        $overridedListName = 'dynamic_filtered_module_list';
+
+        // Población de la lista global con los módulos filtrados y ordenados
+        global $app_list_strings;
+        $app_list_strings[$overridedListName] = $resArray;
+    }
+
     /**
      * Sets a custom filtered list of modules.
      * This function filters and sorts the list of modules based on predefined criteria,
      * excluding certain modules and arranging them in alphabetical order.
      */
-    public static function setCustomFilteredModuleList()
-    {
-        global $app_list_strings;
-        $systemTabs = TabController::get_system_tabs();
-        foreach ($systemTabs as $key => $value) {
-            
-        }
-        $resArray = array();
+    // public static function setCustomFilteredModuleList()
+    // {
+    //     global $app_list_strings;
+    //     $systemTabs = TabController::get_system_tabs();
+    //     foreach ($systemTabs as $key => $value) {
 
-        foreach ($app_list_strings['moduleList'] as $key => $val) {
-            // Filter out invisible modules and the 'Home' module, add others to the list
-            if (!in_array($key, $GLOBALS['modInvisList']) && in_array($key, $systemTabs) && $key != 'Home') {
-                foreach ($systemTabs as $key => $value) {
-                    
+    //     }
+    //     $resArray = array();
+
+    //     foreach ($app_list_strings['moduleList'] as $key => $val) {
+    //         // Filter out invisible modules and the 'Home' module, add others to the list
+    //         if (!in_array($key, $GLOBALS['modInvisList']) && in_array($key, $systemTabs) && $key != 'Home') {
+    //             foreach ($systemTabs as $key => $value) {
+
+    //             }
+    //             $resArray[$key] = $val;
+    //         } else {
+    //             // Log discarded modules for debugging purposes
+    //             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $key . ' Module discarded');
+    //         }
+    //     }
+
+    //     // Sort the resulting array alphabetically
+    //     asort($resArray);
+
+    //     // Name of the list to be generated
+    //     $overridedListName = 'dynamic_filtered_module_list';
+
+    //     // Populate the global list with the filtered and sorted modules
+    //     $app_list_strings[$overridedListName] = $resArray;
+    // }
+
+    /**
+     * Genera y devuelve un array con opciones de módulos relacionados.
+     *
+     * @param string $mainModule El módulo principal.
+     * @return array devuelve un array por cada módulo relacionado, que inclutye el nombre del módulo, el nombre de la relación, el campo relacionado y la etiqueta traducida de la relación.
+     */
+    public static function getRelatedModulesList($mainModule)
+    {
+        $mainModuleBean = BeanFactory::newBean($mainModule);
+        $options = array();
+
+        if (!empty($mainModuleBean)) {
+            foreach ($mainModuleBean->getFieldDefinitions() as $val) {
+                if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] == 'SecurityGroups') && $val['id_name']) {
+                    $options[$val['id_name']] = $val['labelValue'];
+                } else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
+                    if (!empty($val['link'])) {
+                        $options[] = ['relationship' => $val['link'], 'field' => $val['id_name'], 'module' => $val['module'], 'label' => translate($val['vname'], $mainModule)];
+                    }
                 }
-                $resArray[$key] = $val;
-            } else {
-                // Log discarded modules for debugging purposes
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $key . ' Module discarded');
             }
         }
+        // var_dump($options);die();
+        return $options;
+    }
 
-        // Sort the resulting array alphabetically
-        asort($resArray);
+    /**
+     * Establece la lista personalizada de módulos relacionados.
+     *
+     * @param string $mainModule El módulo principal.
+     */
+    public static function setCustomRelatedModuleList($mainModule)
+    {
+        $options = array_column(self::getRelatedModulesList($mainModule), 'label', 'relationship');
 
-        // Name of the list to be generated
-        $overridedListName = 'dynamic_filtered_module_list';
+        // Nombre de la lista que se generará
+        $overridedListName = 'dynamic_related_module_list';
 
-        // Populate the global list with the filtered and sorted modules
-        $app_list_strings[$overridedListName] = $resArray;
+        // Población de la lista global con las opciones
+        global $app_list_strings;
+        $app_list_strings[$overridedListName] = $options;
     }
 
     /**
@@ -58,35 +137,34 @@ class stic_Advanced_Security_GroupsUtils
      *
      * @param object $focus The module object for which the related module list is to be set.
      */
-    public static function setCustomRelatedModuleList($focus)
-    {
-        $mainModule = $focus->name;
-        $mainModuleBean = BeanFactory::newBean($focus->name);
-        if (!empty($mainModuleBean)) {
-            $options = array();
+    // public static function setCustomRelatedModuleList($mainModule)
+    // {
+    //     $mainModuleBean = BeanFactory::newBean($mainModule);
+    //     if (!empty($mainModuleBean)) {
+    //         $options = array();
 
-            foreach ($mainModuleBean->getFieldDefinitions() as $val) {
-                // Add to options if the field is a 'relate' type and relates to SecurityGroups
-                if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] == 'SecurityGroups') && $val['id_name']) {
-                    $options[$val['id_name']] = $val['labelValue'];
-                }
-                // Add other related or linked modules, excluding SecurityGroups and Users
-                else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
-                    if (!empty($val['link'])) {
-                        $options[$val['link']] = translate($val['vname'], $mainModule);
-                    }
-                }
-            }
+    //         foreach ($mainModuleBean->getFieldDefinitions() as $val) {
+    //             // Add to options if the field is a 'relate' type and relates to SecurityGroups
+    //             if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] == 'SecurityGroups') && $val['id_name']) {
+    //                 $options[$val['id_name']] = $val['labelValue'];
+    //             }
+    //             // Add other related or linked modules, excluding SecurityGroups and Users
+    //             else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
+    //                 if (!empty($val['link'])) {
+    //                     $options[$val['link']] = translate($val['vname'], $mainModule);
+    //                 }
+    //             }
+    //         }
 
-            global $app_list_strings;
+    //         global $app_list_strings;
 
-            // Name of the list to be generated
-            $overridedListName = 'dynamic_related_module_list';
+    //         // Name of the list to be generated
+    //         $overridedListName = 'dynamic_related_module_list';
 
-            // Populate the global list with the options
-            $app_list_strings[$overridedListName] = $options;
-        }
-    }
+    //         // Populate the global list with the options
+    //         $app_list_strings[$overridedListName] = $options;
+    //     }
+    // }
 
     /**
      * Sets a list of all related modules with their labels.
@@ -97,12 +175,12 @@ class stic_Advanced_Security_GroupsUtils
     {
         $systemTabs = TabController::get_system_tabs();
         foreach ($systemTabs as $key => $value) {
-            
+
         }
         $options = array();
         foreach ($systemTabs as $key => $mainModule) {
             foreach ($systemTabs as $key => $value) {
-                
+
             }
             $mainModuleBean = BeanFactory::newBean($mainModule);
             if (!empty($mainModuleBean)) {
@@ -157,8 +235,5 @@ class stic_Advanced_Security_GroupsUtils
             $app_list_strings[$overridedListName][$row['id']] = $row['value'];
         }
     }
-
-
-    
 
 }

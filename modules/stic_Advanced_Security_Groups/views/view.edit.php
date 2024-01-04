@@ -25,7 +25,7 @@ class stic_Advanced_Security_GroupsViewEdit extends ViewEdit
         stic_Advanced_Security_GroupsUtils::setCustomSecurityGroupList();
         
         // Charge relate modules list
-        stic_Advanced_Security_GroupsUtils::setCustomRelatedModuleList($this->bean);
+        stic_Advanced_Security_GroupsUtils::setCustomRelatedModuleList($this->bean->name);
         
         // Charge filtered modules list
         stic_Advanced_Security_GroupsUtils::setCustomFilteredModuleList();
