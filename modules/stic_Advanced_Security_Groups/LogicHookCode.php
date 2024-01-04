@@ -1,5 +1,5 @@
 <?php
-class CustomSecurityGroupsInherit
+class stic_Advanced_Security_Groups_Rules
 {
 
     /**

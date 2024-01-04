@@ -28,4 +28,5 @@ if (!isset($hook_array) || !is_array($hook_array)) {
 if (!isset($hook_array['after_save']) || !is_array($hook_array['after_save'])) {
     $hook_array['after_save'] = array();
 }
-$hook_array['after_save'][] = Array(99, 'CustomSecurityGroupsInherit', 'custom/modules/SecurityGroups/CustomSecurityGroupsInherit.php','CustomSecurityGroupsInherit', 'after_save');
+$hook_array['after_save'][] = Array(99, 'stic_Advanced_Security_Groups_Rules', 'modules/stic_Advanced_Security_Groups/LogicHookCode.php','stic_Advanced_Security_Groups_Rules', 'after_save');
+
