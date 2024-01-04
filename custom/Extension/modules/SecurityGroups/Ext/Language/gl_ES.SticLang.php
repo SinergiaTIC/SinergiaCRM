@@ -34,3 +34,6 @@ $mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles do rexistro';
 $mod_strings['LBL_STIC_GENERAL_INFORMATION'] = 'Datos xerais';
+$mod_strings['LBL_STIC_ADVANCED_SECURITY_GROUPS_ENABLED'] = 'Habilitar regras personalizadas de herdanza de grupos de seguridade por módulos.';
+$mod_strings['LBL_STIC_ADVANCED_SECURITY_GROUPS_ENABLED_INFO'] = 'Se se habilitan as regras de herdanza de Grupos de Seguridade por módulos, as regras definidas e activadas para cada módulo terán preferencia sobre as regras de herdanza definidas aquí.';
+

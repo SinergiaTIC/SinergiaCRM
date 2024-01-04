@@ -34,3 +34,5 @@ $mod_strings['LBL_MODIFIED_USER'] = 'Modified By';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modified By (ID)';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
 $mod_strings['LBL_STIC_GENERAL_INFORMATION'] = 'Overview';
+$mod_strings['LBL_STIC_ADVANCED_SECURITY_GROUPS_ENABLED'] = 'Enable custom inheritance rules for security groups by modules.';
+$mod_strings['LBL_STIC_ADVANCED_SECURITY_GROUPS_ENABLED_INFO'] = 'If the inheritance rules for Security Groups by modules are enabled, the rules defined and activated for each module will have preference over the inheritance rules defined here.';
