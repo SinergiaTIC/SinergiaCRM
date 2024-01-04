@@ -44,7 +44,7 @@ class stic_Advanced_Security_GroupsViewList extends ViewList
          * Inserts a record into the 'stic_advanced_security_groups' table for each module
          * that is not already included in the table.
          */
-        global $db,$app_list_strings;
+        global $db, $app_list_strings, $sugar_config;
         require_once 'modules/MySettings/TabController.php';
         $systemTabs = TabController::get_system_tabs();
         foreach ($systemTabs as $key) {
@@ -54,12 +54,11 @@ class stic_Advanced_Security_GroupsViewList extends ViewList
             if ($moduleCount == 0) {
                 // Create a new bean for the 'stic_Advanced_Security_Groups' module
                 $ASGBean = BeanFactory::newBean('stic_Advanced_Security_Groups');
-                $ASGBean->name = $key; 
-                $ASGBean->name_lbl = $app_list_strings['moduleList'][$key]; 
+                $ASGBean->name = $key;
+                $ASGBean->name_lbl = $app_list_strings['moduleList'][$key];
                 $ASGBean->save();
             }
         }
-
 
         require_once 'modules/stic_Advanced_Security_Groups/Utils.php';
 
@@ -72,16 +71,20 @@ class stic_Advanced_Security_GroupsViewList extends ViewList
         // Populate the list of related modules with all available values to ensure the inclusion of all related modules.
         stic_Advanced_Security_GroupsUtils::setAllRelatedModuleList();
 
-        
     }
-    
+
     public function display()
     {
         parent::display();
-        
+
         SticViews::display($this);
-        
+
         echo getVersionedScript("modules/stic_Advanced_Security_Groups/Utils.js");
+
+        global $sugar_config, $mod_strings;
+        if ($sugar_config['stic_advanced_security_groups_enabled'] === false) {
+            echo "<script>$('<div class=msg-fatal-lock>{$mod_strings['LBL_DISABLED_MODULE_RULES_INFO']}</div>').prependTo('#pagecontent')</script>";
+        }
 
     }
 

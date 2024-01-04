@@ -76,4 +76,6 @@ $mod_strings = array(
     'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => 'Defines whether the Security Groups of the user assigned to the current record are inherited.',
     'LBL_INHERIT_CREATOR_CUSTOM_INFO' => 'Enables inheritance of Security Groups from the user who created the record.',
     'LBL_INHERIT_PARENT_CUSTOM_INFO' => 'Sets whether to inherit Security Groups from the parent record in the hierarchy.',
+    'LBL_DISABLED_MODULE_RULES_INFO' => 'The application of inheritance rules for Security Groups is disabled, so the rules defined here will not be applied. You can activate them <a class="btn-default" href="index.php?module=SecurityGroups&action=config&return_module=stic_Advanced_Security_Groups&return_action=ListView" data-action-name="Security_Suite_Settings">on this page</a>',
+
 );

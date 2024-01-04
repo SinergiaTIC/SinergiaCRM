@@ -78,4 +78,6 @@ $mod_strings = array(
     'LBL_INHERIT_CREATOR_CUSTOM_INFO' => 'Habilita l\'herència dels Grups de Seguretat de l\'usuari que va crear el registre.',
     'LBL_INHERIT_PARENT_CUSTOM_INFO' => 'Estableix si s\'han d\'heretar els Grups de Seguretat del registre pare en la jerarquia.',
     'LBL_ACTIVE' => 'Activo',
+    'LBL_DISABLED_MODULE_RULES_INFO' => 'L\'aplicació de regles d\'herència de Grups de Seguretat està desactivada, per la qual cosa les regles definides ací no s\'aplicaran. Pots activar-les <a class="btn-default" href="index.php?module=SecurityGroups&action=config&return_module=stic_Advanced_Security_Groups&return_action=ListView" data-action-name="Security_Suite_Settings">en aquesta pàgina</a>',
+
 );
