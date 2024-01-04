@@ -1,19 +1,6 @@
 <?php
 
-// // $rulesBean1 = BeanFactory::getBean('stic_Advanced_Security_Groups', 'e2f936d5-6247-9cb1-6f30-6595589a206e');
-// // var_dump($rulesBean1->inherit_from_modules);
-// $rulesBean2 = BeanFactory::getBean('stic_Advanced_Security_Groups', 'e2f936d5-6247-9cb1-6f30-6595589a206e');
-// var_dump($rulesBean2->inherit_from_modules);
 
-// die();
-
-// $rulesBean1 = BeanFactory::getBean('Contacts', '6d3e8198-2f32-0b5d-8ac6-652fc2a1a33c');
-// var_dump($rulesbean2->inherit_from_modules);die();
-
-// // print_r($rulesBean1->last_name);die();
-
-// $rulesBean2 = BeanFactory::getBean('Contacts', '6d3e8198-2f32-0b5d-8ac6-652fc2a1a33c');
-// print_r($rulesbean2->id);die();
 
 global $current_user;
 $bean = BeanFactory::newBean($_REQUEST['modulo']);
