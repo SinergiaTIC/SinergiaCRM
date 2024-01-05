@@ -293,7 +293,16 @@ class stic_Security_Groups_RulesUtils
             foreach ($allRelatedModules as $value) {
                 if (!empty($bean->{$value['field']})) {
                     if ($rulesBean->inherit_parent == 1 || in_array($value['relationship'], $filteredRelatedModules)) {
-                        $currentRecordGroups = self::getRelatedSecurityGroupIDs($bean->{$value['field']});
+
+                        // Obtain id from rarent record
+                        $relatedId = $bean->{$value['field']};
+
+                        if (!is_string($relatedId)) {
+                            // If it in not a string, it's because we're coming from a subpanel, so we get the id in the following way:
+                            $relatedId = key($bean->{$value['field']}->rows);
+                        }
+
+                        $currentRecordGroups = self::getRelatedSecurityGroupIDs($relatedId);
                         foreach ($currentRecordGroups as $val2) {
                             $securityGroupsCandidatesToInherit = array_merge(
                                 $securityGroupsCandidatesToInherit,
