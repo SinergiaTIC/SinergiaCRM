@@ -80,8 +80,8 @@ if (!empty($_REQUEST['remove_default_id'])) {
     
     // STIC CUSTOM - JCH - 20240104 - Set config for activate/deactivate custom modules inherit
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
-    // save stic_advanced_security_groups_enabled setting
-    $cfg->config['stic_advanced_security_groups_enabled'] = ($_REQUEST['stic_advanced_security_groups_enabled'] == 1) ? true : false;
+    // save stic_security_groups_rules_enabled setting
+    $cfg->config['stic_security_groups_rules_enabled'] = ($_REQUEST['stic_security_groups_rules_enabled'] == 1) ? true : false;
     // END STIC CUSTOM
 
     if (!isset($cfg->config['addAjaxBannedModules'])) {

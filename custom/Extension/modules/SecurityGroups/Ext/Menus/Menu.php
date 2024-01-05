@@ -41,5 +41,5 @@ if (!defined('sugarEntry') || !sugarEntry) {
 global $mod_strings, $app_strings, $sugar_config, $current_user;
 
 if ($current_user->is_admin == true) {
-    $module_menu[] = array("index.php?module=stic_Advanced_Security_Groups&action=index&return_module=stic_Advanced_Security_Groups&return_action=DetailView", translate('LBL_MODULE_NAME', 'stic_Advanced_Security_Groups'), "stic_Advanced_Security_Groups", 'stic_Advanced_Security_Groups');
+    $module_menu[] = array("index.php?module=stic_Security_Groups_Rules&action=index&return_module=stic_Security_Groups_Rules&return_action=DetailView", translate('LBL_MODULE_NAME', 'stic_Security_Groups_Rules'), "stic_Security_Groups_Rules", 'stic_Security_Groups_Rules');
 }

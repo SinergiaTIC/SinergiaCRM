@@ -132,11 +132,11 @@ $xtpl->assign('securitysuite_inherit_assigned', $securitysuite_inherit_assigned)
 
 // STIC CUSTOM - JCH - 20240104 - Set config for activate/deactivate custom modules inherit
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
-$stic_advanced_security_groups_enabled = '';
-if (isset($sugar_config['stic_advanced_security_groups_enabled']) && $sugar_config['stic_advanced_security_groups_enabled'] == true) {
-    $stic_advanced_security_groups_enabled = 'CHECKED';
+$stic_security_groups_rules_enabled = '';
+if (isset($sugar_config['stic_security_groups_rules_enabled']) && $sugar_config['stic_security_groups_rules_enabled'] == true) {
+    $stic_security_groups_rules_enabled = 'CHECKED';
 }
-$xtpl->assign('stic_advanced_security_groups_enabled', $stic_advanced_security_groups_enabled);
+$xtpl->assign('stic_security_groups_rules_enabled', $stic_security_groups_rules_enabled);
 // END STIC CUSTOM
 
 // securitysuite_inbound_email

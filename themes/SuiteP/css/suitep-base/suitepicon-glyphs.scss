@@ -1,10 +1,10 @@
 @font-face {
     font-family: "suitepicon";
-    src: url("suitepicon.eot?eb015b9879f57a0ab4b1cc994fe06576?#iefix") format("embedded-opentype"),
-url("suitepicon.woff2?eb015b9879f57a0ab4b1cc994fe06576") format("woff2"),
-url("suitepicon.woff?eb015b9879f57a0ab4b1cc994fe06576") format("woff"),
-url("suitepicon.ttf?eb015b9879f57a0ab4b1cc994fe06576") format("truetype"),
-url("suitepicon.svg?eb015b9879f57a0ab4b1cc994fe06576#suitepicon") format("svg");
+    src: url("suitepicon.eot?2c6ddfe25e907c60150077b1725589f2?#iefix") format("embedded-opentype"),
+url("suitepicon.woff2?2c6ddfe25e907c60150077b1725589f2") format("woff2"),
+url("suitepicon.woff?2c6ddfe25e907c60150077b1725589f2") format("woff"),
+url("suitepicon.ttf?2c6ddfe25e907c60150077b1725589f2") format("truetype"),
+url("suitepicon.svg?2c6ddfe25e907c60150077b1725589f2#suitepicon") format("svg");
 }
 
 i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
@@ -192,7 +192,7 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-action-sorting-none:before {
     content: "\f13a";
 }
-.suitepicon-action-stic-advanced-security-groups:before {
+.suitepicon-action-stic-security-groups-rules:before {
     content: "\f13b";
 }
 .suitepicon-action-subtract:before {
@@ -627,73 +627,73 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-stic-accounts-relationships:before {
     content: "\f1cb";
 }
-.suitepicon-module-stic-advanced-security-groups:before {
+.suitepicon-module-stic-assessments:before {
     content: "\f1cc";
 }
-.suitepicon-module-stic-assessments:before {
+.suitepicon-module-stic-attendances:before {
     content: "\f1cd";
 }
-.suitepicon-module-stic-attendances:before {
+.suitepicon-module-stic-bookings:before {
     content: "\f1ce";
 }
-.suitepicon-module-stic-bookings:before {
+.suitepicon-module-stic-centers:before {
     content: "\f1cf";
 }
-.suitepicon-module-stic-centers:before {
+.suitepicon-module-stic-contacts-relationships:before {
     content: "\f1d0";
 }
-.suitepicon-module-stic-contacts-relationships:before {
+.suitepicon-module-stic-events:before {
     content: "\f1d1";
 }
-.suitepicon-module-stic-events:before {
+.suitepicon-module-stic-families:before {
     content: "\f1d2";
 }
-.suitepicon-module-stic-families:before {
+.suitepicon-module-stic-followups:before {
     content: "\f1d3";
 }
-.suitepicon-module-stic-followups:before {
+.suitepicon-module-stic-goals:before {
     content: "\f1d4";
 }
-.suitepicon-module-stic-goals:before {
+.suitepicon-module-stic-grants:before {
     content: "\f1d5";
 }
-.suitepicon-module-stic-grants:before {
+.suitepicon-module-stic-job-applications:before {
     content: "\f1d6";
 }
-.suitepicon-module-stic-job-applications:before {
+.suitepicon-module-stic-job-offers:before {
     content: "\f1d7";
 }
-.suitepicon-module-stic-job-offers:before {
+.suitepicon-module-stic-medication-log:before {
     content: "\f1d8";
 }
-.suitepicon-module-stic-medication-log:before {
+.suitepicon-module-stic-medication:before {
     content: "\f1d9";
 }
-.suitepicon-module-stic-medication:before {
+.suitepicon-module-stic-payment-commitments:before {
     content: "\f1da";
 }
-.suitepicon-module-stic-payment-commitments:before {
+.suitepicon-module-stic-payments-aggregated:before {
     content: "\f1db";
 }
-.suitepicon-module-stic-payments-aggregated:before {
+.suitepicon-module-stic-payments:before {
     content: "\f1dc";
 }
-.suitepicon-module-stic-payments:before {
+.suitepicon-module-stic-personal-environment:before {
     content: "\f1dd";
 }
-.suitepicon-module-stic-personal-environment:before {
+.suitepicon-module-stic-prescription:before {
     content: "\f1de";
 }
-.suitepicon-module-stic-prescription:before {
+.suitepicon-module-stic-registrations:before {
     content: "\f1df";
 }
-.suitepicon-module-stic-registrations:before {
+.suitepicon-module-stic-remittances:before {
     content: "\f1e0";
 }
-.suitepicon-module-stic-remittances:before {
+.suitepicon-module-stic-resources:before {
     content: "\f1e1";
 }
-.suitepicon-module-stic-resources:before {
+.suitepicon-module-stic-security-groups-rules:before {
     content: "\f1e2";
 }
 .suitepicon-module-stic-sepe-actions:before {
