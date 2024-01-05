@@ -300,17 +300,31 @@ class stic_EventsUtils
                 }
                 $sessionBean->name = $sessionName;
             }
+            $sessionBean->start_date = $date[$i];
+            $sessionBean->end_date = $finalDay;
+            $sessionBean->stic_sessions_stic_eventsstic_events_ida = $eventId;
 
             if (isset($_REQUEST['assigned_user_id']) && $_REQUEST['assigned_user_id'] != '') {
                 $sessionBean->assigned_user_id = $_REQUEST['assigned_user_id'];
             } else {
                 $sessionBean->assigned_user_id = $user;
             }
-            $sessionBean->contact_id_c = $_REQUEST['responsible_id'] ?? null;
-            $sessionBean->start_date = $date[$i];
-            $sessionBean->end_date = $finalDay;
-            $sessionBean->stic_sessions_stic_eventsstic_events_ida = $eventId;
-            $sessionBean->color = $_REQUEST['color'] ?? '';
+            if (isset($_REQUEST['responsible_id']) && $_REQUEST['responsible_id'] != '') {
+                $sessionBean->contact_id_c = $_REQUEST['responsible_id'];
+            } else {
+                $sessionBean->contact_id_c = $user;
+            }
+
+            if (isset($_REQUEST['color']) && $_REQUEST['color'] != '') {
+                $sessionBean->color = $_REQUEST['color'];
+            } else {
+                $sessionBean->color = $user;
+            }
+            if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
+                $sessionBean->description = $_REQUEST['description'];
+            } else {
+                $sessionBean->description = $user;
+            }
             if (isset($_REQUEST['activity_type'])) {
                 $activityType = $_REQUEST['activity_type'];
                 if (is_array($activityType)) {

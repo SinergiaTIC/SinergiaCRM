@@ -257,7 +257,14 @@
 						</span>
 				</td>
 			</tr>
-
+			<tr id="description_row">
+				<td width="12.5%" valign="top" scope="row">
+					{$MOD_SESSION.LBL_DESCRIPTION}:
+				</td>
+				<td width="37.5%" valign="top">
+					<textarea style="width: 290px; resize: 'both';" rows="4" cols="50" name='description' id='description' value='' title=''></textarea>
+				</td>
+			</tr>		
 		</table>
 		<div id="cal-edit-buttons" class="ft">
 			<input title="grabar" class="button" type="submit" name="button" value="{$MOD.LBL_SAVE_BUTTON}">
@@ -284,6 +291,7 @@
 			$("#responsible_row").hide();
 			$("#activity_type_row").hide();
 			$("#color_row").hide();
+			$("#description_row").hide();
 			$("#enable_fields").on("change", function() {
 				if ($(this).is(":checked")) {
 					$("#session_name_row").show();
@@ -291,14 +299,17 @@
 					$("#activity_type_row").show();
 					$("#color_row").show();
 					$("#responsible_row").show();
+					$("#description_row").show();
 				} else {
 					$("#session_name_row").hide();
 					$("#assigned_user_row").hide();
 					$("#activity_type_row").hide();
 					$("#color_row").hide();
 					$("#responsible_row").hide();
+					$("#description_row").hide();
 
 					$('#session_name').val('');
+					$('#description').val('');
 					$('#color')[0].selectize.clear();
 					$('#activity_type')[0].selectize.clear();
 					clearRow(this.form, "responsible");
