@@ -291,10 +291,34 @@ class stic_EventsUtils
                 $finalDay = date('Y-m-d H:i:s', $finalDay);
             }
             $sessionBean = BeanFactory::newBean('stic_Sessions');
-            $sessionBean->assigned_user_id = $user;
+            if (isset($_REQUEST['session_name']) && $_REQUEST['session_name'] != '') {
+                $sessionName = $_REQUEST['session_name'];
+                // Check if the variable is present in the string
+                if (strpos($sessionName, '{{$counter}}') !== false) {
+                    // Substitute the variable with the integer
+                    $sessionName = str_replace('{{$counter}}', ($i+1), $sessionName);
+                }
+                $sessionBean->name = $sessionName;
+            }
+
+            if (isset($_REQUEST['assigned_user_id']) && $_REQUEST['assigned_user_id'] != '') {
+                $sessionBean->assigned_user_id = $_REQUEST['assigned_user_id'];
+            } else {
+                $sessionBean->assigned_user_id = $user;
+            }
+            $sessionBean->contact_id_c = $_REQUEST['responsible_id'] ?? null;
             $sessionBean->start_date = $date[$i];
             $sessionBean->end_date = $finalDay;
             $sessionBean->stic_sessions_stic_eventsstic_events_ida = $eventId;
+            $sessionBean->color = $_REQUEST['color'] ?? '';
+            if (isset($_REQUEST['activity_type'])) {
+                $activityType = $_REQUEST['activity_type'];
+                if (is_array($activityType)) {
+                    $sessionBean->activity_type = encodeMultienumValue($activityType);
+                } else {
+                    $sessionBean->activity_type = '^'.$activityType.'^';
+                }
+            }
             $sessionBean->save();
         }
         $endTime = microtime(true);

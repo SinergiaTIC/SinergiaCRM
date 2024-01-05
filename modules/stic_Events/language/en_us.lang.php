@@ -119,4 +119,7 @@ $mod_strings = array(
     'LBL_TIME_START' => '1st session start date and hour',
     'LBL_TITLE' => 'Create periodic sessions',
     'LBL_SESSION_DURATION' => 'Session duration',
+    'LBL_SESSION_ENABLE_FIELDS' => 'Display Session fields',
+    'LBL_SESSION_ENABLE_FIELDS_INFO' => 'Set a default value for these session fields',
+    'LBL_SESSION_NAME_INFO' => 'A counter (Session 1, Session 2, Session N...) can be set by using {{$counter}} in session name',
 );
