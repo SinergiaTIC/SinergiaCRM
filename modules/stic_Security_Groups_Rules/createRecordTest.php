@@ -20,6 +20,10 @@ switch ($_REQUEST['modulo']) {
         $bean->stic_sessions_stic_eventsstic_events_ida = '8ba4c208-a822-9cfa-8611-6596a3a7a821';
 
         break;
+    case 'stic_Payments':
+        $bean->stic_paymebfe2itments_ida = '48ec88ac-3637-53ad-4e9c-6597cd8d3e20';
+
+        break;
     case 'stic_Contacts_Relationships':
         $bean->stic_contacts_relationships_contactscontacts_ida = '9e840dc9-9544-1649-b346-658ea9bec796';
         $bean->stic_centers_stic_contacts_relationshipsstic_centers_ida = '155f0177-315a-6f66-74b3-65818cd1cb8c';

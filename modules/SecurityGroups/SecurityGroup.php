@@ -191,14 +191,21 @@ class SecurityGroup extends SecurityGroup_sugar
 
         // STIC-CUSTOM JCH 2024-02-02 Do not apply global inheritance rules if a custom rule is defined for current module and $sugar_config['stic_security_groups_rules_enabled'] === true.
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
-        // Check for a custom rule for the module in stic_Security_Groups_Rules
-        $customRuleQuery = "SELECT count(*) FROM stic_security_groups_rules WHERE name='{$focus->module_dir}' AND deleted=0 AND active=true";
-        $customRuleCount = $focus->db->getOne($customRuleQuery);
 
-        // If a custom rule is defined for current module, exit the function
-        // This prevents the application of default inheritance global rules
-        if ($customRuleCount == 1 && $sugar_config['stic_security_groups_rules_enabled'] === true) {
-            return;
+        if ($sugar_config['stic_security_groups_rules_enabled'] === true && $isUpdate === false) {
+            
+            // Check for a custom rule for the module in stic_Security_Groups_Rules
+            $customRuleQuery = "SELECT count(*) FROM stic_security_groups_rules WHERE name='{$focus->module_dir}' AND deleted=0 AND active=true";
+            $customRuleCount = $focus->db->getOne($customRuleQuery);
+
+            // If a custom rule is defined for current module, apply custom rules and exit the function
+            if ($customRuleCount == 1) {
+                require_once 'modules/stic_Security_Groups_Rules/Utils.php';
+                stic_Security_Groups_RulesUtils::applyCustomInheritance($focus);
+
+                // This prevents the application of default inheritance global rules
+                return;
+            }
         }
         // END STIC CUSTOM
 
