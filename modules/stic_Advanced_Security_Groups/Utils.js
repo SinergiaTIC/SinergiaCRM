@@ -55,17 +55,20 @@ switch (viewType()) {
       })
 
       // Additional document ready function to handle checkbox state change
-      $(document).ready(function () {
-        // Event listener for checkbox state change
-        $('#inherit_parent').change(function () {
-          // Clear the selectize input if checkbox is checked
-          if (this.checked) {
-            $('#inherit_from_modules')[0].selectize.clear()
-          }
-        });
 
-
+      // Event listener for checkbox state change
+      $('#inherit_parent').change(function () {
+        // Clear the selectize input if checkbox is checked
+        if (this.checked) {
+          $('#inherit_from_modules')[0].selectize.clear()
+        }
       });
+
+      // Show message if the functionality is deactivated
+      if (stic_advanced_security_groups_enabled != 1) {
+        $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Advanced_Security_Groups.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
+      }
+
     })
 
 
@@ -94,6 +97,12 @@ switch (viewType()) {
           $(this).remove();
         }
       });
+
+      // Show message if the functionality is deactivated
+      if (stic_advanced_security_groups_enabled != 1) {
+        $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Advanced_Security_Groups.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
+      }
+
     });
 
 

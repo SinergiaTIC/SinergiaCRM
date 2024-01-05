@@ -60,6 +60,8 @@ class stic_Advanced_Security_GroupsViewList extends ViewList
             }
         }
 
+        echo "<script>let stic_advanced_security_groups_enabled = '{$sugar_config['stic_advanced_security_groups_enabled']}' </script>";
+
         require_once 'modules/stic_Advanced_Security_Groups/Utils.php';
 
         // We load the list of security groups
@@ -80,11 +82,6 @@ class stic_Advanced_Security_GroupsViewList extends ViewList
         SticViews::display($this);
 
         echo getVersionedScript("modules/stic_Advanced_Security_Groups/Utils.js");
-
-        global $sugar_config, $mod_strings;
-        if ($sugar_config['stic_advanced_security_groups_enabled'] === false) {
-            echo "<script>$('<div class=msg-fatal-lock>{$mod_strings['LBL_DISABLED_MODULE_RULES_INFO']}</div>').prependTo('#pagecontent')</script>";
-        }
 
     }
 

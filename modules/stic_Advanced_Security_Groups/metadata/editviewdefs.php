@@ -56,7 +56,7 @@ array(
                 0 => array(
                     0 => array('name' => 'name_lbl',
                         'type' => 'readonly',
-                        'customCode' => '<span style="padding:2px 4px;font-weight:bold;background-color:green;color:white;">{$fields.name_lbl.value}</span>',
+                        'customCode' => '<strong>{$fields.name_lbl.value}</strong>',
 
                     ),
                     1 => array('name' => 'active',

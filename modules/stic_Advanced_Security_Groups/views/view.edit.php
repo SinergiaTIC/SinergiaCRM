@@ -36,9 +36,13 @@ class stic_Advanced_Security_GroupsViewEdit extends ViewEdit
 
     public function preDisplay()
     {
+        global $sugar_config;
+        
         parent::preDisplay();
 
         SticViews::preDisplay($this);
+
+        echo "<script>let stic_advanced_security_groups_enabled = '{$sugar_config['stic_advanced_security_groups_enabled']}' </script>";
 
         require_once 'modules/stic_Advanced_Security_Groups/Utils.php';
         
