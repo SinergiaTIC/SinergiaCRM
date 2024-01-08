@@ -38,7 +38,7 @@ jobs:
             - name: Update develop instance
               run: ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "test -e /web/${{ env.BRANCH_CLEAN }}" && (echo "Directory branch exists" && ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "cd /web/${{ env.BRANCH_CLEAN }} && git stash && git pull && rm -rf /web/${{ env.BRANCH_CLEAN }}/cache") || echo "Branch doesn't exist in develop"
             - name: Repair develop instance
-              run: sh $MAIN_SSH_USERNAME@$MAIN_HOST "source ~/scripts/update/functions.sh && 
+              run: ssh $MAIN_SSH_USERNAME@$MAIN_HOST "source ~/scripts/update/functions.sh && 
                    repair $DEVELOP_SSH_USERNAME@$DEVELOP_HOST 22 /web/${{ env.BRANCH_CLEAN }} $DEVELOP_DOMAIN_NAME"
             - name: Create or Edit PR comment
               uses: thollander/actions-comment-pull-request@v1
