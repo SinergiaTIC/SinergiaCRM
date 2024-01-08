@@ -22,7 +22,7 @@
  */
 
 // Including necessary dependencies
-global $current_user, $app_strings, $sugar_config;
+global $current_user, $app_strings, $sugar_config, $app_list_strings;
 require_once 'modules/SecurityGroups/SecurityGroup.php';
 require_once 'modules/MySettings/TabController.php';
 require_once 'SticInclude/Utils.php';
@@ -83,6 +83,7 @@ class stic_Security_Groups_RulesUtils
 
         if (!empty($mainModuleBean)) {
             foreach ($mainModuleBean->getFieldDefinitions() as $val) {
+
                 if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] !== 'SecurityGroups') && $val['id_name']) {
                     $options[] = [
                         'relationship' => $mainModule . $val['id_name'],
@@ -91,17 +92,32 @@ class stic_Security_Groups_RulesUtils
                         'label' => translate($val['vname'], $mainModule),
                     ];
                 } else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
-                    if (!empty($val['link'])) {
+                    if (empty($val['link'])) {
+                        // n:n relationships
+                        if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
+                            $options[] = [
+                                'relationship' => $val['relationship'],
+                                'field' => $val['name'],
+                                'module' => $val['name'],
+                                'label' => translate($val['vname'], $mainModule),
+                            ];
+                        }
+                    } elseif (!in_array($val['link'], array_column($options, 'relationship'))) {
+                        // 1:n or 1:1 relationships
                         $options[] = [
                             'relationship' => $val['link'],
                             'field' => $val['id_name'],
                             'module' => $val['module'],
                             'label' => translate($val['vname'], $mainModule),
                         ];
+
                     }
                 }
             }
         }
+
+        // orden alfabético
+        usort($options, function ($a, $b) {return strcmp($a['label'], $b['label']);});
 
         return $options;
     }
@@ -126,6 +142,7 @@ class stic_Security_Groups_RulesUtils
      */
     public static function setAllRelatedModuleList()
     {
+        global $app_list_strings;
         $systemTabs = TabController::get_system_tabs();
         $options = array();
 
@@ -133,17 +150,26 @@ class stic_Security_Groups_RulesUtils
             $mainModuleBean = BeanFactory::newBean($mainModule);
             if (!empty($mainModuleBean)) {
                 foreach ($mainModuleBean->getFieldDefinitions() as $val) {
+
                     if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] !== 'SecurityGroups') && $val['id_name']) {
-                        $options[$mainModule . $val['id_name']] = translate($val['vname'], $mainModule);
+                        $options[$mainModule . $val['id_name']] = translate($val['vname'], $mainModule). " ({$app_list_strings['moduleList'][$val['module']]})";
                     } else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
-                        if (!empty($val['link'])) {
-                            $options[$val['link']] = translate($val['vname'], $mainModule);
+
+                        if (!empty($val['link']) && !array_key_exists($val['link'], $options)) {
+                            $options[$val['link']] = translate($val['vname'], $mainModule). " ({$app_list_strings['moduleList'][$val['module']]})";
+                        } elseif (!empty($val['relationship']) && !array_key_exists($val['relationship'], $options)) {
+                            
+                                $options[$val['relationship']] = translate($val['vname'], $mainModule). " ({$app_list_strings['moduleList'][$val['module']]})";
+                            
                         }
                     }
                 }
             }
         }
 
+        // orden alfabético
+        uasort($options, function($a, $b) { return strcmp($a, $b); });
+        // var_dump($options);die();
         global $app_list_strings;
         $overridedListName = 'dynamic_related_module_list';
         $app_list_strings[$overridedListName] = $options;
@@ -190,7 +216,7 @@ class stic_Security_Groups_RulesUtils
                                                WHERE securitygroups_records.record_id = '{$relatedRecordID}'
                                                AND securitygroups_records.deleted = 0
                                                AND securitygroups.noninheritable = 0
-                                               AND security_groups.deleted=0");
+                                               AND securitygroups.deleted=0");
 
         foreach ($queryResult as $row) {
             $securityGroupIDs[] = $row['securitygroup_id'];
@@ -218,8 +244,6 @@ class stic_Security_Groups_RulesUtils
         $rulesBean = BeanFactory::getBean('stic_Security_Groups_Rules', $ruleId);
         return $rulesBean;
     }
-
-    
 
     /**
      * Function for SuiteCRM, handling security group inheritance.
@@ -287,6 +311,7 @@ class stic_Security_Groups_RulesUtils
                         }
 
                         $currentRecordGroups = self::getRelatedSecurityGroupIDs($relatedId);
+
                         foreach ($currentRecordGroups as $val2) {
                             $securityGroupsCandidatesToInherit = array_merge(
                                 $securityGroupsCandidatesToInherit,
@@ -296,6 +321,8 @@ class stic_Security_Groups_RulesUtils
                     }
                 }
             }
+
+            // var_dump($securityGroupsCandidatesToInherit);die();
 
             // Create an array of security groups that are not inheritable under any circumstances for the current module
             $notInheritableGroups = unencodeMultienum($rulesBean->non_inherit_from_security_groups);
