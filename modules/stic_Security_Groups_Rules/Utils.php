@@ -189,7 +189,8 @@ class stic_Security_Groups_RulesUtils
                                                LEFT JOIN securitygroups ON securitygroups_records.securitygroup_id = securitygroups.id
                                                WHERE securitygroups_records.record_id = '{$relatedRecordID}'
                                                AND securitygroups_records.deleted = 0
-                                               AND securitygroups.noninheritable = 0");
+                                               AND securitygroups.noninheritable = 0
+                                               AND security_groups.deleted=0");
 
         foreach ($queryResult as $row) {
             $securityGroupIDs[] = $row['securitygroup_id'];
@@ -218,24 +219,7 @@ class stic_Security_Groups_RulesUtils
         return $rulesBean;
     }
 
-    /**
-     * Verify and obtain the related field for a specific bean.
-     *
-     * This method retrieves the value of a related field of a specific bean
-     * based on its ID. It is useful for verifying relationships in SuiteCRM.
-     *
-     * @param String $relatedID The ID of the related field to be verified.
-     * @param Object $bean The bean for which the related field is sought.
-     * @return String The value of the related field, or an empty string if not found.
-     */
-    public static function checkRelatedField($relatedID, $bean)
-    {
-        global $db;
-        // Query to obtain the value of the related field based on the bean's ID
-        $relID = $db->getOne("SELECT {$relatedID} FROM contacts_cstm WHERE id_c='{$bean->id}' LIMIT 1");
-
-        return $relID;
-    }
+    
 
     /**
      * Function for SuiteCRM, handling security group inheritance.
