@@ -12,7 +12,8 @@ INSERT INTO schedulers (id, deleted, date_entered, date_modified, created_by, mo
 ('98eb0c26-99dd-d656-ee73-611cc6994570', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Purga de la base de datos', 'function::sticPurgeDatabase', NOW(), NULL, '*::2::*::*::0', NULL, NULL, NULL, 'Active', 0),
 ('4d0ac999-2bcb-cc4f-f65d-6192a21c4aff', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Validación y actualización mensual de datos', 'function::validationActions', NOW(), NULL, '*::3::1::*::*', NULL, NULL, NULL, 'Inactive', 0),
 ('ca564b47-9a06-987d-a115-6442356ca768', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Creación de registros de medicación', 'function::createMedicationLogs', NOW(), NULL, '*::1::*::*::*', NULL, NULL, NULL, 'Active', 0),
-('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Reconstrucción de los orígenes de datos de SinergiaDA', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0);
+('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Reconstrucción de los orígenes de datos de SinergiaDA', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0),
+('4d0ac999-2bcb-cc4f-f65d-6192a21c4aff', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Validación y actualización mensual de datos', 'function::validationActions', NOW(), NULL, '*::3::1::*::*', NULL, NULL, NULL, 'Active', 0);
 
 INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
 ('0b5b5d41-ae84-11eb-9b56-0242ac180004', 'Compromisos de pago - Cálculo de registro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '0b5b5d41-ae84-11eb-9b56-0242ac180004', 0, 30),
@@ -38,8 +39,9 @@ INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modi
 ('d49627f2-3623-44e3-bdb2-d5af0f8c5165', 'Relaciones con Personas - Revisión de los datos principales', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'd49627f2-3623-44e3-bdb2-d5af0f8c5165', 0, 75),
 ('b07eefb3-20fb-4993-abea-66ce0aa71649', 'Remesas - Revisión de las relaciones', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b07eefb3-20fb-4993-abea-66ce0aa71649', 0, 20),
 ('375431dc-a6bb-4c0b-ab4c-af1a06229ee4', 'Remesas - Revisión de los datos principales', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '375431dc-a6bb-4c0b-ab4c-af1a06229ee4', 0, 25),
-('10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'Unidades familiares - Cálculo de registro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 0, 30);
-('b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'Ayudas - Cálculo de registro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 0, 30);
+('10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'Unidades familiares - Cálculo de registro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 0, 30),
+('b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'Ayudas - Cálculo de registro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 0, 30),
+('ef33e1ee-1d8e-e054-0d6d-6193c473d5b9', 'General - Eliminación de relaciones obsoletas', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'ef33e1ee-1d8e-e054-0d6d-6193c473d5b9', 0, 50);
 
 INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
 ('16085edd-15a4-e6df-c869-5b406a4611ed', NOW(), 0, 'f512af92-7518-4bbe-b583-5b43bc6223da', '7386c4b1-bcc2-4f6f-be88-7e2a2e5778b5'),
@@ -65,5 +67,6 @@ INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, st
 ('529f2cd9-b277-11eb-b5ab-0242ac1e0002', NOW(), 0, '8cd4b3ba-b273-11eb-b5ab-0242ac1e0002', 'b05bde8a-1309-4789-993b-bf85be389f07'),
 ('583981c3-b277-11eb-b5ab-0242ac1e0002', NOW(), 0, '23d660da-b276-11eb-b5ab-0242ac1e0002', 'b05bde8a-1309-4789-993b-bf85be389f07'),
 ('6f82c1d8-d481-09b5-9bfb-618955029780', NOW(), 0, 'ac28533e-40ad-11ec-b2f2-0242ac150002', 'b05bde8a-1309-4789-993b-bf85be389f07'),
-('d0d59fed-6419-a8eb-a7e2-636b906e5f36', NOW(), 0, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'b05bde8a-1309-4789-993b-bf85be389f07');
-('d0d59ped-6cd9-areb-a77a-6361606e5f36', NOW(), 0, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'b05bde8a-1309-4789-993b-bf85be389f07');
+('d0d59fed-6419-a8eb-a7e2-636b906e5f36', NOW(), 0, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'b05bde8a-1309-4789-993b-bf85be389f07'),
+('d0d59ped-6cd9-areb-a77a-6361606e5f36', NOW(), 0, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'b05bde8a-1309-4789-993b-bf85be389f07'),
+('73031c41-d137-fd92-e776-6193c94ffaa8', NOW(), 0, 'ef33e1ee-1d8e-e054-0d6d-6193c473d5b9', '4d0ac999-2bcb-cc4f-f65d-6192a21c4aff');
