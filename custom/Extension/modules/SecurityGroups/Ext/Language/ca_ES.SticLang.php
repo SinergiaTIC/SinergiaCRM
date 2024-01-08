@@ -34,5 +34,5 @@ $mod_strings['LBL_MODIFIED_USER'] = 'Modificat per';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modificat per (ID)';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalls del registre';
 $mod_strings['LBL_STIC_GENERAL_INFORMATION'] = 'Dades generals';
-$mod_strings['LBL_STIC_SECURITY_GROUPS_RULES_ENABLED'] = 'Habilitar regles personalitzades d\'herència de grups de seguretat per mòduls.';
-$mod_strings['LBL_STIC_SECURITY_GROUPS_RULES_ENABLED_INFO'] = 'Si s\'habiliten les regles d\'herència de Grups de Seguretat per mòduls, les regles definides i activades per a cada mòdul tindran preferència sobre les regles d\'herència definides ací.';
+$mod_strings['LBL_STIC_SECURITY_GROUPS_RULES_ENABLED'] = 'Habilita les regles per mòduls';
+$mod_strings['LBL_STIC_SECURITY_GROUPS_RULES_ENABLED_INFO'] = 'Si marqueu la casella, les regles definides per a cada mòdul tindran preferència sobre les regles generals definides aquí.';
