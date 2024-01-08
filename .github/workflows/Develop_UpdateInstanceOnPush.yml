@@ -38,8 +38,8 @@ jobs:
             - name: Update develop instance
               run: ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "test -e /web/${{ env.BRANCH_CLEAN }}" && (echo "Directory branch exists" && ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "cd /web/${{ env.BRANCH_CLEAN }} && git stash && git pull && rm -rf /web/${{ env.BRANCH_CLEAN }}/cache") || echo "Branch doesn't exist in develop"
             - name: Repair develop instance
-              run: ssh $MAIN_SSH_USERNAME@$MAIN_HOST "scp ~/scripts/common/SticRepair.php $DEVELOP_SSH_USERNAME@$DEVELOP_HOST:/web/${{ env.BRANCH_CLEAN }}/SticRepair.php && 
-                   wget -O - --no-check-certificate "https://$DEVELOP_DOMAIN_NAME/${{ env.BRANCH_CLEAN }}/SticRepair.php" &&
+              run: ssh $MAIN_SSH_USERNAME@$MAIN_HOST "scp ~/scripts/common/SticRepair.php $DEVELOP_SSH_USERNAME@$DEVELOP_HOST:/web/${{ env.BRANCH_CLEAN }}/SticRepair.php" && 
+                   wget -O - --no-check-certificate https://$DEVELOP_DOMAIN_NAME/${{ env.BRANCH_CLEAN }}/SticRepair.php &&
                    ssh $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "rm -rf /web//${{ env.BRANCH_CLEAN }}/SticRepair.php"
             - name: Create or Edit PR comment
               uses: thollander/actions-comment-pull-request@v1
