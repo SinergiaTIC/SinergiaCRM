@@ -109,6 +109,7 @@ $app_list_strings['moduleList']['stic_Medication'] = 'Medicines';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['moduleList']['stic_Grants'] = 'Grants';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centers';
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -143,6 +144,7 @@ $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicine';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescription';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Grant';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Center';
+$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Participant';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -173,6 +175,7 @@ $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Medication Lo
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicines';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centers';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display']['Leads'] = 'Leads';
@@ -204,6 +207,7 @@ $app_list_strings['record_type_display']['stic_Medication'] = 'Medicines';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['record_type_display']['stic_Grants'] = 'Grants';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centers';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Leads';
@@ -235,6 +239,7 @@ $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicines';
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Grants';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centers';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Participants';
 
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3170,6 +3175,18 @@ $app_list_strings['stic_centers_types_list']['residential'] = 'Residential';
 $app_list_strings['stic_centers_types_list']['attention_point'] = 'Attention point';
 $app_list_strings['stic_centers_types_list']['training'] = 'Training';
 $app_list_strings['stic_centers_types_list']['other'] = 'Other';
+
+// Participants: Status
+$app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Guest';
+$app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participating';
+$app_list_strings['stic_group_opportunities_status_list']['rejected'] = 'Rejected';
+$app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Granted';
+$app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'Not granted';
+
+// Participants: Documentation Status
+$app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pending';
+$app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'In progress';
+$app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Delivered';
 
 // SuiteCRM Core modifications
 

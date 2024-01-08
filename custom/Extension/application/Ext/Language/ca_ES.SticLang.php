@@ -108,6 +108,7 @@ $app_list_strings['moduleList']['stic_Medication'] = 'Medicaments';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescripcions mèdiques';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ajuts';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centres';
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -142,6 +143,7 @@ $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicament';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescripció mèdica';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Ajut';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centre';
+$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Participant';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -172,6 +174,7 @@ $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Registre de m
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicaments';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescripcions mèdiques';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centres';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display']['Leads'] = 'Interessats';
@@ -203,6 +206,7 @@ $app_list_strings['record_type_display']['stic_Medication'] = 'Medicaments';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescripcions mèdiques';
 $app_list_strings['record_type_display']['stic_Grants'] = 'Ajuts';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centres';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interessats';
@@ -234,6 +238,7 @@ $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicaments
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescripcions mèdiques';
 $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Ajuts';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centres';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Participants';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3169,6 +3174,19 @@ $app_list_strings['stic_centers_types_list']['residential'] = 'Residencial';
 $app_list_strings['stic_centers_types_list']['attention_point'] = "Punt d'atenció";
 $app_list_strings['stic_centers_types_list']['training'] = 'Formació';
 $app_list_strings['stic_centers_types_list']['other'] = 'Altres';
+
+// Participants: Estat
+$app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Convidada';
+$app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participant';
+$app_list_strings['stic_group_opportunities_status_list']['rejected'] = 'Rebutjada';
+$app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Concedida';
+$app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'No concedida';
+
+// Participants: Estat de la documentació
+$app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'En curs';
+$app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Lliurada';
+
 
 // Modificacions del core de SuiteCRM
 

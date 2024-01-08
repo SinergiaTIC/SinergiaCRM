@@ -126,4 +126,10 @@ class OpportunitiesUtils
         }
         return true;
     }
+
+    public static function createParticipantsFromAccounts($accountIds, $opportunityBean) {
+        // For each AccountId in $accountIds: Create a Participant with this $opportunityBean
+
+        //IEPA!!!
+    }
 }

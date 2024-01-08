@@ -52,6 +52,7 @@ $GLOBALS['tabStructure'] = array(
             1 => 'stic_Payments',
             2 => 'stic_Remittances',
             3 => 'Opportunities',
+            4 => 'stic_Group_Opportunities',
         ),
     ),
     'LBL_GROUPTAB_CAMPAIGNS' => array(

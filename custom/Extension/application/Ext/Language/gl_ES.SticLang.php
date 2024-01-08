@@ -116,6 +116,7 @@ $app_list_strings['moduleList']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescricións médicas';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Participantes';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -150,6 +151,7 @@ $app_list_strings['moduleList']['stic_Sepe_Actions'] = 'Accións SEPE';
 $app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
 $app_list_strings['moduleListSingular']['stic_Bookings'] = 'Reserva';
 $app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
+$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Participante';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -180,6 +182,7 @@ $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Rexistro de m
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescriciónes médicas';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centros';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Participantes';
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -211,6 +214,7 @@ $app_list_strings['record_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescricións médicas';
 $app_list_strings['record_type_display']['stic_Grants'] = 'Ayudas';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centros';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Participantes';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -242,6 +246,7 @@ $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicamento
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescricións médicas';
 $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Ayudas';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centros';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Participantes';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3177,6 +3182,18 @@ $app_list_strings['stic_centers_types_list']['residential'] = 'Residencial';
 $app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de atención';
 $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
+
+// Participantes: Estado
+$app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Invitada';
+$app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participante';
+$app_list_strings['stic_group_opportunities_status_list']['rejected'] = 'Rexeitada';
+$app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Concedida';
+$app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'Non concedida';
+
+// Participantes: Estado de la documentación
+$app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pendente';
+$app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'En curso';
+$app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Entregada';
 
 // Modificaciones del core de SuiteCRM
 
