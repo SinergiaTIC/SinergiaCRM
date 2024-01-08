@@ -1,4 +1,4 @@
-name: Develop - Update instance on Push
+name: Develop - Update develop instance
 on:
     pull_request:
         types: [synchronize]
