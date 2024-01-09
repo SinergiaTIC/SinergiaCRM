@@ -6015,7 +6015,7 @@ $dictionary["stic_group_opportunities_accounts"] = array (
         'relationship_type' => 'many-to-many',
         'join_table' => 'stic_group_opportunities_opportunities_c',
         'join_key_lhs' => 'stic_group_opportunities_opportunitiesopportunities_ida',
-        'join_key_rhs' => 'stic_group_opportunities_opportunitiesstic_group_opportunities_idb',
+        'join_key_rhs' => 'stic_grp_opportunities_opportunitiesstic_grp_opportunities_idb',
       ),
     ),
     'table' => 'stic_group_opportunities_opportunities_c',
@@ -6048,7 +6048,7 @@ $dictionary["stic_group_opportunities_accounts"] = array (
       ),
       4 => 
       array (
-        'name' => 'stic_group_opportunities_opportunitiesstic_group_opportunities_idb',
+        'name' => 'stic_grp_opportunities_opportunitiesstic_grp_opportunities_idb',
         'type' => 'varchar',
         'len' => 36,
       ),
@@ -6079,7 +6079,7 @@ $dictionary["stic_group_opportunities_accounts"] = array (
         'type' => 'alternate_key',
         'fields' => 
         array (
-          0 => 'stic_group_opportunities_opportunitiesstic_group_opportunities_idb',
+          0 => 'stic_grp_opportunities_opportunitiesstic_grp_opportunities_idb',
         ),
       ),
     ),
