@@ -78,52 +78,69 @@ class stic_Security_Groups_RulesUtils
      */
     public static function getRelatedModulesList($mainModule)
     {
+        // Access global application list strings
         global $app_list_strings;
+
+        // Create a new bean instance for the main module
         $mainModuleBean = BeanFactory::newBean($mainModule);
+
+        // Initialize options array
         $options = array();
 
+        // Check if the main module bean is not empty
         if (!empty($mainModuleBean)) {
+            // Iterate over field definitions of the main module bean
             foreach ($mainModuleBean->getFieldDefinitions() as $val) {
+                // Reset destination module label and module label
                 unset($destModuleLabel, $moduleLabel);
                 $moduleLabel = translate($val['vname'], $mainModule);
+
+                // Check if module is defined and not equal to the module list label
                 if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
                     $destModuleLabel = " ({$app_list_strings['moduleList'][$val['module']]})";
                 }
+
+                // Check for 'relate' type fields excluding certain modules
                 if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] !== 'SecurityGroups') && $val['id_name']) {
+                    // Add option for relate type fields
                     $options[] = [
+                        'id' => $mainModule . $val['id_name'],
                         'relationship' => $mainModule . $val['id_name'],
                         'field' => $val['id_name'],
                         'module' => $val['module'],
                         'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                     ];
                 } else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
+                    // Handle link and relate type fields excluding certain modules
                     if (empty($val['link'])) {
-                        // n:n relationships
+                        // Handle n:n relationships
                         if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
                             $options[] = [
-                                'relationship' =>  $val['relationship'],
+                                'id' => $mainModule . $val['relationship'],
+                                'relationship' => $val['relationship'],
                                 'field' => $val['name'],
                                 'module' => $val['module'],
                                 'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                             ];
                         }
                     } elseif (!in_array($val['link'], array_column($options, 'relationship'))) {
-                        // 1:n or 1:1 relationships
+                        // Handle 1:n or 1:1 relationships
                         $options[] = [
-                            'relationship' =>  $val['link'],
+                            'id' => $mainModule . $val['relationship'],
+                            'relationship' => $val['link'],
                             'field' => $val['id_name'],
                             'module' => $val['module'],
                             'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                         ];
-
                     }
                 }
             }
         }
 
-        // orden alfabético
+        // Sort options alphabetically by label
         usort($options, function ($a, $b) {return strcmp($a['label'], $b['label']);});
 
+        // Return the options array
         return $options;
     }
 
@@ -134,7 +151,7 @@ class stic_Security_Groups_RulesUtils
      */
     public static function setCustomRelatedModuleList($mainModule)
     {
-        $options = array_column(self::getRelatedModulesList($mainModule), 'label', 'relationship');
+        $options = array_column(self::getRelatedModulesList($mainModule), 'label', 'id');
         $overridedListName = 'dynamic_related_module_list';
         global $app_list_strings;
         $app_list_strings[$overridedListName] = $options;
@@ -147,31 +164,37 @@ class stic_Security_Groups_RulesUtils
      */
     public static function setAllRelatedModuleList()
     {
+        // Access global application list strings
         global $app_list_strings;
+
+        // Retrieve system tabs
         $systemTabs = TabController::get_system_tabs();
+
+        // Initialize options array
         $options = [];
 
+        // Loop through each system tab to get related modules
         foreach ($systemTabs as $key => $mainModule) {
-            // if (!in_array($mainModule, ['stic_Payment_Commitments'])) {continue;}
 
+            // Get related modules for the main module
             $thisModuleRels = self::getRelatedModulesList($mainModule);
+
+            // Check if related modules list is an array
             if (is_array($thisModuleRels)) {
-
                 foreach ($thisModuleRels as $rel) {
-                    if (!empty($rel['relationship'])) {$options[$rel['relationship']] = $rel['label'];}
-
+                    // Add non-empty module id and label to options
+                    if (!empty($rel['id'])) {
+                        $options[$rel['id']] = $rel['label'];
+                    }
                 }
             }
-
         }
 
-        // orden alfabético
+        // Sort options alphabetically
         uasort($options, function ($a, $b) {return strcmp($a, $b);});
-        // var_dump($options);die();
 
-        global $app_list_strings;
-        $overridedListName = 'dynamic_related_module_list';
-        $app_list_strings[$overridedListName] = $options;
+        // Assign sorted options to the application list strings
+        $app_list_strings['dynamic_related_module_list'] = $options;
     }
 
     /**
@@ -321,7 +344,6 @@ class stic_Security_Groups_RulesUtils
                 }
             }
 
-            // var_dump($securityGroupsCandidatesToInherit);die();
 
             // Create an array of security groups that are not inheritable under any circumstances for the current module
             $notInheritableGroups = unencodeMultienum($rulesBean->non_inherit_from_security_groups);

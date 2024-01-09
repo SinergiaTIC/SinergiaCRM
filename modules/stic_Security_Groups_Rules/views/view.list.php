@@ -34,7 +34,16 @@ class stic_Security_Groups_RulesViewList extends ViewList
 
     public function preDisplay()
     {
-        global $sugar_config;
+        global $sugar_config, $current_user;
+
+        // Obtain user preferences
+        $userPreferenceOrder = $current_user->getPreference('listviewOrder', 'stic_Advanced_Security_Groups2_STIC_ADVANCED_SECUR');
+
+        if (empty($userPreferenceOrder['orderBy'])) {
+            $_REQUEST['orderBy'] = 'name_lbl'; 
+            $_REQUEST['sortOrder'] = 'ASC'; 
+        }
+
         parent::preDisplay();
 
         $sugar_config['list_max_entries_per_page'] = 500;
@@ -77,6 +86,7 @@ class stic_Security_Groups_RulesViewList extends ViewList
 
     public function display()
     {
+
         parent::display();
 
         SticViews::display($this);
