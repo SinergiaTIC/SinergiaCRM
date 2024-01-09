@@ -78,37 +78,42 @@ class stic_Security_Groups_RulesUtils
      */
     public static function getRelatedModulesList($mainModule)
     {
+        global $app_list_strings;
         $mainModuleBean = BeanFactory::newBean($mainModule);
         $options = array();
 
         if (!empty($mainModuleBean)) {
             foreach ($mainModuleBean->getFieldDefinitions() as $val) {
-
+                unset($destModuleLabel, $moduleLabel);
+                $moduleLabel = translate($val['vname'], $mainModule);
+                if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
+                    $destModuleLabel = " ({$app_list_strings['moduleList'][$val['module']]})";
+                }
                 if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] !== 'SecurityGroups') && $val['id_name']) {
                     $options[] = [
                         'relationship' => $mainModule . $val['id_name'],
                         'field' => $val['id_name'],
                         'module' => $val['module'],
-                        'label' => translate($val['vname'], $mainModule),
+                        'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                     ];
                 } else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
                     if (empty($val['link'])) {
                         // n:n relationships
                         if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
                             $options[] = [
-                                'relationship' => $val['relationship'],
+                                'relationship' => $mainModule . '__' . $val['relationship'],
                                 'field' => $val['name'],
-                                'module' => $val['name'],
-                                'label' => translate($val['vname'], $mainModule),
+                                'module' => $val['module'],
+                                'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                             ];
                         }
                     } elseif (!in_array($val['link'], array_column($options, 'relationship'))) {
                         // 1:n or 1:1 relationships
                         $options[] = [
-                            'relationship' => $val['link'],
+                            'relationship' => $mainModule . '__' . $val['link'],
                             'field' => $val['id_name'],
                             'module' => $val['module'],
-                            'label' => translate($val['vname'], $mainModule),
+                            'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                         ];
 
                     }
@@ -144,32 +149,26 @@ class stic_Security_Groups_RulesUtils
     {
         global $app_list_strings;
         $systemTabs = TabController::get_system_tabs();
-        $options = array();
+        $options = [];
 
         foreach ($systemTabs as $key => $mainModule) {
-            $mainModuleBean = BeanFactory::newBean($mainModule);
-            if (!empty($mainModuleBean)) {
-                foreach ($mainModuleBean->getFieldDefinitions() as $val) {
+            // if (!in_array($mainModule, ['stic_Payment_Commitments'])) {continue;}
 
-                    if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] !== 'SecurityGroups') && $val['id_name']) {
-                        $options[$mainModule . $val['id_name']] = translate($val['vname'], $mainModule). " ({$app_list_strings['moduleList'][$val['module']]})";
-                    } else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
+            $thisModuleRels = self::getRelatedModulesList($mainModule);
+            if (is_array($thisModuleRels)) {
 
-                        if (!empty($val['link']) && !array_key_exists($val['link'], $options)) {
-                            $options[$val['link']] = translate($val['vname'], $mainModule). " ({$app_list_strings['moduleList'][$val['module']]})";
-                        } elseif (!empty($val['relationship']) && !array_key_exists($val['relationship'], $options)) {
-                            
-                                $options[$val['relationship']] = translate($val['vname'], $mainModule). " ({$app_list_strings['moduleList'][$val['module']]})";
-                            
-                        }
-                    }
+                foreach ($thisModuleRels as $rel) {
+                    if (!empty($rel['relationship'])) {$options[$rel['relationship']] = $rel['label'];}
+
                 }
             }
+
         }
 
         // orden alfabético
-        uasort($options, function($a, $b) { return strcmp($a, $b); });
+        uasort($options, function ($a, $b) {return strcmp($a, $b);});
         // var_dump($options);die();
+
         global $app_list_strings;
         $overridedListName = 'dynamic_related_module_list';
         $app_list_strings[$overridedListName] = $options;
