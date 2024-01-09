@@ -29,8 +29,10 @@ global $mod_strings, $app_strings, $sugar_config, $current_user, $current_langua
 
 if (is_admin($current_user)) {
     $admin_mod_strings = return_module_language($current_language, 'Administration');
-    $module_menu[] = array('index.php?module=stic_Security_Groups_Rules&action=index&return_module=stic_Security_Groups_Rules&return_action=DetailView', $mod_strings['LNK_LIST'], 'View', 'stic_Security_Groups_Rules');
+    $module_menu[] = array("index.php?module=SecurityGroups&action=EditView&return_module=SecurityGroups&return_action=DetailView", translate('LNK_NEW_RECORD','SecurityGroups'), "Create_Security_Group");
+    $module_menu[] = array("index.php?module=SecurityGroups&action=ListView&return_module=SecurityGroups&return_action=ListView",  translate('LNK_LIST','SecurityGroups'), "Security_Groups");
     $module_menu[] = array("index.php?module=Users&action=index&return_module=SecurityGroups&return_action=ListView", $admin_mod_strings['LBL_MANAGE_USERS_TITLE'], "Create");
     $module_menu[] = array("index.php?module=ACLRoles&action=index&return_module=SecurityGroups&return_action=ListView", $admin_mod_strings['LBL_MANAGE_ROLES_TITLE'], "Role_Management");
     $module_menu[] = array("index.php?module=SecurityGroups&action=config&return_module=SecurityGroups&return_action=ListView", $admin_mod_strings['LBL_CONFIG_SECURITYGROUPS_TITLE'], "Security_Suite_Settings");
+    $module_menu[] = array("index.php?module=stic_Security_Groups_Rules&action=index&return_module=stic_Security_Groups_Rules&return_action=DetailView", $mod_strings['LBL_MODULE_NAME'], "stic_Security_Groups_Rules", 'stic_Security_Groups_Rules');
 }

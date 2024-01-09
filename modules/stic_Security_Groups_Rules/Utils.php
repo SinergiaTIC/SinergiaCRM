@@ -95,6 +95,11 @@ class stic_Security_Groups_RulesUtils
                 unset($destModuleLabel, $moduleLabel);
                 $moduleLabel = translate($val['vname'], $mainModule);
 
+                // Omit elationship module that are not in systemTabs
+                $systemTabs = TabController::get_system_tabs();
+                if(!in_array($val['module'],$systemTabs)){continue;}
+
+
                 // Check if module is defined and not equal to the module list label
                 if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
                     $destModuleLabel = " ({$app_list_strings['moduleList'][$val['module']]})";
@@ -136,7 +141,7 @@ class stic_Security_Groups_RulesUtils
                 }
             }
         }
-
+// var_dump($options);die();
         // Sort options alphabetically by label
         usort($options, function ($a, $b) {return strcmp($a['label'], $b['label']);});
 

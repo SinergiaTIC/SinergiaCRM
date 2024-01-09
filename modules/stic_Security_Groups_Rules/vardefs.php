@@ -131,7 +131,7 @@ $dictionary['stic_Security_Groups_Rules'] = array(
             'inline_edit' => false,
             'isMultiSelect' => true,
             'default' => '^^',
-            'massupdate' => 1,
+            'massupdate' => 0,
             'merge_filter' => 'disabled',
             'name' => 'inherit_from_modules',
             'no_default' => 0,
@@ -250,4 +250,4 @@ $dictionary['stic_Security_Groups_Rules'] = array(
 if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
-VardefManager::createVardef('stic_Security_Groups_Rules', 'stic_Security_Groups_Rules', array('basic', 'assignable', 'security_groups'));
+VardefManager::createVardef('stic_Security_Groups_Rules', 'stic_Security_Groups_Rules', array('basic'));

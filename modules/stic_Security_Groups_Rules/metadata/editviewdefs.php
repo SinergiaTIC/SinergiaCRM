@@ -52,7 +52,7 @@ array(
             'syncDetailEditViews' => true,
         ),
         'panels' => array(
-            'default' => array(
+            'DEFAULT' => array(
                 0 => array(
                     0 => array('name' => 'name_lbl',
                         'type' => 'readonly',
