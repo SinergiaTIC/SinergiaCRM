@@ -49,7 +49,7 @@ class ContactsLogicHooks {
         // End of Patch issue
 
         // Generate automatic Call
-        if (isset($bean->stic_postal_mail_return_reason_c) && ($bean->fetched_row['stic_postal_mail_return_reason_c'] == null || $bean->stic_postal_mail_return_reason_c != $bean->fetched_row['stic_postal_mail_return_reason_c'])) {        
+        if (isset($bean->stic_postal_mail_return_reason_c) && !empty($bean->stic_postal_mail_return_reason_c) && (is_null($bean->fetched_row['stic_postal_mail_return_reason_c']) || $bean->stic_postal_mail_return_reason_c != $bean->fetched_row['stic_postal_mail_return_reason_c'])) {
             include_once 'custom/modules/Contacts/SticUtils.php';
             ContactsUtils::generateCallFromReturnMailReason($bean);
         }
