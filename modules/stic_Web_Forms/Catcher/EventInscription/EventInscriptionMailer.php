@@ -99,16 +99,14 @@ class EventInscriptionMailer extends WebFormMailer
 
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
-                    if($this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), null, $this->payment)) {
-                        return;
-                    }
+                    return $this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), null, $this->payment);
                 // If the form doesn't have the input send the generic email
                 } else { 
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
                     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
                     $html .= $paymentMailer->paymentToHTML($this->payment);
                 }
-                // End STIC 20230920
+                // End STIC 20240109
 
                 break;
         }
@@ -157,9 +155,7 @@ class EventInscriptionMailer extends WebFormMailer
 
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
-                    if($this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), $accountObject, $this->payment)) {
-                        return;
-                    }
+                    return $this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), $accountObject, $this->payment);
                 // If the form doesn't have the input send the generic email
                 } else {
                     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
@@ -172,24 +168,18 @@ class EventInscriptionMailer extends WebFormMailer
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  The form does not include organizational data.");
         }
 
-
-        // STIC 20231220 - ART - Enable custom email template for assigned user
-        // STIC#1224
-        if(empty($_REQUEST['custom_assigned_email_template'])) {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data ...");
-            if ($this->payment == null) {
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data have not been included.");
-            } else {
-                $paymentMailer = new PaymentMailer();
-                $html .= $paymentMailer->paymentToHTML($this->payment);
-                $this->subject = "{$this->payment->transaction_code} - {$this->subject}"; // If there is linked payment, include the payment number in the subject of the mail
-            }
-            $this->body = $html;
-
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
-            return $this->send();
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data ...");
+        if ($this->payment == null) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Payment data have not been included.");
+        } else {
+            $paymentMailer = new PaymentMailer();
+            $html .= $paymentMailer->paymentToHTML($this->payment);
+            $this->subject = "{$this->payment->transaction_code} - {$this->subject}"; // If there is linked payment, include the payment number in the subject of the mail
         }
-        // End STIC 20231220
+        $this->body = $html;
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
+        return $this->send();
     }
 
     /**

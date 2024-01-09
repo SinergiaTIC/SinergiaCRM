@@ -118,12 +118,7 @@ class DonationController extends WebFormDataController
 
             // If the shipment has not gone ok it generates a trace
             if (!$mailer->sendAdminMail($objWeb, $payment, $this->bo->getFormParams(), $donator, $candidates, $donatorResult)) {    
-                // STIC 20240108 - ART - Enable custom email template for assigned user
-                // STIC#1224
-                if(empty($_REQUEST['custom_assigned_email_template'])) {
-                    // End STIC 20240108
-                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Unable to send the email to the administrator.");
-                }
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Unable to send the email to the administrator.");
             }
             // If we are in an advanced version of the form send the notice to the user
             if ($this->version > 1) {

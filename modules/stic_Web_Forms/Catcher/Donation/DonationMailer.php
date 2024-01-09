@@ -58,45 +58,38 @@ class DonationMailer extends WebFormMailer
 
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
-                    if($this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $payment)) {
-                        return;
-                    }
+                    return $this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $payment);
                 // If the form doesn't have the input send the generic email
                 } else {
                     $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
                     $html .= $paymentMailer->paymentToHTML($payment);
                 }
-                // End STIC 20230920
+                // End STIC 20240109
                 
                 break;
         }
 
-        // STIC 20231220 - ART - Enable custom email template for assigned user
-        // STIC#1224
-        if(empty($_REQUEST['custom_assigned_email_template'])) {
-            // Link the attached form files to the mail
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Linking the attached documents of the form to the mail to be sent to the administrator ...");
-            $documents = $donator->documents->tempBeans;
+        // Link the attached form files to the mail
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Linking the attached documents of the form to the mail to be sent to the administrator ...");
+        $documents = $donator->documents->tempBeans;
 
-            if ($documents) {
-                $html .= '<span style="font-weight: bold;">';
-                $html .= $this->translate('LBL_ATTACHMENTS_WEBFORM');
-                $html .= '</span>';
-                $html .= '<table>';
+        if ($documents) {
+            $html .= '<span style="font-weight: bold;">';
+            $html .= $this->translate('LBL_ATTACHMENTS_WEBFORM');
+            $html .= '</span>';
+            $html .= '<table>';
 
-                foreach ($documents as $key => $value) {
-                    $your_url = $GLOBALS['sugar_config']['site_url'] . "/index.php?module=Documents&action=DetailView&record=" . $value->id;
-                    $html .= '<tr><td><a href="' . $your_url . '">' . $value->document_name . '</a></td></tr>';
-                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  File name: " . $value->document_name . " - File URL: " . $your_url);
-                }
-                $html .= '</table><br><br>';
+            foreach ($documents as $key => $value) {
+                $your_url = $GLOBALS['sugar_config']['site_url'] . "/index.php?module=Documents&action=DetailView&record=" . $value->id;
+                $html .= '<tr><td><a href="' . $your_url . '">' . $value->document_name . '</a></td></tr>';
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  File name: " . $value->document_name . " - File URL: " . $your_url);
             }
-
-            $this->body = $html;
-            $this->subject = "{$payment->transaction_code} - {$this->subject}";
-            return $this->send();
+            $html .= '</table><br><br>';
         }
-        // End STIC 20231220
+
+        $this->body = $html;
+        $this->subject = "{$payment->transaction_code} - {$this->subject}";
+        return $this->send();
     }
 
     /**
