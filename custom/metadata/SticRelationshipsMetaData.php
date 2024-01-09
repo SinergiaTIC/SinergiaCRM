@@ -6070,7 +6070,7 @@ $dictionary["stic_group_opportunities_accounts"] = array (
         'type' => 'index',
         'fields' => 
         array (
-          0 => 'stic_group_opportunitiesstic_group_opportunities_opportunitiesopportunities_ida',
+          0 => 'stic_group_opportunities_opportunitiesopportunities_ida',
         ),
       ),
       2 => 
