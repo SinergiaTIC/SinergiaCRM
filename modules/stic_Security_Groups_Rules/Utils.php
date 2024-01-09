@@ -278,7 +278,7 @@ class stic_Security_Groups_RulesUtils
                 if (!empty($bean->{$value['field']})) {
                     if ($rulesBean->inherit_parent == 1 || in_array($value['relationship'], $filteredRelatedModules)) {
 
-                        // Obtain id from rarent record
+                        // Obtain id from parent record
                         $relatedId = $bean->{$value['field']};
 
                         if (!is_string($relatedId)) {
