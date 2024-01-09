@@ -456,7 +456,7 @@ function removeDocumentsFromFS()
         $bean = BeanFactory::getBean($row['module']);
         
         // STIC-Custom 20230929 ART - "Removal of Documents from Filesystem" task has erratic behavior
-        // https://github.com/SinergiaTIC/SinergiaCRM-SuiteCRM/pull/1262
+        // STIC#40
 
         // Update the database to mark the document as deleted
         // $db->query('UPDATE ' . $tableName . ' SET deleted=1 WHERE id=' . $db->quoted($row['id']));
@@ -498,17 +498,19 @@ function removeDocumentsFromFS()
         //     $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
         // }
 
-        if (!file_exists('upload://deleted/' . $bean->deleteFileDirectory())) {
+        $directory = $bean->deleteFileDirectory();
+
+        if (!file_exists('upload://deleted/' . $directory)) {
             // The directory does not exist
             continue;
         }
 
         // Check if the directory is empty
-        $files = glob('upload://deleted/' . $bean->deleteFileDirectory() . '/*');
+        $files = glob('upload://deleted/' . $directory . '/*');
         if (empty($files)) {
             $isSuccess = true;
             // If is empty, delete the directory
-            rmdir_recursive('upload://deleted/' . $bean->deleteFileDirectory());
+            rmdir_recursive('upload://deleted/' . $directory);
             if ($isSuccess) {
                 $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
             } else {
@@ -520,11 +522,11 @@ function removeDocumentsFromFS()
                 unlink($file);
             }
             // Once the files are deleted, delete the directory
-            rmdir_recursive('upload://deleted/' . $bean->deleteFileDirectory());
+            rmdir_recursive('upload://deleted/' . $directory);
             
             $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
         }
-        // End STIC-Custom 20231018 ART
+        // End STIC-Custom 20240109 ART
     }
 
     return $return;
