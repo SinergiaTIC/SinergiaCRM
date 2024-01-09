@@ -101,7 +101,7 @@ class stic_Security_Groups_RulesUtils
                         // n:n relationships
                         if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
                             $options[] = [
-                                'relationship' => $mainModule . '__' . $val['relationship'],
+                                'relationship' =>  $val['relationship'],
                                 'field' => $val['name'],
                                 'module' => $val['module'],
                                 'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
@@ -110,7 +110,7 @@ class stic_Security_Groups_RulesUtils
                     } elseif (!in_array($val['link'], array_column($options, 'relationship'))) {
                         // 1:n or 1:1 relationships
                         $options[] = [
-                            'relationship' => $mainModule . '__' . $val['link'],
+                            'relationship' =>  $val['link'],
                             'field' => $val['id_name'],
                             'module' => $val['module'],
                             'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
