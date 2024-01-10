@@ -85,7 +85,7 @@ class stic_Security_Groups_RulesUtils
                             $options[] = [
                                 'id' => $mainModule . $val['relationship'],
                                 'relationship' => $val['relationship'],
-                                'field' => $val['name'],
+                                'field' => $val['id_name'],
                                 'module' => $val['module'],
                                 'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                             ];
@@ -289,7 +289,7 @@ class stic_Security_Groups_RulesUtils
             $filteredRelatedModules = unencodeMultienum($rulesBean->inherit_from_modules);
             foreach ($allRelatedModules as $value) {
                 if (!empty($bean->{$value['field']})) {
-                    if ($rulesBean->inherit_parent == 1 || in_array($value['relationship'], $filteredRelatedModules)) {
+                    if ($rulesBean->inherit_parent == 1 || in_array($rulesBean->name.$value['relationship'], $filteredRelatedModules)) {
 
                         // Obtain id from parent record
                         $relatedId = $bean->{$value['field']};
