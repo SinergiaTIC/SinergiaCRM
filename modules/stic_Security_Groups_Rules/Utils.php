@@ -27,10 +27,6 @@ require_once 'modules/SecurityGroups/SecurityGroup.php';
 require_once 'modules/MySettings/TabController.php';
 require_once 'SticInclude/Utils.php';
 
-// Checking if the current user is an administrator
-if (!is_admin($current_user)) {
-    sugar_die($app_strings['ERR_NOT_ADMIN']);
-}
 
 // Class stic_Security_Groups_RulesUtils
 class stic_Security_Groups_RulesUtils
