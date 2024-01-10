@@ -30,7 +30,11 @@ class ContactsLogicHooks {
         }
 
         // Bring Incorpora location data, if there is any
-        if (isset($bean->stic_incorpora_locations_id_c) && isset($bean->fetched_row['stic_incorpora_locations_id_c']) && $bean->fetched_row['stic_incorpora_locations_id_c'] != $bean->stic_incorpora_locations_id_c) {
+        if (isset($bean->stic_incorpora_locations_id_c) && 
+            ( empty($bean->stic_incorpora_locations_id_c) && !is_null($bean->fetched_row['stic_incorpora_locations_id_c']) || 
+              (!empty($bean->stic_incorpora_locations_id_c) && $bean->fetched_row['stic_incorpora_locations_id_c'] != $bean->stic_incorpora_locations_id_c)
+            )
+           ) {
             include_once 'modules/stic_Incorpora_Locations/Utils.php';
             stic_Incorpora_LocationsUtils::transferLocationData($bean);
         }
@@ -49,7 +53,7 @@ class ContactsLogicHooks {
         // End of Patch issue
 
         // Generate automatic Call
-        if (isset($bean->stic_postal_mail_return_reason_c) && !empty($bean->stic_postal_mail_return_reason_c) && (is_null($bean->fetched_row['stic_postal_mail_return_reason_c']) || $bean->stic_postal_mail_return_reason_c != $bean->fetched_row['stic_postal_mail_return_reason_c'])) {
+        if (isset($bean->stic_postal_mail_return_reason_c) && !empty($bean->stic_postal_mail_return_reason_c) && $bean->stic_postal_mail_return_reason_c != $bean->fetched_row['stic_postal_mail_return_reason_c']) {   
             include_once 'custom/modules/Contacts/SticUtils.php';
             ContactsUtils::generateCallFromReturnMailReason($bean);
         }
