@@ -3256,12 +3256,3 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunións';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencións';
 $app_list_strings['map_relate_type_list']['Project'] = 'Proxectos';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Obxectivo';
-
-
-// SG Inheritance Rules list
-$app_list_strings['stic_custom_inheritance_rules_list'][''] = '';
-$app_list_strings['stic_custom_inheritance_rules_list']['default_groups'] = 'Grupos por defecto';
-$app_list_strings['stic_custom_inheritance_rules_list']['parent'] = 'Registro padre';
-$app_list_strings['stic_custom_inheritance_rules_list']['assigned'] = 'Usuario asignado';
-$app_list_strings['stic_custom_inheritance_rules_list']['creator'] = 'Usuario creador';
-$app_list_strings['stic_custom_inheritance_rules_list']['custom'] = 'Regla personalizada';

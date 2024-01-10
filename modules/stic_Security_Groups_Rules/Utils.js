@@ -60,9 +60,16 @@ switch (viewType()) {
       $('#inherit_parent').change(function () {
         // Clear the selectize input if checkbox is checked
         if (this.checked) {
+          $('#inherit_from_modules')[0].selectize.disable()
           $('#inherit_from_modules')[0].selectize.clear()
+        } else {
+          $('#inherit_from_modules')[0].selectize.enable()
         }
       });
+
+      // Call on page load
+      $('#inherit_parent').change()
+
 
       // Show message if the functionality is deactivated
       if (stic_security_groups_rules_enabled != 1) {

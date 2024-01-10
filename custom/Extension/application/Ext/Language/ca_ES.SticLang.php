@@ -3250,11 +3250,3 @@ $app_list_strings['map_relate_type_list']['Project'] = 'Projectes';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Públic Objectiu';
 
 
-// Llista de regles d'herència SG
-$app_list_strings['stic_custom_inheritance_rules_list'][''] = '';
-$app_list_strings['stic_custom_inheritance_rules_list']['default_groups'] = 'Grups per defecte';
-$app_list_strings['stic_custom_inheritance_rules_list']['parent'] = 'Registre pare';
-$app_list_strings['stic_custom_inheritance_rules_list']['assigned'] = 'Usuari assignat';
-$app_list_strings['stic_custom_inheritance_rules_list']['creator'] = 'Usuari creador';
-$app_list_strings['stic_custom_inheritance_rules_list']['custom'] = 'Regla personalitzada';
-

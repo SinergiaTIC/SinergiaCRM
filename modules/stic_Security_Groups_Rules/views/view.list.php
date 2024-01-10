@@ -40,8 +40,8 @@ class stic_Security_Groups_RulesViewList extends ViewList
         $userPreferenceOrder = $current_user->getPreference('listviewOrder', 'stic_Advanced_Security_Groups2_STIC_ADVANCED_SECUR');
 
         if (empty($userPreferenceOrder['orderBy'])) {
-            $_REQUEST['orderBy'] = 'name_lbl'; 
-            $_REQUEST['sortOrder'] = 'ASC'; 
+            $_REQUEST['orderBy'] = 'name_lbl';
+            $_REQUEST['sortOrder'] = 'ASC';
         }
 
         parent::preDisplay();
@@ -75,9 +75,6 @@ class stic_Security_Groups_RulesViewList extends ViewList
 
         // We load the list of security groups
         stic_Security_Groups_RulesUtils::setCustomSecurityGroupList();
-
-        // Charge filtered modules list
-        stic_Security_Groups_RulesUtils::setCustomFilteredModuleList();
 
         // Populate the list of related modules with all available values to ensure the inclusion of all related modules.
         stic_Security_Groups_RulesUtils::setAllRelatedModuleList();

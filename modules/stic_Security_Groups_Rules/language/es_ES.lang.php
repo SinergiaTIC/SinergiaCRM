@@ -68,7 +68,6 @@ $mod_strings = array(
     'LBL_INHERIT_ASSIGNED' => 'Heredar del usuario asignado',
     'LBL_INHERIT_PARENT' => 'Heredar de todos los registros padre',
     'LBL_INHERIT_CREATOR' => 'Heredar del usuario creador',
-    'LBL_INHERIT_CUSTOM_RULES' => 'Reglas de herencia personalizadas',
     'LBL_INHERIT_FROM_MODULES' => 'Heredar solamente de los módulos siguientes',
     'LBL_NON_INHERIT_FROM_SECURITY_GROUPS' => 'Grupos de Seguridad no heredables',
     'LBL_INHERIT_CUSTOM' => 'Heredar de un módulo y campo especifico',

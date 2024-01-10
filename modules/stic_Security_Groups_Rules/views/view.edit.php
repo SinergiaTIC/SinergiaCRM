@@ -51,11 +51,6 @@ class stic_Security_Groups_RulesViewEdit extends ViewEdit
         
         // Charge relate modules list
         stic_Security_Groups_RulesUtils::setCustomRelatedModuleList($this->bean->name);
-        
-        // Charge filtered modules list
-        stic_Security_Groups_RulesUtils::setCustomFilteredModuleList();
-
-        
 
 
     }

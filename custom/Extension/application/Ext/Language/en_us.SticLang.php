@@ -3215,11 +3215,3 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
-// SG Inheritance Rules list
-$app_list_strings['stic_custom_inheritance_rules_list'][''] = '';
-$app_list_strings['stic_custom_inheritance_rules_list']['default_groups'] = 'Default groups';
-$app_list_strings['stic_custom_inheritance_rules_list']['parent'] = 'Parent record';
-$app_list_strings['stic_custom_inheritance_rules_list']['assigned'] = 'Assigned user';
-$app_list_strings['stic_custom_inheritance_rules_list']['creator'] = 'Creator user';
-$app_list_strings['stic_custom_inheritance_rules_list']['custom'] = 'Custom rule';
-

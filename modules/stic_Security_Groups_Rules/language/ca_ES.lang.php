@@ -68,7 +68,6 @@ $mod_strings = array(
     'LBL_INHERIT_ASSIGNED' => "Hereta de l'usuari assignat",
     'LBL_INHERIT_PARENT' => 'Hereta de tots els registres pare',
     'LBL_INHERIT_CREATOR' => "Hereta de l'usuari creador",
-    'LBL_INHERIT_CUSTOM_RULES' => "Regles d'herència personalitzades",
     'LBL_INHERIT_FROM_MODULES' => 'Hereta només dels mòduls següents',
     'LBL_NON_INHERIT_FROM_SECURITY_GROUPS' => 'Grups de Seguretat no heretables',
     'LBL_INHERIT_CUSTOM' => "Hereta d'un mòdul i un camp específics",

@@ -68,7 +68,6 @@ $mod_strings = array(
     'LBL_INHERIT_ASSIGNED' => 'Inherit from Assigned To user',
     'LBL_INHERIT_PARENT' => 'Inherit from all parent records',
     'LBL_INHERIT_CREATOR' => 'Inherit from Createb By user',
-    'LBL_INHERIT_CUSTOM_RULES' => 'Custom Inheritance Rules',
     'LBL_INHERIT_FROM_MODULES' => 'Inherit only from the following modules',
     'LBL_NON_INHERIT_FROM_SECURITY_GROUPS' => 'Non-inheritable Security Groups',
     'LBL_INHERIT_CUSTOM' => 'Inherit from a Specific Module and Field',

@@ -35,41 +35,7 @@ if (!is_admin($current_user)) {
 // Class stic_Security_Groups_RulesUtils
 class stic_Security_Groups_RulesUtils
 {
-    /**
-     * Generates and returns an array with filtered modules.
-     *
-     * @return array Array of filtered modules.
-     */
-    public static function generateFilteredModuleArray()
-    {
-        global $app_list_strings;
-        $systemTabs = TabController::get_system_tabs();
-        $resArray = array();
-
-        // Filtering modules based on specific criteria
-        foreach ($app_list_strings['moduleList'] as $key => $val) {
-            if (!in_array($key, $GLOBALS['modInvisList']) && in_array($key, $systemTabs) && $key != 'Home') {
-                $resArray[$key] = $val;
-            } else {
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $key . ' Module discarded');
-            }
-        }
-
-        asort($resArray);
-        return $resArray;
-    }
-
-    /**
-     * Sets the custom filtered module list.
-     */
-    public static function setCustomFilteredModuleList()
-    {
-        $resArray = self::generateFilteredModuleArray();
-        $overridedListName = 'dynamic_filtered_module_list';
-        global $app_list_strings;
-        $app_list_strings[$overridedListName] = $resArray;
-    }
-
+   
     /**
      * Generates and returns an array with related module options.
      *
@@ -141,7 +107,7 @@ class stic_Security_Groups_RulesUtils
                 }
             }
         }
-// var_dump($options);die();
+        
         // Sort options alphabetically by label
         usort($options, function ($a, $b) {return strcmp($a['label'], $b['label']);});
 
