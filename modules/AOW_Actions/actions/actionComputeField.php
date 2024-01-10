@@ -103,15 +103,36 @@ class actionComputeField extends actionBase
 
             $relateFields = $this->getAllRelatedFields($bean);
 
-            for ($i = 0; $i < count($formulas); $i++) {
+            // STIC 20240110 - ART - Error in formula to calculate month
+            // STIC#
+            // for ($i = 0; $i < count($formulas); $i++) {
+            //     if (array_key_exists($formulas[$i], $relateFields) && isset($relateFields[$formulas[$i]]['id_name'])) {
+            //         $calcValue = $calculator->calculateFormula($formulaContents[$i]);
+            //         $bean->{$relateFields[$formulas[$i]]['id_name']} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
+            //     } else {
+            //         $calcValue = $calculator->calculateFormula($formulaContents[$i]);
+            //         $bean->{$formulas[$i]} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
+            //     }
+            // }
+
+            $formulasCount = is_countable($formulas) ? count($formulas) : 0;
+
+            for ($i = 0; $i < $formulasCount; $i++) {
                 if (array_key_exists($formulas[$i], $relateFields) && isset($relateFields[$formulas[$i]]['id_name'])) {
-                    $calcValue = $calculator->calculateFormula($formulaContents[$i]);
-                    $bean->{$relateFields[$formulas[$i]]['id_name']} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
+                    $bean->{$relateFields[$formulas[$i]]['id_name']} = $calculator->calculateFormula($formulaContents[$i]);
                 } else {
-                    $calcValue = $calculator->calculateFormula($formulaContents[$i]);
-                    $bean->{$formulas[$i]} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
+                    $value = $calculator->calculateFormula($formulaContents[$i]);
+                    $fieldType = $bean->field_defs[$formulas[$i]]['type'] ?? 'string';
+                    if (in_array($fieldType, ['float', 'decimal', 'currency'])) {
+                        $value = (float) $value;
+                    }
+                    elseif ($fieldType === 'int') {
+                        $value = (int) $value;
+                    }
+                    $bean->{$formulas[$i]} = $value;
                 }
             }
+            // End STIC 20240110
 
             if ($in_save) {
                 global $current_user;
