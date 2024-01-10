@@ -54,7 +54,6 @@ class DonationMailer extends WebFormMailer
                 // STIC 20230905 - ART - Enable custom email template for assigned user
                 // STIC#1224 
                 // $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
-                $paymentMailer = new PaymentMailer();
 
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
@@ -62,12 +61,14 @@ class DonationMailer extends WebFormMailer
                 // If the form doesn't have the input send the generic email
                 } else {
                     $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
-                    $html .= $paymentMailer->paymentToHTML($payment);
                 }
                 // End STIC 20240109
                 
                 break;
         }
+
+        $paymentMailer = new PaymentMailer();
+        $html .= $paymentMailer->paymentToHTML($payment);
 
         // Link the attached form files to the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Linking the attached documents of the form to the mail to be sent to the administrator ...");

@@ -95,7 +95,6 @@ class EventInscriptionMailer extends WebFormMailer
                 // STIC#1224
                 // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
                 //     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
-                $paymentMailer = new PaymentMailer();
 
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
@@ -104,7 +103,6 @@ class EventInscriptionMailer extends WebFormMailer
                 } else { 
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
                     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
-                    $html .= $paymentMailer->paymentToHTML($this->payment);
                 }
                 // End STIC 20240109
 
@@ -151,7 +149,6 @@ class EventInscriptionMailer extends WebFormMailer
                 // STIC 20230905 - ART - Enable custom email template for assigned user
                 // STIC#1224
                 //$html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
-                $paymentMailer = new PaymentMailer();
 
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
@@ -159,7 +156,6 @@ class EventInscriptionMailer extends WebFormMailer
                 // If the form doesn't have the input send the generic email
                 } else {
                     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
-                    $html .= $paymentMailer->paymentToHTML($this->payment);
                 }
                 // End STIC 20230920
                 
