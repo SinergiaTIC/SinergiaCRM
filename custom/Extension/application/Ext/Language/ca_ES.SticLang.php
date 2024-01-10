@@ -3248,5 +3248,3 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunions';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencions';
 $app_list_strings['map_relate_type_list']['Project'] = 'Projectes';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Públic Objectiu';
-
-

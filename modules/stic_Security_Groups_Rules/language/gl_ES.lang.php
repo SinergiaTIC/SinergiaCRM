@@ -22,7 +22,6 @@
  */
 
 $mod_strings = array(
-$mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ASSIGNED_TO' => 'Asignado a',
@@ -64,17 +63,14 @@ $mod_strings = array(
     'LBL_MODULO' => 'Módulo',
     'LBL_RULES' => 'Reglas de herencia aplicables',
     'LBL_MODULE' => 'Módulo',
-    'LBL_NAME_LBL' => 'Módulo',
+    'LBL_NAME_LABEL' => 'Módulo',
     'LBL_ACTIVE' => 'Activo',
     'LBL_INHERIT_ASSIGNED' => 'Heredar del usuario asignado',
     'LBL_INHERIT_PARENT' => 'Heredar de todos los registros padre',
     'LBL_INHERIT_CREATOR' => 'Heredar del usuario creador',
+    'LBL_INHERIT_CUSTOM_RULES' => 'Reglas de herencia personalizadas',
     'LBL_INHERIT_FROM_MODULES' => 'Heredar solamente de los módulos siguientes',
     'LBL_NON_INHERIT_FROM_SECURITY_GROUPS' => 'Grupos de Seguridad no heredables',
-    'LBL_INHERIT_CUSTOM' => 'Heredar de un módulo y campo especifico',
-    'LBL_EDITVIEW_PANEL1' => 'Reglas de herencia custom',
-    'LBL_EDITVIEW_PANEL2' => 'No heredar',
-    'LBL_COMMENTS' => 'Observaciones',
     'LBL_ACTIVE_INFO' => 'Si la casilla está marcada, se aplicarán las reglas establecidas específicamente para este módulo. Si no lo está, se aplicarán las reglas generales de los Grupos de Seguridad.',
     'LBL_INHERIT_FROM_MODULES_INFO' => 'Indica de qué módulos se heredarán los Grupos de Seguridad de entre aquellos que estén relacionados con el módulo base. Esto permite excluir determinados módulos del proceso de herencia automática del registro padre.',
     'LBL_NON_INHERIT_FROM_SECURITY_GROUPS_INFO' => 'Indica qué Grupos de Seguridad no deben ser heredados por los registros del módulo base.',

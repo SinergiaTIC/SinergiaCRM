@@ -40,7 +40,7 @@ class stic_Security_Groups_RulesViewList extends ViewList
         $userPreferenceOrder = $current_user->getPreference('listviewOrder', 'stic_Advanced_Security_Groups2_STIC_ADVANCED_SECUR');
 
         if (empty($userPreferenceOrder['orderBy'])) {
-            $_REQUEST['orderBy'] = 'name_lbl';
+            $_REQUEST['orderBy'] = 'name_label';
             $_REQUEST['sortOrder'] = 'ASC';
         }
 
@@ -64,7 +64,7 @@ class stic_Security_Groups_RulesViewList extends ViewList
                 // Create a new bean for the 'stic_Security_Groups_Rules' module
                 $ASGBean = BeanFactory::newBean('stic_Security_Groups_Rules');
                 $ASGBean->name = $key;
-                $ASGBean->name_lbl = $app_list_strings['moduleList'][$key];
+                $ASGBean->name_label = $app_list_strings['moduleList'][$key];
                 $ASGBean->save();
             }
         }

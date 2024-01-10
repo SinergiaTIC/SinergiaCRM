@@ -44,19 +44,15 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_EDITVIEW_PANEL1' => array(
-                    'newTab' => false,
-                    'panelDefault' => 'expanded',
-                ),
             ),
             'syncDetailEditViews' => true,
         ),
         'panels' => array(
             'DEFAULT' => array(
                 0 => array(
-                    0 => array('name' => 'name_lbl',
+                    0 => array('name' => 'name_label',
                         'type' => 'readonly',
-                        'customCode' => '<strong>{$fields.name_lbl.value}</strong>',
+                        'customCode' => '<strong>{$fields.name_label.value}</strong>',
 
                     ),
                     1 => array('name' => 'active',

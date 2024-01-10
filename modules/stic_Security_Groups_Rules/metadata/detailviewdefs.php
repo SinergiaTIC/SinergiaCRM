@@ -57,8 +57,8 @@ array(
             'default' => array(
                 0 => array(
                     0 => array(
-                        'name' => 'name_lbl',
-                        'label' => 'LBL_NAME_LBL',
+                        'name' => 'name_label',
+                        'label' => 'LBL_NAME_LABEL',
                     ),
                     1 => array(
                         'name' => 'active',

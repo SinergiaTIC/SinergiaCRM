@@ -30,9 +30,9 @@ array(
         'link' => true,
         'type' => 'readonly',
     ),
-    'NAME_LBL' => array(
+    'NAME_LABEL' => array(
         'width' => '32%',
-        'label' => 'LBL_NAME_LBL',
+        'label' => 'LBL_NAME_LABEL',
         'default' => true,
         'link' => true,
 
