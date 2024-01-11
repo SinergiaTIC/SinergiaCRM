@@ -3248,3 +3248,13 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunions';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencions';
 $app_list_strings['map_relate_type_list']['Project'] = 'Projectes';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Públic Objectiu';
+
+// Vistes personalitzades: Perfils d'usuari
+$app_list_strings['stic_custom_views_user_profile_list']['roles'] = 'Rols';
+$app_list_strings['stic_custom_views_user_profile_list']['security_groups'] = 'Grups de seguretat';
+$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Tothom';
+
+// Vistes personalitzades: Tipus d'usuari
+$app_list_strings['stic_custom_views_user_profile_list']['regular_user'] = 'Usuari regular';
+$app_list_strings['stic_custom_views_user_profile_list']['administrator'] = 'Administrador';
+$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Tothom';

@@ -3248,3 +3248,13 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reuniones';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvenciones';
 $app_list_strings['map_relate_type_list']['Project'] = 'Proyectos';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Objetivo';
+
+// Vistas personalizadas: Perfiles de usuario
+$app_list_strings['stic_custom_views_user_profile_list']['roles'] = 'Roles';
+$app_list_strings['stic_custom_views_user_profile_list']['security_groups'] = 'Grupos de seguridad';
+$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Todos';
+
+// Vistas personalizadas: Tipos de usuario
+$app_list_strings['stic_custom_views_user_profile_list']['regular_user'] = 'Usuario regular';
+$app_list_strings['stic_custom_views_user_profile_list']['administrator'] = 'Administrador';
+$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Todos';

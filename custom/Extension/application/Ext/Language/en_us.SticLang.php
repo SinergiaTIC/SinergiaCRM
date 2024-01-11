@@ -3216,3 +3216,13 @@ $app_list_strings['aow_date_type_list']['week'] = 'Weeks';
 $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
+
+// Custom Views: User profiles
+$app_list_strings['stic_custom_views_user_profile_list']['roles'] = 'Roles';
+$app_list_strings['stic_custom_views_user_profile_list']['security_groups'] = 'Security groups';
+$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'All';
+
+// Custom Views: User Types
+$app_list_strings['stic_custom_views_user_profile_list']['regular_user'] = 'Regular user';
+$app_list_strings['stic_custom_views_user_profile_list']['administrator'] = 'Administrator';
+$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'All';
