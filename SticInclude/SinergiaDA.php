@@ -1527,6 +1527,10 @@ class ExternalReporting
         while ($multiField = $db->fetchByAssoc($res, false)) {
 
             $list = $multiField['master_table'];
+
+            if ($list = 'sda_l_contacts_stic_professional_profile_c_stic_professional_pro'){
+                echo '';
+            }
             $this->info .= "<li>{$list}</li>";
 
             $unionSelectPiece = array();
@@ -1546,7 +1550,7 @@ class ExternalReporting
                  '{$listElement['code']}' as 'code'
                  FROM
                     {$multiField['source_table']}
-                 WHERE {$multiField['source_column']} LIKE '%^{$listElement['code']}^%'
+                 WHERE ({$multiField['source_column']} LIKE '%^{$listElement['code']}^%' OR {$multiField['source_column']} = '{$listElement['code']}') 
                  ";
             }
 
