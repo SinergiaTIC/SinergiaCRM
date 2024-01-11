@@ -27,11 +27,10 @@ require_once 'modules/SecurityGroups/SecurityGroup.php';
 require_once 'modules/MySettings/TabController.php';
 require_once 'SticInclude/Utils.php';
 
-
 // Class stic_Security_Groups_RulesUtils
 class stic_Security_Groups_RulesUtils
 {
-   
+
     /**
      * Generates and returns an array with related module options.
      *
@@ -59,8 +58,7 @@ class stic_Security_Groups_RulesUtils
 
                 // Omit elationship module that are not in systemTabs
                 $systemTabs = TabController::get_system_tabs();
-                if(!in_array($val['module'],$systemTabs)){continue;}
-
+                if (!in_array($val['module'], $systemTabs)) {continue;}
 
                 // Check if module is defined and not equal to the module list label
                 if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
@@ -103,7 +101,7 @@ class stic_Security_Groups_RulesUtils
                 }
             }
         }
-        
+
         // Sort options alphabetically by label
         usort($options, function ($a, $b) {return strcmp($a['label'], $b['label']);});
 
@@ -243,6 +241,7 @@ class stic_Security_Groups_RulesUtils
      */
     public static function applyCustomInheritance($bean)
     {
+        global $current_user, $db;
 
         // Skip processing for the 'SugarFeed' module
         if (in_array($bean->module_name, ['SugarFeed'])) {
@@ -289,7 +288,7 @@ class stic_Security_Groups_RulesUtils
             $filteredRelatedModules = unencodeMultienum($rulesBean->inherit_from_modules);
             foreach ($allRelatedModules as $value) {
                 if (!empty($bean->{$value['field']})) {
-                    if ($rulesBean->inherit_parent == 1 || in_array($rulesBean->name.$value['relationship'], $filteredRelatedModules)) {
+                    if ($rulesBean->inherit_parent == 1 || in_array($rulesBean->name . $value['relationship'], $filteredRelatedModules)) {
 
                         // Obtain id from parent record
                         $relatedId = $bean->{$value['field']};
@@ -311,12 +310,16 @@ class stic_Security_Groups_RulesUtils
                 }
             }
 
-
             // Create an array of security groups that are not inheritable under any circumstances for the current module
-            $notInheritableGroups = unencodeMultienum($rulesBean->non_inherit_from_security_groups);
-            // Add globally defined non-inheritable security groups
-            $result = $bean->db->query("SELECT id FROM securitygroups WHERE deleted=0 AND noninheritable=1");
-            foreach ($result as $row) {
+            if (!empty($rulesBean->non_inherit_from_security_groups)) {
+                $notInheritableGroups = unencodeMultienum($rulesBean->non_inherit_from_security_groups);
+            }
+
+            // Add globally defined non-inheritable security groups and non-inheritable security groups for current user in same query
+            $nonInheritableSQL = "SELECT DISTINCT id FROM securitygroups WHERE deleted=0 AND noninheritable=1
+                           UNION SELECT securitygroup_id FROM securitygroups_users WHERE user_id = '{$current_user->id}' AND deleted=0";
+            $result = $bean->db->query($nonInheritableSQL);
+            while ($row = $db->fetchByAssoc($result)) {
                 $notInheritableGroups[] = $row['id'];
             }
 
