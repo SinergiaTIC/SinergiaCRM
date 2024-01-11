@@ -323,6 +323,10 @@ class stic_Security_Groups_RulesUtils
                 $notInheritableGroups[] = $row['id'];
             }
 
+            // Remove duplicate candidates groups
+            $serializedArray = array_map('serialize', $securityGroupsCandidatesToInherit);
+            $securityGroupsCandidatesToInherit = array_map('unserialize', array_unique($serializedArray));
+
             // Add security groups to the record, excluding the non-inheritable ones
             $securityGroupBean = BeanFactory::newBean('SecurityGroups');
             foreach ($securityGroupsCandidatesToInherit as $key => $item) {
