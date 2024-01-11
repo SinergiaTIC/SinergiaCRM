@@ -79,7 +79,8 @@ class stic_Security_Groups_RulesUtils
                     // Handle link and relate type fields excluding certain modules
                     if (empty($val['link'])) {
                         // Handle n:n relationships
-                        if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
+                        if (!in_array($val['relationship'], array_column($options, 'relationship')) && $val['side'] != 'right') {
+                            
                             $options[] = [
                                 'id' => $mainModule . $val['relationship'],
                                 'relationship' => $val['relationship'],
@@ -143,7 +144,6 @@ class stic_Security_Groups_RulesUtils
 
             // Get related modules for the main module
             $thisModuleRels = self::getRelatedModulesList($mainModule);
-
             // Check if related modules list is an array
             if (is_array($thisModuleRels)) {
                 foreach ($thisModuleRels as $rel) {
