@@ -1527,10 +1527,6 @@ class ExternalReporting
         while ($multiField = $db->fetchByAssoc($res, false)) {
 
             $list = $multiField['master_table'];
-
-            if ($list = 'sda_l_contacts_stic_professional_profile_c_stic_professional_pro'){
-                echo '';
-            }
             $this->info .= "<li>{$list}</li>";
 
             $unionSelectPiece = array();
