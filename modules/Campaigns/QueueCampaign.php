@@ -182,7 +182,7 @@ if (!$test) {
             AND pl.deleted = 0 AND pl.list_type = 'exempt'
             AND plc.campaign_id = '{$campaign->id}'
             -- STIC 12/01/2024 MHP - Do not remove messages from the queue that do not belong to the campaign with exempt LPO
-            -- STIC#
+            -- STIC#61
             AND emailman.campaign_id = '{$campaign->id}') em
             -- END STIC-Custom
     )";
