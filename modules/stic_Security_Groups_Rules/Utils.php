@@ -84,7 +84,7 @@ class stic_Security_Groups_RulesUtils
                             $options[] = [
                                 'id' => $mainModule . $val['relationship'],
                                 'relationship' => $val['relationship'],
-                                'field' => $val['id_name'],
+                                'field' => $val['id_name'] ?? $val['name'],
                                 'module' => $val['module'],
                                 'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
                             ];
