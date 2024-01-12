@@ -317,7 +317,8 @@ class stic_Security_Groups_RulesUtils
 
             // Add globally defined non-inheritable security groups and non-inheritable security groups for current user in same query
             $nonInheritableSQL = "SELECT DISTINCT id FROM securitygroups WHERE deleted=0 AND noninheritable=1
-                           UNION SELECT securitygroup_id FROM securitygroups_users WHERE user_id = '{$current_user->id}' AND deleted=0";
+                           UNION SELECT securitygroup_id FROM securitygroups_users WHERE user_id = '{$current_user->id}' AND deleted=0
+                           AND noninheritable = 1";
             $result = $bean->db->query($nonInheritableSQL);
             while ($row = $db->fetchByAssoc($result)) {
                 $notInheritableGroups[] = $row['id'];
