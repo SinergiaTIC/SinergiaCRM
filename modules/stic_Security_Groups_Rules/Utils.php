@@ -70,7 +70,7 @@ class stic_Security_Groups_RulesUtils
                     // Add option for relate type fields
                     $options[] = [
                         'id' => $mainModule . $val['id_name'],
-                        'relationship' => $mainModule . $val['id_name'],
+                        'relationship' =>$val['id_name'],
                         'field' => $val['id_name'],
                         'module' => $val['module'],
                         'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
@@ -79,7 +79,7 @@ class stic_Security_Groups_RulesUtils
                     // Handle link and relate type fields excluding certain modules
                     if (empty($val['link'])) {
                         // Handle n:n relationships
-                        if (!in_array($val['relationship'], array_column($options, 'relationship')) && $val['side'] != 'right') {
+                        if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
                             
                             $options[] = [
                                 'id' => $mainModule . $val['relationship'],
