@@ -115,9 +115,10 @@ class DetailView2 extends EditView
             // STIC_Custom 20231124 AAM - Adding button to run Workflows
             // 
             global $app_list_strings;
+            $workflowBean = BeanFactory::newBean('AOW_WorkFlow');
             if (in_array($this->module, $app_list_strings['aow_moduleList'])) {
                 $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['AOW_WORKFLOW'] = array ('customCode' => '<input type="button" class="button" onClick="showPopupWorkflow(\'workflow\');" value="{$APP.LBL_RUN_WORKFLOW}">');
-                require_once('modules/AOW_WorkFlow/AOW_WorkFlowForms.php');
+                require_once('custom/modules/AOW_WorkFlow/AOW_WorkFlowForms.php');
                 AOW_WorkFlowForms::DVPopupHtml($this->module);
             }
             // END STIC-Custom   

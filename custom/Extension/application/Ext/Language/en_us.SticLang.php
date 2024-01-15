@@ -3217,3 +3217,7 @@ $app_list_strings['aow_date_type_list']['week'] = 'Weeks';
 $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
+$app_list_strings['aow_run_when_list']['Always'] = 'Always';
+$app_list_strings['aow_run_when_list']['On_Save'] = 'Only On Save';
+$app_list_strings['aow_run_when_list']['In_Scheduler'] = 'Only In The Scheduler';
+$app_list_strings['aow_run_when_list']['Never'] = 'Never';

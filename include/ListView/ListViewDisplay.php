@@ -392,6 +392,11 @@ class ListViewDisplay
                 // STIC#564               
                 $menuItems[] = $this->buildPDFLinkAndPopupHtml();
                 // END-Custom
+
+                // STIC-Custom 20240108 AAM - Adding Workflow Run on Record to view list
+                // STIC#564               
+                $menuItems[] = $this->buildWorkflowLinkAndPopupHtml();
+                // END-Custom
             }
 
             foreach ($this->actionsMenuExtraItems as $item) {
@@ -440,6 +445,21 @@ class ListViewDisplay
         require_once('modules/AOS_PDF_Templates/formLetter.php'); 
         formLetter::LVPopupHtml($this->seed->module_name);
         return formLetter::LVSmarty();
+    }
+    // END STIC-Custom
+
+    // STIC-Custom 20240108 AAM
+    // STIC#   
+    /**
+     * Generate the PDF Link and popupHtml, in list view
+     *
+     * @return string HTML
+     */
+    protected function buildWorkflowLinkAndPopupHtml()
+    {
+        require_once('custom/modules/AOW_WorkFlow/AOW_WorkFlowForms.php'); 
+        AOW_WorkFlowForms::LVPopupHtml($this->seed->module_name);
+        return AOW_WorkFlowForms::LVSmarty();
     }
     // END STIC-Custom
 
