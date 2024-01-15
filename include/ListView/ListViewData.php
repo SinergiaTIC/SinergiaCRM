@@ -310,6 +310,13 @@ class ListViewData
             $orderBy = 'last_name '.$order['sortOrder'].', first_name '.$order['sortOrder'];
         }
 
+        // STIC Custom 20211025 MHP - STIC#
+        // If uploadfile is included in the fields to be displayed, filename is added to the array since in custom modules
+        // that inherit from the file type module, the database field that stores the name is called filename.
+        if (in_array('uploadfile', $filter_fields)){
+            $filter_fields['filename'] = true;
+        }
+        // END STIC
         $ret_array = $seed->create_new_list_query($orderBy, $where, $filter_fields, $params, 0, '', true, $seed, $singleSelect);
         $ret_array['inner_join'] = '';
         if (!empty($this->seed->listview_inner_join)) {
@@ -357,7 +364,6 @@ class ListViewData
                 $result = array();
             }
         }
-
         $data = array();
 
         $temp = clone $seed;
@@ -369,12 +375,22 @@ class ListViewData
 
         while (($row = $this->db->fetchByAssoc($result)) != null) {
             if ($count < $limit) {
+                // STIC Custom 20211025 MHP - STIC#
+                // In custom modules that inherit from the file type module, the field that displays the file name is called 'uploadfile' instead of 'filename'.
+                // The value of the 'filename' field is copied to the 'uploadfile' so that it can be displayed in the list view.
+                if (!empty($row['filename'])){
+                    $row['uploadfile'] = $row['filename'];
+                }   
+                // END STIC
                 $id_list .= ',\''.$row[$id_field].'\'';
                 $idIndex[$row[$id_field]][] = count($rows);
-                $rows[] = $seed->convertRow($row);
+                $rows[] = $seed->convertRow($row);             
             }
             $count++;
         }
+
+
+
 
         if (!empty($id_list)) {
             $id_list = '('.substr($id_list, 1).')';
