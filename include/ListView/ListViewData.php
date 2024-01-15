@@ -311,9 +311,9 @@ class ListViewData
         }
 
         // STIC Custom 20211025 MHP - STIC#
-        // If uploadfile is included in the fields to be displayed, filename is added to the array since in custom modules
-        // that inherit from the file type module, the database field that stores the name is called filename.
-        if (in_array('uploadfile', $filter_fields)){
+        // If 'uploadfile' field is included in the fields to be displayed, 'filename' is added to the array since in custom modules
+        // that inherit from the file type module, the database field that stores the name is called 'filename'.
+        if (isset($GLOBALS["dictionary"][$seed->module_dir]['templates']['file']) && in_array('uploadfile', $filter_fields)){
             $filter_fields['filename'] = true;
         }
         // END STIC
@@ -378,7 +378,9 @@ class ListViewData
                 // STIC Custom 20211025 MHP - STIC#
                 // In custom modules that inherit from the file type module, the field that displays the file name is called 'uploadfile' instead of 'filename'.
                 // The value of the 'filename' field is copied to the 'uploadfile' so that it can be displayed in the list view.
-                if (!empty($row['filename'])){
+                if (isset($GLOBALS["dictionary"][$seed->module_dir]['templates']['file']) && 
+                    !isset($row['uploadfile']) && isset($row['filename']) && !empty($row['filename']))
+                {
                     $row['uploadfile'] = $row['filename'];
                 }   
                 // END STIC
