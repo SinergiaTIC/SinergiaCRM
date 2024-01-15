@@ -310,7 +310,7 @@ class ListViewData
             $orderBy = 'last_name '.$order['sortOrder'].', first_name '.$order['sortOrder'];
         }
 
-        // STIC Custom 20211025 MHP - STIC#
+        // STIC Custom 20211025 MHP - STIC#62
         // If 'uploadfile' field is included in the fields to be displayed, 'filename' is added to the array since in custom modules
         // that inherit from the file type module, the database field that stores the name is called 'filename'.
         if (isset($GLOBALS["dictionary"][$seed->module_dir]['templates']['file']) && in_array('uploadfile', $filter_fields)){
@@ -375,7 +375,7 @@ class ListViewData
 
         while (($row = $this->db->fetchByAssoc($result)) != null) {
             if ($count < $limit) {
-                // STIC Custom 20211025 MHP - STIC#
+                // STIC Custom 20211025 MHP - STIC#62
                 // In custom modules that inherit from the file type module, the field that displays the file name is called 'uploadfile' instead of 'filename'.
                 // The value of the 'filename' field is copied to the 'uploadfile' so that it can be displayed in the list view.
                 if (isset($GLOBALS["dictionary"][$seed->module_dir]['templates']['file']) && 
