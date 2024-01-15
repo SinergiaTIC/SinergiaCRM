@@ -50,7 +50,6 @@ class stic_Security_Groups_RulesUtils
 
         // Check if the main module bean is not empty
         if (!empty($mainModuleBean)) {
-            // Iterate over field definitions of the main module bean
             foreach ($mainModuleBean->getFieldDefinitions() as $val) {
                 // Reset destination module label and module label
                 unset($destModuleLabel, $moduleLabel);
@@ -59,6 +58,41 @@ class stic_Security_Groups_RulesUtils
                 // Omit elationship module that are not in systemTabs
                 $systemTabs = TabController::get_system_tabs();
                 if (!in_array($val['module'], $systemTabs)) {continue;}
+
+                // Check if module is defined and not equal to the module list label
+                if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
+                    $destModuleLabel = " ({$app_list_strings['moduleList'][$val['module']]})";
+                }
+
+                // Check for 'relate' type fields excluding certain modules
+                if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] !== 'SecurityGroups') && $val['id_name']) {
+                    // Add option for relate type fields
+                    $options[] = [
+                        'id' => $mainModule . $val['id_name'],
+                        'relationship' =>$val['id_name'],
+                        'field' => $val['id_name'],
+                        'module' => $val['module'],
+                        'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
+                    ];
+                }
+            }
+
+            $linkedFields = $mainModuleBean->get_linked_fields();
+
+            // Use array_filter to apply the callback function
+            $filteredFields = array_filter($linkedFields, function($element) {
+                return !(isset($element['side']) && $element['side'] === 'right');
+            });
+
+            // Iterate over field definitions of the main module bean
+            foreach ($filteredFields as $val) {
+                // Reset destination module label and module label
+                unset($destModuleLabel, $moduleLabel);
+                $moduleLabel = translate($val['vname'], $mainModule);
+
+                // Omit elationship module that are not in systemTabs
+                $systemTabs = TabController::get_system_tabs();
+                // if (!in_array($val['module'], $systemTabs)) {continue;}
 
                 // Check if module is defined and not equal to the module list label
                 if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
