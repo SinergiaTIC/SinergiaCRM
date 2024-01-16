@@ -85,39 +85,39 @@ class stic_Security_Groups_RulesUtils
 
             // Use array_filter to apply the callback function
             $filteredFields = array_filter($linkedFields, function ($element) {
+                // Exclude elements where 'side' is set to 'right'
                 return !(isset($element['side']) && $element['side'] === 'right');
             });
 
-            // Iterate over field definitions of the main module bean
+            // Iterate over the field definitions of the main module bean
             foreach ($filteredFields as $val) {
                 // Reset destination module label and module label
                 unset($destModuleLabel, $moduleLabel);
 
                 $moduleLabel = translate($val['vname'], $mainModule);
 
-                // como hay ciertas propiedades que no están presentes, las recuperamos directamente de $GLOBALS['dictionary']
+                // Retrieve certain properties directly from $GLOBALS['dictionary'] if not present
                 $tmpRel = $GLOBALS['dictionary'][$val['relationship']]['relationships'][$val['relationship']] ?? null;
                 if ($tmpRel) {
-                    // get relationship field name from dictionary
+                    // Get the relationship field name from the dictionary
                     $val['field'] = $tmpRel['lhs_module'] == $mainModule ? $tmpRel['join_key_rhs'] : $tmpRel['join_key_lhs'];
-                    // get module name from dictionary
+                    // Get the module name from the dictionary
                     $val['module'] = $tmpRel['lhs_module'] == $mainModule ? $tmpRel['rhs_module'] : $tmpRel['lhs_module'];
                 }
 
-                // Omit relationship module that are not in systemTabs
+                // Skip relationship modules that are not in systemTabs
                 if (!in_array($val['module'], $systemTabs)) {continue;}
 
-                // Check if module is defined and not equal to the module list label
+                // Check if the module is defined and differs from the module list label
                 if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
                     $destModuleLabel = " ({$app_list_strings['moduleList'][$val['module']]})";
                 }
 
+                // Handle link and relate type fields, excluding certain modules
                 if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
-                    // Handle link and relate type fields excluding certain modules
                     if (empty($val['link'])) {
                         // Handle link type relationships
                         if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
-
                             $options[] = [
                                 'id' => $mainModule . $val['relationship'],
                                 'relationship' => $val['relationship'],
