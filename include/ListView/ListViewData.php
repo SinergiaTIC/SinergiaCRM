@@ -386,14 +386,10 @@ class ListViewData
                 // END STIC
                 $id_list .= ',\''.$row[$id_field].'\'';
                 $idIndex[$row[$id_field]][] = count($rows);
-                $rows[] = $seed->convertRow($row);             
+                $rows[] = $seed->convertRow($row);
             }
             $count++;
         }
-
-
-
-
         if (!empty($id_list)) {
             $id_list = '('.substr($id_list, 1).')';
         }
