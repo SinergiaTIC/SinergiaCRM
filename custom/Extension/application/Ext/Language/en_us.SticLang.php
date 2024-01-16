@@ -107,9 +107,13 @@ $app_list_strings['moduleList']['stic_Bookings_Calendar'] = 'Bookings Calendar';
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicines';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescriptions';
-$app_list_strings['moduleList']['stic_Custom_Views'] = 'Custom Views';
 $app_list_strings['moduleList']['stic_Grants'] = 'Grants';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centers';
+$app_list_strings['moduleList']['stic_Custom_Views'] = 'Custom Views';
+$app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations of Custom Views';
+$app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions of Custom Views';
+$app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions of Custom Views';
+
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -142,9 +146,13 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Resource';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicine';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescription';
-$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Custom View';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Grant';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Center';
+$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Custom View';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condition';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -3217,12 +3225,33 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
-// Custom Views: User profiles
+// Custom Views: User Profiles
 $app_list_strings['stic_custom_views_user_profile_list']['roles'] = 'Roles';
 $app_list_strings['stic_custom_views_user_profile_list']['security_groups'] = 'Security groups';
 $app_list_strings['stic_custom_views_user_profile_list']['all'] = 'All';
 
 // Custom Views: User Types
-$app_list_strings['stic_custom_views_user_profile_list']['regular_user'] = 'Regular user';
-$app_list_strings['stic_custom_views_user_profile_list']['administrator'] = 'Administrator';
-$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'All';
+$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Regular user';
+$app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrator';
+$app_list_strings['stic_custom_views_user_type_list']['all'] = 'All';
+
+// Custom Views: Action Types
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Field modification';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panel modification';
+
+// Custom views: Field change types
+$app_list_strings['stic_custom_views_field_change_type_list']['show_do'] = 'Visibility: Show';
+$app_list_strings['stic_custom_views_field_change_type_list']['show_undo'] = 'Visibility: Hide';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_do'] = 'Mandatory: Make mandatory';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_undo'] = 'Mandatory: Make optional';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_do'] = 'Inline editing: Allow';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_undo'] = 'Inline editing: Do not allow';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_do'] = 'Read only: Read only';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_undo'] = 'Read Only: Editable';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_background'] = 'Color: Background';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_text'] = 'Color: Text';
+$app_list_strings['stic_custom_views_field_change_type_list']['value_fix'] = 'Value: Fix';
+
+// Custom views: Panel change types
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_do'] = 'Visibility: Show';
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_undo'] = 'Visibility: Hide';

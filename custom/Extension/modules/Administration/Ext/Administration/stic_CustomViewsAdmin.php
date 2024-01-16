@@ -29,7 +29,7 @@ $admin_option_defs['Administration']['stic_Custom_Views'] = array(
     'stic_Custom_Views',
     'LBL_STIC_CUSTOM_VIEWS_LINK_TITLE',
     'LBL_STIC_CUSTOM_VIEWS_DESCRIPTION',
-    './index.php?module=stic_Custom_Views&action=modules',
+    './index.php?module=stic_Custom_Views&action=index',
     'stic-custom-views',
 );
 

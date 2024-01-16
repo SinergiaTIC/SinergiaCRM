@@ -25,11 +25,11 @@ class stic_Custom_ViewsController extends SugarController {
 
     public function process()
     {
-        $this->action_remap = array();
+        //$this->action_remap = array();
         
         $GLOBALS [ 'log' ]->info(get_class($this).":") ;
         global $current_user;
-        $access = $current_user->getDeveloperModules();
+        //$access = $current_user->getDeveloperModules();
         $this->hasAccess = ($current_user->isAdmin() || $current_user->isDeveloperForAnyModule());
         
         parent::process();
@@ -43,6 +43,7 @@ class stic_Custom_ViewsController extends SugarController {
     {
         $this->view = 'list';
     }
+    
 // /**
 //      * This function allows the validation actions associated with a scheduler task to be executed from the console.
 //      * In addition to the name of the scheduled task, and the action itself, the "no-incremental" parameter can be included in the url, although with caution, as this will erase the last execution date of all validation actions.

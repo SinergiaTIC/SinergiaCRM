@@ -259,3 +259,67 @@ $layout_defs["Accounts"]["subpanel_setup"]['stic_grants_accounts'] = array (
       ),
     ),
   );
+
+$layout_defs["stic_Custom_View_Customizations"]["subpanel_setup"]['stic_custom_view_actions_stic_custom_view_customizations'] = array (
+    'order' => 100,
+    'module' => 'stic_Custom_View_Actions',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_CUSTOM_VIEW_ACTIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
+    'get_subpanel_data' => 'stic_custom_view_actions_stic_custom_view_customizations',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array (
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
+    ),
+);
+$layout_defs["stic_Custom_View_Customizations"]["subpanel_setup"]['stic_custom_view_conditions_stic_custom_view_customizations'] = array (
+    'order' => 100,
+    'module' => 'stic_Custom_View_Conditions',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_CUSTOM_VIEW_CONDITIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
+    'get_subpanel_data' => 'stic_custom_view_conditions_stic_custom_view_customizations',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array (
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
+    ),
+);
+$layout_defs["stic_Custom_Views"]["subpanel_setup"]['stic_custom_view_customizations_stic_custom_views'] = array (
+    'order' => 100,
+    'module' => 'stic_Custom_View_Customizations',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEWS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
+    'get_subpanel_data' => 'stic_custom_view_customizations_stic_custom_views',
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array (
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
+    ),
+);

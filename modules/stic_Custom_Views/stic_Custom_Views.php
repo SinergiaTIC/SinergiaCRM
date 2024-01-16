@@ -44,10 +44,11 @@ class stic_Custom_Views extends Basic {
     public $assigned_user_name;
     public $assigned_user_link;
     public $SecurityGroups;
-    public $last_execution;
-    public $function;
-    public $report_always;
-    public $priority;
+    public $user_type;
+    public $user_profile;
+    public $roles;
+    public $security_groups;
+    public $module;
 
     public function bean_implements($interface) {
         switch ($interface) {
@@ -58,6 +59,18 @@ class stic_Custom_Views extends Basic {
         return false;
     }
 
+    /**
+     * stic_Custom_Views constructor.
+     * @param bool $init
+     */
+    public function __construct($init = true)
+    {
+        parent::__construct();
+        if ($init) {
+            //$this->fill_moduleList();
+            require_once('modules/stic_Custom_Views/Utils.php');
+        }
+    }
     // public function __construct() {
     //     parent::__construct();
 
@@ -71,4 +84,23 @@ class stic_Custom_Views extends Basic {
 
     // }
 
+    /**
+     * Fills the module list for the module: stic_custom_views_moduleList
+     */
+    public function fill_moduleList()
+    {
+        if(isset($app_list_strings['stic_custom_views_moduleList']) || empty($app_list_strings['moduleList'])) {
+            return;
+        }
+
+        require_once('modules/ModuleBuilder/Module/StudioBrowser.php') ;
+        $sb = new StudioBrowser();
+        $nodes = $sb->getNodes();
+        $app_list_strings['stic_custom_views_moduleList'] = array();
+
+        foreach ($nodes as $module) {
+            $app_list_strings['stic_custom_views_moduleList'][$module['module']] = $module['name'];
+        }
+        //asort($app_list_strings['stic_custom_views_moduleList']);
+    }
 }

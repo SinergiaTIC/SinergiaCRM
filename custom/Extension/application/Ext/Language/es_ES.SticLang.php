@@ -106,9 +106,13 @@ $app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Registro de medicación';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescripciones médicas';
-$app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
+$app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
+$app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizaciones de las Vistas Personalizadas';
+$app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condiciones de las Vistas Personalizadas';
+$app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Acciones de las Vistas Personalizadas';
+
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -141,9 +145,13 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Registro de medicación';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicamento';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescripción médica';
-$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalizada';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Ayuda';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
+$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalizada';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -3255,6 +3263,27 @@ $app_list_strings['stic_custom_views_user_profile_list']['security_groups'] = 'G
 $app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Todos';
 
 // Vistas personalizadas: Tipos de usuario
-$app_list_strings['stic_custom_views_user_profile_list']['regular_user'] = 'Usuario regular';
-$app_list_strings['stic_custom_views_user_profile_list']['administrator'] = 'Administrador';
-$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Todos';
+$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario regular';
+$app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
+$app_list_strings['stic_custom_views_user_type_list']['all'] = 'Todos';
+
+// Vistas personalizadas: Tipos de acción
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificación de campo';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Modificación de panel';
+
+// Vistas personalizadas: Tipos de cambio para campos
+$app_list_strings['stic_custom_views_field_change_type_list']['show_do'] = 'Visibilidad: mostrar';
+$app_list_strings['stic_custom_views_field_change_type_list']['show_undo'] = 'Visibilidad: ocultar';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_do'] = 'Obligatoriedad: hacer obligado';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_undo'] = 'Obligatoriedad: hacer opcional';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_do'] = 'Edición en línea: permitir';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_undo'] = 'Edición en línea: no permitir';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_do'] = 'Sólo lectura: sólo lectura';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_undo'] = 'Sólo lectura: modificable';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_background'] = 'Color: fondo';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_text'] = 'Color: texto';
+$app_list_strings['stic_custom_views_field_change_type_list']['value_fix'] = 'Valor: fijo';
+
+// Vistas personalizadas: Tipos de cambio para paneles
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_do'] = 'Visibilidad: mostrar';
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_undo'] = 'Visibilidad: ocultar';

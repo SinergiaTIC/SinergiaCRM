@@ -106,9 +106,13 @@ $app_list_strings['moduleList']['stic_Bookings_Calendar'] = 'Calendari de Reserv
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Registre de medicació';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicaments';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescripcions mèdiques';
-$app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistes personalitzades';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ajuts';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centres';
+$app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistes personalitzades';
+$app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions de les Vistes Personalitzades';
+$app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions de les Vistes Personalitzades';
+$app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions de les Vistes Personalitzades';
+
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -141,9 +145,13 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurs';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Registre de medicació';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicament';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescripció mèdica';
-$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalitzada';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Ajut';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centre';
+$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalitzada';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalització';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condició';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acció';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -174,6 +182,7 @@ $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Registre de m
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicaments';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescripcions mèdiques';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centres';
+
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display']['Leads'] = 'Interessats';
@@ -205,6 +214,7 @@ $app_list_strings['record_type_display']['stic_Medication'] = 'Medicaments';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescripcions mèdiques';
 $app_list_strings['record_type_display']['stic_Grants'] = 'Ajuts';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centres';
+
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interessats';
@@ -3255,6 +3265,27 @@ $app_list_strings['stic_custom_views_user_profile_list']['security_groups'] = 'G
 $app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Tothom';
 
 // Vistes personalitzades: Tipus d'usuari
-$app_list_strings['stic_custom_views_user_profile_list']['regular_user'] = 'Usuari regular';
-$app_list_strings['stic_custom_views_user_profile_list']['administrator'] = 'Administrador';
-$app_list_strings['stic_custom_views_user_profile_list']['all'] = 'Tothom';
+$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
+$app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
+$app_list_strings['stic_custom_views_user_type_list']['all'] = 'Tothom';
+
+// Vistes personalitzades: Tipus d'acció
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificació de camp';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Modificació de panell';
+
+// Vistes personalitzades: Tipus de canvi per camps
+$app_list_strings['stic_custom_views_field_change_type_list']['show_do'] = 'Visibilitat: mostrar';
+$app_list_strings['stic_custom_views_field_change_type_list']['show_undo'] = 'Visibilitat: ocultar';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_do'] = 'Obligatorietat: fer obligat';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_undo'] = 'Obligatorietat: fer opcional';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_do'] = 'Edició en línia: permetre';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_undo'] = 'Edició en línia: no permetre';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_do'] = 'Només lectura: només lectura';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_undo'] = 'Només lectura: modificable';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_background'] = 'Color: fons';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_text'] = 'Color: text';
+$app_list_strings['stic_custom_views_field_change_type_list']['value_fix'] = 'Valor: fixe';
+
+// Vistes personalitzades: Tipus de canvi per panells
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_do'] = 'Visibilitat: mostrar';
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_undo'] = 'Visibilitat: ocultar';
