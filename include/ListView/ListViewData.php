@@ -390,6 +390,7 @@ class ListViewData
             }
             $count++;
         }
+
         if (!empty($id_list)) {
             $id_list = '('.substr($id_list, 1).')';
         }
