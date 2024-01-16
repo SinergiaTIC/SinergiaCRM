@@ -364,6 +364,7 @@ class ListViewData
                 $result = array();
             }
         }
+
         $data = array();
 
         $temp = clone $seed;
