@@ -75,7 +75,7 @@
          array (
            0 => 
            array (
-             'name' => 'module',
+             'name' => 'view_module',
              'studio' => 'visible',
              'label' => 'LBL_MODULE',
            ),

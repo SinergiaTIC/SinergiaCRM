@@ -35,14 +35,6 @@ array (
           0 => 'description',
           1 => '',
         ),
-        2 => 
-        array (
-          0 => 
-          array (
-            'name' => 'stic_custom_view_customizations_stic_custom_views_name',
-            'label' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEWS_FROM_STIC_CUSTOM_VIEWS_TITLE',
-          ),
-        ),
       ),
     ),
   ),

@@ -69,30 +69,6 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'min' => false,
     'max' => false,
   ),
-  'module' => 
-  array (
-    'required' => false,
-    'name' => 'module',
-    'vname' => 'LBL_MODULE',
-    'type' => 'enum',
-    'massupdate' => 0,
-    'no_default' => false,
-    'comments' => '',
-    'help' => 'El mòdul al qual s\'aplica la vista personalitzada',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'inline_edit' => '',
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'len' => 100,
-    'size' => '20',
-    'options' => 'moduleList',
-    'studio' => 'visible',
-    'dependency' => false,
-  ),
   'action_type' => 
   array (
     'required' => false,
@@ -116,27 +92,6 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'options' => 'stic_custom_views_action_type_list',
     'studio' => 'visible',
     'dependency' => false,
-  ),
-  'module_view' => 
-  array (
-    'required' => false,
-    'name' => 'module_view',
-    'vname' => 'LBL_MODULE_VIEW',
-    'type' => 'varchar',
-    'massupdate' => 0,
-    'no_default' => false,
-    'comments' => '',
-    'help' => 'La vista del mòdul a la qual se li aplicarà l\'acció de personalització',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'inline_edit' => '',
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'len' => '255',
-    'size' => '20',
   ),
   'field' => 
   array (
@@ -256,37 +211,6 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'unified_search' => true,
 );
 
-$dictionary["stic_Custom_View_Actions"]["fields"]["stic_custom_view_actions_stic_custom_view_customizations"] = array (
-  'name' => 'stic_custom_view_actions_stic_custom_view_customizations',
-  'type' => 'link',
-  'relationship' => 'stic_custom_view_actions_stic_custom_view_customizations',
-  'source' => 'non-db',
-  'module' => 'stic_Custom_View_Customizations',
-  'bean_name' => false,
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_ACTIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
-  'id_name' => 'stic_custod6f1zations_ida',
-);
-$dictionary["stic_Custom_View_Actions"]["fields"]["stic_custom_view_actions_stic_custom_view_customizations_name"] = array (
-  'name' => 'stic_custom_view_actions_stic_custom_view_customizations_name',
-  'type' => 'relate',
-  'source' => 'non-db',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_ACTIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
-  'save' => true,
-  'id_name' => 'stic_custod6f1zations_ida',
-  'link' => 'stic_custom_view_actions_stic_custom_view_customizations',
-  'table' => 'stic_custom_view_customizations',
-  'module' => 'stic_custom_View_Customizations',
-  'rname' => 'name',
-);
-$dictionary["stic_Custom_View_Actions"]["fields"]["stic_custod6f1zations_ida"] = array (
-  'name' => 'stic_custod6f1zations_ida',
-  'type' => 'link',
-  'relationship' => 'stic_custom_view_actions_stic_custom_view_customizations',
-  'source' => 'non-db',
-  'reportable' => false,
-  'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_ACTIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
-);
 
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');

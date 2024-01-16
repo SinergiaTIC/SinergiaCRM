@@ -81,4 +81,3 @@ $mod_strings = array (
   'LBL_VALUE_TYPE' => 'Tipus de valor',
   'LBL_VALUE' => 'Valor',
 );
-$mod_strings['LBL_STIC_CUSTOM_VIEW_CONDITIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalitzacions';

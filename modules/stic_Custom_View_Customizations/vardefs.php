@@ -97,86 +97,11 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'module' => 
-  array (
-    'required' => false,
-    'name' => 'module',
-    'vname' => 'LBL_MODULE',
-    'type' => 'enum',
-    'massupdate' => 0,
-    'no_default' => false,
-    'comments' => '',
-    'help' => 'El mòdul al qual s\'aplica la vista personalitzada',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'inline_edit' => true,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'len' => 100,
-    'size' => '20',
-    'options' => 'moduleList',
-    'studio' => 'visible',
-    'dependency' => false,
-  ),
 ),
     'relationships' => array (
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
-);
-$dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_view_actions_stic_custom_view_customizations"] = array (
-  'name' => 'stic_custom_view_actions_stic_custom_view_customizations',
-  'type' => 'link',
-  'relationship' => 'stic_custom_view_actions_stic_custom_view_customizations',
-  'source' => 'non-db',
-  'module' => 'stic_Custom_View_Actions',
-  'bean_name' => false,
-  'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_ACTIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
-);
-$dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_view_conditions_stic_custom_view_customizations"] = array (
-  'name' => 'stic_custom_view_conditions_stic_custom_view_customizations',
-  'type' => 'link',
-  'relationship' => 'stic_custom_view_conditions_stic_custom_view_customizations',
-  'source' => 'non-db',
-  'module' => 'stic_Custom_View_Conditions',
-  'bean_name' => false,
-  'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CONDITIONS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
-);
-$dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_view_customizations_stic_custom_views"] = array (
-  'name' => 'stic_custom_view_customizations_stic_custom_views',
-  'type' => 'link',
-  'relationship' => 'stic_custom_view_customizations_stic_custom_views',
-  'source' => 'non-db',
-  'module' => 'stic_Custom_Views',
-  'bean_name' => false,
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEWS_FROM_STIC_CUSTOM_VIEWS_TITLE',
-  'id_name' => 'stic_custo94b4m_views_ida',
-);
-$dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_view_customizations_stic_custom_views_name"] = array (
-  'name' => 'stic_custom_view_customizations_stic_custom_views_name',
-  'type' => 'relate',
-  'source' => 'non-db',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEWS_FROM_STIC_CUSTOM_VIEWS_TITLE',
-  'save' => true,
-  'id_name' => 'stic_custo94b4m_views_ida',
-  'link' => 'stic_custom_view_customizations_stic_custom_views',
-  'table' => 'stic_custom_views',
-  'module' => 'stic_Custom_Views',
-  'rname' => 'name',
-);
-$dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custo94b4m_views_ida"] = array (
-  'name' => 'stic_custo94b4m_views_ida',
-  'type' => 'link',
-  'relationship' => 'stic_custom_view_customizations_stic_custom_views',
-  'source' => 'non-db',
-  'reportable' => false,
-  'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEWS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
 );
 
 if (!class_exists('VardefManager')) {

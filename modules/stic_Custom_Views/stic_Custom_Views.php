@@ -27,6 +27,7 @@ class stic_Custom_Views extends Basic {
     public $object_name = 'stic_Custom_Views';
     public $table_name = 'stic_custom_views';
     public $importable = false;
+    public $disable_row_level_security = true;
 
     public $id;
     public $name;
@@ -61,15 +62,15 @@ class stic_Custom_Views extends Basic {
 
     /**
      * stic_Custom_Views constructor.
-     * @param bool $init
      */
-    public function __construct($init = true)
+    public function __construct()
     {
         parent::__construct();
-        if ($init) {
-            //$this->fill_moduleList();
-            require_once('modules/stic_Custom_Views/Utils.php');
-        }
+        require_once('modules/stic_Custom_Views/Utils.php');
+
+        $this->fill_stic_custom_views_moduleList();
+        $this->fill_stic_custom_views_roleList();
+        $this->fill_stic_custom_views_securityGroupList();
     }
     // public function __construct() {
     //     parent::__construct();
@@ -87,20 +88,66 @@ class stic_Custom_Views extends Basic {
     /**
      * Fills the module list for the module: stic_custom_views_moduleList
      */
-    public function fill_moduleList()
+    public function fill_stic_custom_views_moduleList()
     {
-        if(isset($app_list_strings['stic_custom_views_moduleList']) || empty($app_list_strings['moduleList'])) {
+        if(isset($GLOBALS ['app_list_strings']['stic_custom_views_moduleList'])) {
             return;
+        }
+
+        // Remove studio file to prevent StackOverflow (StudioBrowser will crete a new instance of every module with studio.php)
+        $renamed_own_studio_file = false;
+        if (file_exists('modules/' . $this->module_dir . '/metadata/studio.php')){
+            rename('modules/' . $this->module_dir . '/metadata/studio.php', 'modules/' . $this->module_dir . '/metadata/studio.php.bck');
+            $renamed_own_studio_file = true;
         }
 
         require_once('modules/ModuleBuilder/Module/StudioBrowser.php') ;
         $sb = new StudioBrowser();
         $nodes = $sb->getNodes();
-        $app_list_strings['stic_custom_views_moduleList'] = array();
-
+        
+        $stic_custom_views_moduleList = array();
         foreach ($nodes as $module) {
-            $app_list_strings['stic_custom_views_moduleList'][$module['module']] = $module['name'];
+            $stic_custom_views_moduleList[$module['module']] = $module['name'];
         }
-        //asort($app_list_strings['stic_custom_views_moduleList']);
+        $GLOBALS ['app_list_strings']['stic_custom_views_moduleList'] = $stic_custom_views_moduleList;
+
+        // Restore studio file
+        if($renamed_own_studio_file) {
+            rename('modules/' . $this->module_dir . '/metadata/studio.php.bck', 'modules/' . $this->module_dir . '/metadata/studio.php');
+        }
+    }
+
+    public function fill_stic_custom_views_roleList()
+    {
+        if(isset($GLOBALS ['app_list_strings']['stic_custom_views_roleList'])) {
+            return;
+        }
+        
+        $rolFocus = BeanFactory::newBean('ACLRoles');
+        $roles = $rolFocus->get_list("name", "", 0, -99, -99);
+        
+        $stic_custom_views_roleList = array("" => "");
+        foreach ($roles['list'] as $role) {
+            $stic_custom_views_roleList[$role->id] = $role->name;
+        }
+
+        $GLOBALS ['app_list_strings']['stic_custom_views_roleList'] = $stic_custom_views_roleList;
+    }
+
+    public function fill_stic_custom_views_securityGroupList()
+    {
+        if(isset($GLOBALS ['app_list_strings']['stic_custom_views_securityGroupList'])) {
+            return;
+        }
+        
+        $groupFocus = BeanFactory::newBean('SecurityGroups');
+        $groups = $groupFocus->get_list("name", "", 0, -99, -99);
+        
+        $stic_custom_views_securityGroupList = array("" => "");
+        foreach ($groups['list'] as $group) {
+            $stic_custom_views_securityGroupList[$group->id] = $group->name;
+        }
+
+        $GLOBALS ['app_list_strings']['stic_custom_views_securityGroupList'] = $stic_custom_views_securityGroupList;
     }
 }

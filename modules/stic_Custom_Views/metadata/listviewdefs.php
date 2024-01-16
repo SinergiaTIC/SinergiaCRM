@@ -35,7 +35,7 @@ array (
     'default' => true,
     'link' => true,
   ),
-  'MODULE' => 
+  'VIEW_MODULE' => 
   array (
     'type' => 'enum',
     'studio' => 'visible',
@@ -61,14 +61,14 @@ array (
   ),
   'ROLES' => 
   array (
-    'type' => 'varchar',
+    'type' => 'multienum',
     'label' => 'LBL_ROLES',
     'width' => '10%',
-    'default' => true,
+    'default' => false,
   ),
   'SECURITY_GROUPS' => 
   array (
-    'type' => 'varchar',
+    'type' => 'multienum',
     'label' => 'LBL_SECURITY_GROUPS',
     'width' => '10%',
     'default' => true,
