@@ -287,11 +287,15 @@ class EventInscriptionMailer extends WebFormMailer
 
         // Function to parse the email
         $this->parsingEmail($templateId, $account, $payment, $replacementObjects, $lang);
-        // End STIC 20230921 - ART
-
+        
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
-        return $this->send();
+
+        // If there's a template for the user send the mail
+        if(!empty($templateId)) {
+            return $this->send();
+        }
+        // End STIC 20240116 - ART
     }
 
 

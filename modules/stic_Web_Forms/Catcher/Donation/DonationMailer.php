@@ -316,11 +316,15 @@ class DonationMailer extends WebFormMailer
 
         // Function to parse the email
         $this->parsingEmail($templateId, $replacementObjects[1], $replacementObjects, $lang);
-        // End STIC 20231205 - ART
 
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
-        return $this->send();
+
+        // If there's a template for the user send the mail
+        if(!empty($templateId)) {
+            return $this->send();
+        }   
+        // End STIC 20240116 - ART
     }
     
     // STIC 20230905 - ART - Enable custom email template for assigned user
