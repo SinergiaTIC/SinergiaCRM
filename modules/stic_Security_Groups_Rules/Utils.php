@@ -48,62 +48,94 @@ class stic_Security_Groups_RulesUtils
         // Initialize options array
         $options = array();
 
+        // Omit relationship with module name that are not in systemTabs
+        $systemTabs = TabController::get_system_tabs();
+
         // Check if the main module bean is not empty
         if (!empty($mainModuleBean)) {
-            // Iterate over field definitions of the main module bean
-            foreach ($mainModuleBean->getFieldDefinitions() as $val) {
+            // Mostramos EXCLUSIVAMENTE los campos relacionados
+            foreach ($mainModuleBean->get_related_fields() as $val) {
+                // continue;
                 // Reset destination module label and module label
                 unset($destModuleLabel, $moduleLabel);
-                $moduleLabel = translate($val['vname'], $mainModule);
+                if (
+                    // ($val['module'] ?? null) == 'Users' ||
+                    !in_array(($val['module'] ?? null), $systemTabs) ||
+                    !isset($val['ext2'])
+                ) {continue;}
 
-                // Omit elationship module that are not in systemTabs
-                $systemTabs = TabController::get_system_tabs();
-                if (!in_array($val['module'], $systemTabs)) {continue;}
+                $moduleLabel = translate($val['vname'], $mainModule);
 
                 // Check if module is defined and not equal to the module list label
                 if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
                     $destModuleLabel = " ({$app_list_strings['moduleList'][$val['module']]})";
                 }
 
-                // Check for 'relate' type fields excluding certain modules
-                if (isset($val['type']) && $val['type'] === 'relate' && ($val['ext2'] && $val['module'] !== 'SecurityGroups') && $val['id_name']) {
-                    // Add option for relate type fields
-                    $options[] = [
-                        'id' => $mainModule . $val['id_name'],
-                        'relationship' =>$val['id_name'],
-                        'field' => $val['id_name'],
-                        'module' => $val['module'],
-                        'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
-                    ];
-                } else if (isset($val['type']) && in_array($val['type'], ['link', 'relate']) && !in_array($val['module'], ['SecurityGroups', 'Users'])) {
-                    // Handle link and relate type fields excluding certain modules
-                    if (empty($val['link'])) {
-                        // Handle n:n relationships
-                        if (!in_array($val['relationship'], array_column($options, 'relationship'))) {
-                            
-                            $options[] = [
-                                'id' => $mainModule . $val['relationship'],
-                                'relationship' => $val['relationship'],
-                                'field' => $val['id_name'] ?? $val['name'],
-                                'module' => $val['module'],
-                                'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
-                            ];
-                        }
-                    } elseif (!in_array($val['link'], array_column($options, 'relationship'))) {
-                        // Handle 1:n or 1:1 relationships
-                        $options[] = [
-                            'id' => $mainModule . $val['relationship'],
-                            'relationship' => $val['link'],
-                            'field' => $val['id_name'],
-                            'module' => $val['module'],
-                            'label' => translate($val['vname'], $mainModule) . $destModuleLabel,
-                        ];
+                $options[] = [
+                    'id' => $mainModule . $val['name'],
+                    'relationship' => $val['id_name'],
+                    'field' => $val['id_name'] ?? $val['name'],
+                    'module' => $val['module'],
+                    'label' => $moduleLabel . $destModuleLabel,
+                ];
+
+            }
+
+            // Ahora las relaciones normales
+            foreach ($mainModuleBean->get_linked_fields() as $val) {
+                // continue;
+                unset($destModuleLabel, $moduleLabel);
+
+                $tmpRel = $GLOBALS['dictionary'][$val['relationship']]['relationships'][$val['relationship']] ?? null;
+                if ($tmpRel) {
+                    $val['field'] = $tmpRel['lhs_module'] == $mainModule ? $tmpRel['join_key_rhs'] : $tmpRel['join_key_lhs'];
+                    if (empty($val['module'])) {
+                        $val['module'] = $tmpRel['lhs_module'] == $mainModule ? $tmpRel['rhs_module'] : $tmpRel['lhs_module'];
                     }
                 }
-            }
-        }
 
+                $val['cardinality'] = $GLOBALS['dictionary'][$val['name'] ?? $val['relationship']]['true_relationship_type'];
+
+                $moduleLabel = translate($val['vname'], $mainModule);
+                if (
+                    in_array($val['id_name'], array_column($options, 'relationship')) ||
+                    !in_array($val['module'], $systemTabs) ||
+                    $val['side'] == 'right' ||
+                    in_array(($val['module'] ?? null), ['Users', 'SecurityGroups'])
+
+                ) {
+                    continue;
+                }
+
+                $moduleLabel = translate($val['vname'], $mainModule);
+                // Si no se ha obtenido la etiqueta, mostramos el nombre del módulo.
+                if ($moduleLabel == $val['name']) {
+                    $moduleLabel = $app_list_strings['moduleList'][$val['module']];
+                }
+
+                // Check if module is defined and not equal to the module list label
+                if (!empty($val['module']) && $moduleLabel != $app_list_strings['moduleList'][$val['module']]) {
+                    $destModuleLabel = " ({$app_list_strings['moduleList'][$val['module']]})";
+                }
+                // var_dump($val);
+
+
+                $options[] = [
+                    'id' => $mainModule . $val['relationship'],
+                    'relationship' => $val['id_name'] ?? $val['name'],
+                    'field' => $val['field'],
+                    'module' => $val['module'],
+                    'label' => $moduleLabel . $destModuleLabel,
+                    'cardinality' => $val['cardinality'],
+                    // 'val' =>$val
+                ];
+
+            }
+
+        }
+        // die();
         // Sort options alphabetically by label
+        // var_dump($options);die();
         usort($options, function ($a, $b) {return strcmp($a['label'], $b['label']);});
 
         // Return the options array
@@ -117,7 +149,7 @@ class stic_Security_Groups_RulesUtils
      */
     public static function setCustomRelatedModuleList($mainModule)
     {
-        $options = array_column(self::getRelatedModulesList($mainModule), 'label', 'id');
+        $options = array_column(self::getRelatedModulesList($mainModule), 'label', 'field');
         $overridedListName = 'dynamic_related_module_list';
         global $app_list_strings;
         $app_list_strings[$overridedListName] = $options;
@@ -284,7 +316,7 @@ class stic_Security_Groups_RulesUtils
             }
 
             // Inherit security groups from parent records, if enabled
-            $allRelatedModules = self::getRelatedModulesList($bean->module_dir, 'module_names');
+            $allRelatedModules = self::getRelatedModulesList($bean->module_dir);
             $filteredRelatedModules = unencodeMultienum($rulesBean->inherit_from_modules);
             foreach ($allRelatedModules as $value) {
                 if (!empty($bean->{$value['field']})) {
