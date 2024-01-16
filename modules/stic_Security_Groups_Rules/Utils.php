@@ -270,6 +270,57 @@ class stic_Security_Groups_RulesUtils
     }
 
     /**
+     * Return a list of groups that this user belongs to.
+     *
+     * This method retrieves the security groups associated with a given user
+     * in SuiteCRM. It constructs a SQL query to fetch group details such as the
+     * group ID and name from the database, ensuring to exclude any deleted and noninheritable groups.
+     * The method returns an associative array where each key is a group ID, and
+     * the value is an array containing the group's ID and name.
+     *
+     * @param string $userId The user's ID.
+     * @return array An associative array of groups with their IDs and names.
+     */
+    public static function getSticUserSecurityGroups($userId)
+    {
+        // Get an instance of the database manager
+        $db = DBManagerFactory::getInstance();
+
+        // Safely escape the user ID to prevent SQL injection
+        $userId = $db->quote($userId);
+
+        // Construct the SQL query to fetch group details
+        $query = "SELECT
+                securitygroups.id,
+                securitygroups.name
+              FROM
+                securitygroups_users
+              INNER JOIN securitygroups ON
+                securitygroups_users.securitygroup_id = securitygroups.id
+                and securitygroups.deleted = 0
+              WHERE
+                securitygroups_users.user_id = '{$userId}'
+                AND securitygroups_users.deleted = 0
+                AND securitygroups_users.noninheritable = 0
+              ORDER BY
+                securitygroups.name ASC";
+
+        // Execute the query and handle any errors
+        $result = $db->query($query, true, 'Error finding the full membership list for a user: ');
+
+        // Initialize an array to store group details
+        $group_array = array();
+
+        // Fetch each row from the query result and add it to the group array
+        while (($row = $db->fetchByAssoc($result)) != null) {
+            $group_array[$row['id']] = $row;
+        }
+
+        // Return the array of group details
+        return $group_array;
+    }
+
+    /**
      * Function for SuiteCRM, handling security group inheritance.
      * This function applies custom security group inheritance rules to newly created records
      * based on conditions such as the assigned user, creator, and parent records.
@@ -296,7 +347,7 @@ class stic_Security_Groups_RulesUtils
 
             // Inherit security groups from the assigned user, if enabled
             if ($rulesBean->inherit_assigned == 1) {
-                $userGroups = SecurityGroup::getUserSecurityGroups($bean->assigned_user_id);
+                $userGroups = self::getSticUserSecurityGroups($bean->assigned_user_id);
                 if (!empty($userGroups)) {
                     foreach ($userGroups as $group) {
                         $securityGroupsCandidatesToInherit = array_merge(
@@ -309,7 +360,7 @@ class stic_Security_Groups_RulesUtils
 
             // Inherit security groups from the creator user, if enabled
             if ($rulesBean->inherit_creator == 1) {
-                $userGroups = SecurityGroup::getUserSecurityGroups($bean->created_by);
+                $userGroups = self::getSticSecurityGroups($bean->created_by);
                 if (!empty($userGroups)) {
                     foreach ($userGroups as $group) {
                         $securityGroupsCandidatesToInherit = array_merge(
@@ -322,10 +373,27 @@ class stic_Security_Groups_RulesUtils
 
             // Inherit security groups from parent records, if enabled
             $allRelatedModules = self::getRelatedModulesList($bean->module_dir);
-            $filteredRelatedModules = unencodeMultienum($rulesBean->inherit_from_modules);
+
+            // Proccess $field value to ensure only contains related fields name
+            $allRelatedModules = array_map(function ($module) {
+                if (strpos($module['field'], '__') !== false) {
+                    // Extrae y asigna la parte derecha del string directamente
+                    $module['field'] = explode('__', $module['field'])[1];
+                }
+                return $module;
+            }, $allRelatedModules);
+
+            foreach (unencodeMultienum($rulesBean->inherit_from_modules) as $value) {
+                if (strpos($value, '__') !== false) {
+                    $filteredRelatedModules[] = explode('__', $value, 2)[1];
+                } else {
+                    $filteredRelatedModules[] = $value;
+                }
+            }
+
             foreach ($allRelatedModules as $value) {
                 if (!empty($bean->{$value['field']})) {
-                    if ($rulesBean->inherit_parent == 1 || in_array($rulesBean->name . $value['relationship'], $filteredRelatedModules)) {
+                    if ($rulesBean->inherit_parent == 1 || in_array($value['field'], $filteredRelatedModules)) {
 
                         // Obtain id from parent record
                         $relatedId = $bean->{$value['field']};
@@ -352,10 +420,8 @@ class stic_Security_Groups_RulesUtils
                 $notInheritableGroups = unencodeMultienum($rulesBean->non_inherit_from_security_groups);
             }
 
-            // Add globally defined non-inheritable security groups and non-inheritable security groups for current user in same query
-            $nonInheritableSQL = "SELECT DISTINCT id FROM securitygroups WHERE deleted=0 AND noninheritable=1
-                           UNION SELECT securitygroup_id FROM securitygroups_users WHERE user_id = '{$current_user->id}' AND deleted=0
-                           AND noninheritable = 1";
+            // Add globally defined non-inheritable security groups
+            $nonInheritableSQL = "SELECT DISTINCT id FROM securitygroups WHERE deleted=0 AND noninheritable=1";
             $result = $bean->db->query($nonInheritableSQL);
             while ($row = $db->fetchByAssoc($result)) {
                 $notInheritableGroups[] = $row['id'];
