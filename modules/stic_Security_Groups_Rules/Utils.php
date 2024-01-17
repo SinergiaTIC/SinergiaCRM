@@ -397,25 +397,26 @@ class stic_Security_Groups_RulesUtils
                     // Obtain id from parent record
                     $relatedId = $bean->{$value['field']};
 
-                    // If it in not a string, it's because we're coming from a subpanel, 
-                    // so we get the id in the three following ways, or continue.
-                    
-                    // 1) If related field is presnet in subpanels form
+                    // If it is not a string, it indicates we're accessing from a subpanel.
+                    // In such cases, retrieve the id in one of the three following ways, or continue.
+
+                    // 1) Check if the related field is present in the subpanel's form
                     if (!is_string($relatedId)) {
                         $relatedId = key($bean->{$value['field']}->rows);
                     }
-                    
-                    // 2) If relationship is qualified with relationship name
+
+                    // 2) Check if the relationship is specified with a relationship name
                     if (!is_string($relatedId) && isset($bean->{$value['relationship']})) {
                         $relatedId = key($bean->{$value['relationship']}->getBeans());
-                    } 
-                    
-                    // 3) If relationship is qualified with lower case  module name (usual for native relationships)
+                    }
+
+                    // 3) Check if the relationship is specified using the lowercase module name (common in native relationships)
                     $relName = strtolower($value['module']);
                     if (!is_string($relatedId) && isset($bean->{$relName})) {
                         $relatedId = key($bean->{$relName}->getBeans());
-                    } 
 
+                    }
+                    
                     $currentRecordGroups = self::getRelatedSecurityGroupIDs($relatedId);
 
                     foreach ($currentRecordGroups as $val2) {
