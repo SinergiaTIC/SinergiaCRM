@@ -73,5 +73,5 @@ $mod_strings = array(
     'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => 'Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad del usuario que tenga asignado.',
     'LBL_INHERIT_CREATOR_CUSTOM_INFO' => 'Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad del usuario que lo haya creado.',
     'LBL_INHERIT_PARENT_CUSTOM_INFO' => 'Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad de los registros padre de todos los módulos con los que esté relacionado.',
-    'LBL_DISABLED_MODULE_RULES_INFO' => 'La aplicación de reglas de herencia de Grupos de Seguridad está desactivada, por lo que las reglas definidas aqui no se aplicarán.  Puedes activarlas <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">en esta página</a>',
+    'LBL_DISABLED_MODULE_RULES_INFO' => 'Las reglas por módulos en los Grupos de Seguridad no están habilitadas, por lo que la configuración aquí definida no se aplicará. Puede habilitarlas <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">en esta página</a>.',
 );
