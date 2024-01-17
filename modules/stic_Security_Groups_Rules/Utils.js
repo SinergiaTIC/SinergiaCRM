@@ -39,8 +39,11 @@ switch (viewType()) {
 
     $(document).ready(function () {
       // Initialize selectize for specific select elements
-      $('select[name=name], select#non_inherit_from_security_groups').selectize();
+      $('select#non_inherit_from_security_groups').selectize({
+        placeholder:''
+      });
       $('select#inherit_from_modules').selectize({
+        placeholder:'',
         onInitialize: function () {
           // Trigger a change event upon initialization
           this.trigger('change', this.getValue(), true);
