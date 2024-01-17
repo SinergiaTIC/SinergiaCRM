@@ -24,13 +24,17 @@
 class ContactsLogicHooks {
     public function before_save(&$bean, $event, $arguments) {
         // Calculate age
-        if ($bean->birthdate != $bean->fetched_row['birthdate']) {
+        if (isset($bean->birthdate) && isset($bean->fetched_row['birthdate']) && $bean->birthdate != $bean->fetched_row['birthdate']) {
             include_once 'custom/modules/Contacts/SticUtils.php';
             $bean->stic_age_c = ContactsUtils::getAge($bean->birthdate);
         }
 
         // Bring Incorpora location data, if there is any
-        if ($bean->fetched_row['stic_incorpora_locations_id_c'] != $bean->stic_incorpora_locations_id_c) {
+        if (isset($bean->stic_incorpora_locations_id_c) && 
+            ( empty($bean->stic_incorpora_locations_id_c) && !is_null($bean->fetched_row['stic_incorpora_locations_id_c']) || 
+              (!empty($bean->stic_incorpora_locations_id_c) && $bean->fetched_row['stic_incorpora_locations_id_c'] != $bean->stic_incorpora_locations_id_c)
+            )
+           ) {
             include_once 'modules/stic_Incorpora_Locations/Utils.php';
             stic_Incorpora_LocationsUtils::transferLocationData($bean);
         }
@@ -49,7 +53,7 @@ class ContactsLogicHooks {
         // End of Patch issue
 
         // Generate automatic Call
-        if ($bean->stic_postal_mail_return_reason_c != $bean->fetched_row['stic_postal_mail_return_reason_c']) {
+        if (isset($bean->stic_postal_mail_return_reason_c) && !empty($bean->stic_postal_mail_return_reason_c) && $bean->stic_postal_mail_return_reason_c != $bean->fetched_row['stic_postal_mail_return_reason_c']) {   
             include_once 'custom/modules/Contacts/SticUtils.php';
             ContactsUtils::generateCallFromReturnMailReason($bean);
         }
