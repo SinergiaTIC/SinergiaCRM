@@ -40,10 +40,10 @@ switch (viewType()) {
     $(document).ready(function () {
       // Initialize selectize for specific select elements
       $('select#non_inherit_from_security_groups').selectize({
-        placeholder:''
+        placeholder: ''
       });
       $('select#inherit_from_modules').selectize({
-        placeholder:'',
+        placeholder: '',
         onInitialize: function () {
           // Trigger a change event upon initialization
           this.trigger('change', this.getValue(), true);
@@ -73,11 +73,6 @@ switch (viewType()) {
       // Call on page load
       $('#inherit_parent').change()
 
-
-      // Show message if the functionality is deactivated
-      if (stic_security_groups_rules_enabled != 1) {
-        $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Security_Groups_Rules.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
-      }
 
     })
 
@@ -109,7 +104,7 @@ switch (viewType()) {
       });
 
       // Show message if the functionality is deactivated
-      if (stic_security_groups_rules_enabled != 1) {
+      if (SUGAR.config.stic_security_groups_rules_enabled != 1) {
         $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Security_Groups_Rules.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
       }
 

@@ -562,9 +562,11 @@ $sugar_config = array(
     // STIC Custom 20220422 JCH - publish JS variables
     // STIC#708
     // STIC#760
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
     'js_available' => array(
         0 => 'stic_datetime_combo_minute_interval',
         1 => 'stic_sinergiada_public',
+        2 => 'stic_security_groups_rules_enabled',
     ),
     // END STIC
     
@@ -574,4 +576,9 @@ $sugar_config = array(
     'js_custom_version' => 1,
     'stic_show_update_alert' => 0,
     // END STIC
+
+    // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
+    'stic_security_groups_rules_enabled' => false,
+    // STIC
 );

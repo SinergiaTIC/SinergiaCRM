@@ -69,8 +69,6 @@ class stic_Security_Groups_RulesViewList extends ViewList
             }
         }
 
-        echo "<script>let stic_security_groups_rules_enabled = '{$sugar_config['stic_security_groups_rules_enabled']}' </script>";
-
         require_once 'modules/stic_Security_Groups_Rules/Utils.php';
 
         // We load the list of security groups
