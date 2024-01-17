@@ -54,9 +54,11 @@ class DeleteInactiveRelations extends DataCheckFunction {
         - 2nd: deleteInactiveParentIdFields()
         - 3rd: deleteInactiveRelateFields() 
         */
+        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ": --- START Delete Inactive Relations ---\n");        
         $this->deleteInactiveRelationshipsWithoutParentId();
         $this->deleteInactiveParentIdFields();
         $this->deleteInactiveRelateFields();
+        $GLOBALS['log']->stic('\nLine ' . __LINE__ . ': ' . __METHOD__ . ": --- END Delete Inactive Relations ---");
 
         return true;
     }
@@ -257,16 +259,16 @@ class DeleteInactiveRelations extends DataCheckFunction {
     {
         if($resultUpdate){
             if ($affectedRows > 0) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Deleted outdated records: ');                                
-                $GLOBALS['log']->error('- Relationship:' . $relationship);                                
-                $GLOBALS['log']->error('- ' . $affectedRows . ' records have been updated in the table ' . $updateTable);                
-                $GLOBALS['log']->error('- Executed query: ' . $queryUpdate); 
+                $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Deleted outdated records: ');                                
+                $GLOBALS['log']->stic('- Relationship:' . $relationship);                                
+                $GLOBALS['log']->stic('- ' . $affectedRows . ' records have been updated in the table ' . $updateTable);                
+                $GLOBALS['log']->stic('- Executed query: ' . $queryUpdate); 
             }
         } else {
             if($updateField){
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error updating the ' . $updateField . ' field in the table: ' . $updateTable);                
+                $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error updating the ' . $updateField . ' field in the table: ' . $updateTable);                
             } else {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error updating the relationship ' . $relationship);                
+                $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error updating the relationship ' . $relationship);                
             }             
         }
     }
