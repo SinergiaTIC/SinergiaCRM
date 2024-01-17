@@ -116,6 +116,11 @@ $app_list_strings['moduleList']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescricións médicas';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
+$app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
+$app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accións';
+$app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizacións';
+$app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicións';
+
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -142,6 +147,11 @@ $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicamento';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescrición médica';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Ayuda';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
+$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista Personalizada';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
@@ -3177,6 +3187,32 @@ $app_list_strings['stic_centers_types_list']['residential'] = 'Residencial';
 $app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de atención';
 $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
+
+// Vistas personalizadas: Tipos de usuario
+$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario regular';
+$app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
+$app_list_strings['stic_custom_views_user_type_list']['all'] = 'Todos';
+
+// Vistas personalizadas: Tipos de acción
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificación de campo';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Modificación de panel';
+
+// Vistas personalizadas: Tipos de cambio para campos
+$app_list_strings['stic_custom_views_field_change_type_list']['show_do'] = 'Visibilidade: mostrar';
+$app_list_strings['stic_custom_views_field_change_type_list']['show_undo'] = 'Visibilidade: ocultar';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_do'] = 'Obrigatorio: facer obrigatorio';
+$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_undo'] = 'Obrigatorio: facer optativo';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_do'] = 'Edición en línea: permitir';
+$app_list_strings['stic_custom_views_field_change_type_list']['inline_undo'] = 'Edición en línea: no permitir';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_do'] = 'Só lectura: só lectura';
+$app_list_strings['stic_custom_views_field_change_type_list']['readonly_undo'] = 'Só lectura: modificable';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_background'] = 'Cor: fondo';
+$app_list_strings['stic_custom_views_field_change_type_list']['color_text'] = 'Cor: texto';
+$app_list_strings['stic_custom_views_field_change_type_list']['value_fix'] = 'Valor: fixo';
+
+// Vistas personalizadas: Tipos de cambio para paneles
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_do'] = 'Visibilidade: mostrar';
+$app_list_strings['stic_custom_views_panel_change_type_list']['show_undo'] = 'Visibilidade: ocultar';
 
 // Modificaciones del core de SuiteCRM
 
