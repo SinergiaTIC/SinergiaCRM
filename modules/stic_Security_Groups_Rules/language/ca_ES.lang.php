@@ -73,5 +73,5 @@ $mod_strings = array(
     'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => "Si la casella està marcada, cada registre del mòdul base heretarà els Grups de Seguretat de l'usuari que tingui assignat.",
     'LBL_INHERIT_CREATOR_CUSTOM_INFO' => "Si la casella està marcada, cada registre del mòdul base heretarà els Grups de Seguretat de l'usuari que l'hagi creat.",
     'LBL_INHERIT_PARENT_CUSTOM_INFO' => "Si la casella està marcada, cada registre del mòdul base heretarà els Grups de Seguretat dels registres pare de tots els mòduls amb què estigui relacionat.",
-    'LBL_DISABLED_MODULE_RULES_INFO' => 'L\'aplicació de regles d\'herència de Grups de Seguretat està desactivada, per tant les regles definides aquí no s\'aplicaran. Pots activar-les <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">en aquesta pàgina</a>',
+    'LBL_DISABLED_MODULE_RULES_INFO' => 'Les regles per mòduls als Grups de Seguretat no estan habilitades, per tant, la configuració definida aquí no s\'aplicarà. Podeu habilitar-les <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">en aquesta pàgina</a>.',
 );
