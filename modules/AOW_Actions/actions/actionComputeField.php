@@ -103,8 +103,8 @@ class actionComputeField extends actionBase
 
             $relateFields = $this->getAllRelatedFields($bean);
 
-            // STIC 20240110 - ART - Error in formula to calculate month
-            // STIC#
+            // STIC-Custom 20240110 - ART - Error in formula to calculate month
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/49
             // for ($i = 0; $i < count($formulas); $i++) {
             //     if (array_key_exists($formulas[$i], $relateFields) && isset($relateFields[$formulas[$i]]['id_name'])) {
             //         $calcValue = $calculator->calculateFormula($formulaContents[$i]);
@@ -132,7 +132,7 @@ class actionComputeField extends actionBase
                     $bean->{$formulas[$i]} = $value;
                 }
             }
-            // End STIC 20240110
+            // End STIC-Custom 20240110
 
             if ($in_save) {
                 global $current_user;
