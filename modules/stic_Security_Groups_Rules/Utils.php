@@ -392,27 +392,28 @@ class stic_Security_Groups_RulesUtils
             }
 
             foreach ($allRelatedModules as $value) {
-                if (!empty($bean->{$value['field']})) {
-                    if ($rulesBean->inherit_parent == 1 || in_array($value['field'], $filteredRelatedModules)) {
+                // if (!empty($bean->{$value['field']})) {
+                if ($rulesBean->inherit_parent == 1 || in_array($value['field'], $filteredRelatedModules)) {
 
-                        // Obtain id from parent record
-                        $relatedId = $bean->{$value['field']};
+                    // Obtain id from parent record
+                    $relatedId = $bean->{$value['field']};
 
-                        if (!is_string($relatedId)) {
-                            // If it in not a string, it's because we're coming from a subpanel, so we get the id in the following way:
-                            $relatedId = key($bean->{$value['field']}->rows);
-                        }
+                    if (!is_string($relatedId)) {
+                        // If it in not a string, it's because we're coming from a subpanel, so we get the id in the two following ways:
+                        $relName = strtolower($value['module']);
+                        $relatedId = key($bean->{$value['field']}->rows) ?? key($bean->{$relName}->getBeans());
+                    }
 
-                        $currentRecordGroups = self::getRelatedSecurityGroupIDs($relatedId);
+                    $currentRecordGroups = self::getRelatedSecurityGroupIDs($relatedId);
 
-                        foreach ($currentRecordGroups as $val2) {
-                            $securityGroupsCandidatesToInherit = array_merge(
-                                $securityGroupsCandidatesToInherit,
-                                [['record_id' => $bean->id, 'securitygroup_id' => $val2]]
-                            );
-                        }
+                    foreach ($currentRecordGroups as $val2) {
+                        $securityGroupsCandidatesToInherit = array_merge(
+                            $securityGroupsCandidatesToInherit,
+                            [['record_id' => $bean->id, 'securitygroup_id' => $val2]]
+                        );
                     }
                 }
+                // }
             }
 
             // Create an array of security groups that are not inheritable under any circumstances for the current module
