@@ -91,11 +91,6 @@ class EventInscriptionMailer extends WebFormMailer
             case EventInscriptionBO::CONTACT_NEW:
             case EventInscriptionBO::CONTACT_UNIQUE:
 
-                // STIC 20230905 - ART - Enable custom email template for assigned user
-                // STIC#1224
-                // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
-                //     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
-
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
                     return $this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), null, $this->payment);
@@ -104,7 +99,6 @@ class EventInscriptionMailer extends WebFormMailer
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating information for CONTACT_NEW or CONTACT_UNIQUE");
                     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $contactObject, $contactResult == EventInscriptionBO::CONTACT_NEW);
                 }
-                // End STIC 20240109
 
                 break;
         }
@@ -146,10 +140,6 @@ class EventInscriptionMailer extends WebFormMailer
             case EventInscriptionBO::ACCOUNT_NEW:
             case EventInscriptionBO::ACCOUNT_UNIQUE:
 
-                // STIC 20230905 - ART - Enable custom email template for assigned user
-                // STIC#1224
-                //$html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
-
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
                     return $this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $this->eventInscriptionBO->getEvent(), $this->eventInscriptionBO->getInscriptionObject(), $accountObject, $this->payment);
@@ -157,7 +147,6 @@ class EventInscriptionMailer extends WebFormMailer
                 } else {
                     $html .= $this->newObjectBodyHTML($objWeb, $formParams, $accountObject, $accountResult == EventInscriptionBO::ACCOUNT_NEW);
                 }
-                // End STIC 20230920
                 
                 break;
             case EventInscriptionBO::ACCOUNT_NO_DATA:
@@ -201,8 +190,6 @@ class EventInscriptionMailer extends WebFormMailer
             $lang);
     }
 
-    // STIC 20230905 - ART - Enable custom email template for assigned user
-    // STIC#1224
     /**
      * Function to parse the email
      *
@@ -237,7 +224,6 @@ class EventInscriptionMailer extends WebFormMailer
             return false;
         }
     }
-    // End STIC 20230921 - ART
 
     /**
      * Send the notification email to the registered user
@@ -262,29 +248,6 @@ class EventInscriptionMailer extends WebFormMailer
         $replacementObjects[1] = $event;
         $replacementObjects[2] = $inscription;
 
-        // STIC 20230905 - ART - Enable custom email template for assigned user
-        // STIC#1224
-        // if (!empty($account)) {
-        //     $replacementObjects[] = $account;
-        // }
-
-        // if (!empty($payment)) {
-        //     $replacementObjects[] = $payment;
-        //     if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
-        //         $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
-        //         foreach ($relatedBeans as $fpBean) {
-        //             $replacementObjects[] = $fpBean;
-        //         }
-        //     }
-        // }
-
-        // Parse the template
-        // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template ...");
-        // if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
-        //     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
-        //     return false;
-        // }
-
         // Function to parse the email
         $this->parsingEmail($templateId, $account, $payment, $replacementObjects, $lang);
         
@@ -295,12 +258,9 @@ class EventInscriptionMailer extends WebFormMailer
         if(!empty($templateId)) {
             return $this->send();
         }
-        // End STIC 20240116 - ART
     }
 
 
-    // STIC 20230905 - ART - Enable custom email template for assigned user
-    // STIC#1224
     /**
      * Send the notification email to the assigned user
      *
@@ -360,7 +320,6 @@ class EventInscriptionMailer extends WebFormMailer
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
         return $this->send();
     }
-    // End STIC 20230920
 
     /**
      * Prepare the necessary information for deferred mail delivery

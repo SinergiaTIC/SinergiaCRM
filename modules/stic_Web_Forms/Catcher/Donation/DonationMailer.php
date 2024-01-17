@@ -51,10 +51,6 @@ class DonationMailer extends WebFormMailer
             case DonationBO::DONATOR_NEW:
             case DonationBO::DONATOR_UNIQUE:
                 
-                // STIC 20230905 - ART - Enable custom email template for assigned user
-                // STIC#1224 
-                // $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
-
                 // Function that verify if the form have the 'custom_assigned_email_template' input
                 if(!empty($_REQUEST['custom_assigned_email_template'])) {
                     return $this->sendAssignedUserMail($_REQUEST['custom_assigned_email_template'], $objWeb, $payment);
@@ -62,7 +58,6 @@ class DonationMailer extends WebFormMailer
                 } else {
                     $html = $this->newDonationMail($objWeb, $payment, $formParams, $donator, $donatorResult == DonationBO::DONATOR_NEW);
                 }
-                // End STIC 20240109
                 
                 break;
         }
@@ -243,8 +238,6 @@ class DonationMailer extends WebFormMailer
         return $html;
     }
 
-    // STIC 20230905 - ART - Enable custom email template for assigned user
-    // STIC#1224
     /**
      * Function to parse the email
      *
@@ -273,7 +266,6 @@ class DonationMailer extends WebFormMailer
             return false;
         }
     }
-    // End STIC 20231205 - ART
 
     /**
      * Send the notification email to the registered user
@@ -297,23 +289,6 @@ class DonationMailer extends WebFormMailer
         $replacementObjects[0] = $objWeb;
         $replacementObjects[1] = $payment;
 
-        // STIC 20230905 - ART - Enable custom email template for assigned user
-        // STIC#1224
-        // if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
-        //     $relatedBeans = $payment->stic_payments_stic_payment_commitments->getBeans();
-        //     foreach ($relatedBeans as $fpBean) {
-        //         $replacementObjects[] = $fpBean;
-        //     }
-        // }
-
-        // Parse the template
-        // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template [{$templateId}]...");
-
-        // if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
-        //     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
-        //     return false;
-        // }
-
         // Function to parse the email
         $this->parsingEmail($templateId, $replacementObjects[1], $replacementObjects, $lang);
 
@@ -323,12 +298,9 @@ class DonationMailer extends WebFormMailer
         // If there's a template for the user send the mail
         if(!empty($templateId)) {
             return $this->send();
-        }   
-        // End STIC 20240116 - ART
+        }
     }
     
-    // STIC 20230905 - ART - Enable custom email template for assigned user
-    // STIC#1224
     /**
      * Send the notification email to the assigned user
      *
@@ -377,5 +349,4 @@ class DonationMailer extends WebFormMailer
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
         return $this->send();
     }
-    // End STIC 20231205 - ART
 }
