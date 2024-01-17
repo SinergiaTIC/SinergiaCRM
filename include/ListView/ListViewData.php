@@ -376,7 +376,7 @@ class ListViewData
 
         while (($row = $this->db->fetchByAssoc($result)) != null) {
             if ($count < $limit) {
-                // STIC Custom 20211025 MHP - STIC#62
+                // STIC-Custom 20211025 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/
                 // In custom modules that inherit from the file type module, the field that displays the file name is called 'uploadfile' instead of 'filename'.
                 // The value of the 'filename' field is copied to the 'uploadfile' so that it can be displayed in the list view.
                 if (isset($GLOBALS["dictionary"][$seed->module_dir]['templates']['file']) && 
@@ -384,7 +384,7 @@ class ListViewData
                 {
                     $row['uploadfile'] = $row['filename'];
                 }   
-                // END STIC
+                // END STIC-Custom
                 $id_list .= ',\''.$row[$id_field].'\'';
                 $idIndex[$row[$id_field]][] = count($rows);
                 $rows[] = $seed->convertRow($row);
