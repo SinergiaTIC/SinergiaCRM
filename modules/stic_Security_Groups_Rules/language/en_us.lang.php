@@ -73,5 +73,5 @@ $mod_strings = array(
     'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => "If the box is checked, each base module record will inherit the Security Groups of the user it is assigned to.",
     'LBL_INHERIT_CREATOR_CUSTOM_INFO' => "If the box is checked, each base module record will inherit the Security Groups of the user who created it.",
     'LBL_INHERIT_PARENT_CUSTOM_INFO' => "If the box is checked, each base module record will inherit the Security Groups of the parent records of all modules it is related to.",
-    'LBL_DISABLED_MODULE_RULES_INFO' => 'The application of Security Groups inheritance rules is deactivated, so the rules defined here will not apply. You can activate them <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">on this page</a>',
+    'LBL_DISABLED_MODULE_RULES_INFO' => 'Security Groups module rules are not enabled, so the settings defined here will not be applied. You can enable them <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">on this page</a>',
 );
