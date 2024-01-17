@@ -74,6 +74,7 @@ switch (viewType()) {
       $('#inherit_parent').change()
 
 
+   
     })
 
 
@@ -103,10 +104,7 @@ switch (viewType()) {
         }
       });
 
-      // Show message if the functionality is deactivated
-      if (SUGAR.config.stic_security_groups_rules_enabled != 1) {
-        $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Security_Groups_Rules.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
-      }
+
 
     });
 
@@ -119,3 +117,11 @@ switch (viewType()) {
   default:
     break;
 }
+
+$(document).ready(function () {
+  // Show message if the functionality is deactivated
+  if (SUGAR.config.stic_security_groups_rules_enabled != 1) {
+    $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Security_Groups_Rules.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
+  }
+});
+
