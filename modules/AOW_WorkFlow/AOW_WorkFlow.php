@@ -950,15 +950,15 @@ class AOW_WorkFlow extends Basic
         return true;
     }
 
-    // STIC Custom 20231228 EPS - numeric null condition does not work properly
-    // STIC#1363
+    // STIC-Custom 20231228 EPS - numeric null condition does not work properly
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/8
     // public function compare_condition($var1, $var2, $operator = 'Equal_To')
     // {
     public function compare_condition($var1, $var2, $operator = 'Equal_To', $type= '')
     {
         
         $numericTypes = array('double','decimal','currency','float','uint','ulong','long','short','tinyint','int');
-    // STIC Custom End
+    // END STIC-Custom 
 
         switch ($operator) {
             case "Not_Equal_To": return $var1 != $var2;
@@ -969,15 +969,15 @@ class AOW_WorkFlow extends Basic
             case "Contains": return strpos(strtolower($var1), strtolower($var2)) !== false;
             case "Starts_With": return substr(strtolower($var1), 0, strlen($var2) ) === strtolower($var2);
             case "Ends_With": return substr(strtolower($var1), -strlen($var2) ) === strtolower($var2);
-            // STIC Custom 20231228 EPS - numeric null condition does not work properly
-            // STIC#1363
+            // STIC-Custom 20231228 EPS - numeric null condition does not work properly
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/8
             // case "is_null": return $var1 == '';
             case "is_null": 
                 if (in_array($type, $numericTypes) && $var1 == 'NULL') {
                     $var1 = "";
                 }
                 return $var1 == '';
-            // STIC Custom End
+            // END STIC-Custom
             case "One_of":
                 if (is_array($var1)) {
                     foreach ($var1 as $var) {
