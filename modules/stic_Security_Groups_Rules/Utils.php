@@ -392,17 +392,21 @@ class stic_Security_Groups_RulesUtils
             }
 
             foreach ($allRelatedModules as $value) {
-                // if (!empty($bean->{$value['field']})) {
                 if ($rulesBean->inherit_parent == 1 || in_array($value['field'], $filteredRelatedModules)) {
 
                     // Obtain id from parent record
                     $relatedId = $bean->{$value['field']};
 
+                    // If it in not a string, it's because we're coming from a subpanel, 
+                    // so we get the id in the two following ways, or continue.
                     if (!is_string($relatedId)) {
-                        // If it in not a string, it's because we're coming from a subpanel, so we get the id in the two following ways:
-                        $relName = strtolower($value['module']);
-                        $relatedId = key($bean->{$value['field']}->rows) ?? key($bean->{$relName}->getBeans());
+                        $relatedId = key($bean->{$value['field']}->rows);
                     }
+                    
+                    $relName = strtolower($value['module']);
+                    if (!is_string($relatedId) && isset($bean->{$relName})) {
+                        $relatedId = key($bean->{$relName}->getBeans());
+                    } 
 
                     $currentRecordGroups = self::getRelatedSecurityGroupIDs($relatedId);
 
@@ -413,7 +417,6 @@ class stic_Security_Groups_RulesUtils
                         );
                     }
                 }
-                // }
             }
 
             // Create an array of security groups that are not inheritable under any circumstances for the current module
