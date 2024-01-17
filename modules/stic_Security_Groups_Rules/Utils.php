@@ -360,7 +360,7 @@ class stic_Security_Groups_RulesUtils
 
             // Inherit security groups from the creator user, if enabled
             if ($rulesBean->inherit_creator == 1) {
-                $userGroups = self::getSticSecurityGroups($bean->created_by);
+                $userGroups = self::getSticUserSecurityGroups($bean->created_by);
                 if (!empty($userGroups)) {
                     foreach ($userGroups as $group) {
                         $securityGroupsCandidatesToInherit = array_merge(
