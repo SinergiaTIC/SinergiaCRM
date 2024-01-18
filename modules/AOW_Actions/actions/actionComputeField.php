@@ -123,16 +123,16 @@ class actionComputeField extends actionBase
                 } else {
                     $value = $calculator->calculateFormula($formulaContents[$i]);
                     $fieldType = $bean->field_defs[$formulas[$i]]['type'] ?? 'string';
-                    if (in_array($fieldType, ['float', 'decimal', 'currency'])) {
+                    if (in_array($fieldType, ['float', 'decimal', 'currency', 'double'])) {
                         $value = (float) $value;
                     }
-                    elseif ($fieldType === 'int') {
+                    elseif (in_array($fieldType, ['int', 'uint', 'ulong', 'long', 'short', 'tinyint'])) {
                         $value = (int) $value;
                     }
                     $bean->{$formulas[$i]} = $value;
                 }
             }
-            // End STIC-Custom 20240110
+            // End STIC-Custom 20240118
 
             if ($in_save) {
                 global $current_user;
