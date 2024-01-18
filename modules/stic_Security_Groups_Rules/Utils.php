@@ -274,14 +274,15 @@ class stic_Security_Groups_RulesUtils
      *
      * This method retrieves the security groups associated with a given user
      * in SuiteCRM. It constructs a SQL query to fetch group details such as the
-     * group ID and name from the database, ensuring to exclude any deleted and noninheritable groups.
+     * group ID and name from the database, ensuring to exclude any deleted 
+     * and noninheritable groups (either directly or through the Users and Security Groups relationship).
      * The method returns an associative array where each key is a group ID, and
      * the value is an array containing the group's ID and name.
      *
      * @param string $userId The user's ID.
      * @return array An associative array of groups with their IDs and names.
      */
-    public static function getSticUserSecurityGroups($userId)
+    public static function getSticUserInheritableSecurityGroups($userId)
     {
         // Get an instance of the database manager
         $db = DBManagerFactory::getInstance();
@@ -297,7 +298,8 @@ class stic_Security_Groups_RulesUtils
                 securitygroups_users
               INNER JOIN securitygroups ON
                 securitygroups_users.securitygroup_id = securitygroups.id
-                and securitygroups.deleted = 0
+                AND securitygroups.deleted = 0
+                AND securitygroups.noninheritable = 0
               WHERE
                 securitygroups_users.user_id = '{$userId}'
                 AND securitygroups_users.deleted = 0
@@ -347,7 +349,7 @@ class stic_Security_Groups_RulesUtils
 
             // Inherit security groups from the assigned user, if enabled
             if ($rulesBean->inherit_assigned == 1) {
-                $userGroups = self::getSticUserSecurityGroups($bean->assigned_user_id);
+                $userGroups = self::getSticUserInheritableSecurityGroups($bean->assigned_user_id);
                 if (!empty($userGroups)) {
                     foreach ($userGroups as $group) {
                         $securityGroupsCandidatesToInherit = array_merge(
@@ -360,7 +362,7 @@ class stic_Security_Groups_RulesUtils
 
             // Inherit security groups from the creator user, if enabled
             if ($rulesBean->inherit_creator == 1) {
-                $userGroups = self::getSticUserSecurityGroups($bean->created_by);
+                $userGroups = self::getSticUserInheritableSecurityGroups($bean->created_by);
                 if (!empty($userGroups)) {
                     foreach ($userGroups as $group) {
                         $securityGroupsCandidatesToInherit = array_merge(
