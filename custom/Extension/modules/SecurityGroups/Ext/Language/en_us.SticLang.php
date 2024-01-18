@@ -34,3 +34,5 @@ $mod_strings['LBL_MODIFIED_USER'] = 'Modified By';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modified By (ID)';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
 $mod_strings['LBL_STIC_GENERAL_INFORMATION'] = 'Overview';
+$mod_strings['LBL_STIC_SECURITY_GROUPS_RULES_ENABLED'] = 'Enable module rules';
+$mod_strings['LBL_STIC_SECURITY_GROUPS_RULES_ENABLED_INFO'] = 'The rules defined for each module will take precedence over the general rules defined here.';
