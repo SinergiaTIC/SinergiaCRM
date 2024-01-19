@@ -86,7 +86,7 @@ class SugarWidgetSubPanelSticQuickEditButton extends SugarWidgetField
 		<input type="hidden" name="return_relationship" value="'.$relationship_name.'">
 		<input type="hidden" name="action" value="SubpanelCreates">
 		<input type="hidden" name="module" value="Home">
-		<input type="hidden" name="target_action" value="QuickCreate">
+		<input type="hidden" name="target_action" value="QuickEdit">
 		<input type="hidden" name="return_name" value="XXXX">
 		<input type="hidden" name="parent_type" value="'.$return_module.'">
 		<input type="hidden" name="parent_name" value="XXXX">

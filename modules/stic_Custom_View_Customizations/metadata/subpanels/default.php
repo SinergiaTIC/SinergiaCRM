@@ -38,10 +38,11 @@ $subpanel_layout = array (
   'where' => '',
   'list_fields' => 
   array (
-    'name' => 
+    'customization_name' => 
     array (
-      'vname' => 'LBL_NAME',
-      'widget_class' => 'SubPanelDetailViewLink',
+      'type' => 'text',
+      'vname' => 'LBL_CUSTOMIZATION_NAME',
+      //'widget_class' => 'SubPanelDetailViewLink',
       'width' => '45%',
       'default' => true,
     ),
@@ -52,10 +53,10 @@ $subpanel_layout = array (
       'vname' => 'LBL_IS_INITIAL',
       'width' => '10%',
     ),
-    'customization_order' => 
+    'summary' => 
     array (
-      'type' => 'int',
-      'vname' => 'LBL_CUSTOMIZATION_ORDER',
+      'type' => 'text',
+      'vname' => 'LBL_SUMMARY',
       'width' => '10%',
       'default' => true,
     ),

@@ -27,6 +27,29 @@ $dictionary['stic_Custom_Views'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
+  'view_name' => 
+  array(
+    'name' => 'view_name',
+    'vname' => 'LBL_VIEW_NAME',
+    'type' => 'varchar',
+    'dbType' => 'varchar',
+    'len' => 255,
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'size' => '20',
+    'studio' => 'visible',
+    'dependency' => false,
+  ),
   'view_module' => 
   array (
     'required' => false,
@@ -143,4 +166,8 @@ $dictionary["stic_Custom_Views"]["fields"]["stic_custom_views_stic_custom_view_c
 if (!class_exists('VardefManager')) {
   require_once('include/SugarObjects/VardefManager.php');
 }
+
 VardefManager::createVardef('stic_Custom_Views', 'stic_Custom_Views', array('basic','assignable'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Custom_Views']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

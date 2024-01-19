@@ -30,10 +30,6 @@ global $current_user;
 $dashletData['stic_Custom_View_ActionsDashlet']['searchFields'] = array(
     'date_entered' => array('default' => ''),
     'date_modified' => array('default' => ''),
-    'assigned_user_id' => array(
-        'type' => 'assigned_user_name',
-        'default' => $current_user->name
-    )
 );
 $dashletData['stic_Custom_View_ActionsDashlet']['columns'] = array(
     'name' => array(

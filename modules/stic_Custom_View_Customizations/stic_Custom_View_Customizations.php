@@ -41,9 +41,6 @@ class stic_Custom_View_Customizations extends Basic
     public $deleted;
     public $created_by_link;
     public $modified_user_link;
-    public $assigned_user_id;
-    public $assigned_user_name;
-    public $assigned_user_link;
     public $SecurityGroups;
     public $customization_order;
     public $is_initial;

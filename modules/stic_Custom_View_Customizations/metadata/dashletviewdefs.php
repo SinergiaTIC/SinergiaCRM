@@ -30,11 +30,6 @@ $dashletData['stic_Custom_View_CustomizationsDashlet']['searchFields'] = array (
   array (
     'default' => '',
   ),
-  'assigned_user_id' => 
-  array (
-    'type' => 'assigned_user_name',
-    'default' => 'SinergiaCRM',
-  ),
 );
 $dashletData['stic_Custom_View_CustomizationsDashlet']['columns'] = array (
   'name' => 

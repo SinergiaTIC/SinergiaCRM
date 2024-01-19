@@ -41,9 +41,6 @@ class stic_Custom_View_Actions extends Basic
     public $deleted;
     public $created_by_link;
     public $modified_user_link;
-    public $assigned_user_id;
-    public $assigned_user_name;
-    public $assigned_user_link;
     public $SecurityGroups;
     public $action_order;
     public $action_type;
