@@ -21,24 +21,26 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$module_name = 'stic_Custom_View_Conditions';
-$viewdefs[$module_name]['QuickCreate'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30')
-        ),
-    ),
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
-    'panels' => array(
-        'default' => array(
+require_once('include/EditView/SubpanelQuickCreate.php');
 
-            array(
-                'name',
-            ),
-        ),
+class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCreate
+{
+    public function __construct($module, $view='QuickCreate', $proccessOverride = false)
+    {
+        parent::__construct($module, $view, $proccessOverride);
+    }
 
-    ),
+    public function process($module)
+    {
+        // Remove 'SUBPANELFULLFORM' button
+        if (($key = array_search('SUBPANELFULLFORM', $this->ev->defs['templateMeta']['form']['buttons'])) !== false) {
+            unset($this->ev->defs['templateMeta']['form']['buttons'][$key]);
+        }
 
-);
+        parent::process($module);
+    }
+}

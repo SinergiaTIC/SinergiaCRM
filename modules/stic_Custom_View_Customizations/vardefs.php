@@ -27,6 +27,29 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
+  'customization_name' => 
+  array(
+    'name' => 'customization_name',
+    'vname' => 'LBL_CUSTOMIZATION_NAME',
+    'type' => 'varchar',
+    'dbType' => 'varchar',
+    'len' => 512,
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => '',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => '',
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'size' => '20',
+    'studio' => 'visible',
+    'dependency' => false,
+  ),
   'customization_order' => 
   array (
     'required' => false,
@@ -74,6 +97,13 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'len' => '255',
     'size' => '20',
   ),
+  'summary' => array(
+    'name' => 'summary',
+    'vname' => 'LBL_SUMMARY',
+    'type' => 'text',
+    'rows' => 2,
+    'cols' => 80,
+),
 ),
     'relationships' => array (
 ),
@@ -136,4 +166,7 @@ $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custo45d1m_views_
 if (!class_exists('VardefManager')) {
   require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('stic_Custom_View_Customizations', 'stic_Custom_View_Customizations', array('basic','assignable'));
+VardefManager::createVardef('stic_Custom_View_Customizations', 'stic_Custom_View_Customizations', array('basic'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Custom_View_Customizations']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

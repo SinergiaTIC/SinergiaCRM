@@ -235,4 +235,8 @@ $dictionary["stic_Custom_View_Actions"]["fields"]["stic_custo077ezations_ida"] =
 if (!class_exists('VardefManager')) {
   require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('stic_Custom_View_Actions', 'stic_Custom_View_Actions', array('basic','assignable'));
+
+VardefManager::createVardef('stic_Custom_View_Actions', 'stic_Custom_View_Actions', array('basic'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Custom_View_Actions']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

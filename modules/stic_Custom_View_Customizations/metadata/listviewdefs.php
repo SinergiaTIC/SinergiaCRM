@@ -45,20 +45,20 @@ array (
     'width' => '10%',
     'default' => true,
   ),
+  'SUMMARY' => 
+  array (
+    'type' => 'text',
+    'label' => 'LBL_SUMMARY',
+    'sortable' => false,
+    'width' => '10%',
+    'default' => true,
+  ),
   'DESCRIPTION' => 
   array (
     'type' => 'text',
     'label' => 'LBL_DESCRIPTION',
     'sortable' => false,
     'width' => '10%',
-    'default' => true,
-  ),
-  'ASSIGNED_USER_NAME' => 
-  array (
-    'width' => '9%',
-    'label' => 'LBL_ASSIGNED_TO_NAME',
-    'module' => 'Employees',
-    'id' => 'ASSIGNED_USER_ID',
     'default' => true,
   ),
   'STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_NAME' => 

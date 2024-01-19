@@ -30,10 +30,6 @@ global $current_user;
 $dashletData['stic_Custom_View_ConditionsDashlet']['searchFields'] = array(
     'date_entered' => array('default' => ''),
     'date_modified' => array('default' => ''),
-    'assigned_user_id' => array(
-        'type' => 'assigned_user_name',
-        'default' => $current_user->name
-    )
 );
 $dashletData['stic_Custom_View_ConditionsDashlet']['columns'] = array(
     'name' => array(
@@ -54,9 +50,5 @@ $dashletData['stic_Custom_View_ConditionsDashlet']['columns'] = array(
     'created_by' => array(
         'width' => '8',
         'label' => 'LBL_CREATED'
-    ),
-    'assigned_user_name' => array(
-        'width' => '8',
-        'label' => 'LBL_LIST_ASSIGNED_USER'
     ),
 );

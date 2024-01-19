@@ -58,8 +58,10 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_SUBPANEL_TITLE' => 'Personalitzacions',
   'LBL_NEW_FORM_TITLE' => 'Nou Personalitzacions',
+  'LBL_CUSTOMIZATION_NAME' => 'Nom',
   'LBL_CUSTOMIZATION_ORDER' => 'Ordre',
-  'LBL_IS_INITIAL' => 'És la inicial',
+  'LBL_IS_INITIAL' => 'És inicial',
+  'LBL_SUMMARY' => 'Resum',
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE'] = 'Vistes personalitzades';
