@@ -16,6 +16,8 @@ jobs:
         name: Create Instance on Opened or Reopened PR
         runs-on: ubuntu-latest
         steps:
+            - name: Extract branch name
+              run: echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} && echo 'BRANCH='${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} >> $GITHUB_ENV
             - name: Install SSH Key
               uses: shimataro/ssh-key-action@v2
               with:
@@ -41,8 +43,6 @@ jobs:
                 order by SCHEMA_NAME LIMIT 1'") &&
                 echo $DATABASE_NAME &&
                 (echo "DATABASE_NAME=$DATABASE_NAME" >> $GITHUB_ENV)
-            - name: Extract branch name
-              run: echo 'BRANCH='${{ github.head_ref }} >> $GITHUB_ENV
             - name: Extract branch clean
               run: echo 'BRANCH_CLEAN='`echo ${{ env.BRANCH }} | sed -e 's/[^a-zA-Z0-9_/]//g'` >> $GITHUB_ENV
             - name: Set current date as env variable
