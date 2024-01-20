@@ -31,6 +31,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
   array(
     'name' => 'customization_name',
     'vname' => 'LBL_CUSTOMIZATION_NAME',
+    'required' => true,
     'type' => 'varchar',
     'dbType' => 'varchar',
     'len' => 512,

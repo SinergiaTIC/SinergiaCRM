@@ -56,22 +56,27 @@ array (
     array (
       'default' => 
       array (
+        //IEPA!! Eliminar fila 0
         0 => 
         array (
           0 => 'name',
-          1 => 'customization_name',
+          1 => 
+          array (
+            'name' => 'customization_order',
+            'label' => 'LBL_CUSTOMIZATION_ORDER',
+          ),
         ),
         1 => 
         array (
           0 => 
           array (
-            'name' => 'is_initial',
-            'label' => 'LBL_IS_INITIAL',
+            'name' => 'customization_name',
+            'label' => 'LBL_CUSTOMIZATION_NAME',
           ),
           1 => 
           array (
-            'name' => 'customization_order',
-            'label' => 'LBL_CUSTOMIZATION_ORDER',
+            'name' => 'is_initial',
+            'label' => 'LBL_IS_INITIAL',
           ),
         ),
         2 => 
@@ -79,7 +84,6 @@ array (
           0 => 
           array (
             'name' => 'description',
-            'comment' => 'Full text of the note',
             'label' => 'LBL_DESCRIPTION',
           ),
         ),

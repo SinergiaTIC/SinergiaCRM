@@ -58,17 +58,27 @@ array (
       array (
         0 => 
         array (
+          //IEPA!! Eliminar fila 0
           0 => 
           array (
             'name' => 'view_module',
             'studio' => 'visible',
             'label' => 'LBL_VIEW_MODULE',
           ),
-          1 => '',
+          1 => 
+          array (
+            'name' => 'name',
+            'studio' => 'visible',
+            'label' => 'LBL_NAME',
+          ),
         ),
         1 => 
         array (
-          0 => 'name',
+          0 => array (
+            'name' => 'view_name',
+            'studio' => 'visible',
+            'label' => 'LBL_VIEW_NAME',
+          ),
           1 => 'assigned_user_name',
         ),
         2 => 

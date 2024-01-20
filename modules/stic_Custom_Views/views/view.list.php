@@ -20,29 +20,33 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+require_once 'include/MVC/View/views/view.list.php';
+require_once 'SticInclude/Views.php';
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+class stic_Custom_ViewsViewList extends ViewList
+{
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Custom_View_Customizations/stic_Custom_View_Customizations.php');
-
-class stic_Custom_View_CustomizationsDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
+    public function __construct()
     {
-        global $current_user, $app_strings;
-        require('modules/stic_Custom_View_Customizations/metadata/dashletviewdefs.php');
+        parent::__construct();
 
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Custom_View_Customizations');
-        }
-
-        $this->searchFields = $dashletData['stic_Custom_View_CustomizationsDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Custom_View_CustomizationsDashlet']['columns'];
-
-        $this->seedBean = new stic_Custom_View_Customizations();        
     }
+
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+    }
+
+    public function display()
+    {
+
+        parent::display();
+
+        SticViews::display($this);
+
+        echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
+    }
+
 }

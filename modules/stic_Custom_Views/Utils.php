@@ -21,6 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+require_once 'SticInclude/Utils.php';
+
 function fill_dynamic_custom_views_lists($module = null) {
     fill_dynamic_role_list();
     fill_dynamic_security_group_list();
