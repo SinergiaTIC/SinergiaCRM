@@ -58,7 +58,8 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
   'LBL_STIC_CUSTOM_VIEWS_SUBPANEL_TITLE' => 'Vistes personalitzades',
   'LBL_NEW_FORM_TITLE' => 'Nou Vistes personalitzades',
-  'LBL_VIEW_NAME' => 'Nom de la vista',
+  
+  'LBL_VIEW_NAME' => 'Nom intern',
   'LBL_VIEW_MODULE' => 'Mòdul',
   'LBL_USER_TYPE' => "Tipus d'usuari",
   'LBL_USER_PROFILE' => "Perfil d'usuari",

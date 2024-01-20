@@ -58,7 +58,8 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activities',
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_SUBPANEL_TITLE' => 'Personalitzacions',
   'LBL_NEW_FORM_TITLE' => 'New Personalitzacions',
-  'LBL_CUSTOMIZATION_NAME' => 'Name',
+
+  'LBL_CUSTOMIZATION_NAME' => 'Nom intern',
   'LBL_CUSTOMIZATION_ORDER' => 'Ordre',
   'LBL_IS_INITIAL' => 'És la inicial',
   'LBL_SUMMARY' => 'Summary',

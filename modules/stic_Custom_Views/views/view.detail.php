@@ -21,15 +21,36 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
+require_once 'include/MVC/View/views/view.detail.php';
+require_once 'SticInclude/Views.php';
+
+class stic_Custom_ViewsViewDetail extends ViewDetail
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->useForSubpanel = true;
+        $this->useModuleQuickCreateTemplate = true;
+    }
+
+    public function preDisplay()
+    {
+        global $sugar_config;
+        
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+    }
+
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+
+        // Write here you custom code
+
+        echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
+    }
 }
-
-global $app_strings;
-
-$dashletMeta['stic_Custom_View_ConditionsDashlet'] = array(
-    'module' => 'stic_Custom_View_Conditions',
-    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Custom_View_Conditions'),
-    'description' => 'A customizable view into stic_Custom_View_Conditions',
-    'category' => 'Module Views'
-);

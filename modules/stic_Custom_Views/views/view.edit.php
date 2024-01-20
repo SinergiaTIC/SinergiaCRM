@@ -21,15 +21,36 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+require_once 'include/MVC/View/views/view.edit.php';
+require_once 'SticInclude/Views.php';
 
-global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Custom_View_Conditions', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Custom_View_Conditions&action=EditView&return_module=stic_Custom_View_Conditions&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Custom_View_Conditions');
-}
-if(ACLController::checkAccess('stic_Custom_View_Conditions', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Custom_View_Conditions&action=index&return_module=stic_Custom_View_Conditions&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Custom_View_Conditions');
+class stic_Custom_ViewsViewEdit extends ViewEdit
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->useForSubpanel = true;
+        $this->useModuleQuickCreateTemplate = true;
+    }
+
+    public function preDisplay()
+    {
+        global $sugar_config;
+        
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+    }
+
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+
+        // Write here you custom code
+
+        echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
+    }
 }

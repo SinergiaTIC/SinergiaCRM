@@ -31,7 +31,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 class SugarWidgetSubPanelSticQuickEditButton extends SugarWidgetField
 {
-    function displayList($layout_def)
+    public function displayList(&$layout_def)
 	{
 		global $app_strings;
         global $subpanel_item_count;
@@ -91,7 +91,7 @@ class SugarWidgetSubPanelSticQuickEditButton extends SugarWidgetField
 		<input type="hidden" name="parent_type" value="'.$return_module.'">
 		<input type="hidden" name="parent_name" value="XXXX">
 		<input type="hidden" name="parent_id" value="'.$return_id.'">
-		<input title="'.$labelText.'" accesskey="N" class="button" type="submit" name="'.$module_name.'_edit_button" id="projects_opportunities_create_button" value="'.$labelText.'">
+		<input title="'.$labelText.'" accesskey="N" class="button" type="submit" name="'.$module_name.'_quickedit_button" id="'.$record_id.'_quickedit_button" value="'.$labelText.'">
 		</form>';
 		
 				

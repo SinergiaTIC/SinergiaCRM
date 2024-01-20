@@ -33,9 +33,7 @@ array (
         'buttons' => 
         array (
           0 => 'EDIT',
-          1 => 'DUPLICATE',
-          2 => 'DELETE',
-          3 => 'FIND_DUPLICATES',
+          1 => 'DELETE',
         ),
       ),
       'maxColumns' => '2',
@@ -79,11 +77,20 @@ array (
             'studio' => 'visible',
             'label' => 'LBL_VIEW_MODULE',
           ),
-          1 => '',
+          1 => 
+          array (
+            'name' => 'name',
+            'studio' => 'visible',
+            'label' => 'LBL_NAME',
+          ),
         ),
         1 => 
         array (
-          0 => 'name',
+          0 => array (
+            'name' => 'view_name',
+            'studio' => 'visible',
+            'label' => 'LBL_VIEW_NAME',
+          ),
           1 => 'assigned_user_name',
         ),
         2 => 

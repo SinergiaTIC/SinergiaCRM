@@ -29,11 +29,6 @@ $subpanel_layout = array (
     array (
       'widget_class' => 'SubPanelTopCreateButton',
     ),
-    1 => 
-    array (
-      'widget_class' => 'SubPanelTopSelectButton',
-      'popup_module' => 'stic_Custom_View_Customizations',
-    ),
   ),
   'where' => '',
   'list_fields' => 
