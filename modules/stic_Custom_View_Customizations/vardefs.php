@@ -53,7 +53,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
   ),
   'customization_order' => 
   array (
-    'required' => false,
+    'required' => true,
     'name' => 'customization_order',
     'vname' => 'LBL_CUSTOMIZATION_ORDER',
     'type' => 'int',
@@ -65,7 +65,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => 1,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',

@@ -42,13 +42,13 @@ $subpanel_layout = array (
       'default' => true,
     ),
     //IEPA!! Treure
-    'is_initial' => 
-    array (
-      'type' => 'bool',
-      'default' => true,
-      'vname' => 'LBL_IS_INITIAL',
-      'width' => '10%',
-    ),
+    // 'is_initial' => 
+    // array (
+    //   'type' => 'bool',
+    //   'default' => true,
+    //   'vname' => 'LBL_IS_INITIAL',
+    //   'width' => '10%',
+    // ),
     'customization_order' => 
     array (
       'type' => 'int',

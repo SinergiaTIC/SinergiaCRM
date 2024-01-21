@@ -35,55 +35,22 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    $(document).ready(function () {
-      // Initialize selectize for specific select elements
-      $('select#security_groups').selectize({
-        placeholder: ''
-      });
-      $('select#roles').selectize({
-        placeholder: ''
-      });
-      $('select#user_type').selectize({
-        placeholder: ''
-      });
-      // Additional document ready function to handle checkbox state change
-    })
-
-
+    setAutofill(["name"]);
+    $(document).ready(function () { 
+      initializeSelectize();
+    });
     break;
+
   case "detail":
+    $(document).ready(function() {
+      initializeQuickCreateCustomization();
+    });
     break;
 
   case "list":
-
     $(document).ready(function () {
-      // disable some list menu actions
-      var selectorsToKeep = ['#massupdate_listview_top', '#export_listview_top', '#delete_listview_top'];
-
-      // remove duplicate massive link which has not a uniq id
-      $('#actionLinkTop > li > ul > li:nth-child(2) > a#massupdate_listview_top').closest('li').remove();
-
-      $('ul#actionLinkTop li.sugar_action_button ul li').each(function () {
-        var containsSelector = false;
-        for (var i = 0; i < selectorsToKeep.length; i++) {
-          if ($(this).find(selectorsToKeep[i]).length > 0) {
-            containsSelector = true;
-            break;
-          }
-        }
-        if (!containsSelector) {
-          $(this).remove();
-        }
-      });
-
-
-
+      disableListMenuActions();
     });
-
-
-
-
-
     break;
 
   default:
@@ -106,38 +73,67 @@ function isDescendant(parent, child) {
   return false;
 }
 
-$(document).ready(function () {
-  var panelInintial = document.getElementById("list_subpanel_stic_custom_view_customizations_initial"); 
-  var panelDynamic = document.getElementById("list_subpanel_stic_custom_view_customizations_dynamic"); 
-
-  //IEPA!!
-  // Caldria, escoltar l'event de creació, i afegir els inputs abans de fer el commit
-
-  var forms = document.querySelectorAll("[id='formformstic_custom_views_stic_custom_view_customizations']");
-  for(var i = 0; i < forms.length; i++) {
-    if(isDescendant(panelInintial, forms[i])) {
-      var input = document.createElement("input");
-      input.setAttribute('type', 'hidden');
-      input.setAttribute('name', 'is_initial');
-      input.setAttribute('value', '1');
-      forms[i].appendChild(input);
-      //alert("inserted Initial");
-    } 
-    if(isDescendant(panelDynamic,forms[i])) {
-      var input = document.createElement("input");
-      input.setAttribute('type', 'hidden');
-      input.setAttribute('name', 'is_initial');
-      input.setAttribute('value', '0');
-      forms[i].appendChild(input);
-      //alert("inserted Dynamic");
-    }
+function setIsInitialInForm(node, is_initial) {
+  var form = node.querySelector('form');
+  if (form) {
+    var input = document.createElement("input");
+    input.setAttribute('type', 'hidden');
+    input.setAttribute('name', 'is_initial');
+    input.setAttribute('value', is_initial);
+    form.appendChild(input);
+    console.log(form);
   }
+}
 
-  // var e = GetElementInsideContainer("list_subpanel_stic_custom_view_customizations_initial", "formformstic_custom_views_stic_custom_view_customizations");
-  // alert (e);
-  // // Show message if the functionality is deactivated
-  // if (SUGAR.config.stic_security_groups_rules_enabled != 1) {
-  //   $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Security_Groups_Rules.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
-  // }
-});
+function initializeQuickCreateCustomization() {
+  // Observer for new elements
+  var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+        mutation.addedNodes.forEach(function(newNode) {
+          if (newNode.nodeType === 1) {
+            if(newNode.id === "subpanel_stic_custom_view_customizations_initial_newDiv") {
+              setIsInitialInForm(newNode, 1);
+            }
+            if(newNode.id === "subpanel_stic_custom_view_customizations_dynamic_newDiv") {
+              setIsInitialInForm(newNode, 0);
+            }
+          }
+        });
+      }
+    });
+  });
+  
+  // Set observer for subpanel_list
+  var subpanelList = document.getElementById('subpanel_list');
+  var config = { childList: true, subtree: true };
+  observer.observe(subpanelList, config);
+}
 
+function initializeSelectize() {
+  var config = { placeholder: '' };
+  $('select#security_groups').selectize(config);
+  $('select#roles').selectize(config);
+  $('select#user_type').selectize(config);
+}
+
+function disableListMenuActions() {
+  // disable some list menu actions
+  var selectorsToKeep = ['#massupdate_listview_top', '#export_listview_top', '#delete_listview_top'];
+
+  // remove duplicate massive link which has not a uniq id
+  $('#actionLinkTop > li > ul > li:nth-child(2) > a#massupdate_listview_top').closest('li').remove();
+
+  $('ul#actionLinkTop li.sugar_action_button ul li').each(function () {
+    var containsSelector = false;
+    for (var i = 0; i < selectorsToKeep.length; i++) {
+      if ($(this).find(selectorsToKeep[i]).length > 0) {
+        containsSelector = true;
+        break;
+      }
+    }
+    if (!containsSelector) {
+      $(this).remove();
+    }
+  });
+}
