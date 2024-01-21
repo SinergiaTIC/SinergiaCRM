@@ -66,5 +66,7 @@ $mod_strings = array (
   'LBL_ROLES' => 'Rols',
   'LBL_SECURITY_GROUPS' => 'Grups de seguretat',
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
+  'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_INITIAL_TITLE' => 'Personalitzacions inicials',
+  'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_DYNAMIC_TITLE' => 'Personalitzacions dinàmiques',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalitzacions';
