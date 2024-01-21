@@ -43,6 +43,6 @@ class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCr
 
         parent::process($module);
 
-        //echo getVersionedScript("modules/stic_Custom_View_Customizations/Utils.js");
+        echo getVersionedScript("modules/stic_Custom_View_Customizations/Utils.js");
     }
 }

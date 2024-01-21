@@ -60,11 +60,6 @@ array (
         0 => 
         array (
           0 => 'name',
-          1 => 
-          array (
-            'name' => 'customization_order',
-            'label' => 'LBL_CUSTOMIZATION_ORDER',
-          ),
         ),
         1 => 
         array (
@@ -75,8 +70,8 @@ array (
           ),
           1 => 
           array (
-            'name' => 'is_initial',
-            'label' => 'LBL_IS_INITIAL',
+            'name' => 'customization_order',
+            'label' => 'LBL_CUSTOMIZATION_ORDER',
           ),
         ),
         2 => 
