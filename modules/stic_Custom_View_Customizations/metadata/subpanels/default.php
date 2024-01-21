@@ -41,12 +41,20 @@ $subpanel_layout = array (
       'width' => '45%',
       'default' => true,
     ),
+    //IEPA!! Treure
     'is_initial' => 
     array (
       'type' => 'bool',
       'default' => true,
       'vname' => 'LBL_IS_INITIAL',
       'width' => '10%',
+    ),
+    'customization_order' => 
+    array (
+      'type' => 'int',
+      'vname' => 'LBL_CUSTOMIZATION_ORDER',
+      'width' => '10%',
+      'default' => true,
     ),
     'summary' => 
     array (

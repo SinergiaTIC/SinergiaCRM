@@ -81,3 +81,32 @@ function fill_dynamic_panel_list($module) {
     );
     $GLOBALS ['app_list_strings']['dynamic_panel_list'] = $dynamic_panel_list;
 }
+
+/**
+ * Function to filter Customization panel
+ * The function name must be the same as the relationship name in order to create linked records
+ */
+function stic_custom_views_stic_custom_view_customizations($params) {
+    $args = func_get_args();
+    $isInitial = $args[0]['is_initial'];
+
+    global $app;
+    $controller = $app->controller;
+    $bean = $controller->bean;
+    $customViewId = $bean->id;
+
+    $query ="
+        SELECT stic_custom_view_customizations.*
+        FROM stic_custom_view_customizations 
+        INNER JOIN stic_custom_views_stic_custom_view_customizations_c
+            ON stic_custom_views_stic_custom_view_customizations_c.stic_custobdd5zations_idb = stic_custom_view_customizations.id
+            AND stic_custom_views_stic_custom_view_customizations_c.deleted = '0'
+            AND stic_custom_views_stic_custom_view_customizations_c.stic_custo45d1m_views_ida = '". $customViewId . "'
+        INNER JOIN stic_custom_views
+            ON stic_custom_views.id = stic_custom_views_stic_custom_view_customizations_c.stic_custo45d1m_views_ida
+            AND stic_custom_views.deleted = '0'
+        WHERE stic_custom_view_customizations.deleted = '0'
+            AND stic_custom_view_customizations.is_initial = '" . $isInitial . "'
+    ";
+    return $query;
+}

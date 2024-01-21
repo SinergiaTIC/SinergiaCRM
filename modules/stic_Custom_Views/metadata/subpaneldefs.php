@@ -22,19 +22,57 @@
  */
 
 $module_name = 'stic_Custom_Views';
-$layout_defs[$module_name]["subpanel_setup"]['stic_custom_views_stic_custom_view_customizations'] = array (
-    'order' => 100,
-    'module' => 'stic_Custom_View_Customizations',
-    'subpanel_name' => 'default',
-    'sort_order' => 'asc',
-    'sort_by' => 'customization_order',
-    'title_key' => 'LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
-    'get_subpanel_data' => 'stic_custom_views_stic_custom_view_customizations',
-    'top_buttons' => 
-    array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
+// $layout_defs[$module_name]["subpanel_setup"]['stic_custom_views_stic_custom_view_customizations'] = array (
+//     'order' => 10,
+//     'module' => 'stic_Custom_View_Customizations',
+//     'subpanel_name' => 'default',
+//     'sort_order' => 'asc',
+//     'sort_by' => 'customization_order',
+//     'title_key' => 'LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
+//     'get_subpanel_data' => 'stic_custom_views_stic_custom_view_customizations',
+//     'top_buttons' => 
+//     array (
+//       0 => 
+//       array (
+//         'widget_class' => 'SubPanelTopButtonQuickCreate',
+//       ),
+//     ),
+// );
+$layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations_initial'] = array (
+  'order' => 45,
+  'module' => 'stic_Custom_View_Customizations',
+  'subpanel_name' => 'default',
+  'sort_order' => 'asc',
+  'sort_by' => 'customization_order',
+  'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_INITIAL_TITLE',
+  'get_subpanel_data' => 'function:stic_custom_views_stic_custom_view_customizations',
+  'function_parameters' => array(
+    'import_function_file' => 'modules/stic_Custom_Views/Utils.php',
+    'is_initial' => 1
+  ),
+  'top_buttons' => array (
+    0 => array (
+      //'widget_class' => 'SubPanelTopButtonQuickCreateSticIsInitial',
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+      //'widget_class' => 'SubPanelTopButtonQuickCreate2',
     ),
-  );
+  ),
+);
+$layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations_dynamic'] = array (
+  'order' => 50,
+  'module' => 'stic_Custom_View_Customizations',
+  'subpanel_name' => 'default',
+  'sort_order' => 'asc',
+  'sort_by' => 'customization_order',
+  'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_DYNAMIC_TITLE',
+  'get_subpanel_data' => 'function:stic_custom_views_stic_custom_view_customizations',
+  'function_parameters' => array(
+    'import_function_file' => 'modules/stic_Custom_Views/Utils.php',
+    'is_initial' => 0
+  ),
+  'top_buttons' => array (
+    0 => array (
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+    ),
+  ),
+);

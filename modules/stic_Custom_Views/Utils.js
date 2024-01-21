@@ -90,10 +90,54 @@ switch (viewType()) {
     break;
 }
 
-$(document).ready(function () {
-  // Show message if the functionality is deactivated
-  if (SUGAR.config.stic_security_groups_rules_enabled != 1) {
-    $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Security_Groups_Rules.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
+function GetElementInsideContainer(containerID, childID) {
+  var elm = document.getElementById(childID);
+  var parent = elm ? elm.parentNode : {};
+  return (parent.id && parent.id === containerID) ? elm : {};
+}
+function isDescendant(parent, child) {
+  var node = child.parentNode;
+  while (node != null) {
+      if (node == parent) {
+          return true;
+      }
+      node = node.parentNode;
   }
+  return false;
+}
+
+$(document).ready(function () {
+  var panelInintial = document.getElementById("list_subpanel_stic_custom_view_customizations_initial"); 
+  var panelDynamic = document.getElementById("list_subpanel_stic_custom_view_customizations_dynamic"); 
+
+  //IEPA!!
+  // Caldria, escoltar l'event de creació, i afegir els inputs abans de fer el commit
+
+  var forms = document.querySelectorAll("[id='formformstic_custom_views_stic_custom_view_customizations']");
+  for(var i = 0; i < forms.length; i++) {
+    if(isDescendant(panelInintial, forms[i])) {
+      var input = document.createElement("input");
+      input.setAttribute('type', 'hidden');
+      input.setAttribute('name', 'is_initial');
+      input.setAttribute('value', '1');
+      forms[i].appendChild(input);
+      //alert("inserted Initial");
+    } 
+    if(isDescendant(panelDynamic,forms[i])) {
+      var input = document.createElement("input");
+      input.setAttribute('type', 'hidden');
+      input.setAttribute('name', 'is_initial');
+      input.setAttribute('value', '0');
+      forms[i].appendChild(input);
+      //alert("inserted Dynamic");
+    }
+  }
+
+  // var e = GetElementInsideContainer("list_subpanel_stic_custom_view_customizations_initial", "formformstic_custom_views_stic_custom_view_customizations");
+  // alert (e);
+  // // Show message if the functionality is deactivated
+  // if (SUGAR.config.stic_security_groups_rules_enabled != 1) {
+  //   $('<div class=msg-fatal-lock>' + SUGAR.language.languages.stic_Security_Groups_Rules.LBL_DISABLED_MODULE_RULES_INFO + '</div>').prependTo('#pagecontent')
+  // }
 });
 
