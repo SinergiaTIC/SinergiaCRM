@@ -103,7 +103,7 @@ foreach ($recordIds as $recordId) {
     $bean->retrieve($recordId);
 
     // STIC-Custom 20240122 JBL - Product line items in pdf
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/76
     $variableName = strtolower($bean->module_dir);
     $lineItemsGroups = array();
     $lineItems = array();
@@ -131,7 +131,7 @@ foreach ($recordIds as $recordId) {
     }
 
     // STIC-Custom 20240122 JBL - Product line items in pdf
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/76
     /*
     // $search = array(
     //     '@<script[^>]*?>.*?</script>@si',        // Strip out javascript
@@ -282,7 +282,7 @@ foreach ($recordIds as $recordId) {
 $pdf->outputPDF($file_name, 'D');
 
 // STIC-Custom 20240122 JBL - Product line items in pdf
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/76
 function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 'table')
 {
     $firstValue = '';
