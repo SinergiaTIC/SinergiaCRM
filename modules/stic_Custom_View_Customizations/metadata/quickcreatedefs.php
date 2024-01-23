@@ -56,12 +56,7 @@ array (
     array (
       'default' => 
       array (
-        //IEPA!! Eliminar fila 0
         0 => 
-        array (
-          0 => 'name',
-        ),
-        1 => 
         array (
           0 => 
           array (
@@ -74,7 +69,7 @@ array (
             'label' => 'LBL_CUSTOMIZATION_ORDER',
           ),
         ),
-        2 => 
+        1 => 
         array (
           0 => 
           array (

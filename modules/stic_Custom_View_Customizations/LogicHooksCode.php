@@ -20,18 +20,23 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+class stic_Custom_View_CustomizationsLogicHooks
+{
 
+    public function before_save(&$bean, $event, $arguments)
+    {
+        // Ensure name is correct
+        include_once 'SticInclude/Utils.php';
+        $relatedBean = SticUtils::getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
+        $bean->name = $relatedBean->name . ' - ' . $bean->customization_name;
 
- if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+        //IEPA!!
+        // Si customization_order ja està agafat (segons inicial/dinàmic): incrementar ordre dels que tenen el mateix l'ordre 
+        
+    }
 
-global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Custom_Views', 'edit', true)){
-    //$module_menu[]=array('index.php?module=stic_Custom_Views&action=EditView&return_module=stic_Custom_Views&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Custom_Views');
-    $module_menu[]=array('index.php?module=stic_Custom_Views&action=selectModule&return_module=stic_Custom_Views&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Custom_Views');
-}
-if(ACLController::checkAccess('stic_Custom_Views', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Custom_Views&action=index&return_module=stic_Custom_Views&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Custom_Views');
+    public function after_save(&$bean, $event, $arguments)
+    {
+    }
+
 }

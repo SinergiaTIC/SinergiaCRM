@@ -21,11 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-// require_once('modules/ModuleBuilder/MB/AjaxCompose.php') ;
-// require_once('modules/ModuleBuilder/Module/StudioModuleFactory.php') ;
-require_once('include/MVC/View/SugarView.php') ;
+require_once('include/MVC/View/SugarView.php');
+require_once 'SticInclude/Views.php';
 
-class stic_Custom_ViewsViewModules extends SugarView
+class stic_Custom_ViewsViewselectmodule extends SugarView
 {
     private $buttons;
     private $title;
@@ -40,15 +39,28 @@ class stic_Custom_ViewsViewModules extends SugarView
         $this->buttons = array(); // initialize so that modules without subpanels for example don't result in this being unset and causing problems in the smarty->assign
     }
     
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+        // Write here the SinergiaCRM code that must be executed for this module and view
+    }
+
     public function display()
     {
+        parent::display();
+
+        SticViews::display($this);
+
         $this->title = translate('LBL_MODULE_TITLE');
         $this->generateStudioModuleButtons();
 
         $this->ss->assign("title", $this->title);
         $this->ss->assign('buttons', $this->buttons);
 
-        echo $this->ss->fetch('modules/stic_Custom_Views/tpls/modules.tpl');
+        echo $this->ss->fetch('modules/stic_Custom_Views/tpls/selectmodule.tpl');
         echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
     }
 

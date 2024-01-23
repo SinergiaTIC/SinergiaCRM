@@ -58,12 +58,13 @@ array (
       array (
         0 => 
         array (
-          //IEPA!! Eliminar fila 0
           0 => 
           array (
             'name' => 'view_module',
             'studio' => 'visible',
             'label' => 'LBL_VIEW_MODULE',
+            //'type' => 'readonly',
+            //'customCode' => '<strong>{$fields.view_module_name.value}</strong>',
           ),
           1 => 
           array (

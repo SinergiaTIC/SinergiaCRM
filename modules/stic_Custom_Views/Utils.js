@@ -23,6 +23,8 @@
 /* HEADER */
 // Set module name
 var module = "stic_Custom_Views";
+var lastCustomizationInitialOrder = 0;
+var lastCustomizationDynamicOrder = 0;
 
 /* INCLUDES */
 
@@ -35,8 +37,8 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    setAutofill(["name"]);
     $(document).ready(function () { 
+      initializeEditFields();
       initializeSelectize();
     });
     break;
@@ -108,6 +110,23 @@ function initializeQuickCreateCustomization() {
   var subpanelList = document.getElementById('subpanel_list');
   var config = { childList: true, subtree: true };
   observer.observe(subpanelList, config);
+}
+
+function initializeEditFields() {
+  // Hide module selector, show label with module name
+  $("#view_module").hide().parent().append($('<strong id="view_module_label">'+$("#view_module option:selected").text()+'</strong>'));
+
+  // Set initial name
+  $("#name").val($('#view_module_label').text() + ' - ' + $("#view_name").val());
+
+  // Hide name, show label with name
+  $("#name").hide().parent().append($('<strong id="name_label">'+$("#name").val()+'</strong>'));
+
+  // Update name when any change on view_name
+  $("#view_name").on("change paste keyup", function() {
+    $("#name").val($('#view_module_label').text() + ' - ' + $("#view_name").val());
+    $("#name_label").text($("#name").val());
+  });
 }
 
 function initializeSelectize() {

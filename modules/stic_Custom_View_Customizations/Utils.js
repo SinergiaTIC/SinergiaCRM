@@ -35,7 +35,9 @@ switch (viewType()) {
   case "quickcreate":
   case "edit":
   case "popup":
-    setAutofill(["name"]);
+    $(document).ready(function () { 
+      initializeCustomizationEditFields();
+    });
     break;
 
   case "detail":
@@ -51,5 +53,13 @@ switch (viewType()) {
 $(document).ready(function () {
 });
 
+function initializeCustomizationEditFields() {
+  // Set order if is not set
+  if (!$("#customization_order").val()) {
+    //IEPA!!
+    // Si es inicial: lastCustomizationInitialOrder sino: lastCustomizationDynamicOrder
+    $("#customization_order").val(lastCustomizationOrder + 1);
+  }
+}
 
 

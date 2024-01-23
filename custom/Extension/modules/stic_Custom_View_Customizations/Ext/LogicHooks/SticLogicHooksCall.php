@@ -20,18 +20,8 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-
- if (!defined('sugarEntry') || !sugarEntry) {
+//prevents directly accessing this file from a web browser
+if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-
-global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Custom_Views', 'edit', true)){
-    //$module_menu[]=array('index.php?module=stic_Custom_Views&action=EditView&return_module=stic_Custom_Views&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Custom_Views');
-    $module_menu[]=array('index.php?module=stic_Custom_Views&action=selectModule&return_module=stic_Custom_Views&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Custom_Views');
-}
-if(ACLController::checkAccess('stic_Custom_Views', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Custom_Views&action=index&return_module=stic_Custom_Views&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Custom_Views');
-}
+$hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_Custom_View_Customizations/LogicHooksCode.php', 'stic_Custom_View_CustomizationsLogicHooks', 'before_save');
