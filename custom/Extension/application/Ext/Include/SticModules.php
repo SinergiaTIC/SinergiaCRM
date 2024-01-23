@@ -147,10 +147,15 @@ $modInvisList[] = 'stic_Incorpora';
 $modInvisList[] = 'stic_Import_Validation';
 $modInvisList[] = 'stic_Validation_Results';
 $modInvisList[] = 'stic_Security_Groups_Rules';
+$modInvisList[] = 'stic_Custom_Views';
+$modInvisList[] = 'stic_Custom_View_Customizations';
+$modInvisList[] = 'stic_Custom_View_Conditions';
+$modInvisList[] = 'stic_Custom_View_Actions';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
 $modules_exempt_from_availability_check['stic_Incorpora'] = 'stic_Incorpora';
+$modules_exempt_from_availability_check['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations';
 
 // Modules that have been hidden with $modInvisList, but must be available in reporting
 // $report_include_modules['stic_XXXXXXXXXX'] = 'stic_XXXXXXXXXX'; // sample value
@@ -159,6 +164,7 @@ $modules_exempt_from_availability_check['stic_Incorpora'] = 'stic_Incorpora';
 $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
+$adminOnlyList['stic_Custom_Views'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events
 $modInvisList[] = 'FP_events';

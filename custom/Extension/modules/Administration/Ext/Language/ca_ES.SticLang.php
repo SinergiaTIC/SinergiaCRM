@@ -29,6 +29,9 @@ $mod_strings['LBL_STIC_VALIDATION_ACTIONS_DESCRIPTION'] = 'Gestiona les accions 
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_LINK_TITLE'] = 'Resultats de validació';
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_DESCRIPTION'] = 'Gestiona i revisa els resultats de les accions de validació.';
 
+$mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Vistes personalitzades';
+$mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = "Permet personalitzar les vistes dels diferents mòduls de SinergiaCRM segons l'usuari i els valors de camps";
+
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Configuració';
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Opcions de configuració de SinergiaCRM';
 
