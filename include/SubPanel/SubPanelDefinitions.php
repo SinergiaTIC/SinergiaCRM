@@ -262,9 +262,12 @@ class aSubPanel
         $relationshipType = $dictionary[$this->name]['true_relationship_type'];
         // if($relationshipType == 'one-to-many') {
         if($relationshipType == 'one-to-many' || $relationshipType == 'many-to-one') {
+            // STIC-Custom JBL 20240123: Don't show button in Custom views
+            // $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
             if($this->parent_bean->object_name != "stic_Custom_Views") {
                 $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
             }
+            // END STIC-Custom
         }
         // END STIC-Custom
 

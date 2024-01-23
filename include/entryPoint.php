@@ -102,26 +102,23 @@ clean_special_arguments();
 // While looking for a better way of ensuring both security and functionality, let's manage some exceptions.
 // STIC#633
 // STIC#699
-// STIC#1289
 // clean_incoming_data();
 $skipAntiXSS = false;
 // See if the current module is set as an exception 
-if (isset($GLOBALS['sugar_config']['anti_xss_data_exceptions'])){
-    foreach ($GLOBALS['sugar_config']['anti_xss_data_exceptions'] as $key => $xssException) {
-        if (isset($_REQUEST['module']) && isset($xssException['module']) && $xssException['module'] == $_REQUEST['module'] && $skipAntiXSS !== true ) {
-            // Sort config exception array (further than module, may contain other params like action or step)
-            ksort($xssException);
-            // Create a subarray from $_REQUEST containing the elements with keys defined in the prior exception
-            $requestFiltered = array_intersect_key($_REQUEST, $xssException);
-            // Sort the new array in order to have its elements in the same order of the config exception array 
-            ksort($requestFiltered);
-            // If both arrays are equal (ie, there is a match not only in module param but in all of them: action, step, etc.)
-            // clean_incoming_data() should be avoided
-            if (join($xssException) == join($requestFiltered)) {
-                $skipAntiXSS = true;
-                break;
-            } 
-        }
+foreach ($GLOBALS['sugar_config']['anti_xss_data_exceptions'] as $key => $xssException) {
+    if ($xssException['module'] == $_REQUEST['module'] && $skipAntiXSS !== true ) {
+        // Sort config exception array (further than module, may contain other params like action or step)
+        ksort($xssException);
+        // Create a subarray from $_REQUEST containing the elements with keys defined in the prior exception
+        $requestFiltered = array_intersect_key($_REQUEST, $xssException);
+        // Sort the new array in order to have its elements in the same order of the config exception array 
+        ksort($requestFiltered);
+        // If both arrays are equal (ie, there is a match not only in module param but in all of them: action, step, etc.)
+        // clean_incoming_data() should be avoided
+        if (join($xssException) == join($requestFiltered)) {
+            $skipAntiXSS = true;
+            break;
+        } 
     }
 }
 
