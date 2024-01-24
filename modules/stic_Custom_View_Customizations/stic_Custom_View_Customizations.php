@@ -60,8 +60,6 @@ class stic_Custom_View_Customizations extends Basic
     {
         parent::__construct();
 
-        require_once('modules/stic_Custom_Views/Utils.php');
-        fill_dynamic_custom_views_lists();
     }
 
 }

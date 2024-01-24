@@ -36,7 +36,6 @@ switch (viewType()) {
   case "edit":
   case "popup":
     $(document).ready(function () { 
-      initializeCustomizationEditFields();
     });
     break;
 
@@ -53,13 +52,5 @@ switch (viewType()) {
 $(document).ready(function () {
 });
 
-function initializeCustomizationEditFields() {
-  // Set order if is not set
-  if (!$("#customization_order").val()) {
-    //IEPA!!
-    // Si es inicial: lastCustomizationInitialOrder sino: lastCustomizationDynamicOrder
-    $("#customization_order").val(lastCustomizationOrder + 1);
-  }
-}
 
 

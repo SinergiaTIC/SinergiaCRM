@@ -27,8 +27,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
-  'customization_name' => 
-  array(
+  'customization_name' => array(
     'name' => 'customization_name',
     'vname' => 'LBL_CUSTOMIZATION_NAME',
     'required' => true,
@@ -43,7 +42,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => '',
+    'inline_edit' => true,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -51,8 +50,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'studio' => 'visible',
     'dependency' => false,
   ),
-  'customization_order' => 
-  array (
+  'customization_order' => array (
     'required' => true,
     'name' => 'customization_order',
     'vname' => 'LBL_CUSTOMIZATION_ORDER',
@@ -65,7 +63,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'duplicate_merge' => 'disabled',
     'duplicate_merge_dom_value' => '0',
     'audited' => false,
-    'inline_edit' => 1,
+    'inline_edit' => true,
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'disabled',
@@ -76,8 +74,7 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'min' => false,
     'max' => false,
   ),
-  'is_initial' => 
-  array (
+  'is_initial' => array (
     'required' => false,
     'name' => 'is_initial',
     'vname' => 'LBL_IS_INITIAL',
@@ -104,7 +101,45 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'type' => 'text',
     'rows' => 2,
     'cols' => 80,
-),
+  ),
+  'condition_lines' => array(
+    'required' => false,
+    'name' => 'condition_lines',
+    'vname' => 'LBL_CONDITION_LINES',
+    'type' => 'function',
+    'source' => 'non-db',
+    'massupdate' => 0,
+    'importable' => 'false',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'audited' => false,
+    'reportable' => false,
+    'inline_edit' => false,
+    'function' => array(
+      'name' => 'displayConditionLines',
+      'returns' => 'html',
+      'include' => 'modules/stic_Custom_View_Customizations/Utils.php'
+    ),
+  ),
+  'action_lines' => array(
+    'required' => false,
+    'name' => 'action_lines',
+    'vname' => 'LBL_ACTION_LINES',
+    'type' => 'function',
+    'source' => 'non-db',
+    'massupdate' => 0,
+    'importable' => 'false',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'audited' => false,
+    'reportable' => false,
+    'inline_edit' => false,
+    'function' => array(
+      'name' => 'displayActionLines',
+      'returns' => 'html',
+      'include' => 'modules/stic_Custom_View_Customizations/Utils.php'
+    ),
+  ),
 ),
     'relationships' => array (
 ),
@@ -172,4 +207,4 @@ VardefManager::createVardef('stic_Custom_View_Customizations', 'stic_Custom_View
 // Set special values for SuiteCRM base fields
 $dictionary['stic_Custom_View_Customizations']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Custom_View_Customizations']['fields']['name']['inline_edit'] = false; // Not inline_edit for name
-$dictionary['stic_Custom_View_Customizations']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
+$dictionary['stic_Custom_View_Customizations']['fields']['description']['rows'] = '1'; // Make textarea fields shorter

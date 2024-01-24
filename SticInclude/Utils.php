@@ -131,7 +131,7 @@ EOQ;
             return false;
         }
         $relatedBeans = $bean->$relationshipName->getBeans();
-        return !($relatedBeans) ? false : $relatedBeans;
+        return $relatedBeans ?? false;
     }
 
     /**

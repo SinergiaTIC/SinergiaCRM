@@ -23,17 +23,12 @@
 
 require_once 'SticInclude/Utils.php';
 
-function fill_dynamic_custom_views_lists($module = null) {
-    fill_dynamic_role_list();
-    fill_dynamic_security_group_list();
-
-    /*if ($module!=null)*/ {
-        fill_dynamic_field_list($module);
-        fill_dynamic_panel_list($module);
-    }
+function fillDynamicGenericLists() {
+    fillDynamicRoleList();
+    fillDynamicSecurityGroupList();
 }
 
-function fill_dynamic_role_list() {
+function fillDynamicRoleList() {
     if(isset($GLOBALS ['app_list_strings']['dynamic_role_list'])) {
         return;
     }
@@ -49,7 +44,7 @@ function fill_dynamic_role_list() {
     $GLOBALS ['app_list_strings']['dynamic_role_list'] = $dynamic_role_list;
 }
 
-function fill_dynamic_security_group_list() {
+function fillDynamicSecurityGroupList() {
     if(isset($GLOBALS ['app_list_strings']['dynamic_security_group_list'])) {
         return;
     }
@@ -65,22 +60,6 @@ function fill_dynamic_security_group_list() {
     $GLOBALS ['app_list_strings']['dynamic_security_group_list'] = $dynamic_security_group_list;
 }
 
-function fill_dynamic_field_list($module) {
-    $dynamic_field_list = array (
-        'field1' => 'Field 1',
-        'field2' => 'Field 2',
-        'field3' => 'Field 3',
-    );
-    $GLOBALS ['app_list_strings']['dynamic_field_list'] = $dynamic_field_list;
-}
-
-function fill_dynamic_panel_list($module) {
-    $dynamic_panel_list = array (
-        'EditView_panel1' => 'Vista edició: Dades generals',
-        'EditView_panel2' => 'Vista edició: Adreça',
-    );
-    $GLOBALS ['app_list_strings']['dynamic_panel_list'] = $dynamic_panel_list;
-}
 
 /**
  * Function to filter Customization panel

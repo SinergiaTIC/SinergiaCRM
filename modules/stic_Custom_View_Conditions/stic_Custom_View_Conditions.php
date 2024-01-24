@@ -63,7 +63,5 @@ class stic_Custom_View_Conditions extends Basic
     {
         parent::__construct();
 
-        require_once('modules/stic_Custom_Views/Utils.php');
-        fill_dynamic_custom_views_lists();
     }
 }

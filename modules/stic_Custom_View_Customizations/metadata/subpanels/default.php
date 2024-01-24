@@ -33,34 +33,26 @@ $subpanel_layout = array (
   'where' => '',
   'list_fields' => 
   array (
+    'customization_order' => 
+    array (
+      'type' => 'int',
+      'vname' => 'LBL_CUSTOMIZATION_ORDER',
+      'width' => '5%',
+      'default' => true,
+    ),
     'customization_name' => 
     array (
       'type' => 'text',
       'vname' => 'LBL_CUSTOMIZATION_NAME',
       //'widget_class' => 'SubPanelDetailViewLink',
-      'width' => '45%',
-      'default' => true,
-    ),
-    //IEPA!! Treure
-    // 'is_initial' => 
-    // array (
-    //   'type' => 'bool',
-    //   'default' => true,
-    //   'vname' => 'LBL_IS_INITIAL',
-    //   'width' => '10%',
-    // ),
-    'customization_order' => 
-    array (
-      'type' => 'int',
-      'vname' => 'LBL_CUSTOMIZATION_ORDER',
-      'width' => '10%',
+      'width' => '40%',
       'default' => true,
     ),
     'summary' => 
     array (
       'type' => 'text',
       'vname' => 'LBL_SUMMARY',
-      'width' => '10%',
+      'width' => '40%',
       'default' => true,
     ),
     'description' => 
@@ -68,7 +60,7 @@ $subpanel_layout = array (
       'type' => 'text',
       'vname' => 'LBL_DESCRIPTION',
       'sortable' => false,
-      'width' => '10%',
+      'width' => '40%',
       'default' => true,
     ),
     'date_modified' => 

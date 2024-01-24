@@ -23,8 +23,6 @@
 /* HEADER */
 // Set module name
 var module = "stic_Custom_Views";
-var lastCustomizationInitialOrder = 0;
-var lastCustomizationDynamicOrder = 0;
 
 /* INCLUDES */
 
@@ -59,52 +57,78 @@ switch (viewType()) {
     break;
 }
 
-function GetElementInsideContainer(containerID, childID) {
-  var elm = document.getElementById(childID);
-  var parent = elm ? elm.parentNode : {};
-  return (parent.id && parent.id === containerID) ? elm : {};
-}
-function isDescendant(parent, child) {
-  var node = child.parentNode;
-  while (node != null) {
-      if (node == parent) {
-          return true;
-      }
-      node = node.parentNode;
-  }
-  return false;
-}
+// function GetElementInsideContainer(containerID, childID) {
+//   var elm = document.getElementById(childID);
+//   var parent = elm ? elm.parentNode : {};
+//   return (parent.id && parent.id === containerID) ? elm : {};
+// }
+// function isDescendant(parent, child) {
+//   var node = child.parentNode;
+//   while (node != null) {
+//       if (node == parent) {
+//           return true;
+//       }
+//       node = node.parentNode;
+//   }
+//   return false;
+// }
 
-function setIsInitialInForm(node, is_initial) {
+function setFieldsInForm(node, is_initial, order) {
   var form = node.querySelector('form');
   if (form) {
+    // Create is_initial input
     var input = document.createElement("input");
     input.setAttribute('type', 'hidden');
     input.setAttribute('name', 'is_initial');
     input.setAttribute('value', is_initial);
     form.appendChild(input);
-    console.log(form);
+
+    // Set value in customization_order input if is not set
+    if (!$("#customization_order").val()) {
+      $("#customization_order").val(order);
+      console.log("Set customization_order:" + order);
+
+    }
   }
 }
 
 function initializeQuickCreateCustomization() {
+  // When appears a new QuickCreate form in subpanel
+  //  - set the correct value in is_initial field
+  //  - set customization_order if not set (for new items)
+  
   // Observer for new elements
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
       if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
         mutation.addedNodes.forEach(function(newNode) {
           if (newNode.nodeType === 1) {
-            if(newNode.id === "subpanel_stic_custom_view_customizations_initial_newDiv") {
-              setIsInitialInForm(newNode, 1);
-            }
-            if(newNode.id === "subpanel_stic_custom_view_customizations_dynamic_newDiv") {
-              setIsInitialInForm(newNode, 0);
+            if (newNode.id === "subpanel_stic_custom_view_customizations_initial_newDiv") {
+              var nextOrder = 1;
+              if ($("#list_subpanel_stic_custom_view_customizations_initial .subpanel-table tbody tr.footable-empty").length == 0) {
+                nextOrder = $("#list_subpanel_stic_custom_view_customizations_initial .subpanel-table").find("tbody tr").length
+              }
+              setFieldsInForm(newNode, 1, nextOrder);
+            } else
+            if (newNode.id === "subpanel_stic_custom_view_customizations_dynamic_newDiv") {
+              var nextOrder = 1;
+              if ($("#list_subpanel_stic_custom_view_customizations_dynamic .subpanel-table tbody tr.footable-empty").length == 0) {
+                nextOrder = $("#list_subpanel_stic_custom_view_customizations_dynamic .subpanel-table").find("tbody tr").length
+              }
+              setFieldsInForm(newNode, 0, nextOrder);
             }
           }
         });
       }
     });
   });
+
+        // //IEPA!!
+        // // Count Customizations
+        // $db = DBManagerFactory::getInstance();
+        // $query_countCustomizationInitials = "SELECT count(*) FROM `stic_custom_view_customizations` WHERE is_initial='0'";
+        // $query_countCustomizationDynamics = "SELECT count(*) FROM `stic_custom_view_customizations` WHERE is_initial='1'";
+
   
   // Set observer for subpanel_list
   var subpanelList = document.getElementById('subpanel_list');

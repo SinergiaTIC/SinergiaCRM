@@ -27,11 +27,19 @@ class stic_Custom_View_CustomizationsLogicHooks
     {
         // Ensure name is correct
         include_once 'SticInclude/Utils.php';
-        $relatedBean = SticUtils::getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
-        $bean->name = $relatedBean->name . ' - ' . $bean->customization_name;
+        $customViewBean = SticUtils::getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
+        $bean->name = $customViewBean->name . ' - ' . $bean->customization_name;
 
-        //IEPA!!
-        // Si customization_order ja està agafat (segons inicial/dinàmic): incrementar ordre dels que tenen el mateix l'ordre 
+        // Ensure order is not set or change others
+        $customizationBeanArray = SticUtils::getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
+        foreach ($customizationBeanArray as $customizationBean) {
+            if ($customizationBean->id != $bean->id && 
+                $customizationBean->is_initial == $bean->is_initial &&
+                $customizationBean->customization_order == $bean->customization_order) {
+                    $customizationBean->customization_order = $customizationBean->customization_order + 1;
+                    $customizationBean->save();
+                }
+        }
         
     }
 

@@ -43,10 +43,20 @@ array (
         ),
       ),
       'useTabs' => false,
-      'tabDefs' => 
-      array (
-        'DEFAULT' => 
-        array (
+      'tabDefs' =>
+      array(
+        'DEFAULT' =>
+        array(
+          'newTab' => false,
+          'panelDefault' => 'expanded',
+        ),
+        'CONDITIONS' =>
+        array(
+          'newTab' => false,
+          'panelDefault' => 'expanded',
+        ),
+        'ACTIONS' =>
+        array(
           'newTab' => false,
           'panelDefault' => 'expanded',
         ),
@@ -77,6 +87,20 @@ array (
             'label' => 'LBL_DESCRIPTION',
           ),
         ),
+      ),
+      'LBL_CONDITION_LINES' =>
+      array(
+          0 =>
+          array(
+              0 => 'condition_lines',
+          ),
+      ),
+      'LBL_ACTION_LINES' =>
+      array(
+          0 =>
+          array(
+              0 => 'action_lines',
+          ),
       ),
     ),
   ),

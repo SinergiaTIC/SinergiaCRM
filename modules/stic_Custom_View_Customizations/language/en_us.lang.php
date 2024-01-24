@@ -63,6 +63,10 @@ $mod_strings = array (
   'LBL_CUSTOMIZATION_ORDER' => 'Ordre',
   'LBL_IS_INITIAL' => 'És la inicial',
   'LBL_SUMMARY' => 'Summary',
+  'LBL_CONDITION_LINES' => 'Conditions',
+  'LBL_ADD_CONDITION' => 'Add Condition',
+  'LBL_ACTION_LINES' => 'Actions',
+  'LBL_ADD_ACTION' => 'Add Action',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE'] = 'Custom Views';
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE'] = 'Conditions';
