@@ -675,7 +675,7 @@ eoq;
                         case "datetimecombo":
                             $even = !$even;
                             // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
-                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
                             // $newhtml .= $this->addDatetime($displayname, $field["name"]);
                             $newhtml .= $this->addDatetime($displayname, $field["name"],$field["display_default"]);
                             // END STIC-Custom
@@ -1433,7 +1433,7 @@ EOQ;
      * @param varname name of the variable
      */
     // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
     // public function addDatetime($displayname, $varname)
     public function addDatetime($displayname, $varname, $fieldtimeformat)
     {
@@ -1452,7 +1452,7 @@ EOQ;
 	<span id="{$varname}_trigger" class="suitepicon suitepicon-module-calendar" onclick="return false;"></span>
 EOQ;
         // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
         // $dtscript = getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
         $dtscript = getVersionedScript('custom/include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
         // END STIC-Custom
@@ -1467,7 +1467,7 @@ EOQ;
 		$dtscript
 		<script type="text/javascript">
         // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
         // var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1,);
 		var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1,"$fieldtimeformat");
         // END STIC-Custom
