@@ -124,25 +124,6 @@ $dictionary['stic_Custom_View_Conditions'] = array(
     'studio' => 'visible',
     'dependency' => false,
   ),
-  'value_type' =>
-  array(
-  'required' => false,
-  'name' => 'value_type',
-  'vname' => 'LBL_VALUE_TYPE',
-  'type' => 'varchar',
-  'massupdate' => 0,
-  'comments' => '',
-  'help' => '',
-  'importable' => 'true',
-  'duplicate_merge' => 'disabled',
-  'duplicate_merge_dom_value' => '0',
-  'audited' => false,
-  'reportable' => true,
-  'unified_search' => false,
-  'merge_filter' => 'disabled',
-  'len' => '255',
-  'size' => '20',
-  ),
   'value' => 
   array (
     'required' => false,

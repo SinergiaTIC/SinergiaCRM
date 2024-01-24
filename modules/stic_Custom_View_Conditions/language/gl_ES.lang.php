@@ -63,6 +63,5 @@ $mod_strings = array (
   'LBL_OPERATOR' => 'Operador',
   'LBL_CONDITION_TYPE' => 'Tipus de condició',
   'LBL_VALUE' => 'Valor',
-  'LBL_VALUE_TYPE' => 'Tipus',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizacións';

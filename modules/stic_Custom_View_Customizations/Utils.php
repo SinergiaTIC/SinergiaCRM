@@ -46,9 +46,6 @@ function displayConditionLines($focus, $field, $value, $view) {
 
     if(!empty($conditionBeanArray)) {
         foreach ($conditionBeanArray as $conditionBean) {
-            if ($conditionBean->value_type == 'Date') {
-                $conditionBean->value = unserialize(base64_decode($conditionBean->value));
-            }
             $html .= "loadConditionLine(".json_encode($conditionBean->toArray()).");";
         }
     }
