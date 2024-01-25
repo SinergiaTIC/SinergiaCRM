@@ -122,13 +122,6 @@ function initializeQuickCreateCustomization() {
       }
     });
   });
-
-        // //IEPA!!
-        // // Count Customizations
-        // $db = DBManagerFactory::getInstance();
-        // $query_countCustomizationInitials = "SELECT count(*) FROM `stic_custom_view_customizations` WHERE is_initial='0'";
-        // $query_countCustomizationDynamics = "SELECT count(*) FROM `stic_custom_view_customizations` WHERE is_initial='1'";
-
   
   // Set observer for subpanel_list
   var subpanelList = document.getElementById('subpanel_list');
