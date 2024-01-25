@@ -71,10 +71,40 @@ function fillDynamicViewModuleFieldList($view_module) {
 }
 
 function fillDynamicViewModulePanelList($view_module) {
-    $dynamic_panel_list = array (
-        'EditView_panel1' => 'Vista edició: Dades generals',
-        'EditView_panel2' => 'Vista edició: Adreça',
-    );
+    require_once("modules/ModuleBuilder/Module/StudioModuleFactory.php");
+    require_once('modules/ModuleBuilder/parsers/ParserFactory.php') ;
+
+    $studioModule = StudioModuleFactory::getStudioModule($view_module);
+
+    $availableViews = array("detailview", "editview");
+    $views = $studioModule->getViews();
+    $dynamic_view_list = array();
+    $dynamic_view_panel_map = array();
+    foreach($views as $view) {
+        $viewKey = !empty($view['view']) ? $view['view'] : $view['type'];
+        if (in_array($viewKey, $availableViews)) {
+            $dynamic_view_list[$viewKey] = $view['name'];
+            $dynamic_view_panel_map[$viewKey] = array();
+        }
+    }
+    $GLOBALS ['app_list_strings']['dynamic_view_list'] = $dynamic_view_list;
+
+    foreach ($dynamic_view_list as $viewKey => $viewName) {
+        $parser = ParserFactory::getParser($viewKey, $view_module, null);
+        $parsedPanels = $parser->getTabDefs();
+        foreach ($parsedPanels as $panelKey => $panelDef) {
+            $dynamic_view_panel_map[$viewKey][$panelKey] = translate($panelKey, $view_module);
+        }
+    }
+    $GLOBALS ['app_list_strings']['dynamic_view_panel_map'] = $dynamic_view_panel_map;
+
+    $dynamic_panel_list = array();
+    foreach ($dynamic_view_panel_map as $viewKey => $panels) {
+        $viewName = $dynamic_view_list[$viewKey];
+        foreach ($panels as $panelKey => $panelName) {
+            $dynamic_panel_list[$viewKey.".".$panelKey] = $viewName." - ".$panelName;
+        }
+    }
     $GLOBALS ['app_list_strings']['dynamic_panel_list'] = $dynamic_panel_list;
 }
 
@@ -158,13 +188,30 @@ function stic_custom_views_stic_custom_view_customizations($params) {
 function getJsVars($view_module) {
     fillDynamicViewModuleLists($view_module);
 
-    $fieldList = $GLOBALS ['app_list_strings']['dynamic_field_list'];
-    $fieldListOptions = get_select_options_with_id($fieldList, "");
-    
+    $dynamic_field_list = $GLOBALS ['app_list_strings']['dynamic_field_list'];
+    $fieldListOptions = get_select_options_with_id($dynamic_field_list, "");
+    $dynamic_view_list = $GLOBALS ['app_list_strings']['dynamic_view_list'];
+    $viewListOptions = get_select_options_with_id($dynamic_view_list, "");
+    $dynamic_panel_list = $GLOBALS ['app_list_strings']['dynamic_panel_list'];
+    $panelListOptions = get_select_options_with_id($dynamic_panel_list, "");
+
+    $dynamic_view_panel_map = $GLOBALS ['app_list_strings']['dynamic_view_panel_map'];
+    $viewPanelMapOptions = array();
+    foreach($dynamic_view_panel_map as $viewKey => $panel_list) {
+        $viewPanelMapOptions[$viewKey] = get_select_options_with_id($panel_list, "");
+    }
+
     $html = 
 "<script>".
     "var view_module = \"".$view_module."\";".
     "var view_module_fields_option_list = \"".trim(preg_replace('/\s+/', ' ', $fieldListOptions))."\";".
+    "var view_module_views_option_list = \"".trim(preg_replace('/\s+/', ' ', $viewListOptions))."\";".
+    "var view_module_panels_option_list = \"".trim(preg_replace('/\s+/', ' ', $panelListOptions))."\";".
+    "var view_module_views_panels_option_map = {};";
+    foreach ($viewPanelMapOptions as $viewKey => $panelOptions) {
+        $html .= "view_module_views_panels_option_map['".$viewKey."'] = \"".trim(preg_replace('/\s+/', ' ', $panelOptions))."\";";
+    }
+    $html .= 
 "</script>";
     return $html;
 }
