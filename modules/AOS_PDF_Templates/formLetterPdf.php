@@ -102,20 +102,6 @@ $count = 0;
 foreach ($recordIds as $recordId) {
     $bean->retrieve($recordId);
 
-    // STIC-Custom 20240122 JBL - Product line items in pdf
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/76
-    $variableName = strtolower($bean->module_dir);
-    $lineItemsGroups = array();
-    $lineItems = array();
-
-    $sql = "SELECT pg.id, pg.product_id, pg.group_id FROM aos_products_quotes pg LEFT JOIN aos_line_item_groups lig ON pg.group_id = lig.id WHERE pg.parent_type = '" . $bean->object_name . "' AND pg.parent_id = '" . $bean->id . "' AND pg.deleted = 0 ORDER BY lig.number ASC, pg.number ASC";
-    $res = $bean->db->query($sql);
-    while ($row = $bean->db->fetchByAssoc($res)) {
-        $lineItemsGroups[$row['group_id']][$row['id']] = $row['product_id'];
-        $lineItems[$row['id']] = $row['product_id'];
-    }
-    // END STIC-Custom 20240122
-
     try {
         $pdfHistory = PDFWrapper::getPDFEngine();
         $pdfHistory->configurePDF($pdfConfig);
@@ -130,75 +116,21 @@ foreach ($recordIds as $recordId) {
         $object_arr['Accounts'] = $bean->account_id;
     }
 
-    // STIC-Custom 20240122 JBL - Product line items in pdf
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/76
-    /*
-    // $search = array(
-    //     '@<script[^>]*?>.*?</script>@si',        // Strip out javascript
-    //     '@<[\/\!]*?[^<>]*?>@si',        // Strip out HTML tags
-    //     '@([\r\n])[\s]+@',            // Strip out white space
-    //     '@&(quot|#34);@i',            // Replace HTML entities
-    //     '@&(amp|#38);@i',
-    //     '@&(lt|#60);@i',
-    //     '@&(gt|#62);@i',
-    //     '@&(nbsp|#160);@i',
-    //     '@&(iexcl|#161);@i',
-    //     '@<address[^>]*?>@si'
-    // );
-    */
-    // $replace = array(
-    //     '',
-    //     '',
-    //     '\1',
-    //     '"',
-    //     '&',
-    //     '<',
-    //     '>',
-    //     ' ',
-    //     chr(161),
-    //     '<br>'
-    // );
-    
-    // $text = preg_replace($search, $replace, $template->description);
-    // $text = preg_replace_callback(
-    //     '/{DATE\s+(.*?)}/',
-    //     function ($matches) {
-    //         return date($matches[1]);
-    //     },
-    //     $text
-    // );
-    // $header = preg_replace($search, $replace, $template->pdfheader);
-    // $footer = preg_replace($search, $replace, $template->pdffooter);
-
-    //backward compatibility
-    if (isset($bean->billing_account_id)) {
-        $object_arr['Accounts'] = $bean->billing_account_id;
-    }
-    if (isset($bean->billing_contact_id)) {
-        $object_arr['Contacts'] = $bean->billing_contact_id;
-    }
-    if (isset($bean->assigned_user_id)) {
-        $object_arr['Users'] = $bean->assigned_user_id;
-    }
-    if (isset($bean->currency_id)) {
-        $object_arr['Currencies'] = $bean->currency_id;
-    }
-
-    $search = array('/<script[^>]*?>.*?<\/script>/si',      // Strip out javascript
-        '/<[\/\!]*?[^<>]*?>/si',        // Strip out HTML tags
-        '/([\r\n])[\s]+/',          // Strip out white space
-        '/&(quot|#34);/i',          // Replace HTML entities
-        '/&(amp|#38);/i',
-        '/&(lt|#60);/i',
-        '/&(gt|#62);/i',
-        '/&(nbsp|#160);/i',
-        '/&(iexcl|#161);/i',
-        '/<address[^>]*?>/si',
-        '/&(apos|#0*39);/',
-        '/&#(\d+);/'
+    $search = array(
+        '@<script[^>]*?>.*?</script>@si',        // Strip out javascript
+        '@<[\/\!]*?[^<>]*?>@si',        // Strip out HTML tags
+        '@([\r\n])[\s]+@',            // Strip out white space
+        '@&(quot|#34);@i',            // Replace HTML entities
+        '@&(amp|#38);@i',
+        '@&(lt|#60);@i',
+        '@&(gt|#62);@i',
+        '@&(nbsp|#160);@i',
+        '@&(iexcl|#161);@i',
+        '@<address[^>]*?>@si'
     );
 
-    $replace = array('',
+    $replace = array(
+        '',
         '',
         '\1',
         '"',
@@ -207,33 +139,60 @@ foreach ($recordIds as $recordId) {
         '>',
         ' ',
         chr(161),
-        '<br>',
-        "'",
-        'chr(%1)'
+        '<br>'
     );
 
-    $header = preg_replace($search, $replace, $template->pdfheader);
-    $footer = preg_replace($search, $replace, $template->pdffooter);
     $text = preg_replace($search, $replace, $template->description);
-    $text = str_replace("<p><pagebreak /></p>", "<pagebreak />", $text);
     $text = preg_replace_callback(
-        '/\{DATE\s+(.*?)\}/',
+        '/{DATE\s+(.*?)}/',
         function ($matches) {
             return date($matches[1]);
         },
         $text
     );
-    $text = str_replace("\$aos_quotes", "\$" . $variableName, $text);
-    $text = str_replace("\$aos_invoices", "\$" . $variableName, $text);
-    $text = str_replace("\$total_amt", "\$" . $variableName . "_total_amt", $text);
-    $text = str_replace("\$discount_amount", "\$" . $variableName . "_discount_amount", $text);
-    $text = str_replace("\$subtotal_amount", "\$" . $variableName . "_subtotal_amount", $text);
-    $text = str_replace("\$tax_amount", "\$" . $variableName . "_tax_amount", $text);
-    $text = str_replace("\$shipping_amount", "\$" . $variableName . "_shipping_amount", $text);
-    $text = str_replace("\$total_amount", "\$" . $variableName . "_total_amount", $text);
-    
-    $text = populate_group_lines($text, $lineItemsGroups, $lineItems);
-    // END STIC-Custom 20240122
+    // STIC-Custom 20240125 JBL - Product line items in pdf
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/76
+    if (str_starts_with($_REQUEST['module'], "AOS_")) {
+        $variableName = strtolower($bean->module_dir);
+        $lineItemsGroups = array();
+        $lineItems = array();
+
+        $sql = "SELECT pg.id, pg.product_id, pg.group_id FROM aos_products_quotes pg LEFT JOIN aos_line_item_groups lig ON pg.group_id = lig.id WHERE pg.parent_type = '" . $bean->object_name . "' AND pg.parent_id = '" . $bean->id . "' AND pg.deleted = 0 ORDER BY lig.number ASC, pg.number ASC";
+        $res = $bean->db->query($sql);
+        while ($row = $bean->db->fetchByAssoc($res)) {
+            $lineItemsGroups[$row['group_id']][$row['id']] = $row['product_id'];
+            $lineItems[$row['id']] = $row['product_id'];
+        }
+
+        //backward compatibility
+        if (isset($bean->billing_account_id)) {
+            $object_arr['Accounts'] = $bean->billing_account_id;
+        }
+        if (isset($bean->billing_contact_id)) {
+            $object_arr['Contacts'] = $bean->billing_contact_id;
+        }
+        if (isset($bean->assigned_user_id)) {
+            $object_arr['Users'] = $bean->assigned_user_id;
+        }
+        if (isset($bean->currency_id)) {
+            $object_arr['Currencies'] = $bean->currency_id;
+        }
+
+        $text = str_replace("\$aos_quotes", "\$" . $variableName, $text);
+        $text = str_replace("\$aos_invoices", "\$" . $variableName, $text);
+        $text = str_replace("\$total_amt", "\$" . $variableName . "_total_amt", $text);
+        $text = str_replace("\$discount_amount", "\$" . $variableName . "_discount_amount", $text);
+        $text = str_replace("\$subtotal_amount", "\$" . $variableName . "_subtotal_amount", $text);
+        $text = str_replace("\$tax_amount", "\$" . $variableName . "_tax_amount", $text);
+        $text = str_replace("\$shipping_amount", "\$" . $variableName . "_shipping_amount", $text);
+        $text = str_replace("\$total_amount", "\$" . $variableName . "_total_amount", $text);
+
+        $text = populate_group_lines($text, $lineItemsGroups, $lineItems);
+    }
+    // END STIC-Custom 20240125
+
+    $header = preg_replace($search, $replace, $template->pdfheader);
+    $footer = preg_replace($search, $replace, $template->pdffooter);
 
     $converted = templateParser::parse_template($text, $object_arr);
     $header = templateParser::parse_template($header, $object_arr);
@@ -281,7 +240,7 @@ foreach ($recordIds as $recordId) {
 
 $pdf->outputPDF($file_name, 'D');
 
-// STIC-Custom 20240122 JBL - Product line items in pdf
+// STIC-Custom 20240125 JBL - Product line items in pdf
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/76
 function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 'table')
 {
@@ -543,4 +502,4 @@ function populate_service_lines($text, $lineItems, $element = 'tr')
     }
     return $text;
 }
-// END STIC-Custom 20240122
+// END STIC-Custom 20240125
