@@ -183,7 +183,7 @@ function change_state(radiobutton) {
 											<td width="30%" >
 												<!-- STIC-Custom - MHP - 20250125 - Prevent password autofill
     											https://github.com/SinergiaTIC/SinergiaCRM/pull/84
-												<input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="255" tabindex='1'> --!>
+												<input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="255" tabindex='1'> -->
 												<input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="255" tabindex='1' autocomplete="new-password" />
 												<!-- END STIC-Custom -->
 												<a href="javascript:void(0)" id='mail_smtppass_link' onClick="SUGAR.util.setEmailPasswordEdit('mail_smtppass')" style="display: none">{$APP.LBL_CHANGE_PASSWORD}</a>
