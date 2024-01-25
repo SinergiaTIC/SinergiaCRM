@@ -66,9 +66,85 @@ function fillDynamicViewModuleLists($view_module){
 }
 
 function fillDynamicViewModuleFieldList($view_module) {
-    $dynamic_field_list = getViewModuleFields($view_module);
+    global $beanList;
+
+    $dynamic_field_list = array();
+    $dynamic_field_operator_map = array();
+    $unset = array();
+    if ($view_module != '' && isset($beanList[$view_module]) && $beanList[$view_module]) {
+        $mod = new $beanList[$view_module]();
+        foreach ($mod->field_defs as $name => $arr) {
+            if (($arr['type'] === 'link') ||
+                ($name === 'currency_name' || $name === 'currency_symbol') ||
+                (isset($arr['source']) && $arr['source'] === 'non-db' && 
+                    ($arr['type'] !== 'relate' || !isset($arr['id_name'])))) {
+                continue;
+            }
+
+            if (isset($arr['vname']) && $arr['vname'] !== '') {
+                $dynamic_field_list[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');
+            } else {
+                $dynamic_field_list[$name] = $name;
+            }
+            $dynamic_field_operator_map[$name] = getValidOperators($arr['type']);
+            if ($arr['type'] === 'relate' && isset($arr['id_name']) && $arr['id_name'] !== '') {
+                $unset[] = $arr['id_name'];
+            }
+        }
+
+        foreach ($unset as $name) {
+            if (isset($dynamic_field_list[$name])) {
+                unset($dynamic_field_list[$name]);
+            }
+            if (isset($dynamic_field_operator_map[$name])) {
+                unset($dynamic_field_operator_map[$name]);
+            }
+        }
+        asort($dynamic_field_list);
+        asort($dynamic_field_operator_map);
+    }
     $GLOBALS ['app_list_strings']['dynamic_field_list'] = $dynamic_field_list;
+    $GLOBALS ['app_list_strings']['dynamic_field_operator_map'] = $dynamic_field_operator_map;
 }
+
+/**
+ * Gets Valid operators for a given field Type
+ */
+function getValidOperators($fieldType) {
+    global $app_list_strings;
+
+    $validOps = array();
+    switch ($fieldType) {
+        case 'double':
+        case 'decimal':
+        case 'float':
+        case 'currency':
+        case 'uint':
+        case 'ulong':
+        case 'long':
+        case 'short':
+        case 'tinyint':
+        case 'int':
+        case 'date':
+        case 'datetime':
+        case 'datetimecombo':
+            $validOps = array('Equal_To','Not_Equal_To','Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To','is_null');
+            break;
+        case 'enum':
+        case 'multienum':
+            $validOps = array('Equal_To','Not_Equal_To','is_null');
+            break;
+        default:
+            $validOps = array('Equal_To','Not_Equal_To','Contains', 'Starts_With', 'Ends_With','is_null');
+            break;
+    }
+    $operatorList = array();
+    foreach ($validOps as $op) {
+        $operatorList[$op] = $app_list_strings['aow_operator_list'][$op];
+    }
+    return $operatorList;
+}
+
 
 function fillDynamicViewModulePanelList($view_module) {
     require_once("modules/ModuleBuilder/Module/StudioModuleFactory.php");
@@ -109,54 +185,6 @@ function fillDynamicViewModulePanelList($view_module) {
 }
 
 /**
- * Gets an array with all fields of the module
- * Adapted from modules/AOW_WorkFlow/aow_utils.php function getModuleFields
- * stic_Custom_Views is an admin module: Ommit checkAccess
- */
-function getViewModuleFields($view_module) {
-    global $app_strings, $beanList;
-
-    $fields = array('' => $app_strings['LBL_NONE']);
-    $unset = array();
-    if ($view_module == '' || !isset($beanList[$view_module]) || !$beanList[$view_module]) {
-        return $fields;
-    }
-
-    $mod = new $beanList[$view_module]();
-    foreach ($mod->field_defs as $name => $arr) {
-        if ($arr['type'] === 'link') {
-            continue;
-        }
-        if ($name === 'currency_name' || $name === 'currency_symbol') {
-            continue;
-        }
-        if (isset($arr['source']) && $arr['source'] === 'non-db' && 
-            ($arr['type'] !== 'relate' || !isset($arr['id_name']))) {
-            continue;
-        }
-
-        if (isset($arr['vname']) && $arr['vname'] !== '') {
-            $fields[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');
-        } else {
-            $fields[$name] = $name;
-        }
-        if ($arr['type'] === 'relate' && isset($arr['id_name']) && $arr['id_name'] !== '') {
-            $unset[] = $arr['id_name'];
-        }
-    }
-
-    foreach ($unset as $name) {
-        if (isset($fields[$name])) {
-            unset($fields[$name]);
-        }
-    }
-    asort($fields);
-
-    return $fields;
-}
-
-
-/**
  * Function to filter Customization panel
  * The function name must be the same as the relationship name in order to create linked records
  */
@@ -190,8 +218,16 @@ function getJsVars($view_module) {
 
     $dynamic_field_list = $GLOBALS ['app_list_strings']['dynamic_field_list'];
     $fieldListOptions = get_select_options_with_id($dynamic_field_list, "");
+    
+    $dynamic_field_operator_map = $GLOBALS ['app_list_strings']['dynamic_field_operator_map'];
+    $fieldOPeratorMapOptions = array();
+    foreach ($dynamic_field_operator_map as $fieldKey => $operator_list) {
+        $fieldOPeratorMapOptions[$fieldKey] = get_select_options_with_id($operator_list, "");
+    }
+    
     $dynamic_view_list = $GLOBALS ['app_list_strings']['dynamic_view_list'];
     $viewListOptions = get_select_options_with_id($dynamic_view_list, "");
+    
     $dynamic_panel_list = $GLOBALS ['app_list_strings']['dynamic_panel_list'];
     $panelListOptions = get_select_options_with_id($dynamic_panel_list, "");
 
@@ -205,6 +241,11 @@ function getJsVars($view_module) {
 "<script>".
     "var view_module = \"".$view_module."\";".
     "var view_module_fields_option_list = \"".trim(preg_replace('/\s+/', ' ', $fieldListOptions))."\";".
+    "var view_module_fields_operators_option_map = {};";
+    foreach ($fieldOPeratorMapOptions as $fieldKey => $operatorOptions) {
+        $html .= "view_module_fields_operators_option_map['".$fieldKey."'] = \"".trim(preg_replace('/\s+/', ' ', $operatorOptions))."\";";
+    }
+    $html .=
     "var view_module_views_option_list = \"".trim(preg_replace('/\s+/', ' ', $viewListOptions))."\";".
     "var view_module_panels_option_list = \"".trim(preg_replace('/\s+/', ' ', $panelListOptions))."\";".
     "var view_module_views_panels_option_map = {};";

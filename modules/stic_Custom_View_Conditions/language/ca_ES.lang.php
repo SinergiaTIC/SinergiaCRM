@@ -61,7 +61,6 @@ $mod_strings = array (
   'LBL_CONDITION_ORDER' => 'Ordre',
   'LBL_FIELD' => 'Camp',
   'LBL_OPERATOR' => 'Operador',
-  'LBL_CONDITION_TYPE' => 'Tipus de condició',
   'LBL_VALUE' => 'Valor',
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
 );

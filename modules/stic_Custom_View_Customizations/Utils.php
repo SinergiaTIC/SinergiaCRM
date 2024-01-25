@@ -27,7 +27,7 @@ function displayConditionLines($focus, $field, $value, $view) {
     global $mod_strings;
 
     $html = 
-"<table cellpadding='0' cellspacing='0' border='0' width='100%' id='stic_custom_view_conditionLines'></table>".
+"<table cellpadding='0' cellspacing='0' border='0' width='100%' id='aow_conditionLines'></table>".
 "<div style='padding-top: 10px; padding-bottom:10px;'>".
     "<input type='button' class='button' tabindex='116' ".
            "value=\"".$mod_strings['LBL_ADD_CONDITION']."\" ".

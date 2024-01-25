@@ -61,7 +61,6 @@ $mod_strings = array (
   'LBL_CONDITION_ORDER' => 'Ordre',
   'LBL_FIELD' => 'Camp',
   'LBL_OPERATOR' => 'Operador',
-  'LBL_CONDITION_TYPE' => 'Tipus de condició',
   'LBL_VALUE' => 'Valor',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Customizations';
