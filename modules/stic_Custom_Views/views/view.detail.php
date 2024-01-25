@@ -50,7 +50,9 @@ class stic_Custom_ViewsViewDetail extends ViewDetail
         SticViews::display($this);
 
         // Write here you custom code
-
         echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
+
+        include_once("modules/stic_Custom_Views/Utils.php");
+        echo getJsVars($this->bean->view_module);
     }
 }

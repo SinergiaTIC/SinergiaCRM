@@ -24,14 +24,7 @@
 require_once 'SticInclude/Utils.php';
 
 function displayConditionLines($focus, $field, $value, $view) {
-    global $app_list_strings, $mod_strings;
-
-    $customViewBean = SticUtils::getRelatedBeanObject($focus, 'stic_custom_views_stic_custom_view_customizations');
-    $viewModule = $customViewBean->view_module;
-    fillDynamicViewModuleFieldList($viewModule);
-    $fieldList = $app_list_strings['dynamic_field_list'];
-    $fieldListOptions = get_select_options_with_id($fieldList, "");
-    $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_conditions");
+    global $mod_strings;
 
     $html = 
 "<table cellpadding='0' cellspacing='0' border='0' width='100%' id='stic_custom_view_conditionLines'></table>".
@@ -39,18 +32,16 @@ function displayConditionLines($focus, $field, $value, $view) {
     "<input type='button' class='button' tabindex='116' ".
            "value=\"".$mod_strings['LBL_ADD_CONDITION']."\" ".
            "id='btn_ConditionLine' onclick='insertConditionLine()'/>".
-"</div>".
-"<script>".
-    "view_module=\"".$viewModule."\";".
-    "view_module_fields_option_list=\"".trim(preg_replace('/\s+/', ' ', $fieldListOptions))."\";";
+"</div>";
 
+    $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_conditions");
     if(!empty($conditionBeanArray)) {
+        $html .= "<script>";
         foreach ($conditionBeanArray as $conditionBean) {
             $html .= "loadConditionLine(".json_encode($conditionBean->toArray()).");";
         }
+        $html .= "</script>";
     }
-    $html .= 
-"</script>";
     return $html;
 }
 
@@ -133,70 +124,5 @@ function displayActionLines(SugarBean $focus, $field, $value, $view) {
         $html .= "</table>";
     }
     return $html;
-}
-
-function fillDynamicViewModuleLists($view_module){
-    fillDynamicViewModuleFieldList($view_module);
-    fillDynamicViewModulePanelList($view_module);
-}
-
-function fillDynamicViewModuleFieldList($view_module) {
-    $dynamic_field_list = getViewModuleFields($view_module);
-    $GLOBALS ['app_list_strings']['dynamic_field_list'] = $dynamic_field_list;
-}
-
-function fillDynamicViewModulePanelList($view_module) {
-    $dynamic_panel_list = array (
-        'EditView_panel1' => 'Vista edició: Dades generals',
-        'EditView_panel2' => 'Vista edició: Adreça',
-    );
-    $GLOBALS ['app_list_strings']['dynamic_panel_list'] = $dynamic_panel_list;
-}
-
-/**
- * Gets an array with all fields of the module
- * Adapted from modules/AOW_WorkFlow/aow_utils.php function getModuleFields
- * stic_Custom_Views is an admin module: Ommit checkAccess
- */
-function getViewModuleFields($view_module) {
-    global $app_strings, $beanList;
-
-    $fields = array('' => $app_strings['LBL_NONE']);
-    $unset = array();
-    if ($view_module == '' || !isset($beanList[$view_module]) || !$beanList[$view_module]) {
-        return $fields;
-    }
-
-    $mod = new $beanList[$view_module]();
-    foreach ($mod->field_defs as $name => $arr) {
-        if ($arr['type'] === 'link') {
-            continue;
-        }
-        if ($name === 'currency_name' || $name === 'currency_symbol') {
-            continue;
-        }
-        if (isset($arr['source']) && $arr['source'] === 'non-db' && 
-            ($arr['type'] !== 'relate' || !isset($arr['id_name']))) {
-            continue;
-        }
-
-        if (isset($arr['vname']) && $arr['vname'] !== '') {
-            $fields[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');
-        } else {
-            $fields[$name] = $name;
-        }
-        if ($arr['type'] === 'relate' && isset($arr['id_name']) && $arr['id_name'] !== '') {
-            $unset[] = $arr['id_name'];
-        }
-    }
-
-    foreach ($unset as $name) {
-        if (isset($fields[$name])) {
-            unset($fields[$name]);
-        }
-    }
-    asort($fields);
-
-    return $fields;
 }
 

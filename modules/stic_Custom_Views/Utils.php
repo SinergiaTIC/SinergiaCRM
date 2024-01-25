@@ -60,6 +60,71 @@ function fillDynamicSecurityGroupList() {
     $GLOBALS ['app_list_strings']['dynamic_security_group_list'] = $dynamic_security_group_list;
 }
 
+function fillDynamicViewModuleLists($view_module){
+    fillDynamicViewModuleFieldList($view_module);
+    fillDynamicViewModulePanelList($view_module);
+}
+
+function fillDynamicViewModuleFieldList($view_module) {
+    $dynamic_field_list = getViewModuleFields($view_module);
+    $GLOBALS ['app_list_strings']['dynamic_field_list'] = $dynamic_field_list;
+}
+
+function fillDynamicViewModulePanelList($view_module) {
+    $dynamic_panel_list = array (
+        'EditView_panel1' => 'Vista edició: Dades generals',
+        'EditView_panel2' => 'Vista edició: Adreça',
+    );
+    $GLOBALS ['app_list_strings']['dynamic_panel_list'] = $dynamic_panel_list;
+}
+
+/**
+ * Gets an array with all fields of the module
+ * Adapted from modules/AOW_WorkFlow/aow_utils.php function getModuleFields
+ * stic_Custom_Views is an admin module: Ommit checkAccess
+ */
+function getViewModuleFields($view_module) {
+    global $app_strings, $beanList;
+
+    $fields = array('' => $app_strings['LBL_NONE']);
+    $unset = array();
+    if ($view_module == '' || !isset($beanList[$view_module]) || !$beanList[$view_module]) {
+        return $fields;
+    }
+
+    $mod = new $beanList[$view_module]();
+    foreach ($mod->field_defs as $name => $arr) {
+        if ($arr['type'] === 'link') {
+            continue;
+        }
+        if ($name === 'currency_name' || $name === 'currency_symbol') {
+            continue;
+        }
+        if (isset($arr['source']) && $arr['source'] === 'non-db' && 
+            ($arr['type'] !== 'relate' || !isset($arr['id_name']))) {
+            continue;
+        }
+
+        if (isset($arr['vname']) && $arr['vname'] !== '') {
+            $fields[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');
+        } else {
+            $fields[$name] = $name;
+        }
+        if ($arr['type'] === 'relate' && isset($arr['id_name']) && $arr['id_name'] !== '') {
+            $unset[] = $arr['id_name'];
+        }
+    }
+
+    foreach ($unset as $name) {
+        if (isset($fields[$name])) {
+            unset($fields[$name]);
+        }
+    }
+    asort($fields);
+
+    return $fields;
+}
+
 
 /**
  * Function to filter Customization panel
@@ -88,4 +153,18 @@ function stic_custom_views_stic_custom_view_customizations($params) {
             AND stic_custom_view_customizations.is_initial = '" . $isInitial . "'
     ";
     return $query;
+}
+
+function getJsVars($view_module) {
+    fillDynamicViewModuleLists($view_module);
+
+    $fieldList = $GLOBALS ['app_list_strings']['dynamic_field_list'];
+    $fieldListOptions = get_select_options_with_id($fieldList, "");
+    
+    $html = 
+"<script>".
+    "var view_module = \"".$view_module."\";".
+    "var view_module_fields_option_list = \"".trim(preg_replace('/\s+/', ' ', $fieldListOptions))."\";".
+"</script>";
+    return $html;
 }

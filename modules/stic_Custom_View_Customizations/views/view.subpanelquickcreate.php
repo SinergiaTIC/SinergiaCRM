@@ -43,8 +43,6 @@ class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCr
 
         parent::process($module);
 
-        
-
         // Load related lang strings and Utils.js
         $moduleNames = array('stic_Custom_View_Customizations', 'stic_Custom_View_Conditions', 'stic_Custom_View_Actions');
 
