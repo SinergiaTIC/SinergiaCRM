@@ -60,130 +60,6 @@ function fillDynamicSecurityGroupList() {
     $GLOBALS ['app_list_strings']['dynamic_security_group_list'] = $dynamic_security_group_list;
 }
 
-function fillDynamicViewModuleLists($view_module){
-    fillDynamicViewModuleFieldList($view_module);
-    fillDynamicViewModulePanelList($view_module);
-}
-
-function fillDynamicViewModuleFieldList($view_module) {
-    global $beanList;
-
-    $dynamic_field_list = array();
-    $dynamic_field_operator_map = array();
-    $unset = array();
-    if ($view_module != '' && isset($beanList[$view_module]) && $beanList[$view_module]) {
-        $mod = new $beanList[$view_module]();
-        foreach ($mod->field_defs as $name => $arr) {
-            if (($arr['type'] === 'link') ||
-                ($name === 'currency_name' || $name === 'currency_symbol') ||
-                (isset($arr['source']) && $arr['source'] === 'non-db' && 
-                    ($arr['type'] !== 'relate' || !isset($arr['id_name'])))) {
-                continue;
-            }
-
-            if (isset($arr['vname']) && $arr['vname'] !== '') {
-                $dynamic_field_list[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');
-            } else {
-                $dynamic_field_list[$name] = $name;
-            }
-            $dynamic_field_operator_map[$name] = getValidOperators($arr['type']);
-            if ($arr['type'] === 'relate' && isset($arr['id_name']) && $arr['id_name'] !== '') {
-                $unset[] = $arr['id_name'];
-            }
-        }
-
-        foreach ($unset as $name) {
-            if (isset($dynamic_field_list[$name])) {
-                unset($dynamic_field_list[$name]);
-            }
-            if (isset($dynamic_field_operator_map[$name])) {
-                unset($dynamic_field_operator_map[$name]);
-            }
-        }
-        asort($dynamic_field_list);
-        asort($dynamic_field_operator_map);
-    }
-    $GLOBALS ['app_list_strings']['dynamic_field_list'] = $dynamic_field_list;
-    $GLOBALS ['app_list_strings']['dynamic_field_operator_map'] = $dynamic_field_operator_map;
-}
-
-/**
- * Gets Valid operators for a given field Type
- */
-function getValidOperators($fieldType) {
-    global $app_list_strings;
-
-    $validOps = array();
-    switch ($fieldType) {
-        case 'double':
-        case 'decimal':
-        case 'float':
-        case 'currency':
-        case 'uint':
-        case 'ulong':
-        case 'long':
-        case 'short':
-        case 'tinyint':
-        case 'int':
-        case 'date':
-        case 'datetime':
-        case 'datetimecombo':
-            $validOps = array('Equal_To','Not_Equal_To','Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To','is_null');
-            break;
-        case 'enum':
-        case 'multienum':
-            $validOps = array('Equal_To','Not_Equal_To','is_null');
-            break;
-        default:
-            $validOps = array('Equal_To','Not_Equal_To','Contains', 'Starts_With', 'Ends_With','is_null');
-            break;
-    }
-    $operatorList = array();
-    foreach ($validOps as $op) {
-        $operatorList[$op] = $app_list_strings['aow_operator_list'][$op];
-    }
-    return $operatorList;
-}
-
-
-function fillDynamicViewModulePanelList($view_module) {
-    require_once("modules/ModuleBuilder/Module/StudioModuleFactory.php");
-    require_once('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-
-    $studioModule = StudioModuleFactory::getStudioModule($view_module);
-
-    $availableViews = array("detailview", "editview");
-    $views = $studioModule->getViews();
-    $dynamic_view_list = array();
-    $dynamic_view_panel_map = array();
-    foreach($views as $view) {
-        $viewKey = !empty($view['view']) ? $view['view'] : $view['type'];
-        if (in_array($viewKey, $availableViews)) {
-            $dynamic_view_list[$viewKey] = $view['name'];
-            $dynamic_view_panel_map[$viewKey] = array();
-        }
-    }
-    $GLOBALS ['app_list_strings']['dynamic_view_list'] = $dynamic_view_list;
-
-    foreach ($dynamic_view_list as $viewKey => $viewName) {
-        $parser = ParserFactory::getParser($viewKey, $view_module, null);
-        $parsedPanels = $parser->getTabDefs();
-        foreach ($parsedPanels as $panelKey => $panelDef) {
-            $dynamic_view_panel_map[$viewKey][$panelKey] = translate($panelKey, $view_module);
-        }
-    }
-    $GLOBALS ['app_list_strings']['dynamic_view_panel_map'] = $dynamic_view_panel_map;
-
-    $dynamic_panel_list = array();
-    foreach ($dynamic_view_panel_map as $viewKey => $panels) {
-        $viewName = $dynamic_view_list[$viewKey];
-        foreach ($panels as $panelKey => $panelName) {
-            $dynamic_panel_list[$viewKey.".".$panelKey] = $viewName." - ".$panelName;
-        }
-    }
-    $GLOBALS ['app_list_strings']['dynamic_panel_list'] = $dynamic_panel_list;
-}
-
 /**
  * Function to filter Customization panel
  * The function name must be the same as the relationship name in order to create linked records
@@ -213,46 +89,27 @@ function stic_custom_views_stic_custom_view_customizations($params) {
     return $query;
 }
 
-function getJsVars($view_module) {
-    fillDynamicViewModuleLists($view_module);
+function getJsVars($viewModule, $viewModuleView) {
+    require_once('modules/stic_Custom_Views/stic_Custom_Views_ModuleView.php');
+    $moduleView = new stic_Custom_Views_ModuleView($viewModule, $viewModuleView);
 
-    $dynamic_field_list = $GLOBALS ['app_list_strings']['dynamic_field_list'];
-    $fieldListOptions = get_select_options_with_id($dynamic_field_list, "");
-    
-    $dynamic_field_operator_map = $GLOBALS ['app_list_strings']['dynamic_field_operator_map'];
-    $fieldOPeratorMapOptions = array();
-    foreach ($dynamic_field_operator_map as $fieldKey => $operator_list) {
-        $fieldOPeratorMapOptions[$fieldKey] = get_select_options_with_id($operator_list, "");
-    }
-    
-    $dynamic_view_list = $GLOBALS ['app_list_strings']['dynamic_view_list'];
-    $viewListOptions = get_select_options_with_id($dynamic_view_list, "");
-    
-    $dynamic_panel_list = $GLOBALS ['app_list_strings']['dynamic_panel_list'];
-    $panelListOptions = get_select_options_with_id($dynamic_panel_list, "");
-
-    $dynamic_view_panel_map = $GLOBALS ['app_list_strings']['dynamic_view_panel_map'];
-    $viewPanelMapOptions = array();
-    foreach($dynamic_view_panel_map as $viewKey => $panel_list) {
-        $viewPanelMapOptions[$viewKey] = get_select_options_with_id($panel_list, "");
-    }
+    $fieldListOptions = $moduleView->getAllFields_as_select_options();
+    $fieldOPeratorMapOptions = $moduleView->getAllFieldOperatorMap_as_select_options();
+    $fieldViewListOptions = $moduleView->getOnlyViewFields_as_select_options();
+    $panelListOptions = $moduleView->getPanels_as_select_options();
 
     $html = 
 "<script>".
-    "var view_module = \"".$view_module."\";".
+    "var view_module = \"".$viewModule."\";".
+    "var view_module_view = \"".$viewModuleView."\";".
     "var view_module_fields_option_list = \"".trim(preg_replace('/\s+/', ' ', $fieldListOptions))."\";".
+    "var view_module_fields_view_option_list = \"".trim(preg_replace('/\s+/', ' ', $fieldViewListOptions))."\";".
     "var view_module_fields_operators_option_map = {};";
     foreach ($fieldOPeratorMapOptions as $fieldKey => $operatorOptions) {
         $html .= "view_module_fields_operators_option_map['".$fieldKey."'] = \"".trim(preg_replace('/\s+/', ' ', $operatorOptions))."\";";
     }
     $html .=
-    "var view_module_views_option_list = \"".trim(preg_replace('/\s+/', ' ', $viewListOptions))."\";".
     "var view_module_panels_option_list = \"".trim(preg_replace('/\s+/', ' ', $panelListOptions))."\";".
-    "var view_module_views_panels_option_map = {};";
-    foreach ($viewPanelMapOptions as $viewKey => $panelOptions) {
-        $html .= "view_module_views_panels_option_map['".$viewKey."'] = \"".trim(preg_replace('/\s+/', ' ', $panelOptions))."\";";
-    }
-    $html .= 
 "</script>";
     return $html;
 }

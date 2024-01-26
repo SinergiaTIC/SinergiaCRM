@@ -53,6 +53,6 @@ class stic_Custom_ViewsViewDetail extends ViewDetail
         echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
 
         include_once("modules/stic_Custom_Views/Utils.php");
-        echo getJsVars($this->bean->view_module);
+        echo getJsVars($this->bean->view_module, $this->bean->view_module_view);
     }
 }

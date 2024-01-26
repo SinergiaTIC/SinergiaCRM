@@ -3208,6 +3208,9 @@ $app_list_strings['stic_custom_views_field_change_type_list']['value_fix'] = 'Va
 $app_list_strings['stic_custom_views_panel_change_type_list']['show_do'] = 'Visibilitat: mostrar';
 $app_list_strings['stic_custom_views_panel_change_type_list']['show_undo'] = 'Visibilitat: ocultar';
 
+// Vistes personalitzades: Vistes
+$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detall';
+$app_list_strings['stic_custom_views_views_list']['editview'] = "Vista d'edició";
 
 // Modificacions del core de SuiteCRM
 

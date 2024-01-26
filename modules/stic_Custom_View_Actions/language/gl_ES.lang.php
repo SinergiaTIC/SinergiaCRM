@@ -62,7 +62,6 @@ $mod_strings = array (
   'LBL_ACTION_TYPE' => 'Tipus d&#039;acció',
   'LBL_FIELD' => 'Camp',
   'LBL_FIELD_CHANGE_TYPE' => 'Tipus de canvi',
-  'LBL_VIEW' => 'Vista',
   'LBL_PANEL' => 'Panell',
   'LBL_PANEL_CHANGE_TYPE' => 'Tipus de canvi',
   'LBL_VALUE' => 'Valor',

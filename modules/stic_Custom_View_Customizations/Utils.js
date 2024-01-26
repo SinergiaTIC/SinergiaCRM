@@ -36,6 +36,10 @@ switch (viewType()) {
   case "edit":
   case "popup":
     $(document).ready(function () { 
+      // Hide Condition lines
+      if($('input[name="is_initial"]').val()=="1") {
+        $('div[data-id="LBL_CONDITION_LINES"]').parent().hide();
+      }
     });
     break;
 

@@ -66,9 +66,9 @@ array (
           ),
           1 => 
           array (
-            'name' => 'name',
+            'name' => 'view_module_view',
             'studio' => 'visible',
-            'label' => 'LBL_NAME',
+            'label' => 'LBL_VIEW_MODULE_VIEW',
           ),
         ),
         1 => 
@@ -78,7 +78,12 @@ array (
             'studio' => 'visible',
             'label' => 'LBL_VIEW_NAME',
           ),
-          1 => 'assigned_user_name',
+          1 => 
+          array (
+            'name' => 'name',
+            'studio' => 'visible',
+            'label' => 'LBL_NAME',
+          ),
         ),
         2 => 
         array (
@@ -88,7 +93,7 @@ array (
             'studio' => 'visible',
             'label' => 'LBL_USER_TYPE',
           ),
-          1 => '',
+          1 => 'assigned_user_name',
         ),
         3 => 
         array (

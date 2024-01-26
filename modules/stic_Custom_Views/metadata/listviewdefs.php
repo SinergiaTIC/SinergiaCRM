@@ -31,18 +31,19 @@ array (
     'default' => true,
     'link' => true,
   ),
-  'VIEW_NAME' => 
-  array (
-    'width' => '32%',
-    'label' => 'LBL_VIEW_NAME',
-    'default' => true,
-    'link' => true,
-  ),
   'VIEW_MODULE' => 
   array (
     'type' => 'enum',
     'studio' => 'visible',
     'label' => 'LBL_VIEW_MODULE',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'VIEW_MODULE_VIEW' => 
+  array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_VIEW_MODULE_VIEW',
     'width' => '10%',
     'default' => true,
   ),

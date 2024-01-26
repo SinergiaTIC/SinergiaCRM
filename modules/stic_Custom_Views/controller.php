@@ -39,15 +39,19 @@ class stic_Custom_ViewsController extends SugarController {
         $this->view = 'selectmodule';
     }
 
+    public function action_selectView()
+    {
+        $this->view = "selectview";
+    }
     public function action_editview()
     {
-        global $app_list_strings;
-
         $this->view = 'edit';
         $GLOBALS['view'] = $this->view;
         if (isset($_REQUEST['view_module'])) {
             $this->bean->view_module = $_REQUEST['view_module'];
-            //$this->bean->view_module_name = $app_list_strings['moduleList'][$_REQUEST['view_module']];
+        }
+        if (isset($_REQUEST['view_module_view'])) {
+            $this->bean->view_module_view = $_REQUEST['view_module_view'];
         }
     }
 }

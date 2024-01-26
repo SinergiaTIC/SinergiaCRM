@@ -43,6 +43,15 @@ array (
         'default' => true,
         'name' => 'view_module',
       ),
+      'view_module_view' => 
+      array (
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_VIEW_MODULE_VIEW',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'view_module_view',
+      ),
       'user_type' => 
       array (
         'type' => 'enum',

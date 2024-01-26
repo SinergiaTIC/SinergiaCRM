@@ -3207,6 +3207,10 @@ $app_list_strings['stic_custom_views_field_change_type_list']['value_fix'] = 'Va
 $app_list_strings['stic_custom_views_panel_change_type_list']['show_do'] = 'Visibility: Show';
 $app_list_strings['stic_custom_views_panel_change_type_list']['show_undo'] = 'Visibility: Hide';
 
+// Custom Views: Views
+$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Detail View';
+$app_list_strings['stic_custom_views_views_list']['editview'] = "Edit View";
+
 // SuiteCRM Core modifications
 
 // Opportunities: Roles of the contacts in the opportunity context

@@ -27,7 +27,9 @@ class stic_Custom_ViewsLogicHooks
     {
         // Ensure name is correct
         global $app_list_strings;
-        $bean->name = $app_list_strings['moduleList'][$bean->view_module] . ' - ' . $bean->view_name;
+        $bean->name = $app_list_strings['moduleList'][$bean->view_module] . ' - ' . 
+                      $app_list_strings['stic_custom_views_views_list'][$bean->view_module_view] . ' - ' . 
+                      $bean->view_name;
 
         // Update all related names
         include_once 'SticInclude/Utils.php';
