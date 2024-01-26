@@ -103,19 +103,16 @@ function initializeQuickCreateCustomization() {
       if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
         mutation.addedNodes.forEach(function(newNode) {
           if (newNode.nodeType === 1) {
-            if (newNode.id === "subpanel_stic_custom_view_customizations_initial_newDiv") {
+            if (newNode.id === "subpanel_stic_custom_view_customizations_newDiv") {
               var nextOrder = 1;
-              if ($("#list_subpanel_stic_custom_view_customizations_initial .subpanel-table tbody tr.footable-empty").length == 0) {
-                nextOrder = $("#list_subpanel_stic_custom_view_customizations_initial .subpanel-table").find("tbody tr").length
+              if ($("#list_subpanel_stic_custom_view_customizations .subpanel-table tbody tr.footable-empty").length == 0) {
+                nextOrder = $("#list_subpanel_stic_custom_view_customizations .subpanel-table").find("tbody tr").length - 1;
               }
-              setFieldsInForm(newNode, 1, nextOrder);
-            } else
-            if (newNode.id === "subpanel_stic_custom_view_customizations_dynamic_newDiv") {
-              var nextOrder = 1;
-              if ($("#list_subpanel_stic_custom_view_customizations_dynamic .subpanel-table tbody tr.footable-empty").length == 0) {
-                nextOrder = $("#list_subpanel_stic_custom_view_customizations_dynamic .subpanel-table").find("tbody tr").length
+              if ($("#customization_order").val()=="0") {
+                setFieldsInForm(newNode, 1, nextOrder);
+              } else {
+                setFieldsInForm(newNode, 0, nextOrder);
               }
-              setFieldsInForm(newNode, 0, nextOrder);
             }
           }
         });

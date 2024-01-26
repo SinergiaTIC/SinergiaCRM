@@ -20,7 +20,23 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-//IEPA!!
-/**
- * This file adds support for studio
- */
+
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+class SugarWidgetSubPanelRemoveButtonstic_Custom_Views extends SugarWidgetSubPanelRemoveButton
+{
+    public function displayList(&$layout_def)
+    {
+        $current_module=$layout_def['module'];
+        if ($current_module == "stic_Custom_View_Customizations") {
+            $record = $layout_def['fields']['ID'];
+            $bean = BeanFactory::getBean($current_module, $record);
+            if ($bean->is_initial=="1") {
+                return '';
+            }
+        }
+        return parent::displayList($layout_def);
+    }
+}

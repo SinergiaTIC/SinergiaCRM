@@ -38,6 +38,16 @@ class stic_Custom_ViewsLogicHooks
             // before_save LogicHook updates the name
             $relatedBean->save(); 
         }
+
+        // Create first Customization if no one is defined
+        if (empty($relatedBeans)) {
+            // Set basic data
+            $customization = BeanFactory::newBean('stic_Custom_View_Customizations');
+            $customization->customization_name = translate("LBL_STIC_CUSTOM_VIEW_CUSTOMIZATION_INITIAL_TITLE");
+            $customization->is_initial = 1;
+            $customization->stic_custo45d1m_views_ida = $bean->id;
+            $customization->save();   
+        }
     }
 
     public function after_save(&$bean, $event, $arguments)
