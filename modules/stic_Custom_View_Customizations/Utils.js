@@ -38,7 +38,8 @@ switch (viewType()) {
     $(document).ready(function () { 
       // Hide Condition lines
       if($('input[name="is_initial"]').val()=="1") {
-        $('div[data-id="LBL_CONDITION_LINES"]').parent().hide();
+        sticCustomView.editview.panel("LBL_CONDITION_LINES").hide();
+        sticCustomView.editview.field("customization_order").readonly();
       }
     });
     break;

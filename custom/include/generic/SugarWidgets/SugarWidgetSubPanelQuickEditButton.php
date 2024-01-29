@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * This custom class, allows you to create a button in each record of the subpanel
  * which open the QuickCreate View to edit the record.
  */
-class SugarWidgetSubPanelSticQuickEditButton extends SugarWidgetField
+class SugarWidgetSubPanelQuickEditButton extends SugarWidgetField
 {
     public function displayList(&$layout_def)
 	{

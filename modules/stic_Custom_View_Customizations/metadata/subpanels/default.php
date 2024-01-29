@@ -71,7 +71,7 @@ $subpanel_layout = array (
     ),
     'quick_edit_button' => array(
       'vname' => 'LBL_EDIT_BUTTON',
-      'widget_class' => 'SubPanelSticQuickEditButton',
+      'widget_class' => 'SubPanelQuickEditButton',
       'module' => 'stic_Custom_View_Customizations',
       'width' => '5%',
       'default' => true,

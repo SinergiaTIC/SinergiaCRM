@@ -128,22 +128,38 @@ function initializeQuickCreateCustomization() {
 
 function initializeEditFields() {
   // Hide module selector, show label with module name
-  $("#view_module").hide().parent().append($('<strong id="view_module_label">'+$("#view_module option:selected").text()+'</strong>'));
+  sticCustomView.editview.field("view_module").readonly().bold();
+  // $("#view_module").hide().parent().append($('<strong id="view_module_label">'+$("#view_module option:selected").text()+'</strong>'));
 
   // Hide view selector, show label with view name
-  $("#view_module_view").hide().parent().append($('<strong id="view_module_view_label">'+$("#view_module_view option:selected").text()+'</strong>'));
+  sticCustomView.editview.field("view_module_view").readonly().bold();
+  //$("#view_module_view").hide().parent().append($('<strong id="view_module_view_label">'+$("#view_module_view option:selected").text()+'</strong>'));
 
   // Set initial name
-  $("#name").val($('#view_module_label').text() + ' - ' + $('#view_module_view_label').text() + ' - ' + $("#view_name").val());
+  sticCustomView.editview.field("name").input().editor.val(
+    sticCustomView.editview.field("view_module").input().text() + " - " +
+    sticCustomView.editview.field("view_module_view").input().text() + " - " +
+    sticCustomView.editview.field("view_name").input().text()
+  );
+  //$("#name").val($('#view_module_label').text() + ' - ' + $('#view_module_view_label').text() + ' - ' + $("#view_name").val());
 
   // Hide name, show label with name
-  $("#name").hide().parent().append($('<strong id="name_label">'+$("#name").val()+'</strong>'));
+  sticCustomView.editview.field("name").readonly().bold();
+  //$("#name").hide().parent().append($('<strong id="name_label">'+$("#name").val()+'</strong>'));
 
   // Update name when any change on view_name
   $("#view_name").on("change paste keyup", function() {
-    $("#name").val($('#view_module_label').text() + ' - ' + $('#view_module_view_label').text() + ' - ' + $("#view_name").val());
-    $("#name_label").text($("#name").val());
+    sticCustomView.editview.field("name").input().editor.val(
+      sticCustomView.editview.field("view_module").input().text() + " - " +
+      sticCustomView.editview.field("view_module_view").input().text() + " - " +
+      sticCustomView.editview.field("view_name").input().text()
+    );
+    sticCustomView.editview.field("name").input().editor.change();
   });
+  // $("#view_name").on("change paste keyup", function() {
+  //   $("#name").val($('#view_module_label').text() + ' - ' + $('#view_module_view_label').text() + ' - ' + $("#view_name").val());
+  //   $("#name_label").text($("#name").val());
+  // });
 }
 
 function initializeSelectize() {
