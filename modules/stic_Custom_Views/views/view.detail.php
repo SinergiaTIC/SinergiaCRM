@@ -52,6 +52,9 @@ class stic_Custom_ViewsViewDetail extends ViewDetail
         // Write here you custom code
         echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
 
+        //IEPA!!
+        echo getVersionedScript("SticInclude/js/SticCustomViews.js");
+
         include_once("modules/stic_Custom_Views/Utils.php");
         echo getJsVars($this->bean->view_module, $this->bean->view_module_view);
     }
