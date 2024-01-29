@@ -148,7 +148,7 @@ function initializeEditFields() {
   //$("#name").hide().parent().append($('<strong id="name_label">'+$("#name").val()+'</strong>'));
 
   // Update name when any change on view_name
-  $("#view_name").on("change paste keyup", function() {
+  sticCustomView.editview.field("view_name").input().editor.on("change paste keyup", function() {
     sticCustomView.editview.field("name").input().editor.val(
       sticCustomView.editview.field("view_module").input().text() + " - " +
       sticCustomView.editview.field("view_module_view").input().text() + " - " +
