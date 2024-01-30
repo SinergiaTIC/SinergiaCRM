@@ -3191,42 +3191,31 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Tothom';
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detall';
 $app_list_strings['stic_custom_views_views_list']['editview'] = "Vista d'edició";
 
+// Vistes personalitzades: Tipus d'Accions
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificació de camp';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Modificació de panell';
+$app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Modificació de pestanya';
+
 // Vistes personalitzades: Accions
-$app_list_strings['stic_custom_views_action_list']['field'] = 'Modificació de camp';
-$app_list_strings['stic_custom_views_action_list']['field.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['field.readonly'] = 'Només lectura';
-$app_list_strings['stic_custom_views_action_list']['field.mandatory'] = 'Obligat';
-$app_list_strings['stic_custom_views_action_list']['field.inline'] = 'Edició en línia';
-$app_list_strings['stic_custom_views_action_list']['field.fixedvalue'] = 'Valor fixe';
-$app_list_strings['stic_custom_views_action_list']['field.label'] = 'Etiqueta';
-$app_list_strings['stic_custom_views_action_list']['field.label.color'] = 'Color de text';
-$app_list_strings['stic_custom_views_action_list']['field.label.background'] = 'Color de fons';
-$app_list_strings['stic_custom_views_action_list']['field.label.bold'] = 'Negreta';
-$app_list_strings['stic_custom_views_action_list']['field.label.italic'] = 'Cursiva';
-$app_list_strings['stic_custom_views_action_list']['field.label.underline'] = 'Subratllat';
-$app_list_strings['stic_custom_views_action_list']['field.label.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['field.input'] = 'Editor de valor';
-$app_list_strings['stic_custom_views_action_list']['field.input.color'] = 'Color de text';
-$app_list_strings['stic_custom_views_action_list']['field.input.background'] = 'Color de fons';
-$app_list_strings['stic_custom_views_action_list']['field.input.bold'] = 'Negreta';
-$app_list_strings['stic_custom_views_action_list']['field.input.italic'] = 'Cursiva';
-$app_list_strings['stic_custom_views_action_list']['field.input.underline'] = 'Subratllat';
-$app_list_strings['stic_custom_views_action_list']['panel'] = 'Modificació de panell';
-$app_list_strings['stic_custom_views_action_list']['panel.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['panel.header'] = 'Capçalera';
-$app_list_strings['stic_custom_views_action_list']['panel.header.color'] = 'Color de text';
-$app_list_strings['stic_custom_views_action_list']['panel.header.background'] = 'Color de fons';
-$app_list_strings['stic_custom_views_action_list']['panel.header.bold'] = 'Negreta';
-$app_list_strings['stic_custom_views_action_list']['panel.header.italic'] = 'Cursiva';
-$app_list_strings['stic_custom_views_action_list']['panel.header.underline'] = 'Subratllat';
-$app_list_strings['stic_custom_views_action_list']['panel.header.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['tab'] = 'Modificació de pestanya';
-$app_list_strings['stic_custom_views_action_list']['tab.color'] = 'Color de text';
-$app_list_strings['stic_custom_views_action_list']['tab.background'] = 'Color de fons';
-$app_list_strings['stic_custom_views_action_list']['tab.bold'] = 'Negreta';
-$app_list_strings['stic_custom_views_action_list']['tab.italic'] = 'Cursiva';
-$app_list_strings['stic_custom_views_action_list']['tab.underline'] = 'Subratllat';
-$app_list_strings['stic_custom_views_action_list']['tab.visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Només lectura';
+$app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Obligat';
+$app_list_strings['stic_custom_views_action_list']['inline'] = 'Edició en línia';
+$app_list_strings['stic_custom_views_action_list']['fixedvalue'] = 'Valor fixe';
+$app_list_strings['stic_custom_views_action_list']['color'] = 'Color de text';
+$app_list_strings['stic_custom_views_action_list']['background'] = 'Color de fons';
+$app_list_strings['stic_custom_views_action_list']['bold'] = 'Negreta';
+$app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
+$app_list_strings['stic_custom_views_action_list']['underline'] = 'Subratllat';
+
+// Vistes personalitzades: Seccions d'elements
+$app_list_strings['stic_custom_views_element_section_list']['field'] = 'Tot el camp';
+$app_list_strings['stic_custom_views_element_section_list']['field_label'] = 'Etiqueta';
+$app_list_strings['stic_custom_views_element_section_list']['field_input'] = 'Editor de valor';
+$app_list_strings['stic_custom_views_element_section_list']['panel'] = 'Tot el panell';
+$app_list_strings['stic_custom_views_element_section_list']['panel_header'] = 'Capçalera';
+$app_list_strings['stic_custom_views_element_section_list']['tab'] = 'Tota la pestanya';
+$app_list_strings['stic_custom_views_element_section_list']['tab_header'] = 'Capçalera';
 
 
 // Modificacions del core de SuiteCRM

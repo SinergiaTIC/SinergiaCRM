@@ -3190,42 +3190,31 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'All';
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Detail View';
 $app_list_strings['stic_custom_views_views_list']['editview'] = "Edit View";
 
+// Custom Views: Action Types
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Field modification';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panel modification';
+$app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Tab modification';
+
 // Custom Views: Actions
-$app_list_strings['stic_custom_views_action_list']['field'] = 'Field modification';
-$app_list_strings['stic_custom_views_action_list']['field.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['field.readonly'] = 'Read only';
-$app_list_strings['stic_custom_views_action_list']['field.mandatory'] = 'Mandatory';
-$app_list_strings['stic_custom_views_action_list']['field.inline'] = 'Inline editing';
-$app_list_strings['stic_custom_views_action_list']['field.fixedvalue'] = 'Fix value';
-$app_list_strings['stic_custom_views_action_list']['field.label'] = 'Label';
-$app_list_strings['stic_custom_views_action_list']['field.label.color'] = 'Text color';
-$app_list_strings['stic_custom_views_action_list']['field.label.background'] = 'Background color';
-$app_list_strings['stic_custom_views_action_list']['field.label.bold'] = 'Bold';
-$app_list_strings['stic_custom_views_action_list']['field.label.italic'] = 'Italic';
-$app_list_strings['stic_custom_views_action_list']['field.label.underline'] = 'Underline';
-$app_list_strings['stic_custom_views_action_list']['field.label.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['field.input'] = 'Value editor';
-$app_list_strings['stic_custom_views_action_list']['field.input.color'] = 'Text color';
-$app_list_strings['stic_custom_views_action_list']['field.input.background'] = 'Background color';
-$app_list_strings['stic_custom_views_action_list']['field.input.bold'] = 'Bold';
-$app_list_strings['stic_custom_views_action_list']['field.input.italic'] = 'Italic';
-$app_list_strings['stic_custom_views_action_list']['field.input.underline'] = 'Underline';
-$app_list_strings['stic_custom_views_action_list']['panel'] = 'Panel modification';
-$app_list_strings['stic_custom_views_action_list']['panel.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['panel.header'] = 'Header';
-$app_list_strings['stic_custom_views_action_list']['panel.header.color'] = 'Text color';
-$app_list_strings['stic_custom_views_action_list']['panel.header.background'] = 'Background color';
-$app_list_strings['stic_custom_views_action_list']['panel.header.bold'] = 'Bold';
-$app_list_strings['stic_custom_views_action_list']['panel.header.italic'] = 'Italic';
-$app_list_strings['stic_custom_views_action_list']['panel.header.underline'] = 'Underline';
-$app_list_strings['stic_custom_views_action_list']['panel.header.visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['tab'] = 'Tab modification';
-$app_list_strings['stic_custom_views_action_list']['tab.color'] = 'Text color';
-$app_list_strings['stic_custom_views_action_list']['tab.background'] = 'Background color';
-$app_list_strings['stic_custom_views_action_list']['tab.bold'] = 'Bold';
-$app_list_strings['stic_custom_views_action_list']['tab.italic'] = 'Italic';
-$app_list_strings['stic_custom_views_action_list']['tab.underline'] = 'Underline';
-$app_list_strings['stic_custom_views_action_list']['tab.visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Read only';
+$app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Mandatory';
+$app_list_strings['stic_custom_views_action_list']['inline'] = 'Inline editing';
+$app_list_strings['stic_custom_views_action_list']['fixedvalue'] = 'Fix value';
+$app_list_strings['stic_custom_views_action_list']['color'] = 'Text color';
+$app_list_strings['stic_custom_views_action_list']['background'] = 'Background color';
+$app_list_strings['stic_custom_views_action_list']['bold'] = 'Bold';
+$app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
+$app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
+
+// Custom Views: Element's sections
+$app_list_strings['stic_custom_views_element_section_list']['field'] = 'All field';
+$app_list_strings['stic_custom_views_element_section_list']['field_label'] = 'Label';
+$app_list_strings['stic_custom_views_element_section_list']['field_input'] = 'Value editor';
+$app_list_strings['stic_custom_views_element_section_list']['panel'] = 'All panel';
+$app_list_strings['stic_custom_views_element_section_list']['panel_header'] = 'Header';
+$app_list_strings['stic_custom_views_element_section_list']['tab'] = 'All tab';
+$app_list_strings['stic_custom_views_element_section_list']['tab_header'] = 'Header';
 
 
 // SuiteCRM Core modifications

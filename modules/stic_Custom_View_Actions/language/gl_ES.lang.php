@@ -58,12 +58,15 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
   'LBL_STIC_CUSTOM_VIEW_ACTIONS_SUBPANEL_TITLE' => 'Accions',
   'LBL_NEW_FORM_TITLE' => 'Novo Accions',
+
   'LBL_ACTION_ORDER' => 'Ordre',
-  'LBL_ACTION' => 'Acció',
+  'LBL_ACTION_TYPE' => "Tipus d'acció",
   'LBL_ELEMENT' => 'Element',
   'LBL_FIELD' => 'Camp',
   'LBL_PANEL' => 'Panell',
   'LBL_TAB' => 'Pestanya',
+  'LBL_ACTION' => 'Acció',
   'LBL_VALUE' => 'Valor',
+  'LBL_ELEMENT_SECTION' => 'Aplicar a',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizacións';
