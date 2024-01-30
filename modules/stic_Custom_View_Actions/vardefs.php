@@ -55,7 +55,7 @@ $dictionary['stic_Custom_View_Actions'] = array(
   'action_type' => 
   array (
     'required' => false,
-    'name' => 'action',
+    'name' => 'action_type',
     'vname' => 'LBL_ACTION_TYPE',
     'type' => 'enum',
     'massupdate' => 0,
