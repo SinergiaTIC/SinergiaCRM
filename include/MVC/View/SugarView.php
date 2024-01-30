@@ -957,7 +957,7 @@ EOHTML;
             echo getVersionedScript('include/javascript/calendar.js');
 
             //IEPA!!
-            echo getVersionedScript("SticInclude/js/SticCustomViews.js");
+            echo getVersionedScript("modules/stic_Custom_Views/processor/js/SticCustomViewsAPI.js");
 
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
