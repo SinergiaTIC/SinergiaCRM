@@ -43,16 +43,20 @@ class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCr
 
         parent::process($module);
 
-        // Load related lang strings and Utils.js
+        // Load related lang strings
         $moduleNames = array('stic_Custom_View_Customizations', 'stic_Custom_View_Conditions', 'stic_Custom_View_Actions');
-
         foreach($moduleNames as $moduleName) {
             if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
                 require_once('include/language/jsLanguage.php');
                 jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
             }
             echo getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-            echo getVersionedScript("modules/{$moduleName}/Utils.js");
         }
+
+        echo getVersionedScript("modules/stic_Custom_View_Customizations/Utils.js");
+
+        //IEPA!!
+        // Eliminar Utils de Conditions (usar el de Customizations)
+        echo getVersionedScript("modules/stic_Custom_View_Conditions/Utils.js");
     }
 }

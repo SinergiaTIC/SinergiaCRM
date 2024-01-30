@@ -955,7 +955,6 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
-
             //IEPA!!
             echo getVersionedScript("modules/stic_Custom_Views/processor/js/SticCustomViewsAPI.js");
 

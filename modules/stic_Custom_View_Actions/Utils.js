@@ -20,6 +20,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+//IEPA!!!
+// A eliminar el Utils.js de Actions (s'usa el de Customizations)
+
 var actln = 0;
 var actln_count = 0;
 

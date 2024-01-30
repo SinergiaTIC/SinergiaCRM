@@ -20,47 +20,49 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+//IEPA!!!
+// A eliminar el Utils.js de Conditions (s'usa el de Customizations)
 
-var condln = 0;
-var condln_count = 0;
-var condprefix = 'stic_custom_view_conditions_';
+// var condln = 0;
+// var condln_count = 0;
+// var condprefix = 'stic_custom_view_conditions_';
 
 
-/**
- * Insert Header for condition table
- */
-function insertConditionHeader(){
-    tablehead = document.createElement("thead");
-    tablehead.id = "conditionLines_head";
-    document.getElementById('aow_conditionLines').appendChild(tablehead);
+// /**
+//  * Insert Header for condition table
+//  */
+// function insertConditionHeader(){
+//     tablehead = document.createElement("thead");
+//     tablehead.id = "sticCustomView_ConditionLines_head";
+//     document.getElementById('sticCustomView_ConditionLines').appendChild(tablehead);
 
-    var x=tablehead.insertRow(-1);
-    x.insertCell(-1); // Remove button
-    x.insertCell(-1).innerHTML=SUGAR.language.get('stic_Custom_View_Conditions', 'LBL_FIELD');
-    x.insertCell(-1).innerHTML=SUGAR.language.get('stic_Custom_View_Conditions', 'LBL_OPERATOR');
-    x.insertCell(-1).innerHTML=SUGAR.language.get('stic_Custom_View_Conditions', 'LBL_VALUE');
-}
+//     var x=tablehead.insertRow(-1);
+//     x.insertCell(-1); // Remove button
+//     x.insertCell(-1).innerHTML=SUGAR.language.get('stic_Custom_View_Conditions', 'LBL_FIELD');
+//     x.insertCell(-1).innerHTML=SUGAR.language.get('stic_Custom_View_Conditions', 'LBL_OPERATOR');
+//     x.insertCell(-1).innerHTML=SUGAR.language.get('stic_Custom_View_Conditions', 'LBL_VALUE');
+// }
 
 function insertConditionLine(){
-    if(!$("#conditionLines_head").length){
-        insertConditionHeader();
+    if(!$("#sticCustomView_ConditionLines_head").length){
+        insertConditionLinesHeader();
     }
-    $("#conditionLines_head").show();
+    $("#sticCustomView_ConditionLines_head").show();
 
     tablebody = document.createElement("tbody");
     tablebody.id = condprefix + "body" + condln;
-    document.getElementById('aow_conditionLines').appendChild(tablebody);
+    document.getElementById('sticCustomView_ConditionLines').appendChild(tablebody);
 
     var x = tablebody.insertRow(-1);
     x.id = 'condition_line' + condln;
 
     // Remove button
-    x.insertCell(-1).innerHTML = 
-        "<button type='button' class='button' id='"+condprefix+"delete_line"+condln+"' onclick='markConditionLineDeleted("+condln+")'>"+
-            "<span class='suitepicon suitepicon-action-minus'></span>"+
-        "</button><br>"+
-        "<input type='hidden' name='"+condprefix+"deleted["+condln+"]' id='"+condprefix+"deleted"+condln+"' value='0'>"+
-        "<input type='hidden' name='"+condprefix+"id["+condln+"]' id='"+condprefix+"id"+condln+"' value=''>";
+    x.insertCell(-1).innerHTML = getDeleteButton(condprefix, condln, "markConditionLineDeleted");
+        // "<button type='button' class='button' id='"+condprefix+"delete_line"+condln+"' onclick='markConditionLineDeleted("+condln+")'>"+
+        //     "<span class='suitepicon suitepicon-action-minus'></span>"+
+        // "</button><br>"+
+        // "<input type='hidden' name='"+condprefix+"deleted["+condln+"]' id='"+condprefix+"deleted"+condln+"' value='0'>"+
+        // "<input type='hidden' name='"+condprefix+"id["+condln+"]' id='"+condprefix+"id"+condln+"' value=''>";
 
     // Field
     x.insertCell(-1).innerHTML = 
@@ -78,7 +80,7 @@ function insertConditionLine(){
     condln++;
     condln_count++;
 
-    $('.edit-view-field #aow_conditionLines').find('tbody').last().find('select').change(function () {
+    $('.edit-view-field #sticCustomView_ConditionLines').find('tbody').last().find('select').change(function () {
         $(this).find('td').last().removeAttr("style");
         $(this).find('td').height($(this).find('td').last().height() + 8);
     });
@@ -212,8 +214,8 @@ function markConditionLineDeleted(ln){
 }
 
 function clearConditionLines(){
-    if(document.getElementById('aow_conditionLines') != null){
-        var cond_rows = document.getElementById('aow_conditionLines').getElementsByTagName('tr');
+    if(document.getElementById('sticCustomView_ConditionLines') != null){
+        var cond_rows = document.getElementById('sticCustomView_ConditionLines').getElementsByTagName('tr');
         var cond_row_length = cond_rows.length;
         var i;
         for (i=0; i < cond_row_length; i++) {
