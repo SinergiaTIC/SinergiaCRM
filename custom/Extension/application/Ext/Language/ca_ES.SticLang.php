@@ -3187,30 +3187,47 @@ $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari 
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
 $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Tothom';
 
-// Vistes personalitzades: Tipus d'acció
-$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificació de camp';
-$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Modificació de panell';
-
-// Vistes personalitzades: Tipus de canvi per camps
-$app_list_strings['stic_custom_views_field_change_type_list']['show_do'] = 'Visibilitat: mostrar';
-$app_list_strings['stic_custom_views_field_change_type_list']['show_undo'] = 'Visibilitat: ocultar';
-$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_do'] = 'Obligatorietat: fer obligat';
-$app_list_strings['stic_custom_views_field_change_type_list']['mandatory_undo'] = 'Obligatorietat: fer opcional';
-$app_list_strings['stic_custom_views_field_change_type_list']['inline_do'] = 'Edició en línia: permetre';
-$app_list_strings['stic_custom_views_field_change_type_list']['inline_undo'] = 'Edició en línia: no permetre';
-$app_list_strings['stic_custom_views_field_change_type_list']['readonly_do'] = 'Només lectura: només lectura';
-$app_list_strings['stic_custom_views_field_change_type_list']['readonly_undo'] = 'Només lectura: modificable';
-$app_list_strings['stic_custom_views_field_change_type_list']['color_background'] = 'Color: fons';
-$app_list_strings['stic_custom_views_field_change_type_list']['color_text'] = 'Color: text';
-$app_list_strings['stic_custom_views_field_change_type_list']['value_fix'] = 'Valor: fixe';
-
-// Vistes personalitzades: Tipus de canvi per panells
-$app_list_strings['stic_custom_views_panel_change_type_list']['show_do'] = 'Visibilitat: mostrar';
-$app_list_strings['stic_custom_views_panel_change_type_list']['show_undo'] = 'Visibilitat: ocultar';
-
 // Vistes personalitzades: Vistes
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detall';
 $app_list_strings['stic_custom_views_views_list']['editview'] = "Vista d'edició";
+
+// Vistes personalitzades: Accions
+$app_list_strings['stic_custom_views_action_list']['field'] = 'Modificació de camp';
+$app_list_strings['stic_custom_views_action_list']['field.visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['field.readonly'] = 'Només lectura';
+$app_list_strings['stic_custom_views_action_list']['field.mandatory'] = 'Obligat';
+$app_list_strings['stic_custom_views_action_list']['field.inline'] = 'Edició en línia';
+$app_list_strings['stic_custom_views_action_list']['field.fixedvalue'] = 'Valor fixe';
+$app_list_strings['stic_custom_views_action_list']['field.label'] = 'Etiqueta';
+$app_list_strings['stic_custom_views_action_list']['field.label.color'] = 'Color de text';
+$app_list_strings['stic_custom_views_action_list']['field.label.background'] = 'Color de fons';
+$app_list_strings['stic_custom_views_action_list']['field.label.bold'] = 'Negreta';
+$app_list_strings['stic_custom_views_action_list']['field.label.italic'] = 'Cursiva';
+$app_list_strings['stic_custom_views_action_list']['field.label.underline'] = 'Subratllat';
+$app_list_strings['stic_custom_views_action_list']['field.label.visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['field.input'] = 'Editor de valor';
+$app_list_strings['stic_custom_views_action_list']['field.input.color'] = 'Color de text';
+$app_list_strings['stic_custom_views_action_list']['field.input.background'] = 'Color de fons';
+$app_list_strings['stic_custom_views_action_list']['field.input.bold'] = 'Negreta';
+$app_list_strings['stic_custom_views_action_list']['field.input.italic'] = 'Cursiva';
+$app_list_strings['stic_custom_views_action_list']['field.input.underline'] = 'Subratllat';
+$app_list_strings['stic_custom_views_action_list']['panel'] = 'Modificació de panell';
+$app_list_strings['stic_custom_views_action_list']['panel.visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['panel.header'] = 'Capçalera';
+$app_list_strings['stic_custom_views_action_list']['panel.header.color'] = 'Color de text';
+$app_list_strings['stic_custom_views_action_list']['panel.header.background'] = 'Color de fons';
+$app_list_strings['stic_custom_views_action_list']['panel.header.bold'] = 'Negreta';
+$app_list_strings['stic_custom_views_action_list']['panel.header.italic'] = 'Cursiva';
+$app_list_strings['stic_custom_views_action_list']['panel.header.underline'] = 'Subratllat';
+$app_list_strings['stic_custom_views_action_list']['panel.header.visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['tab'] = 'Modificació de pestanya';
+$app_list_strings['stic_custom_views_action_list']['tab.color'] = 'Color de text';
+$app_list_strings['stic_custom_views_action_list']['tab.background'] = 'Color de fons';
+$app_list_strings['stic_custom_views_action_list']['tab.bold'] = 'Negreta';
+$app_list_strings['stic_custom_views_action_list']['tab.italic'] = 'Cursiva';
+$app_list_strings['stic_custom_views_action_list']['tab.underline'] = 'Subratllat';
+$app_list_strings['stic_custom_views_action_list']['tab.visible'] = 'Visible';
+
 
 // Modificacions del core de SuiteCRM
 
