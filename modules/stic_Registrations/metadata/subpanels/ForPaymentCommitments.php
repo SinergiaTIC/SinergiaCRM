@@ -99,7 +99,7 @@ $subpanel_layout = array(
         ),
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
-            'widget_class' => 'SubPanelEditButton',
+            'widget_class' => 'SubPanelQuickEditButton',
             'module' => 'stic_Registrations',
             'width' => '4%',
             'default' => true,
