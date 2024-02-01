@@ -37,9 +37,9 @@ switch (viewType()) {
   case "popup":
     $(document).ready(function () { 
       // Hide Condition lines
-      if($('input[name="is_initial"]').val()=="1") {
+      if($('input[name="default"]').val()=="1") {
         sticCustomView.editview.panel("LBL_CONDITION_LINES").hide();
-        sticCustomView.editview.field("customization_order").readonly();
+        sticCustomView.editview.field("order").readonly();
       }
     });
     break;
@@ -99,7 +99,7 @@ function insertActionLinesHeader(){
   $('#'+actId).append(
     '<thead id="'+actId+'_head"><tr>' + 
       '<th style="width:75px;"></th>' + // Remove button
-      '<th>'+translateAction('LBL_ACTION_TYPE')+'</th>'+
+      '<th>'+translateAction('LBL_TYPE')+'</th>'+
       '<th>'+translateAction('LBL_ELEMENT')+'</th>'+
       '<th>'+translateAction('LBL_ACTION')+'</th>'+
       '<th>'+translateAction('LBL_VALUE')+'</th>'+

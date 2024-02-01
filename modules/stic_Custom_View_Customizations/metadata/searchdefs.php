@@ -34,13 +34,13 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      'customization_order' => 
+      'order' => 
       array (
         'type' => 'int',
-        'label' => 'LBL_CUSTOMIZATION_ORDER',
+        'label' => 'LBL_ORDER',
         'width' => '10%',
         'default' => true,
-        'name' => 'customization_order',
+        'name' => 'order',
       ),
       'current_user_only' => 
       array (
@@ -59,21 +59,21 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      'is_initial' => 
+      'default' => 
       array (
         'type' => 'bool',
         'default' => true,
-        'label' => 'LBL_IS_INITIAL',
+        'label' => 'LBL_DEFAULT',
         'width' => '10%',
-        'name' => 'is_initial',
+        'name' => 'default',
       ),
-      'customization_order' => 
+      'order' => 
       array (
         'type' => 'int',
-        'label' => 'LBL_CUSTOMIZATION_ORDER',
+        'label' => 'LBL_ORDER',
         'width' => '10%',
         'default' => true,
-        'name' => 'customization_order',
+        'name' => 'order',
       ),
       'description' => 
       array (

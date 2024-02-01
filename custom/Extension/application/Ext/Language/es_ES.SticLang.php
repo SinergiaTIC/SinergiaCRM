@@ -3201,7 +3201,7 @@ $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Sólo lectura';
 $app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Obligado';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Edición en línea';
-$app_list_strings['stic_custom_views_action_list']['fixedvalue'] = 'Valor fijo';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fijo';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Color de texto';
 $app_list_strings['stic_custom_views_action_list']['background'] = 'Color de fondo';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negrita';
@@ -3209,13 +3209,13 @@ $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subrayado';
 
 // Vistas personalizadas: Secciones de elementos
-$app_list_strings['stic_custom_views_element_section_list']['field'] = 'Todo el campo';
-$app_list_strings['stic_custom_views_element_section_list']['field_label'] = 'Etiqueta';
-$app_list_strings['stic_custom_views_element_section_list']['field_input'] = 'Editor de valor';
-$app_list_strings['stic_custom_views_element_section_list']['panel'] = 'Todo el panel';
-$app_list_strings['stic_custom_views_element_section_list']['panel_header'] = 'Cabecera';
-$app_list_strings['stic_custom_views_element_section_list']['tab'] = 'Toda la pestaña';
-$app_list_strings['stic_custom_views_element_section_list']['tab_header'] = 'Cabecera';
+$app_list_strings['stic_custom_views_elements_list']['field'] = 'Todo el campo';
+$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Etiqueta';
+$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Editor de valor';
+$app_list_strings['stic_custom_views_elements_list']['panel'] = 'Todo el panel';
+$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Cabecera';
+$app_list_strings['stic_custom_views_elements_list']['tab'] = 'Toda la pestaña';
+$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Cabecera';
 
 
 // Modificaciones del core de SuiteCRM

@@ -42,7 +42,7 @@ class stic_Custom_View_Conditions extends Basic
     public $created_by_link;
     public $modified_user_link;
     public $SecurityGroups;
-    public $condition_order;
+    public $order;
     public $field;
     public $operator;
     public $condition_type;

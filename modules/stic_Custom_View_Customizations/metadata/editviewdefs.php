@@ -65,13 +65,13 @@ array (
         array (
           0 => 
           array (
-            'name' => 'is_initial',
-            'label' => 'LBL_IS_INITIAL',
+            'name' => 'default',
+            'label' => 'LBL_DEFAULT',
           ),
           1 => 
           array (
-            'name' => 'customization_order',
-            'label' => 'LBL_CUSTOMIZATION_ORDER',
+            'name' => 'order',
+            'label' => 'LBL_ORDER',
           ),
         ),
         2 => 

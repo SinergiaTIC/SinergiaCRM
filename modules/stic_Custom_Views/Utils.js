@@ -73,29 +73,27 @@ switch (viewType()) {
 //   return false;
 // }
 
-function setFieldsInForm(node, is_initial, order) {
+function setFieldsInForm(node, default, order) {
   var form = node.querySelector('form');
   if (form) {
-    // Create is_initial input
+    // Create default input
     var input = document.createElement("input");
     input.setAttribute('type', 'hidden');
-    input.setAttribute('name', 'is_initial');
-    input.setAttribute('value', is_initial);
+    input.setAttribute('name', 'default');
+    input.setAttribute('value', default);
     form.appendChild(input);
 
-    // Set value in customization_order input if is not set
-    if (!$("#customization_order").val()) {
-      $("#customization_order").val(order);
-      console.log("Set customization_order:" + order);
-
+    // Set value in order input if is not set
+    if (!$("#order").val()) {
+      $("#order").val(order);
     }
   }
 }
 
 function initializeQuickCreateCustomization() {
   // When appears a new QuickCreate form in subpanel
-  //  - set the correct value in is_initial field
-  //  - set customization_order if not set (for new items)
+  //  - set the correct value in default field
+  //  - set order if not set (for new items)
   
   // Observer for new elements
   var observer = new MutationObserver(function(mutations) {
@@ -108,7 +106,7 @@ function initializeQuickCreateCustomization() {
               if ($("#list_subpanel_stic_custom_view_customizations .subpanel-table tbody tr.footable-empty").length == 0) {
                 nextOrder = $("#list_subpanel_stic_custom_view_customizations .subpanel-table").find("tbody tr").length - 1;
               }
-              if ($("#customization_order").val()=="0") {
+              if ($("#order").val()=="0") {
                 setFieldsInForm(newNode, 1, nextOrder);
               } else {
                 setFieldsInForm(newNode, 0, nextOrder);

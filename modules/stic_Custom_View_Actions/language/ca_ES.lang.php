@@ -59,8 +59,8 @@ $mod_strings = array (
   'LBL_STIC_CUSTOM_VIEW_ACTIONS_SUBPANEL_TITLE' => 'Accions',
   'LBL_NEW_FORM_TITLE' => 'Nou Accions',
 
-  'LBL_ACTION_ORDER' => 'Ordre',
-  'LBL_ACTION_TYPE' => "Tipus d'acció",
+  'LBL_ORDER' => 'Ordre',
+  'LBL_TYPE' => "Tipus d'acció",
   'LBL_ELEMENT' => 'Element',
   'LBL_FIELD' => 'Camp',
   'LBL_PANEL' => 'Panell',

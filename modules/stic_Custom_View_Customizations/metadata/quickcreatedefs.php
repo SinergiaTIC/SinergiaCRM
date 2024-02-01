@@ -75,8 +75,8 @@ array (
           ),
           1 => 
           array (
-            'name' => 'customization_order',
-            'label' => 'LBL_CUSTOMIZATION_ORDER',
+            'name' => 'order',
+            'label' => 'LBL_ORDER',
           ),
         ),
         1 => 

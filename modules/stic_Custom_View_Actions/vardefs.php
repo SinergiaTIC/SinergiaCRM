@@ -27,11 +27,11 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
-  'action_order' => 
+  'order' => 
   array (
     'required' => false,
-    'name' => 'action_order',
-    'vname' => 'LBL_ACTION_ORDER',
+    'name' => 'order',
+    'vname' => 'LBL_ORDER',
     'type' => 'int',
     'massupdate' => 0,
     'no_default' => false,
@@ -52,11 +52,11 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'min' => false,
     'max' => false,
   ),
-  'action_type' => 
+  'type' => 
   array (
     'required' => false,
-    'name' => 'action_type',
-    'vname' => 'LBL_ACTION_TYPE',
+    'name' => 'type',
+    'vname' => 'LBL_TYPE',
     'type' => 'enum',
     'massupdate' => 0,
     'no_default' => false,
@@ -165,7 +165,7 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_custom_views_element_section_list',
+    'options' => 'stic_custom_views_elements_list',
     'studio' => 'visible',
     'dependency' => false,
   ),

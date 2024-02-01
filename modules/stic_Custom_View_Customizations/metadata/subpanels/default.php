@@ -33,10 +33,10 @@ $subpanel_layout = array (
   'where' => '',
   'list_fields' => 
   array (
-    'customization_order' => 
+    'order' => 
     array (
       'type' => 'int',
-      'vname' => 'LBL_CUSTOMIZATION_ORDER',
+      'vname' => 'LBL_ORDER',
       'width' => '5%',
       'default' => true,
     ),

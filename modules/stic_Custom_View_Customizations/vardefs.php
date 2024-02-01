@@ -50,10 +50,10 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'studio' => 'visible',
     'dependency' => false,
   ),
-  'customization_order' => array (
+  'order' => array (
     'required' => true,
-    'name' => 'customization_order',
-    'vname' => 'LBL_CUSTOMIZATION_ORDER',
+    'name' => 'order',
+    'vname' => 'LBL_ORDER',
     'type' => 'int',
     'massupdate' => 0,
     'no_default' => false,
@@ -74,10 +74,10 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'min' => false,
     'max' => false,
   ),
-  'is_initial' => array (
+  'default' => array (
     'required' => false,
-    'name' => 'is_initial',
-    'vname' => 'LBL_IS_INITIAL',
+    'name' => 'default',
+    'vname' => 'LBL_DEFAULT',
     'type' => 'bool',
     'massupdate' => 0,
     'default' => '0',

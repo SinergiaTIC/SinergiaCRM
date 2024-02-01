@@ -214,7 +214,7 @@ class stic_Custom_Views_ModuleView
         $validActions = array();
         switch($actionType) {
             case 'field_modification':
-                $validActions = array('visible', 'readonly', 'mandatory', 'inline', 'fixedvalue', 'color', 'background', 'bold', 'italic', 'underline');
+                $validActions = array('visible', 'readonly', 'mandatory', 'inline', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline');
                 break;
             case 'panel_modification':
                 $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline');
@@ -271,7 +271,7 @@ class stic_Custom_Views_ModuleView
                     case 'readonly':
                     case 'mandatory':
                     case 'inline':
-                    case 'fixedvalue':
+                    case 'fixed_value':
                         $validSections = array('field');
                         break;
                     default:
@@ -302,7 +302,7 @@ class stic_Custom_Views_ModuleView
         }
         $sectionsList = array();
         foreach ($validSections as $section) {
-            $sectionsList[$section] = $app_list_strings['stic_custom_views_element_section_list'][$section];
+            $sectionsList[$section] = $app_list_strings['stic_custom_views_elements_list'][$section];
         }
         return $sectionsList;
 

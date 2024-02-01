@@ -3200,7 +3200,7 @@ $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Read only';
 $app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Mandatory';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Inline editing';
-$app_list_strings['stic_custom_views_action_list']['fixedvalue'] = 'Fix value';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Fix value';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Text color';
 $app_list_strings['stic_custom_views_action_list']['background'] = 'Background color';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Bold';
@@ -3208,13 +3208,13 @@ $app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
 
 // Custom Views: Element's sections
-$app_list_strings['stic_custom_views_element_section_list']['field'] = 'All field';
-$app_list_strings['stic_custom_views_element_section_list']['field_label'] = 'Label';
-$app_list_strings['stic_custom_views_element_section_list']['field_input'] = 'Value editor';
-$app_list_strings['stic_custom_views_element_section_list']['panel'] = 'All panel';
-$app_list_strings['stic_custom_views_element_section_list']['panel_header'] = 'Header';
-$app_list_strings['stic_custom_views_element_section_list']['tab'] = 'All tab';
-$app_list_strings['stic_custom_views_element_section_list']['tab_header'] = 'Header';
+$app_list_strings['stic_custom_views_elements_list']['field'] = 'All field';
+$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Label';
+$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Value editor';
+$app_list_strings['stic_custom_views_elements_list']['panel'] = 'All panel';
+$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Header';
+$app_list_strings['stic_custom_views_elements_list']['tab'] = 'All tab';
+$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Header';
 
 
 // SuiteCRM Core modifications

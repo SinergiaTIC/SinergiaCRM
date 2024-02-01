@@ -27,11 +27,11 @@ $dictionary['stic_Custom_View_Conditions'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
-  'condition_order' => 
+  'order' => 
   array (
     'required' => false,
-    'name' => 'condition_order',
-    'vname' => 'LBL_CONDITION_ORDER',
+    'name' => 'order',
+    'vname' => 'LBL_ORDER',
     'type' => 'int',
     'massupdate' => 0,
     'no_default' => false,
