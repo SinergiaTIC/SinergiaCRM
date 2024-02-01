@@ -91,25 +91,52 @@ function stic_custom_views_stic_custom_view_customizations($params) {
 
 function getJsVars($viewModule, $viewModuleView) {
     require_once('modules/stic_Custom_Views/stic_Custom_Views_ModuleView.php');
+    global $app_list_strings;
+
     $moduleView = new stic_Custom_Views_ModuleView($viewModule, $viewModuleView);
 
-    $fieldListOptions = $moduleView->getAllFields_as_select_options();
-    $fieldOPeratorMapOptions = $moduleView->getAllFieldOperatorMap_as_select_options();
-    $fieldViewListOptions = $moduleView->getOnlyViewFields_as_select_options();
-    $panelListOptions = $moduleView->getPanels_as_select_options();
+    $fieldListOptions = $moduleView->getOnlyViewFields_as_select_options();
+    $fieldOPeratorMapOptions = $moduleView->getOnlyViewFieldOperatorMap_as_select_options();
 
     $html = 
 "<script>".
     "var view_module = \"".$viewModule."\";".
     "var view_module_view = \"".$viewModuleView."\";".
-    "var view_module_fields_option_list = \"".trim(preg_replace('/\s+/', ' ', $fieldListOptions))."\";".
-    "var view_module_fields_view_option_list = \"".trim(preg_replace('/\s+/', ' ', $fieldViewListOptions))."\";".
+    "var view_module_fields_option_list = \"".$fieldListOptions."\";".
     "var view_module_fields_operators_option_map = {};";
     foreach ($fieldOPeratorMapOptions as $fieldKey => $operatorOptions) {
-        $html .= "view_module_fields_operators_option_map['".$fieldKey."'] = \"".trim(preg_replace('/\s+/', ' ', $operatorOptions))."\";";
+        $html .= "view_module_fields_operators_option_map['".$fieldKey."'] = \"".$operatorOptions."\";";
     }
     $html .=
-    "var view_module_panels_option_list = \"".trim(preg_replace('/\s+/', ' ', $panelListOptions))."\";".
+    // "var view_module_panels_option_list = \"".$panelListOptions."\";".
+    // "var view_module_tabs_option_list = \"".$tabListOptions."\";".
+    "var view_module_action_map = {".
+        "actionTypes: {".
+            "options: \"".$moduleView->getActionTypes_as_select_options()."\",";
+        foreach($moduleView->getActionTypes() as $actionTypeKey=>$actionTypeName) {
+            $html .=
+            $actionTypeKey.": {".
+                "elements: {".
+                    "options: \"".$moduleView->getValidElements_as_select_options($actionTypeKey)."\",".
+                "},".
+                "actions: {".
+                    "options: \"".$moduleView->getValidActions_as_select_options($actionTypeKey)."\",";
+                    foreach($moduleView->getValidActions($actionTypeKey) as $actionKey => $actionName) {
+                        $html .=
+                        $actionKey.": {".
+                            "sections: {".
+                                "options: \"".$moduleView->getValidSections_as_select_options($actionTypeKey, $actionKey)."\",".
+                            "},".
+                        "},";
+                    }
+                    $html .=
+                "},".
+            "},";
+        }
+        $html .=
+        "},".
+    "};";
+    $html .=     
 "</script>";
     return $html;
 }

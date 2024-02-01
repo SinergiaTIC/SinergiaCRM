@@ -43,7 +43,7 @@ class stic_Custom_Views_ModuleView
         return $this->allModuleFieldList;
     }
     public function getAllFields_as_select_options() {
-        return get_select_options_with_id($this->getAllFields(), "");
+        return $this->convertToSelectOptions($this->getAllFields());
     }
 
     private $allModuleFieldOperatorMap;
@@ -56,7 +56,7 @@ class stic_Custom_Views_ModuleView
     public function getAllFieldOperatorMap_as_select_options() {
         $fieldOPeratorMapOptions = array();
         foreach ($this->getAllFieldOperatorMap() as $fieldKey => $operator_list) {
-            $fieldOPeratorMapOptions[$fieldKey] = get_select_options_with_id($operator_list, "");
+            $fieldOPeratorMapOptions[$fieldKey] = $this->convertToSelectOptions($operator_list);
         }
         return $fieldOPeratorMapOptions;
     }
@@ -69,19 +69,45 @@ class stic_Custom_Views_ModuleView
         return $this->onlyModuleViewFieldList;
     }
     public function getOnlyViewFields_as_select_options() {
-        return get_select_options_with_id($this->getOnlyViewFields(), "");
+        return $this->convertToSelectOptions($this->getOnlyViewFields());
+    }
+    private $onlyModuleViewFieldOperatorMap;
+    public function getOnlyViewFieldOperatorMap() {
+        if($this->onlyModuleViewFieldOperatorMap == null) {
+            $this->findOnlyModuleViewFieldList();
+        }
+        return $this->onlyModuleViewFieldOperatorMap;
+    }
+    public function getOnlyViewFieldOperatorMap_as_select_options() {
+        $fieldOPeratorMapOptions = array();
+        foreach ($this->getOnlyViewFieldOperatorMap() as $fieldKey => $operator_list) {
+            $fieldOPeratorMapOptions[$fieldKey] = $this->convertToSelectOptions($operator_list);
+        }
+        return $fieldOPeratorMapOptions;
     }
 
     private $panelList;
     public function getPanels() {
         if($this->panelList == null) {
-            $this->findPanelList();
+            $this->findPanelTabList();
         }
         return $this->panelList;
     }
     public function getPanels_as_select_options() {
-        return get_select_options_with_id($this->getPanels(), "");
+        return $this->convertToSelectOptions($this->getPanels());
     }
+
+    private $tabList;
+    public function getTabs() {
+        if($this->tabList == null) {
+            $this->findPanelTabList();
+        }
+        return $this->tabList;
+    }
+    public function getTabs_as_select_options() {
+        return $this->convertToSelectOptions($this->getTabs());
+    }
+
 
     /**
      * Constructor
@@ -98,11 +124,14 @@ class stic_Custom_Views_ModuleView
         $this->panelList = null;
     }
 
+    private function convertToSelectOptions($list) {
+        return trim(preg_replace('/\s+/', ' ', get_select_options_with_id($list, "")));
+    }
 
     private function findAllModuleFieldList() {
         global $beanList;
     
-        $this->allModuleFieldList = array('' => $GLOBALS ['app_strings']['LBL_NONE']);
+        $this->allModuleFieldList = array(); //array('' => $GLOBALS ['app_strings']['LBL_NONE']);
         $this->allModuleFieldOperatorMap = array();
         $unset = array();
         if ($this->module != '' && isset($beanList[$this->module]) && $beanList[$this->module]) {
@@ -177,21 +206,146 @@ class stic_Custom_Views_ModuleView
         return $operatorList;
     }
 
-    private function findOnlyModuleViewFieldList() {
-        $allFields = $this->getAllFields();
-
-        $this->onlyModuleViewFieldList = array('' => $GLOBALS ['app_strings']['LBL_NONE']);
+    public function getValidActions_as_select_options($actionType) {
+        return $this->convertToSelectOptions($this->getValidActions($actionType));
+    }
+    public function getValidActions($actionType) {
+        global $app_list_strings;
+        $validActions = array();
+        switch($actionType) {
+            case 'field_modification':
+                $validActions = array('visible', 'readonly', 'mandatory', 'inline', 'fixedvalue', 'color', 'background', 'bold', 'italic', 'underline');
+                break;
+            case 'panel_modification':
+                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline');
+                break;
+            case 'tab_modification':
+                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline');
+                break;
+            }
+        $actionsList = array();
+        foreach ($validActions as $action) {
+            $actionsList[$action] = $app_list_strings['stic_custom_views_action_list'][$action];
+        }
+        return $actionsList;
     }
 
-    private function findPanelList() {
-        require_once('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-    
-        $this->panelList = array();
+    public function getActionTypes_as_select_options() {
+        return $this->convertToSelectOptions($this->getActionTypes());
+    }
+    public function getActionTypes() {
+        global $app_list_strings;
+        return $app_list_strings['stic_custom_views_action_type_list'];
+    }
+
+    public function getValidElements_as_select_options($actionType) {
+        return $this->convertToSelectOptions($this->getValidElements($actionType));
+    }
+    public function getValidElements($actionType) {
+        $validElements = array();
+        switch($actionType) {
+            case 'field_modification':
+                $validElements = $this->getOnlyViewFields();
+                break;
+            case 'panel_modification':
+                $validElements = $this->getPanels();
+                break;
+            case 'tab_modification':
+                $validElements = $this->getTabs();
+                break;
+            }
+        return $validElements;
+    }
+    public function getValidSections_as_select_options($actionType, $action) {
+        return $this->convertToSelectOptions($this->getValidSections($actionType, $action));
+    }
+    public function getValidSections($actionType, $action) {
+        global $app_list_strings;
+        $validSections = array();
+        switch($actionType) {
+            case 'field_modification':
+                switch($action) {
+                    case 'visible':
+                        $validSections = array('field', 'field_label', 'field_input');
+                        break;
+                    case 'readonly':
+                    case 'mandatory':
+                    case 'inline':
+                    case 'fixedvalue':
+                        $validSections = array('field');
+                        break;
+                    default:
+                        $validSections = array('field_label', 'field_input');
+                        break;
+                }
+                break;
+            case 'panel_modification':
+                switch($action) {
+                    case 'visible':
+                        $validSections = array('panel', 'panel_header');
+                        break;
+                    default:
+                        $validSections = array('panel_header');
+                        break;
+                }
+                break;
+            case 'tab_modification':
+                switch($action) {
+                    case 'visible':
+                        $validSections = array('tab', 'tab_header');
+                        break;
+                    default:
+                        $validSections = array('tab_header');
+                        break;
+                }
+                break;
+        }
+        $sectionsList = array();
+        foreach ($validSections as $section) {
+            $sectionsList[$section] = $app_list_strings['stic_custom_views_element_section_list'][$section];
+        }
+        return $sectionsList;
+
+    }
+
+    private function findOnlyModuleViewFieldList() {
+        require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
+        $allFields = $this->getAllFields();
+        $allFieldsOperatorsMap = $this->getAllFieldOperatorMap();
 
         $parser = ParserFactory::getParser($this->view, $this->module, null);
+        $this->onlyModuleViewFieldList = array();
+        $this->onlyModuleViewFieldOperatorMap = array();
+        foreach ($parser->_viewdefs ['panels'] as $panel) {
+            foreach ($panel as $row) {
+                foreach ($row as $field) {
+                    if(isset($allFields[$field])) {
+                        $this->onlyModuleViewFieldList[$field] = $allFields[$field];
+                        $this->onlyModuleViewFieldOperatorMap[$field] = $allFieldsOperatorsMap[$field];
+                    }
+                }
+            }
+        }
+    }
+
+    private function findPanelTabList() {
+        require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
+    
+        $this->panelList = array();
+        $this->tabList = array();
+        
+        $parser = ParserFactory::getParser($this->view, $this->module, null);
+        $useTabs = $parser->getUseTabs();
         $parsedPanels = $parser->getTabDefs();
+        $i = 0;
         foreach ($parsedPanels as $panelKey => $panelDef) {
-            $this->panelList[$panelKey] = translate($panelKey, $view_module);
+            if($useTabs && $panelDef["newTab"]) {
+                // Tabs are indexed as numbers in browser
+                $this->tabList[$i] = translate($panelKey, $this->module);
+                $i++;
+            } else {
+                $this->panelList[$panelKey] = translate($panelKey, $this->module);    
+            }
         }
     }
 }

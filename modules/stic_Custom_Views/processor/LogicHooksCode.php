@@ -24,7 +24,9 @@ class stic_Custom_Views_ProcessorLogicHooks
 {
 
     public function after_ui_frame($event, $arguments) {
-        //echo getVersionedScript("modules/stic_Custom_Views/processor/js/SticCustomViewsAPI.js");
+        //IEPA!!
+        // Fer el procés de verificació de les Vistes personalitzades que li pertoquen a l'usuari
+        // Passar les personalitzacions via js (variable json)
     }
 
 }

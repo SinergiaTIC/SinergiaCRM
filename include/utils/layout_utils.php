@@ -292,6 +292,8 @@ EOHTML;
         echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . '"></script>';
         echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1.js') . '"></script>';
         //IEPA!!
+        // Incloure js de CustomViews a grp1
+        // custom/Extension/application/Ext/JSGroupings/SticJSGroupings.php
         echo getVersionedScript("modules/stic_Custom_Views/processor/js/SticCustomViewsAPI.js");
     }
     /* Fix to include files required to make pop-ups responsive */
