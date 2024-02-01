@@ -1,4 +1,8 @@
 <?php
+
+// STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP
+
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -420,3 +424,5 @@ $dashletData['AccountsDashlet']['columns'] = array (
     'default' => false,
   ),
 );
+
+// END STIC-Custom
