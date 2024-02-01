@@ -44,7 +44,7 @@ class stic_Custom_ViewsLogicHooks
             // Set basic data
             $customization = BeanFactory::newBean('stic_Custom_View_Customizations');
             $customization->customization_name = translate("LBL_STIC_CUSTOM_VIEW_CUSTOMIZATION_INITIAL_TITLE");
-            $customization->default = 1;
+            $customization->is_default = 1;
             $customization->stic_custo45d1m_views_ida = $bean->id;
             $customization->save();   
         }

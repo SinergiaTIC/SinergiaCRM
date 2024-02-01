@@ -86,13 +86,13 @@ array (
         array (
           0 => 
           array (
-            'name' => 'default',
-            'label' => 'LBL_DEFAULT',
+            'name' => 'is_default',
+            'label' => 'LBL_IS_DEFAULT',
           ),
           1 => 
           array (
-            'name' => 'order',
-            'label' => 'LBL_ORDER',
+            'name' => 'customization_order',
+            'label' => 'LBL_CUSTOMIZATION_ORDER',
           ),
         ),
         3 => 

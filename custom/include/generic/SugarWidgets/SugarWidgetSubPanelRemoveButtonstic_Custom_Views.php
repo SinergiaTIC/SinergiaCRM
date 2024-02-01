@@ -33,7 +33,7 @@ class SugarWidgetSubPanelRemoveButtonstic_Custom_Views extends SugarWidgetSubPan
         if ($current_module == "stic_Custom_View_Customizations") {
             $record = $layout_def['fields']['ID'];
             $bean = BeanFactory::getBean($current_module, $record);
-            if ($bean->default=="1") {
+            if ($bean->is_default=="1") {
                 return '';
             }
         }

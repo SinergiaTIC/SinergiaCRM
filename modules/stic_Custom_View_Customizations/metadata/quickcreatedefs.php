@@ -75,9 +75,14 @@ array (
           ),
           1 => 
           array (
-            'name' => 'order',
-            'label' => 'LBL_ORDER',
+            'name' => 'customization_order',
+            'label' => 'LBL_CUSTOMIZATION_ORDER',
           ),
+          // 2 => 
+          // array (
+          //   'name' => 'is_default',
+          //   'label' => 'LBL_IS_DEFAULT',
+          // ),
         ),
         1 => 
         array (

@@ -27,11 +27,11 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
-  'order' => 
+  'action_order' => 
   array (
     'required' => false,
-    'name' => 'order',
-    'vname' => 'LBL_ORDER',
+    'name' => 'action_order',
+    'vname' => 'LBL_ACTION_ORDER',
     'type' => 'int',
     'massupdate' => 0,
     'no_default' => false,

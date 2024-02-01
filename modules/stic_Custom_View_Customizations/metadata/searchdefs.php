@@ -34,13 +34,13 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      'order' => 
+      'customization_order' => 
       array (
         'type' => 'int',
-        'label' => 'LBL_ORDER',
+        'label' => 'LBL_CUSTOMIZATION_ORDER',
         'width' => '10%',
         'default' => true,
-        'name' => 'order',
+        'name' => 'customization_order',
       ),
       'current_user_only' => 
       array (
@@ -59,13 +59,13 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      'default' => 
+      'is_default' => 
       array (
         'type' => 'bool',
         'default' => true,
-        'label' => 'LBL_DEFAULT',
+        'label' => 'LBL_IS_DEFAULT',
         'width' => '10%',
-        'name' => 'default',
+        'name' => 'is_default',
       ),
       'order' => 
       array (

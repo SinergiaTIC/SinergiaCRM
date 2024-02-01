@@ -33,10 +33,10 @@ $subpanel_layout = array (
   'where' => '',
   'list_fields' => 
   array (
-    'order' => 
+    'customization_order' => 
     array (
       'type' => 'int',
-      'vname' => 'LBL_ORDER',
+      'vname' => 'LBL_CUSTOMIZATION_ORDER',
       'width' => '5%',
       'default' => true,
     ),
@@ -48,6 +48,13 @@ $subpanel_layout = array (
       'width' => '40%',
       'default' => true,
     ),
+    // 'is_default' => 
+    // array (
+    //   'type' => 'bool',
+    //   'vname' => 'LBL_IS_DEFAULT',
+    //   'width' => '40%',
+    //   'default' => true,
+    // ),
     'summary' => 
     array (
       'type' => 'text',

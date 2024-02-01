@@ -60,8 +60,8 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'Nou Personalitzacions',
 
   'LBL_CUSTOMIZATION_NAME' => 'Nom intern',
-  'LBL_ORDER' => 'Ordre',
-  'LBL_DEFAULT' => 'Inicial',
+  'LBL_CUSTOMIZATION_ORDER' => 'Ordre',
+  'LBL_IS_DEFAULT' => 'Inicial',
   'LBL_SUMMARY' => 'Resum',
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
   'LBL_CONDITION_LINES' => 'Condicions',

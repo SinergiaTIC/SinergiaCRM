@@ -31,17 +31,17 @@ array (
     'default' => true,
     'link' => true,
   ),
-  'DEFAULT' => 
-  array (
-    'type' => 'bool',
-    'default' => true,
-    'label' => 'LBL_DEFAULT',
-    'width' => '10%',
-  ),
-  'ORDER' => 
+  // 'IS_DEFAULT' => 
+  // array (
+  //   'type' => 'bool',
+  //   'default' => true,
+  //   'label' => 'LBL_IS_DEFAULT',
+  //   'width' => '10%',
+  // ),
+  'CUSTOMIZATION_ORDER' => 
   array (
     'type' => 'int',
-    'label' => 'LBL_ORDER',
+    'label' => 'LBL_CUSTOMIZATION_ORDER',
     'width' => '10%',
     'default' => true,
   ),

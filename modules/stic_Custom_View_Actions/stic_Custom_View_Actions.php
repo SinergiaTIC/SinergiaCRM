@@ -42,7 +42,7 @@ class stic_Custom_View_Actions extends Basic
     public $created_by_link;
     public $modified_user_link;
     public $SecurityGroups;
-    public $order;
+    public $action_order;
     public $type;
     public $field;
     public $field_change_type;
