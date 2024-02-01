@@ -56,3 +56,7 @@ $js_groupings[] = $newGrouping = array(
 $js_groupings[] = $newGrouping = array(
     'SticInclude/js/SticGetAdditionalDetails.js' => 'include/javascript/sugar_grp1.js',
 );
+// Add Custom View functionality
+$js_groupings[] = $newGrouping = array(
+    'modules/stic_Custom_Views/processor/js/SticCustomViewsAPI.js' => 'include/javascript/sugar_grp1.js',
+);

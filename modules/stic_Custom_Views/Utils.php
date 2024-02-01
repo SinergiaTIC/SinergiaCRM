@@ -108,8 +108,6 @@ function getJsVars($viewModule, $viewModuleView) {
         $html .= "view_module_fields_operators_option_map['".$fieldKey."'] = \"".$operatorOptions."\";";
     }
     $html .=
-    // "var view_module_panels_option_list = \"".$panelListOptions."\";".
-    // "var view_module_tabs_option_list = \"".$tabListOptions."\";".
     "var view_module_action_map = {".
         "actionTypes: {".
             "options: \"".$moduleView->getActionTypes_as_select_options()."\",";

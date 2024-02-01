@@ -54,9 +54,5 @@ class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCr
         }
 
         echo getVersionedScript("modules/stic_Custom_View_Customizations/Utils.js");
-
-        //IEPA!!
-        // Eliminar Utils de Conditions (usar el de Customizations)
-        echo getVersionedScript("modules/stic_Custom_View_Conditions/Utils.js");
     }
 }

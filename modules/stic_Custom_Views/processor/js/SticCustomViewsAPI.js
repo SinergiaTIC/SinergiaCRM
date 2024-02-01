@@ -2,7 +2,7 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-const sticCustomView  = {
+var sticCustomView  = {
     editview: {
         field: (fieldName) => new CustomViewField("editview", fieldName),
         panel: (panelName) => new CustomViewPanel("editview", panelName),
@@ -14,7 +14,7 @@ const sticCustomView  = {
         tab: (tabIndex) => new CustomViewTab("detailview", tabIndex),
     },
 }
-class CustomViewItem {
+var CustomViewItem = class CustomViewItem {
     constructor (view, itemName) {
         this.view = view;
         this.itemName = itemName;
@@ -23,10 +23,13 @@ class CustomViewItem {
         }
         if (this.view=="editview"){
             this.elementView = $("#EditView");
+            if(!this.elementView.length) {
+                this.elementView = $("#EditView_tabs"); // Include QuickCreate view
+            }
         }
     };
 }
-class CustomViewField extends CustomViewItem {
+var CustomViewField = class CustomViewField extends CustomViewItem {
     constructor (view, fieldName) {
         super(view, fieldName);
         this.fieldName = fieldName;
@@ -55,7 +58,7 @@ class CustomViewField extends CustomViewItem {
         return this.input().readonly(readonly);
     }
 }
-class CustomViewDiv {
+var CustomViewDiv = class CustomViewDiv {
     constructor (item, element){
         this.item = item;
         this.element = element;
@@ -72,7 +75,7 @@ class CustomViewDiv {
         return this.show(false);
     }
 }
-class CustomViewDivLabel extends CustomViewDiv {
+var CustomViewDivLabel = class CustomViewDivLabel extends CustomViewDiv {
     constructor (item, element){
         super(item, element);
     }
@@ -109,7 +112,7 @@ class CustomViewDivLabel extends CustomViewDiv {
         return this;
     }
 }
-class CustomViewDivEditInput extends CustomViewDivLabel {
+var CustomViewDivEditInput = class CustomViewDivEditInput extends CustomViewDivLabel {
     constructor (item, element){
         super(item, element);
         this.editor = this.element.find(":input");
@@ -164,13 +167,13 @@ class CustomViewDivEditInput extends CustomViewDivLabel {
         return this;
     }
 }
-class CustomViewDivDetailInput extends CustomViewDivLabel {
+var CustomViewDivDetailInput = class CustomViewDivDetailInput extends CustomViewDivLabel {
     constructor (item, element){
         super(item, element);
     }
 }
 
-class CustomViewPanel extends CustomViewItem {
+var CustomViewPanel = class CustomViewPanel extends CustomViewItem {
     constructor (view, panelName) {
         super(view, panelName);
         this.panelName = panelName;
@@ -188,7 +191,7 @@ class CustomViewPanel extends CustomViewItem {
         return this.panel().hide();
     }
 }
-class CustomViewDivHeader extends CustomViewDivLabel {
+var CustomViewDivHeader = class CustomViewDivHeader extends CustomViewDivLabel {
     constructor (item, element){
         super(item, element);
         this.anchor = this.element.find("a");
@@ -206,7 +209,7 @@ class CustomViewDivHeader extends CustomViewDivLabel {
 
 }
 
-class CustomViewTab extends CustomViewItem {
+var CustomViewTab = class CustomViewTab extends CustomViewItem {
     constructor (view, tabIndex) {
         super(view, tabIndex);
         this.tabIndex = tabIndex;
