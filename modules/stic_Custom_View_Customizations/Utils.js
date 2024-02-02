@@ -37,12 +37,10 @@ switch (viewType()) {
   case "popup":
     $(document).ready(function () { 
       // Hide Condition lines
-      if($('input[name="is_default"]').val()=="1") {
-      //if($("#is_default").val()=="1") {
+      if($('input[name="init"]').val()=="1") {
         sticCustomView.editview.panel("LBL_CONDITION_LINES").hide();
         sticCustomView.editview.field("customization_order").readonly();
       }
-      //sticCustomView.editview.field("is_default").hide();
     });
     break;
 

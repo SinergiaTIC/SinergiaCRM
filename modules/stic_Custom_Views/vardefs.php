@@ -75,11 +75,11 @@ $dictionary['stic_Custom_Views'] = array(
     'studio' => 'visible',
     'dependency' => false,
   ),
-  'view_module_view' => 
+  'view_type' => 
   array (
     'required' => false,
-    'name' => 'view_module_view',
-    'vname' => 'LBL_VIEW_MODULE_VIEW',
+    'name' => 'view_type',
+    'vname' => 'LBL_VIEW_TYPE',
     'type' => 'enum',
     'massupdate' => 0,
     'no_default' => false,

@@ -61,7 +61,7 @@ $mod_strings = array (
 
   'LBL_CUSTOMIZATION_NAME' => 'Nom intern',
   'LBL_CUSTOMIZATION_ORDER' => 'Ordre',
-  'LBL_IS_DEFAULT' => 'Inicial',
+  'LBL_INIT' => 'Inicial',
   'LBL_SUMMARY' => 'Resum',
   'LBL_CONDITION_LINES' => 'Condiciones',
   'LBL_ADD_CONDITION' => 'Agregar Condición',

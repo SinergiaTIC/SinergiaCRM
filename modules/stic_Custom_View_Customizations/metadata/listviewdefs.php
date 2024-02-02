@@ -31,11 +31,11 @@ array (
     'default' => true,
     'link' => true,
   ),
-  // 'IS_DEFAULT' => 
+  // 'INIT' => 
   // array (
   //   'type' => 'bool',
   //   'default' => true,
-  //   'label' => 'LBL_IS_DEFAULT',
+  //   'label' => 'LBL_INIT',
   //   'width' => '10%',
   // ),
   'CUSTOMIZATION_ORDER' => 

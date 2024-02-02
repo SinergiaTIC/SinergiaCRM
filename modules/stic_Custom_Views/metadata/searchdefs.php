@@ -43,14 +43,14 @@ array (
         'default' => true,
         'name' => 'view_module',
       ),
-      'view_module_view' => 
+      'view_type' => 
       array (
         'type' => 'enum',
         'studio' => 'visible',
-        'label' => 'LBL_VIEW_MODULE_VIEW',
+        'label' => 'LBL_VIEW_TYPE',
         'width' => '10%',
         'default' => true,
-        'name' => 'view_module_view',
+        'name' => 'view_type',
       ),
       'user_type' => 
       array (

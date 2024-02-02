@@ -50,8 +50,8 @@ class stic_Custom_ViewsController extends SugarController {
         if (isset($_REQUEST['view_module'])) {
             $this->bean->view_module = $_REQUEST['view_module'];
         }
-        if (isset($_REQUEST['view_module_view'])) {
-            $this->bean->view_module_view = $_REQUEST['view_module_view'];
+        if (isset($_REQUEST['view_type'])) {
+            $this->bean->view_type = $_REQUEST['view_type'];
         }
     }
 }

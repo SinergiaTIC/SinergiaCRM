@@ -79,9 +79,9 @@ array (
           ),
           1 => 
           array (
-            'name' => 'view_module_view',
+            'name' => 'view_type',
             'studio' => 'visible',
-            'label' => 'LBL_VIEW_MODULE_VIEW',
+            'label' => 'LBL_VIEW_TYPE',
           ),
         ),
         1 => 

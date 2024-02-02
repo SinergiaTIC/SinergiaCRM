@@ -31,7 +31,7 @@ class stic_Custom_View_CustomizationsLogicHooks
         $bean->name = $customViewBean->name . ' - ' . $bean->customization_name;
 
         // Initial Configuration: customization_order always 0
-        if ($bean->is_default == 1) {
+        if ($bean->init == 1) {
             $bean->customization_order = 0;
         } else {
             // customization_order must be >0
@@ -44,7 +44,7 @@ class stic_Custom_View_CustomizationsLogicHooks
         $customizationBeanArray = SticUtils::getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
         foreach ($customizationBeanArray as $customizationBean) {
             if ($customizationBean->id != $bean->id && 
-                $customizationBean->is_default == $bean->is_default &&
+                $customizationBean->init == $bean->init &&
                 $customizationBean->customization_order == $bean->customization_order) {
                     $customizationBean->customization_order = $customizationBean->customization_order + 1;
                     $customizationBean->save();

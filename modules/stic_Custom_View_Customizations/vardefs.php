@@ -74,10 +74,10 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'min' => false,
     'max' => false,
   ),
-  'is_default' => array (
+  'init' => array (
     'required' => false,
-    'name' => 'is_default',
-    'vname' => 'LBL_IS_DEFAULT',
+    'name' => 'init',
+    'vname' => 'LBL_INIT',
     'type' => 'bool',
     'massupdate' => 0,
     'default' => '0',

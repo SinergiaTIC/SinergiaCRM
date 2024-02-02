@@ -38,14 +38,14 @@
 			     <table class='CustomViewButton'>
 			         <tr>
 						<td align="center">
-							<a class='studiolink' href="./index.php?module=stic_Custom_Views&action=EditView&view_module={$viewModule}&view_module_view={$button.view}">
+							<a class='studiolink' href="./index.php?module=stic_Custom_Views&action=EditView&view_module={$viewModule}&view_type={$button.view}">
 								<span class="suitepicon suitepicon-module-{$button.icon}"></span>
 							</a>
 						</td>
 					 </tr>
 					 <tr>
 						 <td align="center">
-							 <a class='studiolink' id='{$button.linkId}' href="./index.php?module=stic_Custom_Views&action=EditView&view_module={$viewModule}&view_module_view={$button.view}">
+							 <a class='studiolink' id='{$button.linkId}' href="./index.php?module=stic_Custom_Views&action=EditView&view_module={$viewModule}&view_type={$button.view}">
                                  {$buttonName}
 							 </a>
 						 </td>

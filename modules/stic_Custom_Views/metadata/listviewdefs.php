@@ -39,11 +39,11 @@ array (
     'width' => '10%',
     'default' => true,
   ),
-  'VIEW_MODULE_VIEW' => 
+  'VIEW_TYPE' => 
   array (
     'type' => 'enum',
     'studio' => 'visible',
-    'label' => 'LBL_VIEW_MODULE_VIEW',
+    'label' => 'LBL_VIEW_TYPE',
     'width' => '10%',
     'default' => true,
   ),

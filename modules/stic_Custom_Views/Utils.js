@@ -73,14 +73,14 @@ switch (viewType()) {
 //   return false;
 // }
 
-function setFieldsInForm(node, is_default, order) {
+function setFieldsInForm(node, init, order) {
   var form = node.querySelector('form');
   if (form) {
-    // Create is_default input
+    // Create init input
     var input = document.createElement("input");
     input.setAttribute('type', 'hidden');
-    input.setAttribute('name', 'is_default');
-    input.setAttribute('value', is_default);
+    input.setAttribute('name', 'init');
+    input.setAttribute('value', init);
     form.appendChild(input);
 
     // Set value in customization_order input if is not set
@@ -92,7 +92,7 @@ function setFieldsInForm(node, is_default, order) {
 
 function initializeQuickCreateCustomization() {
   // When appears a new QuickCreate form in subpanel
-  //  - set the correct value in is_default field
+  //  - set the correct value in init field
   //  - set customization_order if not set (for new items)
   
   // Observer for new elements
@@ -130,16 +130,16 @@ function initializeEditFields() {
   // $("#view_module").hide().parent().append($('<strong id="view_module_label">'+$("#view_module option:selected").text()+'</strong>'));
 
   // Hide view selector, show label with view name
-  sticCustomView.editview.field("view_module_view").readonly().bold();
-  //$("#view_module_view").hide().parent().append($('<strong id="view_module_view_label">'+$("#view_module_view option:selected").text()+'</strong>'));
+  sticCustomView.editview.field("view_type").readonly().bold();
+  //$("#view_type").hide().parent().append($('<strong id="view_type_label">'+$("#view_type option:selected").text()+'</strong>'));
 
   // Set initial name
   sticCustomView.editview.field("name").input().editor.val(
     sticCustomView.editview.field("view_module").input().text() + " - " +
-    sticCustomView.editview.field("view_module_view").input().text() + " - " +
+    sticCustomView.editview.field("view_type").input().text() + " - " +
     sticCustomView.editview.field("view_name").input().text()
   );
-  //$("#name").val($('#view_module_label').text() + ' - ' + $('#view_module_view_label').text() + ' - ' + $("#view_name").val());
+  //$("#name").val($('#view_module_label').text() + ' - ' + $('#view_type_label').text() + ' - ' + $("#view_name").val());
 
   // Hide name, show label with name
   sticCustomView.editview.field("name").readonly().bold();
@@ -149,13 +149,13 @@ function initializeEditFields() {
   sticCustomView.editview.field("view_name").input().editor.on("change paste keyup", function() {
     sticCustomView.editview.field("name").input().editor.val(
       sticCustomView.editview.field("view_module").input().text() + " - " +
-      sticCustomView.editview.field("view_module_view").input().text() + " - " +
+      sticCustomView.editview.field("view_type").input().text() + " - " +
       sticCustomView.editview.field("view_name").input().text()
     );
     sticCustomView.editview.field("name").input().editor.change();
   });
   // $("#view_name").on("change paste keyup", function() {
-  //   $("#name").val($('#view_module_label').text() + ' - ' + $('#view_module_view_label').text() + ' - ' + $("#view_name").val());
+  //   $("#name").val($('#view_module_label').text() + ' - ' + $('#view_type_label').text() + ' - ' + $("#view_name").val());
   //   $("#name_label").text($("#name").val());
   // });
 }

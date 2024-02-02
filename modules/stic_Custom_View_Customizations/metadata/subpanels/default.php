@@ -48,10 +48,10 @@ $subpanel_layout = array (
       'width' => '40%',
       'default' => true,
     ),
-    // 'is_default' => 
+    // 'init' => 
     // array (
     //   'type' => 'bool',
-    //   'vname' => 'LBL_IS_DEFAULT',
+    //   'vname' => 'LBL_INIT',
     //   'width' => '40%',
     //   'default' => true,
     // ),

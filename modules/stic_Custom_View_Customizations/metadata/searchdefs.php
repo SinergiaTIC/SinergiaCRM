@@ -59,13 +59,13 @@ array (
         'default' => true,
         'width' => '10%',
       ),
-      'is_default' => 
+      'init' => 
       array (
         'type' => 'bool',
         'default' => true,
-        'label' => 'LBL_IS_DEFAULT',
+        'label' => 'LBL_INIT',
         'width' => '10%',
-        'name' => 'is_default',
+        'name' => 'init',
       ),
       'order' => 
       array (

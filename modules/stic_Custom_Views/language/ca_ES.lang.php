@@ -61,7 +61,7 @@ $mod_strings = array (
   
   'LBL_VIEW_NAME' => 'Nom intern',
   'LBL_VIEW_MODULE' => 'Mòdul',
-  'LBL_VIEW_MODULE_VIEW' => 'Vista',
+  'LBL_VIEW_TYPE' => 'Vista',
   'LBL_USER_TYPE' => "Tipus d'usuari",
   'LBL_USER_PROFILE' => "Perfil d'usuari",
   'LBL_ROLES' => 'Rols',

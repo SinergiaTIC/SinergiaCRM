@@ -86,8 +86,8 @@ array (
         array (
           0 => 
           array (
-            'name' => 'is_default',
-            'label' => 'LBL_IS_DEFAULT',
+            'name' => 'init',
+            'label' => 'LBL_INIT',
           ),
           1 => 
           array (

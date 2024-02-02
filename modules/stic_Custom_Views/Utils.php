@@ -66,7 +66,7 @@ function fillDynamicSecurityGroupList() {
  */
 function stic_custom_views_stic_custom_view_customizations($params) {
     $args = func_get_args();
-    $is_default = $args[0]['is_default'];
+    $init = $args[0]['init'];
 
     global $app;
     $controller = $app->controller;
@@ -84,7 +84,7 @@ function stic_custom_views_stic_custom_view_customizations($params) {
             ON stic_custom_views.id = stic_custom_views_stic_custom_view_customizations_c.stic_custo45d1m_views_ida
             AND stic_custom_views.deleted = '0'
         WHERE stic_custom_view_customizations.deleted = '0'
-            AND stic_custom_view_customizations.is_default = '" . $is_default . "'
+            AND stic_custom_view_customizations.init = '" . $init . "'
     ";
     return $query;
 }
@@ -101,7 +101,7 @@ function getJsVars($viewModule, $viewModuleView) {
     $html = 
 "<script>".
     "var view_module = \"".$viewModule."\";".
-    "var view_module_view = \"".$viewModuleView."\";".
+    "var view_type = \"".$viewModuleView."\";".
     "var view_module_fields_option_list = \"".$fieldListOptions."\";".
     "var view_module_fields_operators_option_map = {};";
     foreach ($fieldOPeratorMapOptions as $fieldKey => $operatorOptions) {

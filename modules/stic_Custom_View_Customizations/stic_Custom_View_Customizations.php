@@ -43,7 +43,7 @@ class stic_Custom_View_Customizations extends Basic
     public $modified_user_link;
     public $SecurityGroups;
     public $customization_order;
-    public $is_default;
+    public $init;
 	
     public function bean_implements($interface)
     {
