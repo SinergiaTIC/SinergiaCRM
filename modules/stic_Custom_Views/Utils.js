@@ -57,22 +57,6 @@ switch (viewType()) {
     break;
 }
 
-// function GetElementInsideContainer(containerID, childID) {
-//   var elm = document.getElementById(childID);
-//   var parent = elm ? elm.parentNode : {};
-//   return (parent.id && parent.id === containerID) ? elm : {};
-// }
-// function isDescendant(parent, child) {
-//   var node = child.parentNode;
-//   while (node != null) {
-//       if (node == parent) {
-//           return true;
-//       }
-//       node = node.parentNode;
-//   }
-//   return false;
-// }
-
 function setFieldsInForm(node, init, order) {
   var form = node.querySelector('form');
   if (form) {
@@ -127,11 +111,9 @@ function initializeQuickCreateCustomization() {
 function initializeEditFields() {
   // Hide module selector, show label with module name
   sticCustomView.editview.field("view_module").readonly().bold();
-  // $("#view_module").hide().parent().append($('<strong id="view_module_label">'+$("#view_module option:selected").text()+'</strong>'));
 
   // Hide view selector, show label with view name
   sticCustomView.editview.field("view_type").readonly().bold();
-  //$("#view_type").hide().parent().append($('<strong id="view_type_label">'+$("#view_type option:selected").text()+'</strong>'));
 
   // Set initial name
   sticCustomView.editview.field("name").input().editor.val(
@@ -139,11 +121,9 @@ function initializeEditFields() {
     sticCustomView.editview.field("view_type").input().text() + " - " +
     sticCustomView.editview.field("view_name").input().text()
   );
-  //$("#name").val($('#view_module_label').text() + ' - ' + $('#view_type_label').text() + ' - ' + $("#view_name").val());
 
   // Hide name, show label with name
   sticCustomView.editview.field("name").readonly().bold();
-  //$("#name").hide().parent().append($('<strong id="name_label">'+$("#name").val()+'</strong>'));
 
   // Update name when any change on view_name
   sticCustomView.editview.field("view_name").input().editor.on("change paste keyup", function() {
@@ -154,10 +134,6 @@ function initializeEditFields() {
     );
     sticCustomView.editview.field("name").input().editor.change();
   });
-  // $("#view_name").on("change paste keyup", function() {
-  //   $("#name").val($('#view_module_label').text() + ' - ' + $('#view_type_label').text() + ' - ' + $("#view_name").val());
-  //   $("#name_label").text($("#name").val());
-  // });
 }
 
 function initializeSelectize() {

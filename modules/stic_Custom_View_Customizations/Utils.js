@@ -114,7 +114,7 @@ function insertActionLinesHeader(){
 
 function getDeleteButton(prefix, ln, functionName) {
   var html = 
-    "<button type='button' class='button' id='"+prefix+"delete_line"+ln+"' onclick='"+functionName+"("+ln+")'>"+
+    "<button type='button' class='button' id='"+prefix+"delete"+ln+"' onclick='"+functionName+"("+ln+")'>"+
       "<span class='suitepicon suitepicon-action-minus'></span>"+
     "</button><br>"+
     "<input type='hidden' name='"+prefix+"deleted["+ln+"]' id='"+prefix+"deleted"+ln+"' value='0'>"+
@@ -122,42 +122,134 @@ function getDeleteButton(prefix, ln, functionName) {
   return html;
 }
 
+
+/**
+ * ACTIONS
+ */
+
 function insertActionLine(){
-  if(!$("#"+actId+"_head").length){
+  var ln = actln;
+  var id = actId;
+  var prefix = actprefix;
+
+  if(!$("#"+id+"_head").length){
       insertActionLinesHeader();
   }
-  $("#"+actId+"_head").show();
+  $("#"+id+"_head").show();
 
   tablebody = document.createElement("tbody");
-  tablebody.id = actprefix + "body" + actln;
-  $('#'+actId).appendChild(tablebody);
+  tablebody.id = prefix+"body"+ln;
+  $('#'+id).append(tablebody);
 
+  //Create row
   var x = tablebody.insertRow(-1);
-  x.id = actprefix+actln;
+  x.id = prefix+ln;
+  x.insertCell(-1).id=prefix+'Cell'+'delete'+ln;   // Delete button
+  x.insertCell(-1).id=prefix+'Cell'+'type'+ln;     // Action Type
+  x.insertCell(-1).id=prefix+'Cell'+'element'+ln;  // Element
+  x.insertCell(-1).id=prefix+'Cell'+'action'+ln;   // Action
+  x.insertCell(-1).id=prefix+'Cell'+'value'+ln;    // Value
+  x.insertCell(-1).id=prefix+'Cell'+'section'+ln;  // Section
 
-  // Remove button
-  x.insertCell(-1).innerHTML = getDeleteButton(actprefix, actln, "markActionLineDeleted");
+  // Initial fills
 
-  // Field
-  x.insertCell(-1).innerHTML = 
-      "<select name='"+actprefix+"field["+actln+"]' id='"+actprefix+"field"+actln+"' value='' onchange='showModuleField("+actln+");'>"+ 
-          view_module_fields_option_list+
-      "</select>"+
-      "<span id='"+actprefix+"field_label"+actln+"' ></span>";
+  // Delete button
+  $("#"+prefix+'Cell'+'delete'+ln).html(getDeleteButton(prefix, ln, "markActionLineDeleted"));
 
-  // Operator
-  x.insertCell(-1).id=actprefix+'operatorInput'+actln;
+  // Action type
+  $("#"+prefix+'Cell'+'type'+ln).html(
+  "<select name='"+prefix+"type["+ln+"]' id='"+prefix+"type"+ln+"'>"+
+    view_module_action_map.actionTypes.options+
+  "</select>"+
+  "<span id='"+prefix+"type"+"_label"+ln+"' ></span>");
+  
+  $("#"+prefix+'type'+ln).on("change", function(){onActionTypeChanged(ln);});
+  $("#"+prefix+'type'+ln).change();
 
-  // Value
-  x.insertCell(-1).id=condprefix+'fieldInput'+condln;
-
-  condln++;
-  condln_count++;
-
-  $('.edit-view-field #sticCustomView_ConditionLines').find('tbody').last().find('select').change(function () {
-      $(this).find('td').last().removeAttr("style");
-      $(this).find('td').height($(this).find('td').last().height() + 8);
+  $('.edit-view-field #'+prefix+'Lines').find('tbody').last().find('select').change(function () {
+    $(this).find('td').last().removeAttr("style");
+    $(this).find('td').height($(this).find('td').last().height() + 8);
   });
 
-  return condln -1;
+  actln++;
+  actln_count++;
+
+  return ln;
+}
+
+function markActionLineDeleted(ln){
+  // collapse line; update deleted value
+  $("#"+actprefix+'body'+ln).hide();
+  $("#"+actprefix+'deleted'+ln).val('1');
+  $("#"+actprefix+'delete'+ln).prop("onclick", null).off("click");
+
+  actln_count--;
+  if(actln_count <= 0){
+    $("#"+actId+"_head").hide();
+  }
+}
+
+function onActionTypeChanged(ln){
+  var type = $("#"+actprefix+'type'+ln).val();
+  if(type==""){
+    $("#"+actprefix+'Cell'+'element'+ln).html("");
+    $("#"+actprefix+'Cell'+'action'+ln).html("");
+    $("#"+actprefix+'Cell'+'value'+ln).html("");
+    $("#"+actprefix+'Cell'+'section'+ln).html("");
+  } else {
+    // Element selector
+    $("#"+actprefix+'Cell'+'element'+ln).html(
+      "<select type='text' name='"+actprefix+"element["+ln+"]' id='"+actprefix+"element"+ln+"'>"+
+        view_module_action_map.actionTypes[type].elements.options+
+      "</select>");
+
+    // Action selector
+    $("#"+actprefix+'Cell'+'action'+ln).html(
+        "<select type='text' name='"+actprefix+"action["+ln+"]' id='"+actprefix+"action"+ln+"'>"+
+          view_module_action_map.actionTypes[type].actions.options+
+        "</select>");
+
+    $("#"+actprefix+'action'+ln).on("change", function(){onActionChanged(ln);});
+    $("#"+actprefix+'element'+ln).on("change", function(){onActionChanged(ln);});
+    $("#"+actprefix+'action'+ln).change();
+  }
+}
+function onActionChanged(ln) {
+  var type = $("#"+actprefix+'type'+ln).val();
+  var action = $("#"+actprefix+'action'+ln).val();
+  var element = $("#"+actprefix+'element'+ln).val();
+  if(type==''||action==''||element==''){
+    $("#"+prefix+'type'+ln).change();
+  } else {
+    // Value editor
+    if(type=='field_modification' && action=='fixed_value'){
+      $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_field_editor_map[element].editor_base64))));
+    } else {
+      $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_action_editor_map[action].editor_base64))));
+    }
+    $("#"+actprefix+'Cell'+'value'+ln).children().attr("name", actprefix+"value["+ln+"]");
+    $("#"+actprefix+'Cell'+'value'+ln).children().attr("id", actprefix+"value"+ln);
+
+    // Section selector
+    $("#"+actprefix+'Cell'+'section'+ln).html(
+      "<select type='text' name='"+actprefix+"section["+ln+"]' id='"+actprefix+"section"+ln+"'>"+
+        view_module_action_map.actionTypes[type].actions[action].sections.options+
+      "</select>");
+    if($("#"+actprefix+"section"+ln).children().length<=1){
+      $("#"+actprefix+"section"+ln).hide();
+      $("#"+actprefix+'Cell'+'section'+ln).append("<p>"+$("#"+actprefix+"section"+ln).text()+"</p>");
+    }
+  }
+}
+
+function markConditionLineDeleted(ln){
+  // collapse line; update deleted value
+  $("#"+condprefix+'body'+ln).hide();
+  $("#"+condprefix+'deleted'+ln).val('1');
+  $("#"+condprefix+'delete'+ln).prop("onclick", null).off("click");
+
+  condln_count--;
+  if(condln_count <= 0){
+    $("#"+condId+"_head").hide();
+  }
 }

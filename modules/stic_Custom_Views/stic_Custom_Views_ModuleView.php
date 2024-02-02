@@ -253,9 +253,10 @@ class stic_Custom_Views_ModuleView
             case 'tab_modification':
                 $validElements = $this->getTabs();
                 break;
-            }
+        }
         return $validElements;
     }
+
     public function getValidSections_as_select_options($actionType, $action) {
         return $this->convertToSelectOptions($this->getValidSections($actionType, $action));
     }
@@ -292,7 +293,7 @@ class stic_Custom_Views_ModuleView
             case 'tab_modification':
                 switch($action) {
                     case 'visible':
-                        $validSections = array('tab', 'tab_header');
+                        $validSections = array('tab');
                         break;
                     default:
                         $validSections = array('tab_header');
@@ -305,7 +306,6 @@ class stic_Custom_Views_ModuleView
             $sectionsList[$section] = $app_list_strings['stic_custom_views_elements_list'][$section];
         }
         return $sectionsList;
-
     }
 
     private function findOnlyModuleViewFieldList() {
@@ -326,6 +326,7 @@ class stic_Custom_Views_ModuleView
                 }
             }
         }
+        asort($this->onlyModuleViewFieldList);
     }
 
     private function findPanelTabList() {
@@ -347,5 +348,53 @@ class stic_Custom_Views_ModuleView
                 $this->panelList[$panelKey] = translate($panelKey, $this->module);    
             }
         }
+    }
+
+    private function getEditorForCommonAction($action, $newEditorId) {
+        switch($action) {
+            // case 'fixed_value':
+            //     return $this->getEditorForFieldValue($element, $newEditorId);
+            //     break;
+
+            case 'color':
+            case 'background':
+                return $this->getEditorForColor($newEditorId);
+                break;
+
+            case 'visible':
+            case 'readonly':
+            case 'mandatory':
+            case 'inline':
+            case 'bold':
+            case 'italic':
+            case 'underline':
+                return $this->getEditorForYesNo($newEditorId);
+                break;
+        }
+        return "";
+    }
+    public function getEditorForCommonAction_Base64($action, $newEditorId) {
+        $html = base64_encode($this->getEditorForCommonAction($action, $newEditorId));
+        return $html;
+    }
+
+    private function getEditorForColor($newEditorId) {
+        return "<input type='color' id='".$newEditorId."'/>";
+    }
+    private function getEditorForYesNo($newEditorId) {
+        global $app_list_strings;
+        $list = $app_list_strings['stic_boolean_list'];
+        unset($list['']);
+        $options=$this->convertToSelectOptions($list);
+        return "<select id='".$newEditorId."'>".$options."</select>";
+    }
+
+    private function getEditorForFieldValue($fieldName, $newEditorId) { 
+        require_once("modules/AOW_WorkFlow/aow_utils.php");
+        return getModuleField($this->module, $fieldName, $newEditorId);
+    }
+    public function getEditorForFieldValue_Base64($fieldName, $newEditorId) {
+        $html = base64_encode($this->getEditorForFieldValue($fieldName, $newEditorId));
+        return $html;
     }
 }

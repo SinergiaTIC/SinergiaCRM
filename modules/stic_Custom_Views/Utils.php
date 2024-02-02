@@ -89,11 +89,11 @@ function stic_custom_views_stic_custom_view_customizations($params) {
     return $query;
 }
 
-function getJsVars($viewModule, $viewModuleView) {
+function getJsVars($viewModule, $viewType) {
     require_once('modules/stic_Custom_Views/stic_Custom_Views_ModuleView.php');
     global $app_list_strings;
 
-    $moduleView = new stic_Custom_Views_ModuleView($viewModule, $viewModuleView);
+    $moduleView = new stic_Custom_Views_ModuleView($viewModule, $viewType);
 
     $fieldListOptions = $moduleView->getOnlyViewFields_as_select_options();
     $fieldOPeratorMapOptions = $moduleView->getOnlyViewFieldOperatorMap_as_select_options();
@@ -101,7 +101,7 @@ function getJsVars($viewModule, $viewModuleView) {
     $html = 
 "<script>".
     "var view_module = \"".$viewModule."\";".
-    "var view_type = \"".$viewModuleView."\";".
+    "var view_type = \"".$viewType."\";".
     "var view_module_fields_option_list = \"".$fieldListOptions."\";".
     "var view_module_fields_operators_option_map = {};";
     foreach ($fieldOPeratorMapOptions as $fieldKey => $operatorOptions) {
@@ -134,7 +134,29 @@ function getJsVars($viewModule, $viewModuleView) {
         $html .=
         "},".
     "};";
-    $html .=     
+    $html .=
+    "var view_action_editor_map = {";
+    foreach($app_list_strings['stic_custom_views_action_list'] as $actionKey => $actionName) {
+        $html .=
+        $actionKey.": {".
+            "editor_base64: \"".$moduleView->getEditorForCommonAction_Base64($actionKey, $actionKey."_editor")."\",".
+        "},";
+    }
+    $html .=
+    "};";
+    $html .=
+    "var view_field_editor_map = {";
+    foreach($moduleView->getOnlyViewFields() as $fieldKey => $fieldName) {
+        $html .=
+        $fieldKey.": {".
+            "editor_base64: \"".$moduleView->getEditorForFieldValue_Base64($fieldKey, $fieldKey."_editor")."\",".
+        "},";
+    }
+    $html .=
+    "};";
+
+    $html .=
 "</script>";
     return $html;
 }
+
