@@ -222,3 +222,6 @@ $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "P
 
 // Cadenas de Ayudas
 $mod_strings['LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';
+
+// Cadenas de Diarios
+$mod_strings['LBL_STIC_JOURNALS_CONTACTS_FROM_STIC_JOURNALS_TITLE'] = 'Diarios';

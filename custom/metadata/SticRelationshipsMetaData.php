@@ -5830,3 +5830,135 @@ $dictionary["stic_grants_stic_families"] = array(
         ),
     ),
 );
+$dictionary["stic_journals_contacts"] = array(
+    'true_relationship_type' => 'many-to-many',
+    'relationships' => array(
+        'stic_journals_contacts' => array(
+            'lhs_module' => 'stic_Journals',
+            'lhs_table' => 'stic_journals',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Contacts',
+            'rhs_table' => 'contacts',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_journals_contacts_c',
+            'join_key_lhs' => 'stic_journals_contactsstic_journals_ida',
+            'join_key_rhs' => 'stic_journals_contactscontacts_idb',
+        ),
+    ),
+    'table' => 'stic_journals_contacts_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_journals_contactsstic_journals_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_journals_contactscontacts_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_journals_contactsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_journals_contacts_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_journals_contactsstic_journals_ida',
+                1 => 'stic_journals_contactscontacts_idb',
+            ),
+        ),
+    ),
+);
+$dictionary["stic_journals_stic_centers"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_journals_stic_centers' => array(
+            'lhs_module' => 'stic_Centers',
+            'lhs_table' => 'stic_centers',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Journals',
+            'rhs_table' => 'stic_journals',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_journals_stic_centers_c',
+            'join_key_lhs' => 'stic_journals_stic_centersstic_centers_ida',
+            'join_key_rhs' => 'stic_journals_stic_centersstic_journals_idb',
+        ),
+    ),
+    'table' => 'stic_journals_stic_centers_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_journals_stic_centersstic_centers_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_journals_stic_centersstic_journals_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_journals_stic_centersspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_journals_stic_centers_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_journals_stic_centersstic_centers_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_journals_stic_centers_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_journals_stic_centersstic_journals_idb',
+            ),
+        ),
+    ),
+);
