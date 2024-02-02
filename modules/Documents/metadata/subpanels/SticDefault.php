@@ -20,7 +20,6 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-// created: 2020-06-25 19:27:47
 $subpanel_layout['list_fields'] = array(
     'object_image' => array(
         'width' => '2%',
