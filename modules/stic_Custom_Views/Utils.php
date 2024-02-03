@@ -95,18 +95,10 @@ function getJsVars($viewModule, $viewType) {
 
     $moduleView = new stic_Custom_Views_ModuleView($viewModule, $viewType);
 
-    $fieldListOptions = $moduleView->getOnlyViewFields_as_select_options();
-    $fieldOPeratorMapOptions = $moduleView->getOnlyViewFieldOperatorMap_as_select_options();
-
     $html = 
 "<script>".
     "var view_module = \"".$viewModule."\";".
-    "var view_type = \"".$viewType."\";".
-    "var view_module_fields_option_list = \"".$fieldListOptions."\";".
-    "var view_module_fields_operators_option_map = {};";
-    foreach ($fieldOPeratorMapOptions as $fieldKey => $operatorOptions) {
-        $html .= "view_module_fields_operators_option_map['".$fieldKey."'] = \"".$operatorOptions."\";";
-    }
+    "var view_type = \"".$viewType."\";";
     $html .=
     "var view_module_action_map = {".
         "actionTypes: {".
@@ -145,11 +137,14 @@ function getJsVars($viewModule, $viewType) {
     $html .=
     "};";
     $html .=
-    "var view_field_editor_map = {";
+    "var view_field_map = {";
     foreach($moduleView->getOnlyViewFields() as $fieldKey => $fieldName) {
         $html .=
         $fieldKey.": {".
             "editor_base64: \"".$moduleView->getEditorForFieldValue_Base64($fieldKey, $fieldKey."_editor")."\",".
+            "condition_operators: {".
+                "options: \"".$moduleView->getViewFieldOperators_as_select_options($fieldKey)."\",".
+            "},".
         "},";
     }
     $html .=

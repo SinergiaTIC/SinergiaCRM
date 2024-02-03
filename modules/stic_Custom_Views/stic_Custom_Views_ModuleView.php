@@ -85,6 +85,12 @@ class stic_Custom_Views_ModuleView
         }
         return $fieldOPeratorMapOptions;
     }
+    public function getViewFieldOperators($fieldKey) {
+        return $this->getOnlyViewFieldOperatorMap()[$fieldKey];
+    }
+    public function getViewFieldOperators_as_select_options($fieldKey) {
+        return $this->convertToSelectOptions($this->getViewFieldOperators($fieldKey));
+    }
 
     private $panelList;
     public function getPanels() {
@@ -141,6 +147,11 @@ class stic_Custom_Views_ModuleView
                     ($name === 'currency_name' || $name === 'currency_symbol') ||
                     (isset($arr['source']) && $arr['source'] === 'non-db' && 
                         ($arr['type'] !== 'relate' || !isset($arr['id_name'])))) {
+                    continue;
+                }
+                //IEPA!!
+                // De moment s'ignoren els relacionats.
+                if(isset($arr['id_name'])) {
                     continue;
                 }
     
@@ -214,7 +225,14 @@ class stic_Custom_Views_ModuleView
         $validActions = array();
         switch($actionType) {
             case 'field_modification':
-                $validActions = array('visible', 'readonly', 'mandatory', 'inline', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline');
+                switch($this->view) {
+                    case 'editview':
+                        $validActions = array('visible', 'readonly', 'mandatory', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline');
+                        break;
+                    case 'detailview':
+                        $validActions = array('visible', 'inline', 'color', 'background', 'bold', 'italic', 'underline');
+                        break;
+                }
                 break;
             case 'panel_modification':
                 $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline');
