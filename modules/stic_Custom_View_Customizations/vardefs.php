@@ -27,29 +27,6 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
-  'customization_name' => array(
-    'name' => 'customization_name',
-    'vname' => 'LBL_CUSTOMIZATION_NAME',
-    'required' => true,
-    'type' => 'varchar',
-    'dbType' => 'varchar',
-    'len' => 512,
-    'massupdate' => 0,
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'inline_edit' => true,
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'size' => '20',
-    'studio' => 'visible',
-    'dependency' => false,
-  ),
   'customization_order' => array (
     'required' => true,
     'name' => 'customization_order',
@@ -207,4 +184,5 @@ VardefManager::createVardef('stic_Custom_View_Customizations', 'stic_Custom_View
 // Set special values for SuiteCRM base fields
 $dictionary['stic_Custom_View_Customizations']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Custom_View_Customizations']['fields']['name']['inline_edit'] = false; // Not inline_edit for name
+$dictionary['stic_Custom_View_Customizations']['fields']['name']['link'] = false; // Not link for name
 $dictionary['stic_Custom_View_Customizations']['fields']['description']['rows'] = '1'; // Make textarea fields shorter

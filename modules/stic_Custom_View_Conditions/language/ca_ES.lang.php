@@ -46,22 +46,24 @@ $mod_strings = array (
   'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmació d\'autorització pendent, Confirmació d\'autorització no enviada',
   'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmació d\'autorització pendent, Confirmació d\'autorització enviada',
   'LBL_OPT_IN_CONFIRMED' => 'Autoritzat a enviar',
-  'LBL_LIST_FORM_TITLE' => 'Condicions Llista',
+  'LBL_LIST_FORM_TITLE' => 'Llista de Condicions',
   'LBL_MODULE_NAME' => 'Condicions',
   'LBL_MODULE_TITLE' => 'Condicions',
-  'LBL_HOMEPAGE_TITLE' => 'El meu Condicions',
-  'LNK_NEW_RECORD' => 'Crea Condicions',
+  'LBL_HOMEPAGE_TITLE' => 'Les meves Condicions',
+  'LNK_NEW_RECORD' => 'Crea Condició',
   'LNK_LIST' => 'Mostra Condicions',
   'LNK_IMPORT_STIC_CUSTOM_VIEW_CONDITIONS' => 'Importar Condicions',
   'LBL_SEARCH_FORM_TITLE' => 'Cerca Condicions',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
   'LBL_STIC_CUSTOM_VIEW_CONDITIONS_SUBPANEL_TITLE' => 'Condicions',
-  'LBL_NEW_FORM_TITLE' => 'Nou Condicions',
+  'LBL_NEW_FORM_TITLE' => 'Nova Condició',
+
   'LBL_CONDITION_ORDER' => 'Ordre',
   'LBL_FIELD' => 'Camp',
   'LBL_OPERATOR' => 'Operador',
   'LBL_VALUE' => 'Valor',
+  
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalitzacions';

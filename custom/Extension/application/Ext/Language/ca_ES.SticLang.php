@@ -3185,7 +3185,7 @@ $app_list_strings['stic_centers_types_list']['other'] = 'Altres';
 // Vistes personalitzades: Tipus d'usuari
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
-$app_list_strings['stic_custom_views_user_type_list']['all'] = 'Tothom';
+$app_list_strings['stic_custom_views_user_type_list']['all'] = 'Tots';
 
 // Vistes personalitzades: Vistes
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detall';
@@ -3201,21 +3201,21 @@ $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Només lectura';
 $app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Obligat';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Edició en línia';
-$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fixe';
-$app_list_strings['stic_custom_views_action_list']['color'] = 'Color de text';
-$app_list_strings['stic_custom_views_action_list']['background'] = 'Color de fons';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fix';
+$app_list_strings['stic_custom_views_action_list']['color'] = 'Color del text';
+$app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fons';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negreta';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subratllat';
 
 // Vistes personalitzades: Seccions d'elements
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Tot el camp';
-$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Etiqueta';
-$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Editor de valor';
+$app_list_strings['stic_custom_views_elements_list']['field_label'] = "Només l'etiqueta";
+$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Només la casella';
 $app_list_strings['stic_custom_views_elements_list']['panel'] = 'Tot el panell';
-$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Capçalera';
+$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Només la capçalera del panell';
 $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Tota la pestanya';
-$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Capçalera';
+$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Només la capçalera de la pestanya';
 
 
 // Modificacions del core de SuiteCRM

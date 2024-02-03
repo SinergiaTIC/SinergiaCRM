@@ -70,8 +70,8 @@ array (
         array (
           0 => 
           array (
-            'name' => 'customization_name',
-            'label' => 'LBL_CUSTOMIZATION_NAME',
+            'name' => 'name',
+            'label' => 'LBL_NAME',
           ),
           1 => 
           array (

@@ -28,7 +28,6 @@ class stic_Custom_View_CustomizationsLogicHooks
         // Ensure name is correct
         include_once 'SticInclude/Utils.php';
         $customViewBean = SticUtils::getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
-        $bean->name = $customViewBean->name . ' - ' . $bean->customization_name;
 
         // Initial Configuration: customization_order always 0
         if ($bean->init == 1) {

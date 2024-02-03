@@ -119,18 +119,18 @@ function initializeEditFields() {
   sticCustomView.editview.field("name").input().editor.val(
     sticCustomView.editview.field("view_module").input().text() + " - " +
     sticCustomView.editview.field("view_type").input().text() + " - " +
-    sticCustomView.editview.field("view_name").input().text()
+    sticCustomView.editview.field("customization_name").input().text()
   );
 
   // Hide name, show label with name
   sticCustomView.editview.field("name").readonly().bold();
 
-  // Update name when any change on view_name
-  sticCustomView.editview.field("view_name").input().editor.on("change paste keyup", function() {
+  // Update name when any change on customization_name
+  sticCustomView.editview.field("customization_name").input().editor.on("change paste keyup", function() {
     sticCustomView.editview.field("name").input().editor.val(
       sticCustomView.editview.field("view_module").input().text() + " - " +
       sticCustomView.editview.field("view_type").input().text() + " - " +
-      sticCustomView.editview.field("view_name").input().text()
+      sticCustomView.editview.field("customization_name").input().text()
     );
     sticCustomView.editview.field("name").input().editor.change();
   });

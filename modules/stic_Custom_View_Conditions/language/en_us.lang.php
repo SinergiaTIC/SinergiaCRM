@@ -57,10 +57,13 @@ $mod_strings = array (
   'LBL_HISTORY_SUBPANEL_TITLE' => 'View History',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activities',
   'LBL_STIC_CUSTOM_VIEW_CONDITIONS_SUBPANEL_TITLE' => 'Condicions',
-  'LBL_NEW_FORM_TITLE' => 'New Condicions',
-  'LBL_CONDITION_ORDER' => 'Ordre',
-  'LBL_FIELD' => 'Camp',
-  'LBL_OPERATOR' => 'Operador',
-  'LBL_VALUE' => 'Valor',
+  'LBL_NEW_FORM_TITLE' => 'New Condition',
+
+  'LBL_CONDITION_ORDER' => 'Order',
+  'LBL_FIELD' => 'Field',
+  'LBL_OPERATOR' => 'Operator',
+  'LBL_VALUE' => 'Value',
+  
+  'LBL_DETAILVIEW_PANEL1' => 'Record details',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Customizations';

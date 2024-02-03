@@ -59,7 +59,6 @@ array (
         0 => 
         array (
           0 => 'name',
-          1 => 'customization_name',
         ),
         1 => 
         array (

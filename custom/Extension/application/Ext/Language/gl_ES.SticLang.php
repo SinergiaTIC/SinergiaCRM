@@ -3196,8 +3196,8 @@ $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Admini
 $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Todos';
 
 // Vistas personalizadas: Vistas
-$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de Detalle';
-$app_list_strings['stic_custom_views_views_list']['editview'] = "Vista de Edición";
+$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detalle';
+$app_list_strings['stic_custom_views_views_list']['editview'] = "Vista de edición";
 
 // Vistas personalizadas: Tipos de Acciones
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificación de campo';
@@ -3206,24 +3206,24 @@ $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'M
 
 // Vistas personalizadas: Acciones
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Só lectura';
-$app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Obrigado';
+$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Sólo lectura';
+$app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Obligado';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Edición en línea';
-$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fixe';
-$app_list_strings['stic_custom_views_action_list']['color'] = 'Cor do texto';
-$app_list_strings['stic_custom_views_action_list']['background'] = 'Cor do fondo';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fijo';
+$app_list_strings['stic_custom_views_action_list']['color'] = 'Color del texto';
+$app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fondo';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negrita';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
-$app_list_strings['stic_custom_views_action_list']['underline'] = 'Subliñado';
+$app_list_strings['stic_custom_views_action_list']['underline'] = 'Subrayado';
 
 // Vistas personalizadas: Secciones de elementos
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Todo el campo';
-$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Etiqueta';
-$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Editor de valor';
+$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Solo la etiqueta';
+$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Solo la casilla';
 $app_list_strings['stic_custom_views_elements_list']['panel'] = 'Todo el panel';
-$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Cabecera';
+$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Solo la cabecera del panel';
 $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Toda la pestaña';
-$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Cabecera';
+$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Solo la cabecera de la pestaña';
 
 
 // Modificaciones del core de SuiteCRM

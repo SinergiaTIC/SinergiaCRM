@@ -29,7 +29,7 @@ class stic_Custom_ViewsLogicHooks
         global $app_list_strings;
         $bean->name = $app_list_strings['moduleList'][$bean->view_module] . ' - ' . 
                       $app_list_strings['stic_custom_views_views_list'][$bean->view_type] . ' - ' . 
-                      $bean->view_name;
+                      $bean->customization_name;
 
         // Update all related names
         include_once 'SticInclude/Utils.php';
@@ -43,7 +43,7 @@ class stic_Custom_ViewsLogicHooks
         if (empty($relatedBeans)) {
             // Set basic data
             $customization = BeanFactory::newBean('stic_Custom_View_Customizations');
-            $customization->customization_name = translate("LBL_STIC_CUSTOM_VIEW_CUSTOMIZATION_INITIAL_TITLE");
+            $customization->name = translate("LBL_STIC_CUSTOM_VIEW_CUSTOMIZATION_INITIAL_TITLE");
             $customization->init = 1;
             $customization->stic_custo45d1m_views_ida = $bean->id;
             $customization->save();   

@@ -57,18 +57,21 @@ $mod_strings = array (
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
   'LBL_STIC_CUSTOM_VIEWS_SUBPANEL_TITLE' => 'Vistes personalitzades',
-  'LBL_NEW_FORM_TITLE' => 'Nou Vistes personalitzades',
+  'LBL_NEW_FORM_TITLE' => 'Nova Vista personalitzada',
   
-  'LBL_VIEW_NAME' => 'Nom intern',
+  'LBL_CUSTOMIZATION_NAME' => 'Nom intern',
   'LBL_VIEW_MODULE' => 'Mòdul',
   'LBL_VIEW_TYPE' => 'Vista',
   'LBL_USER_TYPE' => "Tipus d'usuari",
-  'LBL_USER_PROFILE' => "Perfil d'usuari",
+  'LBL_USER_TYPE_DESC' => "Tipus d'usuari al que s'aplicarà la vista personalitzada",
   'LBL_ROLES' => 'Rols',
+  'LBL_ROLES_DESC' => "Rols als quals s'aplicarà la vista personalitzada",
   'LBL_SECURITY_GROUPS' => 'Grups de seguretat',
+  'LBL_SECURITY_GROUPS_DESC' => "Grups de seguretat als quals s'aplicarà la vista personalitzada",
+
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
+
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATION_INITIAL_TITLE' => 'Personalització inicial',
-  'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_DYNAMIC_TITLE' => 'Personalitzacions dinàmiques',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalitzacions';

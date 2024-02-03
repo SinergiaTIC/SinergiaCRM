@@ -40,10 +40,10 @@ $subpanel_layout = array (
       'width' => '5%',
       'default' => true,
     ),
-    'customization_name' => 
+    'name' => 
     array (
       'type' => 'text',
-      'vname' => 'LBL_CUSTOMIZATION_NAME',
+      'vname' => 'LBL_NAME',
       //'widget_class' => 'SubPanelDetailViewLink',
       'width' => '40%',
       'default' => true,

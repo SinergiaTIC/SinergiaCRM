@@ -3187,8 +3187,8 @@ $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Admini
 $app_list_strings['stic_custom_views_user_type_list']['all'] = 'All';
 
 // Custom Views: Views
-$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Detail View';
-$app_list_strings['stic_custom_views_views_list']['editview'] = "Edit View";
+$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Detail view';
+$app_list_strings['stic_custom_views_views_list']['editview'] = "Edit view";
 
 // Custom Views: Action Types
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Field modification';
@@ -3208,13 +3208,13 @@ $app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
 
 // Custom Views: Element's sections
-$app_list_strings['stic_custom_views_elements_list']['field'] = 'All field';
-$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Label';
-$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Value editor';
-$app_list_strings['stic_custom_views_elements_list']['panel'] = 'All panel';
-$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Header';
-$app_list_strings['stic_custom_views_elements_list']['tab'] = 'All tab';
-$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Header';
+$app_list_strings['stic_custom_views_elements_list']['field'] = 'Whole field';
+$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Only label';
+$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Only input';
+$app_list_strings['stic_custom_views_elements_list']['panel'] = 'Whole panel';
+$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Panel header';
+$app_list_strings['stic_custom_views_elements_list']['tab'] = 'Whole tab';
+$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Tab header';
 
 
 // SuiteCRM Core modifications

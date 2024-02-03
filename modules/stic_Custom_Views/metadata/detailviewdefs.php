@@ -87,9 +87,9 @@ array (
         1 => 
         array (
           0 => array (
-            'name' => 'view_name',
+            'name' => 'customization_name',
             'studio' => 'visible',
-            'label' => 'LBL_VIEW_NAME',
+            'label' => 'LBL_CUSTOMIZATION_NAME',
           ),
           1 => 
           array (
