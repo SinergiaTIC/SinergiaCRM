@@ -435,7 +435,7 @@ $layout_defs['Accounts'] = array(
                     'module' => 'Emails',
                     // STIC-Custom 20220119 MHP - Put a custom subpanel layout
                     // STIC#556                      
-                    'subpanel_name' => 'ForAccountsToUnlinkContactsInHistoryEmails',
+                    'subpanel_name' => 'SticForAccountsToUnlinkContactsInHistoryEmails',
                     // END STIC-Custom 20220119
                     'get_subpanel_data' => 'function:get_emails_by_assign_or_link',
                     'function_parameters' => array('import_function_file' => 'include/utils.php', 'link' => 'contacts'),
