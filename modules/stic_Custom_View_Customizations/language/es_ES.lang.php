@@ -61,7 +61,9 @@ $mod_strings = array (
 
   'LBL_CUSTOMIZATION_ORDER' => 'Orden',
   'LBL_INIT' => 'Inicial',
-  'LBL_SUMMARY' => 'Resumen',
+  'LBL_CONDITIONS' => 'Condiciones',
+  'LBL_ACTIONS' => 'Acciones',
+
 
   'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
 

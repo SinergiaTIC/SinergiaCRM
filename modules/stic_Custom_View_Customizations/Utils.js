@@ -38,8 +38,8 @@ switch (viewType()) {
     $(document).ready(function () { 
       // Hide Condition lines
       if($('input[name="init"]').val()=="1") {
-        sticCustomView.editview.panel("LBL_CONDITION_LINES").hide();
-        sticCustomView.editview.field("customization_order").readonly();
+        sticCustomView.quickcreate.panel("LBL_CONDITION_LINES").hide();
+        sticCustomView.quickcreate.field("customization_order").readonly();
       }
     });
     break;

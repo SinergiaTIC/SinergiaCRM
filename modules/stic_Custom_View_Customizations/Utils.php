@@ -27,6 +27,20 @@ function getCustomView($customizationBean) {
     return SticUtils::getRelatedBeanObject($customizationBean, "stic_custom_views_stic_custom_view_customizations");
 }
 
+function getLangStrings() {
+    $html = "";
+    // Load related lang strings
+    $moduleNames = array('stic_Custom_View_Customizations', 'stic_Custom_View_Conditions', 'stic_Custom_View_Actions');
+    foreach($moduleNames as $moduleName) {
+        if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
+            require_once('include/language/jsLanguage.php');
+            jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
+        }
+        $html.= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
+    }
+    return $html;
+}
+
 function displayConditionLines($focus, $field, $value, $view) {
     global $mod_strings;
 

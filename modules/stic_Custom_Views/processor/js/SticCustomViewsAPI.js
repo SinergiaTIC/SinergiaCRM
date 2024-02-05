@@ -13,6 +13,11 @@ var sticCustomView  = {
         panel: (panelName) => new CustomViewPanel("detailview", panelName),
         tab: (tabIndex) => new CustomViewTab("detailview", tabIndex),
     },
+    quickcreate: {
+        field: (fieldName) => new CustomViewField("quickcreate", fieldName),
+        panel: (panelName) => new CustomViewPanel("quickcreate", panelName),
+        tab: (tabIndex) => new CustomViewTab("quickcreate", tabIndex),
+    }
 }
 var CustomViewItem = class CustomViewItem {
     constructor (view, itemName) {
@@ -23,9 +28,9 @@ var CustomViewItem = class CustomViewItem {
         }
         if (this.view=="editview"){
             this.elementView = $("#EditView");
-            if(!this.elementView.length) {
-                this.elementView = $("#EditView_tabs"); // Include QuickCreate view
-            }
+        }
+        if (this.view=="quickcreate"){
+            this.elementView = $("#EditView_tabs");
         }
     };
 }
@@ -39,6 +44,9 @@ var CustomViewField = class CustomViewField extends CustomViewItem {
             return new CustomViewDivDetailInput(this, this.row().element.children('[field="'+this.fieldName+'"]'));
         }
         if (this.view=="editview") {
+            return new CustomViewDivEditInput(this, this.row().element.children('[field="'+this.fieldName+'"]'));
+        }
+        if (this.view=="quickcreate") {
             return new CustomViewDivEditInput(this, this.row().element.children('[field="'+this.fieldName+'"]'));
         }
     }

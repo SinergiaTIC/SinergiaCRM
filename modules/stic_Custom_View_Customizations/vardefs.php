@@ -72,9 +72,16 @@ $dictionary['stic_Custom_View_Customizations'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'summary' => array(
-    'name' => 'summary',
-    'vname' => 'LBL_SUMMARY',
+  'conditions' => array(
+    'name' => 'conditions',
+    'vname' => 'LBL_CONDITIONS',
+    'type' => 'text',
+    'rows' => 2,
+    'cols' => 80,
+  ),
+  'actions' => array(
+    'name' => 'actions',
+    'vname' => 'LBL_ACTIONS',
     'type' => 'text',
     'rows' => 2,
     'cols' => 80,

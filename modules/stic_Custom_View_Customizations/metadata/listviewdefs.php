@@ -45,10 +45,26 @@ array (
     'width' => '10%',
     'default' => true,
   ),
-  'SUMMARY' => 
+  // 'SUMMARY' => 
+  // array (
+  //   'type' => 'text',
+  //   'label' => 'LBL_SUMMARY',
+  //   'sortable' => false,
+  //   'width' => '10%',
+  //   'default' => true,
+  // ),
+  'CONDITIONS' => 
   array (
     'type' => 'text',
-    'label' => 'LBL_SUMMARY',
+    'label' => 'LBL_CONDITIONS',
+    'sortable' => false,
+    'width' => '10%',
+    'default' => true,
+  ),  
+  'ACTIONS' => 
+  array (
+    'type' => 'text',
+    'label' => 'LBL_ACTIONS',
     'sortable' => false,
     'width' => '10%',
     'default' => true,

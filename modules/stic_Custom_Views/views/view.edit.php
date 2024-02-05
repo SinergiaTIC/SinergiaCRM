@@ -50,7 +50,6 @@ class stic_Custom_ViewsViewEdit extends ViewEdit
         SticViews::display($this);
 
         // Write here you custom code
-
         echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
     }
 }
