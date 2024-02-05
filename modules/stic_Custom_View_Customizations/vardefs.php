@@ -182,7 +182,5 @@ if (!class_exists('VardefManager')) {
 VardefManager::createVardef('stic_Custom_View_Customizations', 'stic_Custom_View_Customizations', array('basic'));
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Custom_View_Customizations']['fields']['name']['required'] = '0'; // Name is not required in this module
-$dictionary['stic_Custom_View_Customizations']['fields']['name']['inline_edit'] = false; // Not inline_edit for name
 $dictionary['stic_Custom_View_Customizations']['fields']['name']['link'] = false; // Not link for name
 $dictionary['stic_Custom_View_Customizations']['fields']['description']['rows'] = '1'; // Make textarea fields shorter

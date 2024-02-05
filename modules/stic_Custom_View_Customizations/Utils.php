@@ -23,6 +23,10 @@
 
 require_once 'SticInclude/Utils.php';
 
+function getCustomView($customizationBean) {
+    return SticUtils::getRelatedBeanObject($customizationBean, "stic_custom_views_stic_custom_view_customizations");
+}
+
 function displayConditionLines($focus, $field, $value, $view) {
     global $mod_strings;
 

@@ -62,4 +62,23 @@ class stic_Custom_View_Customizations extends Basic
 
     }
 
+    public function save($check_notify = false)
+    {
+        require_once("modules/stic_Custom_View_Customizations/Utils.php");
+
+        $return_id = parent::save($check_notify);
+        $customizationBean = BeanFactory::getBean('stic_Custom_View_Customizations', $this->id);
+        $viewBean = getCustomView($customizationBean);
+
+        require_once('modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php');
+        $condition = BeanFactory::newBean('stic_Custom_View_Conditions');
+        $condition->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Condition');
+
+        require_once('modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php');
+        $action = BeanFactory::newBean('stic_Custom_View_Actions');
+        $action->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Action');
+
+        return $return_id;
+    }
+
 }

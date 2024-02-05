@@ -68,4 +68,50 @@ class stic_Custom_View_Actions extends Basic
         require_once('modules/stic_Custom_Views/Utils.php');
     }
 
+    public function save_lines($post_data, $view_module, $parent, $key = '')
+    {
+        require_once 'modules/AOW_WorkFlow/aow_utils.php';
+
+        $type = $key . 'type';
+        $postedType = null;
+        if (isset($post_data[$type])) {
+            $postedType = $post_data[$type];
+        } else {
+            LoggerManager::getLogger()->warn('Posted field is undefined: ' . $type);
+        }
+
+        $line_count = count((array)$postedType);
+        $j = 0;
+        for ($i = 0; $i < $line_count; ++$i) {
+            if (!isset($post_data[$key . 'deleted'][$i])) {
+                LoggerManager::getLogger()->warn('stic Custom View Action trying to save lines but POST data does not contains the key "' . $key . 'deleted' . '" at index: ' . $i);
+            }
+
+            if (isset($post_data[$key . 'deleted'][$i]) && $post_data[$key . 'deleted'][$i] == 1) {
+                $this->mark_deleted($post_data[$key . 'id'][$i]);
+            } else {
+                $action = BeanFactory::newBean('stic_Custom_View_Actions');
+                foreach ($this->field_defs as $field_def) {
+                    $field_name = $field_def['name'];
+                    if (isset($post_data[$key . $field_name][$i])) {
+                        if (is_array($post_data[$key . $field_name][$i])) {
+                            $post_data[$key . $field_name][$i] = encodeMultienumValue($post_data[$key . $field_name][$i]);
+                        } else {
+                            if ($field_name === 'value' && 
+                                $post_data[$key . 'type'][$i] === 'field_modification' && $post_data[$key . 'action'][$i] === 'fixed_value') {
+                                $post_data[$key . $field_name][$i] = fixUpFormatting($view_module, $action->element, $post_data[$key . $field_name][$i]);
+                            }
+                        }
+                        $action->$field_name = $post_data[$key . $field_name][$i];
+                    }
+                }
+                if (trim($action->type) != '') {
+                    $action->action_order = ++$j;
+                    $action->name = $parent->name .'-'.$action->action_order;
+                    $action->stic_custo077ezations_ida = $parent->id;
+                    $action->save();
+                }
+            }
+        }
+    }
 }

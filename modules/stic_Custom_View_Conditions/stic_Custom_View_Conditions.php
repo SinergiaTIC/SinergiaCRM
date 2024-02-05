@@ -64,4 +64,49 @@ class stic_Custom_View_Conditions extends Basic
         parent::__construct();
 
     }
+    public function save_lines($post_data, $view_module, $parent, $key = '')
+    {
+        require_once 'modules/AOW_WorkFlow/aow_utils.php';
+
+        $field = $key . 'field';
+        $postedField = null;
+        if (isset($post_data[$field])) {
+            $postedField = $post_data[$field];
+        } else {
+            LoggerManager::getLogger()->warn('Posted field is undefined: ' . $field);
+        }
+
+        $line_count = count((array)$postedField);
+        $j = 0;
+        for ($i = 0; $i < $line_count; ++$i) {
+            if (!isset($post_data[$key . 'deleted'][$i])) {
+                LoggerManager::getLogger()->warn('stic Custom View Condition trying to save lines but POST data does not contains the key "' . $key . 'deleted' . '" at index: ' . $i);
+            }
+
+            if (isset($post_data[$key . 'deleted'][$i]) && $post_data[$key . 'deleted'][$i] == 1) {
+                $this->mark_deleted($post_data[$key . 'id'][$i]);
+            } else {
+                $condition = BeanFactory::newBean('stic_Custom_View_Conditions');
+                foreach ($this->field_defs as $field_def) {
+                    $field_name = $field_def['name'];
+                    if (isset($post_data[$key . $field_name][$i])) {
+                        if (is_array($post_data[$key . $field_name][$i])) {
+                            $post_data[$key . $field_name][$i] = encodeMultienumValue($post_data[$key . $field_name][$i]);
+                        } else {
+                            if ($field_name === 'value') {
+                                $post_data[$key . $field_name][$i] = fixUpFormatting($view_module, $condition->field, $post_data[$key . $field_name][$i]);
+                            }
+                        }
+                        $condition->$field_name = $post_data[$key . $field_name][$i];
+                    }
+                }
+                if (trim($condition->field) != '') {
+                    $condition->condition_order = ++$j;
+                    $condition->name = $parent->name .'-'.$condition->condition_order;
+                    $condition->stic_custo233dzations_ida = $parent->id;
+                    $condition->save();
+                }
+            }
+        }
+    }
 }
