@@ -47,7 +47,7 @@ $module_name = 'DHA_PlantillasDocumentos';
 $OBJECT_NAME = 'DHA_PLANTILLASDOCUMENTOS';
  
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105
 // $listViewDefs [$module_name] = 
 // array (
 //   // Calculado, ver el bean

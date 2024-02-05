@@ -47,7 +47,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105 
 // $viewdefs['Project']['QuickCreate'] = array(
 //                     'templateMeta' => array('maxColumns' => '2',
 //                         'widths' => array(

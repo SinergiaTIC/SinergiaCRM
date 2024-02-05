@@ -46,7 +46,7 @@
 $module_name = 'AOS_Products_Quotes';
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105
 // $viewdefs [$module_name] =
 // array(
 //   'DetailView' =>

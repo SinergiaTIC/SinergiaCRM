@@ -46,7 +46,7 @@
 $module_name = 'DHA_PlantillasDocumentos';
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105 
 // $searchFields[$module_name] = array (
 //   'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
 //   'document_name' => 

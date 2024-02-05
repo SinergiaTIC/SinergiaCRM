@@ -51,7 +51,7 @@ $object_name = 'AOS_Product_Categories';
 $_module_name = 'aos_product_categories';
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105
 // $popupMeta = array('moduleMain' => $module_name,
 //                         'varName' => $object_name,
 //                         'orderBy' => $_module_name.'.name',

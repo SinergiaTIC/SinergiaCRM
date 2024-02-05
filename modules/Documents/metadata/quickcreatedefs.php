@@ -44,7 +44,7 @@
  */
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105 
 // $viewdefs['Documents']['QuickCreate'] = array(
 //     'templateMeta' => array('form' => array('enctype'=>'multipart/form-data',
 //                                             'hidden'=>array('<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">',

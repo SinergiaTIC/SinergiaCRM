@@ -50,7 +50,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 global $current_user;
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105 
 // $dashletData['EmailsDashlet']['searchFields'] = array(
 //     'date_entered' => array('default' => ''),
 //     'date_modified' => array('default' => ''),

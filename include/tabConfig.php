@@ -44,7 +44,7 @@
  */
 
 // STIC-Custom - MHP - 20240201 - Override the core tabConfig with the custom tabConfig
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105
 // $GLOBALS['tabStructure'] = array(
 //     "LBL_TABGROUP_SALES" => array(
 //         'label' => 'LBL_TABGROUP_SALES',

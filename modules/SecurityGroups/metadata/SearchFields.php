@@ -49,7 +49,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $module_name = 'SecurityGroups';
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105 
 // $searchFields[$module_name] =
 //     array(
 //         'name' => array( 'query_type'=>'default'),

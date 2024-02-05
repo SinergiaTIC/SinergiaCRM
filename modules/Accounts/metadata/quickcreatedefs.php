@@ -47,7 +47,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105
 /*********************************************************************************
 
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.

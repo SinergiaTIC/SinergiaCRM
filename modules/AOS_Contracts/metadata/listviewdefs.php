@@ -49,7 +49,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 global $sugar_config;
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105
 // $listViewDefs ['AOS_Contracts'] =
 // array(
 //   'NAME' =>

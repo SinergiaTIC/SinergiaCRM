@@ -51,7 +51,7 @@ $object_name = 'FP_Event_Locations';
 $_module_name = 'fp_event_locations';
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/MHP 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/105 
 // $popupMeta = array('moduleMain' => $module_name,
 //                         'varName' => $object_name,
 //                         'orderBy' => $_module_name.'.name',
