@@ -71,12 +71,12 @@ function insertActionLinesHeader(){
     //Create row
     var x = tablebody.insertRow(-1);
     x.id = prefix+ln;
-    x.insertCell(-1).id=prefix+'Cell'+'delete'+ln;   // Delete button
-    x.insertCell(-1).id=prefix+'Cell'+'type'+ln;     // Action Type
-    x.insertCell(-1).id=prefix+'Cell'+'element'+ln;  // Element
-    x.insertCell(-1).id=prefix+'Cell'+'action'+ln;   // Action
-    x.insertCell(-1).id=prefix+'Cell'+'value'+ln;    // Value
-    x.insertCell(-1).id=prefix+'Cell'+'section'+ln;  // Section
+    x.insertCell(-1).id=prefix+'Cell'+'delete'+ln;           // Delete button
+    x.insertCell(-1).id=prefix+'Cell'+'type'+ln;             // Action Type
+    x.insertCell(-1).id=prefix+'Cell'+'element'+ln;          // Element
+    x.insertCell(-1).id=prefix+'Cell'+'action'+ln;           // Action
+    x.insertCell(-1).id=prefix+'Cell'+'value'+ln;            // Value
+    x.insertCell(-1).id=prefix+'Cell'+'element_section'+ln;  // Section
   
     // Initial fills
   
@@ -98,16 +98,6 @@ function insertActionLinesHeader(){
       $(this).find('td').last().removeAttr("style");
       $(this).find('td').height($(this).find('td').last().height() + 8);
     });
-
-    //IEPA!!
-    // // Add Summary
-    // $("#"+id+"_head").parent().parent().append('<input type="hidden" name="summary" id="'+prefix+'summary'+ln+'" value="">');
-    // $("#"+prefix+'summary'+ln).hide();
-    // $("#"+prefix+'value'+ln).on("change", function(){
-    //     $("#"+prefix+'summary'+ln).val(
-    //         $("#"+prefix+'field'+ln).text() + " " + $("#"+prefix+'operator'+ln).text() + " " + $("#"+prefix+'value'+ln)
-    //     );
-    // });
 
     actln++;
     actln_count++;
@@ -147,7 +137,7 @@ function insertActionLinesHeader(){
       $("#"+actprefix+'Cell'+'element'+ln).html("");
       $("#"+actprefix+'Cell'+'action'+ln).html("");
       $("#"+actprefix+'Cell'+'value'+ln).html("");
-      $("#"+actprefix+'Cell'+'section'+ln).html("");
+      $("#"+actprefix+'Cell'+'element_section'+ln).html("");
     } else {
       // Create next selector
       // Element selector
@@ -170,7 +160,7 @@ function insertActionLinesHeader(){
       // Reset next selectors
       $("#"+actprefix+'Cell'+'action'+ln).html("");
       $("#"+actprefix+'Cell'+'value'+ln).html("");
-      $("#"+actprefix+'Cell'+'section'+ln).html("");
+      $("#"+actprefix+'Cell'+'element_section'+ln).html("");
     } else {
       // Create next selector
       // Action selector
@@ -195,7 +185,7 @@ function insertActionLinesHeader(){
     } else if(action==""||action==null){
       // Reset next selectors
       $("#"+actprefix+'Cell'+'value'+ln).html("");
-      $("#"+actprefix+'Cell'+'section'+ln).html("");
+      $("#"+actprefix+'Cell'+'element_section'+ln).html("");
     } else {
       //Create next selector
       // Value editor
@@ -209,13 +199,13 @@ function insertActionLinesHeader(){
       $("#"+actprefix+'Cell'+'value'+ln).children().attr('style', 'width: 90% !important');
   
       // Section selector
-      $("#"+actprefix+'Cell'+'section'+ln).html(
-        "<select type='text' name='"+actprefix+"section["+ln+"]' id='"+actprefix+"section"+ln+"'>"+
+      $("#"+actprefix+'Cell'+'element_section'+ln).html(
+        "<select type='text' name='"+actprefix+"element_section["+ln+"]' id='"+actprefix+"element_section"+ln+"'>"+
           view_module_action_map.actionTypes[type].actions[action].sections.options+
         "</select>");
-      if($("#"+actprefix+"section"+ln).children().length<=1){
-        $("#"+actprefix+"section"+ln).hide();
-        $("#"+actprefix+'Cell'+'section'+ln).append("<p>"+$("#"+actprefix+"section"+ln).text()+"</p>");
+      if($("#"+actprefix+"element_section"+ln).children().length<=1){
+        $("#"+actprefix+"element_section"+ln).hide();
+        $("#"+actprefix+'Cell'+'element_section'+ln).append("<p>"+$("#"+actprefix+"element_section"+ln).text()+"</p>");
       }
     }
   }

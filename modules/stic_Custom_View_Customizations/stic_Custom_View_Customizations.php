@@ -65,35 +65,38 @@ class stic_Custom_View_Customizations extends Basic
     public function save($check_notify = false)
     {
         require_once("modules/stic_Custom_View_Customizations/Utils.php");
+        require_once('modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php');
+        require_once('modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php');
 
         $return_id = parent::save($check_notify);
-        $customizationBean = BeanFactory::getBean('stic_Custom_View_Customizations', $this->id);
-        $viewBean = getCustomView($customizationBean);
+        $viewBean = getCustomView($this);
 
-        require_once('modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php');
+        // Save Condition lines
         $condition = BeanFactory::newBean('stic_Custom_View_Conditions');
         $condition->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Condition');
 
-        require_once('modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php');
+        // Save Action lines
         $action = BeanFactory::newBean('stic_Custom_View_Actions');
         $action->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Action');
 
         // Set Conditions field
-        $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_conditions');
+        $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
         $conditions = array();
         foreach ($conditionBeanArray as $conditionBean) {
-            $conditions[] = $conditionBean->field . " " . $conditionBean->operator . " " . $conditionBean->value;
-        //     // if ($customizationBean->id != $bean->id && 
-        //     //     $customizationBean->init == $bean->init &&
-        //     //     $customizationBean->customization_order == $bean->customization_order) {
-        //     //         $customizationBean->customization_order = $customizationBean->customization_order + 1;
-        //     //         $customizationBean->save();
-        //     //     }
+            $conditions[] = $conditionBean->field . "." . $conditionBean->operator . "." . $conditionBean->value;
         }
+        $this->conditions = implode("|", $conditions);
 
         // Set Actions field
+        $actionsBeanArray = SticUtils::getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
+        $actions = array();
+        foreach ($actionsBeanArray as $actionBean) {
+            $actions[] = $actionBean->type . ":" . $actionBean->element . "." . $actionBean->action . "=" . $actionBean->value . "(". $actionBean->element_section . ")";
+        }
+        $this->actions = implode("|", $actions);
+
+        parent::save($check_notify);
 
         return $return_id;
     }
-
 }

@@ -63,8 +63,7 @@ $mod_strings = array (
   'LBL_FIELD' => 'Campo',
   'LBL_OPERATOR' => 'Operador',
   'LBL_VALUE' => 'Valor',
-  'LBL_SUMMARY' => 'Resumen',
-    
+
   'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizaciones';
