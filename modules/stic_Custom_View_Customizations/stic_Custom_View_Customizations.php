@@ -78,6 +78,21 @@ class stic_Custom_View_Customizations extends Basic
         $action = BeanFactory::newBean('stic_Custom_View_Actions');
         $action->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Action');
 
+        // Set Conditions field
+        $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_conditions');
+        $conditions = array();
+        foreach ($conditionBeanArray as $conditionBean) {
+            $conditions[] = $conditionBean->field . " " . $conditionBean->operator . " " . $conditionBean->value;
+        //     // if ($customizationBean->id != $bean->id && 
+        //     //     $customizationBean->init == $bean->init &&
+        //     //     $customizationBean->customization_order == $bean->customization_order) {
+        //     //         $customizationBean->customization_order = $customizationBean->customization_order + 1;
+        //     //         $customizationBean->save();
+        //     //     }
+        }
+
+        // Set Actions field
+
         return $return_id;
     }
 

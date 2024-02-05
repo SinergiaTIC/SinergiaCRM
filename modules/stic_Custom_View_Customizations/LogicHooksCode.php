@@ -49,22 +49,6 @@ class stic_Custom_View_CustomizationsLogicHooks
                     $customizationBean->save();
                 }
         }
-
-        //IEPA!!
-        // // Set Conditions field
-        // $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($customViewBean, 'stic_custom_view_customizations_stic_custom_view_conditions');
-        // $conditions = array();
-        // foreach ($conditionBeanArray as $conditionBean) {
-        //     $conditions[] = $conditionBean->field . " " . $conditionBean->operator . " " . $conditionBean->value;
-        //     // if ($customizationBean->id != $bean->id && 
-        //     //     $customizationBean->init == $bean->init &&
-        //     //     $customizationBean->customization_order == $bean->customization_order) {
-        //     //         $customizationBean->customization_order = $customizationBean->customization_order + 1;
-        //     //         $customizationBean->save();
-        //     //     }
-        // }
-
-        // Set Actions field
     }
 
     public function after_save(&$bean, $event, $arguments)

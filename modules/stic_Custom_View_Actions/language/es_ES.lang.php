@@ -65,6 +65,7 @@ $mod_strings = array (
   'LBL_ACTION' => 'Acción',
   'LBL_VALUE' => 'Valor',
   'LBL_ELEMENT_SECTION' => 'Aplicar a',
+  'LBL_SUMMARY' => 'Resumen',
 
   'LBL_FIELD' => 'Campo',
   'LBL_PANEL' => 'Panel',

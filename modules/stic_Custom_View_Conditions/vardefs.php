@@ -121,6 +121,13 @@ $dictionary['stic_Custom_View_Conditions'] = array(
     'len' => '255',
     'size' => '20',
   ),
+  'summary' => array(
+    'name' => 'summary',
+    'vname' => 'LBL_SUMMARY',
+    'type' => 'text',
+    'rows' => 2,
+    'cols' => 80,
+  ),
 ),
     'relationships' => array (
 ),

@@ -98,26 +98,34 @@ function insertActionLinesHeader(){
       $(this).find('td').last().removeAttr("style");
       $(this).find('td').height($(this).find('td').last().height() + 8);
     });
-  
+
+    //IEPA!!
+    // // Add Summary
+    // $("#"+id+"_head").parent().parent().append('<input type="hidden" name="summary" id="'+prefix+'summary'+ln+'" value="">');
+    // $("#"+prefix+'summary'+ln).hide();
+    // $("#"+prefix+'value'+ln).on("change", function(){
+    //     $("#"+prefix+'summary'+ln).val(
+    //         $("#"+prefix+'field'+ln).text() + " " + $("#"+prefix+'operator'+ln).text() + " " + $("#"+prefix+'value'+ln)
+    //     );
+    // });
+
     actln++;
     actln_count++;
   
     return ln;
   }
+
   function loadActionLine(action) {
-    console.log(action);
     var prefix = actprefix;
-    var ln = 0;
-  
-    ln = insertActionLine();
+    var ln = insertActionLine();
+
     for(var a in action) {
       $("#"+prefix+a+ln).val(action[a]);
       $("#"+prefix+a+ln).change();
     }
-  
-    if (action['value'] instanceof Array) {
-      action['value'] = JSON.stringify(action['value'])
-    }
+    // if (action['value'] instanceof Array) {
+    //   action['value'] = JSON.stringify(action['value'])
+    // }
   }
   
   function markActionLineDeleted(ln){

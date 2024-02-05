@@ -42,11 +42,10 @@ class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCr
         }
         include_once("modules/stic_Custom_View_Customizations/Utils.php");
         echo getLangStrings();
-
-        parent::process($module);
-
         echo getVersionedScript("modules/stic_Custom_View_Customizations/Utils.js");
         echo getVersionedScript("modules/stic_Custom_View_Customizations/action_lines.js");
         echo getVersionedScript("modules/stic_Custom_View_Customizations/condition_lines.js");
+
+        parent::process($module);
     }
 }

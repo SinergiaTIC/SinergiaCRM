@@ -169,6 +169,13 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'studio' => 'visible',
     'dependency' => false,
   ),
+  'summary' => array(
+    'name' => 'summary',
+    'vname' => 'LBL_SUMMARY',
+    'type' => 'text',
+    'rows' => 2,
+    'cols' => 80,
+  ),
 ),
     'relationships' => array (
 ),

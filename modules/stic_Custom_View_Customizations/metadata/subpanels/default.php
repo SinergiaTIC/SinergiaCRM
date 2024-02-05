@@ -55,10 +55,24 @@ $subpanel_layout = array (
     //   'width' => '40%',
     //   'default' => true,
     // ),
-    'summary' => 
+    // 'summary' => 
+    // array (
+    //   'type' => 'text',
+    //   'vname' => 'LBL_SUMMARY',
+    //   'width' => '40%',
+    //   'default' => true,
+    // ),
+    'conditions' => 
     array (
       'type' => 'text',
-      'vname' => 'LBL_SUMMARY',
+      'vname' => 'LBL_CONDITIONS',
+      'width' => '40%',
+      'default' => true,
+    ),
+    'actions' => 
+    array (
+      'type' => 'text',
+      'vname' => 'LBL_ACTIONS',
       'width' => '40%',
       'default' => true,
     ),
