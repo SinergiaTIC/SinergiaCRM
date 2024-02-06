@@ -28,12 +28,54 @@
 var sticCustomView = class sticCustomView {
     constructor(view) {
         this.view = view;
-        this.customizations = [];
     }
 
     field(fieldName) { return new CustomViewField(this, fieldName); }
     panel(panelName) { return new CustomViewPanel(this, panelName); }
     tab(tabIndex)    { return new CustomViewTab(this, tabIndex); }
+
+
+    /**
+     * Process the View customization
+     * @param {*} jsonRules : The rules to apply in a string with json structure. The rules will be applied in order
+     * json format for rules: list of customizations, each with conditions and actions. 
+     *  [
+     *   {
+     *    conditions: [], 
+     *    actions: [{type: tab_modification, element: 4, action: visible, value: 0, element_section: tab}],
+     *   },
+     *   {
+     *    conditions: [{field: stic_referral_agent_c, operator: Equal_To, value: social_services}],
+     *    actions: [{type: tab_modification, element: 4, action: visible, value: 1, element_section: tab}],
+     *   },
+     *  ]
+     */
+    processSticCustomView(jsonRules) {
+        var customizations = JSON.parse(jsonRules);
+        if(Array.isArray(customizations) && customizations.length) {
+            var self = this;
+            customizations.forEach(customization => {
+                self.addCustomization(customization.conditions, customization.actions);
+            });
+        }
+    }
+
+    /**
+     * Adds a customization: a group of Conditions to apply a list of actions
+     */
+    addCustomization(conditions, actions) {
+        // Bind every change involved in condition set
+        if(Array.isArray(conditions) && conditions.length) {
+            var self = this;
+            conditions.forEach(condition => {
+                self.field(condition.field).onChange(function() { 
+                    self.checkConditionsAndApplyActions(conditions, actions); 
+                });
+            });
+        }
+        // Check conditions with current values
+        this.checkConditionsAndApplyActions(conditions, actions); 
+    }
 
     /**
      * Applies an action defined in an object
@@ -54,39 +96,34 @@ var sticCustomView = class sticCustomView {
         }
     }
     
+    /**
+     * Check a condition defined in an object
+     * Example:
+     * {
+     *  field: stic_referral_agent_c,
+     *  operator: Equal_To
+     *  value: social_services
+     * }
+     */
     checkCondition(condition) {
         return this.field(condition.field).checkCondition(condition);
     }
 
+    /**
+     * Checks all conditions in a list in order to apply all actions
+     */
     checkConditionsAndApplyActions(conditions, actions) {
         var value = true;
-        conditions.array.forEach(condition => value &&= this.checkCondition(condition));
-        if(value) {
-            actions.forEach(action => this.applyAction(action));
+        if(Array.isArray(conditions) && conditions.length) {
+            var self = this;
+            conditions.forEach(condition => value &&= self.checkCondition(condition));
         }
-    }
-
-    /**
-     * conditions: 
-     * [
-     *  {
-     *      field: stic_referral_agent_c,
-     *      operator: Equal_To
-     *      value: social_services
-     *  },
-     * ],
-     */
-    addCustomization(conditions, actions) {
-        // Guardem la tupla condicions - accions
-        this.customizations.push([conditions, actions]);
-
-        // Bind cada condició a la funció d'avaluació de totes elles
-        var self = this;
-        conditions.forEach(condition => {
-            this.field(condition.field).onChange(function() { 
-                self.checkConditionsAndApplyActions(conditions, actions); 
-            });
-        });
+        if(value) {
+            if(Array.isArray(actions) && actions.length) {
+                var self = this;
+                actions.forEach(action => self.applyAction(action));
+            }
+        }
     }
 }
 
