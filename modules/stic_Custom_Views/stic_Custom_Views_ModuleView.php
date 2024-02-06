@@ -200,14 +200,14 @@ class stic_Custom_Views_ModuleView
             case 'date':
             case 'datetime':
             case 'datetimecombo':
-                $validOps = array('Equal_To','Not_Equal_To','Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To','is_null');
+                $validOps = array('Equal_To','Not_Equal_To','Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To','is_null', 'is_not_null');
                 break;
             case 'enum':
             case 'multienum':
-                $validOps = array('Equal_To','Not_Equal_To','is_null');
+                $validOps = array('Equal_To','Not_Equal_To','is_null','is_not_null');
                 break;
             default:
-                $validOps = array('Equal_To','Not_Equal_To','Contains', 'Starts_With', 'Ends_With','is_null');
+                $validOps = array('Equal_To','Not_Equal_To','Contains', 'Starts_With', 'Ends_With','is_null','is_not_null');
                 break;
         }
         $operatorList = array();
@@ -230,7 +230,7 @@ class stic_Custom_Views_ModuleView
                         $validActions = array('visible', 'readonly', 'mandatory', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline');
                         break;
                     case 'detailview':
-                        $validActions = array('visible', 'inline', 'color', 'background', 'bold', 'italic', 'underline');
+                        $validActions = array('visible', /*'inline',*/ 'color', 'background', 'bold', 'italic', 'underline');
                         break;
                 }
                 break;

@@ -1,102 +1,307 @@
 /**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+/**
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomView  = {
-    editview: {
-        field: (fieldName) => new CustomViewField("editview", fieldName),
-        panel: (panelName) => new CustomViewPanel("editview", panelName),
-        tab: (tabIndex) => new CustomViewTab("editview", tabIndex),
-    },
-    detailview: {
-        field: (fieldName) => new CustomViewField("detailview", fieldName),
-        panel: (panelName) => new CustomViewPanel("detailview", panelName),
-        tab: (tabIndex) => new CustomViewTab("detailview", tabIndex),
-    },
-    quickcreate: {
-        field: (fieldName) => new CustomViewField("quickcreate", fieldName),
-        panel: (panelName) => new CustomViewPanel("quickcreate", panelName),
-        tab: (tabIndex) => new CustomViewTab("quickcreate", tabIndex),
-    }
-}
-var CustomViewItem = class CustomViewItem {
-    constructor (view, itemName) {
+
+var sticCustomView = class sticCustomView {
+    constructor(view) {
         this.view = view;
+        this.customizations = [];
+    }
+
+    field(fieldName) { return new CustomViewField(this, fieldName); }
+    panel(panelName) { return new CustomViewPanel(this, panelName); }
+    tab(tabIndex)    { return new CustomViewTab(this, tabIndex); }
+
+    /**
+     * Applies an action defined in an object
+     * Example:
+     * {
+     *  type: tab_modification,
+     *  element: 4,
+     *  action: visible,
+     *  value: 0,
+     *  element_section: tab,
+     * },
+     */
+    applyAction(action) {
+        switch(action.type) {
+            case "field_modification": return this.field(action.element).applyAction(action);
+            case "panel_modification": return this.panel(action.element).applyAction(action);
+            case "tab_modification":   return this.tab(action.element).applyAction(action);
+        }
+    }
+    
+    checkCondition(condition) {
+        return this.field(condition.field).checkCondition(condition);
+    }
+
+    checkConditionsAndApplyActions(conditions, actions) {
+        var value = true;
+        conditions.array.forEach(condition => value &&= this.checkCondition(condition));
+        if(value) {
+            actions.forEach(action => this.applyAction(action));
+        }
+    }
+
+    /**
+     * conditions: 
+     * [
+     *  {
+     *      field: stic_referral_agent_c,
+     *      operator: Equal_To
+     *      value: social_services
+     *  },
+     * ],
+     */
+    addCustomization(conditions, actions) {
+        // Guardem la tupla condicions - accions
+        this.customizations.push([conditions, actions]);
+
+        // Bind cada condició a la funció d'avaluació de totes elles
+        var self = this;
+        conditions.forEach(condition => {
+            this.field(condition.field).onChange(function() { 
+                self.checkConditionsAndApplyActions(conditions, actions); 
+            });
+        });
+    }
+}
+
+var CustomViewItemBase = class CustomViewItemBase {
+    constructor (customView, itemName) {
+        this.customView = customView;
+
+        this.view = customView.view;
         this.itemName = itemName;
-        if (this.view=="detailview"){
-            this.elementView = $(".detail-view");
+        
+        switch(this.view) {
+            case "detailview":  this.elementView = $(".detail-view"); break;
+            case "editview":    this.elementView = $("#EditView"); break;
+            case "quickcreate": this.elementView = $("#EditView_tabs"); break;
         }
-        if (this.view=="editview"){
-            this.elementView = $("#EditView");
+        switch(this.view) {
+            case "detailview":  this.form = null; break;
+            case "editview":    this.form = this.elementView; break;
+            case "quickcreate": this.form = this.elementView.parent(); break;
         }
-        if (this.view=="quickcreate"){
-            this.elementView = $("#EditView_tabs");
-        }
-    };
+    }
+
+    applyAction(action) { return false; } // Abstract class
 }
-var CustomViewField = class CustomViewField extends CustomViewItem {
-    constructor (view, fieldName) {
-        super(view, fieldName);
+
+var CustomViewField = class CustomViewField extends CustomViewItemBase {
+    constructor (customView, fieldName) {
+        super(customView, fieldName);
+
         this.fieldName = fieldName;
-    };
-    input() {
-        if (this.view=="detailview") {
-            return new CustomViewDivDetailInput(this, this.row().element.children('[field="'+this.fieldName+'"]'));
+
+        var rowElement = this.elementView.find('*[data-field="'+this.fieldName+'"]');
+        switch(this.view) {
+            case "detailview":  this.row = new CustomViewDivDetailRow(this, rowElement);; break;
+            case "editview":    this.row = new CustomViewDivEditRow(this, rowElement); break;
+            case "quickcreate": this.row = new CustomViewDivEditRow(this, rowElement); break;
         }
-        if (this.view=="editview") {
-            return new CustomViewDivEditInput(this, this.row().element.children('[field="'+this.fieldName+'"]'));
+        
+        this.label = new CustomViewDivLabel(this, this.row.element.children('.label'));
+        
+        var inputElement = this.row.element.children('[field="'+this.fieldName+'"]');
+        switch(this.view) {
+            case "detailview":  this.input = new CustomViewDivDetailInput(this, inputElement); break;
+            case "editview":    this.input = new CustomViewDivEditInput(this, inputElement); break;
+            case "quickcreate": this.input = new CustomViewDivEditInput(this, inputElement); break;
         }
-        if (this.view=="quickcreate") {
-            return new CustomViewDivEditInput(this, this.row().element.children('[field="'+this.fieldName+'"]'));
+    }
+    show(show=true) { this.row.show(show); return this; }
+    hide() { return this.show(false); }
+
+    readonly(readonly=true) { this.input.readonly(readonly); return this; }
+
+    mandatory(mandatory=true) {
+        if(mandatory===true||mandatory==="1"||mandatory===1) {
+            //IEPA!!
+            // Type always text??!!!
+            setRequiredStatus(this.fieldName, 'text',SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
+        } else {
+            setUnrequiredStatus(this.fieldName);
         }
+        return this;
     }
-    label() {
-        return new CustomViewDivLabel(this, this.row().element.children('.label'));
+    inline(inline=true) {
+        //IEPA!!
+        console.log("Inline not available. Requested:" + inline);
+        return false;
     }
-    row() {
-        return new CustomViewDiv(this, this.elementView.find('*[data-field="'+this.fieldName+'"]'));
+    value(newValue) { return this.input.value(newValue); }
+    fixed_value(fixed_value) {
+        var value = this.value(fixed_value);
+
+        //IEPA!!
+        console.log("Fixed_value not checked. Requested:" + fixed_value);
+        return value;
     }
-    show(show = true) {
-        return this.row().show(show);
+
+    applyAction(action) {
+        switch(action.element_section){
+            case "field_label": return this.label.applyAction(action);
+            case "field_input": return this.input.applyAction(action);
+            case "field": {
+                switch(action.action){
+                    case "visible": return this.show(action.value);
+                    case "readonly": return this.readonly(action.value);
+                    case "mandatory": return this.mandatory(action.value);
+                    case "inline": return this.inline(action.value);
+                    case "fixed_value": return this.fixed_value(action.value);
+                }
+            }
+        }
+        return false;
     }
-    hide() {
-        return this.row().hide();
+    
+    checkCondition(condition) {
+        switch(condition.operator) {
+            case 'Equal_To':
+                return this.value()==condition.value;
+            case 'Not_Equal_To':
+                return this.value()!==condition.value;
+            case 'Greater_Than':
+                return this.value()>condition.value;
+            case 'Less_Than':
+                return this.value()<condition.value;
+            case 'Greater_Than_or_Equal_To':
+                return this.value()>=condition.value;
+            case 'Less_Than_or_Equal_To':
+                return this.value()<=condition.value;
+            case 'Contains':
+                return (this.value()??"").includes(condition.value);
+            case 'Starts_With':
+                return (this.value()??"").startsWith(condition.value);
+            case 'Ends_With':
+                return (this.value()??"").endsWith(condition.value);
+            case 'is_null':
+                return (this.value()??"")=="";
+            case 'is_not_null':
+                return (this.value()??"")!="";
+        }
+        return false;
     }
-    readonly(readonly=true) {
-        return this.input().readonly(readonly);
+
+    onChange(callback) {
+        this.input.onChange(callback);
+    }
+    change() {
+        this.input.change();
     }
 }
-var CustomViewDiv = class CustomViewDiv {
+var CustomViewPanel = class CustomViewPanel extends CustomViewItemBase {
+    constructor (customView, panelName) {
+        super(customView, panelName);
+
+        this.panelName = panelName;
+
+        this.panel = new CustomViewDivBase(this, this.elementView.find('.panel-body[data-id="'+this.panelName+'"]').parent());
+        this.header = new CustomViewDivHeader(this, this.panel.element.children('.panel-heading'));
+    };
+
+    show(show=true) { this.panel.show(show); return this; }
+    hide() { return this.show(false); }
+
+    applyAction(action) {
+        switch(action.element_section){
+            case "panel_header": return this.header.applyAction(action);
+            case "panel": {
+                switch(action.action){
+                    case "visible": return this.show(action.value);
+                }
+            }
+        }
+        return false;
+    }
+}
+var CustomViewTab = class CustomViewTab extends CustomViewItemBase {
+    constructor (customView, tabIndex) {
+        super(customView, tabIndex);
+
+        this.tabIndex = tabIndex;
+
+        this.header = new CustomViewDivLabel(this, this.elementView.find('[id=tab'+this.tabIndex+']'));
+    };
+
+    show(show=true) { this.header.show(show); return this; }
+    hide() { return this.show(false); }
+
+    applyAction(action) {
+        switch(action.element_section){
+            case "tab_header": return this.header.applyAction(action);
+            case "tab": {
+                switch(action.action){
+                    case "visible": return this.show(action.value);
+                }
+            }
+        }
+        return false;
+    }
+}
+
+var CustomViewDivBase = class CustomViewDivBase {
     constructor (item, element){
         this.item = item;
         this.element = element;
     }
     show(show=true) {
-        if(show) {
+        if(show===true||show==="1"||show===1) {
             this.element.show();
         } else {
             this.element.hide();
         }
         return this;
     }
-    hide() {
-        return this.show(false);
-    }
+    hide() { return this.show(false); }
+
+    applyAction(action) { return false; } // Abstract class
 }
-var CustomViewDivLabel = class CustomViewDivLabel extends CustomViewDiv {
+
+var CustomViewDivEditRow = class CustomViewDivEditRow extends CustomViewDivBase {
     constructor (item, element){
         super(item, element);
     }
-    color(color="") {
-        this.element.css("color", color);
-        return this;
+}
+var CustomViewDivDetailRow = class CustomViewDivDetailRow extends CustomViewDivBase {
+    constructor (item, element){
+        super(item, element);
     }
-    background(color="") {
-        this.element.css("background-color", color);
-        return this;
+}
+var CustomViewDivLabel = class CustomViewDivLabel extends CustomViewDivBase {
+    constructor (item, element){
+        super(item, element);
     }
+    color(color="") { this.element.css("color", color); return this; }
+    background(color="") { this.element.css("background-color", color); return this; }
+
     bold(bold=true) {
-        if (bold) {
+        if (bold===true||bold==="1"||bold===1) {
             this.element.css('font-weight', 'bold');
         } else {
             this.element.css('font-weight', 'normal');
@@ -104,7 +309,7 @@ var CustomViewDivLabel = class CustomViewDivLabel extends CustomViewDiv {
         return this;
     }
     italic(italic=true) {
-        if (italic) {
+        if (italic===true||italic==="1"||italic===1) {
             this.element.css('font-style', 'italic');
         } else {
             this.element.css('font-style', 'normal');
@@ -112,12 +317,38 @@ var CustomViewDivLabel = class CustomViewDivLabel extends CustomViewDiv {
         return this;
     }
     underline(underline=true) {
-        if (underline) {
+        if (underline===true||underline==="1"||underline===1) {
             this.element.css('text-decoration', 'underline');
         } else {
             this.element.css('text-decoration', 'normal');
         }
         return this;
+    }
+    text(newText){
+        return this.element.text(newText);
+    }
+    value(newValue) {
+        return null;
+    }
+
+
+    applyAction(action) {
+        switch(action.action){
+            case "visible": return this.show(action.value);
+            case "color": return this.color(action.value);
+            case "background": return this.background(action.value);
+            case "bold": return this.bold(action.value);
+            case "italic": return this.italic(action.value);
+            case "underline": return this.underline(action.value);
+        }
+        return false;
+    }
+
+    onChange(callback) {
+        this.element.on("change paste keyup", function() { callback();});
+    }
+    change() {
+        this.element.change();
     }
 }
 var CustomViewDivEditInput = class CustomViewDivEditInput extends CustomViewDivLabel {
@@ -129,7 +360,14 @@ var CustomViewDivEditInput = class CustomViewDivEditInput extends CustomViewDivL
         this.labelValue = this.element.find(".stic-ReadonlyInput");
         this.type = this.element.attr("type"); 
     }
-    text(){
+    value(newValue) {
+        if(newValue!==undefined) {
+            this.editor.val(newValue);
+            this.change();
+        }
+        return this.editor.val();
+    }
+    text(newText){
         var text = this.editor.val();
         if(this.type=="enum" || this.type=="multienum"){
             text = this.editor.find("option:selected").text();
@@ -152,7 +390,7 @@ var CustomViewDivEditInput = class CustomViewDivEditInput extends CustomViewDivL
         return this;
     }
     readonly(readonly=true) {
-        if(readonly) {
+        if(readonly===true||readonly==="1"||readonly===1) {
             this.editor.hide();
             this.items.hide();
             if (this.labelValue.length==0) {
@@ -174,6 +412,13 @@ var CustomViewDivEditInput = class CustomViewDivEditInput extends CustomViewDivL
         }
         return this;
     }
+
+    onChange(callback) {
+        this.editor.on("change paste keyup", function() { callback();});
+    }
+    change() {
+        this.editor.change();
+    }
 }
 var CustomViewDivDetailInput = class CustomViewDivDetailInput extends CustomViewDivLabel {
     constructor (item, element){
@@ -181,24 +426,6 @@ var CustomViewDivDetailInput = class CustomViewDivDetailInput extends CustomView
     }
 }
 
-var CustomViewPanel = class CustomViewPanel extends CustomViewItem {
-    constructor (view, panelName) {
-        super(view, panelName);
-        this.panelName = panelName;
-    };
-    panel() {
-        return new CustomViewDiv(this, this.elementView.find('.panel-body[data-id="'+this.panelName+'"]').parent());
-    }
-    header() {
-        return new CustomViewDivHeader(this, this.panel().element.children('.panel-heading'));
-    }
-    show(show = true) {
-        return this.panel().show(show);
-    }
-    hide() {
-        return this.panel().hide();
-    }
-}
 var CustomViewDivHeader = class CustomViewDivHeader extends CustomViewDivLabel {
     constructor (item, element){
         super(item, element);
@@ -217,19 +444,4 @@ var CustomViewDivHeader = class CustomViewDivHeader extends CustomViewDivLabel {
 
 }
 
-var CustomViewTab = class CustomViewTab extends CustomViewItem {
-    constructor (view, tabIndex) {
-        super(view, tabIndex);
-        this.tabIndex = tabIndex;
-    };
-    header() {
-        return new CustomViewDivLabel(this, this.elementView.find('[id=tab'+this.tabIndex+']'));
-    }
-    show(show = true) {
-        return this.header().show(show);
-    }
-    hide() {
-        return this.header().hide();
-    }
-}
 

@@ -109,30 +109,31 @@ function initializeQuickCreateCustomization() {
 }
 
 function initializeEditFields() {
+  var customView = new sticCustomView("editview");
+
   // Hide module selector, show label with module name
-  sticCustomView.editview.field("view_module").readonly().bold();
+  customView.field("view_module").readonly().input.bold();
 
   // Hide view selector, show label with view name
-  sticCustomView.editview.field("view_type").readonly().bold();
+  customView.field("view_type").readonly().input.bold();
 
   // Set initial name
-  sticCustomView.editview.field("name").input().editor.val(
-    sticCustomView.editview.field("view_module").input().text() + " - " +
-    sticCustomView.editview.field("view_type").input().text() + " - " +
-    sticCustomView.editview.field("customization_name").input().text()
+  customView.field("name").value(
+    customView.field("view_module").input.text() + " - " +
+    customView.field("view_type").input.text() + " - " +
+    customView.field("customization_name").input.text()
   );
 
   // Hide name, show label with name
-  sticCustomView.editview.field("name").readonly().bold();
+  customView.field("name").readonly().input.bold();
 
   // Update name when any change on customization_name
-  sticCustomView.editview.field("customization_name").input().editor.on("change paste keyup", function() {
-    sticCustomView.editview.field("name").input().editor.val(
-      sticCustomView.editview.field("view_module").input().text() + " - " +
-      sticCustomView.editview.field("view_type").input().text() + " - " +
-      sticCustomView.editview.field("customization_name").input().text()
+  customView.field("customization_name").onChange(function() {
+    customView.field("name").value(
+      customView.field("view_module").input.text() + " - " +
+      customView.field("view_type").input.text() + " - " +
+      customView.field("customization_name").input.text()
     );
-    sticCustomView.editview.field("name").input().editor.change();
   });
 }
 

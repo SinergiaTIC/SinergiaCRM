@@ -33,17 +33,20 @@ var module = "stic_Custom_View_Customizations";
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "quickcreate":
-  case "edit":
-  case "popup":
     $(document).ready(function () { 
       // Hide Condition lines
       if($('input[name="init"]').val()=="1") {
-        sticCustomView.quickcreate.panel("LBL_CONDITION_LINES").hide();
-        sticCustomView.quickcreate.field("customization_order").readonly();
+        var customView = new sticCustomView("quickcreate");
+        customView.panel("LBL_CONDITION_LINES").hide();
+        customView.field("customization_order").readonly();
       }
     });
     break;
 
+  case "edit":
+  case "popup":
+    break;
+    
   case "detail":
     break;
 
