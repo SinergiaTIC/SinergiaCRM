@@ -49,7 +49,7 @@ class stic_JournalsViewList extends ViewList
 
         SticViews::display($this);
         
-        // echo getVersionedScript("modules/stic_Journals/Utils.js");
+        echo getVersionedScript("modules/stic_Journals/Utils.js");
 
         // Write here you custom code
     }

@@ -20,35 +20,22 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-require_once 'include/MVC/View/views/view.popup.php';
-require_once 'SticInclude/Views.php';
-
-class stic_JournalsViewPopup extends ViewPopup
+class stic_JournalsLogicHooks
 {
-
-    public function __construct()
+    public function before_save(&$bean, $event, $arguments)
     {
-        parent::__construct();
+        include_once 'SticInclude/Utils.php';
+        global $app_list_strings;
+
+        // Create name if empty
+        if(empty($bean->name)) {
+            $relatedBean = SticUtils::getRelatedBeanObject($bean, 'stic_journals_stic_centers');
+            // If theres a center selected
+            if(!empty($relatedBean->name)) {
+                $bean->name = $relatedBean->name . ' - ' . $bean->journal_date . ' - ' . $app_list_strings['stic_journals_types_list'][$bean->type];
+            } else {
+                $bean->name = $bean->journal_date . ' - ' . $app_list_strings['stic_journals_types_list'][$bean->type];
+            }
+        }
     }
-
-    public function preDisplay()
-    {
-
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-
-    }
-    public function display()
-    {
-
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Journals/Utils.js");
-
-    }
-
 }

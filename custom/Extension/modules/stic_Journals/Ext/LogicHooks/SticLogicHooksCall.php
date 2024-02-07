@@ -20,35 +20,9 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-require_once 'include/MVC/View/views/view.popup.php';
-require_once 'SticInclude/Views.php';
-
-class stic_JournalsViewPopup extends ViewPopup
-{
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    public function preDisplay()
-    {
-
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-
-    }
-    public function display()
-    {
-
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Journals/Utils.js");
-
-    }
-
+//prevents directly accessing this file from a web browser
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
 }
+$hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_Journals/LogicHooksCode.php', 'stic_JournalsLogicHooks', 'before_save');
+

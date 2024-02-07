@@ -1,4 +1,3 @@
-<?php
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -20,35 +19,26 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+/* HEADER */
+// Set module name
+var module = "stic_Journals";
 
-require_once 'include/MVC/View/views/view.popup.php';
-require_once 'SticInclude/Views.php';
+/* VIEWS CUSTOM CODE */
+switch (viewType()) {
+  case "edit":
+  case "quickcreate":
+  case "popup":
+    setAutofill(["name"]);
+    break;
 
-class stic_JournalsViewPopup extends ViewPopup
-{
+  case "detail":
+    break;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
+  case "list":
+    break;
 
-    public function preDisplay()
-    {
-
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-
-    }
-    public function display()
-    {
-
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Journals/Utils.js");
-
-    }
-
+  default:
+    break;
 }
+
+/* AUX FUNCTIONS */

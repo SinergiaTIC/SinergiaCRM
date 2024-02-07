@@ -52,7 +52,7 @@ class stic_JournalsViewEdit extends ViewEdit
 
         // Write here you custom code
 
-        // echo getVersionedScript("modules/stic_Journals/Utils.js");
+        echo getVersionedScript("modules/stic_Journals/Utils.js");
     }
 
 }
