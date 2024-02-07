@@ -1,0 +1,84 @@
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+/**
+ * This file contains logic and functions needed to manage custom views behaviour
+ *
+ */
+var sticCustomViewDivBase = class sticCustomViewDivBase {
+    constructor (item, element){
+        this.item = item;
+        this.element = element;
+    }
+    show(show=true) {
+        if(show===true||show==="1"||show===1) {
+            this.element.show();
+        } else {
+            this.element.hide();
+        }
+        return this;
+    }
+    hide() { return this.show(false); }
+
+    color(color="") { this.element.css("color", color); return this; }
+    background(color="") { this.element.css("background-color", color); return this; }
+
+    bold(bold=true) {
+        if (bold===true||bold==="1"||bold===1) {
+            this.element.css('font-weight', 'bold');
+        } else {
+            this.element.css('font-weight', 'normal');
+        }
+        return this;
+    }
+    italic(italic=true) {
+        if (italic===true||italic==="1"||italic===1) {
+            this.element.css('font-style', 'italic');
+        } else {
+            this.element.css('font-style', 'normal');
+        }
+        return this;
+    }
+    underline(underline=true) {
+        if (underline===true||underline==="1"||underline===1) {
+            this.element.css('text-decoration', 'underline');
+        } else {
+            this.element.css('text-decoration', 'normal');
+        }
+        return this;
+    }
+
+    style(style) {
+        this.element.css(style);
+        return this;
+    }
+
+    mark(mark=true){
+        if(mark) {
+            this.element.css({"border-color": "orangered", "border-style": "dashed"});
+        } else {
+            this.element.css({"border-color": "", "border-style": "none"});
+        }
+    }
+
+    applyAction(action) { return false; } // Abstract class
+}

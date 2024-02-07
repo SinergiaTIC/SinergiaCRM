@@ -58,5 +58,18 @@ $js_groupings[] = $newGrouping = array(
 );
 // Add Custom View functionality
 $js_groupings[] = $newGrouping = array(
-    'modules/stic_Custom_Views/processor/js/SticCustomViewsAPI.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomView.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewItemBase.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewField.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewPanel.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewTab.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewDivBase.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewDivEditRow.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewDivDetailRow.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewDivLabel.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewDivEditInput.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewDivDetailInput.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCustomViewDivHeader.js' => 'include/javascript/sugar_grp1.js',
+
+    'modules/stic_Custom_Views/processor/js/sticCustomizeView.js' => 'include/javascript/sugar_grp1.js',
 );
