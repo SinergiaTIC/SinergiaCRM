@@ -2370,6 +2370,7 @@ function meth_Merge_BlockSections(&$Txt,&$LocR,&$Src,&$RecSpe) {
 	$Src->DataFetch();
 
 	// STIC-Custom 20230903 EPS - Only one tag w:body will be used in the document
+	// https://github.com/SinergiaTIC/SinergiaCRM/pull/29
 	$bodyPresent = false;
 	// END STIC-Custom
 
