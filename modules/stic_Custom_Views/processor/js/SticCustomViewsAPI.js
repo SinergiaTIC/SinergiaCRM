@@ -127,6 +127,16 @@ var sticCustomView = class sticCustomView {
     }
 }
 
+var sticCustomizeView = class sticCustomizeView {
+    static editview = this.For("editview"); 
+    static detailview = this.For("detailview");
+    static quickcreate = this.For("quickcreate"); 
+
+    static For(view) {
+        return new sticCustomView(view);
+    }
+}
+
 var CustomViewItemBase = class CustomViewItemBase {
     constructor (customView, itemName) {
         this.customView = customView;

@@ -157,8 +157,7 @@ class stic_Custom_Views_ProcessorLogicHooks
         $html =
         "<script type=\"text/javascript\" language=\"JavaScript\">".
             "$(document).ready(function () {".
-                "var customView = new sticCustomView(\"{$view}\");".
-                "customView.processSticCustomView(\"".addslashes($customizationsJson)."\");".
+                "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"".addslashes($customizationsJson)."\");".
             "});".
         "</script>";
 

@@ -36,7 +36,7 @@ switch (viewType()) {
     $(document).ready(function () { 
       // Hide Condition lines
       if($('input[name="init"]').val()=="1") {
-        var customView = new sticCustomView("quickcreate");
+        var customView = sticCustomizeView.quickcreate;
         customView.panel("LBL_CONDITION_LINES").hide();
         customView.field("customization_order").readonly();
       }

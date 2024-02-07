@@ -109,7 +109,7 @@ function initializeQuickCreateCustomization() {
 }
 
 function initializeEditFields() {
-  var customView = new sticCustomView("editview");
+  var customView = sticCustomizeView.editview;
 
   // Hide module selector, show label with module name
   customView.field("view_module").readonly().input.bold();
