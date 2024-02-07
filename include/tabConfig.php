@@ -180,7 +180,14 @@ $GLOBALS['tabStructure'] = array(
             4 => 'stic_Sepe_Files',
         ),
     ),
-
+    'LBL_GROUPTAB_BOOKINGS' => array(
+        'label' => 'LBL_GROUPTAB_BOOKINGS',
+        'modules' => array(
+            0 => 'stic_Bookings',
+            1 => 'stic_Resources',
+            2 => 'stic_Bookings_Calendar',
+        ),
+    ),
     'LBL_GROUPTAB_SALES' => array(
         'label' => 'LBL_GROUPTAB_SALES',
         'modules' => array(
