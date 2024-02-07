@@ -93,7 +93,7 @@ $subpanel_layout = [
         'date_end' => [
             'vname' => 'LBL_LIST_DUE_DATE',
             'width' => '10%',
-            // END STIC-Custom 20211217 - Delete alias and sort-by properties
+            // STIC-Custom 20211217 - Delete alias and sort-by properties
             // STIC#510
             // 'alias' => 'date_due',
             // 'sort_by' => 'date_due',
