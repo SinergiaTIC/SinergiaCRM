@@ -207,7 +207,7 @@ class stic_Custom_Views_ModuleView
                 $validOps = array('Equal_To','Not_Equal_To','is_null','is_not_null');
                 break;
             default:
-                $validOps = array('Equal_To','Not_Equal_To','Contains', 'Starts_With', 'Ends_With','is_null','is_not_null');
+                $validOps = array('Equal_To','Not_Equal_To','Contains', 'Not_Contains', 'Starts_With', 'Ends_With','is_null','is_not_null');
                 break;
         }
         $operatorList = array();
@@ -227,10 +227,10 @@ class stic_Custom_Views_ModuleView
             case 'field_modification':
                 switch($this->view) {
                     case 'editview':
-                        $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline');
+                        $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline'/*, 'css_style'*/);
                         break;
                     case 'detailview':
-                        $validActions = array('visible', /*'inline',*/ 'color', 'background', 'bold', 'italic', 'underline');
+                        $validActions = array('visible', /*'inline',*/ 'color', 'background', 'bold', 'italic', 'underline'/*, 'css_style'*/);
                         break;
                 }
                 break;
@@ -285,6 +285,7 @@ class stic_Custom_Views_ModuleView
             case 'field_modification':
                 switch($action) {
                     case 'visible':
+                    case 'css_style':
                         $validSections = array('field', 'field_label', 'field_input');
                         break;
                     case 'readonly':
@@ -388,6 +389,10 @@ class stic_Custom_Views_ModuleView
             case 'underline':
                 return $this->getEditorForYesNo($newEditorId);
                 break;
+
+            case 'css_style':
+                return $this->getEditorForTextArea($newEditorId);
+                break;
         }
         return "";
     }
@@ -397,14 +402,17 @@ class stic_Custom_Views_ModuleView
     }
 
     private function getEditorForColor($newEditorId) {
-        return "<input type='color' id='".$newEditorId."'/>";
+        return "<input type='color' id='{$newEditorId}'/>";
     }
     private function getEditorForYesNo($newEditorId) {
         global $app_list_strings;
         $list = $app_list_strings['stic_boolean_list'];
         unset($list['']);
         $options=$this->convertToSelectOptions($list);
-        return "<select id='".$newEditorId."'>".$options."</select>";
+        return "<select id='{$newEditorId}'>{$options}</select>";
+    }
+    private function getEditorForTextArea($newEditorId) {
+        return "<textarea id='{$newEditorId}' rows='2'></textarea>";
     }
 
     private function getEditorForFieldValue($fieldName, $newEditorId) { 

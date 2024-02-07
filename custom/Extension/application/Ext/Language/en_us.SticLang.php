@@ -3206,6 +3206,7 @@ $app_list_strings['stic_custom_views_action_list']['background'] = 'Background c
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Bold';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Apply css style';
 
 // Custom Views: Element's sections
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Whole field';

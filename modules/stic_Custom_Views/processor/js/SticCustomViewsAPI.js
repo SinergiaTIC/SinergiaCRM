@@ -184,6 +184,8 @@ var CustomViewField = class CustomViewField extends CustomViewItemBase {
     show(show=true) { this.row.show(show); return this; }
     hide() { return this.show(false); }
 
+    style(style) { this.row.style(style); return this; }
+
     readonly(readonly=true) { this.input.readonly(readonly); return this; }
 
     required(required=true) {
@@ -196,19 +198,15 @@ var CustomViewField = class CustomViewField extends CustomViewItemBase {
         }
         return this;
     }
+
     inline(inline=true) {
         //IEPA!!
         console.log("Inline not available. Requested:" + inline);
         return false;
     }
-    value(newValue) { return this.input.value(newValue); }
-    fixed_value(fixed_value) {
-        var value = this.value(fixed_value);
 
-        //IEPA!!
-        console.log("Fixed_value not checked. Requested:" + fixed_value);
-        return value;
-    }
+    value(newValue) { return this.input.value(newValue); }
+    fixed_value(fixed_value) { return this.value(fixed_value); }
 
     applyAction(action) {
         switch(action.element_section){
@@ -221,6 +219,7 @@ var CustomViewField = class CustomViewField extends CustomViewItemBase {
                     case "required": return this.required(action.value);
                     case "inline": return this.inline(action.value);
                     case "fixed_value": return this.fixed_value(action.value);
+                    case "css_style": return this.style(action.value);
                 }
             }
         }
@@ -243,6 +242,8 @@ var CustomViewField = class CustomViewField extends CustomViewItemBase {
                 return this.value()<=condition.value;
             case 'Contains':
                 return (this.value()??"").includes(condition.value);
+            case 'Not_Contains':
+                return !(this.value()??"").includes(condition.value);
             case 'Starts_With':
                 return (this.value()??"").startsWith(condition.value);
             case 'Ends_With':
@@ -327,6 +328,11 @@ var CustomViewDivBase = class CustomViewDivBase {
     }
     hide() { return this.show(false); }
 
+    style(style) {
+        this.element.css(style);
+        return this;
+    }
+
     applyAction(action) { return false; } // Abstract class
 }
 
@@ -387,6 +393,7 @@ var CustomViewDivLabel = class CustomViewDivLabel extends CustomViewDivBase {
             case "bold": return this.bold(action.value);
             case "italic": return this.italic(action.value);
             case "underline": return this.underline(action.value);
+            case "css_style": return this.style(action.value);
         }
         return false;
     }

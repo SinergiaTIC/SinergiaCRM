@@ -3207,6 +3207,7 @@ $app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fo
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negreta';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subratllat';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Aplicar estil css';
 
 // Vistes personalitzades: Seccions d'elements
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Tot el camp';

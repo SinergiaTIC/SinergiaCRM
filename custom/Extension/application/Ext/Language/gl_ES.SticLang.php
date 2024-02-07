@@ -3215,6 +3215,7 @@ $app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fo
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negrita';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subrayado';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Aplicar estilo css';
 
 // Vistas personalizadas: Secciones de elementos
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Todo el campo';
