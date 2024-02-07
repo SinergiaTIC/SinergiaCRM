@@ -57,7 +57,8 @@ function displayConditionLines($focus, $field, $value, $view) {
     if(!empty($conditionBeanArray)) {
         $html .= "<script>";
         foreach ($conditionBeanArray as $conditionBean) {
-            $html .= "loadConditionLine(".json_encode($conditionBean->toArray()).");";
+            $conditionBean->value = htmlspecialchars_decode($conditionBean->value);
+            $html .= "loadConditionLine(\"".addslashes(json_encode($conditionBean->toArray()))."\");";
         }
         $html .= "</script>";
     }
@@ -81,7 +82,8 @@ function displayActionLines(SugarBean $focus, $field, $value, $view) {
     if(!empty($actionBeanArray)) {
         $html .= "<script>";
         foreach ($actionBeanArray as $actionBean) {
-            $html .= "loadActionLine(".json_encode($actionBean->toArray()).");";
+            $actionBean->value = htmlspecialchars_decode($actionBean->value);
+            $html .= "loadActionLine(\"".addslashes(json_encode($actionBean->toArray()))."\");";
         }
         $html .= "</script>";
     }

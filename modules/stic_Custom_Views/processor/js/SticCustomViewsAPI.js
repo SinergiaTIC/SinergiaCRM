@@ -219,7 +219,7 @@ var CustomViewField = class CustomViewField extends CustomViewItemBase {
                     case "required": return this.required(action.value);
                     case "inline": return this.inline(action.value);
                     case "fixed_value": return this.fixed_value(action.value);
-                    case "css_style": return this.style(action.value);
+                    case "css_style": return this.style(JSON.parse(action.value));
                 }
             }
         }
@@ -393,7 +393,7 @@ var CustomViewDivLabel = class CustomViewDivLabel extends CustomViewDivBase {
             case "bold": return this.bold(action.value);
             case "italic": return this.italic(action.value);
             case "underline": return this.underline(action.value);
-            case "css_style": return this.style(action.value);
+            case "css_style": return this.style(JSON.parse(action.value));
         }
         return false;
     }

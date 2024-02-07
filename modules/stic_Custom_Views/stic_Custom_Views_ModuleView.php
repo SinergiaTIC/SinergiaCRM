@@ -227,18 +227,18 @@ class stic_Custom_Views_ModuleView
             case 'field_modification':
                 switch($this->view) {
                     case 'editview':
-                        $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline'/*, 'css_style'*/);
+                        $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                         break;
                     case 'detailview':
-                        $validActions = array('visible', /*'inline',*/ 'color', 'background', 'bold', 'italic', 'underline'/*, 'css_style'*/);
+                        $validActions = array('visible', /*'inline',*/ 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                         break;
                 }
                 break;
             case 'panel_modification':
-                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline');
+                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                 break;
             case 'tab_modification':
-                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline');
+                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                 break;
             }
         $actionsList = array();

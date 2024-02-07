@@ -125,7 +125,8 @@ class stic_Custom_Views_ProcessorLogicHooks
                         "condition_order" => $conditionBean->condition_order,
                         "field" => $conditionBean->field,
                         "operator" => $conditionBean->operator,
-                        "value" => $conditionBean->value,
+                        //"value" => $conditionBean->value,
+                        "value" => htmlspecialchars_decode($conditionBean->value),
                     );
                 }
                 // Sort conditions
@@ -138,7 +139,8 @@ class stic_Custom_Views_ProcessorLogicHooks
                         "type" => $actionBean->type,
                         "element" => $actionBean->element,
                         "action" => $actionBean->action,
-                        "value" => $actionBean->value,
+                        //"value" => $actionBean->value,
+                        "value" => htmlspecialchars_decode($actionBean->value),
                         "element_section" => $actionBean->element_section,
                     );
                 }

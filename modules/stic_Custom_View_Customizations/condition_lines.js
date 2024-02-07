@@ -101,9 +101,11 @@ function insertConditionLinesHeader(){
     return ln;
   }
   
-  function loadConditionLine(condition) {
+  function loadConditionLine(conditionString) {
     var prefix = condprefix;
     var ln = 0;
+
+    var condition = JSON.parse(conditionString);
   
     ln = insertConditionLine();
     for(var a in condition) {

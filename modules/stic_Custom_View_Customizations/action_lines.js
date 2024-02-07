@@ -105,9 +105,11 @@ function insertActionLinesHeader(){
     return ln;
   }
 
-  function loadActionLine(action) {
+  function loadActionLine(actionString) {
     var prefix = actprefix;
     var ln = insertActionLine();
+
+    var action = JSON.parse(actionString);
 
     for(var a in action) {
       $("#"+prefix+a+ln).val(action[a]);
