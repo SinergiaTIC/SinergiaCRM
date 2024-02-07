@@ -186,8 +186,8 @@ var CustomViewField = class CustomViewField extends CustomViewItemBase {
 
     readonly(readonly=true) { this.input.readonly(readonly); return this; }
 
-    mandatory(mandatory=true) {
-        if(mandatory===true||mandatory==="1"||mandatory===1) {
+    required(required=true) {
+        if(required===true||required==="1"||required===1) {
             //IEPA!!
             // Type always text??!!!
             setRequiredStatus(this.fieldName, 'text',SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
@@ -218,7 +218,7 @@ var CustomViewField = class CustomViewField extends CustomViewItemBase {
                 switch(action.action){
                     case "visible": return this.show(action.value);
                     case "readonly": return this.readonly(action.value);
-                    case "mandatory": return this.mandatory(action.value);
+                    case "required": return this.required(action.value);
                     case "inline": return this.inline(action.value);
                     case "fixed_value": return this.fixed_value(action.value);
                 }

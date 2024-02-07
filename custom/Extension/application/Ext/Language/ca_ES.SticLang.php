@@ -3199,7 +3199,7 @@ $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'M
 // Vistes personalitzades: Accions
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Només lectura';
-$app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Obligat';
+$app_list_strings['stic_custom_views_action_list']['required'] = 'Obligat';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Edició en línia';
 $app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fix';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Color del text';

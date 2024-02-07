@@ -3198,7 +3198,7 @@ $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'T
 // Custom Views: Actions
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Read only';
-$app_list_strings['stic_custom_views_action_list']['mandatory'] = 'Mandatory';
+$app_list_strings['stic_custom_views_action_list']['required'] = 'Required';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Inline editing';
 $app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Fix value';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Text color';

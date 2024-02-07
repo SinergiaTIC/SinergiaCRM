@@ -227,7 +227,7 @@ class stic_Custom_Views_ModuleView
             case 'field_modification':
                 switch($this->view) {
                     case 'editview':
-                        $validActions = array('visible', 'readonly', 'mandatory', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline');
+                        $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline');
                         break;
                     case 'detailview':
                         $validActions = array('visible', /*'inline',*/ 'color', 'background', 'bold', 'italic', 'underline');
@@ -288,7 +288,7 @@ class stic_Custom_Views_ModuleView
                         $validSections = array('field', 'field_label', 'field_input');
                         break;
                     case 'readonly':
-                    case 'mandatory':
+                    case 'required':
                     case 'inline':
                     case 'fixed_value':
                         $validSections = array('field');
@@ -381,7 +381,7 @@ class stic_Custom_Views_ModuleView
 
             case 'visible':
             case 'readonly':
-            case 'mandatory':
+            case 'required':
             case 'inline':
             case 'bold':
             case 'italic':
