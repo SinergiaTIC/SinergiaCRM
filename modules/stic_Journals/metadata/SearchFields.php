@@ -38,7 +38,11 @@ $searchFields[$module_name] = array(
     'assigned_user_id' => array('query_type' => 'default'),
 
     //Range Search Support
-    'range_date_entered' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'range_date_entered' => array(
+        'query_type' => 'default', 
+        'enable_range_search' => true, 
+        'is_date_field' => true),
+
     'start_range_date_entered' => array(
         'query_type' => 'default',
         'enable_range_search' => true,
@@ -49,7 +53,11 @@ $searchFields[$module_name] = array(
         'enable_range_search' => true,
         'is_date_field' => true
     ),
-    'range_date_modified' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'range_date_modified' => array(
+        'query_type' => 'default', 
+        'enable_range_search' => true, 
+        'is_date_field' => true),
+
     'start_range_date_modified' => array(
         'query_type' => 'default',
         'enable_range_search' => true,
@@ -61,6 +69,57 @@ $searchFields[$module_name] = array(
         'is_date_field' => true
     ),
     //Range Search Support
+
+    // Date journal range
+    'range_journal_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'start_range_journal_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'end_range_journal_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+
+    // Task start date range
+    'range_task_start_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'start_range_task_start_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'end_range_task_start_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+
+    // Task end date range
+    'range_task_end_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'start_range_task_end_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'end_range_task_end_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
 
     'favorites_only' => array(
         'query_type' => 'format',

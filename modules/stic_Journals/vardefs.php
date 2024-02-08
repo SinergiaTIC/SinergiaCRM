@@ -45,7 +45,8 @@ $dictionary['stic_Journals'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => true,
             'dbType' => 'datetime',
             'display_default' => 'now',
         ),
@@ -157,7 +158,8 @@ $dictionary['stic_Journals'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => true,
             'dbType' => 'datetime',
         ),
         'task_end_date' => array(
@@ -178,7 +180,8 @@ $dictionary['stic_Journals'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => true,
             'dbType' => 'datetime',
         ),
         'task_fulfillment' => array(
@@ -350,4 +353,6 @@ if (!class_exists('VardefManager')) {
 VardefManager::createVardef('stic_Journals', 'stic_Journals', array('basic', 'assignable', 'security_groups'));
 
 // Set special values for SuiteCRM base fields
+$dictionary['stic_Journals']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Journals']['fields']['name']['importable'] = true; // Name is importable but not required in this module
 $dictionary['stic_Journals']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
