@@ -46,17 +46,31 @@ $viewdefs[$module_name]['QuickCreate'] = array(
             array('label' => '10', 'field' => '30'),
             array('label' => '10', 'field' => '30')
         ),
-    ),
-
-    'panels' => array(
-        'default' => array(
-
-            array(
-                'name',
-                'assigned_user_name',
+        'useTabs' => true,
+        'tabDefs' => array(
+            'LBL_DEFAULT_PANEL' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
             ),
         ),
-
+        'syncDetailEditViews' => false,        
     ),
-
+    'panels' => array(
+        'lbl_default_panel' => array(
+            0 => array(
+                0 => 'name',
+                1 => 'assigned_user_name',
+            ),
+            1 => array(
+                0 => array(
+                    'name' => 'start_date',
+                    'label' => 'LBL_START_DATE',
+                ),
+                1 => array(
+                    'name' => 'end_date',
+                    'label' => 'LBL_END_DATE',
+                ),
+            ),
+        ),
+    ),
 );

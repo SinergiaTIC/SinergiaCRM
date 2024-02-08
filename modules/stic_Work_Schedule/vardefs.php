@@ -68,7 +68,7 @@ $dictionary['stic_Work_Schedule'] = array(
             'validation' => array('type' => 'isbefore', 'compareto' => 'end_date', 'blank' => 0),
         ),
         'end_date' => array(
-            'required' => 1,
+            'required' => 0,
             'name' => 'end_date',
             'vname' => 'LBL_END_DATE',
             'duplicate_merge' => 'enabled',
@@ -86,7 +86,7 @@ $dictionary['stic_Work_Schedule'] = array(
             'enable_range_search' => 1,
             'options' => 'date_range_search_dom',
             'dbType' => 'datetime',
-            'display_default' => 'now',
+            'display_default' => '',
             'inline_edit' => 1,
             'validation' => array('type' => 'isafter', 'compareto' => 'start_date', 'blank' => 0),
         ),
@@ -127,3 +127,8 @@ if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
 VardefManager::createVardef('stic_Work_Schedule', 'stic_Work_Schedule', array('basic','assignable','security_groups'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Work_Schedule']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Work_Schedule']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Work_Schedule']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

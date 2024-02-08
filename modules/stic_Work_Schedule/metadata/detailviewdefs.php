@@ -54,32 +54,42 @@ $viewdefs[$module_name]['DetailView'] = array(
             array('label' => '10', 'field' => '30'),
             array('label' => '10', 'field' => '30')
         ),
+        'useTabs' => true,
+        'tabDefs' => array(
+            'LBL_DEFAULT_PANEL' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ),
+            'LBL_PANEL_RECORD_DETAILS' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ),
+        ),        
     ),
 
-    'panels' =>
-        array(
-            'default' =>
-                array(
-                    array(
-                        'name',
-                        'assigned_user_name',
-                    ),
-                    array(
-                        array(
-                            'name' => 'date_entered',
-                            'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
-                            'label' => 'LBL_DATE_ENTERED',
-                        ),
-                        array(
-                            'name' => 'date_modified',
-                            'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
-                            'label' => 'LBL_DATE_MODIFIED',
-                        ),
-                    ),
-
-                    array(
-                        'description',
-                    ),
-                )
+    'panels' => array(
+        'lbl_default_panel' => array(
+            0 => array(
+                    'name',
+                    'assigned_user_name',
+            ),
+            1 => array(
+                0 => array(
+                    'name' => 'start_date',
+                    'label' => 'LBL_START_DATE',
+                ),
+                1 => array(
+                    'name' => 'end_date',
+                    'label' => 'LBL_END_DATE',
+                ),
+            ),
+            2 => array(
+                0 => array(
+                    'name' => 'duration',
+                    'label' => 'LBL_DURATION',
+                ),
+                1 => array(),
+            ),            
         )
+    )
 );

@@ -50,6 +50,25 @@ $listViewDefs[$module_name] = array(
         'default' => true,
         'link' => true
     ),
+    'START_DATE' => array(
+        'type' => 'datetimecombo',
+        'label' => 'LBL_START_DATE',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'END_DATE' => array(
+        'type' => 'datetimecombo',
+        'label' => 'LBL_END_DATE',
+        'width' => '10%',
+        'default' => true,
+    ),    
+    'DURATION' => array(
+        'type' => 'decimal',
+        'label' => 'LBL_DURATION',
+        'width' => '10%',
+        'default' => true,
+        'align' => 'right',
+    ),    
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',
         'label' => 'LBL_ASSIGNED_TO_NAME',
@@ -57,5 +76,39 @@ $listViewDefs[$module_name] = array(
         'id' => 'ASSIGNED_USER_ID',
         'default' => true
     ),
-
+    'DESCRIPTION' => array(
+        'type' => 'text',
+        'label' => 'LBL_DESCRIPTION',
+        'sortable' => false,
+        'width' => '10%',
+        'default' => false,
+    ),
+    'CREATED_BY_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_CREATED',
+        'id' => 'CREATED_BY',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'MODIFIED_BY_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_MODIFIED_NAME',
+        'id' => 'MODIFIED_USER_ID',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'DATE_MODIFIED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_MODIFIED',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'DATE_ENTERED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_ENTERED',
+        'width' => '10%',
+        'default' => false,
+    ),
 );
