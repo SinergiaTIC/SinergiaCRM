@@ -85,7 +85,7 @@ class stic_Custom_View_Customizations extends Basic
         foreach ($conditionBeanArray as $conditionBean) {
             $conditions[] = $conditionBean->field . "." . $conditionBean->operator . "." . $conditionBean->value;
         }
-        $this->conditions = implode("|", $conditions);
+        $this->conditions = implode(" + ", $conditions);
 
         // Set Actions field
         $actionsBeanArray = SticUtils::getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
@@ -93,7 +93,7 @@ class stic_Custom_View_Customizations extends Basic
         foreach ($actionsBeanArray as $actionBean) {
             $actions[] = $actionBean->type . ":" . $actionBean->element . "." . $actionBean->action . "=" . $actionBean->value . "(". $actionBean->element_section . ")";
         }
-        $this->actions = implode("|", $actions);
+        $this->actions = implode(" + ", $actions);
 
         parent::save($check_notify);
 

@@ -34,12 +34,15 @@ var module = "stic_Custom_View_Customizations";
 switch (viewType()) {
   case "quickcreate":
     $(document).ready(function () { 
+      var customView = sticCustomizeView.quickcreate;
       // Hide Condition lines
       if($('input[name="init"]').val()=="1") {
-        var customView = sticCustomizeView.quickcreate;
         customView.panel("LBL_CONDITION_LINES").hide();
         customView.field("customization_order").readonly();
       }
+      // Hide Labels
+      customView.field("condition_lines").label.hide();
+      customView.field("action_lines").label.hide();
     });
     break;
 
@@ -60,3 +63,10 @@ switch (viewType()) {
 $(document).ready(function () {
 });
 
+function translate(label, module) {
+  return SUGAR.language.get(module, label);
+}
+
+function translateCustomization(label) {
+  return translate(label,'stic_Custom_View_Customizations');
+}

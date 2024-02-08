@@ -21,7 +21,7 @@
  */
 
 function translateAction(label) {
-    return SUGAR.language.get('stic_Custom_View_Actions', label);
+    return translate(label,'stic_Custom_View_Actions');
 }
 
 var actln = 0;
@@ -30,14 +30,24 @@ var actprefix = 'sticCustomView_Action';
 var actId = actprefix+'Lines';
 
 function getActionDeleteButton(ln, functionName) {
-    var html = 
-      "<button type='button' class='button' id='"+actprefix+"delete"+ln+"' onclick='"+functionName+"("+ln+")'>"+
-        "<span class='suitepicon suitepicon-action-minus'></span>"+
-      "</button><br>"+
-      "<input type='hidden' name='"+actprefix+"deleted["+ln+"]' id='"+actprefix+"deleted"+ln+"' value='0'>"+
-      "<input type='hidden' name='"+actprefix+"id["+ln+"]' id='"+actprefix+"id"+ln+"' value=''>";
-    return html;
-  }
+  var html = 
+    "<button type='button' class='button' style='padding-top:8px;' title='"+translateCustomization('LBL_DELETE_ACTION')+"' "+
+            "id='"+actprefix+"delete"+ln+"' onclick='"+functionName+"("+ln+")'>"+
+      "<span class='suitepicon suitepicon-action-minus'></span>"+
+    "</button><br>"+
+    "<input type='hidden' name='"+actprefix+"deleted["+ln+"]' id='"+actprefix+"deleted"+ln+"' value='0'>"+
+    "<input type='hidden' name='"+actprefix+"id["+ln+"]' id='"+actprefix+"id"+ln+"' value=''>";
+  return html;
+}
+
+function getActionDuplicateButton(ln, functionName) {
+  var html = 
+    "<button type='button' class='button' title='"+translateCustomization('LBL_DUPLICATE_ACTION')+"' "+
+            "id='"+actprefix+"duplicate"+ln+"' onclick='"+functionName+"("+ln+")'>"+
+      "<span> x2 </span>"+
+    "</button>";
+  return html;
+}
 
 /**
  * Action Table Header
@@ -45,169 +55,193 @@ function getActionDeleteButton(ln, functionName) {
 function insertActionLinesHeader(){
     $('#'+actId).append(
       '<thead id="'+actId+'_head"><tr>' + 
-        '<th style="width:75px;"></th>' + // Remove button
+        '<th style="width:70px;"></th>' + // Remove button
         '<th>'+translateAction('LBL_TYPE')+'</th>'+
         '<th>'+translateAction('LBL_ELEMENT')+'</th>'+
         '<th>'+translateAction('LBL_ACTION')+'</th>'+
         '<th>'+translateAction('LBL_VALUE')+'</th>'+
         '<th>'+translateAction('LBL_ELEMENT_SECTION')+'</th>'+
+        '<th style="width:70px;"></th>' + // Duplicate button
       '</thead>');
   }
   
-  function insertActionLine(){
-    var ln = actln;
-    var id = actId;
-    var prefix = actprefix;
+function insertActionLine(){
+  var ln = actln;
+  var id = actId;
+  var prefix = actprefix;
+
+  if(!$("#"+id+"_head").length){
+      insertActionLinesHeader();
+  }
+  $("#"+id+"_head").show();
+
+  tablebody = document.createElement("tbody");
+  tablebody.id = prefix+"body"+ln;
+  $('#'+id).append(tablebody);
+
+  //Create row
+  var x = tablebody.insertRow(-1);
+  x.id = prefix+ln;
+  x.insertCell(-1).id=prefix+'Cell'+'delete'+ln;           // Delete button
+  x.insertCell(-1).id=prefix+'Cell'+'type'+ln;             // Action Type
+  x.insertCell(-1).id=prefix+'Cell'+'element'+ln;          // Element
+  x.insertCell(-1).id=prefix+'Cell'+'action'+ln;           // Action
+  x.insertCell(-1).id=prefix+'Cell'+'value'+ln;            // Value
+  x.insertCell(-1).id=prefix+'Cell'+'element_section'+ln;  // Section
+  x.insertCell(-1).id=prefix+'Cell'+'duplicate'+ln;        // Duplicate button
+
+
+  // Initial fills
+
+  // Delete button
+  $("#"+prefix+'Cell'+'delete'+ln).html(getActionDeleteButton(ln, "markActionLineDeleted"));
+
+  // Action type
+  $("#"+prefix+'Cell'+'type'+ln).html(
+  "<select name='"+prefix+"type["+ln+"]' id='"+prefix+"type"+ln+"'>"+
+    view_module_action_map.actionTypes.options+
+  "</select>"+
+  "<span id='"+prefix+"type"+"_label"+ln+"' ></span>");
   
-    if(!$("#"+id+"_head").length){
-        insertActionLinesHeader();
-    }
-    $("#"+id+"_head").show();
+  $("#"+prefix+'type'+ln).on("change", function(){onActionTypeChanged(ln);});
+  $("#"+prefix+'type'+ln).val(null);
+  $("#"+prefix+'type'+ln).change();
+
+  $('.edit-view-field #'+prefix+'Lines').find('tbody').last().find('select').change(function () {
+    $(this).find('td').last().removeAttr("style");
+    $(this).find('td').height($(this).find('td').last().height() + 8);
+  });
+
+  actln++;
+  actln_count++;
+
+  return ln;
+}
+
+function loadActionLine(actionString) {
+  var prefix = actprefix;
+  var ln = insertActionLine();
+
+  var action = JSON.parse(actionString);
+
+  for(var a in action) {
+    $("#"+prefix+a+ln).val(action[a]);
+    $("#"+prefix+a+ln).change();
+  }
+  // if (action['value'] instanceof Array) {
+  //   action['value'] = JSON.stringify(action['value'])
+  // }
+}
+
+function duplicateActionLine(ln) {
+  var prefix = actprefix;
+  var newln = insertActionLine();
+
+  var parts = ["type", "element", "action", "value", "element_section"];
+  parts.forEach(a=>{
+    $("#"+prefix+a+newln).val($("#"+prefix+a+ln).val());
+    $("#"+prefix+a+newln).change();
+  });
+
+  // if (action['value'] instanceof Array) {
+  //   action['value'] = JSON.stringify(action['value'])
+  // }
+}
+
+function markActionLineDeleted(ln){
+  // collapse line; update deleted value
+  $("#"+actprefix+'body'+ln).hide();
+  $("#"+actprefix+'deleted'+ln).val('1');
+  $("#"+actprefix+'delete'+ln).prop("onclick", null).off("click");
+
+  actln_count--;
+  if(actln_count <= 0){
+    $("#"+actId+"_head").hide();
+  }
+}
   
-    tablebody = document.createElement("tbody");
-    tablebody.id = prefix+"body"+ln;
-    $('#'+id).append(tablebody);
-  
-    //Create row
-    var x = tablebody.insertRow(-1);
-    x.id = prefix+ln;
-    x.insertCell(-1).id=prefix+'Cell'+'delete'+ln;           // Delete button
-    x.insertCell(-1).id=prefix+'Cell'+'type'+ln;             // Action Type
-    x.insertCell(-1).id=prefix+'Cell'+'element'+ln;          // Element
-    x.insertCell(-1).id=prefix+'Cell'+'action'+ln;           // Action
-    x.insertCell(-1).id=prefix+'Cell'+'value'+ln;            // Value
-    x.insertCell(-1).id=prefix+'Cell'+'element_section'+ln;  // Section
-  
-    // Initial fills
-  
-    // Delete button
-    $("#"+prefix+'Cell'+'delete'+ln).html(getActionDeleteButton(ln, "markActionLineDeleted"));
-  
-    // Action type
-    $("#"+prefix+'Cell'+'type'+ln).html(
-    "<select name='"+prefix+"type["+ln+"]' id='"+prefix+"type"+ln+"'>"+
-      view_module_action_map.actionTypes.options+
-    "</select>"+
-    "<span id='"+prefix+"type"+"_label"+ln+"' ></span>");
-    
-    $("#"+prefix+'type'+ln).on("change", function(){onActionTypeChanged(ln);});
-    $("#"+prefix+'type'+ln).val(null);
+
+function onActionTypeChanged(ln){
+  var type = $("#"+actprefix+'type'+ln).val();
+  if(type==""||type==null){
+    // Reset next selectors
+    $("#"+actprefix+'Cell'+'element'+ln).html("");
+    $("#"+actprefix+'Cell'+'action'+ln).html("");
+    $("#"+actprefix+'Cell'+'value'+ln).html("");
+    $("#"+actprefix+'Cell'+'element_section'+ln).html("");
+  } else {
+    // Create next selector
+    // Element selector
+    $("#"+actprefix+'Cell'+'element'+ln).html(
+      "<select type='text' name='"+actprefix+"element["+ln+"]' id='"+actprefix+"element"+ln+"'>"+
+        view_module_action_map.actionTypes[type].elements.options+
+      "</select>");
+
+    $("#"+actprefix+'element'+ln).on("change", function(){onActionElementChanged(ln);});
+    $("#"+actprefix+'element'+ln).val(null);
+    $("#"+actprefix+'element'+ln).change();
+  }
+}
+
+function onActionElementChanged(ln) {
+  var type = $("#"+actprefix+'type'+ln).val();
+  var element = $("#"+actprefix+'element'+ln).val();
+  if(type==""||type==null) {
     $("#"+prefix+'type'+ln).change();
-  
-    $('.edit-view-field #'+prefix+'Lines').find('tbody').last().find('select').change(function () {
-      $(this).find('td').last().removeAttr("style");
-      $(this).find('td').height($(this).find('td').last().height() + 8);
-    });
+  } else if(element==""||element==null){
+    // Reset next selectors
+    $("#"+actprefix+'Cell'+'action'+ln).html("");
+    $("#"+actprefix+'Cell'+'value'+ln).html("");
+    $("#"+actprefix+'Cell'+'element_section'+ln).html("");
+  } else {
+    // Create next selector
+    // Action selector
+    $("#"+actprefix+'Cell'+'action'+ln).html(
+      "<select type='text' name='"+actprefix+"action["+ln+"]' id='"+actprefix+"action"+ln+"'>"+
+        view_module_action_map.actionTypes[type].actions.options+
+      "</select>");
 
-    actln++;
-    actln_count++;
-  
-    return ln;
+    $("#"+actprefix+'action'+ln).on("change", function(){onActionChanged(ln);});
+    $("#"+actprefix+'action'+ln).val(null);
+    $("#"+actprefix+'action'+ln).change();
   }
+}
 
-  function loadActionLine(actionString) {
-    var prefix = actprefix;
-    var ln = insertActionLine();
-
-    var action = JSON.parse(actionString);
-
-    for(var a in action) {
-      $("#"+prefix+a+ln).val(action[a]);
-      $("#"+prefix+a+ln).change();
-    }
-    // if (action['value'] instanceof Array) {
-    //   action['value'] = JSON.stringify(action['value'])
-    // }
-  }
-  
-  function markActionLineDeleted(ln){
-    // collapse line; update deleted value
-    $("#"+actprefix+'body'+ln).hide();
-    $("#"+actprefix+'deleted'+ln).val('1');
-    $("#"+actprefix+'delete'+ln).prop("onclick", null).off("click");
-  
-    actln_count--;
-    if(actln_count <= 0){
-      $("#"+actId+"_head").hide();
-    }
-  }
-  
-  function onActionTypeChanged(ln){
-    var type = $("#"+actprefix+'type'+ln).val();
-    if(type==""||type==null){
-      // Reset next selectors
-      $("#"+actprefix+'Cell'+'element'+ln).html("");
-      $("#"+actprefix+'Cell'+'action'+ln).html("");
-      $("#"+actprefix+'Cell'+'value'+ln).html("");
-      $("#"+actprefix+'Cell'+'element_section'+ln).html("");
+function onActionChanged(ln) {
+  var type = $("#"+actprefix+'type'+ln).val();
+  var element = $("#"+actprefix+'element'+ln).val();
+  var action = $("#"+actprefix+'action'+ln).val();
+  if(type==""||type==null) {
+    $("#"+prefix+'type'+ln).change();
+  } else if(element==""||element==null){
+    $("#"+prefix+'element'+ln).change();
+  } else if(action==""||action==null){
+    // Reset next selectors
+    $("#"+actprefix+'Cell'+'value'+ln).html("");
+    $("#"+actprefix+'Cell'+'element_section'+ln).html("");
+  } else {
+    //Create next selector
+    // Value editor
+    if(type=='field_modification' && action=='fixed_value'){
+      $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_field_map[element].editor_base64))));
     } else {
-      // Create next selector
-      // Element selector
-      $("#"+actprefix+'Cell'+'element'+ln).html(
-        "<select type='text' name='"+actprefix+"element["+ln+"]' id='"+actprefix+"element"+ln+"'>"+
-          view_module_action_map.actionTypes[type].elements.options+
-        "</select>");
-  
-      $("#"+actprefix+'element'+ln).on("change", function(){onActionElementChanged(ln);});
-      $("#"+actprefix+'element'+ln).val(null);
-      $("#"+actprefix+'element'+ln).change();
+      $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_action_editor_map[action].editor_base64))));
     }
-  }
-  function onActionElementChanged(ln) {
-    var type = $("#"+actprefix+'type'+ln).val();
-    var element = $("#"+actprefix+'element'+ln).val();
-    if(type==""||type==null) {
-      $("#"+prefix+'type'+ln).change();
-    } else if(element==""||element==null){
-      // Reset next selectors
-      $("#"+actprefix+'Cell'+'action'+ln).html("");
-      $("#"+actprefix+'Cell'+'value'+ln).html("");
-      $("#"+actprefix+'Cell'+'element_section'+ln).html("");
-    } else {
-      // Create next selector
-      // Action selector
-      $("#"+actprefix+'Cell'+'action'+ln).html(
-        "<select type='text' name='"+actprefix+"action["+ln+"]' id='"+actprefix+"action"+ln+"'>"+
-          view_module_action_map.actionTypes[type].actions.options+
-        "</select>");
-  
-      $("#"+actprefix+'action'+ln).on("change", function(){onActionChanged(ln);});
-      $("#"+actprefix+'action'+ln).val(null);
-      $("#"+actprefix+'action'+ln).change();
+    $("#"+actprefix+'Cell'+'value'+ln).children().attr("name", actprefix+"value["+ln+"]");
+    $("#"+actprefix+'Cell'+'value'+ln).children().attr("id", actprefix+"value"+ln);
+    $("#"+actprefix+'Cell'+'value'+ln).children().attr('style', 'width: 90% !important');
+
+    // Section selector
+    $("#"+actprefix+'Cell'+'element_section'+ln).html(
+      "<select type='text' name='"+actprefix+"element_section["+ln+"]' id='"+actprefix+"element_section"+ln+"'>"+
+        view_module_action_map.actionTypes[type].actions[action].sections.options+
+      "</select>");
+    if($("#"+actprefix+"element_section"+ln).children().length<=1){
+      $("#"+actprefix+"element_section"+ln).hide();
+      $("#"+actprefix+'Cell'+'element_section'+ln).append("<p>"+$("#"+actprefix+"element_section"+ln).text()+"</p>");
     }
+
+    // Duplicate button
+    $("#"+actprefix+'Cell'+'duplicate'+ln).html(getActionDuplicateButton(ln, "duplicateActionLine"));
   }
-  function onActionChanged(ln) {
-    var type = $("#"+actprefix+'type'+ln).val();
-    var element = $("#"+actprefix+'element'+ln).val();
-    var action = $("#"+actprefix+'action'+ln).val();
-    if(type==""||type==null) {
-      $("#"+prefix+'type'+ln).change();
-    } else if(element==""||element==null){
-      $("#"+prefix+'element'+ln).change();
-    } else if(action==""||action==null){
-      // Reset next selectors
-      $("#"+actprefix+'Cell'+'value'+ln).html("");
-      $("#"+actprefix+'Cell'+'element_section'+ln).html("");
-    } else {
-      //Create next selector
-      // Value editor
-      if(type=='field_modification' && action=='fixed_value'){
-        $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_field_map[element].editor_base64))));
-      } else {
-        $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_action_editor_map[action].editor_base64))));
-      }
-      $("#"+actprefix+'Cell'+'value'+ln).children().attr("name", actprefix+"value["+ln+"]");
-      $("#"+actprefix+'Cell'+'value'+ln).children().attr("id", actprefix+"value"+ln);
-      $("#"+actprefix+'Cell'+'value'+ln).children().attr('style', 'width: 90% !important');
-  
-      // Section selector
-      $("#"+actprefix+'Cell'+'element_section'+ln).html(
-        "<select type='text' name='"+actprefix+"element_section["+ln+"]' id='"+actprefix+"element_section"+ln+"'>"+
-          view_module_action_map.actionTypes[type].actions[action].sections.options+
-        "</select>");
-      if($("#"+actprefix+"element_section"+ln).children().length<=1){
-        $("#"+actprefix+"element_section"+ln).hide();
-        $("#"+actprefix+'Cell'+'element_section'+ln).append("<p>"+$("#"+actprefix+"element_section"+ln).text()+"</p>");
-      }
-    }
-  }
+}

@@ -69,8 +69,11 @@ $mod_strings = array (
 
   'LBL_CONDITION_LINES' => 'Condiciones',
   'LBL_ADD_CONDITION' => 'Agregar condición',
+  'LBL_DELETE_CONDITION' => 'Eliminar condición',
   'LBL_ACTION_LINES' => 'Acciones',
   'LBL_ADD_ACTION' => 'Agregar acción',
+  'LBL_DELETE_ACTION' => 'Eliminar acción',
+  'LBL_DUPLICATE_ACTION' => 'Duplicar acción',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE'] = 'Vistas personalizadas';
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE'] = 'Condiciones';

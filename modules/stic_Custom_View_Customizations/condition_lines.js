@@ -21,7 +21,7 @@
  */
 
 function translateCondition(label) {
-    return SUGAR.language.get('stic_Custom_View_Conditions', label);
+    return translate(label,'stic_Custom_View_Conditions');
 }
   
 var condln = 0;
@@ -31,7 +31,8 @@ var condId = condprefix+'Lines';
 
 function getConditionDeleteButton(ln, functionName) {
     var html = 
-      "<button type='button' class='button' id='"+condprefix+"delete"+ln+"' onclick='"+functionName+"("+ln+")'>"+
+      "<button type='button' class='button' style='padding-top:8px;' title='"+translateCustomization('LBL_DELETE_CONDITION')+"' "+
+              "id='"+condprefix+"delete"+ln+"' onclick='"+functionName+"("+ln+")'>"+
         "<span class='suitepicon suitepicon-action-minus'></span>"+
       "</button><br>"+
       "<input type='hidden' name='"+condprefix+"deleted["+ln+"]' id='"+condprefix+"deleted"+ln+"' value='0'>"+
@@ -45,7 +46,7 @@ function getConditionDeleteButton(ln, functionName) {
 function insertConditionLinesHeader(){
     $('#'+condId).append(
       '<thead id="'+condId+'_head"><tr>' + 
-        '<th style="width:75px;"></th>' + // Remove button
+        '<th style="width:70px;"></th>' + // Remove button
         '<th>'+translateCondition('LBL_FIELD')+'</th>'+
         '<th>'+translateCondition('LBL_OPERATOR')+'</th>'+
         '<th>'+translateCondition('LBL_VALUE')+'</th>'+

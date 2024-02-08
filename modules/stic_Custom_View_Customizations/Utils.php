@@ -55,6 +55,9 @@ function displayConditionLines($focus, $field, $value, $view) {
 
     $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_conditions");
     if(!empty($conditionBeanArray)) {
+        // Sort conditions
+        usort($conditionBeanArray, 'compareConditions');
+
         $html .= "<script>";
         foreach ($conditionBeanArray as $conditionBean) {
             $conditionBean->value = htmlspecialchars_decode($conditionBean->value);
@@ -80,6 +83,8 @@ function displayActionLines(SugarBean $focus, $field, $value, $view) {
 
     $actionBeanArray = SticUtils::getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_actions");
     if(!empty($actionBeanArray)) {
+        // Sort actions
+        usort($actionBeanArray, 'compareActions');
         $html .= "<script>";
         foreach ($actionBeanArray as $actionBean) {
             $actionBean->value = htmlspecialchars_decode($actionBean->value);
@@ -90,3 +95,10 @@ function displayActionLines(SugarBean $focus, $field, $value, $view) {
     return $html;
 }
 
+function compareConditions($a, $b) {
+    return $a->condition_order-$b->condition_order;
+}
+
+function compareActions($a, $b) {
+    return $a->action_order-$b->action_order;
+}
