@@ -74,4 +74,9 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activities',
   'LBL_STIC_WORK_SCHEDULE_SUBPANEL_TITLE' => 'Work_Schedule',
   'LBL_NEW_FORM_TITLE' => 'New Work_Schedule',
+  'LBL_START_DATE' => 'Start Date',
+  'LBL_END_DATE' => 'End date',
+  'LBL_START_DATE_ERROR' => 'The start date and time must be before the end date and time.',
+  'LBL_END_DATE_ERROR' => 'The end date and time must be later than the start date and time.',
+  'LBL_DURATION' => 'Duration',  
 );
