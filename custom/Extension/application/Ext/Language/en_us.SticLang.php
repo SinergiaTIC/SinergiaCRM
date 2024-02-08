@@ -110,6 +110,7 @@ $app_list_strings['moduleList']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['moduleList']['stic_Grants'] = 'Grants';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centers';
 $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Security Groups Module Rules';
+$app_list_strings['moduleList']['stic_Work_Schedule'] = 'Work_Schedule';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';

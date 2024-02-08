@@ -109,6 +109,7 @@ $app_list_strings['moduleList']['stic_Prescription'] = 'Prescripcions mèdiques'
 $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Grups de Seguretat - Regles per mòduls';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ajuts';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centres';
+$app_list_strings['moduleList']['stic_Work_Schedule'] = 'Horari laboral';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
