@@ -3207,6 +3207,7 @@ $app_list_strings['stic_custom_views_action_list']['bold'] = 'Bold';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
 $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Apply css style';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Fix text';
 
 // Custom Views: Element's sections
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Whole field';
@@ -3214,8 +3215,10 @@ $app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Only labe
 $app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Only input';
 $app_list_strings['stic_custom_views_elements_list']['panel'] = 'Whole panel';
 $app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Panel header';
+$app_list_strings['stic_custom_views_elements_list']['panel_content'] = 'Panel content';
 $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Whole tab';
 $app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Tab header';
+$app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Tab content';
 
 
 // SuiteCRM Core modifications

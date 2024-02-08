@@ -3208,6 +3208,7 @@ $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negreta';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subratllat';
 $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Aplicar estil css';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Text fix';
 
 // Vistes personalitzades: Seccions d'elements
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Tot el camp';
@@ -3215,8 +3216,10 @@ $app_list_strings['stic_custom_views_elements_list']['field_label'] = "Només l'
 $app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Només la casella';
 $app_list_strings['stic_custom_views_elements_list']['panel'] = 'Tot el panell';
 $app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Només la capçalera del panell';
+$app_list_strings['stic_custom_views_elements_list']['panel_content'] = 'Només el contingut del panell';
 $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Tota la pestanya';
 $app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Només la capçalera de la pestanya';
+$app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Només el contingut de la pestanya';
 
 
 // Modificacions del core de SuiteCRM

@@ -24,33 +24,30 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivLabel = class sticCustomViewDivLabel extends sticCustomViewDivBase {
-    constructor (item, element){
-        super(item, element);
-    }
-    text(newText){
-        return this.element.text(newText);
-    }
-    value(newValue) {
-        return null;
-    }
 
-    applyActionWithValue(actionName, value) { 
-        var result = super.applyActionWithValue(actionName, value);
-        if(result!== false) {
-            return result;
-        }
-        switch(actionName){
-            case "fixed_value": return this.value(value);
-            case "fixed_text": return this.text(value);
+var sticCustomViewItemTab = class sticCustomViewItemTab extends sticCustomViewItemBase {
+    constructor (customView, tabIndex) {
+        super(customView, tabIndex);
+
+        this.tabIndex = tabIndex;
+
+        this.header = new sticCustomViewDivTabHeader(this, this.elementView.find('[id=tab'+this.tabIndex+']'));
+        this.content = new sticCustomViewDivTabContent(this, this.elementView.find('[id=tab-content-'+this.tabIndex+']'));
+    };
+
+    show(show=true) { this.header.show(show); return this; }
+    hide() { return this.show(false); }
+
+    applyAction(action) {
+        switch(action.element_section){
+            case "tab_header": return this.header.applyAction(action);
+            case "tab_content": return this.content.applyAction(action);
+            case "tab": {
+                switch(action.action){
+                    case "visible": return this.show(action.value);
+                }
+            }
         }
         return false;
-    } 
-
-    onChange(callback) {
-        this.element.on("change paste keyup", function() { callback();});
-    }
-    change() {
-        this.element.change();
     }
 }

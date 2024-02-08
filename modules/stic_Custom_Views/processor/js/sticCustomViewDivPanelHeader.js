@@ -24,10 +24,14 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivHeader = class sticCustomViewDivHeader extends sticCustomViewDivLabel {
+var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends sticCustomViewDivLabel {
     constructor (item, element){
         super(item, element);
         this.anchor = this.element.find("a");
+        this.divText = this.anchor.children(":first");
+    }
+    text(newText){
+        return this.divText.text(newText);
     }
     color(color="") {
         this.anchor.css("color", color);
@@ -36,6 +40,30 @@ var sticCustomViewDivHeader = class sticCustomViewDivHeader extends sticCustomVi
     background(color="") {
         if (this.anchor.length>0) {
             this.anchor[0].style.setProperty("background-color", color, "important");
+        }
+        return this;
+    }
+    bold(bold=true) {
+        if (bold===true||bold==="1"||bold===1) {
+            this.divText.css('font-weight', 'bold');
+        } else {
+            this.divText.css('font-weight', 'normal');
+        }
+        return this;
+    }
+    italic(italic=true) {
+        if (italic===true||italic==="1"||italic===1) {
+            this.divText.css('font-style', 'italic');
+        } else {
+            this.divText.css('font-style', 'normal');
+        }
+        return this;
+    }
+    underline(underline=true) {
+        if (underline===true||underline==="1"||underline===1) {
+            this.divText.css('text-decoration', 'underline');
+        } else {
+            this.divText.css('text-decoration', 'none');
         }
         return this;
     }

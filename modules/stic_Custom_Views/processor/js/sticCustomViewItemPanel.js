@@ -24,33 +24,27 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivLabel = class sticCustomViewDivLabel extends sticCustomViewDivBase {
-    constructor (item, element){
-        super(item, element);
-    }
-    text(newText){
-        return this.element.text(newText);
-    }
-    value(newValue) {
-        return null;
-    }
 
-    applyActionWithValue(actionName, value) { 
-        var result = super.applyActionWithValue(actionName, value);
-        if(result!== false) {
-            return result;
-        }
-        switch(actionName){
-            case "fixed_value": return this.value(value);
-            case "fixed_text": return this.text(value);
+var sticCustomViewItemPanel = class sticCustomViewItemPanel extends sticCustomViewItemBase {
+    constructor (customView, panelName) {
+        super(customView, panelName);
+
+        this.panelName = panelName;
+
+        this.panel = new sticCustomViewDivBase(this, this.elementView.find('.panel-body[data-id="'+this.panelName+'"]').parent());
+        this.header = new sticCustomViewDivPanelHeader(this, this.panel.element.children('.panel-heading'));
+        this.content = new sticCustomViewDivPanelContent(this, this.panel.element.find('.tab-content'));
+    };
+
+    show(show=true) { this.panel.show(show); return this; }
+    hide() { return this.show(false); }
+
+    applyAction(action) {
+        switch(action.element_section){
+            case "panel_header": return this.header.applyAction(action);
+            case "panel_content": return this.content.applyAction(action);
+            case "panel": return this.panel.applyAction(action);
         }
         return false;
-    } 
-
-    onChange(callback) {
-        this.element.on("change paste keyup", function() { callback();});
-    }
-    change() {
-        this.element.change();
     }
 }

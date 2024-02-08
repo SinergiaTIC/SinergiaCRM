@@ -25,7 +25,7 @@
  *
  */
 
-var sticCustomViewField = class sticCustomViewField extends sticCustomViewItemBase {
+var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomViewItemBase {
     constructor (customView, fieldName) {
         super(customView, fieldName);
 
@@ -80,12 +80,11 @@ var sticCustomViewField = class sticCustomViewField extends sticCustomViewItemBa
             case "field_input": return this.input.applyAction(action);
             case "field": {
                 switch(action.action){
-                    case "visible": return this.show(action.value);
                     case "readonly": return this.readonly(action.value);
                     case "required": return this.required(action.value);
                     case "inline": return this.inline(action.value);
                     case "fixed_value": return this.fixed_value(action.value);
-                    case "css_style": return this.style(JSON.parse(action.value));
+                    default: return this.row.applyAction(action);
                 }
             }
         }

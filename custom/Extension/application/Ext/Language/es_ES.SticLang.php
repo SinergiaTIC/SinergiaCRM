@@ -3208,6 +3208,7 @@ $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negrita';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subrayado';
 $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Aplicar estilo css';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Texto fijo';
 
 // Vistas personalizadas: Secciones de elementos
 $app_list_strings['stic_custom_views_elements_list']['field'] = 'Todo el campo';
@@ -3215,8 +3216,10 @@ $app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Solo la e
 $app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Solo la casilla';
 $app_list_strings['stic_custom_views_elements_list']['panel'] = 'Todo el panel';
 $app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Solo la cabecera del panel';
+$app_list_strings['stic_custom_views_elements_list']['panel_content'] = 'Solo el contenido del panel';
 $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Toda la pestaña';
 $app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Solo la cabecera de la pestaña';
+$app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Solo el contenido de la pestaña';
 
 
 // Modificaciones del core de SuiteCRM

@@ -159,7 +159,7 @@ function insertConditionLinesHeader(){
       $("#"+condprefix+'Cell'+'value'+ln).html("");
     } else {
       // Create next selector
-      if(operator=='is_null') {
+      if(operator=='is_null'||operator=='is_not_null') {
           $("#"+condprefix+'Cell'+'value'+ln).html("<p> - </p>");
       } else {
         // Value editor

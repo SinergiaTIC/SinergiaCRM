@@ -227,18 +227,18 @@ class stic_Custom_Views_ModuleView
             case 'field_modification':
                 switch($this->view) {
                     case 'editview':
-                        $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
+                        $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'fixed_text', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                         break;
                     case 'detailview':
-                        $validActions = array('visible', /*'inline',*/ 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
+                        $validActions = array('visible', /*'inline',*/ 'fixed_text', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                         break;
                 }
                 break;
             case 'panel_modification':
-                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
+                $validActions = array('visible', 'fixed_text', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                 break;
             case 'tab_modification':
-                $validActions = array('visible', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
+                $validActions = array('visible', 'fixed_text', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                 break;
             }
         $actionsList = array();
@@ -294,6 +294,9 @@ class stic_Custom_Views_ModuleView
                     case 'fixed_value':
                         $validSections = array('field');
                         break;
+                    case 'fixed_text':
+                        $validSections = array('field_label');
+                        break;
                     default:
                         $validSections = array('field_label', 'field_input');
                         break;
@@ -304,6 +307,12 @@ class stic_Custom_Views_ModuleView
                     case 'visible':
                         $validSections = array('panel', 'panel_header');
                         break;
+                    case 'background':
+                        $validSections = array('panel_header', 'panel_content');
+                        break;
+                    case 'css_style':
+                        $validSections = array('panel','panel_header', 'panel_content');
+                        break;
                     default:
                         $validSections = array('panel_header');
                         break;
@@ -313,6 +322,10 @@ class stic_Custom_Views_ModuleView
                 switch($action) {
                     case 'visible':
                         $validSections = array('tab');
+                        break;
+                    case 'background':
+                    case 'css_style':
+                        $validSections = array('tab_header', 'tab_content');
                         break;
                     default:
                         $validSections = array('tab_header');
@@ -390,6 +403,9 @@ class stic_Custom_Views_ModuleView
                 return $this->getEditorForYesNo($newEditorId);
                 break;
 
+            case 'fixed_text':
+                return $this->getEditorForText($newEditorId);
+                break;
             case 'css_style':
                 return $this->getEditorForTextArea($newEditorId);
                 break;
@@ -403,6 +419,9 @@ class stic_Custom_Views_ModuleView
 
     private function getEditorForColor($newEditorId) {
         return "<input type='color' id='{$newEditorId}'/>";
+    }
+    private function getEditorForText($newEditorId) {
+        return "<input type='text' id='{$newEditorId}'/>";
     }
     private function getEditorForYesNo($newEditorId) {
         global $app_list_strings;

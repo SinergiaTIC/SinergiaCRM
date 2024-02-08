@@ -62,7 +62,7 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         if (underline===true||underline==="1"||underline===1) {
             this.element.css('text-decoration', 'underline');
         } else {
-            this.element.css('text-decoration', 'normal');
+            this.element.css('text-decoration', 'none');
         }
         return this;
     }
@@ -80,5 +80,20 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         }
     }
 
-    applyAction(action) { return false; } // Abstract class
+    applyAction(action) {
+        return this.applyActionWithValue(action.action, action.value);
+    }
+
+    applyActionWithValue(actionName, value) { 
+        switch(actionName){
+            case "visible": return this.show(value);
+            case "color": return this.color(value);
+            case "background": return this.background(value);
+            case "bold": return this.bold(value);
+            case "italic": return this.italic(value);
+            case "underline": return this.underline(value);
+            case "css_style": return this.style(JSON.parse(value));
+        }
+        return false;
+    } 
 }

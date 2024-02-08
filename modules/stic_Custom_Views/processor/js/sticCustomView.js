@@ -30,9 +30,9 @@ var sticCustomView = class sticCustomView {
         this.view = view;
     }
 
-    field(fieldName) { return new sticCustomViewField(this, fieldName); }
-    panel(panelName) { return new sticCustomViewPanel(this, panelName); }
-    tab(tabIndex)    { return new sticCustomViewTab(this, tabIndex); }
+    field(fieldName) { return new sticCustomViewItemField(this, fieldName); }
+    panel(panelName) { return new sticCustomViewItemPanel(this, panelName); }
+    tab(tabIndex)    { return new sticCustomViewItemTab(this, tabIndex); }
 
 
     /**

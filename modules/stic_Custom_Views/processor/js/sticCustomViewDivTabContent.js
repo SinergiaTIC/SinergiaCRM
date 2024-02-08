@@ -24,28 +24,18 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
+var sticCustomViewDivTabContent = class sticCustomViewDivTabContent extends sticCustomViewDivBase {
+    constructor (item, element){
+        super(item, element);
 
-var sticCustomViewTab = class sticCustomViewTab extends sticCustomViewItemBase {
-    constructor (customView, tabIndex) {
-        super(customView, tabIndex);
-
-        this.tabIndex = tabIndex;
-
-        this.header = new sticCustomViewDivLabel(this, this.elementView.find('[id=tab'+this.tabIndex+']'));
-    };
-
-    show(show=true) { this.header.show(show); return this; }
-    hide() { return this.show(false); }
-
-    applyAction(action) {
-        switch(action.element_section){
-            case "tab_header": return this.header.applyAction(action);
-            case "tab": {
-                switch(action.action){
-                    case "visible": return this.show(action.value);
-                }
-            }
+        // Fix padding for Tabs
+        if(element.css("padding")=="0px" && element.parent().css("padding")!="0px") {
+            var parentPadding = element.parent().css("padding");
+            element.parent().css("padding", "0px");
+            element.parent().children().css("padding", parentPadding);
         }
-        return false;
     }
+
 }
+
+
