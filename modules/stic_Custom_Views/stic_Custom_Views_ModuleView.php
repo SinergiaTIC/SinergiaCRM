@@ -452,7 +452,8 @@ class stic_Custom_Views_ModuleView
 
     private function getEditorForFieldValue($fieldName, $newEditorId) { 
         require_once("modules/AOW_WorkFlow/aow_utils.php");
-        return getModuleField($this->module, $fieldName, $newEditorId);
+        $editor = getModuleField($this->module, $fieldName, $newEditorId);
+        return str_replace('"form_name":"EditView"', '"form_name":"form_SubpanelQuickCreate_stic_Custom_View_Customizations"', $editor);
     }
     public function getEditorForFieldValue_Base64($fieldName, $newEditorId) {
         $html = base64_encode($this->getEditorForFieldValue($fieldName, $newEditorId));

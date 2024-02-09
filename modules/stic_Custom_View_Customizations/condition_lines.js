@@ -164,9 +164,9 @@ function insertConditionLinesHeader(){
           $("#"+condprefix+'Cell'+'value'+ln).html("<p> - </p>");
       } else {
         // Value editor
-        $("#"+condprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_field_map[field].editor_base64))));
-        $("#"+condprefix+'Cell'+'value'+ln).children().attr("name", condprefix+"value["+ln+"]");
-        $("#"+condprefix+'Cell'+'value'+ln).children().attr("id", condprefix+"value"+ln);
+        var editor = decodeURIComponent(escape(atob(view_field_map[field].editor_base64)));
+        editor = editor.replaceAll(field+"_editor", condprefix+"value["+ln+"]");
+        $("#"+condprefix+'Cell'+'value'+ln).html(editor);
         $("#"+condprefix+'Cell'+'value'+ln).children().attr('style', 'width: 90% !important');
       }
     }
