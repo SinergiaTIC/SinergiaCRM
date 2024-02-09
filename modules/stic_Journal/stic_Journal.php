@@ -69,4 +69,32 @@ class stic_Journal extends Basic
         return false;
     }
 
+    /**
+     * Overriding SugarBean save function to insert additional logic:
+     * Build the name of the journal using the name of the center, the date and the type
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = false) {
+        
+        include_once 'SticInclude/Utils.php';
+        include_once 'modules/stic_Journal/Utils.php';
+        global $app_list_strings;
+
+        // Create name if empty
+        if(empty($this->name)) {
+
+            // If theres a center selected
+            if(!empty($this->stic_journal_stic_centers_name)) {
+                $this->name = $this->stic_journal_stic_centers_name . ' - ' . $this->journal_date . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
+            } else {
+                $this->name = $this->journal_date . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
+            }
+        }
+        
+        // Call the generic save() function from the SugarBean class
+        parent::save();
+    }
+
 }
