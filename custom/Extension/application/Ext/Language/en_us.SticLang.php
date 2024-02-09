@@ -3210,19 +3210,33 @@ $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Apply css sty
 $app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Fix text';
 
 // Custom Views: Element's sections
-$app_list_strings['stic_custom_views_elements_list']['field'] = 'Whole field';
-$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Only label';
-$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Only input';
-$app_list_strings['stic_custom_views_elements_list']['panel'] = 'Whole panel';
-$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Panel header';
-$app_list_strings['stic_custom_views_elements_list']['panel_content'] = 'Panel content';
-$app_list_strings['stic_custom_views_elements_list']['tab'] = 'Whole tab';
-$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Tab header';
-$app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Tab content';
+$app_list_strings['stic_custom_views_element_list']['field'] = 'Whole field';
+$app_list_strings['stic_custom_views_element_list']['field_label'] = 'Only label';
+$app_list_strings['stic_custom_views_element_list']['field_input'] = 'Only input';
+$app_list_strings['stic_custom_views_element_list']['panel'] = 'Whole panel';
+$app_list_strings['stic_custom_views_element_list']['panel_header'] = 'Panel header';
+$app_list_strings['stic_custom_views_element_list']['panel_content'] = 'Panel content';
+$app_list_strings['stic_custom_views_element_list']['tab'] = 'Whole tab';
+$app_list_strings['stic_custom_views_element_list']['tab_header'] = 'Tab header';
+$app_list_strings['stic_custom_views_element_list']['tab_content'] = 'Tab content';
 
 // Custom Views: Status
 $app_list_strings['stic_custom_views_status_list']['active'] = 'Active';
 $app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactive';
+
+// Custom Views: Operators
+$app_list_strings['stic_custom_views_operator_list']['Equal_To'] = 'Equal To';
+$app_list_strings['stic_custom_views_operator_list']['Not_Equal_To'] = 'Not Equal To';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than'] = 'Greater Than';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than'] = 'Less Than';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than_or_Equal_To'] = 'Greater Than or Equal To';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 'Less Than or Equal To';
+$app_list_strings['stic_custom_views_operator_list']['Contains'] = 'Contains';
+$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'No conté';
+$app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Starts With';
+$app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Ends With';
+$app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Is Null';
+$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'No és nul';
 
 
 // SuiteCRM Core modifications

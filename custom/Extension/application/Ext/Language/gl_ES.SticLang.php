@@ -3219,19 +3219,33 @@ $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Aplicar estil
 $app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Texto fijo';
 
 // Vistas personalizadas: Secciones de elementos
-$app_list_strings['stic_custom_views_elements_list']['field'] = 'Todo el campo';
-$app_list_strings['stic_custom_views_elements_list']['field_label'] = 'Solo la etiqueta';
-$app_list_strings['stic_custom_views_elements_list']['field_input'] = 'Solo la casilla';
-$app_list_strings['stic_custom_views_elements_list']['panel'] = 'Todo el panel';
-$app_list_strings['stic_custom_views_elements_list']['panel_header'] = 'Solo la cabecera del panel';
-$app_list_strings['stic_custom_views_elements_list']['panel_content'] = 'Solo el contenido del panel';
-$app_list_strings['stic_custom_views_elements_list']['tab'] = 'Toda la pestaña';
-$app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Solo la cabecera de la pestaña';
-$app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Solo el contenido de la pestaña';
+$app_list_strings['stic_custom_views_element_list']['field'] = 'Todo el campo';
+$app_list_strings['stic_custom_views_element_list']['field_label'] = 'Solo la etiqueta';
+$app_list_strings['stic_custom_views_element_list']['field_input'] = 'Solo la casilla';
+$app_list_strings['stic_custom_views_element_list']['panel'] = 'Todo el panel';
+$app_list_strings['stic_custom_views_element_list']['panel_header'] = 'Solo la cabecera del panel';
+$app_list_strings['stic_custom_views_element_list']['panel_content'] = 'Solo el contenido del panel';
+$app_list_strings['stic_custom_views_element_list']['tab'] = 'Toda la pestaña';
+$app_list_strings['stic_custom_views_element_list']['tab_header'] = 'Solo la cabecera de la pestaña';
+$app_list_strings['stic_custom_views_element_list']['tab_content'] = 'Solo el contenido de la pestaña';
 
 // Vistas personalizadas: Estado
 $app_list_strings['stic_custom_views_status_list']['active'] = 'Activo';
 $app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactivo';
+
+// Vistas personalizadas: Operadores
+$app_list_strings['stic_custom_views_operator_list']['Equal_To'] = 'Igual a';
+$app_list_strings['stic_custom_views_operator_list']['Not_Equal_To'] = 'Non igual a';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than'] = 'Maior que';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than'] = 'Menor que';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than_or_Equal_To'] = 'Maior ou igual a';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 'Menor ou igual a';
+$app_list_strings['stic_custom_views_operator_list']['Contains'] = 'Contén';
+$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'Non contén';
+$app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Comeza con';
+$app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Finaliza con';
+$app_list_strings['stic_custom_views_operator_list']['is_null'] = 'É Nulo';
+$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'É non Nulo';
 
 
 // Modificaciones del core de SuiteCRM

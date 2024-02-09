@@ -186,7 +186,7 @@ $dictionary['stic_Custom_View_Actions'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'stic_custom_views_elements_list',
+    'options' => 'stic_custom_views_element_list',
     'studio' => 'visible',
     'dependency' => false,
   ),

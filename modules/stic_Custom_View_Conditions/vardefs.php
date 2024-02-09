@@ -96,7 +96,7 @@ $dictionary['stic_Custom_View_Conditions'] = array(
     'merge_filter' => 'disabled',
     'len' => 100,
     'size' => '20',
-    'options' => 'aow_operator_list',
+    'options' => 'stic_custom_views_operator_list',
     'studio' => 'visible',
     'dependency' => false,
   ),

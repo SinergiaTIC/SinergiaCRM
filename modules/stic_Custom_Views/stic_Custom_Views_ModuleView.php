@@ -228,7 +228,7 @@ class stic_Custom_Views_ModuleView
         }
         $operatorList = array();
         foreach ($validOps as $op) {
-            $operatorList[$op] = $app_list_strings['aow_operator_list'][$op];
+            $operatorList[$op] = $app_list_strings['stic_custom_views_operator_list'][$op];
         }
         return $operatorList;
     }
@@ -351,7 +351,7 @@ class stic_Custom_Views_ModuleView
         }
         $sectionsList = array();
         foreach ($validSections as $section) {
-            $sectionsList[$section] = $app_list_strings['stic_custom_views_elements_list'][$section];
+            $sectionsList[$section] = $app_list_strings['stic_custom_views_element_list'][$section];
         }
         return $sectionsList;
     }
