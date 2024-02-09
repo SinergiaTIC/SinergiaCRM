@@ -307,16 +307,16 @@ $dictionary['stic_Centers'] = array(
             'vname' => 'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_EVENTS_TITLE',
         ),
 
-        // Journals relationship Vardef
-        'stic_journals_stic_centers' => array(
-            'name' => 'stic_journals_stic_centers',
+        // Journal relationship Vardef
+        'stic_journal_stic_centers' => array(
+            'name' => 'stic_journal_stic_centers',
             'type' => 'link',
-            'relationship' => 'stic_journals_stic_centers',
+            'relationship' => 'stic_journal_stic_centers',
             'source' => 'non-db',
-            'module' => 'stic_Journals',
+            'module' => 'stic_Journal',
             'bean_name' => false,
             'side' => 'right',
-            'vname' => 'LBL_STIC_JOURNALS_STIC_CENTERS_FROM_STIC_JOURNALS_TITLE',
+            'vname' => 'LBL_STIC_JOURNAL_STIC_CENTERS_FROM_STIC_JOURNAL_TITLE',
         ),
     ),
     'relationships' => array(

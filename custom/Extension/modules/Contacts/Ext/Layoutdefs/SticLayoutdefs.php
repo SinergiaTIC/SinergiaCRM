@@ -368,15 +368,15 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_grants_contacts'] = array (
     ),
   );
 
-// Journals subpanel
-$layout_defs["Contacts"]["subpanel_setup"]['stic_journals_contacts'] = array(
+// Journal subpanel
+$layout_defs["Contacts"]["subpanel_setup"]['stic_journal_contacts'] = array(
     'order' => 100,
-    'module' => 'stic_Journals',
+    'module' => 'stic_Journal',
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'name',
-    'title_key' => 'LBL_STIC_JOURNALS_CONTACTS_FROM_STIC_JOURNALS_TITLE',
-    'get_subpanel_data' => 'stic_journals_contacts',
+    'title_key' => 'LBL_STIC_JOURNAL_CONTACTS_FROM_STIC_JOURNAL_TITLE',
+    'get_subpanel_data' => 'stic_journal_contacts',
     'top_buttons' => array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',

@@ -128,15 +128,15 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_centers_stic_events'] = array
   ),
 );
 
-// Journals subpanel
-$layout_defs[$module_name]["subpanel_setup"]['stic_journals_stic_centers'] = array(
+// Journal subpanel
+$layout_defs[$module_name]["subpanel_setup"]['stic_journal_stic_centers'] = array(
   'order' => 100,
-  'module' => 'stic_Journals',
+  'module' => 'stic_Journal',
   'subpanel_name' => 'default',
   'sort_order' => 'asc',
   'sort_by' => 'name',
-  'title_key' => 'LBL_STIC_JOURNALS_STIC_CENTERS_FROM_STIC_JOURNALS_TITLE',
-  'get_subpanel_data' => 'stic_journals_stic_centers',
+  'title_key' => 'LBL_STIC_JOURNAL_STIC_CENTERS_FROM_STIC_JOURNAL_TITLE',
+  'get_subpanel_data' => 'stic_journal_stic_centers',
   'top_buttons' => array(
       0 => array(
           'widget_class' => 'SubPanelTopButtonQuickCreate',
