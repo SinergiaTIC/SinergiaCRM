@@ -64,8 +64,10 @@ class stic_Custom_Views_ProcessorLogicHooks
                         ON views_custom.stic_custobdd5zations_idb = custom.id
                 WHERE 
                     views.deleted = 0
+                    AND views.status = 'active'
                     AND views_custom.deleted = 0
                     AND custom.deleted = 0
+                    AND custom.status = 'active'
                     AND views.view_module = '{$module}'
                     AND views.view_type = '{$view}'";
         

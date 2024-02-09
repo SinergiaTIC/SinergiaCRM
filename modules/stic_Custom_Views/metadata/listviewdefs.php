@@ -47,6 +47,14 @@ array (
     'width' => '10%',
     'default' => true,
   ),
+  'STATUS' => 
+  array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_STATUS',
+    'width' => '10%',
+    'default' => true,
+  ),
   'USER_TYPE' => 
   array (
     'type' => 'enum',

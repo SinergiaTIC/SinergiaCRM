@@ -63,6 +63,7 @@ $mod_strings = array (
   'LBL_INIT' => 'Inicial',
   'LBL_CONDITIONS' => 'Condicions',
   'LBL_ACTIONS' => 'Accions',
+  'LBL_STATUS' => "Estat",
 
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
 

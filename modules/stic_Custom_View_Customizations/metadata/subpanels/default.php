@@ -48,6 +48,13 @@ $subpanel_layout = array (
       'width' => '40%',
       'default' => true,
     ),
+    'status' => 
+    array (
+      'type' => 'enum',
+      'vname' => 'LBL_STATUS',
+      'width' => '10%',
+      'default' => true,
+    ),
     // 'init' => 
     // array (
     //   'type' => 'bool',

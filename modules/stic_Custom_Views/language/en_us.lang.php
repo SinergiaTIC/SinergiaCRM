@@ -68,6 +68,7 @@ $mod_strings = array (
   'LBL_ROLES_DESC' => "User roles to which the custom view will apply",
   'LBL_SECURITY_GROUPS' => 'Security groups',
   'LBL_SECURITY_GROUPS_DESC' => "Security groups to which the custom view will apply",
+  'LBL_STATUS' => "Status",
 
   'LBL_DETAILVIEW_PANEL1' => 'Record details',
 

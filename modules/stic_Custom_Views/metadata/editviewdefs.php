@@ -112,6 +112,16 @@ array (
         ),
         4 => 
         array (
+          0 => 
+          array (
+            'name' => 'status',
+            'studio' => 'visible',
+            'label' => 'LBL_STATUS',
+          ),
+          1 => array()
+        ),        
+        5 => 
+        array (
           0 => 'description',
         ),
       ),

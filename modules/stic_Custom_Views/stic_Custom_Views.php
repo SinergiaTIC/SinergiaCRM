@@ -69,4 +69,18 @@ class stic_Custom_Views extends Basic
         require_once('modules/stic_Custom_Views/Utils.php');
         fillDynamicGenericLists();
     }
+
+    // public function save($check_notify = false){
+    //     if (($_POST["duplicateSave"] && $_POST["duplicateSave"]="true")) {
+    //          //IEPA!!
+    //          // Veure modules/Surveys/Surveys.php
+    //     }
+    // }
+
+    // private function saveOptions(array $options, array $ids, array $deleted, $questionId) {
+    //     if (($_POST["duplicateSave"] && $_POST["duplicateSave"]="true"))
+    //     {
+    //         unset($_REQUEST['survey_questions_ids']);
+    //     }
+    // }
 }

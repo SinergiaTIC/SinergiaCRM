@@ -3221,6 +3221,9 @@ $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Tota la pestanya'
 $app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Només la capçalera de la pestanya';
 $app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Només el contingut de la pestanya';
 
+// Vistes personalitzades: Estat
+$app_list_strings['stic_custom_views_status_list']['active'] = 'Actiu';
+$app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactiu';
 
 // Modificacions del core de SuiteCRM
 

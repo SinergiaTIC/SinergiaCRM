@@ -78,13 +78,18 @@ array (
             'name' => 'customization_order',
             'label' => 'LBL_CUSTOMIZATION_ORDER',
           ),
-          // 2 => 
-          // array (
-          //   'name' => 'init',
-          //   'label' => 'LBL_INIT',
-          // ),
         ),
         1 => 
+        array (
+          0 => 
+          array (
+            'name' => 'status',
+            'studio' => 'visible',
+            'label' => 'LBL_STATUS',
+          ),
+          1 => array()
+        ),  
+        2 => 
         array (
           0 => 
           array (

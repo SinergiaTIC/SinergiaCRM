@@ -68,6 +68,7 @@ $mod_strings = array (
   'LBL_ROLES_DESC' => "Roles a los que se aplicará la vista personalizada",
   'LBL_SECURITY_GROUPS' => 'Grupos de seguridad',
   'LBL_SECURITY_GROUPS_DESC' => "Grupos de seguridad a los que se aplicará la vista personalizada",
+  'LBL_STATUS' => "Estado",
 
   'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
 

@@ -3221,6 +3221,10 @@ $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Toda la pestaña'
 $app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Solo la cabecera de la pestaña';
 $app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Solo el contenido de la pestaña';
 
+// Vistas personalizadas: Estado
+$app_list_strings['stic_custom_views_status_list']['active'] = 'Activo';
+$app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactivo';
+
 
 // Modificaciones del core de SuiteCRM
 

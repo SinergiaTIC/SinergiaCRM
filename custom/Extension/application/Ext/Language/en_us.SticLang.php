@@ -3220,6 +3220,10 @@ $app_list_strings['stic_custom_views_elements_list']['tab'] = 'Whole tab';
 $app_list_strings['stic_custom_views_elements_list']['tab_header'] = 'Tab header';
 $app_list_strings['stic_custom_views_elements_list']['tab_content'] = 'Tab content';
 
+// Custom Views: Status
+$app_list_strings['stic_custom_views_status_list']['active'] = 'Active';
+$app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactive';
+
 
 // SuiteCRM Core modifications
 

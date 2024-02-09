@@ -52,6 +52,15 @@ array (
         'default' => true,
         'name' => 'view_type',
       ),
+      'status' => 
+      array (
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_STATUS',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'status',
+      ),
       'user_type' => 
       array (
         'type' => 'enum',
