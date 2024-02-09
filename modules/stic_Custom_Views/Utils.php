@@ -145,6 +145,7 @@ function getJsVars($viewModule, $viewType) {
             "condition_operators: {".
                 "options: \"".$moduleView->getViewFieldOperators_as_select_options($fieldKey)."\",".
             "},".
+            "type: \"".$moduleView->getFieldType($fieldKey)."\",".
         "},";
     }
     $html .=

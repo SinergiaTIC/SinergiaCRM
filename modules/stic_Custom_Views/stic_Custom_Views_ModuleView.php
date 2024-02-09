@@ -46,6 +46,17 @@ class stic_Custom_Views_ModuleView
         return $this->convertToSelectOptions($this->getAllFields());
     }
 
+    private $allModuleFieldTypeList;
+    public function getAllFieldTypes() {
+        if($this->allModuleFieldTypeList == null) {
+            $this->findAllModuleFieldList();
+        }
+        return $this->allModuleFieldTypeList;
+    }
+    public function getFieldType($field) {
+        return $this->getAllFieldTypes()[$field];
+    }
+
     private $allModuleFieldOperatorMap;
     public function getAllFieldOperatorMap() {
         if($this->allModuleFieldOperatorMap == null) {
@@ -161,6 +172,7 @@ class stic_Custom_Views_ModuleView
                     $this->allModuleFieldList[$name] = $name;
                 }
                 $this->allModuleFieldOperatorMap[$name] = $this->getValidOperators($arr['type']);
+                $this->allModuleFieldTypeList[$name] = $arr['type'];
                 if ($arr['type'] === 'relate' && isset($arr['id_name']) && $arr['id_name'] !== '') {
                     $unset[] = $arr['id_name'];
                 }
@@ -173,9 +185,13 @@ class stic_Custom_Views_ModuleView
                 if (isset($this->allModuleFieldOperatorMap[$name])) {
                     unset($this->allModuleFieldOperatorMap[$name]);
                 }
+                if (isset($this->allModuleFieldTypeList[$name])) {
+                    unset($this->allModuleFieldTypeList[$name]);
+                }
             }
             asort($this->allModuleFieldList);
             asort($this->allModuleFieldOperatorMap);
+            asort($this->allModuleFieldTypeList);
         }
     }
     

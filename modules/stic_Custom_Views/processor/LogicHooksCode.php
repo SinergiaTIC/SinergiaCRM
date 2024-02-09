@@ -143,6 +143,7 @@ class stic_Custom_Views_ProcessorLogicHooks
                         "action" => $actionBean->action,
                         //"value" => $actionBean->value,
                         "value" => htmlspecialchars_decode($actionBean->value),
+                        "value_type" => $actionBean->value_type,
                         "element_section" => $actionBean->element_section,
                     );
                 }

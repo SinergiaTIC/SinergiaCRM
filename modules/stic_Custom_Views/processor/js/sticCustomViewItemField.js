@@ -54,11 +54,9 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
 
     readonly(readonly=true) { this.input.readonly(readonly); return this; }
 
-    required(required=true) {
+    required(required=true, type="text") {
         if(required===true||required==="1"||required===1) {
-            //IEPA!!
-            // Type always text??!!!
-            setRequiredStatus(this.fieldName, 'text',SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
+            setRequiredStatus(this.fieldName, type, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
         } else {
             setUnrequiredStatus(this.fieldName);
         }
@@ -81,7 +79,7 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
             case "field": {
                 switch(action.action){
                     case "readonly": return this.readonly(action.value);
-                    case "required": return this.required(action.value);
+                    case "required": return this.required(action.value, action.value_type);
                     case "inline": return this.inline(action.value);
                     case "fixed_value": return this.fixed_value(action.value);
                     default: return this.row.applyAction(action);

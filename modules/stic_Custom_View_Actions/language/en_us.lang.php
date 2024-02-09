@@ -64,6 +64,7 @@ $mod_strings = array (
   'LBL_ELEMENT' => 'Element',
   'LBL_ACTION' => 'Action',
   'LBL_VALUE' => 'Value',
+  'LBL_VALUE_TYPE' => 'Value type',
   'LBL_ELEMENT_SECTION' => 'Apply to',
 
   'LBL_FIELD' => 'Field',
