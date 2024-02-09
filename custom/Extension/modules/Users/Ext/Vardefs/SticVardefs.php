@@ -161,6 +161,17 @@ $dictionary['User']['fields']['emails_list'] = array(
     ),
 );
 
+$dictionary["User"]["fields"]["users_stic_work_schedule"] = array (
+    'name' => 'users_stic_work_schedule',
+    'type' => 'link',
+    'relationship' => 'users_stic_work_schedule',
+    'source' => 'non-db',
+    'module' => 'stic_Work_Schedule',
+    'bean_name' => 'stic_Work_Schedule',
+    'side' => 'right',
+    'vname' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_STIC_WORK_SCHEDULE_TITLE',
+);
+
 $dictionary['User']['fields']['status']['massupdate'] = 1;
 $dictionary['User']['fields']['reports_to_name']['massupdate'] = 1;
 $dictionary['User']['fields']['editor_type']['massupdate'] = 1;

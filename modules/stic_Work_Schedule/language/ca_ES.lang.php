@@ -80,5 +80,6 @@ $mod_strings = array (
   'LBL_END_DATE_ERROR' => "La data i hora de finalització ha de ser posterior a la data i hora d'inici.",
   'LBL_DURATION' => 'Duració',
   'LBL_DEFAULT_PANEL' => 'Dades generals',
-  'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',  
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
+  'LBL_USERS_STIC_WORK_SCHEDULE_FROM_USERS_TITLE' => 'Empleat',  
 );

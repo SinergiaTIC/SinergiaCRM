@@ -81,4 +81,5 @@ $mod_strings = array (
   'LBL_DURATION' => 'Duración',
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
+  'LBL_USERS_STIC_WORK_SCHEDULE_FROM_USERS_TITLE' => 'Empleado',
 );

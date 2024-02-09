@@ -88,8 +88,14 @@ $viewdefs[$module_name]['DetailView'] = array(
                     'name' => 'duration',
                     'label' => 'LBL_DURATION',
                 ),
-                1 => array(),
-            ),            
+                1 => array(
+                    'name' => 'users_stic_work_schedule_name',
+                    'label' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_USERS_TITLE',
+                ),
+            ),          
+            3 => array (
+                0 => 'description',
+            ),
         )
     )
 );

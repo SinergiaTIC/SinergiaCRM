@@ -38,6 +38,7 @@ $mod_strings['LBL_INC_REFERENCE_ENTITY'] = 'Reference entity (Incorpora)';
 $mod_strings['LBL_INC_REFERENCE_OFFICER'] = 'Reference officer (Incorpora)';
 $mod_strings['LBL_INC_INCORPORA_USER'] = 'Username (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Incorpora connection settings';
+$mod_strings['LBL_USERS_STIC_WORK_SCHEDULE_FROM_STIC_WORK_SCHEDULE_TITLE'] = 'Work schedule';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
