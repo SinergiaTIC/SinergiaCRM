@@ -35,8 +35,14 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
     }
     value(newValue) {
         if(newValue!==undefined) {
-            this.editor.val(newValue);
-            this.change();
+            var oldValue = this.editor.val();
+            if(newValue!=oldValue) {
+                this.editor.val(newValue);
+                this.change();
+
+                var self = this;
+                this.item.customView.addUndoFunction(function() { self.editor.val(oldValue); }, true);
+            }
         }
         return this.editor.val();
     }
@@ -51,12 +57,24 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
         this.editor.css("color", color);
         this.items.css("color", color);
         this.labelValue.css("color", color);
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.editor.css('color', ''); });
+        this.item.customView.addUndoFunction(function() { self.items.css('color', ''); });
+        this.item.customView.addUndoFunction(function() { self.labelValue.css('color', ''); });
+
         return super.color(color);
     }
     background(color="") {
         this.editor.css("background-color", color);
         this.items.css("background-color", color);
         this.labelValue.css("background-color", color);
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.editor.css('background-color', ''); });
+        this.item.customView.addUndoFunction(function() { self.items.css('background-color', ''); });
+        this.item.customView.addUndoFunction(function() { self.labelValue.css('background-color', ''); });
+
         if (this.type=="radioenum") {
             super.background(color);
         }
@@ -64,24 +82,38 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
     }
     readonly(readonly=true) {
         if(readonly===true||readonly==="1"||readonly===1) {
-            this.editor.hide();
-            this.items.hide();
-            if (this.labelValue.length==0) {
-                this.element.append('<p class="stic-ReadonlyInput"></p>');
-                this.labelValue = this.element.find(".stic-ReadonlyInput");
-                // Update label when value is changed
+            if(this.labelValue.length==0 || this.labelValue.is(":hidden")) {
+                this.editor.hide();
+                this.items.hide();
+                if (this.labelValue.length==0) {
+                    this.element.append('<p class="stic-ReadonlyInput"></p>');
+                    this.labelValue = this.element.find(".stic-ReadonlyInput");
+                    // Update label when value is changed
+                    var self = this;
+                    this.editor.on("change paste keyup", function() {
+                        self.labelValue.text(self.text());
+                    });
+                }
+                this.labelValue.show();
+                this.editor.change();
+
                 var self = this;
-                this.editor.on("change paste keyup", function() {
-                    self.labelValue.text(self.text());
-                });
+                this.item.customView.addUndoFunction(function() { self.editor.show(); });
+                this.item.customView.addUndoFunction(function() { self.items.show(); });
+                this.item.customView.addUndoFunction(function() { self.labelValue.hide(); });
             }
-            this.labelValue.show();
-            this.editor.change();
         }
         else {
-            this.labelValue.hide();
-            this.editor.show();
-            this.items.show();
+            if(this.editor.is(":hidden")||this.items.is(":hidden")) {
+                this.labelValue.hide();
+                this.editor.show();
+                this.items.show();
+
+                var self = this;
+                this.item.customView.addUndoFunction(function() { self.labelValue.show(); });
+                this.item.customView.addUndoFunction(function() { self.editor.hide(); });
+                this.item.customView.addUndoFunction(function() { self.items.hide(); });
+            }
         }
         return this;
     }

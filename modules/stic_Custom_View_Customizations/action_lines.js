@@ -224,11 +224,11 @@ function onActionChanged(ln) {
     // Value editor
     if(type=='field_modification' && action=='fixed_value'){
       var editor = decodeURIComponent(escape(atob(view_field_map[element].editor_base64)));
-      editor = editor.replaceAll(element+"_editor", actprefix+"value["+ln+"]");
+      editor = editor.replaceAll(element+"_editor", actprefix+"value"+ln);
       $("#"+actprefix+'Cell'+'value'+ln).html(editor);
     } else {
       $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_action_editor_map[action].editor_base64))));
-      $("#"+actprefix+'Cell'+'value'+ln).children().attr("name", actprefix+"value["+ln+"]");
+      $("#"+actprefix+'Cell'+'value'+ln).children().attr("name", actprefix+"value"+ln);
       $("#"+actprefix+'Cell'+'value'+ln).children().attr("id", actprefix+"value"+ln);
     }
     $("#"+actprefix+'Cell'+'value'+ln).children().attr('style', 'width: 90% !important');

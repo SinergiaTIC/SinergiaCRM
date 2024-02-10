@@ -29,7 +29,16 @@ var sticCustomViewDivLabel = class sticCustomViewDivLabel extends sticCustomView
         super(item, element);
     }
     text(newText){
-        return this.element.text(newText);
+        var oldText = this.element.text();
+        if(newText===undefined || newText!=oldText) {
+            return oldText;
+        }
+        var text = this.element.text(newText);
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.element.text(oldText); });
+
+        return text;
     }
     value(newValue) {
         return null;

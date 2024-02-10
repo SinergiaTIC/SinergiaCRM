@@ -31,15 +31,30 @@ var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends st
         this.divText = this.anchor.children(":first");
     }
     text(newText){
-        return this.divText.text(newText);
+        var oldText = this.divText.text();
+        if(newText===undefined || newText!=oldText) {
+            return oldText;
+        }
+        var text = this.divText.text(newText);
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.divText.text(oldText); });
+
+        return text;
     }
     color(color="") {
         this.anchor.css("color", color);
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.anchor.css("color", ''); });
         return this;
     }
     background(color="") {
         if (this.anchor.length>0) {
             this.anchor[0].style.setProperty("background-color", color, "important");
+
+            var self = this;
+            this.item.customView.addUndoFunction(function() { self.anchor[0].style.setProperty("background-color", "", ""); });
         }
         return this;
     }
@@ -49,6 +64,9 @@ var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends st
         } else {
             this.divText.css('font-weight', 'normal');
         }
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.divText.css('font-weight', ''); });
         return this;
     }
     italic(italic=true) {
@@ -57,6 +75,9 @@ var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends st
         } else {
             this.divText.css('font-style', 'normal');
         }
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.divText.css('font-style', ''); });
         return this;
     }
     underline(underline=true) {
@@ -65,6 +86,9 @@ var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends st
         } else {
             this.divText.css('text-decoration', 'none');
         }
+
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.divText.css('text-decoration', ''); });
         return this;
     }
 

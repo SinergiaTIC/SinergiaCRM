@@ -30,17 +30,35 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         this.element = element;
     }
     show(show=true) {
+        var visible = this.element.is(":visible");
+        var self = this;
         if(show===true||show==="1"||show===1) {
-            this.element.show();
+            if(!visible) {
+                this.element.show();
+                this.item.customView.addUndoFunction(function() { self.element.hide(); });
+            }
         } else {
-            this.element.hide();
+            if(visible) {
+                this.element.hide();
+                this.item.customView.addUndoFunction(function() { self.element.show(); });
+            }
         }
         return this;
     }
     hide() { return this.show(false); }
 
-    color(color="") { this.element.css("color", color); return this; }
-    background(color="") { this.element.css("background-color", color); return this; }
+    color(color="") { 
+        this.element.css("color", color);
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.element.css('color', ''); });
+        return this; 
+    }
+    background(color="") { 
+        this.element.css("background-color", color); 
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.element.css("background-color", ''); });
+        return this; 
+    }
 
     bold(bold=true) {
         if (bold===true||bold==="1"||bold===1) {
@@ -48,6 +66,9 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         } else {
             this.element.css('font-weight', 'normal');
         }
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.element.css('font-weight', ''); });
+
         return this;
     }
     italic(italic=true) {
@@ -56,6 +77,8 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         } else {
             this.element.css('font-style', 'normal');
         }
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.element.css('font-style', ''); });
         return this;
     }
     underline(underline=true) {
@@ -64,6 +87,8 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         } else {
             this.element.css('text-decoration', 'none');
         }
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.element.css('text-decoration', ''); });
         return this;
     }
 
@@ -78,6 +103,9 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         } else {
             this.element.css({"border-color": "", "border-style": "none"});
         }
+        var self = this;
+        this.item.customView.addUndoFunction(function() { self.element.css({"border-color": "", "border-style": ""}); });
+        return this;
     }
 
     applyAction(action) {

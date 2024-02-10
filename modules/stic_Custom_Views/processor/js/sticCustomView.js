@@ -28,6 +28,9 @@
 var sticCustomView = class sticCustomView {
     constructor(view) {
         this.view = view;
+        
+        this.undoFunctions=[];  // List of functions to undo all actions
+        this.customizations=[]; // List of: conditions, actions, lastResult
     }
 
     field(fieldName) { return new sticCustomViewItemField(this, fieldName); }
@@ -51,30 +54,36 @@ var sticCustomView = class sticCustomView {
      *  ]
      */
     processSticCustomView(jsonRules) {
-        var customizations = JSON.parse(jsonRules);
-        if(Array.isArray(customizations) && customizations.length) {
+        this.customizations = [];
+        var customizationsObject = JSON.parse(jsonRules);
+        if(Array.isArray(customizationsObject) && customizationsObject.length) {
             var self = this;
-            customizations.forEach(customization => {
+            customizationsObject.forEach(customization => {
                 self.addCustomization(customization.conditions, customization.actions);
             });
         }
     }
 
+
     /**
      * Adds a customization: a group of Conditions to apply a list of actions
      */
     addCustomization(conditions, actions) {
+        // Set customization in list
+        this.customizations.push({conditions: conditions, actions: actions, lastResult: false});
+        var index = this.customizations.length-1;
+ 
         // Bind every change involved in condition set
         if(Array.isArray(conditions) && conditions.length) {
             var self = this;
             conditions.forEach(condition => {
                 self.field(condition.field).onChange(function() { 
-                    self.checkConditionsAndApplyActions(conditions, actions); 
+                    self.processCustomization(index); 
                 });
             });
         }
-        // Check conditions with current values
-        this.checkConditionsAndApplyActions(conditions, actions); 
+        // Process Customization with current values
+        this.processCustomization(index); 
     }
 
     /**
@@ -97,6 +106,32 @@ var sticCustomView = class sticCustomView {
     }
     
     /**
+     * Adds a function to undo an applied action
+     * Reverse: says that the function must be applied at the end (to preserve last value)
+     */
+    addUndoFunction(func, reverse=false) {
+        if(reverse) {
+            this.undoFunctions.push(func);
+        } else {
+            this.undoFunctions.unshift(func);
+        }
+    }
+
+    /**
+     * Undo all registered changes and clear undo list
+     */
+    undoChanges(){
+        var undoCopy=[];
+        for(i=0; i<this.undoFunctions.length; i++) {
+            undoCopy[i]=this.undoFunctions[i];
+        }
+        this.undoFunctions=[];
+        undoCopy.forEach(func => {
+            func();
+        });
+    }
+
+    /**
      * Check a condition defined in an object
      * Example:
      * {
@@ -110,19 +145,41 @@ var sticCustomView = class sticCustomView {
     }
 
     /**
-     * Checks all conditions in a list in order to apply all actions
+     * Undo all changes and process all customizations
      */
-    checkConditionsAndApplyActions(conditions, actions) {
-        var value = true;
-        if(Array.isArray(conditions) && conditions.length) {
-            var self = this;
-            conditions.forEach(condition => value &&= self.checkCondition(condition));
+    undoChangesAndProcessCustomizations() {
+        this.undoChanges();
+        for(i=0; i<this.customizations.length; i++) {
+            this.processCustomization(i, true);
         }
+    }
+
+    /**
+     * Process a Customization: Checks all conditions in order to apply all actions
+     */
+    processCustomization(index, resetLastResult=false) {
+        var customization = this.customizations[index];
+        var value = true;
+        if(Array.isArray(customization.conditions) && customization.conditions.length) {
+            var self = this;
+            customization.conditions.forEach(condition => value &&= self.checkCondition(condition));
+        }
+        if(resetLastResult) {
+            customization.lastResult=false;
+        }
+
         if(value) {
-            if(Array.isArray(actions) && actions.length) {
+            if(Array.isArray(customization.actions) && customization.actions.length) {
                 var self = this;
-                actions.forEach(action => self.applyAction(action));
+                customization.actions.forEach(action => self.applyAction(action));
             }
         }
+        else {
+            if(customization.lastResult) {
+                // Last evaluation checks the condition: undo actions
+                this.undoChangesAndProcessCustomizations();
+            }
+        }
+        customization.lastResult = value;
     }
 }
