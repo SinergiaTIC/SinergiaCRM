@@ -3,3 +3,6 @@ REPLACE INTO stic_validation_actions (id, name, date_entered, date_modified, mod
 
 REPLACE INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
 ('a58bba60-c60f-11ee-98c0-0242ac140002', NOW(), 0, 'a8d6cdff-ff13-4a2d-b5af-dba7ed47f29c', 'a9bebf7f-8896-46dd-8d06-77e2b5256c83');
+
+REPLACE INTO stic_settings (`id`, `date_entered`, `date_modified`, `modified_user_id`, `created_by`, `deleted`, `assigned_user_id`, `type`, `name`, `value`, `description`) VALUES
+('b9755f82-72c9-d361-10b7-5b40699f14c4', NOW(), NOW(), '1', '1', 0, '1', 'TPV', 'TPV_MESES_CADUCIDAD', '0', 'Indica los meses de antelación con los que avisar del vencimiento de tarjetas (0 - mes actual, 1 - mes siguiente, -1 - no avisar).');

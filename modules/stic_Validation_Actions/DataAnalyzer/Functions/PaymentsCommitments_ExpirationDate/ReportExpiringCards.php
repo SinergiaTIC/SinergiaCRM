@@ -41,11 +41,33 @@ class ReportExpiringCards extends DataCheckFunction
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL) 
     {
 
+        require_once 'modules/stic_Settings/Utils.php';
+        $numberOfMonths = stic_SettingsUtils::getSetting('TPV_MESES_CADUCIDAD');
+        $currentMonth = date('m');
+        $currentYear = date('y');
+        if ($numberOfMonths == '-1') {
+            // -1 means, no warning must be issued, so no rows should be retrieved
+            return "SELECT spc.name, spc.id, spc.card_expiry_date, assigned_user_id
+            FROM stic_payment_commitments spc
+            WHERE 1=2";
+        }
+
+        if($currentMonth + $numberOfMonths > 12) {
+            $expirationMonth = ($currentMonth + $numberOfMonths) % 12;
+            $expirationYear = $currentYear + floor(($currentMonth + $numberOfMonths) / 12);
+        }
+        else {
+            $expirationYear = $currentYear;
+            $expirationMonth = $currentMonth + $numberOfMonths;
+        }
+
+        $minExpiration =str_pad($expirationYear, 2, '0', STR_PAD_LEFT) . str_pad($expirationMonth, 2, '0', STR_PAD_LEFT);
+
         $sql = "SELECT spc.name, spc.id, spc.card_expiry_date, assigned_user_id
             FROM stic_payment_commitments spc 
             where payment_method = 'card'
             and (end_date is null or end_date > concat(lpad(date_format(card_expiry_date, '%y'), 2, '0'), lpad(month(card_expiry_date), 2, '0')))
-            and card_expiry_date <= concat(lpad(date_format(CURRENT_DATE(), '%y'), 2, '0'), lpad(month(CURRENT_DATE()), 2, '0'))
+            and card_expiry_date <= '{$minExpiration}'
             and periodicity <> 'punctual'
             and deleted = 0
         ";
@@ -65,6 +87,8 @@ class ReportExpiringCards extends DataCheckFunction
         global $app_list_strings;
         // It will indicate if records with errors have been found.
         $errors = 0;
+
+        $currentMonth = date('ym');
         
         $resultInfo = $this->getLabel('RESULT_INFO'); // keep here
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Reporting ExpiringCards (stic_Payment_Commitments) field SQL results: " . $resultInfo);
@@ -74,10 +98,10 @@ class ReportExpiringCards extends DataCheckFunction
             // Set payment commitment end date
             $PCBean = Beanfactory::getBean('stic_Payment_Commitments', $row['id']);
 
-            $paymentMethod=$app_list_strings['stic_payments_methods_list'][$PCBean->payment_method]; 
             $resultInfo = str_replace('@expiring_date@',$row['card_expiry_date'],$resultInfo);
 
-            $errorMsg = '<span style="color:#e85d04;">' . $resultInfo . '</span>';
+            $color = $row['card_expiry_date'] < $currentMonth ? 'red' : '#e85d04';
+            $errorMsg = '<span style="color:'. $color . ';">' . $resultInfo . '</span>';
             $data = array(
                 'name' => $this->getLabel('NAME') . ' - ' . $resultInfo,
                 'stic_validation_actions_id' => $actionBean->id,
