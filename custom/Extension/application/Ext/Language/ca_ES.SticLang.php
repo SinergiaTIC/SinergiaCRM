@@ -110,6 +110,7 @@ $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Grups de Segure
 $app_list_strings['moduleList']['stic_Grants'] = 'Ajuts';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centres';
 $app_list_strings['moduleList']['stic_Work_Schedule'] = 'Horari laboral';
+$app_list_strings['moduleList']['stic_Time_Availability'] = 'Disponibilitat horària';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -3172,6 +3173,15 @@ $app_list_strings['stic_centers_types_list']['residential'] = 'Residencial';
 $app_list_strings['stic_centers_types_list']['attention_point'] = "Punt d'atenció";
 $app_list_strings['stic_centers_types_list']['training'] = 'Formació';
 $app_list_strings['stic_centers_types_list']['other'] = 'Altres';
+
+// Disponibilitat horària: Tipus de disponibilitat
+$app_list_strings['stic_time_availability_types_list'][''] = '';
+$app_list_strings['stic_time_availability_types_list']['working'] = 'Feiner';
+$app_list_strings['stic_time_availability_types_list']['vacation'] = 'Vacances';
+$app_list_strings['stic_time_availability_types_list']['public_holiday'] = 'Die festiu';
+$app_list_strings['stic_time_availability_types_list']['personal_day'] = 'Dia personal';
+$app_list_strings['stic_time_availability_types_list']['sick_leave'] = 'Baixa per malaltia';
+$app_list_strings['stic_time_availability_types_list']['leave_absence'] = 'Excedència';
 
 // Modificacions del core de SuiteCRM
 

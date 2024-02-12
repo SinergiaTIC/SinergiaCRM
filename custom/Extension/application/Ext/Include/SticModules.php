@@ -56,6 +56,7 @@ $moduleList[] = 'stic_Security_Groups_Rules';
 $moduleList[] = 'stic_Grants';
 $moduleList[] = 'stic_Centers';
 $moduleList[] = 'stic_Work_Schedule';
+$moduleList[] = 'stic_Time_Availability';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -93,6 +94,7 @@ $beanList['stic_Security_Groups_Rules'] = 'stic_Security_Groups_Rules';
 $beanList['stic_Grants'] = 'stic_Grants';
 $beanList['stic_Centers'] = 'stic_Centers';
 $beanList['stic_Work_Schedule'] = 'stic_Work_Schedule';
+$beanList['stic_Time_Availability'] = 'stic_Time_Availability';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -129,6 +131,7 @@ $beanFiles['stic_Security_Groups_Rules'] = 'modules/stic_Security_Groups_Rules/s
 $beanFiles['stic_Grants'] = 'modules/stic_Grants/stic_Grants.php';
 $beanFiles['stic_Centers'] = 'modules/stic_Centers/stic_Centers.php';
 $beanFiles['stic_Work_Schedule'] = 'modules/stic_Work_Schedule/stic_Work_Schedule.php';
+$beanFiles['stic_Time_Availability'] = 'modules/stic_Time_Availability/stic_Time_Availability.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';

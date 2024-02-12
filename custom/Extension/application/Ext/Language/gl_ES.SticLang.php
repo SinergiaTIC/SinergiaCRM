@@ -118,6 +118,7 @@ $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Grupos de Segur
 $app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
 $app_list_strings['moduleList']['stic_Work_Schedule'] = 'Horario laboral';
+$app_list_strings['moduleList']['stic_Time_Availability'] = 'Disponibilidad horaria';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -3180,6 +3181,15 @@ $app_list_strings['stic_centers_types_list']['residential'] = 'Residencial';
 $app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de atención';
 $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
+
+// Disponibilidad horaria: Tipo de disponibilidad: Tipo de disponibilidad
+$app_list_strings['stic_time_availability_types_list'][''] = '';
+$app_list_strings['stic_time_availability_types_list']['working'] = 'Laborable';
+$app_list_strings['stic_time_availability_types_list']['vacation'] = 'Vacaciones';
+$app_list_strings['stic_time_availability_types_list']['public_holiday'] = 'Día festivo';
+$app_list_strings['stic_time_availability_types_list']['personal_day'] = 'Día personal';
+$app_list_strings['stic_time_availability_types_list']['sick_leave'] = 'Baja por enfermedad';
+$app_list_strings['stic_time_availability_types_list']['leave_absence'] = 'Excedencia';
 
 // Modificaciones del core de SuiteCRM
 

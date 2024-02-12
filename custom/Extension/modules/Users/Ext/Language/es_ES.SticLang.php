@@ -39,6 +39,7 @@ $mod_strings['LBL_INC_REFERENCE_OFFICER'] = 'Técnico de referencia (Incorpora)'
 $mod_strings['LBL_INC_INCORPORA_USER'] = 'Identificador (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Parámetros de conexión con Incorpora';
 $mod_strings['LBL_USERS_STIC_WORK_SCHEDULE_FROM_STIC_WORK_SCHEDULE_TITLE'] = 'Horario laboral';
+$mod_strings['LBL_STIC_TIME_AVAILABILITY_USERS_FROM_STIC_TIME_AVAILABILITY_TITLE'] = 'Disponibilidad horaria';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direcciones de correo";
