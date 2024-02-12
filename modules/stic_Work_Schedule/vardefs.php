@@ -116,7 +116,7 @@ $dictionary['stic_Work_Schedule'] = array(
                 'editview' => false,
                 'quickcreate' => false,
             ),
-        ),      
+        ),
         'users_stic_work_schedule' => array (
             'name' => 'users_stic_work_schedule',
             'type' => 'link',
@@ -153,7 +153,7 @@ $dictionary['stic_Work_Schedule'] = array(
     ),
     'optimistic_locking' => true,
     'unified_search' => true,
-    'unified_search_default_enabled' => false,    
+    'unified_search_default_enabled' => false, 
 );
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');

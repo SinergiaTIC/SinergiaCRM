@@ -71,6 +71,17 @@ $viewdefs[$module_name]['QuickCreate'] = array(
                     'label' => 'LBL_END_DATE',
                 ),
             ),
+            2 => 
+            array (
+                0 => 
+                array (
+                    'name' => 'users_stic_work_schedule_name',
+                    'label' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_USERS_TITLE',
+                ),
+            ),
+            3 => array (
+                0 => 'description',
+            ),              
         ),
     ),
 );
