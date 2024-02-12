@@ -165,7 +165,10 @@ function insertConditionLinesHeader(){
       } else {
         // Value editor
         var editor = decodeURIComponent(escape(atob(view_field_map[field].editor_base64)));
-        editor = editor.replaceAll(field+"_editor", condprefix+"value"+ln);
+        editor = editor.replaceAll("id=\""+field+"_editor"+"\"", "id=\""+condprefix+"value"+ln+"\"");
+        editor = editor.replaceAll("id='"+field+"_editor"+"'", "id=\""+condprefix+"value"+ln+"\"");
+        editor = editor.replaceAll("name=\""+field+"_editor"+"\"", "name=\""+condprefix+"value["+ln+"]\"");
+        editor = editor.replaceAll("name='"+field+"_editor"+"'", "name=\""+condprefix+"value["+ln+"]\"");
         $("#"+condprefix+'Cell'+'value'+ln).html(editor);
         $("#"+condprefix+'Cell'+'value'+ln).children().attr('style', 'width: 90% !important');
       }
