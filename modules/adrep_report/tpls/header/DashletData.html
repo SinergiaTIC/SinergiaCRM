@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{$title}</title>
+		<style type="text/css">{$stylesheet}</style>
+<style type="text/css">{$custom_css}</style>
+{if $chartcount > 0 and $charttype eq "google"}
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+			{literal}
+      	google.charts.load('current', {'packages':['corechart']});
+
+			{/literal}
+			{foreach from=$charts item=chart}
+				{$chart.ChartJS}
+			{/foreach}
+	</script>
+{/if}
+	</head>
+	<body>
+
+{if $template ne ""}
+{assign var='addurl' value=`$template`}
+{else}
+{assign var='addurl' value=''}
+{/if}
+
+		<div class="adrep_toolbar">
+				{if !empty($page)}
+				<div class="adrep_toolbar">
+
+					{if $page > 0}
+					<div class="adrep_menu">
+						{if $min2 > 2}
+							<a href="index.php?module=adrep_report&action={$action}&record={$record}&page=1&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}{$addurl}">1...</a>
+						{/if}
+						{if $min2 > 0}
+							<a href="index.php?module=adrep_report&action={$action}&record={$record}&page={$min2}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}{$addurl}">{$min2}</a>
+						{/if}
+						{if $min1 > 0}
+							<a href="index.php?module=adrep_report&action={$action}&record={$record}&page={$min1}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}{$addurl}">{$min1}</a>
+						{/if}
+						<a href="#" class="active">{$page}</a>
+						{if $plus1 <= $num_pages}
+							<a href="index.php?module=adrep_report&action={$action}&record={$record}&page={$plus1}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}{$addurl}">{$plus1}</a>
+						{/if}
+						{if $plus2 <= $num_pages}
+							<a href="index.php?module=adrep_report&action={$action}&record={$record}&page={$plus2}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}{$addurl}">{$plus2}</a>
+						{/if}
+						{if $plus2 < ($num_pages - 1)}
+							<a href="index.php?module=adrep_report&action={$action}&record={$record}&page={$num_pages}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}{$addurl}">...{$num_pages}</a>
+						{/if}
+					</div>
+					{/if}
+				</div>
+				{/if}
+		</div>
+
+		<table class="adrep_table_data">

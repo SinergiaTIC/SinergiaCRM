@@ -1,0 +1,6 @@
+<tr class="adrep_tr_{$row_class}">
+	{foreach from=$row item=column}
+	<td class="adrep_td_{$column.class}"{if $column.width>0} width="{$column.width}%"{/if}>{$column.value}</td>
+	{/foreach}
+</tr>
+

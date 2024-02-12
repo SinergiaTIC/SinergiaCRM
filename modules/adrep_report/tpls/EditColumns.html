@@ -1,0 +1,134 @@
+<div class='moduleTitle'>
+	<h2>{$TITLE} {$FOR} "<b>{$FOCUS_NAME}</b>"</h2>
+</div>
+<br />
+
+<form action='index.php' method="POST">
+<input type='hidden' name='module' value='adrep_report' />
+<input type='hidden' name='action' value='SaveColumns' />
+<input type='hidden' name='record' value='{$record}' />
+<input type='hidden' name='new' value='{$new}' />
+<input type='hidden' name='colnames' value='{$colnames}' />
+
+<table class='list'>
+	<thead>
+		<tr>
+			<th width='13%'>Column</th>
+			<th width='13%'>Label</th>
+			<th width='12%'>Type</th>
+			<th width='12%'>Sub/Total&nbsp;Type</th>
+			<th width='12%'>Position</th>
+			<th width='14%'>Dropdown&nbsp;List&nbsp;/&nbsp;Module</th>
+			<th width='12%'>Precision</th>
+			<th width='12%'>Width</th>
+		</tr>
+	</thead>
+	<tbody>
+{foreach from=$columns item=column key=name}
+	<tr>
+		<td>
+			{if $column.editable == 'yes'}
+			<input type="text" size='15' name='name_{$name}' value='{$column.name}' />
+			{else}
+			<input type="text" size='15' readonly name='name_{$name}' value='{$column.name}' />
+			{/if}
+			<input type='hidden' name='id_{$name}' value='{$column.id}' />
+		</td>
+		<td>
+			<input type="text" size='15' name='column_label_{$name}' value='{$column.column_label}' />
+		</td>
+		<td class='type_td' data-name="{$name}">
+			{html_options name=type_$name options=$types selected=$column.type}
+		</td>
+		<td class='total_type_td'>
+			{html_options name=total_type_$name options=$total_types selected=$column.total_type}
+		</td>
+		<td>
+			{html_options name=priority_$name options=$priority_list selected=$column.priority}
+		</td>
+		<td type='dropdown_td' id='dropdown_td_{$name}'>
+			{if $column.type == 'Dropdown'}
+			<div id="dropdown_wrapper_{$name}">
+			{else}
+			<div id="dropdown_wrapper_{$name}" style='display:none;'>
+			{/if}
+				{html_options name=dropdown_name_$name options=$dropdowns selected=$column.dropdown_name}
+			</div>
+			&nbsp;
+		<!-- /td>
+		<td type='module_td' id='modulels_td_{$name}' -->
+			{if $column.type == 'ModuleLink' }
+			<div id="module_wrapper_{$name}">
+			{else}
+			<div id="module_wrapper_{$name}" style='display:none;'>
+			{/if}
+				{html_options name=linked_module_name_$name options=$moduleList selected=$column.module}
+			</div>
+			&nbsp;
+		</td>
+		<td type='decimals_td' id='decimals_td_{$name}'>
+			{if $column.type == 'Number' || $column.type == 'Currency' }
+			<div id="precision_wrapper_{$name}">
+			{else}
+			<div id="precision_wrapper_{$name}" style='display:none;'>
+			{/if}
+				<input type="text" size='2' name='decimals_{$name}' value='{$column.decimals}' />
+			</div>
+			&nbsp;
+		</td>
+		<td>
+			{html_options name=width_$name options=$width_list selected=$column.width}
+		</td>
+	</tr>
+{/foreach}
+	</tbody>
+</table>
+
+<input type='submit' value='{$LBL_SAVE}' class='button' />
+
+</form>
+
+{literal}
+<script type="text/javascript">
+function typeChange()
+{
+	var name = $(this).parent().data('name');
+	var type = $(this).val();
+	var dropdown_id = "dropdown_wrapper_"+name;
+	var date_id = "date_wrapper_"+name;
+	var default_id = "default_wrapper_"+name;
+	var precision_id = "precision_wrapper_"+name;
+	var module_id = "module_wrapper_"+name;
+
+	if (type == "Dropdown")
+		$("#"+dropdown_id).show();
+	else
+		$("#"+dropdown_id).hide();
+
+	if (type == "Date" || type == "DateTime")
+	{
+		$("#"+date_id).show();
+		$("#"+default_id).hide();
+	}
+	else
+	{
+		$("#"+date_id).hide();
+		$("#"+default_id).show();
+	}
+
+	if (type == "Number" || type == "Currency")
+		$("#"+precision_id).show();
+	else
+		$("#"+precision_id).hide();
+
+	if (type == "ModuleLink")
+		$("#"+module_id).show();
+	else
+		$("#"+module_id).hide();
+}
+
+$( document ).ready(function() {
+    $(".type_td select").change(typeChange);
+});
+</script>
+{/literal}

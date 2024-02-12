@@ -1,0 +1,7 @@
+<tr class="adrep_tr_{$row_class}">
+	{foreach from=$row item=column}
+	{if $column.width != 'Hide'}
+	<td class="adrep_td_{$column.class}">{$column.value}</td>
+	{/if}
+	{/foreach}
+</tr>

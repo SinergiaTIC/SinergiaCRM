@@ -1,0 +1,161 @@
+body
+{
+	font-family: Arial, Helvetica, Sans-serif;
+	font-size: 10pt;
+}
+
+td
+{
+	padding: 0px 5px;
+	border: 0;
+}
+
+tr, table
+{
+	border: 0;
+}
+
+td.adrep_td_logo
+{
+	text-align: center;
+}
+
+img.adrep_img_logo
+{
+	margin: 5px auto;
+}
+
+.adrep_table_header
+{
+	font-size: 12pt;
+}
+
+.adrep_tr_header td
+{
+	font-weight: bold;
+	background-color: #dcdcdc;
+	border-bottom: 1px solid black;
+	padding: 5px;
+}
+
+.adrep_tr_footer
+{
+	border-top: 1px solid black;
+	font-weight: bold;
+	background-color: #cccccc;
+}
+
+.adrep_table_footer
+{
+	font-size: 12pt;
+}
+
+.adrep_tr_even
+{
+}
+
+.adrep_tr_odd
+{
+	background-color: #ececec;
+}
+
+.adrep_tr_subtotal1 td
+{
+	border-top: 2px solid black;
+	border-bottom: 1px solid black;
+	font-weight: bold;
+	padding-bottom: 15px;
+}
+
+.adrep_tr_subtotal2 td
+{
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	font-weight: bold;
+	padding-bottom: 15px;
+}
+
+.adrep_tr_totals td
+{
+	border-bottom: 2px solid black;
+	border-top: 2px solid black;
+	font-weight: bold;
+	background-color: #cccccc;
+	padding: 2px 5px;
+}
+
+.adrep_td_Number, .adrep_td_Currency
+{
+	text-align: right;
+}
+
+.adrep_td_created_by
+{
+	text-align: right;
+	font-weight: bold;
+	padding-left: 10px;
+	font-size: 10pt;
+}
+.adrep_td_created_by_footer
+{
+	font-weight: bold;
+	padding-left: 10px;
+	font-size: 10pt;
+}
+
+.adrep_td_title
+{
+	text-align: center;
+	font-size: 14pt;
+}
+
+.adrep_td_date_created
+{
+	text-align: right;
+	padding-right: 10px;
+	font-size: 10pt;
+}
+
+.adrep_td_pagination
+{
+	text-align: right;
+}
+
+.adrep_tr_pagination td
+{
+	padding-top: 10px;
+	font-size: 10pt;
+}
+
+td.adrep_td_parameter_label
+{
+	text-align: right;
+}
+
+.adrep_tr_parameter td
+{
+	font-size: 10pt;
+}
+
+.adrep_td_parameter_label
+{
+	font-weight: bold;
+}
+
+td.adrep_td_download
+{
+	text-align: center;
+}
+
+p.chart_p
+{
+	text-align: center;
+}
+
+@media print
+{
+	.no-print, .no-print *
+	{
+		display: none !important;
+	}
+}

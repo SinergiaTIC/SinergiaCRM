@@ -1,0 +1,382 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');
+
+* {
+  box-sizing: border-box;
+  line-height: 1.2;
+}
+
+body {
+  margin: 60px 80px 30px;
+  font-size: 14px;
+  font-family: 'Open Sans', sans-serif;
+  color: #212121;
+}
+
+h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+/* Logo */
+
+.adrep_logo,
+.adrep_logo_md {
+  height: 68px;
+}
+
+.adrep_logo {
+  margin: 0px 0 20px;
+}
+
+.adrep_logo_md {
+  display: none;
+}
+
+/* Header */
+
+header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  color: #fff;
+  margin-bottom: 65px;
+}
+
+.adrep_header_left,
+.adrep_header_right {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 50px 40px;
+}
+
+.adrep_header_left {
+  width: 80%;
+  background: #08c;
+  border-radius: 4px 0 0 4px;
+}
+
+.adrep_header_left p {
+  font-style: italic;
+}
+
+.adrep_header_left h2 {
+  margin-bottom: 5px;
+}
+
+.adrep_header_right {
+  width: 20%;
+  border-radius: 0 4px 4px 0;
+  background: #333;
+}
+
+.adrep_header_right p {
+  margin-bottom: 5px;
+}
+
+.adrep_header_right p:last-child {
+  margin-bottom: 0;
+}
+
+.adrep_header_right p span {
+  margin-right: 8px;
+}
+
+/* Toolbar */
+
+.adrep_toolbar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin: 5px 0;
+}
+
+/* Menu */
+
+.adrep_menu {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border: 1px solid rgba(34,36,38,.15);
+  border-radius: 4px;
+}
+
+.adrep_menu a {
+  padding: 9px 16px;
+  border-right: 1px solid rgba(34,36,38,.1);
+  color: #7b7b7b;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  -webkit-transition: .25s ease;
+  transition: .25s ease;
+  -webkit-transition-property: background, color;
+  transition-property: background, color;
+}
+
+.adrep_menu a:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.adrep_menu a:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.adrep_menu a:hover:not(.active) {
+  background: #f7f7f7;
+  color: #212121;
+}
+
+.adrep_menu a.active {
+  cursor: default;
+  background: #08c;
+  color: #fff;
+  border: none;
+}
+
+.adrep_menu a:last-child {
+  border: none;
+}
+
+/* Table */
+
+table.adrep_table_data {
+  width: 100%;
+  border: 1px solid rgba(34,36,38,.15);
+  border-radius: 4px;
+  border-spacing: 0;
+  text-align: left;
+}
+
+table.adrep_table_data .adrep_tr_header td {
+  padding: 13px 11px;
+  font-weight: 700;
+  background: #f9fafb;
+}
+
+table.adrep_table_data .adrep_tr_odd:hover td,
+table.adrep_table_data .adrep_tr_even:hover td {
+  background: #f9fafb;
+}
+
+table.adrep_table_data .adrep_tr_header td:first-child {
+  border-top-left-radius: 4px;
+}
+
+table.adrep_table_data .adrep_tr_header td:last-child {
+  border-top-right-radius: 4px
+}
+
+table.adrep_table_data tbody td {
+  padding: 11px 11px;
+  border-top: 1px solid rgba(34,36,38,.1);
+}
+
+table.adrep_table_data tbody td.adrep_td_Number,
+table.adrep_table_data tbody td.adrep_td_Currency {
+	text-align: right;
+}
+
+
+table.adrep_table_data tbody tr:first-child td {
+  border-top: none;
+}
+
+table.adrep_table_data tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 4px;
+}
+
+table.adrep_table_data tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 4px;
+}
+
+table.adrep_table_data tbody tr.adrep_tr_subtotal1 td {
+  padding: 13px 11px;
+  font-weight: 600;
+  background: #f9fafb;
+}
+
+/* Footer */
+
+footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  margin-top: 50px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Media queries */
+
+@media only screen and (max-width: 1600px) {
+  body {
+    margin: 60px 50px 30px;
+  }
+
+  .adrep_header_left {
+    width: 73%
+  }
+
+  .adrep_header_right {
+    width: 27%;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  body {
+    margin: 40px 30px 30px;
+  }
+
+  .adrep_header_left,
+  .adrep_header_right {
+    padding: 50px 30px;
+  }
+
+  .adrep_header_left {
+    width: 68%
+  }
+
+  .adrep_header_right {
+    width: 32%;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  body {
+    margin: 40px 20px 30px;
+  }
+
+  .adrep_logo {
+    display: none;
+  }
+
+  .adrep_logo_md {
+    display: block;
+  }
+
+  header {
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+
+  .adrep_header_left {
+    -webkit-box-ordinal-group: 3;
+    -ms-flex-order: 2;
+    order: 2;
+    width: 100%;
+    text-align: center;
+    border-radius: 4px;
+  }
+
+  .adrep_header_right {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    padding: 0;
+    text-align: right;
+    background: #fff;
+    color: #212121;
+  }
+
+  .adrep_header_right,
+  .adrep_logo_md {
+    margin-bottom: 25px;
+  }
+}
+
+
+@media print {
+  body {
+    margin: 20px 0;
+    color:  #000;
+  }
+
+  .adrep_logo {
+    margin: 0;
+  }
+
+  header {
+    margin-bottom: 20px;
+  }
+
+  .adrep_header_left,
+  .adrep_header_right,
+  table.adrep_table_data .adrep_tr_header td,
+  table.adrep_table_data tbody tr.adrep_tr_subtotal1 td,
+  footer {
+    background: #fff;
+    color:  #000;
+  }
+
+  .adrep_header_left,
+  .adrep_header_right {
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    width: 50%;
+    padding: 20px 0;
+  }
+
+  .adrep_header_right {
+    text-align: right;
+  }
+
+  .adrep_menu {
+    display: none;
+  }
+
+  table.adrep_table_data {
+    border: none;
+    page-break-inside: auto;
+  }
+
+  table.adrep_table_data tbody tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  table.adrep_table_data tbody td {
+    padding: 3px 0;
+    border: none;
+  }
+
+  table.adrep_table_data .adrep_tr_header td {
+    padding: 0 0 5px;
+    border-bottom: 2px solid #000;
+  }
+
+  table.adrep_table_data tbody tr.adrep_tr_subtotal1 td {
+    border-top: 1px solid #000;
+    padding: 5px 0 20px;
+  }
+
+  footer {
+    padding: 0;
+  }
+}

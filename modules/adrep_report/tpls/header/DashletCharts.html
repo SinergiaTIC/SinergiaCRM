@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{$title}</title>
+
+{if $chartcount > 0 and $charttype eq "google"}
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+			{literal}
+      	google.charts.load('current', {'packages':['corechart']});
+
+			{/literal}
+			{foreach from=$charts item=chart}
+				{$chart.ChartJS}
+			{/foreach}
+	</script>
+{/if}
+	</head>
+	<body>
+
+
+		{if $page < 2 and $chartcount > 0 and $charttype eq 'google'}
+			{foreach from=$charts item=chart}
+
+			<div id="{$chart.Chartid}_div"></div>
+
+			{/foreach}
+		{elseif $page < 2 and $chartcount > 0 }
+		{foreach from=$charts item=chart}
+
+				<p class='chart_p'>
+					<img src="{$chart}"/>
+				</p>
+
+		{/foreach}
+
+		{/if}
+
+		

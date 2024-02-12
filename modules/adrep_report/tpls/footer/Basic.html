@@ -1,0 +1,47 @@
+	</table> <!-- end of data table -->
+
+	<table class="adrep_table_footer" width="100%">
+		{if !empty($page)}
+		<tr class="adrep_tr_pagination">
+			<td class="adrep_td_curent_page">
+				Page {$page} of {$num_pages}
+			</td>
+			<td>&nbsp;</td>
+			<td class="adrep_td_pagination">
+				{if $page > 2}
+					<a href="index.php?module=adrep_report&action=ViewHTML&record={$record}&page=1&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}" class="button">1...</a>&nbsp;&nbsp;
+				{/if}
+				{if $min2 > 0}
+					<!-- 
+					<a href="index.php?module=adrep_report&action=ViewHTML&record={$record}&page={$min2}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}" class="button">{$min2}</a>&nbsp;&nbsp;
+					-->
+				{/if}
+				{if $min1 > 0}
+					<a href="index.php?module=adrep_report&action=ViewHTML&record={$record}&page={$min1}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}" class="button">{$min1}</a>&nbsp;&nbsp;
+				{/if}
+				<a href="#" class="button">{$page}</a>&nbsp;&nbsp;
+				{if $plus1 <= $num_pages}
+					<a href="index.php?module=adrep_report&action=ViewHTML&record={$record}&page={$plus1}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}" class="button">{$plus1}</a>&nbsp;&nbsp;
+				{/if}
+				{if $plus2 < $num_pages}
+					<a href="index.php?module=adrep_report&action=ViewHTML&record={$record}&page={$plus2}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}" class="button">{$plus2}</a>&nbsp;&nbsp;
+				{/if}
+				{if $page < ($num_pages-1)}
+					&nbsp;<a href="index.php?module=adrep_report&action=ViewHTML&record={$record}&page={$num_pages}&sugar_body_only={$sugar_body_only}&rpp={$rpp}&ts={$ts}" class="button">...{$num_pages}</a>&nbsp;&nbsp;
+				{/if}
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" class="adrep_td_logo"> &nbsp; </td>
+		</tr>
+		{/if}
+		<tr class="adrep_tr_footer">
+			<td width="33%" class="adrep_td_created_by_footer">{$created_by}</td>
+			<td width="33%" class="adrep_td_title">{$title}</td>
+			<td width="33%" class="adrep_td_date_created">{$date_created}</td>
+		</tr>
+	</table>
+
+</body>
+</html>
+
