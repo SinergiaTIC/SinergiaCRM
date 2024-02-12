@@ -176,7 +176,7 @@ var sticCustomView = class sticCustomView {
         }
         else {
             if(customization.lastResult) {
-                // Last evaluation checks the condition: undo actions
+                // Last evaluation pass all conditions: undo actions
                 this.undoChangesAndProcessCustomizations();
             }
         }

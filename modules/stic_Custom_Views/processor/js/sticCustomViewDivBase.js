@@ -94,6 +94,16 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
 
     style(style) {
         this.element.css(style);
+        var self = this;
+        this.item.customView.addUndoFunction(function() {
+            var visible=self.element.is(":visible");
+            self.element.removeAttr('style');
+            if(visible) {
+                self.element.show();
+            } else {
+                self.element.hide();
+            }
+        });
         return this;
     }
 
