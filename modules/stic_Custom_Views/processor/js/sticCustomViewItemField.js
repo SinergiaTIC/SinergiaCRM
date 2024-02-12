@@ -55,12 +55,18 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
     readonly(readonly=true) { this.input.readonly(readonly); return this; }
 
     required(required=true, type="text") {
-        //IEPA!!! 
-        // Afegir undo!
-        if(required===true||required==="1"||required===1) {
+        console.log("Setting Required: "+ required+" ["+type+"]");
+        var oldRequired = getRequiredStatus(this.fieldName);
+        var newRequired = required===true||required==="1"||required===1;
+        console.log("oldRequired: '"+ oldRequired+"' newRequired: '"+newRequired+"'");
+        if(newRequired) {
             setRequiredStatus(this.fieldName, type, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
         } else {
             setUnrequiredStatus(this.fieldName);
+        }
+        if(oldRequired!=newRequired) {
+            var self = this;
+            this.customView.addUndoFunction(function() { self.required(oldRequired); });
         }
         return this;
     }

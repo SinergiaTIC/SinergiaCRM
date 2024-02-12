@@ -37,11 +37,47 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
         if(newValue!==undefined) {
             var oldValue = this.editor.val();
             if(newValue!=oldValue) {
+                // Set new value
                 this.editor.val(newValue);
+
+                // Unset value is modified by user
+                var attr = this.editor.attr("data-changedByUser");
+                if(typeof(attr==="undefined") || attr===false) {
+                    this.editor.removeAttr("data-changedByUser");
+                }
                 this.change();
 
+                // Set last setted value by this Api to be undoed
+                this.editor.attr("data-lastChangeByApi", newValue);
+
                 var self = this;
-                this.item.customView.addUndoFunction(function() { self.editor.val(oldValue); }, true);
+                this.item.customView.addUndoFunction(function() { 
+                    var editor = self.editor;
+                    var currentValue = editor.val();
+
+                    // Check if the last value change with Api is processed
+                    var attrApi = editor.attr("data-lastChangeByApi");
+                    if(typeof(attrApi!=="undefined") && attrApi!==false) {
+                        // The last value change with Api, is the current value?
+                        if(attrApi!=currentValue) {
+                            // Set data is changed by User
+                            this.editor.attr("data-changedByUser", currentValue);
+                        } else {
+                            // Data is not changed by User
+                            var attrUser = editor.attr("data-changedByUser");
+                            if(typeof(attrUser==="undefined") || attrUser===false) {
+                                editor.removeAttr("data-changedByUser");
+                            }
+                        }
+                        // The last value change with Api is processed
+                        editor.removeAttr("data-lastChangeByApi");
+                    }
+                    // Undo only if last change is not made by user
+                    var attrUser = editor.attr("data-changedByUser");
+                    if(typeof(attrUser==="undefined") || attrUser===false) {
+                        editor.val(oldValue);
+                    }
+                }, true);
             }
         }
         return this.editor.val();
