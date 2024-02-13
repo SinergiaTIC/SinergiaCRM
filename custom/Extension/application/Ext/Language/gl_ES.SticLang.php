@@ -3186,6 +3186,7 @@ $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
 
 // Diario: Tipo de diario
+$app_list_strings['stic_journal_types_list'][''] = '';
 $app_list_strings['stic_journal_types_list']['journal'] = 'Diario';
 $app_list_strings['stic_journal_types_list']['incidence'] = 'Incidencia';
 $app_list_strings['stic_journal_types_list']['followup'] = 'Seguimento a realizar';
@@ -3194,6 +3195,7 @@ $app_list_strings['stic_journal_types_list']['infringement'] = 'Infracción';
 $app_list_strings['stic_journal_types_list']['other'] = 'Outro';
 
 // Diario: Quendas
+$app_list_strings['stic_journal_turns_list'][''] = '';
 $app_list_strings['stic_journal_turns_list']['morning'] = 'Mañá';
 $app_list_strings['stic_journal_turns_list']['afternoon'] = 'Tarde';
 $app_list_strings['stic_journal_turns_list']['night'] = 'Noite';
@@ -3216,11 +3218,13 @@ $app_list_strings['stic_journal_task_scopes_list']['educational'] = 'Educativo';
 $app_list_strings['stic_journal_task_scopes_list']['workplace'] = 'Laboral';
 
 // Diario: Cumprimento da tarefa
+$app_list_strings['stic_journal_task_fulfillments_list'][''] = '';
 $app_list_strings['stic_journal_task_fulfillments_list']['yes'] = 'Sí';
 $app_list_strings['stic_journal_task_fulfillments_list']['no'] = 'Non';
 $app_list_strings['stic_journal_task_fulfillments_list']['partial'] = 'Parcial';
 
 // Diario: Gravidade da tarefa ou infracción
+$app_list_strings['stic_journal_seriousness_list'][''] = '';
 $app_list_strings['stic_journal_seriousness_list']['slight'] = 'Leve';
 $app_list_strings['stic_journal_seriousness_list']['average'] = 'Media';
 $app_list_strings['stic_journal_seriousness_list']['serious'] = 'Grave';

@@ -3177,6 +3177,7 @@ $app_list_strings['stic_centers_types_list']['training'] = 'Training';
 $app_list_strings['stic_centers_types_list']['other'] = 'Other';
 
 // Journal: Type
+$app_list_strings['stic_journal_types_list'][''] = '';
 $app_list_strings['stic_journal_types_list']['journal'] = 'Journal';
 $app_list_strings['stic_journal_types_list']['incidence'] = 'Incidence';
 $app_list_strings['stic_journal_types_list']['followup'] = 'Follow up';
@@ -3185,6 +3186,7 @@ $app_list_strings['stic_journal_types_list']['infringement'] = 'Infringement';
 $app_list_strings['stic_journal_types_list']['other'] = 'Other';
 
 // Journal: Turns
+$app_list_strings['stic_journal_turns_list'][''] = '';
 $app_list_strings['stic_journal_turns_list']['morning'] = 'Morning';
 $app_list_strings['stic_journal_turns_list']['afternoon'] = 'Afternoon';
 $app_list_strings['stic_journal_turns_list']['night'] = 'Night';
@@ -3207,11 +3209,13 @@ $app_list_strings['stic_journal_task_scopes_list']['educational'] = 'Educational
 $app_list_strings['stic_journal_task_scopes_list']['workplace'] = 'Workplace';
 
 // Journal: Task Fulfillments
+$app_list_strings['stic_journal_task_fulfillments_list'][''] = '';
 $app_list_strings['stic_journal_task_fulfillments_list']['yes'] = 'Yes';
 $app_list_strings['stic_journal_task_fulfillments_list']['no'] = 'No';
 $app_list_strings['stic_journal_task_fulfillments_list']['partial'] = 'Partial';
 
 // Journal: Seriousness
+$app_list_strings['stic_journal_seriousness_list'][''] = '';
 $app_list_strings['stic_journal_seriousness_list']['slight'] = 'Slight';
 $app_list_strings['stic_journal_seriousness_list']['average'] = 'Average';
 $app_list_strings['stic_journal_seriousness_list']['serious'] = 'Serious';

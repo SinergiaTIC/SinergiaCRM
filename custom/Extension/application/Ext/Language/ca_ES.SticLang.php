@@ -3178,6 +3178,7 @@ $app_list_strings['stic_centers_types_list']['training'] = 'Formació';
 $app_list_strings['stic_centers_types_list']['other'] = 'Altres';
 
 // Diari: Tipus
+$app_list_strings['stic_journal_types_list'][''] = '';
 $app_list_strings['stic_journal_types_list']['journal'] = 'Diari';
 $app_list_strings['stic_journal_types_list']['incidence'] = 'Incidència';
 $app_list_strings['stic_journal_types_list']['followup'] = 'Seguiment a realitzar';
@@ -3186,6 +3187,7 @@ $app_list_strings['stic_journal_types_list']['infringement'] = 'Infracció';
 $app_list_strings['stic_journal_types_list']['other'] = 'Altres';
 
 // Diari: Torns
+$app_list_strings['stic_journal_turns_list'][''] = '';
 $app_list_strings['stic_journal_turns_list']['morning'] = 'Matí';
 $app_list_strings['stic_journal_turns_list']['afternoon'] = 'Tarda';
 $app_list_strings['stic_journal_turns_list']['night'] = 'Nit';
@@ -3208,11 +3210,13 @@ $app_list_strings['stic_journal_task_scopes_list']['educational'] = 'Educatiu';
 $app_list_strings['stic_journal_task_scopes_list']['workplace'] = 'Laboral';
 
 // Diari: Acompliment
+$app_list_strings['stic_journal_task_fulfillments_list'][''] = '';
 $app_list_strings['stic_journal_task_fulfillments_list']['yes'] = 'Sí';
 $app_list_strings['stic_journal_task_fulfillments_list']['no'] = 'No';
 $app_list_strings['stic_journal_task_fulfillments_list']['partial'] = 'Parcial';
 
 // Diari: Gravetat de la tasca o infracció
+$app_list_strings['stic_journal_seriousness_list'][''] = '';
 $app_list_strings['stic_journal_seriousness_list']['slight'] = 'Lleu';
 $app_list_strings['stic_journal_seriousness_list']['average'] = 'Mitjana';
 $app_list_strings['stic_journal_seriousness_list']['serious'] = 'Greu';
