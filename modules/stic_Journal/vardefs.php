@@ -40,7 +40,7 @@ $dictionary['stic_Journal'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => true,
+            'inline_edit' => false,
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
@@ -63,7 +63,7 @@ $dictionary['stic_Journal'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',
             'audited' => false,
-            'inline_edit' => true,
+            'inline_edit' => false,
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
@@ -355,4 +355,6 @@ VardefManager::createVardef('stic_Journal', 'stic_Journal', array('basic', 'assi
 // Set special values for SuiteCRM base fields
 $dictionary['stic_Journal']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Journal']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Journal']['fields']['name']['inline_edit'] = false; // Name can not edit inline in this module stic_journal_stic_centers_name
 $dictionary['stic_Journal']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
+$dictionary['stic_Journal']['fields']['stic_journal_stic_centers_name']['inline_edit'] = false; // Center can not edit inline in this module
