@@ -139,9 +139,11 @@ function initializeEditFields() {
 
 function initializeSelectize() {
   var config = { placeholder: '' };
+  $('select#user_type').selectize(config);
   $('select#security_groups').selectize(config);
   $('select#roles').selectize(config);
-  $('select#user_type').selectize(config);
+  $('select#security_groups_exclude').selectize(config);
+  $('select#roles_exclude').selectize(config);
 }
 
 function disableListMenuActions() {

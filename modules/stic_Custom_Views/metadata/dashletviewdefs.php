@@ -42,6 +42,18 @@ $dashletData['stic_Custom_ViewsDashlet']['searchFields'] = array (
   array (
     'default' => '',
   ),
+  'roles_exclude' => 
+  array (
+    'default' => '',
+  ),
+  'security_groups_exclude' => 
+  array (
+    'default' => '',
+  ),
+  'status' => 
+  array (
+    'default' => '',
+  ),
   'date_entered' => 
   array (
     'default' => '',

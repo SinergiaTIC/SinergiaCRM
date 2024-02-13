@@ -88,6 +88,24 @@ array (
         'default' => true,
         'name' => 'security_groups',
       ),
+      'roles_exclude' => 
+      array (
+        'type' => 'multienum',
+        'studio' => 'visible',
+        'label' => 'LBL_ROLES_EXCLUDE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'roles',
+      ),
+      'security_groups_exclude' => 
+      array (
+        'type' => 'multienum',
+        'studio' => 'visible',
+        'label' => 'LBL_SECURITY_GROUPS_EXCLUDE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'security_groups',
+      ),
       'description' => 
       array (
         'type' => 'text',

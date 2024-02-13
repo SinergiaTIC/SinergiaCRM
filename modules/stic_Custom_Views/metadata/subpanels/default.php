@@ -77,6 +77,22 @@ $subpanel_layout = array (
       'width' => '10%',
       'default' => true,
     ),
+    'roles_exclude' => 
+    array (
+      'type' => 'multienum',
+      'studio' => 'visible',
+      'vname' => 'LBL_ROLES_EXCLUDE',
+      'width' => '10%',
+      'default' => true,
+    ),
+    'security_groups_exclude' => 
+    array (
+      'type' => 'multienum',
+      'studio' => 'visible',
+      'vname' => 'LBL_SECURITY_GROUPS_EXCLUDE',
+      'width' => '10%',
+      'default' => true,
+    ),
     'date_modified' => 
     array (
       'vname' => 'LBL_DATE_MODIFIED',

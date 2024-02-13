@@ -95,6 +95,21 @@ array (
         array (
           0 => 
           array (
+            'name' => 'roles_exclude',
+            'studio' => 'visible',
+            'label' => 'LBL_ROLES_EXCLUDE',
+          ),
+          1 => 
+          array (
+            'name' => 'security_groups_exclude',
+            'studio' => 'visible',
+            'label' => 'LBL_SECURITY_GROUPS_EXCLUDE',
+          ),
+        ),
+        4 => 
+        array (
+          0 => 
+          array (
             'name' => 'description',
             'comment' => 'Full text of the note',
             'label' => 'LBL_DESCRIPTION',

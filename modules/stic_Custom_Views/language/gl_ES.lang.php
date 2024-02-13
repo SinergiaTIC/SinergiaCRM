@@ -69,7 +69,11 @@ $mod_strings = array (
   'LBL_SECURITY_GROUPS' => 'Grupos de seguridad',
   'LBL_SECURITY_GROUPS_DESC' => "Grupos de seguridad a los que se aplicará la vista personalizada",
   'LBL_STATUS' => "Estado",
-
+  'LBL_ROLES_EXCLUDE' => 'Roles no aplicables',
+  'LBL_ROLES_EXCLUDE_DESC' => "Roles a los que no se aplicará la vista personalizada",
+  'LBL_SECURITY_GROUPS_EXCLUDE' => 'Grupos de seguridad no aplicables',
+  'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Grupos de seguridad a los que no se aplicará la vista personalizada",
+  
   'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
 
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizaciones',

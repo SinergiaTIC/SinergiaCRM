@@ -79,6 +79,24 @@ $popupMeta = array (
     'default' => true,
     'name' => 'security_groups',
   ),
+  'ROLES_EXCLUDE' => 
+  array (
+    'type' => 'multienum',
+    'studio' => 'visible',
+    'label' => 'LBL_ROLES_EXCLUDE',
+    'width' => '10%',
+    'default' => true,
+    'name' => 'roles',
+  ),
+  'SECURITY_GROUPS_EXCLUDE' => 
+  array (
+    'type' => 'multienum',
+    'studio' => 'visible',
+    'label' => 'LBL_SECURITY_GROUPS_EXCLUDE',
+    'width' => '10%',
+    'default' => true,
+    'name' => 'security_groups',
+  ),
   'ASSIGNED_USER_NAME' => 
   array (
     'width' => '9%',

@@ -69,6 +69,10 @@ $mod_strings = array (
   'LBL_SECURITY_GROUPS' => 'Security groups',
   'LBL_SECURITY_GROUPS_DESC' => "Security groups to which the custom view will apply",
   'LBL_STATUS' => "Status",
+  'LBL_ROLES_EXCLUDE' => 'Non-applicable roles',
+  'LBL_ROLES_EXCLUDE_DESC' => "User roles to which the custom view will not apply",
+  'LBL_SECURITY_GROUPS_EXCLUDE' => 'Non-applicable Security groups',
+  'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Security groups to which the custom view will not apply",
 
   'LBL_DETAILVIEW_PANEL1' => 'Record details',
 

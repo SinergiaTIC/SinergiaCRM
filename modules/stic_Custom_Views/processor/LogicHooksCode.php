@@ -56,7 +56,7 @@ class stic_Custom_Views_ProcessorLogicHooks
         // Find all stic_Custom_Views defined for the module and view
         $db = DBManagerFactory::getInstance();
         $sql = "
-            SELECT DISTINCT views.id, views.user_type, views.security_groups, views.roles
+            SELECT DISTINCT views.id, views.user_type, views.security_groups, views.security_groups_exclude, views.roles, views.roles_exclude
                 FROM stic_custom_views views
                     INNER JOIN stic_custom_views_stic_custom_view_customizations_c views_custom 
                         ON views_custom.stic_custo45d1m_views_ida = views.id
@@ -87,18 +87,22 @@ class stic_Custom_Views_ProcessorLogicHooks
             }
 
             $okGroup = empty($row["security_groups"]) ||
-            $this->string_contains_any($row["security_groups"], $groupsIds);
+                       $this->string_contains_any($row["security_groups"], $groupsIds);
+            $okGroup &= empty($row["security_groups_exclude"]) ||
+                        !$this->string_contains_any($row["security_groups_exclude"], $groupsIds);
             if(!$okGroup) {
                 continue;
             }
-
+        
             $okRole = empty($row["roles"]) ||
                       $this->string_contains_any($row["roles"], $rolesIds);
+            $okRole &= empty($row["roles_exclude"]) ||
+                       !$this->string_contains_any($row["roles_exclude"], $rolesIds);
             if(!$okRole) {
                 continue;
             }
 
-            // Here Customization match all: UserType, Role and Security Group
+            // Here Customization match all: UserType, Role, Role-Exclude, SecurityGroup and SecurityGroup-Exclude
             $validCustomViews[] = $row;
         }
 
@@ -189,6 +193,15 @@ class stic_Custom_Views_ProcessorLogicHooks
         if(!empty($a["roles"]) && empty($b["roles"])) {
             return 1;
         }
+        if(!empty($a["roles_exclude"]) && !empty($b["roles_exclude"])) { 
+            return 0;
+        }
+        if(empty($a["roles_exclude"]) && !empty($b["roles_exclude"])) {
+            return -1;
+        }
+        if(!empty($a["roles_exclude"]) && empty($b["roles_exclude"])) {
+            return 1;
+        }
         if (!empty($a["security_groups"]) && !empty($b["security_groups"])) {
             return 0;
         }
@@ -196,6 +209,15 @@ class stic_Custom_Views_ProcessorLogicHooks
             return -2;
         }
         if (!empty($a["security_groups"]) && empty($b["security_groups"])) {
+            return 2;
+        }
+        if (!empty($a["security_groups_exclude"]) && !empty($b["security_groups_exclude"])) {
+            return 0;
+        }
+        if (empty($a["security_groups_exclude"]) && !empty($b["security_groups_exclude"])) {
+            return -2;
+        }
+        if (!empty($a["security_groups_exclude"]) && empty($b["security_groups_exclude"])) {
             return 2;
         }
         if ($a["user_type"] == $b["user_type"]) {
