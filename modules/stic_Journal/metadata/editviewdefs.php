@@ -102,6 +102,7 @@ array (
             'name' => 'stic_journal_stic_centers_name',
             'label' => 'LBL_STIC_JOURNAL_STIC_CENTERS_FROM_STIC_CENTERS_TITLE',
           ),
+          1 => array (),
         ),
         4 => 
         array (
