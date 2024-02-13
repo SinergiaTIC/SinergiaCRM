@@ -57,7 +57,7 @@ $subpanel_layout = array (
     array (
       'type' => 'datetimecombo',
       'vname' => 'LBL_JOURNAL_DATE',
-      'width' => '10%',
+      'width' => '11%',
       'default' => true,
     ),
     'turn' => 
@@ -71,7 +71,7 @@ $subpanel_layout = array (
     'date_modified' => 
     array (
       'vname' => 'LBL_DATE_MODIFIED',
-      'width' => '45%',
+      'width' => '18%',
       'default' => true,
     ),
     'edit_button' => 
@@ -80,14 +80,6 @@ $subpanel_layout = array (
       'widget_class' => 'SubPanelEditButton',
       'module' => 'stic_Journal',
       'width' => '4%',
-      'default' => true,
-    ),
-    'remove_button' => 
-    array (
-      'vname' => 'LBL_REMOVE',
-      'widget_class' => 'SubPanelRemoveButton',
-      'module' => 'stic_Journal',
-      'width' => '5%',
       'default' => true,
     ),
   ),
