@@ -26,7 +26,7 @@ $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
     'order' => 900,
     'sort_by' => 'name',
-    'sort_order' => 'asc',
+    'sort_order' => 'desc',
     'module' => 'SecurityGroups',
     'refresh_page' => 1,
     'subpanel_name' => 'default',
@@ -46,9 +46,6 @@ $layout_defs["stic_Journal"]["subpanel_setup"]['stic_journal_contacts'] = array(
     'get_subpanel_data' => 'stic_journal_contacts',
     'top_buttons' => array(
         0 => array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ),
-        1 => array(
             'widget_class' => 'SubPanelTopSelectButton',
             'mode' => 'MultiSelect',
         ),
