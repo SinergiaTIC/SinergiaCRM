@@ -27,8 +27,17 @@ class stic_Custom_Views_ProcessorLogicHooks
         include_once 'SticInclude/Utils.php';
         global $current_user;
 
-        $view = strtolower($GLOBALS['action']);
+        $action = strtolower($GLOBALS['action']);
+        $view = $action;
         $module = $GLOBALS['module'];
+        if($action=="subpanelcreates") {
+            $view = "quickcreate";
+            $module = $_POST["target_module"];
+        }
+        $availableViews = $GLOBALS ['app_list_strings']['stic_custom_views_views_list'];
+        if (!array_key_exists($view, $availableViews)) {
+            return "";
+        }
 
         // Steps:
         //  1- Find all stic_Custom_Views defined for the module and view

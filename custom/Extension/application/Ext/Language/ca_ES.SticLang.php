@@ -3190,6 +3190,7 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Tots';
 // Vistes personalitzades: Vistes
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detall';
 $app_list_strings['stic_custom_views_views_list']['editview'] = "Vista d'edició";
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = "Creació ràpida";
 
 // Vistes personalitzades: Tipus d'Accions
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificació de camp';

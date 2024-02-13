@@ -79,10 +79,17 @@ class stic_Custom_ViewsViewselectview extends SugarView
         $this->title .= ': ' . $module->name; 
         $this->buttons = array();
 
-        $views = $module->getViews() ;
+
         $availableViews = $GLOBALS ['app_list_strings']['stic_custom_views_views_list'];
 
-        $layouts = array();
+        $views = $module->getViews() ;
+        $hideQuickCreateForModules = array('kbdocuments', 'projecttask', 'campaigns');
+        if (!in_array(strtolower($this->viewModule), $hideQuickCreateForModules)) {
+            $views ['quickcreatedefs'] = array(
+                'name' => $GLOBALS ['app_list_strings']['stic_custom_views_views_list']['quickcreate'],
+                'type' => 'quickcreate',
+            );
+        }
         foreach ($views as $def) {
             $view = !empty($def['view']) ? $def['view'] : $def['type'];
             if (array_key_exists($view, $availableViews)) {

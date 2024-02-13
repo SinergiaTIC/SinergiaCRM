@@ -3189,6 +3189,7 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'All';
 // Custom Views: Views
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Detail view';
 $app_list_strings['stic_custom_views_views_list']['editview'] = "Edit view";
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = "Quick create";
 
 // Custom Views: Action Types
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Field modification';

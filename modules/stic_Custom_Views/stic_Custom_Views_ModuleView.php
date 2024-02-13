@@ -243,6 +243,7 @@ class stic_Custom_Views_ModuleView
             case 'field_modification':
                 switch($this->view) {
                     case 'editview':
+                    case 'quickcreate':
                         $validActions = array('visible', 'readonly', 'required', 'fixed_value', 'fixed_text', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                         break;
                     case 'detailview':

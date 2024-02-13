@@ -3198,6 +3198,7 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Todos';
 // Vistas personalizadas: Vistas
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detalle';
 $app_list_strings['stic_custom_views_views_list']['editview'] = "Vista de edición";
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = "Creación rápida";
 
 // Vistas personalizadas: Tipos de Acciones
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificación de campo';
