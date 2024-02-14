@@ -128,6 +128,7 @@ $dictionary['stic_Time_Tracker'] = array(
             'id_name' => 'users_stic_time_trackerusers_ida',
         ),
         'users_stic_time_tracker_name' => array (
+            'required' => 1,
             'name' => 'users_stic_time_tracker_name',
             'type' => 'relate',
             'source' => 'non-db',

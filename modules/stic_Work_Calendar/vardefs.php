@@ -151,6 +151,7 @@ $dictionary['stic_Work_Calendar'] = array(
             'id_name' => 'stic_work_calendar_usersusers_ida',
         ),
         'stic_work_calendar_users_name' => array (
+            'required' => 1,
             'name' => 'stic_work_calendar_users_name',
             'type' => 'relate',
             'source' => 'non-db',
