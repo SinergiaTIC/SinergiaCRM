@@ -75,16 +75,6 @@ $viewdefs[$module_name]['DetailView'] = array(
             ),
             1 => array(
                 0 => array(
-                    'name' => 'start_date',
-                    'label' => 'LBL_START_DATE',
-                ),
-                1 => array(
-                    'name' => 'end_date',
-                    'label' => 'LBL_END_DATE',
-                ),
-            ),
-            2 => array(
-                0 => array(
                   'name' => 'type',
                   'label' => 'LBL_TYPE',
                 ),
@@ -92,7 +82,17 @@ $viewdefs[$module_name]['DetailView'] = array(
                   'name' => 'duration',
                   'label' => 'LBL_DURATION',
                 ),
-            ),          
+            ),                 
+            2 => array(
+                0 => array(
+                    'name' => 'start_date',
+                    'label' => 'LBL_START_DATE',
+                ),
+                1 => array(
+                    'name' => 'end_date',
+                    'label' => 'LBL_END_DATE',
+                ),
+            ),     
             3 => 
             array (
                 0 => 

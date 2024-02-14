@@ -61,18 +61,7 @@ $viewdefs[$module_name]['EditView'] = array(
                 0 => 'name',
                 1 => 'assigned_user_name',
             ),
-            1 => array(
-                0 => array(
-                    'name' => 'start_date',
-                    'label' => 'LBL_START_DATE',
-                ),
-                1 => array(
-                    'name' => 'end_date',
-                    'label' => 'LBL_END_DATE',
-                ),
-            ),
-            2 => 
-            array (
+            1 => array (
                 0 => 
                 array (
                     'name' => 'type',
@@ -82,6 +71,16 @@ $viewdefs[$module_name]['EditView'] = array(
                 array (
                     'name' => 'stic_work_calendar_users_name',
                     'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
+                ),
+            ),            
+            2 => array(
+                0 => array(
+                    'name' => 'start_date',
+                    'label' => 'LBL_START_DATE',
+                ),
+                1 => array(
+                    'name' => 'end_date',
+                    'label' => 'LBL_END_DATE',
                 ),
             ),
             3 => array (
