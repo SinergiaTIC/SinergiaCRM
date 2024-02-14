@@ -34,13 +34,15 @@ var sticCustomView = class sticCustomView {
 
         if(this.view=="editview") {
             $("#SAVE").off("click");
+
+            var self = this;
             $("#SAVE").on("click", function() {
                 var _form = $('#EditView')[0]; 
                 _form.action.value='Save'; 
                 if(check_form('EditView')) {
                     SUGAR.ajaxUI.submitForm(_form);
                 }
-                this.undoChangesAndProcessCustomizations();
+                self.undoChangesAndProcessCustomizations();
                 return false;
             });
         }
