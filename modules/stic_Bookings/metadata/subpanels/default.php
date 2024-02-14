@@ -94,13 +94,13 @@ $subpanel_layout = array(
             'target_module' => 'Users',
             'target_record_key' => 'assigned_user_id',
         ),
-        'edit_button' => array(
-            'vname' => 'LBL_EDIT_BUTTON',
-            'widget_class' => 'SubPanelEditButton',
-            'module' => 'stic_Bookings',
-            'width' => '4%',
-            'default' => true,
-        ),
+        // 'edit_button' => array(
+        //     'vname' => 'LBL_EDIT_BUTTON',
+        //     'widget_class' => 'SubPanelEditButton',
+        //     'module' => 'stic_Bookings',
+        //     'width' => '4%',
+        //     'default' => true,
+        // ),
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',
             'widget_class' => 'SubPanelRemoveButton',
