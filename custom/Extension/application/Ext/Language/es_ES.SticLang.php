@@ -110,7 +110,7 @@ $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Grupos de Segur
 $app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
 $app_list_strings['moduleList']['stic_Time_Tracker'] = 'Registro horario';
-$app_list_strings['moduleList']['stic_Time_Availability'] = 'Disponibilidad horaria';
+$app_list_strings['moduleList']['stic_Work_Calendar'] = 'Calendario laboral';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -3174,14 +3174,14 @@ $app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de aten
 $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
 
-// Disponibilidad horaria: Tipo de disponibilidad
-$app_list_strings['stic_time_availability_types_list'][''] = '';
-$app_list_strings['stic_time_availability_types_list']['working'] = 'Laborable';
-$app_list_strings['stic_time_availability_types_list']['vacation'] = 'Vacaciones';
-$app_list_strings['stic_time_availability_types_list']['public_holiday'] = 'Día festivo';
-$app_list_strings['stic_time_availability_types_list']['personal_day'] = 'Día personal';
-$app_list_strings['stic_time_availability_types_list']['sick_leave'] = 'Baja por enfermedad';
-$app_list_strings['stic_time_availability_types_list']['leave_absence'] = 'Excedencia';
+// Calendario laboral: Tipo de disponibilidad
+$app_list_strings['stic_work_calendar_types_list'][''] = '';
+$app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
+$app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
+$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Día festivo';
+$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Día personal';
+$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja por enfermedad';
+$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedencia';
 
 // Modificaciones del core de SuiteCRM
 
@@ -3262,10 +3262,10 @@ $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Objetivo';
 
 
 // Centros: Tipo de disponibilidad
-$app_list_strings['stic_time_availability_types_list'][''] = '';
-$app_list_strings['stic_time_availability_types_list']['working'] = 'Laborable';
-$app_list_strings['stic_time_availability_types_list']['vacation'] = 'Vacaciones';
-$app_list_strings['stic_time_availability_types_list']['public_holiday'] = 'Día festivo';
-$app_list_strings['stic_time_availability_types_list']['personal_day'] = 'Día personal';
-$app_list_strings['stic_time_availability_types_list']['sick_leave'] = 'Baja por enfermedad';
-$app_list_strings['stic_time_availability_types_list']['leave_absence'] = 'Excedencia';
+$app_list_strings['stic_work_calendar_types_list'][''] = '';
+$app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
+$app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
+$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Día festivo';
+$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Día personal';
+$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja por enfermedad';
+$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedencia';

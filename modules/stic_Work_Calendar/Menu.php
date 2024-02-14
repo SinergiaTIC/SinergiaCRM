@@ -44,12 +44,12 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Time_Availability', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Time_Availability&action=EditView&return_module=stic_Time_Availability&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Time_Availability');
+if(ACLController::checkAccess('stic_Work_Calendar', 'edit', true)){
+    $module_menu[]=array('index.php?module=stic_Work_Calendar&action=EditView&return_module=stic_Work_Calendar&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Work_Calendar');
 }
-if(ACLController::checkAccess('stic_Time_Availability', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Time_Availability&action=index&return_module=stic_Time_Availability&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Time_Availability');
+if(ACLController::checkAccess('stic_Work_Calendar', 'list', true)){
+    $module_menu[]=array('index.php?module=stic_Work_Calendar&action=index&return_module=stic_Work_Calendar&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Work_Calendar');
 }
-if(ACLController::checkAccess('stic_Time_Availability', 'import', true)){
-    $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Time_Availability&return_module=stic_Time_Availability&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Time_Availability');
+if(ACLController::checkAccess('stic_Work_Calendar', 'import', true)){
+    $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Work_Calendar&return_module=stic_Work_Calendar&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Work_Calendar');
 }

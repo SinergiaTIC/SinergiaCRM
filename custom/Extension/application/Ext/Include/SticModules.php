@@ -56,7 +56,7 @@ $moduleList[] = 'stic_Security_Groups_Rules';
 $moduleList[] = 'stic_Grants';
 $moduleList[] = 'stic_Centers';
 $moduleList[] = 'stic_Time_Tracker';
-$moduleList[] = 'stic_Time_Availability';
+$moduleList[] = 'stic_Work_Calendar';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -94,7 +94,7 @@ $beanList['stic_Security_Groups_Rules'] = 'stic_Security_Groups_Rules';
 $beanList['stic_Grants'] = 'stic_Grants';
 $beanList['stic_Centers'] = 'stic_Centers';
 $beanList['stic_Time_Tracker'] = 'stic_Time_Tracker';
-$beanList['stic_Time_Availability'] = 'stic_Time_Availability';
+$beanList['stic_Work_Calendar'] = 'stic_Work_Calendar';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -131,7 +131,7 @@ $beanFiles['stic_Security_Groups_Rules'] = 'modules/stic_Security_Groups_Rules/s
 $beanFiles['stic_Grants'] = 'modules/stic_Grants/stic_Grants.php';
 $beanFiles['stic_Centers'] = 'modules/stic_Centers/stic_Centers.php';
 $beanFiles['stic_Time_Tracker'] = 'modules/stic_Time_Tracker/stic_Time_Tracker.php';
-$beanFiles['stic_Time_Availability'] = 'modules/stic_Time_Availability/stic_Time_Availability.php';
+$beanFiles['stic_Work_Calendar'] = 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';

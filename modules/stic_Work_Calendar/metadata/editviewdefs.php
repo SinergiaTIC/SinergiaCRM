@@ -38,15 +38,55 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-global $app_strings;
-
-$dashletMeta['stic_Time_AvailabilityDashlet'] = array(
-    'module' => 'stic_Time_Availability',
-    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Time_Availability'),
-    'description' => 'A customizable view into stic_Time_Availability',
-    'category' => 'Module Views'
+$module_name = 'stic_Work_Calendar';
+$viewdefs[$module_name]['EditView'] = array(
+    'templateMeta' => array(
+        'maxColumns' => '2',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
+        ),
+        'useTabs' => true,
+        'tabDefs' => array(
+            'LBL_DEFAULT_PANEL' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ),
+        ),
+        'syncDetailEditViews' => false,        
+    ),
+    'panels' => array(
+        'lbl_default_panel' => array(
+            0 => array(
+                0 => 'name',
+                1 => 'assigned_user_name',
+            ),
+            1 => array(
+                0 => array(
+                    'name' => 'start_date',
+                    'label' => 'LBL_START_DATE',
+                ),
+                1 => array(
+                    'name' => 'end_date',
+                    'label' => 'LBL_END_DATE',
+                ),
+            ),
+            2 => 
+            array (
+                0 => 
+                array (
+                    'name' => 'type',
+                    'label' => 'LBL_TYPE',
+                ),              
+                1 => 
+                array (
+                    'name' => 'stic_work_calendar_users_name',
+                    'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
+                ),
+            ),
+            3 => array (
+                0 => 'description',
+            ),              
+        ),
+    ),
 );

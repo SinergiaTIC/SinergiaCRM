@@ -111,7 +111,7 @@ $app_list_strings['moduleList']['stic_Grants'] = 'Grants';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centers';
 $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Security Groups Module Rules';
 $app_list_strings['moduleList']['stic_Time_Tracker'] = 'Time tracker';
-$app_list_strings['moduleList']['stic_Time_Availability'] = 'Time availability';
+$app_list_strings['moduleList']['stic_Work_Calendar'] = 'Time availability';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -3174,13 +3174,13 @@ $app_list_strings['stic_centers_types_list']['training'] = 'Training';
 $app_list_strings['stic_centers_types_list']['other'] = 'Other';
 
 // Time availability: Availability type
-$app_list_strings['stic_time_availability_types_list'][''] = '';
-$app_list_strings['stic_time_availability_types_list']['working'] = 'Working';
-$app_list_strings['stic_time_availability_types_list']['vacation'] = 'Vacation';
-$app_list_strings['stic_time_availability_types_list']['public_holiday'] = 'Public holiday';
-$app_list_strings['stic_time_availability_types_list']['personal_day'] = 'Personal day';
-$app_list_strings['stic_time_availability_types_list']['sick_leave'] = 'Sick leave';
-$app_list_strings['stic_time_availability_types_list']['leave_absence'] = 'Leave of absence';
+$app_list_strings['stic_work_calendar_types_list'][''] = '';
+$app_list_strings['stic_work_calendar_types_list']['working'] = 'Working';
+$app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacation';
+$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Public holiday';
+$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Personal day';
+$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Sick leave';
+$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Leave of absence';
 
 // SuiteCRM Core modifications
 

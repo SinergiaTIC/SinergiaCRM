@@ -171,15 +171,15 @@ $dictionary["User"]["fields"]["users_stic_time_tracker"] = array (
     'side' => 'right',
     'vname' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_STIC_TIME_TRACKER_TITLE',
 );
-$dictionary["User"]["fields"]["stic_time_availability_users"] = array (
-    'name' => 'stic_time_availability_users',
+$dictionary["User"]["fields"]["stic_work_calendar_users"] = array (
+    'name' => 'stic_work_calendar_users',
     'type' => 'link',
-    'relationship' => 'stic_time_availability_users',
+    'relationship' => 'stic_work_calendar_users',
     'source' => 'non-db',
-    'module' => 'stic_Time_Availability',
+    'module' => 'stic_Work_Calendar',
     'bean_name' => false,
     'side' => 'right',
-    'vname' => 'LBL_STIC_TIME_AVAILABILITY_USERS_FROM_STIC_TIME_AVAILABILITY_TITLE',
+    'vname' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_STIC_WORK_CALENDAR_TITLE',
 );
 
 $dictionary['User']['fields']['status']['massupdate'] = 1;

@@ -38,55 +38,42 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Time_Availability';
-$viewdefs[$module_name]['QuickCreate'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30')
-        ),
-        'useTabs' => true,
-        'tabDefs' => array(
-            'LBL_DEFAULT_PANEL' => array(
-                'newTab' => true,
-                'panelDefault' => 'expanded',
-            ),
-        ),
-        'syncDetailEditViews' => false,        
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+global $current_user;
+
+$dashletData['stic_Work_CalendarDashlet']['searchFields'] = array(
+    'date_entered' => array('default' => ''),
+    'date_modified' => array('default' => ''),
+    'assigned_user_id' => array(
+        'type' => 'assigned_user_name',
+        'default' => $current_user->name
+    )
+);
+$dashletData['stic_Work_CalendarDashlet']['columns'] = array(
+    'name' => array(
+        'width' => '40',
+        'label' => 'LBL_LIST_NAME',
+        'link' => true,
+        'default' => true
     ),
-    'panels' => array(
-        'lbl_default_panel' => array(
-            0 => array(
-                0 => 'name',
-                1 => 'assigned_user_name',
-            ),
-            1 => array(
-                0 => array(
-                    'name' => 'start_date',
-                    'label' => 'LBL_START_DATE',
-                ),
-                1 => array(
-                    'name' => 'end_date',
-                    'label' => 'LBL_END_DATE',
-                ),
-            ),
-            2 => 
-            array (
-                0 => 
-                array (
-                    'name' => 'type',
-                    'label' => 'LBL_TYPE',
-                ),              
-                1 => 
-                array (
-                    'name' => 'stic_time_availability_users_name',
-                    'label' => 'LBL_STIC_TIME_AVAILABILITY_USERS_FROM_USERS_TITLE',
-                ),
-            ),
-            3 => array (
-                0 => 'description',
-            ),              
-        ),
+    'date_entered' => array(
+        'width' => '15',
+        'label' => 'LBL_DATE_ENTERED',
+        'default' => true
+    ),
+    'date_modified' => array(
+        'width' => '15',
+        'label' => 'LBL_DATE_MODIFIED'
+    ),
+    'created_by' => array(
+        'width' => '8',
+        'label' => 'LBL_CREATED'
+    ),
+    'assigned_user_name' => array(
+        'width' => '8',
+        'label' => 'LBL_LIST_ASSIGNED_USER'
     ),
 );

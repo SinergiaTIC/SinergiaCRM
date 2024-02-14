@@ -38,8 +38,8 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$dictionary['stic_Time_Availability'] = array(
-    'table' => 'stic_time_availability',
+$dictionary['stic_Work_Calendar'] = array(
+    'table' => 'stic_work_calendar',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,
@@ -61,7 +61,7 @@ $dictionary['stic_Time_Availability'] = array(
             'unified_search' => 0,
             'len' => 100,
             'size' => '20',
-            'options' => 'stic_time_availability_types_list',
+            'options' => 'stic_work_calendar_types_list',
             'studio' => 'visible',
             'dependency' => 0,
             'inline_edit' => 1,
@@ -140,36 +140,36 @@ $dictionary['stic_Time_Availability'] = array(
                 'quickcreate' => false,
             ),
         ),        
-        'stic_time_availability_users' => array (
-            'name' => 'stic_time_availability_users',
+        'stic_work_calendar_users' => array (
+            'name' => 'stic_work_calendar_users',
             'type' => 'link',
-            'relationship' => 'stic_time_availability_users',
+            'relationship' => 'stic_work_calendar_users',
             'source' => 'non-db',
             'module' => 'Users',
             'bean_name' => 'User',
-            'vname' => 'LBL_STIC_TIME_AVAILABILITY_USERS_FROM_USERS_TITLE',
-            'id_name' => 'stic_time_availability_usersusers_ida',
+            'vname' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
+            'id_name' => 'stic_work_calendar_usersusers_ida',
         ),
-        'stic_time_availability_users_name' => array (
-            'name' => 'stic_time_availability_users_name',
+        'stic_work_calendar_users_name' => array (
+            'name' => 'stic_work_calendar_users_name',
             'type' => 'relate',
             'source' => 'non-db',
-            'vname' => 'LBL_STIC_TIME_AVAILABILITY_USERS_FROM_USERS_TITLE',
+            'vname' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
             'save' => true,
-            'id_name' => 'stic_time_availability_usersusers_ida',
-            'link' => 'stic_time_availability_users',
+            'id_name' => 'stic_work_calendar_usersusers_ida',
+            'link' => 'stic_work_calendar_users',
             'table' => 'users',
             'module' => 'Users',
             'rname' => 'name',
         ),
-        'stic_time_availability_usersusers_ida' => array (
-            'name' => 'stic_time_availability_usersusers_ida',
+        'stic_work_calendar_usersusers_ida' => array (
+            'name' => 'stic_work_calendar_usersusers_ida',
             'type' => 'link',
-            'relationship' => 'stic_time_availability_users',
+            'relationship' => 'stic_work_calendar_users',
             'source' => 'non-db',
             'reportable' => false,
             'side' => 'right',
-            'vname' => 'LBL_STIC_TIME_AVAILABILITY_USERS_FROM_STIC_TIME_AVAILABILITY_TITLE',
+            'vname' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_STIC_WORK_CALENDAR_TITLE',
         ),
     ),
     'relationships' => array (
@@ -181,10 +181,10 @@ $dictionary['stic_Time_Availability'] = array(
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('stic_Time_Availability', 'stic_Time_Availability', array('basic','assignable','security_groups'));
+VardefManager::createVardef('stic_Work_Calendar', 'stic_Work_Calendar', array('basic','assignable','security_groups'));
 
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Time_Availability']['fields']['name']['required'] = '0'; // Name is not required in this module
-$dictionary['stic_Time_Availability']['fields']['name']['importable'] = true; // Name is importable but not required in this module
-$dictionary['stic_Time_Availability']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
+$dictionary['stic_Work_Calendar']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Work_Calendar']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Work_Calendar']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

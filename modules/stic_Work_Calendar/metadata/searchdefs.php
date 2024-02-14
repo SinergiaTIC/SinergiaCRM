@@ -38,7 +38,7 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Time_Availability';
+$module_name = 'stic_Work_Calendar';
 $searchdefs[$module_name] = array(
     'templateMeta' => array(
         'maxColumns' => '3',

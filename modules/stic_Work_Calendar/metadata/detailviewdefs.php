@@ -38,28 +38,72 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+$module_name = 'stic_Work_Calendar';
+$viewdefs[$module_name]['DetailView'] = array(
+    'templateMeta' => array(
+        'form' => array(
+            'buttons' => array(
+                'EDIT',
+                'DUPLICATE',
+                'DELETE',
+                'FIND_DUPLICATES',
+            )
+        ),
+        'maxColumns' => '2',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30')
+        ),
+        'useTabs' => true,
+        'tabDefs' => array(
+            'LBL_DEFAULT_PANEL' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ),
+            'LBL_PANEL_RECORD_DETAILS' => array(
+                'newTab' => true,
+                'panelDefault' => 'expanded',
+            ),
+        ),        
+    ),
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Time_Availability/stic_Time_Availability.php');
-
-class stic_Time_AvailabilityDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
-    {
-        global $current_user, $app_strings;
-        require('modules/stic_Time_Availability/metadata/dashletviewdefs.php');
-
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Time_Availability');
-        }
-
-        $this->searchFields = $dashletData['stic_Time_AvailabilityDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Time_AvailabilityDashlet']['columns'];
-
-        $this->seedBean = new stic_Time_Availability();        
-    }
-}
+    'panels' => array(
+        'lbl_default_panel' => array(
+            0 => array(
+                    'name',
+                    'assigned_user_name',
+            ),
+            1 => array(
+                0 => array(
+                    'name' => 'start_date',
+                    'label' => 'LBL_START_DATE',
+                ),
+                1 => array(
+                    'name' => 'end_date',
+                    'label' => 'LBL_END_DATE',
+                ),
+            ),
+            2 => array(
+                0 => array(
+                  'name' => 'type',
+                  'label' => 'LBL_TYPE',
+                ),
+                1 => array(
+                  'name' => 'duration',
+                  'label' => 'LBL_DURATION',
+                ),
+            ),          
+            3 => 
+            array (
+                0 => 
+                array (
+                  'name' => 'stic_work_calendar_users_name',
+                  'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
+                ),
+            ),            
+            4 => array (
+                0 => 'description',
+            ),
+        )
+    )
+);

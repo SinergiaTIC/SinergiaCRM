@@ -38,72 +38,83 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Time_Availability';
-$viewdefs[$module_name]['DetailView'] = array(
-    'templateMeta' => array(
-        'form' => array(
-            'buttons' => array(
-                'EDIT',
-                'DUPLICATE',
-                'DELETE',
-                'FIND_DUPLICATES',
-            )
-        ),
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30')
-        ),
-        'useTabs' => true,
-        'tabDefs' => array(
-            'LBL_DEFAULT_PANEL' => array(
-                'newTab' => true,
-                'panelDefault' => 'expanded',
-            ),
-            'LBL_PANEL_RECORD_DETAILS' => array(
-                'newTab' => true,
-                'panelDefault' => 'expanded',
-            ),
-        ),        
-    ),
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
-    'panels' => array(
-        'lbl_default_panel' => array(
-            0 => array(
-                    'name',
-                    'assigned_user_name',
-            ),
-            1 => array(
-                0 => array(
-                    'name' => 'start_date',
-                    'label' => 'LBL_START_DATE',
-                ),
-                1 => array(
-                    'name' => 'end_date',
-                    'label' => 'LBL_END_DATE',
-                ),
-            ),
-            2 => array(
-                0 => array(
-                  'name' => 'type',
-                  'label' => 'LBL_TYPE',
-                ),
-                1 => array(
-                  'name' => 'duration',
-                  'label' => 'LBL_DURATION',
-                ),
-            ),          
-            3 => 
-            array (
-                0 => 
-                array (
-                  'name' => 'stic_time_availability_users_name',
-                  'label' => 'LBL_STIC_TIME_AVAILABILITY_USERS_FROM_USERS_TITLE',
-                ),
-            ),            
-            4 => array (
-                0 => 'description',
-            ),
-        )
-    )
+$module_name = 'stic_Work_Calendar';
+$listViewDefs[$module_name] = array(
+    'NAME' => array(
+        'width' => '32',
+        'label' => 'LBL_NAME',
+        'default' => true,
+        'link' => true
+    ),
+    'TYPE' => array(
+        'type' => 'enum',
+        'label' => 'LBL_TYPE',
+        'width' => '10%',
+        'default' => true,
+    ),    
+    'START_DATE' => array(
+        'type' => 'datetimecombo',
+        'label' => 'LBL_START_DATE',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'END_DATE' => array(
+        'type' => 'datetimecombo',
+        'label' => 'LBL_END_DATE',
+        'width' => '10%',
+        'default' => true,
+    ),    
+    'DURATION' => array(
+        'type' => 'decimal',
+        'label' => 'LBL_DURATION',
+        'width' => '10%',
+        'default' => true,
+        'align' => 'right',
+    ),    
+    'ASSIGNED_USER_NAME' => array(
+        'width' => '9',
+        'label' => 'LBL_ASSIGNED_TO_NAME',
+        'module' => 'Employees',
+        'id' => 'ASSIGNED_USER_ID',
+        'default' => true
+    ),
+    'DESCRIPTION' => array(
+        'type' => 'text',
+        'label' => 'LBL_DESCRIPTION',
+        'sortable' => false,
+        'width' => '10%',
+        'default' => false,
+    ),
+    'CREATED_BY_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_CREATED',
+        'id' => 'CREATED_BY',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'MODIFIED_BY_NAME' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_MODIFIED_NAME',
+        'id' => 'MODIFIED_USER_ID',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'DATE_MODIFIED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_MODIFIED',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'DATE_ENTERED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_ENTERED',
+        'width' => '10%',
+        'default' => false,
+    ),
 );
