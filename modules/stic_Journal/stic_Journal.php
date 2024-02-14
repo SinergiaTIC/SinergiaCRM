@@ -83,12 +83,20 @@ class stic_Journal extends Basic
 
         // Create name if empty
         if(empty($this->name)) {
+            // Format the date to NOW
+            $format = 'Y-m-d H:i:s';
+
+            $this->journal_date = gmdate($format);
+            $formatDate = DateTime::createFromFormat($format, $this->journal_date);
+            $formatDate->modify("+1 hours");
+            
+            $formatedDateNow = $formatDate->format($format);
 
             // If theres a center selected
             if(!empty($this->stic_journal_stic_centers_name)) {
-                $this->name = $this->stic_journal_stic_centers_name . ' - ' . $this->journal_date . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
+                $this->name = $this->stic_journal_stic_centers_name . ' - ' . $formatedDateNow . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
             } else {
-                $this->name = $this->journal_date . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
+                $this->name = $formatedDateNow . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
             }
         }
         
