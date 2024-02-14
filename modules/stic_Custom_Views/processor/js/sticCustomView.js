@@ -31,6 +31,19 @@ var sticCustomView = class sticCustomView {
         
         this.undoFunctions=[];  // List of functions to undo all actions
         this.customizations=[]; // List of: conditions, actions, lastResult
+
+        if(this.view=="editview") {
+            $("#SAVE").off("click");
+            $("#SAVE").on("click", function() {
+                var _form = $('#EditView')[0]; 
+                _form.action.value='Save'; 
+                if(check_form('EditView')) {
+                    SUGAR.ajaxUI.submitForm(_form);
+                }
+                this.undoChangesAndProcessCustomizations();
+                return false;
+            });
+        }
     }
 
     field(fieldName) { return new sticCustomViewItemField(this, fieldName); }
