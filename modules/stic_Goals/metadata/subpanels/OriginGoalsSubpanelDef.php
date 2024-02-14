@@ -126,7 +126,7 @@ $subpanel_layout['list_fields'] = array(
     ),
     'edit_button' => array(
         'vname' => 'LBL_EDIT_BUTTON',
-        'widget_class' => 'SubPanelQuickEditButton',
+        'widget_class' => 'SubPanelEditButton',
         'module' => 'stic_Goals',
         'width' => '4%',
         'default' => true,

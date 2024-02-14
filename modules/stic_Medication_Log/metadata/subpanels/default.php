@@ -72,13 +72,21 @@ $subpanel_layout = array (
       'width' => '45%',
       'default' => true,
     ),
-    'edit_button' => 
+    'quick_edit_button' => 
     array (
-      'vname' => 'LBL_EDIT_BUTTON',
+      'vname' => 'LBL_QUICKEDIT_BUTTON',
       'widget_class' => 'SubPanelQuickEditButton',
       'module' => 'stic_Medication_Log',
       'width' => '4%',
       'default' => true,
+    ),
+    'edit_button' => 
+    array (
+      'vname' => 'LBL_EDIT_BUTTON',
+      'widget_class' => 'SubPanelEditButton',
+      'module' => 'stic_Medication_Log',
+      'width' => '4%',
+      'default' => false,
     ),
     // 'remove_button' => 
     // array (

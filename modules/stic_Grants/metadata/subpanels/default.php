@@ -112,11 +112,19 @@ $subpanel_layout = array(
             'vname' => 'LBL_ASSIGNED_TO_NAME',
             'id' => 'ASSIGNED_USER_ID',
         ),
-        'edit_button' => array(
-            'vname' => 'LBL_EDIT_BUTTON',
+        'quick_edit_button' => array(
+            'vname' => 'LBL_QUICKEDIT_BUTTON',
             'widget_class' => 'SubPanelQuickEditButton',
             'module' => $module_name,
             'width' => '4%',
+            'default' => true,
+        ),
+        'edit_button' => array(
+            'vname' => 'LBL_EDIT_BUTTON',
+            'widget_class' => 'SubPanelEditButton',
+            'module' => $module_name,
+            'width' => '4%',
+            'default' => false,
         ),
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',

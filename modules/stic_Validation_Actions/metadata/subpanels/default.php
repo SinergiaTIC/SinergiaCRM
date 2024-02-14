@@ -62,12 +62,19 @@ $subpanel_layout = array(
             'width' => '45%',
             'default' => true,
         ),
+        'quick_edit_button' => array(
+            'vname' => 'LBL_QUICKEDIT_BUTTON',
+            'widget_class' => 'SubPanelQuickEditButton',
+            'module' => 'stic_Validation_Actions',
+            'width' => '4%',
+            'default' => true,
+        ),
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubPanelEditButton',
             'module' => 'stic_Validation_Actions',
             'width' => '4%',
-            'default' => true,
+            'default' => false,
         ),
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',
