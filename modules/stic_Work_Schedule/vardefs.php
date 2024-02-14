@@ -38,8 +38,8 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$dictionary['stic_Work_Schedule'] = array(
-    'table' => 'stic_work_schedule',
+$dictionary['stic_Time_Tracker'] = array(
+    'table' => 'stic_time_tracker',
     'audited' => 1,
     'inline_edit' => 1,
     'duplicate_merge' => 1,
@@ -117,36 +117,36 @@ $dictionary['stic_Work_Schedule'] = array(
                 'quickcreate' => false,
             ),
         ),
-        'users_stic_work_schedule' => array (
-            'name' => 'users_stic_work_schedule',
+        'users_stic_time_tracker' => array (
+            'name' => 'users_stic_time_tracker',
             'type' => 'link',
-            'relationship' => 'users_stic_work_schedule',
+            'relationship' => 'users_stic_time_tracker',
             'source' => 'non-db',
             'module' => 'Users',
             'bean_name' => 'User',
-            'vname' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_USERS_TITLE',
-            'id_name' => 'users_stic_work_scheduleusers_ida',
+            'vname' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
+            'id_name' => 'users_stic_time_trackerusers_ida',
         ),
-        'users_stic_work_schedule_name' => array (
-            'name' => 'users_stic_work_schedule_name',
+        'users_stic_time_tracker_name' => array (
+            'name' => 'users_stic_time_tracker_name',
             'type' => 'relate',
             'source' => 'non-db',
-            'vname' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_USERS_TITLE',
+            'vname' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
             'save' => true,
-            'id_name' => 'users_stic_work_scheduleusers_ida',
-            'link' => 'users_stic_work_schedule',
+            'id_name' => 'users_stic_time_trackerusers_ida',
+            'link' => 'users_stic_time_tracker',
             'table' => 'users',
             'module' => 'Users',
             'rname' => 'name',
         ),
-        'users_stic_work_scheduleusers_ida' => array (
-            'name' => 'users_stic_work_scheduleusers_ida',
+        'users_stic_time_trackerusers_ida' => array (
+            'name' => 'users_stic_time_trackerusers_ida',
             'type' => 'link',
-            'relationship' => 'users_stic_work_schedule',
+            'relationship' => 'users_stic_time_tracker',
             'source' => 'non-db',
             'reportable' => false,
             'side' => 'right',
-            'vname' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_STIC_WORK_SCHEDULE_TITLE',
+            'vname' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_STIC_TIME_TRACKER_TITLE',
         ),      
     ),
     'relationships' => array (
@@ -158,9 +158,9 @@ $dictionary['stic_Work_Schedule'] = array(
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('stic_Work_Schedule', 'stic_Work_Schedule', array('basic','assignable','security_groups'));
+VardefManager::createVardef('stic_Time_Tracker', 'stic_Time_Tracker', array('basic','assignable','security_groups'));
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Work_Schedule']['fields']['name']['required'] = '0'; // Name is not required in this module
-$dictionary['stic_Work_Schedule']['fields']['name']['importable'] = true; // Name is importable but not required in this module
-$dictionary['stic_Work_Schedule']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
+$dictionary['stic_Time_Tracker']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Time_Tracker']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Time_Tracker']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

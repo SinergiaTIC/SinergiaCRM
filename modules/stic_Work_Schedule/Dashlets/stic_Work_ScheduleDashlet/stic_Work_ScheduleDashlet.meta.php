@@ -44,9 +44,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 global $app_strings;
 
-$dashletMeta['stic_Work_ScheduleDashlet'] = array(
-    'module' => 'stic_Work_Schedule',
-    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Work_Schedule'),
-    'description' => 'A customizable view into stic_Work_Schedule',
+$dashletMeta['stic_Time_TrackerDashlet'] = array(
+    'module' => 'stic_Time_Tracker',
+    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Time_Tracker'),
+    'description' => 'A customizable view into stic_Time_Tracker',
     'category' => 'Module Views'
 );

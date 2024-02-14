@@ -39,12 +39,12 @@
  */
 
 
-class stic_Work_Schedule extends Basic
+class stic_Time_Tracker extends Basic
 {
     public $new_schema = true;
-    public $module_dir = 'stic_Work_Schedule';
-    public $object_name = 'stic_Work_Schedule';
-    public $table_name = 'stic_work_schedule';
+    public $module_dir = 'stic_Time_Tracker';
+    public $object_name = 'stic_Time_Tracker';
+    public $table_name = 'stic_time_tracker';
     public $importable = true;
 
     public $id;

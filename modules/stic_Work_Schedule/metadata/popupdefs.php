@@ -42,9 +42,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Work_Schedule';
-$object_name = 'stic_Work_Schedule';
-$_module_name = 'stic_work_schedule';
+$module_name = 'stic_Time_Tracker';
+$object_name = 'stic_Time_Tracker';
+$_module_name = 'stic_time_tracker';
 $popupMeta = array(
     'moduleMain' => $module_name,
     'varName' => $object_name,

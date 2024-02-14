@@ -55,7 +55,7 @@ $moduleList[] = 'stic_Prescription';
 $moduleList[] = 'stic_Security_Groups_Rules';
 $moduleList[] = 'stic_Grants';
 $moduleList[] = 'stic_Centers';
-$moduleList[] = 'stic_Work_Schedule';
+$moduleList[] = 'stic_Time_Tracker';
 $moduleList[] = 'stic_Time_Availability';
 
 // Bean names for custom modules
@@ -93,7 +93,7 @@ $beanList['stic_Prescription'] = 'stic_Prescription';
 $beanList['stic_Security_Groups_Rules'] = 'stic_Security_Groups_Rules';
 $beanList['stic_Grants'] = 'stic_Grants';
 $beanList['stic_Centers'] = 'stic_Centers';
-$beanList['stic_Work_Schedule'] = 'stic_Work_Schedule';
+$beanList['stic_Time_Tracker'] = 'stic_Time_Tracker';
 $beanList['stic_Time_Availability'] = 'stic_Time_Availability';
 
 // Location of custom modules main class files
@@ -130,7 +130,7 @@ $beanFiles['stic_Prescription'] = 'modules/stic_Prescription/stic_Prescription.p
 $beanFiles['stic_Security_Groups_Rules'] = 'modules/stic_Security_Groups_Rules/stic_Security_Groups_Rules.php';
 $beanFiles['stic_Grants'] = 'modules/stic_Grants/stic_Grants.php';
 $beanFiles['stic_Centers'] = 'modules/stic_Centers/stic_Centers.php';
-$beanFiles['stic_Work_Schedule'] = 'modules/stic_Work_Schedule/stic_Work_Schedule.php';
+$beanFiles['stic_Time_Tracker'] = 'modules/stic_Time_Tracker/stic_Time_Tracker.php';
 $beanFiles['stic_Time_Availability'] = 'modules/stic_Time_Availability/stic_Time_Availability.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels

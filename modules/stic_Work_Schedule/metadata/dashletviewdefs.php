@@ -44,7 +44,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 global $current_user;
 
-$dashletData['stic_Work_ScheduleDashlet']['searchFields'] = array(
+$dashletData['stic_Time_TrackerDashlet']['searchFields'] = array(
     'date_entered' => array('default' => ''),
     'date_modified' => array('default' => ''),
     'assigned_user_id' => array(
@@ -52,7 +52,7 @@ $dashletData['stic_Work_ScheduleDashlet']['searchFields'] = array(
         'default' => $current_user->name
     )
 );
-$dashletData['stic_Work_ScheduleDashlet']['columns'] = array(
+$dashletData['stic_Time_TrackerDashlet']['columns'] = array(
     'name' => array(
         'width' => '40',
         'label' => 'LBL_LIST_NAME',

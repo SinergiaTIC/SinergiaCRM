@@ -38,7 +38,7 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$module_name = 'stic_Work_Schedule';
+$module_name = 'stic_Time_Tracker';
 $viewdefs[$module_name]['DetailView'] = array(
     'templateMeta' => array(
         'form' => array(
@@ -89,8 +89,8 @@ $viewdefs[$module_name]['DetailView'] = array(
                     'label' => 'LBL_DURATION',
                 ),
                 1 => array(
-                    'name' => 'users_stic_work_schedule_name',
-                    'label' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_USERS_TITLE',
+                    'name' => 'users_stic_time_tracker_name',
+                    'label' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
                 ),
             ),          
             3 => array (

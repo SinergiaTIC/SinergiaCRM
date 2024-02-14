@@ -42,7 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Work_Schedule';
+$module_name = 'stic_Time_Tracker';
 $listViewDefs[$module_name] = array(
     'NAME' => array(
         'width' => '32',

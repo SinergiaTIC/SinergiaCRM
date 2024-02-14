@@ -5830,24 +5830,24 @@ $dictionary["stic_grants_stic_families"] = array(
         ),
     ),
 );
-$dictionary["users_stic_work_schedule"] = array (
+$dictionary["users_stic_time_tracker"] = array (
     'true_relationship_type' => 'one-to-many',
     'from_studio' => true,
     'relationships' => array (
-        'users_stic_work_schedule' => array (
+        'users_stic_time_tracker' => array (
             'lhs_module' => 'Users',
             'lhs_table' => 'users',
             'lhs_key' => 'id',
-            'rhs_module' => 'stic_Work_Schedule',
-            'rhs_table' => 'stic_work_schedule',
+            'rhs_module' => 'stic_Time_Tracker',
+            'rhs_table' => 'stic_time_tracker',
             'rhs_key' => 'id',
             'relationship_type' => 'many-to-many',
-            'join_table' => 'users_stic_work_schedule_c',
-            'join_key_lhs' => 'users_stic_work_scheduleusers_ida',
-            'join_key_rhs' => 'users_stic_work_schedulestic_work_schedule_idb',
+            'join_table' => 'users_stic_time_tracker_c',
+            'join_key_lhs' => 'users_stic_time_trackerusers_ida',
+            'join_key_rhs' => 'users_stic_time_trackerstic_time_tracker_idb',
         ),
     ),
-    'table' => 'users_stic_work_schedule_c',
+    'table' => 'users_stic_time_tracker_c',
     'fields' => array (
         0 => 
         array (
@@ -5870,13 +5870,13 @@ $dictionary["users_stic_work_schedule"] = array (
         ),
         3 => 
         array (
-            'name' => 'users_stic_work_scheduleusers_ida',
+            'name' => 'users_stic_time_trackerusers_ida',
             'type' => 'varchar',
             'len' => 36,
         ),
         4 => 
         array (
-            'name' => 'users_stic_work_schedulestic_work_schedule_idb',
+            'name' => 'users_stic_time_trackerstic_time_tracker_idb',
             'type' => 'varchar',
             'len' => 36,
         ),
@@ -5884,7 +5884,7 @@ $dictionary["users_stic_work_schedule"] = array (
     'indices' => array (
         0 => 
         array (
-            'name' => 'users_stic_work_schedulespk',
+            'name' => 'users_stic_time_trackerspk',
             'type' => 'primary',
             'fields' => 
             array (
@@ -5893,20 +5893,20 @@ $dictionary["users_stic_work_schedule"] = array (
         ),
         1 => 
         array (
-            'name' => 'users_stic_work_schedule_ida1',
+            'name' => 'users_stic_time_tracker_ida1',
             'type' => 'index',
             'fields' => 
             array (
-            0 => 'users_stic_work_scheduleusers_ida',
+            0 => 'users_stic_time_trackerusers_ida',
             ),
         ),
         2 => 
         array (
-            'name' => 'users_stic_work_schedule_alt',
+            'name' => 'users_stic_time_tracker_alt',
             'type' => 'alternate_key',
             'fields' => 
             array (
-            0 => 'users_stic_work_schedulestic_work_schedule_idb',
+            0 => 'users_stic_time_trackerstic_time_tracker_idb',
             ),
         ),
     ),

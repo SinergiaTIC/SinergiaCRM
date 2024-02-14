@@ -44,12 +44,12 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_Work_Schedule', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Work_Schedule&action=EditView&return_module=stic_Work_Schedule&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Work_Schedule');
+if(ACLController::checkAccess('stic_Time_Tracker', 'edit', true)){
+    $module_menu[]=array('index.php?module=stic_Time_Tracker&action=EditView&return_module=stic_Time_Tracker&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Time_Tracker');
 }
-if(ACLController::checkAccess('stic_Work_Schedule', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Work_Schedule&action=index&return_module=stic_Work_Schedule&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Work_Schedule');
+if(ACLController::checkAccess('stic_Time_Tracker', 'list', true)){
+    $module_menu[]=array('index.php?module=stic_Time_Tracker&action=index&return_module=stic_Time_Tracker&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Time_Tracker');
 }
-if(ACLController::checkAccess('stic_Work_Schedule', 'import', true)){
-    $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Work_Schedule&return_module=stic_Work_Schedule&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Work_Schedule');
+if(ACLController::checkAccess('stic_Time_Tracker', 'import', true)){
+    $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Time_Tracker&return_module=stic_Time_Tracker&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Time_Tracker');
 }

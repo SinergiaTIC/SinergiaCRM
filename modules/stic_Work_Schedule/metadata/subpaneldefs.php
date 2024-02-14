@@ -1,5 +1,5 @@
 <?php
-$module_name = 'stic_Work_Schedule';
+$module_name = 'stic_Time_Tracker';
 $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
     'order' => 900,

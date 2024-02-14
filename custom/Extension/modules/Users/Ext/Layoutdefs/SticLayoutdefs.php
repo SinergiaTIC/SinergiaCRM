@@ -37,14 +37,14 @@ $layout_defs["Users"]["subpanel_setup"]["prospect_lists"] = array(
         ),
     ),
 );
-$layout_defs["Users"]["subpanel_setup"]['users_stic_work_schedule'] = array (
+$layout_defs["Users"]["subpanel_setup"]['users_stic_time_tracker'] = array (
     'order' => 100,
-    'module' => 'stic_Work_Schedule',
+    'module' => 'stic_Time_Tracker',
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'id',
-    'title_key' => 'LBL_USERS_STIC_WORK_SCHEDULE_FROM_STIC_WORK_SCHEDULE_TITLE',
-    'get_subpanel_data' => 'users_stic_work_schedule',
+    'title_key' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_STIC_TIME_TRACKER_TITLE',
+    'get_subpanel_data' => 'users_stic_time_tracker',
     'top_buttons' => 
     array (
         0 => 

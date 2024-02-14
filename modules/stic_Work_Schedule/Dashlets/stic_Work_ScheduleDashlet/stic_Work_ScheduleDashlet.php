@@ -43,23 +43,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Work_Schedule/stic_Work_Schedule.php');
+require_once('modules/stic_Time_Tracker/stic_Time_Tracker.php');
 
-class stic_Work_ScheduleDashlet extends DashletGeneric {
+class stic_Time_TrackerDashlet extends DashletGeneric {
     function __construct($id, $def = null)
     {
         global $current_user, $app_strings;
-        require('modules/stic_Work_Schedule/metadata/dashletviewdefs.php');
+        require('modules/stic_Time_Tracker/metadata/dashletviewdefs.php');
 
         parent::__construct($id, $def);
 
         if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Work_Schedule');
+            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Time_Tracker');
         }
 
-        $this->searchFields = $dashletData['stic_Work_ScheduleDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Work_ScheduleDashlet']['columns'];
+        $this->searchFields = $dashletData['stic_Time_TrackerDashlet']['searchFields'];
+        $this->columns = $dashletData['stic_Time_TrackerDashlet']['columns'];
 
-        $this->seedBean = new stic_Work_Schedule();        
+        $this->seedBean = new stic_Time_Tracker();        
     }
 }
