@@ -199,7 +199,7 @@ class actionComputeField extends actionBase
                     $resolvedParameters[$i] = "";
                 } 
                 // STIC-Custom 20230212 PCS - Format datetime fields in compute field actions when not using formulas.
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/113
                 if($type == 'datetimecombodatetime'){
                    global $timedate;
                    $resolvedParameters[$i] = $timedate->to_display_date_time($bean->{$parameters[$i]});
