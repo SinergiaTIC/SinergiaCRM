@@ -3182,6 +3182,7 @@ $app_list_strings['stic_journal_types_list']['journal'] = 'Journal';
 $app_list_strings['stic_journal_types_list']['incidence'] = 'Incidence';
 $app_list_strings['stic_journal_types_list']['followup'] = 'Follow up';
 $app_list_strings['stic_journal_types_list']['task'] = 'Task';
+$app_list_strings['stic_journal_types_list']['educational_measure'] = 'Educational measure';
 $app_list_strings['stic_journal_types_list']['infringement'] = 'Infringement';
 $app_list_strings['stic_journal_types_list']['other'] = 'Other';
 

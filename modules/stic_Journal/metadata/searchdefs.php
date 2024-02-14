@@ -175,22 +175,14 @@ array(
                 'default' => true,
                 'name' => 'task_fulfillment',
             ),
-            'task_fault_seriousness' => array(
-                'type' => 'enum',
-                'studio' => 'visible',
-                'label' => 'LBL_TASK_FAULT_SERIOUSNESS',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'task_fault_seriousness',
-            ),
-            'task_fault_description' => array(
+            'task_description' => array(
                 'type' => 'text',
                 'studio' => 'visible',
-                'label' => 'LBL_TASK_FAULT_DESCRIPTION',
+                'label' => 'LBL_TASK_DESCRIPTION',
                 'sortable' => false,
                 'width' => '10%',
                 'default' => true,
-                'name' => 'task_fault_description',
+                'name' => 'task_description',
             ),
             'infringement_seriousness' => array(
                 'type' => 'enum',

@@ -55,7 +55,7 @@
         {$FIELD.DESCRIPTION}
     </div>
 {/if}
-{if $FIELD.TYPE === $FIELD.TYPETASK}
+{if $FIELD.TYPE === $FIELD.TYPETASK || $FIELD.TYPE === $FIELD.TYPEEDUCATIONALMEASURE}
     <br>
     {if !empty($FIELD.TASK)}
         <div>
@@ -87,20 +87,14 @@
             {$FIELD.TASK_FULFILLMENT}
         </div>
     {/if}
-    {if !empty($FIELD.TASK_FAULT_SERIOUSNESS)}
+    {if !empty($FIELD.TASK_DESCRIPTION)}
         <div>
-            <strong>{$PARAM.LBL_TASK_FAULT_SERIOUSNESS}:</strong>
-            {$FIELD.TASK_FAULT_SERIOUSNESS}
-        </div>
-    {/if}
-    {if !empty($FIELD.TASK_FAULT_DESCRIPTION)}
-        <div>
-            <strong>{$PARAM.LBL_TASK_FAULT_DESCRIPTION}:</strong>
-            {$FIELD.TASK_FAULT_DESCRIPTION}
+            <strong>{$PARAM.LBL_TASK_DESCRIPTION}:</strong>
+            {$FIELD.TASK_DESCRIPTION}
         </div>
     {/if}
 {/if}
-{if $FIELD.TYPE === $FIELD.TYPEINFRINGEMENT}
+{if $FIELD.TYPE === $FIELD.TYPEINFRINGEMENT || $FIELD.TYPE === $FIELD.TYPEEDUCATIONALMEASURE}
     <br>
     {if !empty($FIELD.INFRINGEMENT_SERIOUSNESS)}
         <div>

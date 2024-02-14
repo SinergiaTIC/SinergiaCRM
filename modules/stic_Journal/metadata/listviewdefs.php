@@ -117,19 +117,11 @@ array (
     'width' => '10%',
     'default' => false,
   ),
-  'TASK_FAULT_SERIOUSNESS' => 
-  array (
-    'type' => 'enum',
-    'studio' => 'visible',
-    'label' => 'LBL_TASK_FAULT_SERIOUSNESS',
-    'width' => '10%',
-    'default' => false,
-  ),
-  'TASK_FAULT_DESCRIPTION' => 
+  'TASK_DESCRIPTION' => 
   array (
     'type' => 'text',
     'studio' => 'visible',
-    'label' => 'LBL_TASK_FAULT_DESCRIPTION',
+    'label' => 'LBL_TASK_DESCRIPTION',
     'sortable' => false,
     'width' => '10%',
     'default' => false,

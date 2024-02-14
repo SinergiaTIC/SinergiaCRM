@@ -147,20 +147,15 @@ array (
             'studio' => 'visible',
             'label' => 'LBL_TASK_FULFILLMENT',
           ),
-          1 => 
-          array (
-            'name' => 'task_fault_seriousness',
-            'studio' => 'visible',
-            'label' => 'LBL_TASK_FAULT_SERIOUSNESS',
-          ),
+          1 => array (),
         ),
         3 => 
         array (
           0 => 
           array (
-            'name' => 'task_fault_description',
+            'name' => 'task_description',
             'studio' => 'visible',
-            'label' => 'LBL_TASK_FAULT_DESCRIPTION',
+            'label' => 'LBL_TASK_DESCRIPTION',
           ),
         ),
       ),

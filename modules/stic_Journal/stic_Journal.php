@@ -53,8 +53,7 @@ class stic_Journal extends Basic
     public $task_start_date;
     public $task_end_date;
     public $task_fulfillment;
-    public $task_fault_seriousness;
-    public $task_fault_description;
+    public $task_description;
     public $infringement_seriousness;
     public $infringement_description;
 	

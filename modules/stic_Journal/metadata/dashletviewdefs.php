@@ -141,19 +141,11 @@ $dashletData['stic_JournalDashlet']['columns'] = array (
     'width' => '10%',
     'default' => false,
   ),
-  'task_fault_seriousness' => 
-  array (
-    'type' => 'enum',
-    'studio' => 'visible',
-    'label' => 'LBL_TASK_FAULT_SERIOUSNESS',
-    'width' => '10%',
-    'default' => false,
-  ),
-  'task_fault_description' => 
+  'task_description' => 
   array (
     'type' => 'text',
     'studio' => 'visible',
-    'label' => 'LBL_TASK_FAULT_DESCRIPTION',
+    'label' => 'LBL_TASK_DESCRIPTION',
     'sortable' => false,
     'width' => '10%',
     'default' => false,

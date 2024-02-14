@@ -3183,6 +3183,7 @@ $app_list_strings['stic_journal_types_list']['journal'] = 'Diari';
 $app_list_strings['stic_journal_types_list']['incidence'] = 'Incidència';
 $app_list_strings['stic_journal_types_list']['followup'] = 'Seguiment a realitzar';
 $app_list_strings['stic_journal_types_list']['task'] = 'Tasca';
+$app_list_strings['stic_journal_types_list']['educational_measure'] = 'Mesura educativa';
 $app_list_strings['stic_journal_types_list']['infringement'] = 'Infracció';
 $app_list_strings['stic_journal_types_list']['other'] = 'Altres';
 

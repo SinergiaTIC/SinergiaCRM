@@ -43,6 +43,7 @@ function additionalDetailsstic_Journal($fields, SugarBean $bean = null, $params 
         // Get the list to show the content
         $fields['TYPETASK'] = $app_list_strings['stic_journal_types_list']['task'];
         $fields['TYPEINFRINGEMENT'] = $app_list_strings['stic_journal_types_list']['infringement'];
+        $fields['TYPEEDUCATIONALMEASURE'] = $app_list_strings['stic_journal_types_list']['educational_measure'];
 
         $mod_strings = return_module_language($current_language, $bean->module_name);
         return additional_details($fields, $bean, $mod_strings);
