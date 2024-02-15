@@ -266,9 +266,7 @@ class ExternalReporting
 
             // Get module bean for use later
             $moduleBean = BeanFactory::getBean($moduleName);
-            // if($moduleName=='stic_Sessions'){
-            //     var_dump($moduleBean->getFieldDefinitions());die();
-            // }
+            
             // recover module labels
             $modStrings = return_module_language($this->langCode, $moduleName);
 
