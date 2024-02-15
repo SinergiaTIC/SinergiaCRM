@@ -129,6 +129,7 @@ $dictionary['stic_Time_Tracker'] = array(
         ),
         'users_stic_time_tracker_name' => array (
             'required' => 1,
+            'audited' => 1,
             'name' => 'users_stic_time_tracker_name',
             'type' => 'relate',
             'source' => 'non-db',
