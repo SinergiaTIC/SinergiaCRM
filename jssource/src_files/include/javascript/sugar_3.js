@@ -822,7 +822,7 @@ function add_error_style(formname, input, txt, flash) {
       if (typeof window[formname + "_tabs"] != "undefined") {
         if ($(".validation-message")) {
           // Reset tab error styles
-          $("#EditView_tabs li a").removeAttr("style");
+          // $("#EditView_tabs li a").removeAttr("style");
           counter = 0;
           $(".validation-message").each(function () {
             // Get error validation tabs ids
