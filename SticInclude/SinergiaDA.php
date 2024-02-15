@@ -266,7 +266,7 @@ class ExternalReporting
 
             // Get module bean for use later
             $moduleBean = BeanFactory::getBean($moduleName);
-            
+
             // recover module labels
             $modStrings = return_module_language($this->langCode, $moduleName);
 
@@ -291,8 +291,10 @@ class ExternalReporting
                     continue;
                 }
 
-                // If field is in detailview, set as visible, hidden if not.
-                if (in_array($fieldV['name'], $detailViewVisibleFields) || $fieldV['name'] == 'id') {
+                // Conditionally controls the visibility of fields in the detail view:
+                // * Shows fields present in the detail view.
+                // * Always shows the "full_name" & "id" field, regardless of its presence in the detail view.
+                if (in_array($fieldV['name'], $detailViewVisibleFields) || in_array($fieldV['name'], ['id', 'full_name'])) {
                     $sdaHiddenField = false;
                 } else {
                     $sdaHiddenField = true;
@@ -300,7 +302,6 @@ class ExternalReporting
 
                 $fieldV['label'] = $this->sanitizeText($modStrings[$fieldV['vname']]);
 
-                
                 // Attempts to assign a translated label to the field.
                 // If no translation is found, it tries to translate it directly.
                 // The field is skipped if no translation is obtained.
