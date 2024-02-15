@@ -45,6 +45,10 @@ var sticCustomViewItemTab = class sticCustomViewItemTab extends sticCustomViewIt
             case "tab": {
                 switch(action.action){
                     case "visible": return this.show(action.value);
+                    case "background": 
+                        this.header.applyAction(action);
+                        this.content.applyAction(action);
+                        return this;
                 }
             }
         }

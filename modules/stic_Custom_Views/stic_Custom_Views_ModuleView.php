@@ -341,6 +341,8 @@ class stic_Custom_Views_ModuleView
                         $validSections = array('tab');
                         break;
                     case 'background':
+                        $validSections = array('tab', 'tab_header', 'tab_content');
+                        break;
                     case 'css_style':
                         $validSections = array('tab_header', 'tab_content');
                         break;
