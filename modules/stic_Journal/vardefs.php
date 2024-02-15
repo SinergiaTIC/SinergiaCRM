@@ -97,7 +97,7 @@ $dictionary['stic_Journal'] = array(
             'dependency' => false,
         ),
         'task' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'task',
             'vname' => 'LBL_TASK',
             'type' => 'multienum',
@@ -119,7 +119,7 @@ $dictionary['stic_Journal'] = array(
             'isMultiSelect' => true,
         ),
         'task_scope' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'task_scope',
             'vname' => 'LBL_TASK_SCOPE',
             'type' => 'multienum',
@@ -141,7 +141,7 @@ $dictionary['stic_Journal'] = array(
             'isMultiSelect' => true,
         ),
         'task_start_date' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'task_start_date',
             'vname' => 'LBL_TASK_START_DATE',
             'type' => 'datetimecombo',
@@ -163,7 +163,7 @@ $dictionary['stic_Journal'] = array(
             'dbType' => 'datetime',
         ),
         'task_end_date' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'task_end_date',
             'vname' => 'LBL_TASK_END_DATE',
             'type' => 'datetimecombo',
@@ -208,7 +208,7 @@ $dictionary['stic_Journal'] = array(
             'dependency' => false,
         ),
         'task_description' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'task_description',
             'vname' => 'LBL_TASK_DESCRIPTION',
             'type' => 'text',
@@ -230,7 +230,7 @@ $dictionary['stic_Journal'] = array(
             'cols' => '20',
         ),
         'infringement_seriousness' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'infringement_seriousness',
             'vname' => 'LBL_INFRINGEMENT_SERIOUSNESS',
             'type' => 'enum',
@@ -253,7 +253,7 @@ $dictionary['stic_Journal'] = array(
             'dependency' => false,
         ),
         'infringement_description' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'infringement_description',
             'vname' => 'LBL_INFRINGEMENT_DESCRIPTION',
             'type' => 'text',
