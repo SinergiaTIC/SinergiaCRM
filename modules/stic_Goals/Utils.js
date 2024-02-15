@@ -266,7 +266,6 @@ function removeCustomRelationManyToMany(subpanelName, goalId) {
 YAHOO.util.Event.addListener('stic_goals_stic_assessmentsstic_assessments_ida','change',goalchanged);
 
 function goalchanged() {
-  console.log('@@@@@@@@');
   let assessmentName = $('#stic_goals_stic_assessments_name').val();
   let assessmentId = $('#stic_goals_stic_assessmentsstic_assessments_ida').val();
   // We check the name and not the id because when removed manually the name, the id is not automatically cleared
@@ -310,7 +309,6 @@ function getContactOrFamilyAsync(assessmentId, callbackFunction) {
       "assessmentId": assessmentId
     },
     success: function(resultado) {
-      console.log(resultado);
       if (resultado.code == 'OK') {
         callbackFunction(resultado.data);
       }
@@ -333,7 +331,6 @@ $.urlParam = function(name){
 
 $(document).ready(() => {
   // Redefine set_return function to act upon receiving value from popup
-  console.log(typeof old_set_return);
   if (typeof old_set_return === 'undefined'){
     // only redefine the function if it is not already redefined
     old_set_return = set_return;
@@ -361,7 +358,6 @@ $(document).ready(() => {
         if(contactOrFamily!= null) {
           Object.entries(contactOrFamily).forEach((element) => {
             const [key, value] = element;
-            console.log(key, value);
             $('#' + key).val(value);
           });
         }
