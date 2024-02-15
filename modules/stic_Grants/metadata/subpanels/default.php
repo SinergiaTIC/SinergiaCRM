@@ -112,7 +112,7 @@ $subpanel_layout = array(
             'vname' => 'LBL_ASSIGNED_TO_NAME',
             'id' => 'ASSIGNED_USER_ID',
         ),
-        'quick_edit_button' => array(
+        'quickedit_button' => array(
             'vname' => 'LBL_QUICKEDIT_BUTTON',
             'widget_class' => 'SubPanelQuickEditButton',
             'module' => $module_name,

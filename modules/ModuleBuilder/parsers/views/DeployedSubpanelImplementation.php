@@ -129,10 +129,10 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
                 
                 // STIC-Custom 20240214 JBL - QuickEdit view
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
-                // Add quick_edit_button if edit_button is present
+                // Add quickedit_button if edit_button is present
                 if (array_key_exists('edit_button', $this->_fullFielddefs) && 
-                   !array_key_exists('quick_edit_button', $this->_fullFielddefs)) {
-                    $this->_fullFielddefs['quick_edit_button'] = array(
+                   !array_key_exists('quickedit_button', $this->_fullFielddefs)) {
+                    $this->_fullFielddefs['quickedit_button'] = array(
                         'vname' => 'LBL_QUICKEDIT_BUTTON',
                         'widget_class' => 'SubPanelQuickEditButton',
                         'module' => $moduleName,

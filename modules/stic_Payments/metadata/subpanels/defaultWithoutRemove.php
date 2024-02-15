@@ -71,7 +71,7 @@ $subpanel_layout['list_fields'] = array(
         'width' => '10%',
         'default' => true,
     ),
-    'quick_edit_button' => array(
+    'quickedit_button' => array(
         'vname' => 'LBL_QUICKEDIT_BUTTON',
         'widget_class' => 'SubPanelQuickEditButton',
         'module' => 'stic_Payments',
