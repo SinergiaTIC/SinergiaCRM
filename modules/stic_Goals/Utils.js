@@ -266,6 +266,7 @@ function removeCustomRelationManyToMany(subpanelName, goalId) {
 YAHOO.util.Event.addListener('stic_goals_stic_assessmentsstic_assessments_ida','change',goalchanged);
 
 function goalchanged() {
+  console.log('@@@@@@@@');
   let assessmentName = $('#stic_goals_stic_assessments_name').val();
   let assessmentId = $('#stic_goals_stic_assessmentsstic_assessments_ida').val();
   // We check the name and not the id because when removed manually the name, the id is not automatically cleared
@@ -337,9 +338,13 @@ $(document).ready(() => {
     // only redefine the function if it is not already redefined
     old_set_return = set_return;
     set_return = function (popup_reply_data) {
+      debugger;
       old_set_return(popup_reply_data);
       // After 1/2 second, we activate the goalchanged event. If called before, the confirm action is not execute due to security issues
-      // setTimeout(() => {goalchanged();}, 500);
+      // Only call when the assessment has been changed and not on other changes
+      if (popup_reply_data.name_to_value_array.stic_goals_stic_assessmentsstic_assessments_ida !== 'undefined'){
+        setTimeout(() => {goalchanged();}, 500);
+      }
     };
   }
 
