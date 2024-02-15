@@ -3180,6 +3180,7 @@ $app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
 $app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Día festivo';
 $app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Día personal';
+$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Ausencia Puntual';
 $app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja por enfermedad';
 $app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedencia';
 
@@ -3259,13 +3260,3 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reuniones';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvenciones';
 $app_list_strings['map_relate_type_list']['Project'] = 'Proyectos';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Objetivo';
-
-
-// Centros: Tipo de disponibilidad
-$app_list_strings['stic_work_calendar_types_list'][''] = '';
-$app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
-$app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
-$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Día festivo';
-$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Día personal';
-$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja por enfermedad';
-$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedencia';

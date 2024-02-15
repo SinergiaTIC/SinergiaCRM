@@ -3180,6 +3180,7 @@ $app_list_strings['stic_work_calendar_types_list']['working'] = 'Feiner';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacances';
 $app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Die festiu';
 $app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Dia personal';
+$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Absència Puntual';
 $app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baixa per malaltia';
 $app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedència';
 

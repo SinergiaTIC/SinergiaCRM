@@ -3179,6 +3179,7 @@ $app_list_strings['stic_work_calendar_types_list']['working'] = 'Working';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacation';
 $app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Public holiday';
 $app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Personal day';
+$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Punctual Absence';
 $app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Sick leave';
 $app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Leave of absence';
 

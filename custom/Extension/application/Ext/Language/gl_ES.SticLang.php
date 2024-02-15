@@ -3188,6 +3188,7 @@ $app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
 $app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Día festivo';
 $app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Día personal';
+$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Ausencia Puntual';
 $app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja por enfermedad';
 $app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedencia';
 
