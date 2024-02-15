@@ -266,7 +266,9 @@ class ExternalReporting
 
             // Get module bean for use later
             $moduleBean = BeanFactory::getBean($moduleName);
-
+            // if($moduleName=='stic_Sessions'){
+            //     var_dump($moduleBean->getFieldDefinitions());die();
+            // }
             // recover module labels
             $modStrings = return_module_language($this->langCode, $moduleName);
 
@@ -309,7 +311,7 @@ class ExternalReporting
                     if (!empty($directTranslate)) {
                         $fieldV['label'] = $this->sanitizeText($directTranslate);
                     } else {
-                    continue;
+                        continue;
                     }
                 }
 
@@ -424,13 +426,7 @@ class ExternalReporting
                                  *    if it's a 'Person' type module.
                                  *    This column allows for easy use of the related record's name, without the
                                  *    need for establishing additional relationships.
-                                 * 3) Fields related to the module itself are omitted since they cannot be represented in EDA,
-                                 *    and using subqueries to display the name of the related record would negatively impact performance.
                                  */
-
-                                if ($fieldV['module'] == $moduleName) {
-                                    continue 2;
-                                }
 
                                 $secureName = preg_replace('([^A-Za-z0-9])', '_', $app_list_strings['moduleList'][$fieldV['module']]) . ' (' . $fieldV['label'] . ')';
 
@@ -1539,7 +1535,7 @@ class ExternalReporting
                  '{$listElement['code']}' as 'code'
                  FROM
                     {$multiField['source_table']}
-                 WHERE ({$multiField['source_column']} LIKE '%^{$listElement['code']}^%' OR {$multiField['source_column']} = '{$listElement['code']}') 
+                 WHERE ({$multiField['source_column']} LIKE '%^{$listElement['code']}^%' OR {$multiField['source_column']} = '{$listElement['code']}')
                  ";
             }
 
