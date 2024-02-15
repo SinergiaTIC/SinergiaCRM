@@ -324,29 +324,60 @@ function getContactOrFamilyAsync(assessmentId, callbackFunction) {
   });
 }
 
+// Utility function to extract params from the URL
+$.urlParam = function(name){
+	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	return results[1] || 0;
+}
 
 $(document).ready(() => {
   // Redefine set_return function to act upon receiving value from popup
-  old_set_return = set_return;
-  set_return = function (popup_reply_data) {
-    old_set_return(popup_reply_data);
-    // After 1/2 second, we activate the goalchanged event. If called before, the confirm action is not execute due to security issues
-    setTimeout(() => {goalchanged();}, 500);
-  };
+  console.log(typeof old_set_return);
+  if (typeof old_set_return === 'undefined'){
+    // only redefine the function if it is not already redefined
+    old_set_return = set_return;
+    set_return = function (popup_reply_data) {
+      old_set_return(popup_reply_data);
+      // After 1/2 second, we activate the goalchanged event. If called before, the confirm action is not execute due to security issues
+      // setTimeout(() => {goalchanged();}, 500);
+    };
+  }
 
-  // Check assessment on page load in case we are at quick create goal from assessment
-  let assessmentId = $('#stic_goals_stic_assessmentsstic_assessments_ida').val();
-  if (assessmentId != null && assessmentId != '') {
-    // let contactOrFamily = getContactOrFamily(assessmentId);
-    getContactOrFamilyAsync(assessmentId, (contactOrFamily) => {
-      if(contactOrFamily!= null) {
-        Object.entries(contactOrFamily).forEach((element) => {
-          const [key, value] = element;
-          console.log(key, value);
-          $('#' + key).val(value);
-        });
-      }
-    });
+  const sticModule = $.urlParam('module');
+  const sticAction = $.urlParam('action');
+  
+  // We look for the assessment person or family only if we are at Assessment view
+  if (sticModule == 'stic_Assessments') {
+    // Check assessment on page load in case we are at quick create goal from assessment
+    let assessmentId = $('#stic_goals_stic_assessmentsstic_assessments_ida').val();
+    if (assessmentId != null && assessmentId != '') {
+      // let contactOrFamily = getContactOrFamily(assessmentId);
+      getContactOrFamilyAsync(assessmentId, (contactOrFamily) => {
+        if(contactOrFamily!= null) {
+          Object.entries(contactOrFamily).forEach((element) => {
+            const [key, value] = element;
+            console.log(key, value);
+            $('#' + key).val(value);
+          });
+        }
+      });
+    }
+  }
 
+  // If we are in stic_Goals DetailView and that fields exist, it's beacause we are in goals subpanel
+  // We take Persona and Family from parent Goal.
+  if (sticModule == 'stic_Goals' && sticAction == 'DetailView' &&
+      ($("#stic_goals_contacts_name").length > 0 || $("#stic_families_stic_goals_name").length)) {
+    const personaName = $("span#stic_goals_contactscontacts_ida").text();
+    const personaId = $('span#stic_goals_contactscontacts_ida').attr('data-id-value');
+
+    const familyName = $('span#stic_families_stic_goalsstic_families_ida').text();
+    const familyId = $('span#stic_families_stic_goalsstic_families_ida').attr('data-id-value');
+
+    $('input#stic_goals_contactscontacts_ida').val(personaId);
+    $('input#stic_goals_contacts_name').val(personaName);
+
+    $('input#stic_families_stic_goalsstic_families_ida').val(familyId);
+    $('input#stic_families_stic_goals_name').val(familyName);
   }
 });
