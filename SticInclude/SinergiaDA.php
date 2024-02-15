@@ -300,9 +300,17 @@ class ExternalReporting
 
                 $fieldV['label'] = $this->sanitizeText($modStrings[$fieldV['vname']]);
 
-                // If there is no translation for the label we go to the next and do not include the field
+                
+                // Attempts to assign a translated label to the field.
+                // If no translation is found, it tries to translate it directly.
+                // The field is skipped if no translation is obtained.
                 if (empty($fieldV['label']) && $fieldV['name'] != 'id') {
+                    $directTranslate = translate($fieldV['vname'], $fieldV['module']);
+                    if (!empty($directTranslate)) {
+                        $fieldV['label'] = $this->sanitizeText($directTranslate);
+                    } else {
                     continue;
+                    }
                 }
 
                 // There are some exceptions that must be applied in specific modules that have not been seen how to solve otherwise
