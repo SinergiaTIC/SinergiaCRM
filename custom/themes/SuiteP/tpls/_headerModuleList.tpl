@@ -943,7 +943,14 @@
                             {/foreach}
                         </ul>
                     </div>
-                    <div id="favoritesSidebar" class="favoritesSidebar">
+                    {* 
+                        STIC-Custom - ART - 20240216 - Sidebar Admin Actions
+                        https://github.com/SinergiaTIC/SinergiaCRM/pull/
+
+                        <div id="favoritesSidebar" class="favoritesSidebar">
+                    *}
+                    <div id="favoritesSidebar" class="favoritesSidebar" style="margin-bottom: 20px;">
+                    {* END STIC-Custom *}
                         {* 
                         STIC-Custom - JCH - 20220503 - Include update alert
                         STIC#720
@@ -976,6 +983,65 @@
                             {/foreach}
                         </ul>
                     </div>
+
+                    {* 
+                        STIC-Custom - ART - 20240216 - Sidebar Admin Actions
+                        https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    *}
+                    {if $IS_ADMIN == 1}
+                        <div id='admin_actions' class="actionMenuSidebar">
+                            <hr style="border: 1px solid #898687; margin-bottom: 15px;">
+                            <ul>
+                                <li class="actionmenulinks" role="presentation">
+                                    <div class="actionmenulink">
+                                        <h5 style="margin-left: 10px; margin-bottom: 12px; margin-right: 15px; color: white;"><b>{sugar_translate module="Administration" label="LBL_ADMIN_ACTIONS"}</b></h5>
+                                    </div>
+                                </li>
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=Administration">
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-module-administration"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_MODULE_NAME"}
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=ModuleBuilder&action=index&type=studio" target="_blank" >
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-studio"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_STUDIO"}
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=Administration&action=Upgrade" target="_blank">
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-repair"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_UPGRADE_TITLE"}
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=Configurator&action=EditView">
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-system-settings"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Configurator" label="LBL_MODULE_NAME"}
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {/if}
+                    {* END STIC-Custom *}
+
                 </div>
                 <!--</div>-->
             </div>
