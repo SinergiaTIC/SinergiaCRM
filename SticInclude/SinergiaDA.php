@@ -377,19 +377,18 @@ class ExternalReporting
                                 $fieldV['link'] = 'accounts_contacts';
                             }
 
-                            if (isset($fieldV['link']) && $fieldV['name'] != 'assigned_user_name') {
+                            if (isset($fieldV['link']) && !empty($fieldV['link']) && $fieldV['name'] != 'assigned_user_name') {
 
                                 //*********************** */
-                                // Es una relación 1:n normal
+                                // Es una relación 1:n normal,
                                 if ($fieldV['module'] == $moduleName) {
-                                    // The normal relationships between the same module are directly excluded, because they cannot be represented in EDA
+                                    // The standar relationships between the same module are directly excluded, because they cannot be represented in EDA
                                     continue 2;
                                 }
 
-                                $res = $this->createRelateLeftJoin($fieldV);
+                                $res = $this->createRelateLeftJoin($fieldV, $tableName);
 
                                 if (empty($res)) {
-                                    // It has not been possible to recover the relationship
                                     continue 2;
                                 }
 
@@ -412,6 +411,7 @@ class ExternalReporting
                                 } else {
                                     $fieldList['failedRelations'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
                                 }
+
                             } else {
                                 /**
                                  * Management of 'relate' type fields:
@@ -974,78 +974,107 @@ class ExternalReporting
     }
 
     /**
-     * Creates a LEFT JOIN for a relationship field
+     * Creates a LEFT JOIN for a relationship field, handling both standard and special cases.
      *
-     * This function creates a LEFT JOIN that retrieves information from a related table based on the relationship defined in the 'relationships' table.
-     * It first retrieves the relationship information from the 'relationships' table, and then checks if the necessary information to create the query is present.
-     * If the necessary information is present, it creates the LEFT JOIN based on whether the current module is the left-hand side or right-hand side of the relationship,
-     * and adds metadata to the 'sda_def_relationships' table.
+     * This function retrieves information about a relationship based on the field's `link` property.
+     * If the relationship uses a join table (`join_table`, `join_key_lhs`, and `join_key_rhs` are defined),
+     * it creates a LEFT JOIN based on whether the current module is the left or right side of the relationship.
+     * If no join table is used, it checks if the relationship is a one-to-many relationship for the
+     * current table and builds the join accordingly. If no suitable relationship is found, it does not return a join.
      *
      * @param array $field The field array containing information about the current field
+     * @param string $tableName The name of the table being processed
      *
-     * @return string|void The LEFT JOIN string, or void if the necessary information is not present
+     * @return array|null An array containing the 'field' and 'leftJoin' information, or null if no join is created
      */
 
-    private function createRelateLeftJoin($field)
+    private function createRelateLeftJoin($field, $tableName)
     {
         $db = DBManagerFactory::getInstance();
 
-        // We recover the registration of the Relationships table
+        // **Retrieve relationship information:**
         $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
 
-        if (empty($rel['join_table']) || empty($rel['join_key_lhs']) || empty($rel['join_key_rhs'])) {
-            // We do not have the necessary information to build the Query
+        // **Check if necessary information is present for standard join:**
+        if (!empty($rel['join_table']) && !empty($rel['join_key_lhs']) && !empty($rel['join_key_rhs'])) {
+            // Standard join using join table
+
+            // **Determine join side based on current module:**
+            if ($rel['lhs_module'] == $field['module']) {
+                // Current module is on the left side
+
+                // Add metadata record
+                $this->addMetadataRecord(
+                    'sda_def_relationships',
+                    [
+                        'id' => $field['link'],
+                        'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
+                        'source_column' => $field['id_name'],
+                        'target_table' => "{$this->viewPrefix}_{$field['table']}",
+                        'target_column' => 'id',
+                        'info' => 'link_lhs',
+                        'label' => $field['label'],
+                    ]
+                );
+
+                return [
+                    'field' => "{$rel['join_table']}.{$rel['join_key_lhs']}",
+                    'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
+                ];
+            } elseif ($rel['rhs_module'] == $field['module']) {
+                // Current module is on the right side
+
+                // Add metadata record
+                $this->addMetadataRecord(
+                    'sda_def_relationships',
+                    [
+                        'id' => $field['link'],
+                        'source_table' => "{$this->viewPrefix}_{$rel['lhs_table']}",
+                        'source_column' => $field['id_name'],
+                        'target_table' => "{$this->viewPrefix}_{$field['table']}",
+                        'target_column' => 'id',
+                        'info' => 'link_rhs',
+                        'label' => $field['label'],
+                    ]
+                );
+
+                return [
+                    'field' => "{$rel['join_table']}.{$rel['join_key_rhs']} ",
+                    'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel_key_lhs}=m.id AND {$rel['join_table']}.deleted=0 ",
+                ];
+            }
+        } else {
+            // **Handle cases where no join table is used:**
+
+            // Check for one-to-many relationship with the current table
+            $sql = "SELECT * FROM relationships WHERE (lhs_table='{$tableName}' OR rhs_table='{$tableName}') AND (lhs_table='{$field['table']}' OR rhs_table='{$field['table']}') AND relationship_type='one-to-many'";
+            $rel = $db->fetchOne($sql);
+
+            if ($rel) {
+                // One-to-many relationship - use direct join
+                $res['field'] = "m.{$field['id_name']}";
+                $res['leftJoin'] = " LEFT JOIN {$field['table']} ON {$field['table']}.id=m.{$field['id_name']} AND {$field['table']}.deleted=0 ";
+
+                // Add metadata record
+                $this->addMetadataRecord(
+                    'sda_def_relationships',
+                    [
+                        'id' => $field['link'],
+                        'source_table' => "{$this->viewPrefix}_{$tableName}",
+                        'source_column' => $field['id_name'],
+                        'target_table' => "{$this->viewPrefix}_{$field['table']}",
+                        'target_column' => 'id',
+                        'info' => 'no-join-table-relationship ',
+                        'label' => $field['label'],
+                    ]
+                );
+
+                return $res;
+
+            }
+
             return;
         }
-
-        // If the current module is on the left side of the relationship ...
-        if ($rel['lhs_module'] == $field['module']) {
-
-            $this->addMetadataRecord(
-                'sda_def_relationships',
-                [
-                    'id' => $field['link'],
-                    'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
-                    'source_column' => $field['id_name'],
-                    'target_table' => "{$this->viewPrefix}_{$field['table']}",
-                    'target_column' => 'id',
-                    'info' => 'link_lhs',
-                    'label' => $field['label'],
-                ]
-            );
-
-            $res = [];
-            $res['field'] = "{$rel['join_table']}.{$rel['join_key_lhs']}";
-            $res['leftJoin'] = " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ";
-            return $res;
-
-        }
-        // Or if the current module is on the right side of the relationship ...
-        elseif ($rel['rhs_module'] == $field['module']) {
-
-            $this->addMetadataRecord(
-                'sda_def_relationships',
-                [
-                    'id' => $field['link'],
-                    'source_table' => "{$this->viewPrefix}_{$rel['lhs_table']}",
-                    'source_column' => $field['id_name'],
-                    'target_table' => "{$this->viewPrefix}_{$field['table']}",
-                    'target_column' => 'id',
-                    'info' => 'link_rhs',
-                    'label' => $field['label'],
-
-                ]
-            );
-
-            $res = [];
-            $res['field'] = "{$rel['join_table']}.{$rel['join_key_rhs']} ";
-            $res['leftJoin'] = " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_lhs']}=m.id AND {$rel['join_table']}.deleted=0 ";
-
-            return $res;
-
-        }
-
-        return;
     }
 
     /**
