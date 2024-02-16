@@ -602,6 +602,7 @@ class ExternalReporting
                         break;
 
                     default:
+                    $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";    
                         $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
                         $this->info .= print_r($fieldV, true);
 
