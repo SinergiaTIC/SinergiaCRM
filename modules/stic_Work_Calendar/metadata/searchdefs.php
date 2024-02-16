@@ -55,13 +55,6 @@ $searchdefs[$module_name] = array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'end_date',
-            ),            
-            'duration' => array(
-                'type' => 'decimal',
-                'label' => 'LBL_DURATION',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'duration',
             ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
@@ -75,7 +68,7 @@ $searchdefs[$module_name] = array(
                 ),
                 'width' => '10%',
                 'default' => true,
-            ),      
+            ),
         ),  
         'advanced_search' => array(
             'name' => array(
@@ -103,6 +96,14 @@ $searchdefs[$module_name] = array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'duration',
+            ),
+            'weekday' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_WEEKDAY',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'weekday',
             ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',

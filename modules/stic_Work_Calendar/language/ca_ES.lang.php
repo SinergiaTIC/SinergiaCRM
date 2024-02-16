@@ -64,6 +64,7 @@ $mod_strings = array (
   'LBL_START_DATE_ERROR' => "La data i hora d'inici ha de ser anterior a la data i hora de finalització.",
   'LBL_END_DATE_ERROR' => "La data i hora de finalització ha de ser posterior a la data i hora d'inici.",
   'LBL_DURATION' => 'Duració',
+  'LBL_WEEKDAY' => 'Día de la setmana',  
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LBL_USERS_STIC_WORK_CALENDAR_FROM_USERS_TITLE' => 'Empleat',  

@@ -51,13 +51,6 @@ $listViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => true,
     ),    
-    'DURATION' => array(
-        'type' => 'decimal',
-        'label' => 'LBL_DURATION',
-        'width' => '10%',
-        'default' => true,
-        'align' => 'right',
-    ),    
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',
         'label' => 'LBL_ASSIGNED_TO_NAME',
@@ -72,6 +65,20 @@ $listViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => false,
     ),
+    'DURATION' => array(
+        'type' => 'decimal',
+        'label' => 'LBL_DURATION',
+        'width' => '10%',
+        'default' => false,
+        'align' => 'right',
+    ),
+    'WEEKDAY' => array(
+        'type' => 'enum',
+        'label' => 'LBL_WEEKDAY',
+        'width' => '10%',
+        'default' => false,
+        'align' => 'right',
+    ),         
     'CREATED_BY_NAME' => array(
         'type' => 'relate',
         'link' => true,

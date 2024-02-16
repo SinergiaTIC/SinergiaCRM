@@ -101,6 +101,18 @@ $searchFields[$module_name] = array(
     'end_range_duration' => array(
         'query_type' => 'default',
         'enable_range_search' => true,
-    ),    
+    ),
+    'range_weekday' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'start_range_weekday' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'end_range_weekday' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
     //Range Search Support
 );
