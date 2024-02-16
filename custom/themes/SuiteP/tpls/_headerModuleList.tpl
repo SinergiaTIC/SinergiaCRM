@@ -945,7 +945,7 @@
                     </div>
                     {* 
                         STIC-Custom - ART - 20240216 - Sidebar Admin Actions
-                        https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        https://github.com/SinergiaTIC/SinergiaCRM/pull/124
 
                         <div id="favoritesSidebar" class="favoritesSidebar">
                     *}
@@ -986,7 +986,7 @@
 
                     {* 
                         STIC-Custom - ART - 20240216 - Sidebar Admin Actions
-                        https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        https://github.com/SinergiaTIC/SinergiaCRM/pull/124
                     *}
                     {if $IS_ADMIN == 1}
                         <div id='admin_actions' class="actionMenuSidebar">
