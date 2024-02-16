@@ -84,20 +84,16 @@ class ReportExpiringCards extends DataCheckFunction
      */
     public function doAction($records, stic_Validation_Actions $actionBean) 
     {
-        global $app_list_strings;
         // It will indicate if records with errors have been found.
         $errors = 0;
 
         $currentMonth = date('ym');
         
-        $resultInfo = $this->getLabel('RESULT_INFO'); // keep here
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Reporting ExpiringCards (stic_Payment_Commitments) field SQL results: " . $resultInfo);
         
         while ($row = array_pop($records)) 
         {
-            // Set payment commitment end date
-            $PCBean = Beanfactory::getBean('stic_Payment_Commitments', $row['id']);
-
+            $resultInfo = $this->getLabel('RESULT_INFO'); 
             $resultInfo = str_replace('@expiring_date@',$row['card_expiry_date'],$resultInfo);
 
             $color = $row['card_expiry_date'] < $currentMonth ? 'red' : '#e85d04';
