@@ -282,6 +282,10 @@ class ExternalReporting
                 // We reset certain variables to avoid errors
                 unset($fieldSrc, $relatedModuleName, $secureName, $edaAggregations, $sdaHiddenField, $excludeColumnFromMetadada);
 
+                // To avoid exceptional cases where the table name is defined in uppercase 
+                // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
+                $fieldV['table']= strtolower($fieldV['table']);
+
                 $fieldName = $fieldV['name'];
 
                 $fieldPrefix = $fieldV['source'] == 'custom_fields' ? 'c' : 'm';
@@ -359,6 +363,8 @@ class ExternalReporting
                     case 'time':
                     case 'iframe':
                     case 'currency_id':
+                    case 'emailbody':
+                    case 'none':
                         continue 2;
                         break;
                     case 'relate':
@@ -603,7 +609,7 @@ class ExternalReporting
 
                     default:
                     $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";    
-                        $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
+                    $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
                         $this->info .= print_r($fieldV, true);
 
                         break;
@@ -991,7 +997,7 @@ class ExternalReporting
 
     private function createRelateLeftJoin($field, $tableName)
     {
-        $db = DBManagerFactory::getInstance();
+                $db = DBManagerFactory::getInstance();
 
         // **Retrieve relationship information:**
         $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
