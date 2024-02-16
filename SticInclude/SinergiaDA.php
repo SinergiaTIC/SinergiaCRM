@@ -1040,7 +1040,7 @@ class ExternalReporting
 
                 return [
                     'field' => "{$rel['join_table']}.{$rel['join_key_rhs']} ",
-                    'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel_key_lhs}=m.id AND {$rel['join_table']}.deleted=0 ",
+                    'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_lhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
                 ];
             }
         } else {
