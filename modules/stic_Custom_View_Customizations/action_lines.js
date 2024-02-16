@@ -128,9 +128,13 @@ function loadActionLine(actionString) {
     $("#"+prefix+a+ln).val(action[a]);
     $("#"+prefix+a+ln).change();
   }
-  // if (action['value'] instanceof Array) {
-  //   action['value'] = JSON.stringify(action['value'])
-  // }
+  
+  if (action['value'] instanceof Array) {
+    action['value'] = JSON.stringify(action['value']);
+  }
+  if(action['type']=='field_modification' && action['action']=='fixed_value') {
+    getModuleFieldEditor(ln, actprefix, action['value']);
+  }
 }
 
 function duplicateActionLine(ln) {
@@ -223,14 +227,7 @@ function onActionChanged(ln) {
     //Create next selector
     // Value editor
     if(type=='field_modification' && action=='fixed_value'){
-      var editor = decodeURIComponent(escape(atob(view_field_map[element].editor_base64)));
-      console.log(editor);
-      editor = editor.replaceAll("id=\""+element+"_editor"+"\"", "id=\""+actprefix+"value"+ln+"\"");
-      editor = editor.replaceAll("id='"+element+"_editor"+"'", "id=\""+actprefix+"value"+ln+"\"");
-      editor = editor.replaceAll("name=\""+element+"_editor"+"\"", "name=\""+actprefix+"value["+ln+"]\"");
-      editor = editor.replaceAll("name='"+element+"_editor"+"'", "name=\""+actprefix+"value["+ln+"]\"");
-      console.log(editor);
-      $("#"+actprefix+'Cell'+'value'+ln).html(editor);
+      getModuleFieldEditor(ln, actprefix);
     } else {
       $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_action_editor_map[action].editor_base64))));
       $("#"+actprefix+'Cell'+'value'+ln).children().attr("id", actprefix+"value"+ln);
@@ -251,4 +248,10 @@ function onActionChanged(ln) {
     // Duplicate button
     $("#"+actprefix+'Cell'+'duplicate'+ln).html(getActionDuplicateButton(ln, "duplicateActionLine"));
   }
+}
+
+
+//IEPA!!!
+function validateCustomViewFixedValues() {
+
 }

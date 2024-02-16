@@ -161,10 +161,10 @@ class stic_Custom_Views_ModuleView
                     continue;
                 }
                 //IEPA!!
-                // De moment s'ignoren els relacionats.
-                if(isset($arr['id_name'])) {
-                    continue;
-                }
+                // // De moment s'ignoren els relacionats.
+                // if(isset($arr['id_name'])) {
+                //     continue;
+                // }
     
                 if (isset($arr['vname']) && $arr['vname'] !== '') {
                     $this->allModuleFieldList[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');

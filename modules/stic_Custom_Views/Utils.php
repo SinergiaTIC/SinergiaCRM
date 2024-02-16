@@ -141,7 +141,7 @@ function getJsVars($viewModule, $viewType) {
     foreach($moduleView->getOnlyViewFields() as $fieldKey => $fieldName) {
         $html .=
         $fieldKey.": {".
-            "editor_base64: \"".$moduleView->getEditorForFieldValue_Base64($fieldKey, $fieldKey."_editor")."\",".
+            //"editor_base64: \"".$moduleView->getEditorForFieldValue_Base64($fieldKey, $fieldKey."_editor")."\",".
             "condition_operators: {".
                 "options: \"".$moduleView->getViewFieldOperators_as_select_options($fieldKey)."\",".
             "},".

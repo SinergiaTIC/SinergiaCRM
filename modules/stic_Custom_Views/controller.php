@@ -54,4 +54,29 @@ class stic_Custom_ViewsController extends SugarController {
             $this->bean->view_type = $_REQUEST['view_type'];
         }
     }
+
+    public function action_getModuleFieldEditor() {
+        require_once("modules/AOW_WorkFlow/aow_utils.php");
+
+        $view_module = $_REQUEST['view_module'];
+        $field_name = $_REQUEST['field_name'];
+        $editor_name = $_REQUEST['editor_name'];
+        $form = $_REQUEST['form'];
+
+        if (isset($_REQUEST['field_value'])) {
+            $value = $_REQUEST['field_value'];
+        } else {
+            $value = '';
+        }
+        if ($_REQUEST['is_value_set'] === 'false'){
+            $params['value_set'] = false;
+        } else{
+            $params['value_set'] = true;
+        }
+        $html = getModuleField($view_module, $field_name, $editor_name, 'EditView', $value, '', '', $params);
+        $html = str_replace('EditView', $form, $html);
+        echo $html;
+        die;
+    }
+
 }
