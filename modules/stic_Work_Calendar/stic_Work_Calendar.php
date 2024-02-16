@@ -45,7 +45,12 @@ class stic_Work_Calendar extends Basic
     public $assigned_user_name;
     public $assigned_user_link;
     public $SecurityGroups;
-	
+    public $type;
+    public $start_date;
+    public $end_date;
+    public $duration;
+    public $weekday;
+
     public function bean_implements($interface)
     {
         switch($interface)
@@ -56,5 +61,30 @@ class stic_Work_Calendar extends Basic
 
         return false;
     }
-	
+
+    /**
+     * Override bean's save function to calculate the valor of the some fields
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = true)
+    {
+        // Set weekday field
+        if ($this->start_date != $this->fetched_row['start_date']) {
+            $this->weekday = date('w', strtotime($this->start_date));
+        }
+
+        // Set duration field
+        if (!empty($this->end_date)) {
+            $startTime = strtotime($this->start_date);
+            $endTime = strtotime($this->end_date);
+            $duration = $endTime - $startTime;            
+            // Casting the result into float, otherwise a string is returned and may give wrong values in workflows
+            $this->duration = (float) number_format($duration / 3600, 2);
+        }
+
+        // Save the bean
+        parent::save($check_notify);
+    }
 }
