@@ -30,8 +30,8 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
         this.element = element;
     }
     show(show=true) {
-        var visible = this.element.is(":visible");
         var self = this;
+        var visible = this.element.is(":visible");
         if(show===true||show==="1"||show===1) {
             if(!visible) {
                 this.element.show();
@@ -48,54 +48,57 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
     hide() { return this.show(false); }
 
     color(color="") { 
-        this.element.css("color", color);
         var self = this;
+        this.element.css("color", color);
         this.item.customView.addUndoFunction(function() { self.element.css('color', ''); });
         return this; 
     }
     background(color="") { 
-        this.element.css("background-color", color); 
         var self = this;
+        this.element.css("background-color", color); 
         this.item.customView.addUndoFunction(function() { self.element.css("background-color", ''); });
         return this; 
     }
 
     bold(bold=true) {
+        var self = this;
         if (bold===true||bold==="1"||bold===1) {
             this.element.css('font-weight', 'bold');
+            this.item.customView.addUndoFunction(function() { self.element.css('font-weight', ''); });
         } else {
             this.element.css('font-weight', 'normal');
+            this.item.customView.addUndoFunction(function() { self.element.css('font-weight', ''); });
         }
-        var self = this;
-        this.item.customView.addUndoFunction(function() { self.element.css('font-weight', ''); });
-
         return this;
     }
     italic(italic=true) {
+        var self = this;
         if (italic===true||italic==="1"||italic===1) {
             this.element.css('font-style', 'italic');
+            this.item.customView.addUndoFunction(function() { self.element.css('font-style', ''); });
         } else {
             this.element.css('font-style', 'normal');
+            this.item.customView.addUndoFunction(function() { self.element.css('font-style', ''); });
         }
-        var self = this;
-        this.item.customView.addUndoFunction(function() { self.element.css('font-style', ''); });
         return this;
     }
     underline(underline=true) {
+        var self = this;
         if (underline===true||underline==="1"||underline===1) {
             this.element.css('text-decoration', 'underline');
+            this.item.customView.addUndoFunction(function() { self.element.css('text-decoration', ''); });
         } else {
             this.element.css('text-decoration', 'none');
+            this.item.customView.addUndoFunction(function() { self.element.css('text-decoration', ''); });
         }
-        var self = this;
-        this.item.customView.addUndoFunction(function() { self.element.css('text-decoration', ''); });
         return this;
     }
 
     style(style) {
-        var oldStyle = this.element.attr('style');
-        this.element.css(style);
         var self = this;
+        var oldStyle = this.element.attr('style');
+
+        this.element.css(style);
         this.item.customView.addUndoFunction(function() {
             self.element.attr('style', oldStyle);
         });
@@ -103,13 +106,14 @@ var sticCustomViewDivBase = class sticCustomViewDivBase {
     }
 
     mark(mark=true){
+        var self = this;
         if(mark) {
             this.element.css({"border-color": "orangered", "border-style": "dashed"});
+            this.item.customView.addUndoFunction(function() { self.element.css({"border-color": "", "border-style": ""}); });
         } else {
-            this.element.css({"border-color": "", "border-style": "none"});
+            this.element.css({"border-color": "", "border-style": ""});
+            this.item.customView.addUndoFunction(function() { self.element.css({"border-color": "", "border-style": ""}); });
         }
-        var self = this;
-        this.item.customView.addUndoFunction(function() { self.element.css({"border-color": "", "border-style": ""}); });
         return this;
     }
 

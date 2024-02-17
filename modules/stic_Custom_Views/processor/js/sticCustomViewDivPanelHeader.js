@@ -31,67 +31,65 @@ var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends st
         this.divText = this.anchor.children(":first");
     }
     text(newText){
+        var self = this;
+
         var oldText = this.divText.text();
         if(newText===undefined || newText!=oldText) {
             return oldText;
         }
         var text = this.divText.text(newText);
-
-        var self = this;
         this.item.customView.addUndoFunction(function() { self.divText.text(oldText); });
 
         return text;
     }
     color(color="") {
-        this.anchor.css("color", color);
-
         var self = this;
+
+        this.anchor.css("color", color);
         this.item.customView.addUndoFunction(function() { self.anchor.css("color", ''); });
         return this;
     }
     background(color="") {
+        var self = this;
         if (this.anchor.length>0) {
             this.anchor[0].style.setProperty("background-color", color, "important");
-
-            var self = this;
             this.item.customView.addUndoFunction(function() { self.anchor[0].style.setProperty("background-color", "", ""); });
         }
         return this;
     }
     bold(bold=true) {
+        var self = this;
         if (bold===true||bold==="1"||bold===1) {
             this.divText.css('font-weight', 'bold');
+            this.item.customView.addUndoFunction(function() { self.divText.css('font-weight', ''); });
         } else {
             this.divText.css('font-weight', 'normal');
+            this.item.customView.addUndoFunction(function() { self.divText.css('font-weight', ''); });
         }
-
-        var self = this;
-        this.item.customView.addUndoFunction(function() { self.divText.css('font-weight', ''); });
         return this;
     }
     italic(italic=true) {
+        var self = this;
         if (italic===true||italic==="1"||italic===1) {
             this.divText.css('font-style', 'italic');
+            this.item.customView.addUndoFunction(function() { self.divText.css('font-style', ''); });
         } else {
             this.divText.css('font-style', 'normal');
+            this.item.customView.addUndoFunction(function() { self.divText.css('font-style', ''); });
         }
-
-        var self = this;
-        this.item.customView.addUndoFunction(function() { self.divText.css('font-style', ''); });
         return this;
     }
     underline(underline=true) {
+        var self = this;
         if (underline===true||underline==="1"||underline===1) {
             this.divText.css('text-decoration', 'underline');
+            this.item.customView.addUndoFunction(function() { self.divText.css('text-decoration', ''); });
         } else {
             this.divText.css('text-decoration', 'none');
+            this.item.customView.addUndoFunction(function() { self.divText.css('text-decoration', ''); });
         }
-
-        var self = this;
-        this.item.customView.addUndoFunction(function() { self.divText.css('text-decoration', ''); });
         return this;
     }
-
 }
 
 
