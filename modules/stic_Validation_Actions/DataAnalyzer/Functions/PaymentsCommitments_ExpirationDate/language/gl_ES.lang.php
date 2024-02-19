@@ -22,6 +22,6 @@
  */
 $func_strings = array (
     'NAME' => 'Compromisos de pago - Revisión de las fechas de caducidad de las tarjetas',
-    'NO_ROWS' => 'No hay tarjetas próximas a su vencimiento',
-    'RESULT_INFO' => "La tarjeta de este compromiso de pago recurrente está próxima a su vencimiento @expiring_date@.",
+    'NO_ROWS' => 'No hay tarjetas próximas a su vencimiento.',
+    'RESULT_INFO' => "La tarjeta de este compromiso de pago recurrente está próxima a su vencimiento: @expiring_date@",
 );
