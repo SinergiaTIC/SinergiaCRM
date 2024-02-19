@@ -22,6 +22,6 @@
  */
 $func_strings = array (
     'NAME' => 'Payment commitments - Card expirancy date validation',
-    'NO_ROWS' => 'No hi ha targetes properes al seu venciment',
-    'RESULT_INFO' => "La targeta d'aquest compromís de pagament recurrent està propera al seu venciment @expiring_date@.",
+    'NO_ROWS' => 'There are no cards close to expiring.',
+    'RESULT_INFO' => "The card for this recurring payment commitment is close to expiration: @expiring_date@",
 );
