@@ -573,11 +573,6 @@ class SugarView
             );
             $ss->assign("CURRENT_USER_ID", $current_user->id);
 
-            // STIC-Custom - ART - 20240216 - Sidebar Admin Actions
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/124
-            $ss->assign("IS_ADMIN", is_admin($current_user));
-            // END STIC-Custom
-
             // get the last viewed records
             $favorites = BeanFactory::getBean('Favorites');
             $favorite_records = $favorites->getCurrentUserSidebarFavorites();

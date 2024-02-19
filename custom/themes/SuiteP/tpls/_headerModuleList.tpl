@@ -988,8 +988,16 @@
                         STIC-Custom - ART - 20240216 - Sidebar Admin Actions
                         https://github.com/SinergiaTIC/SinergiaCRM/pull/124
                     *}
-                    {if $IS_ADMIN == 1}
-                        <div id='admin_actions' class="actionMenuSidebar">
+                    {literal}
+                        <script>
+                            $(document).ready(function() {
+                                if($('#admin_link').length == 1) {
+                                    $('#admin_actions').show();
+                                }
+                            });
+                        </script>
+                    {/literal}
+                        <div id='admin_actions' class="actionMenuSidebar" hidden>
                             <hr style="border: 1px solid #898687; margin-bottom: 15px;">
                             <ul>
                                 <li class="actionmenulinks" role="presentation">
@@ -1039,7 +1047,6 @@
                                 </li>
                             </ul>
                         </div>
-                    {/if}
                     {* END STIC-Custom *}
 
                 </div>
