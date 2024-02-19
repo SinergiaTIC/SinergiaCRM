@@ -68,4 +68,12 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE' => 'Employee',
+  'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Update start and end time',
+  'LBL_MASS_UPDATE_DATES_TITTLE' => 'Mass update start and end time',
+  'LBL_MASS_UPDATE_DATES_FIELD' => 'Field',
+  'LBL_MASS_UPDATE_DATES_OPERADOR' => 'Operator',
+  'LBL_MASS_UPDATE_DATES_HORAS' => 'Hours',
+  'LBL_MASS_UPDATE_DATES_MINUTES' => 'Minutes',
+  'LBL_CANCEL_BUTTON' => 'Cancel',
+  'LBL_UPDATE_BUTTON' => 'Update',
 );

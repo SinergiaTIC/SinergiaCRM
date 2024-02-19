@@ -68,4 +68,12 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LBL_USERS_STIC_WORK_CALENDAR_FROM_USERS_TITLE' => 'Empleat',  
+  'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => "Actualitzar hora d'inici i de final",
+  'LBL_MASS_UPDATE_DATES_TITTLE' => "Actualització massiva de l'hora d'inici i de finalització",
+  'LBL_MASS_UPDATE_DATES_FIELD' => 'Camp',
+  'LBL_MASS_UPDATE_DATES_OPERADOR' => 'Operador',
+  'LBL_MASS_UPDATE_DATES_HORAS' => 'Hores',
+  'LBL_MASS_UPDATE_DATES_MINUTES' => 'Minuts',
+  'LBL_CANCEL_BUTTON' => 'Cancel·lar',
+  'LBL_UPDATE_BUTTON' => 'Actualitzar',
 );
