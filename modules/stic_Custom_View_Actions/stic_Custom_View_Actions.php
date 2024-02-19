@@ -64,8 +64,6 @@ class stic_Custom_View_Actions extends Basic
     public function __construct()
     {
         parent::__construct();
-
-        require_once('modules/stic_Custom_Views/Utils.php');
     }
 
     public function save_lines($post_data, $view_module, $parent, $key = '')

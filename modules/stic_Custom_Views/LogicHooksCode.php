@@ -32,8 +32,8 @@ class stic_Custom_ViewsLogicHooks
                       $bean->customization_name;
 
         // Update all related names
-        include_once 'SticInclude/Utils.php';
-        $relatedBeans = SticUtils::getRelatedBeanObjectArray($bean, 'stic_custom_views_stic_custom_view_customizations');
+        include_once 'modules/stic_Custom_Views/Utils.php';
+        $relatedBeans = getRelatedBeanObjectArray($bean, 'stic_custom_views_stic_custom_view_customizations');
         foreach ($relatedBeans as $relatedBean) {
             // before_save LogicHook updates the name
             $relatedBean->save(); 

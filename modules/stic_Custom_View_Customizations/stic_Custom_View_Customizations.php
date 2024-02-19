@@ -64,9 +64,10 @@ class stic_Custom_View_Customizations extends Basic
 
     public function save($check_notify = false)
     {
-        require_once("modules/stic_Custom_View_Customizations/Utils.php");
-        require_once('modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php');
-        require_once('modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php');
+        require_once 'modules/stic_Custom_Views/Utils.php';
+        require_once 'modules/stic_Custom_View_Customizations/Utils.php';
+        require_once 'modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php';
+        require_once 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
 
         $return_id = parent::save($check_notify);
         $viewBean = getCustomView($this);
@@ -80,7 +81,7 @@ class stic_Custom_View_Customizations extends Basic
         $action->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Action');
 
         // Set Conditions field
-        $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
+        $conditionBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
         $conditions = array();
         foreach ($conditionBeanArray as $conditionBean) {
             $conditions[] = $conditionBean->field . "." . $conditionBean->operator . "." . $conditionBean->value;
@@ -88,7 +89,7 @@ class stic_Custom_View_Customizations extends Basic
         $this->conditions = implode(" + ", $conditions);
 
         // Set Actions field
-        $actionsBeanArray = SticUtils::getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
+        $actionsBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
         $actions = array();
         foreach ($actionsBeanArray as $actionBean) {
             $actions[] = $actionBean->type . ":" . $actionBean->element . "." . $actionBean->action . "=" . $actionBean->value . "(". $actionBean->element_section . ")";

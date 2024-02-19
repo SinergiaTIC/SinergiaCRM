@@ -117,24 +117,6 @@ EOQ;
     }
 
     /**
-     * Get an array with related beans from the $bean module
-     *
-     *
-     * @param Object $bean of the module from which we make the request
-     * @param String $relationshipName Name of the relationships from which we want to get the $relatedBean
-     * @return Array array with relatedModule Beans
-     */
-    public static function getRelatedBeanObjectArray($bean, $relationshipName)
-    {
-        if (!$bean->load_relationship($relationshipName)) {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': : Failed retrieve relationship data array');
-            return false;
-        }
-        $relatedBeans = $bean->$relationshipName->getBeans();
-        return $relatedBeans ?? false;
-    }
-
-    /**
      * Clean a text string, removing unsupported characters
      *
      * @param String $text

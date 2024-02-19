@@ -21,10 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'SticInclude/Utils.php';
-
 function getCustomView($customizationBean) {
-    return SticUtils::getRelatedBeanObject($customizationBean, "stic_custom_views_stic_custom_view_customizations");
+    require_once 'modules/stic_Custom_Views/Utils.php';
+    return getRelatedBeanObject($customizationBean, "stic_custom_views_stic_custom_view_customizations");
 }
 
 function getLangStrings() {
@@ -42,6 +41,8 @@ function getLangStrings() {
 }
 
 function displayConditionLines($focus, $field, $value, $view) {
+    require_once 'modules/stic_Custom_Views/Utils.php';
+
     global $mod_strings;
 
     $html = 
@@ -53,7 +54,7 @@ function displayConditionLines($focus, $field, $value, $view) {
            "id='btn_ConditionLine' onclick='insertConditionLine()'/>".
 "</div>";
 
-    $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_conditions");
+    $conditionBeanArray = getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_conditions");
     if(!empty($conditionBeanArray)) {
         // Sort conditions
         usort($conditionBeanArray, 'compareConditions');
@@ -70,6 +71,7 @@ function displayConditionLines($focus, $field, $value, $view) {
 
 
 function displayActionLines(SugarBean $focus, $field, $value, $view) {
+    require_once 'modules/stic_Custom_Views/Utils.php';
     global $mod_strings;
 
     $html = 
@@ -81,7 +83,7 @@ function displayActionLines(SugarBean $focus, $field, $value, $view) {
            "id='btn_ActionLine' onclick='insertActionLine()'/>".
 "</div>";
 
-    $actionBeanArray = SticUtils::getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_actions");
+    $actionBeanArray = getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_actions");
     if(!empty($actionBeanArray)) {
         // Sort actions
         usort($actionBeanArray, 'compareActions');

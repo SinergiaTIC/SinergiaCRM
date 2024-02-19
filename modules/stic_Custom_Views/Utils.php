@@ -21,7 +21,44 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'SticInclude/Utils.php';
+
+/**
+ * Get an related bean from the $bean module
+ *
+ *
+ * @param Object $bean of the module from which we make the request
+ * @param String $relationshipName Name of the relationships from which we want to get the $relatedBean
+ * @return Object relatedModule Bean
+ */
+function getRelatedBeanObject($bean, $relationshipName)
+{
+    if (!$bean->load_relationship($relationshipName)) {
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': : Failed retrieve contacts relationship data');
+        return false;
+    }
+    $relatedBeans = $bean->$relationshipName->getBeans();
+    $relatedBean = array_pop($relatedBeans);
+    return !($relatedBean) ? false : $relatedBean;
+}
+
+/**
+ * Get an array with related beans from the $bean module
+ *
+ *
+ * @param Object $bean of the module from which we make the request
+ * @param String $relationshipName Name of the relationships from which we want to get the $relatedBean
+ * @return Array array with relatedModule Beans
+ */
+function getRelatedBeanObjectArray($bean, $relationshipName)
+{
+    if (!$bean->load_relationship($relationshipName)) {
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': : Failed retrieve relationship data array');
+        return false;
+    }
+    $relatedBeans = $bean->$relationshipName->getBeans();
+    return $relatedBeans ?? false;
+}
+
 
 function fillDynamicGenericLists() {
     fillDynamicRoleList();

@@ -24,7 +24,7 @@ class stic_Custom_Views_ProcessorLogicHooks
 {
 
     public function after_ui_frame($event, $arguments) {
-        include_once 'SticInclude/Utils.php';
+        require_once 'modules/stic_Custom_Views/Utils.php';
         global $current_user;
 
         $action = strtolower($GLOBALS['action']);
@@ -126,13 +126,13 @@ class stic_Custom_Views_ProcessorLogicHooks
         $customizations = array();
         foreach($validCustomViews as $customView) {
             $customViewBean = BeanFactory::getBean('stic_Custom_Views', $customView["id"]);
-            $customizationBeanArray = SticUtils::getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
+            $customizationBeanArray = getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
             // Sort Customizations
             usort($customizationBeanArray, array($this, 'compareCustomizations'));
 
             foreach($customizationBeanArray as $customizationBean) {
-                $conditionBeanArray = SticUtils::getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_conditions');
-                $actionsBeanArray = SticUtils::getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_actions');
+                $conditionBeanArray = getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_conditions');
+                $actionsBeanArray = getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_actions');
 
                 $conditions = array();
                 foreach ($conditionBeanArray as $conditionBean) {

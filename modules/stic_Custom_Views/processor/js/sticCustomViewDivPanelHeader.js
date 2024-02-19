@@ -27,18 +27,20 @@
 var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends sticCustomViewDivLabel {
     constructor (item, element){
         super(item, element);
-        this.anchor = this.element.find("a");
-        this.divText = this.anchor.children(":first");
+        //this.anchor = this.element.find("a");
+        //this.label = this.anchor.children(":first");
+        this.label = this.element.find('[data-label="'+this.item.panelName+'"]');
+        this.anchor = this.label.parent();
     }
     text(newText){
         var self = this;
 
-        var oldText = this.divText.text();
+        var oldText = this.label.text();
         if(newText===undefined || newText!=oldText) {
             return oldText;
         }
-        var text = this.divText.text(newText);
-        this.item.customView.addUndoFunction(function() { self.divText.text(oldText); });
+        var text = this.label.text(newText);
+        this.item.customView.addUndoFunction(function() { self.label.text(oldText); });
 
         return text;
     }
@@ -60,33 +62,33 @@ var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends st
     bold(bold=true) {
         var self = this;
         if (bold===true||bold==="1"||bold===1) {
-            this.divText.css('font-weight', 'bold');
-            this.item.customView.addUndoFunction(function() { self.divText.css('font-weight', ''); });
+            this.label.css('font-weight', 'bold');
+            this.item.customView.addUndoFunction(function() { self.label.css('font-weight', ''); });
         } else {
-            this.divText.css('font-weight', 'normal');
-            this.item.customView.addUndoFunction(function() { self.divText.css('font-weight', ''); });
+            this.label.css('font-weight', 'normal');
+            this.item.customView.addUndoFunction(function() { self.label.css('font-weight', ''); });
         }
         return this;
     }
     italic(italic=true) {
         var self = this;
         if (italic===true||italic==="1"||italic===1) {
-            this.divText.css('font-style', 'italic');
-            this.item.customView.addUndoFunction(function() { self.divText.css('font-style', ''); });
+            this.label.css('font-style', 'italic');
+            this.item.customView.addUndoFunction(function() { self.label.css('font-style', ''); });
         } else {
-            this.divText.css('font-style', 'normal');
-            this.item.customView.addUndoFunction(function() { self.divText.css('font-style', ''); });
+            this.label.css('font-style', 'normal');
+            this.item.customView.addUndoFunction(function() { self.label.css('font-style', ''); });
         }
         return this;
     }
     underline(underline=true) {
         var self = this;
         if (underline===true||underline==="1"||underline===1) {
-            this.divText.css('text-decoration', 'underline');
-            this.item.customView.addUndoFunction(function() { self.divText.css('text-decoration', ''); });
+            this.label.css('text-decoration', 'underline');
+            this.item.customView.addUndoFunction(function() { self.label.css('text-decoration', ''); });
         } else {
-            this.divText.css('text-decoration', 'none');
-            this.item.customView.addUndoFunction(function() { self.divText.css('text-decoration', ''); });
+            this.label.css('text-decoration', 'none');
+            this.item.customView.addUndoFunction(function() { self.label.css('text-decoration', ''); });
         }
         return this;
     }

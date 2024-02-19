@@ -58,6 +58,8 @@ $js_groupings[] = $newGrouping = array(
 );
 // Add Custom View functionality
 $js_groupings[] = $newGrouping = array(
+    'modules/stic_Custom_Views/processor/js/sticCustomViews_Utils.js' => 'include/javascript/sugar_grp1.js',
+
     'modules/stic_Custom_Views/processor/js/sticCustomView.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCustomViewItemBase.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCustomViewItemField.js' => 'include/javascript/sugar_grp1.js',

@@ -25,9 +25,10 @@ class stic_Custom_View_CustomizationsLogicHooks
 
     public function before_save(&$bean, $event, $arguments)
     {
+        require_once 'modules/stic_Custom_Views/Utils.php';
+
         // Ensure name is correct
-        include_once 'SticInclude/Utils.php';
-        $customViewBean = SticUtils::getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
+        $customViewBean = getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
 
         // Initial Configuration: customization_order always 0
         if ($bean->init == 1) {
@@ -40,7 +41,7 @@ class stic_Custom_View_CustomizationsLogicHooks
         }
 
         // Ensure customization_order is not set or change others
-        $customizationBeanArray = SticUtils::getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
+        $customizationBeanArray = getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
         foreach ($customizationBeanArray as $customizationBean) {
             if ($customizationBean->id != $bean->id && 
                 $customizationBean->init == $bean->init &&

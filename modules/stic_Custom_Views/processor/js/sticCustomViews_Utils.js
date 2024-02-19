@@ -1,0 +1,171 @@
+/**
+ * Transform a Javascript Date into a DB date format
+ */
+function dateToYMDHM(date) {
+    var d = date.getDate();
+    var m = date.getMonth() + 1;
+    var y = date.getFullYear();
+    var h = date.getHours();
+    var min = date.getMinutes();
+    return "" + y + "-" + (m <= 9 ? "0" + m : m) + "-" + (d <= 9 ? "0" + d : d) + " " + h + ":" + (min <= 9 ? "0" + min : min) + ":00";
+}
+
+/**
+ * Returns the name of the active form (used only for editable views)
+ */
+function getFormName() {
+    var formNames = ["form_DCQuickCreate_" + module, "form_SubpanelQuickCreate_" + module, "form_QuickCreate_" + module, "EditView"];
+    var form = null;
+    for (var i = 0; i < formNames.length && !form; i++) {
+      form = document.forms[formNames[i]];
+    }
+    return form != null ? form.id : "EditView";
+  }
+
+  /**
+ * Add the class that shows the required field mark
+ *
+ * @param {*} elementId id of element to mark
+ */
+function addRequiredMark(elementId, conditionalClass = "conditional-required") {
+    var $form = $("form#" + getFormName());
+    $("#" + elementId + "", $form)
+      .closest(".edit-view-row-item")
+      .find(".label")
+      .addClass(conditionalClass);
+  }
+  
+  /**
+   * Remove the class that shows the required field mark
+   *
+   * @param {*} elementId id of the element
+   */
+  function removeRequiredMark(elementId, conditionalClass = "conditional-required") {
+    var $form = $("form#" + getFormName());
+    $("#" + elementId, $form)
+      .closest(".edit-view-row-item")
+      .find(".label")
+      .removeClass(conditionalClass);
+  }
+  
+  /**
+   * Add required validations to fieldId and show the required field mark
+   *
+   * @param {*} fieldId id of field
+   * @param {*} fieldType  type of field (text, date, decimal, etc)
+   * @param {*} fieldMessage validation error message
+   */
+  function setRequiredStatus(fieldId, fieldType, fieldMessage) {
+    addToValidate(getFormName(), fieldId, fieldType, true, fieldMessage);
+    addRequiredMark(fieldId);
+  }
+  
+  /**
+   * Remove all validations and hide the required field mark for fieldId
+   *
+   * @param {*} fieldId id of field
+   */
+  function setUnrequiredStatus(fieldId) {
+    removeFromValidate(getFormName(), fieldId);
+    removeRequiredMark(fieldId);
+  }
+  
+/**
+ * Returns true if the field is required
+ * 
+ * @param {*} fieldId id of field
+ */
+function getRequiredStatus(fieldId) {
+    var validateFields = validate[getFormName()];
+    for (i = 0; i < validateFields.length; i++) {
+      // Array(name, type, required, msg);
+      if (validateFields[i][0] == fieldId) {
+        return validateFields[i][2];
+      }
+    }
+    return false;
+  }
+
+  /**
+ * Get the value of a field in any of the edit|detail|list views (view-dependent function).
+ * In case of enum type fields value will be get through the visible label.
+ *
+ * @param String fieldName Required The name of the field
+ * @param String listName Required when type is enum
+ * @return String found value or '' if a value has not been found for any reason.
+ */
+function getFieldValue(fieldName, listName) {
+    // If fieldName is the active inline edit field, obtain the value directly
+    $activeField = $(".inlineEditActive [name=" + fieldName + "]");
+    if ($activeField.length == 1) {
+      var res = $activeField.val();
+      return res === undefined ? '' : res;
+    }
+  
+    switch (viewType()) {
+      case "edit":
+        var res = $("form#EditView #" + fieldName).val();
+        return res === undefined ? '' : res;
+  
+      case "quickcreate":
+        var res = $("#" + fieldName, ".sub-panel .quickcreate form").val();
+        return res === undefined ? '' : res;
+  
+      case "popup":
+        var res = $("#" + fieldName, "form .edit-view-row").val();
+        return res === undefined ? '' : res;
+  
+      case "detail":
+        var $field = $(".detail-view-field[field=" + fieldName + "]");
+        if ($field.length == 1) {
+          var fieldType = $field.attr("type");
+          if (fieldType == "enum") {
+            if (!listName) {
+              console.error("In enum type fields it is necessary to indicate the full name of the list");
+              return '';
+            }
+            var res = getListValueFromLabel(listName, trim($field.text()));
+            return res === undefined ? '' : res;
+          } else {
+            var res = trim($field.text());
+            return res === undefined ? '' : res;
+          }
+        } else {
+          console.error("It was not possible to obtain the value of the field [" + fieldName + "]");
+          return '';
+        }
+  
+      case "list":
+        if ($(".inlineEditActive").length === 0) {
+          console.error("The getFieldValue() function has been called in a list, but there is no active inline-edit field, so it cannot be evaluated");
+          return '';
+        }
+  
+        var $field = $("td[field=" + fieldName + "] ", $(".inlineEditActive").closest("tr"));
+  
+        if ($field.length == 1) {
+          if ($field.closest("form[name=EditView]") > 0) {
+            return $field.val() === undefined ? '' : $field.val();
+          } else {
+            var fieldType = $field.attr("type");
+            if (fieldType == "enum") {
+              var res = getListValueFromLabel(listName, trim($field.text()));
+              if (!listName) {
+                console.error("In enum type fields it is necessary to indicate the full name of the list");
+              }
+              return res === undefined ? '' : res;
+            } else {
+              var res = trim($field.text());
+              return res === undefined ? '' : res;
+            }
+          }
+        } else {
+          console.error("It was not possible to obtain the value of the field [" + fieldName + "]");
+          return '';
+        }
+  
+      default:
+        return '';
+    }
+  }
+  

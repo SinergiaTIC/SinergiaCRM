@@ -56,7 +56,11 @@
         {{counter name="tabCount" print=false}}
         {{if $tabCount == '0'}}
         <li role="presentation" class="active">
-            <a id="tab{{$tabCount}}" data-toggle="tab" class="hidden-xs">
+            {* STIC-Custom 20240219 - Custom Views *}
+            {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+            {* <a id="tab{{$tabCount}}" data-toggle="tab" class="hidden-xs"> *}
+            <a id="tab{{$tabCount}}" data-toggle="tab" data-label="{{$label_upper}}" class="hidden-xs">
+            {* End STIC-Custom *}
                 {sugar_translate label='{{$label}}' module='{{$module}}'}
             </a>
 
@@ -74,7 +78,11 @@
                 * There is more than one tab set
                 * When Acton Menu's are enabled
             *}
-            <a id="xstab{{$tabCount}}" href="#" class="visible-xs first-tab{{if $tabCountOnlyXS > 0}}-xs{{/if}} dropdown-toggle" data-toggle="dropdown">
+            {* STIC-Custom 20240219 - Custom Views *}
+            {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+            {* <a id="xstab{{$tabCount}}" href="#" class="visible-xs first-tab{{if $tabCountOnlyXS > 0}}-xs{{/if}} dropdown-toggle" data-toggle="dropdown"> *}
+            <a id="xstab{{$tabCount}}" data-label="{{$label_upper}}" href="#" class="visible-xs first-tab{{if $tabCountOnlyXS > 0}}-xs{{/if}} dropdown-toggle" data-toggle="dropdown">
+            {* End STIC-Custom *}
                 {sugar_translate label='{{$label}}' module='{{$module}}'}
             </a>
             {{if $tabCountOnlyXS > 0}}
@@ -84,7 +92,11 @@
                 {{capture name=label_upper_xs assign=label_upper_xs}}{{$label|upper}}{{/capture}}
                 {{if (isset($tabDefs[$label_upper_xs].newTab) && $tabDefs[$label_upper_xs].newTab == true)}}
                 <li role="presentation">
-                    <a id="tab{{$tabCountXS}}" data-toggle="tab" onclick="changeFirstTab(this, 'tab-content-{{$tabCountXS}}');">
+                    {* STIC-Custom 20240219 - Custom Views *}
+                    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                    {* <a id="tab{{$tabCountXS}}" data-toggle="tab" onclick="changeFirstTab(this, 'tab-content-{{$tabCountXS}}');"> *}
+                    <a id="tab{{$tabCountXS}}" data-toggle="tab" data-label="{{$label_upper}}" onclick="changeFirstTab(this, 'tab-content-{{$tabCountXS}}');">
+                    {* End STIC-Custom *}
                         {sugar_translate label='{{$label}}' module='{{$module}}'}
                     </a>
                 </li>
@@ -97,7 +109,11 @@
         </li>
         {{else}}
         <li role="presentation" class="hidden-xs">
-            <a id="tab{{$tabCount}}" data-toggle="tab">
+            {* STIC-Custom 20240219 - Custom Views *}
+            {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+            {* <a id="tab{{$tabCount}}" data-toggle="tab"> *}
+            <a id="tab{{$tabCount}}" data-toggle="tab" data-label="{{$label_upper}}">
+            {* End STIC-Custom *}
                 {sugar_translate label='{{$label}}' module='{{$module}}'}
             </a>
         </li>
@@ -119,10 +135,18 @@
             {{counter name="tabCount" print=false}}
             {{if $tabCount == '0'}}
             <li role="presentation" class="active">
-                <a id="tab{{$tabCount}}" data-toggle="tab" class="hidden-xs">
+                {* STIC-Custom 20240219 - Custom Views *}
+                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                {* <a id="tab{{$tabCount}}" data-toggle="tab" class="hidden-xs"> *}
+                <a id="tab{{$tabCount}}" data-toggle="tab" data-label="{{$label_upper}}" class="hidden-xs">
+                {* End STIC-Custom *}
                     {sugar_translate label='{{$label}}' module='{{$module}}'}
                 </a>
-                <a id="xstab{{$tabCount}}" href="#" class="visible-xs first-tab dropdown-toggle" data-toggle="dropdown">
+                {* STIC-Custom 20240219 - Custom Views *}
+                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                {* <a id="xstab{{$tabCount}}" href="#" class="visible-xs first-tab dropdown-toggle" data-toggle="dropdown"> *}
+                <a id="xstab{{$tabCount}}" data-label="{{$label_upper}}" href="#" class="visible-xs first-tab dropdown-toggle" data-toggle="dropdown">
+                {* End STIC-Custom *}
                     {sugar_translate label='{{$label}}' module='{{$module}}'}
                 </a>
             </li>
@@ -179,11 +203,19 @@
                     {{capture name=label_upper assign=label_upper}}{{$label|upper}}{{/capture}}
                     {{if isset($tabDefs[$label_upper].newTab) && $tabDefs[$label_upper].newTab == true}}
                     {{if $tabCount == '0'}}
-                    <div class="tab-pane-NOBOOTSTRAPTOGGLER active fade in" id='tab-content-{{$tabCount}}'>
+                    {* STIC-Custom 20240219 - Custom Views *}
+                    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                    {* <div class="tab-pane-NOBOOTSTRAPTOGGLER active fade in" id='tab-content-{{$tabCount}}'> *}
+                    <div class="tab-pane-NOBOOTSTRAPTOGGLER active fade in" id='tab-content-{{$tabCount}}' data-id="{{$label_upper}}">
+                    {* End STIC-Custom *}
                         {{include file='themes/SuiteP/include/DetailView/tab_panel_content.tpl'}}
                     </div>
                     {{else}}
-                    <div class="tab-pane-NOBOOTSTRAPTOGGLER fade" id='tab-content-{{$tabCount}}'>
+                    {* STIC-Custom 20240219 - Custom Views *}
+                    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                    {* <div class="tab-pane-NOBOOTSTRAPTOGGLER fade" id='tab-content-{{$tabCount}}'> *}
+                    <div class="tab-pane-NOBOOTSTRAPTOGGLER fade" id='tab-content-{{$tabCount}}' data-id="{{$label_upper}}">
+                    {* End STIC-Custom *}
                         {{include file='themes/SuiteP/include/DetailView/tab_panel_content.tpl'}}
                     </div>
                     {{/if}}
@@ -201,7 +233,11 @@
                         {{foreach name=section from=$sectionPanels key=label item=panel}}
                         {{capture name=label_upper assign=label_upper}}{{$label|upper}}{{/capture}}
                         {{if $tabCount == '0'}}
-                        <div class="tab-pane-NOBOOTSTRAPTOGGLER active fade in" id='tab-content-{{$tabCount}}'>
+                        {* STIC-Custom 20240219 - Custom Views *}
+                        {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                        {* <div class="tab-pane-NOBOOTSTRAPTOGGLER active fade in" id='tab-content-{{$tabCount}}'> *}
+                        <div class="tab-pane-NOBOOTSTRAPTOGGLER active fade in" id='tab-content-{{$tabCount}}' data-id="{{$label_upper}}">
+                        {* End STIC-Custom *}
                             {{include file='themes/SuiteP/include/DetailView/tab_panel_content.tpl'}}
                         </div>
                         {{else}}
@@ -270,7 +306,11 @@
                         {{/if}}
                             <div class="panel-heading {{$panelHeadingCollapse}}">
                                 <a class="{{$collapsed}}" role="button" data-toggle="collapse" href="#{{$panelId}}" aria-expanded="false">
-                                    <div class="col-xs-10 col-sm-11 col-md-11">
+                                    {* STIC-Custom 20240219 - Custom Views *}
+                                    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                                    {* <div class="col-xs-10 col-sm-11 col-md-11"> *}
+                                    <div class="col-xs-10 col-sm-11 col-md-11" data-label="{{$label_upper}}">
+                                    {* End STIC-Custom *}
                                         {sugar_translate label='{{$label}}' module='{{$module}}'}
                                     </div>
                                 </a>
@@ -296,7 +336,11 @@
                         {{/if}}
                         <div class="panel-heading {{$panelHeadingCollapse}}">
                             <a class="{{$collapsed}}" role="button" data-toggle="collapse" href="#{{$panelId}}" aria-expanded="false">
-                                <div class="col-xs-10 col-sm-11 col-md-11">
+                                {* STIC-Custom 20240219 - Custom Views *}
+                                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                                {* <div class="col-xs-10 col-sm-11 col-md-11"> *}
+                                <div class="col-xs-10 col-sm-11 col-md-11" data-label="{{$label_upper}}">
+                                {* End STIC-Custom *}
                                     {sugar_translate label='{{$label}}' module='{{$module}}'}
                                 </div>
                             </a>
