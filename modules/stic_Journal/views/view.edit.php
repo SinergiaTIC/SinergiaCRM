@@ -52,6 +52,14 @@ class stic_JournalViewEdit extends ViewEdit
 
         // Write here you custom code
 
+        // Get the array of the tabs
+        $tabOrder = json_encode($this->ev->defs["templateMeta"]["tabDefs"]);
+
+        echo <<<SCRIPT
+            <script>
+                STIC.tabsArray = $tabOrder;
+            </script>
+        SCRIPT;
         echo getVersionedScript("modules/stic_Journal/Utils.js");
     }
 

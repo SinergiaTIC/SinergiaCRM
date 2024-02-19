@@ -48,6 +48,15 @@ class stic_JournalViewDetail extends ViewDetail
         parent::display();
 
         SticViews::display($this);
+        
+        // Get the array of the tabs
+        $tabOrder = json_encode($this->dv->defs["templateMeta"]["tabDefs"]);
+
+        echo <<<SCRIPT
+            <script>
+                STIC.tabsArray = $tabOrder;
+            </script>
+        SCRIPT;
 
         echo getVersionedScript("modules/stic_Journal/Utils.js");
 

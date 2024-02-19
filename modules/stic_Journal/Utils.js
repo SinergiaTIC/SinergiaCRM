@@ -52,17 +52,30 @@ switch (viewType()) {
 function showTabs() {
   var typeSelected = $('#type').val();
 
-  var panelTasks = $('a#tab1');
-  var panelInfringements = $('a#tab2');
+  var tabsKeys = Object.keys(STIC.tabsArray);
+  
+  var positionTask = tabsKeys.indexOf("LBL_PANEL_TASKS");
+  var positionInfringement = tabsKeys.indexOf("LBL_PANEL_INFRINGEMENTS");
+
+  var panelTasks = $('a#tab' + positionTask);
+  var panelInfringements = $('a#tab' + positionInfringement);
+
+  descriptionRequired('show');
 
   tabTask(panelTasks, 'hide');
   tabInfrigement(panelInfringements, 'hide');
 
   if (typeSelected === 'task') {
+    descriptionRequired('hide');
+    
     tabTask(panelTasks, 'show');
   } else if (typeSelected === 'infringement') {
+    descriptionRequired('hide');
+    
     tabInfrigement(panelInfringements, 'show');
   } else if (typeSelected === 'educational_measure') {
+    descriptionRequired('hide');
+    
     tabTask(panelTasks, 'show');
     tabInfrigement(panelInfringements, 'show');
   } 
@@ -92,7 +105,7 @@ function tabTask (panelTasks, view) {
   // Showing the tab Task and put the fields required if is in the EditView
   if (view === 'show') {
     panelTasks.show();
-    if(viewType() === 'edit' && getRequiredStatus('task') === false) {
+    if(viewType() === 'edit' || viewType() === 'quickcreate' || viewType() === 'popup' && getRequiredStatus('task') === false) {
       setRequiredStatus('task', 'text', SUGAR.language.languages.stic_Journal.LBL_TASK);
       setRequiredStatus('task_scope', 'text', SUGAR.language.languages.stic_Journal.LBL_TASK_SCOPE);
       setRequiredStatus('task_start_date', 'text', SUGAR.language.languages.stic_Journal.LBL_TASK_START_DATE);
@@ -102,7 +115,7 @@ function tabTask (panelTasks, view) {
   // Hiding the tab Task and put the fields unrequired if is in the EditView
   } else if (view === 'hide') {
     panelTasks.hide();
-    if(viewType() === 'edit' && getRequiredStatus('task') != false) {
+    if(viewType() === 'edit' || viewType() === 'quickcreate' || viewType() === 'popup' && getRequiredStatus('task') != false) {
       setUnrequiredStatus('task');
       setUnrequiredStatus('task_scope');
       setUnrequiredStatus('task_start_date');
@@ -116,16 +129,30 @@ function tabInfrigement (panelInfringements, view) {
   // Showing the tab TasInfringementk and put the fields required if is in the EditView
   if (view === 'show') {
     panelInfringements.show();
-    if(viewType() === 'edit' && getRequiredStatus('infringement_seriousness') === false) {
+    if(viewType() === 'edit' || viewType() === 'quickcreate' || viewType() === 'popup' && getRequiredStatus('infringement_seriousness') === false) {
       setRequiredStatus('infringement_seriousness', 'text', SUGAR.language.languages.stic_Journal.LBL_INFRINGEMENT_SERIOUSNESS);
       setRequiredStatus('infringement_description', 'text', SUGAR.language.languages.stic_Journal.LBL_INFRINGEMENT_DESCRIPTION);
     }
   // Hiding the tab Infringement and put the fields unrequired if is in the EditView
   } else if (view === 'hide') {
     panelInfringements.hide();
-    if(viewType() === 'edit' && getRequiredStatus('infringement_seriousness') != false) {
+    if(viewType() === 'edit' || viewType() === 'quickcreate' || viewType() === 'popup' && getRequiredStatus('infringement_seriousness') != false) {
       setUnrequiredStatus('infringement_seriousness');
       setUnrequiredStatus('infringement_description');
+    }
+  }
+}
+
+// Adding the field Description required if there aren't the tabs Tasks or Infringenments
+function descriptionRequired(view) {
+  if (view === 'show') {
+    if(viewType() === 'edit' || viewType() === 'quickcreate' || viewType() === 'popup' && getRequiredStatus('description') === false) {
+      setRequiredStatus('description', 'text', SUGAR.language.languages.stic_Journal.LBL_DESCRIPTION);
+    }
+  // Remove the field Description from required if there are the tabs Tasks or Infringenments
+  } else if (view === 'hide') {
+    if(viewType() === 'edit' || viewType() === 'quickcreate' || viewType() === 'popup' && getRequiredStatus('description') != false) {
+      setUnrequiredStatus('description');
     }
   }
 }
