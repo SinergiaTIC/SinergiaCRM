@@ -38,14 +38,16 @@ $dictionary['KReport'] = array('table' => 'kreports',
             'type' => 'enum',
             'options' => 'kreportstatus',
             'len' => '1',
-            'vname' => 'LBL_REPORT_STATUS'
+            'vname' => 'LBL_REPORT_STATUS',
+            'massupdate' => 1,
         ),
         'report_scope' => array(
             'name' => 'report_scope',
             'type' => 'enum',
             'options' => 'kreportscope',
             'len' => 100,
-            'vname' => 'LBL_REPORT_SCOPE'
+            'vname' => 'LBL_REPORT_SCOPE',
+            'massupdate' => 1,
         ),
         'union_modules' => array(
             'name' => 'union_modules',
