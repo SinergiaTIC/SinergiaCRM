@@ -5884,11 +5884,17 @@ $dictionary["stic_journal_contacts"] = array(
             ),
         ),
         1 => array(
+            'name' => 'stic_journal_contacts_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_journal_contactsstic_journal_ida',
+            ),
+        ),
+        2 => array(
             'name' => 'stic_journal_contacts_alt',
             'type' => 'alternate_key',
             'fields' => array(
                 0 => 'stic_journal_contactscontacts_idb',
-                1 => 'stic_journal_contactsstic_journal_ida',
             ),
         ),
     ),
