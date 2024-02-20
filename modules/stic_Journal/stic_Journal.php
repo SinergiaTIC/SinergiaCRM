@@ -94,7 +94,7 @@ class stic_Journal extends Basic
 
             // If theres a center selected
             if(!empty($this->stic_journal_stic_centers_name)) {
-                $this->name = $this->stic_journal_stic_centers_name . ' - ' . $formatedDateNow . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
+                $this->name = $formatedDateNow . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type] . ' - ' . $this->stic_journal_stic_centers_name;
             } else {
                 $this->name = $formatedDateNow . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type];
             }
