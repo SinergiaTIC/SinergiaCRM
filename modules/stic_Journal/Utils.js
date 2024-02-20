@@ -36,7 +36,8 @@ switch (viewType()) {
 
   case "detail":
     $(document).ready(function() {
-      showTabs();
+      var typeSelected = $('#type').val();
+      showTabs(typeSelected);
     });
     break;
 
@@ -49,8 +50,7 @@ switch (viewType()) {
 
 /* AUX FUNCTIONS */
 // Function to show the tabs depending of the type
-function showTabs() {
-  var typeSelected = $('#type').val();
+function showTabs(typeSelected) {
 
   var tabsKeys = Object.keys(STIC.tabsArray);
   
@@ -59,6 +59,14 @@ function showTabs() {
 
   var panelTasks = $('a#tab' + positionTask);
   var panelInfringements = $('a#tab' + positionInfringement);
+
+  if(viewType() == 'quickcreate' && document.querySelector('#whole_subpanel_stic_journal_stic_centers') != null ) {
+    panelTasks = $('#whole_subpanel_stic_journal_stic_centers a#tab' + positionTask);
+    panelInfringements = $('#whole_subpanel_stic_journal_stic_centers a#tab' + positionInfringement);
+  } else if (viewType() == 'quickcreate' && document.querySelector('#whole_subpanel_stic_journal_contacts') != null ) {
+    panelTasks = $('#whole_subpanel_stic_journal_contacts a#tab' + positionTask);
+    panelInfringements = $('#whole_subpanel_stic_journal_contacts a#tab' + positionInfringement);
+  } 
 
   descriptionRequired('show');
 
@@ -83,10 +91,30 @@ function showTabs() {
 
 // Function to show the tabs when the type is changing
 function showTabsEdit () {
-  showTabs();
-  $('#type').on('change', function() {
-    showTabs();
-  });
+  var typeSelected = $('#type').val();
+  
+  showTabs(typeSelected);
+  
+  // Get the subpanels of the quickcreate
+  if(viewType() == 'quickcreate') {
+    typeCenter = document.querySelector('#whole_subpanel_stic_journal_stic_centers');
+    typeContact = document.querySelector('#whole_subpanel_stic_journal_contacts');
+    if(typeCenter != null ) {
+      typeSelected = $('#whole_subpanel_stic_journal_stic_centers #type');
+        typeSelected.on('change', function() {
+          showTabs(typeSelected.val());
+        });
+    } else if (typeContact != null ) {
+      typeSelected = $('#whole_subpanel_stic_journal_contacts #type');
+      typeSelected.on('change', function() {
+        showTabs(typeSelected.val());
+      });
+    }
+  } else {
+    $('#type').on('change', function() {
+      showTabsEdit();
+    });
+  }
 }
 
 // Get the status if the field is required or not
