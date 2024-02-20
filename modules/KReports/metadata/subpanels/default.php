@@ -41,6 +41,10 @@ $subpanel_layout = array(
             'vname' => 'LBL_REPORT_STATUS',
             'width' => '15%',
         ),
+        'report_scope' => array(
+            'vname' => 'LBL_REPORT_SCOPE',
+            'width' => '15%',
+        ),
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',
             'widget_class' => 'SubPanelRemoveButton',

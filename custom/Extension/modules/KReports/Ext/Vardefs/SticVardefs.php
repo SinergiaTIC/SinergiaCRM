@@ -21,3 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */ 
 $dictionary['KReport']['fields']['report_status']['massupdate'] = 1;
+$dictionary['KReport']['fields']['report_scope']['massupdate'] = 1;

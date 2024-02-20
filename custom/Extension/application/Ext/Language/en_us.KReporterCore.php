@@ -28,4 +28,16 @@ $app_list_strings['kreportstatus'] = array(
 	'3' => 'general release'
 );
 
+$app_list_strings['kreportscope'][''] = '';
+$app_list_strings['kreportscope']['main'] = 'Main';
+$app_list_strings['kreportscope']['activities'] = 'Activities';
+$app_list_strings['kreportscope']['economy'] = 'Economy';
+$app_list_strings['kreportscope']['campaigns'] = 'Campaigns';
+$app_list_strings['kreportscope']['events'] = 'Events';
+$app_list_strings['kreportscope']['direct_care'] = 'Direct Care';
+$app_list_strings['kreportscope']['labour_insertion'] = 'Labour insertion';
+$app_list_strings['kreportscope']['bookings'] = 'Bookings';
+$app_list_strings['kreportscope']['sales'] = 'Sales';
+$app_list_strings['kreportscope']['other'] = 'Other';
+
 ?>

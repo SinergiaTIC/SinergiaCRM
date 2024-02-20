@@ -40,6 +40,13 @@ $dictionary['KReport'] = array('table' => 'kreports',
             'len' => '1',
             'vname' => 'LBL_REPORT_STATUS'
         ),
+        'report_scope' => array(
+            'name' => 'report_scope',
+            'type' => 'enum',
+            'options' => 'kreportscope',
+            'len' => 100,
+            'vname' => 'LBL_REPORT_SCOPE'
+        ),
         'union_modules' => array(
             'name' => 'union_modules',
             'type' => 'text',

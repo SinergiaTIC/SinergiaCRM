@@ -28,4 +28,14 @@ $app_list_strings['kreportstatus'] = array(
 	'3' => 'Distribución xeral'
 );
 
-?>
+$app_list_strings['kreportscope'][''] = '';
+$app_list_strings['kreportscope']['main'] = 'Principal';
+$app_list_strings['kreportscope']['activities'] = 'Actividades';
+$app_list_strings['kreportscope']['economy'] = 'Economía';
+$app_list_strings['kreportscope']['campaigns'] = 'Campañas';
+$app_list_strings['kreportscope']['events'] = 'Eventos';
+$app_list_strings['kreportscope']['direct_care'] = 'Atención directa';
+$app_list_strings['kreportscope']['labour_insertion'] = 'Inserción laboral';
+$app_list_strings['kreportscope']['bookings'] = 'Reservas';
+$app_list_strings['kreportscope']['sales'] = 'Ventas';
+$app_list_strings['kreportscope']['other'] = 'Otros';
