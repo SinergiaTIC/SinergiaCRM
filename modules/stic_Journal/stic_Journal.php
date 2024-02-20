@@ -92,7 +92,7 @@ class stic_Journal extends Basic
             
             $formatedDateNow = $formatDate->format($format);
 
-            // If theres a center selected
+            // If there is a center selected
             if(!empty($this->stic_journal_stic_centers_name)) {
                 $this->name = $formatedDateNow . ' - ' . $app_list_strings['stic_journal_types_list'][$this->type] . ' - ' . $this->stic_journal_stic_centers_name;
             } else {
