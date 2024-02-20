@@ -75,7 +75,7 @@ class stic_Work_CalendarController extends SugarController {
     protected function calculateNewDateInRecord($id, $infoDateArray)
     {
         // Get time information from the work calendar record
-        global $db;
+        global $db, $current_user;
         $query = "SELECT start_date, end_date FROM stic_work_calendar WHERE id ='" . $id . "' AND deleted = 0;";
         $result = $db->query($query);
 
@@ -93,7 +93,11 @@ class stic_Work_CalendarController extends SugarController {
 
         // Update time in work calendar record
         if ($stringDate) {
-            $query = "UPDATE stic_work_calendar SET " . $infoDateArray['field'] . " = '" . $stringDate . "' WHERE id ='" . $id . "'";
+            $query = "UPDATE stic_work_calendar SET " . 
+                        $infoDateArray['field'] . " = '" . $stringDate . "',
+                        date_modified = NOW(),
+                        modified_user_id = '" . $current_user->id . "' 
+                        WHERE id ='" . $id . "'";
             $result = $db->query($query);
         } else {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Error work calendar record with id = '  . $id . ' has no ' . $infoDateArray['field'] . ' value.');                                            
