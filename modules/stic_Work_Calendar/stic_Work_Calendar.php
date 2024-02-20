@@ -70,6 +70,22 @@ class stic_Work_Calendar extends Basic
      */
     public function save($check_notify = true)
     {
+        global $app_list_strings, $timedate;
+
+        // Set name
+        if (empty($this->name)) 
+        {
+            $employee = $this->stic_work_calendar_users_name;
+            $startDate = $timedate->to_display_date_time($this->start_date);
+            $type = $app_list_strings['stic_work_calendar_types_list'][$this->type];
+            
+            $this->name = $employee . " - " . $type . " - " . $startDate;
+
+            if (!empty($this->end_date)) {
+                $this->name .= " - " . $timedate->to_display_date_time($this->end_date);
+            }
+        }
+
         // Set weekday field
         if ($this->start_date != $this->fetched_row['start_date']) {
             $this->weekday = date('w', strtotime($this->start_date));

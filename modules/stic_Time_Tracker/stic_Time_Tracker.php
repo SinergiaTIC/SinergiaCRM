@@ -68,6 +68,21 @@ class stic_Time_Tracker extends Basic
      */
     public function save($check_notify = true)
     {
+        global $timedate;
+
+        // Set name
+        if (empty($this->name)) 
+        {
+            $employee = $this->users_stic_time_tracker_name;
+            $startDate = $timedate->to_display_date_time($this->start_date);
+           
+            $this->name = $employee . " - " . $startDate;
+
+            if (!empty($this->end_date)) {
+                $this->name .= " - " . $timedate->to_display_date_time($this->end_date);
+            }
+        }
+
         // Set duration field
         if (!empty($this->end_date)) {
             $startTime = strtotime($this->start_date);
