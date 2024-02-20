@@ -26,13 +26,13 @@
  */
 
 var sticCustomViewItemTab = class sticCustomViewItemTab extends sticCustomViewItemBase {
-    constructor (customView, tabIndex) {
-        super(customView, tabIndex);
+    constructor (customView, tabName) {
+        super(customView, tabName);
 
-        this.tabIndex = tabIndex;
+        this.tabName = tabName;
 
-        this.header = new sticCustomViewDivTabHeader(this, this.elementView.find('[id=tab'+this.tabIndex+']'));
-        this.content = new sticCustomViewDivTabContent(this, this.elementView.find('[id=tab-content-'+this.tabIndex+']'));
+        this.header = new sticCustomViewDivTabHeader(this);
+        this.content = new sticCustomViewDivTabContent(this);
     };
 
     show(show=true) { this.header.show(show); return this; }

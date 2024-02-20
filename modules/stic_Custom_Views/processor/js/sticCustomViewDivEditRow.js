@@ -25,7 +25,7 @@
  *
  */
 var sticCustomViewDivEditRow = class sticCustomViewDivEditRow extends sticCustomViewDivBase {
-    constructor (item, element){
-        super(item, element);
+    constructor (item, $element){
+        super(item, $element);
     }
 }

@@ -25,23 +25,24 @@
  *
  */
 var sticCustomViewDivLabel = class sticCustomViewDivLabel extends sticCustomViewDivBase {
-    constructor (item, element){
-        super(item, element);
+    constructor (item, $element){
+        super(item, $element);
     }
-    text(newText){
-        var self = this;
-
-        var oldText = this.element.text();
+    _text($elem, newText) {
+        var oldText = $elem.text();
         if(newText===undefined || newText!=oldText) {
             return oldText;
         }
-        var text = this.element.text(newText);
-        this.item.customView.addUndoFunction(function() { self.element.text(oldText); });
+        var text = $elem.text(newText);
+        this.addUndoFunction(function() { $elem.text(oldText); });
 
         return text;
     }
+    text(newText) {
+        return this._text(this.$element, newText);
+    }
     value(newValue) {
-        return null;
+        return this.$element.val();
     }
 
     applyActionWithValue(actionName, value) { 
@@ -57,9 +58,9 @@ var sticCustomViewDivLabel = class sticCustomViewDivLabel extends sticCustomView
     } 
 
     onChange(callback) {
-        this.element.on("change paste keyup", function() { callback();});
+        this.$element.on("change paste keyup", function() { callback();});
     }
     change() {
-        this.element.change();
+        this.$element.change();
     }
 }

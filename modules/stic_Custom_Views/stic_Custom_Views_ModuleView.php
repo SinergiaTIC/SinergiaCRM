@@ -389,12 +389,9 @@ class stic_Custom_Views_ModuleView
         $parser = ParserFactory::getParser($this->view, $this->module, null);
         $useTabs = $parser->getUseTabs();
         $parsedPanels = $parser->getTabDefs();
-        $i = 0;
         foreach ($parsedPanels as $panelKey => $panelDef) {
             if($useTabs && $panelDef["newTab"]) {
-                // Tabs are indexed as numbers in browser
-                $this->tabList[$i] = translate($panelKey, $this->module);
-                $i++;
+                $this->tabList[$panelKey] = translate($panelKey, $this->module);
             } else {
                 $this->panelList[$panelKey] = translate($panelKey, $this->module);    
             }

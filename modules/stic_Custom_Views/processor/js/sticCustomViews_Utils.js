@@ -87,6 +87,39 @@ function getRequiredStatus(fieldId) {
   }
 
   /**
+  * Return key value for label in app_list_stringsName array
+  *
+  * @param String app_list_stringsName $app_list_string to search in
+  * @param String label The label to be searched (in current language)
+  */
+ function getListValueFromLabel(app_list_stringsName, label) {
+   var res;
+   $.each(SUGAR.language.languages.app_list_strings[app_list_stringsName], function (l, k) {
+     if (k == label) {
+       res = l;
+     }
+   });
+   return res;
+ }
+
+ /**
+ * Get the view type
+ */
+function viewType() {
+  if ($(".listViewBody").length == 1) {
+    return "list";
+  } else if ($(".sub-panel .quickcreate form").length == 1) {
+    return "quickcreate";
+  } else if ($(".detail-view").length == 1) {
+    return "detail";
+  } else if ($("form[name=EditView]").length == 1) {
+    return "edit";
+  } else if ($("#popup_query_form").length == 1) {
+    return "popup";
+  }
+}
+
+  /**
  * Get the value of a field in any of the edit|detail|list views (view-dependent function).
  * In case of enum type fields value will be get through the visible label.
  *

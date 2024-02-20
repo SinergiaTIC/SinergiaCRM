@@ -25,14 +25,14 @@
  *
  */
 var sticCustomViewDivTabContent = class sticCustomViewDivTabContent extends sticCustomViewDivBase {
-    constructor (item, element){
-        super(item, element);
+    constructor (item){
+        super(item, item.$elementView.find('div.tab-content > div[data-id='+item.tabName+']'));
 
         // Fix padding for Tabs
-        if(element.css("padding")=="0px" && element.parent().css("padding")!="0px") {
-            var parentPadding = element.parent().css("padding");
-            element.parent().css("padding", "0px");
-            element.parent().children().css("padding", parentPadding);
+        if(this.$element.css("padding")=="0px" && this.$element.parent().css("padding")!="0px") {
+            var parentPadding = this.$element.parent().css("padding");
+            this.$element.parent().css("padding", "0px");
+            this.$element.parent().children().css("padding", parentPadding);
         }
     }
 

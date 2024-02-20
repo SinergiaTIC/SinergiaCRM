@@ -31,20 +31,20 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
 
         this.fieldName = fieldName;
 
-        var rowElement = this.elementView.find('*[data-field="'+this.fieldName+'"]');
+        var $rowElement = this.$elementView.find('*[data-field="'+this.fieldName+'"]');
         switch(this.view) {
-            case "detailview":  this.row = new sticCustomViewDivDetailRow(this, rowElement);; break;
-            case "editview":    this.row = new sticCustomViewDivEditRow(this, rowElement); break;
-            case "quickcreate": this.row = new sticCustomViewDivEditRow(this, rowElement); break;
+            case "detailview":  this.row = new sticCustomViewDivDetailRow(this, $rowElement);; break;
+            case "editview":    this.row = new sticCustomViewDivEditRow(this, $rowElement); break;
+            case "quickcreate": this.row = new sticCustomViewDivEditRow(this, $rowElement); break;
         }
         
-        this.label = new sticCustomViewDivLabel(this, this.row.element.children('.label'));
+        this.label = new sticCustomViewDivLabel(this, this.row.$element.children('.label'));
         
-        var inputElement = this.row.element.children('[field="'+this.fieldName+'"]');
+        var $inputElement = this.row.$element.children('[field="'+this.fieldName+'"]');
         switch(this.view) {
-            case "detailview":  this.input = new sticCustomViewDivDetailInput(this, inputElement); break;
-            case "editview":    this.input = new sticCustomViewDivEditInput(this, inputElement); break;
-            case "quickcreate": this.input = new sticCustomViewDivEditInput(this, inputElement); break;
+            case "detailview":  this.input = new sticCustomViewDivDetailInput(this, $inputElement); break;
+            case "editview":    this.input = new sticCustomViewDivEditInput(this, $inputElement); break;
+            case "quickcreate": this.input = new sticCustomViewDivEditInput(this, $inputElement); break;
         }
     }
     show(show=true) { this.row.show(show); return this; }
@@ -65,7 +65,7 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
         }
         if(oldRequired!=newRequired) {
             var self = this;
-            this.customView.addUndoFunction(function() { self.required(oldRequired); });
+            this.addUndoFunction(function() { self.required(oldRequired); });
         }
         return this;
     }

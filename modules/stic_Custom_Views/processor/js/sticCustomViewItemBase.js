@@ -33,16 +33,18 @@ var sticCustomViewItemBase = class sticCustomViewItemBase {
         this.itemName = itemName;
         
         switch(this.view) {
-            case "detailview":  this.elementView = $(".detail-view"); break;
-            case "editview":    this.elementView = $("#EditView"); break;
-            case "quickcreate": this.elementView = $("#EditView_tabs"); break;
+            case "detailview":  this.$elementView = $(".detail-view"); break;
+            case "editview":    this.$elementView = $("#EditView"); break;
+            case "quickcreate": this.$elementView = $("#EditView_tabs"); break;
         }
         switch(this.view) {
-            case "detailview":  this.form = null; break;
-            case "editview":    this.form = this.elementView; break;
-            case "quickcreate": this.form = this.elementView.parent(); break;
+            case "detailview":  this.$form = null; break;
+            case "editview":    this.$form = this.$elementView; break;
+            case "quickcreate": this.$form = this.$elementView.parent(); break;
         }
     }
 
     applyAction(action) { return false; } // Abstract class
+
+    addUndoFunction(func, reverse=false) { return this.customView.addUndoFunction(func, reverse); }
 }

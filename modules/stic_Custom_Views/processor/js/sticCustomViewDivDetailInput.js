@@ -25,7 +25,7 @@
  *
  */
 var sticCustomViewDivDetailInput = class sticCustomViewDivDetailInput extends sticCustomViewDivLabel {
-    constructor (item, element){
-        super(item, element);
+    constructor (item, $element){
+        super(item, $element);
     }
 }

@@ -25,11 +25,11 @@
  *
  */
 var sticCustomViewDivPanelContent = class sticCustomViewDivPanelContent extends sticCustomViewDivBase {
-    constructor (item, element){
-        super(item, element);
+    constructor (item, $panelElement){
+        super(item, $panelElement.find('.tab-content'));
 
         // Make same width as header 
-        element.css({width:"98%",margin:"auto"});
+        this.$element.css({width:"98%",margin:"auto"});
     }
 
 }

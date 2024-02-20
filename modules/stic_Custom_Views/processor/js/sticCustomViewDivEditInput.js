@@ -25,17 +25,17 @@
  *
  */
 var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCustomViewDivLabel {
-    constructor (item, element){
-        super(item, element);
-        this.type = this.element.attr("type"); 
+    constructor (item, $element){
+        super(item, $element);
+
+        this.type = this.$element.attr("type"); 
         if(this.type=="bool") {
-            this.editor = this.element.find("[type='checkbox']:input");
+            this.$editor = this.$element.find("[type='checkbox']:input");
         } else {
-            this.editor = this.element.find(":input");
+            this.$editor = this.$element.find(":input");
         }
-        this.option
-        this.items = this.element.find(".items");
-        this.labelValue = this.element.find(".stic-ReadonlyInput");
+        this.$items = this.$element.find(".items");
+        this.$labelValue = this.$element.find(".stic-ReadonlyInput");
     }
     value(newValue) {
         if(newValue!==undefined) {
@@ -48,48 +48,48 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
         if(newValue!=oldValue) {
             // Set new value
             if(this.type=="radioenum") {
-                this.editor.parent().find("[type='radio'][value='"+newValue+"']").prop('checked', true);
+                this.$editor.parent().find("[type='radio'][value='"+newValue+"']").prop('checked', true);
             } else if(this.type=="bool") {
-                this.editor.prop("checked", newValue)
+                this.$editor.prop("checked", newValue)
             } else {
-                this.editor.val(newValue);
+                this.$editor.val(newValue);
             }
 
             // Unset value modified by user
-            var attr = this.editor.attr("data-changedByUser");
+            var attr = this.$editor.attr("data-changedByUser");
             if(typeof(attr==="undefined") || attr===false) {
-                this.editor.removeAttr("data-changedByUser");
+                this.$editor.removeAttr("data-changedByUser");
             }
             this.change();
 
             // Set last setted value by this Api to be undoed
-            this.editor.attr("data-lastChangeByApi", newValue);
+            this.$editor.attr("data-lastChangeByApi", newValue);
 
             // Add undo function
             var self = this;
-            this.item.customView.addUndoFunction(function() { 
-                var editor = self.editor;
+            this.addUndoFunction(function() { 
+                var $editor = self.$editor;
                 var currentValue = self.value();
 
                 // Check if the last value change with Api is processed
-                var attrApi = editor.attr("data-lastChangeByApi");
+                var attrApi = $editor.attr("data-lastChangeByApi");
                 if(typeof(attrApi!=="undefined") && attrApi!==false) {
                     // The last value change with Api, is the current value?
                     if(attrApi!=currentValue) {
                         // Set data is changed by User
-                        this.editor.attr("data-changedByUser", currentValue);
+                        self.$editor.attr("data-changedByUser", currentValue);
                     } else {
                         // Data is not changed by User
-                        var attrUser = editor.attr("data-changedByUser");
+                        var attrUser = $editor.attr("data-changedByUser");
                         if(typeof(attrUser==="undefined") || attrUser===false) {
-                            editor.removeAttr("data-changedByUser");
+                            $editor.removeAttr("data-changedByUser");
                         }
                     }
                     // The last value change with Api is processed
-                    editor.removeAttr("data-lastChangeByApi");
+                    $editor.removeAttr("data-lastChangeByApi");
                 }
                 // Undo only if last change is not made by user
-                var attrUser = editor.attr("data-changedByUser");
+                var attrUser = $editor.attr("data-changedByUser");
                 if(typeof(attrUser==="undefined") || attrUser===false) {
                     self.value(oldValue);
                 }
@@ -98,21 +98,21 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
     }
     getValue() {
         if(this.type=="radioenum") {
-            return this.editor.parent().find("[type='radio']:checked").val();
+            return this.$editor.parent().find("[type='radio']:checked").val();
         } else if(this.type=="bool") {
-            return this.editor.prop("checked");
+            return this.$editor.prop("checked");
         } else {
-            return this.editor.val();
+            return this.$editor.val();
         }
     }
 
     text(newText){
-        var text = this.editor.val();
+        var text = this._text(this.$editor, newText);
         if(this.type=="enum" || this.type=="currency_id" || this.type=="dynamicenum" || 
            this.type=="multienum"){
-            text = this.editor.find("option:selected").text();
+            text = this._text(this.$editor.find("option:selected"), newText);
         } else if(this.type=="radioenum") {
-            text = this.editor.parent().find("[type='radio']:checked").parent().text();
+            text = this._text(this.$editor.parent().find("[type='radio']:checked").parent(), newText);
         } else if(this.type=="bool") {
             if(this.getValue()) {
                 text="☒";
@@ -124,31 +124,16 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
     }
 
     color(color="") {
-        var self = this;
-
-        this.editor.css("color", color);
-        this.item.customView.addUndoFunction(function() { self.editor.css('color', ''); });
-
-        this.items.css("color", color);
-        this.item.customView.addUndoFunction(function() { self.items.css('color', ''); });
-
-        this.labelValue.css("color", color);
-        this.item.customView.addUndoFunction(function() { self.labelValue.css('color', ''); });
-
-        return super.color(color);
+        this._color(this.$editor, color);
+        this._color(this.$items, color);
+        this._color(this.$labelValue, color);
+        super.color(color);
+        return this;
     }
     background(color="") {
-        var self = this;
-
-        this.editor.css("background-color", color);
-        this.item.customView.addUndoFunction(function() { self.editor.css('background-color', ''); });
-
-        this.items.css("background-color", color);
-        this.item.customView.addUndoFunction(function() { self.items.css('background-color', ''); });
-
-        this.labelValue.css("background-color", color);
-        this.item.customView.addUndoFunction(function() { self.labelValue.css('background-color', ''); });
-
+        this._background(this.$editor, color);
+        this._background(this.$items, color);
+        this._background(this.$labelValue, color);
         if (this.type=="radioenum") {
             super.background(color);
         }
@@ -156,59 +141,47 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
     }
 
     readonly(readonly=true) {
-        var self = this;
         if(readonly===true||readonly==="1"||readonly===1) {
-            if(this.labelValue.length==0 || this.labelValue.is(":hidden")) {
-                this.editor.hide();
-                this.item.customView.addUndoFunction(function() { self.editor.show(); });
-
-                this.items.hide();
-                this.item.customView.addUndoFunction(function() { self.items.show(); });
+            if(this.$labelValue.length==0 || this.$labelValue.is(":hidden")) {
+                this._show(this.$editor, false);
+                this._show(this.$items, false);
 
                 if(this.type=="radioenum") {
-                    this.editor.parent().hide();
-                    this.item.customView.addUndoFunction(function() { self.editor.parent().show(); });
+                    this._show(this.$editor.parent(), false);
                 }
                 if(this.type!="image" && this.type!="html") {
-                    if (this.labelValue.length==0) {
-                        this.element.prepend('<p class="stic-ReadonlyInput"></p>');
-                        this.labelValue = this.element.find(".stic-ReadonlyInput");
+                    if (this.$labelValue.length==0) {
+                        this.$element.prepend('<p class="stic-ReadonlyInput"></p>');
+                        this.$labelValue = this.$element.find(".stic-ReadonlyInput");
                         // Update label when value is changed
-                        this.editor.on("change paste keyup", function() {
-                            self.labelValue.text(self.text());
+                        var self = this;
+                        this.$editor.on("change paste keyup", function() {
+                            self.$labelValue.text(self.text());
                         });
                     }
-                    this.labelValue.show();
-                    this.item.customView.addUndoFunction(function() { self.labelValue.hide(); });
-
-                    this.editor.change();
+                    this.show(this.$labelValue, true);
+                    this.$editor.change();
                 }
             }
         }
         else {
-            if(this.editor.is(":hidden")||this.items.is(":hidden")) {
-                this.editor.show();
-                this.item.customView.addUndoFunction(function() { self.editor.hide(); });
- 
-                this.items.show();
-                this.item.customView.addUndoFunction(function() { self.items.hide(); });
+            if(this.$editor.is(":hidden")||this.$items.is(":hidden")) {
+                this._show(this.$editor, true);
+                this._show(this.$items, true);
  
                 if(this.type=="radioenum"){
-                    this.editor.parent().show();
-                    this.item.customView.addUndoFunction(function() { self.editor.parent().hide(); });
+                    this._show(this.$editor.parent(), true);
                 } 
- 
-                this.labelValue.hide();
-                this.item.customView.addUndoFunction(function() { self.labelValue.show(); });
+                this._show(this.$labelValue, false);
             }
         }
         return this;
     }
 
     onChange(callback) {
-        this.editor.on("change paste keyup", function() { callback();});
+        this.$editor.on("change paste keyup", function() { callback();});
     }
     change() {
-        this.editor.change();
+        this.$editor.change();
     }
 }

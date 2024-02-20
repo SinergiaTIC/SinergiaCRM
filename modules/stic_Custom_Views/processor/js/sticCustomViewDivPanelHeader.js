@@ -25,72 +25,28 @@
  *
  */
 var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends sticCustomViewDivLabel {
-    constructor (item, element){
-        super(item, element);
-        //this.anchor = this.element.find("a");
-        //this.label = this.anchor.children(":first");
-        this.label = this.element.find('[data-label="'+this.item.panelName+'"]');
-        this.anchor = this.label.parent();
+    constructor (item, $panelElement){
+        super(item, $panelElement.children('.panel-heading'));
+
+        this.$label = this.$element.find('[data-label="'+this.item.panelName+'"]');
     }
-    text(newText){
-        var self = this;
-
-        var oldText = this.label.text();
-        if(newText===undefined || newText!=oldText) {
-            return oldText;
-        }
-        var text = this.label.text(newText);
-        this.item.customView.addUndoFunction(function() { self.label.text(oldText); });
-
-        return text;
+    text(newText) {
+        return this._text(this.$label, newText);
     }
     color(color="") {
-        var self = this;
-
-        this.anchor.css("color", color);
-        this.item.customView.addUndoFunction(function() { self.anchor.css("color", ''); });
-        return this;
+        return this._color(this.$label.parent(), color);
     }
     background(color="") {
-        var self = this;
-        if (this.anchor.length>0) {
-            this.anchor[0].style.setProperty("background-color", color, "important");
-            this.item.customView.addUndoFunction(function() { self.anchor[0].style.setProperty("background-color", "", ""); });
-        }
-        return this;
+        return this._background(this.$label.parent(), color);
     }
     bold(bold=true) {
-        var self = this;
-        if (bold===true||bold==="1"||bold===1) {
-            this.label.css('font-weight', 'bold');
-            this.item.customView.addUndoFunction(function() { self.label.css('font-weight', ''); });
-        } else {
-            this.label.css('font-weight', 'normal');
-            this.item.customView.addUndoFunction(function() { self.label.css('font-weight', ''); });
-        }
-        return this;
+        return this._bold(this.$label, bold);
     }
     italic(italic=true) {
-        var self = this;
-        if (italic===true||italic==="1"||italic===1) {
-            this.label.css('font-style', 'italic');
-            this.item.customView.addUndoFunction(function() { self.label.css('font-style', ''); });
-        } else {
-            this.label.css('font-style', 'normal');
-            this.item.customView.addUndoFunction(function() { self.label.css('font-style', ''); });
-        }
-        return this;
+        return this._italic(this.$label, italic);
     }
     underline(underline=true) {
-        var self = this;
-        if (underline===true||underline==="1"||underline===1) {
-            this.label.css('text-decoration', 'underline');
-            this.item.customView.addUndoFunction(function() { self.label.css('text-decoration', ''); });
-        } else {
-            this.label.css('text-decoration', 'none');
-            this.item.customView.addUndoFunction(function() { self.label.css('text-decoration', ''); });
-        }
-        return this;
+        return this._underline(this.$label, underline);
     }
 }
 

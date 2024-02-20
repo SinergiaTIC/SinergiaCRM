@@ -94,7 +94,7 @@
                     {* STIC-Custom 20240219 - Custom Views *}
                     {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
                     {* <a id="tab{{$tabCountXS}}" data-toggle="tab" onclick="changeFirstTab(this, 'tab-content-{{$tabCountXS}}');"> *}
-                    <a id="tab{{$tabCountXS}}" data-toggle="tab" data-label="{{$label_upper}}" onclick="changeFirstTab(this, 'tab-content-{{$tabCountXS}}');">
+                    <a id="tab{{$tabCountXS}}" data-toggle="tab" data-label="{{$label_upper_xs}}" onclick="changeFirstTab(this, 'tab-content-{{$tabCountXS}}');">
                     {* End STIC-Custom *}
                         {sugar_translate label='{{$label}}' module='{{$module}}'}
                     </a>

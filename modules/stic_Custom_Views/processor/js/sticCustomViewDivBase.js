@@ -25,96 +25,116 @@
  *
  */
 var sticCustomViewDivBase = class sticCustomViewDivBase {
-    constructor (item, element){
+    constructor (item, $element){
         this.item = item;
-        this.element = element;
+        this.$element = $element;
     }
-    show(show=true) {
-        var self = this;
-        var visible = this.element.is(":visible");
+
+    addUndoFunction(func, reverse=false) { return this.item.addUndoFunction(func, reverse); }
+
+    _show($elem, show=true) {
+        var visible = $elem.is(":visible");
         if(show===true||show==="1"||show===1) {
             if(!visible) {
-                this.element.show();
-                this.item.customView.addUndoFunction(function() { self.element.hide(); });
+                $elem.show();
+                this.addUndoFunction(function() { $elem.hide(); });
             }
         } else {
             if(visible) {
-                this.element.hide();
-                this.item.customView.addUndoFunction(function() { self.element.show(); });
+                $elem.hide();
+                this.addUndoFunction(function() { $elem.show(); });
             }
         }
         return this;
     }
+    show(show=true) {
+        return this._show(this.$element, show);
+    }
     hide() { return this.show(false); }
 
+    _color($elem, color="") {
+        $elem.css("color", color);
+        this.addUndoFunction(function() { $elem.css('color', ''); });
+        return this;
+    }
     color(color="") { 
-        var self = this;
-        this.element.css("color", color);
-        this.item.customView.addUndoFunction(function() { self.element.css('color', ''); });
+        return this._color(this.$element, color);
+    }
+
+    _background($elem, color="") { 
+        $elem.css("background-color", color); 
+        this.addUndoFunction(function() { $elem.css("background-color", ''); });
         return this; 
     }
     background(color="") { 
-        var self = this;
-        this.element.css("background-color", color); 
-        this.item.customView.addUndoFunction(function() { self.element.css("background-color", ''); });
-        return this; 
+        return this._background(this.$element, color);
     }
 
-    bold(bold=true) {
-        var self = this;
-        if (bold===true||bold==="1"||bold===1) {
-            this.element.css('font-weight', 'bold');
-            this.item.customView.addUndoFunction(function() { self.element.css('font-weight', ''); });
+    _bold($elem, bold=true) {
+        if(bold===true||bold==="1"||bold===1) {
+            $elem.css('font-weight', 'bold');
+            this.addUndoFunction(function() { $elem.css('font-weight', ''); });
         } else {
-            this.element.css('font-weight', 'normal');
-            this.item.customView.addUndoFunction(function() { self.element.css('font-weight', ''); });
+            $elem.css('font-weight', 'normal');
+            this.addUndoFunction(function() { $elem.css('font-weight', ''); });
+        }
+        return this;
+    }
+    bold(bold=true) {
+        return this._bold(this.$element, bold);
+    }
+
+    _italic($elem, italic=true) {
+        if(italic===true||italic==="1"||italic===1) {
+            $elem.css('font-style', 'italic');
+            this.addUndoFunction(function() { $elem.css('font-style', ''); });
+        } else {
+            $elem.css('font-style', 'normal');
+            this.addUndoFunction(function() { $elem.css('font-style', ''); });
         }
         return this;
     }
     italic(italic=true) {
-        var self = this;
-        if (italic===true||italic==="1"||italic===1) {
-            this.element.css('font-style', 'italic');
-            this.item.customView.addUndoFunction(function() { self.element.css('font-style', ''); });
+        return this._italic(this.$element, italic);
+    }
+
+    _underline($elem, underline=true) {
+        if(underline===true||underline==="1"||underline===1) {
+            $elem.css('text-decoration', 'underline');
+            this.addUndoFunction(function() { $elem.css('text-decoration', ''); });
         } else {
-            this.element.css('font-style', 'normal');
-            this.item.customView.addUndoFunction(function() { self.element.css('font-style', ''); });
+            $elem.css('text-decoration', 'none');
+            this.addUndoFunction(function() { $elem.css('text-decoration', ''); });
         }
         return this;
     }
     underline(underline=true) {
-        var self = this;
-        if (underline===true||underline==="1"||underline===1) {
-            this.element.css('text-decoration', 'underline');
-            this.item.customView.addUndoFunction(function() { self.element.css('text-decoration', ''); });
-        } else {
-            this.element.css('text-decoration', 'none');
-            this.item.customView.addUndoFunction(function() { self.element.css('text-decoration', ''); });
-        }
-        return this;
+        return this._underline(this.$element, underline);
     }
 
+    _style($elem, style) {
+        var oldStyle = $elem.attr('style');
+
+        $elem.css(style);
+        this.addUndoFunction(function() { $elem.attr('style', oldStyle); });
+        return this;
+    }
     style(style) {
-        var self = this;
-        var oldStyle = this.element.attr('style');
-
-        this.element.css(style);
-        this.item.customView.addUndoFunction(function() {
-            self.element.attr('style', oldStyle);
-        });
-        return this;
+        return this._style(this.$element, style);
     }
 
-    mark(mark=true){
-        var self = this;
-        if(mark) {
-            this.element.css({"border-color": "orangered", "border-style": "dashed"});
-            this.item.customView.addUndoFunction(function() { self.element.css({"border-color": "", "border-style": ""}); });
+    _mark($elem, mark=true){
+        if(mark===true||mark==="1"||mark===1) {
+            $elem.css({"border-color": "orangered", "border-style": "dashed"});
+            this.addUndoFunction(function() { $elem.css({"border-color": "", "border-style": ""}); });
         } else {
-            this.element.css({"border-color": "", "border-style": ""});
-            this.item.customView.addUndoFunction(function() { self.element.css({"border-color": "", "border-style": ""}); });
+            $elem.css({"border-color": "", "border-style": ""});
+            this.addUndoFunction(function() { $elem.css({"border-color": "", "border-style": ""}); });
         }
         return this;
+    }
+    mark(mark=true){
+        return this._mark(this.$element, mark);
     }
 
     applyAction(action) {
