@@ -27,6 +27,6 @@ $app_list_strings['kreportstatus']['1'] = 'Draft';
 $app_list_strings['kreportstatus']['2'] = 'Limited release';
 $app_list_strings['kreportstatus']['3'] = 'General release';
 
-$app_list_strings['kreportsegmentation'][''] = '';
-$app_list_strings['kreportsegmentation']['sample_value_1'] = 'Sample value 1';
-$app_list_strings['kreportsegmentation']['sample_value_2'] = 'Sample value 2';
+$app_list_strings['stic_kreports_segmentations_list'][''] = '';
+$app_list_strings['stic_kreports_segmentations_list']['sample_value_1'] = 'Sample value 1';
+$app_list_strings['stic_kreports_segmentations_list']['sample_value_2'] = 'Sample value 2';

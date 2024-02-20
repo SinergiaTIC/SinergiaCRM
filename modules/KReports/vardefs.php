@@ -49,7 +49,7 @@ $dictionary['KReport'] = array('table' => 'kreports',
         'report_segmentation' => array(
             'name' => 'report_segmentation',
             'type' => 'enum',
-            'options' => 'kreportsegmentation',
+            'options' => 'stic_kreports_segmentations_list',
             'len' => 100,
             'vname' => 'LBL_REPORT_SEGMENTATION',
             'massupdate' => 1,
