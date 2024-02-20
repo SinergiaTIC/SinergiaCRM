@@ -21,26 +21,38 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 
-class stic_Work_CalendarViewMassUpdateDatesForm extends SugarView {
-	
-	function preDisplay() 
-	{
-	    parent::preDisplay();
+class stic_Work_CalendarViewEdit extends ViewEdit
+{
 
-        SticViews::preDisplay($this);		
-	}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->useForSubpanel = true;
+        $this->useModuleQuickCreateTemplate = true;
+    }
 
-	function display()  
-	{
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+        // Write here you custom code
+
+    }
+
+    public function display()
+    {
         parent::display();
 
-        SticViews::display($this);		
+        SticViews::display($this);
 
-		// IDs of the selected records
-		$this->ss->assign('selectedIDs', $_REQUEST['uid']);
-        $this->ss->display('modules/stic_Work_Calendar/tpls/massUpdateDatesForm.tpl');
+        // Write here you custom code
+
+        echo getVersionedScript("modules/stic_Work_Calendar/Utils.js");
     }
-}
 
+}

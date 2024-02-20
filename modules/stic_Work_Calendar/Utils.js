@@ -44,7 +44,6 @@ switch (viewType()) {
       text: SUGAR.language.get("stic_Work_Calendar", "LBL_MASS_UPDATE_DATES_BUTTON_TITTLE"),
       onclick: "onClickMassUpdateDatesButton()",
     };
-
     createListViewButton(button);
     break;
 
