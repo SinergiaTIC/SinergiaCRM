@@ -33,18 +33,18 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
 
         var $rowElement = this.$elementView.find('*[data-field="'+this.fieldName+'"]');
         switch(this.view) {
-            case "detailview":  this.row = new sticCustomViewDivDetailRow(this, $rowElement);; break;
-            case "editview":    this.row = new sticCustomViewDivEditRow(this, $rowElement); break;
-            case "quickcreate": this.row = new sticCustomViewDivEditRow(this, $rowElement); break;
+            case "detailview":  this.row = new sticCustomViewDivRowDetail(this, $rowElement); break;
+            case "editview":    this.row = new sticCustomViewDivRowEdit(this, $rowElement); break;
+            case "quickcreate": this.row = new sticCustomViewDivRowEdit(this, $rowElement); break;
         }
         
         this.label = new sticCustomViewDivLabel(this, this.row.$element.children('.label'));
         
         var $inputElement = this.row.$element.children('[field="'+this.fieldName+'"]');
         switch(this.view) {
-            case "detailview":  this.input = new sticCustomViewDivDetailInput(this, $inputElement); break;
-            case "editview":    this.input = new sticCustomViewDivEditInput(this, $inputElement); break;
-            case "quickcreate": this.input = new sticCustomViewDivEditInput(this, $inputElement); break;
+            case "detailview":  this.input = new sticCustomViewDivInputDetail(this, $inputElement); break;
+            case "editview":    this.input = new sticCustomViewDivInputEdit(this, $inputElement); break;
+            case "quickcreate": this.input = new sticCustomViewDivInputEdit(this, $inputElement); break;
         }
     }
     show(show=true) { this.row.show(show); return this; }
@@ -52,29 +52,11 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
 
     style(style) { this.row.style(style); return this; }
 
-    readonly(readonly=true) { this.input.readonly(readonly); return this; }
+    readonly(readonly=true) { return this; }
 
-    required(required=true, type="text") {
-        var oldRequired = getRequiredStatus(this.fieldName);
-        var newRequired = required===true||required==="1"||required===1;
+    required(required=true, type="text") { return this; }
 
-        if(newRequired) {
-            setRequiredStatus(this.fieldName, type, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
-        } else {
-            setUnrequiredStatus(this.fieldName);
-        }
-        if(oldRequired!=newRequired) {
-            var self = this;
-            this.addUndoFunction(function() { self.required(oldRequired); });
-        }
-        return this;
-    }
-
-    inline(inline=true) {
-        //IEPA!!
-        console.log("Inline not available. Requested:" + inline);
-        return false;
-    }
+    inline(inline=true) { return false; }
 
     value(newValue) { return this.input.value(newValue); }
     fixed_value(fixed_value) { return this.value(fixed_value); }

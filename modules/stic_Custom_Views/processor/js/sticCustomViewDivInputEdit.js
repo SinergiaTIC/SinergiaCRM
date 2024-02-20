@@ -24,11 +24,10 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCustomViewDivLabel {
+var sticCustomViewDivInputEdit = class sticCustomViewDivInputEdit extends sticCustomViewDivInputBase {
     constructor (item, $element){
         super(item, $element);
 
-        this.type = this.$element.attr("type"); 
         if(this.type=="bool") {
             this.$editor = this.$element.find("[type='checkbox']:input");
         } else {
@@ -39,11 +38,11 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
     }
     value(newValue) {
         if(newValue!==undefined) {
-            this.setValue(newValue);
+            this._setValue(newValue);
         }
-        return this.getValue();
+        return this._getValue();
     }
-    setValue(newValue) {
+    _setValue(newValue) {
         var oldValue = this.value();
         if(newValue!=oldValue) {
             // Set new value
@@ -96,7 +95,7 @@ var sticCustomViewDivEditInput = class sticCustomViewDivEditInput extends sticCu
             }, true);
         }
     }
-    getValue() {
+    _getValue() {
         if(this.type=="radioenum") {
             return this.$editor.parent().find("[type='radio']:checked").val();
         } else if(this.type=="bool") {

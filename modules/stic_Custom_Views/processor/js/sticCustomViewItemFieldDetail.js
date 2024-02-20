@@ -25,19 +25,16 @@
  *
  */
 
-var sticCustomViewItemBase = class sticCustomViewItemBase {
-    constructor (customView, itemName) {
-        this.customView = customView;
-
-        this.view = customView.view;
-        this.$elementView = customView.$elementView;
-        this.$form = customView.$form;
-        this.formName = customView.formName;
-        
-        this.itemName = itemName;
+var sticCustomViewItemFieldDetail = class sticCustomViewItemFieldDetail extends sticCustomViewItemFieldBase {
+    constructor (customView, fieldName) {
+        super(customView, fieldName);
     }
 
-    applyAction(action) { return false; } // Abstract class
+    inline(inline=true) {
+        //IEPA!!
+        console.log("Inline not available. Requested:" + inline);
+        return false;
+    }
 
-    addUndoFunction(func, reverse=false) { return this.customView.addUndoFunction(func, reverse); }
+    value(newValue) { return this.input.value(newValue); }
 }

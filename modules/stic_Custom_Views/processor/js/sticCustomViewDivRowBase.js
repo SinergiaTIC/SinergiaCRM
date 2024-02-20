@@ -24,20 +24,8 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-
-var sticCustomViewItemBase = class sticCustomViewItemBase {
-    constructor (customView, itemName) {
-        this.customView = customView;
-
-        this.view = customView.view;
-        this.$elementView = customView.$elementView;
-        this.$form = customView.$form;
-        this.formName = customView.formName;
-        
-        this.itemName = itemName;
+var sticCustomViewDivRowBase = class sticCustomViewDivRowBase extends sticCustomViewDivBase {
+    constructor (item, $element){
+        super(item, $element);
     }
-
-    applyAction(action) { return false; } // Abstract class
-
-    addUndoFunction(func, reverse=false) { return this.customView.addUndoFunction(func, reverse); }
 }

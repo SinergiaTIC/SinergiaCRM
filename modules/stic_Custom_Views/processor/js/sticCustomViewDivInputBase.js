@@ -24,8 +24,11 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivDetailRow = class sticCustomViewDivDetailRow extends sticCustomViewDivBase {
+var sticCustomViewDivInputBase = class sticCustomViewDivInputBase extends sticCustomViewDivLabel {
     constructor (item, $element){
         super(item, $element);
+
+        this.type = this.$element.attr("type"); 
     }
+    
 }
