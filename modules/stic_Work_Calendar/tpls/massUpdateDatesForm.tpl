@@ -53,7 +53,7 @@
                     <h3>{$MOD.LBL_START_DATE}:</h3>
                 </td>                    
                 <td>
-                    <select name="startDateOperator">
+                    <select name="start_date_operator">
                         <option label="" value="" selected> </option>
                         <option label="=" value="=">=</option>
                         <option label="+" value="+">+</option>
@@ -61,8 +61,8 @@
                     </select>
                 </td>        
                 <td>
-                    <select name="startDateHours">
-                        <option label="00" value="1">00</option>            
+                    <select name="start_date_hours">
+                        <option label="00" value="0">00</option>            
                         <option label="01" value="1">01</option>
                         <option label="02" value="2">02</option>
                         <option label="03" value="3">03</option>
@@ -89,8 +89,8 @@
                     </select>
                 </td>
                 <td>
-                    <select name="startDateMinutes">
-                        <option label="00" value="1">00</option>                    
+                    <select name="start_date_minutes">
+                        <option label="00" value="0">00</option>                    
                         <option label="01" value="1">01</option>
                         <option label="02" value="2">02</option>
                         <option label="03" value="3">03</option>
@@ -159,7 +159,7 @@
                     <h3>{$MOD.LBL_END_DATE}:</h3>
                 </td>        
                 <td>
-                    <select name="endDateOperator">
+                    <select name="end_date_operator">
                         <option label="" value="" selected> </option>                
                         <option label="=" value="=">=</option>
                         <option label="+" value="+">+</option>
@@ -167,8 +167,8 @@
                     </select>
                 </td>        
                 <td>
-                    <select name="endDateHours">
-                        <option label="00" value="1">00</option>                    
+                    <select name="end_date_hours">
+                        <option label="00" value="0">00</option>                    
                         <option label="01" value="1">01</option>
                         <option label="02" value="2">02</option>
                         <option label="03" value="3">03</option>
@@ -195,8 +195,8 @@
                     </select>
                 </td>
                 <td>
-                    <select name="endDateMinutes">
-                        <option label="00" value="1">00</option>                    
+                    <select name="end_date_minutes">
+                        <option label="00" value="0">00</option>                    
                         <option label="01" value="1">01</option>
                         <option label="02" value="2">02</option>
                         <option label="03" value="3">03</option>
@@ -261,8 +261,8 @@
             </tr>            
         </table>
 		<div id="cal-edit-buttons" class="ft">
-			<input title="Guardar" class="button" type="submit" name="button" value="{$MOD.LBL_UPDATE_BUTTON}">
-			<input title="Cancelar" class="button"
+			<input title="Update" class="button" type="submit" name="button" value="{$MOD.LBL_UPDATE_BUTTON}">
+			<input title="Cancel" class="button"
 				onclick="SUGAR.ajaxUI.loadContent('index.php?action=index&module=stic_Work_Calendar'); return false;"
 				type="submit" name="button" value="{$MOD.LBL_CANCEL_BUTTON}">
 		</div>        

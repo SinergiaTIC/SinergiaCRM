@@ -37,80 +37,99 @@ class stic_Work_CalendarController extends SugarController {
      */
     public function action_runMassUpdateDates()
     {
-        global $db;
-        $format = 'Y-m-d H:i:s';
-        
-        // IDs of the selected records
-        $ids = explode(',', $_REQUEST['selectedIDs']);
-        
-        // OPERATE ON RECORDS
-        foreach ($ids as $id) 
-        {
-            $query = "SELECT start_date, end_date FROM stic_work_calendar WHERE id ='" . $id . "' AND deleted = 0;";
-            $result = $db->query($query);
-
-            // START DATE
-            $startDate = $db->fetchByAssoc($result)['start_date'];
-            $startDateOperator = $_REQUEST['startDateOperator'];
-            
-            if (!empty($startDate) && !empty($startDateOperator)) 
-            {
-                $startDate = DateTime::createFromFormat($format, $startDate);
-                $hours = $_REQUEST['startDateHours'];
-                $minutes = $_REQUEST['startDateMinutes'];
-
-                switch ($startDateOperator) {
-                    case '=':
-                        $startDate->setTime($hours, $minutes);                            
-                        break;
-                    case '+':
-                        $startDate->modify("+{$hours} hours");                        
-                        $startDate->modify("+{$minutes} minutes");                        
-                        break;
-                    case '-':
-                        $startDate->modify("-{$hours} hours");                        
-                        $startDate->modify("-{$minutes} minutes");   
-                        break;
-                    default:
-                        break;
-                } 
-                $query = "UPDATE stic_work_calendar SET start_date = '" . $startDate->format($format) . "' WHERE id ='" . $id . "'";
-                $result = $db->query($query);
-            } else {
-
+        // Check if any operator has been indicated
+        if (!empty($_REQUEST['start_date_operator']) || !empty($_REQUEST['end_date_operator'])) 
+        {            
+            // Calculate the new date on the selected records
+            $selectedIds = explode(',', $_REQUEST['selectedIDs']);
+            foreach ($selectedIds as $id) 
+            {            
+                if (!empty($_REQUEST['start_date_operator'])) {                
+                    $startDateArray = array (
+                        'field' => 'start_date',
+                        'operator' => $_REQUEST['start_date_operator'],
+                        'hours' => $_REQUEST['start_date_hours'],
+                        'minutes' => $_REQUEST['start_date_minutes']
+                    );
+                    $this->calculateNewDateInRecord($id, $startDateArray);
+                }
+                if (!empty($_REQUEST['end_date_operator'])) {                
+                    $endDateArray = array (
+                        'field' => 'end_date',                        
+                        'operator' => $_REQUEST['end_date_operator'],
+                        'hours' => $_REQUEST['end_date_hours'],
+                        'minutes' => $_REQUEST['end_date_minutes']
+                    );
+                    $this->calculateNewDateInRecord($id, $endDateArray);
+                }                
             }
-
-            // END DATE
-            $endDate = $db->fetchByAssoc($result)['end_date'];
-            $endDateOperator = $_REQUEST['endDateOperator'];
-
-            if (!empty($endDate) && !empty($endDateOperator)) 
-            {
-                $endDate = DateTime::createFromFormat($format, $endDate);
-                $hours = $_REQUEST['endDateHours'];
-                $minutes = $_REQUEST['endDateMinutes'];
-
-                switch ($endDateOperator) {
-                    case '=':
-                        $endDate->setTime($hours, $minutes);                            
-                        break;
-                    case '+':
-                        $endDate->modify("+{$hours} hours");                        
-                        $endDate->modify("+{$minutes} minutes");                        
-                        break;
-                    case '-':
-                        $endDate->modify("-{$hours} hours");                        
-                        $endDate->modify("-{$minutes} minutes");   
-                        break;
-                    default:
-                        break;
-                } 
-                $query = "UPDATE stic_work_calendar SET start_date = '" . $endDate->format($format) . "' WHERE id ='" . $id . "'";
-                $result = $db->query($query);
-            } else {
-
-            }
-
+            // Redirect to the list view
+            SugarApplication::redirect('index.php?module=stic_Work_Calendar');
         }
-    }    
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    protected function calculateNewDateInRecord($id, $infoDateArray)
+    {
+        // Get time information from the work calendar record
+        global $db;
+        $query = "SELECT start_date, end_date FROM stic_work_calendar WHERE id ='" . $id . "' AND deleted = 0;";
+        $result = $db->query($query);
+
+        // Calculate new date
+        $stringDate = '';
+        if (!empty($infoDateArray['operator'])){
+            $originalDate = $db->fetchByAssoc($result)[$infoDateArray['field']];
+            if (!empty($originalDate)){
+                $infoDateArray['original'] = $originalDate;
+                $stringDate = $this->calculateNewDate($infoDateArray);
+            } else {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'The new date could not be calculated in the work calendar record with id = '  . $id);                        
+            }
+        }
+
+        // Update time in work calendar record
+        if ($stringDate) {
+            $query = "UPDATE stic_work_calendar SET " . $infoDateArray['field'] . " = '" . $stringDate . "' WHERE id ='" . $id . "'";
+            $result = $db->query($query);
+        } else {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Error work calendar record with id = '  . $id . ' has no ' . $infoDateArray['field'] . ' value.');                                            
+        }
+    } 
+
+    /**
+     * 
+     * @return void
+     */
+    protected function calculateNewDate($dateInfo) 
+    {
+        // User timezone and offset in hours
+        global $current_user;
+        $userTz = $current_user->getUserDateTimePreferences();
+        $userGMTOffsetInHours = $userTz["userGmtOffset"] / 60;      
+
+        // Calculate the new date
+        $format ='Y-m-d H:i:s';
+        $date = DateTime::createFromFormat($format, $dateInfo['original']);
+        switch ($dateInfo['operator']) {
+            case '=':
+                $hours = $dateInfo['hours'] - $userGMTOffsetInHours;         
+                $date->setTime($hours, $dateInfo['minutes']);                            
+                break;
+            case '+':
+                $date->modify("+{$dateInfo['hours']} hours");                        
+                $date->modify("+{$dateInfo['minutes']} minutes");                        
+                break;
+            case '-':
+                $date->modify("-{$dateInfo['hours']} hours");                        
+                $date->modify("-{$dateInfo['minutes']} minutes");    
+                break;
+            default:
+                break; 
+        }
+        return $date->format($format);
+    }
 }
