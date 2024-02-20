@@ -22,18 +22,11 @@
  */ 
 $app_list_strings['moduleList']['KReports'] = 'KReports';
 
+$app_list_strings['kreportstatus'][''] = '';
 $app_list_strings['kreportstatus']['1'] = 'Esborrany';
 $app_list_strings['kreportstatus']['2'] = 'Distribució limitada';
 $app_list_strings['kreportstatus']['3'] = 'Distribució general';
 
-$app_list_strings['kreportscope'][''] = '';
-$app_list_strings['kreportscope']['main'] = 'Principal';
-$app_list_strings['kreportscope']['activities'] = 'Activitats';
-$app_list_strings['kreportscope']['economy'] = 'Economia';
-$app_list_strings['kreportscope']['campaigns'] = 'Campanyes';
-$app_list_strings['kreportscope']['events'] = 'Esdeveniments';
-$app_list_strings['kreportscope']['direct_care'] = 'Atenció directa';
-$app_list_strings['kreportscope']['labour_insertion'] = 'Inserció laboral';
-$app_list_strings['kreportscope']['bookings'] = 'Reserves';
-$app_list_strings['kreportscope']['sales'] = 'Vendes';
-$app_list_strings['kreportscope']['others'] = 'Altres';
+$app_list_strings['kreportsegmentation'][''] = '';
+$app_list_strings['kreportsegmentation']['sample_value_1'] = "Valor d'exemple 1";
+$app_list_strings['kreportsegmentation']['sample_value_2'] = "Valor d'exemple 2";

@@ -41,8 +41,8 @@ $subpanel_layout = array(
             'vname' => 'LBL_REPORT_STATUS',
             'width' => '15%',
         ),
-        'report_scope' => array(
-            'vname' => 'LBL_REPORT_SCOPE',
+        'report_segmentation' => array(
+            'vname' => 'LBL_REPORT_SEGMENTATION',
             'width' => '15%',
         ),
         'remove_button' => array(

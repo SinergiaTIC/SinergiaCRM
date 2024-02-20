@@ -55,11 +55,11 @@ $searchdefs['KReports'] = array(
                 'label' => 'LBL_REPORT_STATUS',
                 'width' => '10%',
             ),
-            'report_scope' => array(
+            'report_segmentation' => array(
                 'type' => 'enum',
-                'name' => 'report_scope', 
+                'name' => 'report_segmentation', 
                 'default' => true,
-                'label' => 'LBL_REPORT_SCOPE',
+                'label' => 'LBL_REPORT_SEGMENTATION',
                 'width' => '10%',
             ),
             'date_entered' => array(
