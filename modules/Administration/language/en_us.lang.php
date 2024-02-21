@@ -1026,6 +1026,4 @@ $mod_strings = array(
     'LBL_ASYNCHRONOUS' => 'Asynchronous',
     'LBL_OUTPUT' => 'OUTPUT',
     'LBL_RESULT' => 'Result',
-
-    'LBL_ADMIN_ACTIONS' => 'Admin Actions', // https://github.com/SinergiaTIC/SinergiaCRM/pull/124
 );

@@ -1001,6 +1001,4 @@ $mod_strings = array(
 
     'LBL_SHAREDRULES_SETTINGS' => "Reglas de seguridad compartidas", // PR 6143
     'LBL_SHAREDRULES_SETTINGS_DESC' => "Gestionar las reglas de seguridad compartidas", // PR 6143
-
-    'LBL_ADMIN_ACTIONS' => 'Acciones Administrador', // https://github.com/SinergiaTIC/SinergiaCRM/pull/124
 );
