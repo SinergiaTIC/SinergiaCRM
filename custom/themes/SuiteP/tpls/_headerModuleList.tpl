@@ -943,9 +943,7 @@
                             {/foreach}
                         </ul>
                     </div>
-                    
                     <div id="favoritesSidebar" class="favoritesSidebar">
-                    {* END STIC-Custom *}
                         {* 
                         STIC-Custom - JCH - 20220503 - Include update alert
                         STIC#720
