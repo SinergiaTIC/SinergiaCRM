@@ -454,79 +454,51 @@ function removeDocumentsFromFS()
     $return = true;
     while ($row = $db->fetchByAssoc($resource)) {
         $bean = BeanFactory::getBean($row['module']);
-        
-        // STIC-Custom 20230929 ART - "Removal of Documents from Filesystem" task has erratic behavior
-        // STIC#40
 
         // Update the database to mark the document as deleted
-        // $db->query('UPDATE ' . $tableName . ' SET deleted=1 WHERE id=' . $db->quoted($row['id']));
+        $db->query('UPDATE ' . $tableName . ' SET deleted=1 WHERE id=' . $db->quoted($row['id']));
+        $bean->retrieve($row['bean_id'], true, false);
 
-        // $bean->retrieve($row['bean_id'], true, false);
+        // STIC 20230929 ART - "Removal of Documents from Filesystem" task has erratic behavior
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
         // if (empty($bean->id)) {
-        //     $isSuccess = true;
-        //     $bean->id = $row['bean_id'];
-        //     $directory = $bean->deleteFileDirectory();
-        //     if (!empty($directory) && is_dir('upload://deleted/' . $directory)) {
-        //         if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
-        //             $directory = explode('/', $directory);
-        //             while (!empty($directory)) {
-        //                 $path = 'upload://deleted/' . implode('/', $directory);
-        //                 if (is_dir($path)) {
-        //                     $directoryIterator = new DirectoryIterator($path);
-        //                     $empty = true;
-        //                     foreach ($directoryIterator as $item) {
-        //                         if ($item->getFilename() == '.' || $item->getFilename() == '..') {
-        //                             continue;
-        //                         }
-        //                         $empty = false;
-        //                         break;
-        //                     }
-        //                     if ($empty) {
-        //                         rmdir($path);
-        //                     }
-        //                 }
-        //                 array_pop($directory);
-        //             }
-        //         }
-        //     }
-        //     if ($isSuccess) {
-        //         $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
-        //     } else {
-        //         $return = false;
-        //     }
-        // } else {
-        //     $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
-        // }
-
-        $directory = $bean->deleteFileDirectory();
-
-        if (!file_exists('upload://deleted/' . $directory)) {
-            // The directory does not exist
-            continue;
-        }
-
-        // Check if the directory is empty
-        $files = glob('upload://deleted/' . $directory . '/*');
-        if (empty($files)) {
+        if ($bean->id) {
+        // End STIC 20240116 ART
+        
             $isSuccess = true;
-            // If is empty, delete the directory
-            rmdir_recursive('upload://deleted/' . $directory);
+            $bean->id = $row['bean_id'];
+            $directory = $bean->deleteFileDirectory();
+            if (!empty($directory) && is_dir('upload://deleted/' . $directory)) {
+                if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
+                    $directory = explode('/', $directory);
+                    while (!empty($directory)) {
+                        $path = 'upload://deleted/' . implode('/', $directory);
+                        if (is_dir($path)) {
+                            $directoryIterator = new DirectoryIterator($path);
+                            $empty = true;
+                            foreach ($directoryIterator as $item) {
+                                if ($item->getFilename() == '.' || $item->getFilename() == '..') {
+                                    continue;
+                                }
+                                $empty = false;
+                                break;
+                            }
+                            if ($empty) {
+                                rmdir($path);
+                            }
+                        }
+                        array_pop($directory);
+                    }
+                }
+            }
             if ($isSuccess) {
                 $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
             } else {
                 $return = false;
             }
         } else {
-            // If is not empty, delete the files first
-            foreach ($files as $file) {
-                unlink($file);
-            }
-            // Once the files are deleted, delete the directory
-            rmdir_recursive('upload://deleted/' . $directory);
-            
             $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
         }
-        // End STIC-Custom 20240109 ART
     }
 
     return $return;
