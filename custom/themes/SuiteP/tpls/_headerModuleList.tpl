@@ -943,13 +943,8 @@
                             {/foreach}
                         </ul>
                     </div>
-                    {* 
-                        STIC-Custom - ART - 20240216 - Sidebar Admin Actions
-                        https://github.com/SinergiaTIC/SinergiaCRM/pull/124
-
-                        <div id="favoritesSidebar" class="favoritesSidebar">
-                    *}
-                    <div id="favoritesSidebar" class="favoritesSidebar" style="margin-bottom: 20px;">
+                    
+                    <div id="favoritesSidebar" class="favoritesSidebar">
                     {* END STIC-Custom *}
                         {* 
                         STIC-Custom - JCH - 20220503 - Include update alert
@@ -998,13 +993,8 @@
                         </script>
                     {/literal}
                         <div id='admin_actions' class="actionMenuSidebar" hidden>
-                            <hr style="border: 1px solid #898687; margin-bottom: 15px;">
+                        <h2 class="admin_actions_title">{sugar_translate module="Administration" label="LBL_ADMIN_ACTIONS"}</h2>
                             <ul>
-                                <li class="actionmenulinks" role="presentation">
-                                    <div class="actionmenulink">
-                                        <h5 style="margin-left: 10px; margin-bottom: 12px; margin-right: 15px; color: white;"><b>{sugar_translate module="Administration" label="LBL_ADMIN_ACTIONS"}</b></h5>
-                                    </div>
-                                </li>
                                 <li class="actionmenulinks" role="presentation">
                                     <a href="./index.php?module=Administration">
                                         <div class="side-bar-action-icon">
