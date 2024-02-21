@@ -79,14 +79,12 @@ class stic_Journal extends Basic
         
         include_once 'SticInclude/Utils.php';
         include_once 'modules/stic_Journal/Utils.php';
-        global $app_list_strings;
+        global $app_list_strings, $timedate;
 
         // Create name if empty
         if(empty($this->name)) {
-            // Format the date with one hour more
-            $addHour = new DateInterval('PT1H');
-            $formatDate = date_add(new DateTime($this->journal_date), $addHour);
-            $formatedDateName = $formatDate->format('Y-m-d H:i:s'); 
+            // Format the date
+            $formatedDateName = $timedate->to_display_date_time($this->journal_date); 
 
             // If there is a center selected
             if(!empty($this->stic_journal_stic_centers_name)) {
