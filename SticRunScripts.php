@@ -26,8 +26,9 @@
  * 
  * It is in charge of running any SugraCRM PHP script that will find in SticUpdates/Scripts folder
  * 
- * If you want to run just one script, you can specify the file name in the argument list, withouth the PHP extension. Like this:
- * http://xxxxxxxxxx.sinergiacrm.org/SticRunScripts.php?file=FixPersonalEnvironmentModuleDisplay
+ * If you want to run just one script, you can specify the path and file name (with the extension) in the argument list . Like this:
+ * http://xxxxxxxxxx.sinergiacrm.org/SticRunScripts.php?file=SticUpdates/Scripts/FixPersonalEnvironmentModuleDisplay.php
+ * http://xxxxxxxxxx.sinergiacrm.org/SticRunScripts.php?file=SticUpdates/Migrations/20200803_hotfix_34_RemovingMailMergeExampleTemplates.sql
  * 
  */
 
