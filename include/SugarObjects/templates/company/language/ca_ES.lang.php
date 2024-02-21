@@ -125,6 +125,10 @@ $mod_strings = array(
     'NTC_DELETE_CONFIRMATION' => 'Està segur de que vol suprimir aquest registre?',
 
     'LBL_EDIT_BUTTON' => 'Editar',
+    // STIC-Custom 20240214 JBL - QuickEdit view
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+    'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
+    // END STIC-Custom
     'LBL_REMOVE' => 'Eliminar',
 
 );
