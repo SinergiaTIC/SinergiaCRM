@@ -24,16 +24,12 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivTabContentBase = class sticCustomViewDivTabContentBase extends sticCustomViewDivBase {
-    constructor (item){
-        super(item, item.$elementView.find('div.tab-content > div[data-id='+item.tabName+']'));
+var sticCustomViewDivPanelContent = class sticCustomViewDivPanelContent extends sticCustomViewDivBase {
+    constructor (item, $panelElement){
+        super(item, $panelElement.find('.tab-content'));
 
-        // Fix padding for Tabs
-        if(this.$element.css("padding")=="0px" && this.$element.parent().css("padding")!="0px") {
-            var parentPadding = this.$element.parent().css("padding");
-            this.$element.parent().css("padding", "0px");
-            this.$element.parent().children().css("padding", parentPadding);
-        }
+        // Make same width as header 
+        this.$element.css({width:"98%",margin:"auto"});
     }
 
 }

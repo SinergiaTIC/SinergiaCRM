@@ -25,8 +25,33 @@
  *
  */
 
-var sticCustomViewItemPanelEdit = class sticCustomViewItemPanelEdit extends sticCustomViewItemPanelBase {
-    constructor (customView, panelName) {
-        super(customView, panelName);
+var sticCustomViewItemTab = class sticCustomViewItemTab extends sticCustomViewItemBase {
+    constructor (customView, tabName) {
+        super(customView, tabName);
+
+        this.tabName = tabName;
+
+        this.header = new sticCustomViewDivTabHeader(this);
+        this.content = new sticCustomViewDivTabContent(this);
     };
+
+    show(show=true) { this.header.show(show); return this; }
+    hide() { return this.show(false); }
+
+    applyAction(action) {
+        switch(action.element_section){
+            case "tab_header": return this.header.applyAction(action);
+            case "tab_content": return this.content.applyAction(action);
+            case "tab": {
+                switch(action.action){
+                    case "visible": return this.show(action.value);
+                    case "background": 
+                        this.header.applyAction(action);
+                        this.content.applyAction(action);
+                        return this;
+                }
+            }
+        }
+        return false;
+    }
 }

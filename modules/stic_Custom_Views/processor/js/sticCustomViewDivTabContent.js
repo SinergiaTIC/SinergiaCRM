@@ -24,9 +24,18 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
+var sticCustomViewDivTabContent = class sticCustomViewDivTabContent extends sticCustomViewDivBase {
+    constructor (item){
+        super(item, item.$elementView.find('div.tab-content > div[data-id='+item.tabName+']'));
 
-var sticCustomViewItemTabDetail = class sticCustomViewItemTabBase extends sticCustomViewItemTabBase {
-    constructor (customView, tabName) {
-        super(customView, tabName);
-    };
+        // Fix padding for Tabs
+        if(this.$element.css("padding")=="0px" && this.$element.parent().css("padding")!="0px") {
+            var parentPadding = this.$element.parent().css("padding");
+            this.$element.parent().css("padding", "0px");
+            this.$element.parent().children().css("padding", parentPadding);
+        }
+    }
+
 }
+
+
