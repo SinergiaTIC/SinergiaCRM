@@ -107,21 +107,13 @@ $subpanel_layout['list_fields'] = array (
     'target_module' => 'Users',
     'target_record_key' => 'assigned_user_id',
   ),
-  'quickedit_button' => 
-  array (
-    'vname' => 'LBL_QUICKEDIT_BUTTON',
-    'widget_class' => 'SubPanelQuickEditButton',
-    'module' => 'stic_Personal_Environment',
-    'width' => '4%',
-    'default' => true,
-  ),
   'edit_button' => 
   array (
     'vname' => 'LBL_EDIT_BUTTON',
     'widget_class' => 'SubPanelEditButton',
     'module' => 'stic_Personal_Environment',
     'width' => '4%',
-    'default' => false,
+    'default' => true,
   ),
   'remove_button' => array(
     'vname' => 'LBL_REMOVE',

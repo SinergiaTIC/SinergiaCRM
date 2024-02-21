@@ -76,13 +76,6 @@ $subpanel_layout = array(
             'target_module' => 'Users',
             'target_record_key' => 'assigned_user_id',
         ),
-        'quickedit_button' => array(
-            'vname' => 'LBL_QUICKEDIT_BUTTON',
-            'widget_class' => 'SubPanelQuickEditButton',
-            'module' => 'stic_Centers',
-            'width' => '4%',
-            'default' => true,
-        ),
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubPanelEditButton',
