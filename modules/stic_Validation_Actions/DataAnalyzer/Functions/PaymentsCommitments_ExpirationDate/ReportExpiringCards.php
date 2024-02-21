@@ -42,15 +42,9 @@ class ReportExpiringCards extends DataCheckFunction
     {
 
         require_once 'modules/stic_Settings/Utils.php';
-        $numberOfMonths = stic_SettingsUtils::getSetting('TPV_MESES_CADUCIDAD');
+        $numberOfMonths = stic_SettingsUtils::getSetting('TPV_EXPIRATION_MONTHS');
         $currentMonth = date('m');
         $currentYear = date('y');
-        if ($numberOfMonths == '-1') {
-            // -1 means, no warning must be issued, so no rows should be retrieved
-            return "SELECT spc.name, spc.id, spc.card_expiry_date, assigned_user_id
-            FROM stic_payment_commitments spc
-            WHERE 1=2";
-        }
 
         if($currentMonth + $numberOfMonths > 12) {
             $expirationMonth = ($currentMonth + $numberOfMonths) % 12;
