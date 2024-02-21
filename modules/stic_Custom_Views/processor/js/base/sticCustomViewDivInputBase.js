@@ -24,43 +24,11 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivLabel = class sticCustomViewDivLabel extends sticCustomViewDivBase {
+var sticCustomViewDivInputBase = class sticCustomViewDivInputBase extends sticCustomViewDivLabelBase {
     constructor (item, $element){
         super(item, $element);
-    }
-    _text($elem, newText) {
-        var oldText = $elem.text();
-        if(newText===undefined || newText!=oldText) {
-            return oldText;
-        }
-        var text = $elem.text(newText);
-        this.addUndoFunction(function() { $elem.text(oldText); });
 
-        return text;
+        this.type = this.$element.attr("type"); 
     }
-    text(newText) {
-        return this._text(this.$element, newText);
-    }
-    value(newValue) {
-        return this.$element.val();
-    }
-
-    applyActionWithValue(actionName, value) { 
-        var result = super.applyActionWithValue(actionName, value);
-        if(result!== false) {
-            return result;
-        }
-        switch(actionName){
-            case "fixed_value": return this.value(value);
-            case "fixed_text": return this.text(value);
-        }
-        return false;
-    } 
-
-    onChange(callback) {
-        this.$element.on("change paste keyup", function() { callback();});
-    }
-    change() {
-        this.$element.change();
-    }
+    
 }

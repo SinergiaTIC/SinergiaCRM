@@ -24,30 +24,11 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivPanelHeader = class sticCustomViewDivPanelHeader extends sticCustomViewDivLabel {
-    constructor (item, $panelElement){
-        super(item, $panelElement.children('.panel-heading'));
-
-        this.$label = this.$element.find('[data-label="'+this.item.panelName+'"]');
+var sticCustomViewDivTabHeaderDetail = class sticCustomViewDivTabHeaderDetail extends sticCustomViewDivTabHeaderBase {
+    constructor (item) {
+        super(item);
     }
-    text(newText) {
-        return this._text(this.$label, newText);
-    }
-    color(color="") {
-        return this._color(this.$label.parent(), color);
-    }
-    background(color="") {
-        return this._background(this.$label.parent(), color);
-    }
-    bold(bold=true) {
-        return this._bold(this.$label, bold);
-    }
-    italic(italic=true) {
-        return this._italic(this.$label, italic);
-    }
-    underline(underline=true) {
-        return this._underline(this.$label, underline);
-    }
+    
 }
 
 

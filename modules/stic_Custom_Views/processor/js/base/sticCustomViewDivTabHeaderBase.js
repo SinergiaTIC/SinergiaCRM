@@ -24,7 +24,7 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivTabHeader = class sticCustomViewDivTabHeader extends sticCustomViewDivLabel {
+var sticCustomViewDivTabHeaderBase = class sticCustomViewDivTabHeaderBase extends sticCustomViewDivLabelBase {
     constructor (item) {
         super(item, item.$elementView.find('ul.nav.nav-tabs li[role="presentation"] > a[data-toggle="tab"][data-label="'+item.tabName+'"]'));
         this.$label = this.$element;

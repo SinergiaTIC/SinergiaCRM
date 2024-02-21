@@ -24,29 +24,11 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-
-var sticCustomViewItemPanel = class sticCustomViewItemPanel extends sticCustomViewItemBase {
-    constructor (customView, panelName) {
-        super(customView, panelName);
-
-        this.panelName = panelName;
-
-        var $panelElement = this.$elementView.find('.panel-body[data-id="'+this.panelName+'"]').parent();
-
-        this.panel = new sticCustomViewDivBase(this, $panelElement);
-        this.header = new sticCustomViewDivPanelHeader(this, $panelElement);
-        this.content = new sticCustomViewDivPanelContent(this, $panelElement);
-    };
-
-    show(show=true) { this.panel.show(show); return this; }
-    hide() { return this.show(false); }
-
-    applyAction(action) {
-        switch(action.element_section){
-            case "panel_header": return this.header.applyAction(action);
-            case "panel_content": return this.content.applyAction(action);
-            case "panel": return this.panel.applyAction(action);
-        }
-        return false;
+var sticCustomViewDivPanelContentDetail = class sticCustomViewDivPanelContentDetail extends sticCustomViewDivPanelContentBase {
+    constructor (item, $panelElement){
+        super(item, $panelElement);
     }
+
 }
+
+

@@ -38,7 +38,7 @@ var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomVi
             case "quickcreate": this.row = new sticCustomViewDivRowEdit(this, $rowElement); break;
         }
         
-        this.label = new sticCustomViewDivLabel(this, this.row.$element.children('.label'));
+        this.label = new sticCustomViewDivLabelBase(this, this.row.$element.children('.label'));
         
         var $inputElement = this.row.$element.children('[field="'+this.fieldName+'"]');
         switch(this.view) {
