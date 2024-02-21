@@ -91,12 +91,11 @@ $subpanel_layout = array(
 			'id' => 'ASSIGNED_USER_ID',
 			'default' => true,
 		),
-		'edit_button' => array(
+		'edit_button'=>array(
             'vname' => 'LBL_EDIT_BUTTON',
 			'widget_class' => 'SubPanelEditButton',
 		 	'module' => $module_name,
 	 		'width' => '4%',
-			'default' => true,
 		),
 		'remove_button'=>array(
             'vname' => 'LBL_REMOVE',

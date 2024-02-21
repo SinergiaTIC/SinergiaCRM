@@ -80,7 +80,6 @@ $subpanel_layout = array(
 			'widget_class' => 'SubPanelEditButton',
 		 	'module' => $module_name,
 	 		'width' => '4%',
-			'default' => true,
 		),
 		'remove_button'=>array(
             'vname' => 'LBL_REMOVE',
