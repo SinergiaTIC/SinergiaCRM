@@ -986,6 +986,8 @@
                             $(document).ready(function() {
                                 if($('#admin_link').length == 1) {
                                     $('#admin_actions').show();
+                                } else {
+                                    $('#admin_actions').hide();
                                 }
                             });
                         </script>
