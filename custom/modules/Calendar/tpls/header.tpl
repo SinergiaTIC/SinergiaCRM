@@ -143,4 +143,14 @@
 	<div style='float: left; width: 60%; text-align: center;'><h3>{$date_info}</h3></div>
 	<div style='float: right;'>{$next}</div>
 	<br style='clear:both;'>
+	{* STIC-custom 20240222 ART -  *}
+    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/ *}
+    {literal}
+        <style>
+            .dashletPanel #rect3120, .dashletPanel #rect3124{
+                fill: #474f50 !important;
+            }
+        </style>
+    {/literal}
+    {* END STIC *}
 </div>
