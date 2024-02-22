@@ -106,8 +106,10 @@ $app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Registro de medicación';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescripciones médicas';
+$app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Grupos de Seguridad - Reglas por módulos';
 $app_list_strings['moduleList']['stic_Grants'] = 'Ayudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
+$app_list_strings['moduleList']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -140,8 +142,10 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Registro de medicación';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicamento';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescripción médica';
+$app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos de Seguridad - Regla por módulo';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Ayuda';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
+$app_list_strings['moduleListSingular']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -172,6 +176,7 @@ $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Registro de m
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescripciones médicas';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centros';
+$app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display']['Contacts'] = 'Personas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -203,6 +208,7 @@ $app_list_strings['record_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescripciones médicas';
 $app_list_strings['record_type_display']['stic_Grants'] = 'Ayudas';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centros';
+$app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Personas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -234,6 +240,7 @@ $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicamento
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescripciones médicas';
 $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Ayudas';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centros';
+$app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3170,6 +3177,51 @@ $app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de aten
 $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
 
+// Diario: Tipo de diario
+$app_list_strings['stic_journal_types_list'][''] = '';
+$app_list_strings['stic_journal_types_list']['journal'] = 'Diario';
+$app_list_strings['stic_journal_types_list']['incidence'] = 'Incidencia';
+$app_list_strings['stic_journal_types_list']['followup'] = 'Seguimiento a realizar';
+$app_list_strings['stic_journal_types_list']['task'] = 'Tarea';
+$app_list_strings['stic_journal_types_list']['educational_measure'] = 'Medida educativa';
+$app_list_strings['stic_journal_types_list']['infringement'] = 'Infracción';
+$app_list_strings['stic_journal_types_list']['other'] = 'Otro';
+
+// Diario: Turnos
+$app_list_strings['stic_journal_turns_list'][''] = '';
+$app_list_strings['stic_journal_turns_list']['morning'] = 'Mañana';
+$app_list_strings['stic_journal_turns_list']['afternoon'] = 'Tarde';
+$app_list_strings['stic_journal_turns_list']['night'] = 'Noche';
+$app_list_strings['stic_journal_turns_list']['weekend'] = 'Fin de semana';
+
+// Diario: Tipos de tareas
+$app_list_strings['stic_journal_tasks_list']['house_cleaning'] = 'Limpieza de casa';
+$app_list_strings['stic_journal_tasks_list']['bathroom_cleaning'] = 'Limpieza de baños';
+$app_list_strings['stic_journal_tasks_list']['shopping'] = 'Compras';
+$app_list_strings['stic_journal_tasks_list']['homeworks'] = 'Hacer los deberes';
+$app_list_strings['stic_journal_tasks_list']['study'] = 'Estudiar';
+$app_list_strings['stic_journal_tasks_list']['project'] = 'Hacer un proyecto';
+$app_list_strings['stic_journal_tasks_list']['training'] = 'Formación';
+$app_list_strings['stic_journal_tasks_list']['cash_count'] = 'Conteo de la caja';
+$app_list_strings['stic_journal_tasks_list']['invoices'] = 'Realizar facturas';
+
+// Diario: Ámbitos
+$app_list_strings['stic_journal_task_scopes_list']['household'] = 'Doméstico';
+$app_list_strings['stic_journal_task_scopes_list']['educational'] = 'Educativo';
+$app_list_strings['stic_journal_task_scopes_list']['workplace'] = 'Laboral';
+
+// Diario: Cumplimiento de la tarea
+$app_list_strings['stic_journal_task_fulfillments_list'][''] = '';
+$app_list_strings['stic_journal_task_fulfillments_list']['yes'] = 'Sí';
+$app_list_strings['stic_journal_task_fulfillments_list']['no'] = 'No';
+$app_list_strings['stic_journal_task_fulfillments_list']['partial'] = 'Parcial';
+
+// Diario: Gravedad de la tarea o infracción
+$app_list_strings['stic_journal_seriousness_list'][''] = '';
+$app_list_strings['stic_journal_seriousness_list']['slight'] = 'Leve';
+$app_list_strings['stic_journal_seriousness_list']['average'] = 'Media';
+$app_list_strings['stic_journal_seriousness_list']['serious'] = 'Grave';
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)
@@ -3246,3 +3298,4 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reuniones';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvenciones';
 $app_list_strings['map_relate_type_list']['Project'] = 'Proyectos';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Objetivo';
+
