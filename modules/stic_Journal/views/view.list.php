@@ -19,5 +19,39 @@
  * 02110-1301 USA.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */ 
-$dictionary['KReport']['fields']['report_status']['massupdate'] = 1;
+ */
+
+require_once 'include/MVC/View/views/view.list.php';
+require_once 'SticInclude/Views.php';
+
+class stic_JournalViewList extends ViewList
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+
+    }
+
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+        // Write here you custom code
+
+    }
+
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+        
+        echo getVersionedScript("modules/stic_Journal/Utils.js");
+
+        // Write here you custom code
+    }
+
+}
