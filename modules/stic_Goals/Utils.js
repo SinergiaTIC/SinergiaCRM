@@ -335,7 +335,6 @@ $(document).ready(() => {
     // only redefine the function if it is not already redefined
     old_set_return = set_return;
     set_return = function (popup_reply_data) {
-      debugger;
       old_set_return(popup_reply_data);
       // After 1/2 second, we activate the goalchanged event. If called before, the confirm action is not execute due to security issues
       // Only call when the assessment has been changed and not on other changes
