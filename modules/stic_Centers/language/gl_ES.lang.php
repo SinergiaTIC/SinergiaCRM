@@ -60,7 +60,7 @@ $mod_strings = array (
   'LBL_ADDRESS_STATE' => 'Dirección postal - Provincia',
   'LBL_ADDRESS_POSTALCODE' => 'Dirección postal - Código postal',
   'LBL_ADDRESS_COUNTRY' => 'Dirección postal - País',
-  'LBL_URL_LOCATION' => 'URL Ubicación',
+  'LBL_URL_LOCATION' => 'URL Localización',
   'LBL_TYPE' => 'Tipo',
   'LBL_PLACES' => 'Prazas',
   'LBL_ADAPTED' => 'Adaptado',
@@ -72,4 +72,5 @@ $mod_strings = array (
   'LBL_STIC_CENTERS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoas',
   'LBL_STIC_CENTERS_PROJECT_FROM_PROJECT_TITLE' => 'Proxectos',
   'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_EVENTS_TITLE' => 'Eventos',
+  'LBL_STIC_JOURNAL_STIC_CENTERS_FROM_STIC_JOURNAL_TITLE' => 'Diario',
 );
