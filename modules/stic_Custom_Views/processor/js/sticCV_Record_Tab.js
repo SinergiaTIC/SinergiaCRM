@@ -24,8 +24,12 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivInputDetail = class sticCustomViewDivInputDetail extends sticCustomViewDivInputBase {
-    constructor (item, $element){
-        super(item, $element);
-    }
+
+var sticCV_Record_Tab = class sticCV_Record_Tab extends sticCV_Record_Container {
+    constructor (customView, tabName) {
+        super(customView, tabName);
+
+        this.header = new sticCV_Record_Tab_Header(this);
+        this.content = new sticCV_Record_Tab_Content(this);
+    };
 }

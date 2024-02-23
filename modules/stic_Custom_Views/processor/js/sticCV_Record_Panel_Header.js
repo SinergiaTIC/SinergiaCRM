@@ -24,8 +24,35 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivRowDetail = class sticCustomViewDivRowDetail extends sticCustomViewDivRowBase {
-    constructor (item, $element){
-        super(item, $element);
+var sticCV_Record_Panel_Header = class sticCV_Record_Panel_Header extends sticCV_Element_Label {
+    constructor (customView, $panelElement){
+        super(customView, $panelElement.children('.panel-heading'));
+
+        this.$label = this.$element.find('[data-label="'+this.item.panelName+'"]');
+    }
+    text(newText) {
+        return sticCVUtils.text(this.$label, this.customView, newText);
+    }
+    color(color="") {
+        sticCVUtils.color(this.$label.parent(), this.customView, color);
+        return this;
+    }
+    background(color="") {
+        sticCVUtils.background(this.$label.parent(), this.customView, color);
+        return this;
+    }
+    bold(bold=true) {
+        sticCVUtils.bold(this.$label, this.customView, bold);
+        return this;
+    }
+    italic(italic=true) {
+        sticCVUtils.italic(this.$label, this.customView, italic);
+        return this;
+    }
+    underline(underline=true) {
+        sticCVUtils.underline(this.$label, this.customView, underline);
+        return this;
     }
 }
+
+

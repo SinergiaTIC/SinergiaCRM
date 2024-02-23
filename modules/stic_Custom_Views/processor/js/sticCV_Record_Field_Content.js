@@ -24,17 +24,45 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivInputEdit = class sticCustomViewDivInputEdit extends sticCustomViewDivInputBase {
-    constructor (item, $element){
-        super(item, $element);
+var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends sticCV_Element_Label {
+    constructor (customView, $fieldElement, fieldName) {
+        super(customView, $fieldElement.children('[field="'+fieldName+'"]'));
 
+        this.type = this.$element.attr("type");
+        
         if(this.type=="bool") {
             this.$editor = this.$element.find("[type='checkbox']:input");
         } else {
             this.$editor = this.$element.find(":input");
         }
         this.$items = this.$element.find(".items");
-        this.$labelValue = this.$element.find(".stic-ReadonlyInput");
+        this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
+    }
+
+    color(color="") {
+        sticCVUtils.color(this.$editor, this.customView, color);
+        sticCVUtils.color(this.$items, this.customView, color);
+        sticCVUtils.color(this.$labelValue, this.customView, color);
+        return super.color(color);
+    }
+    background(color="") {
+        sticCVUtils.background(this.$editor, this.customView, color);
+        sticCVUtils.background(this.$items, this.customView, color);
+        sticCVUtils.background(this.$labelValue, this.customView, color);
+        if (this.customView.view == "detailview" || this.type=="radioenum") {
+            super.background(color);
+        }
+        return this;
+    }
+
+    readonly(readonly=true) {
+        return sticCVUtils.readonly(this, readonly);
+    }
+    inline_edit(inline_edit=true) {
+       return sticCVUtils.inline_edit(this, inline_edit);
+    }
+    value(newValue) {
+        return sticCVUtils.value(this, newValue);
     }
     value(newValue) {
         if(newValue!==undefined) {
@@ -96,91 +124,75 @@ var sticCustomViewDivInputEdit = class sticCustomViewDivInputEdit extends sticCu
         }
     }
     _getValue() {
-        if(this.type=="radioenum") {
-            return this.$editor.parent().find("[type='radio']:checked").val();
-        } else if(this.type=="bool") {
-            return this.$editor.prop("checked");
-        } else {
-            return this.$editor.val();
-        }
+        return sticCVUtils.getValue(this);
     }
 
     text(newText){
-        var text = this._text(this.$editor, newText);
-        if(this.type=="enum" || this.type=="currency_id" || this.type=="dynamicenum" || 
-           this.type=="multienum"){
-            text = this._text(this.$editor.find("option:selected"), newText);
-        } else if(this.type=="radioenum") {
-            text = this._text(this.$editor.parent().find("[type='radio']:checked").parent(), newText);
-        } else if(this.type=="bool") {
-            if(this.getValue()) {
-                text="☒";
-            } else {
-                text="☐";
-            }
-        }
-        return text;
-    }
-
-    color(color="") {
-        this._color(this.$editor, color);
-        this._color(this.$items, color);
-        this._color(this.$labelValue, color);
-        super.color(color);
-        return this;
-    }
-    background(color="") {
-        this._background(this.$editor, color);
-        this._background(this.$items, color);
-        this._background(this.$labelValue, color);
-        if (this.type=="radioenum") {
-            super.background(color);
-        }
-        return this;
-    }
-
-    readonly(readonly=true) {
-        if(readonly===true||readonly==="1"||readonly===1) {
-            if(this.$labelValue.length==0 || this.$labelValue.is(":hidden")) {
-                this._show(this.$editor, false);
-                this._show(this.$items, false);
-
-                if(this.type=="radioenum") {
-                    this._show(this.$editor.parent(), false);
-                }
-                if(this.type!="image" && this.type!="html") {
-                    if (this.$labelValue.length==0) {
-                        this.$element.prepend('<p class="stic-ReadonlyInput"></p>');
-                        this.$labelValue = this.$element.find(".stic-ReadonlyInput");
-                        // Update label when value is changed
-                        var self = this;
-                        this.$editor.on("change paste keyup", function() {
-                            self.$labelValue.text(self.text());
-                        });
-                    }
-                    this.show(this.$labelValue, true);
-                    this.$editor.change();
+        if(this.customView.view == "editview" || this.customView.view == "quickcreate"){
+            if(this.type=="enum" || this.type=="currency_id" || this.type=="dynamicenum" || this.type=="multienum") {
+                return sticCVUtils.text(this.$editor.find("option:selected"), this.customView, newText);
+            } else if(this.type=="radioenum") {
+                return sticCVUtils.text(this.$editor.parent().find("[type='radio']:checked").parent(), this.customView, newText);
+            } else if(this.type=="bool") {
+                if(this.value()) {
+                    return "☒";
+                } else {
+                    return "☐";
                 }
             }
         }
-        else {
-            if(this.$editor.is(":hidden")||this.$items.is(":hidden")) {
-                this._show(this.$editor, true);
-                this._show(this.$items, true);
- 
-                if(this.type=="radioenum"){
-                    this._show(this.$editor.parent(), true);
-                } 
-                this._show(this.$labelValue, false);
+        return super.text(newText);
+    }
+
+    showEditor(show=true){
+        sticCVUtils.show(this.$editor, this.customView, show);
+        sticCVUtils.show(this.$items, this.customView, show);
+        if(this.type=="radioenum"){
+            sticCVUtils.show(this.$editor.parent(), this.customView, show);
+        } 
+    }
+    showReadOnlyLabel(show=true){
+        if(this.type!="image" && this.type!="html") {
+            if(show) {
+                if (this.$readonlyLabel.length==0) {
+                    this.$element.prepend('<p class="stic-ReadonlyInput"></p>');
+                    this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
+                    // Update label when value is changed
+                    var self = this;
+                    this.onChange(function() {
+                        self.$readonlyLabel.text(self.text());
+                    });
+                }
             }
+            sticCVUtils.show(this.$labelValue, this.customView, show);
+            this.change();
         }
-        return this;
+    }
+    is_readonly(){
+        return this.$readonlyLabel.length!=0 && this.$readonlyLabel.is(":visible");
+    }
+
+
+    applyActionWithValue(actionName, value) { 
+        var result = super.applyActionWithValue(actionName, value);
+        if(result!== false) {
+            return result;
+        }
+        switch(actionName){
+            case "fixed_value": return this.value(value);
+            case "readonly": return this.readonly(value);
+            case "inline": return this.inline_edit(value); 
+            case "required": return this.required(value);
+        }
+        return false;
     }
 
     onChange(callback) {
-        this.$editor.on("change paste keyup", function() { callback();});
+        return sticCVUtils.onChange(this.$editor, callback) || super.onChange(callback);
     }
     change() {
-        this.$editor.change();
+        return sticCVUtils.change(this.$editor) || super.change();
     }
 }
+
+

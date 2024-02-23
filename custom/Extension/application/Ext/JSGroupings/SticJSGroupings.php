@@ -58,28 +58,28 @@ $js_groupings[] = $newGrouping = array(
 );
 // Add Custom View functionality
 $js_groupings[] = $newGrouping = array(
-    'modules/stic_Custom_Views/processor/js/sticCustomViews_Utils.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCVUtils.js' => 'include/javascript/sugar_grp1.js',
 
-    'modules/stic_Custom_Views/processor/js/sticCustomView.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewItemBase.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewItemField.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewItemFieldBase.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewItemFieldEdit.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewItemFieldDetail.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewItemPanel.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewItemTab.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivBase.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivRowBase.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivRowEdit.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivRowDetail.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivLabel.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivInputBase.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivInputEdit.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivInputDetail.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivPanelHeader.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivPanelContent.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivTabHeader.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCustomViewDivTabContent.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Element_Div.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Element_Label.js' => 'include/javascript/sugar_grp1.js',
+
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Container.js' => 'include/javascript/sugar_grp1.js',
+
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab_Header.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab_Content.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab.js' => 'include/javascript/sugar_grp1.js',
+
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel_Header.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel_Content.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel.js' => 'include/javascript/sugar_grp1.js',
+
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field_Header.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field_Content.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field.js' => 'include/javascript/sugar_grp1.js',
+
+    'modules/stic_Custom_Views/processor/js/sticCV_View_Record_Base.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_View_Record_Detail.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_View_Record_Edit.js' => 'include/javascript/sugar_grp1.js',
 
     'modules/stic_Custom_Views/processor/js/sticCustomizeView.js' => 'include/javascript/sugar_grp1.js',
 );

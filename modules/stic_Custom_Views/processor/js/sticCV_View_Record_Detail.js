@@ -24,8 +24,11 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivRowEdit = class sticCustomViewDivRowEdit extends sticCustomViewDivRowBase {
-    constructor (item, $element){
-        super(item, $element);
+
+var sticCV_View_Record_Detail = class sticCV_View_Record_Detail extends sticCV_View_Record_Base {
+    constructor(view) {
+        super(view);
+        
+        this.$elementView = $(".detail-view"); 
     }
 }

@@ -24,20 +24,14 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
+var sticCV_Record_Panel_Content = class sticCV_Record_Panel_Content extends sticCV_Element_Div {
+    constructor (customView, $panelElement){
+        super(customView, $panelElement.find('.tab-content'));
 
-var sticCustomViewItemBase = class sticCustomViewItemBase {
-    constructor (customView, itemName) {
-        this.customView = customView;
-
-        this.view = customView.view;
-        this.$elementView = customView.$elementView;
-        this.$form = customView.$form;
-        this.formName = customView.formName;
-        
-        this.itemName = itemName;
+        // Make same width as header 
+        this.$element.css({width:"98%",margin:"auto"});
     }
 
-    applyAction(action) { return false; } // Abstract class
-
-    addUndoFunction(func, reverse=false) { return this.customView.addUndoFunction(func, reverse); }
 }
+
+

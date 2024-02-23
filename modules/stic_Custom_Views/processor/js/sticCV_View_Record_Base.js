@@ -25,30 +25,15 @@
  *
  */
 
-var sticCustomView = class sticCustomView {
+var sticCV_View_Record_Base = class sticCV_View_Record_Base {
     constructor(view) {
         this.view = view;
         
         this.undoFunctions=[];  // List of functions to undo all actions
         this.customizations=[]; // List of {conditions, actions, lastResult}
 
-        switch(this.view) {
-            case "detailview":
-                this.$elementView = $(".detail-view"); 
-                this.$form = null;
-                this.formName = null;
-                break;
-            case "editview":
-                this.$elementView = $("#EditView");
-                this.$form = this.$elementView;
-                this.formName = this.$form.attr("name");
-                break;
-            case "quickcreate":
-                this.$elementView = $("#EditView_tabs");
-                this.$form = this.$elementView.parent();
-                this.formName = this.$form.attr("name");
-                break;
-        }
+        this.$elementView = null; // jQuery element with all View
+ 
         this._fields=[];
         this._panels=[];
         this._tabs=[];
@@ -56,23 +41,21 @@ var sticCustomView = class sticCustomView {
 
     field(fieldName){ 
         if(fieldName in this._fields === false) {
-            if(this.view == "editview" || this.view == "quickcreate") {
-                this._fields[fieldName] = new sticCustomViewItemFieldEdit(this, fieldName);
-            } else {
-                this._fields[fieldName] = new sticCustomViewItemFieldDetail(this, fieldName);
-            }
+            this._fields[fieldName] = new sticCV_Record_Field(this, fieldName);
         }
         return this._fields[fieldName];
     }
+
     panel(panelName){ 
         if(panelName in this._panels === false) {
-            this._panels[panelName] = new sticCustomViewItemPanel(this, panelName);
+            this._panels[panelName] = new sticCV_Record_Panel(this, panelName);
         }
         return this._panels[panelName];
     }
+
     tab(tabName){
         if(tabName in this._tabs === false){
-            this._tabs[tabName] = new sticCustomViewItemTab(this, tabIndex);
+            this._tabs[tabName] = new sticCV_Record_Tab(this, tabName);
         }
         return this._tabs[tabName];
     }
@@ -221,5 +204,22 @@ var sticCustomView = class sticCustomView {
             }
         }
         customization.lastResult = value;
+    }
+
+
+    _show($elem, show=true) {
+        var visible = $elem.is(":visible");
+        if(show===true||show==="1"||show===1) {
+            if(!visible) {
+                $elem.show();
+                this.addUndoFunction(function() { $elem.hide(); });
+            }
+        } else {
+            if(visible) {
+                $elem.hide();
+                this.addUndoFunction(function() { $elem.show(); });
+            }
+        }
+        return this;
     }
 }

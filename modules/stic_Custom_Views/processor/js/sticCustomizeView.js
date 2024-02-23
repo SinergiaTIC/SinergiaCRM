@@ -26,11 +26,17 @@
  */
 
 var sticCustomizeView = class sticCustomizeView {
-    static editview = this.For("editview"); 
-    static detailview = this.For("detailview");
-    static quickcreate = this.For("quickcreate"); 
+    static editview()    { return sticCustomizeView.For("editview"); }
+    static detailview()  { return sticCustomizeView.For("detailview"); }
+    static quickcreate() { return sticCustomizeView.For("quickcreate"); }
 
-    static For(view) {
-        return new sticCustomView(view);
+    static For(view) { 
+        switch(view) {
+            case "detailview": 
+                return new sticCV_View_Record_Detail(view);
+            case "editview":
+            case "quickcreate":
+                return new sticCV_View_Record_Edit(view);
+        }
     }
 }

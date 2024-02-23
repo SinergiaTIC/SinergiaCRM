@@ -24,29 +24,29 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
+var sticCV_Element_Label = class sticCV_Element_Label extends sticCV_Element_Div {
+    constructor (customView, $element){
+        super(customView, $element);
+    }
+    text(newText) {
+        return sticCVUtils.text(this.$element, this.customView, newText);
+    }
 
-var sticCustomViewItemPanel = class sticCustomViewItemPanel extends sticCustomViewItemBase {
-    constructor (customView, panelName) {
-        super(customView, panelName);
-
-        this.panelName = panelName;
-
-        var $panelElement = this.$elementView.find('.panel-body[data-id="'+this.panelName+'"]').parent();
-
-        this.panel = new sticCustomViewDivBase(this, $panelElement);
-        this.header = new sticCustomViewDivPanelHeader(this, $panelElement);
-        this.content = new sticCustomViewDivPanelContent(this, $panelElement);
-    };
-
-    show(show=true) { this.panel.show(show); return this; }
-    hide() { return this.show(false); }
-
-    applyAction(action) {
-        switch(action.element_section){
-            case "panel_header": return this.header.applyAction(action);
-            case "panel_content": return this.content.applyAction(action);
-            case "panel": return this.panel.applyAction(action);
+    applyActionWithValue(actionName, value) { 
+        var result = super.applyActionWithValue(actionName, value);
+        if(result!== false) {
+            return result;
+        }
+        switch(actionName){
+            case "fixed_text": return this.text(value);
         }
         return false;
+    } 
+
+    onChange(callback) {
+        return sticCVUtils.onChange(this.$element, callback);
+    }
+    change() {
+        return sticCVUtils.change(this.$element, callback);
     }
 }

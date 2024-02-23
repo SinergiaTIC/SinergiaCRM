@@ -25,33 +25,23 @@
  *
  */
 
-var sticCustomViewItemTab = class sticCustomViewItemTab extends sticCustomViewItemBase {
-    constructor (customView, tabName) {
-        super(customView, tabName);
+var sticCV_View_Record_Edit = class sticCV_View_Record_Edit extends sticCV_View_Record_Base {
+    constructor(view) {
+        super(view);
+        
+        this.$form = null;        // jQuery element with form
+        this.formName = null;     // The name of the form
 
-        this.tabName = tabName;
-
-        this.header = new sticCustomViewDivTabHeader(this);
-        this.content = new sticCustomViewDivTabContent(this);
-    };
-
-    show(show=true) { this.header.show(show); return this; }
-    hide() { return this.show(false); }
-
-    applyAction(action) {
-        switch(action.element_section){
-            case "tab_header": return this.header.applyAction(action);
-            case "tab_content": return this.content.applyAction(action);
-            case "tab": {
-                switch(action.action){
-                    case "visible": return this.show(action.value);
-                    case "background": 
-                        this.header.applyAction(action);
-                        this.content.applyAction(action);
-                        return this;
-                }
-            }
+        switch(this.view) {
+            case "editview":
+                this.$elementView = $("#EditView");
+                this.$form = this.$elementView;
+                break;
+            case "quickcreate":
+                this.$elementView = $("#EditView_tabs");
+                this.$form = this.$elementView.parent();
+                break;
         }
-        return false;
+        this.formName = this.$form?.attr("name");
     }
 }

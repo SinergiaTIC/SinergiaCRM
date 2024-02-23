@@ -24,14 +24,9 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCustomViewDivPanelContent = class sticCustomViewDivPanelContent extends sticCustomViewDivBase {
-    constructor (item, $panelElement){
-        super(item, $panelElement.find('.tab-content'));
-
-        // Make same width as header 
-        this.$element.css({width:"98%",margin:"auto"});
+var sticCV_Record_Field_Header = class sticCV_Record_Field_Header extends sticCV_Element_Label {
+    constructor (customView, $fieldElement){
+        super(customView, $fieldElement.children('.label'));
     }
 
 }
-
-

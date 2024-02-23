@@ -25,57 +25,34 @@
  *
  */
 
-var sticCustomViewItemField = class sticCustomViewItemField extends sticCustomViewItemBase {
+var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Container {
     constructor (customView, fieldName) {
         super(customView, fieldName);
 
-        this.fieldName = fieldName;
+        var $fieldElement = this.$elementView.find('*[data-field="'+this.name+'"]');
 
-        var $rowElement = this.$elementView.find('*[data-field="'+this.fieldName+'"]');
-        switch(this.view) {
-            case "detailview":  this.row = new sticCustomViewDivRowDetail(this, $rowElement); break;
-            case "editview":    this.row = new sticCustomViewDivRowEdit(this, $rowElement); break;
-            case "quickcreate": this.row = new sticCustomViewDivRowEdit(this, $rowElement); break;
-        }
-        
-        this.label = new sticCustomViewDivLabel(this, this.row.$element.children('.label'));
-        
-        var $inputElement = this.row.$element.children('[field="'+this.fieldName+'"]');
-        switch(this.view) {
-            case "detailview":  this.input = new sticCustomViewDivInputDetail(this, $inputElement); break;
-            case "editview":    this.input = new sticCustomViewDivInputEdit(this, $inputElement); break;
-            case "quickcreate": this.input = new sticCustomViewDivInputEdit(this, $inputElement); break;
-        }
+        this.container = new sticCV_Element_Div(this.customView, $fieldElement);
+        this.header = new sticCV_Record_Field_Header(this.customView, $fieldElement);
+        this.content = new sticCV_Record_Field_Content(this.customView, $fieldElement, fieldName);
+
     }
-    show(show=true) { this.row.show(show); return this; }
-    hide() { return this.show(false); }
+    readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly, element_section: "container"}); }
+    required(required=true) { return sticCVUtils.required(this, required); }
+    inline(inline=true) { return this.applyAction({action: "inline", value: inline, element_section: "container"}); }
 
-    style(style) { this.row.style(style); return this; }
-
-    readonly(readonly=true) { return this; }
-
-    required(required=true, type="text") { return this; }
-
-    inline(inline=true) { return false; }
-
-    value(newValue) { return this.input.value(newValue); }
-    fixed_value(fixed_value) { return this.value(fixed_value); }
+    fixed_value(fixed_value) { return this.applyAction({action: "fixed_value", value: fixed_value, element_section: "container"}); }
+    value(newValue) { return this.fixed_value(newValue); }
 
     applyAction(action) {
-        switch(action.element_section){
-            case "field_label": return this.label.applyAction(action);
-            case "field_input": return this.input.applyAction(action);
-            case "field": {
-                switch(action.action){
-                    case "readonly": return this.readonly(action.value);
-                    case "required": return this.required(action.value, action.value_type);
-                    case "inline": return this.inline(action.value);
-                    case "fixed_value": return this.fixed_value(action.value);
-                    default: return this.row.applyAction(action);
-                }
-            }
+        switch(action.action){
+            case "readonly": 
+            case "inline": 
+            case "fixed_value": 
+                return this.content?.applyAction(action);
+            case "required":
+                return this.required(action.value);
         }
-        return false;
+        return super.applyAction(action);
     }
     
     checkCondition(condition) {
