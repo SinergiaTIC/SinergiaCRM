@@ -29,7 +29,7 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
     constructor (customView, fieldName) {
         super(customView, fieldName);
 
-        var $fieldElement = this.$elementView.find('*[data-field="'+this.name+'"]');
+        var $fieldElement = this.customView.$elementView.find('*[data-field="'+this.name+'"]');
 
         this.container = new sticCV_Element_Div(this.customView, $fieldElement);
         this.header = new sticCV_Record_Field_Header(this.customView, $fieldElement);
@@ -86,9 +86,9 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
     }
 
     onChange(callback) {
-        this.input.onChange(callback);
+        this.content.onChange(callback);
     }
     change() {
-        this.input.change();
+        this.content.change();
     }
 }

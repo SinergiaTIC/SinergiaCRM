@@ -42,13 +42,13 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     color(color="") {
         sticCVUtils.color(this.$editor, this.customView, color);
         sticCVUtils.color(this.$items, this.customView, color);
-        sticCVUtils.color(this.$labelValue, this.customView, color);
+        sticCVUtils.color(this.$readonlyLabel, this.customView, color);
         return super.color(color);
     }
     background(color="") {
         sticCVUtils.background(this.$editor, this.customView, color);
         sticCVUtils.background(this.$items, this.customView, color);
-        sticCVUtils.background(this.$labelValue, this.customView, color);
+        sticCVUtils.background(this.$readonlyLabel, this.customView, color);
         if (this.customView.view == "detailview" || this.type=="radioenum") {
             super.background(color);
         }
@@ -164,7 +164,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     });
                 }
             }
-            sticCVUtils.show(this.$labelValue, this.customView, show);
+            sticCVUtils.show(this.$readonlyLabel, this.customView, show);
             this.change();
         }
     }
