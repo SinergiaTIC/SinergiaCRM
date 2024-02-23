@@ -849,6 +849,24 @@
                             </button>
                             <div id="alerts" class="dropdown-menu" role="menu">{$APP.LBL_EMAIL_ERROR_VIEW_RAW_SOURCE}</div>
                         </li>
+                        {* STIC-Custom 20240222 MHP - *}                            
+                        {literal}
+                            <style>
+                                .time-tracker-start {
+                                    background-color:green;
+                                    font-size:2rem;
+                                }
+                                .time-tracker-stop {
+                                    background: red;
+                                    font-size:2rem;
+                                }
+                            </style>    
+                        {/literal}
+                        <li>
+                            <button id="time_tracker_register" class="btn suitepicon suitepicon-module-tasks"
+                                onclick="toggleTimeTrackerRegisterButton();"></button>
+                        </li>                        
+                        {* END STIC *}       
                         <li id="globalLinks" class="dropdown nav navbar-nav globalLinks-desktop">
                             <button id="with-label" class="dropdown-toggle user-menu-button" title="{$CURRENT_USER}"
                                 data-toggle="dropdown" aria-expanded="true">

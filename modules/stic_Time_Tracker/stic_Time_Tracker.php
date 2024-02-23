@@ -94,5 +94,24 @@ class stic_Time_Tracker extends Basic
 
         // Save the bean
         parent::save($check_notify);
+
+        // Update the configuration of the stic_time_tracker_register_start
+        global $db, $current_user;
+
+        $query = "SELECT end_date FROM `stic_time_tracker`  as st
+                  JOIN users_stic_time_tracker_c as ust
+                  ON st.id = ust.users_stic_time_trackerstic_time_tracker_idb
+                  WHERE st.deleted = 0 AND st.start_date IS NOT NULL AND st.start_date <> ''
+                  AND DATE(st.start_date) = DATE(NOW())
+                  AND " . $this->users_stic_time_trackerusers_ida . " = " . $current_user->id . "
+                  ORDER BY st.start_date desc
+                  LIMIT 1;";
+
+        // Check if today's last record has end date or not
+        $hasEndDateLastRecord = $db->getOne($query);
+        require_once 'modules/Configurator/Configurator.php';
+        $configurator = new Configurator();        
+        $configurator->config['stic_time_tracker_today_registration_started'] = $hasEndDateLastRecord ? 0 : 1;
+        $configurator->saveConfig();
     }
 }
