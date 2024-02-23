@@ -37,7 +37,6 @@ class stic_Time_TrackerController extends SugarController {
         include_once 'modules/stic_Time_Tracker/stic_Time_Tracker.php';        
         $todayUserRegistrationData = stic_Time_Tracker::getTodayRegisterForEmployee($current_user->id);
         $todayRegistrationStarted =  $todayUserRegistrationData ? empty($todayUserRegistrationData["end_date"]) : false;
-        
 
         if ($todayRegistrationStarted) {           
             // Update the end date field of today's time tracker for the current user
@@ -53,6 +52,8 @@ class stic_Time_TrackerController extends SugarController {
             $bean->assigned_user_id = $current_user->id;
             $bean->assigned_user_name = $current_user->name;
         }
-        $bean->save();     
+        $bean->save();   
+        echo $todayRegistrationStarted ? 1:0;  
+        die();
     }
 }

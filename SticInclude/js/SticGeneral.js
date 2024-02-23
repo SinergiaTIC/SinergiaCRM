@@ -29,42 +29,24 @@ function callCRMEntrypoint(url) {
 }
 
 
-// 
+// Comprobar si hay un registro ya activo o no
 function toggleTimeTrackerRegisterButton() 
 {
-    var button = document.getElementById('time_tracker_register');
-
-    // Colors modification
-    button.classList.toggle('time-tracker-start');
-    button.classList.toggle('time-tracker-stop');
-    button.blur();
-}
-
-
-// Función que se ejecutará después de que la página se haya cargado completamente
-window.onload = function() {
-    // Comprobar si hay un registro ya activo o no
-    const url = 'http://localhost:8000/sinergiacrm/index.php?entryPoint=timeRegistrationIsStarted';
-
+    const url = siteURL + '/index.php?module=stic_Time_Tracker&action=createOrUpdateTodayRegister';
     callCRMEntrypoint(url)
         .then(data => 
         {
-            let button = document.getElementById('time_tracker_register');
-            if (data == 1) {
+            location.reload()
+            var button = document.getElementById('time_tracker_register');
+            if (data == 0) {
                 button.classList.add('time-tracker-start');
                 button.classList.remove('time-tracker-stop');
             } else {
                 button.classList.remove('time-tracker-start');
-                button.classList.add('time-tracker-stop');                                                
+                button.classList.add('time-tracker-stop');
             }
-            // button.innerHTML = ' ';
         })
         .catch(error => {
             console.error('Error when obtaining if there is a time registration started, or not, on today:', error);
         });
-
-    // debugger;
-    // Obtener el botón por su ID
-    let button = document.getElementById('time_tracker_register');
-    console.log("Clase cargada");
-};
+}
