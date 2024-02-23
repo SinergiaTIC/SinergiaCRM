@@ -70,23 +70,22 @@ class stic_Time_Tracker extends Basic
     {
         global $timedate;
 
-        // Set name
-        if (empty($this->name)) 
-        {
-            $employee = $this->users_stic_time_tracker_name;
-            $startDate = $timedate->to_display_date_time($this->start_date);
-           
-            $this->name = $employee . " - " . $startDate;
+        $startDate = $_REQUEST["start_date"] ?? $this->start_date;
+        $endDate = $_REQUEST["end_date"] ?? $this->end_date;
 
-            if (!empty($this->end_date)) {
-                $this->name .= " - " . $timedate->to_display_date_time($this->end_date);
+        // Set name
+        if (empty($this->name)) {
+            $employee = $this->users_stic_time_tracker_name;
+            $this->name = $employee . " - " . $startDate;
+            if (!empty($endDate)) {
+                $this->name .= " - " . $endDate;
             }
         }
 
         // Set duration field
-        if (!empty($this->end_date)) {
-            $startTime = strtotime($this->start_date);
-            $endTime = strtotime($this->end_date);
+        if (!empty($endDate)) {
+            $startTime = strtotime($timedate->to_db($startDate));
+            $endTime = strtotime($timedate->to_db($endDate));
             $duration = $endTime - $startTime;            
             // Casting the result into float, otherwise a string is returned and may give wrong values in workflows
             $this->duration = (float) number_format($duration / 3600, 2);
@@ -96,22 +95,51 @@ class stic_Time_Tracker extends Basic
         parent::save($check_notify);
 
         // Update the configuration of the stic_time_tracker_register_start
+        stic_Time_Tracker::checkTodayRegisterStatus($this->users_stic_time_trackerusers_ida);
+    }
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public static function getTodayRegisterForEmployee($idEmployee)
+    {
         global $db, $current_user;
 
-        $query = "SELECT end_date FROM `stic_time_tracker`  as st
-                  JOIN users_stic_time_tracker_c as ust
-                  ON st.id = ust.users_stic_time_trackerstic_time_tracker_idb
-                  WHERE st.deleted = 0 AND st.start_date IS NOT NULL AND st.start_date <> ''
-                  AND DATE(st.start_date) = DATE(NOW())
-                  AND " . $this->users_stic_time_trackerusers_ida . " = " . $current_user->id . "
-                  ORDER BY st.start_date desc
-                  LIMIT 1;";
+        $query = "SELECT st.* FROM `stic_time_tracker`  as st
+                JOIN users_stic_time_tracker_c as ust
+                ON st.id = ust.users_stic_time_trackerstic_time_tracker_idb
+                WHERE st.deleted = 0 AND st.start_date IS NOT NULL AND st.start_date <> ''
+                AND DATE(st.start_date) = DATE(NOW())
+                AND " . $idEmployee . " = " . $current_user->id . "
+                ORDER BY st.start_date desc
+                LIMIT 1;";
 
+
+        $result = $db->query($query);
+        $todayUserRegistrationData = $db->fetchByAssoc($result);
+        return $todayUserRegistrationData;
+    }
+
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public static function checkTodayRegisterStatus($idEmployee)
+    {
+        // Get the last today time tracket record of the current user
+        $todayUserRegistrationData = stic_Time_Tracker::getTodayRegisterForEmployee($idEmployee);
+        
         // Check if today's last record has end date or not
-        $hasEndDateLastRecord = $db->getOne($query);
+        $todayRegistrationStarted = empty($todayUserRegistrationData["end_date"]);
         require_once 'modules/Configurator/Configurator.php';
         $configurator = new Configurator();        
-        $configurator->config['stic_time_tracker_today_registration_started'] = $hasEndDateLastRecord ? 0 : 1;
+        $configurator->config['stic_time_tracker_today_registration_started'] = $todayRegistrationStarted ? 1 : 0;
         $configurator->saveConfig();
+
+        return $configurator->config['stic_time_tracker_today_registration_started'];
     }
 }

@@ -861,12 +861,24 @@
                                     font-size:2rem;
                                 }
                             </style>    
+                            <script>
+                                $(document).ready(function() {
+                                    var button = document.getElementById('time_tracker_register');                                    
+                                    if (todayRegistrationStarted == 0) {
+                                        button.classList.add('time-tracker-start');
+                                        button.classList.remove('time-tracker-stop');
+                                    } else {
+                                        button.classList.remove('time-tracker-start');
+                                        button.classList.add('time-tracker-stop');                                                
+                                    }
+                                });
+                            </script>
                         {/literal}
                         <li>
                             <button id="time_tracker_register" class="btn suitepicon suitepicon-module-tasks"
                                 onclick="toggleTimeTrackerRegisterButton();"></button>
                         </li>                        
-                        {* END STIC *}       
+                        {* END STIC-Custom *}       
                         <li id="globalLinks" class="dropdown nav navbar-nav globalLinks-desktop">
                             <button id="with-label" class="dropdown-toggle user-menu-button" title="{$CURRENT_USER}"
                                 data-toggle="dropdown" aria-expanded="true">

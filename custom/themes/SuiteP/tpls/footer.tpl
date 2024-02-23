@@ -139,6 +139,5 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
-<script type="text/javascript" src='{sugar_getjspath file="SticInclude/js/SticGeneral.js"}'></script>
 </body>
 </html>

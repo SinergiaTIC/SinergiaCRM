@@ -23,12 +23,20 @@
 class stic_Time_TrackerLogicHooks
 {
 
-    public function after_ui_frame($event, $arguments) {
+    public function after_ui_frame($event, $arguments) 
+    {
+        // Check if the user has started any time registration today
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking if time registration is active or not.');
+        require_once 'modules/Configurator/Configurator.php';
+        $configurator = new Configurator();        
+        
 
-        // Write a js call to processSticCustomView when loaded
+
+        // Config JS variables 
         $html =
-        "<script type=\"text/javascript\" language=\"JavaScript\">".
-            // "alert('holaaaas');"
+        "<script type=\"text/javascript\" language=\"JavaScript\">" .
+           "var todayRegistrationStarted = " . $configurator->config['stic_time_tracker_today_registration_started'] . "; " .
+           "var siteURL = '" . $configurator->config['site_url'] . "';" .
         "</script>";
 
         echo $html;
