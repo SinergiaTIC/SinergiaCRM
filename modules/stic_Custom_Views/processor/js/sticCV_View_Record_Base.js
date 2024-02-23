@@ -205,21 +205,4 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
         }
         customization.lastResult = value;
     }
-
-
-    _show($elem, show=true) {
-        var visible = $elem.is(":visible");
-        if(show===true||show==="1"||show===1) {
-            if(!visible) {
-                $elem.show();
-                this.addUndoFunction(function() { $elem.hide(); });
-            }
-        } else {
-            if(visible) {
-                $elem.hide();
-                this.addUndoFunction(function() { $elem.show(); });
-            }
-        }
-        return this;
-    }
 }

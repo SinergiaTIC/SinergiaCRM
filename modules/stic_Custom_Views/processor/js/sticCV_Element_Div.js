@@ -31,7 +31,7 @@ var sticCV_Element_Div = class sticCV_Element_Div {
     }
 
     show(show=true) {
-        sticCVUtils.show($elem, this.customView, show);
+        sticCVUtils.show(this.$element, this.customView, show);
         return this;
     }
     hide() { return this.show(false); }

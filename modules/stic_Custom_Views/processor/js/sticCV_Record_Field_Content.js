@@ -64,68 +64,6 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     value(newValue) {
         return sticCVUtils.value(this, newValue);
     }
-    value(newValue) {
-        if(newValue!==undefined) {
-            this._setValue(newValue);
-        }
-        return this._getValue();
-    }
-    _setValue(newValue) {
-        var oldValue = this.value();
-        if(newValue!=oldValue) {
-            // Set new value
-            if(this.type=="radioenum") {
-                this.$editor.parent().find("[type='radio'][value='"+newValue+"']").prop('checked', true);
-            } else if(this.type=="bool") {
-                this.$editor.prop("checked", newValue)
-            } else {
-                this.$editor.val(newValue);
-            }
-
-            // Unset value modified by user
-            var attr = this.$editor.attr("data-changedByUser");
-            if(typeof(attr==="undefined") || attr===false) {
-                this.$editor.removeAttr("data-changedByUser");
-            }
-            this.change();
-
-            // Set last setted value by this Api to be undoed
-            this.$editor.attr("data-lastChangeByApi", newValue);
-
-            // Add undo function
-            var self = this;
-            this.addUndoFunction(function() { 
-                var $editor = self.$editor;
-                var currentValue = self.value();
-
-                // Check if the last value change with Api is processed
-                var attrApi = $editor.attr("data-lastChangeByApi");
-                if(typeof(attrApi!=="undefined") && attrApi!==false) {
-                    // The last value change with Api, is the current value?
-                    if(attrApi!=currentValue) {
-                        // Set data is changed by User
-                        self.$editor.attr("data-changedByUser", currentValue);
-                    } else {
-                        // Data is not changed by User
-                        var attrUser = $editor.attr("data-changedByUser");
-                        if(typeof(attrUser==="undefined") || attrUser===false) {
-                            $editor.removeAttr("data-changedByUser");
-                        }
-                    }
-                    // The last value change with Api is processed
-                    $editor.removeAttr("data-lastChangeByApi");
-                }
-                // Undo only if last change is not made by user
-                var attrUser = $editor.attr("data-changedByUser");
-                if(typeof(attrUser==="undefined") || attrUser===false) {
-                    self.value(oldValue);
-                }
-            }, true);
-        }
-    }
-    _getValue() {
-        return sticCVUtils.getValue(this);
-    }
 
     text(newText){
         if(this.customView.view == "editview" || this.customView.view == "quickcreate"){
@@ -169,7 +107,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         }
     }
     is_readonly(){
-        return this.$readonlyLabel.length!=0 && this.$readonlyLabel.is(":visible");
+        return this.$readonlyLabel.length!=0 && this.$readonlyLabel.css('display')!='none';
     }
 
 

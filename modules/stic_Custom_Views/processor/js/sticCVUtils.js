@@ -28,7 +28,7 @@
 var sticCVUtils = class sticCVUtils {
     static show($elem, customView=null, show=true) {
         if($elem.length==0) return;
-        var visible = $elem.is(":visible");
+        var visible = ($elem.css('display') != 'none');
         if(show===true||show==="1"||show===1) {
             if(!visible) {
                 $elem.show();
@@ -119,8 +119,7 @@ var sticCVUtils = class sticCVUtils {
         if($elem.length==0) {
             $elem = fieldContent.$element;
         }
-
-        var typeArray=fieldContent.type.split('|');
+        var typeArray = fieldContent.type.split('|');
         switch (typeArray[0]) {
             case "radioenum":
                 var $radio = $elem.parent().find("[type='radio']:checked");
@@ -130,6 +129,9 @@ var sticCVUtils = class sticCVUtils {
                     return sticCVUtils.getListValueFromLabel(typeArray[1], trim($elem.text()));
                 }
                 break;
+            case "multienum":
+                var valueArray = $elem.map(function(){return $(this).val();}).get();
+                return valueArray[valueArray.length-1];
             case "bool":
                 return $elem.prop("checked");
         }
@@ -150,7 +152,7 @@ var sticCVUtils = class sticCVUtils {
 
             switch (typeArray[0]) {
                 case "radioenum":
-                    var $radio = $elem.parent().find("[type='radio'][value='"+newValue+"']");
+                    var $radio = $elem.parent().parent().find("[type='radio'][value='"+newValue+"']");
                     if($radio.length!=0) {
                         $radio.prop('checked', true);
                     } else {
