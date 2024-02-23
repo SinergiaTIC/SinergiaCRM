@@ -842,13 +842,6 @@
                                 </div>
                             </form>
                         </li>
-                        <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
-                            <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
-                                data-toggle="dropdown" aria-expanded="false">
-                                <span class="alert_count hidden">0</span>
-                            </button>
-                            <div id="alerts" class="dropdown-menu" role="menu">{$APP.LBL_EMAIL_ERROR_VIEW_RAW_SOURCE}</div>
-                        </li>
                         {* STIC-Custom 20240222 MHP - *}                            
                         {literal}
                             <style>
@@ -879,6 +872,13 @@
                                 onclick="toggleTimeTrackerRegisterButton();"></button>
                         </li>                        
                         {* END STIC-Custom *}       
+                        <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
+                            <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
+                                data-toggle="dropdown" aria-expanded="false">
+                                <span class="alert_count hidden">0</span>
+                            </button>
+                            <div id="alerts" class="dropdown-menu" role="menu">{$APP.LBL_EMAIL_ERROR_VIEW_RAW_SOURCE}</div>
+                        </li>
                         <li id="globalLinks" class="dropdown nav navbar-nav globalLinks-desktop">
                             <button id="with-label" class="dropdown-toggle user-menu-button" title="{$CURRENT_USER}"
                                 data-toggle="dropdown" aria-expanded="true">
