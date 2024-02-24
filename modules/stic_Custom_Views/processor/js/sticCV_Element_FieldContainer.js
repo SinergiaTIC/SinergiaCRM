@@ -24,14 +24,31 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCV_Record_Panel_Content = class sticCV_Record_Panel_Content extends sticCV_Element_FieldContainer {
-    constructor (panel){
-        super(panel.customView, panel.container.$element.find('.tab-content'));
-
-        // Make same width as header 
-        this.$element.css({width:"98%",margin:"auto"});
+var sticCV_Element_FieldContainer = class sticCV_Element_FieldContainer extends sticCV_Element_Div {
+    constructor (customView, $element){
+        super(customView, $element);
     }
 
+    getFields() {
+        var fields = [];
+        var customView=this.customView;
+        this.$element.find("[field]").each(function(){
+            fields.push(new sticCV_Record_Field(customView, $(this).attr("field")));
+        });
+        return fields;
+    }
+
+    show(show=true) {
+        show=(show===true||show==="1"||show===1);
+        if(!show) {
+            for(var field of this.getFields()) {
+                // Unrequire hidden fields
+                sticCVUtils.required(field, false);
+            };
+        }
+        sticCVUtils.show(this.$element, this.customView, show);
+        return this;
+    }
 }
 
 

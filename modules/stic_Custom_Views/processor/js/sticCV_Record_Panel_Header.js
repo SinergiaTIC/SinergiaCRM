@@ -25,10 +25,10 @@
  *
  */
 var sticCV_Record_Panel_Header = class sticCV_Record_Panel_Header extends sticCV_Element_Label {
-    constructor (customView, $panelElement){
-        super(customView, $panelElement.children('.panel-heading'));
+    constructor (panel){
+        super(panel.customView, panel.container.$element.children('.panel-heading'));
 
-        this.$label = this.$element.find('[data-label="'+this.item.panelName+'"]');
+        this.$label = this.$element.find('[data-label="'+panel.name+'"]');
     }
     text(newText) {
         return sticCVUtils.text(this.$label, this.customView, newText);
@@ -38,7 +38,7 @@ var sticCV_Record_Panel_Header = class sticCV_Record_Panel_Header extends sticCV
         return this;
     }
     background(color="") {
-        sticCVUtils.background(this.$label.parent(), this.customView, color);
+        sticCVUtils.background(this.$label.parent(), this.customView, color, true);
         return this;
     }
     bold(bold=true) {

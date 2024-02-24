@@ -29,11 +29,11 @@ var sticCV_Record_Panel = class sticCV_Record_Panel extends sticCV_Record_Contai
     constructor (customView, panelName) {
         super(customView, panelName);
 
-        var $panelElement = this.customView.$elementView.find('.panel-body[data-id="'+this.panelName+'"]').parent();
+        var $panelElement = this.customView.$elementView.find('.panel-body[data-id="'+panelName+'"]').parent();
 
         this.container = new sticCV_Element_Div(this.customView, $panelElement);
 
-        this.header = new sticCV_Record_Panel_Header(this.customView, $panelElement);
-        this.content = new sticCV_Record_Panel_Content(this.customView, $panelElement);
+        this.header = new sticCV_Record_Panel_Header(this);
+        this.content = new sticCV_Record_Panel_Content(this);
     };
 }

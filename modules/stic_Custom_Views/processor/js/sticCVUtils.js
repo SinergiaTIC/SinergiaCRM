@@ -46,9 +46,13 @@ var sticCVUtils = class sticCVUtils {
         $elem.css("color", color);
         customView?.addUndoFunction(function() { $elem.css('color', ''); });
     }
-    static background($elem, customView=null, color="") { 
+    static background($elem, customView=null, color="", important=false) { 
         if($elem.length==0) return;
-        $elem.css("background-color", color); 
+        if(important) {
+            $elem.style.setProperty("background-color", color, "important");
+        } else {
+            $elem.css("background-color", color); 
+        }
         customView?.addUndoFunction(function() { $elem.css("background-color", ''); });
     }
     static bold($elem, customView=null, bold=true) {

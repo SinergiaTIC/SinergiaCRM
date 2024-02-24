@@ -60,12 +60,9 @@ var sticCV_Record_Container = class sticCV_Record_Container {
             case "panel": 
             case "field":
             case "container":
-                if(this.container!==null) {
-                    this.container?.applyAction(action);
-                } else {
-                    this.header?.applyAction(action);
-                    this.content?.applyAction(action);
-                }
+                this.container?.applyAction(action);
+                this.header?.applyAction(action);
+                this.content?.applyAction(action);
                 return this;
         }
         return false;

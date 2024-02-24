@@ -65,6 +65,12 @@ $js_groupings[] = $newGrouping = array(
 
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Container.js' => 'include/javascript/sugar_grp1.js',
 
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field_Header.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field_Content.js' => 'include/javascript/sugar_grp1.js',
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field.js' => 'include/javascript/sugar_grp1.js',
+
+    'modules/stic_Custom_Views/processor/js/sticCV_Element_FieldContainer.js' => 'include/javascript/sugar_grp1.js',
+
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab_Header.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab_Content.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab.js' => 'include/javascript/sugar_grp1.js',
@@ -72,10 +78,6 @@ $js_groupings[] = $newGrouping = array(
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel_Header.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel_Content.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel.js' => 'include/javascript/sugar_grp1.js',
-
-    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field_Header.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field_Content.js' => 'include/javascript/sugar_grp1.js',
-    'modules/stic_Custom_Views/processor/js/sticCV_Record_Field.js' => 'include/javascript/sugar_grp1.js',
 
     'modules/stic_Custom_Views/processor/js/sticCV_View_Record_Base.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_View_Record_Detail.js' => 'include/javascript/sugar_grp1.js',

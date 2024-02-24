@@ -24,7 +24,7 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCV_Record_Tab_Content = class sticCV_Record_Tab_Content extends sticCV_Element_Div {
+var sticCV_Record_Tab_Content = class sticCV_Record_Tab_Content extends sticCV_Element_FieldContainer {
     constructor (tab){
         super(tab.customView, tab.customView.$elementView.find('div.tab-content > div[data-id='+tab.name+']'));
 
