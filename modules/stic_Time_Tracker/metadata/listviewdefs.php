@@ -33,6 +33,15 @@ $listViewDefs[$module_name] = array(
         'default' => true,
         'link' => true
     ),
+    'USERS_STIC_TIME_TRACKER_NAME' => 
+    array (
+      'type' => 'relate',
+      'link' => true,
+      'label' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
+      'id' => 'USERS_STIC_TIME_TRACKERUSERS_IDA',
+      'width' => '10%',
+      'default' => true,
+    ),    
     'START_DATE' => array(
         'type' => 'datetimecombo',
         'label' => 'LBL_START_DATE',
