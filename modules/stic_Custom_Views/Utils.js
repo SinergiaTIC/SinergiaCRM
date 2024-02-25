@@ -109,30 +109,33 @@ function initializeQuickCreateCustomization() {
 }
 
 function initializeEditFields() {
-  var customView = sticCustomizeView.editview;
+  var customView = sticCustomizeView.editview();
 
   // Hide module selector, show label with module name
-  customView.field("view_module").readonly().input.bold();
+  customView.field("view_module").readonly();
+  customView.field("view_module").content.bold();
 
   // Hide view selector, show label with view name
-  customView.field("view_type").readonly().input.bold();
+  customView.field("view_type").readonly();
+  customView.field("view_type").content.bold();
 
   // Set initial name
   customView.field("name").value(
-    customView.field("view_module").input.text() + " - " +
-    customView.field("view_type").input.text() + " - " +
-    customView.field("customization_name").input.text()
+    customView.field("view_module").content.text() + " - " +
+    customView.field("view_type").content.text() + " - " +
+    customView.field("customization_name").content.text()
   );
 
   // Hide name, show label with name
-  customView.field("name").readonly().input.bold();
+  customView.field("name").readonly();
+  customView.field("name").content.bold();
 
   // Update name when any change on customization_name
   customView.field("customization_name").onChange(function() {
     customView.field("name").value(
-      customView.field("view_module").input.text() + " - " +
-      customView.field("view_type").input.text() + " - " +
-      customView.field("customization_name").input.text()
+      customView.field("view_module").content.text() + " - " +
+      customView.field("view_type").content.text() + " - " +
+      customView.field("customization_name").content.text()
     );
   });
 }

@@ -77,6 +77,8 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 } else {
                     return "☐";
                 }
+            } else if(this.$editor.prop("type")=="text" || this.$editor.prop("type")=="textarea") {
+                return this.value();
             }
         }
         return super.text(newText);

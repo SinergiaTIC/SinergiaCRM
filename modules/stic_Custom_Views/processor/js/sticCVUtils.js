@@ -27,90 +27,105 @@
 
 var sticCVUtils = class sticCVUtils {
     static show($elem, customView=null, show=true) {
-        if($elem.length==0) return;
-        var visible = ($elem.css('display') != 'none');
-        if(show===true||show==="1"||show===1) {
-            if(!visible) {
-                $elem.show();
-                customView?.addUndoFunction(function() { $elem.hide(); });
+        show=(show===true||show==="1"||show===1);
+        $elem.each(function(){
+            var visible = ($(this).css('display') != 'none');
+            if(show) {
+                if(!visible) {
+                    $(this).show();
+                    customView?.addUndoFunction(function() { $(this).hide(); });
+                }
+            } else {
+                if(visible) {
+                    $(this).hide();
+                    customView?.addUndoFunction(function() { $(this).show(); });
+                }
             }
-        } else {
-            if(visible) {
-                $elem.hide();
-                customView?.addUndoFunction(function() { $elem.show(); });
-            }
-        }
+        });
     }
     static color($elem, customView=null, color="") {
-        if($elem.length==0) return;
-        $elem.css("color", color);
-        customView?.addUndoFunction(function() { $elem.css('color', ''); });
+        $elem.each(function(){
+            $(this).css("color", color);
+            customView?.addUndoFunction(function() { $(this).css('color', ''); });
+        });
     }
     static background($elem, customView=null, color="", important=false) { 
-        if($elem.length==0) return;
-        if(important) {
-            $elem.style.setProperty("background-color", color, "important");
-        } else {
-            $elem.css("background-color", color); 
-        }
-        customView?.addUndoFunction(function() { $elem.css("background-color", ''); });
+        $elem.each(function(){
+            if(important) {
+                $(this).style.setProperty("background-color", color, "important");
+            } else {
+                $(this).css("background-color", color); 
+            }
+            customView?.addUndoFunction(function() { $(this).css("background-color", ''); });
+        });
     }
     static bold($elem, customView=null, bold=true) {
-        if($elem.length==0) return;
-        if(bold===true||bold==="1"||bold===1) {
-            $elem.css('font-weight', 'bold');
-            customView?.addUndoFunction(function() { $elem.css('font-weight', ''); });
-        } else {
-            $elem.css('font-weight', 'normal');
-            customView?.addUndoFunction(function() { $elem.css('font-weight', ''); });
-        }
+        bold=(bold===true||bold==="1"||bold===1);
+        $elem.each(function(){
+            if(bold) {
+                $(this).css('font-weight', 'bold');
+                customView?.addUndoFunction(function() { $(this).css('font-weight', ''); });
+            } else {
+                $(this).css('font-weight', 'normal');
+                customView?.addUndoFunction(function() { $(this).css('font-weight', ''); });
+            }
+        });
     }
     static italic($elem, customView=null, italic=true) {
-        if($elem.length==0) return;
-        if(italic===true||italic==="1"||italic===1) {
-            $elem.css('font-style', 'italic');
-            customView?.addUndoFunction(function() { $elem.css('font-style', ''); });
-        } else {
-            $elem.css('font-style', 'normal');
-            customView?.addUndoFunction(function() { $elem.css('font-style', ''); });
-        }
+        italic=(italic===true||italic==="1"||italic===1);
+        $elem.each(function(){
+            if(italic) {
+                $(this).css('font-style', 'italic');
+                customView?.addUndoFunction(function() { $(this).css('font-style', ''); });
+            } else {
+                $(this).css('font-style', 'normal');
+                customView?.addUndoFunction(function() { $(this).css('font-style', ''); });
+            }
+        });
     }
     static underline($elem, customView=null, underline=true) {
-        if($elem.length==0) return;
-        if(underline===true||underline==="1"||underline===1) {
-            $elem.css('text-decoration', 'underline');
-            customView?.addUndoFunction(function() { $elem.css('text-decoration', ''); });
-        } else {
-            $elem.css('text-decoration', 'none');
-            customView?.addUndoFunction(function() { $elem.css('text-decoration', ''); });
-        }
+        underline=(underline===true||underline==="1"||underline===1);
+        $elem.each(function(){
+            if(underline) {
+                $(this).css('text-decoration', 'underline');
+                customView?.addUndoFunction(function() { $(this).css('text-decoration', ''); });
+            } else {
+                $(this).css('text-decoration', 'none');
+                customView?.addUndoFunction(function() { $(this).css('text-decoration', ''); });
+            }
+        });
     }
     static style($elem, customView=null, style="") {
-        if($elem.length==0) return;
-        var oldStyle = $elem.attr('style');
-        $elem.css(style);
-        customView?.addUndoFunction(function() { $elem.attr('style', oldStyle); });
+        $elem.each(function(){
+            var oldStyle = $(this).attr('style');
+            $(this).css(style);
+            customView?.addUndoFunction(function() { $(this).attr('style', oldStyle); });
+        });
     }
     static frame($elem, customView=null, frame=true){
-        if($elem.length==0) return;
-        if(frame===true||frame==="1"||frame===1) {
-            $elem.css({"border-color": "orangered", "border-style": "dashed"});
-            customView?.addUndoFunction(function() { $elem.css({"border-color": "", "border-style": ""}); });
-        } else {
-            $elem.css({"border-color": "", "border-style": ""});
-            customView?.addUndoFunction(function() { $elem.css({"border-color": "", "border-style": ""}); });
-        }
+        frame=(frame===true||frame==="1"||frame===1);
+        $elem.each(function(){
+            if(frame) {
+                $(this).css({"border-color": "orangered", "border-style": "dashed"});
+                customView?.addUndoFunction(function() { $(this).css({"border-color": "", "border-style": ""}); });
+            } else {
+                $(this).css({"border-color": "", "border-style": ""});
+                customView?.addUndoFunction(function() { $(this).css({"border-color": "", "border-style": ""}); });
+            }
+        });
     }
     static text($elem, customView=null, newText) {
-        if($elem.length==0) return "";
-        var oldText = $elem.text();
-        if(newText===undefined || newText!=oldText) {
-            return oldText;
-        }
-        var text = $elem.text(newText);
-        customView?.addUndoFunction(function() { $elem.text(oldText); });
-
-        return text;
+        var textArray=[];
+        $elem.each(function(){
+            var oldText = $(this).text();
+            if(newText===undefined || newText!=oldText) {
+                textArray.push(oldText);
+            } else {
+                textArray.push($(this).text(newText));
+                customView?.addUndoFunction(function() { $(this).text(oldText); });
+            }
+        });
+        return textArray.join(", ");
     }
 
     static value(fieldContent, newValue) {
@@ -260,13 +275,15 @@ var sticCVUtils = class sticCVUtils {
     }
 
     static onChange($elem, callback) {
-        if($elem.length==0) return false;
-        $elem.on("change paste keyup", function() { callback();});
+        $elem.each(function(){
+            $(this).on("change paste keyup", callback);
+        });
         return true;
     }
     static change($elem) {
-        if($elem.length==0) return false;
-        $elem.change();
+        $elem.each(function(){
+            $(this).change();
+        });
         return true;
     }
 

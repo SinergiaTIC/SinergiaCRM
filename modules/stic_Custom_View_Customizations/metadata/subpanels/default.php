@@ -97,21 +97,14 @@ $subpanel_layout = array (
       'width' => '45%',
       'default' => true,
     ),
-    'quick_edit_button' => array(
-      'vname' => 'LBL_EDIT_BUTTON',
+    'quickedit_button' => 
+    array(
+      'vname' => 'LBL_QUICKEDIT_BUTTON',
       'widget_class' => 'SubPanelQuickEditButton',
       'module' => 'stic_Custom_View_Customizations',
-      'width' => '5%',
+      'width' => '4%',
       'default' => true,
     ),
-    // 'edit_button' =>
-    // array (
-    //   'vname' => 'LBL_EDIT_BUTTON',
-    //   'widget_class' => 'SubPanelEditButton',
-    //   'module' => 'stic_Custom_View_Customizations',
-    //   'width' => '5%',
-    //   'default' => true,
-    // ),
     'remove_button' => 
     array (
       'vname' => 'LBL_REMOVE',
