@@ -113,7 +113,7 @@ function insertConditionLinesHeader(){
     if (condition['value'] instanceof Array) {
       condition['value'] = JSON.stringify(condition['value']);
     }
-    condValArray.push({line:ln, value:condition['value']});
+    condValArray.push({line:ln, value:(condition['value']??"").split("|")[0]});
     for(var a in condition) {
       $("#"+prefix+a+ln).val(condition[a]);
       $("#"+prefix+a+ln).change();

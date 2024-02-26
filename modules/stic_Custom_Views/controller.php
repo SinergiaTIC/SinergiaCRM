@@ -75,6 +75,7 @@ class stic_Custom_ViewsController extends SugarController {
         }
         $html = getModuleField($view_module, $field_name, $editor_name, 'EditView', $value, '', '', $params);
         $html = str_replace('EditView', $form, $html);
+        $html = str_replace($editor_name."_display", "display_".$editor_name, $html);
         echo $html;
         die;
     }

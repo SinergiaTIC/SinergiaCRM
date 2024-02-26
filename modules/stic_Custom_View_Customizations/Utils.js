@@ -72,7 +72,6 @@ function translateCustomization(label) {
 }
 
 function getModuleFieldEditor(ln, prefix, field_value) {
-  debugger;
   var field = $("#"+prefix+'field'+ln).val();
   if(!field || field=="") {
     field = $("#"+prefix+'element'+ln).val();

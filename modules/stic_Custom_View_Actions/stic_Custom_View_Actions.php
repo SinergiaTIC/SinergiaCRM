@@ -98,6 +98,9 @@ class stic_Custom_View_Actions extends Basic
                             if ($field_name === 'value' && 
                                 $post_data[$key . 'type'][$i] === 'field_modification' && $post_data[$key . 'action'][$i] === 'fixed_value') {
                                 $post_data[$key . $field_name][$i] = fixUpFormatting($view_module, $action->element, $post_data[$key . $field_name][$i]);
+                                if(isset($post_data["display_" . $key . $field_name]) && isset($post_data["display_" . $key . $field_name][$i])) {
+                                    $post_data[$key . $field_name][$i].="|".$post_data["display_" . $key . $field_name][$i];
+                                }
                             }
                         }
                         $action->$field_name = $post_data[$key . $field_name][$i];

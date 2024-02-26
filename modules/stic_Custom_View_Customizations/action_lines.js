@@ -128,7 +128,8 @@ function loadActionLine(actionString) {
     action['value'] = JSON.stringify(action['value']);
   }
   if(action['type']=='field_modification' && action['action']=='fixed_value') {
-    actValArray.push({line:ln, value:action['value']});
+
+    actValArray.push({line:ln, value:(action['value']??"").split("|")[0]});
   }
   for(var a in action) {
     $("#"+prefix+a+ln).val(action[a]);

@@ -95,6 +95,9 @@ class stic_Custom_View_Conditions extends Basic
                         } else {
                             if ($field_name === 'value') {
                                 $post_data[$key . $field_name][$i] = fixUpFormatting($view_module, $condition->field, $post_data[$key . $field_name][$i]);
+                                if(isset($post_data["display_" . $key . $field_name]) && isset($post_data["display_" . $key . $field_name][$i])) {
+                                    $post_data[$key . $field_name][$i].="|".$post_data["display_" . $key . $field_name][$i];
+                                }                                
                             }
                         }
                         $condition->$field_name = $post_data[$key . $field_name][$i];
