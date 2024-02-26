@@ -28,6 +28,7 @@ var actln = 0;
 var actln_count = 0;
 var actprefix = 'sticCustomView_Action';
 var actId = actprefix+'Lines';
+var actValArray = [];
 
 function getActionDeleteButton(ln, functionName) {
   var html = 
@@ -123,17 +124,15 @@ function loadActionLine(actionString) {
   var ln = insertActionLine();
 
   var action = JSON.parse(actionString);
-
-  for(var a in action) {
-    $("#"+prefix+a+ln).val(action[a]);
-    $("#"+prefix+a+ln).change();
-  }
-  
   if (action['value'] instanceof Array) {
     action['value'] = JSON.stringify(action['value']);
   }
   if(action['type']=='field_modification' && action['action']=='fixed_value') {
-    getModuleFieldEditor(ln, actprefix, action['value']);
+    actValArray.push({line:ln, value:action['value']});
+  }
+  for(var a in action) {
+    $("#"+prefix+a+ln).val(action[a]);
+    $("#"+prefix+a+ln).change();
   }
 }
 
@@ -227,7 +226,15 @@ function onActionChanged(ln) {
     //Create next selector
     // Value editor
     if(type=='field_modification' && action=='fixed_value'){
-      getModuleFieldEditor(ln, actprefix);
+      var actValue = undefined;
+      for(let i=0; i<actValArray.length; i++) {
+        if(actValArray[i].line==ln) {
+          actValue = actValArray[i].value;
+          actValArray.splice(i,1);
+          break;
+        }
+      }
+      getModuleFieldEditor(ln, actprefix, actValue);
     } else {
       $("#"+actprefix+'Cell'+'value'+ln).html(decodeURIComponent(escape(atob(view_action_editor_map[action].editor_base64))));
       $("#"+actprefix+'Cell'+'value'+ln).children().attr("id", actprefix+"value"+ln);

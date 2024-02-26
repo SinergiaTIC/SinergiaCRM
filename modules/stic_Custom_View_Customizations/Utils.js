@@ -34,7 +34,6 @@ var module = "stic_Custom_View_Customizations";
 switch (viewType()) {
   case "quickcreate":
     $(document).ready(function () { 
-      debugger;
       var customView = sticCustomizeView.quickcreate();
       // Hide Condition lines
       if($('input[name="init"]').val()=="1") {
@@ -73,6 +72,7 @@ function translateCustomization(label) {
 }
 
 function getModuleFieldEditor(ln, prefix, field_value) {
+  debugger;
   var field = $("#"+prefix+'field'+ln).val();
   if(!field || field=="") {
     field = $("#"+prefix+'element'+ln).val();

@@ -32,13 +32,15 @@ var sticCVUtils = class sticCVUtils {
             var visible = ($(this).css('display') != 'none');
             if(show) {
                 if(!visible) {
-                    $(this).show();
-                    customView?.addUndoFunction(function() { $(this).hide(); });
+                    var $self=$(this);
+                    $(this).css('display','block');
+                    customView?.addUndoFunction(function() { $self.css('display','none'); });
                 }
             } else {
                 if(visible) {
-                    $(this).hide();
-                    customView?.addUndoFunction(function() { $(this).show(); });
+                    var $self=$(this);
+                    $(this).css('display','none');
+                    customView?.addUndoFunction(function() { $self.css('display','block'); });
                 }
             }
         });
@@ -46,7 +48,8 @@ var sticCVUtils = class sticCVUtils {
     static color($elem, customView=null, color="") {
         $elem.each(function(){
             $(this).css("color", color);
-            customView?.addUndoFunction(function() { $(this).css('color', ''); });
+            var $self=$(this);
+            customView?.addUndoFunction(function() { $self.css('color', ''); });
         });
     }
     static background($elem, customView=null, color="", important=false) { 
@@ -56,7 +59,8 @@ var sticCVUtils = class sticCVUtils {
             } else {
                 $(this).css("background-color", color); 
             }
-            customView?.addUndoFunction(function() { $(this).css("background-color", ''); });
+            var $self=$(this);
+            customView?.addUndoFunction(function() { $self.css("background-color", ''); });
         });
     }
     static bold($elem, customView=null, bold=true) {
@@ -64,10 +68,12 @@ var sticCVUtils = class sticCVUtils {
         $elem.each(function(){
             if(bold) {
                 $(this).css('font-weight', 'bold');
-                customView?.addUndoFunction(function() { $(this).css('font-weight', ''); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css('font-weight', ''); });
             } else {
                 $(this).css('font-weight', 'normal');
-                customView?.addUndoFunction(function() { $(this).css('font-weight', ''); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css('font-weight', ''); });
             }
         });
     }
@@ -76,10 +82,12 @@ var sticCVUtils = class sticCVUtils {
         $elem.each(function(){
             if(italic) {
                 $(this).css('font-style', 'italic');
-                customView?.addUndoFunction(function() { $(this).css('font-style', ''); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css('font-style', ''); });
             } else {
                 $(this).css('font-style', 'normal');
-                customView?.addUndoFunction(function() { $(this).css('font-style', ''); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css('font-style', ''); });
             }
         });
     }
@@ -88,18 +96,25 @@ var sticCVUtils = class sticCVUtils {
         $elem.each(function(){
             if(underline) {
                 $(this).css('text-decoration', 'underline');
-                customView?.addUndoFunction(function() { $(this).css('text-decoration', ''); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css('text-decoration', ''); });
             } else {
                 $(this).css('text-decoration', 'none');
-                customView?.addUndoFunction(function() { $(this).css('text-decoration', ''); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css('text-decoration', ''); });
             }
         });
     }
     static style($elem, customView=null, style="") {
         $elem.each(function(){
+            debugger;
             var oldStyle = $(this).attr('style');
+            if(oldStyle===undefined){
+                oldStyle="";
+            }
             $(this).css(style);
-            customView?.addUndoFunction(function() { $(this).attr('style', oldStyle); });
+            var $self=$(this);
+            customView?.addUndoFunction(function() { $self.attr('style', oldStyle); });
         });
     }
     static frame($elem, customView=null, frame=true){
@@ -107,10 +122,12 @@ var sticCVUtils = class sticCVUtils {
         $elem.each(function(){
             if(frame) {
                 $(this).css({"border-color": "orangered", "border-style": "dashed"});
-                customView?.addUndoFunction(function() { $(this).css({"border-color": "", "border-style": ""}); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css({"border-color": "", "border-style": ""}); });
             } else {
                 $(this).css({"border-color": "", "border-style": ""});
-                customView?.addUndoFunction(function() { $(this).css({"border-color": "", "border-style": ""}); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.css({"border-color": "", "border-style": ""}); });
             }
         });
     }
@@ -122,7 +139,8 @@ var sticCVUtils = class sticCVUtils {
                 textArray.push(oldText);
             } else {
                 textArray.push($(this).text(newText));
-                customView?.addUndoFunction(function() { $(this).text(oldText); });
+                var $self=$(this);
+                customView?.addUndoFunction(function() { $self.text(oldText); });
             }
         });
         return textArray.join(", ");
@@ -149,24 +167,37 @@ var sticCVUtils = class sticCVUtils {
                 }
                 break;
             case "multienum":
-                var valueArray = $elem.map(function(){return $(this).val();}).get();
-                return valueArray[valueArray.length-1];
+                return $elem.val().sort().join(",");
             case "bool":
                 return $elem.prop("checked");
         }
         return $elem.val();
     }
+
     static setValue(fieldContent, newValue) {
         if(newValue===undefined) return;
+
+        var $elem = fieldContent.$editor;
+        if($elem.length==0) {
+            $elem = fieldContent.$element;
+        }
+        var typeArray = fieldContent.type.split('|');
+        if(typeArray[0]=="multienum"){
+            var newValueArray = [];
+            for(var newValueSingle of newValue.split(',')){
+                if(newValueSingle[0]=='^'){ 
+                    newValueArray.push(newValueSingle.substring(1, newValueSingle.length-1));
+                }
+                else {
+                    newValueArray.push(newValueSingle);
+                }
+            }
+            newValue = newValueArray.sort().join(",");
+        }
 
         var oldValue = sticCVUtils.getValue(fieldContent);
         if(newValue!=oldValue) {
             // Set new value
-            var $elem = fieldContent.$editor;
-            if($elem.length==0) {
-                $elem = fieldContent.$element;
-            }
-            var typeArray = fieldContent.type.split('|');
             var customView = fieldContent.customView;
 
             switch (typeArray[0]) {
@@ -180,6 +211,9 @@ var sticCVUtils = class sticCVUtils {
                     break;
                 case "bool":
                     $elem.prop("checked", newValue);
+                    break;
+                case "multienum":
+                    $elem.val(newValue.split(","));
                     break;
                 default:
                     $elem.val(newValue);
@@ -233,6 +267,7 @@ var sticCVUtils = class sticCVUtils {
         }
 
         var oldReadonly = fieldContent.is_readonly();
+        debugger;
         if(readonly!=oldReadonly) {
             fieldContent.showEditor(!readonly);
             fieldContent.showReadOnlyLabel(readonly);

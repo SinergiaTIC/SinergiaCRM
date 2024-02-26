@@ -28,10 +28,13 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     constructor (customView, $fieldElement, fieldName) {
         super(customView, $fieldElement.children('[field="'+fieldName+'"]'));
 
+        this.fieldName = fieldName;
         this.type = this.$element.attr("type");
         
         if(this.type=="bool") {
             this.$editor = this.$element.find("[type='checkbox']:input");
+        } else if(this.type=="multienum"){
+            this.$editor = this.$element.find("select");
         } else {
             this.$editor = this.$element.find(":input");
         }
@@ -95,7 +98,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         if(this.type!="image" && this.type!="html") {
             if(show) {
                 if (this.$readonlyLabel.length==0) {
-                    this.$element.prepend('<p class="stic-ReadonlyInput"></p>');
+                    this.$element.prepend('<p class="stic-ReadonlyInput" style="display:none"></p>');
                     this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
                     // Update label when value is changed
                     var self = this;
@@ -132,6 +135,68 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     }
     change() {
         return sticCVUtils.change(this.$editor) || super.change();
+    }
+
+    checkCondition(condition) {
+        switch(condition.operator) {
+            case 'Equal_To':
+                return this.value()==condition.value;
+            case 'Not_Equal_To':
+                return this.value()!==condition.value;
+            case 'Greater_Than':
+                return this.value()>condition.value;
+            case 'Less_Than':
+                return this.value()<condition.value;
+            case 'Greater_Than_or_Equal_To':
+                return this.value()>=condition.value;
+            case 'Less_Than_or_Equal_To':
+                return this.value()<=condition.value;
+            case 'Contains':
+                if(this.type=="multienum"){
+                    var valueArray = this.value().split(',');
+                    var conditionValueArray = condition.value.split(',');
+                    for(var conditionValue of conditionValueArray){
+                        if(conditionValue[0]=='^'){ 
+                            conditionValue = conditionValue.substring(1, conditionValue.length-1);
+                        }
+                        if(!valueArray.includes(conditionValue)){
+                            return false;
+                       }
+                    }
+                    return true;
+                } else {
+                    return (this.value()??"").includes(condition.value);
+                }
+            case 'Not_Contains':
+                if(this.type=="multienum"){
+                    var valueArray = this.value().split(',');
+                    var conditionValueArray = condition.value.split(',');
+                    for(var conditionValue of conditionValueArray){
+                        if(conditionValue[0]=='^'){ 
+                            conditionValue = conditionValue.substring(1, conditionValue.length-1);
+                        }
+                        if(valueArray.includes(conditionValue)){
+                            return false;
+                       }
+                    }
+                    return true;
+                } else {
+                    return !(this.value()??"").includes(condition.value);
+                }
+            case 'Starts_With':
+                return (this.value()??"").startsWith(condition.value);
+            case 'Not_Starts_With':
+                return !(this.value()??"").startsWith(condition.value);
+            case 'Ends_With':
+                return (this.value()??"").endsWith(condition.value);
+            case 'Not_Ends_With':
+                return !(this.value()??"").endsWith(condition.value);
+            case 'is_null':
+                return (this.value()??"")=="";
+            case 'is_not_null':
+                return (this.value()??"")!="";
+        }
+        return false;
     }
 }
 

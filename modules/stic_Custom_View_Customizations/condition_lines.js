@@ -28,6 +28,7 @@ var condln = 0;
 var condln_count = 0;
 var condprefix = 'sticCustomView_Condition';
 var condId = condprefix+'Lines';
+var condValArray = [];
 
 function getConditionDeleteButton(ln, functionName) {
     var html = 
@@ -47,8 +48,8 @@ function insertConditionLinesHeader(){
     $('#'+condId).append(
       '<thead id="'+condId+'_head"><tr>' + 
         '<th style="width:70px;"></th>' + // Remove button
-        '<th>'+translateCondition('LBL_FIELD')+'</th>'+
-        '<th>'+translateCondition('LBL_OPERATOR')+'</th>'+
+        '<th style="width:25%;">'+translateCondition('LBL_FIELD')+'</th>'+
+        '<th style="width:25%;">'+translateCondition('LBL_OPERATOR')+'</th>'+
         '<th>'+translateCondition('LBL_VALUE')+'</th>'+
       '</thead>');
   }
@@ -109,15 +110,14 @@ function insertConditionLinesHeader(){
     var condition = JSON.parse(conditionString);
   
     ln = insertConditionLine();
+    if (condition['value'] instanceof Array) {
+      condition['value'] = JSON.stringify(condition['value']);
+    }
+    condValArray.push({line:ln, value:condition['value']});
     for(var a in condition) {
       $("#"+prefix+a+ln).val(condition[a]);
       $("#"+prefix+a+ln).change();
     }
-  
-    if (condition['value'] instanceof Array) {
-        condition['value'] = JSON.stringify(condition['value']);
-    }
-    getModuleFieldEditor(ln, condprefix, condition['value']);
   }
   
   function markConditionLineDeleted(ln){
@@ -167,7 +167,15 @@ function insertConditionLinesHeader(){
         // Value editor
         if($("#"+condprefix+'Cell'+'value'+ln).html()=="" || 
            $("#"+condprefix+'Cell'+'value'+ln).html()=="<p> - </p>") {
-            getModuleFieldEditor(ln, condprefix);
+            var condValue = undefined;
+            for(let i=0; i<condValArray.length; i++) {
+              if(condValArray[i].line==ln) {
+                condValue = condValArray[i].value;
+                condValArray.splice(i,1);
+                break;
+              }
+            }
+            getModuleFieldEditor(ln, condprefix, condValue);
         }
       }
     }

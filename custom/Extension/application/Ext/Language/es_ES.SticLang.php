@@ -3286,7 +3286,9 @@ $app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 
 $app_list_strings['stic_custom_views_operator_list']['Contains'] = 'Contiene';
 $app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'No contiene';
 $app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Comienza con';
+$app_list_strings['stic_custom_views_operator_list']['Not_Starts_With'] = 'No comienza con';
 $app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Finaliza con';
+$app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'No finaliza con';
 $app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Es nulo';
 $app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'No es nulo';
 

@@ -165,6 +165,10 @@ class stic_Custom_Views_ModuleView
                 // if(isset($arr['id_name'])) {
                 //     continue;
                 // }
+
+                if($arr['type']=="wysiwyg" || $arr['type']=="iframe") {
+                    continue;
+                }
     
                 if (isset($arr['vname']) && $arr['vname'] !== '') {
                     $this->allModuleFieldList[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');
@@ -202,11 +206,10 @@ class stic_Custom_Views_ModuleView
         global $app_list_strings;
     
         $validOps = array();
-        switch ($fieldType) {
+        switch (strtolower($fieldType)) {
             case 'double':
             case 'decimal':
             case 'float':
-            case 'currency':
             case 'uint':
             case 'ulong':
             case 'long':
@@ -219,11 +222,22 @@ class stic_Custom_Views_ModuleView
                 $validOps = array('Equal_To','Not_Equal_To','Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To','is_null', 'is_not_null');
                 break;
             case 'enum':
-            case 'multienum':
+            case 'relate':
+            case 'image':
+            case 'currency':
+            case 'currency_id':
+            case 'radioenum':
+            case 'colorpicker':
                 $validOps = array('Equal_To','Not_Equal_To','is_null','is_not_null');
                 break;
+            case 'bool':
+                $validOps = array('Equal_To','Not_Equal_To');
+                break;
+            case 'multienum':
+                $validOps = array('Equal_To','Not_Equal_To','Contains', 'Not_Contains','is_null','is_not_null');
+                break;
             default:
-                $validOps = array('Equal_To','Not_Equal_To','Contains', 'Not_Contains', 'Starts_With', 'Ends_With','is_null','is_not_null');
+                $validOps = array('Equal_To','Not_Equal_To','Contains', 'Not_Contains', 'Starts_With', 'Not_Starts_With', 'Ends_With', 'Not_Ends_With', 'is_null', 'is_not_null');
                 break;
         }
         $operatorList = array();

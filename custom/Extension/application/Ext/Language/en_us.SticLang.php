@@ -3283,9 +3283,11 @@ $app_list_strings['stic_custom_views_operator_list']['Less_Than'] = 'Less Than';
 $app_list_strings['stic_custom_views_operator_list']['Greater_Than_or_Equal_To'] = 'Greater Than or Equal To';
 $app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 'Less Than or Equal To';
 $app_list_strings['stic_custom_views_operator_list']['Contains'] = 'Contains';
-$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'No conté';
+$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'Not contains';
 $app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Starts With';
+$app_list_strings['stic_custom_views_operator_list']['Not_Starts_With'] = 'Not starts with';
 $app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Ends With';
+$app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'Not Ends With';
 $app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Is Null';
 $app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'No és nul';
 

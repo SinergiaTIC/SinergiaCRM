@@ -145,7 +145,7 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
      */
     undoChanges(){
         var undoCopy=[];
-        for(i=0; i<this.undoFunctions.length; i++) {
+        for(let i=0; i<this.undoFunctions.length; i++) {
             undoCopy[i]=this.undoFunctions[i];
         }
         this.undoFunctions=[];
@@ -172,7 +172,7 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
      */
     undoChangesAndProcessCustomizations() {
         this.undoChanges();
-        for(i=0; i<this.customizations.length; i++) {
+        for(let i=0; i<this.customizations.length; i++) {
             this.processCustomization(i, true);
         }
     }

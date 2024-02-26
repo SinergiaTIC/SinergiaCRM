@@ -45,6 +45,7 @@ class stic_Custom_View_CustomizationsLogicHooks
         foreach ($customizationBeanArray as $customizationBean) {
             if ($customizationBean->id != $bean->id && 
                 $customizationBean->init == $bean->init &&
+                $customizationBean->deleted == "0" &&
                 $customizationBean->customization_order == $bean->customization_order) {
                     $customizationBean->customization_order = $customizationBean->customization_order + 1;
                     $customizationBean->save();

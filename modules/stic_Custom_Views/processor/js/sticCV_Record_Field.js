@@ -56,33 +56,7 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
     }
     
     checkCondition(condition) {
-        switch(condition.operator) {
-            case 'Equal_To':
-                return this.value()==condition.value;
-            case 'Not_Equal_To':
-                return this.value()!==condition.value;
-            case 'Greater_Than':
-                return this.value()>condition.value;
-            case 'Less_Than':
-                return this.value()<condition.value;
-            case 'Greater_Than_or_Equal_To':
-                return this.value()>=condition.value;
-            case 'Less_Than_or_Equal_To':
-                return this.value()<=condition.value;
-            case 'Contains':
-                return (this.value()??"").includes(condition.value);
-            case 'Not_Contains':
-                return !(this.value()??"").includes(condition.value);
-            case 'Starts_With':
-                return (this.value()??"").startsWith(condition.value);
-            case 'Ends_With':
-                return (this.value()??"").endsWith(condition.value);
-            case 'is_null':
-                return (this.value()??"")=="";
-            case 'is_not_null':
-                return (this.value()??"")!="";
-        }
-        return false;
+        return this.content.checkCondition(condition);
     }
 
     onChange(callback) {
