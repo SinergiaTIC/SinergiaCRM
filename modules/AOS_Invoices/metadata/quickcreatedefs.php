@@ -47,7 +47,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 
 $module_name = 'AOS_Invoices';
-$_module_name = 'aos_invoices';
+$_object_name = 'aos_invoices';
 
 // STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/105
@@ -79,11 +79,11 @@ array(
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_INVOICE_TO' => array(
-                    'newTab' => true,
+                    'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_LINE_ITEMS' => array(
-                    'newTab' => true,
+                    'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
             ),
@@ -267,3 +267,4 @@ array(
         ),
     ),
 );
+// END STIC-Custom
