@@ -22,21 +22,39 @@
  */
 class stic_Time_TrackerLogicHooks
 {
+    public function manage_relationships(&$bean, $event, $arguments)
+    {
+        // Update the valor of the config variable stic_time_tracker_today_registration_started
+        if ($arguments['related_module'] == 'Users') {
+            switch ($event) {
+                case 'after_relationship_delete':
+                case 'after_relationship_add':
+                    if ($arguments['related_id']) {
+                        // Update the configuration of the stic_time_tracker_register_start
+                        stic_Time_Tracker::updateTodayRegisterStatusPreference($arguments['related_id']);                        
+                    }
+                    else {
+                        $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': ' . 'The related Contact Id is empty');
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     public function after_ui_frame($event, $arguments) 
     {
+        global $current_user, $sugar_config;
+        
         // Check if the user has started any time registration today
         $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking if time registration is active or not.');
-        require_once 'modules/Configurator/Configurator.php';
-        $configurator = new Configurator();        
-        
-
-
+       
         // Config JS variables 
         $html =
         "<script type=\"text/javascript\" language=\"JavaScript\">" .
-           "var todayRegistrationStarted = " . $configurator->config['stic_time_tracker_today_registration_started'] . "; " .
-           "var siteURL = '" . $configurator->config['site_url'] . "';" .
+           "var todayRegistrationStarted = " . $current_user->getPreference('stic_time_tracker_today_registration_started') . "; " .
+           "var siteURL = '" . $sugar_config['site_url'] . "';" .
         "</script>";
 
         echo $html;

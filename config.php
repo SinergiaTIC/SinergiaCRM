@@ -585,9 +585,4 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
     'stic_security_groups_rules_enabled' => false,
     // END STIC
-
-    // STIC Custom 20240222 MHP - 
-    'stic_time_tracker_today_registration_started' => 0,
-    // END STIC
-
 );

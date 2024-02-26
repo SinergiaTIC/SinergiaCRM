@@ -94,8 +94,30 @@ class stic_Time_Tracker extends Basic
         // Save the bean
         parent::save($check_notify);
 
-        // Update the configuration of the stic_time_tracker_register_start
-        stic_Time_Tracker::checkTodayRegisterStatus($this->users_stic_time_trackerusers_ida);
+        // check and update the user preference of the stic_time_tracker_register_start
+        stic_Time_Tracker::updateTodayRegisterStatusPreference($this->users_stic_time_trackerusers_ida);
+    }
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public static function updateTodayRegisterStatusPreference($idEmployee)
+    {
+        // Get the last today time tracket record of the current user
+        $todayUserRegistrationData = stic_Time_Tracker::getTodayRegisterForEmployee($idEmployee);
+        
+        // Check if today's last record has end date or not
+        $todayRegistrationStarted = !is_array($todayUserRegistrationData) ? 0: (empty($todayUserRegistrationData["end_date"]) ? 1 : 0);
+
+        // save status in preferences
+        $user = BeanFactory::getBean('Users', $idEmployee);
+        $user->setPreference('stic_time_tracker_today_registration_started', $todayRegistrationStarted);
+        $user->savePreferencesToDB();
+
+        global $current_user;
+        return $current_user->getPreference('stic_time_tracker_today_registration_started');
     }
 
     /**
@@ -105,41 +127,21 @@ class stic_Time_Tracker extends Basic
      */
     public static function getTodayRegisterForEmployee($idEmployee)
     {
-        global $db, $current_user;
+        global $db;
 
         $query = "SELECT st.* FROM `stic_time_tracker`  as st
                 JOIN users_stic_time_tracker_c as ust
                 ON st.id = ust.users_stic_time_trackerstic_time_tracker_idb
-                WHERE st.deleted = 0 AND st.start_date IS NOT NULL AND st.start_date <> ''
+                WHERE st.deleted = 0 
+                and ust.deleted = 0
+                AND st.start_date IS NOT NULL AND st.start_date <> ''
                 AND DATE(st.start_date) = DATE(NOW())
-                AND " . $idEmployee . " = " . $current_user->id . "
+                AND ust.users_stic_time_trackerusers_ida = '" . $idEmployee . "' 
                 ORDER BY st.start_date desc
                 LIMIT 1;";
-
 
         $result = $db->query($query);
         $todayUserRegistrationData = $db->fetchByAssoc($result);
         return $todayUserRegistrationData;
-    }
-
-
-    /**
-     * 
-     *
-     * @return void
-     */
-    public static function checkTodayRegisterStatus($idEmployee)
-    {
-        // Get the last today time tracket record of the current user
-        $todayUserRegistrationData = stic_Time_Tracker::getTodayRegisterForEmployee($idEmployee);
-        
-        // Check if today's last record has end date or not
-        $todayRegistrationStarted = empty($todayUserRegistrationData["end_date"]);
-        require_once 'modules/Configurator/Configurator.php';
-        $configurator = new Configurator();        
-        $configurator->config['stic_time_tracker_today_registration_started'] = $todayRegistrationStarted ? 1 : 0;
-        $configurator->saveConfig();
-
-        return $configurator->config['stic_time_tracker_today_registration_started'];
-    }
+    }    
 }
