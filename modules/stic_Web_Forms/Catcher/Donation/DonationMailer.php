@@ -325,7 +325,13 @@ class DonationMailer extends WebFormMailer
 
         // Get the Contact from the CRM
         include_once 'SticInclude/Utils.php';
-        $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_contacts');
+
+        // Get the form if there is a contact or an account
+        if($_REQUEST['web_module'] == 'Contacts') {
+            $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_contacts');
+        } elseif ($_REQUEST['web_module'] == 'Accounts') {
+            $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_accounts');
+        }
 
         // Build the array of objects to parse
         $replacementObjects = array();
