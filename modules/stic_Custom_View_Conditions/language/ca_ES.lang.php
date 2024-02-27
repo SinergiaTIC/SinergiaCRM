@@ -63,6 +63,7 @@ $mod_strings = array (
   'LBL_FIELD' => 'Camp',
   'LBL_OPERATOR' => 'Operador',
   'LBL_VALUE' => 'Valor',
+  'LBL_VALUE_TYPE' => 'Tipus del valor',
   
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
 );

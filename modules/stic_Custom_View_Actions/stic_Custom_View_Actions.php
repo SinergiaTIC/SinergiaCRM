@@ -49,6 +49,7 @@ class stic_Custom_View_Actions extends Basic
     public $panel;
     public $panel_change_type;
     public $value;
+    public $value_type;
 	
     public function bean_implements($interface)
     {

@@ -156,8 +156,7 @@ var sticCVUtils = class sticCVUtils {
         if($elem.length==0) {
             $elem = fieldContent.$element;
         }
-        var typeArray = fieldContent.type.split('|');
-        switch (typeArray[0]) {
+        switch (fieldContent.type) {
             case "radioenum":
                 var $radio = $elem.parent().find("[type='radio']:checked");
                 if($radio.length!=0) {
@@ -170,6 +169,10 @@ var sticCVUtils = class sticCVUtils {
                 return $elem.val().sort().join(",");
             case "bool":
                 return $elem.prop("checked");
+            case "datetimecombo":
+                return $elem.last().val();
+            case "relate":
+                return $elem.eq(1).val()+"|"+$elem.eq(0).val();
         }
         return $elem.val();
     }
@@ -181,8 +184,7 @@ var sticCVUtils = class sticCVUtils {
         if($elem.length==0) {
             $elem = fieldContent.$element;
         }
-        var typeArray = fieldContent.type.split('|');
-        if(typeArray[0]=="multienum"){
+        if(fieldContent.type=="multienum"){
             var newValueArray = [];
             for(var newValueSingle of newValue.split(',')){
                 if(newValueSingle[0]=='^'){ 
@@ -200,7 +202,7 @@ var sticCVUtils = class sticCVUtils {
             // Set new value
             var customView = fieldContent.customView;
 
-            switch (typeArray[0]) {
+            switch (fieldContent.type) {
                 case "radioenum":
                     var $radio = $elem.parent().parent().find("[type='radio'][value='"+newValue+"']");
                     if($radio.length!=0) {
@@ -214,6 +216,19 @@ var sticCVUtils = class sticCVUtils {
                     break;
                 case "multienum":
                     $elem.val(newValue.split(","));
+                    break;
+                case "datetimecombo":
+                    var dateTimeArray = newValue.split(" ");
+                    $elem.eq(0).val(dateTimeArray[0]);
+                    var timeArray = dateTimeArray[1].split(":");
+                    $elem.eq(1).val(timeArray[0]);
+                    $elem.eq(2).val(timeArray[1]);
+                    $elem.eq(3).val(newValue);
+                    break;
+                case "relate":
+                    var idNameArray = newValue.split('|');
+                    $elem.eq(0).val(idNameArray[1]);
+                    $elem.eq(1).val(idNameArray[0]);
                     break;
                 default:
                     $elem.val(newValue);
@@ -267,7 +282,6 @@ var sticCVUtils = class sticCVUtils {
         }
 
         var oldReadonly = fieldContent.is_readonly();
-        debugger;
         if(readonly!=oldReadonly) {
             fieldContent.showEditor(!readonly);
             fieldContent.showReadOnlyLabel(readonly);
@@ -312,6 +326,7 @@ var sticCVUtils = class sticCVUtils {
     static onChange($elem, callback) {
         $elem.each(function(){
             $(this).on("change paste keyup", callback);
+            YAHOO.util.Event.on($(this)[0], 'change', callback);
         });
         return true;
     }

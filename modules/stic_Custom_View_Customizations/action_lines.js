@@ -198,12 +198,18 @@ function onActionElementChanged(ln) {
     $("#"+actprefix+'Cell'+'value'+ln).html("");
     $("#"+actprefix+'Cell'+'element_section'+ln).html("");
   } else {
+    var value_type="";
+    if(type=='field_modification') {
+      value_type = view_field_map[element].type;
+    }
     // Create next selector
     // Action selector
     $("#"+actprefix+'Cell'+'action'+ln).html(
       "<select type='text' name='"+actprefix+"action["+ln+"]' id='"+actprefix+"action"+ln+"'>"+
         view_module_action_map.actionTypes[type].actions.options+
-      "</select>");
+      "</select>"+
+      "<input type='hidden' name='"+actprefix+"value_type["+ln+"]' id='"+actprefix+"value_type"+ln+"' value='"+value_type+"'>"
+      );
 
     $("#"+actprefix+'action'+ln).on("change", function(){onActionChanged(ln);});
     $("#"+actprefix+'action'+ln).val(null);

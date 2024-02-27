@@ -63,6 +63,7 @@ $mod_strings = array (
   'LBL_FIELD' => 'Field',
   'LBL_OPERATOR' => 'Operator',
   'LBL_VALUE' => 'Value',
+  'LBL_VALUE_TYPE' => 'Value type',
 
   'LBL_DETAILVIEW_PANEL1' => 'Record details',
 );

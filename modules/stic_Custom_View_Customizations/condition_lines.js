@@ -144,7 +144,9 @@ function insertConditionLinesHeader(){
       $("#"+condprefix+'Cell'+'operator'+ln).html(
         "<select type='text' name='"+condprefix+"operator["+ln+"]' id='"+condprefix+"operator"+ln+"'>"+
           view_field_map[field].condition_operators.options+
-        "</select>");
+        "</select>"+
+        "<input type='hidden' name='"+condprefix+"value_type["+ln+"]' id='"+condprefix+"value_type"+ln+"' value='"+view_field_map[field].type+"'>"
+        );
   
       $("#"+condprefix+'operator'+ln).on("change", function(){onConditionOperatorChanged(ln);});
       $("#"+condprefix+'operator'+ln).val(null);

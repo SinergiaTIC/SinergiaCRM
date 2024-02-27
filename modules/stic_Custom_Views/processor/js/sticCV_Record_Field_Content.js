@@ -31,13 +31,22 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         this.fieldName = fieldName;
         this.type = this.$element.attr("type");
         
-        if(this.type=="bool") {
-            this.$editor = this.$element.find("[type='checkbox']:input");
-        } else if(this.type=="multienum"){
-            this.$editor = this.$element.find("select");
-        } else {
-            this.$editor = this.$element.find(":input");
+        switch(this.type) {
+            case "bool":
+                this.$editor = this.$element.find("[type='checkbox']:input");
+                break;
+            case "enum":
+            case "multienum":
+                this.$editor = this.$element.find("select");
+                break;
+            case "datetimecombo":
+                this.$editor = this.$element.find("input,select");
+                break;
+            default:
+                this.$editor = this.$element.find("input");
+                break;
         }
+        this.$buttons = this.$element.find("button");
         this.$items = this.$element.find(".items");
         this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
     }
@@ -140,9 +149,17 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     checkCondition(condition) {
         switch(condition.operator) {
             case 'Equal_To':
-                return this.value()==condition.value;
+                if(this.type=="relate"){
+                    return this.value().split('|')[0]==condition.value.split('|')[0];
+                } else {
+                    return this.value()==condition.value;
+                }
             case 'Not_Equal_To':
-                return this.value()!==condition.value;
+                if(this.type=="relate"){
+                    return this.value().split('|')[0]!=condition.value.split('|')[0];
+                } else {
+                    return this.value()!=condition.value;
+                }
             case 'Greater_Than':
                 return this.value()>condition.value;
             case 'Less_Than':
@@ -192,9 +209,9 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
             case 'Not_Ends_With':
                 return !(this.value()??"").endsWith(condition.value);
             case 'is_null':
-                return (this.value()??"")=="";
+                return (this.value()??"").split('|')[0]=="";
             case 'is_not_null':
-                return (this.value()??"")!="";
+                return (this.value()??"").split('|')[0]!="";
         }
         return false;
     }

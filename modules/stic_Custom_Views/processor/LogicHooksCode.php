@@ -136,12 +136,15 @@ class stic_Custom_Views_ProcessorLogicHooks
 
                 $conditions = array();
                 foreach ($conditionBeanArray as $conditionBean) {
+                    $value_type = $conditionBean->value_type;
+                    $value = $this->value_to_display($conditionBean->value, $value_type);
                     $conditions[] = array(
                         "condition_order" => $conditionBean->condition_order,
                         "field" => $conditionBean->field,
                         "operator" => $conditionBean->operator,
                         //"value" => $conditionBean->value,
-                        "value" => htmlspecialchars_decode($conditionBean->value),
+                        "value" => htmlspecialchars_decode($value),
+                        "value_type" => $value_type,
                     );
                 }
                 // Sort conditions
@@ -149,14 +152,16 @@ class stic_Custom_Views_ProcessorLogicHooks
         
                 $actions = array();
                 foreach ($actionsBeanArray as $actionBean) {
+                    $value_type = $actionBean->value_type;
+                    $value = $this->value_to_display($actionBean->value, $value_type);
                     $actions[] = array(
                         "action_order" => $actionBean->action_order,
                         "type" => $actionBean->type,
                         "element" => $actionBean->element,
                         "action" => $actionBean->action,
                         //"value" => $actionBean->value,
-                        "value" => htmlspecialchars_decode($actionBean->value),
-                        "value_type" => $actionBean->value_type,
+                        "value" => htmlspecialchars_decode($value),
+                        "value_type" => $value_type,
                         "element_section" => $actionBean->element_section,
                     );
                 }
@@ -181,6 +186,17 @@ class stic_Custom_Views_ProcessorLogicHooks
 
         echo $html;
         return "";
+    }
+
+    private function value_to_display($value, $value_type){
+        global $timedate, $current_user;
+
+        switch($value_type){
+            case "date":
+            case "datetimecombo":
+                return $timedate->to_display_date_time($value, true, false, $current_user);
+        }
+        return $value;
     }
 
     private function string_contains_any($str, array $arr){

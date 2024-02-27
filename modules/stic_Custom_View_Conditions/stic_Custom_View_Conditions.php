@@ -47,6 +47,8 @@ class stic_Custom_View_Conditions extends Basic
     public $operator;
     public $condition_type;
     public $value;
+    public $value_type;
+
 	
     public function bean_implements($interface)
     {
