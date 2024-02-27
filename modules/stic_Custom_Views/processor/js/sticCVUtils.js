@@ -158,6 +158,13 @@ var sticCVUtils = class sticCVUtils {
     static getValue(fieldContent) {
         var $elem = fieldContent.$editor;
         if($elem.length==0) {
+            if(fieldContent.customView.view == "detailview") { 
+                if(fieldContent.type=="relate"){
+                    return fieldContent.$fieldText.attr("data-id-value")+"|"+fieldContent.$fieldText.text().trim();
+                } else {
+                    return fieldContent.$fieldText.text().trim();
+                }
+            }
             $elem = fieldContent.$element;
         }
         switch (fieldContent.type) {
@@ -183,6 +190,7 @@ var sticCVUtils = class sticCVUtils {
 
     static setValue(fieldContent, newValue) {
         if(newValue===undefined) return;
+        if(fieldContent.customView.view == "detailview") return;
 
         var $elem = fieldContent.$editor;
         if($elem.length==0) {
