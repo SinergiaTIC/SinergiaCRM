@@ -1,4 +1,7 @@
 <?php
+
+use Symfony\Component\Validator\Constraints\Length;
+
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -168,8 +171,10 @@ class stic_Custom_Views_ProcessorLogicHooks
                 // Sort actions
                 usort($actions, array($this, 'compareActions'));
 
-                // Add Customization
-                $customizations[] = array("conditions" => $conditions, "actions" => $actions);
+                if(count($actions)>0) {
+                    // Add Customization
+                    $customizations[] = array("conditions" => $conditions, "actions" => $actions);
+                }
             }
         }
 

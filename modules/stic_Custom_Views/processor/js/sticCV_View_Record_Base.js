@@ -77,6 +77,7 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
      *  ]
      */
     processSticCustomView(jsonRules) {
+        console.log("sticCustomView - Processing rules: " + jsonRules);
         this.customizations = [];
         var customizationsObject = JSON.parse(jsonRules);
         if(Array.isArray(customizationsObject) && customizationsObject.length) {
@@ -144,6 +145,7 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
      * Undo all registered changes and clear undo list
      */
     undoChanges(){
+        console.log("sticCustomView - Undoing customizations");
         var undoCopy=[];
         for(let i=0; i<this.undoFunctions.length; i++) {
             undoCopy[i]=this.undoFunctions[i];
@@ -192,13 +194,18 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
         }
 
         if(value) {
-            if(Array.isArray(customization.actions) && customization.actions.length) {
-                var self = this;
-                customization.actions.forEach(action => self.applyAction(action));
+            if(!customization.lastResult) {
+                console.log("sticCustomView - Conditions OK: " + JSON.stringify(customization.conditions));
+                console.log("sticCustomView - Applying actions: " + JSON.stringify(customization.actions));
+                if(Array.isArray(customization.actions) && customization.actions.length) {
+                    var self = this;
+                    customization.actions.forEach(action => self.applyAction(action));
+                }
             }
         }
         else {
             if(customization.lastResult) {
+                console.log("sticCustomView - Conditions KO: " + JSON.stringify(customization.conditions));
                 // Last evaluation pass all conditions: undo actions
                 this.undoChangesAndProcessCustomizations();
             }
