@@ -282,9 +282,9 @@ class ExternalReporting
                 // We reset certain variables to avoid errors
                 unset($fieldSrc, $relatedModuleName, $secureName, $edaAggregations, $sdaHiddenField, $excludeColumnFromMetadada);
 
-                // To avoid exceptional cases where the table name is defined in uppercase 
+                // To avoid exceptional cases where the table name is defined in uppercase
                 // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
-                $fieldV['table']= strtolower($fieldV['table']);
+                $fieldV['table'] = strtolower($fieldV['table']);
 
                 $fieldName = $fieldV['name'];
 
@@ -385,11 +385,12 @@ class ExternalReporting
 
                             if (isset($fieldV['link']) && !empty($fieldV['link']) && $fieldV['name'] != 'assigned_user_name') {
 
-                                //*********************** */
-                                // Es una relación 1:n normal,
+                                // It's a standard 1:n relationship
+
+                                // Skip self-referencing relationships in a module to avoid redundancy.
+                                // Specifically, excludes standard relationships like "Reports to" in Users and Contacts modules.
                                 if ($fieldV['module'] == $moduleName) {
-                                    // The standar relationships between the same module are directly excluded, because they cannot be represented in EDA
-                                    continue 2;
+                                    continue 2; // Jump to next iteration of the outer loop.
                                 }
 
                                 $res = $this->createRelateLeftJoin($fieldV, $tableName);
@@ -608,8 +609,8 @@ class ExternalReporting
                         break;
 
                     default:
-                    $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";    
-                    $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
+                        $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";
+                        $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
                         $this->info .= print_r($fieldV, true);
 
                         break;
@@ -997,7 +998,7 @@ class ExternalReporting
 
     private function createRelateLeftJoin($field, $tableName)
     {
-                $db = DBManagerFactory::getInstance();
+        $db = DBManagerFactory::getInstance();
 
         // **Retrieve relationship information:**
         $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
