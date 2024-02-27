@@ -29,18 +29,22 @@ var sticCVUtils = class sticCVUtils {
     static show($elem, customView=null, show=true) {
         show=(show===true||show==="1"||show===1);
         $elem.each(function(){
+            var oldDisplay = $(this).css('display');
+            if(oldDisplay==undefined) {
+                oldDisplay = "";
+            }
             var visible = ($(this).css('display') != 'none');
             if(show) {
                 if(!visible) {
                     var $self=$(this);
-                    $(this).css('display','block');
+                    $(this).css('display','');
                     customView?.addUndoFunction(function() { $self.css('display','none'); });
                 }
             } else {
                 if(visible) {
                     var $self=$(this);
                     $(this).css('display','none');
-                    customView?.addUndoFunction(function() { $self.css('display','block'); });
+                    customView?.addUndoFunction(function() { $self.css('display', oldDisplay); });
                 }
             }
         });

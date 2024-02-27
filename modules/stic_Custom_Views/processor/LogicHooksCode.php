@@ -194,10 +194,21 @@ class stic_Custom_Views_ProcessorLogicHooks
     }
 
     private function value_to_display($value, $value_type){
-        global $timedate, $current_user;
+        global $timedate, $current_user, $sugar_config;
 
-        switch($value_type){
+        switch($value_type) {
+            case "currency":
+                return currency_format_number($value);
+
+            case 'double':
+            case 'decimal':
+            case 'float':
+                $user_dec_sep = (!empty($current_user->id) ? $current_user->getPreference('dec_sep') : null);
+                $dec_sep = empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep;
+                return str_replace('.', $dec_sep, $value);
+                
             case "date":
+            case "datetime":
             case "datetimecombo":
                 return $timedate->to_display_date_time($value, true, false, $current_user);
         }

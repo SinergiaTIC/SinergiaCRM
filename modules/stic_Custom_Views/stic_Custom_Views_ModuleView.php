@@ -160,13 +160,8 @@ class stic_Custom_Views_ModuleView
                         ($arr['type'] !== 'relate' || !isset($arr['id_name'])))) {
                     continue;
                 }
-                //IEPA!!
-                // // De moment s'ignoren els relacionats.
-                // if(isset($arr['id_name'])) {
-                //     continue;
-                // }
 
-                if($arr['type']=="wysiwyg" || $arr['type']=="iframe") {
+                if($arr['type']=="wysiwyg" || $arr['type']=="iframe" || $arr['type']=="image" || $arr['type']=="parent") {
                     continue;
                 }
     
