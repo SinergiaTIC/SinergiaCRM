@@ -321,6 +321,7 @@ class DonationController extends stic_Web_FormsAssistantController {
             '' => $optionList[''],
             'direct_debit' => $optionList['direct_debit'],
             'card' => $optionList['card'],
+            'card_ceca' => $optionList['card_ceca'],
             'transfer_received' => $optionList['transfer_received'],
             'paypal' => $optionList['paypal'],
             'bizum' => $optionList['bizum'],
