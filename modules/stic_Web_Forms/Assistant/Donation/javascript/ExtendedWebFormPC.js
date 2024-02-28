@@ -82,7 +82,7 @@ function adaptPaymentMethod() {
 
   // If the payment method has changed to card or bizum, check the periodicity
   if (((vPaymentMethod == "card" && allowCardRecurringPayments == 0)
-  if (((vPaymentMethod == "card_ceca" && allowCardRecurringPayments == 0)
+    || (vPaymentMethod == "card_ceca" && allowPaypalRecurringPayments == 0)
     || (vPaymentMethod == "paypal" && allowPaypalRecurringPayments == 0)
     || (vPaymentMethod == "stripe" && allowStripeRecurringPayments == 0)
     || vPaymentMethod == "bizum")
