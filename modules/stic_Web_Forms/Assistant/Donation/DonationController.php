@@ -26,13 +26,15 @@ require_once "modules/stic_Web_Forms/Assistant/AssistantController.php";
 /**
  * Controller of the donations form creation wizard
  */
-class DonationController extends stic_Web_FormsAssistantController {
+class DonationController extends stic_Web_FormsAssistantController
+{
     protected $availableModules = array('Contacts', 'Accounts'); // Available modules
 
     /**
      * First action controller: initial form parameters
      */
-    public function actionStep1() {
+    public function actionStep1()
+    {
         $this->createModulesArray();
         $this->view = 'Donationstep1';
         $this->view_object_map['WEB_MODULE'] = $this->persistentData['WEB_MODULE']; // Retrieve the value saved in previous steps
@@ -48,7 +50,8 @@ class DonationController extends stic_Web_FormsAssistantController {
     /**
      * Second step controller: choice of person fields
      */
-    public function actionStep2() {
+    public function actionStep2()
+    {
         if ($this->prev_step = 'step1') {
             $this->saveRequestParams(array('web_module' => 'WEB_MODULE'));
             $this->persistentData['include_recaptcha'] = isset($this->include_recaptcha) ? $this->include_recaptcha : '';
@@ -96,7 +99,8 @@ class DonationController extends stic_Web_FormsAssistantController {
      * Third step controller: form parameters
      * NOTE: it could be unified with the first step, but it is left like this for consistency in usability with the rest of the forms
      */
-    public function actionStep3() {
+    public function actionStep3()
+    {
         global $app_list_strings;
 
         // Generate the default shipping url
@@ -151,7 +155,8 @@ class DonationController extends stic_Web_FormsAssistantController {
     /**
      * Sixth step controller: formatting the form
      */
-    public function actionStepFormat() {
+    public function actionStepFormat()
+    {
         global $current_language;
 
         $this->saveRequestParams(array(
@@ -302,7 +307,8 @@ class DonationController extends stic_Web_FormsAssistantController {
     /**
      * Loading the view to downloading the form
      */
-    public function actionStepDownload() {
+    public function actionStepDownload()
+    {
         parent::actionStepDownload();
         // Save the form submission url
         $this->view_object_map['FORM']['URL'] = $this->persistentData['FORM_WEB_POST_URL'];
@@ -313,7 +319,8 @@ class DonationController extends stic_Web_FormsAssistantController {
     /**
      * Include the payment method fields in the array of selected fields
      */
-    public function includePCFields() {
+    public function includePCFields()
+    {
         global $app_list_strings;
         $bean = BeanFactory::getBean('stic_Payment_Commitments');
         $optionList = $app_list_strings[$bean->field_defs['payment_method']['options']];
@@ -330,8 +337,8 @@ class DonationController extends stic_Web_FormsAssistantController {
 
         // Add payment method for alternative TPV if exist
         foreach ($optionList as $key => $value) {
-            if (substr($key, 0, 5) == 'card_' || substr($key, 0, 6) == 'bizum_') {
-                $restrictedOptionList[$key]=$optionList[$key];
+            if (substr($key, 0, 5) == 'card_' || substr($key, 0, 10) == 'ceca_card_' || substr($key, 0, 6) == 'bizum_') {
+                $restrictedOptionList[$key] = $optionList[$key];
             }
         }
 
@@ -364,19 +371,20 @@ class DonationController extends stic_Web_FormsAssistantController {
      * Returns an array with the mandatory parameters depending on the selected destination module
      * @return Array
      */
-    protected function getRequiredFields() {
+    protected function getRequiredFields()
+    {
         $requiredFields = array();
         $requiredFields['email1'] = true;
 
         // Forces as mandatory the CIF or NIF field (and the name) depending on the destination module
         switch ($this->persistentData['WEB_MODULE']) {
-        case 'Contacts':
-            $requiredFields['stic_identification_number_c'] = true;
-            $requiredFields['first_name'] = true;
-            break;
-        case 'Accounts':
-            $requiredFields['stic_identification_number_c'] = true;
-            break;
+            case 'Contacts':
+                $requiredFields['stic_identification_number_c'] = true;
+                $requiredFields['first_name'] = true;
+                break;
+            case 'Accounts':
+                $requiredFields['stic_identification_number_c'] = true;
+                break;
         }
         return $requiredFields;
     }
@@ -384,7 +392,8 @@ class DonationController extends stic_Web_FormsAssistantController {
     /**
      * Create the list of available modules with the corresponding label
      */
-    protected function createModulesArray() {
+    protected function createModulesArray()
+    {
         global $app_list_strings;
         $this->view_object_map['MODULES'] = array();
         foreach ($this->availableModules as $module) {

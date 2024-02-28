@@ -26,11 +26,13 @@ require_once "modules/stic_Web_Forms/Assistant/AssistantController.php";
 /**
  * Controller of the event registration form creation wizard
  */
-class EventInscriptionController extends stic_Web_FormsAssistantController {
+class EventInscriptionController extends stic_Web_FormsAssistantController
+{
     /**
      * First action controller: initial form parameters
      */
-    public function actionStep1() {
+    public function actionStep1()
+    {
         $this->view = 'Eventinscriptionstep1';
         $this->mapStepNavigation('step1', 'step2');
 
@@ -44,7 +46,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Ensures consistency of selected saved fields
      */
-    public function ensureSelectedFields($modules) {
+    public function ensureSelectedFields($modules)
+    {
         $availableModules = array('Contacts');
         if ($this->persistentData['include_organization']) {
             $availableModules[] = 'Accounts';
@@ -59,7 +62,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Second step controller: choice of person fields
      */
-    public function actionStep2() {
+    public function actionStep2()
+    {
         if ($this->prev_step == 'step1') {
             $this->persistentData['include_payment_commitment'] = isset($this->include_payment_commitment) ? $this->include_payment_commitment : '';
             $this->persistentData['include_organization'] = isset($this->include_organization) ? $this->include_organization : '';
@@ -113,7 +117,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Third step controller (optional): choice of organization fields
      */
-    public function actionStep3() {
+    public function actionStep3()
+    {
         if ($this->prev_step = 'step5') // If we come from step 5 (option back) save the parameters of the step
         {
             $this->saveRequestParams(array(
@@ -159,7 +164,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Fourth step controller: choice of registration fields
      */
-    public function actionStep4() {
+    public function actionStep4()
+    {
         // If we come from step 5 (option back) save the parameters of the step
         if ($this->prev_step = 'step5') {
             $this->saveRequestParams(array(
@@ -201,7 +207,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
      * 5th step controller: form parameters
      * NOTE: It could be unified with the first step, but it is left like this for consistency in usability with the rest of the forms
      */
-    public function actionStep5() {
+    public function actionStep5()
+    {
         global $app_list_strings;
 
         // Generate the default shipping url
@@ -253,7 +260,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Sixth step controller: formatting the form
      */
-    public function actionStepFormat() {
+    public function actionStepFormat()
+    {
         global $current_language;
 
         $this->saveRequestParams(array(
@@ -418,7 +426,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Loading the view to downloading the form
      */
-    public function actionStepDownload() {
+    public function actionStepDownload()
+    {
         parent::actionStepDownload();
         // Save the form submission url
         $this->view_object_map['FORM']['URL'] = $this->persistentData['FORM_WEB_POST_URL'];
@@ -429,7 +438,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Include the payment method fields in the array of selected fields
      */
-    public function includePCFields() {
+    public function includePCFields()
+    {
         if ($this->persistentData['include_payment_commitment']) {
             global $app_list_strings;
             $bean = BeanFactory::getBean('stic_Payment_Commitments');
@@ -447,7 +457,7 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
 
             // Add payment method for alternative TPV if exist
             foreach ($optionList as $key => $value) {
-                if (substr($key, 0, 5) == 'card_' || substr($key, 0, 6) == 'bizum_') {
+                if (substr($key, 0, 5) == 'card_' || substr($key, 0, 10) == 'ceca_card_' || substr($key, 0, 6) == 'bizum_') {
                     $restrictedOptionList[$key] = $optionList[$key];
                 }
             }
@@ -484,7 +494,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
     /**
      * Indicates whether the amount field will be fixed or can be included by the user
      */
-    protected function isFixedAmount() {
+    protected function isFixedAmount()
+    {
         return !empty($this->persistentData['FORM_AMOUNT']);
     }
 }

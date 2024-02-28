@@ -185,7 +185,7 @@ class PaymentBO extends WebFormDataBO
         // 1) In recurring card payments, first payment date can't be in the past
         // 2) In single card payments and in PayPal, first payment date must be today
         // If prior conditions are not verified, then set first payment date to current date
-        $paymentMethodIsCard = $fp->payment_method == 'card' || substr($fp->payment_method, 0, 5) == 'card_' ? true : false;
+        $paymentMethodIsCard = $fp->payment_method == 'ceca_card' || substr($fp->payment_method, 0, 10) == 'ceca_card_' || $fp->payment_method == 'card' || substr($fp->payment_method, 0, 5) == 'card_' ? true : false;
         if (
             ( $paymentMethodIsCard == true && $fp->first_payment_date < date('Y-m-d'))
             || ( $paymentMethodIsCard == true && $fp->first_payment_date != date('Y-m-d') && $fp->periodicity == 'punctual')

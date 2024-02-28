@@ -27,7 +27,8 @@ require_once __DIR__ . '/../../WebFormDataController.php';
 /**
  * Class that controls the flow for donation forms
  */
-class PaymentController extends WebFormDataController {
+class PaymentController extends WebFormDataController
+{
     const RESPONSE_TYPE_NEW_PAYMENT = '';
     const RESPONSE_TYPE_TPV_RESPONSE = 'TPV_RESPONSE';
     const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_RESPONSE';
@@ -39,7 +40,8 @@ class PaymentController extends WebFormDataController {
     /**
      * Controller Builder
      */
-    public function __construct($version = 1) {
+    public function __construct($version = 1)
+    {
         parent::__construct();
         $this->bo = new PaymentBO();
         $this->version = $version;
@@ -57,7 +59,8 @@ class PaymentController extends WebFormDataController {
      * - checkParams
      * @return Array an array of response type
      */
-    protected function doAction() {
+    protected function doAction()
+    {
         $response = null;
         $actionType = $this->bo->getParam('type');
         switch ($actionType) {
@@ -94,7 +97,8 @@ class PaymentController extends WebFormDataController {
      * Parent method overload
      * Retrieve form definition parameter and populate with it the defParams array
      */
-    protected function getDefParams() {
+    protected function getDefParams()
+    {
         if ($this->version == 1) {
             $defParams = $this->filterFields($this->bo->getDefFields());
         } else {
@@ -115,7 +119,8 @@ class PaymentController extends WebFormDataController {
      * Parent method overload
      * Retrieve form definition parameter and populate with it the formParams array
      */
-    protected function getParams() {
+    protected function getParams()
+    {
         if ($this->version == 1) {
             $this->bo->setFormParams($this->filterFields($this->bo->getFormFields()));
         } else {
@@ -128,7 +133,8 @@ class PaymentController extends WebFormDataController {
      * Manage the action of a new payment.
      * If it is a payment with a card indicates the next step
      */
-    private function actionNewPayment() {
+    private function actionNewPayment()
+    {
         /**
          * 1. Create the payment commitment
          * 2. If it is a payment by card or with Paypal, it generates an order number, and indicates the first step of this type of payment
@@ -145,8 +151,13 @@ class PaymentController extends WebFormDataController {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": A direct debit payment has been created.");
             $response = $this->createResponse(self::RESPONSE_STATUS_OK, self::RESPONSE_TYPE_TXT, $this->getMsgString('LBL_THANKS_FOR_DONATION'));
         } else if ($payment->payment_method == 'card' || $payment->payment_method == 'bizum' || substr($payment->payment_method, 0, 5) == 'card_' || substr($payment->payment_method, 0, 6) == 'bizum_') {
+            // TVP REDSYS
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": A {$payment->payment_method} payment has begun.");
             $response = $this->redsysPrepareFirstStep($payment);
+        } else if ($payment->payment_method == 'ceca_card' || substr($payment->payment_method, 0, 10) == 'ceca_card_') {
+            // TVP CECA
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": A {$payment->payment_method} payment has begun.");
+            $response = $this->cecaPrepareFirstStep($payment);
 
         } else if ($payment->payment_method == 'paypal') {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": A paypal payment has been initiated.");
@@ -164,7 +175,8 @@ class PaymentController extends WebFormDataController {
     /**
      * Process the POS response
      */
-    private function actionTPVResponse() {
+    private function actionTPVResponse()
+    {
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing request ...");
 
         // The bookstore is included
@@ -234,7 +246,8 @@ class PaymentController extends WebFormDataController {
      * Generate the answer for the first step in redsys payment methods (card or bizum)
      * Returns the Response generated to initiate redsys payment methods
      */
-    private function redsysPrepareFirstStep($payment) {
+    private function redsysPrepareFirstStep($payment)
+    {
 
         // The library is included
         require_once __DIR__ . '/lib/ApiRedsys.php';
@@ -266,7 +279,121 @@ class PaymentController extends WebFormDataController {
         );
 
         // Specific config for bizum payments
-        if ($payment->payment_method == 'bizum'  || substr($payment->payment_method, 0, 6) == 'bizum_') {
+        if ($payment->payment_method == 'bizum' || substr($payment->payment_method, 0, 6) == 'bizum_') {
+            $tpvSys->setParameter('DS_MERCHANT_PAYMETHODS', 'z');
+        }
+
+        foreach ($requiredConsts as $key => $value) {
+            if (!array_key_exists($key, $settings)) {
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The constant {$key} missing or empty.");
+                $this->returnCode('UNEXPECTED_ERROR');
+                return $this->feedBackError($this);
+            } else {
+                // If the parameter exists it adds it to the parameters
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$key} = {$settings[$key]}.");
+                $tpvSys->setParameter($value, $settings[$key]);
+            }
+        }
+
+        // The amount must go without decimals and expressed in cents
+        $amount = $payment->amount * 100;
+
+        $PCBean = $this->bo->getLastPC();
+
+        // The order number must have between 4 and 12 characters, fill with 0 on the left in case there are missing positions.
+        $id = str_pad($payment->transaction_code, 12, '0', STR_PAD_LEFT);
+
+        // Specific config for recurring card payments
+        if (($payment->payment_method == 'card' || substr($payment->payment_method, 0, 5) == 'card_') && $PCBean->periodicity != 'punctual') {
+            $tpvSys->setParameter('DS_MERCHANT_IDENTIFIER', 'REQUIRED');
+            $tpvSys->setParameter("DS_MERCHANT_COF_INI", "S");
+            $tpvSys->setParameter("DS_MERCHANT_COF_TYPE", "R");
+
+            // If the first payment date is today, the operation is processed as a payment with the amount indicated in the form,
+            // if it is a future date, the amount is 0
+            if ($PCBean->first_payment_date > date('Y-m-d')) {
+                $amount = 0;
+
+                // If it is an initial authorization for a later payment, we add the suffix "-AUT" after "transaction_code"
+                // to use in  DS_MERCHANT_ORDER, and prevent this value from repeating when executing the first recurring payment and
+                // avoid error 9051 ("Error número de pedido repetido")
+                $id = str_pad($payment->transaction_code . '-AUT', 12, '0', STR_PAD_LEFT);
+            }
+        }
+
+        $koURL = $this->bo->getKOURL();
+        $okURL = $this->bo->getOKURL();
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding non-constant parameters [{$amount}] [{$id}] [{$payment->transaction_code}] [{$okURL}] [{$koURL}] ...");
+
+        $tpvSys->setParameter("DS_MERCHANT_AMOUNT", $amount);
+
+        // Add the non-dependent fields of the settings
+        $tpvSys->setParameter("DS_MERCHANT_ORDER", $id);
+        $tpvSys->setParameter("DS_MERCHANT_URLKO", $koURL);
+        $tpvSys->setParameter("DS_MERCHANT_URLOK", $okURL);
+        $tpvSys->setParameter("DS_MERCHANT_CONSUMERLANGUAGE", PaymentBO::getTPVLanguage($this->getLanguage()));
+
+        // Configuration data
+        $version = $settings["TPV_VERSION"];
+        $kc = $settings["TPV_PASSWORD"];
+        $url = $settings["TPV_SERVER_URL"];
+
+        // The request parameters are generated
+        $params = $tpvSys->createMerchantParameters();
+        $signature = $tpvSys->createMerchantSignature($kc);
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Parameters [{$params}] signature [{$signature}] URL {$url}...");
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving template...");
+        $xtpl = self::getNewTemplate(__DIR__ . '/tpls/TPVFirstStep.html');
+        $xtpl->assign('SIG_VERSION', $version);
+        $xtpl->assign('SIGNATURE', $signature);
+        $xtpl->assign('PARAMS', $params);
+        $xtpl->assign('SERVER_URL', $url);
+        $xtpl->assign('LANG', $this->getLanguage());
+        $xtpl->assign('LOADING_MESSAGE', $this->getMsgString('LBL_TPV_LOADING_MESSAGE'));
+        $xtpl->parse('main');
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Returning answer...");
+
+        return $this->createResponse(self::RESPONSE_STATUS_PENDING, self::RESPONSE_TYPE_TEMPLATE, $xtpl);
+    }
+    /**
+     * Generate the answer for the first step in CECA payment methods (ceca_card. NOT bizum)
+     * Returns the Response generated to initiate CECA payment methods
+     */
+    private function cecaPrepareFirstStep($payment)
+    {
+
+        // The library is included
+        require_once __DIR__ . '/lib/ApiRedsys.php';
+        // Object is created
+        $tpvSys = new RedsysAPI();
+
+        // Retrieve application settings
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving POS settings...");
+        $settings = $this->bo->getTPVSettings($payment->payment_method);
+        if ($settings == null) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Cannot continue because the POS settings cannot be retrieved.");
+            $this->returnCode('UNEXPECTED_ERROR');
+            return $this->feedBackError($this);
+        }
+
+        // Check that the settings are complete and if so, add it to the parameters
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning POS settings to request parameters...");
+
+        $requiredConsts = array(
+            "TPV_MERCHANT_CODE" => "DS_MERCHANT_MERCHANTCODE",
+            "TPV_TERMINAL" => "DS_MERCHANT_TERMINAL",
+            "TPV_CURRENCY" => "DS_MERCHANT_CURRENCY",
+            "TPV_TRANSACTION_TYPE" => "DS_MERCHANT_TRANSACTIONTYPE",
+            "TPV_MERCHANT_URL" => "DS_MERCHANT_MERCHANTURL",
+            "TPV_PASSWORD" => "TPV_PASSWORD",
+            "TPV_VERSION" => "Ds_SignatureVersion",
+            "TPV_SERVER_URL" => "TPV_SERVER_URL",
+
+        );
+
+        // Specific config for bizum payments
+        if ($payment->payment_method == 'bizum' || substr($payment->payment_method, 0, 6) == 'bizum_') {
             $tpvSys->setParameter('DS_MERCHANT_PAYMETHODS', 'z');
         }
 
@@ -348,7 +475,8 @@ class PaymentController extends WebFormDataController {
      * Generate the answer for the first step in the payment with Paypal
      * Returns the Response generated to initiate card payment
      */
-    private function PaypalPrepareFirstStep($payment) {
+    private function PaypalPrepareFirstStep($payment)
+    {
         // Retrieve application settings
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving PayPal settings...");
         $settings = $this->bo->getPaypalSettings();
@@ -437,7 +565,8 @@ class PaymentController extends WebFormDataController {
         return $this->createResponse(self::RESPONSE_STATUS_PENDING, self::RESPONSE_TYPE_TEMPLATE, $xtpl);
     }
 
-    private static function getMerchantPaypalURL() {
+    private static function getMerchantPaypalURL()
+    {
         require_once 'modules/stic_Web_Forms/controller.php';
         $server = stic_Web_FormsController::getServerURL();
         $url = "{$server}/index.php?entryPoint=stic_Web_Forms_paypal_response";
@@ -448,7 +577,8 @@ class PaymentController extends WebFormDataController {
     /**
      *   Process the PayPal response
      */
-    private function actionPaypalResponse() {
+    private function actionPaypalResponse()
+    {
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing request...");
 
@@ -495,13 +625,14 @@ class PaymentController extends WebFormDataController {
      * More information: https://developer.paypal.com/api/nvp-soap/ipn/ht-ipn/
      * https://developer.paypal.com/api/nvp-soap/ipn/IPNImplementation/#specs
      */
-    protected function verifyPayPal() {
+    protected function verifyPayPal()
+    {
         // Check the cURL version, below version 1.0 the origin cannot be verified
         $curlInfo = curl_version();
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": SSL_VERSION [{$curlInfo['ssl_version']}]");
         if ($curlInfo['ssl_version'] < "OpenSSL/1.0.1") {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": SSL_VERSION [{$curlInfo['ssl_version']}] less than OpenSSL / 1.0.1t. Verification of the origin of the confirmation is omitted.");
-            // Although message can't be verified against PayPal, let's assume it's a valid message 
+            // Although message can't be verified against PayPal, let's assume it's a valid message
             // in order to let it be further processed in the main function
             return "VERIFIED";
         }
@@ -598,8 +729,9 @@ class PaymentController extends WebFormDataController {
      * @param string $returnCode The return code. Default: 'UNEXPECTED_ERROR'
      * @return array The feedBackError
      */
-    private function logFatalAndFeedBackError($line, $method, $message, $returnCode = 'UNEXPECTED_ERROR') {
-        $GLOBALS['log']->fatal('Line ' . $line . ': ' . $method . ": ". $message);
+    private function logFatalAndFeedBackError($line, $method, $message, $returnCode = 'UNEXPECTED_ERROR')
+    {
+        $GLOBALS['log']->fatal('Line ' . $line . ': ' . $method . ": " . $message);
         $this->returnCode($returnCode);
         return $this->feedBackError($this);
     }
@@ -610,24 +742,25 @@ class PaymentController extends WebFormDataController {
      * @param object $pcBean The Payment Commitment to get this periodicity (stic_Payment_Commitments)
      * @return integer The periodicity value in months (-1 if not has periodiciy)
      */
-    protected function getMonthIntervalPeriodicity($pcBean) {
+    protected function getMonthIntervalPeriodicity($pcBean)
+    {
         if ($pcBean == null || $pcBean->periodicity == null) {
             return -1;
         }
         switch ($pcBean->periodicity) {
-            case 'monthly': 
+            case 'monthly':
                 return 1;
-            case 'bimonthly': 
+            case 'bimonthly':
                 return 2;
-            case 'quarterly': 
+            case 'quarterly':
                 return 3;
-            case 'four_monthly': 
+            case 'four_monthly':
                 return 4;
-            case 'half_yearly': 
+            case 'half_yearly':
                 return 6;
-            case 'annual': 
+            case 'annual':
                 return 12;
-            default: 
+            default:
                 return -1; // No periodicity
         }
     }
@@ -637,12 +770,13 @@ class PaymentController extends WebFormDataController {
      *
      * @return array
      */
-    protected function getStripePaymentMethodTypes() {
+    protected function getStripePaymentMethodTypes()
+    {
         $payment_method_types = array();
 
         // Get Payment Method Types from request
         if (isset($_REQUEST['stripe_payment_method_types'])) {
-            $payment_method_types = explode(',',$_REQUEST['stripe_payment_method_types']);
+            $payment_method_types = explode(',', $_REQUEST['stripe_payment_method_types']);
         }
 
         // Trim all payment_method_types
@@ -685,10 +819,10 @@ class PaymentController extends WebFormDataController {
         foreach ($requiredConsts as $key) {
             if (!isset($settings[$settingsKey][$key]) || empty($settings[$settingsKey][$key])) {
                 return $this->logFatalAndFeedBackError(__LINE__, __METHOD__, "The setting {$key} is missing or empty for {$payment->payment_method}.");
-            } 
+            }
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment_method: {$payment->payment_method}; {$key} = {$settings[$settingsKey][$key]}.");
         }
-        
+
         // The amount must go without decimals and expressed in cents
         $amount = $payment->amount * 100;
         $koURL = $this->bo->cleanUpUrl($this->bo->getKOURL(), true);
@@ -728,11 +862,11 @@ class PaymentController extends WebFormDataController {
             'payment_method_types' => $payment_method_types,
             'line_items' => [[
                 'price_data' => [
-                    'currency' => 'eur', 
-                    'unit_amount' => $amount, 
-                    'product_data' => ['name' => $itemName]
+                    'currency' => 'eur',
+                    'unit_amount' => $amount,
+                    'product_data' => ['name' => $itemName],
                 ],
-                'quantity' => 1
+                'quantity' => 1,
             ]],
             'metadata' => ['transaction_code' => $transaction_code],
             'mode' => $payment_mode,
@@ -765,7 +899,8 @@ class PaymentController extends WebFormDataController {
     /**
      *   Process the Stripe response
      */
-    private function actionStripeResponse() {
+    private function actionStripeResponse()
+    {
         // Include Stripe PHP library
         require_once 'SticInclude/vendor/stripe/stripe-php/init.php';
         require_once __DIR__ . "/PaymentMailer.php";
@@ -787,7 +922,7 @@ class PaymentController extends WebFormDataController {
             $apiKey = $settings["STRIPE_SECRET_KEY"];
             // Get the Stripe Webhook Secret
             $webhookSecret = $settings["STRIPE_WEBHOOK_SECRET"];
-            
+
             // Set up Stripe API key
             \Stripe\Stripe::setApiKey($apiKey);
             // Try to construct a Stripe event object with pair API key - Webhook Secret
@@ -806,11 +941,11 @@ class PaymentController extends WebFormDataController {
             } catch (\UnexpectedValueException $e) {
                 // Invalid payload: Construction fails. Exit (Keys are valid, but message is corrupt)
                 return $this->logFatalAndFeedBackError(__LINE__, __METHOD__, "Unable to continue because Stripe rise an 'UnexpectedValueException': Invalid payload.");
-            } catch(\Stripe\Exception\SignatureVerificationException $e) {
+            } catch (\Stripe\Exception\SignatureVerificationException $e) {
                 // Invalid signature: Construction fails. Try with next Key pairs
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Can not recover Stripe event, raised an 'UnexpectedValueException': Invalid payload with ApiKey:{$apiKey} and WebHookSecret:{$webhookSecret}");
                 // We will try with next Key pairs
-                // continue; 
+                // continue;
             }
         }
     }
@@ -822,17 +957,17 @@ class PaymentController extends WebFormDataController {
      * @param string $retCode The returning code (by ref)
      * @return boolean Says if the event is correctly processed
      */
-    private function actionStripeResponseEvent($event, &$retCode) {
+    private function actionStripeResponseEvent($event, &$retCode)
+    {
         $transactionCode = "";
         $retCode = "";
-        
+
         // Process the Stripe event and fills the $transactionCode and retCode
         $isProcessed = $this->bo->processStripeEvent($event, $transactionCode, $retCode);
 
         if (empty($transactionCode)) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": No transactionCode returned in Stripe response.");
-        }
-        else {
+        } else {
             // Send mail with payment information
             $mailer = WebFormMailer::readDataToDeferredMail(intval($transactionCode), true);
             if (!$mailer) {
