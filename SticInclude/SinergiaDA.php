@@ -239,7 +239,9 @@ class ExternalReporting
             // Create array to save lists used in module
             $listNames = array();
 
-            // Fix when table name & module name are not equal.
+            // Corrects table name when it does not match the module name.
+            // IMPORTANT: If the table name is changed in this switch, the same change must be applied
+            // in the corresponding block in sda_def_permission (function getAndSaveUserACL()).
             switch ($moduleName) {
                 case 'CampaignLog':
                     $tableName = 'campaign_log';
@@ -1691,6 +1693,16 @@ class ExternalReporting
 
         // Add the permissions with the values determined in the previous switch case to the metadata table, based on the case.
         foreach ($userModuleAccessMode as $key => $value) {
+
+            // Adjust table names that do not match the lowercase version of the module name.
+            switch ($value['table']) {
+                case 'sda_campaignlog':
+                    $value['table'] = 'sda_campaign_log';
+                    break;
+                case 'sda_projecttask':
+                    $value['table'] = 'sda_project_task';
+                    break;
+            }
 
             $this->addMetadataRecord(
                 'sda_def_permissions',
