@@ -30,6 +30,7 @@ require_once __DIR__ . '/../../WebFormDataController.php';
 class PaymentController extends WebFormDataController {
     const RESPONSE_TYPE_NEW_PAYMENT = '';
     const RESPONSE_TYPE_TPV_RESPONSE = 'TPV_RESPONSE';
+    const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_RESPONSE';
     const RESPONSE_TYPE_PAYPAL_RESPONSE = 'PAYPAL_RESPONSE';
     const RESPONSE_TYPE_STRIPE_RESPONSE = 'STRIPE_RESPONSE';
 
@@ -65,6 +66,10 @@ class PaymentController extends WebFormDataController {
                 $response = $this->actionNewPayment();
                 break;
             case self::RESPONSE_TYPE_TPV_RESPONSE:
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Managing the response of a POS payment...");
+                $response = $this->actionTPVResponse();
+                break;
+            case self::RESPONSE_TYPE_TPVCECA_RESPONSE:
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Managing the response of a POS payment...");
                 $response = $this->actionTPVResponse();
                 break;

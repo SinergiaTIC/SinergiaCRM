@@ -73,8 +73,13 @@ class PaymentBO extends WebFormDataBO
                 $this->defFields = array('payment_method', 'payment_type');
                 $this->requiredDefFields = $this->defFields;
                 break;
-            // If it is a POS response, we do not need a definition field
+            // If it is a POS Redsys response, we do not need a definition field
             case PaymentController::RESPONSE_TYPE_TPV_RESPONSE:
+                $this->defFields = array();
+                $this->requiredDefFields = array();
+                break;
+            // If it is a POS CECA response, we do not need a definition field
+            case PaymentController::RESPONSE_TYPE_TPVCECA_RESPONSE:
                 $this->defFields = array();
                 $this->requiredDefFields = array();
                 break;
@@ -124,6 +129,12 @@ class PaymentBO extends WebFormDataBO
 
             // Set the required fields for a POS payment answer
             case PaymentController::RESPONSE_TYPE_TPV_RESPONSE:
+                $this->formFields = array('Ds_SignatureVersion', 'Ds_Signature', 'Ds_MerchantParameters');
+                $this->requiredFormFields = $this->formFields;
+                break;
+           
+                // Set the required fields for a POS payment answer
+            case PaymentController::RESPONSE_TYPE_TPVCECA_RESPONSE:
                 $this->formFields = array('Ds_SignatureVersion', 'Ds_Signature', 'Ds_MerchantParameters');
                 $this->requiredFormFields = $this->formFields;
                 break;
