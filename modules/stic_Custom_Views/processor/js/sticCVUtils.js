@@ -29,23 +29,10 @@ var sticCVUtils = class sticCVUtils {
     static show($elem, customView=null, show=true) {
         show=(show===true||show==="1"||show===1);
         $elem.each(function(){
-            var oldDisplay = $(this).css('display');
-            if(oldDisplay==undefined) {
-                oldDisplay = "";
-            }
-            var visible = ($(this).css('display') != 'none');
             if(show) {
-                if(!visible) {
-                    var $self=$(this);
-                    $(this).css('display','');
-                    customView?.addUndoFunction(function() { $self.css('display','none'); });
-                }
+                sticCVUtils.removeClass($(this), customView, "hidden");
             } else {
-                if(visible) {
-                    var $self=$(this);
-                    $(this).css('display','none');
-                    customView?.addUndoFunction(function() { $self.css('display', oldDisplay); });
-                }
+                sticCVUtils.addClass($(this), customView, "hidden");
             }
         });
     }
@@ -148,7 +135,26 @@ var sticCVUtils = class sticCVUtils {
         });
         return textArray.join(", ");
     }
-
+    static addClass($elem, customView=null, className){
+        if(className=="") return;
+        $elem.each(function(){
+            if(!$(this).hasClass(className)) {
+                $(this).addClass(className);
+                var $self=$(this);
+                customView?.addUndoFunction(function(){ $self.removeClass(className); })
+            }
+        })
+    }
+    static removeClass($elem, customView=null, className){
+        if(className=="") return;
+        $elem.each(function(){
+            if($(this).hasClass(className)) {
+                $(this).removeClass(className);
+                var $self=$(this);
+                customView?.addUndoFunction(function(){ $self.addClass(className); })
+            }
+        })
+    }
     static value(fieldContent, newValue) {
         sticCVUtils.setValue(fieldContent, newValue);
         return sticCVUtils.getValue(fieldContent);

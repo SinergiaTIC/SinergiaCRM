@@ -75,6 +75,7 @@ $js_groupings[] = $newGrouping = array(
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab_Content.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Tab.js' => 'include/javascript/sugar_grp1.js',
 
+    'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel_Container.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel_Header.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel_Content.js' => 'include/javascript/sugar_grp1.js',
     'modules/stic_Custom_Views/processor/js/sticCV_Record_Panel.js' => 'include/javascript/sugar_grp1.js',

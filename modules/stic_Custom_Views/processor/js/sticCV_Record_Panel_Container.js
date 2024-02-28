@@ -24,16 +24,10 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-
-var sticCV_Record_Panel = class sticCV_Record_Panel extends sticCV_Record_Container {
-    constructor (customView, panelName) {
-        super(customView, panelName);
-
-        var $panelElement = this.customView.$elementView.find('.panel-body[data-id="'+panelName+'"]').parent();
-
-        this.container = new sticCV_Record_Panel_Container(this);
-
-        this.header = new sticCV_Record_Panel_Header(this);
-        this.content = new sticCV_Record_Panel_Content(this);
-    };
+var sticCV_Record_Panel_Container = class sticCV_Record_Panel_Container extends sticCV_Element_Div {
+    constructor (panel){
+        super(panel.customView, panel.customView.$elementView.find('.panel-body[data-id="'+panel.name+'"]').parent());
+    }
 }
+
+
