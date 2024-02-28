@@ -712,6 +712,7 @@ $app_list_strings['stic_payments_methods_list']['stripe'] = 'Stripe';
 $app_list_strings['stic_payments_methods_list']['cash'] = 'Efectiu';
 $app_list_strings['stic_payments_methods_list']['check'] = 'Xec';
 $app_list_strings['stic_payments_methods_list']['card'] = 'Targeta';
+$app_list_strings['stic_payments_methods_list']['card_ceca'] = 'Targeta CECA';
 $app_list_strings['stic_payments_methods_list']['direct_debit'] = 'Domiciliació';
 $app_list_strings['stic_payments_methods_list']['kind'] = 'Espècie';
 $app_list_strings['stic_payments_methods_list']['paypal'] = 'PayPal';

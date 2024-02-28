@@ -720,6 +720,7 @@ $app_list_strings['stic_payments_methods_list']['stripe'] = 'Stripe';
 $app_list_strings['stic_payments_methods_list']['cash'] = 'Efectivo';
 $app_list_strings['stic_payments_methods_list']['check'] = 'Cheque';
 $app_list_strings['stic_payments_methods_list']['card'] = 'Tarxeta';
+$app_list_strings['stic_payments_methods_list']['card_ceca'] = 'Tarxeta CECA';
 $app_list_strings['stic_payments_methods_list']['direct_debit'] = 'Domiciliación';
 $app_list_strings['stic_payments_methods_list']['kind'] = 'Especie';
 $app_list_strings['stic_payments_methods_list']['paypal'] = 'PayPal';
