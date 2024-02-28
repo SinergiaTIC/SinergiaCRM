@@ -111,7 +111,6 @@ var sticCVUtils = class sticCVUtils {
     }
     static style($elem, customView=null, style="") {
         $elem.each(function(){
-            debugger;
             var oldStyle = $(this).attr('style');
             if(oldStyle===undefined){
                 oldStyle="";
@@ -157,12 +156,16 @@ var sticCVUtils = class sticCVUtils {
 
     static getValue(fieldContent) {
         var $elem = fieldContent.$editor;
-        if($elem.length==0) {
+        if($elem.length==0 || $elem.get(0).parentNode === null) {
             if(fieldContent.customView.view == "detailview") { 
+                $elem = fieldContent.$fieldText;
+                if($elem.length==0 || $elem.get(0).parentNode === null) {
+                    $elem = fieldContent.$element;
+                }
                 if(fieldContent.type=="relate"){
-                    return fieldContent.$fieldText.attr("data-id-value")+"|"+fieldContent.$fieldText.text().trim();
+                    return $elem.attr("data-id-value")+"|"+$elem.text().trim();
                 } else {
-                    return fieldContent.$fieldText.text().trim();
+                    return $elem.text().trim();
                 }
             }
             $elem = fieldContent.$element;
@@ -339,14 +342,18 @@ var sticCVUtils = class sticCVUtils {
         $elem.each(function(){
             $(this).on("change paste keyup", callback);
             YAHOO.util.Event.on($(this)[0], 'change', callback);
+            if(!$(this).is(":input")) {
+                var observer = new MutationObserver(callback);
+                observer.observe($(this)[0], {attributes:true, childList:true, subtree:true, characterData:true});
+            }
         });
-        return true;
+        return $elem.length>0;
     }
     static change($elem) {
         $elem.each(function(){
             $(this).change();
         });
-        return true;
+        return $elem.length>0;
     }
 
     /**

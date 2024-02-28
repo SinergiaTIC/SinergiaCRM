@@ -144,7 +144,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         return sticCVUtils.onChange(this.$editor, callback) || super.onChange(callback);
     }
     change() {
-        return sticCVUtils.change(this.$editor) || super.change();
+        return ticCVUtils.change(this.$editor) || super.change();
     }
 
     checkCondition(condition) {
