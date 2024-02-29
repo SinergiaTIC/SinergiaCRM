@@ -74,8 +74,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     inline_edit(inline_edit=true) {
        return sticCVUtils.inline_edit(this, inline_edit);
     }
-    value(newValue) {
-        return sticCVUtils.value(this, newValue);
+    value(newValue, value_list) {
+        return sticCVUtils.value(this, newValue, value_list);
+    }
+    _getValue(value_list){
+        return this.value(undefined, value_list);
     }
 
     text(newText){
@@ -94,7 +97,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 return this.value();
             }
         }
-        return super.text(newText);
+        var text = super.text(newText);
+        if(this.customView.view=="detailview") {
+            text=text.trim();
+        }
+        return text;
     }
 
     showEditor(show=true){
@@ -141,37 +148,44 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     }
 
     onChange(callback) {
-        return sticCVUtils.onChange(this.$editor, callback) || super.onChange(callback);
+        var alsoInline=(this.customView.view=="detailview");
+        return sticCVUtils.onChange(this.$editor, callback, alsoInline) || super.onChange(callback, alsoInline);
     }
     change() {
-        return ticCVUtils.change(this.$editor) || super.change();
+        return sticCVUtils.change(this.$editor) || super.change();
     }
 
     checkCondition(condition) {
+        var value_list = condition.value_list;
         switch(condition.operator) {
             case 'Equal_To':
                 if(this.type=="relate"){
-                    return this.value().split('|')[0]==condition.value.split('|')[0];
+                    var valueSplit = this._getValue(value_list).split('|');
+                    if(this.customView.view=="detailview" && valueSplit[0]=="undefined") {
+                        return valueSplit[1]==condition.value.split('|')[1];
+                    } else {
+                        return valueSplit[0]==condition.value.split('|')[0];
+                    }
                 } else {
-                    return this.value()==condition.value;
+                    return this._getValue(value_list)==condition.value;
                 }
             case 'Not_Equal_To':
                 if(this.type=="relate"){
-                    return this.value().split('|')[0]!=condition.value.split('|')[0];
+                    return this._getValue(value_list).split('|')[0]!=condition.value.split('|')[0];
                 } else {
-                    return this.value()!=condition.value;
+                    return this._getValue(value_list)!=condition.value;
                 }
             case 'Greater_Than':
-                return this.value()>condition.value;
+                return this._getValue(value_list)>condition.value;
             case 'Less_Than':
-                return this.value()<condition.value;
+                return this._getValue(value_list)<condition.value;
             case 'Greater_Than_or_Equal_To':
-                return this.value()>=condition.value;
+                return this._getValue(value_list)>=condition.value;
             case 'Less_Than_or_Equal_To':
-                return this.value()<=condition.value;
+                return this._getValue(value_list)<=condition.value;
             case 'Contains':
                 if(this.type=="multienum"){
-                    var valueArray = this.value().split(',');
+                    var valueArray = this._getValue(value_list).split(',');
                     var conditionValueArray = condition.value.split(',');
                     for(var conditionValue of conditionValueArray){
                         if(conditionValue[0]=='^'){ 
@@ -183,11 +197,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     }
                     return true;
                 } else {
-                    return (this.value()??"").includes(condition.value);
+                    return (this._getValue(value_list)??"").includes(condition.value);
                 }
             case 'Not_Contains':
                 if(this.type=="multienum"){
-                    var valueArray = this.value().split(',');
+                    var valueArray = this._getValue(value_list).split(',');
                     var conditionValueArray = condition.value.split(',');
                     for(var conditionValue of conditionValueArray){
                         if(conditionValue[0]=='^'){ 
@@ -199,20 +213,20 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     }
                     return true;
                 } else {
-                    return !(this.value()??"").includes(condition.value);
+                    return !(this._getValue(value_list)??"").includes(condition.value);
                 }
             case 'Starts_With':
-                return (this.value()??"").startsWith(condition.value);
+                return (this._getValue(value_list)??"").startsWith(condition.value);
             case 'Not_Starts_With':
-                return !(this.value()??"").startsWith(condition.value);
+                return !(this._getValue(value_list)??"").startsWith(condition.value);
             case 'Ends_With':
-                return (this.value()??"").endsWith(condition.value);
+                return (this._getValue(value_list)??"").endsWith(condition.value);
             case 'Not_Ends_With':
-                return !(this.value()??"").endsWith(condition.value);
+                return !(this._getValue(value_list)??"").endsWith(condition.value);
             case 'is_null':
-                return (this.value()??"").split('|')[0]=="";
+                return (this._getValue(value_list)??"").split('|')[0]=="";
             case 'is_not_null':
-                return (this.value()??"").split('|')[0]!="";
+                return (this._getValue(value_list)??"").split('|')[0]!="";
         }
         return false;
     }

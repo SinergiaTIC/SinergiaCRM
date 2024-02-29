@@ -46,7 +46,11 @@ var sticCVUtils = class sticCVUtils {
     static background($elem, customView=null, color="", important=false) { 
         $elem.each(function(){
             if(important) {
-                $(this).style.setProperty("background-color", color, "important");
+                if($(this).style==undefined) {
+                    $(this).attr('style', 'background-color:' + color + ' !important');
+                } else {
+                    $(this).style.setProperty("background-color", color, "important");
+                }
             } else {
                 $(this).css("background-color", color); 
             }
@@ -155,36 +159,36 @@ var sticCVUtils = class sticCVUtils {
             }
         })
     }
-    static value(fieldContent, newValue) {
-        sticCVUtils.setValue(fieldContent, newValue);
-        return sticCVUtils.getValue(fieldContent);
+    static value(fieldContent, newValue, value_list) {
+        sticCVUtils.setValue(fieldContent, newValue, value_list);
+        return sticCVUtils.getValue(fieldContent, value_list);
     }
 
-    static getValue(fieldContent) {
+    static getValue(fieldContent, value_list) {
         var $elem = fieldContent.$editor;
+        if(fieldContent.customView.view == "detailview") { 
+            $elem = fieldContent.$fieldText;
+        }
         if($elem.length==0 || $elem.get(0).parentNode === null) {
-            if(fieldContent.customView.view == "detailview") { 
-                $elem = fieldContent.$fieldText;
-                if($elem.length==0 || $elem.get(0).parentNode === null) {
-                    $elem = fieldContent.$element;
-                }
-                if(fieldContent.type=="relate"){
-                    return $elem.attr("data-id-value")+"|"+$elem.text().trim();
-                } else {
-                    return $elem.text().trim();
-                }
-            }
             $elem = fieldContent.$element;
+        }
+
+        if(fieldContent.customView.view == "detailview") { 
+            if(fieldContent.type=="relate"){
+                return $elem.attr("data-id-value")+"|"+$elem.text().trim();
+            } 
+            var text = fieldContent.text();
+            if(value_list!=undefined && value_list!=""){
+                return sticCVUtils.getListValueFromLabel(value_list, text);
+            }
+            return text;
         }
         switch (fieldContent.type) {
             case "radioenum":
                 var $radio = $elem.parent().find("[type='radio']:checked");
                 if($radio.length!=0) {
                     return $radio.val();
-                } else if(typeArray.length>1) {
-                    return sticCVUtils.getListValueFromLabel(typeArray[1], trim($elem.text()));
                 }
-                break;
             case "multienum":
                 return $elem.val().sort().join(",");
             case "bool":
@@ -344,11 +348,11 @@ var sticCVUtils = class sticCVUtils {
         return false;
     }
 
-    static onChange($elem, callback) {
+    static onChange($elem, callback, alsoInline=false) {
         $elem.each(function(){
             $(this).on("change paste keyup", callback);
             YAHOO.util.Event.on($(this)[0], 'change', callback);
-            if(!$(this).is(":input")) {
+            if(!$(this).is(":input")||alsoInline) {
                 var observer = new MutationObserver(callback);
                 observer.observe($(this)[0], {attributes:true, childList:true, subtree:true, characterData:true});
             }

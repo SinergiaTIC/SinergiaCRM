@@ -141,11 +141,12 @@ function insertConditionLinesHeader(){
     } else {
       // Create next selector
       // Operator selector
+      var value_type=view_field_map[field].type + "|" + view_field_map[field].list;
       $("#"+condprefix+'Cell'+'operator'+ln).html(
         "<select type='text' name='"+condprefix+"operator["+ln+"]' id='"+condprefix+"operator"+ln+"'>"+
           view_field_map[field].condition_operators.options+
         "</select>"+
-        "<input type='hidden' name='"+condprefix+"value_type["+ln+"]' id='"+condprefix+"value_type"+ln+"' value='"+view_field_map[field].type+"'>"
+        "<input type='hidden' name='"+condprefix+"value_type["+ln+"]' id='"+condprefix+"value_type"+ln+"' value='"+value_type+"'>"
         );
   
       $("#"+condprefix+'operator'+ln).on("change", function(){onConditionOperatorChanged(ln);});

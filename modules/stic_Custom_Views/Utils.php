@@ -183,6 +183,7 @@ function getJsVars($viewModule, $viewType) {
                 "options: \"".$moduleView->getViewFieldOperators_as_select_options($fieldKey)."\",".
             "},".
             "type: \"".$moduleView->getFieldType($fieldKey)."\",".
+            "list: \"".$moduleView->getFieldListOption($fieldKey)."\",".
         "},";
     }
     $html .=

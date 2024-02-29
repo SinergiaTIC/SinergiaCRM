@@ -1,5 +1,6 @@
 <?php
 
+use Elasticsearch\Endpoints\Graph\Explore;
 use Symfony\Component\Validator\Constraints\Length;
 
 /**
@@ -139,7 +140,9 @@ class stic_Custom_Views_ProcessorLogicHooks
 
                 $conditions = array();
                 foreach ($conditionBeanArray as $conditionBean) {
-                    $value_type = $conditionBean->value_type;
+                    $value_typeArray = explode("|",$conditionBean->value_type);
+                    $value_type=$value_typeArray[0];
+                    $value_list=$value_typeArray[1];
                     $value = $this->value_to_display($conditionBean->value, $value_type);
                     $conditions[] = array(
                         "condition_order" => $conditionBean->condition_order,
@@ -148,6 +151,7 @@ class stic_Custom_Views_ProcessorLogicHooks
                         //"value" => $conditionBean->value,
                         "value" => htmlspecialchars_decode($value),
                         "value_type" => $value_type,
+                        "value_list" => $value_list,
                     );
                 }
                 // Sort conditions
@@ -155,7 +159,9 @@ class stic_Custom_Views_ProcessorLogicHooks
         
                 $actions = array();
                 foreach ($actionsBeanArray as $actionBean) {
-                    $value_type = $actionBean->value_type;
+                    $value_typeArray = explode("|",$actionBean->value_type);
+                    $value_type=$value_typeArray[0];
+                    $value_list=$value_typeArray[1];
                     $value = $this->value_to_display($actionBean->value, $value_type);
                     $actions[] = array(
                         "action_order" => $actionBean->action_order,
@@ -165,6 +171,7 @@ class stic_Custom_Views_ProcessorLogicHooks
                         //"value" => $actionBean->value,
                         "value" => htmlspecialchars_decode($value),
                         "value_type" => $value_type,
+                        "value_list" => $value_list,
                         "element_section" => $actionBean->element_section,
                     );
                 }

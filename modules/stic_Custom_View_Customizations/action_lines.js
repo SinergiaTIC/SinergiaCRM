@@ -200,7 +200,7 @@ function onActionElementChanged(ln) {
   } else {
     var value_type="";
     if(type=='field_modification') {
-      value_type = view_field_map[element].type;
+      value_type = view_field_map[element].type + "|" + view_field_map[element].list;
     }
     // Create next selector
     // Action selector

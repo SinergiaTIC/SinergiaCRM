@@ -29,8 +29,6 @@ var sticCV_Record_Panel = class sticCV_Record_Panel extends sticCV_Record_Contai
     constructor (customView, panelName) {
         super(customView, panelName);
 
-        var $panelElement = this.customView.$elementView.find('.panel-body[data-id="'+panelName+'"]').parent();
-
         this.container = new sticCV_Record_Panel_Container(this);
 
         this.header = new sticCV_Record_Panel_Header(this);

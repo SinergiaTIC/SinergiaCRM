@@ -56,6 +56,16 @@ class stic_Custom_Views_ModuleView
     public function getFieldType($field) {
         return $this->getAllFieldTypes()[$field];
     }
+    private $allModuleFieldListOptionList;
+    public function getAllFieldListOptions() {
+        if($this->allModuleFieldListOptionList == null) {
+            $this->findAllModuleFieldList();
+        }
+        return $this->allModuleFieldListOptionList;
+    }
+    public function getFieldListOption($field) {
+        return $this->getAllFieldListOptions()[$field];
+    }
 
     private $allModuleFieldOperatorMap;
     public function getAllFieldOperatorMap() {
@@ -169,6 +179,11 @@ class stic_Custom_Views_ModuleView
                     $this->allModuleFieldList[$name] = rtrim(translate($arr['vname'], $mod->module_dir), ':');
                 } else {
                     $this->allModuleFieldList[$name] = $name;
+                }
+                if(isset($arr['options'])){
+                    $this->allModuleFieldListOptionList[$name]=$arr['options'];
+                } else {
+                    $this->allModuleFieldListOptionList[$name]="";
                 }
                 $this->allModuleFieldOperatorMap[$name] = $this->getValidOperators($arr['type']);
                 $this->allModuleFieldTypeList[$name] = $arr['type'];
