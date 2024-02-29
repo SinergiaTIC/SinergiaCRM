@@ -106,6 +106,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
 
     showEditor(show=true){
         sticCVUtils.show(this.$editor, this.customView, show);
+        sticCVUtils.show(this.$buttons, this.customView, show);
         sticCVUtils.show(this.$items, this.customView, show);
         if(this.type=="radioenum"){
             sticCVUtils.show(this.$editor.parent(), this.customView, show);
@@ -115,12 +116,16 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         if(this.type!="image" && this.type!="html") {
             if(show) {
                 if (this.$readonlyLabel.length==0) {
-                    this.$element.prepend('<p class="stic-ReadonlyInput" style="display:none"></p>');
+                    this.$element.prepend('<p class="stic-ReadonlyInput" class="hidden"></p>');
                     this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
                     // Update label when value is changed
                     var self = this;
                     this.onChange(function() {
-                        self.$readonlyLabel.text(self.text());
+                        if(self.type=="relate"){
+                            self.$readonlyLabel.text(self.text().split('|')[1]);
+                        } else {
+                            self.$readonlyLabel.text(self.text());
+                        }
                     });
                 }
             }
