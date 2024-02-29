@@ -39,6 +39,10 @@ class DonationController extends WebFormDataController
         $this->bo = new DonationBO();
     }
 
+    public function getObjectsCreated() {
+        return array_merge($this->bo->getObjectsCreated(), $this->fp->getObjectsCreated());
+    }
+
     /**
      * Overload of the parent method.
      * Retrieve the form parameters and populate the formParams array with it
@@ -76,6 +80,7 @@ class DonationController extends WebFormDataController
      */
     protected function doAction()
     {
+
         // Decide the donor (and create it if necessary)
         $donator = null;
         $candidates = null;
@@ -87,6 +92,7 @@ class DonationController extends WebFormDataController
 
         $objWeb = array_pop($candidates);
 
+        $defParams = $this->bo->getDefParams();
         // We create a payment controller
         $this->fp = new DonationPaymentController($this->version);
         $params = array(

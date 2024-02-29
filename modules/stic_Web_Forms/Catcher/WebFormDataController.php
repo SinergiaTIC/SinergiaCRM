@@ -175,6 +175,12 @@ class WebFormDataController
         return $this->responseData;
     }
 
+    public function getObjectsCreated() {
+        $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ' If this placeholder function is called, something web wrong ');
+        return array();
+    }
+
+
     /**
      *  Load the specific driver, if there is no specific driver, the class itself will be used
      */
@@ -327,7 +333,9 @@ class WebFormDataController
                 } else {
                     // Perform the operation management
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Managing the request..");
+
                     $response = $controller->doAction();
+                    $response['objects'] = $controller->getObjectsCreated();
                 }
             }
         }
