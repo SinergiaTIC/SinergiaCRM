@@ -39,7 +39,6 @@ $hook_array['after_ui_footer'][] = Array(10, 'popup_onload', 'modules/SecurityGr
 $hook_array['after_ui_frame'] = Array(); 
 $hook_array['after_ui_frame'][] = Array(20, 'mass_assign', 'modules/SecurityGroups/AssignGroups.php','AssignGroups', 'mass_assign'); 
 $hook_array['after_ui_frame'][] = Array(1, 'Load Social JS', 'include/social/hooks.php','hooks', 'load_js'); 
-$hook_array['after_ui_frame'][] = Array(1, 'stic_Custom_Views processor', 'modules/stic_Custom_Views/processor/LogicHooksCode.php','stic_Custom_Views_ProcessorLogicHooks', 'after_ui_frame'); 
 
 
 
