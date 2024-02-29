@@ -1,0 +1,21 @@
+{
+   "name": "ubublog/ceca",
+   "version": "1.0.0",
+   "description": "Pasarela de pago ceca",
+   "keywords": ["ceca", "payment", "pasarela", "sabadell","tpv", "Caja badajoz", "Caja Circulo", "Caja de Burgos", "CajaSur", "Caja Granada", "Caja de guadalajara", "Caja Rioja", "Caixa Laietana", "Caja Murcia", "CajAstur", "Sanostra", "La Caja de Canarias", "Caja navarra", "Caja Canarias", "Caja Cantabria", "Caja Segovia", "CaixaNova", "IberCaja", "CAM", "Caixa Galicia", "Caja de Avila", "BBK", "Caja Vital Kutxa", "Caja de Extremadura", "Kutxa", "Caja duero", "CCM", "Cajasol"],
+   "homepage": "https://github.com/ssheduardo/ceca",
+   "license": "MIT",
+   "authors": [
+      {
+         "name": "Eduardo D",
+         "email": "ssh.eduardo@gmail.com",
+         "homepage": "http://ubublog.com/"
+      }
+   ],
+   "require": {
+      "php": ">=5.2.0"
+   },
+   "autoload": {
+      "files": ["ceca.php"]
+   }
+}
