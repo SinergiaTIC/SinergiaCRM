@@ -132,8 +132,8 @@ class PaymentBO extends WebFormDataBO
                 $this->formFields = array('Ds_SignatureVersion', 'Ds_Signature', 'Ds_MerchantParameters');
                 $this->requiredFormFields = $this->formFields;
                 break;
-           
-                // Set the required fields for a POS payment answer
+
+            // Set the required fields for a POS payment answer
             case PaymentController::RESPONSE_TYPE_TPVCECA_RESPONSE:
                 $this->formFields = array('Ds_SignatureVersion', 'Ds_Signature', 'Ds_MerchantParameters');
                 $this->requiredFormFields = $this->formFields;
@@ -187,8 +187,8 @@ class PaymentBO extends WebFormDataBO
         // If prior conditions are not verified, then set first payment date to current date
         $paymentMethodIsCard = $fp->payment_method == 'ceca_card' || substr($fp->payment_method, 0, 10) == 'ceca_card_' || $fp->payment_method == 'card' || substr($fp->payment_method, 0, 5) == 'card_' ? true : false;
         if (
-            ( $paymentMethodIsCard == true && $fp->first_payment_date < date('Y-m-d'))
-            || ( $paymentMethodIsCard == true && $fp->first_payment_date != date('Y-m-d') && $fp->periodicity == 'punctual')
+            ($paymentMethodIsCard == true && $fp->first_payment_date < date('Y-m-d'))
+            || ($paymentMethodIsCard == true && $fp->first_payment_date != date('Y-m-d') && $fp->periodicity == 'punctual')
             || ($fp->payment_method == 'paypal')
         ) {
             $fp->first_payment_date = date('Y-m-d');
@@ -261,7 +261,7 @@ class PaymentBO extends WebFormDataBO
     }
 
     /**
-     * Get the TPV settings
+     * Get the TPV(redsys) settings
      */
     public static function getTPVSettings($paymentMethod)
     {
@@ -304,6 +304,77 @@ class PaymentBO extends WebFormDataBO
                     break;
                 default:
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": POS/TPV operating in mode [{$mode}]. Invalid value, please check TPV_TEST setting.");
+                    return null;
+            }
+
+            // Start the return array with the values set outside the database
+            $filteredConst = array();
+            foreach ($fixedSettings as $key => $value) {
+                $filteredConst[$key] = $value;
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding virtual setting [{$key}] = [{$value}]...");
+            }
+
+            // Add settings not dependent on the execution mode
+            foreach ($nonTestDependentConst as $key) {
+                $filteredConst[$key] = $settingsTPV[$key];
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding setting independent of mode [{$key}] = [{$settingsTPV[$key]}]...");
+            }
+
+            // Add the environment dependent settings
+            foreach ($dependentTestConst as $key) {
+                $setting = $settingsTPV[$key . $test];
+                $newKey = str_replace($test, '', $key);
+                $filteredConst[$newKey] = $setting;
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Filtered setting [{$newKey}] = [{$setting}].");
+            }
+
+            return $filteredConst;
+        }
+    }
+ /**
+     * Get the TPVCECA settings
+     */
+    public static function getTPVCECASettings($paymentMethod)
+    {
+        // Add variable TPVCECA values from settings (filtered by payment_method)
+        require_once "modules/stic_Settings/Utils.php";
+        $settingsTPV = stic_SettingsUtils::getTPVSettings($paymentMethod);
+
+        // Add permanent TPV values
+        $settingsTPV['TPVCECA_SERVER_URL'] = 'https://pgw.ceca.es/tpvweb/tpv/compra.action';
+        $settingsTPV['TPVCECA_SERVER_URL_TEST'] = 'https://tpv.ceca.es/tpvweb/tpv/compra.action';
+        $settingsTPV['TPVCECA_VERSION'] = 'HMAC_SHA256_V1';
+        $settingsTPV['TPVCECA_VERSION_TEST'] = 'HMAC_SHA256_V1';
+
+        if ($settingsTPV == null) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Could not load TPV related settings.");
+            return null;
+        } else {
+            // Generates the array with settings that are not in the CRM
+            $fixedSettings = array(
+                'TPVCECA_MERCHANT_URL' => self::getMerchantURL('TPVCECA'),
+                'TPVCECA_TRANSACTION_TYPE' => 0,
+            );
+
+            // Execution mode-dependent settings (TEST / PRODUCTION)
+            $dependentTestConst = array('TPVCECA_VERSION', 'TPVCECA_PASSWORD', 'TPVCECA_SERVER_URL');
+
+            // Settings that are in the CRM and do not depend on the execution environment
+            $nonTestDependentConst = array('TPVCECA_MERCHANT_NAME', 'TPVCECA_CURRENCY', 'TPVCECA_MERCHANT_CODE', 'TPVCECA_TERMINAL', 'TPVCECA_TEST');
+
+            // Get execution mode (TEST / PRODUCTION)
+            $mode = $settingsTPV['TPVCECA_TEST'];
+            $test = "";
+            switch ($mode) {
+                case '0':
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": POS/TPV operating in mode [{$mode}] PRODUCTION.");
+                    break;
+                case '1':
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": POS/TPV operating in mode [{$mode}] TEST.");
+                    $test = "_TEST";
+                    break;
+                default:
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": POS/TPV operating in mode [{$mode}]. Invalid value, please check TPVCECA_TEST setting.");
                     return null;
             }
 
@@ -387,7 +458,7 @@ class PaymentBO extends WebFormDataBO
     {
         require_once "modules/stic_Settings/Utils.php";
 
-        // Settings are a pair of keys, allowing multiple configurations: 
+        // Settings are a pair of keys, allowing multiple configurations:
         // Single config:
         //     STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET (production)
         //     STRIPE_SECRET_KEY_TEST, STRIPE_WEBHOOK_SECRET_TEST (test)
@@ -418,15 +489,15 @@ class PaymentBO extends WebFormDataBO
                 // Check if is a "SECRET_KEY", then find related WEBHOOK_SECRET and add the pair to returning Settings
                 if (str_ends_with($key, "SECRET_KEY") || str_ends_with($key, "SECRET_KEY_TEST")) {
                     if (($mode == '0' && !str_ends_with($key, "_TEST") && str_starts_with($key, "STRIPE_")) ||
-                        ($mode == '1' &&  str_ends_with($key, "_TEST") && str_starts_with($key, "STRIPE_"))) {
+                        ($mode == '1' && str_ends_with($key, "_TEST") && str_starts_with($key, "STRIPE_"))) {
 
                         // Find the WEBHOOK_SECRET
                         $webHookSecretKey = str_replace("SECRET_KEY", "WEBHOOK_SECRET", $key);
-                        if(!isset($settingsStripe[$webHookSecretKey])) {
+                        if (!isset($settingsStripe[$webHookSecretKey])) {
                             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": STRIPE missing Setting {$webHookSecretKey}; Ignoring {$key}, check STRIPE settings.");
                         } else {
                             // Get the config Key (XXXX for STRIPE_ALT_XXXX_SECRET_KEY and STRIPE_ALT_XXXX_SECRET_KEY_TEST)
-                            $configKey = (str_starts_with($key, "STRIPE_ALT_")) ? str_replace(array("_TEST","STRIPE_ALT_","_SECRET_KEY"), "", $key) : "";
+                            $configKey = (str_starts_with($key, "STRIPE_ALT_")) ? str_replace(array("_TEST", "STRIPE_ALT_", "_SECRET_KEY"), "", $key) : "";
                             $stripeConsts[$configKey]['STRIPE_SECRET_KEY'] = $value;
                             $stripeConsts[$configKey]['STRIPE_WEBHOOK_SECRET'] = $settingsStripe[$webHookSecretKey];
 
@@ -443,11 +514,14 @@ class PaymentBO extends WebFormDataBO
     /**
      * Generate the response address of a POS request
      */
-    private static function getMerchantURL()
+    private static function getMerchantURL($tpvType = 'TPV')
     {
+
+        $entryPoint = $tpvType == 'TPVCECA' ? 'stic_Web_Forms_tpv_ceca_response' : 'stic_Web_Forms_tpv_response';
+
         require_once 'modules/stic_Web_Forms/controller.php';
         $server = stic_Web_FormsController::getServerURL();
-        $url = "{$server}/index.php?entryPoint=stic_Web_Forms_tpv_response";
+        $url = "{$server}/index.php?entryPoint={$entryPoint}";
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  {$url}");
         return $url;
     }
@@ -655,7 +729,8 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode (By reference) Fills the return Code of the process
      * @return boolean Says if the event is correctly processed
      */
-    public function processStripeEvent($event, &$transaction_code, &$retCode) {
+    public function processStripeEvent($event, &$transaction_code, &$retCode)
+    {
         if ($event == null) {
             $retCode = "STRIPE_INVALID_EVENT";
             return false;
@@ -694,7 +769,8 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode
      * @return boolean
      */
-    private function processStripeCheckout($session, $eventType, $paymentMailer, &$transaction_code, &$retCode) {
+    private function processStripeCheckout($session, $eventType, $paymentMailer, &$transaction_code, &$retCode)
+    {
         if ($session == null) {
             $retCode = "STRIPE_INVALID_SESSION";
             return false;
@@ -713,9 +789,9 @@ class PaymentBO extends WebFormDataBO
                 $subject = translate('LBL_STRIPE_ADMIN_CANT_GET_PAYMENT', 'stic_Web_Forms') . " [{$eventType}]";
             }
             $paymentMailer->sendStripeInfo('', $subject, $body);
-            
+
             $retCode = "STRIPE_PAYMENT_NOT_FOUND";
-            return false; 
+            return false;
         }
 
         $paymentBean = $this->getLastPayment();
@@ -723,7 +799,7 @@ class PaymentBO extends WebFormDataBO
             case 'checkout.session.completed':
             case 'checkout.session.async_payment_succeeded':
                 $paymentBean->status = 'paid';
-                $paymentBean->amount = $session->amount_total/100;
+                $paymentBean->amount = $session->amount_total / 100;
                 $paymentBean->gateway_log .= '##### ' . print_r($session, true);
                 break;
             case 'checkout.session.async_payment_failed':
@@ -748,7 +824,8 @@ class PaymentBO extends WebFormDataBO
      * @param string $transaction_code
      * @return boolean
      */
-    private function loadPaymentBeansFromStripeSession($session, &$transaction_code) {
+    private function loadPaymentBeansFromStripeSession($session, &$transaction_code)
+    {
         require_once 'SticInclude/Utils.php';
 
         $paymentBean = null;
@@ -778,9 +855,9 @@ class PaymentBO extends WebFormDataBO
         $this->setLastPayment($paymentBean);
         $this->setLastPC($pcBean);
 
-        return $this->getLastPC()!=null && $this->getLastPayment()!=null;
+        return $this->getLastPC() != null && $this->getLastPayment() != null;
     }
-    
+
     /**
      * Process a Stripe Invoice event
      *
@@ -790,12 +867,13 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode
      * @return boolean
      */
-    private function processStripeInvoice($invoice, $eventType, $paymentMailer, &$retCode) {
+    private function processStripeInvoice($invoice, $eventType, $paymentMailer, &$retCode)
+    {
         if ($invoice == null) {
             $retCode = "STRIPE_INVALID_INVOICE";
             return false;
         }
-        
+
         // Process only invoice payments
         if ($eventType != 'invoice.payment_succeeded') {
             return true;
@@ -813,14 +891,14 @@ class PaymentBO extends WebFormDataBO
                 $subject = translate('LBL_STRIPE_ADMIN_CANT_GET_PAYMENT', 'stic_Web_Forms') . " [{$eventType}]";
             }
             $paymentMailer->sendStripeInfo('', $subject, $body);
-            
+
             $retCode = "STRIPE_PAYMENT_NOT_FOUND";
-            return false; 
+            return false;
         }
         $paymentBean = $this->getLastPayment();
         if ($invoice->paid) {
             $paymentBean->status = 'paid';
-            $paymentBean->amount = $invoice->amount_paid/100;
+            $paymentBean->amount = $invoice->amount_paid / 100;
         } else {
             $paymentBean->status = 'pending';
         }
@@ -836,7 +914,8 @@ class PaymentBO extends WebFormDataBO
      * @param Stripe\Invoice $invoice
      * @return boolean
      */
-    private function loadPaymentBeansFromStripeInvoice($invoice) {
+    private function loadPaymentBeansFromStripeInvoice($invoice)
+    {
         $paymentBean = null;
         $pcBean = null;
 
@@ -850,7 +929,7 @@ class PaymentBO extends WebFormDataBO
         $this->setLastPayment($paymentBean);
         $this->setLastPC($pcBean);
 
-        return $this->getLastPC()!=null && $this->getLastPayment()!=null;
+        return $this->getLastPC() != null && $this->getLastPayment() != null;
     }
 
     /**
@@ -862,7 +941,8 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode
      * @return boolean
      */
-    private function processStripeSubscription($subscription, $eventType, $paymentMailer, &$retCode) {
+    private function processStripeSubscription($subscription, $eventType, $paymentMailer, &$retCode)
+    {
         if ($subscription == null) {
             $retCode = "STRIPE_INVALID_SUBSCRIPTION";
             return false;
@@ -887,7 +967,7 @@ class PaymentBO extends WebFormDataBO
             $paymentMailer->sendStripeInfo('', $subject, $body);
 
             $retCode = "STRIPE_PAYMENT_NOT_FOUND";
-            return false; 
+            return false;
         }
         $pcBean = $this->getLastPC();
 
@@ -906,7 +986,8 @@ class PaymentBO extends WebFormDataBO
      * @param Stripe\Subscription $subscription
      * @return boolean
      */
-    private function loadPaymentBeansFromStripeSubscription($subscription) {
+    private function loadPaymentBeansFromStripeSubscription($subscription)
+    {
         require_once 'SticInclude/Utils.php';
 
         $pcBean = null;
@@ -914,22 +995,22 @@ class PaymentBO extends WebFormDataBO
         // Load the Payment Commitment from subscription, then the Payment
         $pcBean = Beanfactory::getBean('stic_Payment_Commitments');
         $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $subscription->id));
-        
+
         $this->setLastPayment(null);
         $this->setLastPC($pcBean);
 
-        return $pcBean!=null;
+        return $pcBean != null;
     }
 
     private function getBeanPaymentFromStripePaymentCommitment($pcBean, $paymentTimestamp)
     {
         $pcId = $pcBean->id;
         $paymentDate = date('Ym', $paymentTimestamp);
-        $paymentIdSQL ="SELECT p.id
+        $paymentIdSQL = "SELECT p.id
                         FROM stic_payments p
-                            INNER JOIN stic_payments_stic_payment_commitments_c rel 
+                            INNER JOIN stic_payments_stic_payment_commitments_c rel
                                 ON p.id = rel.stic_payments_stic_payment_commitmentsstic_payments_idb
-                            INNER JOIN stic_payment_commitments pc 
+                            INNER JOIN stic_payment_commitments pc
                                 ON pc.id = rel.stic_paymebfe2itments_ida
                         WHERE pc.Id = '{$pcId}'
                             AND p.deleted = 0

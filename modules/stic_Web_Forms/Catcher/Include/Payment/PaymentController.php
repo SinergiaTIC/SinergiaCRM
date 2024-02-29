@@ -391,48 +391,80 @@ class PaymentController extends WebFormDataController
         // die();
 
         // Object is created
-        $tpvSys = new Ubublog\Ceca\Ceca;
+        $tpvCeca = new Ubublog\Ceca\Ceca;
 
         // Retrieve application settings
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving POS settings...");
-        $settings = $this->bo->getTPVSettings($payment->payment_method);
+        $settings = $this->bo->getTPVCECASettings($payment->payment_method);
         if ($settings == null) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Cannot continue because the POS settings cannot be retrieved.");
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
-
+var_dump($settings);
         // Check that the settings are complete and if so, add it to the parameters
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning POS settings to request parameters...");
 
-        $requiredConsts = array(
-            "TPV_MERCHANT_CODE" => "DS_MERCHANT_MERCHANTCODE",
-            "TPV_TERMINAL" => "DS_MERCHANT_TERMINAL",
-            "TPV_CURRENCY" => "DS_MERCHANT_CURRENCY",
-            "TPV_TRANSACTION_TYPE" => "DS_MERCHANT_TRANSACTIONTYPE",
-            "TPV_MERCHANT_URL" => "DS_MERCHANT_MERCHANTURL",
-            "TPV_PASSWORD" => "TPV_PASSWORD",
-            "TPV_VERSION" => "Ds_SignatureVersion",
-            "TPV_SERVER_URL" => "TPV_SERVER_URL",
+        // $requiredConsts = array(
+        //     "TPVCECA_MERCHANT_CODE" => "DS_MERCHANT_MERCHANTCODE",
+        //     "TPVCECA_TERMINAL" => "DS_MERCHANT_TERMINAL",
+        //     "TPVCECA_CURRENCY" => "DS_MERCHANT_CURRENCY",
+        //     "TPVCECA_TRANSACTION_TYPE" => "DS_MERCHANT_TRANSACTIONTYPE",
+        //     "TPVCECA_MERCHANT_URL" => "DS_MERCHANT_MERCHANTURL",
+        //     "TPVCECA_PASSWORD" => "TPV_PASSWORD",
+        //     "TPVCECA_VERSION" => "Ds_SignatureVersion",
+        //     "TPVCECA_SERVER_URL" => "TPV_SERVER_URL",
 
-        );
+        // );
 
         // Specific config for bizum payments
-        if ($payment->payment_method == 'bizum' || substr($payment->payment_method, 0, 6) == 'bizum_') {
-            $tpvSys->setParameter('DS_MERCHANT_PAYMETHODS', 'z');
-        }
+        // if ($payment->payment_method == 'bizum' || substr($payment->payment_method, 0, 6) == 'bizum_') {
+        //     $tpvSys->setParameter('DS_MERCHANT_PAYMETHODS', 'z');
+        // }
 
         foreach ($requiredConsts as $key => $value) {
             if (!array_key_exists($key, $settings)) {
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The constant {$key} missing or empty.");
                 $this->returnCode('UNEXPECTED_ERROR');
                 return $this->feedBackError($this);
-            } else {
-                // If the parameter exists it adds it to the parameters
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$key} = {$settings[$key]}.");
-                $tpvSys->setParameter($value, $settings[$key]);
             }
+            //  else {
+            //     // If the parameter exists it adds it to the parameters
+            //     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$key} = {$settings[$key]}.");
+            //     $tpvSys->setParameter($value, $settings[$key]);
+            // }
         }
+
+        try {
+            $tpvCeca = new Ubublog\Ceca\Ceca;
+            $tpvCeca->setEntorno();
+            $tpvCeca->setMerchantID('xxxxxx');
+            $tpvCeca->setClaveEncriptacion('xxxxxx');
+            $tpvCeca->setAcquirerBIN('xxxxxx');
+            $tpvCeca->setUrlOk('http://www.url.com/respuesta_ok.php');
+            $tpvCeca->setUrlNok('http://www.url.com/respuesta_nok.php');
+            $tpvCeca->setNumOperacion('A00' . date('His'));
+            $tpvCeca->setImporte('43,81');
+            $tpvCeca->setSubmit();
+            $tpvCeca->setNameform('ceca_form');
+            $tpvCeca->setIdform('ceca_form');
+            $tpvCeca->setSubmit('nombre_submit','texto_del_boton');
+            $form = $tpv->create_form();
+            $tpvCeca->launchRedirection(); 
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            exit();
+        }
+        echo $form;
+
+        die();
+
+
+
+
+
+
+
 
         // The amount must go without decimals and expressed in cents
         $amount = $payment->amount * 100;
