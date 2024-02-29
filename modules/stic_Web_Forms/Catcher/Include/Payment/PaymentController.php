@@ -364,9 +364,34 @@ class PaymentController extends WebFormDataController
     {
 
         // The library is included
-        require_once __DIR__ . '/lib/ApiRedsys.php';
+        require_once 'SticInclude/vendor/ceca/ceca.php';
+
+        // try {
+        //     $tpv = new Ubublog\Ceca\Ceca;
+        //     $tpv->setEntorno();
+        //     $tpv->setMerchantID('xxxxxx');
+        //     $tpv->setClaveEncriptacion('xxxxxx');
+        //     $tpv->setAcquirerBIN('xxxxxx');
+        //     $tpv->setUrlOk('http://www.url.com/respuesta_ok.php');
+        //     $tpv->setUrlNok('http://www.url.com/respuesta_nok.php');
+        //     $tpv->setNumOperacion('A00' . date('His'));
+        //     $tpv->setImporte('43,81');
+        //     $tpv->setSubmit();
+        //     $tpv->setNameform('ceca_form');
+        //     $tpv->setIdform('ceca_form');
+        //     // $tpv->setSubmit('nombre_submit','texto_del_boton');
+        //     $form = $tpv->create_form();
+        //     $tpv->launchRedirection(); 
+        // } catch (Exception $e) {
+        //     echo $e->getMessage();
+        //     exit();
+        // }
+        // // echo $form;
+
+        // die();
+
         // Object is created
-        $tpvSys = new RedsysAPI();
+        $tpvSys = new Ubublog\Ceca\Ceca;
 
         // Retrieve application settings
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving POS settings...");
