@@ -47,7 +47,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 break;
         }
         this.$buttons = this.$element.find("button");
-        this.$items = this.$element.find(".items");
+        this.$items = this.$element.find(".items,table");
         this.$fieldText = this.$element.find(".sugar_field");
         this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
     }
