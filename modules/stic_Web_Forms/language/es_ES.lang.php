@@ -109,6 +109,7 @@ $mod_strings = array(
     'LBL_PARAM_ERROR_EMAIL_REQUIRED' => 'Obligatorio',
     'LBL_PARAM_ERROR_EMAIL_FORM_PARAMS_TITLE' => 'Parámetros del formulario',
     'LBL_PARAM_ERROR_EMAIL_INFORMATION' => 'La recepción de este correo indica que se ha producido algún error al procesar los datos enviados al CRM por un formulario web. Por favor, revise los datos recibidos y, en su caso, corrija el formulario. En caso de duda contacte con el administrador del CRM, el desarrollador web o el foro de soporte de SinergiaCRM.',
+    'LBL_INVALID_CECA_SIGNATURE' => "La firma SHA2 CECA no es válida",
     'LBL_UNEXPECTED_ERROR' => 'Se ha producido un error inesperado en el servidor.',
     'LBL_INVALID_IPN_SOURCE' => 'No se ha podido verificar que el mensaje IPN recibido procede de Paypal.',
     'LBL_STRIPE_ITEM_EMPTY'=> "No se puede cargar Stripe por que el concepto está vacío. Comprueba el el campo banking_concept en el formulario y/o que este rellena la variable 'GENERAL ORGANIZATION_NAME'",
