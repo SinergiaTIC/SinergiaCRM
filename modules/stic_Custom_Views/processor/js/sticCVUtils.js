@@ -195,6 +195,8 @@ var sticCVUtils = class sticCVUtils {
                 return $elem.prop("checked");
             case "datetimecombo":
                 return $elem.last().val();
+            case "date":
+                return $elem.val()+" 00:00";
             case "relate":
                 return $elem.eq(1).val()+"|"+$elem.eq(0).val();
         }

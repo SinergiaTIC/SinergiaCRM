@@ -152,6 +152,7 @@ class stic_Custom_Views_ProcessorLogicHooks
                         "value" => htmlspecialchars_decode($value),
                         "value_type" => $value_type,
                         "value_list" => $value_list,
+                        "date_format" => strtoupper($current_user->getPreference('datef'))." HH:mm",
                     );
                 }
                 // Sort conditions

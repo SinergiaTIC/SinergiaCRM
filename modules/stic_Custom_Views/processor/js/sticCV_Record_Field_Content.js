@@ -48,6 +48,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 this.$editor = this.$element.find("input,textarea,select");
                 break;
         }
+
         this.$buttons = this.$element.find("button");
         this.$items = this.$element.find(".items,table");
         this.$fieldText = this.$element.find(".sugar_field");
@@ -185,13 +186,29 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     return this._getValue(value_list)!=condition.value;
                 }
             case 'Greater_Than':
-                return this._getValue(value_list)>condition.value;
+                if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
+                    return moment(this._getValue(value_list), condition.date_format).isAfter(moment(condition.value, condition.date_format));
+                } else {
+                    return this._getValue(value_list)>condition.value;
+                }
             case 'Less_Than':
-                return this._getValue(value_list)<condition.value;
+                if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
+                    return moment(this._getValue(value_list), condition.date_format).isBefore(moment(condition.value, condition.date_format));
+                } else {
+                    return this._getValue(value_list)<condition.value;
+                }
             case 'Greater_Than_or_Equal_To':
-                return this._getValue(value_list)>=condition.value;
+                if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
+                    return moment(this._getValue(value_list), condition.date_format).isSameOrAfter(moment(condition.value, condition.date_format));
+                } else {
+                    return this._getValue(value_list)>=condition.value;
+                }
             case 'Less_Than_or_Equal_To':
-                return this._getValue(value_list)<=condition.value;
+                if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
+                    return moment(this._getValue(value_list), condition.date_format).isSameOrBefore(moment(condition.value, condition.date_format));
+                } else {
+                    return this._getValue(value_list)<=condition.value;
+                }
             case 'Contains':
                 if(this.type=="multienum"){
                     var valueArray = this._getValue(value_list).split(',');
