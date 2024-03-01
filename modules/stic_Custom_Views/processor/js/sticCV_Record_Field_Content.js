@@ -36,14 +36,16 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 this.$editor = this.$element.find("[type='checkbox']:input");
                 break;
             case "enum":
+            case "dynamicenum":
             case "multienum":
+            case "currency_id":
                 this.$editor = this.$element.find("select");
                 break;
             case "datetimecombo":
                 this.$editor = this.$element.find("input,select");
                 break;
             default:
-                this.$editor = this.$element.find("input");
+                this.$editor = this.$element.find("input,textarea,select");
                 break;
         }
         this.$buttons = this.$element.find("button");
@@ -83,18 +85,20 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
 
     text(newText){
         if(this.customView.view == "editview" || this.customView.view == "quickcreate"){
-            if(this.type=="enum" || this.type=="currency_id" || this.type=="dynamicenum" || this.type=="multienum") {
-                return sticCVUtils.text(this.$editor.find("option:selected"), this.customView, newText);
-            } else if(this.type=="radioenum") {
-                return sticCVUtils.text(this.$editor.parent().find("[type='radio']:checked").parent(), this.customView, newText);
-            } else if(this.type=="bool") {
-                if(this.value()) {
-                    return "☒";
-                } else {
-                    return "☐";
-                }
-            } else if(this.$editor.prop("type")=="text" || this.$editor.prop("type")=="textarea") {
-                return this.value();
+            switch (this.type) {
+                case "enum":
+                case "dynamicenum":
+                case "multienum":
+                case "currency_id":
+                    return sticCVUtils.text(this.$editor.find("option:selected"), this.customView, newText);
+                case "radioenum":
+                    return sticCVUtils.text(this.$editor.parent().find("[type='radio']:checked").parent(), this.customView, newText);
+                case "bool":
+                    return this.value()?"☒":"☐";
+                case "relate":
+                    return this.value().split("|").slice(-1)[0];
+                default:
+                    return this.value();
             }
         }
         var text = super.text(newText);

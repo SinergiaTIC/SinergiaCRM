@@ -156,6 +156,10 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
         });
     }
 
+    clearUndoList(){
+        this.undoFunctions=[];
+    }
+
     /**
      * Check a condition defined in an object
      * Example:
