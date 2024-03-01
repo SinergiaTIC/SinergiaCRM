@@ -96,7 +96,7 @@ class PaymentMailer extends WebFormMailer
         $this->body .= $this->paymentToHtml($payment);
         $this->addUserIdDest($adminId);
 
-        return $this->send();
+        return $this->send(self::SEND_NORMAL);
     }
 
     public function sendPaypalAdminResponse($payment, $adminId, $errorCode)
@@ -113,7 +113,7 @@ class PaymentMailer extends WebFormMailer
         $this->body .= $this->paymentToHtml($payment);
         $this->addUserIdDest($adminId);
 
-        return $this->send();
+        return $this->send(self::SEND_NORMAL);
     }
 
     public function sendStripeAdminResponse($payment, $adminId, $errorCode)
@@ -130,7 +130,7 @@ class PaymentMailer extends WebFormMailer
         $this->body .= $this->paymentToHtml($payment);
         $this->addUserIdDest($adminId);
 
-        return $this->send();
+        return $this->send(self::SEND_NORMAL);
     }
 
      /**
@@ -160,7 +160,7 @@ class PaymentMailer extends WebFormMailer
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Sending Stripe info to user {$userId}.");
         }
 
-        $emailSent = $this->send();
+        $emailSent = $this->send(self::SEND_ERROR);
 
         if (!$emailSent) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$subject} email sending failed.");
@@ -169,7 +169,13 @@ class PaymentMailer extends WebFormMailer
             return true;
         }
     }
-
+    
+    public function sendPaypalCancellation($userId, $subject, $body) {
+        $this->sendPaypalInfo($userId, $subject, $body, self::SEND_NORMAL);
+    }
+    public function sendPaypalError($userId, $subject, $body) {
+        $this->sendPaypalInfo($userId, $subject, $body, self::SEND_ERROR);
+    }
     /**
      * Sends an email with PayPal recurring payments information
      *
@@ -178,7 +184,7 @@ class PaymentMailer extends WebFormMailer
      * @param String $body email body
      * @return void
      */
-    public function sendPaypalInfo($userId, $subject, $body)
+    public function sendPaypalInfo($userId, $subject, $body, $mailType)
     {
 
         $this->subject = $subject;
@@ -198,7 +204,7 @@ class PaymentMailer extends WebFormMailer
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Sending PayPal info to user {$userId}.");
         }
 
-        $emailSent = $this->send();
+        $emailSent = $this->send($mailType);
 
         if (!$emailSent) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$subject} email sending failed.");

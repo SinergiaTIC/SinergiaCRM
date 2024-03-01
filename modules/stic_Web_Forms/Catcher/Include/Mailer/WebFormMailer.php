@@ -37,6 +37,15 @@ class WebFormMailer
     protected $defaultModule = 'stic_Web_Forms';
     protected $saved_attachment = array();
 
+    const SEND_NONE = 0b0000;
+    const SEND_ANYWAY = 0b1111;
+    const SEND_NORMAL = 0b0001;
+    const SEND_ERROR = 0b0010;
+    const SEND_ALL = 0b0011;
+
+    protected $mailsAllowed = self::SEND_ALL;
+
+
     public function __construct()
     {
         global $sugar_config;
@@ -47,6 +56,12 @@ class WebFormMailer
             $this->current_language = $sugar_config['default_language'];
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  language selected as [{$this->current_language}] from the configuration.");
         }
+        $this->mailsAllowed = self::SEND_ALL;
+        if (isset($_REQUEST['stic_mails_allowed'])) {
+            $this->mailsAllowed = bindec($_REQUEST['stic_mails_allowed']);
+
+        }
+
     }
 
     /**
@@ -104,8 +119,14 @@ class WebFormMailer
     /**
      * Send notice of changes to those involved in the case.
      */
-    public function send()
+    public function send($mailType = self::SEND_ANYWAY)
     {
+
+        if (!($mailType & $this->mailsAllowed)) {
+            return true;
+        }
+
+
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Processing mailing...");
 
         // Prepare mail
@@ -640,6 +661,15 @@ class WebFormMailer
      */
     public static function sendErrorNotification($formData, $formParams, $assignedUserId, $msg)
     {
+        $mailsAllowed = self::SEND_ALL;
+        if (isset($_REQUEST['stic_mails_allowed'])) {
+            $mailsAllowed = bindec($_REQUEST['stic_mails_allowed']);
+        }
+
+        if(!($mailsAllowed & self::SEND_ERROR)){
+            return true;
+        }
+
         $usersBean = BeanFactory::getBean('Users', $assignedUserId);
 
         $emailToNotify = array();

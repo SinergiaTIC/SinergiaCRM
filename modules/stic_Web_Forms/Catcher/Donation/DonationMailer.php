@@ -77,7 +77,7 @@ class DonationMailer extends WebFormMailer
         $this->body = $html;
         $this->subject = "{$payment->transaction_code} - {$this->subject}";
 
-        return $this->send();
+        return $this->send(self::SEND_NORMAL);
     }
 
     /**
@@ -268,6 +268,6 @@ class DonationMailer extends WebFormMailer
 
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
-        return $this->send();
+        return $this->send(self::SEND_NORMAL);
     }
 }
