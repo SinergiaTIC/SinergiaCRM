@@ -363,169 +363,135 @@ class PaymentController extends WebFormDataController
     private function cecaPrepareFirstStep($payment)
     {
 
-        // The library is included
-        require_once 'SticInclude/vendor/ceca/ceca.php';
-
-        // try {
-        //     $tpv = new Ubublog\Ceca\Ceca;
-        //     $tpv->setEntorno();
-        //     $tpv->setMerchantID('xxxxxx');
-        //     $tpv->setClaveEncriptacion('xxxxxx');
-        //     $tpv->setAcquirerBIN('xxxxxx');
-        //     $tpv->setUrlOk('http://www.url.com/respuesta_ok.php');
-        //     $tpv->setUrlNok('http://www.url.com/respuesta_nok.php');
-        //     $tpv->setNumOperacion('A00' . date('His'));
-        //     $tpv->setImporte('43,81');
-        //     $tpv->setSubmit();
-        //     $tpv->setNameform('ceca_form');
-        //     $tpv->setIdform('ceca_form');
-        //     // $tpv->setSubmit('nombre_submit','texto_del_boton');
-        //     $form = $tpv->create_form();
-        //     $tpv->launchRedirection(); 
-        // } catch (Exception $e) {
-        //     echo $e->getMessage();
-        //     exit();
-        // }
-        // // echo $form;
-
-        // die();
-
-        // Object is created
-        $tpvCeca = new Ubublog\Ceca\Ceca;
-
         // Retrieve application settings
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving POS settings...");
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving CECA  settings...");
+
         $settings = $this->bo->getTPVCECASettings($payment->payment_method);
         if ($settings == null) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Cannot continue because the POS settings cannot be retrieved.");
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
-var_dump($settings);
+        var_dump($settings);
+
         // Check that the settings are complete and if so, add it to the parameters
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning POS settings to request parameters...");
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning CECA settings to request parameters...");
+        $requiredConsts = [
+            'TPVCECA_MERCHANTID',
+            'TPVCECA_ACQUIRERBIN',
+            'TPVCECA_TERMINALID',
+            'TPVCECA_TIPOMONEDA',
+            // 'TPVCECA_TRANSACTION_TYPE',
+            'TPVCECA_MERCHANT_URL',
+            'TPVCECA_CLAVE_ENCRIPTACION',
+            'TPVCECA_VERSION',
+            'TPVCECA_TEST',
+            'TPVCECA_SERVER_URL'];
 
-        // $requiredConsts = array(
-        //     "TPVCECA_MERCHANT_CODE" => "DS_MERCHANT_MERCHANTCODE",
-        //     "TPVCECA_TERMINAL" => "DS_MERCHANT_TERMINAL",
-        //     "TPVCECA_CURRENCY" => "DS_MERCHANT_CURRENCY",
-        //     "TPVCECA_TRANSACTION_TYPE" => "DS_MERCHANT_TRANSACTIONTYPE",
-        //     "TPVCECA_MERCHANT_URL" => "DS_MERCHANT_MERCHANTURL",
-        //     "TPVCECA_PASSWORD" => "TPV_PASSWORD",
-        //     "TPVCECA_VERSION" => "Ds_SignatureVersion",
-        //     "TPVCECA_SERVER_URL" => "TPV_SERVER_URL",
-
-        // );
-
-        // Specific config for bizum payments
-        // if ($payment->payment_method == 'bizum' || substr($payment->payment_method, 0, 6) == 'bizum_') {
-        //     $tpvSys->setParameter('DS_MERCHANT_PAYMETHODS', 'z');
-        // }
-
-        foreach ($requiredConsts as $key => $value) {
-            if (!array_key_exists($key, $settings)) {
-                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The constant {$key} missing or empty.");
+        foreach ($requiredConsts as $key) {
+            if (empty($settings[$key])) {
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The setting {$key} is missing or empty.");
                 $this->returnCode('UNEXPECTED_ERROR');
                 return $this->feedBackError($this);
+            } else {
+                // If the parameter exists it adds it to the parameters
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$key} = {$settings[$key]}.");
             }
-            //  else {
-            //     // If the parameter exists it adds it to the parameters
-            //     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$key} = {$settings[$key]}.");
-            //     $tpvSys->setParameter($value, $settings[$key]);
-            // }
         }
-
-        try {
-            $tpvCeca = new Ubublog\Ceca\Ceca;
-            $tpvCeca->setEntorno();
-            $tpvCeca->setMerchantID('xxxxxx');
-            $tpvCeca->setClaveEncriptacion('xxxxxx');
-            $tpvCeca->setAcquirerBIN('xxxxxx');
-            $tpvCeca->setUrlOk('http://www.url.com/respuesta_ok.php');
-            $tpvCeca->setUrlNok('http://www.url.com/respuesta_nok.php');
-            $tpvCeca->setNumOperacion('A00' . date('His'));
-            $tpvCeca->setImporte('43,81');
-            $tpvCeca->setSubmit();
-            $tpvCeca->setNameform('ceca_form');
-            $tpvCeca->setIdform('ceca_form');
-            $tpvCeca->setSubmit('nombre_submit','texto_del_boton');
-            $form = $tpv->create_form();
-            $tpvCeca->launchRedirection(); 
-        } catch (Exception $e) {
-            echo $e->getMessage();
-            exit();
-        }
-        echo $form;
-
-        die();
-
-
-
-
-
-
-
-
-        // The amount must go without decimals and expressed in cents
-        $amount = $payment->amount * 100;
-
-        $PCBean = $this->bo->getLastPC();
+        $amount = ($payment->amount * 100);
+        $koURL = $this->bo->getKOURL();
+        $okURL = $this->bo->getOKURL();
 
         // The order number must have between 4 and 12 characters, fill with 0 on the left in case there are missing positions.
         $id = str_pad($payment->transaction_code, 12, '0', STR_PAD_LEFT);
 
-        // Specific config for recurring card payments
-        if (($payment->payment_method == 'card' || substr($payment->payment_method, 0, 5) == 'card_') && $PCBean->periodicity != 'punctual') {
-            $tpvSys->setParameter('DS_MERCHANT_IDENTIFIER', 'REQUIRED');
-            $tpvSys->setParameter("DS_MERCHANT_COF_INI", "S");
-            $tpvSys->setParameter("DS_MERCHANT_COF_TYPE", "R");
-
-            // If the first payment date is today, the operation is processed as a payment with the amount indicated in the form,
-            // if it is a future date, the amount is 0
-            if ($PCBean->first_payment_date > date('Y-m-d')) {
-                $amount = 0;
-
-                // If it is an initial authorization for a later payment, we add the suffix "-AUT" after "transaction_code"
-                // to use in  DS_MERCHANT_ORDER, and prevent this value from repeating when executing the first recurring payment and
-                // avoid error 9051 ("Error número de pedido repetido")
-                $id = str_pad($payment->transaction_code . '-AUT', 12, '0', STR_PAD_LEFT);
-            }
-        }
-
-        $koURL = $this->bo->getKOURL();
-        $okURL = $this->bo->getOKURL();
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding non-constant parameters [{$amount}] [{$id}] [{$payment->transaction_code}] [{$okURL}] [{$koURL}] ...");
 
-        $tpvSys->setParameter("DS_MERCHANT_AMOUNT", $amount);
-
-        // Add the non-dependent fields of the settings
-        $tpvSys->setParameter("DS_MERCHANT_ORDER", $id);
-        $tpvSys->setParameter("DS_MERCHANT_URLKO", $koURL);
-        $tpvSys->setParameter("DS_MERCHANT_URLOK", $okURL);
-        $tpvSys->setParameter("DS_MERCHANT_CONSUMERLANGUAGE", PaymentBO::getTPVLanguage($this->getLanguage()));
+        $PCBean = $this->bo->getLastPC();
 
         // Configuration data
-        $version = $settings["TPV_VERSION"];
-        $kc = $settings["TPV_PASSWORD"];
-        $url = $settings["TPV_SERVER_URL"];
+        if ($PCBean->periodicity == 'punctual') {
+            $xtpl = self::getNewTemplate(__DIR__ . '/tpls/CecaFirstStep.html');
+        } else {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "CECA Recurring payments are not enabled.");
+        }
 
-        // The request parameters are generated
-        $params = $tpvSys->createMerchantParameters();
-        $signature = $tpvSys->createMerchantSignature($kc);
+        switch ($this->getLanguage()) {
+            case 'es_ES':
+                $idioma = 1;
+                break;
+            case 'ca_ES':
+                $idioma = 2;
+                break;
+            case 'eu_ES':
+                $idioma = 3;
+                break;
+            case 'gl_ES':
+                $idioma = 4;
+                break;
+            case 'en_us':
+                $idioma = 6;
+                break;
+            case 'fr_FR':
+                $idioma = 7;
+                break;
+            case 'de_DE':
+                $idioma = 8;
+                break;
+            case 'pt_PT':
+                $idioma = 9;
+                break;
+            case 'it_IT':
+                $idioma = 10;
+                break;
+            case 'ru_RU':
+                $idioma = 14;
+                break;
+            case 'no_NO':
+                $idioma = 15;
+                break;
+            default:
+                $idioma = 1;
+                break;
+        }
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Parameters [{$params}] signature [{$signature}] URL {$url}...");
+        
+        // We calculate the value of the signature required to include in the form
+        $firma = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $settings['TPVCECA_MERCHANTID'] . $settings['TPVCECA_ACQUIRERBIN'] . $settings['TPVCECA_TERMINALID'] . $id . $amount . $settings['TPVCECA_TIPOMONEDA'] . '2' . 'SHA2' . $okURL . $koURL;
+        if (strlen(trim($firma)) > 0) {
+            // Cálculo del SHA256
+            $firma = strtolower(hash('sha256', $firma));
+        } else {
+            $this->returnCode('INVALID_CECA_SIGNATURE');
+            return $this->feedBackError($this);
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invalid CECA signature ");
+        }
+        
+        // die('Línea:' . __LINE__);
+
+
+
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving template...");
-        $xtpl = self::getNewTemplate(__DIR__ . '/tpls/TPVFirstStep.html');
-        $xtpl->assign('SIG_VERSION', $version);
-        $xtpl->assign('SIGNATURE', $signature);
-        $xtpl->assign('PARAMS', $params);
-        $xtpl->assign('SERVER_URL', $url);
-        $xtpl->assign('LANG', $this->getLanguage());
+        $xtpl->assign('server_url', $settings["TPVCECA_SERVER_URL"]);
+        $xtpl->assign('merchant_id', $settings['TPVCECA_MERCHANTID']);
+        $xtpl->assign('acquirer_bin', $settings['TPVCECA_ACQUIRERBIN']);
+        $xtpl->assign('terminal_id', $settings['TPVCECA_TERMINALID']);
+        $xtpl->assign('koURL', $koURL);
+        $xtpl->assign('okURL', $okURL);
+        $xtpl->assign('num_operation', $id);
+        $xtpl->assign('importe', $amount);
+        $xtpl->assign('tipomoneda', $settings['TPVCECA_TIPOMONEDA']);
+        $xtpl->assign('description', $PCBean->banking_concept);
+        $xtpl->assign('idioma', $idioma);
+        $xtpl->assign('firma', $firma);
         $xtpl->assign('LOADING_MESSAGE', $this->getMsgString('LBL_TPV_LOADING_MESSAGE'));
         $xtpl->parse('main');
+        
+        
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Returning answer...");
 
         return $this->createResponse(self::RESPONSE_STATUS_PENDING, self::RESPONSE_TYPE_TEMPLATE, $xtpl);
+
     }
 
     /**

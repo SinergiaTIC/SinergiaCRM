@@ -353,14 +353,14 @@ class PaymentBO extends WebFormDataBO
             // Generates the array with settings that are not in the CRM
             $fixedSettings = array(
                 'TPVCECA_MERCHANT_URL' => self::getMerchantURL('TPVCECA'),
-                'TPVCECA_TRANSACTION_TYPE' => 0,
+                // 'TPVCECA_TRANSACTION_TYPE' => 0,
             );
 
             // Execution mode-dependent settings (TEST / PRODUCTION)
-            $dependentTestConst = array('TPVCECA_VERSION', 'TPVCECA_PASSWORD', 'TPVCECA_SERVER_URL');
+            $dependentTestConst = array('TPVCECA_VERSION', 'TPVCECA_CLAVE_ENCRIPTACION', 'TPVCECA_SERVER_URL');
 
             // Settings that are in the CRM and do not depend on the execution environment
-            $nonTestDependentConst = array('TPVCECA_MERCHANT_NAME', 'TPVCECA_CURRENCY', 'TPVCECA_MERCHANT_CODE', 'TPVCECA_TERMINAL', 'TPVCECA_TEST');
+            $nonTestDependentConst = array('TPVCECA_ACQUIRERBIN', 'TPVCECA_TIPOMONEDA', 'TPVCECA_MERCHANTID', 'TPVCECA_TERMINALID', 'TPVCECA_TEST');
 
             // Get execution mode (TEST / PRODUCTION)
             $mode = $settingsTPV['TPVCECA_TEST'];

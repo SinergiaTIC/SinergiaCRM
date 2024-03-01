@@ -40,11 +40,11 @@ INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_us
 ('2c389ba8-78aa-e9fa-d77d-642a92edba46', NOW(), NOW(), '1', '1', 0, '1', 'GENERAL', 'GENERAL_RECAPTCHA', '', 'Secret key given by Google. More information at:  https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA'),
 ('696c690e-70ce-4dd1-855b-ff02d4302831', NOW(), NOW(), '1', '1', 0, '1', 'GENERAL', 'GENERAL_RECAPTCHA_VERSION', '', 'Google reCAPTCHA version. Accepted values: 2 or 3. More information at: https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA'),
 ('572910d4-716b-457d-b66c-4fb54d8e39a5', NOW(), NOW(), '1', '1', 0, '1', 'GENERAL', 'GENERAL_RECAPTCHA_WEBKEY', '', 'Website key given by Google. More information at: https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA'),
-('2013e269-06b7-42ef-8a6d-44ff2341c8ec', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_CURRENCY', '978', 'Currency code for the payment gateway (978 = Euro).'),
-('496bf293-1552-453a-96fb-1dde7d78ea63', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_MERCHANT_NAME', NULL, 'The name of your organization, that will be shown in the payment gateway.'),
-('bb3a7ca4-8668-4e7d-a6f3-c3bfbe7247d8', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_MERCHANT_CODE', NULL, 'Unique numeric code provided by the payment gateway.'),
+('2013e269-06b7-42ef-8a6d-44ff2341c8ec', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_TIPOMONEDA', '978', 'Currency code for the payment gateway (978 = Euro).'),
+('496bf293-1552-453a-96fb-1dde7d78ea63', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_ACQUIRERBIN', NULL, 'The name of your organization, that will be shown in the payment gateway.'),
+('bb3a7ca4-8668-4e7d-a6f3-c3bfbe7247d8', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_MERCHANTID', NULL, 'Unique numeric code provided by the payment gateway.'),
 ('d72a1bc8-c20b-49b6-a970-0ff37178b9d5', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_TEST', '1', 'Indicates the working mode (0 = Real, 1 = Test).'),
-('3cbabeae-f992-4958-955b-1a0cd4300dc8', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_TERMINAL', '1', 'Terminal number, provided by the payment gateway. Usually number 1, but could be 2, 3, etc. depending on whether your organization has one or more POS terminals.'),
-('7f72883c-18ba-46c9-b4fc-511b17f6a5ad', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_PASSWORD_TEST', NULL, 'Password for test mode, provided by the payment gateway.'),
-('7521efd8-671c-4296-9b6f-3bc236fc1fe0', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_PASSWORD', NULL, 'Password for real mode, provided by the payment gateway.');
+('3cbabeae-f992-4958-955b-1a0cd4300dc8', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_TERMINALID', '1', 'Terminal number, provided by the payment gateway. Usually number 1, but could be 2, 3, etc. depending on whether your organization has one or more POS terminals.'),
+('7f72883c-18ba-46c9-b4fc-511b17f6a5ad', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_CLAVE_ENCRIPTACION_TEST', NULL, 'Password for test mode, provided by the payment gateway.'),
+('7521efd8-671c-4296-9b6f-3bc236fc1fe0', NOW(), NOW(), '1', '1', 0, '1', 'TPVCECA', 'TPVCECA_CLAVE_ENCRIPTACION', NULL, 'Password for real mode, provided by the payment gateway.');
 
