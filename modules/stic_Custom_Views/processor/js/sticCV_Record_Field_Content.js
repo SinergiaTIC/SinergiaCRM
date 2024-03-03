@@ -126,11 +126,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     // Update label when value is changed
                     var self = this;
                     this.onChange(function() {
-                        if(self.type=="relate"){
-                            self.$readonlyLabel.text(self.text().split('|')[1]);
-                        } else {
-                            self.$readonlyLabel.text(self.text());
-                        }
+                        self.$readonlyLabel.text(self.text());
                     });
                 }
             }
