@@ -357,15 +357,15 @@ class PaymentController extends WebFormDataController
         return $this->createResponse(self::RESPONSE_STATUS_PENDING, self::RESPONSE_TYPE_TEMPLATE, $xtpl);
     }
     /**
-     * Generate the answer for the first step in CECA payment methods (ceca_card. NOT bizum)
+     * Generate the answer for the first step in CECA payment methods
      * Returns the Response generated to initiate CECA payment methods
      */
     private function cecaPrepareFirstStep($payment)
     {
-
         // Retrieve application settings
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving CECA  settings...");
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving CECA settings...");
 
+        // Obtaining CECA settings
         $settings = $this->bo->getTPVCECASettings($payment->payment_method);
         if ($settings == null) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Cannot continue because the POS settings cannot be retrieved.");
@@ -381,12 +381,12 @@ class PaymentController extends WebFormDataController
             'TPVCECA_ACQUIRERBIN',
             'TPVCECA_TERMINALID',
             'TPVCECA_TIPOMONEDA',
-            // 'TPVCECA_TRANSACTION_TYPE',
             'TPVCECA_MERCHANT_URL',
             'TPVCECA_CLAVE_ENCRIPTACION',
             'TPVCECA_VERSION',
             'TPVCECA_TEST',
-            'TPVCECA_SERVER_URL'];
+            'TPVCECA_SERVER_URL',
+        ];
 
         foreach ($requiredConsts as $key) {
             if (empty($settings[$key])) {
@@ -398,6 +398,8 @@ class PaymentController extends WebFormDataController
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$key} = {$settings[$key]}.");
             }
         }
+
+        // Convert the amount to cents
         $amount = ($payment->amount * 100);
         $koURL = $this->bo->getKOURL();
         $okURL = $this->bo->getOKURL();
@@ -407,6 +409,7 @@ class PaymentController extends WebFormDataController
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding non-constant parameters [{$amount}] [{$id}] [{$payment->transaction_code}] [{$okURL}] [{$koURL}] ...");
 
+        // Get the last PC
         $PCBean = $this->bo->getLastPC();
 
         // Configuration data
@@ -416,6 +419,7 @@ class PaymentController extends WebFormDataController
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "CECA Recurring payments are not enabled.");
         }
 
+        // Define language
         switch ($this->getLanguage()) {
             case 'es_ES':
                 $idioma = 1;
@@ -455,22 +459,18 @@ class PaymentController extends WebFormDataController
                 break;
         }
 
-        
-        // We calculate the value of the signature required to include in the form
+        // Calculate the signature value required to include in the form
         $firma = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $settings['TPVCECA_MERCHANTID'] . $settings['TPVCECA_ACQUIRERBIN'] . $settings['TPVCECA_TERMINALID'] . $id . $amount . $settings['TPVCECA_TIPOMONEDA'] . '2' . 'SHA2' . $okURL . $koURL;
         if (strlen(trim($firma)) > 0) {
-            // Cálculo del SHA256
+            // SHA256 calculation
             $firma = strtolower(hash('sha256', $firma));
         } else {
             $this->returnCode('INVALID_CECA_SIGNATURE');
             return $this->feedBackError($this);
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invalid CECA signature ");
         }
-        
-        // die('Línea:' . __LINE__);
 
-
-
+        // Retrieve template
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving template...");
         $xtpl->assign('server_url', $settings["TPVCECA_SERVER_URL"]);
         $xtpl->assign('merchant_id', $settings['TPVCECA_MERCHANTID']);
@@ -486,12 +486,11 @@ class PaymentController extends WebFormDataController
         $xtpl->assign('firma', $firma);
         $xtpl->assign('LOADING_MESSAGE', $this->getMsgString('LBL_TPV_LOADING_MESSAGE'));
         $xtpl->parse('main');
-        
-        
+
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Returning answer...");
 
+        // Create response
         return $this->createResponse(self::RESPONSE_STATUS_PENDING, self::RESPONSE_TYPE_TEMPLATE, $xtpl);
-
     }
 
     /**
