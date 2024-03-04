@@ -126,13 +126,23 @@ var sticCVUtils = class sticCVUtils {
         });
     }
     static text($elem, customView=null, newText) {
+        if(newText!==undefined) {
+            newText=newText.trim();
+        }
         var textArray=[];
         $elem.each(function(){
-            var oldText = $(this).text();
-            if(newText===undefined || newText!=oldText) {
+            // Only text inside the parent element
+            var oldText = $(this).contents().filter(function(){
+                return this.nodeType==Node.TEXT_NODE;
+            })[0].nodeValue ?? "";
+            oldText = oldText.trim(); 
+            if(newText===undefined || newText==oldText) {
                 textArray.push(oldText);
             } else {
-                textArray.push($(this).text(newText));
+                $(this).contents().filter(function(){
+                    return this.nodeType==Node.TEXT_NODE;
+                })[0].nodeValue = newText;
+                textArray.push(newText);
                 var $self=$(this);
                 customView?.addUndoFunction(function() { $self.text(oldText); });
             }

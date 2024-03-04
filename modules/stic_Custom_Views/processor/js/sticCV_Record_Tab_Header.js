@@ -80,10 +80,14 @@ var sticCV_Record_Tab_Header = class sticCV_Record_Tab_Header extends sticCV_Ele
         return this;
     }
     text(newText) {
-        sticCVUtils.text(this.$label, this.customView, newText);
+        var oldText = sticCVUtils.text(this.$label, this.customView, newText).split(", ")[0];
         sticCVUtils.text(this.$xsLabel, this.customView, newText);
         sticCVUtils.text(this.$xsMenuLabel, this.customView, newText);
-        return newText;
+        if(newText===undefined) {
+            return oldText;
+        } else {
+            return newText;
+        }
     }
 }
 

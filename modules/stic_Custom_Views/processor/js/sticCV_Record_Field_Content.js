@@ -29,7 +29,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         super(customView, $fieldElement.children('[field="'+fieldName+'"]'));
 
         this.fieldName = fieldName;
-        this.type = this.$element.attr("type");
+        this.type = (this.$element.attr("type")??"").toLowerCase();
         
         switch(this.type) {
             case "bool":

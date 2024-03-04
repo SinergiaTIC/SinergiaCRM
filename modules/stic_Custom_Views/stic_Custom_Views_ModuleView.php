@@ -237,6 +237,7 @@ class stic_Custom_Views_ModuleView
                 $validOps = array('Equal_To','Not_Equal_To',/*'Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To',*/'is_null', 'is_not_null');
                 break;
             case 'enum':
+            case 'dynamicenum':
             case 'relate':
             case 'image':
             case 'currency':
@@ -354,8 +355,6 @@ class stic_Custom_Views_ModuleView
                         $validSections = array('panel', 'panel_header');
                         break;
                     case 'background':
-                        $validSections = array('panel_header', 'panel_content');
-                        break;
                     case 'css_style':
                         $validSections = array('panel','panel_header', 'panel_content');
                         break;

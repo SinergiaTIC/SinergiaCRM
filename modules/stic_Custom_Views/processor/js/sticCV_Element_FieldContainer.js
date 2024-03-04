@@ -41,10 +41,12 @@ var sticCV_Element_FieldContainer = class sticCV_Element_FieldContainer extends 
     show(show=true) {
         show=(show===true||show==="1"||show===1);
         if(!show) {
-            for(var field of this.getFields()) {
-                // Unrequire hidden fields
-                sticCVUtils.required(field, false);
-            };
+            if(this.customView.view=="editview" || this.customView.view=="quickcreate") {
+                for(var field of this.getFields()) {
+                    // Unrequire hidden fields
+                    sticCVUtils.required(field, false);
+                };
+            }
         }
         sticCVUtils.show(this.$element, this.customView, show);
         return this;
