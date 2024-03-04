@@ -33,7 +33,8 @@
  * from which this function is invoked, including the View and the Bean of the remittance
  * @return void
  */
-function generateSEPADirectDebits($remittance) {
+function generateSEPADirectDebits($remittance)
+{
 
     require_once 'SticInclude/vendor/php-iban/php-iban.php';
     require_once 'modules/stic_Settings/Utils.php';
@@ -194,10 +195,11 @@ function generateSEPADirectDebits($remittance) {
         !verify_iban($paymentResult['bank_account'], true) === true ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_INVALID_IBAN'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 4) That the mandate is set and is valid
-        empty($paymentResult['mandate']) || $paymentResult['mandate'] == '' || strlen($paymentResult['mandate']) > 35 || strpos($paymentResult['mandate'], ' ') !== false  ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_MANDATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
+        empty($paymentResult['mandate']) || $paymentResult['mandate'] == '' || strlen($paymentResult['mandate']) > 35 || strpos($paymentResult['mandate'], ' ') !== false ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_MANDATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
-        // 5) That the date of signature of the mandate exists
-        $sqlSignatureDate = "SELECT
+        // 5) That the related Payment Commitment exists
+        $sqlPC = "SELECT
+                                fp.id,
                                 fp.signature_date
                             FROM
                                 stic_payment_commitments fp
@@ -207,10 +209,15 @@ function generateSEPADirectDebits($remittance) {
                                 fpp.stic_payments_stic_payment_commitmentsstic_payments_idb = '{$paymentResult['id']}'
                                 and fp.deleted = 0
                                 and fpp.deleted = 0";
-        $signatureDate = $db->getOne($sqlSignatureDate);
-        empty($signatureDate) || $signatureDate == '' ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
-        // 6) That the status is not "paid"
+        $PCRow = $db->fetchOne($sqlPC);
+        empty($PCRow['id']) ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
+
+        // 6) That the date of signature of the mandate exists (and PC exists)
+        $signatureDate = $PCRow['signature_date'];
+        !empty($PCRow['id']) && (empty($signatureDate) || $signatureDate == '') ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
+
+        // 7) That the status is not "paid"
         $paymentResult['status'] == 'paid' ? $warningMsg .= '<p class="msg-warning">' . $mod_strings['LBL_SEPA_INVALID_STATUS'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : null;
 
         // Set explicit var to generate/not generate XML in case of fatal errors in any payment
