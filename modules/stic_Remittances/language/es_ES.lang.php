@@ -89,13 +89,13 @@ $mod_strings = array(
     'LBL_SEPA_WITHOUT_CONTACT_OR_ACCOUNT' => 'No hay ninguna persona u organización relacionada en el pago: ',
     'LBL_SEPA_XML_HAS_ERRORS' => 'El archivo XML no se ha generado porque existen errores que deben ser corregidos.',
     'LBL_MISSING_SEPA_VARIABLES' => 'Algunos parámetros de configuración necesarios para la generación de remesas están vacíos. Revíselos en el área de administración del CRM antes de continuar:',
-    'LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG' => 'El valor de la configuración <b>GENERAL_ORGANIZATION_NAME</b> excede los 70 caracteres permitidos.',
+    'LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG' => 'El valor del parámetro de configuración <b>GENERAL_ORGANIZATION_NAME</b> excede los 70 caracteres permitidos.',
 
     // Mensajes SEPA para transferencias
     'LBL_SEPA_CREDIT_INVALID_TYPE' => 'El fichero no se puede generar porque su tipo debería ser <b>transferencias emitidas</b>.',
 
     // Mensajes SEPA para recibos
-    'LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT' => 'El pago <b>no esta relacionado</b> con ningún compromiso de pago: ',
+    'LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT' => 'El pago no está relacionado con ningún compromiso de pago: ',
     'LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE' => 'La <b>fecha de firma</b> del compromiso de pago está vacía: ',
     'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'El <b>mandato</b> del pago es inválido. Está vacío, supera los 35 caracteres o contiene espacios en blanco (verifique también el compromiso de pago): ',
     'LBL_SEPA_DEBIT_INVALID_NIF' => 'El <b>número de identificación</b> (NIF, NIE...) de la persona/organización está vacío: ',
