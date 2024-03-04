@@ -70,6 +70,25 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         }
         return this;
     }
+    bold(bold=true) {
+        sticCVUtils.bold(this.$editor, this.customView, bold);
+        sticCVUtils.bold(this.$items, this.customView, bold);
+        sticCVUtils.bold(this.$readonlyLabel, this.customView, bold);
+        return this;
+    }
+
+    italic(italic=true) {
+        sticCVUtils.italic(this.$editor, this.customView, italic);
+        sticCVUtils.italic(this.$items, this.customView, italic);
+        sticCVUtils.italic(this.$readonlyLabel, this.customView, italic);
+        return this;
+    }
+    underline(underline=true) {
+        sticCVUtils.underline(this.$editor, this.customView, underline);
+        sticCVUtils.underline(this.$items, this.customView, underline);
+        sticCVUtils.underline(this.$readonlyLabel, this.customView, underline);
+        return this;
+    }
 
     readonly(readonly=true) {
         return sticCVUtils.readonly(this, readonly);
