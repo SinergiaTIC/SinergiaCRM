@@ -187,6 +187,8 @@ class PaymentController extends WebFormDataController {
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Settings: ", print_r($settings, true));
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": TPVResponseSettings: ", print_r($settings, true));
 
+$GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ' ###EPS### - TPV Error');
+
         $kc = $settings["TPV_PASSWORD"];
         if (empty($kc)) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve the PASSWORD POS constant.");

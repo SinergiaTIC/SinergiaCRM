@@ -25,6 +25,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+// Set flag mails_allowed to SKIP_CONFIGURATION
+require_once __DIR__ . '/../Catcher/Include/Mailer/WebFormMailer.php';
+if (!(isset($_REQUEST['stic_mails_allowed']))) {
+    $_REQUEST['stic_mails_allowed'] = WebFormMailer::SEND_SKIP_CONFIGURATION;
+}
+
 global $current_user;
 $current_user->getSystemUser();
 

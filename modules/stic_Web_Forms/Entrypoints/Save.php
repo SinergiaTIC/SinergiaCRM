@@ -38,6 +38,13 @@ $GLOBALS['log']->debug('Entrypoint File: Save.php: Processing WebFormDataControl
 global $current_user;
 $current_user->getSystemUser();
 
+// Set flag mails_allowed to all (default value)
+require_once __DIR__ . '/../Catcher/Include/Mailer/WebFormMailer.php';
+if (!(isset($_REQUEST['stic_mails_allowed']))) {
+    $_REQUEST['stic_mails_allowed'] = WebFormMailer::SEND_ALL;
+}
+
+
 require_once __DIR__ . '/../Catcher/WebFormDataController.php';
 $controller = new WebFormDataController();
 $controller->manage();

@@ -24,6 +24,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+// Set flag mails_allowed to all (default value)
+require_once __DIR__ . '/../Catcher/Include/Mailer/WebFormMailer.php';
+if (!(isset($_REQUEST['stic_mails_allowed']))) {
+    $_REQUEST['stic_mails_allowed'] = WebFormMailer::SEND_ALL;
+}
+
 $GLOBALS['log']->debug('Entrypoint File: AttachmentLimitsResponse.php.php:  getConfigVariables...');
 
 require_once 'include/utils.php';
