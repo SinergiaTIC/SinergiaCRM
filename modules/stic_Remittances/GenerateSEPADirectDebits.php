@@ -194,7 +194,7 @@ function generateSEPADirectDebits($remittance) {
         !verify_iban($paymentResult['bank_account'], true) === true ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_INVALID_IBAN'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 4) That the mandate is set and is valid
-        empty($paymentResult['mandate']) || $paymentResult['mandate'] == '' || strlen($paymentResult['mandate']) > 35 ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_MANDATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
+        empty($paymentResult['mandate']) || $paymentResult['mandate'] == '' || strlen($paymentResult['mandate']) > 35 || strpos($paymentResult['mandate'], ' ') !== false  ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_MANDATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 5) That the date of signature of the mandate exists
         $sqlSignatureDate = "SELECT

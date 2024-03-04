@@ -95,7 +95,7 @@ $mod_strings = array (
 
     // Missatges SEPA per a rebuts
     'LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE' => 'La <b>data de signatura</b> del compromís de pagament està buida: ',
-    'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'El <b>mandat</b> del pagament no és vàlid. Està buit o supera els 35 caràcters (comproveu també el compromís de pagament): ',
+    'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'El <b>mandat</b> del pagament no és vàlid. Està buit, supera els 35 caràcters o conté espais en blanc (comproveu també el compromís de pagament): ',
     'LBL_SEPA_DEBIT_INVALID_NIF' => "El <b>número d'identificació</b> (NIF, NIE...) de la persona/organització està buit: ",
     'LBL_SEPA_DEBIT_INVALID_TYPE' => 'El fitxer no es pot generar perquè el seu tipus hauria de ser <b>rebuts domiciliats</b>.',
 
