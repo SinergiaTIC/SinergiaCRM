@@ -89,6 +89,7 @@ $mod_strings = array(
     'LBL_SEPA_WITHOUT_CONTACT_OR_ACCOUNT' => 'Non hai ningunha persoa ou organización relacionada no pago: ',
     'LBL_SEPA_XML_HAS_ERRORS' => 'O arquivo XML non se xerou porque existen erros que deben ser corrigidos.',
     'LBL_MISSING_SEPA_VARIABLES' => 'Algúns parámetros de configuración necesarios para a xeración de remesas están baleiros. Revíseos na área de administración do CRM antes de continuar:',
+    'LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG' => 'El valor de la configuración <b>GENERAL_ORGANIZATION_NAME</b> excede los 70 caracteres permitidos.',
 
     // Mensaxes SEPA para transferencias
     'LBL_SEPA_CREDIT_INVALID_TYPE' => 'O ficheiro non se pode xerar porque o seu tipo debería ser <b>transferencias emitidas</b>.',

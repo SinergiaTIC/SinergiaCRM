@@ -27,7 +27,8 @@
  * @param Object $remittance Corresponds to the $this object of the corresponding action of the module controller.php file, from which this function is invoked, including the View and the Bean of the remittance
  * @return void
  */
-function generateSEPACreditTransfers($remittance) {
+function generateSEPACreditTransfers($remittance)
+{
     /**
      * This function generates a remittance of SEPA bank transfers in XML format.
      * Based on the Credit Transfer SEPA library:
@@ -78,6 +79,11 @@ function generateSEPACreditTransfers($remittance) {
 
     if (count($missingSettings) > 0) {
         SticUtils::showErrorMessagesAndDie($remittance, $mod_strings['LBL_MISSING_SEPA_VARIABLES'] . ' <br>' . join('<br>', $missingSettings));
+    }
+
+    // Checking the length of GENERAL_ORGANIZATION_NAME
+    if (strlen($directCreditsVars['GENERAL_ORGANIZATION_NAME']) > 70) {
+        SticUtils::showErrorMessagesAndDie($remittance, $mod_strings['LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG'] . ' <br>' . join('<br>', $missingSettings));
     }
 
     // We start variables to count and add the total payments to be made (and then indicate them in the header)
