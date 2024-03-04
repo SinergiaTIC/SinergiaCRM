@@ -372,8 +372,9 @@ class PaymentController extends WebFormDataController
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
-        var_dump($settings);
-
+        // var_dump($settings);
+        // die();
+        
         // Check that the settings are complete and if so, add it to the parameters
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning CECA settings to request parameters...");
         $requiredConsts = [
