@@ -22,40 +22,43 @@
 <div class='moduleTitle'>
 	<h2>{$TITLE} {$FOR} "<b>{$FOCUS_NAME}</b>"</h2>
 </div>
-<br />
+
+<div class="clear"></div>
+
+<br /><br />
 
 <form action='index.php' method="POST">
-<input type='hidden' name='module' value='adrep_report' />
-<input type='hidden' name='action' value='SaveRoles' />
-<input type='hidden' name='record' value='{$record}' />
-<input type='hidden' name='new' value='{$new}' />
-<input type='hidden' name='role_ids' value='{$role_ids}' />
-<input type='hidden' name='role_names' value='{$role_names}' />
+	<input type='hidden' name='module' value='adrep_report' />
+	<input type='hidden' name='action' value='SaveRoles' />
+	<input type='hidden' name='record' value='{$record}' />
+	<input type='hidden' name='new' value='{$new}' />
+	<input type='hidden' name='role_ids' value='{$role_ids}' />
+	<input type='hidden' name='role_names' value='{$role_names}' />
 
-<table class='list'>
-	<thead>
-		<tr>
-			<th width='48%'>Role</th>
-			<th width='48%'>Allowed?</th>
-		</tr>
-	</thead>
-	<tbody>
-{foreach from=$roles item=role key=id}
-	<tr>
-		<td>
-			{$role.name}
-			<!-- input type='hidden' name='role_{$id}' value='{$role.name}' />
+	<table class='list'>
+		<thead>
+			<tr>
+				<th width='48%'>{$ROLE}</th>
+				<th width='48%'>{$ALLOWED}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach from=$roles item=role key=id}
+			<tr>
+				<td>
+					{$role.name}
+					<!-- input type='hidden' name='role_{$id}' value='{$role.name}' />
 			<input type='hidden' name='id_{$id}' value='{$role.role_id}' / -->
-		</td>
-		<td class='type_td' data-name="{$name}">
-			{html_options name=allowed_flag_$id options=$yesno selected=$role.allowed_flag}
-			&nbsp;
-		</td>
-	</tr>
-{/foreach}
-	</tbody>
-</table>
-
-<input type='submit' value='{$LBL_SAVE}' class='button' />
+				</td>
+				<td class='type_td' data-name="{$name}">
+					{html_options name=allowed_flag_$id options=$yesno selected=$role.allowed_flag}
+					&nbsp;
+				</td>
+			</tr>
+			{/foreach}
+		</tbody>
+	</table>
+	<br /><br />
+	<input type='submit' value='{$LBL_SAVE}' class='button' />
 
 </form>

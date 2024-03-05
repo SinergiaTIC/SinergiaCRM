@@ -53,6 +53,8 @@ else
 	$smarty->assign("LBL_SAVE",translate('LBL_NEXT','adrep_report'));
 	$smarty->assign("new","yes");
 }
+$smarty->assign("ROLE",translate('LBL_ROLE_NAME','adrep_role'));
+$smarty->assign("ALLOWED",translate('LBL_ALLOWED_FLAG','adrep_role'));
 
 // Roles
 $smarty->assign("roles",$roles);
