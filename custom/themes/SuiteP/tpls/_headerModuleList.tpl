@@ -928,7 +928,7 @@
                                                     href="{sugar_link module=$item.module_name action='DetailView' record=$item.item_id link_only=1}"
                                                     class="recent-links-detail">
                                                     <span class="suitepicon suitepicon-module-{$item.module_name|lower|replace:'_':'-'}"></span>
-                                                    <span>{$item.item_summary_short}</span>
+                                                    <span title="{$item.item_summary}">{$item.item_summary_short}</span>
                                                 </a>
                                                 {capture assign='access'}{suite_check_access module=$item.module_name action='edit' record=$item.item_id }{/capture}
                                                 {if $access}
@@ -962,7 +962,7 @@
                                                 href="{sugar_link module=$item.module_name action='DetailView' record=$item.id link_only=1}"
                                                 class="favorite-links-detail">
                                                 <span class="suitepicon suitepicon-module-{$item.module_name|lower|replace:'_':'-'}"></span>
-                                                <span aria-hidden="true">{$item.item_summary_short}</span>
+                                                <span title="{$item.item_summary}" aria-hidden="true">{$item.item_summary_short}</span>
                                             </a>
                                             {capture assign='access'}{suite_check_access module=$item.module_name action='edit' record=$item.item_id }{/capture}
                                             {if $access}
