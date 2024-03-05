@@ -81,10 +81,8 @@ function generateSEPACreditTransfers($remittance)
         SticUtils::showErrorMessagesAndDie($remittance, $mod_strings['LBL_MISSING_SEPA_VARIABLES'] . ' <br>' . join('<br>', $missingSettings));
     }
 
-    // Checking the length of GENERAL_ORGANIZATION_NAME
-    if (strlen($directCreditsVars['GENERAL_ORGANIZATION_NAME']) > 70) {
-        SticUtils::showErrorMessagesAndDie($remittance, $mod_strings['LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG'] . ' <br>' . join('<br>', $missingSettings));
-    }
+    // Truncate GENERAL_ORGANIZATION_NAME to 70 characters as allowed
+    $directCreditsVars['GENERAL_ORGANIZATION_NAME'] = substr($directCreditsVars['GENERAL_ORGANIZATION_NAME'],0,70);
 
     // We start variables to count and add the total payments to be made (and then indicate them in the header)
     $controlSum = 0;

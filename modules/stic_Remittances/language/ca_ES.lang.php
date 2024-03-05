@@ -89,7 +89,6 @@ $mod_strings = array (
     'LBL_SEPA_WITHOUT_CONTACT_OR_ACCOUNT' => 'No hi ha cap persona o organització relacionada al pagament: ',
     'LBL_SEPA_XML_HAS_ERRORS' => "El fitxer XML no s'ha generat perquè hi ha errors que cal corregir.",
     'LBL_MISSING_SEPA_VARIABLES' => "Alguns paràmetres de configuració necessaris per a la generació de remeses no tenen valor. Reviseu-los a l'àrea d'administració del CRM abans de continuar:",
-    'LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG' => 'El valor del paràmetre de configuració <b>GENERAL_ORGANIZATION_NAME</b> excedeix els 70 caràcters permesos.',
     
     // Missatges SEPA per a transferències
     'LBL_SEPA_CREDIT_INVALID_TYPE' => 'El fitxer no es pot generar perquè el seu tipus hauria de ser <b>transferències emeses</b>.',

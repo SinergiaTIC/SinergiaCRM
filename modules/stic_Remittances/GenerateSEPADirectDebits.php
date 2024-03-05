@@ -96,10 +96,8 @@ function generateSEPADirectDebits($remittance)
         SticUtils::showErrorMessagesAndDie($remittance, $mod_strings['LBL_MISSING_SEPA_VARIABLES'] . ' <br>' . join('<br>', $missingSettings));
     }
 
-    // Checking the length of GENERAL_ORGANIZATION_NAME
-    if (strlen($directDebitsVars['GENERAL_ORGANIZATION_NAME']) > 70) {
-        SticUtils::showErrorMessagesAndDie($remittance, $mod_strings['LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG'] . ' <br>' . join('<br>', $missingSettings));
-    }
+   // Truncate GENERAL_ORGANIZATION_NAME to 70 characters as allowed
+   $directDebitsVars['GENERAL_ORGANIZATION_NAME'] = substr($directDebitsVars['GENERAL_ORGANIZATION_NAME'],0,70);
 
     $message = new SEPAMessage('urn:iso:std:iso:20022:tech:xsd:pain.008.001.02');
 

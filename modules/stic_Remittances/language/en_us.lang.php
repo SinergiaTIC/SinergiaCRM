@@ -89,7 +89,6 @@ $mod_strings = array(
     'LBL_SEPA_WITHOUT_CONTACT_OR_ACCOUNT' => 'No related contact or account in payment: ',
     'LBL_SEPA_XML_HAS_ERRORS' => 'The XML file has not been generated because there are errors that should be corrected.',
     'LBL_MISSING_SEPA_VARIABLES' => 'Some settings needed for remittances generation are empty. Please check next settings in admin area: ',
-    'LBL_GENERAL_ORGANIZATION_NAME_TOO_LONG' => 'The value of the <b>GENERAL_ORGANIZATION_NAME</b> setting exceeds the allowed 70 characters.',
 
     // SEPA transfers messages
     'LBL_SEPA_CREDIT_INVALID_TYPE' => "File won't be generated because its type should be <b>credit transfers</b>.",
