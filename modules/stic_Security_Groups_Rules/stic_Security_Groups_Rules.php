@@ -19,5 +19,45 @@
  * 02110-1301 USA.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */ 
-$dictionary['KReport']['fields']['report_status']['massupdate'] = 1;
+ */
+
+class stic_Security_Groups_Rules extends Basic
+{
+    public $new_schema = true;
+    public $module_dir = 'stic_Security_Groups_Rules';
+    public $object_name = 'stic_Security_Groups_Rules';
+    public $table_name = 'stic_security_groups_rules';
+    public $importable = false;
+
+    public $id;
+    public $name;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $modified_by_name;
+    public $created_by;
+    public $created_by_name;
+    public $description;
+    public $deleted;
+    public $created_by_link;
+    public $modified_user_link;
+    public $assigned_user_id;
+    public $assigned_user_name;
+    public $assigned_user_link;
+    public $SecurityGroups;
+    public $modulo;
+    public $rules;
+
+    public function bean_implements($interface)
+    {
+        switch ($interface) {
+            case 'ACL':
+                return true;
+        }
+
+        return false;
+    }
+
+   
+
+}

@@ -59,6 +59,10 @@ $sugar_config = array(
         // STIC#1086 - Do not apply Ajax in this module, the same as in Import module.
         2 => 'stic_Import_Validation',
         // END STIC
+        // STIC - JCH - 20240118 - Avoid Ajax in module Rules
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/66
+        3 => 'stic_Security_Groups_Rules',
+        // END STIC
     ),
     'admin_access_control' => false,
     'admin_export_only' => false,
@@ -562,16 +566,23 @@ $sugar_config = array(
     // STIC Custom 20220422 JCH - publish JS variables
     // STIC#708
     // STIC#760
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
     'js_available' => array(
         0 => 'stic_datetime_combo_minute_interval',
         1 => 'stic_sinergiada_public',
+        2 => 'stic_security_groups_rules_enabled',
     ),
     // END STIC
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '1.0.0',
-    'js_custom_version' => 1,
-    'stic_show_update_alert' => 0,
+    'sinergiacrm_version' => '1.2.1',
+    'js_custom_version' => 3,
+    'stic_show_update_alert' => 1,
+    // END STIC
+
+    // STIC-Custom 20240117 JCH - Security Groups Module Rules activation config
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
+    'stic_security_groups_rules_enabled' => false,
     // END STIC
 );

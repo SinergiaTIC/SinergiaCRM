@@ -119,4 +119,7 @@ $mod_strings = array(
     'LBL_TIME_START' => 'Data e hora de inicio da 1ª sesión',
     'LBL_TITLE' => 'Crear sesións periódicas',
     'LBL_SESSION_DURATION' => 'Duración da sesión',
+    'LBL_SESSION_ENABLE_FIELDS' => 'Mostrar outros campos de Sesións',
+    'LBL_SESSION_ENABLE_FIELDS_INFO' => 'Aparte dos campos obrigatorios de inicio e final da primeira sesión  da frecuencia de repetición, é posible establecer tamén valores por defecto para outros campos.',
+    'LBL_SESSION_NAME_INFO' => 'O nome da sesión pode incluir un contador numérico utilizando o parámetro {{$counter}}. Exemplo: se se indica ol valor "Sesión {{$counter}}", as sesións denominaranse "Sesión 1", "Sesión 2", etc.',
 );
