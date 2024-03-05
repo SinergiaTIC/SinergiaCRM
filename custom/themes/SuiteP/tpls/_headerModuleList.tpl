@@ -1016,6 +1016,16 @@
                                     </a>
                                 </li>
                                 <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=stic_Custom_Views&action=index" target="_blank" >
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-stic-custom-views"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_STIC_CUSTOM_VIEWS_LINK_TITLE"}
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="actionmenulinks" role="presentation">
                                     <a href="./index.php?module=Administration&action=Upgrade" target="_blank">
                                         <div class="side-bar-action-icon">
                                             <span class="suitepicon suitepicon-admin-repair"></span>

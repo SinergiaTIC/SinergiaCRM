@@ -3242,7 +3242,7 @@ $app_list_strings['stic_journal_seriousness_list']['serious'] = 'Grave';
 
 
 // Vistas personalizadas: Tipos de usuario
-$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario regular';
+$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario normal';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
 $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Todos';
 

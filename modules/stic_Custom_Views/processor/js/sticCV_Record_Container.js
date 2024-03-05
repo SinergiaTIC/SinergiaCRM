@@ -34,7 +34,7 @@ var sticCV_Record_Container = class sticCV_Record_Container {
         this.container = null;
         this.header = null
         this.content = null;
-    };
+    }
 
     show(show=true) { return this.applyAction({action: "visible", value: show, element_section: "container"}); }
     hide() { return this.show(false); }

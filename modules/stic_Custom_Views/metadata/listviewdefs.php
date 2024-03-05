@@ -31,6 +31,13 @@ array (
     'default' => true,
     'link' => true,
   ),
+  'CUSTOMIZATION_NAME'=>
+  array (
+    'width' => '10%',
+    'studio' => 'visible',
+    'label' => 'LBL_CUSTOMIZATION_NAME',
+    'default' => true,
+  ),
   'VIEW_MODULE' => 
   array (
     'type' => 'enum',

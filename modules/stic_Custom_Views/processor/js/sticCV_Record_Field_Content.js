@@ -74,20 +74,20 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         sticCVUtils.bold(this.$editor, this.customView, bold);
         sticCVUtils.bold(this.$items, this.customView, bold);
         sticCVUtils.bold(this.$readonlyLabel, this.customView, bold);
-        return this;
+        return super.bold(bold);
     }
 
     italic(italic=true) {
         sticCVUtils.italic(this.$editor, this.customView, italic);
         sticCVUtils.italic(this.$items, this.customView, italic);
         sticCVUtils.italic(this.$readonlyLabel, this.customView, italic);
-        return this;
+        return super.italic(italic);
     }
     underline(underline=true) {
         sticCVUtils.underline(this.$editor, this.customView, underline);
         sticCVUtils.underline(this.$items, this.customView, underline);
         sticCVUtils.underline(this.$readonlyLabel, this.customView, underline);
-        return this;
+        return super.underline(underline);
     }
 
     readonly(readonly=true) {
@@ -110,9 +110,9 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 case "dynamicenum":
                 case "multienum":
                 case "currency_id":
-                    return sticCVUtils.text(this.$editor.find("option:selected"), this.customView, newText);
+                    return sticCVUtils.text(this.$editor.find("option:selected"), this.customView);
                 case "radioenum":
-                    return sticCVUtils.text(this.$editor.parent().find("[type='radio']:checked").parent(), this.customView, newText);
+                    return sticCVUtils.text(this.$editor.parent().find("[type='radio']:checked").parent(), this.customView);
                 case "bool":
                     return this.value()?"☒":"☐";
                 case "relate":
@@ -121,10 +121,13 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     return this.value();
             }
         }
-        var text = super.text(newText);
+        var text = "";
         if(this.customView.view=="detailview") {
-            text=text.trim();
+            text=this.$element.text().trim();
+        } else {
+            text=sticCVUtils.text(this.$element, this.customView);
         }
+        
         return text;
     }
 

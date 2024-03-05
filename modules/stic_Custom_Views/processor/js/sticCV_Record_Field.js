@@ -45,6 +45,14 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
 
     applyAction(action) {
         switch(action.action){
+            case "visible":
+                if((action.value!==true || action.value!=="1" || action.value!==1) && 
+                   (action.element_section=="field" || action.element_section=="container") &&
+                   (this.customView.view=="editview" || this.customView.view=="quickcreate")){
+                    // Unrequire hidden fields
+                    this.required(false);
+                }
+                break;
             case "readonly": 
             case "inline": 
             case "fixed_value": 
