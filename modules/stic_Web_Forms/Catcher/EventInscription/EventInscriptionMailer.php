@@ -200,12 +200,8 @@ class EventInscriptionMailer extends WebFormMailer
      * @param $lang
      * @return void
      */
-    public function parsingEmail($templateId, $account, $payment, $replacementObjects, $lang){
-        // Function to get the object
-        if (!empty($account)) {
-            $replacementObjects[] = $account;
-        }
-
+    public function parsingEmail($templateId, $payment, $replacementObjects, $account, $lang){
+        // Function to get the object if there is a payment
         if (!empty($payment)) {
             $replacementObjects[] = $payment;
             if ($payment->load_relationship('stic_payments_stic_payment_commitments')) {
@@ -219,7 +215,7 @@ class EventInscriptionMailer extends WebFormMailer
         // Parse the template
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template [{$templateId}]...");
 
-        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $lang)) {
+        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $account, $lang)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
             return false;
         }
@@ -249,7 +245,7 @@ class EventInscriptionMailer extends WebFormMailer
         $replacementObjects[2] = $inscription;
 
         // Function to parse the email
-        $this->parsingEmail($templateId, $account, $payment, $replacementObjects, $lang);
+        $this->parsingEmail($templateId, $payment, $replacementObjects, $account, $lang);
         
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
@@ -273,7 +269,7 @@ class EventInscriptionMailer extends WebFormMailer
      * @param $lang
      * @return void
      */
-    protected function sendAssignedUserMail($templateId, $objWeb, $event, $inscription, $account = null, $payment, $lang = null)
+    protected function sendAssignedUserMail($templateId, $objWeb, $event, $inscription, $account = null, $payment = null, $lang = null)
     {
         // Reset the recipient list
         $this->resetDest();
@@ -295,8 +291,8 @@ class EventInscriptionMailer extends WebFormMailer
 
         // Get the Contact from the CRM
         include_once 'SticInclude/Utils.php';
-        $contactBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_contacts'); 
-
+        $contactBean = SticUtils::getRelatedBeanObject($inscription, 'stic_registrations_contacts'); 
+        
         // Build the array of objects to parse
         $replacementObjects = array();
         $replacementObjects[0] = $objWeb;
@@ -305,16 +301,23 @@ class EventInscriptionMailer extends WebFormMailer
         $replacementObjects[3] = $user;
         $replacementObjects[4] = $contactBean;
 
+        // If there is an Account, search from the CRM
+        if (!empty($account)) {
+            $accountBean = SticUtils::getRelatedBeanObject($inscription, 'stic_registrations_accounts'); 
+            $replacementObjects[5] = $accountBean;
+            $replacementObjects[6] = $account;
+        }
+
         // If there is an attached document it is added to the array
         if(!empty($contactBean->documents)){
             $documents = $contactBean->documents->tempBeans;
             foreach($documents as $key => $valueDocument) {
-                $replacementObjects[5] = $valueDocument;
+                $replacementObjects[] = $valueDocument;
             }
         }
 
         // Function to parse the email
-        $this->parsingEmail($templateId, $account, $payment, $replacementObjects, $lang);
+        $this->parsingEmail($templateId, $payment, $replacementObjects, $account, $lang);
 
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");

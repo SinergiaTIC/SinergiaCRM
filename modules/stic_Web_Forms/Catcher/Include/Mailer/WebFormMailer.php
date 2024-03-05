@@ -408,10 +408,47 @@ class WebFormMailer
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Result [{$i}] -> " . $parseArr["html{$j}"]);
         }
 
-        // Replace on the email template the param of form_contact to contact
-        $parseArr["html{$i}"] = str_replace('$form_contact', '$contact', $parseArr["html{$i}"]);
-        $obj = $this->prepareBean2EmailTemplate($objWeb);
-        $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
+        // Search the web form to replace on the email template the param
+        switch ($_REQUEST['webFormClass']) {
+            // If the form is from Donation
+            case 'Donation':
+                // If is a Contact, replace the param form_contact to contact
+                if($_REQUEST['web_module'] == 'Contacts') {
+                    $parseArr["html{$i}"] = str_replace('$form_contact', '$contact', $parseArr["html{$i}"]);
+
+                // If is an Account, replace the param form_account to account
+                } elseif ($_REQUEST['web_module'] == 'Accounts') {
+                    $parseArr["html{$i}"] = str_replace('$form_account', '$account', $parseArr["html{$i}"]);
+                }
+
+                // Parsing the object
+                $obj = $this->prepareBean2EmailTemplate($objWeb);
+                $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
+
+                break;
+
+            // If the form is from Events
+            case 'EventInscription':
+                // If there is an account, replace both params
+                if(!empty($account)) {
+                    $search = ['$form_contact', '$form_account'];
+                    $replace = ['$contact', '$account'];
+                    $parseArr["html{$i}"] = str_replace($search, $replace, $parseArr["html{$i}"]);
+
+                    // Parsing the object
+                    $obj = $this->prepareBean2EmailTemplate($account);
+                    $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
+
+                // If there isn't an account, replace the param form_contact to contact
+                } else {
+                    $parseArr["html{$i}"] = str_replace('$form_contact', '$contact', $parseArr["html{$i}"]);
+
+                    // Parsing the object
+                    $obj = $this->prepareBean2EmailTemplate($objWeb);
+                    $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
+                }
+                break;
+        }
 
         // Parse the entire email template again
         $parseArr["text{$j}"] = $parseArr["text{$i}"];
