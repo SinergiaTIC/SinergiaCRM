@@ -154,7 +154,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         }
     }
     is_readonly(){
-        return this.$readonlyLabel.length!=0 && this.$readonlyLabel.css('display')!='none';
+        return this.$readonlyLabel.length!=0 && !this.$readonlyLabel.hasClass("hidden");
     }
 
 
@@ -182,6 +182,9 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
 
     checkCondition(condition) {
         var value_list = condition.value_list;
+        if(this.type=="multienum") {
+            condition.value=(condition.value??"").replaceAll("^", "").split(',').sort().join(",");
+        }
         switch(condition.operator) {
             case 'Equal_To':
                 if(this.type=="relate"){
@@ -229,9 +232,6 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     var valueArray = this._getValue(value_list).split(',');
                     var conditionValueArray = condition.value.split(',');
                     for(var conditionValue of conditionValueArray){
-                        if(conditionValue[0]=='^'){ 
-                            conditionValue = conditionValue.substring(1, conditionValue.length-1);
-                        }
                         if(!valueArray.includes(conditionValue)){
                             return false;
                        }
@@ -245,9 +245,6 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     var valueArray = this._getValue(value_list).split(',');
                     var conditionValueArray = condition.value.split(',');
                     for(var conditionValue of conditionValueArray){
-                        if(conditionValue[0]=='^'){ 
-                            conditionValue = conditionValue.substring(1, conditionValue.length-1);
-                        }
                         if(valueArray.includes(conditionValue)){
                             return false;
                        }
