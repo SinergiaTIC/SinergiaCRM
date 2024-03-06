@@ -66,5 +66,20 @@ $subpanel_layout = array (
       'vname' => 'LBL_RUN_FLAG',
       'width' => '10%',
     ),
+    'edit_button' =>
+    array(
+      'vname' => 'LBL_EDIT_BUTTON',      
+      'widget_class' => 'SubPanelEditButton',
+      'module' => 'adrep_menu_link',
+      'width' => '4%',
+      'default' => true,
+    ),    
+    'remove_button' => array(
+      'vname' => 'LBL_REMOVE',
+      'widget_class' => 'SubPanelRemoveButton',
+      'module' => 'adrep_menu_link',
+      'width' => '5%',
+      'default' => true,
+    ),        
   ),
 );
