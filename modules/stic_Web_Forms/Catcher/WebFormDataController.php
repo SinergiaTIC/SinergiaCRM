@@ -236,6 +236,11 @@ class WebFormDataController
             $formParams = array();
             $reqIdFields = explode(";", $_REQUEST['req_id']);
 
+
+            if (isset($_REQUEST['stic_origin_form']) && !empty($_REQUEST['stic_origin_form'])) {
+                $formParams['URL'] = $_REQUEST['stic_origin_form'];
+            }
+
             // Received fields
             foreach ($_REQUEST as $key => $value) {
                 if (!strpos($key, '___') === false) {
