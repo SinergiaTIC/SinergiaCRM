@@ -37,18 +37,6 @@ class WebFormMailer
     protected $defaultModule = 'stic_Web_Forms';
     protected $saved_attachment = array();
 
-<<<<<<< HEAD
-    const SEND_NONE = 0b0000;
-    const SEND_ANYWAY = 0b1111;
-    const SEND_NORMAL = 0b0001;
-    const SEND_ERROR = 0b0010;
-    const SEND_ALL = 0b0011;
-
-    protected $mailsAllowed = self::SEND_ALL;
-
-
-=======
->>>>>>> parent of 51ad13310b... Request parameter to control mail sending
     public function __construct()
     {
         global $sugar_config;
@@ -59,15 +47,6 @@ class WebFormMailer
             $this->current_language = $sugar_config['default_language'];
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  language selected as [{$this->current_language}] from the configuration.");
         }
-<<<<<<< HEAD
-        $this->mailsAllowed = self::SEND_ALL;
-        if (isset($_REQUEST['stic_mails_allowed'])) {
-            $this->mailsAllowed = bindec($_REQUEST['stic_mails_allowed']);
-
-        }
-
-=======
->>>>>>> parent of 51ad13310b... Request parameter to control mail sending
     }
 
     /**

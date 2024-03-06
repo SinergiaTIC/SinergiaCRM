@@ -215,7 +215,8 @@ class WebFormDataController
         // to form manager. Errors related to other entrypoints like stic_Web_Forms_tpv_response
         // can be ignored for notification purposes.
         
-        if ($_REQUEST['entryPoint'] == 'stic_Web_Forms_save') {
+        if (isset($_REQUEST['stic_send_feedBackErrors']) && $_REQUEST['stic_send_feedBackErrors'] == 1) {
+        // if ($_REQUEST['entryPoint'] == 'stic_Web_Forms_save') {
             
             $msg = array();
             $msg['subject'] = $this->getMsgString('LBL_' . $lastError);
