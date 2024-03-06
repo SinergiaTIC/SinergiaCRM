@@ -148,7 +148,7 @@ class EventInscriptionMailer extends WebFormMailer
         $this->body = $html;
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
-        return $this->send(self::SEND_NORMAL);
+        return $this->send();
     }
 
     /**
@@ -220,7 +220,7 @@ class EventInscriptionMailer extends WebFormMailer
 
         // Send the mail
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail ...");
-        return $this->send(self::SEND_NORMAL);
+        return $this->send();
     }
 
     /**

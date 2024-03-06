@@ -592,7 +592,7 @@ class PaymentBO extends WebFormDataBO
                     // Send IPN message to all admin users
                     $body = "<div><h3>Paypal IPN [{$txnType}]</h3><pre>" . print_r($ipnMessage, true) . '</pre></div>';
                     $subject = translate('LBL_PAYPAL_ADMIN_CANT_GET_PAYMENT', 'stic_Web_Forms') . " [{$txnType}]";
-                    $paymentMailer->sendPaypalError('', $subject, $body);
+                    $paymentMailer->sendPaypalInfo('', $subject, $body);
                 }
                 break;
 
@@ -607,7 +607,7 @@ class PaymentBO extends WebFormDataBO
                     // Send IPN message to all admin users
                     $body = "<div><h3>Paypal IPN [{$txnType}]</h3><pre>" . print_r($ipnMessage, true) . '</pre></div>';
                     $subject = translate('LBL_PAYPAL_ADMIN_CANT_GET_PAYMENT_COMMITMENT', 'stic_Web_Forms') . " [{$txnType}]";
-                    $paymentMailer->sendPaypalError('', $subject, $body);
+                    $paymentMailer->sendPaypalInfo('', $subject, $body);
                 }
                 break;
 
@@ -624,12 +624,12 @@ class PaymentBO extends WebFormDataBO
                     $body = translate('LBL_PAYPAL_ADMIN_CANCEL_SUBSCRIPTION_INFO', 'stic_Web_Forms') . ': <ul><li>' . translate('LBL_PAYPAL_SUBSCR_ID', 'stic_Payment_Commitments') . ': ' . $PCBean->paypal_subscr_id . '<li>' . translate('LBL_NAME', 'stic_Payment_Commitments') . ':  <a href="' . $paymentMailer->createLinkToDetailView('stic_Payment_Commitments', $PCBean->id) . '">' . $PCBean->name . '</a><li>' . translate('LBL_END_DATE', 'stic_Payment_Commitments') . ': ' . $PCBean->end_date . '</ul>';
                     $body .= '<div><h3>IPN</h3><pre>' . print_r($ipnMessage, true) . '</pre></div>';
                     $subject = translate('LBL_PAYPAL_ADMIN_CANCEL_SUBSCRIPTION_TITLE', 'stic_Web_Forms') . ': ' . $PCBean->paypal_subscr_id;
-                    $paymentMailer->sendPaypalCancellation($PCBean->assigned_user_id, $subject, $body);
+                    $paymentMailer->sendPaypalInfo($PCBean->assigned_user_id, $subject, $body);
                 } else {
                     // Send IPN message to all admin users
                     $body = "<div><h3>Paypal IPN [{$txnType}]</h3><pre>" . print_r($ipnMessage, true) . '</pre></div>';
                     $subject = translate('LBL_PAYPAL_ADMIN_CANT_GET_PAYMENT_COMMITMENT', 'stic_Web_Forms') . " [{$txnType}]";
-                    $paymentMailer->sendPaypalError('', $subject, $body);
+                    $paymentMailer->sendPaypalInfo('', $subject, $body);
                 }
                 break;
 
@@ -637,7 +637,7 @@ class PaymentBO extends WebFormDataBO
                 // Send IPN message to all admin users
                 $body = "<div><h3>Paypal IPN [{$txnType}]</h3><pre>" . print_r($ipnMessage, true) . '</pre></div>';
                 $subject = translate('LBL_PAYPAL_ADMIN_UNKNOWN_MESSAGE', 'stic_Web_Forms') . " [{$txnType}]";
-                $paymentMailer->sendPaypalError('', $subject, $body);
+                $paymentMailer->sendPaypalInfo('', $subject, $body);
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": An IPN message of the type [{$txnType}] has been received, but there is no defined way to process it.");
                 break;
         }
