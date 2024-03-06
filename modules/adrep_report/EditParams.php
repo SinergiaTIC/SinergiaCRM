@@ -41,6 +41,13 @@ else
 	$smarty->assign("LBL_SAVE",translate('LBL_NEXT','adrep_report'));
 	$smarty->assign("new","yes");
 }
+$smarty->assign("PARAMETER",translate('LBL_PARAMETER','adrep_parameter'));
+$smarty->assign("LABEL",translate('LBL_COLUMN_LABEL','adrep_parameter'));
+$smarty->assign("TYPE",translate('LBL_TYPE','adrep_parameter'));
+$smarty->assign("PRIORITY",translate('LBL_PRIORITY','adrep_parameter'));
+$smarty->assign("DEFAULT_VALUE",translate('LBL_DEFAULT_VALUE','adrep_parameter'));
+$smarty->assign("DROPDOWN_NAME",translate('LBL_DROPDOWN_NAME','adrep_parameter'));
+$smarty->assign("PRECISION",translate('LBL_DECIMALS','adrep_parameter'));
 
 // Parameters
 $cnt = 0;

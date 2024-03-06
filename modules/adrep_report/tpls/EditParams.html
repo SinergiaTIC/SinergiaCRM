@@ -22,136 +22,137 @@
 <div class='moduleTitle'>
 	<h2>{$TITLE} {$FOR} "<b>{$FOCUS_NAME}</b>"</h2>
 </div>
-<br />
+
+<div class="clear"></div>
+
+<br /><br />
 
 <form action='index.php' method="POST">
-<input type='hidden' name='module' value='adrep_report' />
-<input type='hidden' name='action' value='SaveParams' />
-<input type='hidden' name='record' value='{$record}' />
-<input type='hidden' name='new' value='{$new}' />
+	<input type='hidden' name='module' value='adrep_report' />
+	<input type='hidden' name='action' value='SaveParams' />
+	<input type='hidden' name='record' value='{$record}' />
+	<input type='hidden' name='new' value='{$new}' />
 
-<table class='list'>
-	<thead>
-		<tr>
-			<th width='15%'>Parameter</th>
-			<th width='15%'>Label</th>
-			<th width='15%'>Type</th>
-			<th width='15%'>Priority</th>
-			<th width='15%'>Default&nbsp;Value</th>
-			<th width='15%'>Dropdown&nbsp;List</th>
-			<th width='15%'>Precision</th>
-		</tr>
-	</thead>
-	<tbody>
-{foreach from=$parameters item=parameter key=name}
-	<tr>
-		<td>
-			<input type="text" size='15' readonly name='name_{$name}' value='{$parameter.name}' />
-			<input type='hidden' name='id_{$name}' value='{$parameter.id}' />
-		</td>
-		<td>
-			<input type="text"size='15' name='parameter_label_{$name}' value='{$parameter.parameter_label}' />
-		</td>
-		<td class='type_td' data-name="{$name}">
-			{html_options name=type_$name options=$types selected=$parameter.type}
-		</td>
-		<td>
-			{html_options name=priority_$name options=$priority_list selected=$parameter.priority}
-		</td>
-		<td>
-			{if $parameter.type == 'Date' || $parameter.type == 'DateTime' }
-			<div id="default_wrapper_{$name}" style='display:none;'>
-				<input size='15' name='default_value_{$name}' value='{$parameter.default_value}' />
-			</div>
-			<div id="date_wrapper_{$name}">
-				{html_options name=default_date_$name options=$date_types selected=$parameter.default_value}
-			</div>
-			{else}
-			<div id="default_wrapper_{$name}">
-				<input type="text" size='15' name='default_value_{$name}' value='{$parameter.default_value}' />
-			</div>
-			<div id="date_wrapper_{$name}" style='display:none;'>
-				{html_options name=default_date_$name options=$date_types}
-			</div>
-			{/if}
-		</td>
-		<td type='dropdown_td' id='dropdown_td_{$name}'>
-			{if $parameter.type == 'Dropdown'}
-			<div id="dropdown_wrapper_{$name}">
-			{else}
-			<div id="dropdown_wrapper_{$name}" style='display:none;'>
-			{/if}
-				{html_options name=dropdown_name_$name options=$dropdowns selected=$parameter.dropdown_name}
-			</div>
-			{if $parameter.type == 'ModuleLink'}
-			<div id="module_wrapper_{$name}">
-			{else}
-			<div id="module_wrapper_{$name}" style='display:none;'>
-			{/if}
-				{html_options name=link_module_name_$name options=$moduleList selected=$parameter.dropdown_name}
-			</div>
-			&nbsp;
-		</td>
-		<td type='decimals_td' id='decimals_td_{$name}'>
-			{if $parameter.type == 'Number' || $parameter.type == 'Currency' }
-			<div id="precision_wrapper_{$name}">
-			{else}
-			<div id="precision_wrapper_{$name}" style='display:none;'>
-			{/if}
-				<input type="text" size='2' name='decimals_{$name}' value='{$parameter.decimals}' />
-			</div>
-			&nbsp;
-		</td>
-	</tr>
-{/foreach}
-	</tbody>
-</table>
+	<table class='list'>
+		<thead>
+			<tr>
+				<th width='15%'>{$PARAMETER}</th>
+				<th width='15%'>{$LABEL}</th>
+				<th width='15%'>{$TYPE}</th>
+				<th width='15%'>{$PRIORITY}</th>
+				<th width='15%'>{$DEFAULT_VALUE}</th>
+				<th width='15%'>{$DROPDOWN_NAME}</th>
+				<th width='15%'>{$PRECISION}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach from=$parameters item=parameter key=name}
+			<tr>
+				<td>
+					<input type="text" size='15' readonly name='name_{$name}' value='{$parameter.name}' />
+					<input type='hidden' name='id_{$name}' value='{$parameter.id}' />
+				</td>
+				<td>
+					<input type="text" size='15' name='parameter_label_{$name}' value='{$parameter.parameter_label}' />
+				</td>
+				<td class='type_td' data-name="{$name}">
+					{html_options name=type_$name options=$types selected=$parameter.type}
+				</td>
+				<td>
+					{html_options name=priority_$name options=$priority_list selected=$parameter.priority}
+				</td>
+				<td>
+					{if $parameter.type == 'Date' || $parameter.type == 'DateTime' }
+					<div id="default_wrapper_{$name}" style='display:none;'>
+						<input size='15' name='default_value_{$name}' value='{$parameter.default_value}' />
+					</div>
+					<div id="date_wrapper_{$name}">
+						{html_options name=default_date_$name options=$date_types selected=$parameter.default_value}
+					</div>
+					{else}
+					<div id="default_wrapper_{$name}">
+						<input type="text" size='15' name='default_value_{$name}' value='{$parameter.default_value}' />
+					</div>
+					<div id="date_wrapper_{$name}" style='display:none;'>
+						{html_options name=default_date_$name options=$date_types}
+					</div>
+					{/if}
+				</td>
+				<td type='dropdown_td' id='dropdown_td_{$name}'>
+					{if $parameter.type == 'Dropdown'}
+					<div id="dropdown_wrapper_{$name}">
+						{else}
+						<div id="dropdown_wrapper_{$name}" style='display:none;'>
+							{/if}
+							{html_options name=dropdown_name_$name options=$dropdowns selected=$parameter.dropdown_name}
+						</div>
+						{if $parameter.type == 'ModuleLink'}
+						<div id="module_wrapper_{$name}">
+							{else}
+							<div id="module_wrapper_{$name}" style='display:none;'>
+								{/if}
+								{html_options name=link_module_name_$name options=$moduleList
+								selected=$parameter.dropdown_name}
+							</div>
+							&nbsp;
+				</td>
+				<td type='decimals_td' id='decimals_td_{$name}'>
+					{if $parameter.type == 'Number' || $parameter.type == 'Currency' }
+					<div id="precision_wrapper_{$name}">
+						{else}
+						<div id="precision_wrapper_{$name}" style='display:none;'>
+							{/if}
+							<input type="text" size='2' name='decimals_{$name}' value='{$parameter.decimals}' />
+						</div>
+						&nbsp;
+				</td>
+			</tr>
+			{/foreach}
+		</tbody>
+	</table>
 
-<input type='submit' value='{$LBL_SAVE}' class='button' />
+	<input type='submit' value='{$LBL_SAVE}' class='button' />
 
 </form>
 
 {literal}
 <script type="text/javascript">
-function typeChange()
-{
-	var name = $(this).parent().data('name');
-	var type = $(this).val();
-	var dropdown_id = "dropdown_wrapper_"+name;
-	var date_id = "date_wrapper_"+name;
-	var default_id = "default_wrapper_"+name;
-	var precision_id = "precision_wrapper_"+name;
-	var module_id = "module_wrapper_"+name;
+	function typeChange() {
+		var name = $(this).parent().data('name');
+		var type = $(this).val();
+		var dropdown_id = "dropdown_wrapper_" + name;
+		var date_id = "date_wrapper_" + name;
+		var default_id = "default_wrapper_" + name;
+		var precision_id = "precision_wrapper_" + name;
+		var module_id = "module_wrapper_" + name;
 
-	if (type == "Dropdown")
-		$("#"+dropdown_id).show();
-	else
-		$("#"+dropdown_id).hide();
+		if (type == "Dropdown")
+			$("#" + dropdown_id).show();
+		else
+			$("#" + dropdown_id).hide();
 
-	if (type == "Date" || type == "DateTime")
-	{
-		$("#"+date_id).show();
-		$("#"+default_id).hide();
+		if (type == "Date" || type == "DateTime") {
+			$("#" + date_id).show();
+			$("#" + default_id).hide();
+		}
+		else {
+			$("#" + date_id).hide();
+			$("#" + default_id).show();
+		}
+
+		if (type == "Number" || type == "Currency")
+			$("#" + precision_id).show();
+		else
+			$("#" + precision_id).hide();
+
+		if (type == "ModuleLink")
+			$("#" + module_id).show();
+		else
+			$("#" + module_id).hide();
 	}
-	else
-	{
-		$("#"+date_id).hide();
-		$("#"+default_id).show();
-	}
 
-	if (type == "Number" || type == "Currency")
-		$("#"+precision_id).show();
-	else
-		$("#"+precision_id).hide();
-
-	if (type == "ModuleLink")
-		$("#"+module_id).show();
-	else
-		$("#"+module_id).hide();
-}
-
-$( document ).ready(function() {
-    $(".type_td select").change(typeChange);
-});
+	$(document).ready(function () {
+		$(".type_td select").change(typeChange);
+	});
 </script>
 {/literal}

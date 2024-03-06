@@ -55,6 +55,7 @@ $mod_strings = array (
     'LBL_NEW_FORM_TITLE' => 'Nuevos parámetros de informes avanzados',
     'LBL_REPORT_NAME_ADREP_REPORT_ID' => 'Informe (ID relacionado)',
     'LBL_REPORT_NAME' => 'Informe',
+    'LBL_PARAMETER' => 'Parámetro',
     'LBL_COLUMN_LABEL' => 'Etiqueta',
     'LBL_TYPE' => 'Tipo',
     'LBL_DECIMALS' => 'Precisión',
