@@ -339,7 +339,6 @@ class WebFormDataController
                 } else {
                     // Perform the operation management
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Managing the request..");
-
                     $response = $controller->doAction();
                     $response['objects'] = $controller->getObjectsCreated();
                 }

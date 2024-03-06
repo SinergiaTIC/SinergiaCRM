@@ -80,7 +80,6 @@ class DonationController extends WebFormDataController
      */
     protected function doAction()
     {
-
         // Decide the donor (and create it if necessary)
         $donator = null;
         $candidates = null;
@@ -92,7 +91,6 @@ class DonationController extends WebFormDataController
 
         $objWeb = array_pop($candidates);
 
-        $defParams = $this->bo->getDefParams();
         // We create a payment controller
         $this->fp = new DonationPaymentController($this->version);
         $params = array(

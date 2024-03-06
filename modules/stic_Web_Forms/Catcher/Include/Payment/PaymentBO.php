@@ -163,7 +163,6 @@ class PaymentBO extends WebFormDataBO
 
         // Load the data sent by the web form in a new payment commitment bean
         $fp = $this->newBeanFromParams('stic_Payment_Commitments', false);
-        // EPS $this->objectsCreated ['stic_Payment_Commitment'] = $fp;
 
         // Set or update some fields: description, channel and amount
         if (!empty($this->formParams['description'])) {
