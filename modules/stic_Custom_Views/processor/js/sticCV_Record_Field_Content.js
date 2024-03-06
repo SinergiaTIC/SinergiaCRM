@@ -55,47 +55,10 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
     }
 
-    color(color="") {
-        sticCVUtils.color(this.$editor, this.customView, color);
-        sticCVUtils.color(this.$items, this.customView, color);
-        sticCVUtils.color(this.$readonlyLabel, this.customView, color);
-        return super.color(color);
-    }
-    background(color="") {
-        sticCVUtils.background(this.$editor, this.customView, color);
-        sticCVUtils.background(this.$items, this.customView, color);
-        sticCVUtils.background(this.$readonlyLabel, this.customView, color);
-        if (this.customView.view == "detailview" || this.type=="radioenum") {
-            super.background(color);
-        }
-        return this;
-    }
-    bold(bold=true) {
-        sticCVUtils.bold(this.$editor, this.customView, bold);
-        sticCVUtils.bold(this.$items, this.customView, bold);
-        sticCVUtils.bold(this.$readonlyLabel, this.customView, bold);
-        return super.bold(bold);
-    }
+    readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly}); }
 
-    italic(italic=true) {
-        sticCVUtils.italic(this.$editor, this.customView, italic);
-        sticCVUtils.italic(this.$items, this.customView, italic);
-        sticCVUtils.italic(this.$readonlyLabel, this.customView, italic);
-        return super.italic(italic);
-    }
-    underline(underline=true) {
-        sticCVUtils.underline(this.$editor, this.customView, underline);
-        sticCVUtils.underline(this.$items, this.customView, underline);
-        sticCVUtils.underline(this.$readonlyLabel, this.customView, underline);
-        return super.underline(underline);
-    }
-
-    readonly(readonly=true) {
-        return sticCVUtils.readonly(this, readonly);
-    }
-    inline_edit(inline_edit=true) {
-       return sticCVUtils.inline_edit(this, inline_edit);
-    }
+    inline_edit(inline_edit=true) { return this.applyAction({action: "inline", value: inline_edit}); }
+    
     value(newValue, value_list) {
         return sticCVUtils.value(this, newValue, value_list);
     }
@@ -160,20 +123,50 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         return this.$readonlyLabel.length!=0 && !this.$readonlyLabel.hasClass("hidden");
     }
 
-
-    applyActionWithValue(actionName, value) { 
-        var result = super.applyActionWithValue(actionName, value);
-        if(result!== false) {
-            return result;
-        }
-        switch(actionName){
+    applyAction(action) {
+        switch(action.action){
+            case "color": 
+                sticCVUtils.color(this.$editor, this.customView, action.value);
+                sticCVUtils.color(this.$items, this.customView, action.value);
+                sticCVUtils.color(this.$readonlyLabel, this.customView, action.value);
+                sticCVUtils.color(this.$element, this.customView, action.value);
+                return this;
+            case "background": 
+                sticCVUtils.background(this.$editor, this.customView, action.value);
+                sticCVUtils.background(this.$items, this.customView, action.value);
+                sticCVUtils.background(this.$readonlyLabel, this.customView, action.value);
+                if (this.customView.view == "detailview" || this.type=="radioenum") {
+                    sticCVUtils.background(this.$element, this.customView, action.value);
+                }
+                return this;
+            case "bold": 
+                sticCVUtils.bold(this.$editor, this.customView, action.value);
+                sticCVUtils.bold(this.$items, this.customView, action.value);
+                sticCVUtils.bold(this.$readonlyLabel, this.customView, action.value);
+                sticCVUtils.bold(this.$element, this.customView, action.value);
+                return this;
+            case "italic": 
+                sticCVUtils.italic(this.$editor, this.customView, action.value);
+                sticCVUtils.italic(this.$items, this.customView, action.value);
+                sticCVUtils.italic(this.$readonlyLabel, this.customView, action.value);
+                sticCVUtils.italic(this.$element, this.customView, action.value);
+                return this;
+            case "underline": 
+                sticCVUtils.underline(this.$editor, this.customView, action.value);
+                sticCVUtils.underline(this.$items, this.customView, action.value);
+                sticCVUtils.underline(this.$readonlyLabel, this.customView, action.value);
+                sticCVUtils.underline(this.$element, this.customView, action.value);
+                return this;
+            case "readonly": 
+                sticCVUtils.readonly(this, action.value);
+                return this;
+            case "inline": 
+                sticCVUtils.inline_edit(this, action.value);
+                return this; 
             case "fixed_value": return this.value(value);
-            case "readonly": return this.readonly(value);
-            case "inline": return this.inline_edit(value); 
-            case "required": return this.required(value);
         }
-        return false;
-    }
+        return super.applyAction(action);
+    } 
 
     onChange(callback) {
         var alsoInline=(this.customView.view=="detailview");

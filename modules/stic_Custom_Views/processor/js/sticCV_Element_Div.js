@@ -30,61 +30,49 @@ var sticCV_Element_Div = class sticCV_Element_Div {
         this.$element = $element;
     }
 
-    show(show=true) {
-        sticCVUtils.show(this.$element, this.customView, show);
-        return this;
-    }
+    show(show=true) { return this.applyAction({action: "visible", value: show}); }
     hide() { return this.show(false); }
 
-    color(color="") { 
-        sticCVUtils.color(this.$element, this.customView, color);
-        return this;
-    }
+    color(color="") { return this.applyAction({action: "color", value: color}); }
+    background(color="") { return this.applyAction({action: "background", value: color}); }
 
-    background(color="") { 
-        sticCVUtils.background(this.$element, this.customView, color);
-        return this;
-    }
+    bold(bold=true) { return this.applyAction({action: "bold", value: bold}); }
+    italic(italic=true) { return this.applyAction({action: "italic", value: italic}); }
+    underline(underline=true) { return this.applyAction({action: "underline", value: underline}); }
 
-    bold(bold=true) {
-        sticCVUtils.bold(this.$element, this.customView, bold);
-        return this;
-    }
+    style(style) { return this.applyAction({action: "style", value: style}); }
 
-    italic(italic=true) {
-        sticCVUtils.italic(this.$element, this.customView, italic);
-        return this;
-    }
-
-    underline(underline=true) {
-        sticCVUtils.underline(this.$element, this.customView, underline);
-        return this;
-    }
-
-    style(style) {
-        sticCVUtils.style(this.$element, this.customView, style);
-        return this;
-    }
-
-    frame(frame=true){
-        sticCVUtils.frame(this.$element, this.customView, frame);
-        return this;
-    }
+    frame(frame=true) { return this.applyAction({action: "frame", value: frame}); }
 
     applyAction(action) {
-        return this.applyActionWithValue(action.action, action.value);
-    }
-
-    applyActionWithValue(actionName, value) { 
-        switch(actionName){
-            case "visible": return this.show(value);
-            case "color": return this.color(value);
-            case "background": return this.background(value);
-            case "bold": return this.bold(value);
-            case "italic": return this.italic(value);
-            case "underline": return this.underline(value);
-            case "css_style": return this.style(JSON.parse(value));
+        switch(action.action){
+            case "visible": 
+                sticCVUtils.show(this.$element, this.customView, action.value);
+                return this;
+            case "color": 
+                sticCVUtils.color(this.$element, this.customView, action.value);
+                return this;
+            case "background": 
+                sticCVUtils.background(this.$element, this.customView, action.value);
+                return this;
+            case "bold": 
+                sticCVUtils.bold(this.$element, this.customView, action.value);
+                return this;
+            case "italic": 
+                sticCVUtils.italic(this.$element, this.customView, action.value);
+                return this;
+            case "underline": 
+                sticCVUtils.underline(this.$element, this.customView, action.value);
+                return this;
+            case "css_style": 
+                return this.applyAction({action: "style", value: JSON.parse(action.value)});
+            case "style":
+                sticCVUtils.style(this.$element, this.customView, action.value);
+                return this;
+            case "frame":
+                sticCVUtils.frame(this.$element, this.customView, action.value);
+                return this;
         }
         return false;
-    } 
+    }
 }

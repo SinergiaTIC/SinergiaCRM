@@ -30,29 +30,29 @@ var sticCV_Record_Panel_Header = class sticCV_Record_Panel_Header extends sticCV
 
         this.$label = this.$element.find('[data-label="'+panel.name+'"]');
     }
-    text(newText) {
-        return sticCVUtils.text(this.$label, this.customView, newText);
-    }
-    color(color="") {
-        sticCVUtils.color(this.$label.parent(), this.customView, color);
-        return this;
-    }
-    background(color="") {
-        sticCVUtils.background(this.$label.parent(), this.customView, color, true);
-        return this;
-    }
-    bold(bold=true) {
-        sticCVUtils.bold(this.$label, this.customView, bold);
-        return this;
-    }
-    italic(italic=true) {
-        sticCVUtils.italic(this.$label, this.customView, italic);
-        return this;
-    }
-    underline(underline=true) {
-        sticCVUtils.underline(this.$label, this.customView, underline);
-        return this;
-    }
+    
+    applyAction(action) {
+        switch(action.action){
+            case "color": 
+                sticCVUtils.color(this.$label.parent(), this.customView, action.value);
+                return this;
+            case "background": 
+                sticCVUtils.background(this.$label.parent(), this.customView, action.value);
+                return this;
+            case "bold": 
+                sticCVUtils.bold(this.$label, this.customView, action.value);
+                return this;
+            case "italic": 
+                sticCVUtils.italic(this.$label, this.customView, action.value);
+                return this;
+            case "underline": 
+                sticCVUtils.underline(this.$label, this.customView, action.value);
+                return this;
+            case "fixed_text": 
+                return sticCVUtils.text(this.$label, this.customView, action.value);
+        }
+        return super.applyAction(action);
+    } 
 }
 
 

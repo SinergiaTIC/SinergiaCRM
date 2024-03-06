@@ -28,20 +28,15 @@ var sticCV_Element_Label = class sticCV_Element_Label extends sticCV_Element_Div
     constructor (customView, $element){
         super(customView, $element);
     }
-    text(newText) {
-        return sticCVUtils.text(this.$element, this.customView, newText);
-    }
+    text(newText) { return this.applyAction({action: "fixed_text", value: newText}); }
 
-    applyActionWithValue(actionName, value) { 
-        var result = super.applyActionWithValue(actionName, value);
-        if(result!== false) {
-            return result;
+    applyAction(action) {
+        switch(action.action){
+            case "fixed_text": 
+                return sticCVUtils.text(this.$element, this.customView, action.value);
         }
-        switch(actionName){
-            case "fixed_text": return this.text(value);
-        }
-        return false;
-    } 
+        return super.applyAction(action);
+    }
 
     onChange(callback, alsoInline=false) {
         return sticCVUtils.onChange(this.$element, callback, alsoInline);

@@ -31,12 +31,5 @@ var sticCV_Record_Tab = class sticCV_Record_Tab extends sticCV_Record_Container 
 
         this.header = new sticCV_Record_Tab_Header(this);
         this.content = new sticCV_Record_Tab_Content(this);
-    };
-
-    applyAction(action) {
-        if(action.action=="visible") {
-            action.element_section = "tab_header";
-        }
-        return super.applyAction(action);
     }
 }

@@ -31,16 +31,16 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
 
         var $fieldElement = this.customView.$elementView.find('*[data-field="'+this.name+'"]');
 
-        this.container = new sticCV_Element_Div(this.customView, $fieldElement);
+        this.container = new sticCV_Record_Field_Container(this.customView, $fieldElement);
         this.header = new sticCV_Record_Field_Header(this.customView, $fieldElement);
         this.content = new sticCV_Record_Field_Content(this.customView, $fieldElement, fieldName);
 
     }
-    readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly, element_section: "container"}); }
-    required(required=true) { return sticCVUtils.required(this, required); }
-    inline(inline=true) { return this.applyAction({action: "inline", value: inline, element_section: "container"}); }
+    readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly}); }
+    required(required=true) { return this.applyAction({action: "required", value: required}); }
+    inline(inline=true)     { return this.applyAction({action: "inline", value: inline}); }
 
-    fixed_value(fixed_value) { return this.applyAction({action: "fixed_value", value: fixed_value, element_section: "container"}); }
+    fixed_value(fixed_value) { return this.applyAction({action: "fixed_value", value: fixed_value}); }
     value(newValue) { return this.fixed_value(newValue); }
 
     applyAction(action) {
@@ -58,7 +58,8 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
             case "fixed_value": 
                 return this.content?.applyAction(action);
             case "required":
-                return this.required(action.value);
+                sticCVUtils.required(this, action.value);
+                return this;
         }
         return super.applyAction(action);
     }

@@ -24,30 +24,24 @@
  * This file contains logic and functions needed to manage custom views behaviour
  *
  */
-var sticCV_Record_Tab_Content = class sticCV_Record_Tab_Content extends sticCV_Element_FieldContainer {
-    constructor (tab){
-        super(tab.customView, tab.customView.$elementView.find('div.tab-content > div[data-id='+tab.name+']'));
-
-        // Fix padding for Tabs
-        if(this.$element.css("padding")=="0px" && this.$element.parent().css("padding")!="0px") {
-            var parentPadding = this.$element.parent().css("padding");
-            this.$element.parent().css("padding", "0px");
-            this.$element.parent().children().css("padding", parentPadding);
-        }
-        this.tabIndex = this.$element.index();
-        // Add panels to Tab content
-        this.$element = this.$element.add(tab.customView.$elementView.find('div.panel-content > div.tab-panel-'+this.tabIndex));
+var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends sticCV_Element_Div {
+    constructor (customView, $fieldElement){
+        super(customView, $fieldElement);
     }
 
     applyAction(action) {
         switch(action.action){
-            case "background": 
-                sticCVUtils.background(this.$element.first(), this.customView, action.value);
-                return this;
+            case "visible":
+                if((action.value!==true || action.value!=="1" || action.value!==1) && 
+                   (action.element_section=="field" || action.element_section=="container") &&
+                   (this.customView.view=="editview" || this.customView.view=="quickcreate")){
+                    // Unrequire hidden fields
+                    this.required(false);
+                }
+                break;
         }
         return super.applyAction(action);
     }
-
 }
 
 
