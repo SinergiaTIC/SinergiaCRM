@@ -33,7 +33,7 @@ if(ACLController::checkAccess("$module", 'list', true))$module_menu[]=Array("ind
 if ($_REQUEST['action'] == 'DetailView')
 {
 	$module_menu[]=Array("index.php?module=$module&action=RunReport&record=$record&return_module=$module&return_action=DetailView&return_record=$record", $mod_strings['LNK_RUN_REPORT'],$module, $module);
-	if(ACLController::checkAccess("$module", 'edit', true))$module_menu[]=Array("index.php?module=$module&action=RunSQL&record=$record&return_module=$module&return_action=DetailView&return_record=$record", 'Format SQL',$module, $module);
+	if(ACLController::checkAccess("$module", 'edit', true))$module_menu[]=Array("index.php?module=$module&action=RunSQL&record=$record&return_module=$module&return_action=DetailView&return_record=$record", $mod_strings['LBL_FORMAT_SQL'],$module, $module);
 	/*if(ACLController::checkAccess($module, 'edit', true))$module_menu[]=Array("index.php?module=$module&action=EditParams&record=$record&return_module=$module&return_action=DetailView", $mod_strings['LNK_EDIT_PARAMETERS'],$module, $module);
 	if(ACLController::checkAccess($module, 'edit', true))$module_menu[]=Array("index.php?module=$module&action=EditColumns&record=$record&return_module=$module&return_action=DetailView", $mod_strings['LNK_EDIT_COLUMNS'],$module, $module);
 	if(ACLController::checkAccess($module, 'edit', true))$module_menu[]=Array("index.php?module=$module&action=EditRoles&record=$record&return_module=$module&return_action=DetailView", $mod_strings['LNK_EDIT_ROLES'],$module, $module);

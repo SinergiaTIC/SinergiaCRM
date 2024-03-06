@@ -88,4 +88,5 @@ $mod_strings = array (
     'LBL_DASHLET_TEMPLATE' => 'Plantilla de Dashlet',
     'LBL_DASHLET_NUMROWS' => 'Número de filas del Dashlet',
     'LBL_DASHLET_SELECT_REPORT' => 'Informe de selección de Dashlet',
+    'LBL_FORMAT_SQL' => 'Formato SQL',    
 );
