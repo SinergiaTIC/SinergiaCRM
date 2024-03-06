@@ -39,12 +39,10 @@ class WebFormMailer
 
 <<<<<<< HEAD
     const SEND_NONE = 0b0000;
-    const SEND_ANYWAY = 0b01111;
+    const SEND_ANYWAY = 0b1111;
     const SEND_NORMAL = 0b0001;
     const SEND_ERROR = 0b0010;
-    const SEND_SKIP_CONFIGURATION = 0b0011;
-    const SEND_CONFIGURATION_ERRORS = 0b0100;
-    const SEND_ALL = 0b01111;
+    const SEND_ALL = 0b0011;
 
     protected $mailsAllowed = self::SEND_ALL;
 
@@ -65,6 +63,7 @@ class WebFormMailer
         $this->mailsAllowed = self::SEND_ALL;
         if (isset($_REQUEST['stic_mails_allowed'])) {
             $this->mailsAllowed = bindec($_REQUEST['stic_mails_allowed']);
+
         }
 
 =======

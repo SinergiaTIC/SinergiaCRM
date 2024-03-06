@@ -215,13 +215,7 @@ class WebFormDataController
         // to form manager. Errors related to other entrypoints like stic_Web_Forms_tpv_response
         // can be ignored for notification purposes.
         
-        require_once 'Include/Mailer/WebFormMailer.php';
-        $mailsAllowed = WebFormMailer::SEND_ALL;
-        if (isset($_REQUEST['stic_mails_allowed'])) {
-            $mailsAllowed = bindec($_REQUEST['stic_mails_allowed']);
-        }
-        if ($mailsAllowed & WebFormMailer::SEND_CONFIGURATION_ERRORS) {
-        // if ($_REQUEST['entryPoint'] == 'stic_Web_Forms_save') {
+        if ($_REQUEST['entryPoint'] == 'stic_Web_Forms_save') {
             
             $msg = array();
             $msg['subject'] = $this->getMsgString('LBL_' . $lastError);

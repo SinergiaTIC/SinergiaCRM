@@ -24,12 +24,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-// Set flag mails_allowed to all (default value)
-require_once __DIR__ . '/../Catcher/Include/Mailer/WebFormMailer.php';
-if (!(isset($_REQUEST['stic_mails_allowed']))) {
-    $_REQUEST['stic_mails_allowed'] = WebFormMailer::SEND_ALL;
-}
-
 // Access the variable created by the entity in SinergiaCRM
 $recaptchaSetting = 'GENERAL_RECAPTCHA';
 if (isset($_POST['stic-recaptcha-id']) && !empty($_POST['stic-recaptcha-id'])) {
