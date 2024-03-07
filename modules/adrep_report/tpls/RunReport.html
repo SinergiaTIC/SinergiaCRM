@@ -22,41 +22,45 @@
 <div class='moduleTitle'>
 	<h2>{$TITLE} <b>{$FOCUS_NAME}</b></h2>
 </div>
-<br />
+
+<div class="clear"></div>
+
+<br /><br />
 
 <form action='index.php' method="POST" id="RunReportForm">
-<input type='hidden' name='module' value='adrep_report' />
-<input type='hidden' name='action' value='RunReport' />
-<input type='hidden' name='record' value='{$record}' />
-<input type='hidden' name='run' value='yes' />
-{if !empty($return_module)}
+	<input type='hidden' name='module' value='adrep_report' />
+	<input type='hidden' name='action' value='RunReport' />
+	<input type='hidden' name='record' value='{$record}' />
+	<input type='hidden' name='run' value='yes' />
+	{if !empty($return_module)}
 	<input type='hidden' name='return_module' value='{$return_module}' />
 	<input type='hidden' name='return_action' value='{$return_action}' />
 	<input type='hidden' name='return_record' value='{$return_record}' />
-{/if}
+	{/if}
 
-<table class='list' width='100%'>
-	<thead>
-		<tr>
-			<th width='20%'>Parameter</th>
-			<th width='80%'>Value</th>
-		</tr>
-	</thead>
-	<tobdy>
-{foreach from=$parameters item=parameter key=name}
-	<tr>
-		<td>
-			{$parameter.parameter_label}
-		</td>
-		<td>
-			{if $parameter.type == 'Dropdown'}
-				{html_options name=$name options=$parameter.list selected=$parameter.default_value}
-			{elseif $parameter.type == 'ModuleLink'}
-<input type="text" name="name_{$name}" class="sqsEnabled" id="name_{$name}" size="" value="{$parameter.default_name}" title='' autocomplete="off" >
-<input type="hidden" name="{$name}" id="{$name}" value="{$parameter.default_value}">
-<span class="id-ff multiple">
-<button type="button" name="btn_contact_name" id="btn_contact_name" tabindex="0" title="Select Record" class="button firstChild" value="Select Record"
-onclick='open_popup(
+	<table class='list' width='100%'>
+		<thead>
+			<tr>
+				<th width='20%'>Parameter</th>
+				<th width='80%'>Value</th>
+			</tr>
+		</thead>
+		<tobdy>
+			{foreach from=$parameters item=parameter key=name}
+			<tr>
+				<td>
+					{$parameter.parameter_label}
+				</td>
+				<td>
+					{if $parameter.type == 'Dropdown'}
+					{html_options name=$name options=$parameter.list selected=$parameter.default_value}
+					{elseif $parameter.type == 'ModuleLink'}
+					<input type="text" name="name_{$name}" class="sqsEnabled" id="name_{$name}" size=""
+						value="{$parameter.default_name}" title='' autocomplete="off">
+					<input type="hidden" name="{$name}" id="{$name}" value="{$parameter.default_value}">
+					<span class="id-ff multiple">
+						<button type="button" name="btn_contact_name" id="btn_contact_name" tabindex="0"
+							title="Select Record" class="button firstChild" value="Select Record" onclick='open_popup(
 "{$parameter.dropdown_name|default:Notes}", 
 600, 
 400, 
@@ -68,59 +72,61 @@ false,
 {/literal}
 "single", 
 true
-);' ><img src="themes/default/images/id-ff-select.png"></button>
-</span>
-<script type="text/javascript">
-</script>
-			{elseif $parameter.type == 'Date' || $parameter.type == 'DateTime'}
-<span class="dateTime">
-<input class="date_input" autocomplete="off" type="text" name="{$name}" id="{$name}" value="{$parameter.default_value}" title='' size="10" maxlength="10" >
-<img src="themes/default/images/jscalendar.gif" alt="Enter Date" style="position:relative; top:0px" border="0" id="{$name}_trigger" alt="" />
-</span>&nbsp;
-<script type="text/javascript">
-{literal}
-Calendar.setup ({
-{/literal}
-inputField : "{$name}",
-form : "RunReportForm",
-ifFormat : "{$date_format}",
-daFormat : "{$date_format}",
-button : "{$name}_trigger",
-singleClick : true,
-dateStr : "",
-startWeekday: 0,
-step : 1,
-weekNumbers:false
-{literal}
+);'><img src="themes/default/images/id-ff-select.png"></button>
+					</span>
+					<script type="text/javascript">
+					</script>
+					{elseif $parameter.type == 'Date' || $parameter.type == 'DateTime'}
+					<span class="dateTime">
+						<input class="date_input" autocomplete="off" type="text" name="{$name}" id="{$name}"
+							value="{$parameter.default_value}" title='' size="10" maxlength="10">
+						<img src="themes/default/images/jscalendar.gif" alt="Enter Date"
+							style="position:relative; top:0px" border="0" id="{$name}_trigger" alt="" />
+					</span>&nbsp;
+					<script type="text/javascript">
+						{ literal }
+						Calendar.setup({
+{/ literal}
+							inputField : "{$name}",
+							form : "RunReportForm",
+							ifFormat : "{$date_format}",
+							daFormat : "{$date_format}",
+							button : "{$name}_trigger",
+							singleClick : true,
+							dateStr : "",
+							startWeekday: 0,
+							step : 1,
+							weekNumbers: false
+{ literal }
 }
-);
-</script>
-{/literal}
-				{if $parameter.type == 'DateTime'}
+						);
+					</script>
+					{/literal}
+					{if $parameter.type == 'DateTime'}
 					{html_options name=hour_$name options=$hours selected=$parameter.hour}:
 					{html_options name=min_$name options=$minutes selected=$parameter.min}
 					{if !empty($ampm_format) && $ampm_format == 'A'}
-						{html_options name=ampm_$name options=$ampm_list selected=$parameter.ampm}
+					{html_options name=ampm_$name options=$ampm_list selected=$parameter.ampm}
 					{/if}
-				{/if}
-			{else}
-				<input type="text" size='15' name='{$name}' value='{$parameter.default_value}' />
-			{/if}
-		</td>
-	</tr>
-{/foreach}
-	<tr>
-		<td>
-			Format
-		</td>
-		<td>
-			{html_options name=format options=$adrep_format_list selected=$format}
-		</td>
-	</tr>
-</tbody>
-</table>
-
-<input type='submit' value='{$LBL_RUN_REPORT}' class='button' />
+					{/if}
+					{else}
+					<input type="text" size='15' name='{$name}' value='{$parameter.default_value}' />
+					{/if}
+				</td>
+			</tr>
+			{/foreach}
+			<tr>
+				<td>
+					{$LBL_ACTION_TO_RUN}
+				</td>
+				<td>
+					{html_options name=format options=$adrep_format_list selected=$format}
+				</td>
+			</tr>
+			</tbody>
+	</table>
+	<br />
+	<input type='submit' value='{$LBL_RUN_REPORT}' class='button' />
 
 </form>
 

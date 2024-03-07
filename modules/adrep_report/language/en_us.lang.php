@@ -89,5 +89,6 @@ $mod_strings = array (
     'LBL_DASHLET_TEMPLATE' => 'Dashlet Template',
     'LBL_DASHLET_NUMROWS' => 'Dashlet Number of Rows',
     'LBL_DASHLET_SELECT_REPORT' => 'Dashlet Select Report',
-    'LBL_FORMAT_SQL' => 'Format SQL'
+    'LBL_FORMAT_SQL' => 'Format SQL',
+    'LBL_ACTION_TO_RUN' => 'Action to run',
 );

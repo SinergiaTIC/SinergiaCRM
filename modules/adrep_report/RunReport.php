@@ -171,7 +171,10 @@ if (!isset($_REQUEST['run']) || $_REQUEST['run'] != 'yes')	// Prompt for paramet
 		$smarty->assign("format",$_REQUEST['format']);
 	else
 		$smarty->assign("format","view");
-	
+
+	// Action to run
+	$smarty->assign("LBL_ACTION_TO_RUN",translate('LBL_ACTION_TO_RUN','adrep_report'));	
+
 	// Date default values
 	$date_types = array('none'=>'None','today'=>'Today','yesterday'=>'Yesterday','tomorrow'=>'Tomorrow');
 	$smarty->assign("date_types",$date_types);
@@ -218,6 +221,13 @@ else // Run the report and display results
 	unset($_REQUEST['run']);
 	$query = http_build_query($_REQUEST);
 
-	echo "<br /><br /><a class='button' href='index.php?$query'>" . translate('LBL_RUN_AGAIN','adrep_report') . '</a>';
-	echo "&nbsp;&nbsp;<a class='button' href='index.php?module=$return_module&action=$return_action&record=$return_record'>" . translate('LBL_BACK','adrep_report') . '</a>';
+	echo "
+	<br /><br />
+	<a href='index.php?$query'>
+    	<button type='button' class='button'>" . translate('LBL_RUN_AGAIN','adrep_report') . "</button>
+	</a>";
+	echo "
+	<a href='index.php?module=$return_module&action=$return_action&record=$return_record'>
+    	<button type='button' class='button'>" . translate('LBL_BACK','adrep_report') . "</button>
+	</a>";	
 }
