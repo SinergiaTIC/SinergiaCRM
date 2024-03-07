@@ -90,4 +90,11 @@ $mod_strings = array(
     'LBL_COMPUTEFIELD_RAW_VALUE' => 'Valor original',
     'LBL_COMPUTEFIELD_FORMATTED_VALUE' => 'Valor con formato',
     'LBL_COPY_EMAIL_ADDRESSES_WORKFLOW' => 'Copiar mensajes de correo electrónico del módulo de flujo de trabajo',
+    // STIC-Custom 20240307 EPS - Improve send mail action
+    'LBL_REMITTANCE_EMAIL' => 'Remitente (Dirección de email)',
+    'LBL_REMITTANCE_NAME' => 'Nombre del remitente (Nombre a mostrar)',
+    'LBL_REPLY_TO' => 'Responder a (Dirección de email)',
+    'LBL_STICSENDEMAIL' => 'Enviar email (opciones avanzadas)',
+    'LBL_OUTPUT_SMTP' => 'Correo saliente',
+    // END STIC-Custom
 );

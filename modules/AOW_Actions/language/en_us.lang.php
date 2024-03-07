@@ -89,5 +89,12 @@ $mod_strings = array(
     'LBL_COMPUTEFIELD_VALUE_TYPE' => 'Value type',
     'LBL_COMPUTEFIELD_RAW_VALUE' => 'Raw value',
     'LBL_COMPUTEFIELD_FORMATTED_VALUE' => 'Formatted value',
-    'LBL_COPY_EMAIL_ADDRESSES_WORKFLOW' => 'Copy emails from WorkFlow Module'
+    'LBL_COPY_EMAIL_ADDRESSES_WORKFLOW' => 'Copy emails from WorkFlow Module',
+    // STIC-Custom 20240307 EPS - Improve send mail action
+    'LBL_REMITTANCE_EMAIL' =>"From Address",
+    'LBL_REMITTANCE_NAME' =>'From Name',
+    'LBL_REPLY_TO' =>'Reply to Address',
+    'LBL_STICSENDEMAIL' => 'Send Email (with options)',
+    'LBL_OUTPUT_SMTP' => 'Outbound Email',
+    // END STIC-Custom
 );
