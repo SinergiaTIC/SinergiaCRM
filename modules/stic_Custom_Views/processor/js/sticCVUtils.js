@@ -27,7 +27,7 @@
 
 var sticCVUtils = class sticCVUtils {
     static show($elem, customView=null, show=true) {
-        show=(show===true||show==="1"||show===1);
+        show=sticCVUtils.isTrue(show);
         $elem.each(function(){
             if(show) {
                 sticCVUtils.removeClass($(this), customView, "hidden");
@@ -59,7 +59,7 @@ var sticCVUtils = class sticCVUtils {
         });
     }
     static bold($elem, customView=null, bold=true) {
-        bold=(bold===true||bold==="1"||bold===1);
+        bold=sticCVUtils.isTrue(bold);
         $elem.each(function(){
             if(bold) {
                 $(this).css('font-weight', 'bold');
@@ -73,7 +73,7 @@ var sticCVUtils = class sticCVUtils {
         });
     }
     static italic($elem, customView=null, italic=true) {
-        italic=(italic===true||italic==="1"||italic===1);
+        italic=sticCVUtils.isTrue(italic);
         $elem.each(function(){
             if(italic) {
                 $(this).css('font-style', 'italic');
@@ -87,7 +87,7 @@ var sticCVUtils = class sticCVUtils {
         });
     }
     static underline($elem, customView=null, underline=true) {
-        underline=(underline===true||underline==="1"||underline===1);
+        underline=sticCVUtils.isTrue(underline);
         $elem.each(function(){
             if(underline) {
                 $(this).css('text-decoration', 'underline');
@@ -112,7 +112,7 @@ var sticCVUtils = class sticCVUtils {
         });
     }
     static frame($elem, customView=null, frame=true){
-        frame=(frame===true||frame==="1"||frame===1);
+        frame=sticCVUtils.isTrue(frame);
         $elem.each(function(){
             if(frame) {
                 $(this).css({"border-color": "orangered", "border-style": "dashed"});
@@ -312,20 +312,6 @@ var sticCVUtils = class sticCVUtils {
         }
     }
 
-    static readonly(fieldContent, readonly=true) {
-        readonly = (readonly===true||readonly==="1"||readonly===1);
-        if(fieldContent.customView.view == "detailview"){
-            return sticCVUtils.inline_edit(fieldContent, !readonly);
-        }
-
-        var oldReadonly = fieldContent.is_readonly();
-        if(readonly!=oldReadonly) {
-            fieldContent.showEditor(!readonly);
-            fieldContent.showReadOnlyLabel(readonly);
-        }
-        return this;
-    }
-
     static inline_edit(fieldContent, inline_edit=true) {
          //IEPA!!
          console.log("Inline not available. Requested:" + inline_edit);
@@ -334,7 +320,7 @@ var sticCVUtils = class sticCVUtils {
 
     static required(field, required=true) {
         var oldRequired = sticCVUtils.getRequiredStatus(field);
-        var newRequired = required===true||required==="1"||required===1;
+        var newRequired = sticCVUtils.isTrue(required);
 
         var customView = field.customView;
         if(newRequired) {
@@ -392,5 +378,9 @@ var sticCVUtils = class sticCVUtils {
             }
         });
         return res;
+    }
+
+    static isTrue(value){
+        return (value===true||value==="1"||value===1);
     }
 }

@@ -52,7 +52,20 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         this.$buttons = this.$element.find("button");
         this.$items = this.$element.find(".items,table");
         this.$fieldText = this.$element.find(".sugar_field");
-        this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
+
+        this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
+        if (this.$readonlyLabel.length==0) {
+            var classes = this.$element.attr("class").replaceAll("hidden","");
+            this.$element.parent().append('<div class="'+classes+' stic-ReadonlyInput hidden"></div>');
+            this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
+            this.$readonlyLabel.text(this.text());
+
+            // Update label when value is changed
+            var self = this;
+            this.onChange(function() {
+                self.$readonlyLabel.text(self.text());
+            });
+        }
     }
 
     readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly}); }
@@ -94,31 +107,6 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         return text;
     }
 
-    showEditor(show=true){
-        sticCVUtils.show(this.$editor, this.customView, show);
-        sticCVUtils.show(this.$buttons, this.customView, show);
-        sticCVUtils.show(this.$items, this.customView, show);
-        if(this.type=="radioenum"){
-            sticCVUtils.show(this.$editor.parent(), this.customView, show);
-        } 
-    }
-    showReadOnlyLabel(show=true){
-        if(this.type!="image" && this.type!="html") {
-            if(show) {
-                if (this.$readonlyLabel.length==0) {
-                    this.$element.prepend('<p class="stic-ReadonlyInput" class="hidden"></p>');
-                    this.$readonlyLabel = this.$element.find(".stic-ReadonlyInput");
-                    // Update label when value is changed
-                    var self = this;
-                    this.onChange(function() {
-                        self.$readonlyLabel.text(self.text());
-                    });
-                }
-            }
-            sticCVUtils.show(this.$readonlyLabel, this.customView, show);
-            this.change();
-        }
-    }
     is_readonly(){
         return this.$readonlyLabel.length!=0 && !this.$readonlyLabel.hasClass("hidden");
     }
@@ -158,9 +146,17 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 sticCVUtils.underline(this.$element, this.customView, action.value);
                 return this;
             case "readonly": 
-                sticCVUtils.readonly(this, action.value);
+                if(this.customView.view != "editview" && this.customView.view != "quickcreate"){
+                    return false;
+                }
+                var readonly=sticCVUtils.isTrue(action.value);
+                this.applyAction({action:"visible", value:!readonly});
+                sticCVUtils.show(this.$readonlyLabel, this.customView, readonly);
                 return this;
             case "inline": 
+                if(this.customView.view != "detailview") {
+                    return false;
+                }
                 sticCVUtils.inline_edit(this, action.value);
                 return this; 
             case "fixed_value": return this.value(value);

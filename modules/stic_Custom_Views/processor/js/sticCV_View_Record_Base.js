@@ -150,10 +150,10 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
         for(let i=0; i<this.undoFunctions.length; i++) {
             undoCopy[i]=this.undoFunctions[i];
         }
-        this.undoFunctions=[];
         undoCopy.forEach(func => {
             func();
         });
+        this.undoFunctions=[];
     }
 
     clearUndoList(){
