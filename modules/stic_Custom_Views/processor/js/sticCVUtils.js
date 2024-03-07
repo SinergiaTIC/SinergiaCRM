@@ -36,9 +36,17 @@ var sticCVUtils = class sticCVUtils {
             }
         });
     }
-    static color($elem, customView=null, color="") {
+    static color($elem, customView=null, color="", important=false) {
         $elem.each(function(){
-            $(this).css("color", color);
+            if(important) {
+                if($(this).style==undefined) {
+                    $(this).attr('style', 'color:' + color + ' !important');
+                } else {
+                    $(this).style.setProperty("color", color, "important");
+                }
+            } else {
+                $(this).css("color", color);
+            }
             var $self=$(this);
             customView?.addUndoFunction(function() { $self.css('color', ''); });
         });
@@ -325,13 +333,21 @@ var sticCVUtils = class sticCVUtils {
         var customView = field.customView;
         if(newRequired) {
             addToValidate(customView.formName, field.name, field.content.type, true, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
-            field.header.$element.addClass("conditional-required");
+            sticCVUtils.addClass(field.header.$element, customView, "conditional-required");
+            sticCVUtils.show(field.header.$element.find("span.required"), customView, false);
+            if(!oldRequired) {
+                customView.addUndoFunction(function() { 
+                    removeFromValidate(customView.formName, field.name);
+                });
+            }
         } else {
             removeFromValidate(customView.formName, field.name);
-            field.header.$element.removeClass("conditional-required");
-        }
-        if(oldRequired!=newRequired) {
-            customView.addUndoFunction(function() { sticCVUtils.required(field, oldRequired); });
+            sticCVUtils.removeClass(field.header.$element, customView, "conditional-required");
+            if(oldRequired) {
+                customView.addUndoFunction(function() { 
+                    addToValidate(customView.formName, field.name, field.content.type, true, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS')); 
+                });
+            }
         }
         return this;
     }

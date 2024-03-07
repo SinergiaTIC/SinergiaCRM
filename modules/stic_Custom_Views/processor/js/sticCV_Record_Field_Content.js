@@ -50,7 +50,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         }
 
         this.$buttons = this.$element.find("button");
-        this.$items = this.$element.find(".items,table");
+        this.$items = this.$element.find(".items,table,option,label");
         this.$fieldText = this.$element.find(".sugar_field");
 
         this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
@@ -115,7 +115,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         switch(action.action){
             case "color": 
                 sticCVUtils.color(this.$editor, this.customView, action.value);
-                sticCVUtils.color(this.$items, this.customView, action.value);
+                sticCVUtils.color(this.$items, this.customView, action.value, true);
                 sticCVUtils.color(this.$readonlyLabel, this.customView, action.value);
                 sticCVUtils.color(this.$element, this.customView, action.value);
                 return this;
