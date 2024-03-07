@@ -310,7 +310,7 @@ class WebFormMailer
      * @param Optional String $lang Language with which to parse the template
      * @return String Mail body in html
      */
-    public function parseEmailTemplateById($templateId, $replacementObjects, $lang = null)
+    public function parseEmailTemplateById($templateId, $replacementObjects, $account, $lang = null)
     {
         // Calling the object from the form to parse the entire template
         $objWeb = $replacementObjects[0];
@@ -328,7 +328,7 @@ class WebFormMailer
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Template with ID  [{$templateId}]  not found.");
             return false;
         }
-        return $this->parseEmailTemplate($template, $replacementObjects, $objWeb, $lang);
+        return $this->parseEmailTemplate($template, $replacementObjects, $objWeb, $account, $lang);
     }
 
     /**
@@ -357,7 +357,7 @@ class WebFormMailer
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Template not found with name [{$templateName}]");
             return false;
         }
-        return $this->parseEmailTemplate($template, $replacementObjects, $objWeb, $lang);
+        return $this->parseEmailTemplate($template, $replacementObjects, $objWeb, $account, $lang);
     }
 
     /**
@@ -367,7 +367,7 @@ class WebFormMailer
      * @param $replacementObjects Array of objects to be parsed
      * @return String Mail body in html
      */
-    protected function parseEmailTemplate($template, $replacementObjects, $objWeb, $lang)
+    protected function parseEmailTemplate($template, $replacementObjects, $objWeb, $account, $lang)
     {
         global $current_language, $app_list_strings, $app_strings;
 

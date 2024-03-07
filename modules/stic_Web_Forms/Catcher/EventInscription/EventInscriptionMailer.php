@@ -215,7 +215,7 @@ class EventInscriptionMailer extends WebFormMailer
         // Parse the template
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing template [{$templateId}]...");
 
-        if (false === parent::parseEmailTemplateById($templateId, $replacementObjects, $account, $lang)) {
+        if (false === $this->parseEmailTemplateById($templateId, $replacementObjects, $account, $lang)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error parsing the template.");
             return false;
         }
