@@ -197,7 +197,7 @@ function generateSEPACreditTransfers($remittance)
                 ->setCreditorIBAN(trim($paymentResult['bank_account']))
                 ->setCreditorName($receptorName)
                 ->setEndToEndId(str_replace('-', '', $paymentResult['id']))
-                ->setRemittanceInformation(SticUtils::cleanText(trim(substr($finalConcept, 0, 140))));
+                ->setRemittanceInformation(SticUtils::cleanText(trim(mb_substr($finalConcept, 0, 140))));
             $paymentInformation->addPayments($paymentXML);
 
             // We update totals of amount and number of operations
