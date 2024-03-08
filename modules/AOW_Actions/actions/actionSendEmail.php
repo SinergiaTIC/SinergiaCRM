@@ -587,20 +587,29 @@ class actionSendEmail extends actionBase
     // STIC-Custom 20240307 EPS
     // public function sendEmail($emailTo, $emailSubject, $emailBody, $altemailBody, SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
     public function sendEmail($templateData, $emailTo, $mailerName = 'system', $user = '', $fromEmail, $fromName, $replyto)
+    // END STIC-Custom
     {
         require_once('modules/Emails/Email.php');
         require_once('include/SugarPHPMailer.php');
-        if (empty($emailTo)) {
+
+        // STIC-Custom 20240307 EPS
+        // Moved up
+        if ((empty($emailTo)) || (!is_array($emailTo))) {
             return false;
         }
-
-        $mail = new SugarPHPMailer();
+        // END STIC-Custom
 
         $emailObj = BeanFactory::newBean('Emails');
-        // $defaults = $emailObj->getSystemDefaultEmail();
+        $mail = new SugarPHPMailer();
 
+        // STIC-Custom 20240307 EPS
+        // $defaults = $emailObj->getSystemDefaultEmail();
+        // $mail->setMailerForSystem();
         // $mail->From = $defaults['email'];
+        // isValidEmailAddress($mail->From);
         // $mail->FromName = $defaults['name'];
+        
+        
         $outboundEmail = new OutboundEmail();
         if ($mailerName === 'system') {
             $outboundEmail = $outboundEmail->getSystemMailerSettings();
@@ -608,34 +617,11 @@ class actionSendEmail extends actionBase
         else {
             $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
         }
-
         $mail->From = $fromEmail? $fromEmail : $outboundEmail->smtp_from_addr;
         $mail->FromName = $fromName ? $fromName : $outboundEmail->smtp_from_name;
-
         $mail->ClearCustomHeaders();
-        $mail->ClearAllRecipients();
-        $mail->ClearReplyTos();
-        if (!empty($replyto)){
-            $mail->addReplyTo($replyto);
-        }
-        // $mail->AddAddress($address, $name);
-        foreach ($emailTo as $to) {
-            $mail->AddAddress($to);
-        }
-
-        $mail->Subject = $templateData->subject;
-        if ($templateData->text_only == '1') {
-            $mail->Body = $templateData->body;
-        } else {
-            $mail->Body = $templateData->body_html;
-            $mail->isHTML(true);
-        }
-        $mail->AltBody = $templateData->body;
 
         $user = $mailerName === 'system' ? 1 : $user;
-        $mail->handleAttachments($attachments);
-        $mail->prepForOutbound();
-        // $mail->setMailerForSystem();
         $mail->Mailer = 'smtp';
         $mail->Host = $outboundEmail->mail_smtpserver;
         $mail->Port = $outboundEmail->mail_smtpport;
@@ -651,10 +637,108 @@ class actionSendEmail extends actionBase
             $mail->Username = $outboundEmail->mail_smtpuser;
             $mail->Password = $outboundEmail->mail_smtppass;
         }
+        // END STIC-Custom 
+
+        $mail->ClearAllRecipients();
+        $mail->ClearReplyTos();
+
+        // STIC-Custom 20240307 EPS
+        // $mail->Subject=from_html($emailSubject);
+        // $mail->Body=$emailBody;
+        // $mail->AltBody = $altemailBody;
+        $mail->Subject = $templateData->subject;
+        if ($templateData->text_only == '1') {
+            $mail->Body = $templateData->body;
+        } else {
+            $mail->Body = $templateData->body_html;
+            $mail->isHTML(true);
+        }
+        $mail->AltBody = $templateData->body;
+        // END STIC-Custom
 
 
+        $mail->handleAttachments($attachments);
+        $mail->prepForOutbound();
 
-        if (!$mail->Send()) {
+        foreach ($emailTo as $to) {
+            $mail->AddAddress($to);
+        }
+
+        // STIC-Custom 20240307 EPS
+        if (!empty($replyto)){
+            $mail->addReplyTo($replyto);
+        }
+        // END STIC-Custom
+        if (!empty($emailCc)) {
+            foreach ($emailCc as $email) {
+                $mail->AddCC($email);
+            }
+        }
+        if (!empty($emailBcc)) {
+            foreach ($emailBcc as $email) {
+                $mail->AddBCC($email);
+            }
+        }
+        if (!is_array($emailCc)) {
+            $emailCc = [];
+        }
+
+        if (!is_array($emailBcc)) {
+            $emailBcc = [];
+        }
+
+        if ($mail->Send()) {
+            $emailObj->to_addrs= implode(',', $emailTo);
+            // STIC Custom 20230511 - JBL - Reducing use of deprecated code and warnings
+            // STIC#1066
+            //  - PHP Warning:  implode(): Invalid arguments passed
+            // $emailObj->cc_addrs= implode(',', $emailCc);
+            // $emailObj->bcc_addrs= implode(',', $emailBcc);
+            $emailObj->cc_addrs= is_array($emailCc)? implode(',', $emailCc) : null;
+            $emailObj->bcc_addrs= is_array($emailBcc)? implode(',', $emailBcc): null;
+            // End STIC Custom
+            $emailObj->type= 'out';
+            $emailObj->deleted = '0';
+            $emailObj->name = $mail->Subject;
+            $emailObj->description = $mail->AltBody;
+            $emailObj->description_html = $mail->Body;
+            $emailObj->from_addr = $mail->From;
+            isValidEmailAddress($emailObj->from_addr);
+            if ($relatedBean instanceof SugarBean && !empty($relatedBean->id)) {
+                $emailObj->parent_type = $relatedBean->module_dir;
+                $emailObj->parent_id = $relatedBean->id;
+            }
+            $emailObj->date_sent_received = TimeDate::getInstance()->nowDb();
+            $emailObj->modified_user_id = '1';
+            $emailObj->created_by = '1';
+            $emailObj->status = 'sent';
+            $emailObj->save();
+
+            // Fix for issue 1561 - Email Attachments Sent By Workflow Do Not Show In Related Activity.
+            foreach ($attachments as $attachment) {
+                $note = BeanFactory::newBean('Notes');
+                $note->id = create_guid();
+                $note->date_entered = $attachment->date_entered;
+                $note->date_modified = $attachment->date_modified;
+                $note->modified_user_id = $attachment->modified_user_id;
+                $note->assigned_user_id = $attachment->assigned_user_id;
+                $note->new_with_id = true;
+                $note->parent_id = $emailObj->id;
+                $note->parent_type = $attachment->parent_type;
+                $note->name = $attachment->name;
+                ;
+                $note->filename = $attachment->filename;
+                $note->file_mime_type = $attachment->file_mime_type;
+                $fileLocation = "upload://{$attachment->id}";
+                $dest = "upload://{$note->id}";
+                if (!copy($fileLocation, $dest)) {
+                    $GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
+                }
+                $note->save();
+            }
+
+        }
+        else {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error send the notification email.");
             return false;
         }
