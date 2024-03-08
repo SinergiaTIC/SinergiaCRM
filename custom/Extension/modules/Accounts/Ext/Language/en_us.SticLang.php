@@ -147,3 +147,9 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
 
 // Grants strings
 $mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Grants';
+
+// Training strings
+$mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Training';
+
+// Work experience strings
+$mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Work Experience';
