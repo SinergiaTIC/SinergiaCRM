@@ -84,6 +84,7 @@ class actionSendEmail extends actionBase
         $html .= "<input type='hidden' name='aow_actions_param[".$line."][individual_email]' value='0' >";
         $html .= "<input type='checkbox' id='aow_actions_param[".$line."][individual_email]' name='aow_actions_param[".$line."][individual_email]' value='1' $checked></td>";
         // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         // $html .= '</td>';
         // END STIC-Custom
         if (!isset($params['email_template'])) {
@@ -107,7 +108,8 @@ class actionSendEmail extends actionBase
         $html .= "</tr>";
 
 
-        // STIC-Custom 20240307 EPS
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
                 if (isset($params['remittance_email_address']) && $params['remittance_email_address']) {
                     $remittance = $params['remittance_email_address'];
 
@@ -238,7 +240,8 @@ class actionSendEmail extends actionBase
         return $html;
     }
 
-    // STIC-Custom 20240307 EPS
+    // STIC-Custom 20240307 EPS - Improve send mail action
+    // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
     private function get_output_smtps($selectedSmtp) {
         global $db;
 
@@ -433,7 +436,8 @@ class actionSendEmail extends actionBase
 
         $attachments = $this->getAttachments($emailTemp);
 
-        // STIC-Custom 20240307 EPS
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         $fromEmail = $params['remittance_email_address'];
         $fromName = $params['remittance_email_name'];
         $replyto = $params['reply_to'];
@@ -447,7 +451,8 @@ class actionSendEmail extends actionBase
                 $emailTemp->retrieve($params['email_template']);
                 $template_override = isset($emails['template_override'][$email_to]) ? $emails['template_override'][$email_to] : array();
                 $this->parse_template($bean, $emailTemp, $template_override);
-                // STIC-Custom 20240307 EPS
+                // STIC-Custom 20240307 EPS - Improve send mail action
+                // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
                 // if (!$this->sendEmail(array($email_to), $emailTemp->subject, $emailTemp->body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
                 if (!$this->sendEmail($emailTemp, array($email_to), $outputSmtp, '', $fromEmail, $fromName, $replyto)) {
                 // END STIC-Custom
@@ -465,7 +470,8 @@ class actionSendEmail extends actionBase
                 $email_body_html = $emailTemp->body_html;
             }
 
-            // STIC-Custom 20240307 EPS
+            // STIC-Custom 20240307 EPS - Improve send mail action
+            // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
             // if (!$this->sendEmail($emails['to'], $emailTemp->subject, $email_body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
             if (!$this->sendEmail($emailTemp, $emails['to'], $outputSmtp, '', $fromEmail, $fromName, $replyto)) {
             // END STIC-Custom
@@ -584,7 +590,8 @@ class actionSendEmail extends actionBase
         }
         return $attachments;
     }
-    // STIC-Custom 20240307 EPS
+    // STIC-Custom 20240307 EPS - Improve send mail action
+    // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
     // public function sendEmail($emailTo, $emailSubject, $emailBody, $altemailBody, SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
     public function sendEmail($templateData, $emailTo, $mailerName = 'system', $user = '', $fromEmail, $fromName, $replyto)
     // END STIC-Custom
@@ -592,8 +599,8 @@ class actionSendEmail extends actionBase
         require_once('modules/Emails/Email.php');
         require_once('include/SugarPHPMailer.php');
 
-        // STIC-Custom 20240307 EPS
-        // Moved up
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         if ((empty($emailTo)) || (!is_array($emailTo))) {
             return false;
         }
@@ -602,7 +609,8 @@ class actionSendEmail extends actionBase
         $emailObj = BeanFactory::newBean('Emails');
         $mail = new SugarPHPMailer();
 
-        // STIC-Custom 20240307 EPS
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         // $defaults = $emailObj->getSystemDefaultEmail();
         // $mail->setMailerForSystem();
         // $mail->From = $defaults['email'];
@@ -642,7 +650,8 @@ class actionSendEmail extends actionBase
         $mail->ClearAllRecipients();
         $mail->ClearReplyTos();
 
-        // STIC-Custom 20240307 EPS
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         // $mail->Subject=from_html($emailSubject);
         // $mail->Body=$emailBody;
         // $mail->AltBody = $altemailBody;
@@ -664,7 +673,8 @@ class actionSendEmail extends actionBase
             $mail->AddAddress($to);
         }
 
-        // STIC-Custom 20240307 EPS
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         if (!empty($replyto)){
             $mail->addReplyTo($replyto);
         }
@@ -736,7 +746,11 @@ class actionSendEmail extends actionBase
                 }
                 $note->save();
             }
-
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        //     return true;
+        // }
+        // return false;
         }
         else {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error send the notification email.");
