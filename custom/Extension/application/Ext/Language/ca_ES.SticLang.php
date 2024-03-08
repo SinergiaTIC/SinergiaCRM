@@ -112,6 +112,7 @@ $app_list_strings['moduleList']['stic_Grants'] = 'Ajuts';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centres';
 $app_list_strings['moduleList']['stic_Time_Tracker'] = 'Registre horari';
 $app_list_strings['moduleList']['stic_Work_Calendar'] = 'Disponibilitat horària';
+$app_list_strings['moduleList']['stic_Journal'] = 'Diari';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -149,6 +150,7 @@ $app_list_strings['moduleListSingular']['stic_Grants'] = 'Ajut';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centre';
 $app_list_strings['moduleListSingular']['stic_Time_Tracker'] = 'Registro horario';
 $app_list_strings['moduleListSingular']['stic_Work_Calendar'] = 'Calendario laboral';
+$app_list_strings['moduleListSingular']['stic_Journal'] = 'Diari';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -181,6 +183,7 @@ $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescripcions m
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centres';
 $app_list_strings['parent_type_display']['stic_Time_Tracker'] = 'Registro horario';
 $app_list_strings['parent_type_display']['stic_Work_Calendar'] = 'Calendario laboral';
+$app_list_strings['parent_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display']['Leads'] = 'Interessats';
@@ -214,6 +217,7 @@ $app_list_strings['record_type_display']['stic_Grants'] = 'Ajuts';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centres';
 $app_list_strings['record_type_display']['stic_Time_Tracker'] = 'Registro horario';
 $app_list_strings['record_type_display']['stic_Work_Calendar'] = 'Calendario laboral';
+$app_list_strings['record_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interessats';
@@ -247,6 +251,7 @@ $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Ajuts';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centres';
 $app_list_strings['record_type_display_notes']['stic_Time_Tracker'] = 'Registro horario';
 $app_list_strings['record_type_display_notes']['stic_Work_Calendar'] = 'Calendario laboral';
+$app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diari';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3192,6 +3197,51 @@ $app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Dia person
 $app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Absència Puntual';
 $app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baixa per malaltia';
 $app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedència';
+
+// Diari: Tipus
+$app_list_strings['stic_journal_types_list'][''] = '';
+$app_list_strings['stic_journal_types_list']['journal'] = 'Diari';
+$app_list_strings['stic_journal_types_list']['incidence'] = 'Incidència';
+$app_list_strings['stic_journal_types_list']['followup'] = 'Seguiment a realitzar';
+$app_list_strings['stic_journal_types_list']['task'] = 'Tasca';
+$app_list_strings['stic_journal_types_list']['educational_measure'] = 'Mesura educativa';
+$app_list_strings['stic_journal_types_list']['infringement'] = 'Infracció';
+$app_list_strings['stic_journal_types_list']['other'] = 'Altres';
+
+// Diari: Torns
+$app_list_strings['stic_journal_turns_list'][''] = '';
+$app_list_strings['stic_journal_turns_list']['morning'] = 'Matí';
+$app_list_strings['stic_journal_turns_list']['afternoon'] = 'Tarda';
+$app_list_strings['stic_journal_turns_list']['night'] = 'Nit';
+$app_list_strings['stic_journal_turns_list']['weekend'] = 'Cap de setmana';
+
+// Diari: Tipus de tasca
+$app_list_strings['stic_journal_tasks_list']['house_cleaning'] = 'Neteja de casa';
+$app_list_strings['stic_journal_tasks_list']['bathroom_cleaning'] = 'Neteja de banys';
+$app_list_strings['stic_journal_tasks_list']['shopping'] = 'Compres';
+$app_list_strings['stic_journal_tasks_list']['homeworks'] = 'Fer els deures';
+$app_list_strings['stic_journal_tasks_list']['study'] = 'Estudiar';
+$app_list_strings['stic_journal_tasks_list']['project'] = 'Fer un projecte';
+$app_list_strings['stic_journal_tasks_list']['training'] = 'Formació';
+$app_list_strings['stic_journal_tasks_list']['cash_count'] = 'Comptatge de la caixa';
+$app_list_strings['stic_journal_tasks_list']['invoices'] = 'Realitzar factures';
+
+// Diari: Àmbits
+$app_list_strings['stic_journal_task_scopes_list']['household'] = 'Domèstic';
+$app_list_strings['stic_journal_task_scopes_list']['educational'] = 'Educatiu';
+$app_list_strings['stic_journal_task_scopes_list']['workplace'] = 'Laboral';
+
+// Diari: Acompliment
+$app_list_strings['stic_journal_task_fulfillments_list'][''] = '';
+$app_list_strings['stic_journal_task_fulfillments_list']['yes'] = 'Sí';
+$app_list_strings['stic_journal_task_fulfillments_list']['no'] = 'No';
+$app_list_strings['stic_journal_task_fulfillments_list']['partial'] = 'Parcial';
+
+// Diari: Gravetat de la tasca o infracció
+$app_list_strings['stic_journal_seriousness_list'][''] = '';
+$app_list_strings['stic_journal_seriousness_list']['slight'] = 'Lleu';
+$app_list_strings['stic_journal_seriousness_list']['average'] = 'Mitjana';
+$app_list_strings['stic_journal_seriousness_list']['serious'] = 'Greu';
 
 // Modificacions del core de SuiteCRM
 
