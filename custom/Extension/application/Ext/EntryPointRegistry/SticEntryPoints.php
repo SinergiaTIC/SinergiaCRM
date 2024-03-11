@@ -44,7 +44,3 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
-
-// Checking if time registration is active or not
-$entry_point_registry['timeRegistrationIsStarted'] = array('file' => 'modules/stic_Time_Tracker/Entrypoints/checkIfTimeRegistrationIsStarted.php', 'auth' => false);
-
