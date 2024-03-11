@@ -122,8 +122,8 @@ function initializeEditFields() {
   // Set initial name
   customView.field("name").value(
     customView.field("view_module").content.text() + " - " +
-    customView.field("view_type").content.text() + " - " +
-    customView.field("customization_name").content.text()
+    customView.field("customization_name").content.text() + " - " +
+    customView.field("view_type").content.text()
   );
 
   // Hide name, show label with name
@@ -134,8 +134,8 @@ function initializeEditFields() {
   customView.field("customization_name").onChange(function() {
     customView.field("name").value(
       customView.field("view_module").content.text() + " - " +
-      customView.field("view_type").content.text() + " - " +
-      customView.field("customization_name").content.text()
+      customView.field("customization_name").content.text() + " - " +
+      customView.field("view_type").content.text()
     );
   });
 }

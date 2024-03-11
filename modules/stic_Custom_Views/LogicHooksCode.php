@@ -28,8 +28,8 @@ class stic_Custom_ViewsLogicHooks
         // Ensure name is correct
         global $app_list_strings;
         $bean->name = $app_list_strings['moduleList'][$bean->view_module] . ' - ' . 
-                      $app_list_strings['stic_custom_views_views_list'][$bean->view_type] . ' - ' . 
-                      $bean->customization_name;
+                      $bean->customization_name . ' - ' . 
+                      $app_list_strings['stic_custom_views_views_list'][$bean->view_type];
 
         // Update all related names
         include_once 'modules/stic_Custom_Views/Utils.php';
