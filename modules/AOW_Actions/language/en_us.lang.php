@@ -96,5 +96,6 @@ $mod_strings = array(
     'LBL_REPLY_TO' =>'Reply to Address',
     'LBL_STICSENDEMAIL' => 'Send Email (with options)',
     'LBL_OUTPUT_SMTP' => 'Outbound Email',
+    'LBL_SHOW_ADVANCED'=> 'Show advanced options',
     // END STIC-Custom
 );

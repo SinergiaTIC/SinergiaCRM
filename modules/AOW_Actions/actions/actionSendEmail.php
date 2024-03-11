@@ -110,15 +110,21 @@ class actionSendEmail extends actionBase
 
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
-                if (isset($params['remittance_email_address']) && $params['remittance_email_address']) {
-                    $remittance = $params['remittance_email_address'];
+        if (isset($params['remittance_email_address']) && $params['remittance_email_address']) {
+            $remittance = $params['remittance_email_address'];
+        } else {
+            $remittance='';
+        }
 
-                } else {
-                    $remittance='';
-                }
-
-        //REMITTANCE_ADDRESS
-                $html .= "<tr style='margin-top:20px;'>";
+        $html .= "<tr style='margin-top:20px;' >";
+        $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;" > <a href="javascript:$(\'.advancedOptions\').toggle();">' . translate(
+            "LBL_SHOW_ADVANCED",
+            "AOW_Actions"
+        ) . '<span class="inline-help glyphicon glyphicon-triangle-bottom"></span> </a> ';
+        $html .= '</td>'; 
+        $html .= "</tr>";       
+        //FROM ADDRESS
+                $html .= "<tr style='margin-top:20px; display:none;' class='advancedOptions'>";
                 $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;"> <label>' . translate(
                     "LBL_REMITTANCE_EMAIL",
                     "AOW_Actions"
@@ -155,7 +161,7 @@ class actionSendEmail extends actionBase
                     $reply_to='';
                 }      
         //REPLY TO
-                $html .= "<tr style='margin-top:20px; margin-bottom:20px;'>";
+                $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none' class='advancedOptions'>";
                 $html .= '<td id="relate_label_4" scope="row" valign="top" style="width:20%;"><label>' . translate(
                     "LBL_REPLY_TO",
                     "AOW_Actions"
@@ -176,7 +182,7 @@ class actionSendEmail extends actionBase
         }      
 
 
-        $html .= "<tr style='margin-top:20px; margin-bottom:20px;'>";
+        $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none;' class='advancedOptions'>";
         $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
             "LBL_OUTPUT_SMTP",
             "AOW_Actions"
@@ -184,13 +190,18 @@ class actionSendEmail extends actionBase
         $html .= '</td>';
 
 
-        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
         $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps($params['output_smtp']) . "</select>";
 
         // $html .= "<td valign='top' style='width:20% !important;'>";
         // $html .= "<input type='hidden' name='aow_actions_param[".$line."][output_smtp]' value='0' >";
         // $html .= "<input type='text' id='aow_actions_param[".$line."][output_smtp'] name='aow_actions_param[".$line."][output_smtp]' value='{$reply_to}' ></td>";
         $html .= '</td>';
+        $html .= '</tr>';
+        $html .= "<tr style='margin-top:20px;' >";
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= '</td>';
+        $html .= '</tr>';
 
         // END STIC-Custom
 
@@ -243,21 +254,37 @@ class actionSendEmail extends actionBase
     // STIC-Custom 20240307 EPS - Improve send mail action
     // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
     private function get_output_smtps($selectedSmtp) {
-        global $db;
+        global $db, $current_user;
 
-        $sql = "select id, name from outbound_email oe where deleted = 0 ";
+        // $sql = "select id, name from outbound_email oe where deleted = 0 and (user = '{$current_user->id}' OR user = '')";
 
-        $result = $db->query($sql);
+        // $result = $db->query($sql);
+
+        $emailsList = $this->getOutboundEmailAccountOptions();
 
         $selected = '' == $selectedSmtp ? 'selected' : '';
         $optionString = "<option value='' {$selected}></option> ";
-        while ($row = $result->fetch_assoc()){
-            $selected = $row['name'] == $selectedSmtp ? 'selected' : '';
-            $optionString .= "<option value='{$row['name']}' {$selected}>{$row['name']}</option> ";
+        // while ($row = $result->fetch_assoc()){
+        foreach($emailsList as $id => $name) {
+            $selected = $name == $selectedSmtp ? 'selected' : '';
+            $optionString .= "<option value='{$name}' {$selected}>{$name}</option> ";
         }
 
         return $optionString;
         // return "<option value='1'> sdfdsfsd </option> <option value='2'> 2sdfdsfsd </option> <option value='3'> 3sdfdsfsd </option>";
+    }
+
+    private function getOutboundEmailAccountOptions()
+    {
+        global $mod_strings;
+        //	$ret = array(
+        //		0 => $mod_strings['LBL_OUTBOUND_EMAIL_ACCOUNT_DEFAULT'],
+        //	);
+        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+        foreach ($oeaList as $oea) {
+            $ret[$oea->id] = $oea->name;
+        }
+        return $ret;
     }
     // END STIC-Custom
 
