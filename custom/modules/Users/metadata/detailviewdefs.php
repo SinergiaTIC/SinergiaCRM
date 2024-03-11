@@ -83,6 +83,10 @@ array(
                     0 => 'sda_allowed_c',
                     1 => 'photo',
                 ),
+                3 => array(
+                    0 => 'stic_work_calendar_c',
+                    1 => 'stic_clock_c',
+                ),                
             ),
             'LBL_EMPLOYEE_INFORMATION' => array(
                 0 => array(

@@ -40,6 +40,10 @@ $mod_strings['LBL_INC_INCORPORA_USER'] = 'Identificador (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Paràmetres de connexió amb Incorpora';
 $mod_strings['LBL_USERS_STIC_TIME_TRACKER_FROM_STIC_TIME_TRACKER_TITLE'] = 'Registre horari';
 $mod_strings['LBL_STIC_WORK_CALENDAR_USERS_FROM_STIC_WORK_CALENDAR_TITLE'] = 'Disponibilitat horària';
+$mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Calendari laboral';
+$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = "Activa o desactiva l'ús del mòdul de Disponibilitat horària per a aquest empleat";
+$mod_strings['LBL_STIC_CLOCK'] = 'Registre horari';
+$mod_strings['LBL_STIC_CLOCK_INFO'] = "Activa o desactiva l\'ús del mòdul de Registre horari per a aquest empleat";
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";

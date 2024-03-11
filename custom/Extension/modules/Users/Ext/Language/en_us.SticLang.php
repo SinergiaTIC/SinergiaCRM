@@ -40,6 +40,10 @@ $mod_strings['LBL_INC_INCORPORA_USER'] = 'Username (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Incorpora connection settings';
 $mod_strings['LBL_USERS_STIC_TIME_TRACKER_FROM_STIC_TIME_TRACKER_TITLE'] = 'Time tracker';
 $mod_strings['LBL_STIC_WORK_CALENDAR_USERS_FROM_STIC_WORK_CALENDAR_TITLE'] = 'Time availability';
+$mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Work calendar';
+$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Enable or disable the use of the Work Calendar module for this employee';
+$mod_strings['LBL_STIC_CLOCK'] = 'Time tracker';
+$mod_strings['LBL_STIC_CLOCK_INFO'] = 'Enable or disable the use of the Time tracker module for this employee';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
