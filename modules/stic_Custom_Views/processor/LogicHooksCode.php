@@ -130,7 +130,13 @@ class stic_Custom_Views_ProcessorLogicHooks
         $customizations = array();
         foreach($validCustomViews as $customView) {
             $customViewBean = BeanFactory::getBean('stic_Custom_Views', $customView["id"]);
-            $customizationBeanArray = getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
+            $allCustomizationBeanArray = getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
+            $customizationBeanArray = array();
+            foreach($allCustomizationBeanArray as $customizationBean) {
+                if(strtolower($customizationBean->status)=="active") {
+                    $customizationBeanArray[]=$customizationBean;
+                }
+            }
             // Sort Customizations
             usort($customizationBeanArray, array($this, 'compareCustomizations'));
 

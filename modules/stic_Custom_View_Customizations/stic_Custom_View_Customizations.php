@@ -44,6 +44,7 @@ class stic_Custom_View_Customizations extends Basic
     public $SecurityGroups;
     public $customization_order;
     public $init;
+    public $status;
 	
     public function bean_implements($interface)
     {
