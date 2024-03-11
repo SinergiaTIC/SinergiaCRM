@@ -48,7 +48,7 @@
     <div>
         <strong>{$PARAM.LBL_ACHIEVED}</strong>
     </div>
-    {/if}
+{/if}
     
 {if !empty($FIELD.END_DATE)}
     <div>

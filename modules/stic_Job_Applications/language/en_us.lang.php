@@ -89,4 +89,5 @@ $mod_strings = array(
     'LBL_CONTRACT_END_DATE_ERROR' => 'Contract end date must be equal or after Contract start date.',
     'LBL_START_DATE_CONTRACT_START_DATE_ERROR' => 'Start date must be equal or before Contract start date',
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => 'Contract start date must be equal or after Start date',
+    'LBL_WORK_EXPERIENCE_SUBJECT' => 'Job Application accepted',
 );

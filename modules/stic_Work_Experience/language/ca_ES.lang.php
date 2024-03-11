@@ -73,4 +73,6 @@ $mod_strings = array (
   'LBL_ACHIEVED' => "Aconseguit a través de l'entitat",
   'LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_CONTACTS_TITLE' => 'Persones',
   'LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organització',
+  'LBL_START_DATE_ERROR' => "La data d'inici ha de ser igual o anterior a la data de finalització.",
+  'LBL_END_DATE_ERROR' => "La data de finalització ha de ser igual o posterior a la data d'inici.",
 );

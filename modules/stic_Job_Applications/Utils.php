@@ -20,16 +20,13 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-use DBManagerFactory;
 
 class stic_Job_ApplicationsUtils
 {
-    public $db;
-
     /**
-     * Generate a record in the Calls module
+     * Generate a record in the Work Experience module
      *
-     * @param Object $paymentBean The payment bean
+     * @param Object $jobApplicationBean The Job application bean
      * @return void
      */
     public static function createWorkExperience($jobApplicationBean)
@@ -37,27 +34,23 @@ class stic_Job_ApplicationsUtils
         include_once 'SticInclude/Utils.php';
 
         global $current_user, $timedate;
-        $db = DBManagerFactory::getInstance();
 
-        // Create the new call
+        // Create the new work experience
         $workBean = new stic_Work_Experience();
 
-        // Link the call to the Person / Organization linked to the Payment
+        $workBean->name = translate('LBL_WORK_EXPERIENCE_SUBJECT', 'stic_Job_Applications');
         if (!empty($jobApplicationBean->stic_job_applications_contactscontacts_ida)) {
-            $workBean->name .= " - {$jobApplicationBean->stic_job_applications_contacts_name}";
-        } 
-        
-        $workBean->assigned_user_id = (empty($jobApplicationBean->assigned_user_id) ? $current_user->id : $jobApplicationBean->assigned_user_id);
-        $workBean->created_by = $jobApplicationBean->created_by_name;
-        $workBean->modified_user_id = $jobApplicationBean->modified_by_name;
+            $workBean->name .= "- {$jobApplicationBean->stic_job_applications_contacts_name}";
+        }
 
+        $workBean->assigned_user_id = (empty($jobApplicationBean->assigned_user_id) ? $current_user->id : $jobApplicationBean->assigned_user_id);
 
         $offerBean = BeanFactory::getBean('stic_Job_Offers', $jobApplicationBean->stic_job_applications_stic_job_offersstic_job_offers_ida);
         $accountOfferId = SticUtils::getRelatedBeanObject($offerBean, 'stic_job_offers_accounts')->id;
 
         $workBean->stic_work_experience_accountsaccounts_ida = $accountOfferId;
         $workBean->stic_work_experience_contactscontacts_ida = $jobApplicationBean->stic_job_applications_contactscontacts_ida;
-        
+
         $workBean->save();
 
     }

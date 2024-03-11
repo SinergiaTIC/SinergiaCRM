@@ -30,8 +30,8 @@ function additionalDetailsstic_Training($fields, SugarBean $bean = null, $params
 {
     if (file_exists('custom/modules/' . $bean->module_name . '/metadata/customAdditionalDetails.php')) {
         $additionalDetailsFile = 'custom/modules/' . $bean->module_name . '/metadata/customAdditionalDetails.php';
-        require_once($additionalDetailsFile);
-        
+        require_once $additionalDetailsFile;
+
         $mod_strings = return_module_language($current_language, $bean->module_name);
         return customAdditionalDetails::customAdditionalDetailsstic_Training($fields, $bean, $mod_strings);
 
@@ -42,5 +42,5 @@ function additionalDetailsstic_Training($fields, SugarBean $bean = null, $params
         $fields["TOTAL_AMOUNT"] = number_format($fields["TOTAL_AMOUNT"], 2);
 
         return additional_details($fields, $bean, $mod_strings);
-    }    
+    }
 }
