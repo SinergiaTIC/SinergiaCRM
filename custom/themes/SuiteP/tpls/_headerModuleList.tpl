@@ -845,6 +845,9 @@
                         {* STIC-Custom 20240222 MHP - *}                            
                         {literal}
                             <style>
+                                .no-show-time-tracker-button {
+                                    display:none !important;
+                                }
                                 .time-tracker-start {
                                     background-color:green;
                                     font-size:2rem;
@@ -853,22 +856,18 @@
                                     background: red;
                                     font-size:2rem;
                                 }
-                            </style>    
+                            </style>
                             <script>
-                                $(document).ready(function() {
-                                    var button = document.getElementById('time_tracker_register');                                    
-                                    if (todayRegistrationStarted == 0) {
-                                        button.classList.add('time-tracker-start');
-                                        button.classList.remove('time-tracker-stop');
-                                    } else {
-                                        button.classList.remove('time-tracker-start');
-                                        button.classList.add('time-tracker-stop');                                                
-                                    }
+                                // Checks whether to show the time tracker button based on whether the time tracker module is being used
+                                // If used, updates the button color based on whether or not there is an active time record for today
+                                $(document).ready(function() 
+                                {
+                                    result = checkTimeTrackerButtonStatus();
                                 });
                             </script>
                         {/literal}
-                        <li>
-                            <button id="time_tracker_register" class="btn suitepicon suitepicon-module-tasks"
+                        <li id="time_tracker_button_row" class="no-show-time-tracker-button">
+                            <button id="time_tracker_button" class="btn suitepicon suitepicon-module-tasks"
                                 onclick="toggleTimeTrackerRegisterButton();"></button>
                         </li>                        
                         {* END STIC-Custom *}       

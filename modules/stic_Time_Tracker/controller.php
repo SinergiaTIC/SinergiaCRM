@@ -25,6 +25,34 @@ use Symfony\Component\Validator\Constraints\IsNull;
  */
 class stic_Time_TrackerController extends SugarController {
 
+
+    /**
+     * 
+     * @return void
+     */
+    public function action_getTimeTrackerRegisterButtonStatus()
+    {
+        // Check if the user has started any time registration today
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
+        global $current_user, $sugar_config;
+        
+        include_once 'modules/MySettings/TabController.php';
+        $controller = new TabController();
+        $currentTabs = $controller->get_system_tabs();
+        $showTimeRegisterButton = in_array('stic_Time_Tracker', $currentTabs) ? 1 : 0;
+        
+        $data = array(
+            'showTimeRegisterButton' => $showTimeRegisterButton,
+            'todayRegistrationStarted' => $current_user->getPreference('stic_time_tracker_today_registration_started'),
+        );
+        
+        // return the json result
+        $json = json_encode($data);
+        header('Content-Type: application/json');
+        echo $json;
+        die();
+    }
+
     /**
      * 
      * @return void
@@ -53,7 +81,6 @@ class stic_Time_TrackerController extends SugarController {
             $bean->assigned_user_name = $current_user->name;
         }
         $bean->save();   
-        echo $todayRegistrationStarted ? 1:0;  
         die();
     }
 }
