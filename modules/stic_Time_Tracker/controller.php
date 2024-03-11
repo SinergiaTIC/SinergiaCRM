@@ -40,10 +40,9 @@ class stic_Time_TrackerController extends SugarController {
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
         $timeTrackerModuleActive = in_array('stic_Time_Tracker', $currentTabs) ? 1 : 0;
-        
         $data = array(
             'timeTrackerModuleActive' => $timeTrackerModuleActive,
-
+            'timeTrackerActiveInEmployee' => $current_user->stic_clock_c ? 1:0,
             'todayRegistrationStarted' => $current_user->getPreference('stic_time_tracker_today_registration_started'),
         );
         
