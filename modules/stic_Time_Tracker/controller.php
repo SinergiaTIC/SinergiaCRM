@@ -34,15 +34,16 @@ class stic_Time_TrackerController extends SugarController {
     {
         // Check if the user has started any time registration today
         $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
-        global $current_user, $sugar_config;
+        global $current_user;
         
         include_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
-        $showTimeRegisterButton = in_array('stic_Time_Tracker', $currentTabs) ? 1 : 0;
+        $timeTrackerModuleActive = in_array('stic_Time_Tracker', $currentTabs) ? 1 : 0;
         
         $data = array(
-            'showTimeRegisterButton' => $showTimeRegisterButton,
+            'timeTrackerModuleActive' => $timeTrackerModuleActive,
+
             'todayRegistrationStarted' => $current_user->getPreference('stic_time_tracker_today_registration_started'),
         );
         

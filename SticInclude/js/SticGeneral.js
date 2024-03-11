@@ -11,7 +11,7 @@ function checkTimeTrackerButtonStatus()
         .then(response => response.json())
         .then(data => {
             var buttonRow = document.getElementById('time_tracker_button_row');                                    
-            if (data.showTimeRegisterButton == 1){
+            if (data.timeTrackerModuleActive == 1){
                 buttonRow.classList.remove('no-show-time-tracker-button');
                 var button = document.getElementById('time_tracker_button');        
                 if (data.todayRegistrationStarted == 0) {
