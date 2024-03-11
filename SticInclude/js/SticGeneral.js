@@ -1,41 +1,10 @@
-// alert('SticGeneral');    
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Función que devuelve una promesa para obtener datos de cualquier API
-function callCRMEntrypoint(url) {
-    // Retorna una nueva promesa
-    return new Promise((resolve, reject) => {
-        // Hacer la solicitud a la API utilizando fetch
-        fetch(url)
-            .then(response => {
-                // Verificar si la solicitud fue exitosa (código de respuesta 200)
-                if (!response.ok) {
-                    throw new Error(`Error en la solicitud: ${response.status}`);
-                }
-
-                // Parsear la respuesta JSON y resolver la promesa con los datos
-                return response.json();
-            })
-            .then(data => {
-                resolve(data); // Resolver la promesa con los datos
-            })
-            .catch(error => {
-                reject(error); // Rechazar la promesa con el error
-            });
-    });
-}
-
-
-// Comprobar si hay un registro ya activo o no
+// Check if there is an active time register for today or not
 function toggleTimeTrackerRegisterButton() 
 {
-    var resultado = window.confirm(SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP'));
-    if (resultado) {
+    var result = window.confirm(SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP'));
+    if (result) {
         const url = siteURL + '/index.php?module=stic_Time_Tracker&action=createOrUpdateTodayRegister';
-        callCRMEntrypoint(url)
+        fetch(url)
             .then(data => 
             {
                 location.reload();
