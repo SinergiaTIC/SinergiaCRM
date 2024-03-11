@@ -42,23 +42,4 @@ class stic_Time_TrackerLogicHooks
             }
         }
     }
-
-    public function after_ui_frame($event, $arguments) 
-    {
-        global $current_user, $sugar_config;
-        
-        // Check if the user has started any time registration today
-        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking if time registration is active or not.');
-       
-        // Config JS variables 
-        $html =
-        "<script type=\"text/javascript\" language=\"JavaScript\">" .
-           "var todayRegistrationStarted = " . $current_user->getPreference('stic_time_tracker_today_registration_started') . "; " .
-           "var siteURL = '" . $sugar_config['site_url'] . "';" .
-        "</script>";
-
-        echo $html;
-        return "";
-    }
-
 }
