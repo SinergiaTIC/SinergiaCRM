@@ -100,4 +100,48 @@ class stic_Custom_View_Customizations extends Basic
 
         return $return_id;
     }
+
+    public function duplicate() {
+        require_once 'modules/stic_Custom_Views/Utils.php';
+
+        $conditionBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
+        $fieldsToExclude = array(
+            "id", 
+            "stic_custom_view_customizations_stic_custom_view_conditions", 
+            "stic_custom_view_customizations_stic_custom_view_conditions_name",
+            "stic_custo233dzations_ida");
+
+        $this->addToPost($conditionBeanArray, "sticCustomView_Condition", $fieldsToExclude);
+
+        $actionsBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
+        $fieldsToExclude = array(
+            "id", 
+            "stic_custom_view_customizations_stic_custom_view_actions", 
+            "stic_custom_view_customizations_stic_custom_view_actions_name",
+            "stic_custo077ezations_ida");
+        $this->addToPost($actionsBeanArray, "sticCustomView_Action", $fieldsToExclude);
+       
+        $clone = clone $this;
+        $clone->id = null;
+        $clone->customization_order++;
+        $clone->name= $clone->name." ".translate("LBL_NAME_COPY_SUFFIX");
+        
+        $clone->save();
+    }
+
+    private function addToPost($beanArray, $keyPostBean, $fieldsToExclude) {
+        foreach($_POST as $key => $value) {
+            if(str_starts_with($key, $keyPostBean)) {
+                $_POST[$key] = array();
+            }
+        }
+        foreach($beanArray as $bean) {
+            foreach ($bean->field_defs as $field_def) {
+                $field_name = $field_def['name'];
+                if(!in_array($field_name, $fieldsToExclude)) {
+                    $_POST[$keyPostBean.$field_name][]=$bean->$field_name;
+                }
+            }
+        }
+    }
 }

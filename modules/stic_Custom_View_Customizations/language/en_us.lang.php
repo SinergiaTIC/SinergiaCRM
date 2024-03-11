@@ -74,6 +74,7 @@ $mod_strings = array (
   'LBL_ADD_ACTION' => 'Add action',
   'LBL_DELETE_ACTION' => 'Delete action',
   'LBL_DUPLICATE_ACTION' => 'Duplicate action',
+  'LBL_NAME_COPY_SUFFIX' => '(copy)',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE'] = 'Custom Views';
 $mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE'] = 'Conditions';

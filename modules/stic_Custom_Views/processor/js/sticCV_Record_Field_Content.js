@@ -159,7 +159,8 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 }
                 sticCVUtils.inline_edit(this, action.value);
                 return this; 
-            case "fixed_value": return this.value(value);
+            case "fixed_value": 
+                return this.value(action.value);
         }
         return super.applyAction(action);
     } 

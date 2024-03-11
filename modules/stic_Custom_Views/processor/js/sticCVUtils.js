@@ -353,7 +353,7 @@ var sticCVUtils = class sticCVUtils {
     }
     static getRequiredStatus(field) {
         var validateFields = validate[field.customView.formName];
-        for (i = 0; i < validateFields.length; i++) {
+        for (var i = 0; i < validateFields.length; i++) {
             // Array(name, type, required, msg);
             if (validateFields[i][0] == field.name) {
                 return validateFields[i][2];
