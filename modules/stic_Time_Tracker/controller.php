@@ -75,6 +75,7 @@ class stic_Time_TrackerController extends SugarController {
             // Create today's time tracker record for the current user
             $bean = BeanFactory::getBean($this->module);
             $bean->start_date = $timedate->now();
+            $bean->end_date = '';            
             $bean->users_stic_time_trackerusers_ida = $current_user->id;
             $bean->users_stic_time_tracker_name = $current_user->name;
             $bean->assigned_user_id = $current_user->id;
