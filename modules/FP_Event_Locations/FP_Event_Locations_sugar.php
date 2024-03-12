@@ -52,7 +52,7 @@ class FP_Event_Locations_sugar extends Basic
     public $object_name = 'FP_Event_Locations';
     public $table_name = 'fp_event_locations';
     // STIC 20240312 ART - Error importing Locations module
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/163
     // public $importable = false;
     public $importable = true;
     // End STIC
