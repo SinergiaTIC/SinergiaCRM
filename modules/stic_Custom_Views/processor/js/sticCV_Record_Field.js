@@ -31,9 +31,9 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
 
         var $fieldElement = this.customView.$elementView.find('*[data-field="'+this.name+'"]');
 
-        this.container = new sticCV_Record_Field_Container(this.customView, $fieldElement);
+        this.container = new sticCV_Record_Field_Container(this, $fieldElement);
         this.header = new sticCV_Record_Field_Header(this.customView, $fieldElement);
-        this.content = new sticCV_Record_Field_Content(this.customView, $fieldElement, fieldName);
+        this.content = new sticCV_Record_Field_Content(this, $fieldElement, fieldName);
 
     }
     readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly}); }
@@ -46,9 +46,8 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
     applyAction(action) {
         switch(action.action){
             case "visible":
-                if((action.value!==true || action.value!=="1" || action.value!==1) && 
-                   (action.element_section=="field" || action.element_section=="container") &&
-                   (this.customView.view=="editview" || this.customView.view=="quickcreate")){
+                if(!sticCVUtils.isTrue(action.value) && 
+                   (action.element_section!="header" && action.element_section!="field_label")) {
                     // Unrequire hidden fields
                     this.required(false);
                 }
@@ -58,8 +57,12 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
             case "fixed_value": 
                 return this.content?.applyAction(action);
             case "required":
-                sticCVUtils.required(this, action.value);
-                return this;
+                if(this.customView.view=="editview" || this.customView.view=="quickcreate") {
+                    sticCVUtils.required(this, action.value);
+                    return this;
+                } else {
+                    return false;
+                }
         }
         return super.applyAction(action);
     }

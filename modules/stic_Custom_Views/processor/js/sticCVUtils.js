@@ -140,19 +140,30 @@ var sticCVUtils = class sticCVUtils {
         var textArray=[];
         $elem.each(function(){
             // Only text inside the parent element
-            var oldText = $(this).contents().filter(function(){
+            var oldTextArray = $(this).contents().filter(function(){
                 return this.nodeType==Node.TEXT_NODE;
-            })[0].nodeValue ?? "";
+            });
+            var oldText = "";
+            if(oldTextArray && oldTextArray.length>0 && 
+               oldTextArray[0] && oldTextArray[0]!==undefined && 
+               oldTextArray[0].nodeValue && oldTextArray[0].nodeValue!==undefined) {
+                oldText = oldTextArray[0].nodeValue ?? "";
+               }
             oldText = oldText.trim(); 
             if(newText===undefined || newText==oldText) {
                 textArray.push(oldText);
             } else {
-                $(this).contents().filter(function(){
+                var newTextArray = $(this).contents().filter(function(){
                     return this.nodeType==Node.TEXT_NODE;
-                })[0].nodeValue = newText;
-                textArray.push(newText);
-                var $self=$(this);
-                customView?.addUndoFunction(function() { $self.text(oldText); });
+                });
+                if(newTextArray && newTextArray.length>0 && 
+                   newTextArray[0] && newTextArray[0]!==undefined && 
+                   newTextArray[0].nodeValue && newTextArray[0].nodeValue!==undefined) {
+                    newTextArray[0].nodeValue = newText;
+                    textArray.push(newText);
+                    var $self=$(this);
+                    customView?.addUndoFunction(function() { $self.text(oldText); });
+                }
             }
         });
         return textArray.join(", ");

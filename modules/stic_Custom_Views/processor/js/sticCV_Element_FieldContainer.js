@@ -33,7 +33,6 @@ var sticCV_Element_FieldContainer = class sticCV_Element_FieldContainer extends 
         var fields = [];
         var customView=this.customView;
         this.$element.find("[field]").each(function(){
-            debugger;
             fields.push(new sticCV_Record_Field(customView, $(this).attr("field")));
         });
         return fields;
@@ -45,8 +44,8 @@ var sticCV_Element_FieldContainer = class sticCV_Element_FieldContainer extends 
             if(!show) {
                 if(this.customView.view=="editview" || this.customView.view=="quickcreate") {
                     for(var field of this.getFields()) {
-                        // Unrequire hidden fields
-                        sticCVUtils.required(field, false);
+                        // Hide fields (this make unrequired also)
+                        field.hide();
                     };
                 }
             }

@@ -25,18 +25,18 @@
  *
  */
 var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends sticCV_Element_Div {
-    constructor (customView, $fieldElement){
-        super(customView, $fieldElement);
+    constructor (field, $fieldElement){
+        super(field.customView, $fieldElement);
+
+        this.field = field;
     }
 
     applyAction(action) {
         switch(action.action){
             case "visible":
-                if((action.value!==true || action.value!=="1" || action.value!==1) && 
-                   (action.element_section=="field" || action.element_section=="container") &&
-                   (this.customView.view=="editview" || this.customView.view=="quickcreate")){
+                if(!sticCVUtils.isTrue(action.value)){
                     // Unrequire hidden fields
-                    this.required(false);
+                    this.field.required(false);
                 }
                 break;
         }

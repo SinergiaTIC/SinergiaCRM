@@ -25,9 +25,10 @@
  *
  */
 var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends sticCV_Element_Label {
-    constructor (customView, $fieldElement, fieldName) {
-        super(customView, $fieldElement.children('[field="'+fieldName+'"]'));
+    constructor (field, $fieldElement, fieldName) {
+        super(field.customView, $fieldElement.children('[field="'+fieldName+'"]'));
 
+        this.field = field;
         this.fieldName = fieldName;
         this.type = (this.$element.attr("type")??"").toLowerCase();
         
