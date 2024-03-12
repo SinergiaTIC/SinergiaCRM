@@ -78,7 +78,7 @@ class ViewShowDuplicates extends SugarView
 
         $query = 'SELECT id, first_name, last_name, title FROM leads WHERE deleted=0 ';
         // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/??
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/164
         if(file_exists("custom/modules/Leads/LeadsDuplicateQueries.php")) {
             require_once("custom/modules/Leads/LeadsDuplicateQueries.php");
             if(method_exists("LeadsDuplicateQueries", "getShowDuplicateQuery")) {

@@ -90,7 +90,7 @@ class ProspectFormBase
             }
         }
         // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/??
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/164
         if(file_exists("custom/modules/Prospects/ProspectsDuplicateQueries.php")) {
             require_once("custom/modules/Prospects/ProspectsDuplicateQueries.php");
             if(method_exists("ProspectsDuplicateQueries", "getDuplicateQuery")) {
