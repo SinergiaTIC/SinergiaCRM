@@ -89,6 +89,15 @@ class ProspectFormBase
                 $query .= "or email1='". $email2 . "' or email2 = '". $email2 ."'";
             }
         }
+        // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/??
+        if(file_exists("custom/modules/Prospects/ProspectsDuplicateQueries.php")) {
+            require_once("custom/modules/Prospects/ProspectsDuplicateQueries.php");
+            if(method_exists("ProspectsDuplicateQueries", "getDuplicateQuery")) {
+                $query = ProspectsDuplicateQueries::getDuplicateQuery($focus, $prefix);
+            }
+        }
+        // END STIC-Custom
 
         if (!empty($query)) {
             $rows = array();

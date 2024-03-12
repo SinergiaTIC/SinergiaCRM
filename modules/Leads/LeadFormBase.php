@@ -60,6 +60,16 @@ class LeadFormBase extends PersonFormBase
      */
     public function getDuplicateQuery($focus, $prefix='')
     {
+        // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/??
+        if(file_exists("custom/modules/Leads/LeadsDuplicateQueries.php")) {
+            require_once("custom/modules/Leads/LeadsDuplicateQueries.php");
+            if(method_exists("LeadsDuplicateQueries", "getDuplicateQuery")) {
+                return LeadsDuplicateQueries::getDuplicateQuery($focus, $prefix);
+            }
+        }
+        // END STIC-Custom
+
         $query = "SELECT id, first_name, last_name, account_name, title FROM leads ";
 
         // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
