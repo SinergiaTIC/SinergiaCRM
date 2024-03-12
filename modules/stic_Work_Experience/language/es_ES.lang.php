@@ -69,10 +69,10 @@ $mod_strings = array(
     'LBL_WORKDAY_TYPE' => 'Tipo de jornada',
     'LBL_SCHEDULE' => 'Horario',
     'LBL_SECTOR' => 'Sector',
-    'LBL_SUBSECTOR' => 'subsector',
+    'LBL_SUBSECTOR' => 'Subsector',
     'LBL_ACHIEVED' => 'Conseguido a través de la entidad',
     'LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona',
-    'LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organitación',  
+    'LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización',  
     'LBL_START_DATE_ERROR' => 'La fecha de inicio debe ser igual o anterior a la fecha de finalización.',
     'LBL_END_DATE_ERROR' => 'La fecha de finalización debe ser igual o posterior a la fecha de inicio.',
 );
