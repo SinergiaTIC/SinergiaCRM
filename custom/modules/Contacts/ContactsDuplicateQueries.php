@@ -46,22 +46,30 @@ class ContactsDuplicateQueries{
             }
         }
 
-        $query = 'SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title FROM contacts ';
+        $query = 'SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title '. 
+            'FROM contacts INNER JOIN contacts_cstm ON contacts.id=contacts_cstm.id_c';
 
         // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
         // add team security
 
         $dbManager = DBManagerFactory::getInstance();
 
-        $query .= ' where contacts.deleted = 0 AND ';
+        $query .= ' where contacts.deleted = 0 AND (';
         if (isset($_POST[$prefix.'first_name']) && strlen($_POST[$prefix.'first_name']) != 0 && isset($_POST[$prefix.'last_name']) && strlen($_POST[$prefix.'last_name']) != 0) {
             $firstName = $dbManager->quote($_POST[$prefix.'first_name' ?? '']);
             $lastName = $dbManager->quote($_POST[$prefix.'last_name' ?? '']);
-            $query .= " contacts.first_name LIKE '". $firstName . "%' AND contacts.last_name = '". $lastName ."'";
+            $query .= " (contacts.first_name LIKE '". $firstName . "%' AND contacts.last_name = '". $lastName ."')";
         } else {
             $lastName = $dbManager->quote($_POST[$prefix.'last_name' ?? '']);
             $query .= " contacts.last_name = '". $lastName ."'";
         }
+        if(isset($_POST[$prefix.'stic_identification_number_c']) && strlen($_POST[$prefix.'stic_identification_number_c']) != 0) {
+            $query .= " OR ";
+            $stic_identification_number_c = $dbManager->quote($_POST[$prefix.'stic_identification_number_c' ?? '']);
+            $query .= " contacts_cstm.stic_identification_number_c = '". $stic_identification_number_c ."'";
+        }
+        $query .= ")";
+
 
         if (!empty($_POST[$prefix.'record'])) {
             $record = $dbManager->quote($_POST[$prefix.'record' ?? '']);
@@ -78,7 +86,7 @@ class ContactsDuplicateQueries{
             }
         }
 
-        $query = 'select contacts.id, first_name, last_name, title, accounts.name, primary_address_city from contacts LEFT JOIN accounts_contacts ON contacts.id=accounts_contacts.contact_id and accounts_contacts.deleted = 0 LEFT JOIN accounts ON accounts_contacts.account_id=accounts.id AND accounts_contacts.deleted=0 AND accounts.deleted=0 where contacts.deleted=0 ';
+        $query = 'select contacts.id, first_name, last_name, contacts_cstm.stic_identification_number_c, title, accounts.name, primary_address_city from contacts INNER JOIN contacts_cstm ON contacts.id=contacts_cstm.id_c LEFT JOIN accounts_contacts ON contacts.id=accounts_contacts.contact_id and accounts_contacts.deleted = 0 LEFT JOIN accounts ON accounts_contacts.account_id=accounts.id AND accounts_contacts.deleted=0 AND accounts.deleted=0 where contacts.deleted=0 ';
         return $query;
     }
 }
