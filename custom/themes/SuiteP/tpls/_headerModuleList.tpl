@@ -862,14 +862,14 @@
                                 // If used, updates the button color based on whether or not there is an active time record for today
                                 $(document).ready(function() 
                                 {
-                                    result = checkTimeTrackerButtonStatus();
+                                    checkTimeTrackerButtonStatus();
                                 });
                             </script>
                         {/literal}
                         <li id="time_tracker_button_row" class="no-show-time-tracker-button">
                             <button id="time_tracker_button" class="btn suitepicon suitepicon-module-tasks"
-                                onclick="toggleTimeTrackerRegisterButton();"></button>
-                        </li>                        
+                                onclick="showTimeTrackerConfimrBox();"></button>
+                        </li>
                         {* END STIC-Custom *}       
                         <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                             <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
@@ -902,6 +902,50 @@
                                 </ul>
                             </li>
                         </ul>
+
+                        {* STIC-Custom 20240222 MHP - *}                            
+                        {literal}
+                            <style>
+                                .dialog {
+                                    display: none;
+                                    position: fixed;
+                                    top: 8%;
+                                    left: 75%;
+                                    background-color: #eee;
+                                    border: 1px solid #000;
+                                    padding: 20px;
+                                }
+                                .dialogInfo {
+                                    text-align: left;
+                                }
+                                .dialogRow{
+                                    list-style: circle;
+                                    padding-left: 5%;
+                                }
+                                #dialogInfoDescription{
+                                    display: inline-block;
+                                    width: 95%; /* Ajusta el ancho según tus necesidades */
+                                    height: 100px; /* Ajusta la altura según tus necesidades */
+                                    padding: 5px;
+                                    font-size: 16px;
+                                    border: 1px solid #ccc;
+                                    border-radius: 4px;
+                                    resize: vertical; /* Permite cambiar la altura verticalmente */
+                                }
+                                #timeTrackerPopupButtons{
+                                    display: flex;
+                                    justify-content: center;
+                                }
+                                #timeTrackerButtonConfirm{
+                                    margin-right:10%;
+                                }
+                            </style>
+                        {/literal}
+                        <div id="myDialog" class="dialog">
+                        </div>
+                        {* END STIC-Custom *}   
+
+
 
                     </div>
             </nav>

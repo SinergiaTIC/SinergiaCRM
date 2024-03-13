@@ -10,6 +10,7 @@ function checkTimeTrackerButtonStatus()
     fetch(url)
         .then(response => response.json())
         .then(data => {
+            localStorage.setItem('todayRegistrationStarted', data.todayRegistrationStarted);   
             var buttonRow = document.getElementById('time_tracker_button_row');                                    
             if (data.timeTrackerModuleActive == 1 && data.timeTrackerActiveInEmployee == 1){
                 buttonRow.classList.remove('no-show-time-tracker-button');
@@ -26,21 +27,101 @@ function checkTimeTrackerButtonStatus()
             }
         })
         .catch(error => {
-            console.error('Error when obtaining if there is a time registration started, or not, on today:', error);
+            console.error('Failed to get time tracker button status. Could not find out if there is a time record started for today and for the logged in employee:', error);
         });
 }
 
-// Check if there is an active time register for today or not and update the button color 
-function toggleTimeTrackerRegisterButton() 
+// Show the popup confirmation box 
+function showTimeTrackerConfimrBox() 
 {
-    var result = window.confirm(SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP'));
-    if (result) {
-        const url = 'index.php?module=stic_Time_Tracker&action=createOrUpdateTodayRegister';
-        fetch(url)
-            .then()
-            .catch(error => {
-                console.error('Error when obtaining if there is a time registration started, or not, on today:', error);
-            });
+    const url = 'index.php?module=stic_Time_Tracker&action=getLastTodayTimeTrackerRecordForEmployee';
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            drawTimeTrackerConfimrBox(data);
+        })
+        .catch(error => {
+            console.error('Error when obtaining the last today time tracker record for employee:', error);
+        });
+}
+
+// Draw dinamically the content of the confirmation box
+function drawTimeTrackerConfimrBox(data) 
+{
+    var content = '<div class="dialogInfo">';
+    var userName = document.querySelector(".globallabel-user").innerText;
+
+    if (localStorage.todayRegistrationStarted == '0') {
+        content += `
+            <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CREATE')}</p>
+            <br />
+            <ul class='dialogRow'>
+                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_START_DATE')} ${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NOW')}</li>
+                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE')} ${userName}</li>
+            </ul>`;
+    } else {
+        content += `
+        <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1', 'hola')}</p>
+        <br />
+        <ul class='dialogRow'>
+            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')} ${data.name}</li>
+        </ul>
+        <br />     
+        <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_2')}</p>
+        <br />
+        <ul class='dialogRow'>
+            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_END_DATE')} ${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NOW')}</li>
+        </ul>`;
     }
-    location.reload();
+
+    content += `
+        <br />
+        <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_QUESTION')}</p>
+        <br />
+        <textarea id="dialogInfoDescription" name="description" rows="2" cols="20"></textarea>
+        <br /><br />
+        <div id="timeTrackerPopupButtons">
+            <button id="timeTrackerButtonConfirm" onclick="timeTrackerButtonConfirm(document.getElementById('dialogInfoDescription').value)">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_ACCEPT')}</button>
+            <button id="timeTrackerButtonCancel" onclick="timeTrackerButtonCancel()">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CANCEL')}</button>                                
+        </div>
+    </div>`;
+
+    mydialog = document.getElementById('myDialog');
+    mydialog.innerHTML = content;
+    document.getElementById('myDialog').style.display = 'block';
+}
+
+// Create or Update a time tracker record
+function timeTrackerButtonConfirm(description) 
+{
+    // Call to the action that create or update the correspondient time tracker record
+
+    const url = 'index.php?module=stic_Time_Tracker&action=createOrUpdateTodayRegister';
+    var data = {
+        'description': description
+    };
+
+    var options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    };  
+
+    fetch(url, options)
+        .then(response => {location.reload();})
+        .catch(error => {
+            console.error('Error creating or updating a today time tracker for the employee:', error);
+        });
+      
+    // Hide the dialog box
+    document.getElementById('myDialog').style.display = 'none';
+}
+
+// 
+function timeTrackerButtonCancel() 
+{
+    // Hide the dialog box
+    document.getElementById('myDialog').style.display = 'none';
 }

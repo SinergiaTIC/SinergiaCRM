@@ -57,20 +57,41 @@ class stic_Time_TrackerController extends SugarController {
      * 
      * @return void
      */
+    public function action_getLastTodayTimeTrackerRecordForEmployee()
+    {
+        // Check if the user has started any time registration today
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
+        global $current_user;
+        $data = stic_Time_Tracker::getLastTodayTimeTrackerRecordForEmployeeData($current_user->id);
+
+        // return the json result
+        $json = json_encode($data);
+        header('Content-Type: application/json');
+        echo $json;
+        die();
+    }
+
+    /**
+     * 
+     * @return void
+     */
     public function action_createOrUpdateTodayRegister()
     {
         global $current_user, $timedate;
-
+        $data = json_decode(file_get_contents('php://input'), true);
         // Check if the user has started any time registration today
         include_once 'modules/stic_Time_Tracker/stic_Time_Tracker.php';        
-        $todayUserRegistrationData = stic_Time_Tracker::getTodayRegisterForEmployee($current_user->id);
+        $todayUserRegistrationData = stic_Time_Tracker::getLastTodayTimeTrackerRecordForEmployeeData($current_user->id);
         $todayRegistrationStarted =  $todayUserRegistrationData ? empty($todayUserRegistrationData["end_date"]) : false;
 
         if ($todayRegistrationStarted) {           
             // Update the end date field of today's time tracker for the current user
             $bean = BeanFactory::getBean($this->module, $todayUserRegistrationData['id']);
             $bean->end_date = $timedate->now();
-            $bean->name = '';
+            $bean->name = ''; // delete the name so that it is recalculated again
+            $bean->description=$bean->description.'
+            
+            '.$data['description']; 
         } else {
             // Create today's time tracker record for the current user
             $bean = BeanFactory::getBean($this->module);
@@ -80,8 +101,9 @@ class stic_Time_TrackerController extends SugarController {
             $bean->users_stic_time_tracker_name = $current_user->name;
             $bean->assigned_user_id = $current_user->id;
             $bean->assigned_user_name = $current_user->name;
+            $bean->description=$data['description'];            
         }
-        $bean->save();   
+        $bean->save();
         die();
     }
 }

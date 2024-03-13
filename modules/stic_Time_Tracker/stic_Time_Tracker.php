@@ -106,10 +106,10 @@ class stic_Time_Tracker extends Basic
     public static function updateTodayRegisterStatusPreference($idEmployee)
     {
         // Get the last today time tracket record of the current user
-        $todayUserRegistrationData = stic_Time_Tracker::getTodayRegisterForEmployee($idEmployee);
+        $data = stic_Time_Tracker::getLastTodayTimeTrackerRecordForEmployeeData($idEmployee);
         
         // Check if today's last record has end date or not
-        $todayRegistrationStarted = !is_array($todayUserRegistrationData) ? 0: (empty($todayUserRegistrationData["end_date"]) ? 1 : 0);
+        $todayRegistrationStarted = !is_array($data) ? 0: (empty($data["end_date"]) ? 1 : 0);
 
         // save status in preferences
         $user = BeanFactory::getBean('Users', $idEmployee);
@@ -119,13 +119,13 @@ class stic_Time_Tracker extends Basic
         global $current_user;
         return $current_user->getPreference('stic_time_tracker_today_registration_started');
     }
-
+  
     /**
      * 
      *
      * @return void
      */
-    public static function getTodayRegisterForEmployee($idEmployee)
+    public static function getLastTodayTimeTrackerRecordForEmployeeData($idEmployee)
     {
         global $db;
 
@@ -141,7 +141,7 @@ class stic_Time_Tracker extends Basic
                 LIMIT 1;";
 
         $result = $db->query($query);
-        $todayUserRegistrationData = $db->fetchByAssoc($result);
-        return $todayUserRegistrationData;
-    }    
+        $data = $db->fetchByAssoc($result);
+        return $data;
+    }
 }
