@@ -872,6 +872,7 @@ while ($i <= 12) {
         'type' => 'kreporter',
         'source' => 'non-db',
         'kreporttype' => 'number',
+        'evalSQLFunction' => 'X',
         'eval' => array(
             'presentation' => array(
                 'eval' => $mainQuery,
