@@ -46,23 +46,31 @@ class LeadsDuplicateQueries{
             }
         }
 
-        $query = "SELECT id, first_name, last_name, account_name, title FROM leads ";
+        $query = 'SELECT leads.id, leads.first_name, leads.last_name, leads.account_name leads.title '. 
+                 'FROM leads INNER JOIN leads_cstm ON leads.id=leads_cstm.id_c';
 
         // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
         // add team security
 
-        $query .= " WHERE deleted != 1 AND (status <> 'Converted' OR status IS NULL) AND ";
-
         $dbManager = DBManagerFactory::getInstance();
+
+        $query .= " WHERE leads.deleted != 1 AND (leads.status <> 'Converted' OR leads.status IS NULL) AND (";
         //Use the first and last name from the $_POST to filter.  If only last name supplied use that
         if (isset($_POST[$prefix.'first_name']) && strlen($_POST[$prefix.'first_name']) != 0 && isset($_POST[$prefix.'last_name']) && strlen($_POST[$prefix.'last_name']) != 0) {
             $firstName = $dbManager->quote($_POST[$prefix.'first_name' ?? '']);
             $lastName = $dbManager->quote($_POST[$prefix.'last_name' ?? '']);
-            $query .= " (first_name='". $firstName . "' AND last_name = '". $lastName ."')";
+            $query .= " (leads.first_name LIKE '". $firstName . "%' AND leads.last_name = '". $lastName ."')";
         } else {
             $lastName = $dbManager->quote($_POST[$prefix.'last_name' ?? '']);
-            $query .= " last_name = '". $lastName ."'";
+            $query .= " leads.last_name = '". $lastName ."'";
         }
+        if(isset($_POST[$prefix.'stic_identification_number_c']) && strlen($_POST[$prefix.'stic_identification_number_c']) != 0) {
+            $query .= " OR ";
+            $stic_identification_number_c = $dbManager->quote($_POST[$prefix.'stic_identification_number_c' ?? '']);
+            $query .= " leads_cstm.stic_identification_number_c = '". $stic_identification_number_c ."'";
+        }
+        $query .= ")";
+
         return $query;
     }
 
@@ -74,7 +82,7 @@ class LeadsDuplicateQueries{
             }
         }
 
-        $query = 'SELECT id, first_name, last_name, title FROM leads WHERE deleted=0 ';
+        $query = 'SELECT id, first_name, last_name, leads_cstm.stic_identification_number_c title FROM leads NNER JOIN leads_cstm ON leads.id=leads_cstm.id_c WHERE leads.deleted=0 ';
         return $query;
     }
 }
