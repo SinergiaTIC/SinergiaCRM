@@ -39,7 +39,19 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Nonprofitized by SinergiaCRM';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM has been developed by SinergiaTIC Association. The software is provided AS IS, without any warranty. Under the AGPLv3 license. For more information, visit <a href="https://www.sinergiacrm.org">SinergiaCRM website</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'This program is free software. You are allowed to redistribute and/or modify it under the terms of the GNU Affero General Public License version 3, published by the Free Software Foundation, including any additional permissions indicated in the source code header.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'All names of other companies and products mentioned here may be trademarks of their respective associated companies.';
-$app_strings['LBL_CONFIRMATION_POPUP'] = 'Are you sure you want to continue?';
+
+// Create time tracker record from the top menu - Confirmation pop-up window
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'A time tracker record will be created with the following information:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Your last today time tracker record will be updated: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'with the following information: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Name:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Start date and time:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'End date and time:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_NOW'] = 'Now';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Employee:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Do you want to make an indication in the time record?:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Accept';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancel';
 
 // SinergiaCRM update alert
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'SinergiaCRM update succesfully completed';

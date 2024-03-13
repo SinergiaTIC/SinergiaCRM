@@ -46,7 +46,19 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativizado por SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM foi desenvolvido pola Asociación SinergiaTIC. O software é fornecido COMO ESTÁ, sen garantía ningunha. Baixo a licenza AGPLv3. Para máis información, visite o <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software libre. Permítese a súa redistribución e/ou modificación baixo os termos da Licenza Pública Xeral Affero de GNU versión 3, publicada pola Free Software Foundation, incluíndo calquera permiso adicional indicado no encabezamento do código fonte.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
-$app_strings['LBL_CONFIRMATION_POPUP'] = '¿Seguro que desea continuar?';
+
+// Crear registro horario desde el menú superior - Ventana emergente de confirmación
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se va a crear un registro horario con la siguiente información:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se va a actualizar tú último registro horario para el día de hoy: '; 
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente información: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nombre:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_NOW'] = 'Ahora';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleado:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = '¿Quieres realizar alguna indicación en el registro horario?:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Aceptar';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancelar';
 
 // Aviso de actualización de SinergiaCRM
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'Actualización de SinergiaCRM realizada';

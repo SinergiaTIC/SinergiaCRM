@@ -38,7 +38,19 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativitzat per SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM ha estat desenvolupat per l\'Associació SinergiaTIC. El programari es proporciona TAL COM ÉS, sense cap garantia. Sota llicència AGPLv3. Per a més informació, visiteu el <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Aquest programa és programari lliure. Podeu redistribuir-lo i/o modificar-lo segons els termes de la Llicència Pública General Affero de GNU versió 3, publicada per la Free Software Foundation, incloent-hi qualsevol permís addicional indicat a la capçalera del codi font.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres empreses i productes esmentats poden ser marques registrades de les empreses amb les quals s'associen.";
-$app_strings['LBL_CONFIRMATION_POPUP'] = 'Esteu segur que voleu continuar?';
+
+// Crear registre horari des del menú superior - Finestra emergent de confirmació
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Es crearà un registre horari amb la informació següent:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = "S\'actualitzarà el teu darrer registre horari per al dia d\'avui: ";
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'amb la informació següent: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nom:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = "Data i hora d'inici:";
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Data i hora de finalització:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_NOW'] = 'Ara';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleat:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Vols fer alguna indicació al registre horari?:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Acceptar';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancel';
 
 // Avís d'actualització de SinergiaCRM
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'Actualització de SinergiaCRM realitzada';
