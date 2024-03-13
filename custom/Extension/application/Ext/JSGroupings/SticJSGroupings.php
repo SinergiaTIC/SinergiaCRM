@@ -56,6 +56,12 @@ $js_groupings[] = $newGrouping = array(
 $js_groupings[] = $newGrouping = array(
     'SticInclude/js/SticGetAdditionalDetails.js' => 'include/javascript/sugar_grp1.js',
 );
+
+// Adding moment library to JSGroupings.
+$js_groupings[] = $newGrouping = array(
+    'include/javascript/moment.min.js' => 'include/javascript/sugar_grp1.js',
+);
+
 // Add Custom View functionality
 $js_groupings[] = $newGrouping = array(
     'modules/stic_Custom_Views/processor/js/sticCVUtils.js' => 'include/javascript/sugar_grp1.js',

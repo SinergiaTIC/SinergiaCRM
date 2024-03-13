@@ -49,6 +49,8 @@ class stic_Custom_Views extends Basic
     public $user_type;
     public $roles;
     public $security_groups;
+
+    public $show_SubPanelTopButtonListView = false;
 	
     public function bean_implements($interface)
     {

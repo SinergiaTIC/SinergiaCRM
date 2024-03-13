@@ -31,8 +31,6 @@ var sticCustomizeView = class sticCustomizeView {
     static quickcreate() { return sticCustomizeView.For("quickcreate"); }
 
     static For(view) { 
-        sticCustomizeView._load_moment();
-
         switch(view) {
             case "detailview": 
                 return new sticCV_View_Record_Detail(view);
@@ -41,29 +39,5 @@ var sticCustomizeView = class sticCustomizeView {
                 return new sticCV_View_Record_Edit(view);
         }
     }
-
-    static _load_moment() {
-        if(typeof moment!=='undefined') return;
-        
-        var url = "include/javascript/moment.min.js";
-        console.log("Loading script [" + url + "].");
-
-        // Add the script tag to the head
-        var head = document.getElementsByTagName("head")[0];
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = url;
-
-        // // Bind events to the callback function if exist
-        // if (callback) {
-        //     // There are several events for cross browser compatibility.
-        //     script.onreadystatechange = callback;
-        //     script.onload = callback;
-        // }
-
-        // Fire the loading
-        head.appendChild(script);
-    }
-
 
 }
