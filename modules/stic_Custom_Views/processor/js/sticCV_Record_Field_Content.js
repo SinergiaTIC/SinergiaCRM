@@ -55,7 +55,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         this.$fieldText = this.$element.find(".sugar_field");
 
         this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
-        if (this.$readonlyLabel.length==0) {
+        if (this.$readonlyLabel.length==0 && this.$element.length>0) {
             var classes = this.$element.attr("class").replaceAll("hidden","");
             this.$element.parent().append('<div class="'+classes+' stic-ReadonlyInput hidden"></div>');
             this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
