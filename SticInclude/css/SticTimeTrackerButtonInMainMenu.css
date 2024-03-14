@@ -1,0 +1,56 @@
+
+/* Time Tracker Button */
+.no-show-time-tracker-button {
+    display:none !important;
+}
+
+.time-tracker-start {
+    background-color:green;
+    font-size:2rem;
+}
+
+.time-tracker-stop {
+    background: red;
+    font-size:2rem;
+}
+
+
+/* Time Tracker Dialog box */
+.time-tracker-dialog-box {
+    display: none;
+    position: fixed;
+    top: 8%;
+    left: 75%;
+    background-color: #eee;
+    border: 1px solid #000;
+    padding: 20px;
+}
+
+.time-tracker-dialog-info {
+    text-align: left;
+}
+
+.time-tracker-dialog-row {
+    list-style: circle;
+    padding-left: 5%;
+}
+
+#time-tracker-dialog-description {
+    display: inline-block;
+    width: 95%;
+    height: 100px;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+#time-tracker-dialog-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+#time-tracker-dialog-button-confirm {
+    margin-right:10%;
+}

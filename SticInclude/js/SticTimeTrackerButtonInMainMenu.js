@@ -3,6 +3,14 @@
     This button is defined in the file custom/themes/SuiteP/tpls/_headerModuleList.tpl 
 */
 
+// Checks whether to show the time tracker button based on whether the time tracker module is being used
+// If used, updates the button color based on whether or not there is an active time record for today
+$(document).ready(function() 
+{
+    checkTimeTrackerButtonStatus();
+});
+
+
 // Check time tracker button status
 function checkTimeTrackerButtonStatus() 
 {
@@ -48,14 +56,14 @@ function showTimeTrackerConfimrBox()
 // Draw dinamically the content of the confirmation box
 function drawTimeTrackerConfimrBox(data) 
 {
-    var content = '<div class="dialogInfo">';
+    var content = '<div class="time-tracker-dialog-info">';
     var userName = document.querySelector(".globallabel-user").innerText;
 
     if (localStorage.todayRegistrationStarted == '0') {
         content += `
             <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CREATE')}</p>
             <br />
-            <ul class='dialogRow'>
+            <ul class='time-tracker-dialog-row'>
                 <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_START_DATE')} ${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NOW')}</li>
                 <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE')} ${userName}</li>
             </ul>`;
@@ -63,7 +71,7 @@ function drawTimeTrackerConfimrBox(data)
         content += `
         <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1', 'hola')}</p>
         <br />
-        <ul class='dialogRow'>
+        <ul class='time-tracker-dialog-row'>
             <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')} ${data.name}</li>
         </ul>
         <br />     
@@ -78,21 +86,21 @@ function drawTimeTrackerConfimrBox(data)
         <br />
         <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_QUESTION')}</p>
         <br />
-        <textarea id="dialogInfoDescription" name="description" rows="2" cols="20"></textarea>
+        <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
         <br /><br />
-        <div id="timeTrackerPopupButtons">
-            <button id="timeTrackerButtonConfirm" onclick="timeTrackerButtonConfirm(document.getElementById('dialogInfoDescription').value)">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_ACCEPT')}</button>
-            <button id="timeTrackerButtonCancel" onclick="timeTrackerButtonCancel()">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CANCEL')}</button>                                
+        <div id="time-tracker-dialog-buttons">
+            <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_ACCEPT')}</button>
+            <button id="timeTrackerButtonCancel" onclick="timeTrackerDialogCancel()">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CANCEL')}</button>                                
         </div>
     </div>`;
 
-    mydialog = document.getElementById('myDialog');
+    mydialog = document.getElementById('time-tracker-dialog-box');
     mydialog.innerHTML = content;
-    document.getElementById('myDialog').style.display = 'block';
+    mydialog.style.display = 'block';
 }
 
 // Create or Update a time tracker record
-function timeTrackerButtonConfirm(description) 
+function timeTrackerDialogConfirm(description) 
 {
     // Call to the action that create or update the correspondient time tracker record
 
@@ -116,12 +124,11 @@ function timeTrackerButtonConfirm(description)
         });
       
     // Hide the dialog box
-    document.getElementById('myDialog').style.display = 'none';
+    document.getElementById('time-tracker-dialog-box').style.display = 'none';
 }
 
-// 
-function timeTrackerButtonCancel() 
+// Hide the dialog box
+function timeTrackerDialogCancel() 
 {
-    // Hide the dialog box
-    document.getElementById('myDialog').style.display = 'none';
+    document.getElementById('time-tracker-dialog-box').style.display = 'none';
 }

@@ -842,35 +842,12 @@
                                 </div>
                             </form>
                         </li>
-                        {* STIC-Custom 20240222 MHP - *}                            
-                        {literal}
-                            <style>
-                                .no-show-time-tracker-button {
-                                    display:none !important;
-                                }
-                                .time-tracker-start {
-                                    background-color:green;
-                                    font-size:2rem;
-                                }
-                                .time-tracker-stop {
-                                    background: red;
-                                    font-size:2rem;
-                                }
-                            </style>
-                            <script>
-                                // Checks whether to show the time tracker button based on whether the time tracker module is being used
-                                // If used, updates the button color based on whether or not there is an active time record for today
-                                $(document).ready(function() 
-                                {
-                                    checkTimeTrackerButtonStatus();
-                                });
-                            </script>
-                        {/literal}
+                        {* STIC-Custom 20240222 MHP - *}
                         <li id="time_tracker_button_row" class="no-show-time-tracker-button">
                             <button id="time_tracker_button" class="btn suitepicon suitepicon-module-tasks"
                                 onclick="showTimeTrackerConfimrBox();"></button>
                         </li>
-                        {* END STIC-Custom *}       
+                        {* END STIC-Custom *}
                         <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                             <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                                 data-toggle="dropdown" aria-expanded="false">
@@ -902,52 +879,10 @@
                                 </ul>
                             </li>
                         </ul>
-
-                        {* STIC-Custom 20240222 MHP - *}                            
-                        {literal}
-                            <style>
-                                .dialog {
-                                    display: none;
-                                    position: fixed;
-                                    top: 8%;
-                                    left: 75%;
-                                    background-color: #eee;
-                                    border: 1px solid #000;
-                                    padding: 20px;
-                                }
-                                .dialogInfo {
-                                    text-align: left;
-                                }
-                                .dialogRow{
-                                    list-style: circle;
-                                    padding-left: 5%;
-                                }
-                                #dialogInfoDescription{
-                                    display: inline-block;
-                                    width: 95%; /* Ajusta el ancho según tus necesidades */
-                                    height: 100px; /* Ajusta la altura según tus necesidades */
-                                    padding: 5px;
-                                    font-size: 16px;
-                                    border: 1px solid #ccc;
-                                    border-radius: 4px;
-                                    resize: vertical; /* Permite cambiar la altura verticalmente */
-                                }
-                                #timeTrackerPopupButtons{
-                                    display: flex;
-                                    justify-content: center;
-                                }
-                                #timeTrackerButtonConfirm{
-                                    margin-right:10%;
-                                }
-                            </style>
-                        {/literal}
-                        <div id="myDialog" class="dialog">
-                        </div>
-                        {* END STIC-Custom *}   
-
-
-
                     </div>
+                        {* STIC-Custom 20240222 MHP - *}
+                        <div id="time-tracker-dialog-box" class="time-tracker-dialog-box"></div>
+                        {* END STIC-Custom *}
             </nav>
             <!--End Responsive Top Navigation Menu -->
             {if $THEME_CONFIG.display_sidebar}
