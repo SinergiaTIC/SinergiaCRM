@@ -33,14 +33,11 @@ var validationDependencies = {
 
 validateFunctions.other = function () {
   var isRequired = ["edit", "quickcreate"].indexOf(viewType()) >= 0;
-
   addToValidateCallback(getFormName(), "other", "text", isRequired, SUGAR.language.get(module, "LBL_QUICKCREATE_PANEL1"), function () {
     // Check if language is "other" before allowing a value in other
     return getFieldValue("language", "stic_skills_languages_list") === "other" || getFieldValue("other") === "";
   });
 };
-
-
 
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
@@ -176,6 +173,9 @@ function tabLanguage(panelLanguages, view) {
         "text",
         SUGAR.language.languages.stic_Skills.LBL_ORAL
       );
+      setUnrequiredStatus("skill");
+      setUnrequiredStatus("level");
+
     }
     // Hiding the tab Task and put the fields unrequired if is in the EditView
   } else if (view === "hide") {
@@ -188,6 +188,18 @@ function tabLanguage(panelLanguages, view) {
       setUnrequiredStatus("language");
       setUnrequiredStatus("written");
       setUnrequiredStatus("oral");
+
+      setRequiredStatus(
+        "level",
+        "enum",
+        SUGAR.language.languages.stic_Skills.LBL_LEVEL
+      );
+      setRequiredStatus(
+        "skill",
+        "text",
+        SUGAR.language.languages.stic_Skills.LBL_SKILL
+      );
+
     }
   }
 }
