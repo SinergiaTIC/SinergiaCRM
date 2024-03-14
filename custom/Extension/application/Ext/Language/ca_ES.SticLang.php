@@ -3292,6 +3292,18 @@ $app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'No fina
 $app_list_strings['stic_custom_views_operator_list']['is_null'] = 'És nul';
 $app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'No és nul';
 
+// Vistes personalitzades: Tipus Condicions
+$app_list_strings['stic_custom_views_condition_type_list']['value'] = 'Valor';
+$app_list_strings['stic_custom_views_condition_type_list']['date'] = 'Data';
+$app_list_strings['stic_custom_views_condition_type_list']['user'] = 'Usuari';
+$app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Camp';
+
+// Vistes personalitzades: Valors definits
+$app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Ara';
+$app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Avui';
+$app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversari';
+$app_list_strings['stic_custom_views_condition_values_list']['actual_user'] = 'Usuari actual';
+
 
 // Modificacions del core de SuiteCRM
 

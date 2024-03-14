@@ -75,13 +75,27 @@ class stic_Custom_Views_ModuleView
         return $this->allModuleFieldOperatorMap;
     }
     public function getAllFieldOperatorMap_as_select_options() {
-        $fieldOPeratorMapOptions = array();
+        $fieldOperatorMapOptions = array();
         foreach ($this->getAllFieldOperatorMap() as $fieldKey => $operator_list) {
-            $fieldOPeratorMapOptions[$fieldKey] = $this->convertToSelectOptions($operator_list);
+            $fieldOperatorMapOptions[$fieldKey] = $this->convertToSelectOptions($operator_list);
         }
-        return $fieldOPeratorMapOptions;
+        return $fieldOperatorMapOptions;
     }
 
+    private $allModuleFieldConditionTypeMap;
+    public function getAllFieldConditionTypeMap() {
+        if($this->allModuleFieldConditionTypeMap==null){
+            $this->findAllModuleFieldList();
+        }
+        return $this->allModuleFieldConditionTypeMap;
+    }
+    public function getAllFieldConditionTypeMap_as_select_options() {
+        $fieldConditionTypeMapOptions = array();
+        foreach ($this->getAllFieldConditionTypeMap() as $fieldKey => $conditionType_list) {
+            $fieldConditionTypeMapOptions[$fieldKey] = $this->convertToSelectOptions($conditionType_list);
+        }
+        return $fieldConditionTypeMapOptions;
+    }
     private $onlyModuleViewFieldList;
     public function getOnlyViewFields() {
         if($this->onlyModuleViewFieldList == null) {
@@ -111,6 +125,9 @@ class stic_Custom_Views_ModuleView
     }
     public function getViewFieldOperators_as_select_options($fieldKey) {
         return $this->convertToSelectOptions($this->getViewFieldOperators($fieldKey));
+    }
+    public function getViewFieldConditionTypes_as_select_options($fieldKey) {
+        return $this->convertToSelectOptions($this->getAllFieldConditionTypeMap()[$fieldKey]);
     }
 
     private $panelList;
@@ -186,6 +203,7 @@ class stic_Custom_Views_ModuleView
                     $this->allModuleFieldListOptionList[$name]="";
                 }
                 $this->allModuleFieldOperatorMap[$name] = $this->getValidOperators($arr['type']);
+                $this->allModuleFieldConditionTypeMap[$name] = $this->getValidConditionTypes($arr['type'], $arr['table']??"");
                 $this->allModuleFieldTypeList[$name] = $arr['type'];
                 if ($arr['type'] === 'relate' && isset($arr['id_name']) && $arr['id_name'] !== '') {
                     $unset[] = $arr['id_name'];
@@ -258,6 +276,34 @@ class stic_Custom_Views_ModuleView
             $operatorList[$op] = $app_list_strings['stic_custom_views_operator_list'][$op];
         }
         return $operatorList;
+    }
+
+    /**
+     * Get Valid Condition Types for a given field Type
+     */
+    private function getValidConditionTypes($fieldType, $relatedTable="") {
+        global $app_list_strings;
+    
+        $validConditionTypes = array();
+        switch (strtolower($fieldType)) {
+            case 'date':
+            case 'datetime':
+            case 'datetimecombo':
+                $validConditionTypes = array('value'/*,'date','field'*/);
+                break;
+            default:
+                if($relatedTable=="users") {
+                    $validConditionTypes = array('value'/*,'user', 'field'*/);
+                } else {
+                    $validConditionTypes = array('value'/*,'field'*/);
+                }
+                break;
+        }
+        $conditionTypeList = array();
+        foreach ($validConditionTypes as $op) {
+            $conditionTypeList[$op] = $app_list_strings['stic_custom_views_condition_type_list'][$op];
+        }
+        return $conditionTypeList;
     }
 
     public function getValidActions_as_select_options($actionType) {

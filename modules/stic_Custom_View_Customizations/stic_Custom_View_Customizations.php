@@ -86,7 +86,7 @@ class stic_Custom_View_Customizations extends Basic
         $conditionBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
         $conditions = array();
         foreach ($conditionBeanArray as $conditionBean) {
-            $conditions[] = $conditionBean->field . "." . $conditionBean->operator . "." . $conditionBean->value;
+            $conditions[] = $conditionBean->field . "." . $conditionBean->operator . "." . $conditionBean->condition_type . "." . $conditionBean->value;
         }
         $this->conditions = implode(" + ", $conditions);
 

@@ -3289,7 +3289,19 @@ $app_list_strings['stic_custom_views_operator_list']['Not_Starts_With'] = 'Not s
 $app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Ends With';
 $app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'Not Ends With';
 $app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Is Null';
-$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'No és nul';
+$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'Is not Null';
+
+// Custom Views: Condition Types
+$app_list_strings['stic_custom_views_condition_type_list']['value'] = 'Value';
+$app_list_strings['stic_custom_views_condition_type_list']['date'] = 'Date';
+$app_list_strings['stic_custom_views_condition_type_list']['user'] = 'User';
+$app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Field';
+
+// Custom Views: Defined values
+$app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Now';
+$app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Today';
+$app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Anniversary';
+$app_list_strings['stic_custom_views_condition_values_list']['actual_user'] = 'Actual user';
 
 
 // SuiteCRM Core modifications

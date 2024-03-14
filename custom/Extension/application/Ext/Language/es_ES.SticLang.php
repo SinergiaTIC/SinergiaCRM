@@ -3292,6 +3292,19 @@ $app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'No fina
 $app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Es nulo';
 $app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'No es nulo';
 
+// Vistas personalizadas: Tipos de condiciones
+$app_list_strings['stic_custom_views_condition_type_list']['value'] = 'Valor';
+$app_list_strings['stic_custom_views_condition_type_list']['date'] = 'Fecha';
+$app_list_strings['stic_custom_views_condition_type_list']['user'] = 'Usuario';
+$app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Campo';
+
+// Vistas personalizadas: Valores definidos
+$app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Ahora';
+$app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Hoy';
+$app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversario';
+$app_list_strings['stic_custom_views_condition_values_list']['actual_user'] = 'Usuario actual';
+
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)

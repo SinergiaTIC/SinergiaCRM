@@ -48,8 +48,9 @@ function insertConditionLinesHeader(){
     $('#'+condId).append(
       '<thead id="'+condId+'_head"><tr>' + 
         '<th style="width:70px;"></th>' + // Remove button
-        '<th style="width:25%;">'+translateCondition('LBL_FIELD')+'</th>'+
-        '<th style="width:25%;">'+translateCondition('LBL_OPERATOR')+'</th>'+
+        '<th style="width:20%;">'+translateCondition('LBL_FIELD')+'</th>'+
+        '<th style="width:20%;">'+translateCondition('LBL_OPERATOR')+'</th>'+
+        '<th style="width:20%;">'+translateCondition('LBL_CONDITION_TYPE')+'</th>'+
         '<th>'+translateCondition('LBL_VALUE')+'</th>'+
       '</thead>');
   }
@@ -71,10 +72,11 @@ function insertConditionLinesHeader(){
     //Create row
     var x = tablebody.insertRow(-1);
     x.id = prefix+ln;
-    x.insertCell(-1).id=prefix+'Cell'+'delete'+ln;   // Delete button
-    x.insertCell(-1).id=prefix+'Cell'+'field'+ln;    // Field
-    x.insertCell(-1).id=prefix+'Cell'+'operator'+ln; // Operator
-    x.insertCell(-1).id=prefix+'Cell'+'value'+ln;    // Value
+    x.insertCell(-1).id=prefix+'Cell'+'delete'+ln;         // Delete button
+    x.insertCell(-1).id=prefix+'Cell'+'field'+ln;          // Field
+    x.insertCell(-1).id=prefix+'Cell'+'operator'+ln;       // Operator
+    x.insertCell(-1).id=prefix+'Cell'+'condition_type'+ln; // Condition type
+    x.insertCell(-1).id=prefix+'Cell'+'value'+ln;          // Value
   
     // Initial fills
   
@@ -137,6 +139,7 @@ function insertConditionLinesHeader(){
     if(field==""||field==null){
       // Reset next selectors
       $("#"+condprefix+'Cell'+'operator'+ln).html("");
+      $("#"+condprefix+'Cell'+'condition_type'+ln).html("");
       $("#"+condprefix+'Cell'+'value'+ln).html("");
     } else {
       // Create next selector
@@ -161,25 +164,50 @@ function insertConditionLinesHeader(){
       $("#"+prefix+'field'+ln).change();
     } else if(operator==""||operator==null){
       // Reset next selectors
+      $("#"+condprefix+'Cell'+'condition_type'+ln).html("");
       $("#"+condprefix+'Cell'+'value'+ln).html("");
     } else {
       // Create next selector
       if(operator=='is_null'||operator=='is_not_null') {
+          $("#"+condprefix+'Cell'+'condition_type'+ln).html("<p> - </p>");
           $("#"+condprefix+'Cell'+'value'+ln).html("<p> - </p>");
       } else {
-        // Value editor
-        if($("#"+condprefix+'Cell'+'value'+ln).html()=="" || 
-           $("#"+condprefix+'Cell'+'value'+ln).html()=="<p> - </p>") {
-            var condValue = undefined;
-            for(let i=0; i<condValArray.length; i++) {
-              if(condValArray[i].line==ln) {
-                condValue = condValArray[i].value;
-                condValArray.splice(i,1);
-                break;
-              }
-            }
-            getModuleFieldEditor(ln, condprefix, condValue);
+        // Condition Type selector
+        if($("#"+condprefix+'Cell'+'condition_type'+ln).html()=="" || 
+           $("#"+condprefix+'Cell'+'condition_type'+ln).html()=="<p> - </p>") {
+            $("#"+condprefix+'Cell'+'condition_type'+ln).html(
+              "<select type='text' name='"+condprefix+"condition_type["+ln+"]' id='"+condprefix+"condition_type"+ln+"'>"+
+                view_field_map[field].condition_types.options+
+              "</select>"
+            );
+            $("#"+condprefix+'condition_type'+ln).on("change", function(){onConditionTypeChanged(ln);});
+            $("#"+condprefix+'condition_type'+ln).val(null);
+            $("#"+condprefix+'condition_type'+ln).change();
         }
+      }
+    }
+  }
+  function onConditionTypeChanged(ln) {
+    var field = $("#"+condprefix+'field'+ln).val();
+    var condition_type = $("#"+condprefix+'condition_type'+ln).val();
+    if(field==""||field==null) {
+      $("#"+prefix+'field'+ln).change();
+    } else if(condition_type==""||condition_type==null){
+      // Reset next selectors
+      $("#"+condprefix+'Cell'+'value'+ln).html("");
+    } else {
+      // Value editor
+      if($("#"+condprefix+'Cell'+'value'+ln).html()=="" || 
+        $("#"+condprefix+'Cell'+'value'+ln).html()=="<p> - </p>") {
+          var condValue = undefined;
+          for(let i=0; i<condValArray.length; i++) {
+            if(condValArray[i].line==ln) {
+              condValue = condValArray[i].value;
+              condValArray.splice(i,1);
+              break;
+            }
+          }
+          getModuleFieldEditor(ln, condprefix, condValue);
       }
     }
   }

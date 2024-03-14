@@ -175,6 +175,16 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     }
 
     checkCondition(condition) {
+        switch(condition.condition_type) {
+            case "value":
+                return this.checkCondition_value(condition);
+        }
+        return false;
+    }
+
+    checkCondition_value(condition) {
+        //condition.type="value"
+
         var value_list = condition.value_list;
         if(this.type=="multienum") {
             condition.value=(condition.value??"").replaceAll("^", "").split(',').sort().join(",");

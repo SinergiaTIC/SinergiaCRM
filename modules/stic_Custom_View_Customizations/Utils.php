@@ -62,6 +62,9 @@ function displayConditionLines($focus, $field, $value, $view) {
         $html .= "<script>";
         foreach ($conditionBeanArray as $conditionBean) {
             $conditionBean->value = htmlspecialchars_decode($conditionBean->value);
+            if($conditionBean->condition_type=="") {
+                $conditionBean->condition_type = "value";
+            }
             $html .= "loadConditionLine(\"".addslashes(json_encode($conditionBean->toArray()))."\");";
         }
         $html .= "</script>";

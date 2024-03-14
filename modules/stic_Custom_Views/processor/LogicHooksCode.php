@@ -150,10 +150,15 @@ class stic_Custom_Views_ProcessorLogicHooks
                     $value_type=$value_typeArray[0];
                     $value_list=$value_typeArray[1];
                     $value = $this->value_to_display($conditionBean->value, $value_type);
+                    $condition_type = $conditionBean->condition_type;
+                    if($condition_type=="") {
+                        $condition_type = "value";
+                    }
                     $conditions[] = array(
                         "condition_order" => $conditionBean->condition_order,
                         "field" => $conditionBean->field,
                         "operator" => $conditionBean->operator,
+                        "condition_type" => $condition_type,
                         //"value" => $conditionBean->value,
                         "value" => htmlspecialchars_decode($value),
                         "value_type" => $value_type,
