@@ -97,34 +97,35 @@ function fillDynamicSecurityGroupList() {
     $GLOBALS ['app_list_strings']['dynamic_security_group_list'] = $dynamic_security_group_list;
 }
 
-/**
- * Function to filter Customization panel
- * The function name must be the same as the relationship name in order to create linked records
- */
-function stic_custom_views_stic_custom_view_customizations($params) {
-    $args = func_get_args();
-    $init = $args[0]['init'];
+//IEPA!!
+// /**
+//  * Function to filter Customization panel
+//  * The function name must be the same as the relationship name in order to create linked records
+//  */
+// function stic_custom_views_stic_custom_view_customizations($params) {
+//     $args = func_get_args();
+//     $init = $args[0]['init'];
 
-    global $app;
-    $controller = $app->controller;
-    $bean = $controller->bean;
-    $customViewId = $bean->id;
+//     global $app;
+//     $controller = $app->controller;
+//     $bean = $controller->bean;
+//     $customViewId = $bean->id;
 
-    $query ="
-        SELECT stic_custom_view_customizations.*
-        FROM stic_custom_view_customizations 
-        INNER JOIN stic_custom_views_stic_custom_view_customizations_c
-            ON stic_custom_views_stic_custom_view_customizations_c.stic_custobdd5zations_idb = stic_custom_view_customizations.id
-            AND stic_custom_views_stic_custom_view_customizations_c.deleted = '0'
-            AND stic_custom_views_stic_custom_view_customizations_c.stic_custo45d1m_views_ida = '". $customViewId . "'
-        INNER JOIN stic_custom_views
-            ON stic_custom_views.id = stic_custom_views_stic_custom_view_customizations_c.stic_custo45d1m_views_ida
-            AND stic_custom_views.deleted = '0'
-        WHERE stic_custom_view_customizations.deleted = '0'
-            AND stic_custom_view_customizations.init = '" . $init . "'
-    ";
-    return $query;
-}
+//     $query ="
+//         SELECT stic_custom_view_customizations.*
+//         FROM stic_custom_view_customizations 
+//         INNER JOIN stic_custom_views_stic_custom_view_customizations_c
+//             ON stic_custom_views_stic_custom_view_customizations_c.stic_custobdd5zations_idb = stic_custom_view_customizations.id
+//             AND stic_custom_views_stic_custom_view_customizations_c.deleted = '0'
+//             AND stic_custom_views_stic_custom_view_customizations_c.stic_custo45d1m_views_ida = '". $customViewId . "'
+//         INNER JOIN stic_custom_views
+//             ON stic_custom_views.id = stic_custom_views_stic_custom_view_customizations_c.stic_custo45d1m_views_ida
+//             AND stic_custom_views.deleted = '0'
+//         WHERE stic_custom_view_customizations.deleted = '0'
+//             AND stic_custom_view_customizations.init = '" . $init . "'
+//     ";
+//     return $query;
+// }
 
 function getJsVars($viewModule, $viewType) {
     require_once('modules/stic_Custom_Views/stic_Custom_Views_ModuleView.php');

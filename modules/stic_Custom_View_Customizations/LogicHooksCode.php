@@ -27,29 +27,23 @@ class stic_Custom_View_CustomizationsLogicHooks
     {
         require_once 'modules/stic_Custom_Views/Utils.php';
 
-        // Ensure name is correct
-        $customViewBean = getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
-
-        // Initial Configuration: customization_order always 0
-        if ($bean->init == 1) {
-            $bean->customization_order = 0;
-        } else {
-            // customization_order must be >0
-            if($bean->customization_order<=0) {
-                $bean->customization_order = 1;
-            }
+        // customization_order must be >0
+        if($bean->customization_order<=0) {
+            $bean->customization_order = 1;
         }
-
+        
         // Ensure customization_order is not set or change others
-        $customizationBeanArray = getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
-        foreach ($customizationBeanArray as $customizationBean) {
-            if ($customizationBean->id != $bean->id && 
-                $customizationBean->init == $bean->init &&
-                $customizationBean->deleted == "0" &&
-                $customizationBean->customization_order == $bean->customization_order) {
-                    $customizationBean->customization_order = $customizationBean->customization_order + 1;
-                    $customizationBean->save();
-                }
+        $customViewBean = getRelatedBeanObject($bean, 'stic_custom_views_stic_custom_view_customizations');
+        if($customViewBean) {
+            $customizationBeanArray = getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
+            foreach ($customizationBeanArray as $customizationBean) {
+                if ($customizationBean->id != $bean->id && 
+                    $customizationBean->deleted == "0" &&
+                    $customizationBean->customization_order == $bean->customization_order) {
+                        $customizationBean->customization_order = $customizationBean->customization_order + 1;
+                        $customizationBean->save();
+                    }
+            }
         }
     }
 

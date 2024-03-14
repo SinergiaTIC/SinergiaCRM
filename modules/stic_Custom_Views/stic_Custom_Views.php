@@ -30,6 +30,9 @@ class stic_Custom_Views extends Basic
     public $importable = false;
 
     public $id;
+    public $customization_name;
+    public $view_module;
+    public $view_type;
     public $name;
     public $date_entered;
     public $date_modified;
@@ -45,10 +48,12 @@ class stic_Custom_Views extends Basic
     public $assigned_user_name;
     public $assigned_user_link;
     public $SecurityGroups;
-    public $view_module;
     public $user_type;
     public $roles;
     public $security_groups;
+    public $roles_exclude;
+    public $security_groups_exclude;
+    public $status;
 
     public $show_SubPanelTopButtonListView = false;
 	
@@ -72,12 +77,33 @@ class stic_Custom_Views extends Basic
         fillDynamicGenericLists();
     }
 
-    // public function save($check_notify = false){
-    //     if (($_POST["duplicateSave"] && $_POST["duplicateSave"]="true")) {
-    //          //IEPA!!
-    //          // Veure modules/Surveys/Surveys.php
-    //     }
-    // }
+    private function before_save()
+    {
+        // Ensure name is correct
+        global $app_list_strings;
+        $this->name = $app_list_strings['moduleList'][$this->view_module] . ' - ' . 
+                      $this->customization_name . ' - ' . 
+                      $app_list_strings['stic_custom_views_views_list'][$this->view_type];
+
+        // Update all related names
+        include_once 'modules/stic_Custom_Views/Utils.php';
+        $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_views_stic_custom_view_customizations');
+        foreach ($relatedBeans as $relatedBean) {
+            // before_save LogicHook updates the name
+            $relatedBean->save(); 
+        }
+    }
+
+    public function save($check_notify = false){
+        $this->before_save();
+
+        // if (($_POST["duplicateSave"] && $_POST["duplicateSave"]="true")) {
+        //      //IEPA!!
+        //      // Veure modules/Surveys/Surveys.php
+        // }
+
+        return parent::save($check_notify);
+    }
 
     // private function saveOptions(array $options, array $ids, array $deleted, $questionId) {
     //     if (($_POST["duplicateSave"] && $_POST["duplicateSave"]="true"))

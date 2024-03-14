@@ -30,6 +30,7 @@ class stic_Custom_View_Customizations extends Basic
     public $importable = false;
 
     public $id;
+    public $customization_order;
     public $name;
     public $date_entered;
     public $date_modified;
@@ -42,9 +43,9 @@ class stic_Custom_View_Customizations extends Basic
     public $created_by_link;
     public $modified_user_link;
     public $SecurityGroups;
-    public $customization_order;
-    public $init;
     public $status;
+    public $conditions;
+    public $actions;
 	
     public function bean_implements($interface)
     {

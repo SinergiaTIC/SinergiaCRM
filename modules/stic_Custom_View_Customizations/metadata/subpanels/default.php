@@ -90,7 +90,7 @@ $subpanel_layout = array (
     'remove_button' => 
     array (
       'vname' => 'LBL_REMOVE',
-      'widget_class' => 'SubPanelRemoveButtonstic_Custom_Views',
+      'widget_class' => 'SubPanelRemoveButton',
       'module' => 'stic_Custom_View_Customizations',
       'default' => true,
     ),

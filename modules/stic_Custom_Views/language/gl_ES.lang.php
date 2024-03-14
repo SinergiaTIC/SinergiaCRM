@@ -77,6 +77,5 @@ $mod_strings = array (
   'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
 
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizaciones',
-  'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATION_INITIAL_TITLE' => 'Personalización inicial',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizaciones';

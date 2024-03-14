@@ -57,16 +57,9 @@ switch (viewType()) {
     break;
 }
 
-function setFieldsInForm(node, init, order) {
+function setFieldsInForm(node, order) {
   var form = node.querySelector('form');
   if (form) {
-    // Create init input
-    var input = document.createElement("input");
-    input.setAttribute('type', 'hidden');
-    input.setAttribute('name', 'init');
-    input.setAttribute('value', init);
-    form.appendChild(input);
-
     // Set value in customization_order input if is not set
     if (!$("#customization_order").val()) {
       $("#customization_order").val(order);
@@ -76,7 +69,6 @@ function setFieldsInForm(node, init, order) {
 
 function initializeQuickCreateCustomization() {
   // When appears a new QuickCreate form in subpanel
-  //  - set the correct value in init field
   //  - set customization_order if not set (for new items)
   
   // Observer for new elements
@@ -88,13 +80,9 @@ function initializeQuickCreateCustomization() {
             if (newNode.id === "subpanel_stic_custom_view_customizations_newDiv") {
               var nextOrder = 1;
               if ($("#list_subpanel_stic_custom_view_customizations .subpanel-table tbody tr.footable-empty").length == 0) {
-                nextOrder = $("#list_subpanel_stic_custom_view_customizations .subpanel-table").find("tbody tr").length - 1;
+                nextOrder = $("#list_subpanel_stic_custom_view_customizations .subpanel-table").find("tbody tr").length;
               }
-              if ($("#customization_order").val()=="0") {
-                setFieldsInForm(newNode, 1, nextOrder);
-              } else {
-                setFieldsInForm(newNode, 0, nextOrder);
-              }
+              setFieldsInForm(newNode, nextOrder);
             }
           }
         });
