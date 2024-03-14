@@ -263,9 +263,3 @@ function onActionChanged(ln) {
     $("#"+actprefix+'Cell'+'duplicate'+ln).html(getActionDuplicateButton(ln, "duplicateActionLine"));
   }
 }
-
-
-//IEPA!!!
-function validateCustomViewFixedValues() {
-
-}
