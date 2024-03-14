@@ -51,12 +51,18 @@ class stic_SkillsViewDetail extends ViewDetail
         
         // Get the array of the tabs
         $tabOrder = json_encode($this->dv->defs["templateMeta"]["tabDefs"]);
+        $panelOrder = json_encode($this->dv->defs["templateMeta"]["tabDefs"]);
 
         echo <<<SCRIPT
             <script>
                 STIC.tabsArray = $tabOrder;
             </script>
         SCRIPT;
+        echo <<<SCRIPT
+        <script>
+            STIC.tabsArray = $panelOrder;
+        </script>
+    SCRIPT;
 
         echo getVersionedScript("modules/stic_Skills/Utils.js");
 

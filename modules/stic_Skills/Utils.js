@@ -87,29 +87,18 @@ switch (viewType()) {
 /* AUX FUNCTIONS */
 // Function to show the tabs depending of the type
 function showTabs(typeSelected) {
-  var tabsKeys = Object.keys(STIC.tabsArray);
 
-  var positionLanguage = tabsKeys.indexOf("LBL_PANEL_LANGUAGE");
-  var panelLanguages = $("a#tab" + positionLanguage);
-
-  if (
-    viewType() == "quickcreate" &&
-    document.querySelector("#whole_subpanel_stic_journal_stic_centers") != null
-  ) {
-    panelLanguages = $(
-      "#whole_subpanel_stic_skills_contacts a#tab" + positionLanguage
-    );
-  }
+  var panelLanguages = $("div.panel-content");
 
   // Ocultar el panel de lenguaje por defecto
-  tabLanguage(panelLanguages, "hide");
+  panelLanguage(panelLanguages, "hide");
 
   if (typeSelected === "language") {
     // Mostrar el panel de lenguaje si typeSelected es 'language'
-    tabLanguage(panelLanguages, "show");
+    panelLanguage(panelLanguages, "show");
   } else {
     // Ocultar el panel de lenguaje si typeSelected no es 'language'
-    tabLanguage(panelLanguages, "hide");
+    panelLanguage(panelLanguages, "hide");
   }
 }
 
@@ -149,7 +138,7 @@ function getRequiredStatus(fieldId) {
   return false;
 }
 
-function tabLanguage(panelLanguages, view) {
+function panelLanguage(panelLanguages, view) {
   // Showing the tab Task and put the fields required if is in the EditView
   if (view === "show") {
     panelLanguages.show();

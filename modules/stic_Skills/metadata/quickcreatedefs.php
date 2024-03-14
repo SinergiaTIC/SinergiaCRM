@@ -38,18 +38,18 @@ array(
             ),
             'useTabs' => true,
             'tabDefs' => array(
-                'DEFAULT' => array(
+                'LBL_DEFAULT_PANEL' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_QUICKCREATE_PANEL1' => array(
-                    'newTab' => true,
+                'LBL_PANEL_LANGUAGE' => array(
+                    'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
             ),
         ),
         'panels' => array(
-            'default' => array(
+            'lbl_default_panel' => array(
                 0 => array(
                     0 => 'name',
                     1 => 'assigned_user_name',
@@ -84,7 +84,7 @@ array(
                     ),
                 ),
             ),
-            'lbl_quickcreate_panel1' => array(
+            'lbl_panel_language' => array(
                 0 => array(
                     0 => array(
                         'name' => 'language',

@@ -50,13 +50,6 @@ class stic_SkillsViewEdit extends ViewEdit
 
         SticViews::display($this);
         // Get the array of the tabs
-        $tabOrder = json_encode($this->ev->defs["templateMeta"]["tabDefs"]);
-
-        echo <<<SCRIPT
-            <script>
-                STIC.tabsArray = $tabOrder;
-            </script>
-        SCRIPT;
 
         echo getVersionedScript("modules/stic_Skills/Utils.js");
         
