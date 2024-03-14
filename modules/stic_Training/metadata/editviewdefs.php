@@ -131,6 +131,7 @@ array(
                 8 => array(
                     0 => array(
                         'name' => 'grant_amount',
+                        'studio' => 'visible',
                         'label' => 'LBL_GRANT_AMOUNT',
                     ),
                     1 => array(
@@ -142,6 +143,7 @@ array(
                 9 => array(
                     0 => array(
                         'name' => 'total_amount',
+                        'studio' => 'visible',
                         'label' => 'LBL_TOTAL_AMOUNT',
                     ),
                     1 => array(

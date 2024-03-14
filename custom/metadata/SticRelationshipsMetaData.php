@@ -6315,6 +6315,76 @@ $dictionary["stic_work_experience_accounts"] = array(
         ),
     ),
 );
+$dictionary["stic_work_experience_stic_job_applications"] = array(
+    'true_relationship_type' => 'one-to-one',
+    'relationships' => array(
+        'stic_work_experience_stic_job_applications' => array(
+            'lhs_module' => 'stic_Work_Experience',
+            'lhs_table' => 'stic_work_experience',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Job_Applications',
+            'rhs_table' => 'stic_job_applications',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_work_experience_stic_job_applications_c',
+            'join_key_lhs' => 'stic_work_537ferience_ida',
+            'join_key_rhs' => 'stic_work_9fefcations_idb',
+        ),
+    ),
+    'table' => 'stic_work_experience_stic_job_applications_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_work_537ferience_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_work_9fefcations_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_work_experience_stic_job_applicationsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_work_experience_stic_job_applications_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_work_537ferience_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_work_experience_stic_job_applications_idb2',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_work_9fefcations_idb',
+            ),
+        ),
+    ),
+);
+
 $dictionary["stic_skills_contacts"] = array(
     'true_relationship_type' => 'one-to-many',
     'relationships' => array(

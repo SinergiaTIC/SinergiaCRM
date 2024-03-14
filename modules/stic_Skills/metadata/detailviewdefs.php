@@ -51,7 +51,7 @@ array(
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_PANEL_LANGUAGE' => array(
-                    'newTab' => true,
+                    'newTab' => false,
                     'panelDefault' => 'expanded',
                 ),
                 'LBL_PANEL_RECORD_DETAILS' => array(

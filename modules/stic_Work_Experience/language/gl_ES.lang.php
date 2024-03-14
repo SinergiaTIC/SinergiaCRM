@@ -73,6 +73,7 @@ $mod_strings = array(
     'LBL_ACHIEVED' => 'Conseguido a través de la entidad',
     'LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona',
     'LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización',  
+    'LBL_STIC_WORK_EXPERIENCE_STIC_JOB_APPLICATIONS_FROM_STIC_JOB_APPLICATIONS_TITLE' => 'Candidaturas',
     'LBL_START_DATE_ERROR' => 'La fecha de inicio debe ser igual o anterior a la fecha de finalización.',
     'LBL_END_DATE_ERROR' => 'La fecha de finalización debe ser igual o posterior a la fecha de inicio.',
 );

@@ -70,6 +70,7 @@ $mod_strings = array(
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_CONTACTS_TITLE' => 'Contacts',
   'LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Accounts',
+  'LBL_STIC_WORK_EXPERIENCE_STIC_JOB_APPLICATIONS_FROM_STIC_JOB_APPLICATIONS_TITLE' => 'Job Applications',
   'LBL_START_DATE_ERROR' => 'Start date must be equal or before End date.',
   'LBL_END_DATE_ERROR' => 'End date must be equal or after Start date.',
 );

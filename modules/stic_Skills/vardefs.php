@@ -53,7 +53,7 @@ $dictionary['stic_Skills'] = array(
             'size' => '20',
         ),
         'skill' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'skill',
             'vname' => 'LBL_SKILL',
             'type' => 'varchar',

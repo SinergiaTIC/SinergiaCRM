@@ -406,7 +406,7 @@ $dictionary['stic_Training'] = array(
             'table' => 'accounts',
             'module' => 'Accounts',
             'rname' => 'name',
-            'required' => true,
+            'required' => false,
         ),
         'stic_training_accountsaccounts_ida' => array(
             'name' => 'stic_training_accountsaccounts_ida',

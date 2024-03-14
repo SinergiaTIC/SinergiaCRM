@@ -583,7 +583,7 @@ $dictionary['stic_Registrations'] = array(
             'relationship' => 'stic_training_stic_registrations',
             'source' => 'non-db',
             'module' => 'stic_Training',
-            'bean_name' => false,
+            'bean_name' => 'stic_Training',
             'vname' => 'LBL_STIC_TRAINING_STIC_REGISTRATIONS_FROM_STIC_TRAINING_TITLE',
             'id_name' => 'stic_training_stic_registrationsstic_training_ida',
         ),

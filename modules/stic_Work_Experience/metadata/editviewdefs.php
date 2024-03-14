@@ -116,6 +116,13 @@ array(
                     ),
                 ),
                 7 => array(
+                    0 => array(
+                    ),
+                    1 => array(
+                        'name' => 'stic_work_experience_stic_job_applications_name',
+                    ),
+                ),
+                8 => array(
                     0 => 'description',
                 ),
             ),
