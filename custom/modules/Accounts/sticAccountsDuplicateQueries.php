@@ -39,10 +39,10 @@ class sticAccountsDuplicateQueries{
      * @return SQL String of the query that should be used for the initial duplicate lookup check
      */
     public static function getDuplicateQuery($bean, $prefix='') {
-        if(file_exists("custom/modules/Leads/customsticAccountsDuplicateQueries.php")) {
-            require_once("custom/modules/Leads/customsticAccountsDuplicateQueries.php");
-            if(method_exists("customsticAccountsDuplicateQueries", "getDuplicateQuery")) {
-                return customsticAccountsDuplicateQueries::getDuplicateQuery($bean, $prefix);
+        if(file_exists("custom/modules/Leads/customAccountsDuplicateQueries.php")) {
+            require_once("custom/modules/Leads/customAccountsDuplicateQueries.php");
+            if(method_exists("customAccountsDuplicateQueries", "getDuplicateQuery")) {
+                return customAccountsDuplicateQueries::getDuplicateQuery($bean, $prefix);
             }
         }
 
@@ -100,10 +100,10 @@ class sticAccountsDuplicateQueries{
     }
 
     public static function getShowDuplicateQuery() {
-        if(file_exists("custom/modules/Leads/customsticAccountsDuplicateQueries.php")) {
-            require_once("custom/modules/Leads/customsticAccountsDuplicateQueries.php");
-            if(method_exists("customsticAccountsDuplicateQueries", "getShowDuplicateQuery")) {
-                return customsticAccountsDuplicateQueries::getShowDuplicateQuery();
+        if(file_exists("custom/modules/Leads/customAccountsDuplicateQueries.php")) {
+            require_once("custom/modules/Leads/customAccountsDuplicateQueries.php");
+            if(method_exists("customAccountsDuplicateQueries", "getShowDuplicateQuery")) {
+                return customAccountsDuplicateQueries::getShowDuplicateQuery();
             }
         }
 

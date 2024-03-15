@@ -79,10 +79,10 @@ class sticContactsDuplicateQueries{
     }
 
     public static function getShowDuplicateQuery() {
-        if(file_exists("custom/modules/Contacts/customsticContactsDuplicateQueries.php")) {
-            require_once("custom/modules/Contacts/customsticContactsDuplicateQueries.php");
-            if(method_exists("customsticContactsDuplicateQueries", "getShowDuplicateQuery")) {
-                return customsticContactsDuplicateQueries::getShowDuplicateQuery();
+        if(file_exists("custom/modules/Contacts/customContactsDuplicateQueries.php")) {
+            require_once("custom/modules/Contacts/customContactsDuplicateQueries.php");
+            if(method_exists("customContactsDuplicateQueries", "getShowDuplicateQuery")) {
+                return customContactsDuplicateQueries::getShowDuplicateQuery();
             }
         }
 

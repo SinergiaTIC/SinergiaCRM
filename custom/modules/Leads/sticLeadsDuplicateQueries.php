@@ -76,10 +76,10 @@ class sticLeadsDuplicateQueries{
     }
 
     public static function getShowDuplicateQuery() {
-        if(file_exists("custom/modules/Leads/customsticLeadsDuplicateQueries.php")) {
-            require_once("custom/modules/Leads/customsticLeadsDuplicateQueries.php");
-            if(method_exists("customsticLeadsDuplicateQueries", "getShowDuplicateQuery")) {
-                return customsticLeadsDuplicateQueries::getShowDuplicateQuery();
+        if(file_exists("custom/modules/Leads/customLeadsDuplicateQueries.php")) {
+            require_once("custom/modules/Leads/customLeadsDuplicateQueries.php");
+            if(method_exists("customLeadsDuplicateQueries", "getShowDuplicateQuery")) {
+                return customLeadsDuplicateQueries::getShowDuplicateQuery();
             }
         }
 
