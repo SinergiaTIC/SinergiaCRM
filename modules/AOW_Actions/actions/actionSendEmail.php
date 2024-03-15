@@ -141,38 +141,38 @@ class actionSendEmail extends actionBase
         $html .= '</tr>';
 
         // From name
-        if (isset($params['remittance_email_name']) && $params['remittance_email_name']) {
-            $remittance_name = $params['remittance_email_name'];
+        if (isset($params['from_email_name']) && $params['from_email_name']) {
+            $from_name = $params['from_email_name'];
         } else {
-            $remittance_name= $fromName;
+            $from_name= $fromName;
         }      
 
 
         $html .= "<tr style='margin-top:20px; display:none;' class='advancedOptions'>";
         $html .= '<td id="relate_label_3" scope="row" valign="top" style="width:20%;"><label>' . translate(
-            "LBL_REMITTANCE_NAME",
+            "LBL_FROM_NAME",
             "AOW_Actions"
         ) . ':</label>';
         $html .= '</td>';
         $html .= "<td valign='top' style='width:20% !important;'>";
-        $html .= "<input type='hidden' name='aow_actions_param[".$line."][remittance_email_name]' value='0' >";
-        $html .= "<input type='text' id='aow_actions_param[".$line."][remittance_email_name]' name='aow_actions_param[".$line."][remittance_email_name]' value='{$remittance_name}' ></td>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][from_email_name]' value='0' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][from_email_name]' name='aow_actions_param[".$line."][from_email_name]' value='{$from_name}' ></td>";
  
         // From address
-        if (isset($params['remittance_email_address']) && $params['remittance_email_address']) {
-            $remittance = $params['remittance_email_address'];
+        if (isset($params['from_email_address']) && $params['from_email_address']) {
+            $from = $params['from_email_address'];
         } else {
-            $remittance= $fromAddress;
+            $from= $fromAddress;
         }
 
         $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;"> <label>' . translate(
-            "LBL_REMITTANCE_EMAIL",
+            "LBL_FROM_EMAIL",
             "AOW_Actions"
         ) . ':</label>';
         $html .= '</td>';
         $html .= "<td valign='top' style='width:20% !important;'>";
-        $html .= "<input type='hidden' name='aow_actions_param[".$line."][remittance_email_address]' value='' >";
-        $html .= "<input type='text' id='aow_actions_param[".$line."][remittance_email_address]' name='aow_actions_param[".$line."][remittance_email_address]' value='{$remittance}' ></td>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][from_email_address]' value='' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][from_email_address]' name='aow_actions_param[".$line."][from_email_address]' value='{$from}' ></td>";
 
         $html .= "</tr>";
 
@@ -289,11 +289,11 @@ class actionSendEmail extends actionBase
         selection.onchange = function(event){
           let from = event.target.options[event.target.selectedIndex].dataset.from;
           let address = event.target.options[event.target.selectedIndex].dataset.address;
-          document.getElementById('aow_actions_param[" . $line . "][remittance_email_address]').setAttribute('value', address);
-          document.getElementById('aow_actions_param[" . $line . "][remittance_email_name]').setAttribute('value', from);
+          document.getElementById('aow_actions_param[" . $line . "][from_email_address]').setAttribute('value', address);
+          document.getElementById('aow_actions_param[" . $line . "][from_email_name]').setAttribute('value', from);
         };";
 
-        if ($params['output_smtp'] != 'system' || $fromName != $remittance_name || $fromAddress != $remittance
+        if ($params['output_smtp'] != 'system' || $fromName != $from_name || $fromAddress != $from
                 || !empty($params['reply_to']) || !empty($params['reply_to_name'])) {
             $html .= "$('.advancedOptions').toggle();";
         }
@@ -536,8 +536,8 @@ class actionSendEmail extends actionBase
 
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
-        $fromEmail = $params['remittance_email_address'];
-        $fromName = $params['remittance_email_name'];
+        $fromEmail = $params['from_email_address'];
+        $fromName = $params['from_email_name'];
         $replyto = $params['reply_to'];
         $replytoName = $params['reply_to_name'];
         $outputSmtp = $params['output_smtp'];

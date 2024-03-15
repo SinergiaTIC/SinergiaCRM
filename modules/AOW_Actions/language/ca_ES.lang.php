@@ -91,8 +91,8 @@ $mod_strings = array(
     'LBL_COMPUTEFIELD_FORMATTED_VALUE' => 'Valor amb format',
     'LBL_COPY_EMAIL_ADDRESSES_WORKFLOW' => 'Còpia de missatges de correu electrònic del mòdul de flux de treball',
     // STIC-Custom 20240307 EPS - Improve send mail action
-    'LBL_REMITTANCE_EMAIL' => "Remitent (Adreça de correu electrònic)",
-    'LBL_REMITTANCE_NAME' => 'Nom del remitent (Nom a mostrar)',
+    'LBL_FROM_EMAIL' => "Remitent (Adreça de correu electrònic)",
+    'LBL_FROM_NAME' => 'Nom del remitent (Nom a mostrar)',
     'LBL_REPLY_TO' => 'Respondre a (Adreça de correu electrònic)',
     'LBL_REPLY_TO_NAME' => 'Respondre a (Nom a mostrar)',
     'LBL_STICSENDEMAIL'=> 'Enviar correu electrònic (opcions avançades)',
