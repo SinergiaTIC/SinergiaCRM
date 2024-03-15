@@ -328,22 +328,16 @@ class actionSendEmail extends actionBase
     }
 
     private function get_output_smtps() {
-        $emailsList = $this->getOutboundEmailAccountOptions();
-
-        return $emailsList;
-    }
-
-    private function getOutboundEmailAccountOptions()
-    {
+        $emailsList = array();
         $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
         foreach ($oeaList as $oea) {
-            $ret[$oea->id] = array(
+            $emailsList[$oea->id] = array(
                 'name' => $oea->name,
                 'smtp_from_name' => $oea->smtp_from_name,
                 'smtp_from_addr' => $oea->smtp_from_addr
             );
         }
-        return $ret;
+        return $emailsList;
     }
     // END STIC-Custom
 
