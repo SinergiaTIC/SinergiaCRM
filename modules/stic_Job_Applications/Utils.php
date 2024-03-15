@@ -47,15 +47,18 @@ class stic_Job_ApplicationsUtils
 
         $offerBean = BeanFactory::getBean('stic_Job_Offers', $jobApplicationBean->stic_job_applications_stic_job_offersstic_job_offers_ida);
         $accountOfferId = SticUtils::getRelatedBeanObject($offerBean, 'stic_job_offers_accounts')->id;
+        $contactApplicationId= $jobApplicationBean->stic_job_applications_contactscontacts_ida;
+        $applicationId = $jobApplicationBean->id;
 
         $workBean->stic_work_experience_accountsaccounts_ida = $accountOfferId;
-        $workBean->stic_work_experience_contactscontacts_ida = $jobApplicationBean->stic_job_applications_contactscontacts_ida;
+        $workBean->stic_work_experience_contactscontacts_ida = $contactApplicationId;
+        $workBean->stic_work_9fefcations_idb = $applicationId;
         $workBean->sector = $offerBean->sector;
         $workBean->subsector = $offerBean->subsector;
         $workBean->position_type = $offerBean->position_type;
         $workBean->workday_type = $offerBean->workday_type;
         $workBean->contract_type = $offerBean->contract_type;
-
+        $workBean->achieved=true;
         $workBean->save();
 
     }

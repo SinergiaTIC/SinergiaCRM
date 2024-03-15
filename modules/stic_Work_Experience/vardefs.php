@@ -279,7 +279,7 @@ $dictionary['stic_Work_Experience'] = array(
             'module' => 'Contacts',
             'bean_name' => 'Contact',
             'vname' => 'LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_CONTACTS_TITLE',
-            'id_name' => 'stic_work_9fefcations_idb',
+            'id_name' => 'stic_work_experience_contactscontacts_ida',
         ),
         'stic_work_experience_contacts_name' => array(
             'name' => 'stic_work_experience_contacts_name',
@@ -287,7 +287,7 @@ $dictionary['stic_Work_Experience'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_CONTACTS_TITLE',
             'save' => true,
-            'id_name' => 'stic_work_9fefcations_idb',
+            'id_name' => 'stic_work_experience_contactscontacts_ida',
             'link' => 'stic_work_experience_contacts',
             'table' => 'contacts',
             'module' => 'Contacts',
@@ -298,8 +298,8 @@ $dictionary['stic_Work_Experience'] = array(
                 1 => 'last_name',
             ),
         ),
-        'stic_work_9fefcations_idb' => array(
-            'name' => 'stic_work_9fefcations_idb',
+        'stic_work_experience_contactscontacts_ida' => array(
+            'name' => 'stic_work_experience_contactscontacts_ida',
             'type' => 'link',
             'relationship' => 'stic_work_experience_contacts',
             'source' => 'non-db',
@@ -363,7 +363,7 @@ $dictionary['stic_Work_Experience'] = array(
             'inline_edit' => 1,
             'massupdate' => 0,
         ),
-        'stic_work_exp_stic_job_appstic_job_app_idb' => array(
+        'stic_work_9fefcations_idb' => array(
             'name' => 'stic_work_9fefcations_idb',
             'type' => 'link',
             'relationship' => 'stic_work_experience_stic_job_applications',
