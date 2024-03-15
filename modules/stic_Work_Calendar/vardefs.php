@@ -74,7 +74,7 @@ $dictionary['stic_Work_Calendar'] = array(
             'validation' => array('type' => 'isbefore', 'compareto' => 'end_date', 'blank' => 0),
         ),
         'end_date' => array(
-            'required' => 0,
+            'required' => 1,
             'name' => 'end_date',
             'vname' => 'LBL_END_DATE',
             'duplicate_merge' => 'enabled',
