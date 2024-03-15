@@ -42,21 +42,51 @@ $dashletData['stic_Work_CalendarDashlet']['columns'] = array(
         'link' => true,
         'default' => true
     ),
+    'stic_work_calendar_users_name' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
+        'id' => 'STIC_WORK_CALENDAR_USERSUSERS_IDA',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'type' => array(
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_TYPE',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'start_date' => array(
+        'type' => 'datetimecombo',
+        'label' => 'LBL_START_DATE',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'duration' => array(
+        'type' => 'int',
+        'label' => 'LBL_DURATION',
+        'width' => '10%',
+        'default' => true,
+    ), 
+    'assigned_user_name' => array(
+        'width' => '8',
+        'label' => 'LBL_LIST_ASSIGNED_USER',
+        'default' => true        
+    ),    
     'date_entered' => array(
         'width' => '15',
         'label' => 'LBL_DATE_ENTERED',
-        'default' => true
+        'default' => false
     ),
     'date_modified' => array(
         'width' => '15',
-        'label' => 'LBL_DATE_MODIFIED'
+        'label' => 'LBL_DATE_MODIFIED',
+        'default' => false
     ),
     'created_by' => array(
         'width' => '8',
-        'label' => 'LBL_CREATED'
-    ),
-    'assigned_user_name' => array(
-        'width' => '8',
-        'label' => 'LBL_LIST_ASSIGNED_USER'
+        'label' => 'LBL_CREATED',
+        'default' => false        
     ),
 );
