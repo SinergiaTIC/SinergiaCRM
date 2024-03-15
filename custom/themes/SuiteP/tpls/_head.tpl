@@ -94,8 +94,8 @@
     <script type="text/javascript" src='{sugar_getjspath file="cache/include/javascript/sugar_field_grp.js"}'></script>
     <script type="text/javascript" src='{sugar_getjspath file="vendor/tinymce/tinymce/tinymce.min.js"}'></script>
     {* STIC-Custom 20240222 MHP - *}     
-    <link href="SticInclude/css/SticTimeTrackerButtonInMainMenu.css" rel="stylesheet" type="text/css"/>    
-    <script type="text/javascript" src='{sugar_getjspath file="SticInclude/js/SticTimeTrackerButtonInMainMenu.js"}'></script>
+    <link href="modules/stic_Time_Tracker/menuButton/SticTimeTrackerButtonInMainMenu.css" rel="stylesheet" type="text/css"/>    
+    <script type="text/javascript" src='{sugar_getjspath file="modules/stic_Time_Tracker/menuButton/SticTimeTrackerButtonInMainMenu.js"}'></script>
     {* END STIC-Custom *}
 </head>
 
