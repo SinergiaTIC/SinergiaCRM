@@ -38,23 +38,21 @@
   <body>
     <span>{LOADING_MESSAGE}</span>
 
-    <form action="{server_url}" method="post" name="frm">
-
-      <li>Exponente:<input type="text" name="Exponente" value=2 /></li>
-      <li>Nombre:<input type="text" name="Nombre" value="Descripción del producto" /></li>
-      <li>Cifrado:<input type="text" name="Cifrado" value="SHA2" /></li>
-      <li>Pago_soportado:<input type="text" name="Pago_soportado" value="SSL" /></li>
-      <li>MerchantID: <input type="text" name="MerchantID" value="{merchant_id}" /></li>
-      <li>AcquirerBIN: <input type="text" name="AcquirerBIN" value="{acquirer_bin}" /></li>
-      <li>TerminalID: <input type="text" name="TerminalID" value="{terminal_id}" /></li>
-      <li>URL_OK: <input type="text" name="URL_OK" value="{okURL}" /></li>
-      <li>URL_NOK: <input type="text" name="URL_NOK" value="{koURL}" /></li>
-      <li>Num_operacion: <input type="text" name="Num_operacion" value="{num_operation}" /></li>
-      <li>Importe: <input type="text" name="Importe" value="{importe}" /></li>
-      <li>TipoMoneda: <input type="text" name="TipoMoneda" value="{tipomoneda}" /></li>
-      <li>Descripcion: <input type="text" name="Descripcion" value="{description}" /></li>
-      <li>Idioma: <input type="text" name="Idioma" value="{idioma}" /></li>
-      <li>Firma:<input type="text" name="Firma" value="{firma}" /></li>
+    <form action="{server_url}" method="post" name="frm" ENCTYPE="application/x-www-form-urlencoded">
+      <li>Exponente:<input style="width:300px" type="text" name="Exponente" value=2 /></li>
+      <li>Cifrado:<input style="width:300px" type="text" name="Cifrado" value="SHA2" /></li>
+      <li>Pago_soportado:<input style="width:300px" type="text" name="Pago_soportado" value="SSL" /></li>
+      <li>MerchantID: <input style="width:300px" type="text" name="MerchantID" value="{merchant_id}" /></li>
+      <li>AcquirerBIN: <input style="width:300px" type="text" name="AcquirerBIN" value="{acquirer_bin}" /></li>
+      <li>TerminalID: <input style="width:300px" type="text" name="TerminalID" value="{terminal_id}" /></li>
+      <li>URL_OK: <input style="width:300px" type="text" name="URL_OK" value="{okURL}" /></li>
+      <li>URL_NOK: <input style="width:300px" type="text" name="URL_NOK" value="{koURL}" /></li>
+      <li>Num_operacion: <input style="width:300px" type="text" name="Num_operacion" value="{num_operation}" /></li>
+      <li>Importe: <input style="width:300px" type="text" name="Importe" value="{importe}" /> </li>
+      <li>TipoMoneda: <input style="width:300px" type="text" name="TipoMoneda" value="{tipomoneda}" /></li>
+      <li>Descripcion: <input style="width:300px" type="text" name="Descripcion" value="{description}" /></li>
+      <li>Idioma: <input style="width:300px" type="text" name="Idioma" value="{idioma}" /></li>
+      <li>Firma:<input style="width:300px" type="text" name="Firma" value="{firma}" /></li>
 
      <!-- Fixed values -->
     </form>

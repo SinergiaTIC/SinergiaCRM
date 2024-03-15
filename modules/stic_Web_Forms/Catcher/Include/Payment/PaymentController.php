@@ -406,7 +406,8 @@ class PaymentController extends WebFormDataController
         $okURL = $this->bo->getOKURL();
 
         // The order number must have between 4 and 12 characters, fill with 0 on the left in case there are missing positions.
-        $id = str_pad($payment->transaction_code, 12, '0', STR_PAD_LEFT);
+        // str_pad($payment->transaction_code, 12, '0', STR_PAD_LEFT);
+        $id = $payment->transaction_code;
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding non-constant parameters [{$amount}] [{$id}] [{$payment->transaction_code}] [{$okURL}] [{$koURL}] ...");
 
@@ -459,21 +460,28 @@ class PaymentController extends WebFormDataController
                 $idioma = 1;
                 break;
         }
+
+
+
         // Calculate the signature value required to include in the form
         $firma = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $settings['TPVCECA_MERCHANTID'] . $settings['TPVCECA_ACQUIRERBIN'] . $settings['TPVCECA_TERMINALID'] . $id . $amount . $settings['TPVCECA_TIPOMONEDA'] . '2' . 'SHA2' . $okURL . $koURL;
+        // $firma = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $settings['TPVCECA_MERCHANTID'] . $settings['TPVCECA_ACQUIRERBIN'] . $settings['TPVCECA_TERMINALID'] . '123' . '500' . '978' . '2' . 'SHA2' . $okURL . $koURL;
+        echo $firma.'<br>';
+        
         // $firma = '99888888' . '111950028' . '0000554052' . '00000003' . '123' . '500' . '978' . '2' . 'SHA2' . 'http://www.ceca.es' . 'http://www.ceca.es';
+        // echo $firma.'<br>';
         // $firma = 'HXBU8H84' . '086624434' . '0000554027' . '00000003' . '123' . '500' . '978' . '2' . 'SHA2' . 'http://www.ceca.es' . 'http://www.ceca.es';
         // 998888881119500280000554052000000031235009782SHA2http://www.ceca.eshttp://www.ceca.es
         // $firma = '998888881119500280000554052000000031235009782SHA2http://www.ceca.eshttp://www.ceca.es';
-        echo '998888881119500280000554052000000031235009782SHA2http://www.ceca.eshttp://www.ceca.es<hr>';
+        // echo '998888881119500280000554052000000031235009782SHA2http://www.ceca.eshttp://www.ceca.es<hr>';
         if (strlen(trim($firma)) > 0) {
-            echo $firma;
+            // echo $firma;
             
             // SHA256 calculation
             $firma = strtolower(hash('sha256', $firma));
             // $firma = (hash('sha256', $firma));
             echo '<hr>';
-            // die($firma);
+            die($firma);
         } else {
             $this->returnCode('INVALID_CECA_SIGNATURE');
             return $this->feedBackError($this);
