@@ -39,10 +39,10 @@ class sticContactsDuplicateQueries{
      * @return SQL String of the query that should be used for the initial duplicate lookup check
      */
     public static function getDuplicateQuery($bean, $prefix='') {
-        if(file_exists("custom/modules/Contacts/customsticContactsDuplicateQueries.php")) {
-            require_once("custom/modules/Contacts/customsticContactsDuplicateQueries.php");
-            if(method_exists("customsticContactsDuplicateQueries", "getDuplicateQuery")) {
-                return customsticContactsDuplicateQueries::getDuplicateQuery($bean, $prefix);
+        if(file_exists("custom/modules/Contacts/customContactsDuplicateQueries.php")) {
+            require_once("custom/modules/Contacts/customContactsDuplicateQueries.php");
+            if(method_exists("customContactsDuplicateQueries", "getDuplicateQuery")) {
+                return customContactsDuplicateQueries::getDuplicateQuery($bean, $prefix);
             }
         }
         $dbManager = DBManagerFactory::getInstance();

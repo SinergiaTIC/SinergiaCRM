@@ -39,10 +39,10 @@ class sticLeadsDuplicateQueries{
      * @return SQL String of the query that should be used for the initial duplicate lookup check
      */
     public static function getDuplicateQuery($bean, $prefix='') {
-        if(file_exists("custom/modules/Leads/customsticLeadsDuplicateQueries.php")) {
-            require_once("custom/modules/Leads/customsticLeadsDuplicateQueries.php");
-            if(method_exists("customsticLeadsDuplicateQueries", "getDuplicateQuery")) {
-                return customsticLeadsDuplicateQueries::getDuplicateQuery($bean, $prefix);
+        if(file_exists("custom/modules/Leads/customLeadsDuplicateQueries.php")) {
+            require_once("custom/modules/Leads/customLeadsDuplicateQueries.php");
+            if(method_exists("customLeadsDuplicateQueries", "getDuplicateQuery")) {
+                return customLeadsDuplicateQueries::getDuplicateQuery($bean, $prefix);
             }
         }
 
