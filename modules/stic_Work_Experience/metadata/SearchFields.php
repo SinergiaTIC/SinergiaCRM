@@ -38,6 +38,18 @@ $searchFields[$module_name] = array(
     'assigned_user_id' => array('query_type' => 'default'),
 
     //Range Search Support
+    'range_start_date' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'start_range_start_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
+    'end_range_start_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
+
     'range_date_entered' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
     'start_range_date_entered' => array(
         'query_type' => 'default',
@@ -61,4 +73,15 @@ $searchFields[$module_name] = array(
         'is_date_field' => true,
     ),
     //Range Search Support
-);
+    'favorites_only' => array(
+        'query_type' => 'format',
+        'operator' => 'subquery',
+        'checked_only' => true,
+        'subquery' => 'SELECT favorites.parent_id FROM favorites
+			                    WHERE favorites.deleted = 0
+			                        and favorites.parent_type = \'stic_Grants\'
+			                        and favorites.assigned_user_id = \'{1}\'',
+        'db_field' => array(
+            0 => 'id',
+        ),
+));

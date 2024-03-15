@@ -136,39 +136,6 @@ array(
                         'label' => 'LBL_POSTINSERTION_OBSERVATIONS',
                     ),
                 ),
-                2 => array(
-                    0 => array(
-                        'name' => 'sector',
-                        'studio' => 'visible',
-                        'label' => 'LBL_SECTOR',
-                    ),
-                    1 => array(
-                        'name' => 'subsector',
-                        'studio' => 'visible',
-                        'label' => 'LBL_SUBSECTOR',
-                    ),
-                ),
-                3 => array(
-                    0 => array(
-                        'name' => 'position_type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_POSITION_TYPE',
-                    ),
-                    1 => array(
-                        'name' => 'contract_type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_CONTRACT_TYPE',
-                    ),
-                ),
-                4 => array(
-                    0 => array(
-                        'name' => 'workday_type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_WORKDAY_TYPE',
-                    ),
-                    1 => array(
-                    ),
-                ),
             ),
         ),
     ),

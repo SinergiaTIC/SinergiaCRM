@@ -53,7 +53,7 @@ $dictionary['stic_Work_Experience'] = array(
             'size' => '20',
         ),
         'position_type' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'position_type',
             'vname' => 'LBL_POSITION_TYPE',
             'type' => 'enum',
@@ -142,7 +142,7 @@ $dictionary['stic_Work_Experience'] = array(
             'size' => '20',
         ),
         'sector' => array(
-            'required' => true,
+            'required' => false,
             'name' => 'sector',
             'vname' => 'LBL_SECTOR',
             'type' => 'enum',
@@ -247,7 +247,8 @@ $dictionary['stic_Work_Experience'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => true,
         ),
         'end_date' => array(
             'required' => false,
@@ -267,6 +268,7 @@ $dictionary['stic_Work_Experience'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
+            'options' => 'date_range_search_dom',
             'enable_range_search' => false,
         ),
         'stic_work_experience_contacts' => array(
@@ -326,7 +328,7 @@ $dictionary['stic_Work_Experience'] = array(
             'table' => 'accounts',
             'module' => 'Accounts',
             'rname' => 'name',
-            'required' => true,
+            'required' => false,
         ),
         'stic_work_experience_accountsaccounts_ida' => array(
             'name' => 'stic_work_experience_accountsaccounts_ida',

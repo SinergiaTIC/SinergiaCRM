@@ -249,7 +249,9 @@ $dictionary['stic_Skills'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => true,
+            'dbType' => 'datetime',
         ),
         'stic_skills_contacts' => array(
             'name' => 'stic_skills_contacts',

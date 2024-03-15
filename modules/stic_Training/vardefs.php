@@ -320,7 +320,8 @@ $dictionary['stic_Training'] = array(
             'merge_filter' => 'disabled',
             'len' => '18',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => true,
             'precision' => '2',
         ),
         'total_amount' => array(
@@ -342,7 +343,8 @@ $dictionary['stic_Training'] = array(
             'merge_filter' => 'disabled',
             'len' => '18',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'numeric_range_search_dom',
+            'enable_range_search' => true,
             'precision' => '2',
         ),
         'start_date' => array(
@@ -363,7 +365,9 @@ $dictionary['stic_Training'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => true,
+            'dbType' => 'datetime',
         ),
         'end_date' => array(
             'required' => false,
@@ -383,7 +387,9 @@ $dictionary['stic_Training'] = array(
             'unified_search' => false,
             'merge_filter' => 'disabled',
             'size' => '20',
-            'enable_range_search' => false,
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => true,
+            'dbType' => 'datetime',
         ),
         'stic_training_accounts' => array(
             'name' => 'stic_training_accounts',

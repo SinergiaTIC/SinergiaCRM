@@ -50,11 +50,11 @@ class stic_Job_ApplicationsUtils
 
         $workBean->stic_work_experience_accountsaccounts_ida = $accountOfferId;
         $workBean->stic_work_experience_contactscontacts_ida = $jobApplicationBean->stic_job_applications_contactscontacts_ida;
-        $workBean->sector = $jobApplicationBean->sector;
-        $workBean->subsector = $jobApplicationBean->subsector;
-        $workBean->position_type = $jobApplicationBean->position_type;
-        $workBean->workday_type = $jobApplicationBean->workday_type;
-        $workBean->contract_type = $jobApplicationBean->contract_type;
+        $workBean->sector = $offerBean->sector;
+        $workBean->subsector = $offerBean->subsector;
+        $workBean->position_type = $offerBean->position_type;
+        $workBean->workday_type = $offerBean->workday_type;
+        $workBean->contract_type = $offerBean->contract_type;
 
         $workBean->save();
 

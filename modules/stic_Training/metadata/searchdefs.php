@@ -71,13 +71,7 @@ array(
                 'width' => '10%',
                 'name' => 'country',
             ),
-            'current_user_only' => array(
-                'name' => 'current_user_only',
-                'label' => 'LBL_CURRENT_USER_FILTER',
-                'type' => 'bool',
-                'default' => true,
-                'width' => '10%',
-            ),
+
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
@@ -88,6 +82,20 @@ array(
                         0 => false,
                     ),
                 ),
+                'default' => true,
+                'width' => '10%',
+            ),
+            'current_user_only' => array(
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+                'default' => true,
+                'width' => '10%',
+                'name' => 'current_user_only',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
                 'default' => true,
                 'width' => '10%',
             ),
@@ -192,6 +200,21 @@ array(
                 'default' => true,
                 'name' => 'qualification',
             ),
+            'start_date' => array(
+                'type' => 'date',
+                'label' => 'LBL_START_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'start_date',
+            ),
+            'end_date' => array(
+                'type' => 'date',
+                'label' => 'LBL_END_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'end_date',
+            ),
+
             'grant_training' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
@@ -258,6 +281,20 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'created_by',
+            ),
+            'current_user_only' => array(
+                'label' => 'LBL_CURRENT_USER_FILTER',
+                'type' => 'bool',
+                'default' => true,
+                'width' => '10%',
+                'name' => 'current_user_only',
+            ),
+            'favorites_only' => array(
+                'name' => 'favorites_only',
+                'label' => 'LBL_FAVORITES_FILTER',
+                'type' => 'bool',
+                'default' => true,
+                'width' => '10%',
             ),
         ),
     ),
