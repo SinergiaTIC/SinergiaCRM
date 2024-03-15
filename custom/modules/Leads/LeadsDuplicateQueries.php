@@ -46,7 +46,7 @@ class LeadsDuplicateQueries{
             }
         }
 
-        $query = 'SELECT leads.id, leads.first_name, leads.last_name, leads.account_name leads.title '. 
+        $query = 'SELECT leads.id, leads.first_name, leads.last_name, leads.account_name, leads.title '. 
                  'FROM leads INNER JOIN leads_cstm ON leads.id=leads_cstm.id_c';
 
         // Bug #46427 : Records from other Teams shown on Potential Duplicate Contacts screen during Lead Conversion
