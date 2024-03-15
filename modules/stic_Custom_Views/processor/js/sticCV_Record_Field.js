@@ -38,6 +38,7 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
     }
     readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly}); }
     required(required=true) { return this.applyAction({action: "required", value: required}); }
+    is_required() { return sticCVUtils.getRequiredStatus(this); }
     inline(inline=true)     { return this.applyAction({action: "inline", value: inline}); }
 
     fixed_value(fixed_value) { return this.applyAction({action: "fixed_value", value: fixed_value}); }
@@ -46,10 +47,10 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
     applyAction(action) {
         switch(action.action){
             case "visible":
-                if(!sticCVUtils.isTrue(action.value) && 
-                   (action.element_section!="header" && action.element_section!="field_label")) {
-                    // Unrequire hidden fields
-                    this.required(false);
+                if(action.element_section!="header" && action.element_section!="field_label") {
+                    super.applyAction(action);
+                    sticCVUtils.check_required_visible(this);
+                    return this;
                 }
                 break;
             case "readonly": 

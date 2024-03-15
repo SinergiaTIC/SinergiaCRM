@@ -31,17 +31,6 @@ var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends 
         this.field = field;
     }
 
-    applyAction(action) {
-        switch(action.action){
-            case "visible":
-                if(!sticCVUtils.isTrue(action.value)){
-                    // Unrequire hidden fields
-                    this.field.required(false);
-                }
-                break;
-        }
-        return super.applyAction(action);
-    }
 }
 
 

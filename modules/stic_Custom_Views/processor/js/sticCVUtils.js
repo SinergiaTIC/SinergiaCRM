@@ -36,6 +36,13 @@ var sticCVUtils = class sticCVUtils {
             }
         });
     }
+    static is_visible($elem) {
+        var visible=true;
+        $elem.each(function(){
+            visible &= !$(this).hasClass("hidden");
+        });
+        return visible;
+    }
     static color($elem, customView=null, color="", important=false) {
         $elem.each(function(){
             if(important) {
@@ -293,7 +300,7 @@ var sticCVUtils = class sticCVUtils {
 
             // Unset value modified by user
             var attr = $elem.attr("data-changedByUser");
-            if(typeof(attr==="undefined") || attr===false) {
+            if(typeof(attr)==="undefined" || attr===false) {
                 $elem.removeAttr("data-changedByUser");
             }
             sticCVUtils.change($elem);
@@ -307,7 +314,7 @@ var sticCVUtils = class sticCVUtils {
 
                 // Check if the last value change with Api is processed
                 var attrApi = $elem.attr("data-lastChangeByApi");
-                if(typeof(attrApi!=="undefined") && attrApi!==false) {
+                if(typeof(attrApi)!=="undefined" && attrApi!==false) {
                     // The last value change with Api, is the current value?
                     if(attrApi!=currentValue) {
                         // Set data is changed by User
@@ -315,7 +322,7 @@ var sticCVUtils = class sticCVUtils {
                     } else {
                         // Data is not changed by User
                         var attrUser = $elem.attr("data-changedByUser");
-                        if(typeof(attrUser==="undefined") || attrUser===false) {
+                        if(!(typeof(attrUser)==="undefined" || attrUser===false)) {
                             $elem.removeAttr("data-changedByUser");
                         }
                     }
@@ -324,7 +331,7 @@ var sticCVUtils = class sticCVUtils {
                 }
                 // Undo only if last change is not made by user
                 var attrUser = $elem.attr("data-changedByUser");
-                if(typeof(attrUser==="undefined") || attrUser===false) {
+                if(typeof(attrUser)==="undefined" || attrUser===false) {
                     sticCVUtils.value(fieldContent, oldValue);
                 }
             }, true);
@@ -337,15 +344,43 @@ var sticCVUtils = class sticCVUtils {
          return false;
     }
 
+    static check_required_visible(field) {
+        if(sticCVUtils.is_visible(field.content.$element)) {
+            if(!sticCVUtils.getRequiredStatus(field)) {
+                // Set required when Visible and has "data-requiredIfVisible"
+                var attrRequired = field.container.$element.attr("data-requiredIfVisible");
+                if(!(typeof(attrRequired)==="undefined" || attrRequired===false)) {
+                    sticCVUtils.required(field, true);
+                    field.container.$element.removeAttr("data-requiredIfVisible");
+                    field.customView.addUndoFunction(function() { 
+                        field.container.$element.attr("data-requiredIfVisible", attrRequired);
+                    });
+                }
+            }
+        } else {
+            if(sticCVUtils.getRequiredStatus(field)) {
+                // Set unrequired when not visible and add "data-requiredIfVisible"
+                sticCVUtils.required(field, false);
+                var attrRequired = field.container.$element.attr("data-requiredIfVisible");
+                if(typeof(attrRequired)==="undefined" || attrRequired===false) {
+                    field.container.$element.attr("data-requiredIfVisible", true);
+                    field.customView.addUndoFunction(function() { 
+                        field.container.$element.removeAttr("data-requiredIfVisible");
+                    });
+                }
+            }
+        }
+    }
     static required(field, required=true) {
+        var required = sticCVUtils.isTrue(required);
         var oldRequired = sticCVUtils.getRequiredStatus(field);
-        var newRequired = sticCVUtils.isTrue(required);
 
         var customView = field.customView;
-        if(newRequired) {
-            addToValidate(customView.formName, field.name, field.content.type, true, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
+        if(required) {
             sticCVUtils.addClass(field.header.$element, customView, "conditional-required");
             sticCVUtils.show(field.header.$element.find("span.required"), customView, false);
+            removeFromValidate(customView.formName, field.name);
+            addToValidate(customView.formName, field.name, field.content.type, true, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
             if(!oldRequired) {
                 customView.addUndoFunction(function() { 
                     removeFromValidate(customView.formName, field.name);
@@ -360,7 +395,8 @@ var sticCVUtils = class sticCVUtils {
                 });
             }
         }
-        return this;
+        sticCVUtils.check_required_visible(field);
+        return field;
     }
     static getRequiredStatus(field) {
         var validateFields = validate[field.customView.formName];
