@@ -3,18 +3,10 @@
     This button is defined in the file custom/themes/SuiteP/tpls/_headerModuleList.tpl 
 */
 
-// Checks whether to show the time tracker button based on whether the time tracker module is being used
-// If used, updates the button color based on whether or not there is an active time record for today
-$(document).ready(function() 
-{
-    checkTimeTrackerButtonStatus();
-});
-
-
 // Check time tracker button status
 function checkTimeTrackerButtonStatus() 
 {
-    const url = 'index.php?module=stic_Time_Tracker&action=getTimeTrackerRegisterButtonStatus';
+    const url = 'index.php?module=stic_Time_Tracker&action=getTimeTrackerMenuButtonStatus';
     fetch(url)
         .then(response => response.json())
         .then(data => {

@@ -30,20 +30,26 @@ class stic_Time_TrackerController extends SugarController {
      * 
      * @return void
      */
-    public function action_getTimeTrackerRegisterButtonStatus()
+    public function action_getTimeTrackerMenuButtonStatus()
     {
         // Check if the user has started any time registration today
         $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
         global $current_user;
         
+        // Check if time tracker module is active
         include_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
         $timeTrackerModuleActive = in_array('stic_Time_Tracker', $currentTabs) ? 1 : 0;
+
+        // Check if there is a time tracker record for the employee in today
+        $data = stic_Time_Tracker::getLastTodayTimeTrackerRecordForEmployeeData($current_user->id);
+        $todayRegistrationStarted = !is_array($data) ? 0 : (empty($data["end_date"]) ? 1 : 0);
+
         $data = array(
             'timeTrackerModuleActive' => $timeTrackerModuleActive,
             'timeTrackerActiveInEmployee' => $current_user->stic_clock_c ? 1:0,
-            'todayRegistrationStarted' => $current_user->getPreference('stic_time_tracker_today_registration_started'),
+            'todayRegistrationStarted' => $todayRegistrationStarted,
         );
         
         // return the json result

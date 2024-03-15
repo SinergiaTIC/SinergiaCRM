@@ -93,31 +93,6 @@ class stic_Time_Tracker extends Basic
 
         // Save the bean
         parent::save($check_notify);
-
-        // check and update the user preference of the stic_time_tracker_register_start
-        stic_Time_Tracker::updateTodayRegisterStatusPreference($this->users_stic_time_trackerusers_ida);
-    }
-
-    /**
-     * 
-     *
-     * @return void
-     */
-    public static function updateTodayRegisterStatusPreference($idEmployee)
-    {
-        // Get the last today time tracket record of the current user
-        $data = stic_Time_Tracker::getLastTodayTimeTrackerRecordForEmployeeData($idEmployee);
-        
-        // Check if today's last record has end date or not
-        $todayRegistrationStarted = !is_array($data) ? 0: (empty($data["end_date"]) ? 1 : 0);
-
-        // save status in preferences
-        $user = BeanFactory::getBean('Users', $idEmployee);
-        $user->setPreference('stic_time_tracker_today_registration_started', $todayRegistrationStarted);
-        $user->savePreferencesToDB();
-
-        global $current_user;
-        return $current_user->getPreference('stic_time_tracker_today_registration_started');
     }
   
     /**
