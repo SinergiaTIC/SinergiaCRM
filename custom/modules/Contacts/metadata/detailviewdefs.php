@@ -293,19 +293,6 @@ array (
         array (
           0 => 
           array (
-            'name' => 'work_experience_field_c',
-            'label' => 'test',
-          ),
-          1 => 
-          array (
-            'name' => 'training_field_c',
-            'label' => 'test tt',
-          ),
-        ),
-        9 => 
-        array (
-          0 => 
-          array (
             'name' => 'description',
             'label' => 'LBL_DESCRIPTION',
           ),
