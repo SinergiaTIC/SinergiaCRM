@@ -93,9 +93,8 @@ $mod_strings = array(
     // STIC-Custom 20240307 EPS - Improve send mail action
     'LBL_FROM_EMAIL' =>"From Address",
     'LBL_FROM_NAME' =>'From Name',
-    'LBL_REPLY_TO' =>'Reply to Address',
+    'LBL_REPLY_TO_EMAIL' =>'Reply to Address',
     'LBL_REPLY_TO_NAME' =>'Reply to Name',
-    'LBL_STICSENDEMAIL' => 'Send Email (with options)',
     'LBL_OUTPUT_SMTP' => 'Outbound Email',
     'LBL_SHOW_ADVANCED'=> 'Show advanced options',
     'LBL_ADVANCED_TOOLTIP_HEADER' => 'Advanced options',

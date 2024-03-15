@@ -111,7 +111,7 @@ class actionSendEmail extends actionBase
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
 
-        // Advanced options
+        // Advanced options section
         $html .= "<tr style='margin-top:20px;' >";
         $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;" > <a href="javascript:$(\'.advancedOptions\').toggle();">' . translate(
             "LBL_SHOW_ADVANCED",
@@ -121,6 +121,9 @@ class actionSendEmail extends actionBase
         $html .= "</tr>";
             
         // Show output accounts
+        $emailsList = $this->get_output_smtps();
+        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp']);
+        
         $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none;' class='advancedOptions'>";
         $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
             "LBL_OUTPUT_SMTP",
@@ -128,15 +131,8 @@ class actionSendEmail extends actionBase
         ) . ':<span class="required">*</span></label>';
         $html .= '</td>';
 
-        $emailsList = $this->get_output_smtps();
-        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp']);
-
         $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
         $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp']) . "</select>";
-
-        // $html .= "<td valign='top' style='width:20% !important;'>";
-        // $html .= "<input type='hidden' name='aow_actions_param[".$line."][output_smtp]' value='0' >";
-        // $html .= "<input type='text' id='aow_actions_param[".$line."][output_smtp'] name='aow_actions_param[".$line."][output_smtp]' value='{$reply_to}' ></td>";
         $html .= '</td>';
         $html .= '</tr>';
 
@@ -146,7 +142,6 @@ class actionSendEmail extends actionBase
         } else {
             $from_name= $fromName;
         }      
-
 
         $html .= "<tr style='margin-top:20px; display:none;' class='advancedOptions'>";
         $html .= '<td id="relate_label_3" scope="row" valign="top" style="width:20%;"><label>' . translate(
@@ -173,7 +168,6 @@ class actionSendEmail extends actionBase
         $html .= "<td valign='top' style='width:20% !important;'>";
         $html .= "<input type='hidden' name='aow_actions_param[".$line."][from_email_address]' value='' >";
         $html .= "<input type='text' id='aow_actions_param[".$line."][from_email_address]' name='aow_actions_param[".$line."][from_email_address]' value='{$from}' ></td>";
-
         $html .= "</tr>";
 
         // Reply to name
@@ -202,7 +196,7 @@ class actionSendEmail extends actionBase
             $reply_to='';
         }  
         $html .= '<td id="relate_label_4" scope="row" valign="top" style="width:20%;"><label>' . translate(
-            "LBL_REPLY_TO",
+            "LBL_REPLY_TO_EMAIL",
             "AOW_Actions"
         ) . ':</label>';
         $html .= '</td>';
@@ -210,6 +204,7 @@ class actionSendEmail extends actionBase
         $html .= "<input type='hidden' name='aow_actions_param[".$line."][reply_to]' value='0' >";
         $html .= "<input type='text' id='aow_actions_param[".$line."][reply_to'] name='aow_actions_param[".$line."][reply_to]' value='{$reply_to}' ></td>";
         $html .= '</td>';
+        $html .= "</tr>";
 
         // Section end
         $html .= "<tr style='margin-top:20px;' >";
@@ -264,8 +259,9 @@ class actionSendEmail extends actionBase
 
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
-        // script for tooltip
+        
         $html .= "<script id ='info'> 
+        // script for tooltip
         $('#info-availability').qtip({
             content: {
               text: '". translate(
@@ -293,6 +289,7 @@ class actionSendEmail extends actionBase
           document.getElementById('aow_actions_param[" . $line . "][from_email_name]').setAttribute('value', from);
         };";
 
+        // Hide advanced section when default configuration is used
         if (isset($params['output_smtp']) && ($params['output_smtp'] != 'system' || $fromName != $from_name || $fromAddress != $from
                 || !empty($params['reply_to']) || !empty($params['reply_to_name']))) {
             $html .= "$('.advancedOptions').toggle();";
@@ -322,9 +319,6 @@ class actionSendEmail extends actionBase
     private function get_output_smtps_options($emailsList, $selectedSmtp) {
         $selectedSmtp = $selectedSmtp == '' ? 'system' : $selectedSmtp;
         $optionString = "";
-        // $selected = '' == $selectedSmtp ? 'selected' : '';
-        // $optionString = "<option value='' {$selected} data-from='aa' data-address='aa@aa.com' ></option> ";
-        // while ($row = $result->fetch_assoc()){
         foreach($emailsList as $id => $props) {
             $selected = $props['name'] == $selectedSmtp ? 'selected' : '';
             $optionString .= "<option value='{$props['name']}' {$selected} data-from='{$props['smtp_from_name']}' data-address='{$props['smtp_from_addr']}'>{$props['name']}</option> ";
@@ -337,16 +331,10 @@ class actionSendEmail extends actionBase
         $emailsList = $this->getOutboundEmailAccountOptions();
 
         return $emailsList;
-        
-        // return "<option value='1'> sdfdsfsd </option> <option value='2'> 2sdfdsfsd </option> <option value='3'> 3sdfdsfsd </option>";
     }
 
     private function getOutboundEmailAccountOptions()
     {
-        global $mod_strings;
-        //	$ret = array(
-        //		0 => $mod_strings['LBL_OUTBOUND_EMAIL_ACCOUNT_DEFAULT'],
-        //	);
         $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
         foreach ($oeaList as $oea) {
             $ret[$oea->id] = array(

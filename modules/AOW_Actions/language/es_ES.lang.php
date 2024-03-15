@@ -93,9 +93,8 @@ $mod_strings = array(
     // STIC-Custom 20240307 EPS - Improve send mail action
     'LBL_FROM_EMAIL' => 'Remitente (Dirección de email)',
     'LBL_FROM_NAME' => 'Nombre del remitente (Nombre a mostrar)',
-    'LBL_REPLY_TO' => 'Responder a (Dirección de email)',
+    'LBL_REPLY_TO_EMAIL' => 'Responder a (Dirección de email)',
     'LBL_REPLY_TO_NAME' => 'Responder a (Nombre)',
-    'LBL_STICSENDEMAIL' => 'Enviar email (opciones avanzadas)',
     'LBL_OUTPUT_SMTP' => 'Correo saliente',
     'LBL_SHOW_ADVANCED'=> 'Mostrar configuración avanzada',
     'LBL_ADVANCED_TOOLTIP_HEADER' => 'Opciones avazadas',
