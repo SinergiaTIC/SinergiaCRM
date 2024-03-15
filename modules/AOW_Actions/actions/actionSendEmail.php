@@ -54,7 +54,7 @@ class actionSendEmail extends actionBase
 
     public function edit_display($line, SugarBean $bean = null, $params = array())
     {
-        global $app_list_strings, $mod_strings;
+        global $app_list_strings;
         $email_templates_arr = get_bean_select_array(true, 'EmailTemplate', 'name', '', 'name');
 
         if (!in_array($bean->module_dir, getEmailableModules())) {
@@ -106,7 +106,6 @@ class actionSendEmail extends actionBase
         $html .= "&nbsp;<span name='edit_template' id='aow_actions_edit_template_link".$line."' $hidden><a href='javascript:edit_email_template_form(".$line.")' >".translate('LBL_EDIT_EMAIL_TEMPLATE', 'AOW_Actions')."</a></span>";
         $html .= "</td>";
         $html .= "</tr>";
-
 
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
@@ -778,6 +777,7 @@ class actionSendEmail extends actionBase
             $emailBcc = [];
         }
 
+        //now create email
         if ($mail->Send()) {
             $emailObj->to_addrs= implode(',', $emailTo);
             // STIC Custom 20230511 - JBL - Reducing use of deprecated code and warnings
