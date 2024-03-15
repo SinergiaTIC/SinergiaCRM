@@ -94,8 +94,11 @@ $mod_strings = array(
     'LBL_REMITTANCE_EMAIL' => 'Remitente (Dirección de email)',
     'LBL_REMITTANCE_NAME' => 'Nombre del remitente (Nombre a mostrar)',
     'LBL_REPLY_TO' => 'Responder a (Dirección de email)',
+    'LBL_REPLY_TO_NAME' => 'Responder a (Nombre)',
     'LBL_STICSENDEMAIL' => 'Enviar email (opciones avanzadas)',
     'LBL_OUTPUT_SMTP' => 'Correo saliente',
     'LBL_SHOW_ADVANCED'=> 'Mostrar configuración avanzada',
+    'LBL_ADVANCED_TOOLTIP_HEADER' => 'Opciones avazadas',
+    'LBL_ADVANCED_TOOLTIP_BODY' => "Estas opciones permiten escoger la cuenta de correo saliente a usar así como personalizar el nombre y dirección del remitente",
     // END STIC-Custom
 );

@@ -54,7 +54,7 @@ class actionSendEmail extends actionBase
 
     public function edit_display($line, SugarBean $bean = null, $params = array())
     {
-        global $app_list_strings;
+        global $app_list_strings, $mod_strings;
         $email_templates_arr = get_bean_select_array(true, 'EmailTemplate', 'name', '', 'name');
 
         if (!in_array($bean->module_dir, getEmailableModules())) {
@@ -110,78 +110,17 @@ class actionSendEmail extends actionBase
 
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
-        if (isset($params['remittance_email_address']) && $params['remittance_email_address']) {
-            $remittance = $params['remittance_email_address'];
-        } else {
-            $remittance='';
-        }
 
+        // Advanced options
         $html .= "<tr style='margin-top:20px;' >";
         $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;" > <a href="javascript:$(\'.advancedOptions\').toggle();">' . translate(
             "LBL_SHOW_ADVANCED",
             "AOW_Actions"
-        ) . '<span class="inline-help glyphicon glyphicon-triangle-bottom"></span> </a> ';
+            ) . '<span class="inline-help glyphicon glyphicon-triangle-bottom"></span> <span id="info-availability" class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="1" aria-describedby="qtip-1"></span></a> ';
         $html .= '</td>'; 
-        $html .= "</tr>";       
-        //FROM ADDRESS
-                $html .= "<tr style='margin-top:20px; display:none;' class='advancedOptions'>";
-                $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;"> <label>' . translate(
-                    "LBL_REMITTANCE_EMAIL",
-                    "AOW_Actions"
-                ) . ':</label>';
-                $html .= '</td>';
-                $html .= "<td valign='top' style='width:20% !important;'>";
-                $html .= "<input type='hidden' name='aow_actions_param[".$line."][remittance_email_address]' value='' >";
-                $html .= "<input type='text' id='aow_actions_param[".$line."][remittance_email_address]' name='aow_actions_param[".$line."][remittance_email_address]' value='{$remittance}' ></td>";
-
-              
-                if (isset($params['remittance_email_name']) && $params['remittance_email_name']) {
-                    $remittance_name = $params['remittance_email_name'];
-        
-                } else {
-                    $remittance_name='';
-                }      
-        //REMITTANCE NAME
-        
-                $html .= '<td id="relate_label_3" scope="row" valign="top" style="width:20%;"><label>' . translate(
-                    "LBL_REMITTANCE_NAME",
-                    "AOW_Actions"
-                ) . ':</label>';
-                $html .= '</td>';
-                $html .= "<td valign='top' style='width:20% !important;'>";
-                $html .= "<input type='hidden' name='aow_actions_param[".$line."][remittance_email_name]' value='0' >";
-                $html .= "<input type='text' id='aow_actions_param[".$line."][remittance_email_name]' name='aow_actions_param[".$line."][remittance_email_name]' value='{$remittance_name}' ></td>";
-                $html .= "</tr>";
-
-
-                if (isset($params['reply_to']) && $params['reply_to']) {
-                    $reply_to = $params['reply_to'];
-        
-                } else {
-                    $reply_to='';
-                }      
-        //REPLY TO
-                $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none' class='advancedOptions'>";
-                $html .= '<td id="relate_label_4" scope="row" valign="top" style="width:20%;"><label>' . translate(
-                    "LBL_REPLY_TO",
-                    "AOW_Actions"
-                ) . ':</label>';
-                $html .= '</td>';
-                $html .= "<td valign='top' style='width:20% !important;'>";
-                $html .= "<input type='hidden' name='aow_actions_param[".$line."][reply_to]' value='0' >";
-                $html .= "<input type='text' id='aow_actions_param[".$line."][reply_to'] name='aow_actions_param[".$line."][reply_to]' value='{$reply_to}' ></td>";
-                $html .= '</td>';
-
-        // ###EPS###
-        // OUTPUT SMTP
-        if (isset($params['output_smtp']) && $params['output_smtp']) {
-            $reply_to = $params['output_smtp'];
-
-        } else {
-            $reply_to='';
-        }      
-
-
+        $html .= "</tr>";
+            
+        // Show output accounts
         $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none;' class='advancedOptions'>";
         $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
             "LBL_OUTPUT_SMTP",
@@ -189,15 +128,90 @@ class actionSendEmail extends actionBase
         ) . ':<span class="required">*</span></label>';
         $html .= '</td>';
 
+        $emailsList = $this->get_output_smtps();
+        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp']);
 
         $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
-        $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps($params['output_smtp']) . "</select>";
+        $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp']) . "</select>";
 
         // $html .= "<td valign='top' style='width:20% !important;'>";
         // $html .= "<input type='hidden' name='aow_actions_param[".$line."][output_smtp]' value='0' >";
         // $html .= "<input type='text' id='aow_actions_param[".$line."][output_smtp'] name='aow_actions_param[".$line."][output_smtp]' value='{$reply_to}' ></td>";
         $html .= '</td>';
         $html .= '</tr>';
+
+        // From name
+        if (isset($params['remittance_email_name']) && $params['remittance_email_name']) {
+            $remittance_name = $params['remittance_email_name'];
+        } else {
+            $remittance_name= $fromName;
+        }      
+
+
+        $html .= "<tr style='margin-top:20px; display:none;' class='advancedOptions'>";
+        $html .= '<td id="relate_label_3" scope="row" valign="top" style="width:20%;"><label>' . translate(
+            "LBL_REMITTANCE_NAME",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][remittance_email_name]' value='0' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][remittance_email_name]' name='aow_actions_param[".$line."][remittance_email_name]' value='{$remittance_name}' ></td>";
+ 
+        // From address
+        if (isset($params['remittance_email_address']) && $params['remittance_email_address']) {
+            $remittance = $params['remittance_email_address'];
+        } else {
+            $remittance= $fromAddress;
+        }
+
+        $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;"> <label>' . translate(
+            "LBL_REMITTANCE_EMAIL",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][remittance_email_address]' value='' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][remittance_email_address]' name='aow_actions_param[".$line."][remittance_email_address]' value='{$remittance}' ></td>";
+
+        $html .= "</tr>";
+
+        // Reply to name
+        if (isset($params['reply_to_name']) && $params['reply_to_name']) {
+            $reply_to_name = $params['reply_to_name'];
+
+        } else {
+            $reply_to_name = '';
+        }  
+        $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none' class='advancedOptions'>";
+        $html .= '<td id="relate_label_4" scope="row" valign="top" style="width:20%;"><label>' . translate(
+            "LBL_REPLY_TO_NAME",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][reply_to_name]' value='0' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][reply_to_name'] name='aow_actions_param[".$line."][reply_to_name]' value='{$reply_to_name}' ></td>";
+        $html .= '</td>';
+
+        // Reply to address
+        if (isset($params['reply_to']) && $params['reply_to']) {
+            $reply_to = $params['reply_to'];
+
+        } else {
+            $reply_to='';
+        }  
+        $html .= '<td id="relate_label_4" scope="row" valign="top" style="width:20%;"><label>' . translate(
+            "LBL_REPLY_TO",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][reply_to]' value='0' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][reply_to'] name='aow_actions_param[".$line."][reply_to]' value='{$reply_to}' ></td>";
+        $html .= '</td>';
+
+        // Section end
         $html .= "<tr style='margin-top:20px;' >";
         $html .= "<td valign='top' style='width:20% !important;'>";
         $html .= '</td>';
@@ -248,29 +262,82 @@ class actionSendEmail extends actionBase
         }
         $html .= "</script>";
 
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        // script for tooltip
+        $html .= "<script id ='info'> 
+        $('#info-availability').qtip({
+            content: {
+              text: '". translate(
+                "LBL_ADVANCED_TOOLTIP_BODY",
+                "AOW_Actions"
+            )."',
+              title: {
+                text: '". translate(
+                    "LBL_ADVANCED_TOOLTIP_HEADER",
+                    "AOW_Actions"
+                ) ."',
+              },
+              style: {
+                classes: 'qtip-inline-help'
+              }
+            },
+        });
+
+        // script for outbound mail change
+        var selection = document.getElementById('aow_actions_param[".$line."][output_smtp]');
+        selection.onchange = function(event){
+          let from = event.target.options[event.target.selectedIndex].dataset.from;
+          let address = event.target.options[event.target.selectedIndex].dataset.address;
+          document.getElementById('aow_actions_param[" . $line . "][remittance_email_address]').setAttribute('value', address);
+          document.getElementById('aow_actions_param[" . $line . "][remittance_email_name]').setAttribute('value', from);
+        };";
+
+        if ($params['output_smtp'] != 'system' || $fromName != $remittance_name || $fromAddress != $remittance
+                || !empty($params['reply_to']) || !empty($params['reply_to_name'])) {
+            $html .= "$('.advancedOptions').toggle();";
+        }
+
+        $html .= "</script>";
+        //END STIC-Custom
+
         return $html;
     }
 
     // STIC-Custom 20240307 EPS - Improve send mail action
     // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
-    private function get_output_smtps($selectedSmtp) {
-        global $db, $current_user;
 
-        // $sql = "select id, name from outbound_email oe where deleted = 0 and (user = '{$current_user->id}' OR user = '')";
-
-        // $result = $db->query($sql);
-
-        $emailsList = $this->getOutboundEmailAccountOptions();
-
-        $selected = '' == $selectedSmtp ? 'selected' : '';
-        $optionString = "<option value='' {$selected}></option> ";
+    private function getSelectedSMTPData($emailsList, $selectedSmtp) {
+        $selectedData = array();
+        foreach($emailsList as $id => $props) {
+            if ($selectedSmtp == $props['name']) {
+                $selectedData = array(
+                    $props['smtp_from_name'],
+                    $props['smtp_from_addr'],
+                );
+            }
+        }
+        return $selectedData;
+    }
+    private function get_output_smtps_options($emailsList, $selectedSmtp) {
+        $selectedSmtp = $selectedSmtp == '' ? 'system' : $selectedSmtp;
+        $optionString = "";
+        // $selected = '' == $selectedSmtp ? 'selected' : '';
+        // $optionString = "<option value='' {$selected} data-from='aa' data-address='aa@aa.com' ></option> ";
         // while ($row = $result->fetch_assoc()){
-        foreach($emailsList as $id => $name) {
-            $selected = $name == $selectedSmtp ? 'selected' : '';
-            $optionString .= "<option value='{$name}' {$selected}>{$name}</option> ";
+        foreach($emailsList as $id => $props) {
+            $selected = $props['name'] == $selectedSmtp ? 'selected' : '';
+            $optionString .= "<option value='{$props['name']}' {$selected} data-from='{$props['smtp_from_name']}' data-address='{$props['smtp_from_addr']}'>{$props['name']}</option> ";
         }
 
         return $optionString;
+    }
+
+    private function get_output_smtps() {
+        $emailsList = $this->getOutboundEmailAccountOptions();
+
+        return $emailsList;
+        
         // return "<option value='1'> sdfdsfsd </option> <option value='2'> 2sdfdsfsd </option> <option value='3'> 3sdfdsfsd </option>";
     }
 
@@ -282,7 +349,11 @@ class actionSendEmail extends actionBase
         //	);
         $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
         foreach ($oeaList as $oea) {
-            $ret[$oea->id] = $oea->name;
+            $ret[$oea->id] = array(
+                'name' => $oea->name,
+                'smtp_from_name' => $oea->smtp_from_name,
+                'smtp_from_addr' => $oea->smtp_from_addr
+            );
         }
         return $ret;
     }
@@ -468,6 +539,7 @@ class actionSendEmail extends actionBase
         $fromEmail = $params['remittance_email_address'];
         $fromName = $params['remittance_email_name'];
         $replyto = $params['reply_to'];
+        $replytoName = $params['reply_to_name'];
         $outputSmtp = $params['output_smtp'];
         // END STIC-Custom
 
@@ -481,7 +553,7 @@ class actionSendEmail extends actionBase
                 // STIC-Custom 20240307 EPS - Improve send mail action
                 // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
                 // if (!$this->sendEmail(array($email_to), $emailTemp->subject, $emailTemp->body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
-                if (!$this->sendEmail($emailTemp, array($email_to), $outputSmtp, '', $fromEmail, $fromName, $replyto)) {
+                if (!$this->sendEmail($emailTemp, array($email_to), $outputSmtp, '', $fromEmail, $fromName, $replyto, $replytoName)) {
                 // END STIC-Custom
                     $ret = false;
                     $this->lastEmailsFailed++;
@@ -500,7 +572,7 @@ class actionSendEmail extends actionBase
             // STIC-Custom 20240307 EPS - Improve send mail action
             // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
             // if (!$this->sendEmail($emails['to'], $emailTemp->subject, $email_body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
-            if (!$this->sendEmail($emailTemp, $emails['to'], $outputSmtp, '', $fromEmail, $fromName, $replyto)) {
+            if (!$this->sendEmail($emailTemp, $emails['to'], $outputSmtp, '', $fromEmail, $fromName, $replyto, $replytoName)) {
             // END STIC-Custom
                 $ret = false;
                 $this->lastEmailsFailed++;
@@ -620,7 +692,7 @@ class actionSendEmail extends actionBase
     // STIC-Custom 20240307 EPS - Improve send mail action
     // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
     // public function sendEmail($emailTo, $emailSubject, $emailBody, $altemailBody, SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
-    public function sendEmail($templateData, $emailTo, $mailerName = 'system', $user = '', $fromEmail, $fromName, $replyto)
+    public function sendEmail($templateData, $emailTo, $mailerName = 'system', $user = '', $fromEmail, $fromName, $replyto, $replytoName)
     // END STIC-Custom
     {
         require_once('modules/Emails/Email.php');
@@ -703,7 +775,7 @@ class actionSendEmail extends actionBase
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         if (!empty($replyto)){
-            $mail->addReplyTo($replyto);
+            $mail->addReplyTo($replyto, $replytoName);
         }
         // END STIC-Custom
         if (!empty($emailCc)) {

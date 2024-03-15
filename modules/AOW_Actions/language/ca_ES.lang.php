@@ -94,9 +94,13 @@ $mod_strings = array(
     'LBL_REMITTANCE_EMAIL' => "Remitent (Adreça de correu electrònic)",
     'LBL_REMITTANCE_NAME' => 'Nom del remitent (Nom a mostrar)',
     'LBL_REPLY_TO' => 'Respondre a (Adreça de correu electrònic)',
+    'LBL_REPLY_TO_NAME' => 'Respondre a (Nom a mostrar)',
     'LBL_STICSENDEMAIL'=> 'Enviar correu electrònic (opcions avançades)',
     'LBL_OUTPUT_SMTP'=> 'Correu electrònic sortint',
     'LBL_SHOW_ADVANCED'=> 'Mostrar configuració avançada',
+    'LBL_ADVANCED_TOOLTIP_HEADER' => 'Opcions avaçades',
+    'LBL_ADVANCED_TOOLTIP_BODY' => 'Aquestes opcions permeten triar el compte de correu electrònic sortint emprat així com l&#39;adreça i el nom del remitent',
+
     // END STIC-Custom
 
 

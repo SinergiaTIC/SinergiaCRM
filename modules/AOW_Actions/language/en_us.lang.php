@@ -94,8 +94,11 @@ $mod_strings = array(
     'LBL_REMITTANCE_EMAIL' =>"From Address",
     'LBL_REMITTANCE_NAME' =>'From Name',
     'LBL_REPLY_TO' =>'Reply to Address',
+    'LBL_REPLY_TO_NAME' =>'Reply to Name',
     'LBL_STICSENDEMAIL' => 'Send Email (with options)',
     'LBL_OUTPUT_SMTP' => 'Outbound Email',
     'LBL_SHOW_ADVANCED'=> 'Show advanced options',
+    'LBL_ADVANCED_TOOLTIP_HEADER' => 'Advanced options',
+    'LBL_ADVANCED_TOOLTIP_BODY' => 'These options allow to choose the outbound account and to customize the From name and address',
     // END STIC-Custom
 );
