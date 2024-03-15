@@ -90,5 +90,5 @@ $mod_strings = array(
     'LBL_CONTRACT_END_DATE_ERROR' => "La data final de contracte o col·locació ha de ser igual o posterior a la data d'inici de contracte o col·locació.",
     'LBL_START_DATE_CONTRACT_START_DATE_ERROR' => "La data d'alta ha de ser igual o anterior a la data d'inici de contracte",
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => "La data d'inici de contracte ha de ser igual o posterior a la data d'alta",
-    'LBL_WORK_EXPERIENCE_SUBJECT' => 'Candidature acceptada',
+    'LBL_WORK_EXPERIENCE_SUBJECT' => 'Candidatura acceptada',
 );
