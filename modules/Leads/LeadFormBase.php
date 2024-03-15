@@ -62,10 +62,10 @@ class LeadFormBase extends PersonFormBase
     {
         // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/164
-        if(file_exists("custom/modules/Leads/LeadsDuplicateQueries.php")) {
-            require_once("custom/modules/Leads/LeadsDuplicateQueries.php");
-            if(method_exists("LeadsDuplicateQueries", "getDuplicateQuery")) {
-                return LeadsDuplicateQueries::getDuplicateQuery($focus, $prefix);
+        if(file_exists("custom/modules/Leads/sticLeadsDuplicateQueries.php")) {
+            require_once("custom/modules/Leads/sticLeadsDuplicateQueries.php");
+            if(method_exists("sticLeadsDuplicateQueries", "getDuplicateQuery")) {
+                return sticLeadsDuplicateQueries::getDuplicateQuery($focus, $prefix);
             }
         }
         // END STIC-Custom

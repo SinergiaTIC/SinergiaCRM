@@ -70,10 +70,10 @@ class ContactFormBase extends PersonFormBase
     {
         // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/164
-        if(file_exists("custom/modules/Contacts/ContactsDuplicateQueries.php")) {
-            require_once("custom/modules/Contacts/ContactsDuplicateQueries.php");
-            if(method_exists("ContactsDuplicateQueries", "getDuplicateQuery")) {
-                return ContactsDuplicateQueries::getDuplicateQuery($focus, $prefix);
+        if(file_exists("custom/modules/Contacts/sticContactsDuplicateQueries.php")) {
+            require_once("custom/modules/Contacts/sticContactsDuplicateQueries.php");
+            if(method_exists("sticContactsDuplicateQueries", "getDuplicateQuery")) {
+                return sticContactsDuplicateQueries::getDuplicateQuery($focus, $prefix);
             }
         }
         // END STIC-Custom

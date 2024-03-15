@@ -86,6 +86,16 @@ $accountForm = new AccountFormBase();
 $GLOBALS['check_notify'] = false;
 
 $query = 'select id, name, website, billing_address_city  from accounts where deleted=0 ';
+// STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/164
+if(file_exists("custom/modules/Accounts/sticAccountsDuplicateQueries.php")) {
+    require_once("custom/modules/Accounts/sticAccountsDuplicateQueries.php");
+    if(method_exists("sticAccountsDuplicateQueries", "getShowDuplicateQuery")) {
+        $query = sticAccountsDuplicateQueries::getShowDuplicateQuery();
+    }
+}
+// END STIC-Custom
+
 $duplicates = $_POST['duplicate'];
 $count = count($duplicates);
 $db = DBManagerFactory::getInstance();
@@ -102,16 +112,6 @@ if ($count > 0) {
     }
     $query .= ')';
 }
-// STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/164
-if(file_exists("custom/modules/Accounts/AccountsDuplicateQueries.php")) {
-    require_once("custom/modules/Accounts/AccountsDuplicateQueries.php");
-    if(method_exists("AccountsDuplicateQueries", "getShowDuplicateQuery")) {
-        $query = AccountsDuplicateQueries::getShowDuplicateQuery();
-    }
-}
-// END STIC-Custom
-
 $duplicateAccounts = array();
 
 $result = $db->query($query);
