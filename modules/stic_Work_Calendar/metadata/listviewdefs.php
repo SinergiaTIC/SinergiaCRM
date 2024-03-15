@@ -87,7 +87,14 @@ $listViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => false,
         'align' => 'right',
-    ),         
+    ),
+    'COLOR' => array(
+        'type' => 'color',
+        'studio' => 'visible',
+        'label' => 'LBL_COLOR',
+        'width' => '10%',
+        'default' => false,
+    ),    
     'CREATED_BY_NAME' => array(
         'type' => 'relate',
         'link' => true,

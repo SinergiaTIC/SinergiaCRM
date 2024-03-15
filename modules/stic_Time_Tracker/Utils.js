@@ -23,6 +23,7 @@
 /* HEADER */
 
 /* VALIDATION DEPENDENCIES */
+var validationDependencies = {};
 
 /* VALIDATION CALLBACKS */
 
@@ -35,8 +36,10 @@ switch (viewType()) {
     // Set autofill mark beside field label
     setAutofill(["name"]);  
     break;
+
   case "detail":
     break;
+    
   case "list":
     break;
 
