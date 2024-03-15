@@ -293,8 +293,8 @@ class actionSendEmail extends actionBase
           document.getElementById('aow_actions_param[" . $line . "][from_email_name]').setAttribute('value', from);
         };";
 
-        if ($params['output_smtp'] != 'system' || $fromName != $from_name || $fromAddress != $from
-                || !empty($params['reply_to']) || !empty($params['reply_to_name'])) {
+        if (isset($params['output_smtp']) && ($params['output_smtp'] != 'system' || $fromName != $from_name || $fromAddress != $from
+                || !empty($params['reply_to']) || !empty($params['reply_to_name']))) {
             $html .= "$('.advancedOptions').toggle();";
         }
 
