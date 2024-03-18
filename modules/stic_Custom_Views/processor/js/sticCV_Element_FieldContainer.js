@@ -40,7 +40,7 @@ var sticCV_Element_FieldContainer = class sticCV_Element_FieldContainer extends 
 
     applyAction(action) {
         if(action.action=="visible"){
-            var show=(sticCVUtils.isTrue(action));    
+            var show=(sticCVUtils.isTrue(action.value));
             if(!show) {
                 if(this.customView.view=="editview" || this.customView.view=="quickcreate") {
                     for(var field of this.getFields()) {
