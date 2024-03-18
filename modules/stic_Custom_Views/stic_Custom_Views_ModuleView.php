@@ -249,7 +249,7 @@ class stic_Custom_Views_ModuleView
             case 'date':
             case 'datetime':
             case 'datetimecombo':
-                $validOps = array('Equal_To','Not_Equal_To',/*'Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To',*/'is_null', 'is_not_null');
+                $validOps = array('Equal_To','Not_Equal_To','Greater_Than','Less_Than','Greater_Than_or_Equal_To','Less_Than_or_Equal_To','is_null', 'is_not_null');
                 break;
             case 'enum':
             case 'dynamicenum':

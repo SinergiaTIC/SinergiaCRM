@@ -96,36 +96,36 @@ function initializeQuickCreateCustomization() {
   observer.observe(subpanelList, config);
 }
 
-function initializeEditFields() {
-  var customView = sticCustomizeView.editview();
-
-  // Hide module selector, show label with module name
-  customView.field("view_module").readonly();
-  customView.field("view_module").content.bold();
-
-  // Hide view selector, show label with view name
-  customView.field("view_type").readonly();
-  customView.field("view_type").content.bold();
-
-  // Set initial name
+function refreshViewName(customView) {
   customView.field("name").value(
     customView.field("view_module").content.text() + " - " +
     customView.field("customization_name").content.text() + " - " +
     customView.field("view_type").content.text()
   );
+}
 
-  // Hide name, show label with name
+function initializeEditFields() {
+  var customView = sticCustomizeView.editview();
+
+  // Readonly module selector
+  customView.field("view_module").readonly();
+  customView.field("view_module").content.bold();
+
+  // Readonly view selector
+  // customView.field("view_type").readonly();
+  // customView.field("view_type").content.bold();
+
+  // Readonly name
   customView.field("name").readonly();
   customView.field("name").content.bold();
+  
+  // Set initial name
+  refreshViewName(customView);
 
-  // Update name when any change on customization_name
-  customView.field("customization_name").onChange(function() {
-    customView.field("name").value(
-      customView.field("view_module").content.text() + " - " +
-      customView.field("customization_name").content.text() + " - " +
-      customView.field("view_type").content.text()
-    );
-  });
+  // Update name when any change on dependant fields
+  customView.field("view_module").onChange(function() { refreshViewName(customView); });
+  customView.field("customization_name").onChange(function() { refreshViewName(customView); });
+  customView.field("view_type").onChange(function() { refreshViewName(customView); });
 }
 
 function initializeSelectize() {

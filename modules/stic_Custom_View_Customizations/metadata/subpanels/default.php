@@ -87,6 +87,13 @@ $subpanel_layout = array (
       'module' => 'stic_Custom_View_Customizations',
       'default' => true,
     ),
+    'duplicate_button' => 
+    array(
+      'vname' => 'LBL_DUPLICATE_BUTTON',
+      'widget_class' => 'SubPanelDuplicateButtonstic',
+      'module' => 'stic_Custom_View_Customizations',
+      'default' => true,
+    ),    
     'remove_button' => 
     array (
       'vname' => 'LBL_REMOVE',
