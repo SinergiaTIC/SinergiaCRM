@@ -281,22 +281,39 @@ $(document).ready(function() {ldelim}
                 selectTab(tab);
             }
         });
-
+        // STIC-Custom 20240318 JBL - Custom Views: Expand/Collapse single subpanel 
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/73 
+        // $('a[data-toggle="collapse-edit"]').click(function(e){ 
+        //    if($(this).hasClass('collapsed')) { 
+        //      // Expand panel 
+        //        // Change style of .panel-header 
+        //        $(this).removeClass('collapsed');
+        //        // Expand .panel-body
+        //        $(this).parents('.panel').find('.panel-body').removeClass('in').addClass('in');
+        //    } else {
+        //      // Collapse panel
+        //        // Change style of .panel-header
+        //        $(this).addClass('collapsed');
+        //        // Collapse .panel-body
+        //        $(this).parents('.panel').find('.panel-body').removeClass('in').removeClass('in');
+        //    }
+        // });
         $('a[data-toggle="collapse-edit"]').click(function(e){
             if($(this).hasClass('collapsed')) {
-              // Expand panel
+                // Expand panel
                 // Change style of .panel-header
                 $(this).removeClass('collapsed');
                 // Expand .panel-body
-                $(this).parents('.panel').find('.panel-body').removeClass('in').addClass('in');
+                $(this).parent().parent().find('.panel-body').removeClass('in').addClass('in');
             } else {
-              // Collapse panel
+                // Collapse panel
                 // Change style of .panel-header
                 $(this).addClass('collapsed');
                 // Collapse .panel-body
-                $(this).parents('.panel').find('.panel-body').removeClass('in').removeClass('in');
+                $(this).parent().parent().find('.panel-body').removeClass('in');
             }
         });
+        // End STIC-Custom 
     });
 
     </script>
