@@ -3306,10 +3306,10 @@ $app_list_strings['stic_training_status_list']['finished'] = 'Finalizada';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Baja';
 
 // Formación: Disponible al entrar en contacto con la entidad
-$app_list_strings['stic_training_origin_list'][''] = '';
-$app_list_strings['stic_training_origin_list']['yes'] = 'Sí';
-$app_list_strings['stic_training_origin_list']['no'] = 'No';
-$app_list_strings['stic_training_origin_list']['in_progress'] = 'En curso';
+$app_list_strings['stic_training_previous_list'][''] = '';
+$app_list_strings['stic_training_previous_list']['yes'] = 'Sí';
+$app_list_strings['stic_training_previous_list']['no'] = 'No';
+$app_list_strings['stic_training_previous_list']['in_progress'] = 'En curso';
 
 // Formación: Origen de la beca
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
