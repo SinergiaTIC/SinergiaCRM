@@ -87,7 +87,7 @@ class CustomCalendarDisplay extends CalendarDisplay
             'text' => 'E5E5EE',
         ),
         'stic_Work_Calendar' => array(
-            'border' => '534B62',
+            'border' => '524B62',
             'body' => '711674',
             'text' => 'E5E5EE',
         ),        
@@ -243,7 +243,8 @@ class CustomCalendarDisplay extends CalendarDisplay
         $sticFollowUpsContactId = $current_user->getPreference('calendar_stic_followups_contacts_id');
         $sticFollowUpsProjectId = $current_user->getPreference('calendar_stic_followups_projects_id');
         $sticWorkCalendarType = $current_user->getPreference('calendar_stic_work_calendar_type');
-        $sticWorkCalendarUsersId = $current_user->getPreference('calendar_stic_work_calendar_users_id');        
+        $sticWorkCalendarUsersId = $current_user->getPreference('calendar_stic_work_calendar_users_id');
+        $sticWorkCalendarUsersDepartament = $current_user->getPreference('calendar_stic_work_calendar_users_department');
 
         $sticSessionsColorOptions = get_select_options_with_id($app_list_strings[$dictionary['stic_Sessions']['fields']['color']['options']], $sticSessionsColor);
         $ss->assign('stic_sessions_color', $sticSessionsColorOptions);
@@ -305,11 +306,13 @@ class CustomCalendarDisplay extends CalendarDisplay
             $ss->assign('stic_work_calendar_users_name', $userBean->full_name);
             $ss->assign('stic_work_calendar_users_id', $sticWorkCalendarUsersId);
         }
+        
+        $ss->assign('stic_work_calendar_users_department', $sticWorkCalendarUsersDepartament);
 
         if (
             $sticSessionsSticEventsType || $sticSessionsSticEventId || $sticSessionsSticCenterId || $sticSessionsResponsibleId || $sticSessionsContactId || $sticSessionsProjectId ||
             $sticSessionsColor || $sticSessionsActivityType || $sticFollowUpsColor || $sticFollowUpsContactId || $sticFollowUpsProjectId || $sticFollowUpsType ||
-            $sticWorkCalendarUsersId
+            $sticWorkCalendarType || $sticWorkCalendarUsersId || $sticWorkCalendarUsersDepartament
         ) {
             $ss->assign('applied_filters', true);
         }

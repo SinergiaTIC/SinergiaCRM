@@ -473,6 +473,7 @@ class CustomCalendar extends Calendar
         $userSticWorkCalendarFilters = array(
             'stic_work_calendar_type' => $current_user->getPreference('calendar_stic_work_calendar_type'),
             'stic_work_calendar_users' => $current_user->getPreference('calendar_stic_work_calendar_users_id'),
+            'stic_work_calendar_users_department' => $current_user->getPreference('calendar_stic_work_calendar_users_department'),            
         );
         foreach ($activitiesArray as $userKey => $activityArray) {
             foreach ($activityArray as $activityKey => $activity) {
@@ -495,6 +496,18 @@ class CustomCalendar extends Calendar
                                             $relatedBean = array_pop($bean->$relationship->getBeans());
                                             if ($relatedBean->id != $filterValue) {
                                                 // If the work calendar record does not match the filter value, remove it from the activities array
+                                                unset($activitiesArray[$userKey][$activityKey]);
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    case 'stic_work_calendar_users_department': {
+                                        $relationship = 'stic_work_calendar_users';
+                                        if (!$bean->load_relationship($relationship)) {
+                                            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading relationship: ' . $relationship);
+                                        } else {
+                                            $relatedBean = array_pop($bean->$relationship->getBeans());
+                                            if ($relatedBean->department != $filterValue) {
                                                 unset($activitiesArray[$userKey][$activityKey]);
                                             }
                                         }

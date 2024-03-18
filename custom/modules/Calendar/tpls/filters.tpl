@@ -339,7 +339,17 @@
                                                 </button>
                                             </span>
                                         </td>
-                                    </tr>                                    
+                                    </tr>
+                                    <tr>
+                                        <td scope="row" style="width:60%;">
+                                            {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT}
+                                        </td>
+                                        <td>
+                                            <input type='text' class='sqsEnabled' name='stic_work_calendar_users_department'
+                                                id='stic_work_calendar_users_department' autocomplete='off'
+                                                value='{$stic_work_calendar_users_department}' title='' tabindex='3'>                                        
+                                        </td>
+                                    </tr>                                                                    
                                 </table>
                             </div>                            
                         </div>

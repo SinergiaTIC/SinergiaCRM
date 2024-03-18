@@ -43,3 +43,4 @@ $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Projecte relacionat';
 $mod_strings['LBL FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Calendari laboral';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR ACTIVITY_TYPE'] = 'Tipo';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_USER'] = 'Empleat';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Departament';

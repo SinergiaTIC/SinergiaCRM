@@ -49,7 +49,8 @@ if ($('#applied_filters').val()) {
 }
 
 // Removes all filters and submit changes
-function handleCrossRemoveFilters() {
+function handleCrossRemoveFilters() 
+{
     for (var key in relatedFilters) {
         clearRow(document.getElementById('form_filters'), relatedFilters[key].elementId);
     }
@@ -72,6 +73,7 @@ fieldFilters = [
     'stic_followups_color',
     'stic_followups_type',
     'stic_work_calendar_type',
+    'stic_work_calendar_users_department',
 ];
 
 // Filters array
@@ -105,7 +107,7 @@ relatedFilters = {
         module: 'Project',
     },
     'stic_Work_Calendar_Users': {
-        elementId: 'users_stic_time_tracker',
+        elementId: 'stic_work_calendar_users',
         module: 'Users',
     },    
 };
