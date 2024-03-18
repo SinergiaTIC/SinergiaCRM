@@ -3348,10 +3348,10 @@ $app_list_strings['stic_skills_levels_list']['low'] = 'Bajo';
 
 // Habilidades: Idioma
 $app_list_strings['stic_skills_languages_list'][''] = '';
+$app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalán';
 $app_list_strings['stic_skills_languages_list']['spanish'] = 'Español';
 $app_list_strings['stic_skills_languages_list']['english'] = 'Inglés';
 $app_list_strings['stic_skills_languages_list']['french'] = 'Francés';
-$app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalán';
 $app_list_strings['stic_skills_languages_list']['german'] = 'Alemán';
 $app_list_strings['stic_skills_languages_list']['chinese'] = 'Chino';
 $app_list_strings['stic_skills_languages_list']['arabic'] = 'Árabe';
