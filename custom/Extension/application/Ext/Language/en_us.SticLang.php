@@ -112,7 +112,7 @@ $app_list_strings['moduleList']['stic_Centers'] = 'Centers';
 $app_list_strings['moduleList']['stic_Journal'] = 'Journal';
 $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Security Groups Module Rules';
 $app_list_strings['moduleList']['stic_Training'] = 'Training';
-$app_list_strings['moduleList']['stic_Work_Experience'] = 'Work Experience';
+$app_list_strings['moduleList']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleList']['stic_Skills'] = 'Skills';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
@@ -149,7 +149,7 @@ $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescription';
 $app_list_strings['moduleListSingular']['stic_Journal'] = 'Journal';
 $app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Security Groups Module Rule';
 $app_list_strings['moduleListSingular']['stic_Training'] = 'Training';
-$app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Work Experience';
+$app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleListSingular']['stic_Skills'] = 'Skill';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
@@ -3259,15 +3259,16 @@ $app_list_strings['stic_training_scopes_list']['food_industries'] = 'Food indust
 $app_list_strings['stic_training_scopes_list']['extractive_industries'] = 'Extractive industries';
 $app_list_strings['stic_training_scopes_list']['information_technology_and_communications'] = 'Information technology and communications';
 $app_list_strings['stic_training_scopes_list']['installation_and_maintenance'] = 'Installation and maintenance';
-$app_list_strings['stic_training_scopes_list']['wood_furniture_and_cork'] = 'Wood, furniture, and cork';
+$app_list_strings['stic_training_scopes_list']['wood_furniture_and_cork'] = 'Wood, furniture and cork';
 $app_list_strings['stic_training_scopes_list']['maritime_fishing'] = 'Maritime fishing';
 $app_list_strings['stic_training_scopes_list']['chemistry'] = 'Chemistry';
 $app_list_strings['stic_training_scopes_list']['health'] = 'Health';
 $app_list_strings['stic_training_scopes_list']['security_and_environment'] = 'Security and environment';
 $app_list_strings['stic_training_scopes_list']['socio_cultural_and_community_services'] = 'Socio-cultural and community services';
-$app_list_strings['stic_training_scopes_list']['textile_clothing_and_leather'] = 'Textile, clothing, and leather';
+$app_list_strings['stic_training_scopes_list']['textile_clothing_and_leather'] = 'Textile, clothing and leather';
 $app_list_strings['stic_training_scopes_list']['transport_and_maintenance'] = 'Transport and maintenance';
 $app_list_strings['stic_training_scopes_list']['glass_and_ceramics'] = 'Glass and ceramics';
+$app_list_strings['stic_training_scopes_list']['other'] = 'Other';
 
 // Training: Course
 $app_list_strings['stic_training_courses_list'][''] = '';
@@ -3303,13 +3304,13 @@ $app_list_strings['stic_training_status_list']['in_progress'] = 'In progress';
 $app_list_strings['stic_training_status_list']['finished'] = 'Finished';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Dropped';
 
-// Training: Origin
+// Training:  Available when meeting the organization
 $app_list_strings['stic_training_origin_list'][''] = '';
 $app_list_strings['stic_training_origin_list']['yes'] = 'Yes';
 $app_list_strings['stic_training_origin_list']['no'] = 'No';
 $app_list_strings['stic_training_origin_list']['in_progress'] = 'In progress';
 
-// Training: Grant
+// Training: Grant origin
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
 $app_list_strings['stic_training_grant_origins_list']['private'] = 'Private';
 $app_list_strings['stic_training_grant_origins_list']['public'] = 'Public';
@@ -3346,8 +3347,8 @@ $app_list_strings['stic_skills_levels_list']['low'] = 'Low';
 
 // Skills: Language
 $app_list_strings['stic_skills_languages_list'][''] = '';
-$app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalan';
 $app_list_strings['stic_skills_languages_list']['english'] = 'English';
+$app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalan';
 $app_list_strings['stic_skills_languages_list']['spanish'] = 'Spanish';
 $app_list_strings['stic_skills_languages_list']['french'] = 'French';
 $app_list_strings['stic_skills_languages_list']['german'] = 'German';
