@@ -3238,8 +3238,8 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'All';
 
 // Custom Views: Views
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Detail view';
-$app_list_strings['stic_custom_views_views_list']['editview'] = "Edit view";
-$app_list_strings['stic_custom_views_views_list']['quickcreate'] = "Quick create";
+$app_list_strings['stic_custom_views_views_list']['editview'] = 'Edit view';
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Quickcreate view';
 
 // Custom Views: Action Types
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Field modification';
@@ -3250,15 +3250,15 @@ $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'T
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Read only';
 $app_list_strings['stic_custom_views_action_list']['required'] = 'Required';
-$app_list_strings['stic_custom_views_action_list']['inline'] = 'Inline editing';
-$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Fix value';
+$app_list_strings['stic_custom_views_action_list']['inline'] = 'Inline edit';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Fixed value';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Text color';
 $app_list_strings['stic_custom_views_action_list']['background'] = 'Background color';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Bold';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
-$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Apply css style';
-$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Fix text';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'CSS style';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Fixed text';
 
 // Custom Views: Element's sections
 $app_list_strings['stic_custom_views_element_list']['field'] = 'Whole field';
@@ -3276,20 +3276,20 @@ $app_list_strings['stic_custom_views_status_list']['active'] = 'Active';
 $app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactive';
 
 // Custom Views: Operators
-$app_list_strings['stic_custom_views_operator_list']['Equal_To'] = 'Equal To';
-$app_list_strings['stic_custom_views_operator_list']['Not_Equal_To'] = 'Not Equal To';
-$app_list_strings['stic_custom_views_operator_list']['Greater_Than'] = 'Greater Than';
-$app_list_strings['stic_custom_views_operator_list']['Less_Than'] = 'Less Than';
-$app_list_strings['stic_custom_views_operator_list']['Greater_Than_or_Equal_To'] = 'Greater Than or Equal To';
-$app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 'Less Than or Equal To';
+$app_list_strings['stic_custom_views_operator_list']['Equal_To'] = 'Equal to';
+$app_list_strings['stic_custom_views_operator_list']['Not_Equal_To'] = 'Not equal To';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than'] = 'Greater than';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than'] = 'Less than';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than_or_Equal_To'] = 'Greater than or equal to';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 'Less than or equal to';
 $app_list_strings['stic_custom_views_operator_list']['Contains'] = 'Contains';
-$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'Not contains';
-$app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Starts With';
-$app_list_strings['stic_custom_views_operator_list']['Not_Starts_With'] = 'Not starts with';
-$app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Ends With';
-$app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'Not Ends With';
-$app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Is Null';
-$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'Is not Null';
+$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'Does not contain';
+$app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Starts with';
+$app_list_strings['stic_custom_views_operator_list']['Not_Starts_With'] = 'Does not start with';
+$app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Ends with';
+$app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'Does not end with';
+$app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Is null';
+$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'Is not null';
 
 // Custom Views: Condition Types
 $app_list_strings['stic_custom_views_condition_type_list']['value'] = 'Value';
@@ -3301,7 +3301,7 @@ $app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Field';
 $app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Now';
 $app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Today';
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Anniversary';
-$app_list_strings['stic_custom_views_condition_values_list']['actual_user'] = 'Actual user';
+$app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Current user';
 
 
 // SuiteCRM Core modifications
