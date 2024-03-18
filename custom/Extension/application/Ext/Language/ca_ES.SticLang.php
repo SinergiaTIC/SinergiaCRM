@@ -3240,7 +3240,7 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Tots';
 // Vistes personalitzades: Vistes
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detall';
 $app_list_strings['stic_custom_views_views_list']['editview'] = "Vista d'edició";
-$app_list_strings['stic_custom_views_views_list']['quickcreate'] = "Creació ràpida";
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Vista de creació ràpida';
 
 // Vistes personalitzades: Tipus d'Accions
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificació de camp';
@@ -3258,7 +3258,7 @@ $app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fo
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negreta';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subratllat';
-$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Aplicar estil css';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estil css';
 $app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Text fix';
 
 // Vistes personalitzades: Seccions d'elements
@@ -3302,7 +3302,7 @@ $app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Camp';
 $app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Ara';
 $app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Avui';
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversari';
-$app_list_strings['stic_custom_views_condition_values_list']['actual_user'] = 'Usuari actual';
+$app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuari actual';
 
 
 // Modificacions del core de SuiteCRM
