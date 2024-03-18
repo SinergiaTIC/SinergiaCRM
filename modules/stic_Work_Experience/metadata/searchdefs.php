@@ -63,13 +63,13 @@ array(
                 'default' => true,
                 'name' => 'position_type',
             ),
-            'contract_type' => array(
+            'sector' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
-                'label' => 'LBL_CONTRACT_TYPE',
+                'label' => 'LBL_SECTOR',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'contract_type',
+                'name' => 'sector',
             ),
             'start_date' => array(
                 'type' => 'date',
@@ -78,13 +78,13 @@ array(
                 'default' => true,
                 'name' => 'start_date',
             ),
-            'sector' => array(
+            'contract_type' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
-                'label' => 'LBL_SECTOR',
+                'label' => 'LBL_CONTRACT_TYPE',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'sector',
+                'name' => 'contract_type',
             ),
             'current_user_only' => array(
                 'label' => 'LBL_CURRENT_USER_FILTER',
@@ -140,14 +140,6 @@ array(
                 'default' => true,
                 'name' => 'position_type',
             ),
-            'contract_type' => array(
-                'type' => 'enum',
-                'studio' => 'visible',
-                'label' => 'LBL_CONTRACT_TYPE',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'contract_type',
-            ),
             'sector' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
@@ -155,6 +147,21 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'sector',
+            ),
+            'start_date' => array(
+                'type' => 'date',
+                'label' => 'LBL_START_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'start_date',
+            ),
+            'contract_type' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_CONTRACT_TYPE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'contract_type',
             ),
             'subsector' => array(
                 'type' => 'dynamicenum',

@@ -40,9 +40,25 @@ $subpanel_layout = array(
             'widget_class' => 'SubPanelDetailViewLink',
             'width' => '45%',
         ),
-        'date_modified' => array(
-            'vname' => 'LBL_DATE_MODIFIED',
-            'width' => '45%',
+        'level' => array(
+            'vname' => 'LBL_LEVEL',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '10%',
+        ),
+        'course' => array(
+            'vname' => 'LBL_COURSE_YEAR',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '10%',
+        ),
+        'status' => array(
+            'vname' => 'LBL_STATUS',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '10%',
+        ),
+        'country' => array(
+            'vname' => 'LBL_COUNTRY',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '10%',
         ),
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
@@ -50,15 +66,6 @@ $subpanel_layout = array(
             'module' => $module_name,
             'width' => '4%',
         ),
-        // STIC-Custom 20240214 JBL - QuickEdit view
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
-        'quickedit_button' => array(
-            'vname' => 'LBL_QUICKEDIT_BUTTON',
-            'widget_class' => 'SubPanelQuickEditButton',
-            'module' => $module_name,
-            'width' => '4%',
-        ),
-        // END STIC-Custom
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',
             'widget_class' => 'SubPanelRemoveButton',

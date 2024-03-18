@@ -150,17 +150,17 @@ function panelLanguage(panelLanguages, view) {
       setRequiredStatus(
         "language",
         "text",
-        SUGAR.language.languages.stic_Skills.LBL_LANGUAGE
+        SUGAR.language.get(module, 'LBL_LANGUAGE')
       );
       setRequiredStatus(
         "written",
         "text",
-        SUGAR.language.languages.stic_Skills.LBL_WRITTEN
+        SUGAR.language.get(module, 'LBL_WRITTEN')
       );
       setRequiredStatus(
         "oral",
         "text",
-        SUGAR.language.languages.stic_Skills.LBL_ORAL
+        SUGAR.language.get(module, 'LBL_ORAL')
       );
       setUnrequiredStatus("skill");
       setUnrequiredStatus("level");
@@ -181,12 +181,12 @@ function panelLanguage(panelLanguages, view) {
       setRequiredStatus(
         "level",
         "enum",
-        SUGAR.language.languages.stic_Skills.LBL_LEVEL
-      );
+        SUGAR.language.get(module, 'LBL_LEVEL')
+        );
       setRequiredStatus(
         "skill",
         "text",
-        SUGAR.language.languages.stic_Skills.LBL_SKILL
+        SUGAR.language.get(module, 'LBL_SKILL')
       );
 
     }

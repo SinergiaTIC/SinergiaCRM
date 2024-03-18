@@ -78,13 +78,6 @@ $subpanel_layout = array(
             'width' => '4%',
             'default' => true,
         ),
-        'quickedit_button' => array(
-            'vname' => 'LBL_QUICKEDIT_BUTTON',
-            'widget_class' => 'SubPanelQuickEditButton',
-            'module' => 'stic_Work_Experience',
-            'width' => '4%',
-            'default' => true,
-        ),
         'remove_button' => array(
             'vname' => 'LBL_REMOVE',
             'widget_class' => 'SubPanelRemoveButton',

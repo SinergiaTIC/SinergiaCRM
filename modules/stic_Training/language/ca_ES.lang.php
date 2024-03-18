@@ -43,7 +43,6 @@ $mod_strings = array (
   'LBL_NAME' => 'Nom',
   'LBL_LIST_NAME' => 'Nom',
   'LBL_EDIT_BUTTON' => 'Editar',
-  'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
   'LBL_REMOVE' => 'Eliminar',
   'LBL_ASCENDING' => 'Ascendent',
   'LBL_DESCENDING' => 'Descendent',

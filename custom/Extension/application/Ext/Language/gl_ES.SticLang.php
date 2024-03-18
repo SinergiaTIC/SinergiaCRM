@@ -3374,6 +3374,7 @@ $app_list_strings['stic_skills_language_levels_list']['c1'] = 'C1';
 $app_list_strings['stic_skills_language_levels_list']['c2'] = 'C2';
 
 // Habilidades: Certificado
+$app_list_strings['stic_skills_language_certificates_list'][''] = '';
 $app_list_strings['stic_skills_language_certificates_list']['catalan_cifalc'] = 'CIFALC - Comissió Interuniversitària de Formació i Acreditació Lingüístiques de Catalunya';
 $app_list_strings['stic_skills_language_certificates_list']['catalan_spl'] = 'SPL - Secretaria de Política Lingüística ';
 $app_list_strings['stic_skills_language_certificates_list']['spanish_dele'] = 'DELE - Diplomas de Español como Lengua Extranjera ';

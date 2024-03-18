@@ -94,7 +94,7 @@ class stic_Skills extends Basic
             }
 
             $this->name = $contactName . ' - ' . 
-               $this->skill;
+               $this->type;
         }
     }
 
