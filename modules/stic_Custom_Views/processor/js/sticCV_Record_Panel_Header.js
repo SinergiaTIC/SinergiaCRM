@@ -37,7 +37,7 @@ var sticCV_Record_Panel_Header = class sticCV_Record_Panel_Header extends sticCV
                 sticCVUtils.color(this.$label.parent(), this.customView, action.value);
                 return this;
             case "background": 
-                sticCVUtils.background(this.$label.parent(), this.customView, action.value);
+                sticCVUtils.background(this.$label.parent(), this.customView, action.value, true);
                 return this;
             case "bold": 
                 sticCVUtils.bold(this.$label, this.customView, action.value);

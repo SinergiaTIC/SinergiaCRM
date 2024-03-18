@@ -46,11 +46,18 @@ var sticCVUtils = class sticCVUtils {
     static color($elem, customView=null, color="", important=false) {
         $elem.each(function(){
             if(important) {
-                if($(this).style==undefined) {
-                    $(this).attr('style', 'color:' + color + ' !important');
+                var currentStyle = $(this).attr("style");
+                if (currentStyle) {
+                    var match = currentStyle.match(/color\s*:\s*[^;]+/);
+                    if (match) {
+                        var newStyle = currentStyle.replace(match[0], "color: " + color + " !important;");
+                    } else {
+                        var newStyle = currentStyle + " color: " + color + " !important;";
+                    }
                 } else {
-                    $(this).style.setProperty("color", color, "important");
+                    var newStyle = "color: " + color +" !important;";
                 }
+                $(this).attr("style", newStyle);
             } else {
                 $(this).css("color", color);
             }
@@ -61,11 +68,19 @@ var sticCVUtils = class sticCVUtils {
     static background($elem, customView=null, color="", important=false) { 
         $elem.each(function(){
             if(important) {
-                if($(this).style==undefined) {
-                    $(this).attr('style', 'background-color:' + color + ' !important');
+                debugger;
+                var currentStyle = $(this).attr("style");
+                if (currentStyle) {
+                    var match = currentStyle.match(/background-color\s*:\s*[^;]+/);
+                    if (match) {
+                        var newStyle = currentStyle.replace(match[0], "background-color: " + color + " !important;");
+                    } else {
+                        var newStyle = currentStyle + " background-color: " + color + " !important;";
+                    }
                 } else {
-                    $(this).style.setProperty("background-color", color, "important");
+                    var newStyle = "background-color: " + color +" !important;";
                 }
+                $(this).attr("style", newStyle);
             } else {
                 $(this).css("background-color", color); 
             }
