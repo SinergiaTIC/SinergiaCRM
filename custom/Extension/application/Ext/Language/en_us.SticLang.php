@@ -3304,11 +3304,11 @@ $app_list_strings['stic_training_status_list']['in_progress'] = 'In progress';
 $app_list_strings['stic_training_status_list']['finished'] = 'Finished';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Dropped';
 
-// Training:  Available when meeting the organization
-$app_list_strings['stic_training_origin_list'][''] = '';
-$app_list_strings['stic_training_origin_list']['yes'] = 'Yes';
-$app_list_strings['stic_training_origin_list']['no'] = 'No';
-$app_list_strings['stic_training_origin_list']['in_progress'] = 'In progress';
+// Training: Available when first meeting the organization
+$app_list_strings['stic_training_previous_list'][''] = '';
+$app_list_strings['stic_training_previous_list']['yes'] = 'Yes';
+$app_list_strings['stic_training_previous_list']['no'] = 'No';
+$app_list_strings['stic_training_previous_list']['in_progress'] = 'In progress';
 
 // Training: Grant origin
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
