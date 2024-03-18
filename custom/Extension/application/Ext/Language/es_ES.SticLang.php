@@ -3311,7 +3311,7 @@ $app_list_strings['stic_training_origin_list']['yes'] = 'Sí';
 $app_list_strings['stic_training_origin_list']['no'] = 'No';
 $app_list_strings['stic_training_origin_list']['in_progress'] = 'En curso';
 
-// Formación: Beca
+// Formación: Origen de la beca
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
 $app_list_strings['stic_training_grant_origins_list']['private'] = 'Privada';
 $app_list_strings['stic_training_grant_origins_list']['public'] = 'Pública';
