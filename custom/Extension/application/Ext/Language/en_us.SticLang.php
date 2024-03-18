@@ -3347,9 +3347,9 @@ $app_list_strings['stic_skills_levels_list']['low'] = 'Low';
 
 // Skills: Language
 $app_list_strings['stic_skills_languages_list'][''] = '';
-$app_list_strings['stic_skills_languages_list']['english'] = 'English';
 $app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalan';
 $app_list_strings['stic_skills_languages_list']['spanish'] = 'Spanish';
+$app_list_strings['stic_skills_languages_list']['english'] = 'English';
 $app_list_strings['stic_skills_languages_list']['french'] = 'French';
 $app_list_strings['stic_skills_languages_list']['german'] = 'German';
 $app_list_strings['stic_skills_languages_list']['chinese'] = 'Chinese';
