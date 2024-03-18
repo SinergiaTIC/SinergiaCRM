@@ -290,6 +290,58 @@
                                     </tr>
                                 </table>
                             </div>
+                            <div class="panel-heading  panel-heading-collapse">
+                                <a id="subpanel_title_activities" class="" role="button" data-toggle="collapse"
+                                    href="#subpanel_filters_work_calendar">
+                                    <div class="col-xs-10 col-sm-11 col-md-11">
+                                        <div>
+                                            {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_TITLE}
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div id="subpanel_filters_work_calendar" class="panel-body panel-collapse collapse in">
+                                <table class='table-responsive' >
+                                    <input type="hidden" name="view" value="{$view}">
+                                    <input type="hidden" name="day" value="{$day}">
+                                    <input type="hidden" name="month" value="{$month}">
+                                    <input type="hidden" name="year" value="{$year}">
+                                    <tr>                            
+                                    <tr>
+                                        <td scope="row" style="width:60%;">
+                                            {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_ACTIVITY_TYPE}
+                                        </td>
+                                        <td>
+                                            <select multiple id="stic_work_calendar_type" name="stic_work_calendar_type[]" tabindex="102">
+                                                {$stic_work_calendar_type}
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">
+                                            {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_USER}
+                                        </td>
+                                        <td>
+                                            <input type='text' class='sqsEnabled' name='stic_work_calendar_users_name'
+                                                id='stic_work_calendar_users_name' autocomplete='off'
+                                                value='{$stic_work_calendar_users_name}' title='' tabindex='3'>
+                                            <input type='hidden' name='stic_work_calendar_users_id'
+                                                id='stic_work_calendar_users_id' value='{$stic_work_calendar_users_id}'>
+                                            <span class='id-ff multiple'>
+                                                <button title='{$MOD.LBL_SELECT_BUTTON_TITLE}' type='button'
+                                                    class='button' name='btn_1'
+                                                    onclick='openSelectPopup("Users", "stic_work_calendar_users")'>
+                                                    <span class='suitepicon suitepicon-action-select'></span>
+                                                </button>
+                                                <button type='button' name='btn_1' class='button lastChild'
+                                                    onclick='clearRow(this.form, "stic_work_calendar_users")'>
+                                                    <span class='suitepicon suitepicon-action-clear'></span>
+                                                </button>
+                                            </span>
+                                        </td>
+                                    </tr>                                    
+                                </table>
+                            </div>                            
                         </div>
                 </div>
                 </form>

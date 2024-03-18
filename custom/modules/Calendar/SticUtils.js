@@ -71,6 +71,7 @@ fieldFilters = [
     'stic_sessions_stic_events_type',
     'stic_followups_color',
     'stic_followups_type',
+    'stic_work_calendar_type',
 ];
 
 // Filters array
@@ -103,6 +104,10 @@ relatedFilters = {
         elementId: 'stic_followups_projects',
         module: 'Project',
     },
+    'stic_Work_Calendar_Users': {
+        elementId: 'users_stic_time_tracker',
+        module: 'Users',
+    },    
 };
 
 // The SQS functions add the autocompletion functionality for the related input records

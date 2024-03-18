@@ -39,3 +39,7 @@ $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_COLOR'] = 'Color';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_TYPE'] = 'Tipo';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = 'Persoa en seguemento';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Proxecto relacionado';
+
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Calendario laboral';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_ACTIVITY_TYPE'] = 'Tipo';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_USER'] = 'Empleado';

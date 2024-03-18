@@ -86,6 +86,11 @@ class CustomCalendarDisplay extends CalendarDisplay
             'body' => 'AD645E',
             'text' => 'E5E5EE',
         ),
+        'stic_Work_Calendar' => array(
+            'border' => '534B62',
+            'body' => '711674',
+            'text' => 'E5E5EE',
+        ),        
     );
 
     // Overriding the array to add Shared Day option
@@ -237,6 +242,8 @@ class CustomCalendarDisplay extends CalendarDisplay
         $sticFollowUpsType = $current_user->getPreference('calendar_stic_followups_type');
         $sticFollowUpsContactId = $current_user->getPreference('calendar_stic_followups_contacts_id');
         $sticFollowUpsProjectId = $current_user->getPreference('calendar_stic_followups_projects_id');
+        $sticWorkCalendarType = $current_user->getPreference('calendar_stic_work_calendar_type');
+        $sticWorkCalendarUsersId = $current_user->getPreference('calendar_stic_work_calendar_users_id');        
 
         $sticSessionsColorOptions = get_select_options_with_id($app_list_strings[$dictionary['stic_Sessions']['fields']['color']['options']], $sticSessionsColor);
         $ss->assign('stic_sessions_color', $sticSessionsColorOptions);
@@ -289,9 +296,20 @@ class CustomCalendarDisplay extends CalendarDisplay
             $ss->assign('stic_followups_projects_name', $projectBean->name);
             $ss->assign('stic_followups_projects_id', $sticFollowUpsProjectId);
         }
+
+        $sticWorkCalendarTypeOptions = get_select_options_with_id($app_list_strings['stic_work_calendar_types_list'], $sticWorkCalendarType);
+        $ss->assign('stic_work_calendar_type', $sticWorkCalendarTypeOptions);
+
+        if ($sticWorkCalendarUsersId) {
+            $userBean = BeanFactory::getBean('Users', $sticWorkCalendarUsersId);
+            $ss->assign('stic_work_calendar_users_name', $userBean->full_name);
+            $ss->assign('stic_work_calendar_users_id', $sticWorkCalendarUsersId);
+        }
+
         if (
             $sticSessionsSticEventsType || $sticSessionsSticEventId || $sticSessionsSticCenterId || $sticSessionsResponsibleId || $sticSessionsContactId || $sticSessionsProjectId ||
-            $sticSessionsColor || $sticSessionsActivityType || $sticFollowUpsColor || $sticFollowUpsContactId || $sticFollowUpsProjectId || $sticFollowUpsType
+            $sticSessionsColor || $sticSessionsActivityType || $sticFollowUpsColor || $sticFollowUpsContactId || $sticFollowUpsProjectId || $sticFollowUpsType ||
+            $sticWorkCalendarUsersId
         ) {
             $ss->assign('applied_filters', true);
         }

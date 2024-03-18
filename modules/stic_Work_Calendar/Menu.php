@@ -36,3 +36,6 @@ if(ACLController::checkAccess('stic_Work_Calendar', 'list', true)){
 if(ACLController::checkAccess('stic_Work_Calendar', 'import', true)){
     $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Work_Calendar&return_module=stic_Work_Calendar&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Work_Calendar');
 }
+if (ACLController::checkAccess('Calendar', 'list', true)) {
+    $module_menu[]=array("index.php?module=Calendar&action=index&view=day", translate('LNK_VIEW_CALENDAR', 'Activities'),"Schedule");
+}
