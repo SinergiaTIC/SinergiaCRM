@@ -103,7 +103,7 @@ class stic_Custom_View_Customizations extends Basic
         return $return_id;
     }
 
-    public function duplicate() {
+    public function duplicateTo($customViewId) {
         require_once 'modules/stic_Custom_Views/Utils.php';
 
         $conditionBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
@@ -127,7 +127,8 @@ class stic_Custom_View_Customizations extends Basic
         $clone->id = null;
         $clone->customization_order++;
         $clone->name= $clone->name." ".translate("LBL_NAME_COPY_SUFFIX");
-        
+        $clone->stic_custo45d1m_views_ida = $customViewId;
+
         $clone->save();
     }
 

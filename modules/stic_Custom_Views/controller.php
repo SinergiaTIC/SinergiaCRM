@@ -80,4 +80,17 @@ class stic_Custom_ViewsController extends SugarController {
         die;
     }
 
+    public function action_DuplicateSubpanelRecord() {
+        require_once("modules/stic_Custom_View_Customizations/stic_Custom_View_Customizations.php");
+
+        $subpanelRecordId = $_REQUEST['subpanel_record'];
+        $currentCustomViewId = $_REQUEST['main_record'];
+        $subpanelName = $_REQUEST['subpanel_name'];
+
+        if($subpanelName == "stic_custom_view_customizations") {
+            $customizationBean = BeanFactory::getBean('stic_Custom_View_Customizations', $subpanelRecordId);
+            $customizationBean->duplicateTo($currentCustomViewId);
+        }
+        SugarApplication::redirect("index.php?module=stic_Custom_Views&action=DetailView&record={$currentCustomViewId}");
+    }
 }

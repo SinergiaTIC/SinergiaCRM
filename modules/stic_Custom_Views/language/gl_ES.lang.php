@@ -75,7 +75,8 @@ $mod_strings = array (
   'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Grupos de seguridad a los que no se aplicará la vista personalizada",
   
   'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
-
+  'LBL_NAME_COPY_SUFFIX' => '(copia)',
+  
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizaciones',
 );
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizaciones';

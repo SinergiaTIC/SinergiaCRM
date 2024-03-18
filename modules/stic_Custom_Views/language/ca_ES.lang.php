@@ -75,6 +75,7 @@ $mod_strings = array (
   'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Grups de seguretat als quals no s'aplicarà la vista personalitzada",
 
   'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
+  'LBL_NAME_COPY_SUFFIX' => '(còpia)',
 
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
 );

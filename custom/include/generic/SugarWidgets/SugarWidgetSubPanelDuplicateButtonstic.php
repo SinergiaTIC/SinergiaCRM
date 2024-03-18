@@ -59,15 +59,16 @@ class SugarWidgetSubPanelDuplicateButtonstic extends SugarWidgetField
         
         if ($layout_def['ListView'] && !$hidebutton) {
            return "<a href=\"javascript:".
-                    "location.href = '?index.php&+$.param({".
+                    "var obj = {".
                         "action: '$action', ".
                         "module: '$parent_module', ".
                         "return_module: '$parent_module', ".
                         "return_action: 'DetailView', ".
                         "main_record: window.document.forms['DetailView'].record.value, ".
-                        "subpanel_record: $record, ".
+                        "subpanel_record: '$record', ".
                         "subpanel_name: '$subpanel', ".
-                    "});\" ". 
+                    "};".
+                    "location.href = '?index.php&'+$.param(obj);\" ". 
                     "class='listViewTdToolsS1' ". 
                     "id=$unique_id ". 
                     ">$duplicate_text</a>";
