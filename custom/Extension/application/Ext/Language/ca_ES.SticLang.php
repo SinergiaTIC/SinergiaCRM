@@ -3258,7 +3258,7 @@ $app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fo
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negreta';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subratllat';
-$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estil css';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estil CSS';
 $app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Text fix';
 
 // Vistes personalitzades: Seccions d'elements
