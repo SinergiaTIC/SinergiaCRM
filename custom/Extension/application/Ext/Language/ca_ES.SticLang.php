@@ -3234,11 +3234,11 @@ $app_list_strings['stic_training_levels_list']['childhood'] = 'EI - Educació In
 $app_list_strings['stic_training_levels_list']['primary'] = 'EP - Educació Primària';
 $app_list_strings['stic_training_levels_list']['secondary'] = 'ESO - Educació Secundària Obligatòria';
 $app_list_strings['stic_training_levels_list']['upper_secondary'] = 'BAT - Batxillerat';
-$app_list_strings['stic_training_levels_list']['basic_vocational'] = 'PFI - Programa de Formació i Inserció';
 $app_list_strings['stic_training_levels_list']['intermediate_vocational'] = 'CFGM - Cicle Formatiu de Grau Mitjà';
 $app_list_strings['stic_training_levels_list']['advanced_vocational'] = 'CFGS - Cicle Formatiu de Grau Superior';
 $app_list_strings['stic_training_levels_list']['university'] = 'Grau universitari';
 $app_list_strings['stic_training_levels_list']['postgraduate'] = 'Postgrau, màster, doctorat, etc.';
+$app_list_strings['stic_training_levels_list']['basic_vocational'] = 'PFI - Programa de Formació i Inserció';
 $app_list_strings['stic_training_levels_list']['other'] = 'Altres';
 
 // Formació: Àmbit
@@ -3248,7 +3248,7 @@ $app_list_strings['stic_training_scopes_list']['administration_and_management'] 
 $app_list_strings['stic_training_scopes_list']['agrarian'] = 'Agrària';
 $app_list_strings['stic_training_scopes_list']['graphic_arts'] = 'Arts gràfiques';
 $app_list_strings['stic_training_scopes_list']['arts_and_crafts'] = 'Arts i oficis';
-$app_list_strings['stic_training_scopes_list']['commerce_and_marketing'] = 'Arts i oficis';
+$app_list_strings['stic_training_scopes_list']['commerce_and_marketing'] = 'Comerç i màrqueting';
 $app_list_strings['stic_training_scopes_list']['building_and_civil_works'] = 'Edificació i obra civil';
 $app_list_strings['stic_training_scopes_list']['electricity_and_electronics'] = 'Electricitat i electrònica';
 $app_list_strings['stic_training_scopes_list']['energy_and_water'] = 'Energia i aigua';
@@ -3269,6 +3269,7 @@ $app_list_strings['stic_training_scopes_list']['socio_cultural_and_community_ser
 $app_list_strings['stic_training_scopes_list']['textile_clothing_and_leather'] = 'Tèxtil, confecció i pell';
 $app_list_strings['stic_training_scopes_list']['transport_and_maintenance'] = 'Transport i manteniment';
 $app_list_strings['stic_training_scopes_list']['glass_and_ceramics'] = 'Vidre i ceràmica';
+$app_list_strings['stic_training_scopes_list']['other'] = 'Altres';
 
 // Formació: Curs
 $app_list_strings['stic_training_courses_list'][''] = '';
@@ -3301,16 +3302,16 @@ $app_list_strings['stic_training_status_list'][''] = '';
 $app_list_strings['stic_training_status_list']['planned'] = 'Planificada';
 $app_list_strings['stic_training_status_list']['enrolled'] = 'Matriculada';
 $app_list_strings['stic_training_status_list']['in_progress'] = 'En curs';
-$app_list_strings['stic_training_status_list']['finished'] = 'Finalitzat ';
+$app_list_strings['stic_training_status_list']['finished'] = 'Finalitzada';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Baixa';
 
-// Formació: Origen
+// Formació: Disponible a l'entrar en contacte amb l'entitat
 $app_list_strings['stic_training_origin_list'][''] = '';
-$app_list_strings['stic_training_origin_list']['yes'] = 'Si';
+$app_list_strings['stic_training_origin_list']['yes'] = 'Sí';
 $app_list_strings['stic_training_origin_list']['no'] = 'No';
 $app_list_strings['stic_training_origin_list']['in_progress'] = 'En curs';
 
-// Formació: Grant
+// Formació: Origen de beca
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
 $app_list_strings['stic_training_grant_origins_list']['private'] = 'Privada';
 $app_list_strings['stic_training_grant_origins_list']['public'] = 'Pública';
@@ -3348,8 +3349,8 @@ $app_list_strings['stic_skills_levels_list']['low'] = 'Baix';
 // Competències: Idioma
 $app_list_strings['stic_skills_languages_list'][''] = '';
 $app_list_strings['stic_skills_languages_list']['catalan'] = 'Català';
-$app_list_strings['stic_skills_languages_list']['english'] = 'Anglès';
 $app_list_strings['stic_skills_languages_list']['spanish'] = 'Castellà';
+$app_list_strings['stic_skills_languages_list']['english'] = 'Anglès';
 $app_list_strings['stic_skills_languages_list']['french'] = 'Francès';
 $app_list_strings['stic_skills_languages_list']['german'] = 'Alemany';
 $app_list_strings['stic_skills_languages_list']['chinese'] = 'Xinès';
@@ -3368,8 +3369,8 @@ $app_list_strings['stic_skills_language_levels_list']['c2'] = 'C2';
 // Competències: Certificat
 $app_list_strings['stic_skills_language_certificates_list'][''] = '';
 $app_list_strings['stic_skills_language_certificates_list']['catalan_cifalc'] = 'CIFALC - Comissió Interuniversitària de Formació i Acreditació Lingüístiques de Catalunya';
-$app_list_strings['stic_skills_language_certificates_list']['catalan_spl'] = 'SPL - Secretaria de Política Lingüística ';
-$app_list_strings['stic_skills_language_certificates_list']['spanish_dele'] = 'DELE - Diplomas de Español como Lengua Extranjera ';
+$app_list_strings['stic_skills_language_certificates_list']['catalan_spl'] = 'SPL - Secretaria de Política Lingüística';
+$app_list_strings['stic_skills_language_certificates_list']['spanish_dele'] = 'DELE - Diplomas de Español como Lengua Extranjera';
 $app_list_strings['stic_skills_language_certificates_list']['spanish_siele'] = 'SIELE - Servicio Internacional de Evaluación de la Lengua Española';
 $app_list_strings['stic_skills_language_certificates_list']['english_pet'] = 'PET - Preliminary English Test';
 $app_list_strings['stic_skills_language_certificates_list']['english_fce'] = 'FCE - First Certificate in English ';
@@ -3378,7 +3379,7 @@ $app_list_strings['stic_skills_language_certificates_list']['english_cpe'] = 'CP
 $app_list_strings['stic_skills_language_certificates_list']['english_ielts'] = 'IELTS - International English Language Testing System';
 $app_list_strings['stic_skills_language_certificates_list']['english_toefl'] = 'TOEFL - Test of English as a Foreign Language';
 $app_list_strings['stic_skills_language_certificates_list']['english_toeic'] = 'TOEIC - Test of English for International Communication';
-$app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DELF - Diplôme d\'Études en Langue Française";
+$app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DELF - Diplôme d'Études en Langue Française";
 $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DALF - Diplôme Approfondi de Langue Française';
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
