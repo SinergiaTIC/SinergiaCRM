@@ -3306,12 +3306,12 @@ $app_list_strings['stic_training_status_list']['finished'] = 'Finalitzada';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Baixa';
 
 // Formació: Disponible a l'entrar en contacte amb l'entitat
-$app_list_strings['stic_training_origin_list'][''] = '';
-$app_list_strings['stic_training_origin_list']['yes'] = 'Sí';
-$app_list_strings['stic_training_origin_list']['no'] = 'No';
-$app_list_strings['stic_training_origin_list']['in_progress'] = 'En curs';
+$app_list_strings['stic_training_previous_list'][''] = '';
+$app_list_strings['stic_training_previous_list']['yes'] = 'Sí';
+$app_list_strings['stic_training_previous_list']['no'] = 'No';
+$app_list_strings['stic_training_previous_list']['in_progress'] = 'En curs';
 
-// Formació: Origen de beca
+// Formació: Origen de la beca
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
 $app_list_strings['stic_training_grant_origins_list']['private'] = 'Privada';
 $app_list_strings['stic_training_grant_origins_list']['public'] = 'Pública';
