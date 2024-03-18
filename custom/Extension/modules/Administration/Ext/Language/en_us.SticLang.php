@@ -29,8 +29,8 @@ $mod_strings['LBL_STIC_VALIDATION_ACTIONS_DESCRIPTION'] = 'Manage validation act
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_LINK_TITLE'] = 'Validation results';
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_DESCRIPTION'] = 'Manage and review the validation actions results.';
 
-$mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Custom Views';
-$mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = "Allows to customize module views according to the user and the fields values";
+$mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Custom views';
+$mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Module views conditional customization.';
 
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Settings';
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Settings management for SinergiaCRM.';
