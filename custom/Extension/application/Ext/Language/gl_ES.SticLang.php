@@ -151,7 +151,7 @@ $app_list_strings['moduleListSingular']['stic_Grants'] = 'Axuda';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
 $app_list_strings['moduleListSingular']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos de Seguridade - Regra por módulo';
-$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista Personalizada';
+$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalizada';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
@@ -3248,8 +3248,8 @@ $app_list_strings['stic_custom_views_user_type_list']['all'] = 'Todos';
 
 // Vistas personalizadas: Vistas
 $app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detalle';
-$app_list_strings['stic_custom_views_views_list']['editview'] = "Vista de edición";
-$app_list_strings['stic_custom_views_views_list']['quickcreate'] = "Creación rápida";
+$app_list_strings['stic_custom_views_views_list']['editview'] = 'Vista de edición';
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Vista de creación rápida';
 
 // Vistas personalizadas: Tipos de Acciones
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Modificación de campo';
@@ -3258,7 +3258,7 @@ $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'M
 
 // Vistas personalizadas: Acciones
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
-$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Sólo lectura';
+$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Solo lectura';
 $app_list_strings['stic_custom_views_action_list']['required'] = 'Obligado';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Edición en línea';
 $app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fijo';
@@ -3267,7 +3267,7 @@ $app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fo
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negrita';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subrayado';
-$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Aplicar estilo css';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estilo CSS';
 $app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Texto fijo';
 
 // Vistas personalizadas: Secciones de elementos
@@ -3311,7 +3311,7 @@ $app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Campo';
 $app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Ahora';
 $app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Hoy';
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversario';
-$app_list_strings['stic_custom_views_condition_values_list']['actual_user'] = 'Usuario actual';
+$app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuario actual';
 
 
 // Modificaciones del core de SuiteCRM
