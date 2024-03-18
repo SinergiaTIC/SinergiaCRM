@@ -3269,6 +3269,7 @@ $app_list_strings['stic_training_scopes_list']['socio_cultural_and_community_ser
 $app_list_strings['stic_training_scopes_list']['textile_clothing_and_leather'] = 'Textil, confección y piel';
 $app_list_strings['stic_training_scopes_list']['transport_and_maintenance'] = 'Transporte y mantenimiento';
 $app_list_strings['stic_training_scopes_list']['glass_and_ceramics'] = 'Vidrio y cerámica';
+$app_list_strings['stic_training_scopes_list']['other'] = 'Otros';
 
 // Formación: Curso
 $app_list_strings['stic_training_courses_list'][''] = '';
@@ -3304,9 +3305,9 @@ $app_list_strings['stic_training_status_list']['in_progress'] = 'En curso';
 $app_list_strings['stic_training_status_list']['finished'] = 'Finalizada';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Baja';
 
-// Formación: Origen
+// Formación: Disponible al entrar en contacto con la entidad
 $app_list_strings['stic_training_origin_list'][''] = '';
-$app_list_strings['stic_training_origin_list']['yes'] = 'Si';
+$app_list_strings['stic_training_origin_list']['yes'] = 'Sí';
 $app_list_strings['stic_training_origin_list']['no'] = 'No';
 $app_list_strings['stic_training_origin_list']['in_progress'] = 'En curso';
 
@@ -3347,10 +3348,10 @@ $app_list_strings['stic_skills_levels_list']['low'] = 'Bajo';
 
 // Habilidades: Idioma
 $app_list_strings['stic_skills_languages_list'][''] = '';
-$app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalán';
-$app_list_strings['stic_skills_languages_list']['english'] = 'Inglés';
 $app_list_strings['stic_skills_languages_list']['spanish'] = 'Español';
+$app_list_strings['stic_skills_languages_list']['english'] = 'Inglés';
 $app_list_strings['stic_skills_languages_list']['french'] = 'Francés';
+$app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalán';
 $app_list_strings['stic_skills_languages_list']['german'] = 'Alemán';
 $app_list_strings['stic_skills_languages_list']['chinese'] = 'Chino';
 $app_list_strings['stic_skills_languages_list']['arabic'] = 'Árabe';
