@@ -29,7 +29,7 @@ class stic_RemittancesUtils
      * @param Object $remittanceBean Then bean with remittance
      * @return void
      */
-    public static function managePaymentsIfRemmitanceIsSent($remittanceBean)
+    public static function managePaymentsIfRemittanceIsSent($remittanceBean)
     {
 
         // In card payments remittances the payment status should not be globally updated as it will be managed on individual payment execution
