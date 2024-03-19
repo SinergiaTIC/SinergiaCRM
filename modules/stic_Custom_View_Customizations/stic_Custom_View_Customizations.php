@@ -71,6 +71,11 @@ class stic_Custom_View_Customizations extends Basic
         require_once 'modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php';
         require_once 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
 
+        // customization_order must be >0
+        if($this->customization_order<=0) {
+            $this->customization_order = 1;
+        }
+
         $return_id = parent::save($check_notify);
         $viewBean = getCustomView($this);
 
@@ -78,10 +83,28 @@ class stic_Custom_View_Customizations extends Basic
         $condition = BeanFactory::newBean('stic_Custom_View_Conditions');
         $condition->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Condition');
 
+        // Remove Condition lines in $_POST
+        $conditionPostToDelete = array();
+        foreach ($_POST as $postKey => $postValue) {
+            if(str_starts_with($postKey, 'sticCustomView_Condition')) {
+                $conditionPostToDelete[$postKey]=$postValue;
+            }
+        }
+        $_POST = array_diff_key($_POST, $conditionPostToDelete);
+
         // Save Action lines
         $action = BeanFactory::newBean('stic_Custom_View_Actions');
         $action->save_lines($_POST, $viewBean->view_module, $this, 'sticCustomView_Action');
 
+        // Remove Action lines in $_POST
+        $actionPostToDelete = array();
+        foreach ($_POST as $postKey => $postValue) {
+            if(str_starts_with($postKey, 'sticCustomView_Action')) {
+                $actionPostToDelete[$postKey]=$postValue;
+            }
+        }
+        $_POST = array_diff_key($_POST, $actionPostToDelete);
+        
         // Set Conditions field
         $conditionBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
         $conditions = array();
@@ -97,6 +120,17 @@ class stic_Custom_View_Customizations extends Basic
             $actions[] = $actionBean->type . ":" . $actionBean->element . "." . $actionBean->action . "=" . $actionBean->value . "(". $actionBean->element_section . ")";
         }
         $this->actions = implode(" + ", $actions);
+
+        // Ensure customization_order is not set or change others
+        $customizationBeanArray = getRelatedBeanObjectArray($viewBean, 'stic_custom_views_stic_custom_view_customizations');
+        foreach ($customizationBeanArray as $customizationBean) {
+            if ($customizationBean->id != $this->id && 
+                $customizationBean->deleted == "0" &&
+                $customizationBean->customization_order == $this->customization_order) {
+                    $customizationBean->customization_order = $customizationBean->customization_order + 1;
+                    $customizationBean->save();
+                }
+        }
 
         parent::save($check_notify);
 
