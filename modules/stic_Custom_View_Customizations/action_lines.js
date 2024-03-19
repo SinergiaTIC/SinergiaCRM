@@ -192,8 +192,8 @@ function onActionElementChanged(ln) {
   var type = $("#"+actprefix+'type'+ln).val();
   var element = $("#"+actprefix+'element'+ln).val();
   if(type==""||type==null) {
-    $("#"+prefix+'type'+ln).change();
-  } else {
+    $("#"+actprefix+'type'+ln).change();
+  } else if(element!="" && element!=null) {
     var value_type="";
     if(type=='field_modification') {
       value_type = view_field_map[element].type + "|" + view_field_map[element].list;
@@ -222,11 +222,10 @@ function onActionChanged(ln) {
   var type = $("#"+actprefix+'type'+ln).val();
   var element = $("#"+actprefix+'element'+ln).val();
   var action = $("#"+actprefix+'action'+ln).val();
-  debugger;
   if(type==""||type==null) {
-    $("#"+prefix+'type'+ln).change();
+    $("#"+actprefix+'type'+ln).change();
   } else if(element==""||element==null){
-    $("#"+prefix+'element'+ln).change();
+    $("#"+actprefix+'element'+ln).change();
   } else if(action==""||action==null){
     // Reset next selectors
     $("#"+actprefix+'Cell'+'value'+ln).html("");
