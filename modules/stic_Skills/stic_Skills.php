@@ -74,10 +74,12 @@ class stic_Skills extends Basic
      */
     public function save($check_notify = false)
     {
-        $this->fillName();
 
         // Save the bean
         parent::save($check_notify);
+        
+        $this->fillName();
+
     }
 
     protected function fillName()

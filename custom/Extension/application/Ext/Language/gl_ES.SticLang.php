@@ -120,7 +120,7 @@ $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
 $app_list_strings['moduleList']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleList']['stic_Training'] = 'Formación';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
-$app_list_strings['moduleList']['stic_Skills'] = 'Habilidades';
+$app_list_strings['moduleList']['stic_Skills'] = 'Competencias';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -151,7 +151,7 @@ $app_list_strings['moduleListSingular']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos de Seguridade - Regra por módulo';
 $app_list_strings['moduleList']['stic_Training'] = 'Formación';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
-$app_list_strings['moduleList']['stic_Skills'] = 'Habilidad';
+$app_list_strings['moduleList']['stic_Skills'] = 'Competencia';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
@@ -190,7 +190,11 @@ $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Rexistro de m
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescriciónes médicas';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centros';
+$app_list_strings['parent_type_display']['stic_Grants'] = 'Ayudas';
 $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
+$app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
+$app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
+$app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -223,6 +227,9 @@ $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescricións m
 $app_list_strings['record_type_display']['stic_Grants'] = 'Axudas';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centros';
 $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
+$app_list_strings['record_type_display']['stic_Training'] = 'Formación';
+$app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
+$app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -255,6 +262,9 @@ $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescrici
 $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Axudas';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centros';
 $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
+$app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
+$app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
+$app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3340,7 +3350,7 @@ $app_list_strings['stic_work_experience_workday_types_list']['weekend'] = 'Fin d
 $app_list_strings['stic_work_experience_workday_types_list']['part_time'] = 'Jornada parcial / Media jornada';
 $app_list_strings['stic_work_experience_workday_types_list']['by_hours'] = 'Jornada parcial por horas';
 
-// Habilidades: Tipo
+// Competencias: Tipo
 $app_list_strings['stic_skills_types_list'][''] = '';
 $app_list_strings['stic_skills_types_list']['language'] = 'Idiomas';
 $app_list_strings['stic_skills_types_list']['technical'] = 'Técnicas';
@@ -3348,13 +3358,13 @@ $app_list_strings['stic_skills_types_list']['transversal'] = 'Transversales';
 $app_list_strings['stic_skills_types_list']['entrepreneurship'] = 'Autoempleo';
 $app_list_strings['stic_skills_types_list']['other'] = 'Otras';
 
-// Habilidades: Nivel
+// Competencias: Nivel
 $app_list_strings['stic_skills_levels_list'][''] = '';
 $app_list_strings['stic_skills_levels_list']['high'] = 'Alto';
 $app_list_strings['stic_skills_levels_list']['medium'] = 'Medio';
 $app_list_strings['stic_skills_levels_list']['low'] = 'Bajo';
 
-// Habilidades: Idioma
+// Competencias: Idioma
 $app_list_strings['stic_skills_languages_list'][''] = '';
 $app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalán';
 $app_list_strings['stic_skills_languages_list']['spanish'] = 'Español';
@@ -3367,7 +3377,7 @@ $app_list_strings['stic_skills_languages_list']['chinese'] = 'Chino';
 $app_list_strings['stic_skills_languages_list']['arabic'] = 'Árabe';
 $app_list_strings['stic_skills_languages_list']['other'] = 'Otros';
 
-// Habilidades: Nivel del idioma
+// Competencias: Nivel del idioma
 $app_list_strings['stic_skills_language_levels_list'][''] = '';
 $app_list_strings['stic_skills_language_levels_list']['a1'] = 'A1';
 $app_list_strings['stic_skills_language_levels_list']['a2'] = 'A2';
@@ -3376,7 +3386,7 @@ $app_list_strings['stic_skills_language_levels_list']['b2'] = 'B2';
 $app_list_strings['stic_skills_language_levels_list']['c1'] = 'C1';
 $app_list_strings['stic_skills_language_levels_list']['c2'] = 'C2';
 
-// Habilidades: Certificado
+// Competencias: Certificado
 $app_list_strings['stic_skills_language_certificates_list'][''] = '';
 $app_list_strings['stic_skills_language_certificates_list']['catalan_cifalc'] = 'CIFALC - Comissió Interuniversitària de Formació i Acreditació Lingüístiques de Catalunya';
 $app_list_strings['stic_skills_language_certificates_list']['catalan_spl'] = 'SPL - Secretaria de Política Lingüística ';

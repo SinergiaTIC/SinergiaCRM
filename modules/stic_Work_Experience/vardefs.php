@@ -34,7 +34,7 @@ $dictionary['stic_Work_Experience'] = array(
             'link' => true,
             'dbType' => 'varchar',
             'len' => '255',
-            'unified_search' => false,
+            'unified_search' => true,
             'full_text_search' => array(
                 'boost' => 3,
             ),

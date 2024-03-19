@@ -232,5 +232,5 @@ $mod_strings['LBL_STIC_TRAINING_CONTACTS_FROM_STIC_TRAINING_TITLE'] = 'Formació
 // Cadenas Experiencia laboral
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiencia laboral';
 
-// Cadenas Habilidades
-$mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Habilidades';
+// Cadenas Competencias
+$mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competencias';
