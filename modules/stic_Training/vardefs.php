@@ -189,10 +189,10 @@ $dictionary['stic_Training'] = array(
             'dependency' => false,
             'default' => '011',
         ),
-        'origin' => array(
+        'previous' => array(
             'required' => false,
             'name' => 'origin',
-            'vname' => 'LBL_ORIGIN',
+            'vname' => 'LBL_PREVIOUS',
             'type' => 'enum',
             'massupdate' => 0,
             'no_default' => false,
@@ -208,7 +208,7 @@ $dictionary['stic_Training'] = array(
             'merge_filter' => 'disabled',
             'len' => 100,
             'size' => '20',
-            'options' => 'stic_training_origin_list',
+            'options' => 'stic_training_previous_list',
             'studio' => 'visible',
             'dependency' => false,
         ),

@@ -3269,6 +3269,7 @@ $app_list_strings['stic_training_scopes_list']['socio_cultural_and_community_ser
 $app_list_strings['stic_training_scopes_list']['textile_clothing_and_leather'] = 'Textil, confección y piel';
 $app_list_strings['stic_training_scopes_list']['transport_and_maintenance'] = 'Transporte y mantenimiento';
 $app_list_strings['stic_training_scopes_list']['glass_and_ceramics'] = 'Vidrio y cerámica';
+$app_list_strings['stic_training_scopes_list']['other'] = 'Otros';
 
 // Formación: Curso
 $app_list_strings['stic_training_courses_list'][''] = '';
@@ -3304,13 +3305,13 @@ $app_list_strings['stic_training_status_list']['in_progress'] = 'En curso';
 $app_list_strings['stic_training_status_list']['finished'] = 'Finalizada';
 $app_list_strings['stic_training_status_list']['dropped'] = 'Baja';
 
-// Formación: Origen
-$app_list_strings['stic_training_origin_list'][''] = '';
-$app_list_strings['stic_training_origin_list']['yes'] = 'Si';
-$app_list_strings['stic_training_origin_list']['no'] = 'No';
-$app_list_strings['stic_training_origin_list']['in_progress'] = 'En curso';
+// Formación: Disponible al entrar en contacto con la entidad
+$app_list_strings['stic_training_previous_list'][''] = '';
+$app_list_strings['stic_training_previous_list']['yes'] = 'Sí';
+$app_list_strings['stic_training_previous_list']['no'] = 'No';
+$app_list_strings['stic_training_previous_list']['in_progress'] = 'En curso';
 
-// Formación: Beca
+// Formación: Origen de la beca
 $app_list_strings['stic_training_grant_origins_list'][''] = '';
 $app_list_strings['stic_training_grant_origins_list']['private'] = 'Privada';
 $app_list_strings['stic_training_grant_origins_list']['public'] = 'Pública';
@@ -3348,8 +3349,10 @@ $app_list_strings['stic_skills_levels_list']['low'] = 'Bajo';
 // Habilidades: Idioma
 $app_list_strings['stic_skills_languages_list'][''] = '';
 $app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalán';
-$app_list_strings['stic_skills_languages_list']['english'] = 'Inglés';
 $app_list_strings['stic_skills_languages_list']['spanish'] = 'Español';
+$app_list_strings['stic_skills_languages_list']['galician'] = 'Gallego';
+$app_list_strings['stic_skills_languages_list']['basque'] = 'Vasco';
+$app_list_strings['stic_skills_languages_list']['english'] = 'Inglés';
 $app_list_strings['stic_skills_languages_list']['french'] = 'Francés';
 $app_list_strings['stic_skills_languages_list']['german'] = 'Alemán';
 $app_list_strings['stic_skills_languages_list']['chinese'] = 'Chino';
@@ -3378,7 +3381,7 @@ $app_list_strings['stic_skills_language_certificates_list']['english_cpe'] = 'CP
 $app_list_strings['stic_skills_language_certificates_list']['english_ielts'] = 'IELTS - International English Language Testing System';
 $app_list_strings['stic_skills_language_certificates_list']['english_toefl'] = 'TOEFL - Test of English as a Foreign Language';
 $app_list_strings['stic_skills_language_certificates_list']['english_toeic'] = 'TOEIC - Test of English for International Communication';
-$app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DELF - Diplôme d\'Études en Langue Française";
+$app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DELF - Diplôme d'Études en Langue Française";
 $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DALF - Diplôme Approfondi de Langue Française';
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';

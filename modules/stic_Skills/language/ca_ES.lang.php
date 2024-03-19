@@ -71,5 +71,5 @@ $mod_strings = array (
   'LBL_CERTIFICATE' => 'Certificat',
   'LBL_CERTIFICATE_DATE' => 'Data del certificat',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
-  'LBL_STIC_SKILLS_CONTACTS_FROM_CONTACTS_TITLE'=> 'Persones',
+  'LBL_STIC_SKILLS_CONTACTS_FROM_CONTACTS_TITLE'=> 'Persona',
 );
