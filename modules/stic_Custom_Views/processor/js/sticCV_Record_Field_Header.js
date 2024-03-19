@@ -27,6 +27,12 @@
 var sticCV_Record_Field_Header = class sticCV_Record_Field_Header extends sticCV_Element_Label {
     constructor (customView, $fieldElement){
         super(customView, $fieldElement.children('.label'));
+
+        // Fix size: same as editor
+        this.$element.css("min-height", "20px");
+        this.$element.css("line-height", "20px");
+        this.$element.css("height", "30px");
+        this.$element.css("padding", "5px");
     }
 
 }
