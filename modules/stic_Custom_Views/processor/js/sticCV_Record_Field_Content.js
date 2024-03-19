@@ -199,37 +199,61 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                         return valueSplit[0]==condition.value.split('|')[0];
                     }
                 } else {
-                    return this._getValue(value_list)==condition.value;
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return (this._getValue(value_list)??"").toLowerCase()==(condition.value??"").toLowerCase();
+                    } else {
+                        return this._getValue(value_list)==condition.value;
+                    }
                 }
             case 'Not_Equal_To':
                 if(this.type=="relate"){
                     return this._getValue(value_list).split('|')[0]!=condition.value.split('|')[0];
                 } else {
-                    return this._getValue(value_list)!=condition.value;
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return (this._getValue(value_list)??"").toLowerCase()!=(condition.value??"").toLowerCase();
+                    } else {
+                        return this._getValue(value_list)!=condition.value;
+                    }
                 }
             case 'Greater_Than':
                 if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
                     return moment(this._getValue(value_list), condition.date_format).isAfter(moment(condition.value, condition.date_format));
                 } else {
-                    return this._getValue(value_list)>condition.value;
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return (this._getValue(value_list)??"").toLowerCase()>(condition.value??"").toLowerCase();
+                    } else {
+                        return this._getValue(value_list)>condition.value;
+                    }
                 }
             case 'Less_Than':
                 if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
                     return moment(this._getValue(value_list), condition.date_format).isBefore(moment(condition.value, condition.date_format));
                 } else {
-                    return this._getValue(value_list)<condition.value;
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return (this._getValue(value_list)??"").toLowerCase()<(condition.value??"").toLowerCase();
+                    } else {
+                        return this._getValue(value_list)<condition.value;
+                    }
                 }
             case 'Greater_Than_or_Equal_To':
                 if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
                     return moment(this._getValue(value_list), condition.date_format).isSameOrAfter(moment(condition.value, condition.date_format));
                 } else {
-                    return this._getValue(value_list)>=condition.value;
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return (this._getValue(value_list)??"").toLowerCase()>=(condition.value??"").toLowerCase();
+                    } else {
+                        return this._getValue(value_list)>=condition.value;
+                    }
                 }
             case 'Less_Than_or_Equal_To':
                 if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
                     return moment(this._getValue(value_list), condition.date_format).isSameOrBefore(moment(condition.value, condition.date_format));
                 } else {
-                    return this._getValue(value_list)<=condition.value;
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return (this._getValue(value_list)??"").toLowerCase()<=(condition.value??"").toLowerCase();
+                    } else {
+                        return this._getValue(value_list)<=condition.value;
+                    }
                 }
             case 'Contains':
                 if(this.type=="multienum"){
@@ -242,7 +266,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     }
                     return true;
                 } else {
-                    return (this._getValue(value_list)??"").includes(condition.value);
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return (this._getValue(value_list)??"").toLowerCase().includes((condition.value??"").toLowerCase());
+                    } else {
+                        return (this._getValue(value_list)??"").includes(condition.value);
+                    }
                 }
             case 'Not_Contains':
                 if(this.type=="multienum"){
@@ -255,16 +283,36 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     }
                     return true;
                 } else {
-                    return !(this._getValue(value_list)??"").includes(condition.value);
+                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                        return !(this._getValue(value_list)??"").toLowerCase().includes((condition.value??"").toLowerCase());
+                    } else {
+                        return !(this._getValue(value_list)??"").includes(condition.value);
+                    }
                 }
             case 'Starts_With':
-                return (this._getValue(value_list)??"").startsWith(condition.value);
+                if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                    return (this._getValue(value_list)??"").toLowerCase().startsWith((condition.value??"").toLowerCase());
+                } else {
+                    return (this._getValue(value_list)??"").startsWith(condition.value);
+                }
             case 'Not_Starts_With':
-                return !(this._getValue(value_list)??"").startsWith(condition.value);
+                if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                    return !(this._getValue(value_list)??"").toLowerCase().startsWith((condition.value??"").toLowerCase());
+                } else {
+                    return !(this._getValue(value_list)??"").startsWith(condition.value);
+                }
             case 'Ends_With':
-                return (this._getValue(value_list)??"").endsWith(condition.value);
+                if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                    return (this._getValue(value_list)??"").toLowerCase().endsWith((condition.value??"").toLowerCase());
+                } else {
+                    return (this._getValue(value_list)??"").endsWith(condition.value);
+                }
             case 'Not_Ends_With':
-                return !(this._getValue(value_list)??"").endsWith(condition.value);
+                if(typeof(condition.value)==="string" || condition.value instanceof String) {
+                    return !(this._getValue(value_list)??"").toLowerCase().endsWith((condition.value??"").toLowerCase());
+                } else {
+                    return !(this._getValue(value_list)??"").endsWith(condition.value);
+                }
             case 'is_null':
                 return (this._getValue(value_list)??"").split('|')[0]=="";
             case 'is_not_null':

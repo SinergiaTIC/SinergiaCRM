@@ -68,7 +68,6 @@ var sticCVUtils = class sticCVUtils {
     static background($elem, customView=null, color="", important=false) { 
         $elem.each(function(){
             if(important) {
-                debugger;
                 var currentStyle = $(this).attr("style");
                 if (currentStyle) {
                     var match = currentStyle.match(/background-color\s*:\s*[^;]+/);
