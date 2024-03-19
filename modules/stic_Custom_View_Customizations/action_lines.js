@@ -168,14 +168,10 @@ function markActionLineDeleted(ln){
 function onActionTypeChanged(ln){
   var type = $("#"+actprefix+'type'+ln).val();
   if(type==""||type==null){
-    // Reset next selectors
+    // Reset Element selector
     $("#"+actprefix+'Cell'+'element'+ln).html("");
-    $("#"+actprefix+'Cell'+'action'+ln).html("");
-    $("#"+actprefix+'Cell'+'value'+ln).html("");
-    $("#"+actprefix+'Cell'+'element_section'+ln).html("");
   } else {
-    // Create next selector
-    // Element selector
+    // Create Element selector
     $("#"+actprefix+'Cell'+'element'+ln).html(
       "<select type='text' name='"+actprefix+"element["+ln+"]' id='"+actprefix+"element"+ln+"'>"+
         view_module_action_map.actionTypes[type].elements.options+
@@ -185,6 +181,11 @@ function onActionTypeChanged(ln){
     $("#"+actprefix+'element'+ln).val(null);
     $("#"+actprefix+'element'+ln).change();
   }
+
+  // Reset next selectors
+  $("#"+actprefix+'Cell'+'action'+ln).html("");
+  $("#"+actprefix+'Cell'+'value'+ln).html("");
+  $("#"+actprefix+'Cell'+'element_section'+ln).html("");
 }
 
 function onActionElementChanged(ln) {
@@ -192,28 +193,28 @@ function onActionElementChanged(ln) {
   var element = $("#"+actprefix+'element'+ln).val();
   if(type==""||type==null) {
     $("#"+prefix+'type'+ln).change();
-  } else if(element==""||element==null){
-    // Reset next selectors
-    $("#"+actprefix+'Cell'+'action'+ln).html("");
-    $("#"+actprefix+'Cell'+'value'+ln).html("");
-    $("#"+actprefix+'Cell'+'element_section'+ln).html("");
   } else {
     var value_type="";
     if(type=='field_modification') {
       value_type = view_field_map[element].type + "|" + view_field_map[element].list;
     }
-    // Create next selector
-    // Action selector
-    $("#"+actprefix+'Cell'+'action'+ln).html(
-      "<select type='text' name='"+actprefix+"action["+ln+"]' id='"+actprefix+"action"+ln+"'>"+
-        view_module_action_map.actionTypes[type].actions.options+
-      "</select>"+
-      "<input type='hidden' name='"+actprefix+"value_type["+ln+"]' id='"+actprefix+"value_type"+ln+"' value='"+value_type+"'>"
-      );
+    // Create next selector if need
+    if($("#"+actprefix+'Cell'+'action'+ln).html()=="") {
+      // Action selector
+      $("#"+actprefix+'Cell'+'action'+ln).html(
+        "<select type='text' name='"+actprefix+"action["+ln+"]' id='"+actprefix+"action"+ln+"'>"+
+          view_module_action_map.actionTypes[type].actions.options+
+        "</select>"+
+        "<input type='hidden' name='"+actprefix+"value_type["+ln+"]' id='"+actprefix+"value_type"+ln+"' value='"+value_type+"'>"
+        );
 
-    $("#"+actprefix+'action'+ln).on("change", function(){onActionChanged(ln);});
-    $("#"+actprefix+'action'+ln).val(null);
-    $("#"+actprefix+'action'+ln).change();
+      $("#"+actprefix+'action'+ln).on("change", function(){onActionChanged(ln);});
+      $("#"+actprefix+'action'+ln).val(null);
+      $("#"+actprefix+'action'+ln).change();
+    } else {
+      // Update value_type
+      $("#"+actprefix+'value_type'+ln).val(value_type);
+    }
   }
 }
 
@@ -221,6 +222,7 @@ function onActionChanged(ln) {
   var type = $("#"+actprefix+'type'+ln).val();
   var element = $("#"+actprefix+'element'+ln).val();
   var action = $("#"+actprefix+'action'+ln).val();
+  debugger;
   if(type==""||type==null) {
     $("#"+prefix+'type'+ln).change();
   } else if(element==""||element==null){
@@ -230,7 +232,7 @@ function onActionChanged(ln) {
     $("#"+actprefix+'Cell'+'value'+ln).html("");
     $("#"+actprefix+'Cell'+'element_section'+ln).html("");
   } else {
-    //Create next selector
+    // Create next selectors
     // Value editor
     if(type=='field_modification' && action=='fixed_value'){
       var actValue = undefined;
