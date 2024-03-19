@@ -366,24 +366,40 @@ class stic_Payment_CommitmentsUtils
     public static function recalculateCurrentYearTotalPaidViaSQL()
     {
         global $db;
-        $sql = "UPDATE stic_payment_commitments pc
-        JOIN (
-        SELECT rel.stic_paymebfe2itments_ida, SUM(sp.amount) AS total
-            FROM stic_payments sp
-            JOIN stic_payments_stic_payment_commitments_c rel
-                ON rel.stic_payments_stic_payment_commitmentsstic_payments_idb = sp.id
-            WHERE sp.status = 'paid'
-                AND sp.deleted = 0
-                AND rel.deleted = 0
-                AND YEAR(sp.payment_date) = YEAR(CURDATE())
-                AND rel.stic_paymebfe2itments_ida IN (SELECT id FROM stic_payment_commitments where active=1 AND deleted=0)
-            GROUP BY rel.stic_paymebfe2itments_ida
-        ) pay_sum
-        ON pc.id = pay_sum.stic_paymebfe2itments_ida
-        SET pc.date_modified = DATE_FORMAT(UTC_TIMESTAMP(), '%Y-%m-%d %H:%i:%s'),
-            pc.paid_annualized_fee = pay_sum.total
-        WHERE pc.id IN (SELECT id FROM stic_payment_commitments where active=1 AND deleted=0 ) ;";
-        
+        $sql = "UPDATE
+            stic_payment_commitments pc
+            JOIN (
+                SELECT
+                    rel.stic_paymebfe2itments_ida,
+                    SUM(sp.amount) AS total
+                FROM
+                    stic_payments sp
+                    JOIN stic_payments_stic_payment_commitments_c rel ON rel.stic_payments_stic_payment_commitmentsstic_payments_idb = sp.id
+                WHERE
+                    sp.status = 'paid'
+                    AND sp.deleted = 0
+                    AND rel.deleted = 0
+                    AND YEAR(sp.payment_date) = YEAR(CURDATE())
+                    AND rel.stic_paymebfe2itments_ida IN (
+                        SELECT
+                            id
+                        FROM
+                            stic_payment_commitments
+                        where
+                            deleted = 0
+                            AND (
+                                end_date IS NULL
+                                OR end_date = ''
+                                OR YEAR(end_date) = YEAR(CURDATE())
+                            )
+                    )
+                GROUP BY
+                    rel.stic_paymebfe2itments_ida
+            ) pay_sum ON pc.id = pay_sum.stic_paymebfe2itments_ida
+        SET
+            pc.date_modified = DATE_FORMAT(UTC_TIMESTAMP(), '%Y-%m-%d %H:%i:%s'),
+            pc.paid_annualized_fee = pay_sum.total;";
+
         $GLOBALS['log']->debug(__METHOD__ . ": Updating current year total paid ...");
         $res = $db->query($sql);
         if ($res === false) {
@@ -395,51 +411,6 @@ class stic_Payment_CommitmentsUtils
     }
 
     /**
-     * Sets the pending annualized fee value for a given payment commitment.
-     *
-     * @param SugarBean $PCBean The payment commitment bean to update.
-     * @return void
-     */
-    public static function setPendingPayments($PCBean)
-    {
-
-        global $db;
-
-        // Start timer
-        $startTime = microtime(true);
-
-        $newValue = self::getPendingPayments($PCBean);
-
-        // End timer after getPendingPayments
-        $endTime = microtime(true);
-        $elapsedTime = $endTime - $startTime;
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . " Time calculating getPendingPayments: {$elapsedTime} seconds");
-
-        // Only save the new value if it's different from the existing one
-        if ($newValue['expected_payments_detail'] != $PCBean->fetched_row['expected_payments_detail']) {
-
-            // SQL mode
-            $startTime2 = microtime(true);
-            $sql = "UPDATE
-                    stic_payment_commitments
-                    SET
-                        pending_annualized_fee='{$newValue['pending_annualized_fee']}',
-                        expected_payments_detail='{$newValue['expected_payments_detail']}',
-                        date_modified=UTC_TIMESTAMP()
-                    WHERE id='{$PCBean->id}'";
-            $res = $db->query($sql);
-            if (!$res) {
-                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . " No ha sido posible ejecutar la consulta {$sql}");
-            }
-            $endTime2 = microtime(true);
-            // End SQL mode
-
-            // End second timer
-            $elapsedTime2 = $endTime2 - $startTime2;
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . " Time updating SQL payment commitments  : {$PCBean->id} | {$elapsedTime2} seconds");
-        }
-    }
-    /**
      * Update the paid annual fee of the payment commitment record using SQL.
      *
      * @param object $PCBean The payment commitment object to update.
@@ -450,7 +421,7 @@ class stic_Payment_CommitmentsUtils
     {
         global $db;
         require_once 'SticInclude/Utils.php';
-        
+
         $sql = "UPDATE stic_payment_commitments
                 SET
                 date_modified=UTC_TIMESTAMP(),
@@ -475,49 +446,6 @@ class stic_Payment_CommitmentsUtils
     }
 
     /**
-     * getPaidPayments - Function to retrieve the sum of paid payments for a Payment Commitment
-     *
-     * @param  object $PCBean      The Payment Commitment object
-     *
-     * @return float               The sum of paid payments for the Payment Commitment
-     */
-    public static function getPaidPayments($PCBean)
-    {
-        global $db;
-
-        require_once 'SticInclude/Utils.php';
-
-        // SQL query to retrieve the sum of paid payments for the given Payment Commitment object. Excluding payment $paymentBean
-        $sql = "SELECT DISTINCT
-                sum(p.amount)
-            FROM
-                stic_payments p
-            JOIN stic_payments_stic_payment_commitments_c spc on
-                p.id = spc.stic_payments_stic_payment_commitmentsstic_payments_idb
-            JOIN stic_payment_commitments pc on
-                spc.stic_paymebfe2itments_ida = pc.id
-            WHERE
-                p.deleted = 0
-                AND pc.deleted = 0
-                AND spc.deleted = 0
-                AND p.status = 'paid'
-                AND pc.id = '{$PCBean->id}'
-                AND year(current_date()) = year(p.payment_date)";
-
-        // Execute the query, retrieve the result & convert to float.
-        $res = SticUtils::unformatDecimal($db->getOne($sql));
-
-        if (!empty($res)) {
-            // If there are paid payments, return the sum
-            return $res;
-        } else {
-            // If there are no paid payments, log an error and return 0
-            $GLOBALS['log']->error(__METHOD__ . ' line ' . __LINE__ . ' It is not possible to calculate paid payments for Payment Commitment.', $PCBean->name . " " . $PCBean->id);
-            return 0;
-        }
-    }
-
-    /**
      * This function calculates the pending payments for a payment commitment based on its details.
      * @param SugarBean $PCBean PaymentCommitments Bean
      * @return array|string Returns an array with two values:
@@ -534,7 +462,8 @@ class stic_Payment_CommitmentsUtils
         $endDate = $PCBean->end_date;
         $periodicity = $PCBean->periodicity;
 
-        // Este SQL no usa ninguna tabla específica, pero se ha visto que es muy efectivo para
+        // This SQL does not use any specific table, but it has been found to be very effective in generating the string with the payment forecast
+        // and thus we use the calculation mode that is used in the script that runs monthly for the set of records.
         $detailedSQL = "
         SELECT
             GROUP_CONCAT(
