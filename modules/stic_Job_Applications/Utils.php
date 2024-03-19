@@ -44,10 +44,23 @@ class stic_Job_ApplicationsUtils
         }
 
         $workBean->assigned_user_id = (empty($jobApplicationBean->assigned_user_id) ? $current_user->id : $jobApplicationBean->assigned_user_id);
+        if ($jobApplicationBean->stic_job_applications_stic_job_offersstic_job_offers_ida instanceof Link2) {
+            $offerBean = SticUtils::getRelatedBeanObject($jobApplicationBean, 'stic_job_applications_stic_job_offers');
+        } else {
+            $offerBean = BeanFactory::getBean('stic_Job_Offers', $jobApplicationBean->stic_job_applications_stic_job_offersstic_job_offers_ida);
+        }
 
-        $offerBean = BeanFactory::getBean('stic_Job_Offers', $jobApplicationBean->stic_job_applications_stic_job_offersstic_job_offers_ida);
         $accountOfferId = SticUtils::getRelatedBeanObject($offerBean, 'stic_job_offers_accounts')->id;
-        $contactApplicationId= $jobApplicationBean->stic_job_applications_contactscontacts_ida;
+
+        if ($jobApplicationBean->stic_job_applications_contactscontacts_ida instanceof Link2) {
+            $contactApplicationId = SticUtils::getRelatedBeanObject($jobApplicationBean, 'stic_job_applications_contacts');
+            $contactApplicationId = $contactApplicationId->id;
+        } else {
+            $contactApplicationId= $jobApplicationBean->stic_job_applications_contactscontacts_ida;
+        }
+
+
+
         $applicationId = $jobApplicationBean->id;
 
         $workBean->stic_work_experience_accountsaccounts_ida = $accountOfferId;

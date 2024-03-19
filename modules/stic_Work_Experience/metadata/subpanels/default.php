@@ -26,10 +26,6 @@ $subpanel_layout = array(
         0 => array(
             'widget_class' => 'SubPanelTopCreateButton',
         ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'popup_module' => 'stic_Work_Experience',
-        ),
     ),
     'where' => '',
     'list_fields' => array(

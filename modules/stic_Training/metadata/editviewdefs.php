@@ -142,7 +142,7 @@ array(
                 ),
                 9 => array(
                     0 => array(
-                        'name' => 'total_amount',
+                        'name' => 'total',
                         'studio' => 'visible',
                         'label' => 'LBL_TOTAL_AMOUNT',
                     ),

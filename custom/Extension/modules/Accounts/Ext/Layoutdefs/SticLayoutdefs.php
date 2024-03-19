@@ -222,10 +222,6 @@ $layout_defs["Accounts"]["subpanel_setup"]['stic_training_accounts'] = array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
     ),
 );
 
@@ -241,10 +237,6 @@ $layout_defs["Accounts"]["subpanel_setup"]['stic_work_experience_accounts'] = ar
     'top_buttons' => array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
         ),
     ),
 );

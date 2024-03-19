@@ -69,13 +69,23 @@ class stic_Job_Applications extends Basic
         include_once 'modules/stic_Job_Applications/Utils.php';
 
         // Call the generic save() function from the SugarBean class
-		if( $this->status == 'accepted'&& $this->fetched_row['status'] != 'accepted'){
+        if (empty($this->name)) {
+            if ($this->stic_job_applications_contactscontacts_ida) {
+                $contact_name = $this->stic_job_applications_contacts_name;
+            }
+            if ($this->stic_job_applications_stic_job_offersstic_job_offers_ida) {
+                $offer_name = $this->stic_job_applications_stic_job_offers_name;
+            }
+            $this->name = $contact_name .' - '.$offer_name;
+        }
+
+        parent::save($check_notify);
+
+        if( $this->status == 'accepted'){
 
             stic_Job_ApplicationsUtils::createWorkExperience($this);
 
 		}
-        parent::save($check_notify);
-
     }
 
 }

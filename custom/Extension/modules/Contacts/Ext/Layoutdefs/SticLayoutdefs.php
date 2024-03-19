@@ -394,10 +394,6 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_training_contacts'] = array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
     ),
 );
 
@@ -414,10 +410,6 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_work_experience_contacts'] = ar
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
     ),
 );
 
@@ -433,10 +425,6 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_skills_contacts'] = array(
     'top_buttons' => array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ),
-        1 => array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
         ),
     ),
 );

@@ -29,7 +29,6 @@ $module_name = 'stic_Training';
 $subpanel_layout = array(
     'top_buttons' => array(
         array('widget_class' => 'SubPanelTopCreateButton'),
-        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
     ),
 
     'where' => '',
