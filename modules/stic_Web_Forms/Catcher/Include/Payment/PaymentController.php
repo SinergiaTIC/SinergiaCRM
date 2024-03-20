@@ -31,7 +31,7 @@ class PaymentController extends WebFormDataController
 {
     const RESPONSE_TYPE_NEW_PAYMENT = '';
     const RESPONSE_TYPE_TPV_RESPONSE = 'TPV_RESPONSE';
-    const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_RESPONSE';
+    const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_CECA_RESPONSE';
     const RESPONSE_TYPE_PAYPAL_RESPONSE = 'PAYPAL_RESPONSE';
     const RESPONSE_TYPE_STRIPE_RESPONSE = 'STRIPE_RESPONSE';
 
@@ -73,8 +73,8 @@ class PaymentController extends WebFormDataController
                 $response = $this->actionTPVResponse();
                 break;
             case self::RESPONSE_TYPE_TPVCECA_RESPONSE:
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Managing the response of a POS payment...");
-                $response = $this->actionTPVResponse();
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Managing the response of a POS CECA payment...");
+                $response = $this->actionCECAResponse();
                 break;
             case self::RESPONSE_TYPE_PAYPAL_RESPONSE:
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Managing the response of a Paypal payment...");
@@ -241,6 +241,73 @@ class PaymentController extends WebFormDataController
             return $this->createResponse(self::RESPONSE_STATUS_OK, self::RESPONSE_TYPE_TXT, $this->getMsgString('LBL_THANKS_FOR_DONATION'));
         }
     }
+  
+    /**
+     * Process the POS CECA response
+     */
+    private function actionCECAResponse()
+    {
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing CECA request ...");
+
+        $firma = $this->bo->getParam("Firma");
+        $data = $this->bo->getParam("Ds_MerchantParameters");
+
+
+        
+        $receivedSignature = $this->bo->getParam("Ds_Signature");
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Decoding received parameters...");
+        $decodec = $tpvSys->decodeMerchantParameters($data);
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving POS settings...");
+
+        $tpvSys->stringToArray($decodec);
+
+        // At the time of processing the response from the POS, the payment payment_method created before retrieving the settings corresponding to the alternative POS is necessary.
+        global $db;
+        $paymentMethod = $db->getOne("select payment_method from stic_payments where transaction_code = CONVERT('{$tpvSys->vars_pay['Ds_Order']}', UNSIGNED INTEGER)");
+
+        $settings = PaymentBO::getTPVSettings($paymentMethod);
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Settings: ", print_r($settings, true));
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": TPVResponseSettings: ", print_r($settings, true));
+
+        $kc = $settings["TPV_PASSWORD"];
+        if (empty($kc)) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve the PASSWORD POS constant.");
+            $this->returnCode('UNEXPECTED_ERROR');
+            return $this->feedBackError($this);
+        }
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Checking signature...");
+        $signature = $tpvSys->createMerchantSignatureNotif($kc, $data);
+        if ($signature != $receivedSignature) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The signatures do not match [{$signature}] [{$receivedSignature}].");
+            $this->returnCode('UNEXPECTED_ERROR');
+            return $this->feedBackError($this);
+        }
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature validated. Processing request...");
+        $retCode = $this->bo->proccessTPVResponse($tpvSys->vars_pay);
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Loading mail manager ...");
+        require_once __DIR__ . "/PaymentMailer.php";
+        $mailer = WebFormMailer::readDataToDeferredMail(intval($tpvSys->vars_pay['Ds_Order']));
+        if (!$mailer) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": No data for sending deferred emails.");
+        } else {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Sending notification emails ...");
+            $mailer->sendDeferredMails($retCode, self::RESPONSE_TYPE_TPV_RESPONSE);
+        }
+
+        if ($retCode) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error processing the POS response [{$decodec}].");
+            $this->returnCode($this->bo->getLastError());
+            return $this->feedBackError($this);
+        } else {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": POS response processed successfully.");
+            return $this->createResponse(self::RESPONSE_STATUS_OK, self::RESPONSE_TYPE_TXT, $this->getMsgString('LBL_THANKS_FOR_DONATION'));
+        }
+    }
 
     /**
      * Generate the answer for the first step in redsys payment methods (card or bizum)
@@ -333,6 +400,7 @@ class PaymentController extends WebFormDataController
         $tpvSys->setParameter("DS_MERCHANT_URLOK", $okURL);
         $tpvSys->setParameter("DS_MERCHANT_CONSUMERLANGUAGE", PaymentBO::getTPVLanguage($this->getLanguage()));
 
+
         // Configuration data
         $version = $settings["TPV_VERSION"];
         $kc = $settings["TPV_PASSWORD"];
@@ -374,7 +442,7 @@ class PaymentController extends WebFormDataController
         }
         // var_dump($settings);
         // die();
-        
+
         // Check that the settings are complete and if so, add it to the parameters
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning CECA settings to request parameters...");
         $requiredConsts = [
@@ -461,27 +529,12 @@ class PaymentController extends WebFormDataController
                 break;
         }
 
-
-
         // Calculate the signature value required to include in the form
         $firma = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $settings['TPVCECA_MERCHANTID'] . $settings['TPVCECA_ACQUIRERBIN'] . $settings['TPVCECA_TERMINALID'] . $id . $amount . $settings['TPVCECA_TIPOMONEDA'] . '2' . 'SHA2' . $okURL . $koURL;
-        // $firma = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $settings['TPVCECA_MERCHANTID'] . $settings['TPVCECA_ACQUIRERBIN'] . $settings['TPVCECA_TERMINALID'] . '123' . '500' . '978' . '2' . 'SHA2' . $okURL . $koURL;
-        echo $firma.'<br>';
-        
-        // $firma = '99888888' . '111950028' . '0000554052' . '00000003' . '123' . '500' . '978' . '2' . 'SHA2' . 'http://www.ceca.es' . 'http://www.ceca.es';
-        // echo $firma.'<br>';
-        // $firma = 'HXBU8H84' . '086624434' . '0000554027' . '00000003' . '123' . '500' . '978' . '2' . 'SHA2' . 'http://www.ceca.es' . 'http://www.ceca.es';
-        // 998888881119500280000554052000000031235009782SHA2http://www.ceca.eshttp://www.ceca.es
-        // $firma = '998888881119500280000554052000000031235009782SHA2http://www.ceca.eshttp://www.ceca.es';
-        // echo '998888881119500280000554052000000031235009782SHA2http://www.ceca.eshttp://www.ceca.es<hr>';
+
         if (strlen(trim($firma)) > 0) {
-            // echo $firma;
-            
             // SHA256 calculation
             $firma = strtolower(hash('sha256', $firma));
-            // $firma = (hash('sha256', $firma));
-            echo '<hr>';
-            die($firma);
         } else {
             $this->returnCode('INVALID_CECA_SIGNATURE');
             return $this->feedBackError($this);

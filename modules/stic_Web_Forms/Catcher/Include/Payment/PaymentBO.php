@@ -135,7 +135,7 @@ class PaymentBO extends WebFormDataBO
 
             // Set the required fields for a POS payment answer
             case PaymentController::RESPONSE_TYPE_TPVCECA_RESPONSE:
-                $this->formFields = array('Ds_SignatureVersion', 'Ds_Signature', 'Ds_MerchantParameters');
+                $this->formFields = array('MerchantID', 'AcquirerBIN', 'TerminalID', 'Num_operacion', 'Importe', 'Firma', 'Referencia');
                 $this->requiredFormFields = $this->formFields;
                 break;
 
