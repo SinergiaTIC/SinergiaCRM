@@ -108,12 +108,12 @@ array(
                     0 => array(
                         'name' => 'oral',
                         'studio' => 'visible',
-                        'label' => 'LBL_ORAL ',
+                        'label' => 'LBL_ORAL',
                     ),
                     1 => array(
                         'name' => 'written',
                         'studio' => 'visible',
-                        'label' => 'LBL_WRITTEN ',
+                        'label' => 'LBL_WRITTEN',
                     ),
                 ),
                 2 => array(
