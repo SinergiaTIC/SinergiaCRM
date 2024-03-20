@@ -346,7 +346,8 @@ $dictionary['stic_Training'] = array(
             'size' => '20',
             'options' => 'numeric_range_search_dom',
             'enable_range_search' => true,
-            'precision' => '2',        ),
+            'precision' => '2',
+        ),
         'start_date' => array(
             'required' => false,
             'name' => 'start_date',
