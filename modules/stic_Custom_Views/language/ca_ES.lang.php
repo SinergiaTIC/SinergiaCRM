@@ -50,7 +50,7 @@ $mod_strings = array (
   'LBL_DESCENDING' => 'Descendent',
 
   // Accions del mòdul
-  'LBL_LIST_FORM_TITLE' => "Llista de Vistes personalitzades",
+  'LBL_LIST_FORM_TITLE' => 'Llista de Vistes personalitzades',
   'LBL_MODULE_NAME' => 'Vistes personalitzades',
   'LBL_MODULE_TITLE' => 'Vistes personalitzades',
   'LBL_HOMEPAGE_TITLE' => 'Les meves Vistes personalitzades',
