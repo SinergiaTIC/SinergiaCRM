@@ -67,17 +67,17 @@ $mod_strings = array (
   'LBL_CUSTOMIZATION_NAME' => 'Internal name',
   'LBL_VIEW_MODULE' => 'Module',
   'LBL_VIEW_TYPE' => 'View',
-  'LBL_USER_TYPE' => "User type",
-  'LBL_USER_TYPE_DESC' => "User type to which the custom view will apply",
+  'LBL_USER_TYPE' => 'User type',
+  'LBL_USER_TYPE_DESC' => 'User type to which the custom view will apply',
   'LBL_ROLES' => 'Roles',
-  'LBL_ROLES_DESC' => "User roles to which the custom view will apply",
+  'LBL_ROLES_DESC' => 'User roles to which the custom view will apply',
   'LBL_SECURITY_GROUPS' => 'Security groups',
-  'LBL_SECURITY_GROUPS_DESC' => "Security groups to which the custom view will apply",
-  'LBL_STATUS' => "Status",
+  'LBL_SECURITY_GROUPS_DESC' => 'Security groups to which the custom view will apply',
+  'LBL_STATUS' => 'Status',
   'LBL_ROLES_EXCLUDE' => 'Non-applicable roles',
-  'LBL_ROLES_EXCLUDE_DESC' => "User roles to which the custom view will not apply",
+  'LBL_ROLES_EXCLUDE_DESC' => 'User roles to which the custom view will not apply',
   'LBL_SECURITY_GROUPS_EXCLUDE' => 'Non-applicable Security groups',
-  'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Security groups to which the custom view will not apply",
+  'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => 'Security groups to which the custom view will not apply',
 
   // View Panels
   'LBL_DEFAULT_PANEL' => 'Overview',
@@ -89,4 +89,3 @@ $mod_strings = array (
   // Other
   'LBL_NAME_COPY_SUFFIX' => '(copy)',
 );
-
