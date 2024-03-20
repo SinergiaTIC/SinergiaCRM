@@ -59,7 +59,6 @@ class OpportunityFormBase
             $query .= getLikeForEachWord('name', $_POST[$prefix.'name']);
         }
 
-
         if (!empty($query)) {
             $rows = array();
             $db = DBManagerFactory::getInstance();
