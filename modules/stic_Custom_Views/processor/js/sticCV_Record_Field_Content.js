@@ -57,7 +57,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
         if (this.$readonlyLabel.length==0 && this.$element.length>0) {
             var classes = this.$element.attr("class").replaceAll("hidden","");
-            this.$element.parent().append('<div class="'+classes+' stic-ReadonlyInput hidden"></div>');
+            
+            this.$element.parent().append(
+                '<div class="'+classes+' stic-ReadonlyInput hidden" '+
+                     'style="min-height:20px; height:30px; display:inline-flex; align-items:center; padding-left:5px; border-radius:0.25em;">'+
+                '</div>');
             this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
             this.$readonlyLabel.text(this.text());
 
