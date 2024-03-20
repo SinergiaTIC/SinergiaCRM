@@ -44,10 +44,10 @@
         {$FIELD.SCOPE}
     </div>
 {/if}
-{if !empty($FIELD.ORIGIN)}
+{if !empty($FIELD.PREVIOUS)}
     <div>
-        <strong>{$PARAM.LBL_ORIGIN}:</strong>
-        {$FIELD.ORIGIN}
+        <strong>{$PARAM.LBL_PREVIOUS}:</strong>
+        {$FIELD.PREVIOUS}
     </div>
 {/if}
 {if !empty($FIELD.FORMAL)}

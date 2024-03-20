@@ -78,4 +78,5 @@ $mod_strings = array (
   'LBL_STIC_TRAINING_CONTACTS_FROM_CONTACTS_TITLE' => 'Contact',
   'LBL_STIC_TRAINING_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Account',
   'LBL_STIC_TRAINING_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Registration',
+  'LBL_STIC_PREVIOUS_HELP' => 'This field allows you to record if the person has completed the training before starting his/her relationship with the organization.',
 );

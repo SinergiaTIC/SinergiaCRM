@@ -123,9 +123,9 @@ array(
                         'label' => 'LBL_GRANT_TRAINING',
                     ),
                     1 => array(
-                        'name' => 'origin',
+                        'name' => 'previous',
                         'studio' => 'visible',
-                        'label' => 'LBL_ORIGIN',
+                        'label' => 'LBL_PREVIOUS',
                     ),
                 ),
                 8 => array(

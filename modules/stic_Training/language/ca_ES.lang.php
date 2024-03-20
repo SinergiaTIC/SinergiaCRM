@@ -78,4 +78,5 @@ $mod_strings = array (
   'LBL_STIC_TRAINING_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona',
   'LBL_STIC_TRAINING_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organització',
   'LBL_STIC_TRAINING_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Inscripció',
+  'LBL_STIC_PREVIOUS_HELP' => "Aquest camp permet registrar si la persona ha fet la formació abans de començar la vinculació amb l'entitat.",
 );

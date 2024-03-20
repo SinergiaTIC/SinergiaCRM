@@ -191,7 +191,7 @@ $dictionary['stic_Training'] = array(
         ),
         'previous' => array(
             'required' => false,
-            'name' => 'origin',
+            'name' => 'previous',
             'vname' => 'LBL_PREVIOUS',
             'type' => 'enum',
             'massupdate' => 0,
@@ -211,6 +211,7 @@ $dictionary['stic_Training'] = array(
             'options' => 'stic_training_previous_list',
             'studio' => 'visible',
             'dependency' => false,
+            'popupHelp' => 'LBL_STIC_PREVIOUS_HELP',
         ),
         'accredited' => array(
             'required' => false,

@@ -77,5 +77,5 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
   'LBL_STIC_TRAINING_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona',
   'LBL_STIC_TRAINING_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización',
-  'LBL_STIC_TRAINING_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Inscripción',
+  'LBL_STIC_PREVIOUS_HELP' => 'Este campo permite registrar si la persona ha realizado la formación antes de empezar su vinculación con la entidad.',
 );
