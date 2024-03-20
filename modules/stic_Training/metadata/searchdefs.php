@@ -230,12 +230,12 @@ array(
                 'default' => true,
                 'name' => 'grant_amount',
             ),
-            'total_amount' => array(
+            'amount' => array(
                 'type' => 'decimal',
-                'label' => 'LBL_TOTAL_AMOUNT',
+                'label' => 'LBL_AMOUNT',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'total_amount',
+                'name' => 'amount',
             ),
             'stic_training_stic_registrations_name' => array(
                 'type' => 'relate',

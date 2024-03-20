@@ -88,9 +88,9 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'TOTAL_AMOUNT' => array(
+    'AMOUNT' => array(
         'type' => 'decimal',
-        'label' => 'LBL_TOTAL_AMOUNT',
+        'label' => 'LBL_AMOUNT',
         'width' => '10%',
         'default' => false,
     ),

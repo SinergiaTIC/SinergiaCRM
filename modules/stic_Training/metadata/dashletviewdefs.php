@@ -183,12 +183,12 @@ $dashletData['stic_TrainingDashlet']['columns'] = array(
         'default' => false,
         'name' => 'grant_amount',
     ),
-    'total_amount' => array(
+    'amount' => array(
         'type' => 'decimal',
-        'label' => 'LBL_TOTAL_AMOUNT',
+        'label' => 'LBL_AMOUNT',
         'width' => '10%',
         'default' => false,
-        'name' => 'total_amount',
+        'name' => 'amount',
     ),
     'created_by' => array(
         'width' => '8%',

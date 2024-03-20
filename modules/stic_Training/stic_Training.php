@@ -55,7 +55,7 @@ class stic_Training extends Basic
     public $formal;
     public $grant_training;
     public $grant_amount;
-    public $total_amount;
+    public $amount;
     public $start_date;
     public $end_date;
 

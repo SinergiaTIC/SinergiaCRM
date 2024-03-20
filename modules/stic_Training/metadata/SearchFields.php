@@ -50,15 +50,15 @@ $searchFields[$module_name] = array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
-    'range_total_amount' => array(
+    'range_amount' => array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
-    'start_range_total_amount' => array(
+    'start_range_amount' => array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
-    'end_range_total_amount' => array(
+    'end_range_amount' => array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),

@@ -325,10 +325,10 @@ $dictionary['stic_Training'] = array(
             'enable_range_search' => true,
             'precision' => '2',
         ),
-        'total' => array(
+        'amount' => array(
             'required' => false,
-            'name' => 'total',
-            'vname' => 'LBL_TEST',
+            'name' => 'amount',
+            'vname' => 'LBL_AMOUNT',
             'type' => 'decimal',
             'massupdate' => 0,
             'no_default' => false,

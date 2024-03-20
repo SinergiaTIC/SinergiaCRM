@@ -153,8 +153,8 @@ array(
                 ),
                 9 => array(
                     0 => array(
-                        'name' => 'total_amount',
-                        'label' => 'LBL_TOTAL_AMOUNT',
+                        'name' => 'amount',
+                        'label' => 'LBL_AMOUNT',
                     ),
                     1 => array(
                         'name' => 'stic_training_stic_registrations_name',

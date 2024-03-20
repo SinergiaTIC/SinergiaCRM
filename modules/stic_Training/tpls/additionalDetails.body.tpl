@@ -86,10 +86,10 @@
         {$FIELD.GRANT_AMOUNT}
     </div>
 {/if}
-{if !empty($FIELD.TOTAL_AMOUNT)}
+{if !empty($FIELD.AMOUNT)}
     <div>
-        <strong>{$PARAM.LBL_TOTAL_AMOUNT}:</strong>
-        {$FIELD.TOTAL_AMOUNT}
+        <strong>{$PARAM.LBL_AMOUNT}:</strong>
+        {$FIELD.AMOUNT}
     </div>
 {/if}
 {if !empty($FIELD.DESCRIPTION)}
@@ -108,7 +108,7 @@
     || !empty($FIELD.QUALIFICATION)
     || !empty($FIELD.CERTIFICATION)
     || !empty($FIELD.GRANT_TRAINING)
-    || !empty($FIELD.TOTAL_AMOUNT)
+    || !empty($FIELD.AMOUNT)
     || !empty($FIELD.GRANT_AMOUNT)}
 <br>
 {/if}
