@@ -68,7 +68,7 @@ $mod_strings = array (
   'LBL_INIT' => 'Default',
   'LBL_CONDITIONS' => 'Conditions',
   'LBL_ACTIONS' => 'Actions',
-  'LBL_STATUS' => "Status",
+  'LBL_STATUS' => 'Status',
 
   // View Panels
   'LBL_DEFAULT_PANEL' => 'Overview',
