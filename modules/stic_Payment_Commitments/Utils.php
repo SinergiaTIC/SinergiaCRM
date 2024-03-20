@@ -389,7 +389,6 @@ class stic_Payment_CommitmentsUtils
                             deleted = 0
                             AND (
                                 end_date IS NULL
-                                OR end_date = ''
                                 OR YEAR(end_date) = YEAR(CURDATE())
                             )
                     )
