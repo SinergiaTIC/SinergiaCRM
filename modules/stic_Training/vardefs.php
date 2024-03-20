@@ -211,7 +211,7 @@ $dictionary['stic_Training'] = array(
             'options' => 'stic_training_previous_list',
             'studio' => 'visible',
             'dependency' => false,
-            'popupHelp' => 'LBL_STIC_PREVIOUS_HELP',
+            'popupHelp' => 'LBL_PREVIOUS_HELP',
         ),
         'accredited' => array(
             'required' => false,
