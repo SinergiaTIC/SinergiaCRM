@@ -102,7 +102,7 @@
     || !empty($FIELD.START_DATE) 
     || !empty($FIELD.END_DATE) 
     || !empty($FIELD.SCOPE) 
-    || !empty($FIELD.ORIGIN) 
+    || !empty($FIELD.PREVIOUS) 
     || !empty($FIELD.FORMAL) 
     || !empty($FIELD.ACCREDITED) 
     || !empty($FIELD.QUALIFICATION)
