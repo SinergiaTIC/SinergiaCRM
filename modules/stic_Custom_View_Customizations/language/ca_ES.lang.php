@@ -68,7 +68,7 @@ $mod_strings = array (
   'LBL_INIT' => 'Inicial',
   'LBL_CONDITIONS' => 'Condicions',
   'LBL_ACTIONS' => 'Accions',
-  'LBL_STATUS' => "Estat",
+  'LBL_STATUS' => 'Estat',
 
   // Panells de les vistes
   'LBL_DEFAULT_PANEL' => 'Dades generals',
@@ -84,9 +84,7 @@ $mod_strings = array (
   'LBL_ADD_CONDITION' => 'Afegeix una condició',
   'LBL_DELETE_CONDITION' => 'Elimina la condició',
   'LBL_ADD_ACTION' => 'Afegeix una acció',
-  'LBL_DELETE_ACTION' => 'Elimina la acció',
-  'LBL_DUPLICATE_ACTION' => 'Duplica la acció',
+  'LBL_DELETE_ACTION' => "Elimina l'acció",
+  'LBL_DUPLICATE_ACTION' => "Duplica l'acció",
   'LBL_NAME_COPY_SUFFIX' => '(còpia)',
 );
-
-
