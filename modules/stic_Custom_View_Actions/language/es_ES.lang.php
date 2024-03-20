@@ -22,43 +22,7 @@
  */
 
 $mod_strings = array (
-  'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
-  'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
-  'LBL_SECURITYGROUPS' => 'Grupos de Seguridad',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de Seguridad',
-  'LBL_ID' => 'ID',
-  'LBL_DATE_ENTERED' => 'Fecha de Creación',
-  'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
-  'LBL_MODIFIED' => 'Modificado Por',
-  'LBL_MODIFIED_NAME' => 'Modificado Por Nombre',
-  'LBL_CREATED' => 'Creado por',
-  'LBL_DESCRIPTION' => 'Descripción',
-  'LBL_DELETED' => 'Eliminado',
-  'LBL_NAME' => 'Nombre',
-  'LBL_CREATED_USER' => 'Creado por el Usuario',
-  'LBL_MODIFIED_USER' => 'Modificado por el Usuario',
-  'LBL_LIST_NAME' => 'Nombre',
-  'LBL_EDIT_BUTTON' => 'Editar',
-  'LBL_REMOVE' => 'Quitar',
-  'LBL_ASCENDING' => 'Ascendente',
-  'LBL_DESCENDING' => 'Descendente',
-  'LBL_OPT_IN' => 'Autorizar',
-  'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización no enviada',
-  'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización enviada',
-  'LBL_OPT_IN_CONFIRMED' => 'Autorizado',
-  'LBL_LIST_FORM_TITLE' => 'Lista de Acciones',
-  'LBL_MODULE_NAME' => 'Acciones',
-  'LBL_MODULE_TITLE' => 'Acciones',
-  'LBL_HOMEPAGE_TITLE' => 'Mis Acciones',
-  'LNK_NEW_RECORD' => 'Crear Acciones',
-  'LNK_LIST' => 'Ver Acciones',
-  'LNK_IMPORT_STIC_CUSTOM_VIEW_ACTIONS' => 'Importar Acciones',
-  'LBL_SEARCH_FORM_TITLE' => 'Búscar Acciones',
-  'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
-  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_STIC_CUSTOM_VIEW_ACTIONS_SUBPANEL_TITLE' => 'Acciones',
-  'LBL_NEW_FORM_TITLE' => 'Nueva Acción',
-
+  // Campos del módulo
   'LBL_ACTION_ORDER' => 'Orden',
   'LBL_TYPE' => "Tipo de acción",
   'LBL_ELEMENT' => 'Elemento',
@@ -67,8 +31,6 @@ $mod_strings = array (
   'LBL_VALUE_TYPE' => 'Tipo del valor',
   'LBL_ELEMENT_SECTION' => 'Aplicar a',
 
-  'LBL_FIELD' => 'Campo',
-  'LBL_PANEL' => 'Panel',
-  'LBL_TAB' => 'Pestaña',
+  // Relaciones y subpaneles
+  'LBL_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizaciones',
 );
-$mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizaciones';

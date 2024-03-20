@@ -45,7 +45,7 @@ array (
       'useTabs' => true,
       'tabDefs' => 
       array (
-        'DEFAULT' => 
+        'LBL_DEFAULT_PANEL' => 
         array (
           'newTab' => true,
           'panelDefault' => 'expanded',
@@ -54,7 +54,7 @@ array (
     ),
     'panels' => 
     array (
-      'default' => 
+      'LBL_DEFAULT_PANEL' => 
       array (
         0 => 
         array (

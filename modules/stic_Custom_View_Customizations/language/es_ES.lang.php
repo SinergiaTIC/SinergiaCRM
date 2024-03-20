@@ -22,60 +22,69 @@
  */
 
 $mod_strings = array (
-  'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
+  // Cadenas comunes 
+  'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
   'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
-  'LBL_SECURITYGROUPS' => 'Grupos de Seguridad',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de Seguridad',
+  'LBL_ASSIGNED_TO' => 'Asignado a',
+  'LBL_LIST_ASSIGNED_TO_NAME' => 'Asignado a',
+  'LBL_LIST_ASSIGNED_USER' => 'Asignado a',
+  'LBL_CREATED' => 'Creado por',
+  'LBL_CREATED_USER' => 'Creado por',
+  'LBL_CREATED_ID' => 'Creado por (ID)',
+  'LBL_MODIFIED' => 'Modificado por',
+  'LBL_MODIFIED_NAME' => 'Modificado por',
+  'LBL_MODIFIED_USER' => 'Modificado por',
+  'LBL_MODIFIED_ID' => 'Modificado por (ID)',
+  'LBL_SECURITYGROUPS' => 'Grupos de seguridad',
+  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de seguridad',
   'LBL_ID' => 'ID',
   'LBL_DATE_ENTERED' => 'Fecha de Creación',
   'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
-  'LBL_MODIFIED' => 'Modificado Por',
-  'LBL_MODIFIED_NAME' => 'Modificado Por Nombre',
-  'LBL_CREATED' => 'Creado por',
   'LBL_DESCRIPTION' => 'Descripción',
   'LBL_DELETED' => 'Eliminado',
   'LBL_NAME' => 'Nombre',
-  'LBL_CREATED_USER' => 'Creado por el Usuario',
-  'LBL_MODIFIED_USER' => 'Modificado por el Usuario',
   'LBL_LIST_NAME' => 'Nombre',
   'LBL_EDIT_BUTTON' => 'Editar',
-  'LBL_REMOVE' => 'Quitar',
+  'LBL_REMOVE' => 'Desvincular',
   'LBL_ASCENDING' => 'Ascendente',
   'LBL_DESCENDING' => 'Descendente',
-  'LBL_OPT_IN' => 'Autorizar',
-  'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización no enviada',
-  'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización enviada',
-  'LBL_OPT_IN_CONFIRMED' => 'Autorizado',
+
+  // Acciones del módulo
   'LBL_LIST_FORM_TITLE' => 'Lista de Personalizaciones',
   'LBL_MODULE_NAME' => 'Personalizaciones',
   'LBL_MODULE_TITLE' => 'Personalizaciones',
   'LBL_HOMEPAGE_TITLE' => 'Mis Personalizaciones',
-  'LNK_NEW_RECORD' => 'Crear Personalización',
+  'LNK_NEW_RECORD' => 'Crear una Personalización',
   'LNK_LIST' => 'Ver Personalizaciones',
   'LNK_IMPORT_STIC_CUSTOM_VIEW_CUSTOMIZATIONS' => 'Importar Personalizaciones',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Personalizaciones',
-  'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_SUBPANEL_TITLE' => 'Personalizaciones',
-  'LBL_NEW_FORM_TITLE' => 'Nueva personalización',
+  'LBL_NEW_FORM_TITLE' => 'Nueva Personalización',
 
+  // Campos del módulo
   'LBL_CUSTOMIZATION_ORDER' => 'Orden',
   'LBL_INIT' => 'Inicial',
   'LBL_CONDITIONS' => 'Condiciones',
   'LBL_ACTIONS' => 'Acciones',
   'LBL_STATUS' => "Estado",
 
-  'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
+  // Paneles de las vistas
+  'LBL_DEFAULT_PANEL' => 'Datos generales',
+  'LBL_CONDITION_PANEL' => 'Condiciones',
+  'LBL_ACTION_PANEL' => 'Acciones',  
 
-  'LBL_CONDITION_LINES' => 'Condiciones',
+  // Relaciones y subpaneles
+  'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE' => 'Vistas personalizadas',
+  'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE' => 'Condiciones',
+  'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE' => 'Acciones',
+
+  // Otras
   'LBL_ADD_CONDITION' => 'Agregar condición',
   'LBL_DELETE_CONDITION' => 'Eliminar condición',
-  'LBL_ACTION_LINES' => 'Acciones',
   'LBL_ADD_ACTION' => 'Agregar acción',
   'LBL_DELETE_ACTION' => 'Eliminar acción',
   'LBL_DUPLICATE_ACTION' => 'Duplicar acción',
   'LBL_NAME_COPY_SUFFIX' => '(copia)',
 );
-$mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE'] = 'Vistas personalizadas';
-$mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE'] = 'Condiciones';
-$mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE'] = 'Acciones';

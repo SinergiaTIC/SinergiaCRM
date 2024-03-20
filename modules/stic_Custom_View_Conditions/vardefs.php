@@ -180,14 +180,14 @@ $dictionary["stic_Custom_View_Conditions"]["fields"]["stic_custom_view_customiza
   'source' => 'non-db',
   'module' => 'stic_Custom_View_Customizations',
   'bean_name' => false,
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
   'id_name' => 'stic_custo233dzations_ida',
 );
 $dictionary["stic_Custom_View_Conditions"]["fields"]["stic_custom_view_customizations_stic_custom_view_conditions_name"] = array (
   'name' => 'stic_custom_view_customizations_stic_custom_view_conditions_name',
   'type' => 'relate',
   'source' => 'non-db',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
   'save' => true,
   'id_name' => 'stic_custo233dzations_ida',
   'link' => 'stic_custom_view_customizations_stic_custom_view_conditions',
@@ -202,7 +202,7 @@ $dictionary["stic_Custom_View_Conditions"]["fields"]["stic_custo233dzations_ida"
   'source' => 'non-db',
   'reportable' => false,
   'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
 );
 
 if (!class_exists('VardefManager')) {

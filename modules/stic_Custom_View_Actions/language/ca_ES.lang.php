@@ -22,43 +22,7 @@
  */
 
 $mod_strings = array (
-  'LBL_ASSIGNED_TO_ID' => 'ID Usuari Assignat',
-  'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
-  'LBL_SECURITYGROUPS' => 'Grups de Seguretat',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grups de Seguretat',
-  'LBL_ID' => 'ID',
-  'LBL_DATE_ENTERED' => 'Data de Creació',
-  'LBL_DATE_MODIFIED' => 'Última Modificació',
-  'LBL_MODIFIED' => 'Modificat Per',
-  'LBL_MODIFIED_NAME' => 'Modificat Per Nom',
-  'LBL_CREATED' => 'Creat Per',
-  'LBL_DESCRIPTION' => 'Descripció',
-  'LBL_DELETED' => 'Eliminat',
-  'LBL_NAME' => 'Nom',
-  'LBL_CREATED_USER' => 'Creat Per Usuari',
-  'LBL_MODIFIED_USER' => 'Modificat Per Usuari',
-  'LBL_LIST_NAME' => 'Nom',
-  'LBL_EDIT_BUTTON' => 'Editar',
-  'LBL_REMOVE' => 'Eliminar',
-  'LBL_ASCENDING' => 'Ascendent',
-  'LBL_DESCENDING' => 'Descendent',
-  'LBL_OPT_IN' => 'Autoritzar comunicacions',
-  'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmació d\'autorització pendent, Confirmació d\'autorització no enviada',
-  'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmació d\'autorització pendent, Confirmació d\'autorització enviada',
-  'LBL_OPT_IN_CONFIRMED' => 'Autoritzat a enviar',
-  'LBL_LIST_FORM_TITLE' => "Llistat d'Accions",
-  'LBL_MODULE_NAME' => 'Accions',
-  'LBL_MODULE_TITLE' => 'Accions',
-  'LBL_HOMEPAGE_TITLE' => 'Les meves Accions',
-  'LNK_NEW_RECORD' => 'Crea Acció',
-  'LNK_LIST' => 'Mostra Accions',
-  'LNK_IMPORT_STIC_CUSTOM_VIEW_ACTIONS' => 'Importar Accions',
-  'LBL_SEARCH_FORM_TITLE' => 'Cerca Accions',
-  'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
-  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
-  'LBL_STIC_CUSTOM_VIEW_ACTIONS_SUBPANEL_TITLE' => 'Accions',
-  'LBL_NEW_FORM_TITLE' => 'Nova Acció',
-
+  // Camps del mòdul
   'LBL_ACTION_ORDER' => 'Ordre',
   'LBL_TYPE' => "Tipus d'acció",
   'LBL_ELEMENT' => 'Element',
@@ -66,9 +30,7 @@ $mod_strings = array (
   'LBL_VALUE' => 'Valor',
   'LBL_VALUE_TYPE' => 'Tipus del valor',
   'LBL_ELEMENT_SECTION' => 'Aplica-ho a',
-
-  'LBL_FIELD' => 'Camp',
-  'LBL_PANEL' => 'Panell',
-  'LBL_TAB' => 'Pestanya',
+  
+  // Relacions i subpanells
+  'LBL_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
 );
-$mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalitzacions';

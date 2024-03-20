@@ -28,7 +28,7 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations_st
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
+    'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
     'get_subpanel_data' => 'stic_custom_view_customizations_stic_custom_view_actions',
     'top_buttons' => 
     array (
@@ -49,7 +49,7 @@ $layout_defs["stic_Custom_View_Customizations"]["subpanel_setup"]['stic_custom_v
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
+    'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
     'get_subpanel_data' => 'stic_custom_view_customizations_stic_custom_view_conditions',
     'top_buttons' => 
     array (

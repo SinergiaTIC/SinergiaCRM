@@ -55,12 +55,12 @@ array (
       'useTabs' => true,
       'tabDefs' => 
       array (
-        'DEFAULT' => 
+        'LBL_DEFAULT_PANEL' => 
         array (
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
-        'LBL_DETAILVIEW_PANEL1' => 
+        'LBL_PANEL_RECORD_DETAILS' => 
         array (
           'newTab' => true,
           'panelDefault' => 'expanded',
@@ -69,7 +69,7 @@ array (
     ),
     'panels' => 
     array (
-      'default' => 
+      'lbl_default_panel' => 
       array (
         0 => 
         array (
@@ -155,7 +155,7 @@ array (
           0 => 'description',
         ),
       ),
-      'lbl_detailview_panel1' => 
+      'lbl_panel_record_details' => 
       array (
         0 => 
         array (

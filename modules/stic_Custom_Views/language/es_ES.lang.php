@@ -22,43 +22,48 @@
  */
 
 $mod_strings = array (
-  'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
+  // Cadenas comunes 
+  'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
   'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
-  'LBL_SECURITYGROUPS' => 'Grupos de Seguridad',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de Seguridad',
+  'LBL_ASSIGNED_TO' => 'Asignado a',
+  'LBL_LIST_ASSIGNED_TO_NAME' => 'Asignado a',
+  'LBL_LIST_ASSIGNED_USER' => 'Asignado a',
+  'LBL_CREATED' => 'Creado por',
+  'LBL_CREATED_USER' => 'Creado por',
+  'LBL_CREATED_ID' => 'Creado por (ID)',
+  'LBL_MODIFIED' => 'Modificado por',
+  'LBL_MODIFIED_NAME' => 'Modificado por',
+  'LBL_MODIFIED_USER' => 'Modificado por',
+  'LBL_MODIFIED_ID' => 'Modificado por (ID)',
+  'LBL_SECURITYGROUPS' => 'Grupos de seguridad',
+  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de seguridad',
   'LBL_ID' => 'ID',
   'LBL_DATE_ENTERED' => 'Fecha de Creación',
   'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
-  'LBL_MODIFIED' => 'Modificado Por',
-  'LBL_MODIFIED_NAME' => 'Modificado Por Nombre',
-  'LBL_CREATED' => 'Creado por',
   'LBL_DESCRIPTION' => 'Descripción',
   'LBL_DELETED' => 'Eliminado',
   'LBL_NAME' => 'Nombre',
-  'LBL_CREATED_USER' => 'Creado por el Usuario',
-  'LBL_MODIFIED_USER' => 'Modificado por el Usuario',
   'LBL_LIST_NAME' => 'Nombre',
   'LBL_EDIT_BUTTON' => 'Editar',
-  'LBL_REMOVE' => 'Quitar',
+  'LBL_REMOVE' => 'Desvincular',
   'LBL_ASCENDING' => 'Ascendente',
   'LBL_DESCENDING' => 'Descendente',
-  'LBL_OPT_IN' => 'Autorizar',
-  'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización no enviada',
-  'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización enviada',
-  'LBL_OPT_IN_CONFIRMED' => 'Autorizado',
+
+  // Acciones del módulo
   'LBL_LIST_FORM_TITLE' => 'Lista de Vistas personalizadas',
   'LBL_MODULE_NAME' => 'Vistas personalizadas',
   'LBL_MODULE_TITLE' => 'Vistas personalizadas',
   'LBL_HOMEPAGE_TITLE' => 'Mis Vistas personalizadas',
-  'LNK_NEW_RECORD' => 'Crear Vista personalizada',
+  'LNK_NEW_RECORD' => 'Crear una Vista personalizada',
   'LNK_LIST' => 'Ver Vistas personalizadas',
   'LNK_IMPORT_STIC_CUSTOM_VIEWS' => 'Importar Vistas personalizadas',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Vistas personalizadas',
-  'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
   'LBL_STIC_CUSTOM_VIEWS_SUBPANEL_TITLE' => 'Vistas personalizadas',
   'LBL_NEW_FORM_TITLE' => 'Nueva Vista personalizada',
 
+  // Campos del módulo
   'LBL_CUSTOMIZATION_NAME' => 'Nombre interno',
   'LBL_VIEW_MODULE' => 'Módulo',
   'LBL_VIEW_TYPE' => 'Vista',
@@ -74,9 +79,13 @@ $mod_strings = array (
   'LBL_SECURITY_GROUPS_EXCLUDE' => 'Grupos de seguridad no aplicables',
   'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Grupos de seguridad a los que no se aplicará la vista personalizada",
 
-  'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
-  'LBL_NAME_COPY_SUFFIX' => '(copia)',
-  
+  // Paneles de las vistas
+  'LBL_DEFAULT_PANEL' => 'Datos generales',
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
+
+  // Relaciones y subpaneles
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizaciones',
+
+  // Otras
+  'LBL_NAME_COPY_SUFFIX' => '(copia)',
 );
-$mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizaciones';

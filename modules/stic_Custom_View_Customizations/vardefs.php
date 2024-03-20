@@ -141,7 +141,7 @@ $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_view_custo
   'module' => 'stic_Custom_View_Actions',
   'bean_name' => false,
   'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
 );
 $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_view_customizations_stic_custom_view_conditions"] = array (
   'name' => 'stic_custom_view_customizations_stic_custom_view_conditions',
@@ -151,7 +151,7 @@ $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_view_custo
   'module' => 'stic_Custom_View_Conditions',
   'bean_name' => false,
   'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
 );
 $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_views_stic_custom_view_customizations"] = array (
   'name' => 'stic_custom_views_stic_custom_view_customizations',
@@ -160,14 +160,14 @@ $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_views_stic
   'source' => 'non-db',
   'module' => 'stic_Custom_Views',
   'bean_name' => false,
-  'vname' => 'LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE',
   'id_name' => 'stic_custo45d1m_views_ida',
 );
 $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custom_views_stic_custom_view_customizations_name"] = array (
   'name' => 'stic_custom_views_stic_custom_view_customizations_name',
   'type' => 'relate',
   'source' => 'non-db',
-  'vname' => 'LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE',
   'save' => true,
   'id_name' => 'stic_custo45d1m_views_ida',
   'link' => 'stic_custom_views_stic_custom_view_customizations',
@@ -182,7 +182,7 @@ $dictionary["stic_Custom_View_Customizations"]["fields"]["stic_custo45d1m_views_
   'source' => 'non-db',
   'reportable' => false,
   'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
 );
 
 if (!class_exists('VardefManager')) {

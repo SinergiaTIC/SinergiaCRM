@@ -45,17 +45,17 @@ array (
       'useTabs' => false,
       'tabDefs' =>
       array(
-        'DEFAULT' =>
+        'LBL_DEFAULT_PANEL' =>
         array(
           'newTab' => false,
           'panelDefault' => 'expanded',
         ),
-        'CONDITIONS' =>
+        'LBL_CONDITION_PANEL' =>
         array(
           'newTab' => false,
           'panelDefault' => 'expanded',
         ),
-        'ACTIONS' =>
+        'LBL_ACTION_PANEL' =>
         array(
           'newTab' => false,
           'panelDefault' => 'expanded',
@@ -64,7 +64,7 @@ array (
     ),
     'panels' => 
     array (
-      'default' => 
+      'LBL_DEFAULT_PANEL' => 
       array (
         0 => 
         array (
@@ -98,14 +98,14 @@ array (
           ),
         ),
       ),
-      'LBL_CONDITION_LINES' =>
+      'LBL_CONDITION_PANEL' =>
       array(
           0 =>
           array(
               0 => 'condition_lines',
           ),
       ),
-      'LBL_ACTION_LINES' =>
+      'LBL_ACTION_PANEL' =>
       array(
           0 =>
           array(

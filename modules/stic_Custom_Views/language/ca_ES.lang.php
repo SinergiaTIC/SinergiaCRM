@@ -22,43 +22,48 @@
  */
 
 $mod_strings = array (
-  'LBL_ASSIGNED_TO_ID' => 'ID Usuari Assignat',
+  // Cadenes comuns 
+  'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
   'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
-  'LBL_SECURITYGROUPS' => 'Grups de Seguretat',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grups de Seguretat',
+  'LBL_ASSIGNED_TO' => 'Assignat a',
+  'LBL_LIST_ASSIGNED_TO_NAME' => 'Assignat a',
+  'LBL_LIST_ASSIGNED_USER' => 'Assignat a',
+  'LBL_CREATED' => 'Creat per',
+  'LBL_CREATED_USER' => 'Creat per',
+  'LBL_CREATED_ID' => 'Creat per (ID)',
+  'LBL_MODIFIED' => 'Modificat per',
+  'LBL_MODIFIED_NAME' => 'Modificat per',
+  'LBL_MODIFIED_USER' => 'Modificat per',
+  'LBL_MODIFIED_ID' => 'Modificat per (ID)',
+  'LBL_SECURITYGROUPS' => 'Grups de seguretat',
+  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grups de seguretat',
   'LBL_ID' => 'ID',
   'LBL_DATE_ENTERED' => 'Data de Creació',
-  'LBL_DATE_MODIFIED' => 'Última Modificació',
-  'LBL_MODIFIED' => 'Modificat Per',
-  'LBL_MODIFIED_NAME' => 'Modificat Per Nom',
-  'LBL_CREATED' => 'Creat Per',
+  'LBL_DATE_MODIFIED' => 'Data de Modificació',
   'LBL_DESCRIPTION' => 'Descripció',
-  'LBL_DELETED' => 'Eliminat',
+  'LBL_DELETED' => 'Suprimit',
   'LBL_NAME' => 'Nom',
-  'LBL_CREATED_USER' => 'Creat Per Usuari',
-  'LBL_MODIFIED_USER' => 'Modificat Per Usuari',
   'LBL_LIST_NAME' => 'Nom',
-  'LBL_EDIT_BUTTON' => 'Editar',
-  'LBL_REMOVE' => 'Eliminar',
+  'LBL_EDIT_BUTTON' => 'Edita',
+  'LBL_REMOVE' => 'Desvincula',
   'LBL_ASCENDING' => 'Ascendent',
   'LBL_DESCENDING' => 'Descendent',
-  'LBL_OPT_IN' => 'Autoritzar comunicacions',
-  'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmació d\'autorització pendent, Confirmació d\'autorització no enviada',
-  'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmació d\'autorització pendent, Confirmació d\'autorització enviada',
-  'LBL_OPT_IN_CONFIRMED' => 'Autoritzat a enviar',
-  'LBL_LIST_FORM_TITLE' => 'Vistes personalitzades Llista',
+
+  // Accions del mòdul
+  'LBL_LIST_FORM_TITLE' => "Llista de Vistes personalitzades",
   'LBL_MODULE_NAME' => 'Vistes personalitzades',
   'LBL_MODULE_TITLE' => 'Vistes personalitzades',
-  'LBL_HOMEPAGE_TITLE' => 'El meu Vistes personalitzades',
-  'LNK_NEW_RECORD' => 'Crea Vistes personalitzades',
-  'LNK_LIST' => 'Mostra Vistes personalitzades',
-  'LNK_IMPORT_STIC_CUSTOM_VIEWS' => 'Importar Vistes personalitzades',
+  'LBL_HOMEPAGE_TITLE' => 'Les meves Vistes personalitzades',
+  'LNK_NEW_RECORD' => 'Crea una Vista personalitzada',
+  'LNK_LIST' => 'Mostra les Vistes personalitzades',
+  'LNK_IMPORT_STIC_CUSTOM_VIEWS' => 'Importa Vistes personalitzades',
   'LBL_SEARCH_FORM_TITLE' => 'Cerca Vistes personalitzades',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
   'LBL_STIC_CUSTOM_VIEWS_SUBPANEL_TITLE' => 'Vistes personalitzades',
   'LBL_NEW_FORM_TITLE' => 'Nova Vista personalitzada',
-  
+
+  // Camps del mòdul
   'LBL_CUSTOMIZATION_NAME' => 'Nom intern',
   'LBL_VIEW_MODULE' => 'Mòdul',
   'LBL_VIEW_TYPE' => 'Vista',
@@ -74,9 +79,13 @@ $mod_strings = array (
   'LBL_SECURITY_GROUPS_EXCLUDE' => 'Grups de seguretat no aplicables',
   'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Grups de seguretat als quals no s'aplicarà la vista personalitzada",
 
-  'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
-  'LBL_NAME_COPY_SUFFIX' => '(còpia)',
+  // Panells de les vistes
+  'LBL_DEFAULT_PANEL' => 'Dades generals',
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
+  // Relacions i subpanells
   'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
+
+  // Altres
+  'LBL_NAME_COPY_SUFFIX' => '(còpia)',
 );
-$mod_strings['LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalitzacions';

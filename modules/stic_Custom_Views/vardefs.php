@@ -259,7 +259,7 @@ $dictionary["stic_Custom_Views"]["fields"]["stic_custom_views_stic_custom_view_c
   'module' => 'stic_Custom_View_Customizations',
   'bean_name' => false,
   'side' => 'right',
-  'vname' => 'LBL_STIC_CUSTOM_VIEWS_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
+  'vname' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
 );
 
 if (!class_exists('VardefManager')) {

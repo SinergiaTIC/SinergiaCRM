@@ -22,43 +22,7 @@
  */
 
 $mod_strings = array (
-  'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
-  'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
-  'LBL_SECURITYGROUPS' => 'Grupos de Seguridad',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de Seguridad',
-  'LBL_ID' => 'ID',
-  'LBL_DATE_ENTERED' => 'Fecha de Creación',
-  'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
-  'LBL_MODIFIED' => 'Modificado Por',
-  'LBL_MODIFIED_NAME' => 'Modificado Por Nombre',
-  'LBL_CREATED' => 'Creado por',
-  'LBL_DESCRIPTION' => 'Descripción',
-  'LBL_DELETED' => 'Eliminado',
-  'LBL_NAME' => 'Nombre',
-  'LBL_CREATED_USER' => 'Creado por el Usuario',
-  'LBL_MODIFIED_USER' => 'Modificado por el Usuario',
-  'LBL_LIST_NAME' => 'Nombre',
-  'LBL_EDIT_BUTTON' => 'Editar',
-  'LBL_REMOVE' => 'Quitar',
-  'LBL_ASCENDING' => 'Ascendente',
-  'LBL_DESCENDING' => 'Descendente',
-  'LBL_OPT_IN' => 'Autorizar',
-  'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización no enviada',
-  'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Confirmación de Autorización pendiente, Confirmación de Autorización enviada',
-  'LBL_OPT_IN_CONFIRMED' => 'Autorizado',
-  'LBL_LIST_FORM_TITLE' => 'Lista de Condiciones',
-  'LBL_MODULE_NAME' => 'Condiciones',
-  'LBL_MODULE_TITLE' => 'Condiciones',
-  'LBL_HOMEPAGE_TITLE' => 'Mis Condiciones',
-  'LNK_NEW_RECORD' => 'Crear Condición',
-  'LNK_LIST' => 'Ver Condiciones',
-  'LNK_IMPORT_STIC_CUSTOM_VIEW_CONDITIONS' => 'Importar Condiciones',
-  'LBL_SEARCH_FORM_TITLE' => 'Buscar Condiciones',
-  'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
-  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
-  'LBL_STIC_CUSTOM_VIEW_CONDITIONS_SUBPANEL_TITLE' => 'Condiciones',
-  'LBL_NEW_FORM_TITLE' => 'Nueva Condición',
-
+  // Campos del módulo
   'LBL_CONDITION_ORDER' => 'Orden',
   'LBL_FIELD' => 'Campo',
   'LBL_OPERATOR' => 'Operador',
@@ -66,6 +30,6 @@ $mod_strings = array (
   'LBL_VALUE' => 'Valor',
   'LBL_VALUE_TYPE' => 'Tipo del valor',
 
-  'LBL_DETAILVIEW_PANEL1' => 'Detalles del registro',
+  // Relaciones y subpaneles
+  'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizaciones',
 );
-$mod_strings['LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE'] = 'Personalizaciones';
