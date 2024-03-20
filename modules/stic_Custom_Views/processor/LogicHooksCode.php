@@ -174,7 +174,11 @@ class stic_Custom_Views_ProcessorLogicHooks
                     $value_typeArray = explode("|",$actionBean->value_type);
                     $value_type=$value_typeArray[0];
                     $value_list=$value_typeArray[1];
-                    $value = $this->value_to_display($actionBean->value, $value_type);
+                    if($actionBean->action=="fixed_value") {
+                        $value = $this->value_to_display($actionBean->value, $value_type);
+                    } else {
+                        $value = $actionBean->value;
+                    }
                     $actions[] = array(
                         "action_order" => $actionBean->action_order,
                         "type" => $actionBean->type,
