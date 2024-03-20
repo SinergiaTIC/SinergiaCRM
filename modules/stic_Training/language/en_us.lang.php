@@ -67,6 +67,7 @@ $mod_strings = array (
   'LBL_QUALIFICATION' => 'Qualification',
   'LBL_COUNTRY ' => 'Country of origin',
   'LBL_PREVIOUS' => 'Previous training',
+  'LBL_PREVIOUS_HELP' => 'Indicates whether the person did the training before starting the relationship with the organization, was doing it at that time or started it later. Registering this data facilitates the analysis of the activity carried out by the organization with the person being cared for.',
   'LBL_ACCREDITED' => 'Accredited',
   'LBL_FORMAL' => 'Formal',
   'LBL_CERTIFICATION' => 'Certification',
@@ -78,5 +79,4 @@ $mod_strings = array (
   'LBL_STIC_TRAINING_CONTACTS_FROM_CONTACTS_TITLE' => 'Contact',
   'LBL_STIC_TRAINING_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Account',
   'LBL_STIC_TRAINING_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Registration',
-  'LBL_STIC_PREVIOUS_HELP' => 'This field allows you to record if the person has completed the training before starting his/her relationship with the organization.',
 );

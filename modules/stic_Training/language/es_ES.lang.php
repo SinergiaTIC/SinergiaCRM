@@ -67,6 +67,7 @@ $mod_strings = array (
   'LBL_QUALIFICATION' => 'Nota final',
   'LBL_COUNTRY ' => 'País de obtención',
   'LBL_PREVIOUS' => 'Formación previa',
+  'LBL_PREVIOUS_HELP' => 'Indica si la persona hizo la formación antes de empezar la vinculación con la entidad, si la estaba haciendo en ese momento o si la inició posteriormente. Registrar este dato facilita el análisis de la actividad realizada por la entidad con la persona atendida.',
   'LBL_ACCREDITED' => 'Homologada',
   'LBL_FORMAL' => 'Reglada',
   'LBL_CERTIFICATION' => 'Certificación obtenida',
@@ -78,5 +79,4 @@ $mod_strings = array (
   'LBL_STIC_TRAINING_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona',
   'LBL_STIC_TRAINING_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización',
   'LBL_STIC_TRAINING_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Inscripción',
-  'LBL_STIC_PREVIOUS_HELP' => 'Este campo permite registrar si la persona ha realizado la formación antes de empezar su vinculación con la entidad.',
 );
