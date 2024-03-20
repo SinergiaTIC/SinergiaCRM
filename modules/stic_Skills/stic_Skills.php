@@ -21,7 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-
 class stic_Skills extends Basic
 {
     public $new_schema = true;
@@ -55,18 +54,17 @@ class stic_Skills extends Basic
     public $oral;
     public $certificate;
     public $certificate_date;
-	
+
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
 
         return false;
     }
-	    /**
+    /**
      * Override the bean's save function to assign an auto-incrementing value to the code field when a new record is created
      *
      * @param boolean $check_notify
@@ -74,11 +72,15 @@ class stic_Skills extends Basic
      */
     public function save($check_notify = false)
     {
+        global $app_list_strings;
 
+        $this->fillName();
+
+        if ($this->type == 'language') {
+            $this->skill=$app_list_strings['stic_skills_types_list'][$this->type];
+        }
         // Save the bean
         parent::save($check_notify);
-        
-        $this->fillName();
 
     }
 
@@ -91,13 +93,13 @@ class stic_Skills extends Basic
 
             $contactName = '';
             $contactBean = BeanFactory::getBean('Contacts', $this->stic_skills_contactscontacts_ida);
-            if ($contactBean){
+            if ($contactBean) {
                 $contactName = $contactBean->first_name . ' ' . $contactBean->last_name;
             }
 
-            $this->name = $contactName . ' - ' . 
-               $this->type;
+            $this->name = $contactName . ' - ' .
+                $app_list_strings['stic_skills_types_list'][$this->type];
+
         }
     }
-
 }
