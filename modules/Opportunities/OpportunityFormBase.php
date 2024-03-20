@@ -58,15 +58,7 @@ class OpportunityFormBase
             $query = $baseQuery ."  name like '%".$_POST[$prefix.'name']."%'";
             $query .= getLikeForEachWord('name', $_POST[$prefix.'name']);
         }
-        // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/164
-        if(file_exists("custom/modules/Opportunities/sticOpportunitiesDuplicateQueries.php")) {
-            require_once("custom/modules/Opportunities/sticOpportunitiesDuplicateQueries.php");
-            if(method_exists("sticOpportunitiesDuplicateQueries", "getDuplicateQuery")) {
-                $query = sticOpportunitiesDuplicateQueries::getDuplicateQuery($focus, $prefix);
-            }
-        }
-        // END STIC-Custom
+
 
         if (!empty($query)) {
             $rows = array();
