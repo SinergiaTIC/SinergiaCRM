@@ -629,6 +629,72 @@ class PaymentBO extends WebFormDataBO
 
         return $this->returnCode($ret);
     }
+    
+
+    // Procesamos la respuesta CECA, despues de haber comprobado la validez  de la firma y de que tenemos todos los datos necesarios en el $_REQUEST
+    public function proccessTPVCECAResponse($tpvParams)
+    {
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing TPV CECA POS response... -> " . print_r($tpvParams, true));
+
+        // Check the necessary parameters
+        if (!isset($_REQUEST['Num_operation']) || !isset($_REQUEST['paymentId'])) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Missing data needed to process the request [{$tpvParams['Ds_Response']}] [{$tpvParams['Ds_Order']}].");
+            return $this->returnCode('UNEXPECTED_ERROR');
+        }
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving payment data...");
+        $transaction_code = intval($tpvParams['Ds_Order']);
+        $payment = Beanfactory::getBean('stic_Payments');
+        $payment->retrieve_by_string_fields(array('transaction_code' => $transaction_code));
+        if ($payment == null) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error retrieving payment data for transaction code [{$transaction_code}].");
+            return $this->returnCode('UNEXPECTED_ERROR');
+        }
+
+        $result = intval($tpvParams['Ds_Response']);
+        $ret = '';
+
+        // Process valid responses
+        if (($result >= 0 && $result <= 99) || $result == 900) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$payment->payment_method}] successfully done. TPV response: [{$result}].");
+
+            // If the amount is 0 then it is just an authorization (no payment has been processed), so keep the payment as "not_remitted"
+            if ($tpvParams['Ds_Amount'] > 0) {
+                $payment->status = 'paid';
+            } else {
+                $payment->status = 'not_remitted';
+            }
+
+            // If TPV response includes data for recurring payments then save it in the payment commitment
+            if (!empty($tpvParams['Ds_Merchant_Identifier']) && !empty($tpvParams['Ds_ExpiryDate']) && !empty($tpvParams['Ds_Merchant_Cof_Txnid'])) {
+                require_once 'SticInclude/Utils.php';
+                $PCBean = SticUtils::getRelatedBeanObject($payment, 'stic_payments_stic_payment_commitments');
+                $PCBean->redsys_ds_merchant_identifier = $tpvParams['Ds_Merchant_Identifier'];
+                $PCBean->card_expiry_date = $tpvParams['Ds_ExpiryDate'];
+                $PCBean->redsys_ds_merchant_cof_txnid = $tpvParams['Ds_Merchant_Cof_Txnid'];
+                $PCBean->save(false);
+            }
+
+        } else {
+            require_once 'modules/stic_Web_Forms/Catcher/Include/Payment/lib/RedsysResponseCodes.php';
+
+            $error = !empty($redsysResponseCode[$result]) ? "[{$result}] " . $redsysResponseCode[$result] : 'Undefined Redsys error';
+
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$payment->id}] failed. TPV response: [{$error}].");
+
+            $payment->status = 'rejected_gateway';
+            $payment->gateway_rejection_reason = $error;
+
+            // If payment is rejected the related payment commitment might be cancelled if it is a recurring one
+            self::disablePaymentCommitment($payment);
+
+            $ret = $this->returnCode('TPV_REJECTED');
+        }
+
+        $payment->save();
+
+        return $this->returnCode($ret);
+    }
 
     /**
      *  Process the paypal response data

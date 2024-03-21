@@ -241,53 +241,64 @@ class PaymentController extends WebFormDataController
             return $this->createResponse(self::RESPONSE_STATUS_OK, self::RESPONSE_TYPE_TXT, $this->getMsgString('LBL_THANKS_FOR_DONATION'));
         }
     }
-  
+
     /**
-     * Process the POS CECA response
+     * Process the POS CECA response.
+     * Si se recibe la comunicación ok por parte del TPV de CECA es que el pago se ha autorizado correctamente
      */
     private function actionCECAResponse()
     {
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing CECA request ...");
-
-        $firma = $this->bo->getParam("Firma");
-        $data = $this->bo->getParam("Ds_MerchantParameters");
-
-
-        
-        $receivedSignature = $this->bo->getParam("Ds_Signature");
-
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Decoding received parameters...");
-        $decodec = $tpvSys->decodeMerchantParameters($data);
-
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving POS settings...");
-
-        $tpvSys->stringToArray($decodec);
-
-        // At the time of processing the response from the POS, the payment payment_method created before retrieving the settings corresponding to the alternative POS is necessary.
         global $db;
-        $paymentMethod = $db->getOne("select payment_method from stic_payments where transaction_code = CONVERT('{$tpvSys->vars_pay['Ds_Order']}', UNSIGNED INTEGER)");
 
-        $settings = PaymentBO::getTPVSettings($paymentMethod);
+        // recuperamos el id y el metodo de pago a partir del número de operación recibido
+        $payment = $db->fetchOne("select id, payment_method from stic_payments where transaction_code = CONVERT('{$_REQUEST['Num_operacion']}', UNSIGNED INTEGER)");
+
+        if (empty($payment['id'] || $payment['payment_method'])) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve the payment Method from REQUEST Num_operation (Transaction_code).");
+            $this->returnCode('UNEXPECTED_ERROR');
+            return $this->feedBackError($this);
+        }
+
+        // Guardamos el id del pago en el Request, ya que lo vamos a usar mas tarde
+        $_REQUEST['paymentId'] = $payment['id'];
+
+        // recuperamos los settings para el método de pago
+        $settings = PaymentBO::getTPVCECASettings($payment['payment_method']);
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Settings: ", print_r($settings, true));
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": TPVResponseSettings: ", print_r($settings, true));
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": TPVCECAResponseValues: ", print_r($_REQUEST, true));
 
-        $kc = $settings["TPV_PASSWORD"];
-        if (empty($kc)) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve the PASSWORD POS constant.");
+        if (empty($settings['TPVCECA_CLAVE_ENCRIPTACION'])) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve the TPVCECA_CLAVE_ENCRIPTACION Setting.");
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Checking signature...");
-        $signature = $tpvSys->createMerchantSignatureNotif($kc, $data);
-        if ($signature != $receivedSignature) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The signatures do not match [{$signature}] [{$receivedSignature}].");
+        $receivedSignature = $this->bo->getParam("Firma");
+
+        // Calculate the signature value required to include in the form
+        $newSignSourceString = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $_REQUEST['MerchantID'] . $_REQUEST['AcquirerBIN'] . $_REQUEST['TerminalID'] . $_REQUEST['Num_operacion'] . $_REQUEST['Importe'] . $settings['TPVCECA_TIPOMONEDA'] . $_REQUEST['Exponente'] . $_REQUEST['Referencia'];
+
+        if (strlen(trim($newSignSourceString)) > 0) {
+            // SHA256 calculation
+            $newSign = strtolower(hash('sha256', $newSignSourceString));
+        } else {
+            $this->returnCode('INVALID_CECA_SIGNATURE');
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invalid CECA signature received");
+            return $this->feedBackError($this);
+        }
+
+        // Chequeamos si la firma recibida en el $_REQUEST es la misma que la calculada ahora miso usando la clave de encriptación de CECA
+        if ($newSign != $receivedSignature) {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The CECA signatures do not match [{$newSign}] [{$receivedSignature}].");
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature validated. Processing request...");
-        $retCode = $this->bo->proccessTPVResponse($tpvSys->vars_pay);
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": CECA Signature validated. Processing request...");
+
+        // Una vez verificado que todo está correcto, procesamos la respuesta 
+        $retCode = $this->bo->proccessTPVCECAResponse($_REQUEST);
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Loading mail manager ...");
         require_once __DIR__ . "/PaymentMailer.php";
@@ -399,7 +410,6 @@ class PaymentController extends WebFormDataController
         $tpvSys->setParameter("DS_MERCHANT_URLKO", $koURL);
         $tpvSys->setParameter("DS_MERCHANT_URLOK", $okURL);
         $tpvSys->setParameter("DS_MERCHANT_CONSUMERLANGUAGE", PaymentBO::getTPVLanguage($this->getLanguage()));
-
 
         // Configuration data
         $version = $settings["TPV_VERSION"];
