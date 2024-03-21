@@ -84,15 +84,8 @@ class stic_Payment_Commitments extends Basic
     public function save($check_notify = true) {
 
         // Call the generic save() function from the SugarBean class
-        $startTime = microtime(true);
         parent::save($check_notify);
         
-
-        $endTime = microtime(true);
-        $elapsedTime = $endTime - $startTime;
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . " PPP3: {$elapsedTime} seconds");
-
-
         // If things are happening in Payments subpanel...
         if ($_REQUEST['child_field'] == 'stic_payments_stic_payment_commitments') {
             // For multiple payments selection from popup
