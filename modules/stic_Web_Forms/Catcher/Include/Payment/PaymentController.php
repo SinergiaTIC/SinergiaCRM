@@ -276,8 +276,8 @@ class PaymentController extends WebFormDataController
 
         $receivedSignature = $this->bo->getParam("Firma");
 
-        // Calculate the signature value required to include in the form
-        $newSignSourceString = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $_REQUEST['MerchantID'] . $_REQUEST['AcquirerBIN'] . $_REQUEST['TerminalID'] . $_REQUEST['Num_operacion'] . $_REQUEST['Importe'] . $settings['TPVCECA_TIPOMONEDA'] . $_REQUEST['Exponente'] . $_REQUEST['Referencia'];
+        // Calculate the signature value required to include in the form. En los casos de pago válido recibimos el numero de referencia de la operación, y en caso de error, recibimos el número de error. Usamos uno u otro (el que esté presente) para calcular la firma 
+        $newSignSourceString = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $_REQUEST['MerchantID'] . $_REQUEST['AcquirerBIN'] . $_REQUEST['TerminalID'] . $_REQUEST['Num_operacion'] . $_REQUEST['Importe'] . $settings['TPVCECA_TIPOMONEDA'] . $_REQUEST['Exponente'] . ($_REQUEST['Referencia'] ?? $_REQUEST['Codigo_error']);
 
         if (strlen(trim($newSignSourceString)) > 0) {
             // SHA256 calculation
@@ -288,7 +288,7 @@ class PaymentController extends WebFormDataController
             return $this->feedBackError($this);
         }
 
-        // Chequeamos si la firma recibida en el $_REQUEST es la misma que la calculada ahora miso usando la clave de encriptación de CECA
+        // Chequeamos si la firma recibida en el $_REQUEST es la misma que la calculada ahora mismo usando la clave de encriptación de CECA
         if ($newSign != $receivedSignature) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The CECA signatures do not match [{$newSign}] [{$receivedSignature}].");
             $this->returnCode('UNEXPECTED_ERROR');

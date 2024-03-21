@@ -135,7 +135,7 @@ class PaymentBO extends WebFormDataBO
 
             // Set the required fields for a POS payment answer
             case PaymentController::RESPONSE_TYPE_TPVCECA_RESPONSE:
-                $this->formFields = array('MerchantID', 'AcquirerBIN', 'TerminalID', 'Num_operacion', 'Importe', 'Firma', 'Referencia');
+                $this->formFields = array('MerchantID', 'AcquirerBIN', 'TerminalID', 'Num_operacion', 'Importe', 'Firma');
                 $this->requiredFormFields = $this->formFields;
                 break;
 
@@ -629,7 +629,6 @@ class PaymentBO extends WebFormDataBO
 
         return $this->returnCode($ret);
     }
-    
 
     // Procesamos la respuesta CECA, despues de haber comprobado la validez  de la firma y de que tenemos todos los datos necesarios en el $_REQUEST
     public function proccessTPVCECAResponse($tpvParams)
@@ -637,20 +636,39 @@ class PaymentBO extends WebFormDataBO
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing TPV CECA POS response... -> " . print_r($tpvParams, true));
 
         // Check the necessary parameters
-        if (!isset($_REQUEST['Num_operation']) || !isset($_REQUEST['paymentId'])) {
+        if (!isset($_REQUEST['Num_operacion']) || !isset($_REQUEST['paymentId'])) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Missing data needed to process the request [{$tpvParams['Ds_Response']}] [{$tpvParams['Ds_Order']}].");
             return $this->returnCode('UNEXPECTED_ERROR');
         }
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving payment data...");
-        $transaction_code = intval($tpvParams['Ds_Order']);
-        $payment = Beanfactory::getBean('stic_Payments');
-        $payment->retrieve_by_string_fields(array('transaction_code' => $transaction_code));
+        $paymentBean = Beanfactory::getBean('stic_Payments', $tpvParams['paymentId']);
+
         if ($payment == null) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error retrieving payment data for transaction code [{$transaction_code}].");
             return $this->returnCode('UNEXPECTED_ERROR');
         }
 
+        
+        // Comprobamos si el pago ha sido aceptado o no en función de la existencia de "Referencia" o "Codigo_error"
+        if (!empty($tpvParams['Referencia'])) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$payment->payment_method}] successfully done. TPVCECA response: [{$tpvParams['Referencia']}].");
+            $paymentBean->status = 'paid';
+            $ret='';
+
+        } elseif (!empty($tpvParams['Codigo_error'])) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment [{$payment->payment_method}] rejected. TPVCECA response: [{$tpvParams['Codigo_error']}].");
+            $paymentBean->status = 'rejected_gateway';
+            $paymentBean->gateway_rejection_reason = $error;
+            $ret='TPVCECA_REJECTED';
+        }
+
+
+        POR AQUI
+
+
+
+        
         $result = intval($tpvParams['Ds_Response']);
         $ret = '';
 
