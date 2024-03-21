@@ -1,10 +1,10 @@
 @font-face {
     font-family: "suitepicon";
-    src: url("suitepicon.eot?a244971a49eabae44fb7f10d7e4d68c3?#iefix") format("embedded-opentype"),
-url("suitepicon.woff2?a244971a49eabae44fb7f10d7e4d68c3") format("woff2"),
-url("suitepicon.woff?a244971a49eabae44fb7f10d7e4d68c3") format("woff"),
-url("suitepicon.ttf?a244971a49eabae44fb7f10d7e4d68c3") format("truetype"),
-url("suitepicon.svg?a244971a49eabae44fb7f10d7e4d68c3#suitepicon") format("svg");
+    src: url("suitepicon.eot?f0c3c527c0b031710e8c2ed12b6c7c9d?#iefix") format("embedded-opentype"),
+url("suitepicon.woff2?f0c3c527c0b031710e8c2ed12b6c7c9d") format("woff2"),
+url("suitepicon.woff?f0c3c527c0b031710e8c2ed12b6c7c9d") format("woff"),
+url("suitepicon.ttf?f0c3c527c0b031710e8c2ed12b6c7c9d") format("truetype"),
+url("suitepicon.svg?f0c3c527c0b031710e8c2ed12b6c7c9d#suitepicon") format("svg");
 }
 
 i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
@@ -717,33 +717,42 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-stic-sessions:before {
     content: "\f1e9";
 }
-.suitepicon-module-stic-validation-actions:before {
+.suitepicon-module-stic-skills:before {
     content: "\f1ea";
 }
-.suitepicon-module-subpanels:before {
+.suitepicon-module-stic-training:before {
     content: "\f1eb";
 }
-.suitepicon-module-survey-responses:before {
+.suitepicon-module-stic-validation-actions:before {
     content: "\f1ec";
 }
-.suitepicon-module-surveys:before {
+.suitepicon-module-stic-work-experience:before {
     content: "\f1ed";
 }
-.suitepicon-module-targets:before {
+.suitepicon-module-subpanels:before {
     content: "\f1ee";
 }
-.suitepicon-module-tasks:before {
+.suitepicon-module-survey-responses:before {
     content: "\f1ef";
 }
-.suitepicon-module-users:before {
+.suitepicon-module-surveys:before {
     content: "\f1f0";
 }
-.suitepicon-template-company:before {
+.suitepicon-module-targets:before {
     content: "\f1f1";
 }
-.suitepicon-template-file:before {
+.suitepicon-module-tasks:before {
     content: "\f1f2";
 }
-.suitepicon-template-issue:before {
+.suitepicon-module-users:before {
     content: "\f1f3";
+}
+.suitepicon-template-company:before {
+    content: "\f1f4";
+}
+.suitepicon-template-file:before {
+    content: "\f1f5";
+}
+.suitepicon-template-issue:before {
+    content: "\f1f6";
 }

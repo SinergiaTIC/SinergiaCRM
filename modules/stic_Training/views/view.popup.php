@@ -20,25 +20,31 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-class stic_Job_ApplicationsLogicHooks {
+require_once 'include/MVC/View/views/view.popup.php';
+require_once 'SticInclude/Views.php';
 
-    public function before_save(&$bean, $event, $arguments)
+class stic_TrainingViewPopup extends ViewPopup
+{
+
+    public function preDisplay()
     {
-        // Create name if empty
-        if (empty($bean->name)) {
-            if ($bean->load_relationship('stic_job_applications_contacts')) {
-                $related_beans = $bean->stic_job_applications_contacts->getBeans();
-                $related_bean = array_pop($related_beans);
-                $contact_name = $related_bean->first_name .' '.$related_bean->last_name;
-            }
-            if ($bean->load_relationship('stic_job_applications_stic_job_offers')) {
-                $related_beans = $bean->stic_job_applications_stic_job_offers->getBeans();
-                $related_bean = array_pop($related_beans);
-                $offer_name = $related_bean->name;
-            }
-            $bean->name = $contact_name .' - '.$offer_name;
-        }
+
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
     }
+    public function display()
+    {
+
+        parent::display();
+
+        SticViews::display($this);
+
+        echo getVersionedScript("modules/stic_Training/Utils.js");
+
+        // Write here you custom code
+    }
+
 }

@@ -20,12 +20,14 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-//prevents directly accessing this file from a web browser
-if (!defined('sugarEntry') || !sugarEntry) die ('Not A Valid Entry Point');
-if (! isset($hook_array) || ! is_array($hook_array)) {
-	$hook_array = Array();
-}
 
-$hook_version = 1;
-
-$hook_array['before_save'][] = Array(100, 'before_save', 'modules/stic_Job_Applications/LogicHooksCode.php', 'stic_Job_ApplicationsLogicHooks', 'before_save');
+$module_name = 'stic_Training';
+$metafiles[$module_name] = array(
+    'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
+    'editviewdefs' => 'modules/' . $module_name . '/metadata/editviewdefs.php',
+    'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
+    'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
+    'popupdefs' => 'modules/' . $module_name . '/metadata/popupdefs.php',
+    'searchfields' => 'modules/' . $module_name . '/metadata/SearchFields.php',
+    'subpaneldefs' => 'modules/' . $module_name . '/metadata/subpaneldefs.php',
+);
