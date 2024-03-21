@@ -204,10 +204,10 @@ class stic_PaymentsUtils
             $result = $db->query($emptyPaidAnnualizedFeeSQL);
 
             if ($result === false) {
-                $GLOBALS['log']->ERROR(__METHOD__ . ": Error executing SQL query [{$emptyPaidAnnualizedFeeSQL}]");
+                $GLOBALS['log']->error(__METHOD__ . ": Error executing SQL query [{$emptyPaidAnnualizedFeeSQL}]");
             } else {
                 $updatedRows = $db->getAffectedRowCount($result);
-                $GLOBALS['log']->INFO(__METHOD__ . ": Successfully emptied 'paid_annualized_fee' for [{$updatedRows}] payment commitments.");
+                $GLOBALS['log']->info(__METHOD__ . ": Successfully emptied 'paid_annualized_fee' for [{$updatedRows}] payment commitments.");
             }
         }
         return true;

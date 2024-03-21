@@ -71,9 +71,9 @@ class stic_RemittancesUtils
             $GLOBALS['log']->debug(__METHOD__ . ": Updating payment status ...");
             $res = $db->query($sql);
             if ($res === false) {
-                $GLOBALS['log']->ERROR(__METHOD__ . ": An error occurred updating the status of payments linked to the remittance [{$remittanceBean->id} - {$remittanceBean->name}]");
+                $GLOBALS['log']->error(__METHOD__ . ": An error occurred updating the status of payments linked to the remittance [{$remittanceBean->id} - {$remittanceBean->name}]");
             } else {
-                $GLOBALS['log']->INFO(__METHOD__ . ": [" . $db->getAffectedRowCount($res) . "] payments linked to the remittance [{$remittanceBean->id} - {$remittanceBean->name}] have been updated to paid status.");
+                $GLOBALS['log']->info(__METHOD__ . ": [" . $db->getAffectedRowCount($res) . "] payments linked to the remittance [{$remittanceBean->id} - {$remittanceBean->name}] have been updated to paid status.");
             }
 
             // Recalculate the 'paid_annualized_fee' for all Payment Commitments involved in a remittance status change.
@@ -114,10 +114,10 @@ class stic_RemittancesUtils
             $res2 = $db->query($paidAnnualizedFeeSQL);
 
             if ($res2 === false) {
-                $GLOBALS['log']->ERROR(__METHOD__ . ": An error occurred while updating the 'paid_annualized_fee' of Payment Commitments related to the remittance [{$remittanceBean->id} - {$remittanceBean->name}].");
+                $GLOBALS['log']->error(__METHOD__ . ": An error occurred while updating the 'paid_annualized_fee' of Payment Commitments related to the remittance [{$remittanceBean->id} - {$remittanceBean->name}].");
             } else {
                 $updatedRows2 = $db->getAffectedRowCount($res2);
-                $GLOBALS['log']->INFO(__METHOD__ . ": Successfully updated 'paid_annualized_fee' for [{$updatedRows2}] payment commitment(s) related to the remittance [{$remittanceBean->id} - {$remittanceBean->name}].");
+                $GLOBALS['log']->info(__METHOD__ . ": Successfully updated 'paid_annualized_fee' for [{$updatedRows2}] payment commitment(s) related to the remittance [{$remittanceBean->id} - {$remittanceBean->name}].");
             }
 
         }

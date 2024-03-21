@@ -346,9 +346,9 @@ class stic_Payment_CommitmentsUtils
         $GLOBALS['log']->debug(__METHOD__ . ": Updating payment projection ...");
         $res = $db->query($sql);
         if ($res === false) {
-            $GLOBALS['log']->ERROR(__METHOD__ . ": An error occurred updating the payment projection [{$db->last_error}]");
+            $GLOBALS['log']->error(__METHOD__ . ": An error occurred updating the payment projection [{$db->last_error}]");
         } else {
-            $GLOBALS['log']->INFO(__METHOD__ . ": [" . $db->getAffectedRowCount($res) . "] payments linked to the remittance [{$remittanceBean->id} - {$remittanceBean->name}] have been updated to paid status.");
+            $GLOBALS['log']->info(__METHOD__ . ": [" . $db->getAffectedRowCount($res) . "] payments linked to the remittance [{$remittanceBean->id} - {$remittanceBean->name}] have been updated to paid status.");
         }
 
     }
@@ -402,9 +402,9 @@ class stic_Payment_CommitmentsUtils
         $GLOBALS['log']->debug(__METHOD__ . ": Updating current year total paid ...");
         $res = $db->query($sql);
         if ($res === false) {
-            $GLOBALS['log']->ERROR(__METHOD__ . ": An error occurred updating the current year total paid [{$db->last_error}]");
+            $GLOBALS['log']->error(__METHOD__ . ": An error occurred updating the current year total paid [{$db->last_error}]");
         } else {
-            $GLOBALS['log']->INFO(__METHOD__ . ": [" . $db->getAffectedRowCount($res) . "] records updated.");
+            $GLOBALS['log']->info(__METHOD__ . ": [" . $db->getAffectedRowCount($res) . "] records updated.");
         }
 
     }
