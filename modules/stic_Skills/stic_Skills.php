@@ -97,8 +97,17 @@ class stic_Skills extends Basic
                 $contactName = $contactBean->first_name . ' ' . $contactBean->last_name;
             }
 
-            $this->name = $contactName . ' - ' .
-                $app_list_strings['stic_skills_types_list'][$this->type];
+            if ($this->type === 'language') {
+                $this->name = $contactName . ' - ' .
+                    $app_list_strings['stic_skills_types_list'][$this->type] . ' - ' .
+                    $app_list_strings['stic_skills_languages_list'][$this->language];
+                }
+            else {
+                $this->name = $contactName . ' - ' .
+                    $app_list_strings['stic_skills_types_list'][$this->type] . ' - ' .
+                    $this->skill;
+            }
+
 
         }
     }

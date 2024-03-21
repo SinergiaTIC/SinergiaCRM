@@ -59,8 +59,25 @@ switch (viewType()) {
       clear_all_errors();
       setCustomStatus(languageType, $("#language", "form").val());
       $("#other").val("");
-
     });
+
+    // Definition of the behavior of fields that are conditionally enabled or disabled
+    skillType = {
+      language: {
+          enabled: [],
+          disabled: ["skill", "level"]
+      },
+      default: {
+          enabled: ["skill", "level"],
+          disabled: []
+      }
+    };
+    setCustomStatus(skillType, $("#type", "form").val());
+    $("form").on("change", "#type", function() {
+        clear_all_errors();
+        setCustomStatus(skillType, $("#type", "form").val());
+    });
+
 
     $(document).ready(function () {
       // Definition of the behavior of fields that are conditionally enabled or disabled
