@@ -401,15 +401,10 @@ class FormulaCalculator
 
         if (($params = $this->evaluateFunctionParams("date", $text, $childItems)) != null) {
             // STIC-Custom 20240321 JBL - Unformat datetime fields to extract parts
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/??
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/174
             // return date($params[0], strtotime($params[1]));
-            global $timedate;
-            $date = $timedate->to_db($params[1]);
-            if($date=="") {
-                return date($params[0], strtotime($params[1]));
-            } else {
-                return date($params[0], strtotime($date));
-            }
+            $date = $this->getDBFormat($params[1]);
+            return date($params[0], strtotime($date));
             // END STIC-Custom
         }
 
