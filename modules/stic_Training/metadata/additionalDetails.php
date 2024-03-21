@@ -38,6 +38,8 @@ function additionalDetailsstic_Training($fields, SugarBean $bean = null, $params
     } else {
         global $current_language;
         $mod_strings = return_module_language($current_language, $bean->module_name);
+        $fields['GRANT_AMOUNT'] = empty($fields['GRANT_AMOUNT'])? $fields['GRANT_AMOUNT'] : format_number($fields['GRANT_AMOUNT'], $current_user);
+        $fields['AMOUNT'] = empty($fields['AMOUNT']) ? $fields['AMOUNT'] : format_number($fields['AMOUNT'], $current_user);
         return additional_details($fields, $bean, $mod_strings);
     }
 }
