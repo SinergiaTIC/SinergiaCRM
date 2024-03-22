@@ -181,4 +181,21 @@ class stic_Custom_View_Customizations extends Basic
             }
         }
     }
+
+    public function mark_deleted($id)
+    {
+        // Delete all Conditions
+        $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
+        foreach ($relatedBeans as $relatedBean) {
+            $relatedBean->mark_deleted($relatedBean->id); 
+        }
+
+        // Delete all Actions
+        $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
+        foreach ($relatedBeans as $relatedBean) {
+            $relatedBean->mark_deleted($relatedBean->id); 
+        }
+        
+        parent::mark_deleted($id);
+    }
 }

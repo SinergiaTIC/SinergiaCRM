@@ -47,9 +47,10 @@ class stic_Custom_Views_ProcessorLogicHooks
         //  1- Find all stic_Custom_Views defined for the module and view
         //  2- Filter stic_Custom_Views to apply with user permissions
         //  3- Sort stic_Custom_Views: less restrictions -> more restrictions
-        //  4- Get all customizations: [Conditions, Actions]
-        //  5- Convert to json
-        //  6- Write a js call to processSticCustomView when loaded
+        //  4- Get all Customizations: [Conditions, Actions]
+        //  5- Sort Customizations
+        //  6- Convert to json
+        //  7- Write a js call to processSticCustomView when loaded
 
         $is_admin = $current_user->isAdmin();
 

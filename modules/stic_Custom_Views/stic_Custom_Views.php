@@ -89,7 +89,7 @@ class stic_Custom_Views extends Basic
         include_once 'modules/stic_Custom_Views/Utils.php';
         $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_views_stic_custom_view_customizations');
         foreach ($relatedBeans as $relatedBean) {
-            // before_save LogicHook updates the name
+            // save updates the name
             $relatedBean->save(); 
         }
     }
@@ -111,4 +111,15 @@ class stic_Custom_Views extends Basic
     //         unset($_REQUEST['survey_questions_ids']);
     //     }
     // }
+
+    public function mark_deleted($id)
+    {
+        // Delete all Customizations
+        $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_views_stic_custom_view_customizations');
+        foreach ($relatedBeans as $relatedBean) {
+            $relatedBean->mark_deleted($relatedBean->id); 
+        }
+
+        parent::mark_deleted($id);
+    }
 }
