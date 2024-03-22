@@ -112,7 +112,12 @@ class CustomCalendar extends Calendar
             foreach ($acts as $act) {
                 $item = array();
                 $item['user_id'] = $user_id;
-                $item['module_name'] = $act->sugar_bean->module_dir;
+                $module_name = $act->sugar_bean->module_dir;
+                $item['module_name'] = $module_name;
+                // Store the type in case it is a stic_Work_calendar event
+                if ($module_name == 'stic_Work_Calendar') {
+                    $item['event_type'] = $act->sugar_bean->type;
+                }
                 $item['type'] = strtolower($act->sugar_bean->object_name);
                 $item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
                 $item['record'] = $act->sugar_bean->id;

@@ -874,6 +874,10 @@ $($.fullCalendar).ready(function () {
             if (element.module_name != "Meetings" && element.module_name != "Calls") {
                 valueToPush["editable"] = false;
             }
+            // Add a special class to stic_Work_Calendar events
+            if (element.module_name == "stic_Work_Calendar") {
+                valueToPush["className"] = 'stic-Work-Calendar' + element.event_type;
+            }            
             if (undefined !== global_colorList[element.module_name]) {
                 // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
                 // STIC#1192
@@ -1065,5 +1069,29 @@ $($.fullCalendar).ready(function () {
                 $("#calendar_title_" + user_id).html(data.full_name);
             });
         }
+
+        // Once the calendar is rendered, if in a shared view, show stic_Work_Calendar records in column or row form
+        prefix = 'stic-Work-Calendar';
+        workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
+        workCalendarEvents.forEach(function(element) {
+            element.textContent = "";
+            elementClasses = element.classList;
+            arrayClasses = [...elementClasses];
+            arrayClasses.forEach(function(elem) {
+                if (elem.startsWith(prefix)){
+                    type = elem.substring(prefix.length);
+                    if (['working', 'punctual_absence'].includes(type)) {
+                        element.style.width='15px';
+                    } else {
+                        element.style.height='15px';
+                    }
+                    if (type == 'working') {
+                        element.style.backgroundColor='green';
+                    } else {
+                        element.style.backgroundColor='red';
+                    }                    
+                }
+            });
+        });    
     }
 });
