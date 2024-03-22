@@ -228,7 +228,8 @@ var sticCVUtils = class sticCVUtils {
                 return $elem.attr("data-id-value")+"|"+$elem.text().trim();
             } 
             var text = fieldContent.text();
-            if(value_list!=undefined && value_list!=""){
+            if(value_list!=undefined && value_list!="" && 
+               fieldContent.type!="date" && fieldContent.type!="datetime" && fieldContent.type!="datetimecombo") {
                 return sticCVUtils.getListValueFromLabel(value_list, text);
             }
             return text;
