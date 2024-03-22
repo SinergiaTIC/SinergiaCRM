@@ -318,9 +318,17 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                     return !(this._getValue(value_list)??"").endsWith(condition.value);
                 }
             case 'is_null':
-                return (this._getValue(value_list)??"").split('|')[0]=="";
+                var value = (this._getValue(value_list)??"").split('|')[0];
+                if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
+                    value=value.replace(" 00:00","");
+                } 
+                return value=="";
             case 'is_not_null':
-                return (this._getValue(value_list)??"").split('|')[0]!="";
+                var value = (this._getValue(value_list)??"").split('|')[0];
+                if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
+                    value=value.replace(" 00:00","");
+                } 
+                return value!="";
         }
         return false;
     }
