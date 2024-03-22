@@ -33,8 +33,7 @@ array (
         'buttons' => 
         array (
           0 => 'EDIT',
-          //IEPA!!
-          //1 => 'DUPLICATE',
+          1 => 'DUPLICATE',
           2 => 'DELETE',
         ),
       ),

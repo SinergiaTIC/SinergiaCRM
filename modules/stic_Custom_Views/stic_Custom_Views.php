@@ -84,33 +84,23 @@ class stic_Custom_Views extends Basic
         $this->name = $app_list_strings['moduleList'][$this->view_module] . ' - ' . 
                       $this->customization_name . ' - ' . 
                       $app_list_strings['stic_custom_views_views_list'][$this->view_type];
-
-        // Update all related names
-        include_once 'modules/stic_Custom_Views/Utils.php';
-        $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_views_stic_custom_view_customizations');
-        foreach ($relatedBeans as $relatedBean) {
-            // save updates the name
-            $relatedBean->save(); 
-        }
     }
 
     public function save($check_notify = false){
         $this->before_save();
 
-        // if (($_POST["duplicateSave"] && $_POST["duplicateSave"]="true")) {
-        //      //IEPA!!
-        //      // Veure modules/Surveys/Surveys.php
-        // }
+        $id = parent::save($check_notify);
 
-        return parent::save($check_notify);
+        if (($_POST["duplicateSave"] && $_POST["duplicateSave"]=="true")) {
+            // Duplicate Customizations
+            $originalBean = BeanFactory::getBean("stic_Custom_Views", $_POST["duplicateId"]);
+            $customizationBeans = getRelatedBeanObjectArray($originalBean, 'stic_custom_views_stic_custom_view_customizations');
+            foreach ($customizationBeans as $customizationBean) {
+                $customizationBean->duplicateTo($id); 
+            }
+        }
+        return $id;
     }
-
-    // private function saveOptions(array $options, array $ids, array $deleted, $questionId) {
-    //     if (($_POST["duplicateSave"] && $_POST["duplicateSave"]="true"))
-    //     {
-    //         unset($_REQUEST['survey_questions_ids']);
-    //     }
-    // }
 
     public function mark_deleted($id)
     {
