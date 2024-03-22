@@ -189,10 +189,29 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     checkCondition_value(condition) {
         //condition.type="value"
 
+        switch(condition.operator) {
+            case 'Not_Equal_To':
+                condition.operator = 'Equal_To';
+                return !checkCondition_value(condition);
+            case 'Not_Contains':
+                condition.operator = 'Contains';
+                return !checkCondition_value(condition);
+            case 'Not_Starts_With':
+                condition.operator = 'Starts_With';
+                return !checkCondition_value(condition);
+            case 'Not_Ends_With':
+                condition.operator = 'Ends_With';
+                return !checkCondition_value(condition);
+            case 'is_not_null':
+                condition.operator = 'is_null';
+                return !checkCondition_value(condition);
+        }
+
         var value_list = condition.value_list;
         if(this.type=="multienum") {
             condition.value=(condition.value??"").replaceAll("^", "").split(',').sort().join(",");
         }
+
         switch(condition.operator) {
             case 'Equal_To':
                 if(this.type=="relate"){
@@ -207,16 +226,6 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                         return (this._getValue(value_list)??"").toLowerCase()==(condition.value??"").toLowerCase();
                     } else {
                         return this._getValue(value_list)==condition.value;
-                    }
-                }
-            case 'Not_Equal_To':
-                if(this.type=="relate"){
-                    return this._getValue(value_list).split('|')[0]!=condition.value.split('|')[0];
-                } else {
-                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
-                        return (this._getValue(value_list)??"").toLowerCase()!=(condition.value??"").toLowerCase();
-                    } else {
-                        return this._getValue(value_list)!=condition.value;
                     }
                 }
             case 'Greater_Than':
@@ -276,34 +285,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                         return (this._getValue(value_list)??"").includes(condition.value);
                     }
                 }
-            case 'Not_Contains':
-                if(this.type=="multienum"){
-                    var valueArray = this._getValue(value_list).split(',');
-                    var conditionValueArray = condition.value.split(',');
-                    for(var conditionValue of conditionValueArray){
-                        if(valueArray.includes(conditionValue)){
-                            return false;
-                       }
-                    }
-                    return true;
-                } else {
-                    if(typeof(condition.value)==="string" || condition.value instanceof String) {
-                        return !(this._getValue(value_list)??"").toLowerCase().includes((condition.value??"").toLowerCase());
-                    } else {
-                        return !(this._getValue(value_list)??"").includes(condition.value);
-                    }
-                }
             case 'Starts_With':
                 if(typeof(condition.value)==="string" || condition.value instanceof String) {
                     return (this._getValue(value_list)??"").toLowerCase().startsWith((condition.value??"").toLowerCase());
                 } else {
                     return (this._getValue(value_list)??"").startsWith(condition.value);
-                }
-            case 'Not_Starts_With':
-                if(typeof(condition.value)==="string" || condition.value instanceof String) {
-                    return !(this._getValue(value_list)??"").toLowerCase().startsWith((condition.value??"").toLowerCase());
-                } else {
-                    return !(this._getValue(value_list)??"").startsWith(condition.value);
                 }
             case 'Ends_With':
                 if(typeof(condition.value)==="string" || condition.value instanceof String) {
@@ -311,27 +297,16 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
                 } else {
                     return (this._getValue(value_list)??"").endsWith(condition.value);
                 }
-            case 'Not_Ends_With':
-                if(typeof(condition.value)==="string" || condition.value instanceof String) {
-                    return !(this._getValue(value_list)??"").toLowerCase().endsWith((condition.value??"").toLowerCase());
-                } else {
-                    return !(this._getValue(value_list)??"").endsWith(condition.value);
-                }
             case 'is_null':
                 var value = (this._getValue(value_list)??"").split('|')[0];
                 if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
                     value=value.replace(" 00:00","");
                 } 
                 return value=="";
-            case 'is_not_null':
-                var value = (this._getValue(value_list)??"").split('|')[0];
-                if(this.type=="date" || this.type=="datetime" || this.type=="datetimecombo") {
-                    value=value.replace(" 00:00","");
-                } 
-                return value!="";
         }
         return false;
     }
+
 }
 
 
