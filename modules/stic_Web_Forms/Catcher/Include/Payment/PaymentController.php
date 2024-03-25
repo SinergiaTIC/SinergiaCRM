@@ -243,79 +243,69 @@ class PaymentController extends WebFormDataController
     }
 
     /**
-     * Process the POS CECA response.
-     * Si se recibe la comunicación ok por parte del TPV de CECA es que el pago se ha autorizado correctamente
+     * Manage the response from CECA's TPV system following a payment attempt.
+     * It validates the payment authorization based on CECA's response parameters and handles
+     * the business logic for both successful and unsuccessful payments.
      */
     private function actionCECAResponse()
     {
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Processing CECA request ...");
         global $db;
 
-        // recuperamos el id y el metodo de pago a partir del número de operación recibido
+        // Retrieve payment details using the operation number provided by CECA's response.
+        // This is crucial for linking the response to the corresponding payment record.
         $payment = $db->fetchOne("select id, payment_method from stic_payments where transaction_code = CONVERT('{$_REQUEST['Num_operacion']}', UNSIGNED INTEGER)");
 
-        if (empty($payment['id'] || $payment['payment_method'])) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve the payment Method from REQUEST Num_operation (Transaction_code).");
+        // Verification of the existence of payment details to ensure the operation can be linked to an existing payment.
+        if (empty($payment['id']) || empty($payment['payment_method'])) {
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
 
-        // Guardamos el id del pago en el Request, ya que lo vamos a usar mas tarde
+        // Save the payment ID for later processing steps. This bridges the current response handling with subsequent actions.
         $_REQUEST['paymentId'] = $payment['id'];
 
-        // recuperamos los settings para el método de pago
+        // Retrieve payment method settings, particularly looking for the encryption key to validate the response signature.
+        // This step is critical for ensuring the integrity and authenticity of the response from CECA.
         $settings = PaymentBO::getTPVCECASettings($payment['payment_method']);
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Settings: ", print_r($settings, true));
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": TPVCECAResponseValues: ", print_r($_REQUEST, true));
 
         if (empty($settings['TPVCECA_CLAVE_ENCRIPTACION'])) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not retrieve the TPVCECA_CLAVE_ENCRIPTACION Setting.");
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
 
+        // Construct the signature string from response and settings, a step required to authenticate the response.
+        // The choice between 'Referencia' and 'Codigo_error' for signature computation is based on whether the payment was successful or not.
         $receivedSignature = $this->bo->getParam("Firma");
-
-        // Calculate the signature value required to include in the form. En los casos de pago válido recibimos el numero de referencia de la operación, y en caso de error, recibimos el número de error. Usamos uno u otro (el que esté presente) para calcular la firma 
         $newSignSourceString = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $_REQUEST['MerchantID'] . $_REQUEST['AcquirerBIN'] . $_REQUEST['TerminalID'] . $_REQUEST['Num_operacion'] . $_REQUEST['Importe'] . $settings['TPVCECA_TIPOMONEDA'] . $_REQUEST['Exponente'] . ($_REQUEST['Referencia'] ?? $_REQUEST['Codigo_error']);
 
         if (strlen(trim($newSignSourceString)) > 0) {
-            // SHA256 calculation
             $newSign = strtolower(hash('sha256', $newSignSourceString));
         } else {
             $this->returnCode('INVALID_CECA_SIGNATURE');
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invalid CECA signature received");
             return $this->feedBackError($this);
         }
 
-        // Chequeamos si la firma recibida en el $_REQUEST es la misma que la calculada ahora mismo usando la clave de encriptación de CECA
+        // Signature verification to confirm the response's integrity. Mismatched signatures indicate potential tampering or issues in the communication.
         if ($newSign != $receivedSignature) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The CECA signatures do not match [{$newSign}] [{$receivedSignature}].");
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": CECA Signature validated. Processing request...");
-
-        // Una vez verificado que todo está correcto, procesamos la respuesta 
+        // Process the verified response according to the business logic, which might involve updating payment status, sending notifications, etc.
         $retCode = $this->bo->proccessTPVCECAResponse($_REQUEST);
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Loading mail manager ...");
+        // Handling email notifications based on the processing outcome. This is part of the post-processing steps to inform relevant parties of the payment status.
         require_once __DIR__ . "/PaymentMailer.php";
         $mailer = WebFormMailer::readDataToDeferredMail(intval($tpvSys->vars_pay['Ds_Order']));
-        if (!$mailer) {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": No data for sending deferred emails.");
-        } else {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Sending notification emails ...");
+        if ($mailer) {
             $mailer->sendDeferredMails($retCode, self::RESPONSE_TYPE_TPV_RESPONSE);
         }
 
+        // Final handling based on the overall processing outcome, including error management and success acknowledgments.
         if ($retCode) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error processing the POS response [{$decodec}].");
             $this->returnCode($this->bo->getLastError());
             return $this->feedBackError($this);
         } else {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": POS response processed successfully.");
             return $this->createResponse(self::RESPONSE_STATUS_OK, self::RESPONSE_TYPE_TXT, $this->getMsgString('LBL_THANKS_FOR_DONATION'));
         }
     }
