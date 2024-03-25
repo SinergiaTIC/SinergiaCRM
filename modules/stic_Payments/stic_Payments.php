@@ -98,7 +98,7 @@ class stic_Payments extends Basic
         }
 
         if ($PCBean) {
-            global $timedate, $current_user;
+            global $timedate;
             
             // Get userDate object from user format or from database format 
             $userDate = $timedate->fromDBDate(SticUtils::formatDateForDatabase($this->payment_date));
@@ -136,8 +136,6 @@ class stic_Payments extends Basic
         if ($PCBean && $userDate) {
         
             // Recalculate the field paid_annualized_fee if applicable.
-            require_once 'SticInclude/Utils.php';
-           
             // Check if the status, amount, or payment_date fields have changed or if it is a new record.            
             if (
                 $this->status != $tempFetchedRow['status']
