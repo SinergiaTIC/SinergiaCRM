@@ -1071,27 +1071,30 @@ $($.fullCalendar).ready(function () {
         }
 
         // Once the calendar is rendered, if in a shared view, show stic_Work_Calendar records in column or row form
-        prefix = 'stic-Work-Calendar';
-        workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
-        workCalendarEvents.forEach(function(element) {
-            element.textContent = "";
-            elementClasses = element.classList;
-            arrayClasses = [...elementClasses];
-            arrayClasses.forEach(function(elem) {
-                if (elem.startsWith(prefix)){
-                    type = elem.substring(prefix.length);
-                    if (['working', 'punctual_absence'].includes(type)) {
-                        element.style.width='15px';
-                    } else {
-                        element.style.height='15px';
+        debugger;
+        if(global_view.includes('shared')){
+            prefix = 'stic-Work-Calendar';
+            workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
+            workCalendarEvents.forEach(function(element) {
+                element.textContent = "";
+                elementClasses = element.classList;
+                arrayClasses = [...elementClasses];
+                arrayClasses.forEach(function(elem) {
+                    if (elem.startsWith(prefix)){
+                        type = elem.substring(prefix.length);
+                        if (['working', 'punctual_absence'].includes(type)) {
+                            element.style.width='15px';
+                        } else {
+                            element.style.height='15px';
+                        }
+                        if (type == 'working') {
+                            element.style.backgroundColor='green';
+                        } else {
+                            element.style.backgroundColor='red';
+                        }                    
                     }
-                    if (type == 'working') {
-                        element.style.backgroundColor='green';
-                    } else {
-                        element.style.backgroundColor='red';
-                    }                    
-                }
-            });
-        });    
+                });
+            });    
+        }
     }
 });
