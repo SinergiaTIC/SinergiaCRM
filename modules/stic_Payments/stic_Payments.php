@@ -133,7 +133,7 @@ class stic_Payments extends Basic
         parent::save();
 
 
-        if ($PCBean) {
+        if ($PCBean && $userDate) {
         
             // Recalculate the field paid_annualized_fee if applicable.
             require_once 'SticInclude/Utils.php';
