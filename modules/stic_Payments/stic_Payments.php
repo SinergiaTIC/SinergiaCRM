@@ -108,7 +108,7 @@ class stic_Payments extends Basic
                 if ($userDate) {
                     $this->name = $PCBean->name . ' - ' . $userDate->asDBDate();
                 } else {
-                    // The payment is created from the pop-up view where the format of the date type fields is from the database
+                    // The payment is created in any context where the format of the date-type fields is bad formed.
                     $this->name = $PCBean->name . ' - ' . $this->payment_date;
                 }
             }
