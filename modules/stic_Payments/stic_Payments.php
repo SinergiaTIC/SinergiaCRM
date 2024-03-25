@@ -99,7 +99,10 @@ class stic_Payments extends Basic
 
         if ($PCBean) {
             global $timedate, $current_user;
-            $userDate = $timedate->fromUserDate($this->payment_date, false, $current_user);
+            
+            // Get userDate object from user format or from database format 
+            $userDate = $timedate->fromDBDate(SticUtils::formatDateForDatabase($this->payment_date));
+            
             // Create name if empty
             if (empty($this->name)) {
                 if ($userDate) {
@@ -121,7 +124,7 @@ class stic_Payments extends Basic
             }
         }
 
-        // Since the value of `fetched_row` is reset in the case of audited fields, 
+        // Since the value of `fetched_row` is reset in the case of audited fields,
         // we will save its contents in a variable to be used after running the `Save` method.
         $tempFetchedRow = $this->fetched_row;
 
@@ -131,11 +134,11 @@ class stic_Payments extends Basic
 
 
         if ($PCBean) {
-        
+
             // Recalculate the field paid_annualized_fee if applicable.
             require_once 'SticInclude/Utils.php';
-           
-            // Check if the status, amount, or payment_date fields have changed or if it is a new record.            
+
+            // Check if the status, amount, or payment_date fields have changed or if it is a new record.
             if (
                 $this->status != $tempFetchedRow['status']
                 || SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount'])

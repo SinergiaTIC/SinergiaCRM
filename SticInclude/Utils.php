@@ -620,4 +620,47 @@ EOQ;
             return $number; // Return the float value of the input number after removing formatting
         }
     }
+
+    /**
+     * Formats date and datetime strings into the standard database format.
+     * Cloned from the getDBFormat function in modules/AOW_Actions/FormulaCalculator.php
+     *
+     * @param string $date String representing a date or datetime.
+     * @return string|null Formatted string suitable for database storage, or null if the input is invalid.
+     */
+    public static function formatDateForDatabase($date)
+    {
+        $formatDate = 'Y-m-d';
+        $validDate = DateTime::createFromFormat($formatDate, $date);
+        $formatDateTime = 'Y-m-d H:i:s';
+        $validDateTime = DateTime::createFromFormat($formatDateTime, $date);
+
+        // If the string matches the date format without time, return it unchanged.
+        if ($validDate && $validDate->format($formatDate) === $date) {
+            return $date;
+        }
+        // If the string matches the datetime format, adjust the timezone.
+        else if ($validDateTime && $validDateTime->format($formatDateTime) === $date) {
+            global $timedate, $current_user;
+            $date = $timedate->fromDb($date);
+            $date = $timedate->tzUser($date, $current_user);
+            return $date->format('Y-m-d H:i:s');
+        }
+        // If the input does not match either format, attempt to format based on user type.
+        else {
+            global $current_user, $timedate;
+            // Determine if the string includes a time component.
+            if (strpos($date, " ") !== false) {
+                $type = 'datetime';
+            } else {
+                $type = 'date';
+            }
+            // Convert from user's format to database format.
+            $date = $timedate->fromUserType($date, $type, $current_user);
+            if ($date) {
+                return $date->asDb(false);
+            }
+            return null;
+        }
+    }
 }
