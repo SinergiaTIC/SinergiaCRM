@@ -465,7 +465,7 @@ class PaymentBO extends WebFormDataBO
     {
         require_once "modules/stic_Settings/Utils.php";
 
-        // Settings are a pair of keys, allowing multiple configurations:
+        // Settings are a pair of keys, allowing multiple configurations: 
         // Single config:
         //     STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET (production)
         //     STRIPE_SECRET_KEY_TEST, STRIPE_WEBHOOK_SECRET_TEST (test)
@@ -496,15 +496,15 @@ class PaymentBO extends WebFormDataBO
                 // Check if is a "SECRET_KEY", then find related WEBHOOK_SECRET and add the pair to returning Settings
                 if (str_ends_with($key, "SECRET_KEY") || str_ends_with($key, "SECRET_KEY_TEST")) {
                     if (($mode == '0' && !str_ends_with($key, "_TEST") && str_starts_with($key, "STRIPE_")) ||
-                        ($mode == '1' && str_ends_with($key, "_TEST") && str_starts_with($key, "STRIPE_"))) {
+                        ($mode == '1' &&  str_ends_with($key, "_TEST") && str_starts_with($key, "STRIPE_"))) {
 
                         // Find the WEBHOOK_SECRET
                         $webHookSecretKey = str_replace("SECRET_KEY", "WEBHOOK_SECRET", $key);
-                        if (!isset($settingsStripe[$webHookSecretKey])) {
+                        if(!isset($settingsStripe[$webHookSecretKey])) {
                             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": STRIPE missing Setting {$webHookSecretKey}; Ignoring {$key}, check STRIPE settings.");
                         } else {
                             // Get the config Key (XXXX for STRIPE_ALT_XXXX_SECRET_KEY and STRIPE_ALT_XXXX_SECRET_KEY_TEST)
-                            $configKey = (str_starts_with($key, "STRIPE_ALT_")) ? str_replace(array("_TEST", "STRIPE_ALT_", "_SECRET_KEY"), "", $key) : "";
+                            $configKey = (str_starts_with($key, "STRIPE_ALT_")) ? str_replace(array("_TEST","STRIPE_ALT_","_SECRET_KEY"), "", $key) : "";
                             $stripeConsts[$configKey]['STRIPE_SECRET_KEY'] = $value;
                             $stripeConsts[$configKey]['STRIPE_WEBHOOK_SECRET'] = $settingsStripe[$webHookSecretKey];
 
@@ -775,8 +775,7 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode (By reference) Fills the return Code of the process
      * @return boolean Says if the event is correctly processed
      */
-    public function processStripeEvent($event, &$transaction_code, &$retCode)
-    {
+    public function processStripeEvent($event, &$transaction_code, &$retCode) {
         if ($event == null) {
             $retCode = "STRIPE_INVALID_EVENT";
             return false;
@@ -815,8 +814,7 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode
      * @return boolean
      */
-    private function processStripeCheckout($session, $eventType, $paymentMailer, &$transaction_code, &$retCode)
-    {
+    private function processStripeCheckout($session, $eventType, $paymentMailer, &$transaction_code, &$retCode) {
         if ($session == null) {
             $retCode = "STRIPE_INVALID_SESSION";
             return false;
@@ -835,9 +833,9 @@ class PaymentBO extends WebFormDataBO
                 $subject = translate('LBL_STRIPE_ADMIN_CANT_GET_PAYMENT', 'stic_Web_Forms') . " [{$eventType}]";
             }
             $paymentMailer->sendStripeInfo('', $subject, $body);
-
+            
             $retCode = "STRIPE_PAYMENT_NOT_FOUND";
-            return false;
+            return false; 
         }
 
         $paymentBean = $this->getLastPayment();
@@ -845,7 +843,7 @@ class PaymentBO extends WebFormDataBO
             case 'checkout.session.completed':
             case 'checkout.session.async_payment_succeeded':
                 $paymentBean->status = 'paid';
-                $paymentBean->amount = $session->amount_total / 100;
+                $paymentBean->amount = $session->amount_total/100;
                 $paymentBean->gateway_log .= '##### ' . print_r($session, true);
                 break;
             case 'checkout.session.async_payment_failed':
@@ -870,8 +868,7 @@ class PaymentBO extends WebFormDataBO
      * @param string $transaction_code
      * @return boolean
      */
-    private function loadPaymentBeansFromStripeSession($session, &$transaction_code)
-    {
+    private function loadPaymentBeansFromStripeSession($session, &$transaction_code) {
         require_once 'SticInclude/Utils.php';
 
         $paymentBean = null;
@@ -901,9 +898,9 @@ class PaymentBO extends WebFormDataBO
         $this->setLastPayment($paymentBean);
         $this->setLastPC($pcBean);
 
-        return $this->getLastPC() != null && $this->getLastPayment() != null;
+        return $this->getLastPC()!=null && $this->getLastPayment()!=null;
     }
-
+    
     /**
      * Process a Stripe Invoice event
      *
@@ -913,13 +910,12 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode
      * @return boolean
      */
-    private function processStripeInvoice($invoice, $eventType, $paymentMailer, &$retCode)
-    {
+    private function processStripeInvoice($invoice, $eventType, $paymentMailer, &$retCode) {
         if ($invoice == null) {
             $retCode = "STRIPE_INVALID_INVOICE";
             return false;
         }
-
+        
         // Process only invoice payments
         if ($eventType != 'invoice.payment_succeeded') {
             return true;
@@ -937,14 +933,14 @@ class PaymentBO extends WebFormDataBO
                 $subject = translate('LBL_STRIPE_ADMIN_CANT_GET_PAYMENT', 'stic_Web_Forms') . " [{$eventType}]";
             }
             $paymentMailer->sendStripeInfo('', $subject, $body);
-
+            
             $retCode = "STRIPE_PAYMENT_NOT_FOUND";
-            return false;
+            return false; 
         }
         $paymentBean = $this->getLastPayment();
         if ($invoice->paid) {
             $paymentBean->status = 'paid';
-            $paymentBean->amount = $invoice->amount_paid / 100;
+            $paymentBean->amount = $invoice->amount_paid/100;
         } else {
             $paymentBean->status = 'pending';
         }
@@ -960,8 +956,7 @@ class PaymentBO extends WebFormDataBO
      * @param Stripe\Invoice $invoice
      * @return boolean
      */
-    private function loadPaymentBeansFromStripeInvoice($invoice)
-    {
+    private function loadPaymentBeansFromStripeInvoice($invoice) {
         $paymentBean = null;
         $pcBean = null;
 
@@ -975,7 +970,7 @@ class PaymentBO extends WebFormDataBO
         $this->setLastPayment($paymentBean);
         $this->setLastPC($pcBean);
 
-        return $this->getLastPC() != null && $this->getLastPayment() != null;
+        return $this->getLastPC()!=null && $this->getLastPayment()!=null;
     }
 
     /**
@@ -987,8 +982,7 @@ class PaymentBO extends WebFormDataBO
      * @param string $retCode
      * @return boolean
      */
-    private function processStripeSubscription($subscription, $eventType, $paymentMailer, &$retCode)
-    {
+    private function processStripeSubscription($subscription, $eventType, $paymentMailer, &$retCode) {
         if ($subscription == null) {
             $retCode = "STRIPE_INVALID_SUBSCRIPTION";
             return false;
@@ -1013,7 +1007,7 @@ class PaymentBO extends WebFormDataBO
             $paymentMailer->sendStripeInfo('', $subject, $body);
 
             $retCode = "STRIPE_PAYMENT_NOT_FOUND";
-            return false;
+            return false; 
         }
         $pcBean = $this->getLastPC();
 
@@ -1032,8 +1026,7 @@ class PaymentBO extends WebFormDataBO
      * @param Stripe\Subscription $subscription
      * @return boolean
      */
-    private function loadPaymentBeansFromStripeSubscription($subscription)
-    {
+    private function loadPaymentBeansFromStripeSubscription($subscription) {
         require_once 'SticInclude/Utils.php';
 
         $pcBean = null;
@@ -1041,22 +1034,22 @@ class PaymentBO extends WebFormDataBO
         // Load the Payment Commitment from subscription, then the Payment
         $pcBean = Beanfactory::getBean('stic_Payment_Commitments');
         $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $subscription->id));
-
+        
         $this->setLastPayment(null);
         $this->setLastPC($pcBean);
 
-        return $pcBean != null;
+        return $pcBean!=null;
     }
 
     private function getBeanPaymentFromStripePaymentCommitment($pcBean, $paymentTimestamp)
     {
         $pcId = $pcBean->id;
         $paymentDate = date('Ym', $paymentTimestamp);
-        $paymentIdSQL = "SELECT p.id
+        $paymentIdSQL ="SELECT p.id
                         FROM stic_payments p
-                            INNER JOIN stic_payments_stic_payment_commitments_c rel
+                            INNER JOIN stic_payments_stic_payment_commitments_c rel 
                                 ON p.id = rel.stic_payments_stic_payment_commitmentsstic_payments_idb
-                            INNER JOIN stic_payment_commitments pc
+                            INNER JOIN stic_payment_commitments pc 
                                 ON pc.id = rel.stic_paymebfe2itments_ida
                         WHERE pc.Id = '{$pcId}'
                             AND p.deleted = 0

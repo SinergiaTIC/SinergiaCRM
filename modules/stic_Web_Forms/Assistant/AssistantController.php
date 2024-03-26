@@ -484,11 +484,11 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     		// Conditions of exclusion from the list by field no editable 
 			if ((in_array('studio', $field_def))
 				&& ($field_def['studio'] === false || ($field_def['studio']['view'] ?? true) === false)
-			)
-			{
-				$GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [{$field_def['name']}] excluded by field no editable.");
-				continue;
-			}
+			   )
+    		{
+    			$GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [{$field_def['name']}] excluded by field no editable.");
+    			continue;
+    		}
     
 
     		$field_def['vname'] = preg_replace('/:$/','',translate($field_def['vname'], $bean->module_name));
