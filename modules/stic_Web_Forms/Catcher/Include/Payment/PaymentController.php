@@ -296,7 +296,7 @@ class PaymentController extends WebFormDataController
 
         // Handling email notifications based on the processing outcome. This is part of the post-processing steps to inform relevant parties of the payment status.
         require_once __DIR__ . "/PaymentMailer.php";
-        $mailer = WebFormMailer::readDataToDeferredMail(intval($tpvSys->vars_pay['Ds_Order']));
+        $mailer = WebFormMailer::readDataToDeferredMail(intval($_REQUEST['Num_operacion']));
         if ($mailer) {
             $mailer->sendDeferredMails($retCode, self::RESPONSE_TYPE_TPV_RESPONSE);
         }
@@ -440,9 +440,7 @@ class PaymentController extends WebFormDataController
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
-        // var_dump($settings);
-        // die();
-
+        
         // Check that the settings are complete and if so, add it to the parameters
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning CECA settings to request parameters...");
         $requiredConsts = [
