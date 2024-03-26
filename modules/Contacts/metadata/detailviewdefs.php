@@ -697,7 +697,7 @@ array (
           array (
             'name' => 'primary_address_street',
             // STIC - ART - Incorrect tag for the address in DetailView
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/180
             // 'label' => 'LBL_PRIMARY_ADDRESS',
             'label' => 'LBL_PRIMARY_ADDRESS_STREET',
             // END STIC
@@ -706,7 +706,7 @@ array (
           array (
             'name' => 'alt_address_street',
             // STIC - ART - Incorrect tag for the address in DetailView
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/180
             // 'label' => 'LBL_ALTERNATE_ADDRESS',
             'label' => 'LBL_ALT_ADDRESS_STREET',
             // END STIC
