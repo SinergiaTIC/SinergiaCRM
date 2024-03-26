@@ -876,7 +876,11 @@ $($.fullCalendar).ready(function () {
             }
             // Add a special class to stic_Work_Calendar events
             if (element.module_name == "stic_Work_Calendar") {
-                valueToPush["className"] = 'stic-Work-Calendar' + element.event_type;
+                if (element.event_type == 'working' || element.event_type == 'punctual_absence') {
+                    valueToPush["className"] = 'stic-Work-Calendar' + element.event_type;
+                } else {
+                    valueToPush["allDay"] = true;
+                }
             }            
             if (undefined !== global_colorList[element.module_name]) {
                 // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
@@ -1070,7 +1074,7 @@ $($.fullCalendar).ready(function () {
             });
         }
 
-        // Once the calendar is rendered, if in a shared view, show stic_Work_Calendar records in column or row form
+        // Once the calendar is rendered, display the records with the stic_Work_Calendar class in column form
         prefix = 'stic-Work-Calendar';
         workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
         workCalendarEvents.forEach(function(element) {
@@ -1080,15 +1084,11 @@ $($.fullCalendar).ready(function () {
             arrayClasses.forEach(function(elem) {
                 if (elem.startsWith(prefix)){
                     type = elem.substring(prefix.length);
-                    if (['working', 'punctual_absence'].includes(type)) {
-                        element.style.width='15px';
-                    } else {
-                        element.style.height='15px';
-                    }
+                    element.style.width='15px';                        
                     if (type == 'working') {
                         element.style.backgroundColor='green';
                     } else {
-                        element.style.backgroundColor='red';
+                        element.style.backgroundColor='red';                     
                     }                    
                 }
             });
