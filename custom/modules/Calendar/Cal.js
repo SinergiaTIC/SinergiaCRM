@@ -877,7 +877,7 @@ $($.fullCalendar).ready(function () {
             // Add a special class to stic_Work_Calendar events
             if (element.module_name == "stic_Work_Calendar") {
                 if (element.event_type == 'working' || element.event_type == 'punctual_absence') {
-                    valueToPush["className"] = 'stic-Work-Calendar' + element.event_type;
+                    valueToPush["className"] = 'stic-Work-Calendar';
                 } else {
                     valueToPush["allDay"] = true;
                 }
@@ -885,9 +885,15 @@ $($.fullCalendar).ready(function () {
             if (undefined !== global_colorList[element.module_name]) {
                 // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
                 // STIC#1192
-                valueToPush["backgroundColor"] = element.color ? element.color : "#" + global_colorList[element.module_name].body;
-                valueToPush["borderColor"] = element.color ? element.color : "#" + global_colorList[element.module_name].border;
-                valueToPush["textColor"] = element.color ? getContrastYIQ(element.color.substring(1)) : "#" + global_colorList[element.module_name].text;
+                if (element.module_name != 'stic_Work_Calendar') {
+                    valueToPush["backgroundColor"] = element.color ? element.color : "#" + global_colorList[element.module_name].body;
+                    valueToPush["borderColor"] = element.color ? element.color : "#" + global_colorList[element.module_name].border;
+                    valueToPush["textColor"] = element.color ? getContrastYIQ(element.color.substring(1)) : "#" + global_colorList[element.module_name].text;
+                } else {
+                    valueToPush["backgroundColor"] = (element.event_type == 'working') ? "#" + global_colorList[element.module_name].body_working : "#" + global_colorList[element.module_name].body_noworking;
+                    valueToPush["borderColor"] = (element.event_type == 'working') ? "#" + global_colorList[element.module_name].border_working : "#" + global_colorList[element.module_name].border_noworking;
+                    valueToPush["textColor"] = (element.event_type == 'working') ? "#" + global_colorList[element.module_name].text_working : "#" + global_colorList[element.module_name].text_noworking;
+                }
                 function getContrastYIQ(hexcolor){
                     var r = parseInt(hexcolor.substr(0,2),16);
                     var g = parseInt(hexcolor.substr(2,2),16);
@@ -1079,19 +1085,7 @@ $($.fullCalendar).ready(function () {
         workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
         workCalendarEvents.forEach(function(element) {
             element.textContent = "";
-            elementClasses = element.classList;
-            arrayClasses = [...elementClasses];
-            arrayClasses.forEach(function(elem) {
-                if (elem.startsWith(prefix)){
-                    type = elem.substring(prefix.length);
-                    element.style.width='15px';                        
-                    if (type == 'working') {
-                        element.style.backgroundColor='green';
-                    } else {
-                        element.style.backgroundColor='red';                     
-                    }                    
-                }
-            });
+            element.style.width='5%';  
         });    
     }
 });

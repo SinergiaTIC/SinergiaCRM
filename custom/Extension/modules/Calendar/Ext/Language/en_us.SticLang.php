@@ -44,3 +44,6 @@ $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Work Calendar';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_ACTIVITY_TYPE'] = 'Activity type';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_USER'] = 'Employee';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Department';
+
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = 'Work Calendar - Available';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Work calendar - Not available';

@@ -87,11 +87,52 @@ class CustomCalendarDisplay extends CalendarDisplay
             'text' => 'E5E5EE',
         ),
         'stic_Work_Calendar' => array(
-            'border' => '524B62',
-            'body' => '711674',
-            'text' => 'E5E5EE',
-        ),        
+            'border_working' => '0A2407',
+            'body_working' => '1C6114',
+            'text_working' => 'E5E5EE',
+            'border_noworking' => '170000',
+            'body_noworking' => 'D60000',
+            'text_noworking' => 'E5E5EE',        
+        ),       
     );
+
+    // Overriding to add the stic_Work_Calendar properties
+    public function checkActivity($activity = "")
+    {
+        global $current_user, $mod_strings;
+        if (empty($activity)) {
+            $activity = $this->activity_colors;
+        }
+        $newActivities = unserialize(base64_decode($current_user->getPreference("CalendarActivities")));
+        if ($newActivities) {
+            $activity = array_merge($activity, $newActivities);
+        }
+        foreach ($activity as $key => $activityItem) {
+            if (isset($GLOBALS['app_list_strings']['moduleList'][ $key ]) && !empty($GLOBALS['app_list_strings']['moduleList'][ $key ]) && !empty($this->cal->activityList[ $key ])) {
+                if ($key != 'stic_Work_Calendar') {
+                    $activity[ $key ]['label'] = $GLOBALS['app_list_strings']['moduleList'][ $key ];
+                } else {
+                    $activity[ $key ]['label_working'] = $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'];
+                    $activity[ $key ]['label_noworking'] = $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'];
+                }
+            } else {
+                unset($activity[ $key ]);
+            }
+        }
+        if (isset($activity) && !empty($activity)) {
+            $this->activity_colors = $activity;
+        }
+        if (!empty($this->cal->activityList)) {
+            foreach ($this->cal->activityList as $key=>$value) {
+                if (isset($GLOBALS['beanList'][$key]) && !empty($GLOBALS['beanList'][$key]) && !isset($this->activity_colors[ $key ])) {
+                    $this->activity_colors[ $key ] = $GLOBALS['sugar_config']['CalendarColors'][$key];
+                    $activity[ $key ] = $GLOBALS['sugar_config']['CalendarColors'][$key];
+                }
+            }
+        }
+
+        return $activity;
+    }
 
     // Overriding the array to add Shared Day option
     public function get_date_info($view, $date_time)
