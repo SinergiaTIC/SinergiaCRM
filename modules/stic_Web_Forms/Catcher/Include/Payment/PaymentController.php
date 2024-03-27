@@ -261,7 +261,7 @@ class PaymentController extends WebFormDataController {
         // This step is critical for ensuring the integrity and authenticity of the response from CECA.
         $settings = PaymentBO::getTPVCECASettings($payment['payment_method']);
 
-        if (empty($settings['TPVCECA_CLAVE_ENCRIPTACION'])) {
+        if (empty($settings['TPVCECA_PASSWORD'])) {
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
         }
@@ -269,7 +269,7 @@ class PaymentController extends WebFormDataController {
         // Construct the signature string from response and settings, a step required to authenticate the response.
         // The choice between 'Referencia' and 'Codigo_error' for signature computation is based on whether the payment was successful or not.
         $receivedSignature = $this->bo->getParam("Firma");
-        $newSignSourceString = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $_REQUEST['MerchantID'] . $_REQUEST['AcquirerBIN'] . $_REQUEST['TerminalID'] . $_REQUEST['Num_operacion'] . $_REQUEST['Importe'] . $settings['TPVCECA_TIPOMONEDA'] . $_REQUEST['Exponente'] . ($_REQUEST['Referencia'] ?? $_REQUEST['Codigo_error']);
+        $newSignSourceString = $settings['TPVCECA_PASSWORD'] . $_REQUEST['MerchantID'] . $_REQUEST['AcquirerBIN'] . $_REQUEST['TerminalID'] . $_REQUEST['Num_operacion'] . $_REQUEST['Importe'] . $settings['TPVCECA_CURRENCY'] . $_REQUEST['Exponente'] . ($_REQUEST['Referencia'] ?? $_REQUEST['Codigo_error']);
 
         if (strlen(trim($newSignSourceString)) > 0) {
             $newSign = strtolower(hash('sha256', $newSignSourceString));
@@ -436,12 +436,12 @@ class PaymentController extends WebFormDataController {
         // Check that the settings are complete and if so, add it to the parameters
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning CECA settings to request parameters...");
         $requiredConsts = [
-            'TPVCECA_MERCHANTID',
-            'TPVCECA_ACQUIRERBIN',
-            'TPVCECA_TERMINALID',
-            'TPVCECA_TIPOMONEDA',
+            'TPVCECA_MERCHANT_CODE',
+            'TPVCECA_ACQUIRER_BIN',
+            'TPVCECA_TERMINAL',
+            'TPVCECA_CURRENCY',
             'TPVCECA_MERCHANT_URL',
-            'TPVCECA_CLAVE_ENCRIPTACION',
+            'TPVCECA_PASSWORD',
             'TPVCECA_VERSION',
             'TPVCECA_TEST',
             'TPVCECA_SERVER_URL',
@@ -520,7 +520,7 @@ class PaymentController extends WebFormDataController {
         }
 
         // Calculate the signature value required to include in the form
-        $firma = $settings['TPVCECA_CLAVE_ENCRIPTACION'] . $settings['TPVCECA_MERCHANTID'] . $settings['TPVCECA_ACQUIRERBIN'] . $settings['TPVCECA_TERMINALID'] . $id . $amount . $settings['TPVCECA_TIPOMONEDA'] . '2' . 'SHA2' . $okURL . $koURL;
+        $firma = $settings['TPVCECA_PASSWORD'] . $settings['TPVCECA_MERCHANT_CODE'] . $settings['TPVCECA_ACQUIRER_BIN'] . $settings['TPVCECA_TERMINAL'] . $id . $amount . $settings['TPVCECA_CURRENCY'] . '2' . 'SHA2' . $okURL . $koURL;
 
         if (strlen(trim($firma)) > 0) {
             // SHA256 calculation
@@ -533,14 +533,14 @@ class PaymentController extends WebFormDataController {
         // Retrieve template
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving template...");
         $xtpl->assign('server_url', $settings["TPVCECA_SERVER_URL"]);
-        $xtpl->assign('merchant_id', $settings['TPVCECA_MERCHANTID']);
-        $xtpl->assign('acquirer_bin', $settings['TPVCECA_ACQUIRERBIN']);
-        $xtpl->assign('terminal_id', $settings['TPVCECA_TERMINALID']);
+        $xtpl->assign('merchant_id', $settings['TPVCECA_MERCHANT_CODE']);
+        $xtpl->assign('acquirer_bin', $settings['TPVCECA_ACQUIRER_BIN']);
+        $xtpl->assign('terminal_id', $settings['TPVCECA_TERMINAL']);
         $xtpl->assign('koURL', $koURL);
         $xtpl->assign('okURL', $okURL);
         $xtpl->assign('num_operation', $id);
         $xtpl->assign('importe', $amount);
-        $xtpl->assign('tipomoneda', $settings['TPVCECA_TIPOMONEDA']);
+        $xtpl->assign('tipomoneda', $settings['TPVCECA_CURRENCY']);
         $xtpl->assign('description', $PCBean->banking_concept);
         $xtpl->assign('idioma', $idioma);
         $xtpl->assign('firma', $firma);
