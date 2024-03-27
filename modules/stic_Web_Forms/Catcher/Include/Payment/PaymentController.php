@@ -261,6 +261,11 @@ class PaymentController extends WebFormDataController {
         // This step is critical for ensuring the integrity and authenticity of the response from CECA.
         $settings = PaymentBO::getTPVCECASettings($payment['payment_method']);
 
+        // Fill in 0 on the left
+        $settings['TPVCECA_MERCHANT_CODE']=str_pad($settings['TPVCECA_MERCHANT_CODE'],9,'0', STR_PAD_LEFT);
+        $settings['TPVCECA_ACQUIRER_BIN']=str_pad($settings['TPVCECA_ACQUIRER_BIN'], 10, '0', STR_PAD_LEFT);
+        $settings['TPVCECA_TERMINAL']=str_pad($settings['TPVCECA_TERMINAL'], 8, '0', STR_PAD_LEFT);
+
         if (empty($settings['TPVCECA_PASSWORD'])) {
             $this->returnCode('UNEXPECTED_ERROR');
             return $this->feedBackError($this);
@@ -269,7 +274,16 @@ class PaymentController extends WebFormDataController {
         // Construct the signature string from response and settings, a step required to authenticate the response.
         // The choice between 'Referencia' and 'Codigo_error' for signature computation is based on whether the payment was successful or not.
         $receivedSignature = $this->bo->getParam("Firma");
-        $newSignSourceString = $settings['TPVCECA_PASSWORD'] . $_REQUEST['MerchantID'] . $_REQUEST['AcquirerBIN'] . $_REQUEST['TerminalID'] . $_REQUEST['Num_operacion'] . $_REQUEST['Importe'] . $settings['TPVCECA_CURRENCY'] . $_REQUEST['Exponente'] . ($_REQUEST['Referencia'] ?? $_REQUEST['Codigo_error']);
+        $newSignSourceString = 
+            $settings['TPVCECA_PASSWORD'] 
+            . $_REQUEST['MerchantID'] 
+            . $_REQUEST['AcquirerBIN'] 
+            . $_REQUEST['TerminalID'] 
+            . $_REQUEST['Num_operacion'] 
+            . $_REQUEST['Importe'] 
+            . $settings['TPVCECA_CURRENCY'] 
+            . $_REQUEST['Exponente'] 
+            . ($_REQUEST['Referencia'] ?? $_REQUEST['Codigo_error']);
 
         if (strlen(trim($newSignSourceString)) > 0) {
             $newSign = strtolower(hash('sha256', $newSignSourceString));
@@ -433,6 +447,11 @@ class PaymentController extends WebFormDataController {
             return $this->feedBackError($this);
         }
         
+        // Fill in 0 on the left
+        $settings['TPVCECA_MERCHANT_CODE']=str_pad($settings['TPVCECA_MERCHANT_CODE'],9,'0', STR_PAD_LEFT);
+        $settings['TPVCECA_ACQUIRER_BIN']=str_pad($settings['TPVCECA_ACQUIRER_BIN'], 10, '0', STR_PAD_LEFT);
+        $settings['TPVCECA_TERMINAL']=str_pad($settings['TPVCECA_TERMINAL'], 8, '0', STR_PAD_LEFT);
+           
         // Check that the settings are complete and if so, add it to the parameters
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Assigning CECA settings to request parameters...");
         $requiredConsts = [
@@ -520,7 +539,18 @@ class PaymentController extends WebFormDataController {
         }
 
         // Calculate the signature value required to include in the form
-        $firma = $settings['TPVCECA_PASSWORD'] . $settings['TPVCECA_MERCHANT_CODE'] . $settings['TPVCECA_ACQUIRER_BIN'] . $settings['TPVCECA_TERMINAL'] . $id . $amount . $settings['TPVCECA_CURRENCY'] . '2' . 'SHA2' . $okURL . $koURL;
+        $firma = $settings['TPVCECA_PASSWORD']
+        . $settings['TPVCECA_MERCHANT_CODE']
+        . $settings['TPVCECA_ACQUIRER_BIN']
+        . $settings['TPVCECA_TERMINAL']
+        . $id
+        . $amount
+        . $settings['TPVCECA_CURRENCY']
+        . '2'
+        . 'SHA2'
+        . $okURL
+        . $koURL;
+
 
         if (strlen(trim($firma)) > 0) {
             // SHA256 calculation
