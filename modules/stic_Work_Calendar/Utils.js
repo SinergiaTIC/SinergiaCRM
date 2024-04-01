@@ -35,24 +35,12 @@ switch (viewType()) {
   case "popup":    
     // Set autofill mark beside field label
     setAutofill(["name"]);  
-
-    // Adding color dots to "color" enum field
-    buildEditableColorFieldSelectize('color');    
     break;
     
   case "detail":
-    // Adding color dots to "color" enum field
-    buildDetailedColorFieldSelectize('color');
     break;
 
   case "list":
-
-    // Adding color dots to "color" enum field
-    // Check both massupdate and both filters, basic and advanced.
-    buildEditableColorFieldSelectize('mass_color');
-    buildEditableColorFieldSelectize('color_basic');
-    buildEditableColorFieldSelectize('color_advanced');
-
     button = {
       id: "bt_mass_update_dates_listview",
       title: SUGAR.language.get("stic_Work_Calendar", "LBL_MASS_UPDATE_DATES_BUTTON_TITTLE"),

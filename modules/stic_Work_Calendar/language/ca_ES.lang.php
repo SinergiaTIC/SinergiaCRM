@@ -77,6 +77,4 @@ $mod_strings = array (
   'LBL_MASS_UPDATE_DATES_MINUTES' => 'Minuts',
   'LBL_CANCEL_BUTTON' => 'Cancel·lar',
   'LBL_UPDATE_BUTTON' => 'Actualitzar',
-  'LBL_COLOR' => 'Color',  
-  'LBL_COLOR_INFO' => "Color amb el que apareixerà al Calendari d\'Activitats.",
 );

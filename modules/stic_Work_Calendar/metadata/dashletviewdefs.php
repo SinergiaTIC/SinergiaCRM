@@ -74,13 +74,6 @@ $dashletData['stic_Work_CalendarDashlet']['columns'] = array(
         'label' => 'LBL_LIST_ASSIGNED_USER',
         'default' => true        
     ),    
-    'color' => array(
-        'type' => 'enum',
-        'studio' => 'visible',
-        'label' => 'LBL_COLOR',
-        'width' => '10%',
-        'default' => false
-    ),
     'date_entered' => array(
         'width' => '15',
         'label' => 'LBL_DATE_ENTERED',

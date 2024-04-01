@@ -89,13 +89,6 @@ $viewdefs[$module_name]['DetailView'] = array(
                 ),
             ),            
             4 => array (
-                0 => array(
-                    'name' => 'color',
-                    'label' => 'LBL_COLOR',
-                ),
-                1 => array(),
-            ),            
-            5 => array (                
                 0 => 'description',
             ),
         ),

@@ -67,13 +67,6 @@ $viewdefs[$module_name]['QuickCreate'] = array(
                 ),
             ),
             3 => array (
-                0 => array(
-                    'name' => 'color',
-                    'label' => 'LBL_COLOR',
-                ),
-                1 => array(),
-            ),                   
-            4 => array (
                 0 => 'description',
             ),              
         ),

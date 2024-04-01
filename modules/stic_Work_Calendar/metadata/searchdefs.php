@@ -105,14 +105,6 @@ $searchdefs[$module_name] = array(
                 'default' => true,
                 'name' => 'weekday',
             ),
-            'color' => array(
-                'type' => 'color',
-                'label' => 'LBL_COLOR',
-                'sortable' => false,
-                'width' => '10%',
-                'default' => true,
-                'name' => 'color',
-            ),            
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
