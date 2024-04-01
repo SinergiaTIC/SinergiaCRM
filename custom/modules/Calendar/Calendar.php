@@ -112,11 +112,16 @@ class CustomCalendar extends Calendar
             foreach ($acts as $act) {
                 $item = array();
                 $item['user_id'] = $user_id;
-                $module_name = $act->sugar_bean->module_dir;
-                $item['module_name'] = $module_name;
-                // Store the type in case it is a stic_Work_calendar event
-                if ($module_name == 'stic_Work_Calendar') {
+                $item['module_name'] = $act->sugar_bean->module_dir;
+                // stic_Work_Calendar is a special module where you have to take into account the type and the related employee
+                if ($item['module_name'] == 'stic_Work_Calendar') {
+                    // Store the type
                     $item['event_type'] = $act->sugar_bean->type;
+                    // Store the related employee of the record as assigned user
+                    include_once 'SticInclude/Utils.php';
+                    $employee = SticUtils::getRelatedBeanObject($act->sugar_bean, 'stic_work_calendar_users');                    
+                    $item['user_id'] = $employee->id;
+                    $item['assigned_user_id'] = $employee->id;
                 }
                 $item['type'] = strtolower($act->sugar_bean->object_name);
                 $item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
@@ -488,36 +493,36 @@ class CustomCalendar extends Calendar
                         if (!empty($filterValue)) {
                             switch ($filterKey) {
                                 case 'stic_work_calendar_type': {
-                                        if (!in_array($bean->type, $filterValue)) {
+                                    if (!in_array($bean->type, $filterValue)) {
+                                        unset($activitiesArray[$userKey][$activityKey]);
+                                    }
+                                    break;
+                                }
+                                case 'stic_work_calendar_users': {
+                                    $relationship = 'stic_work_calendar_users';
+                                    if (!$bean->load_relationship($relationship)) {
+                                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading relationship: ' . $relationship);
+                                    } else {
+                                        $relatedBean = array_pop($bean->$relationship->getBeans());
+                                        if ($relatedBean->id != $filterValue) {
+                                            // If the work calendar record does not match the filter value, remove it from the activities array
                                             unset($activitiesArray[$userKey][$activityKey]);
                                         }
-                                        break;
                                     }
-                                case 'stic_work_calendar_users': {
-                                        $relationship = 'stic_work_calendar_users';
-                                        if (!$bean->load_relationship($relationship)) {
-                                            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading relationship: ' . $relationship);
-                                        } else {
-                                            $relatedBean = array_pop($bean->$relationship->getBeans());
-                                            if ($relatedBean->id != $filterValue) {
-                                                // If the work calendar record does not match the filter value, remove it from the activities array
-                                                unset($activitiesArray[$userKey][$activityKey]);
-                                            }
+                                    break;
+                                }
+                                case 'stic_work_calendar_users_department': {
+                                    $relationship = 'stic_work_calendar_users';
+                                    if (!$bean->load_relationship($relationship)) {
+                                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading relationship: ' . $relationship);
+                                    } else {
+                                        $relatedBean = array_pop($bean->$relationship->getBeans());
+                                        if ($relatedBean->department != $filterValue) {
+                                            unset($activitiesArray[$userKey][$activityKey]);
                                         }
-                                        break;
                                     }
-                                    case 'stic_work_calendar_users_department': {
-                                        $relationship = 'stic_work_calendar_users';
-                                        if (!$bean->load_relationship($relationship)) {
-                                            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading relationship: ' . $relationship);
-                                        } else {
-                                            $relatedBean = array_pop($bean->$relationship->getBeans());
-                                            if ($relatedBean->department != $filterValue) {
-                                                unset($activitiesArray[$userKey][$activityKey]);
-                                            }
-                                        }
-                                        break;
-                                    }
+                                    break;
+                                }
                             }
                         }
                     }
