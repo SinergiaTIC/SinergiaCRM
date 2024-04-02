@@ -874,7 +874,7 @@ $($.fullCalendar).ready(function () {
             if (element.module_name != "Meetings" && element.module_name != "Calls") {
                 valueToPush["editable"] = false;
             }
-            // Add a special class to stic_Work_Calendar events
+            // STIC-Custom 20240222 MHP - Add a special class to stic_Work_Calendar events
             if (element.module_name == "stic_Work_Calendar") {
                 if (element.event_type == 'working' || element.event_type == 'punctual_absence') {
                     valueToPush["className"] = 'stic-Work-Calendar';
@@ -1079,13 +1079,13 @@ $($.fullCalendar).ready(function () {
                 $("#calendar_title_" + user_id).html(data.full_name);
             });
         }
-
-        // Once the calendar is rendered, display the records with the stic_Work_Calendar class in column form
+        // STIC-Custom 20240222 MHP - Once the calendar is rendered, display the records with the stic_Work_Calendar class in column shape
         prefix = 'stic-Work-Calendar';
         workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
         workCalendarEvents.forEach(function(element) {
             element.textContent = "";
             element.style.width='5%';  
         });    
+        // END STIC-Custom 
     }
 });
