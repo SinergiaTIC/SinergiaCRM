@@ -25,4 +25,6 @@ $func_strings = array (
     'NO_END_DATE' => 'This time tracker record has no end date.',
     'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'The related employee does not have the Time Tracker functionality activated.',
     'NO_RECORD_IN_WORK_CALENDAR' => 'There is no work type record in the Work Calendar of the associated employee for the indicated date.',
+    'EMAIL_SUBJECT' => "CRM - Review yesterday's time tracker records",
+    'EMAIL_BODY' => "After the process of validating the data of yesterday's time tracker records, we inform you that there is an erroneous record that does not have an end date and time.",
 );

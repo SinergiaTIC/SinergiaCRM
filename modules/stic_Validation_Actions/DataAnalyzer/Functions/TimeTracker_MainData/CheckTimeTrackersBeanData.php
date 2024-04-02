@@ -71,8 +71,8 @@ class CheckTimeTrackersBeanData extends DataCheckFunction
 
             $employeeId = $row['employeeId'];
             $employee = BeanFactory::getBean('Users', $employeeId);
-            $isActivateTimeTracker = $employee->stic_clock_c;
-            $isActivateWorkCalendar = $employee->stic_work_calendar_c;
+            $isActivateTimeTracker = $employee->stic_clock_c == '1';
+            $isActivateWorkCalendar = $employee->stic_work_calendar_c == '1';
 
             $errorMsg = '';
             $errorEndDate = '';
@@ -127,6 +127,24 @@ class CheckTimeTrackersBeanData extends DataCheckFunction
                     'assigned_user_id' => $row['assigned_user_id'],
                 );
                 $this->logValidationResult($data);
+                
+                // If the employee is not an administrator, store the email to notify the error.
+                if (!$employee->is_admin) {
+                    $this->functionDef['sendToEmail'][] = $employee->email1;
+                }
+                // If the employee has a responsible
+                if (!empty($employee->reports_to_name)) {
+                    include_once 'SticInclude/Utils.php';
+                    $responsible = SticUtils::getRelatedBeanObject($employee, 'reports_to_link');
+                    // If the responsible is not an administrator, store the email to notify the error.
+                    if (!$responsible->is_admin) {
+                        $this->functionDef['sendMessageToEmails'][] = $responsible->email1;
+                    }
+                }
+                if (!empty($this->functionDef['sendMessageToEmails'])) {
+                    $this->functionDef['subject'] = $this->getLabel('EMAIL_SUBJECT');
+                    $this->functionDef['body'] = $this->getLabel('EMAIL_BODY');
+                }
             }
         }
 

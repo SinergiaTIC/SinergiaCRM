@@ -98,6 +98,10 @@ class stic_DataAnalyzer
                         $action->last_execution = $timedate->getInstance()->now();
                         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Saving execution date...");
                         $action->save();
+
+                        // Send notification to users and those responsible for the erroneous time tracker records found
+                        self::sendEmail($func->subject, $func->body, $func->sendMessageToEmails);
+
                     } else {
                         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Action [{$action->id} - {$action->name}]has ended with error.");
                     }
@@ -242,44 +246,7 @@ class stic_DataAnalyzer
     {
         // Add destination addresses
         $recipients = $this->getRecipients();
-        if (!empty($recipients)) {
-
-            // Prepare mail
-            require_once 'include/SugarPHPMailer.php';
-            $emailObj = new Email();
-            $defaults = $emailObj->getSystemDefaultEmail();
-
-            $mail = new SugarPHPMailer();
-            $mail->setMailerForSystem();
-            $mail->From = $defaults['email'];
-            $mail->FromName = $defaults['name'];
-
-            foreach ($recipients as $address) {
-                $mail->AddBCC($address);
-            }
-            
-            $mail->Subject = $subject;
-            $current_language = $GLOBALS['current_language'];
-            $completeHTML = "
-            <html lang=\"{$current_language}\">
-                <head>
-                    <title>{$this->Subject}</title>
-                </head>
-                <body style=\"font-family: Arial\">
-                {$body}
-                </body>
-            </html>";
-            $mail->Body = from_html($completeHTML);
-            //$this->saveReport($this->name, $completeHTML);
-            $mail->isHtml(true);
-            $mail->prepForOutbound();
-            $ret = true;
-            if (!$ret = $mail->Send()) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': There was an error sending the email to the admins.');
-            } else {
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Mail/s sent correctly.');
-            }
-        }
+        $ret = self::sendEmail($subject, $body, $recipients);
         return $ret;
     }
 
@@ -314,6 +281,56 @@ class stic_DataAnalyzer
             }
         }
         return $recipients;
+    }
+
+        /**
+     * Send email to recipients
+     *
+     * @param String $subject mail subject
+     * @param String $subject mail body
+     * @return void
+     */
+    protected static function sendEmail($subject, $body, $recipients)
+    {
+        if (!empty($recipients)) {
+
+            // Prepare mail
+            require_once 'include/SugarPHPMailer.php';
+            $emailObj = new Email();
+            $defaults = $emailObj->getSystemDefaultEmail();
+
+            $mail = new SugarPHPMailer();
+            $mail->setMailerForSystem();
+            $mail->From = $defaults['email'];
+            $mail->FromName = $defaults['name'];
+
+            foreach ($recipients as $address) {
+                $mail->AddBCC($address);
+            }
+            
+            $mail->Subject = $subject;
+            $current_language = $GLOBALS['current_language'];
+            $completeHTML = "
+            <html lang=\"{$current_language}\">
+                <head>
+                    <title>{$Subject}</title>
+                </head>
+                <body style=\"font-family: Arial\">
+                {$body}
+                </body>
+            </html>";
+            $mail->Body = from_html($completeHTML);
+            //$this->saveReport($this->name, $completeHTML);
+            $mail->isHtml(true);
+            $mail->prepForOutbound();
+            $ret = true;
+            if (!$ret = $mail->Send()) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': There was an error sending the email to the admins.');
+            } else {
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Mail/s sent correctly.');
+            }
+        }
+        return $ret;
     }
 }
 
