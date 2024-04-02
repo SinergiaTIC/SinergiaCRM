@@ -103,8 +103,7 @@ class stic_Time_Tracker extends Basic
     public static function getLastTodayTimeTrackerRecordForEmployeeData($idEmployee)
     {
         global $db;
-
-        $query = "SELECT st.* FROM `stic_time_tracker`  as st
+        $query = "SELECT st.* FROM stic_time_tracker  as st
                 JOIN users_stic_time_tracker_c as ust
                 ON st.id = ust.users_stic_time_trackerstic_time_tracker_idb
                 WHERE st.deleted = 0 
@@ -115,6 +114,7 @@ class stic_Time_Tracker extends Basic
                 ORDER BY st.start_date desc
                 LIMIT 1;";
 
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
         $result = $db->query($query);
         $data = $db->fetchByAssoc($result);
         return $data;

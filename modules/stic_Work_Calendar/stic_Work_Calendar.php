@@ -103,4 +103,27 @@ class stic_Work_Calendar extends Basic
         // Save the bean
         parent::save($check_notify);
     }
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public static function existAtLeastOneRecordForEmployeeAndDate($date, $idEmployee)
+    {
+        global $db;
+        $query = "SELECT count(wc.id) as count
+                    FROM stic_work_calendar as wc
+                  JOIN stic_work_calendar_users_c as wcu
+                    ON wc.id = wcu.stic_work_calendar_usersstic_work_calendar_idb
+                  WHERE wc.deleted = 0 
+                    AND wcu.deleted = 0
+                    AND wc.start_date LIKE '%" . $date . "%'
+                    AND wcu.stic_work_calendar_usersusers_ida = '" . $idEmployee . "';";
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
+        $result = $db->query($query);
+        $data = $db->fetchByAssoc($result);
+        return $data['count'] > 0;
+    }
 }
