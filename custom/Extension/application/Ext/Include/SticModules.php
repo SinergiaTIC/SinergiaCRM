@@ -99,11 +99,6 @@ $beanList['stic_Journal'] = 'stic_Journal';
 $beanList['stic_Training'] = 'stic_Training';
 $beanList['stic_Work_Experience'] = 'stic_Work_Experience';
 $beanList['stic_Skills'] = 'stic_Skills';
-// SEVEN SMS Plugin
-$beanList['seven_sms_inbound'] = 'seven_sms_inbound';
-$beanList['seven_sms'] = 'seven_sms';
-$beanList['seven_templates'] = 'seven_templates';
-// END SEVEN SMS Plugin
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -143,11 +138,6 @@ $beanFiles['stic_Journal'] = 'modules/stic_Journal/stic_Journal.php';
 $beanFiles['stic_Training'] = 'modules/stic_Training/stic_Training.php';
 $beanFiles['stic_Work_Experience'] = 'modules/stic_Work_Experience/stic_Work_Experience.php';
 $beanFiles['stic_Skills'] = 'modules/stic_Skills/stic_Skills.php';
-// SEVEN SMS Plugin
-$beanFiles['seven_sms_inbound'] = 'modules/seven_sms_inbound/seven_sms_inbound.php';
-$beanFiles['seven_sms'] = 'modules/seven_sms/seven_sms.php';
-$beanFiles['seven_templates'] = 'modules/seven_templates/seven_templates.php';
-// END SEVEN SMS Plugin
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -157,29 +147,13 @@ $modInvisList[] = 'stic_Incorpora';
 $modInvisList[] = 'stic_Import_Validation';
 $modInvisList[] = 'stic_Validation_Results';
 $modInvisList[] = 'stic_Security_Groups_Rules';
-// SEVEN SMS Plugin
-$modInvisList[] = 'seven_sms_inbound';
-$modInvisList[] = 'seven_sms';
-$modInvisList[] = 'seven_templates';
-// END SEVEN SMS Plugin
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
 $modules_exempt_from_availability_check['stic_Incorpora'] = 'stic_Incorpora';
-// SEVEN SMS Plugin
-$modules_exempt_from_availability_check['seven_sms_inbound'] = 'seven_sms_inbound';
-$modules_exempt_from_availability_check['seven_sms'] = 'seven_sms';
-$modules_exempt_from_availability_check['seven_templates'] = 'seven_templates';
-// END SEVEN SMS Plugin
 
 // Modules that have been hidden with $modInvisList, but must be available in reporting
 // $report_include_modules['stic_XXXXXXXXXX'] = 'stic_XXXXXXXXXX'; // sample value
-// SEVEN SMS Plugin
-$report_include_modules['seven_sms_inbound'] = 'seven_sms_inbound';
-$report_include_modules['seven_sms'] = 'seven_sms';
-$report_include_modules['seven_templates'] = 'seven_templates';
-// END SEVEN SMS Plugin
-
 
 // Modules that should be accessed only by administrators through the Admin page
 $adminOnlyList['stic_Settings'] = array('all' => 1);
