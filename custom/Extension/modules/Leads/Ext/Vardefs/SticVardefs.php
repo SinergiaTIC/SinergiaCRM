@@ -605,3 +605,8 @@ $dictionary['Lead']['fields']['emails_list'] = array(
         ),
     ),
 );
+
+// SEVEN SMS PLugin
+$dictionary['Lead']['fields']['seven_compose_sms']['inline_edit'] = '0';
+$dictionary['Lead']['fields']['seven_compose_sms']['labelValue'] = 'Write SMS';
+// END SEVEN SMS Plugin

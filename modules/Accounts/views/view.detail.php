@@ -38,6 +38,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * "Powered by SugarCRM".
  */
 
+ //STIC-Custom 20240326 EPS - Seven SMS Integration
+ require_once 'modules/seven/seven_util.php';
+ //END STIC-Cuctom
 
 class AccountsViewDetail extends ViewDetail
 {
@@ -64,6 +67,10 @@ class AccountsViewDetail extends ViewDetail
             sugar_die($app_strings['ERROR_NO_RECORD']);
         }
 
+        //STIC-Custom 20240326 EPS - Seven SMS integration
+        $this->setSevenPlugin();
+        //END STIC-Custom
+
         // STIC-Custom 20220124 MHP - Do not add the Print PDF logic in this module because it is added generically through include/DetailView/DetailView2.php
         // STIC#564   
         // require_once('modules/AOS_PDF_Templates/formLetter.php');
@@ -88,6 +95,36 @@ class AccountsViewDetail extends ViewDetail
         }
         echo $this->dv->display();
     }
+
+    //STIC-Custom 20240326 EPS - Seven SMS Integration
+    protected function setSevenPlugin() {
+        global $sugar_config;
+
+        $history = array_merge($this->getOutboundSms(), $this->getInboundSms());
+
+        usort($history, function (SugarBean $a, SugarBean $b) {
+            return strcmp($a->date_entered, $b->date_entered);
+        });
+
+        /** @var Account $account */
+        $account = $this->bean;
+        $this->ss->assign('SEVEN_BEAN_ID', $this->bean->id);
+        $this->ss->assign('SEVEN_FROM', $sugar_config['seven_sender'] ?? '');
+        $this->ss->assign('SEVEN_MODULE', $this->module);
+        $this->ss->assign('SEVEN_SMS_HISTORY', $history);
+        $this->ss->assign('SEVEN_TO', $account->phone_office);
+
+        echo $this->ss->fetch('modules/seven/tpls/sms_compose.tpl');
+    }
+
+    private function getInboundSms(): array {
+        return seven_util::getSMS('seven_sms_inbound', $this->bean);
+    }
+
+    private function getOutboundSms(): array {
+        return seven_util::getSMS('seven_sms', $this->bean);
+    }
+    //END STIC-Custom
 
     public function generatePushCode($param)
     {

@@ -21,3 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $dictionary['Employee']['fields']['reports_to_name']['massupdate'] = true;
+
+// SEVEN SMS PLugin
+$dictionary['Employee']['fields']['seven_compose_sms']['inline_edit'] = '0';
+$dictionary['Employee']['fields']['seven_compose_sms']['labelValue'] = 'Write SMS';
+// END SEVEN SMS Plugin

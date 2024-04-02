@@ -44,3 +44,8 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
+
+// SEVEN SMS Plugin
+$entry_point_registry['seven_inbound'] = array('file' => 'modules/seven/receiveSMS.php', 'auth' => false);
+$entry_point_registry['seven'] = array('file' => 'modules/seven/sendSMS.php','auth' => false);
+// END SEVEN SMS Plugin
