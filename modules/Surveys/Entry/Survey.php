@@ -363,7 +363,7 @@ function displayDateField($question)
 function displayClosedPage($survey)
 {
     // STIC-Custom 20240402 - JBL - Show logo in closed surveys
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/184
     $themeObject = SugarThemeRegistry::current();
     $companyLogoURL = $themeObject->getImageURL('company_logo.png');
     // END STIC-Custom
@@ -385,7 +385,7 @@ function displayClosedPage($survey)
         <div class="row">
             <div class="col-md-offset-3 col-md-6">
                 <!-- STIC-Custom 20240402 - JBL - Show logo in closed surveys -->
-                <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/93 -->
+                <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/184 -->
                 <!-- <img height=100 src="modules/Surveys/Entry/survey_logo.jpg"/> -->
                 <img src="<?php echo $companyLogoURL ?>"/>
                 <!-- END STIC-Custom -->
