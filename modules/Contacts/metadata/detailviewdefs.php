@@ -447,6 +447,12 @@ array (
         array (
           'file' => 'modules/Contacts/Contact.js',
         ),
+        // SEVEN SMS Plugin
+        1 => 
+        array (
+          'file' => 'modules/seven/scripts/sms.js',
+        ),
+        // END SEVEN SMS Plugin
       ),
       'useTabs' => true,
       'tabDefs' => 
@@ -496,6 +502,13 @@ array (
           'newTab' => false,
           'panelDefault' => 'expanded',
         ),
+        // SEVEN SMS Plugin
+        'LBL_SEVEN_PANEL_HEADING' => 
+        array (
+          'newTab' => true,
+          'panelDefault' => 'expanded',
+        ),
+        // END SEVEN SMS Plugin
         'LBL_STIC_PANEL_RECORD_DETAILS' => 
         array (
           'newTab' => true,
@@ -1314,6 +1327,31 @@ array (
           ),
         ),
       ),
+      // SEVEN SMS PLugin
+      'lbl_seven_panel_heading' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'customCode' => '{include file=\'modules/seven/tpls/sms_history.tpl\'}',
+            'label' => 'LBL_SEVEN_MESSAGES',
+            'name' => 'seven_sms_history',
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array (
+            'customCode' => '<button class=\'button\' onclick=\'seven_suitecrm.openSmsDialog();\'>
+                        {$MOD.LBL_SEVEN_WRITE_SMS}
+                    </button>',
+            'label' => 'LBL_SEVEN_TEXT',
+            'name' => 'seven_compose_sms',
+          ),
+        ),
+      ),
+      // END SEVEN SMS PLugin
       'LBL_STIC_PANEL_RECORD_DETAILS' => 
       array (
         0 => 
