@@ -87,6 +87,7 @@ class CustomCalendar extends Calendar
     {
         // STIC-Custom 20211015 - Filters the $this->act_arr array
         // STIC#438
+        // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
         $this->acts_arr = $this->filterSticSessions($this->acts_arr);
         $this->acts_arr = $this->filterSticFollowUps($this->acts_arr);
         $this->acts_arr = $this->filterSticWorkCalendar($this->acts_arr);
@@ -113,16 +114,20 @@ class CustomCalendar extends Calendar
                 $item = array();
                 $item['user_id'] = $user_id;
                 $item['module_name'] = $act->sugar_bean->module_dir;
-                // stic_Work_Calendar is a special module where you have to take into account the type and the related employee
+                // STIC-Custom 20240222 MHP - Store the type of record as it will indicate how it should be rendered.
+                // Aditionally, stic_Work_Calendar records are displayed in the calendar of the related employee and not the assigned user.
                 if ($item['module_name'] == 'stic_Work_Calendar') {
                     // Store the type
                     $item['event_type'] = $act->sugar_bean->type;
                     // Store the related employee of the record as assigned user
                     include_once 'SticInclude/Utils.php';
                     $employee = SticUtils::getRelatedBeanObject($act->sugar_bean, 'stic_work_calendar_users');                    
-                    $item['user_id'] = $employee->id;
-                    $item['assigned_user_id'] = $employee->id;
+                    if (!empty($employee->id)) {
+                        $item['user_id'] = $employee->id;
+                        $item['assigned_user_id'] = $employee->id;
+                    }
                 }
+                // END STIC-Custom
                 $item['type'] = strtolower($act->sugar_bean->object_name);
                 $item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
                 $item['record'] = $act->sugar_bean->id;
@@ -192,7 +197,6 @@ class CustomCalendar extends Calendar
                 // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
                 // STIC#1192
                 // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
-                //
                 if ($item['module_name'] == 'stic_Sessions') {
                     $totalMinutes = $act->sugar_bean->duration * 60;
                     $item['duration_hours'] = floor($totalMinutes / 60);
@@ -473,6 +477,7 @@ class CustomCalendar extends Calendar
      * Current existing filters:
      * - stic_work_calendar_type
      * - stic_work_calendar_users
+     * - stic_work_calendar_users_department
      * The filters values are retrieved from the user's configuration
      *
      * @return void

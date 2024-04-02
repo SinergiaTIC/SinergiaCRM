@@ -842,7 +842,7 @@
                                 </div>
                             </form>
                         </li>
-                        {* STIC-Custom 20240222 MHP - *}
+                        {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
                         <li id="time_tracker_button_row" class="no-show-time-tracker-button">
                             <button id="time_tracker_button" class="btn suitepicon suitepicon-module-tasks"
                                 onclick="showTimeTrackerConfimrBox();"></button>
@@ -880,7 +880,7 @@
                             </li>
                         </ul>
                     </div>
-                        {* STIC-Custom 20240222 MHP - *}
+                        {* STIC-Custom 20240222 MHP - Add registration button dialog *}
                         <div id="time-tracker-dialog-box" class="time-tracker-dialog-box"></div>
                         {* END STIC-Custom *}
             </nav>

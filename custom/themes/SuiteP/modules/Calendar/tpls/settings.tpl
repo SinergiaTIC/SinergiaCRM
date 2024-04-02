@@ -193,20 +193,7 @@ $(function() {
 										<th>Module</th><th>Body</th><th>Border</th><th>Text</th>
 									</tr>
 									{foreach from=$activity key=name item=def}
-                                        
-                                        <!-- Stic-Custom 20240222 MHP - 
-                                        <tr>
-                                            <td>{$def.label}</td>
-                                            <td>
-                                                <input type="text" id="{$name}" name="activity[{$name}][body]" class="color" value="{$def.body}" size="8" />
-                                            </td>
-                                            <td>
-                                                <input type="text" id="{$name}" name="activity[{$name}][border]" class="color" value="{$def.border}" size="8" />
-                                            </td>
-                                            <td>
-                                                <input type="text" id="{$name}" name="activity[{$name}][text]" class="color" value="{$def.text}" size="8" />
-                                            </td>
-                                        </tr> -->
+										<!-- STIC-Custom 20240222 MHP - The work calendar records are colored depending on whether they are work type or not. -->	
                                         {if $name != 'stic_Work_Calendar'}
 											<tr>
 												<td>{$def.label}</td>
@@ -246,7 +233,7 @@ $(function() {
 												</td>
 											</tr>											
 										{/if}
-                                        <!-- Stic-Custom -->
+                                        <!-- STIC-Custom -->
 									{/foreach}
 								</table>
 							</div>

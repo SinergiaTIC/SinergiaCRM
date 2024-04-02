@@ -86,6 +86,7 @@ class CustomCalendarDisplay extends CalendarDisplay
             'body' => 'AD645E',
             'text' => 'E5E5EE',
         ),
+        // STIC-Custom 20240222 MHP - Adding colors to Work Calendar items
         'stic_Work_Calendar' => array(
             'border_working' => '0A2407',
             'body_working' => '1C6114',
@@ -93,10 +94,11 @@ class CustomCalendarDisplay extends CalendarDisplay
             'border_noworking' => '170000',
             'body_noworking' => 'D60000',
             'text_noworking' => 'E5E5EE',        
-        ),       
+        ),
+        // END STIC-Custom      
     );
 
-    // Overriding to add the stic_Work_Calendar properties
+    // STIC-Custom 20240222 MHP - Overriding to add the stic_Work_Calendar properties
     public function checkActivity($activity = "")
     {
         global $current_user, $mod_strings;
@@ -133,6 +135,7 @@ class CustomCalendarDisplay extends CalendarDisplay
 
         return $activity;
     }
+    // END STIC-Custom
 
     // Overriding the array to add Shared Day option
     public function get_date_info($view, $date_time)
@@ -338,7 +341,6 @@ class CustomCalendarDisplay extends CalendarDisplay
             $ss->assign('stic_followups_projects_name', $projectBean->name);
             $ss->assign('stic_followups_projects_id', $sticFollowUpsProjectId);
         }
-
         $sticWorkCalendarTypeOptions = get_select_options_with_id($app_list_strings['stic_work_calendar_types_list'], $sticWorkCalendarType);
         $ss->assign('stic_work_calendar_type', $sticWorkCalendarTypeOptions);
 
