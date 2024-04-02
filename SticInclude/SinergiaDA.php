@@ -671,7 +671,7 @@ class ExternalReporting
 
                 if (isset($fieldSrc)) {
                     // Add to the array of normal base and custom fields
-                    if ($fieldV['source'] == 'custom_fields' || $fieldV['name'] == 'email1') {
+                    if ($fieldV['source'] == 'custom_fields' || ($fieldV['source'] == 'custom_fields' && $fieldV['name'] == 'email1')) {
                         $fieldList['custom'][$fieldK] = $fieldSrc;
                         $addColumnToMetadata = 1;
                     } else if ($fieldV['source'] == 'non-db' && $fieldV['name'] != 'full_name') {
