@@ -156,7 +156,16 @@ function getJsVars($viewModule, $viewType) {
                 "options: \"".$moduleView->getViewFieldConditionTypes_as_select_options($fieldKey)."\",".
             "}, ".
             "type: \"".$moduleView->getFieldType($fieldKey)."\",".
-            "list: \"".$moduleView->getFieldListOption($fieldKey)."\",".
+            "list: \"".$moduleView->getFieldListOption($fieldKey)."\",";
+        foreach($moduleView->getAllFieldConditionTypeMap()[$fieldKey] as $typeKey => $typeName) {
+            if($typeKey!="value") {
+                $html .= 
+                "condition_values_".$typeKey.": {".
+                    "options: \"".$moduleView->getViewFieldConditionValueList_as_select_options($fieldKey, $typeKey)."\",".
+                "}";
+            }
+        }
+        $html .=
         "},";
     }
     $html .=

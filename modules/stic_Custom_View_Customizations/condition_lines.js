@@ -195,19 +195,23 @@ function insertConditionLinesHeader(){
     } else if(condition_type==""||condition_type==null){
       // Reset next selectors
       $("#"+condprefix+'Cell'+'value'+ln).html("");
-    } else {
+    } else if(condition_type=="value") {
       // Value editor
-      if($("#"+condprefix+'Cell'+'value'+ln).html()=="" || 
-        $("#"+condprefix+'Cell'+'value'+ln).html()=="<p> - </p>") {
-          var condValue = undefined;
-          for(let i=0; i<condValArray.length; i++) {
-            if(condValArray[i].line==ln) {
-              condValue = condValArray[i].value;
-              condValArray.splice(i,1);
-              break;
-            }
-          }
-          getModuleFieldEditor(ln, condprefix, condValue);
+      var condValue = undefined;
+      for(let i=0; i<condValArray.length; i++) {
+        if(condValArray[i].line==ln) {
+          condValue = condValArray[i].value;
+          condValArray.splice(i,1);
+          break;
+        }
       }
+      getModuleFieldEditor(ln, condprefix, condValue);
+    } else {
+      //IEPA!!
+      $("#"+condprefix+'Cell'+'value'+ln).html(
+        "<select type='text' name='"+condprefix+"value["+ln+"]' id='"+condprefix+"value"+ln+"'>"+
+          view_field_map[field]["condition_values_"+condition_type].options+
+        "</select>"
+      );
     }
   }

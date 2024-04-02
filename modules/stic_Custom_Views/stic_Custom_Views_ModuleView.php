@@ -130,6 +130,10 @@ class stic_Custom_Views_ModuleView
         return $this->convertToSelectOptions($this->getAllFieldConditionTypeMap()[$fieldKey]);
     }
 
+    public function getViewFieldConditionValueList_as_select_options($fieldKey, $conditionType) {
+        return $this->convertToSelectOptions($this->getValidValueList($fieldKey, $conditionType));
+    }
+
     private $panelList;
     public function getPanels() {
         if($this->panelList == null) {
@@ -304,6 +308,30 @@ class stic_Custom_Views_ModuleView
             $conditionTypeList[$op] = $app_list_strings['stic_custom_views_condition_type_list'][$op];
         }
         return $conditionTypeList;
+    }
+
+    private function getValidValueList($fieldKey, $conditionType) {
+        global $app_list_strings;
+    
+        $validValues = array();
+        //$fieldType = $this->allModuleFieldTypeList[$fieldKey];
+        switch (strtolower($conditionType)) {
+            case 'date':
+                $validValues = array('now','today'/*,'anniversary'*/);
+                break;
+            case 'user':
+                $validValues = array('current_user');
+                break;
+            case 'field':
+                //IEPA!!
+                //TODO
+                break;
+        }
+        $validValuesList = array();
+        foreach ($validValues as $op) {
+            $validValuesList[$op] = $app_list_strings['stic_custom_views_condition_values_list'][$op];
+        }
+        return $validValuesList;
     }
 
     public function getValidActions_as_select_options($actionType) {
