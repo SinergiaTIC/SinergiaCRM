@@ -593,7 +593,7 @@ class ExternalReporting
                     case 'ColorPicker':
                     case 'email':
                         $fieldV['alias'] = $fieldV['name'];
-                        if ($fieldV['name'] == 'email1') {
+                        if ($fieldV['name'] == 'email1' && $fieldV['type'] == 'varchar' && $fieldV['source'] == 'non-db') {
                             // Special field for main email
                             $fieldSrc = "ea.email_address AS {$fieldV['name']}";
 
@@ -671,7 +671,8 @@ class ExternalReporting
 
                 if (isset($fieldSrc)) {
                     // Add to the array of normal base and custom fields
-                    if ($fieldV['source'] == 'custom_fields' || ($fieldV['source'] == 'custom_fields' && $fieldV['name'] == 'email1')) {
+                    // We give special treatment to fields named email1 to prevent them from being seen as custom fields, to avoid errors seen
+                    if ($fieldV['source'] == 'custom_fields' || ($fieldV['name'] == 'email1' && $fieldV['source'] == 'non-db' && $fieldV['type'] == 'varchar')) {
                         $fieldList['custom'][$fieldK] = $fieldSrc;
                         $addColumnToMetadata = 1;
                     } else if ($fieldV['source'] == 'non-db' && $fieldV['name'] != 'full_name') {
