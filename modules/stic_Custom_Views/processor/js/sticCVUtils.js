@@ -461,4 +461,11 @@ var sticCVUtils = class sticCVUtils {
     static isTrue(value){
         return (value===true||value==="1"||value===1);
     }
+
+    static normalizeToCompare(value){
+        if(typeof(value)==="string" || value instanceof String) {
+            return (value??"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+        }
+        return value;
+    }
 }
