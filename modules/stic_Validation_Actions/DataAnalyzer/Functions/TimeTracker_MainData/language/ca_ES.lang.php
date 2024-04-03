@@ -23,8 +23,8 @@
 $func_strings = array (
     'NAME' => 'Registre horari - Revisió dels registres del dia anterior', // Aquesta etiqueta és obligatòria. Indica el nom de la funció
     'NO_END_DATE' => 'Aquest registre horari no té data de finalització.',
-    'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> "L'empleat relacionat no té activada la funcionalitat de Registre horari.",
-    'NO_RECORD_IN_WORK_CALENDAR' => "No hi ha cap registre de tipus laborable al Calendari Laboral de l'empleat associat per a la data indicada.",
+    'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> "La funcionalitat de Registre horari no està activada a l'empleat: ",
+    'NO_RECORD_IN_WORK_CALENDAR' => "No hi ha cap registre de tipus laborable al Calendari Laboral de l'empleat: ",
     'EMAIL_SUBJECT' => "CRM - Revisar els registres horaris del dia d'ahir",
-    'EMAIL_BODY' => "Després del procés de validació de dades dels registres del dia d'ahir del mòdul de Registre horari, us informem que hi ha algun registre erroni que no té data i hora de finalització.",
+    'EMAIL_BODY' => "S\'ha trobat un error durant el procés de validació del següent registre horari: ",
 );

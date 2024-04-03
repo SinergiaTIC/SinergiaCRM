@@ -29,7 +29,6 @@ require_once 'SticInclude/Utils.php';
  */
 class CheckTimeTrackersBeanData extends DataCheckFunction 
 {
-
     /**
      * It receives a proposal from SQL and modifies it with the necessary features for the function.
      * Most functions should override this method.
@@ -65,6 +64,10 @@ class CheckTimeTrackersBeanData extends DataCheckFunction
         // It will indicate if records with errors have been found.
         $errors = 0;
 
+        include_once 'modules/stic_Validation_Actions/DataAnalyzer/Functions/include/Mailing/Utils.php';
+        $info['subject'] = $this->getLabel('EMAIL_SUBJECT');
+        $info['body'] = $this->getLabel('EMAIL_BODY');
+
         while ($row = array_pop($records)) 
         {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Validating the next record: {$row['name']}.");
@@ -82,7 +85,7 @@ class CheckTimeTrackersBeanData extends DataCheckFunction
                 if ($isActivateWorkCalendar) {
                     include_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';  
                     if (!stic_Work_Calendar::existAtLeastOneRecordForEmployeeAndDate(substr($row['start_date'], 0, 10), $employeeId)) {
-                        $errorMsg = $this->getLabel('NO_RECORD_IN_WORK_CALENDAR');
+                        $errorMsg = $this->getLabel('NO_RECORD_IN_WORK_CALENDAR') . $employee->name;
                         $contTemp = 1;
                     }
                 }
@@ -91,7 +94,7 @@ class CheckTimeTrackersBeanData extends DataCheckFunction
                     $contTemp = 1;
                 }
             } else {
-                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_TIME_TRACKER');
+                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_TIME_TRACKER') . $employee->name;
                 $contTemp = 1;
             }
 
@@ -112,6 +115,8 @@ class CheckTimeTrackersBeanData extends DataCheckFunction
                     'assigned_user_id' => $row['assigned_user_id'],
                 );
                 $this->logValidationResult($data);
+                $info['errorMsg'] = $errorMsg;
+                sendEmailToEmployeeAndResponsible($employee, $row, $info);
             }
                 
             // Report that the Time Tracker record does not have an end_date
@@ -127,24 +132,8 @@ class CheckTimeTrackersBeanData extends DataCheckFunction
                     'assigned_user_id' => $row['assigned_user_id'],
                 );
                 $this->logValidationResult($data);
-                
-                // If the employee is not an administrator, store the email to notify the error.
-                if (!$employee->is_admin) {
-                    $this->functionDef['sendToEmail'][] = $employee->email1;
-                }
-                // If the employee has a responsible
-                if (!empty($employee->reports_to_name)) {
-                    include_once 'SticInclude/Utils.php';
-                    $responsible = SticUtils::getRelatedBeanObject($employee, 'reports_to_link');
-                    // If the responsible is not an administrator, store the email to notify the error.
-                    if (!$responsible->is_admin) {
-                        $this->functionDef['sendMessageToEmails'][] = $responsible->email1;
-                    }
-                }
-                if (!empty($this->functionDef['sendMessageToEmails'])) {
-                    $this->functionDef['subject'] = $this->getLabel('EMAIL_SUBJECT');
-                    $this->functionDef['body'] = $this->getLabel('EMAIL_BODY');
-                }
+                $info['errorMsg'] = $errorMsg;
+                sendEmailToEmployeeAndResponsible($employee, $row, $info);
             }
         }
 
