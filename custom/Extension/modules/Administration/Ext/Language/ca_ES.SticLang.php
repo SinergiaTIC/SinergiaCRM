@@ -46,25 +46,3 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Elimina el conjunt de d
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Dades de prova eliminades correctament.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = "Hi ha hagut errors a l'eliminar les dades de prova. " & 'Reviseu el <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_removeSticData">log</a>.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = "Accions d'Administració";
-
-// SEVEN SMS Plugin
-$mod_strings['LBL_SEVEN_TITLE'] = 'Configuració seven SMS';
-$mod_strings['LBL_SEVEN_DESC'] = '';
-
-$mod_strings['LBL_SEVEN_CONFIGURATION_TITLE'] = 'Configuració API seven SMS';
-$mod_strings['LBL_SEVEN_CONFIGURATION_DESC'] = 'Configuració seven SMS';
-
-$mod_strings['LBL_SEVEN_TEMPLATE_CONFIGURATION_TITLE'] = 'Configuració de la plantilla de Persones';
-$mod_strings['LBL_SEVEN_TEMPLATE_CONFIGURATION_DESC'] = 'Configuració de la plantilla de Persones';
-
-$mod_strings['LBL_SEVEN_LEAD_CONFIGURATION_TITLE'] = "Configuració de la plantilla d'Interessats";
-$mod_strings['LBL_SEVEN_LEAD_CONFIGURATION_DESC'] = "Configuració de la plantilla d'Interessats";
-
-$mod_strings['LBL_SEVEN_ACCOUNT_CONFIGURATION_TITLE'] = "Configuració de la plantilla d'Organitzacions";
-$mod_strings['LBL_SEVEN_ACCOUNT_CONFIGURATION_DESC'] = "Configuració de la plantilla d'Organitzacions";
-
-$mod_strings['LBL_SEVEN_EMPLOYEE_CONFIGURATION_TITLE'] = "Configuració de la plantilla d'Empleats";
-$mod_strings['LBL_SEVEN_EMPLOYEE_CONFIGURATION_DESC'] = "Configuració de la plantilla d'Empleats";
-
-$mod_strings['LBL_SEVEN_PANEL_HEADING'] = 'SMS by seven';
-//END SEVEN SMS Plugin
