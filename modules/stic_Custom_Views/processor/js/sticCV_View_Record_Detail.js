@@ -26,9 +26,9 @@
  */
 
 var sticCV_View_Record_Detail = class sticCV_View_Record_Detail extends sticCV_View_Record_Base {
-    constructor(view) {
-        super(view);
-        
-        this.$elementView = $(".detail-view"); 
-    }
-}
+  constructor(view) {
+    super(view);
+
+    this.$elementView = $(".detail-view");
+  }
+};

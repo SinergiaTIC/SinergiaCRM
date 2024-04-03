@@ -25,14 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Custom_Views/stic_Custom_Views.php');
+require_once 'include/Dashlets/DashletGeneric.php';
+require_once 'modules/stic_Custom_Views/stic_Custom_Views.php';
 
-class stic_Custom_ViewsDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
+class stic_Custom_ViewsDashlet extends DashletGeneric
+{
+    public function __construct($id, $def = null)
     {
         global $current_user, $app_strings;
-        require('modules/stic_Custom_Views/metadata/dashletviewdefs.php');
+        require 'modules/stic_Custom_Views/metadata/dashletviewdefs.php';
 
         parent::__construct($id, $def);
 
@@ -43,6 +44,6 @@ class stic_Custom_ViewsDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['stic_Custom_ViewsDashlet']['searchFields'];
         $this->columns = $dashletData['stic_Custom_ViewsDashlet']['columns'];
 
-        $this->seedBean = new stic_Custom_Views();        
+        $this->seedBean = new stic_Custom_Views();
     }
 }

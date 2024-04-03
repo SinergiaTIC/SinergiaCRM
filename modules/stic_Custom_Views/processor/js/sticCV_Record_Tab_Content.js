@@ -25,29 +25,28 @@
  *
  */
 var sticCV_Record_Tab_Content = class sticCV_Record_Tab_Content extends sticCV_Element_FieldContainer {
-    constructor (tab){
-        super(tab.customView, tab.customView.$elementView.find('div.tab-content > div[data-id='+tab.name+']'));
+  constructor(tab) {
+    super(tab.customView, tab.customView.$elementView.find("div.tab-content > div[data-id=" + tab.name + "]"));
 
-        // Fix padding for Tabs
-        if(this.$element.css("padding")=="0px" && this.$element.parent().css("padding")!="0px") {
-            var parentPadding = this.$element.parent().css("padding");
-            this.$element.parent().css("padding", "0px");
-            this.$element.parent().children().css("padding", parentPadding);
-        }
-        this.tabIndex = this.$element.index();
-        // Add panels to Tab content
-        this.$element = this.$element.add(tab.customView.$elementView.find('div.panel-content > div.tab-panel-'+this.tabIndex));
+    // Fix padding for Tabs
+    if (this.$element.css("padding") == "0px" && this.$element.parent().css("padding") != "0px") {
+      var parentPadding = this.$element.parent().css("padding");
+      this.$element.parent().css("padding", "0px");
+      this.$element.parent().children().css("padding", parentPadding);
     }
+    this.tabIndex = this.$element.index();
+    // Add panels to Tab content
+    this.$element = this.$element.add(
+      tab.customView.$elementView.find("div.panel-content > div.tab-panel-" + this.tabIndex)
+    );
+  }
 
-    applyAction(action) {
-        switch(action.action){
-            case "background": 
-                sticCVUtils.background(this.$element.first(), this.customView, action.value);
-                return this;
-        }
-        return super.applyAction(action);
+  applyAction(action) {
+    switch (action.action) {
+      case "background":
+        sticCVUtils.background(this.$element.first(), this.customView, action.value);
+        return this;
     }
-
-}
-
-
+    return super.applyAction(action);
+  }
+};

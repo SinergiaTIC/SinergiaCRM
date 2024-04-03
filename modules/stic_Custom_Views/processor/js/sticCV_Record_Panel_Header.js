@@ -25,34 +25,32 @@
  *
  */
 var sticCV_Record_Panel_Header = class sticCV_Record_Panel_Header extends sticCV_Element_Label {
-    constructor (panel){
-        super(panel.customView, panel.container.$element.children('.panel-heading'));
+  constructor(panel) {
+    super(panel.customView, panel.container.$element.children(".panel-heading"));
 
-        this.$label = this.$element.find('[data-label="'+panel.name+'"]');
+    this.$label = this.$element.find('[data-label="' + panel.name + '"]');
+  }
+
+  applyAction(action) {
+    switch (action.action) {
+      case "color":
+        sticCVUtils.color(this.$label.parent(), this.customView, action.value);
+        return this;
+      case "background":
+        sticCVUtils.background(this.$label.parent(), this.customView, action.value, true);
+        return this;
+      case "bold":
+        sticCVUtils.bold(this.$label, this.customView, action.value);
+        return this;
+      case "italic":
+        sticCVUtils.italic(this.$label, this.customView, action.value);
+        return this;
+      case "underline":
+        sticCVUtils.underline(this.$label, this.customView, action.value);
+        return this;
+      case "fixed_text":
+        return sticCVUtils.text(this.$label, this.customView, action.value);
     }
-    
-    applyAction(action) {
-        switch(action.action){
-            case "color": 
-                sticCVUtils.color(this.$label.parent(), this.customView, action.value);
-                return this;
-            case "background": 
-                sticCVUtils.background(this.$label.parent(), this.customView, action.value, true);
-                return this;
-            case "bold": 
-                sticCVUtils.bold(this.$label, this.customView, action.value);
-                return this;
-            case "italic": 
-                sticCVUtils.italic(this.$label, this.customView, action.value);
-                return this;
-            case "underline": 
-                sticCVUtils.underline(this.$label, this.customView, action.value);
-                return this;
-            case "fixed_text": 
-                return sticCVUtils.text(this.$label, this.customView, action.value);
-        }
-        return super.applyAction(action);
-    } 
-}
-
-
+    return super.applyAction(action);
+  }
+};

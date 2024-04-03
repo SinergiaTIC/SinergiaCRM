@@ -21,89 +21,94 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-function getCustomView($customizationBean) {
+function getCustomView($customizationBean)
+{
     require_once 'modules/stic_Custom_Views/Utils.php';
     return getRelatedBeanObject($customizationBean, "stic_custom_views_stic_custom_view_customizations");
 }
 
-function getLangStrings() {
+function getLangStrings()
+{
     $html = "";
     // Load related lang strings
     $moduleNames = array('stic_Custom_View_Customizations', 'stic_Custom_View_Conditions', 'stic_Custom_View_Actions');
-    foreach($moduleNames as $moduleName) {
+    foreach ($moduleNames as $moduleName) {
         if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
-            require_once('include/language/jsLanguage.php');
+            require_once 'include/language/jsLanguage.php';
             jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
         }
-        $html.= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
+        $html .= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
     }
     return $html;
 }
 
-function displayConditionLines($focus, $field, $value, $view) {
+function displayConditionLines($focus, $field, $value, $view)
+{
     require_once 'modules/stic_Custom_Views/Utils.php';
 
     global $mod_strings;
 
-    $html = 
-"<table cellpadding='0' cellspacing='0' border='0' style='table-layout:fixed; width:100%;'".
-    "id='sticCustomView_ConditionLines' class='sticCustomView_Lines'></table>".
-"<div style='padding-top: 10px; padding-bottom:10px;'>".
-    "<input type='button' class='button' tabindex='116' ".
-           "value=\"".$mod_strings['LBL_ADD_CONDITION']."\" ".
-           "id='btn_ConditionLine' onclick='insertConditionLine()'/>".
-"</div>";
+    $html =
+        "<table cellpadding='0' cellspacing='0' border='0' style='table-layout:fixed; width:100%;'" .
+        "id='sticCustomView_ConditionLines' class='sticCustomView_Lines'></table>" .
+        "<div style='padding-top: 10px; padding-bottom:10px;'>" .
+        "<input type='button' class='button' tabindex='116' " .
+        "value=\"" . $mod_strings['LBL_ADD_CONDITION'] . "\" " .
+        "id='btn_ConditionLine' onclick='insertConditionLine()'/>" .
+        "</div>";
 
     $conditionBeanArray = getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_conditions");
-    if(!empty($conditionBeanArray)) {
+    if (!empty($conditionBeanArray)) {
         // Sort conditions
         usort($conditionBeanArray, 'compareConditions');
 
         $html .= "<script>";
         foreach ($conditionBeanArray as $conditionBean) {
             $conditionBean->value = htmlspecialchars_decode($conditionBean->value);
-            if($conditionBean->condition_type=="") {
+            if ($conditionBean->condition_type == "") {
                 $conditionBean->condition_type = "value";
             }
-            $html .= "loadConditionLine(\"".addslashes(json_encode($conditionBean->toArray()))."\");";
+            $html .= "loadConditionLine(\"" . addslashes(json_encode($conditionBean->toArray())) . "\");";
         }
         $html .= "</script>";
     }
     return $html;
 }
 
-
-function displayActionLines(SugarBean $focus, $field, $value, $view) {
+function displayActionLines(SugarBean $focus, $field, $value, $view)
+{
     require_once 'modules/stic_Custom_Views/Utils.php';
     global $mod_strings;
 
-    $html = 
-"<table cellpadding='0' cellspacing='0' border='0' style='table-layout:fixed; width:100%;'".
-       "id='sticCustomView_ActionLines' class='sticCustomView_Lines'></table>".
-"<div style='padding-top: 10px; padding-bottom:10px;'>".
-    "<input type='button' class='button' tabindex='116' ".
-           "value=\"".$mod_strings['LBL_ADD_ACTION']."\" ".
-           "id='btn_ActionLine' onclick='insertActionLine()'/>".
-"</div>";
+    $html =
+        "<table cellpadding='0' cellspacing='0' border='0' style='table-layout:fixed; width:100%;'" .
+        "id='sticCustomView_ActionLines' class='sticCustomView_Lines'></table>" .
+        "<div style='padding-top: 10px; padding-bottom:10px;'>" .
+        "<input type='button' class='button' tabindex='116' " .
+        "value=\"" . $mod_strings['LBL_ADD_ACTION'] . "\" " .
+        "id='btn_ActionLine' onclick='insertActionLine()'/>" .
+        "</div>";
 
     $actionBeanArray = getRelatedBeanObjectArray($focus, "stic_custom_view_customizations_stic_custom_view_actions");
-    if(!empty($actionBeanArray)) {
+    if (!empty($actionBeanArray)) {
         // Sort actions
         usort($actionBeanArray, 'compareActions');
         $html .= "<script>";
         foreach ($actionBeanArray as $actionBean) {
             $actionBean->value = htmlspecialchars_decode($actionBean->value);
-            $html .= "loadActionLine(\"".addslashes(json_encode($actionBean->toArray()))."\");";
+            $html .= "loadActionLine(\"" . addslashes(json_encode($actionBean->toArray())) . "\");";
         }
         $html .= "</script>";
     }
     return $html;
 }
 
-function compareConditions($a, $b) {
-    return $a->condition_order-$b->condition_order;
+function compareConditions($a, $b)
+{
+    return $a->condition_order - $b->condition_order;
 }
 
-function compareActions($a, $b) {
-    return $a->action_order-$b->action_order;
+function compareActions($a, $b)
+{
+    return $a->action_order - $b->action_order;
 }

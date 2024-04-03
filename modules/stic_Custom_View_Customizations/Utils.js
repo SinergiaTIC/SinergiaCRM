@@ -33,7 +33,7 @@ var module = "stic_Custom_View_Customizations";
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "quickcreate":
-    $(document).ready(function () { 
+    $(document).ready(function() {
       var customView = sticCustomizeView.quickcreate();
       // Hide Labels
       customView.field("condition_lines").header.hide();
@@ -44,7 +44,7 @@ switch (viewType()) {
   case "edit":
   case "popup":
     break;
-    
+
   case "detail":
     break;
 
@@ -55,41 +55,53 @@ switch (viewType()) {
     break;
 }
 
-$(document).ready(function () {
-});
+$(document).ready(function() {});
 
 function translate(label, module) {
   return SUGAR.language.get(module, label);
 }
 
 function translateCustomization(label) {
-  return translate(label,'stic_Custom_View_Customizations');
+  return translate(label, "stic_Custom_View_Customizations");
 }
 
 function getModuleFieldEditor(ln, prefix, field_value) {
-  var field = $("#"+prefix+'field'+ln).val();
-  if(!field || field=="") {
-    field = $("#"+prefix+'element'+ln).val();
+  var field = $("#" + prefix + "field" + ln).val();
+  if (!field || field == "") {
+    field = $("#" + prefix + "element" + ln).val();
   }
 
-  var editor_name = prefix+"value["+ln+"]";
+  var editor_name = prefix + "value[" + ln + "]";
   var is_value_set = true;
-  if (typeof field_value === 'undefined') {
-      field_value = '';
-      is_value_set = false;
+  if (typeof field_value === "undefined") {
+    field_value = "";
+    is_value_set = false;
   }
 
   var callbackFieldEditor = {
     success: function(result) {
-      $("#"+prefix+'Cell'+'value'+ln).html(result.responseText);
-      $("#"+prefix+'Cell'+'value'+ln).children().attr('style', 'max-width: 90% !important');
+      $("#" + prefix + "Cell" + "value" + ln).html(result.responseText);
+      $("#" + prefix + "Cell" + "value" + ln).children().attr("style", "max-width: 90% !important");
       SUGAR.util.evalScript(result.responseText);
       enableQS(true);
     },
     failure: function(result) {
-      $("#"+prefix+'Cell'+'value'+ln).html("");
-    }
-  }
+      $("#" + prefix + "Cell" + "value" + ln).html("");
+    },
+  };
 
-  YAHOO.util.Connect.asyncRequest("GET", "index.php?module=stic_Custom_Views&action=getModuleFieldEditor&form=form_SubpanelQuickCreate_stic_Custom_View_Customizations&view_module="+view_module+"&field_name="+field+"&editor_name="+editor_name+"&field_value="+field_value+"&is_value_set="+is_value_set, callbackFieldEditor);
-} 
+  YAHOO.util.Connect.asyncRequest(
+    "GET",
+    "index.php?module=stic_Custom_Views&action=getModuleFieldEditor&form=form_SubpanelQuickCreate_stic_Custom_View_Customizations&view_module=" +
+      view_module +
+      "&field_name=" +
+      field +
+      "&editor_name=" +
+      editor_name +
+      "&field_value=" +
+      field_value +
+      "&is_value_set=" +
+      is_value_set,
+    callbackFieldEditor
+  );
+}

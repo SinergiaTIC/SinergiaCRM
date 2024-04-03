@@ -22,7 +22,7 @@
  */
 
 $module_name = 'stic_Custom_View_Customizations';
-$layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations_stic_custom_view_actions'] = array (
+$layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations_stic_custom_view_actions'] = array(
     'order' => 100,
     'module' => 'stic_Custom_View_Actions',
     'subpanel_name' => 'default',
@@ -30,20 +30,17 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations_st
     'sort_by' => 'id',
     'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE',
     'get_subpanel_data' => 'stic_custom_view_customizations_stic_custom_view_actions',
-    'top_buttons' => 
-    array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'mode' => 'MultiSelect',
+        ),
     ),
 );
-$layout_defs["stic_Custom_View_Customizations"]["subpanel_setup"]['stic_custom_view_customizations_stic_custom_view_conditions'] = array (
+$layout_defs["stic_Custom_View_Customizations"]["subpanel_setup"]['stic_custom_view_customizations_stic_custom_view_conditions'] = array(
     'order' => 100,
     'module' => 'stic_Custom_View_Conditions',
     'subpanel_name' => 'default',
@@ -51,16 +48,13 @@ $layout_defs["stic_Custom_View_Customizations"]["subpanel_setup"]['stic_custom_v
     'sort_by' => 'id',
     'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE',
     'get_subpanel_data' => 'stic_custom_view_customizations_stic_custom_view_conditions',
-    'top_buttons' => 
-    array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'mode' => 'MultiSelect',
+        ),
     ),
 );

@@ -26,21 +26,21 @@
  */
 
 var sticCV_Record_Panel = class sticCV_Record_Panel extends sticCV_Record_Container {
-    constructor (customView, panelName) {
-        super(customView, panelName);
+  constructor(customView, panelName) {
+    super(customView, panelName);
 
-        this.container = new sticCV_Record_Panel_Container(this);
+    this.container = new sticCV_Record_Panel_Container(this);
 
-        this.header = new sticCV_Record_Panel_Header(this);
-        this.content = new sticCV_Record_Panel_Content(this);
-    };
+    this.header = new sticCV_Record_Panel_Header(this);
+    this.content = new sticCV_Record_Panel_Content(this);
+  }
 
-    applyAction(action) {
-        if(action.action=="background" && (action.element_section=="panel"||action.element_section=="container")) {
-            this.header?.applyAction(action);
-            this.content?.applyAction(action);
-            return this;
-        }
-        return super.applyAction(action);
+  applyAction(action) {
+    if (action.action == "background" && (action.element_section == "panel" || action.element_section == "container")) {
+      this.header && this.header.applyAction(action);
+      this.content && this.content.applyAction(action);
+      return this;
     }
-}
+    return super.applyAction(action);
+  }
+};

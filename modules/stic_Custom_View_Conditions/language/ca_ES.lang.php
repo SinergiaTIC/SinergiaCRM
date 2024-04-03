@@ -21,15 +21,15 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$mod_strings = array (
-  // Camps del mòdul  
-  'LBL_CONDITION_ORDER' => 'Ordre',
-  'LBL_FIELD' => 'Camp',
-  'LBL_OPERATOR' => 'Operador',
-  'LBL_CONDITION_TYPE' => 'Tipus',
-  'LBL_VALUE' => 'Valor',
-  'LBL_VALUE_TYPE' => 'Tipus del valor',
-  
-  // Relacions i subpanells
-  'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
+$mod_strings = array(
+    // Camps del mòdul
+    'LBL_CONDITION_ORDER' => 'Ordre',
+    'LBL_FIELD' => 'Camp',
+    'LBL_OPERATOR' => 'Operador',
+    'LBL_CONDITION_TYPE' => 'Tipus',
+    'LBL_VALUE' => 'Valor',
+    'LBL_VALUE_TYPE' => 'Tipus del valor',
+
+    // Relacions i subpanells
+    'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
 );

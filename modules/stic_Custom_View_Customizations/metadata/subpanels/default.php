@@ -21,85 +21,72 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$module_name='stic_Custom_View_Customizations';
-$subpanel_layout = array (
-  'top_buttons' => 
-  array (
-    0 => 
-    array (
-      'widget_class' => 'SubPanelTopCreateButton',
+$module_name = 'stic_Custom_View_Customizations';
+$subpanel_layout = array(
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopCreateButton',
+        ),
     ),
-  ),
-  'where' => '',
-  'list_fields' => 
-  array (
-    'customization_order' => 
-    array (
-      'type' => 'int',
-      'vname' => 'LBL_CUSTOMIZATION_ORDER',
-      'width' => '5%',
-      'default' => true,
+    'where' => '',
+    'list_fields' => array(
+        'customization_order' => array(
+            'type' => 'int',
+            'vname' => 'LBL_CUSTOMIZATION_ORDER',
+            'width' => '5%',
+            'default' => true,
+        ),
+        'name' => array(
+            'type' => 'text',
+            'vname' => 'LBL_NAME',
+            'default' => true,
+        ),
+        'status' => array(
+            'type' => 'enum',
+            'vname' => 'LBL_STATUS',
+            'default' => true,
+        ),
+        'conditions' => array(
+            'type' => 'text',
+            'vname' => 'LBL_CONDITIONS',
+            'width' => '30%',
+            'sortable' => false,
+            'default' => true,
+        ),
+        'actions' => array(
+            'type' => 'text',
+            'vname' => 'LBL_ACTIONS',
+            'width' => '30%',
+            'sortable' => false,
+            'default' => true,
+        ),
+        'description' => array(
+            'type' => 'text',
+            'vname' => 'LBL_DESCRIPTION',
+            'sortable' => false,
+            'default' => true,
+        ),
+        'date_modified' => array(
+            'vname' => 'LBL_DATE_MODIFIED',
+            'default' => true,
+        ),
+        'quickedit_button' => array(
+            'vname' => 'LBL_QUICKEDIT_BUTTON',
+            'widget_class' => 'SubPanelQuickEditButton',
+            'module' => 'stic_Custom_View_Customizations',
+            'default' => true,
+        ),
+        'duplicate_button' => array(
+            'vname' => 'LBL_DUPLICATE_BUTTON',
+            'widget_class' => 'SubPanelDuplicateButtonstic',
+            'module' => 'stic_Custom_View_Customizations',
+            'default' => true,
+        ),
+        'remove_button' => array(
+            'vname' => 'LBL_REMOVE',
+            'widget_class' => 'SubPanelRemoveButton',
+            'module' => 'stic_Custom_View_Customizations',
+            'default' => true,
+        ),
     ),
-    'name' => 
-    array (
-      'type' => 'text',
-      'vname' => 'LBL_NAME',
-      'default' => true,
-    ),
-    'status' => 
-    array (
-      'type' => 'enum',
-      'vname' => 'LBL_STATUS',
-      'default' => true,
-    ),
-    'conditions' => 
-    array (
-      'type' => 'text',
-      'vname' => 'LBL_CONDITIONS',
-      'width' => '30%',
-      'sortable' => false,
-      'default' => true,
-    ),
-    'actions' => 
-    array (
-      'type' => 'text',
-      'vname' => 'LBL_ACTIONS',
-      'width' => '30%',
-      'sortable' => false,
-      'default' => true,
-    ),
-    'description' => 
-    array (
-      'type' => 'text',
-      'vname' => 'LBL_DESCRIPTION',
-      'sortable' => false,
-      'default' => true,
-    ),
-    'date_modified' => 
-    array (
-      'vname' => 'LBL_DATE_MODIFIED',
-      'default' => true,
-    ),
-    'quickedit_button' => 
-    array(
-      'vname' => 'LBL_QUICKEDIT_BUTTON',
-      'widget_class' => 'SubPanelQuickEditButton',
-      'module' => 'stic_Custom_View_Customizations',
-      'default' => true,
-    ),
-    'duplicate_button' => 
-    array(
-      'vname' => 'LBL_DUPLICATE_BUTTON',
-      'widget_class' => 'SubPanelDuplicateButtonstic',
-      'module' => 'stic_Custom_View_Customizations',
-      'default' => true,
-    ),    
-    'remove_button' => 
-    array (
-      'vname' => 'LBL_REMOVE',
-      'widget_class' => 'SubPanelRemoveButton',
-      'module' => 'stic_Custom_View_Customizations',
-      'default' => true,
-    ),
-  ),
 );

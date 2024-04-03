@@ -23,17 +23,17 @@
 
 $module_name = 'stic_Custom_Views';
 
-$layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations'] = array (
-  'order' => 45,
-  'module' => 'stic_Custom_View_Customizations',
-  'subpanel_name' => 'default',
-  'sort_order' => 'asc',
-  'sort_by' => 'order',
-  'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
-  'get_subpanel_data' => 'stic_custom_views_stic_custom_view_customizations',
-  'top_buttons' => array (
-    0 => array (
-      'widget_class' => 'SubPanelTopButtonQuickCreate',
+$layout_defs[$module_name]["subpanel_setup"]['stic_custom_view_customizations'] = array(
+    'order' => 45,
+    'module' => 'stic_Custom_View_Customizations',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'order',
+    'title_key' => 'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE',
+    'get_subpanel_data' => 'stic_custom_views_stic_custom_view_customizations',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
     ),
-  ),
 );

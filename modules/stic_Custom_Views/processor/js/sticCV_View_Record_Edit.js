@@ -26,22 +26,22 @@
  */
 
 var sticCV_View_Record_Edit = class sticCV_View_Record_Edit extends sticCV_View_Record_Base {
-    constructor(view) {
-        super(view);
-        
-        this.$form = null;        // jQuery element with form
-        this.formName = null;     // The name of the form
+  constructor(view) {
+    super(view);
 
-        switch(this.view) {
-            case "editview":
-                this.$elementView = $("#EditView");
-                this.$form = this.$elementView;
-                break;
-            case "quickcreate":
-                this.$elementView = $("#EditView_tabs");
-                this.$form = this.$elementView.parent();
-                break;
-        }
-        this.formName = this.$form?.attr("name");
+    this.$form = null; // jQuery element with form
+    this.formName = null; // The name of the form
+
+    switch (this.view) {
+      case "editview":
+        this.$elementView = $("#EditView");
+        this.$form = this.$elementView;
+        break;
+      case "quickcreate":
+        this.$elementView = $("#EditView_tabs");
+        this.$form = this.$elementView.parent();
+        break;
     }
-}
+    this.formName = this.$form ? this.$form.attr("name") : "";
+  }
+};

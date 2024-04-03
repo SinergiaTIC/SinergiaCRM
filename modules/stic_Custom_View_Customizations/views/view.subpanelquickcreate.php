@@ -25,11 +25,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('include/EditView/SubpanelQuickCreate.php');
+require_once 'include/EditView/SubpanelQuickCreate.php';
 
 class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCreate
 {
-    public function __construct($module, $view='QuickCreate', $proccessOverride = false)
+    public function __construct($module, $view = 'QuickCreate', $proccessOverride = false)
     {
         parent::__construct($module, $view, $proccessOverride);
     }
@@ -40,7 +40,7 @@ class stic_Custom_View_CustomizationsSubpanelQuickCreate extends SubpanelQuickCr
         if (($key = array_search('SUBPANELFULLFORM', $this->ev->defs['templateMeta']['form']['buttons'])) !== false) {
             unset($this->ev->defs['templateMeta']['form']['buttons'][$key]);
         }
-        include_once("modules/stic_Custom_View_Customizations/Utils.php");
+        include_once "modules/stic_Custom_View_Customizations/Utils.php";
         echo getLangStrings();
         echo getVersionedScript("modules/stic_Custom_View_Customizations/Utils.js");
         echo getVersionedScript("modules/stic_Custom_View_Customizations/action_lines.js");

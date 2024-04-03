@@ -26,56 +26,67 @@
  */
 
 var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Container {
-    constructor (customView, fieldName) {
-        super(customView, fieldName);
+  constructor(customView, fieldName) {
+    super(customView, fieldName);
 
-        var $fieldElement = this.customView.$elementView.find('*[data-field="'+this.name+'"]');
+    var $fieldElement = this.customView.$elementView.find('*[data-field="' + this.name + '"]');
 
-        this.container = new sticCV_Record_Field_Container(this, $fieldElement);
-        this.header = new sticCV_Record_Field_Header(this.customView, $fieldElement);
-        this.content = new sticCV_Record_Field_Content(this, $fieldElement, fieldName);
+    this.container = new sticCV_Record_Field_Container(this, $fieldElement);
+    this.header = new sticCV_Record_Field_Header(this.customView, $fieldElement);
+    this.content = new sticCV_Record_Field_Content(this, $fieldElement, fieldName);
+  }
+  readonly(readonly = true) {
+    return this.applyAction({ action: "readonly", value: readonly });
+  }
+  required(required = true) {
+    return this.applyAction({ action: "required", value: required });
+  }
+  is_required() {
+    return sticCVUtils.getRequiredStatus(this);
+  }
+  inline(inline = true) {
+    return this.applyAction({ action: "inline", value: inline });
+  }
 
-    }
-    readonly(readonly=true) { return this.applyAction({action: "readonly", value: readonly}); }
-    required(required=true) { return this.applyAction({action: "required", value: required}); }
-    is_required() { return sticCVUtils.getRequiredStatus(this); }
-    inline(inline=true)     { return this.applyAction({action: "inline", value: inline}); }
+  fixed_value(fixed_value) {
+    return this.applyAction({ action: "fixed_value", value: fixed_value });
+  }
+  value(newValue) {
+    return this.fixed_value(newValue);
+  }
 
-    fixed_value(fixed_value) { return this.applyAction({action: "fixed_value", value: fixed_value}); }
-    value(newValue) { return this.fixed_value(newValue); }
-
-    applyAction(action) {
-        switch(action.action){
-            case "visible":
-                if(action.element_section!="header" && action.element_section!="field_label") {
-                    super.applyAction(action);
-                    sticCVUtils.check_required_visible(this);
-                    return this;
-                }
-                break;
-            case "readonly": 
-            case "inline": 
-            case "fixed_value": 
-                return this.content?.applyAction(action);
-            case "required":
-                if(this.customView.view=="editview" || this.customView.view=="quickcreate") {
-                    sticCVUtils.required(this, action.value);
-                    return this;
-                } else {
-                    return false;
-                }
+  applyAction(action) {
+    switch (action.action) {
+      case "visible":
+        if (action.element_section != "header" && action.element_section != "field_label") {
+          super.applyAction(action);
+          sticCVUtils.check_required_visible(this);
+          return this;
         }
-        return super.applyAction(action);
+        break;
+      case "readonly":
+      case "inline":
+      case "fixed_value":
+        return this.content ? this.content.applyAction(action) : null;
+      case "required":
+        if (this.customView.view == "editview" || this.customView.view == "quickcreate") {
+          sticCVUtils.required(this, action.value);
+          return this;
+        } else {
+          return false;
+        }
     }
-    
-    checkCondition(condition) {
-        return this.content.checkCondition(condition);
-    }
+    return super.applyAction(action);
+  }
 
-    onChange(callback) {
-        this.content.onChange(callback);
-    }
-    change() {
-        this.content.change();
-    }
-}
+  checkCondition(condition) {
+    return this.content.checkCondition(condition);
+  }
+
+  onChange(callback) {
+    this.content.onChange(callback);
+  }
+  change() {
+    this.content.change();
+  }
+};

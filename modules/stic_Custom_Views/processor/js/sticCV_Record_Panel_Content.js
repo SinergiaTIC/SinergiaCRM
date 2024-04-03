@@ -25,13 +25,10 @@
  *
  */
 var sticCV_Record_Panel_Content = class sticCV_Record_Panel_Content extends sticCV_Element_FieldContainer {
-    constructor (panel){
-        super(panel.customView, panel.container.$element.find('.tab-content'));
+  constructor(panel) {
+    super(panel.customView, panel.container.$element.find(".tab-content"));
 
-        // Make same width as header 
-        this.$element.css({width:"98%",margin:"auto"});
-    }
-
-}
-
-
+    // Make same width as header
+    this.$element.css({ width: "98%", margin: "auto" });
+  }
+};

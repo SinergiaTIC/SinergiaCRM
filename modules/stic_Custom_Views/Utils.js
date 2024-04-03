@@ -35,7 +35,7 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    $(document).ready(function () { 
+    $(document).ready(function() {
       initializeEditFields();
       initializeSelectize();
     });
@@ -48,7 +48,7 @@ switch (viewType()) {
     break;
 
   case "list":
-    $(document).ready(function () {
+    $(document).ready(function() {
       disableListMenuActions();
     });
     break;
@@ -58,7 +58,7 @@ switch (viewType()) {
 }
 
 function setFieldsInForm(node, order) {
-  var form = node.querySelector('form');
+  var form = node.querySelector("form");
   if (form) {
     // Set value in customization_order input if is not set
     if (!$("#customization_order").val()) {
@@ -70,16 +70,18 @@ function setFieldsInForm(node, order) {
 function initializeQuickCreateCustomization() {
   // When appears a new QuickCreate form in subpanel
   //  - set customization_order if not set (for new items)
-  
+
   // Observer for new elements
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
-      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
         mutation.addedNodes.forEach(function(newNode) {
           if (newNode.nodeType === 1) {
             if (newNode.id === "subpanel_stic_custom_view_customizations_newDiv") {
               var nextOrder = 1;
-              if ($("#list_subpanel_stic_custom_view_customizations .subpanel-table tbody tr.footable-empty").length == 0) {
+              if (
+                $("#list_subpanel_stic_custom_view_customizations .subpanel-table tbody tr.footable-empty").length == 0
+              ) {
                 nextOrder = $("#list_subpanel_stic_custom_view_customizations .subpanel-table").find("tbody tr").length;
               }
               setFieldsInForm(newNode, nextOrder);
@@ -89,19 +91,23 @@ function initializeQuickCreateCustomization() {
       }
     });
   });
-  
+
   // Set observer for subpanel_list
-  var subpanelList = document.getElementById('subpanel_list');
+  var subpanelList = document.getElementById("subpanel_list");
   var config = { childList: true, subtree: true };
   observer.observe(subpanelList, config);
 }
 
 function refreshViewName(customView) {
-  customView.field("name").value(
-    customView.field("view_module").content.text() + " - " +
-    customView.field("customization_name").content.text() + " - " +
-    customView.field("view_type").content.text()
-  );
+  customView
+    .field("name")
+    .value(
+      customView.field("view_module").content.text() +
+        " - " +
+        customView.field("customization_name").content.text() +
+        " - " +
+        customView.field("view_type").content.text()
+    );
 }
 
 function initializeEditFields() {
@@ -118,33 +124,39 @@ function initializeEditFields() {
   // Readonly name
   customView.field("name").readonly();
   customView.field("name").content.bold();
-  
+
   // Set initial name
   refreshViewName(customView);
 
   // Update name when any change on dependant fields
-  customView.field("view_module").onChange(function() { refreshViewName(customView); });
-  customView.field("customization_name").onChange(function() { refreshViewName(customView); });
-  customView.field("view_type").onChange(function() { refreshViewName(customView); });
+  customView.field("view_module").onChange(function() {
+    refreshViewName(customView);
+  });
+  customView.field("customization_name").onChange(function() {
+    refreshViewName(customView);
+  });
+  customView.field("view_type").onChange(function() {
+    refreshViewName(customView);
+  });
 }
 
 function initializeSelectize() {
-  var config = { placeholder: '' };
-  $('select#user_type').selectize(config);
-  $('select#security_groups').selectize(config);
-  $('select#roles').selectize(config);
-  $('select#security_groups_exclude').selectize(config);
-  $('select#roles_exclude').selectize(config);
+  var config = { placeholder: "" };
+  $("select#user_type").selectize(config);
+  $("select#security_groups").selectize(config);
+  $("select#roles").selectize(config);
+  $("select#security_groups_exclude").selectize(config);
+  $("select#roles_exclude").selectize(config);
 }
 
 function disableListMenuActions() {
   // disable some list menu actions
-  var selectorsToKeep = ['#massupdate_listview_top', '#export_listview_top', '#delete_listview_top'];
+  var selectorsToKeep = ["#massupdate_listview_top", "#export_listview_top", "#delete_listview_top"];
 
   // remove duplicate massive link which has not a uniq id
-  $('#actionLinkTop > li > ul > li:nth-child(2) > a#massupdate_listview_top').closest('li').remove();
+  $("#actionLinkTop > li > ul > li:nth-child(2) > a#massupdate_listview_top").closest("li").remove();
 
-  $('ul#actionLinkTop li.sugar_action_button ul li').each(function () {
+  $("ul#actionLinkTop li.sugar_action_button ul li").each(function() {
     var containsSelector = false;
     for (var i = 0; i < selectorsToKeep.length; i++) {
       if ($(this).find(selectorsToKeep[i]).length > 0) {

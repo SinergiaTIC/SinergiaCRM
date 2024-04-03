@@ -25,19 +25,18 @@
  *
  */
 var sticCV_Record_Field_Header = class sticCV_Record_Field_Header extends sticCV_Element_Label {
-    constructor (customView, $fieldElement){
-        super(customView, $fieldElement.children('.label'));
+  constructor(customView, $fieldElement) {
+    super(customView, $fieldElement.children(".label"));
 
-        // Fix size: same as editor
-        if(this.customView.view=="detailview") {
-            this.$element.css("min-height", "42px");    
-        } else if(this.customView.view=="editview" || this.customView.view=="quickcreate") {
-            this.$element.css("min-height", "20px");
-            this.$element.css("height", "30px");
-            this.$element.css("margin-left", "-5px");
-            this.$element.css("margin-right", "5px");
-            this.$element.css("padding-left", "5px");
-        }
+    // Fix size: same as editor
+    if (this.customView.view == "detailview") {
+      this.$element.css("min-height", "42px");
+    } else if (this.customView.view == "editview" || this.customView.view == "quickcreate") {
+      this.$element.css("min-height", "20px");
+      this.$element.css("height", "30px");
+      this.$element.css("margin-left", "-5px");
+      this.$element.css("margin-right", "5px");
+      this.$element.css("padding-left", "5px");
     }
-
-}
+  }
+};

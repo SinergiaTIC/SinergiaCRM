@@ -37,7 +37,7 @@ class stic_Custom_ViewsViewDetail extends ViewDetail
     public function preDisplay()
     {
         global $sugar_config;
-        
+
         parent::preDisplay();
 
         SticViews::preDisplay($this);
@@ -52,7 +52,7 @@ class stic_Custom_ViewsViewDetail extends ViewDetail
         // Write here you custom code
         echo getVersionedScript("modules/stic_Custom_Views/Utils.js");
 
-        include_once("modules/stic_Custom_Views/Utils.php");
+        include_once "modules/stic_Custom_Views/Utils.php";
         echo getJsVars($this->bean->view_module, $this->bean->view_type);
     }
 }

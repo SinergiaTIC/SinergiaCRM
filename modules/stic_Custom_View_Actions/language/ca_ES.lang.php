@@ -21,16 +21,16 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$mod_strings = array (
-  // Camps del mòdul
-  'LBL_ACTION_ORDER' => 'Ordre',
-  'LBL_TYPE' => "Tipus d'acció",
-  'LBL_ELEMENT' => 'Element',
-  'LBL_ACTION' => 'Acció',
-  'LBL_VALUE' => 'Valor',
-  'LBL_VALUE_TYPE' => 'Tipus del valor',
-  'LBL_ELEMENT_SECTION' => 'Aplica-ho a',
-  
-  // Relacions i subpanells
-  'LBL_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
+$mod_strings = array(
+    // Camps del mòdul
+    'LBL_ACTION_ORDER' => 'Ordre',
+    'LBL_TYPE' => "Tipus d'acció",
+    'LBL_ELEMENT' => 'Element',
+    'LBL_ACTION' => 'Acció',
+    'LBL_VALUE' => 'Valor',
+    'LBL_VALUE_TYPE' => 'Tipus del valor',
+    'LBL_ELEMENT_SECTION' => 'Aplica-ho a',
+
+    // Relacions i subpanells
+    'LBL_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
 );

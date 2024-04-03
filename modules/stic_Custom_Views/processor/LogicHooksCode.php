@@ -1,8 +1,5 @@
 <?php
 
-use Elasticsearch\Endpoints\Graph\Explore;
-use Symfony\Component\Validator\Constraints\Length;
-
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -27,18 +24,19 @@ use Symfony\Component\Validator\Constraints\Length;
 class stic_Custom_Views_ProcessorLogicHooks
 {
 
-    public function after_ui_frame($event, $arguments) {
+    public function after_ui_frame($event, $arguments)
+    {
         require_once 'modules/stic_Custom_Views/Utils.php';
         global $current_user;
 
         $action = strtolower($GLOBALS['action']);
         $view = $action;
         $module = $GLOBALS['module'];
-        if($action=="subpanelcreates") {
+        if ($action == "subpanelcreates") {
             $view = "quickcreate";
             $module = $_POST["target_module"];
         }
-        $availableViews = $GLOBALS ['app_list_strings']['stic_custom_views_views_list'];
+        $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'];
         if (!array_key_exists($view, $availableViews)) {
             return "";
         }
@@ -56,14 +54,14 @@ class stic_Custom_Views_ProcessorLogicHooks
 
         $groups = SecurityGroup::getUserSecurityGroups($current_user->id);
         $groupsIds = array();
-        foreach($groups as $group) {
-            $groupsIds[] = $group["id"]; 
+        foreach ($groups as $group) {
+            $groupsIds[] = $group["id"];
         }
 
         $acl = BeanFactory::newBean('ACLRoles');
         $roles = $acl->getUserRoles($current_user->id, false);
         $rolesIds = array();
-        foreach($roles as $rol) {
+        foreach ($roles as $rol) {
             $rolesIds[] = $rol->id;
         }
 
@@ -72,11 +70,11 @@ class stic_Custom_Views_ProcessorLogicHooks
         $sql = "
             SELECT DISTINCT views.id, views.user_type, views.security_groups, views.security_groups_exclude, views.roles, views.roles_exclude
                 FROM stic_custom_views views
-                    INNER JOIN stic_custom_views_stic_custom_view_customizations_c views_custom 
+                    INNER JOIN stic_custom_views_stic_custom_view_customizations_c views_custom
                         ON views_custom.stic_custo45d1m_views_ida = views.id
                     INNER JOIN stic_custom_view_customizations custom
                         ON views_custom.stic_custobdd5zations_idb = custom.id
-                WHERE 
+                WHERE
                     views.deleted = 0
                     AND views.status = 'active'
                     AND views_custom.deleted = 0
@@ -84,7 +82,7 @@ class stic_Custom_Views_ProcessorLogicHooks
                     AND custom.status = 'active'
                     AND views.view_module = '{$module}'
                     AND views.view_type = '{$view}'";
-        
+
         $result = $db->query($sql, true);
         if (!$result) {
             return '';
@@ -93,26 +91,26 @@ class stic_Custom_Views_ProcessorLogicHooks
         // Filter Custom Views for current user
         $validCustomViews = array();
         while ($row = $db->fetchByAssoc($result)) {
-            $okUserType = $row["user_type"]=="all" || 
-                          ($is_admin && $row["user_type"]=="administrator") ||
-                          (!$is_admin && $row["user_type"]=="regular_user");
-            if(!$okUserType) {
+            $okUserType = $row["user_type"] == "all" ||
+                ($is_admin && $row["user_type"] == "administrator") ||
+                (!$is_admin && $row["user_type"] == "regular_user");
+            if (!$okUserType) {
                 continue;
             }
 
             $okGroup = empty($row["security_groups"]) ||
-                       $this->string_contains_any($row["security_groups"], $groupsIds);
+            $this->string_contains_any($row["security_groups"], $groupsIds);
             $okGroup &= empty($row["security_groups_exclude"]) ||
-                        !$this->string_contains_any($row["security_groups_exclude"], $groupsIds);
-            if(!$okGroup) {
+            !$this->string_contains_any($row["security_groups_exclude"], $groupsIds);
+            if (!$okGroup) {
                 continue;
             }
-        
+
             $okRole = empty($row["roles"]) ||
-                      $this->string_contains_any($row["roles"], $rolesIds);
+            $this->string_contains_any($row["roles"], $rolesIds);
             $okRole &= empty($row["roles_exclude"]) ||
-                       !$this->string_contains_any($row["roles_exclude"], $rolesIds);
-            if(!$okRole) {
+            !$this->string_contains_any($row["roles_exclude"], $rolesIds);
+            if (!$okRole) {
                 continue;
             }
 
@@ -120,7 +118,7 @@ class stic_Custom_Views_ProcessorLogicHooks
             $validCustomViews[] = $row;
         }
 
-        if(empty($validCustomViews)){
+        if (empty($validCustomViews)) {
             return '';
         }
 
@@ -129,30 +127,30 @@ class stic_Custom_Views_ProcessorLogicHooks
 
         // Get all customizations: [Conditions, Actions]
         $customizations = array();
-        foreach($validCustomViews as $customView) {
+        foreach ($validCustomViews as $customView) {
             $customViewBean = BeanFactory::getBean('stic_Custom_Views', $customView["id"]);
             $allCustomizationBeanArray = getRelatedBeanObjectArray($customViewBean, 'stic_custom_views_stic_custom_view_customizations');
             $customizationBeanArray = array();
-            foreach($allCustomizationBeanArray as $customizationBean) {
-                if(strtolower($customizationBean->status)=="active") {
-                    $customizationBeanArray[]=$customizationBean;
+            foreach ($allCustomizationBeanArray as $customizationBean) {
+                if (strtolower($customizationBean->status) == "active") {
+                    $customizationBeanArray[] = $customizationBean;
                 }
             }
             // Sort Customizations
             usort($customizationBeanArray, array($this, 'compareCustomizations'));
 
-            foreach($customizationBeanArray as $customizationBean) {
+            foreach ($customizationBeanArray as $customizationBean) {
                 $conditionBeanArray = getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_conditions');
                 $actionsBeanArray = getRelatedBeanObjectArray($customizationBean, 'stic_custom_view_customizations_stic_custom_view_actions');
 
                 $conditions = array();
                 foreach ($conditionBeanArray as $conditionBean) {
-                    $value_typeArray = explode("|",$conditionBean->value_type);
-                    $value_type=$value_typeArray[0];
-                    $value_list=$value_typeArray[1];
+                    $value_typeArray = explode("|", $conditionBean->value_type);
+                    $value_type = $value_typeArray[0];
+                    $value_list = $value_typeArray[1];
                     $value = $this->value_to_display($conditionBean->value, $value_type);
                     $condition_type = $conditionBean->condition_type;
-                    if($condition_type=="") {
+                    if ($condition_type == "") {
                         $condition_type = "value";
                     }
                     $conditions[] = array(
@@ -164,18 +162,18 @@ class stic_Custom_Views_ProcessorLogicHooks
                         "value" => htmlspecialchars_decode($value),
                         "value_type" => $value_type,
                         "value_list" => $value_list,
-                        "date_format" => strtoupper($current_user->getPreference('datef'))." HH:mm",
+                        "date_format" => strtoupper($current_user->getPreference('datef')) . " HH:mm",
                     );
                 }
                 // Sort conditions
                 usort($conditions, array($this, 'compareConditions'));
-        
+
                 $actions = array();
                 foreach ($actionsBeanArray as $actionBean) {
-                    $value_typeArray = explode("|",$actionBean->value_type);
-                    $value_type=$value_typeArray[0];
-                    $value_list=$value_typeArray[1];
-                    if($actionBean->action=="fixed_value") {
+                    $value_typeArray = explode("|", $actionBean->value_type);
+                    $value_type = $value_typeArray[0];
+                    $value_list = $value_typeArray[1];
+                    if ($actionBean->action == "fixed_value") {
                         $value = $this->value_to_display($actionBean->value, $value_type);
                     } else {
                         $value = $actionBean->value;
@@ -195,7 +193,7 @@ class stic_Custom_Views_ProcessorLogicHooks
                 // Sort actions
                 usort($actions, array($this, 'compareActions'));
 
-                if(count($actions)>0) {
+                if (count($actions) > 0) {
                     // Add Customization
                     $customizations[] = array("conditions" => $conditions, "actions" => $actions);
                 }
@@ -207,20 +205,21 @@ class stic_Custom_Views_ProcessorLogicHooks
 
         // Write a js call to processSticCustomView when loaded
         $html =
-        "<script type=\"text/javascript\" language=\"JavaScript\">".
-            "$(document).ready(function () {".
-                "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"".addslashes($customizationsJson)."\");".
-            "});".
-        "</script>";
+        "<script type=\"text/javascript\" language=\"JavaScript\">" .
+        "$(document).ready(function () {" .
+        "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"" . addslashes($customizationsJson) . "\");" .
+            "});" .
+            "</script>";
 
         echo $html;
         return "";
     }
 
-    private function value_to_display($value, $value_type){
+    private function value_to_display($value, $value_type)
+    {
         global $timedate, $current_user, $sugar_config;
 
-        switch($value_type) {
+        switch ($value_type) {
             case "currency":
                 return currency_format_number($value);
 
@@ -230,7 +229,7 @@ class stic_Custom_Views_ProcessorLogicHooks
                 $user_dec_sep = (!empty($current_user->id) ? $current_user->getPreference('dec_sep') : null);
                 $dec_sep = empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep;
                 return str_replace('.', $dec_sep, $value);
-                
+
             case "date":
             case "datetime":
             case "datetimecombo":
@@ -239,32 +238,34 @@ class stic_Custom_Views_ProcessorLogicHooks
         return $value;
     }
 
-    private function string_contains_any($str, array $arr){
-        foreach($arr as $a) {
-            if (stripos($str,$a) !== false) {
+    private function string_contains_any($str, array $arr)
+    {
+        foreach ($arr as $a) {
+            if (stripos($str, $a) !== false) {
                 return true;
             }
         }
         return false;
     }
 
-    private function compareCustomViewRestrictions($a, $b) {
-        if(!empty($a["roles"]) && !empty($b["roles"])) { 
+    private function compareCustomViewRestrictions($a, $b)
+    {
+        if (!empty($a["roles"]) && !empty($b["roles"])) {
             return 0;
         }
-        if(empty($a["roles"]) && !empty($b["roles"])) {
+        if (empty($a["roles"]) && !empty($b["roles"])) {
             return -1;
         }
-        if(!empty($a["roles"]) && empty($b["roles"])) {
+        if (!empty($a["roles"]) && empty($b["roles"])) {
             return 1;
         }
-        if(!empty($a["roles_exclude"]) && !empty($b["roles_exclude"])) { 
+        if (!empty($a["roles_exclude"]) && !empty($b["roles_exclude"])) {
             return 0;
         }
-        if(empty($a["roles_exclude"]) && !empty($b["roles_exclude"])) {
+        if (empty($a["roles_exclude"]) && !empty($b["roles_exclude"])) {
             return -1;
         }
-        if(!empty($a["roles_exclude"]) && empty($b["roles_exclude"])) {
+        if (!empty($a["roles_exclude"]) && empty($b["roles_exclude"])) {
             return 1;
         }
         if (!empty($a["security_groups"]) && !empty($b["security_groups"])) {
@@ -297,16 +298,19 @@ class stic_Custom_Views_ProcessorLogicHooks
         return 0;
     }
 
-    private function compareCustomizations($a, $b) {
-        return $a->customization_order-$b->customization_order;
+    private function compareCustomizations($a, $b)
+    {
+        return $a->customization_order - $b->customization_order;
     }
 
-    private function compareConditions($a, $b) {
-        return $a["condition_order"]-$b["condition_order"];
+    private function compareConditions($a, $b)
+    {
+        return $a["condition_order"] - $b["condition_order"];
     }
 
-    private function compareActions($a, $b) {
-        return $a["action_order"]-$b["action_order"];
+    private function compareActions($a, $b)
+    {
+        return $a["action_order"] - $b["action_order"];
     }
 
 }

@@ -49,18 +49,16 @@ class stic_Custom_View_Conditions extends Basic
     public $value;
     public $value_type;
 
-	
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
 
         return false;
     }
-	
+
     public function __construct()
     {
         parent::__construct();
@@ -78,7 +76,7 @@ class stic_Custom_View_Conditions extends Basic
             LoggerManager::getLogger()->warn('Posted field is undefined: ' . $field);
         }
 
-        $line_count = count((array)$postedField);
+        $line_count = count((array) $postedField);
         $j = 0;
         for ($i = 0; $i < $line_count; ++$i) {
             if (!isset($post_data[$key . 'deleted'][$i])) {
@@ -97,9 +95,9 @@ class stic_Custom_View_Conditions extends Basic
                         } else {
                             if ($field_name === 'value') {
                                 $post_data[$key . $field_name][$i] = fixUpFormatting($view_module, $condition->field, $post_data[$key . $field_name][$i]);
-                                if(isset($post_data["display_" . $key . $field_name]) && isset($post_data["display_" . $key . $field_name][$i])) {
-                                    $post_data[$key . $field_name][$i].="|".$post_data["display_" . $key . $field_name][$i];
-                                }                                
+                                if (isset($post_data["display_" . $key . $field_name]) && isset($post_data["display_" . $key . $field_name][$i])) {
+                                    $post_data[$key . $field_name][$i] .= "|" . $post_data["display_" . $key . $field_name][$i];
+                                }
                             }
                         }
                         $condition->$field_name = $post_data[$key . $field_name][$i];
@@ -107,7 +105,7 @@ class stic_Custom_View_Conditions extends Basic
                 }
                 if (trim($condition->field) != '') {
                     $condition->condition_order = ++$j;
-                    $condition->name = $parent->name .'-'.$condition->condition_order;
+                    $condition->name = $parent->name . '-' . $condition->condition_order;
                     $condition->stic_custo233dzations_ida = $parent->id;
                     $condition->save();
                 }

@@ -22,126 +22,99 @@
  */
 
 $module_name = 'stic_Custom_Views';
-$viewdefs [$module_name] = 
-array (
-  'EditView' => 
-  array (
-    'templateMeta' => 
-    array (
-      'maxColumns' => '2',
-      'widths' => 
-      array (
-        0 => 
-        array (
-          'label' => '10',
-          'field' => '30',
+$viewdefs[$module_name] =
+array(
+    'EditView' => array(
+        'templateMeta' => array(
+            'maxColumns' => '2',
+            'widths' => array(
+                0 => array(
+                    'label' => '10',
+                    'field' => '30',
+                ),
+                1 => array(
+                    'label' => '10',
+                    'field' => '30',
+                ),
+            ),
+            'useTabs' => true,
+            'tabDefs' => array(
+                'LBL_DEFAULT_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
+            ),
         ),
-        1 => 
-        array (
-          'label' => '10',
-          'field' => '30',
+        'panels' => array(
+            'LBL_DEFAULT_PANEL' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'view_module',
+                        'studio' => 'visible',
+                        'label' => 'LBL_VIEW_MODULE',
+                    ),
+                    1 => array(
+                        'name' => 'view_type',
+                        'studio' => 'visible',
+                        'label' => 'LBL_VIEW_TYPE',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'customization_name',
+                        'studio' => 'visible',
+                        'label' => 'LBL_CUSTOMIZATION_NAME',
+                    ),
+                    1 => array(
+                        'name' => 'name',
+                        'studio' => 'visible',
+                        'label' => 'LBL_NAME',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'user_type',
+                        'studio' => 'visible',
+                        'label' => 'LBL_USER_TYPE',
+                    ),
+                    1 => 'assigned_user_name',
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'security_groups',
+                        'studio' => 'visible',
+                        'label' => 'LBL_SECURITY_GROUPS',
+                    ),
+                    1 => array(
+                        'name' => 'roles',
+                        'studio' => 'visible',
+                        'label' => 'LBL_ROLES',
+                    ),
+                ),
+                4 => array(
+                    0 => array(
+                        'name' => 'security_groups_exclude',
+                        'studio' => 'visible',
+                        'label' => 'LBL_SECURITY_GROUPS_EXCLUDE',
+                    ),
+                    1 => array(
+                        'name' => 'roles_exclude',
+                        'studio' => 'visible',
+                        'label' => 'LBL_ROLES_EXCLUDE',
+                    ),
+                ),
+                5 => array(
+                    0 => array(
+                        'name' => 'status',
+                        'studio' => 'visible',
+                        'label' => 'LBL_STATUS',
+                    ),
+                    1 => array(),
+                ),
+                6 => array(
+                    0 => 'description',
+                ),
+            ),
         ),
-      ),
-      'useTabs' => true,
-      'tabDefs' => 
-      array (
-        'LBL_DEFAULT_PANEL' => 
-        array (
-          'newTab' => true,
-          'panelDefault' => 'expanded',
-        ),
-      ),
     ),
-    'panels' => 
-    array (
-      'LBL_DEFAULT_PANEL' => 
-      array (
-        0 => 
-        array (
-          0 => 
-          array (
-            'name' => 'view_module',
-            'studio' => 'visible',
-            'label' => 'LBL_VIEW_MODULE',
-          ),
-          1 => 
-          array (
-            'name' => 'view_type',
-            'studio' => 'visible',
-            'label' => 'LBL_VIEW_TYPE',
-          ),
-        ),
-        1 => 
-        array (
-          0 => array (
-            'name' => 'customization_name',
-            'studio' => 'visible',
-            'label' => 'LBL_CUSTOMIZATION_NAME',
-          ),
-          1 => 
-          array (
-            'name' => 'name',
-            'studio' => 'visible',
-            'label' => 'LBL_NAME',
-          ),
-        ),
-        2 => 
-        array (
-          0 => 
-          array (
-            'name' => 'user_type',
-            'studio' => 'visible',
-            'label' => 'LBL_USER_TYPE',
-          ),
-          1 => 'assigned_user_name',
-        ),
-        3 => 
-        array (
-          0 => 
-          array (
-            'name' => 'security_groups',
-            'studio' => 'visible',
-            'label' => 'LBL_SECURITY_GROUPS',
-          ),
-          1 => 
-          array (
-            'name' => 'roles',
-            'studio' => 'visible',
-            'label' => 'LBL_ROLES',
-          ),
-        ),
-        4 => 
-        array (
-          0 => 
-          array (
-            'name' => 'security_groups_exclude',
-            'studio' => 'visible',
-            'label' => 'LBL_SECURITY_GROUPS_EXCLUDE',
-          ),
-          1 => 
-          array (
-            'name' => 'roles_exclude',
-            'studio' => 'visible',
-            'label' => 'LBL_ROLES_EXCLUDE',
-          ),
-        ),
-        5 => 
-        array (
-          0 => 
-          array (
-            'name' => 'status',
-            'studio' => 'visible',
-            'label' => 'LBL_STATUS',
-          ),
-          1 => array()
-        ),        
-        6 => 
-        array (
-          0 => 'description',
-        ),
-      ),
-    ),
-  ),
 );
-;
-?>

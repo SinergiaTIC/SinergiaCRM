@@ -56,24 +56,22 @@ class stic_Custom_Views extends Basic
     public $status;
 
     public $show_SubPanelTopButtonListView = false;
-	
+
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
 
         return false;
     }
-	
 
     public function __construct()
     {
         parent::__construct();
 
-        require_once('modules/stic_Custom_Views/Utils.php');
+        require_once 'modules/stic_Custom_Views/Utils.php';
         fillDynamicGenericLists();
     }
 
@@ -81,22 +79,23 @@ class stic_Custom_Views extends Basic
     {
         // Ensure name is correct
         global $app_list_strings;
-        $this->name = $app_list_strings['moduleList'][$this->view_module] . ' - ' . 
-                      $this->customization_name . ' - ' . 
-                      $app_list_strings['stic_custom_views_views_list'][$this->view_type];
+        $this->name = $app_list_strings['moduleList'][$this->view_module] . ' - ' .
+        $this->customization_name . ' - ' .
+            $app_list_strings['stic_custom_views_views_list'][$this->view_type];
     }
 
-    public function save($check_notify = false){
+    public function save($check_notify = false)
+    {
         $this->before_save();
 
         $id = parent::save($check_notify);
 
-        if (($_POST["duplicateSave"] && $_POST["duplicateSave"]=="true")) {
+        if (($_POST["duplicateSave"] && $_POST["duplicateSave"] == "true")) {
             // Duplicate Customizations
             $originalBean = BeanFactory::getBean("stic_Custom_Views", $_POST["duplicateId"]);
             $customizationBeans = getRelatedBeanObjectArray($originalBean, 'stic_custom_views_stic_custom_view_customizations');
             foreach ($customizationBeans as $customizationBean) {
-                $customizationBean->duplicateTo($id); 
+                $customizationBean->duplicateTo($id);
             }
         }
         return $id;
@@ -107,7 +106,7 @@ class stic_Custom_Views extends Basic
         // Delete all Customizations
         $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_views_stic_custom_view_customizations');
         foreach ($relatedBeans as $relatedBean) {
-            $relatedBean->mark_deleted($relatedBean->id); 
+            $relatedBean->mark_deleted($relatedBean->id);
         }
 
         parent::mark_deleted($id);

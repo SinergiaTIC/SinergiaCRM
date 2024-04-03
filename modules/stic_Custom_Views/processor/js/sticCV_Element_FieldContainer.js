@@ -25,33 +25,31 @@
  *
  */
 var sticCV_Element_FieldContainer = class sticCV_Element_FieldContainer extends sticCV_Element_Div {
-    constructor (customView, $element){
-        super(customView, $element);
-    }
+  constructor(customView, $element) {
+    super(customView, $element);
+  }
 
-    getFields() {
-        var fields = [];
-        var customView=this.customView;
-        this.$element.find("[field]").each(function(){
-            fields.push(new sticCV_Record_Field(customView, $(this).attr("field")));
-        });
-        return fields;
-    }
+  getFields() {
+    var fields = [];
+    var customView = this.customView;
+    this.$element.find("[field]").each(function() {
+      fields.push(new sticCV_Record_Field(customView, $(this).attr("field")));
+    });
+    return fields;
+  }
 
-    applyAction(action) {
-        if(action.action=="visible"){
-            var show=(sticCVUtils.isTrue(action.value));
-            if(!show) {
-                if(this.customView.view=="editview" || this.customView.view=="quickcreate") {
-                    for(var field of this.getFields()) {
-                        // Hide fields (this make unrequired also)
-                        field.hide();
-                    };
-                }
-            }
+  applyAction(action) {
+    if (action.action == "visible") {
+      var show = sticCVUtils.isTrue(action.value);
+      if (!show) {
+        if (this.customView.view == "editview" || this.customView.view == "quickcreate") {
+          for (var field of this.getFields()) {
+            // Hide fields (this make unrequired also)
+            field.hide();
+          }
         }
-        return super.applyAction(action);
+      }
     }
-}
-
-
+    return super.applyAction(action);
+  }
+};

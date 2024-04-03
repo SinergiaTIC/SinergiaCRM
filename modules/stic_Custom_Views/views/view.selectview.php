@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once('include/MVC/View/SugarView.php');
+require_once 'include/MVC/View/SugarView.php';
 require_once 'SticInclude/Views.php';
 
 class stic_Custom_ViewsViewselectview extends SugarView
@@ -32,11 +32,11 @@ class stic_Custom_ViewsViewselectview extends SugarView
 
     public function __construct()
     {
-        if (isset($_REQUEST [ 'view' ])) {
-            $this->view = $_REQUEST [ 'view' ] ;
+        if (isset($_REQUEST['view'])) {
+            $this->view = $_REQUEST['view'];
         }
 
-        $this->editModule = (! empty($_REQUEST [ 'view_module' ])) ? $_REQUEST [ 'view_module' ] : null ;
+        $this->editModule = (!empty($_REQUEST['view_module'])) ? $_REQUEST['view_module'] : null;
         $this->buttons = array(); // initialize so that modules without subpanels for example don't result in this being unset and causing problems in the smarty->assign
 
         if (isset($_REQUEST['view_module'])) {
@@ -72,21 +72,20 @@ class stic_Custom_ViewsViewselectview extends SugarView
 
     public function generateStudioViewButtons()
     {
-        require_once("modules/ModuleBuilder/Module/StudioModuleFactory.php");
-        require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
+        require_once "modules/ModuleBuilder/Module/StudioModuleFactory.php";
+        require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
         $module = StudioModuleFactory::getStudioModule($this->viewModule);
-        $this->title .= ': ' . $module->name; 
+        $this->title .= ': ' . $module->name;
         $this->buttons = array();
 
+        $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'];
 
-        $availableViews = $GLOBALS ['app_list_strings']['stic_custom_views_views_list'];
-
-        $views = $module->getViews() ;
+        $views = $module->getViews();
         $hideQuickCreateForModules = array('kbdocuments', 'projecttask', 'campaigns');
         if (!in_array(strtolower($this->viewModule), $hideQuickCreateForModules)) {
-            $views ['quickcreatedefs'] = array(
-                'name' => $GLOBALS ['app_list_strings']['stic_custom_views_views_list']['quickcreate'],
+            $views['quickcreatedefs'] = array(
+                'name' => $GLOBALS['app_list_strings']['stic_custom_views_views_list']['quickcreate'],
                 'type' => 'quickcreate',
             );
         }

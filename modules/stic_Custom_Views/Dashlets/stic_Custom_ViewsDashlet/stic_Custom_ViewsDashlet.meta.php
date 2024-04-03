@@ -31,5 +31,5 @@ $dashletMeta['stic_Custom_ViewsDashlet'] = array(
     'module' => 'stic_Custom_Views',
     'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Custom_Views'),
     'description' => 'A customizable view into stic_Custom_Views',
-    'category' => 'Module Views'
+    'category' => 'Module Views',
 );

@@ -25,62 +25,69 @@
  *
  */
 var sticCV_Record_Tab_Header = class sticCV_Record_Tab_Header extends sticCV_Element_Label {
-    constructor (tab) {
-        super(tab.customView, tab.customView.$elementView.find('ul.nav.nav-tabs li[role="presentation"] > a[data-toggle="tab"][data-label="'+tab.name+'"]'));
-        this.$label = this.$element;
-        this.$xsLabel = tab.customView.$elementView.find('ul.nav.nav-tabs > li[role="presentation"] > ul li > a[data-toggle="tab"][data-label="'+tab.name+'"]');
-        this.$xsMenuLabel = tab.customView.$elementView.find('ul.nav.nav-tabs > li[role="presentation"] > a[data-toggle="dropdown"][data-label="'+tab.name+'"]');
+  constructor(tab) {
+    super(
+      tab.customView,
+      tab.customView.$elementView.find(
+        'ul.nav.nav-tabs li[role="presentation"] > a[data-toggle="tab"][data-label="' + tab.name + '"]'
+      )
+    );
+    this.$label = this.$element;
+    this.$xsLabel = tab.customView.$elementView.find(
+      'ul.nav.nav-tabs > li[role="presentation"] > ul li > a[data-toggle="tab"][data-label="' + tab.name + '"]'
+    );
+    this.$xsMenuLabel = tab.customView.$elementView.find(
+      'ul.nav.nav-tabs > li[role="presentation"] > a[data-toggle="dropdown"][data-label="' + tab.name + '"]'
+    );
+  }
+
+  applyAction(action) {
+    switch (action.action) {
+      case "visible":
+        sticCVUtils.show(this.$label, this.customView, action.value);
+        sticCVUtils.show(this.$xsLabel, this.customView, action.value);
+        return this;
+      case "color":
+        sticCVUtils.color(this.$label, this.customView, action.value);
+        sticCVUtils.color(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.color(this.$xsMenuLabel, this.customView, action.value);
+        return this;
+      case "background":
+        sticCVUtils.background(this.$label, this.customView, action.value);
+        sticCVUtils.background(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.background(this.$xsMenuLabel, this.customView, action.value);
+        return this;
+      case "bold":
+        sticCVUtils.bold(this.$label, this.customView, action.value);
+        sticCVUtils.bold(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.bold(this.$xsMenuLabel, this.customView, action.value);
+        return this;
+      case "italic":
+        sticCVUtils.italic(this.$label, this.customView, action.value);
+        sticCVUtils.italic(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.italic(this.$xsMenuLabel, this.customView, action.value);
+        return this;
+      case "underline":
+        sticCVUtils.underline(this.$label, this.customView, action.value);
+        sticCVUtils.underline(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.underline(this.$xsMenuLabel, this.customView, action.value);
+        return this;
+      case "style":
+        sticCVUtils.style(this.$label, this.customView, action.value);
+        sticCVUtils.style(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.style(this.$xsMenuLabel, this.customView, action.value);
+        return this;
+      case "frame":
+        sticCVUtils.frame(this.$label, this.customView, action.value);
+        sticCVUtils.frame(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.frame(this.$xsMenuLabel, this.customView, action.value);
+        return this;
+      case "fixed_text":
+        var oldText = sticCVUtils.text(this.$label, this.customView, action.value).split(", ")[0];
+        sticCVUtils.text(this.$xsLabel, this.customView, action.value);
+        sticCVUtils.text(this.$xsMenuLabel, this.customView, action.value);
+        return action.value === undefined ? oldText : action.value;
     }
-
-    applyAction(action) {
-        switch(action.action){
-            case "visible": 
-                sticCVUtils.show(this.$label, this.customView, action.value);
-                sticCVUtils.show(this.$xsLabel, this.customView, action.value);
-                return this;
-            case "color": 
-                sticCVUtils.color(this.$label, this.customView, action.value);
-                sticCVUtils.color(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.color(this.$xsMenuLabel, this.customView, action.value);
-                return this;
-            case "background": 
-                sticCVUtils.background(this.$label, this.customView, action.value);
-                sticCVUtils.background(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.background(this.$xsMenuLabel, this.customView, action.value);
-                return this;
-            case "bold": 
-                sticCVUtils.bold(this.$label, this.customView, action.value);
-                sticCVUtils.bold(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.bold(this.$xsMenuLabel, this.customView, action.value);
-                return this;
-            case "italic": 
-                sticCVUtils.italic(this.$label, this.customView, action.value);
-                sticCVUtils.italic(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.italic(this.$xsMenuLabel, this.customView, action.value);
-                return this;
-            case "underline": 
-                sticCVUtils.underline(this.$label, this.customView, action.value);
-                sticCVUtils.underline(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.underline(this.$xsMenuLabel, this.customView, action.value);
-                return this;
-            case "style":
-                sticCVUtils.style(this.$label, this.customView, action.value);
-                sticCVUtils.style(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.style(this.$xsMenuLabel, this.customView, action.value);
-                return this;
-            case "frame":
-                sticCVUtils.frame(this.$label, this.customView, action.value);
-                sticCVUtils.frame(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.frame(this.$xsMenuLabel, this.customView, action.value);
-                return this;
-            case "fixed_text": 
-                var oldText = sticCVUtils.text(this.$label, this.customView, action.value).split(", ")[0];
-                sticCVUtils.text(this.$xsLabel, this.customView, action.value);
-                sticCVUtils.text(this.$xsMenuLabel, this.customView, action.value);
-                return (action.value===undefined) ? oldText: action.value;
-        }
-        return super.applyAction(action);
-    }
-}
-
-
+    return super.applyAction(action);
+  }
+};

@@ -46,18 +46,17 @@ class stic_Custom_View_Customizations extends Basic
     public $status;
     public $conditions;
     public $actions;
-	
+
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
 
         return false;
     }
-	
+
     public function __construct()
     {
         parent::__construct();
@@ -72,7 +71,7 @@ class stic_Custom_View_Customizations extends Basic
         require_once 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
 
         // customization_order must be >0
-        if($this->customization_order<=0) {
+        if ($this->customization_order <= 0) {
             $this->customization_order = 1;
         }
 
@@ -86,8 +85,8 @@ class stic_Custom_View_Customizations extends Basic
         // Remove Condition lines in $_POST
         $conditionPostToDelete = array();
         foreach ($_POST as $postKey => $postValue) {
-            if(str_starts_with($postKey, 'sticCustomView_Condition')) {
-                $conditionPostToDelete[$postKey]=$postValue;
+            if (str_starts_with($postKey, 'sticCustomView_Condition')) {
+                $conditionPostToDelete[$postKey] = $postValue;
             }
         }
         $_POST = array_diff_key($_POST, $conditionPostToDelete);
@@ -99,12 +98,12 @@ class stic_Custom_View_Customizations extends Basic
         // Remove Action lines in $_POST
         $actionPostToDelete = array();
         foreach ($_POST as $postKey => $postValue) {
-            if(str_starts_with($postKey, 'sticCustomView_Action')) {
-                $actionPostToDelete[$postKey]=$postValue;
+            if (str_starts_with($postKey, 'sticCustomView_Action')) {
+                $actionPostToDelete[$postKey] = $postValue;
             }
         }
         $_POST = array_diff_key($_POST, $actionPostToDelete);
-        
+
         // Set Conditions field
         $conditionBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
         $conditions = array();
@@ -117,19 +116,19 @@ class stic_Custom_View_Customizations extends Basic
         $actionsBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
         $actions = array();
         foreach ($actionsBeanArray as $actionBean) {
-            $actions[] = $actionBean->type . ":" . $actionBean->element . "." . $actionBean->action . "=" . $actionBean->value . "(". $actionBean->element_section . ")";
+            $actions[] = $actionBean->type . ":" . $actionBean->element . "." . $actionBean->action . "=" . $actionBean->value . "(" . $actionBean->element_section . ")";
         }
         $this->actions = implode(" + ", $actions);
 
         // Ensure customization_order is not set or change others
         $customizationBeanArray = getRelatedBeanObjectArray($viewBean, 'stic_custom_views_stic_custom_view_customizations');
         foreach ($customizationBeanArray as $customizationBean) {
-            if ($customizationBean->id != $this->id && 
+            if ($customizationBean->id != $this->id &&
                 $customizationBean->deleted == "0" &&
                 $customizationBean->customization_order == $this->customization_order) {
-                    $customizationBean->customization_order = $customizationBean->customization_order + 1;
-                    $customizationBean->save();
-                }
+                $customizationBean->customization_order = $customizationBean->customization_order + 1;
+                $customizationBean->save();
+            }
         }
 
         parent::save($check_notify);
@@ -137,13 +136,14 @@ class stic_Custom_View_Customizations extends Basic
         return $return_id;
     }
 
-    public function duplicateTo($customViewId) {
+    public function duplicateTo($customViewId)
+    {
         require_once 'modules/stic_Custom_Views/Utils.php';
 
         $conditionBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
         $fieldsToExclude = array(
-            "id", 
-            "stic_custom_view_customizations_stic_custom_view_conditions", 
+            "id",
+            "stic_custom_view_customizations_stic_custom_view_conditions",
             "stic_custom_view_customizations_stic_custom_view_conditions_name",
             "stic_custo233dzations_ida");
 
@@ -151,32 +151,33 @@ class stic_Custom_View_Customizations extends Basic
 
         $actionsBeanArray = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
         $fieldsToExclude = array(
-            "id", 
-            "stic_custom_view_customizations_stic_custom_view_actions", 
+            "id",
+            "stic_custom_view_customizations_stic_custom_view_actions",
             "stic_custom_view_customizations_stic_custom_view_actions_name",
             "stic_custo077ezations_ida");
         $this->addToPost($actionsBeanArray, "sticCustomView_Action", $fieldsToExclude);
-       
+
         $clone = clone $this;
         $clone->id = null;
         $clone->customization_order++;
-        $clone->name= $clone->name." ".translate("LBL_NAME_COPY_SUFFIX");
+        $clone->name = $clone->name . " " . translate("LBL_NAME_COPY_SUFFIX");
         $clone->stic_custo45d1m_views_ida = $customViewId;
 
         $clone->save();
     }
 
-    private function addToPost($beanArray, $keyPostBean, $fieldsToExclude) {
-        foreach($_POST as $key => $value) {
-            if(str_starts_with($key, $keyPostBean)) {
+    private function addToPost($beanArray, $keyPostBean, $fieldsToExclude)
+    {
+        foreach ($_POST as $key => $value) {
+            if (str_starts_with($key, $keyPostBean)) {
                 $_POST[$key] = array();
             }
         }
-        foreach($beanArray as $bean) {
+        foreach ($beanArray as $bean) {
             foreach ($bean->field_defs as $field_def) {
                 $field_name = $field_def['name'];
-                if(!in_array($field_name, $fieldsToExclude)) {
-                    $_POST[$keyPostBean.$field_name][]=$bean->$field_name;
+                if (!in_array($field_name, $fieldsToExclude)) {
+                    $_POST[$keyPostBean . $field_name][] = $bean->$field_name;
                 }
             }
         }
@@ -187,15 +188,15 @@ class stic_Custom_View_Customizations extends Basic
         // Delete all Conditions
         $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_conditions');
         foreach ($relatedBeans as $relatedBean) {
-            $relatedBean->mark_deleted($relatedBean->id); 
+            $relatedBean->mark_deleted($relatedBean->id);
         }
 
         // Delete all Actions
         $relatedBeans = getRelatedBeanObjectArray($this, 'stic_custom_view_customizations_stic_custom_view_actions');
         foreach ($relatedBeans as $relatedBean) {
-            $relatedBean->mark_deleted($relatedBean->id); 
+            $relatedBean->mark_deleted($relatedBean->id);
         }
-        
+
         parent::mark_deleted($id);
     }
 }

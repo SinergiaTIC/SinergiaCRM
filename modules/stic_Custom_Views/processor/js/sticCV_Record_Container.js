@@ -26,45 +26,55 @@
  */
 
 var sticCV_Record_Container = class sticCV_Record_Container {
-    constructor (customView, name) {
-        this.customView = customView;
+  constructor(customView, name) {
+    this.customView = customView;
 
-        this.name = name;
+    this.name = name;
 
-        this.container = null;
-        this.header = null
-        this.content = null;
+    this.container = null;
+    this.header = null;
+    this.content = null;
+  }
+
+  show(show = true) {
+    return this.applyAction({ action: "visible", value: show, element_section: "container" });
+  }
+  hide() {
+    return this.show(false);
+  }
+
+  style(style) {
+    return this.applyAction({ action: "css_style", value: style, element_section: "container" });
+  }
+
+  color(color = "") {
+    return this.applyAction({ action: "color", value: color, element_section: "container" });
+  }
+  background(color = "") {
+    return this.applyAction({ action: "background", value: color, element_section: "container" });
+  }
+
+  applyAction(action) {
+    switch (action.element_section) {
+      case "tab_header":
+      case "panel_header":
+      case "field_label":
+      case "header":
+        return this.header ? this.header.applyAction(action) : null;
+      case "tab_content":
+      case "panel_content":
+      case "field_input":
+      case "content":
+        return this.content ? this.content.applyAction(action) : null;
+      case "tab":
+      case "panel":
+      case "field":
+      case "container":
+        this.container && this.container.applyAction(action);
+        this.header && this.header.applyAction(action);
+        this.content && this.content.applyAction(action);
+        return this;
     }
-
-    show(show=true) { return this.applyAction({action: "visible", value: show, element_section: "container"}); }
-    hide() { return this.show(false); }
-
-    style(style) { return this.applyAction({action: "css_style", value: style, element_section: "container"}); }
-    
-    color(color="") { return this.applyAction({action: "color", value: color, element_section: "container"}); }
-    background(color="")  { return this.applyAction({action: "background", value: color, element_section: "container"}); }
-
-    applyAction(action) {
-        switch(action.element_section){
-            case "tab_header": 
-            case "panel_header":
-            case "field_label":
-            case "header":
-                return this.header?.applyAction(action);
-            case "tab_content": 
-            case "panel_content": 
-            case "field_input":
-            case "content":
-                return this.content?.applyAction(action);
-            case "tab": 
-            case "panel": 
-            case "field":
-            case "container":
-                this.container?.applyAction(action);
-                this.header?.applyAction(action);
-                this.content?.applyAction(action);
-                return this;
-        }
-        return false;
-    }
-}
+    return false;
+  }
+};

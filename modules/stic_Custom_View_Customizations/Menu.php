@@ -21,15 +21,15 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
+if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
 global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Custom_View_Customizations', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Custom_View_Customizations&action=EditView&return_module=stic_Custom_View_Customizations&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Custom_View_Customizations');
+
+if (ACLController::checkAccess('stic_Custom_View_Customizations', 'edit', true)) {
+    $module_menu[] = array('index.php?module=stic_Custom_View_Customizations&action=EditView&return_module=stic_Custom_View_Customizations&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Custom_View_Customizations');
 }
-if(ACLController::checkAccess('stic_Custom_View_Customizations', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Custom_View_Customizations&action=index&return_module=stic_Custom_View_Customizations&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Custom_View_Customizations');
+if (ACLController::checkAccess('stic_Custom_View_Customizations', 'list', true)) {
+    $module_menu[] = array('index.php?module=stic_Custom_View_Customizations&action=index&return_module=stic_Custom_View_Customizations&return_action=DetailView', $mod_strings['LNK_LIST'], 'View', 'stic_Custom_View_Customizations');
 }

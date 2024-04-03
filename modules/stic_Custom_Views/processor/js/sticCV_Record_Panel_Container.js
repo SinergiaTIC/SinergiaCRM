@@ -25,9 +25,7 @@
  *
  */
 var sticCV_Record_Panel_Container = class sticCV_Record_Panel_Container extends sticCV_Element_Div {
-    constructor (panel){
-        super(panel.customView, panel.customView.$elementView.find('.panel-body[data-id="'+panel.name+'"]').parent());
-    }
-}
-
-
+  constructor(panel) {
+    super(panel.customView, panel.customView.$elementView.find('.panel-body[data-id="' + panel.name + '"]').parent());
+  }
+};

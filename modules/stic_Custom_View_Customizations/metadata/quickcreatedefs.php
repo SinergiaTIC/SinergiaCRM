@@ -22,98 +22,74 @@
  */
 
 $module_name = 'stic_Custom_View_Customizations';
-$viewdefs [$module_name] = 
-array (
-  'QuickCreate' => 
-  array (
-    'templateMeta' => 
-    array (
-      'maxColumns' => '2',
-      'widths' => 
-      array (
-        0 => 
-        array (
-          'label' => '10',
-          'field' => '30',
+$viewdefs[$module_name] =
+array(
+    'QuickCreate' => array(
+        'templateMeta' => array(
+            'maxColumns' => '2',
+            'widths' => array(
+                0 => array(
+                    'label' => '10',
+                    'field' => '30',
+                ),
+                1 => array(
+                    'label' => '10',
+                    'field' => '30',
+                ),
+            ),
+            'useTabs' => false,
+            'tabDefs' => array(
+                'LBL_DEFAULT_PANEL' => array(
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
+                'LBL_CONDITION_PANEL' => array(
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
+                'LBL_ACTION_PANEL' => array(
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
+            ),
         ),
-        1 => 
-        array (
-          'label' => '10',
-          'field' => '30',
+        'panels' => array(
+            'LBL_DEFAULT_PANEL' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'name',
+                        'label' => 'LBL_NAME',
+                    ),
+                    1 => array(
+                        'name' => 'customization_order',
+                        'label' => 'LBL_CUSTOMIZATION_ORDER',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'status',
+                        'studio' => 'visible',
+                        'label' => 'LBL_STATUS',
+                    ),
+                    1 => array(),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'description',
+                        'label' => 'LBL_DESCRIPTION',
+                    ),
+                ),
+            ),
+            'LBL_CONDITION_PANEL' => array(
+                0 => array(
+                    0 => 'condition_lines',
+                ),
+            ),
+            'LBL_ACTION_PANEL' => array(
+                0 => array(
+                    0 => 'action_lines',
+                ),
+            ),
         ),
-      ),
-      'useTabs' => false,
-      'tabDefs' =>
-      array(
-        'LBL_DEFAULT_PANEL' =>
-        array(
-          'newTab' => false,
-          'panelDefault' => 'expanded',
-        ),
-        'LBL_CONDITION_PANEL' =>
-        array(
-          'newTab' => false,
-          'panelDefault' => 'expanded',
-        ),
-        'LBL_ACTION_PANEL' =>
-        array(
-          'newTab' => false,
-          'panelDefault' => 'expanded',
-        ),
-      ),
     ),
-    'panels' => 
-    array (
-      'LBL_DEFAULT_PANEL' => 
-      array (
-        0 => 
-        array (
-          0 => 
-          array (
-            'name' => 'name',
-            'label' => 'LBL_NAME',
-          ),
-          1 => 
-          array (
-            'name' => 'customization_order',
-            'label' => 'LBL_CUSTOMIZATION_ORDER',
-          ),
-        ),
-        1 => 
-        array (
-          0 => 
-          array (
-            'name' => 'status',
-            'studio' => 'visible',
-            'label' => 'LBL_STATUS',
-          ),
-          1 => array()
-        ),  
-        2 => 
-        array (
-          0 => 
-          array (
-            'name' => 'description',
-            'label' => 'LBL_DESCRIPTION',
-          ),
-        ),
-      ),
-      'LBL_CONDITION_PANEL' =>
-      array(
-          0 =>
-          array(
-              0 => 'condition_lines',
-          ),
-      ),
-      'LBL_ACTION_PANEL' =>
-      array(
-          0 =>
-          array(
-              0 => 'action_lines',
-          ),
-      ),
-    ),
-  ),
 );
-;
-?>

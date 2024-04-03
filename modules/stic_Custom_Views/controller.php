@@ -21,16 +21,17 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-class stic_Custom_ViewsController extends SugarController {
+class stic_Custom_ViewsController extends SugarController
+{
 
     public function process()
     {
         //$this->action_remap = array();
-        
-        $GLOBALS [ 'log' ]->info(get_class($this).":") ;
+
+        $GLOBALS['log']->info(get_class($this) . ":");
         global $current_user;
         $this->hasAccess = ($current_user->isAdmin() || $current_user->isDeveloperForAnyModule());
-        
+
         parent::process();
     }
 
@@ -55,8 +56,9 @@ class stic_Custom_ViewsController extends SugarController {
         }
     }
 
-    public function action_getModuleFieldEditor() {
-        require_once("modules/AOW_WorkFlow/aow_utils.php");
+    public function action_getModuleFieldEditor()
+    {
+        require_once "modules/AOW_WorkFlow/aow_utils.php";
 
         $view_module = $_REQUEST['view_module'];
         $field_name = $_REQUEST['field_name'];
@@ -68,26 +70,27 @@ class stic_Custom_ViewsController extends SugarController {
         } else {
             $value = '';
         }
-        if ($_REQUEST['is_value_set'] === 'false'){
+        if ($_REQUEST['is_value_set'] === 'false') {
             $params['value_set'] = false;
-        } else{
+        } else {
             $params['value_set'] = true;
         }
         $html = getModuleField($view_module, $field_name, $editor_name, 'EditView', $value, '', '', $params);
         $html = str_replace('EditView', $form, $html);
-        $html = str_replace($editor_name."_display", "display_".$editor_name, $html);
+        $html = str_replace($editor_name . "_display", "display_" . $editor_name, $html);
         echo $html;
         die;
     }
 
-    public function action_DuplicateSubpanelRecord() {
-        require_once("modules/stic_Custom_View_Customizations/stic_Custom_View_Customizations.php");
+    public function action_DuplicateSubpanelRecord()
+    {
+        require_once "modules/stic_Custom_View_Customizations/stic_Custom_View_Customizations.php";
 
         $subpanelRecordId = $_REQUEST['subpanel_record'];
         $currentCustomViewId = $_REQUEST['main_record'];
         $subpanelName = $_REQUEST['subpanel_name'];
 
-        if($subpanelName == "stic_custom_view_customizations") {
+        if ($subpanelName == "stic_custom_view_customizations") {
             $customizationBean = BeanFactory::getBean('stic_Custom_View_Customizations', $subpanelRecordId);
             $customizationBean->duplicateTo($currentCustomViewId);
         }

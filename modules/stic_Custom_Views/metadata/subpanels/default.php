@@ -21,99 +21,85 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$module_name='stic_Custom_Views';
-$subpanel_layout = array (
-  'top_buttons' => 
-  array (
-    0 => 
-    array (
-      'widget_class' => 'SubPanelTopCreateButton',
+$module_name = 'stic_Custom_Views';
+$subpanel_layout = array(
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopCreateButton',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'popup_module' => 'stic_Custom_Views',
+        ),
     ),
-    1 => 
-    array (
-      'widget_class' => 'SubPanelTopSelectButton',
-      'popup_module' => 'stic_Custom_Views',
+    'where' => '',
+    'list_fields' => array(
+        'name' => array(
+            'vname' => 'LBL_NAME',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '45%',
+            'default' => true,
+        ),
+        'view_module' => array(
+            'type' => 'enum',
+            'studio' => 'visible',
+            'vname' => 'LBL_VIEW_MODULE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'user_type' => array(
+            'type' => 'enum',
+            'default' => true,
+            'studio' => 'visible',
+            'vname' => 'LBL_USER_TYPE',
+            'width' => '10%',
+        ),
+        'roles' => array(
+            'type' => 'multienum',
+            'studio' => 'visible',
+            'vname' => 'LBL_ROLES',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'security_groups' => array(
+            'type' => 'multienum',
+            'studio' => 'visible',
+            'vname' => 'LBL_SECURITY_GROUPS',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'roles_exclude' => array(
+            'type' => 'multienum',
+            'studio' => 'visible',
+            'vname' => 'LBL_ROLES_EXCLUDE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'security_groups_exclude' => array(
+            'type' => 'multienum',
+            'studio' => 'visible',
+            'vname' => 'LBL_SECURITY_GROUPS_EXCLUDE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'date_modified' => array(
+            'vname' => 'LBL_DATE_MODIFIED',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'edit_button' => array(
+            'vname' => 'LBL_EDIT_BUTTON',
+            'widget_class' => 'SubPanelEditButton',
+            'module' => 'stic_Custom_Views',
+            'width' => '4%',
+            'default' => true,
+        ),
+        'remove_button' => array(
+            'vname' => 'LBL_REMOVE',
+            'widget_class' => 'SubPanelRemoveButton',
+            'module' => 'stic_Custom_Views',
+            'width' => '5%',
+            'default' => true,
+        ),
     ),
-  ),
-  'where' => '',
-  'list_fields' => 
-  array (
-    'name' => 
-    array (
-      'vname' => 'LBL_NAME',
-      'widget_class' => 'SubPanelDetailViewLink',
-      'width' => '45%',
-      'default' => true,
-    ),
-    'view_module' => 
-    array (
-      'type' => 'enum',
-      'studio' => 'visible',
-      'vname' => 'LBL_VIEW_MODULE',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'user_type' => 
-    array (
-      'type' => 'enum',
-      'default' => true,
-      'studio' => 'visible',
-      'vname' => 'LBL_USER_TYPE',
-      'width' => '10%',
-    ),
-    'roles' => 
-    array (
-      'type' => 'multienum',
-      'studio' => 'visible',
-      'vname' => 'LBL_ROLES',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'security_groups' => 
-    array (
-      'type' => 'multienum',
-      'studio' => 'visible',
-      'vname' => 'LBL_SECURITY_GROUPS',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'roles_exclude' => 
-    array (
-      'type' => 'multienum',
-      'studio' => 'visible',
-      'vname' => 'LBL_ROLES_EXCLUDE',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'security_groups_exclude' => 
-    array (
-      'type' => 'multienum',
-      'studio' => 'visible',
-      'vname' => 'LBL_SECURITY_GROUPS_EXCLUDE',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'date_modified' => 
-    array (
-      'vname' => 'LBL_DATE_MODIFIED',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'edit_button' => 
-    array (
-      'vname' => 'LBL_EDIT_BUTTON',
-      'widget_class' => 'SubPanelEditButton',
-      'module' => 'stic_Custom_Views',
-      'width' => '4%',
-      'default' => true,
-    ),
-    'remove_button' => 
-    array (
-      'vname' => 'LBL_REMOVE',
-      'widget_class' => 'SubPanelRemoveButton',
-      'module' => 'stic_Custom_Views',
-      'width' => '5%',
-      'default' => true,
-    ),
-  ),
 );

@@ -25,12 +25,9 @@
  *
  */
 var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends sticCV_Element_Div {
-    constructor (field, $fieldElement){
-        super(field.customView, $fieldElement);
+  constructor(field, $fieldElement) {
+    super(field.customView, $fieldElement);
 
-        this.field = field;
-    }
-
-}
-
-
+    this.field = field;
+  }
+};

@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once('include/MVC/View/SugarView.php');
+require_once 'include/MVC/View/SugarView.php';
 require_once 'SticInclude/Views.php';
 
 class stic_Custom_ViewsViewselectmodule extends SugarView
@@ -31,14 +31,14 @@ class stic_Custom_ViewsViewselectmodule extends SugarView
 
     public function __construct()
     {
-        if (isset($_REQUEST [ 'view' ])) {
-            $this->view = $_REQUEST [ 'view' ] ;
+        if (isset($_REQUEST['view'])) {
+            $this->view = $_REQUEST['view'];
         }
 
-        $this->editModule = (! empty($_REQUEST [ 'view_module' ])) ? $_REQUEST [ 'view_module' ] : null ;
+        $this->editModule = (!empty($_REQUEST['view_module'])) ? $_REQUEST['view_module'] : null;
         $this->buttons = array(); // initialize so that modules without subpanels for example don't result in this being unset and causing problems in the smarty->assign
     }
-    
+
     public function preDisplay()
     {
         parent::preDisplay();
@@ -66,7 +66,7 @@ class stic_Custom_ViewsViewselectmodule extends SugarView
 
     public function generateStudioModuleButtons()
     {
-        require_once('modules/ModuleBuilder/Module/StudioBrowser.php') ;
+        require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
         $sb = new StudioBrowser();
         $nodes = $sb->getNodes();
         $this->buttons = array();

@@ -50,11 +50,10 @@ class stic_Custom_View_Actions extends Basic
     public $panel_change_type;
     public $value;
     public $value_type;
-	
+
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
@@ -79,7 +78,7 @@ class stic_Custom_View_Actions extends Basic
             LoggerManager::getLogger()->warn('Posted field is undefined: ' . $type);
         }
 
-        $line_count = count((array)$postedType);
+        $line_count = count((array) $postedType);
         $j = 0;
         for ($i = 0; $i < $line_count; ++$i) {
             if (!isset($post_data[$key . 'deleted'][$i])) {
@@ -96,11 +95,11 @@ class stic_Custom_View_Actions extends Basic
                         if (is_array($post_data[$key . $field_name][$i])) {
                             $post_data[$key . $field_name][$i] = encodeMultienumValue($post_data[$key . $field_name][$i]);
                         } else {
-                            if ($field_name === 'value' && 
+                            if ($field_name === 'value' &&
                                 $post_data[$key . 'type'][$i] === 'field_modification' && $post_data[$key . 'action'][$i] === 'fixed_value') {
                                 $post_data[$key . $field_name][$i] = fixUpFormatting($view_module, $action->element, $post_data[$key . $field_name][$i]);
-                                if(isset($post_data["display_" . $key . $field_name]) && isset($post_data["display_" . $key . $field_name][$i])) {
-                                    $post_data[$key . $field_name][$i].="|".$post_data["display_" . $key . $field_name][$i];
+                                if (isset($post_data["display_" . $key . $field_name]) && isset($post_data["display_" . $key . $field_name][$i])) {
+                                    $post_data[$key . $field_name][$i] .= "|" . $post_data["display_" . $key . $field_name][$i];
                                 }
                             }
                         }
@@ -109,7 +108,7 @@ class stic_Custom_View_Actions extends Basic
                 }
                 if (trim($action->type) != '') {
                     $action->action_order = ++$j;
-                    $action->name = $parent->name .'-'.$action->action_order;
+                    $action->name = $parent->name . '-' . $action->action_order;
                     $action->stic_custo077ezations_ida = $parent->id;
                     $action->save();
                 }
