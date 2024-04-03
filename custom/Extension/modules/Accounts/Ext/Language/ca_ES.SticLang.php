@@ -181,15 +181,3 @@ $mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Formació
 // Cadenes Experiència laboral
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiència laboral';
 
-// SEVEN SMS Plugin
-$mod_strings['LBL_SEVEN_FROM'] = 'De';
-$mod_strings['LBL_SEVEN_MESSAGES'] = 'Missatges';
-$mod_strings['LBL_SEVEN_MISSING_TEXT'] = 'Si us plau, entri un missatge';
-$mod_strings['LBL_SEVEN_PANEL_HEADING'] = 'Historial SMS';
-$mod_strings['LBL_SEVEN_SEND_SMS_VIA'] = 'Enviar SMS via seven';
-$mod_strings['LBL_SEVEN_SEND_SMS'] = 'Enviar SMS';
-$mod_strings['LBL_SEVEN_TEXT'] = 'Text';
-$mod_strings['LBL_SEVEN_TO'] = 'A';
-$mod_strings['LBL_SEVEN_TO_HELP'] = 'Afegeix més destinataris separats per coma';
-$mod_strings['LBL_SEVEN_WRITE_SMS'] = 'Escriure SMS';
-// END SEVEN SMS Plugin
