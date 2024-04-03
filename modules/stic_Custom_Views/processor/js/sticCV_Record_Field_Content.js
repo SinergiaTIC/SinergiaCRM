@@ -189,16 +189,24 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
   }
 
   checkCondition(condition) {
+    if (condition.operator == "is_null" || condition.operator == "is_not_null") {
+      condition.condition_type = "value";
+    }
+
     switch (condition.condition_type) {
       case "value":
         return this.checkCondition_value(condition);
+      case "date":
+        return this.checkCondition_date(condition);
+      case "user":
+        return this.checkCondition_user(condition);
+      case "field":
+        return this.checkCondition_field(condition);
     }
     return false;
   }
 
   checkCondition_value(condition) {
-    //condition.type="value"
-
     switch (condition.operator) {
       case "Not_Equal_To":
         condition.operator = "Equal_To";
@@ -293,6 +301,125 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         }
         return value == "";
     }
+    return false;
+  }
+
+  checkCondition_date(condition) {
+    if (this.type != "date" && this.type != "datetime" && this.type != "datetimecombo") {
+      return false;
+    }
+    switch (condition.operator) {
+      case "Not_Equal_To":
+        condition.operator = "Equal_To";
+        return !checkCondition_date(condition);
+    }
+
+    var value_list = condition.value_list;
+
+    var valueMoment = moment(sticCVUtils.normalizeToCompare(this._getValue(value_list)), condition.date_format);
+    var conditionMoment = null;
+    switch (condition.value) {
+      case "now":
+        conditionMoment = moment();
+        break;
+      case "today":
+        conditionMoment = moment().startOf("day");
+        break;
+      case "tomorrow":
+        conditionMoment = moment().add(1, "days").startOf("day");
+        break;
+      case "yesterday":
+        conditionMoment = moment().add(-1, "days").startOf("day");
+        break;
+      case "anniversary":
+        conditionMoment = moment().startOf("day");
+        valueMoment.year(conditionMoment.year());
+        break;
+    }
+    if (conditionMoment == null) {
+      return false;
+    }
+    switch (condition.operator) {
+      case "Equal_To":
+        switch (condition.value) {
+          case "now":
+            return valueMoment.isSame(conditionMoment);
+
+          case "today":
+          case "tomorrow":
+          case "yesterday":
+          case "anniversary":
+            return valueMoment.isSame(conditionMoment, "day");
+        }
+      case "Greater_Than":
+        switch (condition.value) {
+          case "now":
+            return valueMoment.isAfter(conditionMoment);
+
+          case "today":
+          case "tomorrow":
+          case "yesterday":
+          case "anniversary":
+            return valueMoment.isAfter(conditionMoment, "day");
+        }
+      case "Less_Than":
+        switch (condition.value) {
+          case "now":
+            return valueMoment.isBefore(conditionMoment);
+
+          case "today":
+          case "tomorrow":
+          case "yesterday":
+          case "anniversary":
+            return valueMoment.isBefore(conditionMoment, "day");
+        }
+      case "Greater_Than_or_Equal_To":
+        switch (condition.value) {
+          case "now":
+            return valueMoment.isSameOrAfter(conditionMoment);
+
+          case "today":
+          case "tomorrow":
+          case "yesterday":
+          case "anniversary":
+            return valueMoment.isSameOrAfter(conditionMoment, "day");
+        }
+      case "Less_Than_or_Equal_To":
+        switch (condition.value) {
+          case "now":
+            return valueMoment.isSameOrBefore(conditionMoment);
+
+          case "today":
+          case "tomorrow":
+          case "yesterday":
+          case "anniversary":
+            return valueMoment.isSameOrBefore(conditionMoment, "day");
+        }
+    }
+
+    return false;
+  }
+
+  checkCondition_user(condition) {
+    switch (condition.operator) {
+      case "Not_Equal_To":
+        condition.operator = "Equal_To";
+        return !checkCondition_user(condition);
+    }
+
+    var value_list = condition.value_list;
+    if (this.type == "multienum") {
+      condition.value = condition.value ? condition.value : "";
+      condition.value = condition.value.replaceAll("^", "").split(",").sort().join(",");
+    }
+
+    var currentValue = sticCVUtils.normalizeToCompare(this._getValue(value_list));
+    var conditionValue = sticCVUtils.normalizeToCompare(condition.value);
+
+    return false;
+  }
+
+  checkCondition_field(condition) {
     return false;
   }
 };

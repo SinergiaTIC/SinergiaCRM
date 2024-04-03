@@ -3482,6 +3482,8 @@ $app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Campo';
 // Vistas personalizadas: Valores definidos
 $app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Ahora';
 $app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Hoy';
+$app_list_strings['stic_custom_views_condition_values_list']['tomorrow'] = 'Mañana';
+$app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Ayer';
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversario';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuario actual';
 

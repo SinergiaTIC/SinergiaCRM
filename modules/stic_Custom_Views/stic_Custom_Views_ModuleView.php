@@ -321,7 +321,7 @@ class stic_Custom_Views_ModuleView
             case 'date':
             case 'datetime':
             case 'datetimecombo':
-                $validConditionTypes = array('value' /*,'date','field'*/);
+                $validConditionTypes = array('value' ,'date'/*,'field'*/);
                 break;
             default:
                 if ($relatedTable == "users") {
@@ -346,7 +346,7 @@ class stic_Custom_Views_ModuleView
         //$fieldType = $this->allModuleFieldTypeList[$fieldKey];
         switch (strtolower($conditionType)) {
             case 'date':
-                $validValues = array('now', 'today' /*,'anniversary'*/);
+                $validValues = array('now', 'today', 'tomorrow', 'yesterday' ,'anniversary');
                 break;
             case 'user':
                 $validValues = array('current_user');

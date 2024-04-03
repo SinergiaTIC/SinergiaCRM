@@ -106,42 +106,42 @@ function getJsVars($viewModule, $viewType)
     $moduleView = new stic_Custom_Views_ModuleView($viewModule, $viewType);
 
     $html =
-        "<script>" .
+    "<script>" .
         "var view_module = \"" . $viewModule . "\";" .
         "var view_type = \"" . $viewType . "\";";
     $html .=
-    "var view_module_action_map = {" .
-    "actionTypes: {" .
-    "options: \"" . $moduleView->getActionTypes_as_select_options() . "\",";
+        "var view_module_action_map = {" .
+            "actionTypes: {" .
+                "options: \"" . $moduleView->getActionTypes_as_select_options() . "\",";
     foreach ($moduleView->getActionTypes() as $actionTypeKey => $actionTypeName) {
         $html .=
-        $actionTypeKey . ": {" .
-        "elements: {" .
-        "options: \"" . $moduleView->getValidElements_as_select_options($actionTypeKey) . "\"," .
-        "}," .
-        "actions: {" .
-        "options: \"" . $moduleView->getValidActions_as_select_options($actionTypeKey) . "\",";
+                $actionTypeKey . ": {" .
+                    "elements: {" .
+                        "options: \"" . $moduleView->getValidElements_as_select_options($actionTypeKey) . "\"," .
+                    "}," .
+                    "actions: {" .
+                        "options: \"" . $moduleView->getValidActions_as_select_options($actionTypeKey) . "\",";
         foreach ($moduleView->getValidActions($actionTypeKey) as $actionKey => $actionName) {
             $html .=
-            $actionKey . ": {" .
-            "sections: {" .
-            "options: \"" . $moduleView->getValidSections_as_select_options($actionTypeKey, $actionKey) . "\"," .
-                "}," .
-                "},";
+                        $actionKey . ": {" .
+                            "sections: {" .
+                                "options: \"" . $moduleView->getValidSections_as_select_options($actionTypeKey, $actionKey) . "\"," .
+                            "}," .
+                        "},";
         }
         $html .=
-            "}," .
-            "},";
+                    "}," .
+                "},";
     }
     $html .=
-        "}," .
+            "}," .
         "};";
     $html .=
         "var view_action_editor_map = {";
     foreach ($app_list_strings['stic_custom_views_action_list'] as $actionKey => $actionName) {
         $html .=
-        $actionKey . ": {" .
-        "editor_base64: \"" . $moduleView->getEditorForCommonAction_Base64($actionKey, $actionKey . "_editor") . "\"," .
+            $actionKey . ": {" .
+                "editor_base64: \"" . $moduleView->getEditorForCommonAction_Base64($actionKey, $actionKey . "_editor") . "\"," .
             "},";
     }
     $html .=
@@ -150,21 +150,21 @@ function getJsVars($viewModule, $viewType)
         "var view_field_map = {";
     foreach ($moduleView->getOnlyViewFields() as $fieldKey => $fieldName) {
         $html .=
-        $fieldKey . ": {" .
-        "condition_operators: {" .
-        "options: \"" . $moduleView->getViewFieldOperators_as_select_options($fieldKey) . "\"," .
-        "}," .
-        "condition_types: {" .
-        "options: \"" . $moduleView->getViewFieldConditionTypes_as_select_options($fieldKey) . "\"," .
-        "}, " .
-        "type: \"" . $moduleView->getFieldType($fieldKey) . "\"," .
-        "list: \"" . $moduleView->getFieldListOption($fieldKey) . "\",";
+            $fieldKey . ": {" .
+                "condition_operators: {" .
+                    "options: \"" . $moduleView->getViewFieldOperators_as_select_options($fieldKey) . "\"," .
+                "}," .
+                "condition_types: {" .
+                    "options: \"" . $moduleView->getViewFieldConditionTypes_as_select_options($fieldKey) . "\"," .
+                "}, " .
+                "type: \"" . $moduleView->getFieldType($fieldKey) . "\"," .
+                "list: \"" . $moduleView->getFieldListOption($fieldKey) . "\",";
         foreach ($moduleView->getAllFieldConditionTypeMap()[$fieldKey] as $typeKey => $typeName) {
             if ($typeKey != "value") {
                 $html .=
                 "condition_values_" . $typeKey . ": {" .
-                "options: \"" . $moduleView->getViewFieldConditionValueList_as_select_options($fieldKey, $typeKey) . "\"," .
-                    "}";
+                    "options: \"" . $moduleView->getViewFieldConditionValueList_as_select_options($fieldKey, $typeKey) . "\"," .
+                "}";
             }
         }
         $html .=
@@ -174,6 +174,6 @@ function getJsVars($viewModule, $viewType)
         "};";
 
     $html .=
-        "</script>";
+    "</script>";
     return $html;
 }
