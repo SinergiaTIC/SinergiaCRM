@@ -936,8 +936,16 @@ class ExternalReporting
         $token = md5($token);
         $this->info .= "<li>Token md5: $token";
 
-        // Specify the URL to fetch content from.
-        $url = $sugar_config['stic_sinergiada_public']['url'] ?? "https://{$this->baseHostname}.sinergiada.org/edapi/updatemodel/update?tks=$token";
+        // Builds the URL to be called to execute the updateModel method in SinergiaDA,
+        // depending on whether a specific URL has been indicated or if a standard location will be used.
+        if($sugar_config['stic_sinergiada_public']['url'] ?? null ){
+            $url = "{$sugar_config['stic_sinergiada_public']['url']}/edapi/updatemodel/update?tks=$token";
+        }else{
+            $url = "https://{$this->baseHostname}.sinergiada.org/edapi/updatemodel/update?tks=$token";
+        }
+        
+        
+        
         $link = "<a href='$url' target='_blank'>$url</a>";
         $link2 = addslashes("Retry <a href='$url' target='_blank'>&#9842;</a>");
 
