@@ -161,8 +161,12 @@ class stic_Custom_Views_ProcessorLogicHooks
                     $value_typeArray = explode("|", $conditionBean->value_type);
                     $value_type = $value_typeArray[0];
                     $value_list = $value_typeArray[1];
-                    $value = $this->value_to_display($conditionBean->value, $value_type);
                     $condition_type = $conditionBean->condition_type;
+                    if($condition_type=="value") {
+                        $value = $this->value_to_display($conditionBean->value, $value_type);
+                    } else {
+                        $value = $conditionBean->value;
+                    }
                     if ($condition_type == "") {
                         $condition_type = "value";
                     }

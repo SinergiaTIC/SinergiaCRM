@@ -147,23 +147,10 @@ function insertActionLine() {
 
   // Action type
   $("#" + prefix + "Cell" + "type" + ln).html(
-    "<select name='" +
-      prefix +
-      "type[" +
-      ln +
-      "]' id='" +
-      prefix +
-      "type" +
-      ln +
-      "'>" +
+    "<select name='" + prefix + "type[" + ln + "]' id='" + prefix + "type" + ln + "'>" +
       view_module_action_map.actionTypes.options +
-      "</select>" +
-      "<span id='" +
-      prefix +
-      "type" +
-      "_label" +
-      ln +
-      "' ></span>"
+    "</select>" +
+    "<span id='" + prefix + "type" + "_label" + ln + "' ></span>"
   );
 
   $("#" + prefix + "type" + ln).on("change", function() {
@@ -236,17 +223,9 @@ function onActionTypeChanged(ln) {
   } else {
     // Create Element selector
     $("#" + actprefix + "Cell" + "element" + ln).html(
-      "<select type='text' name='" +
-        actprefix +
-        "element[" +
-        ln +
-        "]' id='" +
-        actprefix +
-        "element" +
-        ln +
-        "'>" +
+      "<select type='text' name='" + actprefix + "element[" + ln + "]' id='" + actprefix + "element" + ln + "'>" +
         view_module_action_map.actionTypes[type].elements.options +
-        "</select>"
+      "</select>"
     );
 
     $("#" + actprefix + "element" + ln).on("change", function() {
@@ -276,28 +255,10 @@ function onActionElementChanged(ln) {
     if ($("#" + actprefix + "Cell" + "action" + ln).html() == "") {
       // Action selector
       $("#" + actprefix + "Cell" + "action" + ln).html(
-        "<select type='text' name='" +
-          actprefix +
-          "action[" +
-          ln +
-          "]' id='" +
-          actprefix +
-          "action" +
-          ln +
-          "'>" +
+        "<select type='text' name='" + actprefix + "action[" + ln + "]' id='" + actprefix + "action" + ln + "'>" +
           view_module_action_map.actionTypes[type].actions.options +
-          "</select>" +
-          "<input type='hidden' name='" +
-          actprefix +
-          "value_type[" +
-          ln +
-          "]' id='" +
-          actprefix +
-          "value_type" +
-          ln +
-          "' value='" +
-          value_type +
-          "'>"
+        "</select>" +
+        "<input type='hidden' name='" + actprefix + "value_type[" + ln + "]' id='" + actprefix + "value_type" + ln + "' value='" + value_type + "'>"
       );
 
       $("#" + actprefix + "action" + ln).on("change", function() {
@@ -348,17 +309,9 @@ function onActionChanged(ln) {
 
     // Section selector
     $("#" + actprefix + "Cell" + "element_section" + ln).html(
-      "<select type='text' name='" +
-        actprefix +
-        "element_section[" +
-        ln +
-        "]' id='" +
-        actprefix +
-        "element_section" +
-        ln +
-        "'>" +
+      "<select type='text' name='" + actprefix + "element_section[" + ln + "]' id='" + actprefix + "element_section" + ln + "'>" +
         view_module_action_map.actionTypes[type].actions[action].sections.options +
-        "</select>"
+      "</select>"
     );
     if ($("#" + actprefix + "element_section" + ln).children().length <= 1) {
       $("#" + actprefix + "element_section" + ln).hide();

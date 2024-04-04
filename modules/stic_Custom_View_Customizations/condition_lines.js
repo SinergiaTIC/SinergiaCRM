@@ -32,38 +32,12 @@ var condValArray = [];
 
 function getConditionDeleteButton(ln, functionName) {
   var html =
-    "<button type='button' class='button' style='padding-top:8px;' title='" +
-    translateCustomization("LBL_DELETE_CONDITION") +
-    "' " +
-    "id='" +
-    condprefix +
-    "delete" +
-    ln +
-    "' onclick='" +
-    functionName +
-    "(" +
-    ln +
-    ")'>" +
-    "<span class='suitepicon suitepicon-action-minus'></span>" +
+    "<button type='button' class='button' style='padding-top:8px;' title='" + translateCustomization("LBL_DELETE_CONDITION") + "' " +
+            "id='" + condprefix + "delete" + ln + "' onclick='" + functionName + "(" + ln +")'>" +
+      "<span class='suitepicon suitepicon-action-minus'></span>" +
     "</button><br>" +
-    "<input type='hidden' name='" +
-    condprefix +
-    "deleted[" +
-    ln +
-    "]' id='" +
-    condprefix +
-    "deleted" +
-    ln +
-    "' value='0'>" +
-    "<input type='hidden' name='" +
-    condprefix +
-    "id[" +
-    ln +
-    "]' id='" +
-    condprefix +
-    "id" +
-    ln +
-    "' value=''>";
+    "<input type='hidden' name='" + condprefix + "deleted[" + ln + "]' id='" + condprefix + "deleted" + ln + "' value='0'>" +
+    "<input type='hidden' name='" + condprefix + "id[" + ln + "]' id='" + condprefix + "id" + ln + "' value=''>";
   return html;
 }
 
@@ -72,23 +46,12 @@ function getConditionDeleteButton(ln, functionName) {
  */
 function insertConditionLinesHeader() {
   $("#" + condId).append(
-    '<thead id="' +
-    condId +
-    '_head"><tr>' +
-    '<th style="width:70px;"></th>' + // Remove button
-      '<th style="width:20%;">' +
-      translateCondition("LBL_FIELD") +
-      "</th>" +
-      '<th style="width:20%;">' +
-      translateCondition("LBL_OPERATOR") +
-      "</th>" +
-      '<th style="width:20%;">' +
-      translateCondition("LBL_CONDITION_TYPE") +
-      "</th>" +
-      "<th>" +
-      translateCondition("LBL_VALUE") +
-      "</th>" +
-      "</thead>"
+    '<thead id="' + condId + '_head"><tr>' + '<th style="width:70px;"></th>' + // Remove button
+      '<th style="width:20%;">' + translateCondition("LBL_FIELD") + "</th>" +
+      '<th style="width:20%;">' + translateCondition("LBL_OPERATOR") + "</th>" +
+      '<th style="width:20%;">' + translateCondition("LBL_CONDITION_TYPE") + "</th>" +
+      "<th>" + translateCondition("LBL_VALUE") + "</th>" +
+    "</thead>"
   );
 }
 
@@ -122,23 +85,10 @@ function insertConditionLine() {
 
   // Field
   $("#" + prefix + "Cell" + "field" + ln).html(
-    "<select name='" +
-      prefix +
-      "field[" +
-      ln +
-      "]' id='" +
-      prefix +
-      "field" +
-      ln +
-      "'>" +
+    "<select name='" + prefix + "field[" + ln + "]' id='" + prefix + "field" + ln + "'>" +
       view_module_action_map.actionTypes.field_modification.elements.options +
-      "</select>" +
-      "<span id='" +
-      prefix +
-      "field" +
-      "_label" +
-      ln +
-      "' ></span>"
+    "</select>" +
+    "<span id='" + prefix + "field" + "_label" + ln + "' ></span>"
   );
 
   $("#" + prefix + "field" + ln).on("change", function() {
@@ -200,28 +150,10 @@ function onConditionFieldChanged(ln) {
     // Operator selector
     var value_type = view_field_map[field].type + "|" + view_field_map[field].list;
     $("#" + condprefix + "Cell" + "operator" + ln).html(
-      "<select type='text' name='" +
-        condprefix +
-        "operator[" +
-        ln +
-        "]' id='" +
-        condprefix +
-        "operator" +
-        ln +
-        "'>" +
+      "<select type='text' name='" + condprefix + "operator[" + ln + "]' id='" + condprefix + "operator" + ln + "'>" +
         view_field_map[field].condition_operators.options +
-        "</select>" +
-        "<input type='hidden' name='" +
-        condprefix +
-        "value_type[" +
-        ln +
-        "]' id='" +
-        condprefix +
-        "value_type" +
-        ln +
-        "' value='" +
-        value_type +
-        "'>"
+      "</select>" +
+      "<input type='hidden' name='" + condprefix + "value_type[" + ln + "]' id='" + condprefix + "value_type" + ln + "' value='" + value_type + "'>"
     );
 
     $("#" + condprefix + "operator" + ln).on("change", function() {
@@ -252,17 +184,9 @@ function onConditionOperatorChanged(ln) {
         $("#" + condprefix + "Cell" + "condition_type" + ln).html() == "<p> - </p>"
       ) {
         $("#" + condprefix + "Cell" + "condition_type" + ln).html(
-          "<select type='text' name='" +
-            condprefix +
-            "condition_type[" +
-            ln +
-            "]' id='" +
-            condprefix +
-            "condition_type" +
-            ln +
-            "'>" +
+          "<select type='text' name='" + condprefix + "condition_type[" + ln + "]' id='" + condprefix + "condition_type" + ln + "'>" +
             view_field_map[field].condition_types.options +
-            "</select>"
+          "</select>"
         );
         $("#" + condprefix + "condition_type" + ln).on("change", function() {
           onConditionTypeChanged(ln);
@@ -293,19 +217,10 @@ function onConditionTypeChanged(ln) {
     }
     getModuleFieldEditor(ln, condprefix, condValue);
   } else {
-    //IEPA!!
     $("#" + condprefix + "Cell" + "value" + ln).html(
-      "<select type='text' name='" +
-        condprefix +
-        "value[" +
-        ln +
-        "]' id='" +
-        condprefix +
-        "value" +
-        ln +
-        "'>" +
+      "<select type='text' name='" + condprefix + "value[" + ln + "]' id='" + condprefix + "value" + ln + "'>" +
         view_field_map[field]["condition_values_" + condition_type].options +
-        "</select>"
+      "</select>"
     );
   }
 }

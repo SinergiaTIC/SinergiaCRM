@@ -92,16 +92,10 @@ function getModuleFieldEditor(ln, prefix, field_value) {
 
   YAHOO.util.Connect.asyncRequest(
     "GET",
-    "index.php?module=stic_Custom_Views&action=getModuleFieldEditor&form=form_SubpanelQuickCreate_stic_Custom_View_Customizations&view_module=" +
-      view_module +
-      "&field_name=" +
-      field +
-      "&editor_name=" +
-      editor_name +
-      "&field_value=" +
-      field_value +
-      "&is_value_set=" +
-      is_value_set,
+    "index.php?module=stic_Custom_Views&action=getModuleFieldEditor&form=form_SubpanelQuickCreate_stic_Custom_View_Customizations" + 
+             "&view_module=" + view_module + "&field_name=" + field + 
+             "&editor_name=" + editor_name + "&field_value=" + field_value +
+             "&is_value_set=" + is_value_set,
     callbackFieldEditor
   );
 }
