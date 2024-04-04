@@ -3426,14 +3426,14 @@ $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Solo lectura';
 $app_list_strings['stic_custom_views_action_list']['required'] = 'Obligado';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Edición en línea';
-$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fijo';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor por defecto';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Color del texto';
 $app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fondo';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negrita';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subrayado';
 $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estilo CSS';
-$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Texto fijo';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Texto de la etiqueta';
 
 // Vistas personalizadas: Secciones de elementos
 $app_list_strings['stic_custom_views_element_list']['field'] = 'Todo el campo';

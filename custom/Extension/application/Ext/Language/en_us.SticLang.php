@@ -3425,14 +3425,14 @@ $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Read only';
 $app_list_strings['stic_custom_views_action_list']['required'] = 'Required';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Inline edit';
-$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Fixed value';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Default value';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Text color';
 $app_list_strings['stic_custom_views_action_list']['background'] = 'Background color';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Bold';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
 $app_list_strings['stic_custom_views_action_list']['css_style'] = 'CSS style';
-$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Fixed text';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Label text';
 
 // Custom Views: Element's sections
 $app_list_strings['stic_custom_views_element_list']['field'] = 'Whole field';

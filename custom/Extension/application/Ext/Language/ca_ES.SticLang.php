@@ -3426,14 +3426,14 @@ $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
 $app_list_strings['stic_custom_views_action_list']['readonly'] = 'Només lectura';
 $app_list_strings['stic_custom_views_action_list']['required'] = 'Obligat';
 $app_list_strings['stic_custom_views_action_list']['inline'] = 'Edició en línia';
-$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor fix';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor per defecte';
 $app_list_strings['stic_custom_views_action_list']['color'] = 'Color del text';
 $app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fons';
 $app_list_strings['stic_custom_views_action_list']['bold'] = 'Negreta';
 $app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
 $app_list_strings['stic_custom_views_action_list']['underline'] = 'Subratllat';
 $app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estil CSS';
-$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Text fix';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = "Text de l'etiqueta";
 
 // Vistes personalitzades: Seccions d'elements
 $app_list_strings['stic_custom_views_element_list']['field'] = 'Tot el camp';
