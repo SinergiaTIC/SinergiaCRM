@@ -43,6 +43,7 @@ INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modi
 ('10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'Unitats familiars - Càlcul de registre actiu/inactiu', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 0, 30),
 ('b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'Ajuts - Càlcul de registre actiu/inactiu', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 0, 30),
 ('3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 'Registre horari - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 0, 90),
+('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95),
 ('7acc83f4-f72e-10d5-969c-660bcb36cb56', "Registre horari - Revisió del total d'hores treballades per empleat durant la setmana anterior", NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95);
 
 INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
@@ -73,4 +74,5 @@ INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, st
 ('d0d59fed-6419-a8eb-a7e2-636b906e5f36', NOW(), 0, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'b05bde8a-1309-4789-993b-bf85be389f07'),
 ('d0d59ped-6cd9-areb-a77a-6361606e5f36', NOW(), 0, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'b05bde8a-1309-4789-993b-bf85be389f07'),
 ('d59a3bf0-8035-069f-9ec2-660bc7470264', NOW(), 0, '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 'b05bde8a-1309-4789-993b-bf85be389f07'),
+('366fe514-7762-189c-f14e-660e85e49357', NOW(), 0, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 'b05bde8a-1309-4789-993b-bf85be389f07'),
 ('72cea0a5-cb6a-eaeb-aaf5-660bcd238d1d', NOW(), 0, '7acc83f4-f72e-10d5-969c-660bcb36cb56', '56dca334-679c-266d-fd9a-660bcd6ed93e');
