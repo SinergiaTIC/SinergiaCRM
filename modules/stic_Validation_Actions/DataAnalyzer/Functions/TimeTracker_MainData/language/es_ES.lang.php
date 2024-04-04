@@ -25,6 +25,6 @@ $func_strings = array (
     'NO_END_DATE' => 'El registro horario no tiene fecha de finalización.',
     'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'La funcionalidad de Registro horario no está activada en el empleado: ',
     'NO_RECORD_IN_WORK_CALENDAR' => 'No existe ningún registro de tipo laborable en el Calendario Laboral del empleado: ',
-    'EMAIL_SUBJECT' => 'CRM - Revisar los registros horarios del día: ',
-    'EMAIL_BODY' => 'Se ha encontrado un error durante el proceso de validación del siguiente registro horario:',
+    'EMAIL_SUBJECT' => 'CRM - Revisar registro de Registro horario',
+    'EMAIL_BODY' => 'Se ha encontrado un error durante el proceso de validación del siguiente registro de Registro horario:',
 );

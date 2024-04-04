@@ -25,6 +25,6 @@ $func_strings = array (
     'NO_END_DATE' => 'This time tracker record has no end date.',
     'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'The Time tracking functionality is not activated on the employee: ',
     'NO_RECORD_IN_WORK_CALENDAR' => "There is no work type record in the employee's Work Calendar: ",
-    'EMAIL_SUBJECT' => "CRM - Review yesterday's time tracker records",
-    'EMAIL_BODY' => 'An error was encountered during the validation process of the following time tracker record: ',
+    'EMAIL_SUBJECT' => 'CRM - Review Time Tracker Record',
+    'EMAIL_BODY' => 'An error was encountered during the validation process of the following Time tracker record:',
 );

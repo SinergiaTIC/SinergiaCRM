@@ -21,7 +21,7 @@ function sendEmailToEmployeeAndResponsible($employee, $row, $info)
     // Add employee email to $emailsToSendMessage
     if ($employee->is_admin == '0' || (isset($responsible) && $responsible->is_admin == '0'))
     {
-        $subject = $info['subject'] . substr($row['start_date'], 0, 10);       
+        $subject = $info['subject'];       
         $body = $info['body'];
         $body .= ' <a href="' . $sugar_config["site_url"] . '/index.php?module=stic_Time_Tracker&&return_module=stic_Time_Tracker&action=DetailView&record=' . $row['id'] . '"> ' . $row['name'] . '</a> <br />';
         $body .= $info['errorMsg']; 

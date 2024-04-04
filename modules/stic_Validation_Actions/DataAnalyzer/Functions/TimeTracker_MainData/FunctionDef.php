@@ -26,8 +26,8 @@
  */
 $functionDef = array(
     'id' => '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', // Function identifier
-    'class' => 'CheckTimeTrackersBeanData', // Class name
-    'classFile' => './CheckTimeTrackersBeanData.php', // Class File Path
+    'class' => 'CheckTimeTrackerBeanData', // Class name
+    'classFile' => './CheckTimeTrackerBeanData.php', // Class File Path
     'action' => 'REPORT', // Type of action of the 'UPDATE', 'REPORT' or 'UPDATE_REPORT' function
     'selector' => 'INCREMENTAL', // Selector type 'INCREMENTAL' or 'SPECIFIC'
     'module' => 'stic_Time_Tracker', // Main module on which the action is executed

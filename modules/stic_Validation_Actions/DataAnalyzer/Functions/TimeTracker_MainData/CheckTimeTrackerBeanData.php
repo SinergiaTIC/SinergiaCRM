@@ -24,10 +24,10 @@
 require_once 'SticInclude/Utils.php';
 
 /**
- * Class to check the following remittance fields
- * - Name
+ * 
+ * 
  */
-class CheckTimeTrackersBeanData extends DataCheckFunction 
+class CheckTimeTrackerBeanData extends DataCheckFunction 
 {
     /**
      * It receives a proposal from SQL and modifies it with the necessary features for the function.
