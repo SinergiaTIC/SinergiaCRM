@@ -119,4 +119,28 @@ class stic_Time_Tracker extends Basic
         $data = $db->fetchByAssoc($result);
         return $data;
     }
+
+    /**
+     * 
+     *
+     * @return 
+     */
+    public static function existAtLeastOneRecordForEmployeeAndDate($date, $idEmployee)
+    {
+        global $db;
+        $query = "SELECT count(tt.id) as count
+                    FROM stic_time_tracker as tt
+                  JOIN users_stic_time_tracker_c as ut
+                    ON tt.id = ut.users_stic_time_trackerstic_time_tracker_idb
+                  WHERE tt.deleted = 0 
+                    AND ut.deleted = 0
+                    AND tt.start_date LIKE '%" . $date . "%'
+                    AND ut.users_stic_time_trackerusers_ida = '" . $idEmployee . "';";
+
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
+        $result = $db->query($query);
+        $data = $db->fetchByAssoc($result);
+        return $data['count'] > 0;
+    }
+
 }
