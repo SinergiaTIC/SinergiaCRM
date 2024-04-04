@@ -401,22 +401,12 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
   }
 
   checkCondition_user(condition) {
-    switch (condition.operator) {
-      case "Not_Equal_To":
-        condition.operator = "Equal_To";
-        return !checkCondition_user(condition);
+    if (this.type != "relate") {
+      return false;
     }
 
-    var value_list = condition.value_list;
-    if (this.type == "multienum") {
-      condition.value = condition.value ? condition.value : "";
-      condition.value = condition.value.replaceAll("^", "").split(",").sort().join(",");
-    }
-
-    var currentValue = sticCVUtils.normalizeToCompare(this._getValue(value_list));
-    var conditionValue = sticCVUtils.normalizeToCompare(condition.value);
-
-    return false;
+    condition.value = SUGAR.sticCV_currentUser;
+    return this.checkCondition_value(condition);
   }
 
   checkCondition_field(condition) {

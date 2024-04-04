@@ -203,13 +203,15 @@ class stic_Custom_Views_ProcessorLogicHooks
         // Convert to json
         $customizationsJson = json_encode($customizations);
 
+        // Set Current user in js
         // Write a js call to processSticCustomView when loaded
         $html =
         "<script type=\"text/javascript\" language=\"JavaScript\">" .
-        "$(document).ready(function () {" .
-        "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"" . addslashes($customizationsJson) . "\");" .
+            "SUGAR.sticCV_currentUser = \"".$current_user->id."|".$current_user->user_name."\";".
+            "$(document).ready(function () {" .
+                "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"" . addslashes($customizationsJson) . "\");" .
             "});" .
-            "</script>";
+        "</script>";
 
         echo $html;
         return "";

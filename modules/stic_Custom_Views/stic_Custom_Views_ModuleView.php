@@ -325,7 +325,7 @@ class stic_Custom_Views_ModuleView
                 break;
             default:
                 if ($relatedTable == "users") {
-                    $validConditionTypes = array('value' /*,'user', 'field'*/);
+                    $validConditionTypes = array('value' ,'user'/*, 'field'*/);
                 } else {
                     $validConditionTypes = array('value' /*,'field'*/);
                 }
