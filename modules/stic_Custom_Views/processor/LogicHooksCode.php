@@ -23,6 +23,12 @@
  */
 class stic_Custom_Views_ProcessorLogicHooks
 {
+    protected $logger;
+
+    public function __construct()
+    {
+        $this->logger = LoggerManager::getLogger();
+    }
 
     public function after_ui_frame($event, $arguments)
     {
@@ -41,6 +47,8 @@ class stic_Custom_Views_ProcessorLogicHooks
             return "";
         }
 
+        $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'after_ui_frame; Module:'.$module.'; View:'.$view);
+
         // Steps:
         //  1- Find all stic_Custom_Views defined for the module and view
         //  2- Filter stic_Custom_Views to apply with user permissions
@@ -50,6 +58,7 @@ class stic_Custom_Views_ProcessorLogicHooks
         //  6- Convert to json
         //  7- Write a js call to processSticCustomView when loaded
 
+        $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'Username:'.$current_user->user_name);
         $is_admin = $current_user->isAdmin();
 
         $groups = SecurityGroup::getUserSecurityGroups($current_user->id);
@@ -64,6 +73,7 @@ class stic_Custom_Views_ProcessorLogicHooks
         foreach ($roles as $rol) {
             $rolesIds[] = $rol->id;
         }
+        $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'IsAdmin:'.$is_admin.'; Security Groups:'.print_r($groupsIds, true).'; Roles:'.print_r($rolesIds, true));
 
         // Find all stic_Custom_Views defined for the module and view
         $db = DBManagerFactory::getInstance();
@@ -85,6 +95,7 @@ class stic_Custom_Views_ProcessorLogicHooks
 
         $result = $db->query($sql, true);
         if (!$result) {
+            $this->logger->error(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'Invalid result with query: '.$sql);
             return '';
         }
 
@@ -116,9 +127,11 @@ class stic_Custom_Views_ProcessorLogicHooks
 
             // Here Customization match all: UserType, Role, Role-Exclude, SecurityGroup and SecurityGroup-Exclude
             $validCustomViews[] = $row;
+            $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'CustomView for user:'.print_r($row, true));
         }
 
         if (empty($validCustomViews)) {
+            $this->logger->info('No CustomViews defined for: Module:'.$module.'; View:'.$view.'; Username:'.$current_user->user_name);
             return '';
         }
 
@@ -199,9 +212,12 @@ class stic_Custom_Views_ProcessorLogicHooks
                 }
             }
         }
+        $this->logger->info('Found CustomViews defined for: Module:'.$module.'; View:'.$view.'; Username:'.$current_user->user_name);
+        $this->logger->info('CustomViews:'.print_r($customizations, true));
 
         // Convert to json
         $customizationsJson = json_encode($customizations);
+        $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'jsonCustomViews:'.$customizationsJson);
 
         // Set Current user in js
         // Write a js call to processSticCustomView when loaded
