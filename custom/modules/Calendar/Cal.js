@@ -1080,12 +1080,14 @@ $($.fullCalendar).ready(function () {
             });
         }
         // STIC-Custom 20240222 MHP - Once the calendar is rendered, display the records with the stic_Work_Calendar class in column shape
-        prefix = 'stic-Work-Calendar';
-        workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
-        workCalendarEvents.forEach(function(element) {
-            element.textContent = "";
-            element.style.width='5%';  
-        });    
+        if(global_view != 'month' && global_view != 'sharedMonth') {
+            prefix = 'stic-Work-Calendar';
+            workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
+            workCalendarEvents.forEach(function(element) {
+                element.textContent = "";
+                element.style.width='5%';  
+            });    
+        }
         // END STIC-Custom 
     }
 });
