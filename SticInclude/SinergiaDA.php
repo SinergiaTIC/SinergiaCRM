@@ -1198,7 +1198,7 @@ class ExternalReporting
                                     1
                             ) email,
                             u.user_hash AS password,
-                            if(u.status='Active' AND uc.sda_allowed_c=1 AND is_admin=1 ,1,0) as 'active'
+                            if(u.status='Active' AND uc.sda_allowed_c=1,1,0) as 'active'
                         FROM
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c
@@ -1251,7 +1251,7 @@ class ExternalReporting
                                 JOIN securitygroups s on sr.securitygroup_id=s.id
                             WHERE sr.deleted=0
                             -- limite temporal para evitar problemas de colapso al existir un número muy grande de registros
-                            limit 1;
+                            -- limit 1;
                             ";
 
         // run sql queries
