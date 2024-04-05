@@ -36,8 +36,6 @@ class stic_Custom_ViewsViewEdit extends ViewEdit
 
     public function preDisplay()
     {
-        global $sugar_config;
-
         parent::preDisplay();
 
         SticViews::preDisplay($this);

@@ -196,11 +196,29 @@ class stic_Custom_Views_ModuleView
         $this->panelList = null;
     }
 
+    /**
+     * Converts a list of options into a string formatted for use as HTML select options.
+     *
+     * This function takes a list of options and formats them as HTML select options,
+     * removing any excess whitespace in the process.
+     *
+     * @param array $list The list of options to convert.
+     * @return string The HTML string containing select options.
+     */    
     private function convertToSelectOptions($list)
     {
         return trim(preg_replace('/\s+/', ' ', get_select_options_with_id($list, "")));
     }
 
+    /**
+     * Finds all fields associated with the module.
+     *
+     * This function retrieves all fields associated with the module specified and stores them in class properties for later use.
+     * It populates arrays containing field lists, operator maps, condition type maps, and field type lists.
+     * Additionally, it filters out certain types of fields such as links, currency-related fields, non-database fields, and specific field types.
+     *
+     * @return void
+     */    
     private function findAllModuleFieldList()
     {
         global $beanList;
@@ -258,7 +276,12 @@ class stic_Custom_Views_ModuleView
     }
 
     /**
-     * Get Valid operators for a given field Type
+     * Retrieves valid operators for a given field type.
+     *
+     * This function determines and returns an array of valid operators applicable to the specified field type.
+     *
+     * @param string $fieldType The type of the field.
+     * @return array An array of valid operators with their corresponding labels.
      */
     private function getValidOperators($fieldType)
     {
@@ -310,7 +333,13 @@ class stic_Custom_Views_ModuleView
     }
 
     /**
-     * Get Valid Condition Types for a given field Type
+     * Retrieves valid condition types for a given field type and related table.
+     *
+     * This function determines and returns an array of valid condition types applicable to the specified field type and related table.
+     *
+     * @param string $fieldType The type of the field.
+     * @param string $relatedTable The related table name (optional).
+     * @return array An array of valid condition types with their corresponding labels.
      */
     private function getValidConditionTypes($fieldType, $relatedTable = "")
     {
@@ -338,6 +367,15 @@ class stic_Custom_Views_ModuleView
         return $conditionTypeList;
     }
 
+    /**
+     * Retrieves valid value options for a given field and condition type.
+     *
+     * This function determines and returns an array of valid value options applicable to the specified field and condition type.
+     *
+     * @param string $fieldKey The key of the field.
+     * @param string $conditionType The condition type.
+     * @return array An array of valid value options with their corresponding labels.
+     */    
     private function getValidValueList($fieldKey, $conditionType)
     {
         global $app_list_strings;

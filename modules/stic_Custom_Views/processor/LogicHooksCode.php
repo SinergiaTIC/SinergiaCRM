@@ -59,7 +59,7 @@ class stic_Custom_Views_ProcessorLogicHooks
         //  7- Write a js call to processSticCustomView when loaded
 
         $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'Username:'.$current_user->user_name);
-        $is_admin = $current_user->isAdmin();
+        $isAdmin = $current_user->isAdmin();
 
         $groups = SecurityGroup::getUserSecurityGroups($current_user->id);
         $groupsIds = array();
@@ -73,12 +73,11 @@ class stic_Custom_Views_ProcessorLogicHooks
         foreach ($roles as $rol) {
             $rolesIds[] = $rol->id;
         }
-        $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'IsAdmin:'.$is_admin.'; Security Groups:'.print_r($groupsIds, true).'; Roles:'.print_r($rolesIds, true));
+        $this->logger->debug(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'IsAdmin:'.$isAdmin.'; Security Groups:'.print_r($groupsIds, true).'; Roles:'.print_r($rolesIds, true));
 
         // Find all stic_Custom_Views defined for the module and view
         $db = DBManagerFactory::getInstance();
-        $sql = "
-            SELECT DISTINCT views.id, views.user_type, views.security_groups, views.security_groups_exclude, views.roles, views.roles_exclude
+        $sql = "SELECT DISTINCT views.id, views.user_type, views.security_groups, views.security_groups_exclude, views.roles, views.roles_exclude
                 FROM stic_custom_views views
                     INNER JOIN stic_custom_views_stic_custom_view_customizations_c views_custom
                         ON views_custom.stic_custo45d1m_views_ida = views.id
@@ -103,8 +102,8 @@ class stic_Custom_Views_ProcessorLogicHooks
         $validCustomViews = array();
         while ($row = $db->fetchByAssoc($result)) {
             $okUserType = $row["user_type"] == "all" ||
-                ($is_admin && $row["user_type"] == "administrator") ||
-                (!$is_admin && $row["user_type"] == "regular_user");
+                ($isAdmin && $row["user_type"] == "administrator") ||
+                (!$isAdmin && $row["user_type"] == "regular_user");
             if (!$okUserType) {
                 continue;
             }
@@ -237,6 +236,13 @@ class stic_Custom_Views_ProcessorLogicHooks
         return "";
     }
 
+    /**
+     * Converts the given value to a displayable format based on the specified value type.
+     *
+     * @param mixed $value The value to be converted.
+     * @param string $value_type The type of the value.
+     * @return mixed The converted value.
+     */
     private function value_to_display($value, $value_type)
     {
         global $timedate, $current_user, $sugar_config;
@@ -260,6 +266,13 @@ class stic_Custom_Views_ProcessorLogicHooks
         return $value;
     }
 
+    /**
+     * Checks if the given string contains any of the substrings from the provided array.
+     *
+     * @param string $str The string to be checked.
+     * @param array $arr An array of substrings to search for.
+     * @return bool True if the string contains any of the substrings, false otherwise.
+     */
     private function string_contains_any($str, array $arr)
     {
         foreach ($arr as $a) {
@@ -270,6 +283,15 @@ class stic_Custom_Views_ProcessorLogicHooks
         return false;
     }
 
+    /**
+     * Compares Custom View restrictions for sorting purposes.
+     *
+     * This function is intended for use with sorting arrays of custom views when applying restrictions
+     *
+     * @param array $a The first Custom View to compare.
+     * @param array $b The second Custom View to compare.
+     * @return int Returns a negative value if $a should be placed before $b, a positive value if $b should be placed before $a, or 0 if they are equivalent.
+     */    
     private function compareCustomViewRestrictions($a, $b)
     {
         if (!empty($a["roles"]) && !empty($b["roles"])) {
@@ -320,16 +342,43 @@ class stic_Custom_Views_ProcessorLogicHooks
         return 0;
     }
 
+    /**
+     * Compares Customizations for sorting purposes.
+     *
+     * This function is intended for use with sorting arrays of Customizations, by order
+     *
+     * @param array $a The first Customization to compare.
+     * @param array $b The second Customization to compare.
+     * @return int Returns a negative value if $a should be placed before $b, a positive value if $b should be placed before $a, or 0 if they are equivalent.
+     */    
     private function compareCustomizations($a, $b)
     {
         return $a->customization_order - $b->customization_order;
     }
 
+    /**
+     * Compares Conditions for sorting purposes.
+     *
+     * This function is intended for use with sorting arrays of Conditions, by order
+     *
+     * @param array $a The first Condition to compare.
+     * @param array $b The second Condition to compare.
+     * @return int Returns a negative value if $a should be placed before $b, a positive value if $b should be placed before $a, or 0 if they are equivalent.
+     */     
     private function compareConditions($a, $b)
     {
         return $a["condition_order"] - $b["condition_order"];
     }
 
+    /**
+     * Compares Actions for sorting purposes.
+     *
+     * This function is intended for use with sorting arrays of Actions, by order
+     *
+     * @param array $a The first Action to compare.
+     * @param array $b The second Action to compare.
+     * @return int Returns a negative value if $a should be placed before $b, a positive value if $b should be placed before $a, or 0 if they are equivalent.
+     */ 
     private function compareActions($a, $b)
     {
         return $a["action_order"] - $b["action_order"];

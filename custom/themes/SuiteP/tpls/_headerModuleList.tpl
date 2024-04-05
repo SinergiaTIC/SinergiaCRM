@@ -1027,6 +1027,8 @@
                                         </div>
                                     </a>
                                 </li>
+                                {* STIC-Custom - JBL - 20240405 -  Custom Views link *}
+                                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
                                 <li class="actionmenulinks" role="presentation">
                                     <a href="./index.php?module=stic_Custom_Views&action=index" target="_blank" >
                                         <div class="side-bar-action-icon">
@@ -1037,6 +1039,7 @@
                                         </div>
                                     </a>
                                 </li>
+                                {* END STIC-Custom *}
                                 <li class="actionmenulinks" role="presentation">
                                     <a href="./index.php?module=Administration&action=Upgrade" target="_blank">
                                         <div class="side-bar-action-icon">

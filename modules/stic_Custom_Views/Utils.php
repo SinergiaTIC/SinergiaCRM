@@ -58,12 +58,28 @@ function getRelatedBeanObjectArray($bean, $relationshipName)
     return $relatedBeans ?? false;
 }
 
+/**
+ * Fills dynamic generic lists for roles and security groups.
+ *
+ * This function populates dynamic lists for roles and security groups
+ * It internally calls functions to fill the dynamic lists: fillDynamicRoleList() and fillDynamicSecurityGroupList().
+ *
+ * @return void
+ */
 function fillDynamicGenericLists()
 {
     fillDynamicRoleList();
     fillDynamicSecurityGroupList();
 }
 
+/**
+ * Fills the dynamic_role_list with roles.
+ *
+ * This function fills the list $GLOBALS['app_list_strings']['dynamic_role_list'] with roles.
+ * If the role list has already been populated, it returns early without performing any action.
+ *
+ * @return void
+ */
 function fillDynamicRoleList()
 {
     if (isset($GLOBALS['app_list_strings']['dynamic_role_list'])) {
@@ -81,6 +97,14 @@ function fillDynamicRoleList()
     $GLOBALS['app_list_strings']['dynamic_role_list'] = $dynamic_role_list;
 }
 
+/**
+ * Fills the dynamic_security_group_list with Security Groups.
+ *
+ * This function fills the list $GLOBALS['app_list_strings']['dynamic_security_group_list'] with Security Groups.
+ * If the Security Groups list has already been populated, it returns early without performing any action.
+ *
+ * @return void
+ */
 function fillDynamicSecurityGroupList()
 {
     if (isset($GLOBALS['app_list_strings']['dynamic_security_group_list'])) {
@@ -98,6 +122,16 @@ function fillDynamicSecurityGroupList()
     $GLOBALS['app_list_strings']['dynamic_security_group_list'] = $dynamic_security_group_list;
 }
 
+/**
+ * Retrieves JavaScript variables related to a specified view module and view type.
+ *
+ * This function fetches JavaScript variables required for client-side operations based on the provided view module and view type.
+ * It constructs JavaScript variables for various actions, action types, action editors, field conditions, and field types.
+ *
+ * @param string $viewModule The module associated with the view.
+ * @param string $viewType The type of view.
+ * @return string The HTML containing JavaScript variables.
+ */
 function getJsVars($viewModule, $viewType)
 {
     require_once 'modules/stic_Custom_Views/stic_Custom_Views_ModuleView.php';

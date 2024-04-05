@@ -36,8 +36,6 @@ class stic_Custom_ViewsViewDetail extends ViewDetail
 
     public function preDisplay()
     {
-        global $sugar_config;
-
         parent::preDisplay();
 
         SticViews::preDisplay($this);
