@@ -1659,7 +1659,7 @@ class ExternalReporting
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
                                 $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
-                                    'user_name' => $u['user_name'],
+                                    'user_name' => null,
                                     'group' => $userGroups['group'],
                                     'table' => $currentTable,
                                     'column' => 'id',
