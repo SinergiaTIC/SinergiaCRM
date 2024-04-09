@@ -39,7 +39,6 @@ class SugarWidgetSubPanelDuplicateButtonstic extends SugarWidgetField
 
         $unique_id = $layout_def['subpanel_id'] . "_duplicate_" . $subpanel_item_count; 
 
-        $parent_record_id = $_REQUEST['record'];
         $parent_module = $_REQUEST['module'];
 
         $action = 'DuplicateSubpanelRecord';
