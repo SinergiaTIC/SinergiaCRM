@@ -361,5 +361,11 @@ class CustomCalendarDisplay extends CalendarDisplay
         }
         $filters = get_custom_file_if_exists("modules/Calendar/tpls/filters.tpl");
         $ss->assign("filters", $filters);
+
+        // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
+        $display_work_calendar_records = $GLOBALS['current_user']->getPreference('display_work_calendar_records');
+        $display_work_calendar_records = $display_work_calendar_records ?: false;
+        $ss->assign('display_work_calendar_records', $display_work_calendar_records);
+        // END STIC-Custom
     }
 }

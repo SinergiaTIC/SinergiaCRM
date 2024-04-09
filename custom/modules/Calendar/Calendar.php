@@ -94,6 +94,9 @@ class CustomCalendar extends Calendar
 
         $field_list = CalendarUtils::get_fields();
 
+        $display_work_calendar_records = $GLOBALS['current_user']->getPreference('display_work_calendar_records');
+        $display_work_calendar_records = $display_work_calendar_records ?: false;
+
         $i = 0;
         foreach ($this->acts_arr as $user_id => $acts) {
             if (isset($acts) && empty($acts)) {
@@ -111,6 +114,9 @@ class CustomCalendar extends Calendar
                 continue;
             }
             foreach ($acts as $act) {
+                if (!$display_work_calendar_records && $act->sugar_bean->module_dir == 'stic_Work_Calendar'){
+                    continue;
+                }
                 $item = array();
                 $item['user_id'] = $user_id;
                 $item['module_name'] = $act->sugar_bean->module_dir;
