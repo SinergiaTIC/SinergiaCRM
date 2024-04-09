@@ -10,3 +10,5 @@ $mod_strings['LBL_SEVEN_TEXT'] = 'Text';
 $mod_strings['LBL_SEVEN_TO'] = 'To';
 $mod_strings['LBL_SEVEN_TO_HELP'] = 'Add more recipients separated by comma';
 $mod_strings['LBL_SEVEN_WRITE_SMS'] = 'Write SMS';
+$mod_strings['LBL_SEVEN_TEMPLATE'] = 'Template';
+$mod_strings['LBL_TEMPLATE_OR_TEXT_FILLED'] = 'Must choose a template or fill the text field';

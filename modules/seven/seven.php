@@ -132,6 +132,13 @@ class seven {
         $to = preg_replace('~\D~', '', $this->getNumber());
         return $this->apiCall($this->getSender(), $_POST['message'], $to);
     }
+    
+    // STIC-Custom EPS 20240404
+    public function sendSMSwithText($text): array {
+        $to = preg_replace('~\D~', '', $this->getNumber());
+        return $this->apiCall($this->getSender(), $text, $to);
+    }
+    // END STIC-Custom
 
     public function apiCall(?string $from, string $text, string $to): array {
         if (!$this->getActive()) return [null, null];

@@ -10,3 +10,5 @@ $mod_strings['LBL_SEVEN_TEXT'] = 'Texto';
 $mod_strings['LBL_SEVEN_TO'] = 'A';
 $mod_strings['LBL_SEVEN_TO_HELP'] = 'Añade más destiantarios separados por coma';
 $mod_strings['LBL_SEVEN_WRITE_SMS'] = 'Escribir SMS';
+$mod_strings['LBL_SEVEN_TEMPLATE'] = 'Plantilla';
+$mod_strings['LBL_TEMPLATE_OR_TEXT_FILLED'] = 'Debe escoger una plantilla o rellenar el campo Texto';
