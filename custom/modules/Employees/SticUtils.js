@@ -32,7 +32,6 @@ switch (viewType()) {
     
     case "detail":
         // Define button content
-        debugger;
         var buttons = {
             showWorkCalendarAssistant: {
             id: "show_work_calendar_assistant",

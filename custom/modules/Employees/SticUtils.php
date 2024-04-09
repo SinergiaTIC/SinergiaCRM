@@ -41,11 +41,11 @@ class stic_EmployeesUtils
         // TIP: the action can be run from the web browser using this url:
         // http://<CRM domain>/index.php?module=stic_Work_Calendar&action=createPeriodicSessions&return_module=stic_Work_Calendar&return_action=index&repeat_type=Daily&repeat_interval=1&repeat_count=3&repeat_until=&repeat_start_day=02/04/2019&repeat_final_day=02/04/2019&repeat_start_hour=09&repeat_start_minute=0&repeat_final_hour=10&repeat_final_minute=1&employeeId=<id_evento>"
 
-        global $db, $current_user, $timedate;
+        global $current_user, $timedate;
 
         // Get the data from the smarty template
         $user = $current_user->id;
-        $type = $_REQUEST['repeat_type'];
+        $repeat_type = $_REQUEST['repeat_type'];
         $interval = $_REQUEST['repeat_interval'];
         $count = $_REQUEST['repeat_count'];
         $until = $_REQUEST['repeat_until'];
@@ -86,11 +86,11 @@ class stic_EmployeesUtils
 
         // Depending on the chosen type, perform the right operation
         // (none, daily, weekly, monthly or annual)
-        if ($type == '') {
+        if ($repeat_type == '') {
             header("Location: index.php?action=index&module=stic_Work_Calendar");
         } else {
             // Daily
-            if ($type == 'Daily') {
+            if ($repeat_type == 'Daily') {
                 $firstDay = $startDay;
                 if ($count != '' and $count != '0') {
                     for ($i = 0; $i < $count; $i++) {
@@ -107,7 +107,7 @@ class stic_EmployeesUtils
                 }
             }
             // Monthly
-            if ($type == 'Monthly') {
+            if ($repeat_type == 'Monthly') {
                 $firstMonth = $startDay;
                 if ($count != '' and $count != '0') {
                     for ($i = 0; $i < $count; $i++) {
@@ -124,7 +124,7 @@ class stic_EmployeesUtils
                 }
             }
             // Yearly
-            if ($type == 'Yearly') {
+            if ($repeat_type == 'Yearly') {
                 $firstYear = $startDay;
                 if ($count != '' and $count != '0') {
                     for ($i = 0; $i < $count; $i++) {
@@ -141,7 +141,7 @@ class stic_EmployeesUtils
                 }
             }
             // Weekly
-            if ($type == 'Weekly') {
+            if ($repeat_type == 'Weekly') {
                 // We create the table $dow of the days of the week, fixing the problem that
                 // in the smarty template Sunday is in position '0' and not in position '7'
                 $times = 0;
@@ -271,6 +271,7 @@ class stic_EmployeesUtils
 
         // Get and save other data
         $employeeId = $_REQUEST['employeeId'];
+        $employee = BeanFactory::getBean('Users', $employeeId);
         $counter = count($date);
 
         // Boost performance by not updating related event until the last session
@@ -290,50 +291,28 @@ class stic_EmployeesUtils
                 $finalDay = strtotime($date[$i]) + $duration;
                 $finalDay = date('Y-m-d H:i:s', $finalDay);
             }
-            $sessionBean = BeanFactory::newBean('stic_Sessions');
+            $workCalendarBean = BeanFactory::newBean('stic_Work_Calendar');
             if (isset($_REQUEST['work_calendar_name']) && $_REQUEST['work_calendar_name'] != '') {
-                $sessionName = $_REQUEST['work_calendar_name'];
-                // Check if the variable is present in the string
-                if (strpos($sessionName, '{{$counter}}') !== false) {
-                    // Substitute the variable with the integer
-                    $sessionName = str_replace('{{$counter}}', ($i+1), $sessionName);
-                }
-                $sessionBean->name = $sessionName;
+                $workCalendarBean->name = $_REQUEST['work_calendar_name'];
             }
-            $sessionBean->start_date = $date[$i];
-            $sessionBean->end_date = $finalDay;
-            $sessionBean->stic_sessions_stic_eventsstic_events_ida = $employeeId;
+            $workCalendarBean->start_date = $date[$i];
+            $workCalendarBean->end_date = $finalDay;
+            $workCalendarBean->stic_work_calendar_usersusers_ida = $employeeId;
+            $workCalendarBean->stic_work_calendar_users_name = $employee->name;
 
             if (isset($_REQUEST['assigned_user_id']) && $_REQUEST['assigned_user_id'] != '') {
-                $sessionBean->assigned_user_id = $_REQUEST['assigned_user_id'];
+                $workCalendarBean->assigned_user_id = $_REQUEST['assigned_user_id'];
             } else {
-                $sessionBean->assigned_user_id = $user;
-            }
-            if (isset($_REQUEST['responsible_id']) && $_REQUEST['responsible_id'] != '') {
-                $sessionBean->contact_id_c = $_REQUEST['responsible_id'];
-            } else {
-                $sessionBean->contact_id_c = $user;
+                $workCalendarBean->assigned_user_id = $user;
             }
 
-            if (isset($_REQUEST['color']) && $_REQUEST['color'] != '') {
-                $sessionBean->color = $_REQUEST['color'];
-            } else {
-                $sessionBean->color = $user;
+            if (isset($_REQUEST['type']) && $_REQUEST['type'] != '') {
+                $workCalendarBean->type = $_REQUEST['type'];
             }
             if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
-                $sessionBean->description = $_REQUEST['description'];
-            } else {
-                $sessionBean->description = $user;
+                $workCalendarBean->description = $_REQUEST['description'];
             }
-            if (isset($_REQUEST['type'])) {
-                $activityType = $_REQUEST['type'];
-                if (is_array($activityType)) {
-                    $sessionBean->type = encodeMultienumValue($activityType);
-                } else {
-                    $sessionBean->type = '^'.$activityType.'^';
-                }
-            }
-            $sessionBean->save();
+            $workCalendarBean->save();
         }
         $endTime = microtime(true);
         $totalTime = $endTime - $startTime;
@@ -341,12 +320,9 @@ class stic_EmployeesUtils
         // For total security, unset the control variable anyway
         unset($_SESSION['notUpdateRelatedEvent']);
 
-        // Calculate total Sessions duration for this event
-        self::setEventTotalHours($employeeId);
-
         // Reactivamos la configuración previa de Advanced Open Discovery
         $sugar_config['aod']['enable_aod'] = $aodConfig;
 
-        header("Location: index.php?action=DetailView&module=stic_Work_Calendar&record=$employeeId");
+        header("Location: index.php?action=DetailView&module=Employees&record=$employeeId");
     }
 }

@@ -123,7 +123,32 @@
 					</div>
 				</td>
 			</tr>
-
+			<tr id="type_row">
+				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_TYPE}:<span
+						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td></td>
+				<td width="37.5%" valign="top">
+					<select class='sqsEnabled' name='type' id='type' value='' title=''  required>
+						{html_options options=$TYPE}
+				</td>
+			</tr>
+			<tr id="employee_row">
+				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE}:<span
+						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td></td>
+				<td width="37.5%" valign="top">
+					<input style="width: 210px" type='text' class='sqsEnabled' name='stic_work_calendar_users_name'
+						id='stic_work_calendar_users_name' autocomplete='new-password' value='' title='' required>
+					<input type='hidden' name='stic_work_calendar_usersusers_ida' id='stic_work_calendar_usersusers_ida' value=''>
+					<span class='id-ff multiple'>
+						<button title='SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE")' type='button'
+							class='button' name='btn_1' onclick='openSelectPopup("Users", "stic_work_calendar_users")'>
+							<span class='suitepicon suitepicon-action-select' /></span>
+					</button>
+					<button type='button' name='btn_1' class='button lastChild'
+						onclick='clearRow(this.form, "stic_work_calendar_users_name");'>
+						<span class='suitepicon suitepicon-action-clear'></span>
+						</span>
+				</td>
+			</tr>		
 			<tr>
 				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
 				<td width="37.5%" valign="top">
@@ -201,40 +226,12 @@
 			</tr>
 			<tr id="name_row">
 				<td width="12.5%" valign="top" scope="row">
-					{$MOD_WORK_CALENDAR.LBL_NAME}
-					<span id="work_calendar_name_info" style='position: relative;'
-						class="inline-help glyphicon glyphicon-info-sign"></span>
-					:
+					{$MOD_WORK_CALENDAR.LBL_NAME}:
 				</td>
 				<td width="37.5%" valign="top">
 					<input style="width: 290px" type='text' name='work_calendar_name' id='work_calendar_name' value='' title=''>
 				</td>
-			</tr>
-			<tr id="type_row">
-				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_TYPE}:</td>
-				<td width="37.5%" valign="top">
-					<select multiple=true class='sqsEnabled' name='type[]' id='type' value=''
-						title=''>
-						{html_options options=$TYPE}
-				</td>
-			</tr>
-			<tr id="employee_row">
-				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE}:</td>
-				<td width="37.5%" valign="top">
-					<input style="width: 210px" type='text' class='sqsEnabled' name='stic_work_calendar_users_name'
-						id='stic_work_calendar_users_name' autocomplete='new-password' value='' title=''>
-					<input type='hidden' name='stic_work_calendar_usersusers_ida' id='stic_work_calendar_usersusers_ida' value=''>
-					<span class='id-ff multiple'>
-						<button title='SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE")' type='button'
-							class='button' name='btn_1' onclick='openSelectPopup("Users", "stic_work_calendar_users")'>
-							<span class='suitepicon suitepicon-action-select' /></span>
-					</button>
-					<button type='button' name='btn_1' class='button lastChild'
-						onclick='clearRow(this.form, "stic_work_calendar_users_name");'>
-						<span class='suitepicon suitepicon-action-clear'></span>
-						</span>
-				</td>
-			</tr>			
+			</tr>	
 			<tr id="assigned_user_row">
 				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_ASSIGNED_TO}:</td>
 				<td width="37.5%" valign="top">
@@ -262,9 +259,8 @@
 			</tr>		
 		</table>
 		<div id="cal-edit-buttons" class="ft">
-			<input title="grabar" class="button" type="submit" name="button" value="{$MOD.LBL_SAVE_BUTTON}">
-			<input title="Enrera" class="button"
-				onclick="SUGAR.ajaxUI.loadContent('index.php?action=index&module=stic_Work_Calendar'); return false;"
+			<input class="button" type="submit" name="button" value="{$MOD.LBL_SAVE_BUTTON}">
+			<input class="button" onclick="SUGAR.ajaxUI.loadContent('index.php?action=DetailView&module=Employees&record={$REQUEST.employeeId}'); return false;"
 				type="submit" name="button" value="{$MOD.LBL_CANCEL_BUTTON}">
 		</div>
 	</form>
@@ -273,35 +269,25 @@
 <script type="text/javascript">
 	{literal}
 
-		addQtipFunctionality('#stic_work_calendar_enable_fields_info', 'stic_Work_Calendar', 'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO');
+		addQtipFunctionality('#stic_work_calendar_enable_fields_info', 'Employees', 'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO');
 
-		buildEditableColorFieldSelectize('color');
+
 		$(document).ready(function() {
 			$("#name_row").hide();
 			$("#assigned_user_row").hide();
-			$("#employee_row").hide();
-			$("#type_row").hide();
-			$('#type').selectize();
 			$("#description_row").hide();
 			$("#enable_fields").on("change", function() {
 				if ($(this).is(":checked")) {
 					$("#name_row").show();
 					$("#assigned_user_row").show();
-					$("#type_row").show();
-					$("#employee_row").show();
 					$("#description_row").show();
 				} else {
 					$("#name_row").hide();
 					$("#assigned_user_row").hide();
-					$("#type_row").hide();
-					$("#employee_row").hide();
 					$("#description_row").hide();
 
 					$('#work_calendar_name').val('');
 					$('#description').val('');
-					$('#color')[0].selectize.clear();
-					$('#type')[0].selectize.clear();
-					clearRow(this.form, "stic_work_calendar_usersusers_ida");
 					clearRow(this.form, "assigned_user")
 				}
 			});
