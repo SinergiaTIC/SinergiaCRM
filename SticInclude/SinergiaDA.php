@@ -1016,9 +1016,7 @@ class ExternalReporting
         $tableLabel = empty($tableLabel) ? '-' : $tableLabel;
         // **Retrieve relationship information:**
         $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
-        if ($tableName == 'stic_events') {
-            echo '';
-        }
+        
         // **Check if necessary information is present for standard join:**
         if (!empty($rel['join_table']) && !empty($rel['join_key_lhs']) && !empty($rel['join_key_rhs'])) {
             // Standard join using join table
