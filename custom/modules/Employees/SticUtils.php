@@ -22,10 +22,9 @@
  */
 class stic_EmployeesUtils
 {
-
     /**
-     * This function creates periodic sessions for a certain event, based on the parameters received via $_REQUEST
-     * and defined in the periodic session creation wizard (modules/stic_Work_Calendar/SessionWizard.tpl)
+     * This function creates periodic work calendar records for a certain employee, based on the parameters received via $_REQUEST
+     * and defined in the periodic work calendar records creation wizard (custom/modules/Employees/tpls/workCalendarWizard.tpl)
      *
      * @return void
      */
@@ -39,7 +38,7 @@ class stic_EmployeesUtils
         $startTime = microtime(true);
 
         // TIP: the action can be run from the web browser using this url:
-        // http://<CRM domain>/index.php?module=stic_Work_Calendar&action=createPeriodicSessions&return_module=stic_Work_Calendar&return_action=index&repeat_type=Daily&repeat_interval=1&repeat_count=3&repeat_until=&repeat_start_day=02/04/2019&repeat_final_day=02/04/2019&repeat_start_hour=09&repeat_start_minute=0&repeat_final_hour=10&repeat_final_minute=1&employeeId=<id_evento>"
+        // http://<CRM domain>/index.php?module=stic_Work_Calendar&action=createPeriodicWorkCalendarRecords&return_module=stic_Work_Calendar&return_action=index&repeat_type=Daily&repeat_interval=1&repeat_count=3&repeat_until=&repeat_start_day=02/04/2019&repeat_final_day=02/04/2019&repeat_start_hour=09&repeat_start_minute=0&repeat_final_hour=10&repeat_final_minute=1&employeeId=<id_employee>"
 
         global $current_user, $timedate;
 
@@ -61,7 +60,7 @@ class stic_EmployeesUtils
 
         // Set minute interval as defined in $sugar_config
         $m = 0;
-        $minutesInterval = $sugar_config['stic_datetime_combo_minute_interval'] ?: 15;
+        $minutesInterval = 1;
         $repeatMinuts1 = array('00');
         do {
             $m = $m + $minutesInterval;
@@ -75,7 +74,7 @@ class stic_EmployeesUtils
         if ($finalHour < $startHour and $finalDay == $startDay) {$finalHour = $startHour + 1;}
 
         // Take the dates collected in the smarty template and set their values
-        // in order to calculate the duration of the session
+        // in order to calculate the duration of the work calendar record
         $until = str_replace('/', '-', $until);
         $until = date("Y-m-d", strtotime($until));
         $startDay = str_replace('/', '-', $startDay);
@@ -271,20 +270,12 @@ class stic_EmployeesUtils
 
         // Get and save other data
         $employeeId = $_REQUEST['employeeId'];
-        $employee = BeanFactory::getBean('Users', $employeeId);
+        $employeeName = $_REQUEST['employeeName'];
         $counter = count($date);
 
-        // Boost performance by not updating related event until the last session
-        $_SESSION['notUpdateRelatedEvent'] = true;
-
-        // Loop for session creation
-        for ($i = 0; $i < $counter; $i++) {
-
-            // If creating the last session let related event to be updated
-            if ($counter == $i + 1) {
-                unset($_SESSION['notUpdateRelatedEvent']);
-            }
-
+        // Loop for work calendar records creation
+        for ($i = 0; $i < $counter; $i++) 
+        {
             $date[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
 
             if ($finalDay != '') {
@@ -298,7 +289,7 @@ class stic_EmployeesUtils
             $workCalendarBean->start_date = $date[$i];
             $workCalendarBean->end_date = $finalDay;
             $workCalendarBean->stic_work_calendar_usersusers_ida = $employeeId;
-            $workCalendarBean->stic_work_calendar_users_name = $employee->name;
+            $workCalendarBean->stic_work_calendar_users_name = $employeeName;
 
             if (isset($_REQUEST['assigned_user_id']) && $_REQUEST['assigned_user_id'] != '') {
                 $workCalendarBean->assigned_user_id = $_REQUEST['assigned_user_id'];
@@ -316,9 +307,7 @@ class stic_EmployeesUtils
         }
         $endTime = microtime(true);
         $totalTime = $endTime - $startTime;
-        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Has been created $i sessions in $totalTime seconds");
-        // For total security, unset the control variable anyway
-        unset($_SESSION['notUpdateRelatedEvent']);
+        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Has been created $i work calendar records in $totalTime seconds");
 
         // Reactivamos la configuración previa de Advanced Open Discovery
         $sugar_config['aod']['enable_aod'] = $aodConfig;

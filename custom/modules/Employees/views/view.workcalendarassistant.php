@@ -66,6 +66,8 @@ class EmployeesViewWorkCalendarAssistant extends SugarView
         }
 
         $workCalendarBean = BeanFactory::getBean('stic_Work_Calendar');
+        $employee = BeanFactory::getBean('Users', $_REQUEST['employeeId']);
+        $_REQUEST['employeeName'] = $employee->name;
 
         $this->ss->assign('TYPE', $app_list_strings[$workCalendarBean->field_name_map['type']['options']]);
         $this->ss->assign('REQUEST', $_REQUEST);

@@ -57,6 +57,7 @@
 	<form name="CalendarRepeatForm" id="CalendarRepeatForm" method="POST">
 		<input type="hidden" id="module" name="module" value="Employees">
 		<input type="hidden" id="employeeId" name="employeeId" value="{$REQUEST.employeeId}">
+		<input type="hidden" id="employeeName" name="employeeName" value="{$REQUEST.employeeName}">		
 		<input type="hidden" id="action" name="action" value="createPeriodicWorkCalendarRecords">
 		<input type="hidden" name="repeat_parent_id">
 
@@ -131,24 +132,6 @@
 						{html_options options=$TYPE}
 				</td>
 			</tr>
-			<tr id="employee_row">
-				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE}:<span
-						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td></td>
-				<td width="37.5%" valign="top">
-					<input style="width: 210px" type='text' class='sqsEnabled' name='stic_work_calendar_users_name'
-						id='stic_work_calendar_users_name' autocomplete='new-password' value='' title='' required>
-					<input type='hidden' name='stic_work_calendar_usersusers_ida' id='stic_work_calendar_usersusers_ida' value=''>
-					<span class='id-ff multiple'>
-						<button title='SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE")' type='button'
-							class='button' name='btn_1' onclick='openSelectPopup("Users", "stic_work_calendar_users")'>
-							<span class='suitepicon suitepicon-action-select' /></span>
-					</button>
-					<button type='button' name='btn_1' class='button lastChild'
-						onclick='clearRow(this.form, "stic_work_calendar_users_name");'>
-						<span class='suitepicon suitepicon-action-clear'></span>
-						</span>
-				</td>
-			</tr>		
 			<tr>
 				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
 				<td width="37.5%" valign="top">
