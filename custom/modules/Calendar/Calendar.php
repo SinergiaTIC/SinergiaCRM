@@ -79,6 +79,44 @@ class CustomCalendar extends Calendar
     );
     // END STIC-Custom
 
+
+    /**
+     * loads array of objects
+     * @param User $user user object
+     * @param string $type
+     */
+    public function add_activities($user, $type='sugar')
+    {
+        $start_date_time = $this->date_time;
+        if ($this->view == 'agendaWeek'|| $this->view == 'basicWeek'  || $this->view == 'sharedWeek') {
+            $start_date_time = CalendarUtils::get_first_day_of_week($this->date_time);
+            $end_date_time = $start_date_time->get("+7 days");
+        } else {
+            if ($this->view == 'month' || $this->view == "sharedMonth") {
+                $start_date_time = $this->date_time->get_day_by_index_this_month(0);
+                $end_date_time = $start_date_time->get("+".$start_date_time->format('t')." days");
+                $start_date_time = CalendarUtils::get_first_day_of_week($start_date_time);
+                $end_date_time = CalendarUtils::get_first_day_of_week($end_date_time)->get("+7 days");
+            } else {
+                $end_date_time = $this->date_time->get("+1 day");
+            }
+        }
+        
+        $start_date_time = $start_date_time->get("-5 days"); // 5 days step back to fetch multi-day activities that
+
+        $acts_arr = array();
+        if ($type == 'vfb') {
+            // $acts_arr = CalendarActivity::get_freebusy_activities($user, $start_date_time, $end_date_time);
+            $acts_arr = CustomCalendarActivity::get_freebusy_activities($user, $start_date_time, $end_date_time);
+        } else {
+            // $acts_arr = CalendarActivity::get_activities($this->activityList, $user->id, $this->show_tasks, $start_date_time, $end_date_time, $this->view, $this->show_calls, $this->show_completed);
+            $acts_arr = CustomCalendarActivity::get_activities($this->activityList, $user->id, $this->show_tasks, $start_date_time, $end_date_time, $this->view, $this->show_calls, $this->show_completed);
+        }
+
+        $this->acts_arr[$user->id] = $acts_arr;
+    }
+
+
     /**
      * Overriding the funcion load_activities(). It includes an exception for the stic_Sessions module regarding
      * the definition of the variables duration_hours and duration_minutes
@@ -120,20 +158,6 @@ class CustomCalendar extends Calendar
                 $item = array();
                 $item['user_id'] = $user_id;
                 $item['module_name'] = $act->sugar_bean->module_dir;
-                // STIC-Custom 20240222 MHP - Store the type of record as it will indicate how it should be rendered.
-                // Aditionally, stic_Work_Calendar records are displayed in the calendar of the related employee and not the assigned user.
-                if ($item['module_name'] == 'stic_Work_Calendar') {
-                    // Store the type
-                    $item['event_type'] = $act->sugar_bean->type;
-                    // Store the related employee of the record as assigned user
-                    include_once 'SticInclude/Utils.php';
-                    $employee = SticUtils::getRelatedBeanObject($act->sugar_bean, 'stic_work_calendar_users');                    
-                    if (!empty($employee->id)) {
-                        $item['user_id'] = $employee->id;
-                        $item['assigned_user_id'] = $employee->id;
-                    }
-                }
-                // END STIC-Custom
                 $item['type'] = strtolower($act->sugar_bean->object_name);
                 $item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
                 $item['record'] = $act->sugar_bean->id;
@@ -217,6 +241,7 @@ class CustomCalendar extends Calendar
                     $item['color'] = $act->sugar_bean->color ? '#'.$act->sugar_bean->color : '';
                 }
                 if ($item['module_name'] == 'stic_Work_Calendar') {
+                    $item['event_type'] = $act->sugar_bean->type;
                     $totalMinutes = $act->sugar_bean->duration * 60;
                     $item['duration_hours'] = floor($totalMinutes / 60);
                     $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
