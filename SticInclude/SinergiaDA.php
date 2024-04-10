@@ -392,9 +392,9 @@ class ExternalReporting
                                     continue 2;
                                 }
 
+                                // Build and obtain the translated value from the other side of the relationship so it can be properly displayed in SinergiaDA
                                 $joinModuleRelLabel = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_TITLE';
                                 $joinLabel = translate($joinModuleRelLabel, $fieldV['module']);
-
                                 $joinLabel = empty($joinLabel) || $joinLabel == $joinModuleRelLabel ? $txModuleName : $joinLabel;
 
                                 $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel);
