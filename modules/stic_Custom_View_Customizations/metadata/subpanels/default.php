@@ -29,12 +29,17 @@ $subpanel_layout = array(
         ),
     ),
     'where' => '',
+    'sort_order' => 'asc',
+    'sort_by' => 'customization_order',
     'list_fields' => array(
         'customization_order' => array(
             'type' => 'int',
             'vname' => 'LBL_CUSTOMIZATION_ORDER',
             'width' => '5%',
             'default' => true,
+            'sortable' => true,
+            'sort_order' => 'asc',
+            'sort_by' => 'customization_order',
         ),
         'name' => array(
             'type' => 'text',
