@@ -56,6 +56,16 @@ $searchdefs[$module_name] = array(
                 'default' => true,
                 'name' => 'end_date',
             ),
+            'stic_work_calendar_users_name' => 
+            array (
+              'type' => 'relate',
+              'link' => true,
+              'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
+              'id' => 'STIC_WORK_CALENDAR_USERSUSERS_IDA',
+              'width' => '10%',
+              'default' => true,
+              'name' => 'stic_work_calendar_users_name',
+            ),            
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
@@ -69,7 +79,7 @@ $searchdefs[$module_name] = array(
                 'width' => '10%',
                 'default' => true,
             ),
-        ),  
+        ),
         'advanced_search' => array(
             'name' => array(
                 'name' => 'name',
@@ -90,6 +100,14 @@ $searchdefs[$module_name] = array(
                 'default' => true,
                 'name' => 'start_date',
             ),
+            'end_date' => 
+            array (
+              'type' => 'datetimecombo',
+              'label' => 'LBL_END_DATE',
+              'width' => '10%',
+              'default' => true,
+              'name' => 'end_date',
+            ),
             'duration' => array(
                 'type' => 'decimal',
                 'label' => 'LBL_DURATION',
@@ -105,6 +123,15 @@ $searchdefs[$module_name] = array(
                 'default' => true,
                 'name' => 'weekday',
             ),
+            'stic_work_calendar_users_name' => array (
+              'type' => 'relate',
+              'link' => true,
+              'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
+              'width' => '10%',
+              'default' => true,
+              'id' => 'STIC_WORK_CALENDAR_USERSUSERS_IDA',
+              'name' => 'stic_work_calendar_users_name',
+            ),      
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
