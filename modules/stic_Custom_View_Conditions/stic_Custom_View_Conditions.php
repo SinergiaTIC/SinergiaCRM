@@ -49,8 +49,6 @@ class stic_Custom_View_Conditions extends Basic
     public $value;
     public $value_type;
 
-    protected $logger;
-
     public function bean_implements($interface)
     {
         switch ($interface) {
@@ -64,8 +62,6 @@ class stic_Custom_View_Conditions extends Basic
     public function __construct()
     {
         parent::__construct();
-
-        $this->logger = LoggerManager::getLogger();
     }
     public function save_lines($post_data, $view_module, $parent, $key = '')
     {
@@ -76,14 +72,14 @@ class stic_Custom_View_Conditions extends Basic
         if (isset($post_data[$field])) {
             $postedField = $post_data[$field];
         } else {
-            $this->logger->warn(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'Posted field is undefined: ' . $field);
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Posted field is undefined: ' . $field);
         }
 
         $line_count = count((array) $postedField);
         $j = 0;
         for ($i = 0; $i < $line_count; ++$i) {
             if (!isset($post_data[$key . 'deleted'][$i])) {
-                $this->logger->warn(__FILE__ . ':' . __LINE__ . ' ' . __METHOD__ . ' - ' . 'stic Custom View Condition trying to save lines but POST data does not contains the key "' . $key . 'deleted' . '" at index: ' . $i);
+                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'stic Custom View Condition trying to save lines but POST data does not contains the key "' . $key . 'deleted' . '" at index: ' . $i);
             }
 
             if (isset($post_data[$key . 'deleted'][$i]) && $post_data[$key . 'deleted'][$i] == 1) {
