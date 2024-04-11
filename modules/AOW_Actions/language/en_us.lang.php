@@ -98,6 +98,6 @@ $mod_strings = array(
     'LBL_OUTPUT_SMTP' => 'Outbound email',
     'LBL_SHOW_ADVANCED'=> 'Show advanced options',
     'LBL_ADVANCED_TOOLTIP_HEADER' => 'Advanced options',
-    'LBL_ADVANCED_TOOLTIP_BODY' => 'These options allow to choose the outbound account and to customize the From name and address',
+    'LBL_ADVANCED_TOOLTIP_BODY' => 'These options allow to choose the outbound account and to customize the From name and address.',
     // END STIC-Custom
 );
