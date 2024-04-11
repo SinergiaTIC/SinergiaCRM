@@ -98,6 +98,6 @@ $mod_strings = array(
     'LBL_OUTPUT_SMTP'=> 'Correu electrònic sortint',
     'LBL_SHOW_ADVANCED'=> 'Mostra la configuració avançada',
     'LBL_ADVANCED_TOOLTIP_HEADER' => 'Opcions avançades',
-    'LBL_ADVANCED_TOOLTIP_BODY' => "Aquestes opcions permeten indicar el compte de correu electrònic sortint i l'adreça i el nom del remitent.",
+    'LBL_ADVANCED_TOOLTIP_BODY' => "Aquestes opcions permeten indicar el compte de correu electrònic sortint i el nom i l'adreça del remitent.",
     // END STIC-Custom
 );
