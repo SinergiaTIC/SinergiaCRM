@@ -34,22 +34,31 @@ $re = '/\$stic-base:.*;/m';
 file_put_contents($file, preg_replace($re, '\\$stic-base: ' . $color . ';', $data));
 
 if ($setting_sidebar_color==0){
-    $re = '/\$stic-sidebar:.*;/m';
-    $re2= '/\$stic-sidebar-text:.*;/m';
-    //$re3 = '/\$color-39:.*;/m';
     $sidebar_color= "#D9DEE3";
     $sidebar_text_color= "#001E40";
-    //$color_39= "#BFCAD3";
-    file_put_contents($file, preg_replace($re, '\\$stic-sidebar: ' . $sidebar_color . ';', $data));
-    file_put_contents($file, preg_replace($re2, '\\$stic-sidebar-text: ' . $sidebar_text_color . ';', $data));
-    //file_put_contents($file, preg_replace($re3, '\\$stic-sidebar: ' . $color_39 . ';', $data));
+    $replacements = array(
+        '\\$stic-sidebar: ' . $sidebar_color . ';',
+        '\\$stic-sidebar-text: ' . $sidebar_text_color . ';'
+    );
+    $patterns = array(
+        '/\$stic-sidebar:.*;/m',
+        '/\$stic-sidebar-text:.*;/m'
+    );
+    $data = preg_replace($patterns, $replacements, $data);
+    file_put_contents($file, $data);
 }else{
-    $re = '/\$stic-sidebar:.*;/m';
-    $re2= '/\$stic-sidebar-text:.*;/m';
     $sidebar_color= " #353535;";
     $sidebar_text_color= "#F5F5F5";
-    file_put_contents($file, preg_replace($re, '\\$stic-sidebar: ' . $sidebar_color . ';', $data));
-    file_put_contents($file, preg_replace($re2, '\\$stic-sidebar-text: ' . $sidebar_text_color . ';', $data));
+    $replacements = array(
+        '\\$stic-sidebar: ' . $sidebar_color . ';',
+        '\\$stic-sidebar-text: ' . $sidebar_text_color . ';'
+    );
+    $patterns = array(
+        '/\$stic-sidebar:.*;/m',
+        '/\$stic-sidebar-text:.*;/m'
+    );
+    $data = preg_replace($patterns, $replacements, $data);
+    file_put_contents($file, $data);
 }
 
 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SticCustom color palette is :" . print_r(file_get_contents($file), true));
