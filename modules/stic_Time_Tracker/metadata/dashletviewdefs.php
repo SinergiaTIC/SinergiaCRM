@@ -42,14 +42,6 @@ $dashletData['stic_Time_TrackerDashlet']['columns'] = array(
         'link' => true,
         'default' => true
     ),
-    'users_stic_time_tracker_name' => array(
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
-        'id' => 'USERS_STIC_TIME_TRACKERUSERS_IDA',
-        'width' => '10%',
-        'default' => true,
-    ),
     'start_date' => array(
         'type' => 'datetimecombo',
         'label' => 'LBL_START_DATE',

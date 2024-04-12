@@ -38,13 +38,10 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
      */
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL)
     {
-        $sql = "SELECT tt.id, tt.name, tt.start_date, tt.end_date, tt.assigned_user_id, ut.users_stic_time_trackerusers_ida as employeeId
-                    FROM stic_time_tracker as tt
-                JOIN users_stic_time_tracker_c as ut 
-                    ON tt.id = ut.users_stic_time_trackerstic_time_tracker_idb 
-                WHERE tt.start_date LIKE CONCAT('%', DATE_SUB(CURDATE(), INTERVAL 1 DAY), '%')
-                    AND tt.deleted = 0
-                    AND ut.deleted = 0;";
+        $sql = "SELECT id, name, start_date, end_date, assigned_user_id
+                    FROM stic_time_tracker
+                WHERE start_date LIKE CONCAT('%', DATE_SUB(CURDATE(), INTERVAL 1 DAY), '%')
+                    AND deleted = 0;";
 
         return $sql;
     }
@@ -72,10 +69,10 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
         {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Validating the next record: {$row['name']}.");
 
-            $employeeId = $row['employeeId'];
-            $employee = BeanFactory::getBean('Users', $employeeId);
-            $isActivateTimeTracker = $employee->stic_clock_c == '1';
-            $isActivateWorkCalendar = $employee->stic_work_calendar_c == '1';
+            $assignedUserId = $row['assigned_user_id'];
+            $assignedUser = BeanFactory::getBean('Users', $assignedUserId);
+            $isActivateTimeTracker = $assignedUser->stic_clock_c == '1';
+            $isActivateWorkCalendar = $assignedUser->stic_work_calendar_c == '1';
 
             $errorMsg = '';
             $errorEndDate = '';
@@ -84,8 +81,8 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
             {
                 if ($isActivateWorkCalendar) {
                     include_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';  
-                    if (!stic_Work_Calendar::existAtLeastOneRecordForEmployeeAndDate(substr($row['start_date'], 0, 10), $employeeId)) {
-                        $errorMsg = $this->getLabel('NO_RECORD_IN_WORK_CALENDAR') . $employee->name;
+                    if (!stic_Work_Calendar::existAtLeastOneRecordForEmployeeAndDate(substr($row['start_date'], 0, 10), $assignedUserId)) {
+                        $errorMsg = $this->getLabel('NO_RECORD_IN_WORK_CALENDAR') . $assignedUser->name;
                         $contTemp = 1;
                     }
                 }
@@ -94,7 +91,7 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
                     $contTemp = 1;
                 }
             } else {
-                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_TIME_TRACKER') . $employee->name;
+                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_TIME_TRACKER') . $assignedUser->name;
                 $contTemp = 1;
             }
 
@@ -112,11 +109,11 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
                     'parent_type' => $this->functionDef['module'],
                     'parent_id' => $row['id'],
                     'reviewed' => 'no',   
-                    'assigned_user_id' => $row['assigned_user_id'],
+                    'assigned_user_id' => $assignedUserId,
                 );
                 $this->logValidationResult($data);
                 $info['errorMsg'] = $errorMsg;
-                sendEmailToEmployeeAndResponsible($employee, $row, $info);
+                sendEmailToEmployeeAndResponsible($assignedUser, $row, $info);
             }
                 
             // Report that the Time Tracker record does not have an end_date
@@ -129,11 +126,11 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
                     'parent_type' => $this->functionDef['module'],
                     'parent_id' => $row['id'],
                     'reviewed' => 'no',   
-                    'assigned_user_id' => $row['assigned_user_id'],
+                    'assigned_user_id' => $assignedUserId,
                 );
                 $this->logValidationResult($data);
                 $info['errorMsg'] = $errorMsg;
-                sendEmailToEmployeeAndResponsible($employee, $row, $info);
+                sendEmailToEmployeeAndResponsible($assignedUser, $row, $info);
             }
         }
 

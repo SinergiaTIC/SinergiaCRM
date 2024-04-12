@@ -54,15 +54,7 @@ $viewdefs[$module_name]['QuickCreate'] = array(
                     'label' => 'LBL_END_DATE',
                 ),
             ),
-            2 => 
-            array (
-                0 => 
-                array (
-                    'name' => 'users_stic_time_tracker_name',
-                    'label' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
-                ),
-            ),
-            3 => array (
+            2 => array (
                 0 => 'description',
             ),              
         ),

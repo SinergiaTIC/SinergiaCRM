@@ -37,27 +37,6 @@ $layout_defs["Users"]["subpanel_setup"]["prospect_lists"] = array(
         ),
     ),
 );
-$layout_defs["Users"]["subpanel_setup"]['users_stic_time_tracker'] = array (
-    'order' => 100,
-    'module' => 'stic_Time_Tracker',
-    'subpanel_name' => 'default',
-    'sort_order' => 'asc',
-    'sort_by' => 'name',
-    'title_key' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_STIC_TIME_TRACKER_TITLE',
-    'get_subpanel_data' => 'users_stic_time_tracker',
-    'top_buttons' => 
-    array (
-        0 => 
-        array (
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ),
-        1 => 
-        array (
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
-    ),
-);
 $layout_defs["Users"]["subpanel_setup"]['stic_work_calendar_users'] = array (
     'order' => 100,
     'module' => 'stic_Work_Calendar',

@@ -74,12 +74,10 @@ class stic_Time_Tracker extends Basic
         $endDate = $_REQUEST["end_date"] ?? $this->end_date;
 
         // Set name
-        if (empty($this->name)) {
-            $employee = $this->users_stic_time_tracker_name;
-            $this->name = $employee . " - " . $startDate;
-            if (!empty($endDate)) {
-                $this->name .= " - " . $endDate;
-            }
+        $assignedUser = $this->assigned_user_name;
+        $this->name = $assignedUser . " - " . $startDate;
+        if (!empty($endDate)) {
+            $this->name .= " - " . $endDate;
         }
 
         // Set duration field
@@ -100,18 +98,15 @@ class stic_Time_Tracker extends Basic
      *
      * @return void
      */
-    public static function getLastTodayTimeTrackerRecordForEmployeeData($idEmployee)
+    public static function getLastTodayTimeTrackerRecordForEmployeeData($userId)
     {
         global $db;
-        $query = "SELECT st.* FROM stic_time_tracker  as st
-                JOIN users_stic_time_tracker_c as ust
-                ON st.id = ust.users_stic_time_trackerstic_time_tracker_idb
-                WHERE st.deleted = 0 
-                and ust.deleted = 0
-                AND st.start_date IS NOT NULL AND st.start_date <> ''
-                AND DATE(st.start_date) = DATE(NOW())
-                AND ust.users_stic_time_trackerusers_ida = '" . $idEmployee . "' 
-                ORDER BY st.start_date desc
+        $query = "SELECT * FROM stic_time_tracker
+                WHERE deleted = 0 
+                AND start_date IS NOT NULL AND start_date <> ''
+                AND DATE(start_date) = DATE(NOW())
+                AND assigned_user_id = '" . $userId . "'  
+                ORDER BY start_date desc
                 LIMIT 1;";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
@@ -125,22 +120,18 @@ class stic_Time_Tracker extends Basic
      *
      * @return 
      */
-    public static function existAtLeastOneRecordForEmployeeAndDate($date, $idEmployee)
+    public static function existAtLeastOneRecordForEmployeeAndDate($date, $userId)
     {
         global $db;
-        $query = "SELECT count(tt.id) as count
-                    FROM stic_time_tracker as tt
-                  JOIN users_stic_time_tracker_c as ut
-                    ON tt.id = ut.users_stic_time_trackerstic_time_tracker_idb
-                  WHERE tt.deleted = 0 
-                    AND ut.deleted = 0
-                    AND tt.start_date LIKE '%" . $date . "%'
-                    AND ut.users_stic_time_trackerusers_ida = '" . $idEmployee . "';";
+        $query = "SELECT count(id) as count
+                    FROM stic_time_tracker
+                  WHERE deleted = 0 
+                    AND start_date LIKE '%" . $date . "%'
+                    AND assigned_user_id = '" . $userId . "';";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
         $result = $db->query($query);
         $data = $db->fetchByAssoc($result);
         return $data['count'] > 0;
     }
-
 }

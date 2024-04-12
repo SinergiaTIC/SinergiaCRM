@@ -65,5 +65,4 @@ $mod_strings = array (
   'LBL_DURATION' => 'Duration',  
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
-  'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE' => 'Employee',  
 );

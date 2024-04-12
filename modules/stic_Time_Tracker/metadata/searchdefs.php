@@ -56,16 +56,6 @@ $searchdefs[$module_name] = array(
                 'default' => true,
                 'name' => 'duration',
             ),
-            'users_stic_time_tracker_name' => 
-            array (
-              'type' => 'relate',
-              'link' => true,
-              'label' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
-              'id' => 'USERS_STIC_TIME_TRACKERUSERS_IDA',
-              'width' => '10%',
-              'default' => true,
-              'name' => 'users_stic_time_tracker_name',
-            ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
@@ -107,16 +97,6 @@ $searchdefs[$module_name] = array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'duration',
-            ),
-            'users_stic_time_tracker_name' => 
-            array (
-              'type' => 'relate',
-              'link' => true,
-              'label' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
-              'width' => '10%',
-              'default' => true,
-              'id' => 'USERS_STIC_TIME_TRACKERUSERS_IDA',
-              'name' => 'users_stic_time_tracker_name',
             ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',

@@ -71,10 +71,7 @@ $viewdefs[$module_name]['DetailView'] = array(
                     'name' => 'duration',
                     'label' => 'LBL_DURATION',
                 ),
-                1 => array(
-                    'name' => 'users_stic_time_tracker_name',
-                    'label' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_USERS_TITLE',
-                ),
+                1 => array(),
             ),          
             3 => array (
                 0 => 'description',

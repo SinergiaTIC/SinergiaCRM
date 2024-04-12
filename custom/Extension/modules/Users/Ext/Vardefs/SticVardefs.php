@@ -211,16 +211,6 @@ $dictionary['User']['fields']['emails_list'] = array(
     ),
 );
 
-$dictionary["User"]["fields"]["users_stic_time_tracker"] = array (
-    'name' => 'users_stic_time_tracker',
-    'type' => 'link',
-    'relationship' => 'users_stic_time_tracker',
-    'source' => 'non-db',
-    'module' => 'stic_Time_Tracker',
-    'bean_name' => 'stic_Time_Tracker',
-    'side' => 'right',
-    'vname' => 'LBL_USERS_STIC_TIME_TRACKER_FROM_STIC_TIME_TRACKER_TITLE',
-);
 $dictionary["User"]["fields"]["stic_work_calendar_users"] = array (
     'name' => 'stic_work_calendar_users',
     'type' => 'link',
