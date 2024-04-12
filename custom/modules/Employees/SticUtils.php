@@ -303,7 +303,7 @@ class stic_EmployeesUtils
             if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
                 $workCalendarBean->description = $_REQUEST['description'];
             }
-            $workCalendarBean->save();
+            $workCalendarBean->save(false);
         }
         $endTime = microtime(true);
         $totalTime = $endTime - $startTime;
