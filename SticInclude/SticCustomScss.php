@@ -36,10 +36,13 @@ file_put_contents($file, preg_replace($re, '\\$stic-base: ' . $color . ';', $dat
 if ($sidebar_color==0){
     $re = '/\$stic-sidebar:.*;/m';
     $re2= '/\$stic-sidebar-text:.*;/m';
+    //$re3 = '/\$color-39:.*;/m';
     $sidebar_color= "#D9DEE3";
     $sidebar_text_color= "#001E40";
+    //$color_39= "#BFCAD3";
     file_put_contents($file, preg_replace($re, '\\$stic-sidebar: ' . $sidebar_color . ';', $data));
     file_put_contents($file, preg_replace($re2, '\\$stic-sidebar-text: ' . $sidebar_text_color . ';', $data));
+    //file_put_contents($file, preg_replace($re3, '\\$stic-sidebar: ' . $color_39 . ';', $data));
 }
 
 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SticCustom color palette is :" . print_r(file_get_contents($file), true));
