@@ -43,6 +43,13 @@ if ($setting_sidebar_color==0){
     file_put_contents($file, preg_replace($re, '\\$stic-sidebar: ' . $sidebar_color . ';', $data));
     file_put_contents($file, preg_replace($re2, '\\$stic-sidebar-text: ' . $sidebar_text_color . ';', $data));
     //file_put_contents($file, preg_replace($re3, '\\$stic-sidebar: ' . $color_39 . ';', $data));
+}else{
+    $re = '/\$stic-sidebar:.*;/m';
+    $re2= '/\$stic-sidebar-text:.*;/m';
+    $sidebar_color= " #353535;";
+    $sidebar_text_color= "#F5F5F5";
+    file_put_contents($file, preg_replace($re, '\\$stic-sidebar: ' . $sidebar_color . ';', $data));
+    file_put_contents($file, preg_replace($re2, '\\$stic-sidebar-text: ' . $sidebar_text_color . ';', $data));
 }
 
 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SticCustom color palette is :" . print_r(file_get_contents($file), true));
