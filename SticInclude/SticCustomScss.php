@@ -9,7 +9,7 @@ $current_user->getSystemUser();
 // We always extract the pain of Stic_Setting, to avoid any discordance between what is shown and defined in setting
 $db = DBManagerFactory::getInstance();
 $color = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_THEME_COLOR' and deleted=0");
-$sidebar_color = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_SIDEBAR_COLOR' and deleted=0");
+$setting_sidebar_color = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_SIDEBAR_COLOR' and deleted=0");
 
 if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Color [$color] is empty. Aborting SticCustom subtheme base color change.");
@@ -33,11 +33,21 @@ $data = file_get_contents($file); // reads an array of lines
 $re = '/\$stic-base:.*;/m';
 file_put_contents($file, preg_replace($re, '\\$stic-base: ' . $color . ';', $data));
 
-if ($sidebar_color==0){
+if ($setting_sidebar_color==0){
     $re = '/\$stic-sidebar:.*;/m';
     $re2= '/\$stic-sidebar-text:.*;/m';
+    //$re3 = '/\$color-39:.*;/m';
     $sidebar_color= "#D9DEE3";
     $sidebar_text_color= "#001E40";
+    //$color_39= "#BFCAD3";
+    file_put_contents($file, preg_replace($re, '\\$stic-sidebar: ' . $sidebar_color . ';', $data));
+    file_put_contents($file, preg_replace($re2, '\\$stic-sidebar-text: ' . $sidebar_text_color . ';', $data));
+    //file_put_contents($file, preg_replace($re3, '\\$stic-sidebar: ' . $color_39 . ';', $data));
+}else{
+    $re = '/\$stic-sidebar:.*;/m';
+    $re2= '/\$stic-sidebar-text:.*;/m';
+    $sidebar_color= " #353535;";
+    $sidebar_text_color= "#F5F5F5";
     file_put_contents($file, preg_replace($re, '\\$stic-sidebar: ' . $sidebar_color . ';', $data));
     file_put_contents($file, preg_replace($re2, '\\$stic-sidebar-text: ' . $sidebar_text_color . ';', $data));
 }
