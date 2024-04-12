@@ -1,4 +1,3 @@
-<?php
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -20,8 +19,15 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$func_strings = array (
-    'NAME' => 'Compromisos de pago - Revisión das autorizacións recurrentes incompletas',
-    'NO_ROWS' => 'Non se encontrou ningún compromiso de pago.',
-    'RESULT_INFO' => 'Este compromiso de pago recurrente con @payment_method@ non ten a información necesaria da pasarela de pago e ten @payment_count@ pagos con estado pendente que deberían ser revisados. É posible que deba darse de baixa o compromiso de pago.',
-);
+
+/**
+ * This file contains logic and functions needed to manage custom views behaviour
+ *
+ */
+var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends sticCV_Element_Div {
+  constructor(field, $fieldElement) {
+    super(field.customView, $fieldElement);
+
+    this.field = field;
+  }
+};
