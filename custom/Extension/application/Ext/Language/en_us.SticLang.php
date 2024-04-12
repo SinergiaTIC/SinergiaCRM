@@ -109,6 +109,16 @@ $app_list_strings['moduleList']['stic_Medication'] = 'Medicines';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['moduleList']['stic_Grants'] = 'Grants';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centers';
+$app_list_strings['moduleList']['stic_Journal'] = 'Journal';
+$app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Security Groups Module Rules';
+$app_list_strings['moduleList']['stic_Training'] = 'Training';
+$app_list_strings['moduleList']['stic_Work_Experience'] = 'Work experience';
+$app_list_strings['moduleList']['stic_Skills'] = 'Skills';
+$app_list_strings['moduleList']['stic_Custom_Views'] = 'Custom Views';
+$app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
+$app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
+$app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
+
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
@@ -142,8 +152,16 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Resource';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicine';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescription';
-$app_list_strings['moduleListSingular']['stic_Grants'] = 'Grant';
-$app_list_strings['moduleListSingular']['stic_Centers'] = 'Center';
+$app_list_strings['moduleListSingular']['stic_Journal'] = 'Journal';
+$app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Security Groups Module Rule';
+$app_list_strings['moduleListSingular']['stic_Training'] = 'Training';
+$app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Work experience';
+$app_list_strings['moduleListSingular']['stic_Skills'] = 'Skill';
+$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Custom View';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condition';
+
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Participant';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
@@ -174,7 +192,12 @@ $app_list_strings['parent_type_display']['stic_Resources'] = 'Resources';
 $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicines';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescriptions';
+$app_list_strings['parent_type_display']['stic_Grants'] = 'Grants';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centers';
+$app_list_strings['parent_type_display']['stic_Journal'] = 'Journal';
+$app_list_strings['parent_type_display']['stic_Training'] = 'Training';
+$app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Work experience';
+$app_list_strings['parent_type_display']['stic_Skills'] = 'Skills';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
@@ -207,6 +230,10 @@ $app_list_strings['record_type_display']['stic_Medication'] = 'Medicines';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['record_type_display']['stic_Grants'] = 'Grants';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centers';
+$app_list_strings['record_type_display']['stic_Journal'] = 'Journal';
+$app_list_strings['record_type_display']['stic_Training'] = 'Training';
+$app_list_strings['record_type_display']['stic_Work_Experience'] = 'Work experience';
+$app_list_strings['record_type_display']['stic_Skills'] = 'Skills';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Participants';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
@@ -239,6 +266,10 @@ $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicines';
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescriptions';
 $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Grants';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centers';
+$app_list_strings['record_type_display_notes']['stic_Journal'] = 'Journal';
+$app_list_strings['record_type_display_notes']['stic_Training'] = 'Training';
+$app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work experience';
+$app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Participants';
 
 // Current VAT percentages (IVA)
@@ -690,7 +721,8 @@ $app_list_strings['stic_payments_methods_list']['bizum'] = 'Bizum';
 $app_list_strings['stic_payments_methods_list']['stripe'] = 'Stripe';
 $app_list_strings['stic_payments_methods_list']['cash'] = 'Cash';
 $app_list_strings['stic_payments_methods_list']['check'] = 'Check';
-$app_list_strings['stic_payments_methods_list']['card'] = 'Credit/Debit card';
+$app_list_strings['stic_payments_methods_list']['card'] = 'Credit/Debit card (via Redsys)';
+$app_list_strings['stic_payments_methods_list']['ceca_card'] = 'Credit/Debit card (via CECA)';
 $app_list_strings['stic_payments_methods_list']['direct_debit'] = 'Direct debit';
 $app_list_strings['stic_payments_methods_list']['kind'] = 'In kind';
 $app_list_strings['stic_payments_methods_list']['paypal'] = 'PayPal';
@@ -3176,6 +3208,284 @@ $app_list_strings['stic_centers_types_list']['attention_point'] = 'Attention poi
 $app_list_strings['stic_centers_types_list']['training'] = 'Training';
 $app_list_strings['stic_centers_types_list']['other'] = 'Other';
 
+// Journal: Type
+$app_list_strings['stic_journal_types_list'][''] = '';
+$app_list_strings['stic_journal_types_list']['journal'] = 'Journal';
+$app_list_strings['stic_journal_types_list']['incidence'] = 'Incidence';
+$app_list_strings['stic_journal_types_list']['followup'] = 'Follow up';
+$app_list_strings['stic_journal_types_list']['task'] = 'Task';
+$app_list_strings['stic_journal_types_list']['educational_measure'] = 'Educational measure';
+$app_list_strings['stic_journal_types_list']['infringement'] = 'Infringement';
+$app_list_strings['stic_journal_types_list']['other'] = 'Other';
+
+// Journal: Turns
+$app_list_strings['stic_journal_turns_list'][''] = '';
+$app_list_strings['stic_journal_turns_list']['morning'] = 'Morning';
+$app_list_strings['stic_journal_turns_list']['afternoon'] = 'Afternoon';
+$app_list_strings['stic_journal_turns_list']['night'] = 'Night';
+$app_list_strings['stic_journal_turns_list']['weekend'] = 'Weekend';
+
+// Journal: Tasks
+$app_list_strings['stic_journal_tasks_list']['house_cleaning'] = 'LHouse cleaning';
+$app_list_strings['stic_journal_tasks_list']['bathroom_cleaning'] = 'Bathroom cleaning';
+$app_list_strings['stic_journal_tasks_list']['shopping'] = 'Shopping';
+$app_list_strings['stic_journal_tasks_list']['homeworks'] = 'Do homeworks';
+$app_list_strings['stic_journal_tasks_list']['study'] = 'Study';
+$app_list_strings['stic_journal_tasks_list']['project'] = 'Do a project';
+$app_list_strings['stic_journal_tasks_list']['training'] = 'Training';
+$app_list_strings['stic_journal_tasks_list']['cash_count'] = 'Cash count';
+$app_list_strings['stic_journal_tasks_list']['invoices'] = 'Do invoices';
+
+// Journal: Scopes
+$app_list_strings['stic_journal_task_scopes_list']['household'] = 'Household';
+$app_list_strings['stic_journal_task_scopes_list']['educational'] = 'Educational';
+$app_list_strings['stic_journal_task_scopes_list']['workplace'] = 'Workplace';
+
+// Journal: Task Fulfillments
+$app_list_strings['stic_journal_task_fulfillments_list'][''] = '';
+$app_list_strings['stic_journal_task_fulfillments_list']['yes'] = 'Yes';
+$app_list_strings['stic_journal_task_fulfillments_list']['no'] = 'No';
+$app_list_strings['stic_journal_task_fulfillments_list']['partial'] = 'Partial';
+
+// Journal: Seriousness
+$app_list_strings['stic_journal_seriousness_list'][''] = '';
+$app_list_strings['stic_journal_seriousness_list']['slight'] = 'Slight';
+$app_list_strings['stic_journal_seriousness_list']['average'] = 'Average';
+$app_list_strings['stic_journal_seriousness_list']['serious'] = 'Serious';
+
+// Training: Level
+$app_list_strings['stic_training_levels_list'][''] = '';
+$app_list_strings['stic_training_levels_list']['childhood'] = 'Childhood Education';
+$app_list_strings['stic_training_levels_list']['primary'] = 'Primary Education';
+$app_list_strings['stic_training_levels_list']['secondary'] = 'Secondary Education';
+$app_list_strings['stic_training_levels_list']['upper_secondary'] = 'Upper Secondary Education';
+$app_list_strings['stic_training_levels_list']['basic_vocational'] = 'Basic vocational training';
+$app_list_strings['stic_training_levels_list']['intermediate_vocational'] = 'Intermediate vocational training';
+$app_list_strings['stic_training_levels_list']['advanced_vocational'] = 'Advanced vocational training';
+$app_list_strings['stic_training_levels_list']['university'] = 'University degree';
+$app_list_strings['stic_training_levels_list']['postgraduate'] = 'Postgraduate, master, PhD, etc.';
+$app_list_strings['stic_training_levels_list']['other'] = 'Other';
+
+// Training: Scope
+$app_list_strings['stic_training_scopes_list'][''] = '';
+$app_list_strings['stic_training_scopes_list']['physical_and_sports_activities'] = 'Physical and sports activities';
+$app_list_strings['stic_training_scopes_list']['administration_and_management'] = 'Administration and management';
+$app_list_strings['stic_training_scopes_list']['agrarian'] = 'Agrarian';
+$app_list_strings['stic_training_scopes_list']['graphic_arts'] = 'Graphic arts';
+$app_list_strings['stic_training_scopes_list']['arts_and_crafts'] = 'Arts and crafts';
+$app_list_strings['stic_training_scopes_list']['commerce_and_marketing'] = 'Commerce and marketing';
+$app_list_strings['stic_training_scopes_list']['building_and_civil_works'] = 'Building and civil works';
+$app_list_strings['stic_training_scopes_list']['electricity_and_electronics'] = 'Electricity and electronics';
+$app_list_strings['stic_training_scopes_list']['energy_and_water'] = 'Energy and water';
+$app_list_strings['stic_training_scopes_list']['mechanical_manufacturing'] = 'Mechanical manufacturing';
+$app_list_strings['stic_training_scopes_list']['hospitality_and_tourism'] = 'Hospitality and tourism';
+$app_list_strings['stic_training_scopes_list']['personal_image'] = 'Personal image';
+$app_list_strings['stic_training_scopes_list']['image_and_sound'] = 'Image and sound';
+$app_list_strings['stic_training_scopes_list']['food_industries'] = 'Food industries';
+$app_list_strings['stic_training_scopes_list']['extractive_industries'] = 'Extractive industries';
+$app_list_strings['stic_training_scopes_list']['information_technology_and_communications'] = 'Information technology and communications';
+$app_list_strings['stic_training_scopes_list']['installation_and_maintenance'] = 'Installation and maintenance';
+$app_list_strings['stic_training_scopes_list']['wood_furniture_and_cork'] = 'Wood, furniture and cork';
+$app_list_strings['stic_training_scopes_list']['maritime_fishing'] = 'Maritime fishing';
+$app_list_strings['stic_training_scopes_list']['chemistry'] = 'Chemistry';
+$app_list_strings['stic_training_scopes_list']['health'] = 'Health';
+$app_list_strings['stic_training_scopes_list']['security_and_environment'] = 'Security and environment';
+$app_list_strings['stic_training_scopes_list']['socio_cultural_and_community_services'] = 'Socio-cultural and community services';
+$app_list_strings['stic_training_scopes_list']['textile_clothing_and_leather'] = 'Textile, clothing and leather';
+$app_list_strings['stic_training_scopes_list']['transport_and_maintenance'] = 'Transport and maintenance';
+$app_list_strings['stic_training_scopes_list']['glass_and_ceramics'] = 'Glass and ceramics';
+$app_list_strings['stic_training_scopes_list']['other'] = 'Other';
+
+// Training: Course
+$app_list_strings['stic_training_courses_list'][''] = '';
+$app_list_strings['stic_training_courses_list']['childhood_first'] = 'First';
+$app_list_strings['stic_training_courses_list']['childhood_second'] = 'Second';
+$app_list_strings['stic_training_courses_list']['childhood_third'] = 'Third';
+$app_list_strings['stic_training_courses_list']['primary_first'] = 'First';
+$app_list_strings['stic_training_courses_list']['primary_second'] = 'Second';
+$app_list_strings['stic_training_courses_list']['primary_third'] = 'Third';
+$app_list_strings['stic_training_courses_list']['primary_fourth'] = 'Fourth';
+$app_list_strings['stic_training_courses_list']['primary_fifth'] = 'Fifth';
+$app_list_strings['stic_training_courses_list']['primary_sixth'] = 'Sixth';
+$app_list_strings['stic_training_courses_list']['secondary_first'] = 'First';
+$app_list_strings['stic_training_courses_list']['secondary_second'] = 'Second';
+$app_list_strings['stic_training_courses_list']['secondary_third'] = 'Third';
+$app_list_strings['stic_training_courses_list']['secondary_fourth'] = 'Fourth';
+$app_list_strings['stic_training_courses_list']['upper_secondary_first'] = 'First';
+$app_list_strings['stic_training_courses_list']['upper_secondary_second'] = 'Second';
+$app_list_strings['stic_training_courses_list']['intermediate_vocational_first'] = 'First';
+$app_list_strings['stic_training_courses_list']['intermediate_vocational_second'] = 'Second';
+$app_list_strings['stic_training_courses_list']['advanced_vocational_first'] = 'First';
+$app_list_strings['stic_training_courses_list']['advanced_vocational_second'] = 'Second';
+$app_list_strings['stic_training_courses_list']['university_first'] = 'First';
+$app_list_strings['stic_training_courses_list']['university_second'] = 'Second';
+$app_list_strings['stic_training_courses_list']['university_third'] = 'Third';
+$app_list_strings['stic_training_courses_list']['university_fourth'] = 'Fourth';
+
+// Training: Status
+$app_list_strings['stic_training_status_list'][''] = '';
+$app_list_strings['stic_training_status_list']['planned'] = 'Planned';
+$app_list_strings['stic_training_status_list']['enrolled'] = 'Enrolled';
+$app_list_strings['stic_training_status_list']['in_progress'] = 'In progress';
+$app_list_strings['stic_training_status_list']['finished'] = 'Finished';
+$app_list_strings['stic_training_status_list']['dropped'] = 'Dropped';
+
+// Training: Available when first meeting the organization
+$app_list_strings['stic_training_previous_list'][''] = '';
+$app_list_strings['stic_training_previous_list']['yes'] = 'Yes';
+$app_list_strings['stic_training_previous_list']['no'] = 'No';
+$app_list_strings['stic_training_previous_list']['in_progress'] = 'In progress';
+
+// Training: Grant origin
+$app_list_strings['stic_training_grant_origins_list'][''] = '';
+$app_list_strings['stic_training_grant_origins_list']['private'] = 'Private';
+$app_list_strings['stic_training_grant_origins_list']['public'] = 'Public';
+
+// Work experience: Contract type
+$app_list_strings['stic_work_experience_contract_types_list'][''] = '';
+$app_list_strings['stic_work_experience_contract_types_list']['temporary'] = 'Temporary';
+$app_list_strings['stic_work_experience_contract_types_list']['permanent'] = 'Permanent';
+$app_list_strings['stic_work_experience_contract_types_list']['internship'] = 'Internship';
+$app_list_strings['stic_work_experience_contract_types_list']['self_employed'] = 'Self employed';
+$app_list_strings['stic_work_experience_contract_types_list']['without_contract'] = 'Without contract';
+
+// Work experience: Workday type
+$app_list_strings['stic_work_experience_workday_types_list'][''] = '';
+$app_list_strings['stic_work_experience_workday_types_list']['full_time'] = 'Full time';
+$app_list_strings['stic_work_experience_workday_types_list']['splitted_full_time'] = 'Splitted full time';
+$app_list_strings['stic_work_experience_workday_types_list']['weekend'] = 'Weekend';
+$app_list_strings['stic_work_experience_workday_types_list']['part_time'] = 'Part time';
+$app_list_strings['stic_work_experience_workday_types_list']['by_hours'] = 'Part time by hours';
+
+// Skills: Type
+$app_list_strings['stic_skills_types_list'][''] = '';
+$app_list_strings['stic_skills_types_list']['language'] = 'Languages';
+$app_list_strings['stic_skills_types_list']['technical'] = 'Technical';
+$app_list_strings['stic_skills_types_list']['transversal'] = 'Transversal';
+$app_list_strings['stic_skills_types_list']['entrepreneurship'] = 'Entrepreneurship';
+$app_list_strings['stic_skills_types_list']['other'] = 'Other';
+
+// Skills: Level
+$app_list_strings['stic_skills_levels_list'][''] = '';
+$app_list_strings['stic_skills_levels_list']['high'] = 'High';
+$app_list_strings['stic_skills_levels_list']['medium'] = 'Medium';
+$app_list_strings['stic_skills_levels_list']['low'] = 'Low';
+
+// Skills: Language
+$app_list_strings['stic_skills_languages_list'][''] = '';
+$app_list_strings['stic_skills_languages_list']['catalan'] = 'Catalan';
+$app_list_strings['stic_skills_languages_list']['spanish'] = 'Spanish';
+$app_list_strings['stic_skills_languages_list']['galician'] = 'Galician';
+$app_list_strings['stic_skills_languages_list']['basque'] = 'Basque';
+$app_list_strings['stic_skills_languages_list']['english'] = 'English';
+$app_list_strings['stic_skills_languages_list']['french'] = 'French';
+$app_list_strings['stic_skills_languages_list']['german'] = 'German';
+$app_list_strings['stic_skills_languages_list']['chinese'] = 'Chinese';
+$app_list_strings['stic_skills_languages_list']['arabic'] = 'Arabic';
+$app_list_strings['stic_skills_languages_list']['other'] = 'Other';
+
+// Skills: Language level
+$app_list_strings['stic_skills_language_levels_list'][''] = '';
+$app_list_strings['stic_skills_language_levels_list']['a1'] = 'A1';
+$app_list_strings['stic_skills_language_levels_list']['a2'] = 'A2';
+$app_list_strings['stic_skills_language_levels_list']['b1'] = 'B1';
+$app_list_strings['stic_skills_language_levels_list']['b2'] = 'B2';
+$app_list_strings['stic_skills_language_levels_list']['c1'] = 'C1';
+$app_list_strings['stic_skills_language_levels_list']['c2'] = 'C2';
+
+// Skills: Certificate
+$app_list_strings['stic_skills_language_certificates_list'][''] = '';
+$app_list_strings['stic_skills_language_certificates_list']['catalan_cifalc'] = 'CIFALC - Comissió Interuniversitària de Formació i Acreditació Lingüístiques de Catalunya';
+$app_list_strings['stic_skills_language_certificates_list']['catalan_spl'] = 'SPL - Secretaria de Política Lingüística ';
+$app_list_strings['stic_skills_language_certificates_list']['spanish_dele'] = 'DELE - Diplomas de Español como Lengua Extranjera ';
+$app_list_strings['stic_skills_language_certificates_list']['spanish_siele'] = 'SIELE - Servicio Internacional de Evaluación de la Lengua Española';
+$app_list_strings['stic_skills_language_certificates_list']['english_pet'] = 'PET - Preliminary English Test';
+$app_list_strings['stic_skills_language_certificates_list']['english_fce'] = 'FCE - First Certificate in English ';
+$app_list_strings['stic_skills_language_certificates_list']['english_cae'] = 'CAE - Certificate in Advanced English';
+$app_list_strings['stic_skills_language_certificates_list']['english_cpe'] = 'CPE - Certificate of Proficiency in English';
+$app_list_strings['stic_skills_language_certificates_list']['english_ielts'] = 'IELTS - International English Language Testing System';
+$app_list_strings['stic_skills_language_certificates_list']['english_toefl'] = 'TOEFL - Test of English as a Foreign Language';
+$app_list_strings['stic_skills_language_certificates_list']['english_toeic'] = 'TOEIC - Test of English for International Communication';
+$app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DELF - Diplôme d\'Études en Langue Française";
+$app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DALF - Diplôme Approfondi de Langue Française';
+$app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
+$app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
+
+// Custom Views: User Types
+$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Regular user';
+$app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrator';
+$app_list_strings['stic_custom_views_user_type_list']['all'] = 'All';
+
+// Custom Views: Views
+$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Detail view';
+$app_list_strings['stic_custom_views_views_list']['editview'] = 'Edit view';
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Quickcreate view';
+
+// Custom Views: Action Types
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Field modification';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panel modification';
+$app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Tab modification';
+
+// Custom Views: Actions
+$app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Read only';
+$app_list_strings['stic_custom_views_action_list']['required'] = 'Required';
+$app_list_strings['stic_custom_views_action_list']['inline'] = 'Inline edit';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Default value';
+$app_list_strings['stic_custom_views_action_list']['color'] = 'Text color';
+$app_list_strings['stic_custom_views_action_list']['background'] = 'Background color';
+$app_list_strings['stic_custom_views_action_list']['bold'] = 'Bold';
+$app_list_strings['stic_custom_views_action_list']['italic'] = 'Italic';
+$app_list_strings['stic_custom_views_action_list']['underline'] = 'Underline';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'CSS style';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Label text';
+
+// Custom Views: Element's sections
+$app_list_strings['stic_custom_views_element_list']['field'] = 'Whole field';
+$app_list_strings['stic_custom_views_element_list']['field_label'] = 'Only label';
+$app_list_strings['stic_custom_views_element_list']['field_input'] = 'Only input';
+$app_list_strings['stic_custom_views_element_list']['panel'] = 'Whole panel';
+$app_list_strings['stic_custom_views_element_list']['panel_header'] = 'Panel header';
+$app_list_strings['stic_custom_views_element_list']['panel_content'] = 'Panel content';
+$app_list_strings['stic_custom_views_element_list']['tab'] = 'Whole tab';
+$app_list_strings['stic_custom_views_element_list']['tab_header'] = 'Tab header';
+$app_list_strings['stic_custom_views_element_list']['tab_content'] = 'Tab content';
+
+// Custom Views: Status
+$app_list_strings['stic_custom_views_status_list']['active'] = 'Active';
+$app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactive';
+
+// Custom Views: Operators
+$app_list_strings['stic_custom_views_operator_list']['Equal_To'] = 'Equal to';
+$app_list_strings['stic_custom_views_operator_list']['Not_Equal_To'] = 'Not equal To';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than'] = 'Greater than';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than'] = 'Less than';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than_or_Equal_To'] = 'Greater than or equal to';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 'Less than or equal to';
+$app_list_strings['stic_custom_views_operator_list']['Contains'] = 'Contains';
+$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'Does not contain';
+$app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Starts with';
+$app_list_strings['stic_custom_views_operator_list']['Not_Starts_With'] = 'Does not start with';
+$app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Ends with';
+$app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'Does not end with';
+$app_list_strings['stic_custom_views_operator_list']['is_null'] = 'Is null';
+$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'Is not null';
+
+// Custom Views: Condition Types
+$app_list_strings['stic_custom_views_condition_type_list']['value'] = 'Value';
+$app_list_strings['stic_custom_views_condition_type_list']['date'] = 'Date';
+$app_list_strings['stic_custom_views_condition_type_list']['user'] = 'User';
+$app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Field';
+
+// Custom Views: Defined values
+$app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Now';
+$app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Today';
+$app_list_strings['stic_custom_views_condition_values_list']['tomorrow'] = 'Tomorrow';
+$app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Yesterday';
+$app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Anniversary';
+$app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Current user';
+
+
 // Participants: Status
 $app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Guest';
 $app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participating';
@@ -3231,3 +3541,4 @@ $app_list_strings['aow_date_type_list']['week'] = 'Weeks';
 $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
+

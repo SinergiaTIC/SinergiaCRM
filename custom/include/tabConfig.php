@@ -128,3 +128,4 @@ $GLOBALS['tabStructure'] = array(
         ),
     ),
 );
+

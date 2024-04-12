@@ -370,6 +370,22 @@ function setUnrequiredStatus(fieldId) {
 }
 
 /**
+ * Returns true if the field is required
+ * 
+ * @param {*} fieldId id of field
+ */
+function getRequiredStatus(fieldId) {
+  var validateFields = validate[getFormName()];
+  for (i = 0; i < validateFields.length; i++) {
+    // Array(name, type, required, msg);
+    if (validateFields[i][0] == fieldId) {
+      return validateFields[i][2];
+    }
+  }
+  return false;
+}
+
+/**
  * Mark fields that will be autofilled
  */
 function setAutofill(fieldList) {
@@ -977,4 +993,33 @@ function buildDetailedColorFieldSelectize(fieldName) {
       $color[0].outerHTML + text + '</div>'
     );
   }
+}
+
+/**
+ * Add qtip (info-popup) functionality to an html element.
+ * Normally used in this element:
+ * <span id="id_selector" style='position: relative;'class="inline-help glyphicon glyphicon-info-sign data-hasqtip"></span>
+ * @param {String} selector qtip selector ('#' for id, '.' for class)
+ * @param {String} module 
+ * @param {String} label LBL...
+ */
+function addQtipFunctionality(selector, module, label) {
+  $(selector).qtip({
+    content: {
+      text: function (api) {
+        return SUGAR.language.translate(module, label);
+      },
+      title: {
+        text: SUGAR.language.languages.app_strings.LBL_ALT_INFO,
+      },
+      style: {
+        classes: 'qtip-inline-help'
+      }
+    },
+    hide: { 
+    event: 'mouseleave unfocus',
+    fixed: true,
+    delay: 200,
+    }
+  });
 }
