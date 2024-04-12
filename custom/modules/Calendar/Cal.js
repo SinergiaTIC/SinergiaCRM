@@ -876,11 +876,7 @@ $($.fullCalendar).ready(function () {
             }
             // STIC-Custom 20240222 MHP - Add a special class to stic_Work_Calendar events
             if (element.module_name == "stic_Work_Calendar") {
-                if (element.event_type == 'working' || element.event_type == 'punctual_absence') {
-                    valueToPush["className"] = 'stic-Work-Calendar';
-                } else {
-                    valueToPush["allDay"] = true;
-                }
+                valueToPush["className"] = 'stic-Work-Calendar';
             }            
             if (undefined !== global_colorList[element.module_name]) {
                 // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
