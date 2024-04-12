@@ -94,4 +94,4 @@ $mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = "Plantilla de correo electrónico";
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = "URL da convocatoria";
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = "Información adicional";
 // Cadeas Ayudas
-$mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';
+$mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Axudas';

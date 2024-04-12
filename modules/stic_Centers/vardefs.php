@@ -306,11 +306,24 @@ $dictionary['stic_Centers'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_CENTERS_STIC_EVENTS_FROM_STIC_EVENTS_TITLE',
         ),
+
+        // Journal relationship Vardef
+        'stic_journal_stic_centers' => array(
+            'name' => 'stic_journal_stic_centers',
+            'type' => 'link',
+            'relationship' => 'stic_journal_stic_centers',
+            'source' => 'non-db',
+            'module' => 'stic_Journal',
+            'bean_name' => false,
+            'side' => 'right',
+            'vname' => 'LBL_STIC_JOURNAL_STIC_CENTERS_FROM_STIC_JOURNAL_TITLE',
+        ),
     ),
     'relationships' => array(
     ),
     'optimistic_locking' => true,
     'unified_search' => true,
+    'unified_search_default_enabled' => true,
 );
 if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';

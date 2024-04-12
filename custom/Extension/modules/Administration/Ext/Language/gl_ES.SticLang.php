@@ -29,8 +29,11 @@ $mod_strings['LBL_STIC_VALIDATION_ACTIONS_DESCRIPTION'] = 'Xestiona as accións 
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_LINK_TITLE'] = 'Resultados da validación';
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_DESCRIPTION'] = 'Xestiona e revisa os resultados das accións de validación.';
 
+$mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Vistas personalizadas';
+$mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Personalización condicional de las vistas de los módulos.';
+
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Configuración';
-$mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Opcións de configuración de SinergiaCRM';
+$mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Opcións de configuración de SinergiaCRM.';
 
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de correo que se enviará ao crear un usuario.';
 
@@ -45,3 +48,5 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_LINK_TITLE'] = 'Eliminar o conxunto de d
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Eliminar o conxunto de datos de proba previamente cargado.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Elimináronse os datos de proba correctamente.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Producíronse erros ao eliminar os datos de proba. Revise o <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_removeSticData">log</a>.';
+$mod_strings['LBL_ADMIN_ACTIONS'] = 'Accións de Administración';
+
