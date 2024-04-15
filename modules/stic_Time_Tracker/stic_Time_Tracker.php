@@ -77,7 +77,7 @@ class stic_Time_Tracker extends Basic
         $assignedUser = $this->assigned_user_name;
         $this->name = $assignedUser . " - " . $startDate;
         if (!empty($endDate)) {
-            $this->name .= " - " . $endDate;
+            $this->name .= " - " . substr($endDate, -5);
         }
 
         // Set duration field
