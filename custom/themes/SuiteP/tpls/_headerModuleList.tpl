@@ -1008,7 +1008,7 @@
                         <h2 class="admin_actions_title">{sugar_translate module="Administration" label="LBL_ADMIN_ACTIONS"}</h2>
                             <ul>
                                 <li class="actionmenulinks" role="presentation">
-                                    <a href="./index.php?module=Administration">
+                                    <a href="./index.php?module=Administration" target="_blank">
                                         <div class="side-bar-action-icon">
                                             <span class="suitepicon suitepicon-module-administration"></span>
                                         </div>
@@ -1038,7 +1038,7 @@
                                     </a>
                                 </li>
                                 <li class="actionmenulinks" role="presentation">
-                                    <a href="./index.php?module=Configurator&action=EditView">
+                                    <a href="./index.php?module=Configurator&action=EditView" target="_blank">
                                         <div class="side-bar-action-icon">
                                             <span class="suitepicon suitepicon-admin-system-settings"></span>
                                         </div>

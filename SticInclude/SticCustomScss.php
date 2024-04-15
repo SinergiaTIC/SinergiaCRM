@@ -30,17 +30,17 @@ $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Starting 
 
 $file = 'themes/SuiteP/css/SticCustom/CustomPalette.scss';
 $data = file_get_contents($file); // reads an array of lines
-$re = '/\$stic-base:.*;/m';
-file_put_contents($file, preg_replace($re, '\\$stic-base: ' . $color . ';', $data));
 
 if ($setting_sidebar_color==0){
     $sidebar_color= "#D9DEE3";
     $sidebar_text_color= "#001E40";
     $replacements = array(
+        '\\$stic-base: ' . $color . ';',
         '\\$stic-sidebar: ' . $sidebar_color . ';',
         '\\$stic-sidebar-text: ' . $sidebar_text_color . ';'
     );
     $patterns = array(
+        '/\$stic-base:.*;/m',
         '/\$stic-sidebar:.*;/m',
         '/\$stic-sidebar-text:.*;/m'
     );
@@ -50,10 +50,12 @@ if ($setting_sidebar_color==0){
     $sidebar_color= " #353535;";
     $sidebar_text_color= "#F5F5F5";
     $replacements = array(
+        '\\$stic-base: ' . $color . ';',
         '\\$stic-sidebar: ' . $sidebar_color . ';',
         '\\$stic-sidebar-text: ' . $sidebar_text_color . ';'
     );
     $patterns = array(
+        '/\$stic-base:.*;/m',
         '/\$stic-sidebar:.*;/m',
         '/\$stic-sidebar-text:.*;/m'
     );

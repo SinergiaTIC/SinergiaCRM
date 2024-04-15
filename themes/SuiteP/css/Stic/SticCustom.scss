@@ -1354,7 +1354,9 @@ a#nonprofitized_by {
     text-decoration: none;
   }
 }
-
+#actionMenuSidebar {
+  background-color: darken($stic-sidebar, 7%);
+}
 // styles for admin sidebar https://github.com/SinergiaTIC/SinergiaCRM/pull/124
 #admin_actions {
   display: block;
