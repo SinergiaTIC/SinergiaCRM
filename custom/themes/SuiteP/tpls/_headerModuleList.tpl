@@ -593,6 +593,12 @@
                         </form>
                     </div>
                 </li>
+                {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                <li class="time_tracker_button_row no-show-time-tracker-button">
+                    <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                        onclick="showTimeTrackerConfirmBox();"></button>
+                </li>
+                {* END STIC-Custom *}
                 <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                     <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                         data-toggle="dropdown" aria-expanded="false">
@@ -640,6 +646,9 @@
                         </ul>
                     </li>
                 </ul>
+                {* STIC-Custom 20240222 MHP - Add registration button dialog *}
+                <div class="time-tracker-dialog-box"></div>
+                {* END STIC-Custom *}                
             </div>
             <div class="tablet-bar">
                 <ul id="toolbar" class="toolbar">
@@ -726,6 +735,12 @@
                             </div>
                         </form>
                     </li>
+                    {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                    <li class="time_tracker_button_row no-show-time-tracker-button">
+                        <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                            onclick="showTimeTrackerConfirmBox();"></button>
+                    </li>
+                    {* END STIC-Custom *}                    
                     <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                         <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                             data-toggle="dropdown" aria-expanded="false">
@@ -756,6 +771,9 @@
                             </ul>
                         </li>
                     </ul>
+                    {* STIC-Custom 20240222 MHP - Add registration button dialog *}
+                    <div class="time-tracker-dialog-box"></div>
+                    {* END STIC-Custom *}                    
                 </div>
                 <div class="desktop-bar">
                     <ul id="toolbar" class="toolbar">
@@ -843,9 +861,9 @@
                             </form>
                         </li>
                         {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
-                        <li id="time_tracker_button_row" class="no-show-time-tracker-button">
-                            <button id="time_tracker_button" class="btn suitepicon suitepicon-module-tasks"
-                                onclick="showTimeTrackerConfimrBox();"></button>
+                        <li class="time_tracker_button_row no-show-time-tracker-button">
+                            <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                                onclick="showTimeTrackerConfirmBox();"></button>
                         </li>
                         {* END STIC-Custom *}
                         <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
@@ -879,10 +897,10 @@
                                 </ul>
                             </li>
                         </ul>
-                    </div>
                         {* STIC-Custom 20240222 MHP - Add registration button dialog *}
-                        <div id="time-tracker-dialog-box" class="time-tracker-dialog-box"></div>
+                        <div class="time-tracker-dialog-box"></div>
                         {* END STIC-Custom *}
+                    </div>
             </nav>
             <!--End Responsive Top Navigation Menu -->
             {if $THEME_CONFIG.display_sidebar}

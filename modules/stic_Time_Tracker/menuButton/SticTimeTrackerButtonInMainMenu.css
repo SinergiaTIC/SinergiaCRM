@@ -1,4 +1,5 @@
 
+/* GENERAL */
 /* Time Tracker Button */
 .no-show-time-tracker-button {
     display:none !important;
@@ -16,22 +17,8 @@
 
 
 /* Time Tracker Dialog box */
-.time-tracker-dialog-box {
-    display: none;
-    position: fixed;
-    top: 8%;
-    left: 75%;
-    background-color: #eee;
-    border: 1px solid #000;
-    padding: 20px;
-}
-
-.time-tracker-dialog-info {
-    text-align: left;
-}
-
 .time-tracker-dialog-row {
-    list-style: circle;
+    list-style: circle !important;
     padding-left: 5%;
 }
 
@@ -53,4 +40,113 @@
 
 #time-tracker-dialog-button-confirm {
     margin-right:10%;
+}
+
+
+
+
+/* MEDIA QUERIES */ 
+/* Extra small screen / phone */
+@media (min-width: 480px) {
+    /* Time Tracker Button */    
+    .time-tracker-start {
+        margin-left: 1.5rem;
+    }
+    
+    .time-tracker-stop {
+        margin-left: 1.5rem;    
+    }
+
+    /* Time Tracker Dialog box */
+    .time-tracker-dialog-box {
+        /* color: rgb(169, 24, 236); */
+        display: none;
+        position: fixed;
+        top: 8%;
+        left: 50%;
+        width: 50%; 
+        background-color: #eee;
+        border: 1px solid #000;
+        padding: 20px;
+        line-height: normal;       
+    }
+
+    .time-tracker-dialog-row {
+        float: left !important;
+    }
+
+    .time-tracker-dialog-row li {
+        display:list-item !important;
+    }
+
+    .time-tracker-dialog-info {
+        text-align: left;
+        font-size: 1.1rem !important;  
+    }
+}
+
+/* Small screen / tablet */
+@media (min-width: 768px) {
+    /* Time Tracker Dialog box */
+    .time-tracker-dialog-box {
+        /* color: red; */
+        display: none;
+        position: fixed;
+        top: 8%;
+        left: 60%;
+        width: 40%;        
+        background-color: #eee;
+        border: 1px solid #000;
+        padding: 20px;
+        line-height: normal;        
+    }
+
+    .time-tracker-dialog-info {
+        text-align: left;
+        font-size: 1.2rem !important;  
+    }    
+}
+
+/* Medium screen / desktop */
+@media (min-width: 992px) {
+    /* Time Tracker Dialog box */
+    .time-tracker-dialog-box {
+        /* color: blue;         */
+        display: none;
+        position: fixed;
+        top: 8%;
+        left: 65%;
+        width: 35%;
+        background-color: #eee;
+        border: 1px solid #000;
+        padding: 20px;
+        line-height: normal;
+    }
+
+    .time-tracker-dialog-info {
+        text-align: left;
+        font-size: 1.3rem !important;  
+    }
+}
+
+/* Large screen / wide desktop */
+@media (min-width: 1200px) {  
+    /* Time Tracker Dialog box */  
+    .time-tracker-dialog-box {
+        /* color: green;         */
+        display: none;
+        position: fixed;
+        top: 8%;
+        left: 75%;
+        width: 25%;
+        background-color: #eee;
+        border: 1px solid #000;
+        padding: 20px;
+        line-height: normal;        
+    }
+
+    .time-tracker-dialog-info {
+        text-align: left;
+        font-size: 1.4rem !important;  
+    }
 }

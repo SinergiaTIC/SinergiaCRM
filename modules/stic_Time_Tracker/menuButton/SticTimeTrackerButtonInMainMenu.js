@@ -10,20 +10,26 @@ function checkTimeTrackerButtonStatus()
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            localStorage.setItem('todayRegistrationStarted', data.todayRegistrationStarted);   
-            var buttonRow = document.getElementById('time_tracker_button_row');                                    
+            localStorage.setItem('todayRegistrationStarted', data.todayRegistrationStarted);
+            let buttonRow = document.querySelectorAll('.time_tracker_button_row');                             
             if (data.timeTrackerModuleActive == 1 && data.timeTrackerActiveInEmployee == 1){
-                buttonRow.classList.remove('no-show-time-tracker-button');
-                var button = document.getElementById('time_tracker_button');        
-                if (data.todayRegistrationStarted == 0) {
-                    button.classList.add('time-tracker-start');
-                    button.classList.remove('time-tracker-stop');
-                } else {
-                    button.classList.remove('time-tracker-start');
-                    button.classList.add('time-tracker-stop');                                                
-                }
+                buttonRow.forEach(function(element) {
+                    element.classList.remove('no-show-time-tracker-button');
+                });
+                let button = document.querySelectorAll('.time_tracker_button'); 
+                button.forEach(function(element) {
+                    if (data.todayRegistrationStarted == 0) {
+                        element.classList.add('time-tracker-start');
+                        element.classList.remove('time-tracker-stop');
+                    } else {
+                        element.classList.remove('time-tracker-start');
+                        element.classList.add('time-tracker-stop');                                                
+                    }
+                });        
             } else {
-                buttonRow.classList.add('no-show-time-tracker-button');
+                buttonRow.each(function(index, element) {
+                    buttonRow.classList.add('no-show-time-tracker-button');
+                }); 
             }
         })
         .catch(error => {
@@ -32,7 +38,7 @@ function checkTimeTrackerButtonStatus()
 }
 
 // Show the popup confirmation box 
-function showTimeTrackerConfimrBox() 
+function showTimeTrackerConfirmBox() 
 {
     const url = 'index.php?module=stic_Time_Tracker&action=getLastTodayTimeTrackerRecordForEmployee';
     fetch(url)
@@ -53,31 +59,32 @@ function drawTimeTrackerConfimrBox(data)
 
     if (localStorage.todayRegistrationStarted == '0') {
         content += `
-            <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CREATE')}</p>
-            <br />
+            <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CREATE')}</span>
+            <br /><br />
             <ul class='time-tracker-dialog-row'>
                 <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_START_DATE')} ${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NOW')}</li>
                 <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE')} ${userName}</li>
-            </ul>`;
+            </ul>
+            <br />`;
     } else {
         content += `
-        <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1', 'hola')}</p>
-        <br />
+        <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1')}</span>
+        <br /><br />
         <ul class='time-tracker-dialog-row'>
             <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')} ${data.name}</li>
         </ul>
-        <br />     
-        <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_2')}</p>
-        <br />
-        <ul class='dialogRow'>
+        <br /><br />   
+        <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_2')}</span>
+        <br /><br />
+        <ul class='time-tracker-dialog-row'>
             <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_END_DATE')} ${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NOW')}</li>
         </ul>`;
     }
 
     content += `
-        <br />
-        <p>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_QUESTION')}</p>
-        <br />
+        <br /><br />
+        <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_QUESTION')}</span>
+        <br /><br />
         <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
         <br /><br />
         <div id="time-tracker-dialog-buttons">
@@ -86,9 +93,15 @@ function drawTimeTrackerConfimrBox(data)
         </div>
     </div>`;
 
-    mydialog = document.getElementById('time-tracker-dialog-box');
-    mydialog.innerHTML = content;
-    mydialog.style.display = 'block';
+    // mydialog = document.getElementById('time-tracker-dialog-box');
+    // mydialog.innerHTML = content;
+    // mydialog.style.display = 'block';
+
+    mydialog = document.querySelectorAll('.time-tracker-dialog-box');
+    mydialog.forEach(function(element) {
+        element.innerHTML = content;
+        element.style.display = 'block';
+    });    
 }
 
 // Create or Update a time tracker record
@@ -116,11 +129,17 @@ function timeTrackerDialogConfirm(description)
         });
       
     // Hide the dialog box
-    document.getElementById('time-tracker-dialog-box').style.display = 'none';
+    mydialog = document.querySelectorAll('.time-tracker-dialog-box');
+    mydialog.forEach(function(element) {
+        element.style.display = 'none';
+    }); 
 }
 
 // Hide the dialog box
 function timeTrackerDialogCancel() 
 {
-    document.getElementById('time-tracker-dialog-box').style.display = 'none';
+    mydialog = document.querySelectorAll('.time-tracker-dialog-box');
+    mydialog.forEach(function(element) {
+        element.style.display = 'none';
+    }); 
 }
