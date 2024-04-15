@@ -105,11 +105,7 @@ relatedFilters = {
     'stic_FollowUps_Project': {
         elementId: 'stic_followups_projects',
         module: 'Project',
-    },
-    'stic_Work_Calendar_Users': {
-        elementId: 'stic_work_calendar_users',
-        module: 'Users',
-    },    
+    } 
 };
 
 // The SQS functions add the autocompletion functionality for the related input records

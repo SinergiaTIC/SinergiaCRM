@@ -342,12 +342,6 @@ class CustomCalendarDisplay extends CalendarDisplay
         }
         $sticWorkCalendarTypeOptions = get_select_options_with_id($app_list_strings['stic_work_calendar_types_list'], $sticWorkCalendarType);
         $ss->assign('stic_work_calendar_type', $sticWorkCalendarTypeOptions);
-
-        if ($sticWorkCalendarUsersId) {
-            $userBean = BeanFactory::getBean('Users', $sticWorkCalendarUsersId);
-            $ss->assign('stic_work_calendar_users_name', $userBean->full_name);
-            $ss->assign('stic_work_calendar_users_id', $sticWorkCalendarUsersId);
-        }
         
         $ss->assign('stic_work_calendar_assigned_user_department', $sticWorkCalendarUsersDepartament);
 

@@ -252,10 +252,6 @@
 		});
 		// Filters array
 		relatedFields = {
-			'stic_Work_Calendar_employee': {
-				elementId: 'stic_work_calendar_usersusers_ida',
-				module: 'Users',
-			},
 			'stic_Work_Calendar_assigned_user': {
 				elementId: 'assigned_user',
 				module: 'Users',
