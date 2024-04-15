@@ -38,13 +38,10 @@ class CheckWorkCalendarBeanData extends DataCheckFunction
      */
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL)
     {
-        $sql = "SELECT wc.id, wc.name, wc.start_date, wc.assigned_user_id, wu.stic_work_calendar_usersusers_ida as employeeId
-                    FROM stic_work_calendar as wc
-                JOIN stic_work_calendar_users_c as wu 
-                    ON wc.id = wu.stic_work_calendar_usersstic_work_calendar_idb 
-                WHERE wc.start_date LIKE CONCAT('%', DATE_SUB(CURDATE(), INTERVAL 1 DAY), '%')
-                    AND wc.deleted = 0
-                    AND wu.deleted = 0;";
+        $sql = "SELECT id, name, start_date, assigned_user_id
+                    FROM stic_work_calendar
+                WHERE start_date LIKE CONCAT('%', DATE_SUB(CURDATE(), INTERVAL 1 DAY), '%')
+                    AND deleted = 0;";
 
         return $sql;
     }
@@ -72,27 +69,24 @@ class CheckWorkCalendarBeanData extends DataCheckFunction
         {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Validating the next record: {$row['name']}.");
 
-            $employeeId = $row['employeeId'];
-            $employee = BeanFactory::getBean('Users', $employeeId);
-            $isActivateTimeTracker = $employee->stic_clock_c == '1';
-            $isActivateWorkCalendar = $employee->stic_work_calendar_c == '1';
+            $assignedUserId = $row['assigned_user_id'];
+            $assignedUser = BeanFactory::getBean('Users', $assignedUserId);
+            $isActivateTimeTracker = $assignedUser->stic_clock_c == '1';
+            $isActivateWorkCalendar = $assignedUser->stic_work_calendar_c == '1';
 
             $errorMsg = '';
             $contTemp = 0;
-            if ($isActivateTimeTracker) 
+            if ($isActivateWorkCalendar) 
             {
-                if ($isActivateWorkCalendar) {
+                if ($isActivateTimeTracker) {
                     include_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';  
-                    if (!stic_Time_Tracker::existAtLeastOneRecordForEmployeeAndDate(substr($row['start_date'], 0, 10), $employeeId)) {
+                    if (!stic_Time_Tracker::existAtLeastOneRecordForEmployeeAndDate(substr($row['start_date'], 0, 10), $assignedUserId)) {
                         $errorMsg = $this->getLabel('NO_RECORD_IN_TIME_TRACKER');
                         $contTemp = 1;
                     }
-                } else {
-                    $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_WORK_CALENDAR') . $employee->name;
-                    $contTemp = 1;
-                }
+                } 
             } else {
-                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_TIME_TRACKER') . $employee->name;
+                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_WORK_CALENDAR') . $assignedUser->name;
                 $contTemp = 1;
             }
 
@@ -114,7 +108,7 @@ class CheckWorkCalendarBeanData extends DataCheckFunction
                 );
                 $this->logValidationResult($data);
                 $info['errorMsg'] = $errorMsg;
-                sendEmailToEmployeeAndResponsible($employee, $row, $info);
+                sendEmailToEmployeeAndResponsible($assignedUser, $row, $info);
             }
         }
 
