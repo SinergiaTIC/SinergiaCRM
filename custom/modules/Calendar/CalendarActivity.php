@@ -45,7 +45,6 @@
 
 
 require_once 'include/utils/activity_utils.php';
-require_once 'custom/modules/Calendar/activity_utils.php';
 require_once('modules/Calendar/CalendarActivity.php');
 
 
@@ -190,14 +189,7 @@ class CustomCalendarActivity extends CalendarActivity
                     }
                 }
 
-                // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
-                if ($bean->module_dir == 'stic_Work_Calendar'){
-                    $focus_list = build_related_list_by_employee_id($bean, $user_id, $where);
-                } else {   
-                    $focus_list = build_related_list_by_user_id($bean, $user_id, $where);
-                }
-                // END STIC-Custom                
-                
+                $focus_list = build_related_list_by_user_id($bean, $user_id, $where);
                 // require_once 'modules/SecurityGroups/SecurityGroup.php';
                 foreach ($focus_list as $focusBean) {
                     if (isset($seen_ids[$focusBean->id])) {
