@@ -34,7 +34,9 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":    
     // Set autofill mark beside field label
-    setAutofill(["name"]);  
+    setAutofill(["name"]);
+    // Disable editing of the name field    
+    document.getElementById('name').disabled = true;
     break;
     
   case "detail":

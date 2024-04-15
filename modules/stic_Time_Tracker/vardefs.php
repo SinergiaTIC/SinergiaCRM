@@ -115,4 +115,6 @@ VardefManager::createVardef('stic_Time_Tracker', 'stic_Time_Tracker', array('bas
 // Set special values for SuiteCRM base fields
 $dictionary['stic_Time_Tracker']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Time_Tracker']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Time_Tracker']['fields']['name']['massupdate'] = '0';
+$dictionary['stic_Time_Tracker']['fields']['name']['inline_edit'] = '0';
 $dictionary['stic_Time_Tracker']['fields']['description']['rows'] = '2'; // Make textarea fields shorter

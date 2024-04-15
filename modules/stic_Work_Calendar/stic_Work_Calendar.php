@@ -72,13 +72,15 @@ class stic_Work_Calendar extends Basic
     {
         global $app_list_strings, $timedate;
 
+        $startDate = $_REQUEST["start_date"] ?? $this->start_date;
+        $endDate = $_REQUEST["end_date"] ?? $this->end_date;
+
         // Set name
         $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
-        $startDate = $timedate->to_display_date_time($this->start_date);
         $type = $app_list_strings['stic_work_calendar_types_list'][$this->type];
         $this->name = $assignedUser->name . " - " . $type . " - " . $startDate;
-        if (!empty($this->end_date)) {
-            $this->name .= " - " . substr($timedate->to_display_date_time($this->end_date), -5);
+        if (!empty($endDate)) {
+            $this->name .= " - " . substr($endDate, -5);
         }
 
         // Set weekday field
