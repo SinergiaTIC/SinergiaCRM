@@ -37,24 +37,3 @@ $layout_defs["Users"]["subpanel_setup"]["prospect_lists"] = array(
         ),
     ),
 );
-$layout_defs["Users"]["subpanel_setup"]['stic_work_calendar_users'] = array (
-    'order' => 100,
-    'module' => 'stic_Work_Calendar',
-    'subpanel_name' => 'default',
-    'sort_order' => 'asc',
-    'sort_by' => 'name',
-    'title_key' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_STIC_WORK_CALENDAR_TITLE',
-    'get_subpanel_data' => 'stic_work_calendar_users',
-    'top_buttons' => 
-    array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
-    ),
-  );
