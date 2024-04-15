@@ -55,17 +55,7 @@ $searchdefs[$module_name] = array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'end_date',
-            ),
-            'stic_work_calendar_users_name' => 
-            array (
-              'type' => 'relate',
-              'link' => true,
-              'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
-              'id' => 'STIC_WORK_CALENDAR_USERSUSERS_IDA',
-              'width' => '10%',
-              'default' => true,
-              'name' => 'stic_work_calendar_users_name',
-            ),            
+            ),       
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
@@ -122,15 +112,6 @@ $searchdefs[$module_name] = array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'weekday',
-            ),
-            'stic_work_calendar_users_name' => array (
-              'type' => 'relate',
-              'link' => true,
-              'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
-              'width' => '10%',
-              'default' => true,
-              'id' => 'STIC_WORK_CALENDAR_USERSUSERS_IDA',
-              'name' => 'stic_work_calendar_users_name',
             ),      
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',

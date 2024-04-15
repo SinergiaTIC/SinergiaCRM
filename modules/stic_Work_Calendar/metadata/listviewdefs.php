@@ -51,15 +51,6 @@ $listViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => true,
     ),
-    'STIC_WORK_CALENDAR_USERS_NAME' => 
-    array (
-      'type' => 'relate',
-      'link' => true,
-      'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
-      'id' => 'STIC_WORK_CALENDAR_USERSUSERS_IDA',
-      'width' => '10%',
-      'default' => true,
-    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',
         'label' => 'LBL_ASSIGNED_TO_NAME',

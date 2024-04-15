@@ -42,14 +42,6 @@ $dashletData['stic_Work_CalendarDashlet']['columns'] = array(
         'link' => true,
         'default' => true
     ),
-    'stic_work_calendar_users_name' => array(
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
-        'id' => 'STIC_WORK_CALENDAR_USERSUSERS_IDA',
-        'width' => '10%',
-        'default' => true,
-    ),
     'type' => array(
         'type' => 'enum',
         'studio' => 'visible',

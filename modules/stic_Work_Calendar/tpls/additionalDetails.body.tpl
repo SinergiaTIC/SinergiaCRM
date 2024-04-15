@@ -53,13 +53,6 @@
     </div>
 {/if}
 
-{if !empty($FIELD.STIC_WORK_CALENDAR_USERSUSERS_IDA)}
-    <div>
-        <strong>{$PARAM.LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE}:</strong>
-        <a href="index.php?module=Users&action=DetailView&record={$FIELD.STIC_WORK_CALENDAR_USERSUSERS_IDA}">{$FIELD.STIC_WORK_CALENDAR_USERS_NAME}</a>
-    </div>
-{/if}
-
 {if !empty($FIELD.TYPE)}
     <div>
         <strong>{$PARAM.LBL_TYPE}:</strong>
@@ -86,7 +79,6 @@
     || !empty($FIELD.END_DATE)    
     || !empty($FIELD.START_DATE) 
     || !empty($FIELD.DURATION) 
-    || !empty($FIELD.STIC_WORK_CALENDAR_USERSUSERS_IDA) 
     || !empty($FIELD.TYPE) 
     || !empty($FIELD.ASSIGNED_USER_ID)}
     <br>

@@ -83,10 +83,7 @@ $viewdefs[$module_name]['DetailView'] = array(
                     'label' => 'LBL_WEEKDAY',
                 ),
                 1 => 
-                array (
-                  'name' => 'stic_work_calendar_users_name',
-                  'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
-                ),
+                array (),
             ),            
             4 => array (
                 0 => 'description',

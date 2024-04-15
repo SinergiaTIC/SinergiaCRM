@@ -51,10 +51,7 @@ $viewdefs[$module_name]['EditView'] = array(
                     'label' => 'LBL_TYPE',
                 ),              
                 1 => 
-                array (
-                    'name' => 'stic_work_calendar_users_name',
-                    'label' => 'LBL_STIC_WORK_CALENDAR_USERS_FROM_USERS_TITLE',
-                ),
+                array (),
             ),            
             2 => array(
                 0 => array(
