@@ -268,12 +268,9 @@ class stic_EmployeesUtils
             }
         }
 
-        // Get and save other data
-        $employeeId = $_REQUEST['employeeId'];
-        $employeeName = $_REQUEST['employeeName'];
-        $counter = count($date);
-
         // Loop for work calendar records creation
+        $counter = count($date);
+        $assignedUserId = $_REQUEST['employeeId'];        
         for ($i = 0; $i < $counter; $i++) 
         {
             $date[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
@@ -288,18 +285,10 @@ class stic_EmployeesUtils
             }
             $workCalendarBean->start_date = $date[$i];
             $workCalendarBean->end_date = $finalDay;
-            $workCalendarBean->stic_work_calendar_usersusers_ida = $employeeId;
-            $workCalendarBean->stic_work_calendar_users_name = $employeeName;
-
-            if (isset($_REQUEST['assigned_user_id']) && $_REQUEST['assigned_user_id'] != '') {
-                $workCalendarBean->assigned_user_id = $_REQUEST['assigned_user_id'];
-            } else {
-                $workCalendarBean->assigned_user_id = $user;
-            }
-
             if (isset($_REQUEST['type']) && $_REQUEST['type'] != '') {
                 $workCalendarBean->type = $_REQUEST['type'];
             }
+            $workCalendarBean->assigned_user_id = $assignedUserId;
             if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
                 $workCalendarBean->description = $_REQUEST['description'];
             }
@@ -312,6 +301,6 @@ class stic_EmployeesUtils
         // Reactivamos la configuración previa de Advanced Open Discovery
         $sugar_config['aod']['enable_aod'] = $aodConfig;
 
-        header("Location: index.php?action=DetailView&module=Employees&record=$employeeId");
+        header("Location: index.php?action=DetailView&module=Employees&record=$assignedUserId");
     }
 }

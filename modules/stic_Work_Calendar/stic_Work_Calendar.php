@@ -73,17 +73,12 @@ class stic_Work_Calendar extends Basic
         global $app_list_strings, $timedate;
 
         // Set name
-        if (empty($this->name)) 
-        {
-            $employee = $this->stic_work_calendar_users_name;
-            $startDate = $timedate->to_display_date_time($this->start_date);
-            $type = $app_list_strings['stic_work_calendar_types_list'][$this->type];
-            
-            $this->name = $employee . " - " . $type . " - " . $startDate;
-
-            if (!empty($this->end_date)) {
-                $this->name .= " - " . $timedate->to_display_date_time($this->end_date);
-            }
+        $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
+        $startDate = $timedate->to_display_date_time($this->start_date);
+        $type = $app_list_strings['stic_work_calendar_types_list'][$this->type];
+        $this->name = $assignedUser->name . " - " . $type . " - " . $startDate;
+        if (!empty($this->end_date)) {
+            $this->name .= " - " . substr($timedate->to_display_date_time($this->end_date), -5);
         }
 
         // Set weekday field
@@ -109,17 +104,14 @@ class stic_Work_Calendar extends Basic
      *
      * @return void
      */
-    public static function existAtLeastOneRecordForEmployeeAndDate($date, $idEmployee)
+    public static function existAtLeastOneRecordForEmployeeAndDate($date, $userId)
     {
         global $db;
-        $query = "SELECT count(wc.id) as count
-                    FROM stic_work_calendar as wc
-                  JOIN stic_work_calendar_users_c as wcu
-                    ON wc.id = wcu.stic_work_calendar_usersstic_work_calendar_idb
-                  WHERE wc.deleted = 0 
-                    AND wcu.deleted = 0
-                    AND wc.start_date LIKE '%" . $date . "%'
-                    AND wcu.stic_work_calendar_usersusers_ida = '" . $idEmployee . "';";
+        $query = "SELECT count(id) as count
+                    FROM stic_work_calendar
+                  WHERE deleted = 0 
+                    AND start_date LIKE '%" . $date . "%'
+                    AND assigned_user_id = '" . $userId . "';";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
         $result = $db->query($query);

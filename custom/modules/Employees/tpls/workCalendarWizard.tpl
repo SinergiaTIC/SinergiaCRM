@@ -207,31 +207,6 @@
 					<input type="checkbox" id="enable_fields">
 				</td>
 			</tr>
-			<tr id="name_row">
-				<td width="12.5%" valign="top" scope="row">
-					{$MOD_WORK_CALENDAR.LBL_NAME}:
-				</td>
-				<td width="37.5%" valign="top">
-					<input style="width: 290px" type='text' name='work_calendar_name' id='work_calendar_name' value='' title=''>
-				</td>
-			</tr>	
-			<tr id="assigned_user_row">
-				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_ASSIGNED_TO}:</td>
-				<td width="37.5%" valign="top">
-					<input style="width: 210px" type='text' class='sqsEnabled yui-ac-input assigned_user_data_name'
-						name='assigned_user_name' id='assigned_user_name' autocomplete='new-password' value='' title=''>
-					<input type='hidden' name='assigned_user_id' id='assigned_user_id' value=''>
-					<span class='id-ff multiple'>
-						<button title='SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE")' type='button'
-							class='button' name='btn_1' onclick='openSelectPopup("Users", "assigned_user")'>
-							<span class='suitepicon suitepicon-action-select' /></span>
-					</button>
-					<button type='button' name='btn_1' class='button lastChild'
-						onclick='clearRow(this.form, "assigned_user");'>
-						<span class='suitepicon suitepicon-action-clear'></span>
-						</span>
-				</td>
-			</tr>
 			<tr id="description_row">
 				<td width="12.5%" valign="top" scope="row">
 					{$MOD_WORK_CALENDAR.LBL_DESCRIPTION}:
