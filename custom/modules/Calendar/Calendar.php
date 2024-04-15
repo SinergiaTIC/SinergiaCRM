@@ -469,8 +469,7 @@ class CustomCalendar extends Calendar
      * 
      * Current existing filters:
      * - stic_work_calendar_type
-     * - stic_work_calendar_users
-     * - stic_work_calendar_users_department
+     * - assigned_user_department
      * The filters values are retrieved from the user's configuration
      *
      * @return void
@@ -480,8 +479,7 @@ class CustomCalendar extends Calendar
         global $current_user, $db;
         $userSticWorkCalendarFilters = array(
             'stic_work_calendar_type' => $current_user->getPreference('calendar_stic_work_calendar_type'),
-            'stic_work_calendar_users' => $current_user->getPreference('calendar_stic_work_calendar_users_id'),
-            'stic_work_calendar_users_department' => $current_user->getPreference('calendar_stic_work_calendar_users_department'),            
+            'stic_work_calendar_assigned_user_department' => $current_user->getPreference('calendar_stic_work_calendar_assigned_user_department'),            
         );
         foreach ($activitiesArray as $userKey => $activityArray) {
             foreach ($activityArray as $activityKey => $activity) {
@@ -496,28 +494,10 @@ class CustomCalendar extends Calendar
                                     }
                                     break;
                                 }
-                                case 'stic_work_calendar_users': {
-                                    $relationship = 'stic_work_calendar_users';
-                                    if (!$bean->load_relationship($relationship)) {
-                                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading relationship: ' . $relationship);
-                                    } else {
-                                        $relatedBean = array_pop($bean->$relationship->getBeans());
-                                        if ($relatedBean->id != $filterValue) {
-                                            // If the work calendar record does not match the filter value, remove it from the activities array
-                                            unset($activitiesArray[$userKey][$activityKey]);
-                                        }
-                                    }
-                                    break;
-                                }
-                                case 'stic_work_calendar_users_department': {
-                                    $relationship = 'stic_work_calendar_users';
-                                    if (!$bean->load_relationship($relationship)) {
-                                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error loading relationship: ' . $relationship);
-                                    } else {
-                                        $relatedBean = array_pop($bean->$relationship->getBeans());
-                                        if ($relatedBean->department != $filterValue) {
-                                            unset($activitiesArray[$userKey][$activityKey]);
-                                        }
+                                case 'stic_work_calendar_assigned_user_department': {
+                                    $assignedUser = BeanFactory::getBean('Users', $bean->assigned_user_id);
+                                    if ($assignedUser->department != $filterValue) {
+                                        unset($activitiesArray[$userKey][$activityKey]);
                                     }
                                     break;
                                 }

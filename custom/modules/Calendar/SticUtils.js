@@ -73,7 +73,7 @@ fieldFilters = [
     'stic_followups_color',
     'stic_followups_type',
     'stic_work_calendar_type',
-    'stic_work_calendar_users_department',
+    'stic_work_calendar_assigned_user_department',
 ];
 
 // Filters array

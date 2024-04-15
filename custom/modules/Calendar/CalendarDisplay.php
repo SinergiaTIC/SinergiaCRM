@@ -287,8 +287,7 @@ class CustomCalendarDisplay extends CalendarDisplay
         $sticFollowUpsContactId = $current_user->getPreference('calendar_stic_followups_contacts_id');
         $sticFollowUpsProjectId = $current_user->getPreference('calendar_stic_followups_projects_id');
         $sticWorkCalendarType = $current_user->getPreference('calendar_stic_work_calendar_type');
-        $sticWorkCalendarUsersId = $current_user->getPreference('calendar_stic_work_calendar_users_id');
-        $sticWorkCalendarUsersDepartament = $current_user->getPreference('calendar_stic_work_calendar_users_department');
+        $sticWorkCalendarUsersDepartament = $current_user->getPreference('calendar_stic_work_calendar_assigned_user_department');
 
         $sticSessionsColorOptions = get_select_options_with_id($app_list_strings[$dictionary['stic_Sessions']['fields']['color']['options']], $sticSessionsColor);
         $ss->assign('stic_sessions_color', $sticSessionsColorOptions);
@@ -350,7 +349,7 @@ class CustomCalendarDisplay extends CalendarDisplay
             $ss->assign('stic_work_calendar_users_id', $sticWorkCalendarUsersId);
         }
         
-        $ss->assign('stic_work_calendar_users_department', $sticWorkCalendarUsersDepartament);
+        $ss->assign('stic_work_calendar_assigned_user_department', $sticWorkCalendarUsersDepartament);
 
         if (
             $sticSessionsSticEventsType || $sticSessionsSticEventId || $sticSessionsSticCenterId || $sticSessionsResponsibleId || $sticSessionsContactId || $sticSessionsProjectId ||

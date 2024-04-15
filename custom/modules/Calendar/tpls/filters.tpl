@@ -309,7 +309,7 @@
                                     <tr>                            
                                     <tr>
                                         <td scope="row" style="width:60%;">
-                                            {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_ACTIVITY_TYPE}
+                                            {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_TYPE}
                                         </td>
                                         <td>
                                             <select multiple id="stic_work_calendar_type" name="stic_work_calendar_type[]" tabindex="102">
@@ -318,36 +318,13 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td scope="row">
-                                            {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_USER}
-                                        </td>
-                                        <td>
-                                            <input type='text' class='sqsEnabled' name='stic_work_calendar_users_name'
-                                                id='stic_work_calendar_users_name' autocomplete='off'
-                                                value='{$stic_work_calendar_users_name}' title='' tabindex='3'>
-                                            <input type='hidden' name='stic_work_calendar_users_id'
-                                                id='stic_work_calendar_users_id' value='{$stic_work_calendar_users_id}'>
-                                            <span class='id-ff multiple'>
-                                                <button title='{$MOD.LBL_SELECT_BUTTON_TITLE}' type='button'
-                                                    class='button' name='btn_1'
-                                                    onclick='openSelectPopup("Users", "stic_work_calendar_users")'>
-                                                    <span class='suitepicon suitepicon-action-select'></span>
-                                                </button>
-                                                <button type='button' name='btn_1' class='button lastChild'
-                                                    onclick='clearRow(this.form, "stic_work_calendar_users")'>
-                                                    <span class='suitepicon suitepicon-action-clear'></span>
-                                                </button>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <td scope="row" style="width:60%;">
                                             {$MOD.LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT}
                                         </td>
                                         <td>
-                                            <input type='text' class='sqsEnabled' name='stic_work_calendar_users_department'
-                                                id='stic_work_calendar_users_department' autocomplete='off'
-                                                value='{$stic_work_calendar_users_department}' title='' tabindex='3'>                                        
+                                            <input type='text' name='stic_work_calendar_assigned_user_department'
+                                                id='stic_work_calendar_assigned_user_department' autocomplete='off'
+                                                value='{$stic_work_calendar_assigned_user_department}' title='' tabindex='3'>                                        
                                         </td>
                                     </tr>                                                                    
                                 </table>

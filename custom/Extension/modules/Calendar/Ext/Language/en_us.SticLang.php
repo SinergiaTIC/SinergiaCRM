@@ -41,8 +41,7 @@ $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = 'Followed contact';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Related project';
 
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Work Calendar';
-$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_ACTIVITY_TYPE'] = 'Activity type';
-$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_USER'] = 'Employee';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Activity type';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Department';
 
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Work Calendar - Display Records';
