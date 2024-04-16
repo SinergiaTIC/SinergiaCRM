@@ -187,14 +187,6 @@ class ExternalReporting
             $modulesList['SurveyQuestionResponses'] = 'SurveyQuestionResponses';
         }
 
-        // If Surveys module is enabled, we automatically activate the related Surveys modules
-        if (in_array('Surveys', $modulesList)) {
-            $modulesList['SurveyResponses'] = 'SurveyResponses';
-            $modulesList['SurveyQuestions'] = 'SurveyQuestions';
-            $modulesList['SurveyQuestionOptions'] = 'SurveyQuestionOptions';
-            $modulesList['SurveyQuestionResponses'] = 'SurveyQuestionResponses';
-        }
-
         natsort($modulesList);
 
         // Get & populate users ACL metadata (must run after $modulesList is created)
