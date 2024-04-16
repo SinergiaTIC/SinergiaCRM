@@ -1646,6 +1646,10 @@ class ExternalReporting
 
                 $aclSource = $aclSourcesList[$value['module']['view']['aclaccess']];
 
+                // Fix for special cases when the module name is different from the table name
+                $key = $key == 'ProjectTask' ? 'Project_Task' : $key;
+                $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
+
                 $currentTable = $this->viewPrefix . '_' . strtolower($key);
                 if ($u['is_admin'] == 1) {
                     $userModuleAccessMode["{$aclSource}_{$u['user_name']}_{$currentTable}"] = [
