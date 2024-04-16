@@ -61,16 +61,15 @@ class stic_Group_Opportunities extends Basic
     public $folder;
     public $contact_id_c;
     public $contact;
-	
+
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
 
         return false;
     }
-	
+
 }

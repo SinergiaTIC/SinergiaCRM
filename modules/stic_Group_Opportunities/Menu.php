@@ -21,18 +21,18 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
+if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
 global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Group_Opportunities', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Group_Opportunities&action=EditView&return_module=stic_Group_Opportunities&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Group_Opportunities');
+
+if (ACLController::checkAccess('stic_Group_Opportunities', 'edit', true)) {
+    $module_menu[] = array('index.php?module=stic_Group_Opportunities&action=EditView&return_module=stic_Group_Opportunities&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Group_Opportunities');
 }
-if(ACLController::checkAccess('stic_Group_Opportunities', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Group_Opportunities&action=index&return_module=stic_Group_Opportunities&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Group_Opportunities');
+if (ACLController::checkAccess('stic_Group_Opportunities', 'list', true)) {
+    $module_menu[] = array('index.php?module=stic_Group_Opportunities&action=index&return_module=stic_Group_Opportunities&return_action=DetailView', $mod_strings['LNK_LIST'], 'View', 'stic_Group_Opportunities');
 }
-if(ACLController::checkAccess('stic_Group_Opportunities', 'import', true)){
-    $module_menu[]=array('index.php?module=Import&action=Step1&import_module=stic_Group_Opportunities&return_module=stic_Group_Opportunities&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Group_Opportunities');
+if (ACLController::checkAccess('stic_Group_Opportunities', 'import', true)) {
+    $module_menu[] = array('index.php?module=Import&action=Step1&import_module=stic_Group_Opportunities&return_module=stic_Group_Opportunities&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Group_Opportunities');
 }

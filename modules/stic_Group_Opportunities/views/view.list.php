@@ -49,7 +49,7 @@ class stic_Group_OpportunitiesViewList extends ViewList
 
         SticViews::display($this);
         echo getVersionedScript("modules/stic_Group_Opportunities/Utils.js");
-        
+
         // Write here you custom code
     }
 

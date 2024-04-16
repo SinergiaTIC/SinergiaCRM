@@ -50,7 +50,7 @@ class stic_Group_OpportunitiesViewEdit extends ViewEdit
 
         SticViews::display($this);
         echo getVersionedScript("modules/stic_Group_Opportunities/Utils.js");
-        
+
         // Write here you custom code
 
     }

@@ -28,7 +28,7 @@ class stic_Group_OpportunitiesLogicHooks
         // Create name if is empty
         if (empty($bean->name)) {
             include_once 'SticInclude/Utils.php';
-            
+
             $accountBean = SticUtils::getRelatedBeanObject($bean, 'stic_group_opportunities_accounts');
             $opportunityBean = SticUtils::getRelatedBeanObject($bean, 'stic_group_opportunities_opportunities');
             $bean->name = $accountBean->name . ' - ' . $opportunityBean->name;

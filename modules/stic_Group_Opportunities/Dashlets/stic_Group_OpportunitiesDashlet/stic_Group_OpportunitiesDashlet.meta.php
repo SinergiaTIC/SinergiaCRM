@@ -31,5 +31,5 @@ $dashletMeta['stic_Group_OpportunitiesDashlet'] = array(
     'module' => 'stic_Group_Opportunities',
     'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Group_Opportunities'),
     'description' => 'A customizable view into stic_Group_Opportunities',
-    'category' => 'Module Views'
+    'category' => 'Module Views',
 );

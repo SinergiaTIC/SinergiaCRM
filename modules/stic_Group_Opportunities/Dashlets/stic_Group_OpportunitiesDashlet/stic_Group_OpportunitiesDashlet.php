@@ -25,14 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Group_Opportunities/stic_Group_Opportunities.php');
+require_once 'include/Dashlets/DashletGeneric.php';
+require_once 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
 
-class stic_Group_OpportunitiesDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
+class stic_Group_OpportunitiesDashlet extends DashletGeneric
+{
+    public function __construct($id, $def = null)
     {
         global $current_user, $app_strings;
-        require('modules/stic_Group_Opportunities/metadata/dashletviewdefs.php');
+        require 'modules/stic_Group_Opportunities/metadata/dashletviewdefs.php';
 
         parent::__construct($id, $def);
 
@@ -43,6 +44,6 @@ class stic_Group_OpportunitiesDashlet extends DashletGeneric {
         $this->searchFields = $dashletData['stic_Group_OpportunitiesDashlet']['searchFields'];
         $this->columns = $dashletData['stic_Group_OpportunitiesDashlet']['columns'];
 
-        $this->seedBean = new stic_Group_Opportunities();        
+        $this->seedBean = new stic_Group_Opportunities();
     }
 }

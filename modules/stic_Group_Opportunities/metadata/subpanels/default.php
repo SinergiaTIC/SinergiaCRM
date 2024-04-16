@@ -20,81 +20,69 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$module_name='stic_Group_Opportunities';
-$subpanel_layout = array (
-  'top_buttons' => 
-  array (
-    0 => 
-    array (
-      'widget_class' => 'SubPanelTopCreateButton',
+$module_name = 'stic_Group_Opportunities';
+$subpanel_layout = array(
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopCreateButton',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'popup_module' => 'stic_Group_Opportunities',
+        ),
     ),
-    1 => 
-    array (
-      'widget_class' => 'SubPanelTopSelectButton',
-      'popup_module' => 'stic_Group_Opportunities',
+    'where' => '',
+    'list_fields' => array(
+        'name' => array(
+            'vname' => 'LBL_NAME',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '45%',
+            'default' => true,
+        ),
+        'status' => array(
+            'type' => 'enum',
+            'studio' => 'visible',
+            'vname' => 'LBL_STATUS',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'amount_requested' => array(
+            'type' => 'currency',
+            'vname' => 'LBL_AMOUNT_REQUESTED',
+            'currency_format' => true,
+            'width' => '10%',
+            'default' => true,
+        ),
+        'validation_date' => array(
+            'type' => 'date',
+            'vname' => 'LBL_VALIDATION_DATE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'resolution_date' => array(
+            'type' => 'date',
+            'vname' => 'LBL_RESOLUTION_DATE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'date_modified' => array(
+            'vname' => 'LBL_DATE_MODIFIED',
+            'width' => '45%',
+            'default' => true,
+        ),
+        'edit_button' => array(
+            'vname' => 'LBL_EDIT_BUTTON',
+            'widget_class' => 'SubPanelEditButton',
+            'module' => 'stic_Group_Opportunities',
+            'width' => '4%',
+            'default' => true,
+        ),
+        'remove_button' => array(
+            'vname' => 'LBL_REMOVE',
+            'widget_class' => 'SubPanelRemoveButton',
+            'module' => 'stic_Group_Opportunities',
+            'width' => '5%',
+            'default' => true,
+        ),
     ),
-  ),
-  'where' => '',
-  'list_fields' => 
-  array (
-    'name' => 
-    array (
-      'vname' => 'LBL_NAME',
-      'widget_class' => 'SubPanelDetailViewLink',
-      'width' => '45%',
-      'default' => true,
-    ),
-    'status' => 
-    array (
-      'type' => 'enum',
-      'studio' => 'visible',
-      'vname' => 'LBL_STATUS',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'amount_requested' => 
-    array (
-      'type' => 'currency',
-      'vname' => 'LBL_AMOUNT_REQUESTED',
-      'currency_format' => true,
-      'width' => '10%',
-      'default' => true,
-    ),
-    'validation_date' => 
-    array (
-      'type' => 'date',
-      'vname' => 'LBL_VALIDATION_DATE',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'resolution_date' => 
-    array (
-      'type' => 'date',
-      'vname' => 'LBL_RESOLUTION_DATE',
-      'width' => '10%',
-      'default' => true,
-    ),
-    'date_modified' => 
-    array (
-      'vname' => 'LBL_DATE_MODIFIED',
-      'width' => '45%',
-      'default' => true,
-    ),
-    'edit_button' => 
-    array (
-      'vname' => 'LBL_EDIT_BUTTON',
-      'widget_class' => 'SubPanelEditButton',
-      'module' => 'stic_Group_Opportunities',
-      'width' => '4%',
-      'default' => true,
-    ),
-    'remove_button' => 
-    array (
-      'vname' => 'LBL_REMOVE',
-      'widget_class' => 'SubPanelRemoveButton',
-      'module' => 'stic_Group_Opportunities',
-      'width' => '5%',
-      'default' => true,
-    ),
-  ),
 );

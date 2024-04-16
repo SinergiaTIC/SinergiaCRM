@@ -34,7 +34,7 @@ $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'title_key' => 'LBL_SECURITYGROUPS_SUBPANEL_TITLE',
 );
 
-$layout_defs[$module_name]["subpanel_setup"]['stic_group_opportunities_documents_1'] = array (
+$layout_defs[$module_name]["subpanel_setup"]['stic_group_opportunities_documents_1'] = array(
     'order' => 100,
     'module' => 'Documents',
     'subpanel_name' => 'default',
@@ -42,16 +42,13 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_group_opportunities_documents
     'sort_by' => 'id',
     'title_key' => 'LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_DOCUMENTS_TITLE',
     'get_subpanel_data' => 'stic_group_opportunities_documents_1',
-    'top_buttons' => 
-    array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'mode' => 'MultiSelect',
+        ),
     ),
 );
