@@ -9,7 +9,7 @@ $current_user->getSystemUser();
 // We always extract the pain of Stic_Setting, to avoid any discordance between what is shown and defined in setting
 $db = DBManagerFactory::getInstance();
 $color = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_THEME_COLOR' and deleted=0");
-$setting_sidebar_color = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_SIDEBAR_COLOR' and deleted=0");
+$settingSidebarColor = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_SIDEBAR_COLOR' and deleted=0");
 
 if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Color [$color] is empty. Aborting SticCustom subtheme base color change.");
@@ -29,39 +29,25 @@ if ($color == '#b5bc31') {
 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Starting SticCustom subtheme base color change to {$color}");
 
 $file = 'themes/SuiteP/css/SticCustom/CustomPalette.scss';
-$data = file_get_contents($file); // reads an array of lines
 
-if ($setting_sidebar_color==0){
-    $sidebar_color= "#D9DEE3";
-    $sidebar_text_color= "#001E40";
-    $replacements = array(
-        '\\$stic-base: ' . $color . ';',
-        '\\$stic-sidebar: ' . $sidebar_color . ';',
-        '\\$stic-sidebar-text: ' . $sidebar_text_color . ';'
-    );
-    $patterns = array(
-        '/\$stic-base:.*;/m',
-        '/\$stic-sidebar:.*;/m',
-        '/\$stic-sidebar-text:.*;/m'
-    );
-    $data = preg_replace($patterns, $replacements, $data);
-    file_put_contents($file, $data);
+if ($settingSidebarColor==0){
+    $sidebarColor= "#D9DEE3";
+    $sidebarTextColor= "#001E40";
 }else{
-    $sidebar_color= " #353535;";
-    $sidebar_text_color= "#F5F5F5";
-    $replacements = array(
-        '\\$stic-base: ' . $color . ';',
-        '\\$stic-sidebar: ' . $sidebar_color . ';',
-        '\\$stic-sidebar-text: ' . $sidebar_text_color . ';'
-    );
-    $patterns = array(
-        '/\$stic-base:.*;/m',
-        '/\$stic-sidebar:.*;/m',
-        '/\$stic-sidebar-text:.*;/m'
-    );
-    $data = preg_replace($patterns, $replacements, $data);
-    file_put_contents($file, $data);
+    $sidebarColor= " #353535;";
+    $sidebarTextColor= "#F5F5F5";
 }
+
+$data = "
+\$stic-base: $color;
+\$stic-dark: darken(\$stic-base, 7%);
+\$stic-light: lighten(\$stic-base, 7%);;
+\$stic-superlight: lighten(\$stic-base, 35%);
+\$stic-sidebar: $sidebarColor;
+\$stic-sidebar-text: $sidebarTextColor;
+";
+
+file_put_contents($file, $data);
 
 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SticCustom color palette is :" . print_r(file_get_contents($file), true));
 

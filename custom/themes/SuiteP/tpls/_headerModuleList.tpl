@@ -1003,8 +1003,18 @@
                                 }
                             });
                         </script>
+                        <!-- STIC-Custom - PCS - 20240416 - Sidebar theme options -->
+                        <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/193 -->
+                        <!-- 
+                            {/literal}
+                            <div id='admin_actions' class="actionMenuSidebar adminMenuSidebar" hidden>
+                         -->
+                        <style>
+                          h2.admin_actions_title {font-size: 16px;font-weight: bold; margin: 10px 15px;}
+                        </style>
                     {/literal}
-                        <div id='admin_actions' class="actionMenuSidebar" hidden>
+                        <div id='admin_actions' class="actionMenuSidebar adminMenuSidebar" hidden>
+                        <!-- END STIC-Custom -->
                         <h2 class="admin_actions_title">{sugar_translate module="Administration" label="LBL_ADMIN_ACTIONS"}</h2>
                             <ul>
                                 <li class="actionmenulinks" role="presentation">
