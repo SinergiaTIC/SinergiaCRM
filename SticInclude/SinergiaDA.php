@@ -274,9 +274,9 @@ class ExternalReporting
                 // We reset certain variables to avoid errors
                 unset($fieldSrc, $relatedModuleName, $secureName, $edaAggregations, $sdaHiddenField, $excludeColumnFromMetadada);
 
-                // To avoid exceptional cases where the table name is defined in uppercase 
+                // To avoid exceptional cases where the table name is defined in uppercase
                 // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
-                $fieldV['table']= strtolower($fieldV['table']);
+                $fieldV['table'] = strtolower($fieldV['table']);
 
                 $fieldName = $fieldV['name'];
 
@@ -605,8 +605,8 @@ class ExternalReporting
                         break;
 
                     default:
-                    $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";    
-                    $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
+                        $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";
+                        $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
                         $this->info .= print_r($fieldV, true);
 
                         break;
@@ -1197,16 +1197,8 @@ class ExternalReporting
                                     1
                             ) email,
                             u.user_hash AS password,
-                            if(u.status='Active' 
-                            	AND uc.sda_allowed_c=1 
-                                -- If users belong to any security group, we include them but as inactive, so they cannot log in to SDA.
-                            	AND u.id NOT IN (SELECT u2.id  FROM users u2 
-							                            JOIN securitygroups_users su ON su.user_id =u2.id AND su.deleted =0
-							                            JOIN securitygroups s ON s.id =su.securitygroup_id  AND s.deleted =0
-							                            AND u2.deleted =0
-							                            AND u2.is_admin =0
-							                            GROUP BY u2.id)
-                            	,1,0) as 'active'
+                            if(u.status='Active'
+                            	AND uc.sda_allowed_c=1 ,1,0) as 'active'
                         FROM
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c
@@ -1643,7 +1635,7 @@ class ExternalReporting
 
             $allModulesACL = array_intersect_key(ACLAction::getUserActions($u['id'], true), $modules);
             foreach ($allModulesACL as $key => $value) {
-
+                unset($aclSource);
                 // Access to the users module is allowed only for administrator users
                 if($u['is_admin']==0 && $key=='Users'){
                     continue;
@@ -1671,6 +1663,10 @@ class ExternalReporting
                     // first we'll add them to the $userModuleAccessMode array with a unique key to avoid duplicates
                     switch ($value['module']['view']['aclaccess']) {
                         case '80': // Security groups
+
+                            // In this phase, access to modules where the user has restricted access to their group's records is disabled.
+                            continue 2;
+
                             // In the case of Secutity Groups we add a unique entry for each of the groups the user belongs to,
                             // ensuring that it does not exist previously for each module.
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
@@ -1687,6 +1683,9 @@ class ExternalReporting
                             break;
 
                         case '75': // Owner case
+                            // In this phase, access to modules where the user has restricted access to their own/assigned records is disabled.
+                            continue 2;
+
                             $userModuleAccessMode["{$aclSource}_{$u['user_name']}_{$currentTable}"] = [
                                 'user_name' => $u['user_name'],
                                 'table' => $currentTable,
