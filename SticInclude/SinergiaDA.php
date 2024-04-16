@@ -1644,6 +1644,12 @@ class ExternalReporting
             $allModulesACL = array_intersect_key(ACLAction::getUserActions($u['id'], true), $modules);
             foreach ($allModulesACL as $key => $value) {
 
+                // Access to the users module is allowed only for administrator users
+                if($u['is_admin']==0 && $key=='Users'){
+                    continue;
+                }
+
+
                 $aclSource = $aclSourcesList[$value['module']['view']['aclaccess']];
 
                 // Fix for special cases when the module name is different from the table name
