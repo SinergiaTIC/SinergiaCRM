@@ -1197,11 +1197,19 @@ class ExternalReporting
                                     1
                             ) email,
                             u.user_hash AS password,
-                            if(u.status='Active' AND uc.sda_allowed_c=1 AND is_admin=1 ,1,0) as 'active'
+                            if(u.status='Active' 
+                            	AND uc.sda_allowed_c=1 
+                                -- If users belong to any security group, we include them but as inactive, so they cannot log in to SDA.
+                            	AND u.id NOT IN (SELECT u2.id  FROM users u2 
+							                            JOIN securitygroups_users su ON su.user_id =u2.id AND su.deleted =0
+							                            JOIN securitygroups s ON s.id =su.securitygroup_id  AND s.deleted =0
+							                            AND u2.deleted =0
+							                            AND u2.is_admin =0
+							                            GROUP BY u2.id)
+                            	,1,0) as 'active'
                         FROM
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c
-
                         WHERE
                             deleted = 0;";
 
