@@ -1005,10 +1005,6 @@
                         </script>
                         <!-- STIC-Custom - PCS - 20240416 - Sidebar theme options -->
                         <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/193 -->
-                        <!-- 
-                            {/literal}
-                            <div id='admin_actions' class="actionMenuSidebar adminMenuSidebar" hidden>
-                         -->
                         <style>
                           h2.admin_actions_title {font-size: 16px;font-weight: bold; margin: 10px 15px;}
                         </style>
