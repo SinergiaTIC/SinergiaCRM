@@ -20,9 +20,24 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-//prevents directly accessing this file from a web browser
+
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-$hook_array['before_save'][] = array(100, 'before_save', 'modules/stic_Group_Opportunities/LogicHooksCode.php', 'stic_Group_OpportunitiesLogicHooks', 'before_save');
 
+require_once 'include/EditView/SubpanelQuickCreate.php';
+
+class stic_Group_OpportunitiesSubpanelQuickCreate extends SubpanelQuickCreate
+{
+    public function __construct($module, $view = 'QuickCreate', $proccessOverride = false)
+    {
+        parent::__construct($module, $view, $proccessOverride);
+    }
+
+    public function process($module)
+    {
+        echo getVersionedScript("modules/stic_Group_Opportunities/Utils.js");
+
+        parent::process($module);
+    }
+}

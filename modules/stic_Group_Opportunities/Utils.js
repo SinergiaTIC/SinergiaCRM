@@ -23,31 +23,15 @@
 // Set module name
 var module = "stic_Group_Opportunities";
 
-/* INCLUDES */
-// Load moment.js to use in validations
-// loadScript("include/javascript/moment.min.js");
-
-/* VALIDATION DEPENDENCIES */
-// var validationDependencies = {
-//   end_date: "start_date",
-//   start_date: "end_date",
-// };
-
-/* VALIDATION CALLBACKS */
-// addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
-//   return checkStartAndEndDatesCoherence("start_date", "end_date");
-// });
-// addToValidateCallback(getFormName(), "start_date", "date", false, SUGAR.language.get(module, "LBL_START_DATE_ERROR"), function () {
-//   return checkStartAndEndDatesCoherence("start_date", "end_date");
-// });
-
 /* VIEWS CUSTOM CODE */
+var customView = sticCustomizeView.For(viewType());
 switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    // Set autofill mark beside field label
-    setAutofill(["name"]);
+    $(document).ready(function() {
+      initializeEditFields(customView);
+    });
     break;
 
   case "detail":
@@ -57,3 +41,42 @@ switch (viewType()) {
 }
 
 /* AUX FUNCTIONS */
+
+function refreshViewName(customView) {
+  if (customView == null) {
+    return;
+  }
+  customView
+    .field("name")
+    .value(
+      customView.field("stic_group_opportunities_accounts_name").content.text() +
+        " - " +
+        customView.field("stic_group_opportunities_opportunities_name").content.text()
+    );
+}
+
+function initializeEditFields(customView) {
+  setAutofill(["name"]);
+
+  if (customView != null) {
+    // Readonly name
+    // customView.field("name").readonly();
+    // customView.field("name").content.bold();
+
+    // Set initial name
+    refreshViewName(customView);
+
+    // Update name when any change on dependant fields
+    customView.field("stic_group_opportunities_accounts_name").onChange(function() {
+      refreshViewName(customView);
+    });
+    customView.field("stic_group_opportunities_opportunities_name").onChange(function() {
+      refreshViewName(customView);
+    });
+
+    if(customView.view=="quickcreate") {
+      customView.field("stic_group_opportunities_opportunities_name").readonly();
+      customView.field("stic_group_opportunities_opportunities_name").content.bold();
+    }
+  }
+}

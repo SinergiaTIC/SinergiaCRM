@@ -37,6 +37,12 @@ var sticCustomizeView = class sticCustomizeView {
   }
 
   static For(view) {
+    if (view == "detail") {
+      view = "detailview";
+    } else if (view == "edit") {
+      view = "editview";
+    }
+
     switch (view) {
       case "detailview":
         return new sticCV_View_Record_Detail(view);
@@ -44,5 +50,7 @@ var sticCustomizeView = class sticCustomizeView {
       case "quickcreate":
         return new sticCV_View_Record_Edit(view);
     }
+
+    return null;
   }
 };

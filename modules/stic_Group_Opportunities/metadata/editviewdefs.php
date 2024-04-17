@@ -52,12 +52,12 @@ array(
                 ),
                 1 => array(
                     0 => array(
-                        'name' => 'stic_group_opportunities_opportunities_name',
-                        'label' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_NAME',
-                    ),
-                    1 => array(
                         'name' => 'stic_group_opportunities_accounts_name',
                         'label' => 'LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_NAME',
+                    ),
+                    1 => array(
+                        'name' => 'stic_group_opportunities_opportunities_name',
+                        'label' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_NAME',
                     ),
                 ),
                 2 => array(
