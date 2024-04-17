@@ -64,6 +64,7 @@ $mod_strings = array (
   'LBL_END_DATE' => 'Fecha de y hora de finalización',  
   'LBL_START_DATE_ERROR' => 'La fecha y hora de inicio debe ser anterior a la fecha y hora de finalización.',
   'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
+  'LBL_END_DATE_EXCCEDS_24_HOURS' => 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.',  
   'LBL_DURATION' => 'Duración',
   'LBL_WEEKDAY' => 'Día de la semana',
   'LBL_DEFAULT_PANEL' => 'Datos generales',

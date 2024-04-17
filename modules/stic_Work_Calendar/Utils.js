@@ -21,12 +21,22 @@
  */
 
 /* HEADER */
-// Load moment.js to use in validations
+// Set module name
+var module = "stic_Work_Calendar";
 
 /* VALIDATION DEPENDENCIES */
-var validationDependencies = {};
+var validationDependencies = {
+  end_date: "start_date",
+};
 
 /* VALIDATION CALLBACKS */
+addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+  return checkStartAndEndDatesCoherence("start_date", "end_date", true);
+});
+addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+  return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
+});
+
 
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
@@ -68,4 +78,29 @@ function onClickMassUpdateDatesButton() {
   document.MassUpdate.action.value='showMassUpdateDatesForm';
   document.MassUpdate.module.value='stic_Work_Calendar';
   document.MassUpdate.submit();
+}
+
+
+/**
+ * Check that the difference between the end date and the start date is less than 24 hours.
+ * It is necessary to load at the beginning of the page moment.js by "loadScript("include/javascript/moment.min.js");"
+ * It is assumed that if start_date and end_date include hours and minutes, they will be in H:i (php) or HH:MM (momentjs) format
+ *
+ * @param {String} startDate name of the field whose date must be previous
+ * @param {String} endDate name of the field whose date must be prior
+ * @returns {Boolean} True if the difference between the end date and the start date is less than 24 hours, and False if not. 
+ */
+function checkStartAndEndDatesExcceds24Hours(startDate, endDate) 
+{
+  debugger;
+  var userDateFormat = STIC.userDateFormat.toUpperCase();  
+  var startDate = moment(getFieldValue(startDate), userDateFormat + "HH:mm");
+  var endDate = moment(getFieldValue(endDate), userDateFormat + "HH:mm");
+
+  // Calcular la diferencia entre las dos fechas en horas y verificar que sea menor a 24 horas
+  const diferenciaHoras = endDate.diff(startDate, 'hours');
+  // Verificar si la diferencia es mayor a 24 horas
+  if (diferenciaHoras >= 24) {
+      return false;
+  } 
 }
