@@ -30,11 +30,15 @@ var validationDependencies = {
 };
 
 /* VALIDATION CALLBACKS */
-addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
   return checkStartAndEndDatesCoherence("start_date", "end_date", true);
 });
-addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
   return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
+});
+
+addToValidateCallback(getFormName(), "name", "name", false, SUGAR.language.get(module, "LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS"), function () {
+  return checkIfExistsOtherTypesIncompatibleRecords("start_date", "type", "assigned_user_id");
 });
 
 
@@ -88,11 +92,10 @@ function onClickMassUpdateDatesButton() {
  *
  * @param {String} startDate name of the field whose date must be previous
  * @param {String} endDate name of the field whose date must be prior
- * @returns {Boolean} True if the difference between the end date and the start date is less than 24 hours, and False if not. 
+ * @returns {Boolean} true if the difference between the end date and the start date is less than 24 hours, and false if not. 
  */
 function checkStartAndEndDatesExcceds24Hours(startDate, endDate) 
 {
-  debugger;
   var userDateFormat = STIC.userDateFormat.toUpperCase();  
   var startDate = moment(getFieldValue(startDate), userDateFormat + "HH:mm");
   var endDate = moment(getFieldValue(endDate), userDateFormat + "HH:mm");
@@ -103,4 +106,41 @@ function checkStartAndEndDatesExcceds24Hours(startDate, endDate)
   if (diferenciaHoras >= 24) {
       return false;
   } 
+}
+
+
+/**
+ * Synchronous verification of whether there are Work Calendar records of incompatible type that match the assigned user and time range.
+ * @returns {Boolean} false if there are records of incompatible types for the same assigned user and time range, true if there are not.
+ */
+function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUserId) 
+{
+  //get Id of the record
+  const queryString = window.location.search;
+  const params = new URLSearchParams(queryString);
+  const id = params.get('record');
+
+  var data = {
+    id: id,
+    startDate: getFieldValue(startDate),
+    type: getFieldValue(type),
+    assignedUserId: getFieldValue(assignedUserId),
+  };
+
+  const url = 'index.php?module=stic_Work_Calendar&action=existsOtherTypesIncompatibleRecords';
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', url, false); // set asyncto false
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify(data));
+
+  if (xhr.status === 200) {
+    if (xhr.responseText == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    alert(SUGAR.language.get(module, "LBL_ERROR_REQUEST_INCOMPATIBLE_TYPE") + '\n\n' + SUGAR.language.get(module, "LBL_ERROR_CODE_REQUEST_INCOMPATIBLE_TYPE") + xhr.status);
+    return false;
+  }
 }
