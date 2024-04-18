@@ -73,21 +73,9 @@ foreach ($groupedTabStructure as $mainTab => $subModules) {
 
     }
 $menu[]=$m;
-    // $groupedTabStructure[$mainTab]['labelValue'] = $selectedAppLanguages[$mainTab];
 }
-// $menu=$menu[0];
-// var_dump($menu);die();
 $jsonMenu = json_encode($menu, JSON_UNESCAPED_UNICODE);
 
-// Procesando el menu para darle el formato esperado
-
-// var_dump($menu);
-// var_dump($jsonMenu);
-// var_dump($groupedTabStructure);
-// die();
-
-// $jsonMenu = '[{"a":"b"}]'; //json_encode($groupedTabStructure, JSON_UNESCAPED_UNICODE);
-// $jsonMenu='abc';
 $smarty->assign('jsonMenu', $jsonMenu);
 
 $smarty->assign('tabs', $groupedTabStructure);
