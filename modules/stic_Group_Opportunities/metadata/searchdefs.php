@@ -68,7 +68,7 @@ array(
                 'type' => 'relate',
                 'studio' => 'visible',
                 'label' => 'LBL_CONTACT',
-                'id' => 'CONTACT_ID_C',
+                'id' => 'CONTACT_ID',
                 'link' => true,
                 'width' => '10%',
                 'default' => true,
@@ -195,7 +195,7 @@ array(
                 'link' => true,
                 'width' => '10%',
                 'default' => true,
-                'id' => 'CONTACT_ID_C',
+                'id' => 'CONTACT_ID',
                 'name' => 'contact',
             ),
             'start_date' => array(

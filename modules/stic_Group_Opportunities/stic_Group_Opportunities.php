@@ -45,6 +45,7 @@ class stic_Group_Opportunities extends Basic
     public $assigned_user_name;
     public $assigned_user_link;
     public $SecurityGroups;
+
     public $status;
     public $document_status;
     public $amount_requested;
@@ -59,7 +60,7 @@ class stic_Group_Opportunities extends Basic
     public $justification_date;
     public $payment_date;
     public $folder;
-    public $contact_id_c;
+    public $contact_id;
     public $contact;
 
     public function bean_implements($interface)
