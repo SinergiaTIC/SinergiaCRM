@@ -3486,7 +3486,6 @@ $app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Ahi
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversari';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuari actual';
 
-
 // Participants: Estat
 $app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Convidada';
 $app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participant';
