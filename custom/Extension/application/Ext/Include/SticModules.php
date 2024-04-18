@@ -151,7 +151,8 @@ $beanFiles['stic_Skills'] = 'modules/stic_Skills/stic_Skills.php';
 $beanFiles['stic_Custom_Views'] = 'modules/stic_Custom_Views/stic_Custom_Views.php';
 $beanFiles['stic_Custom_View_Customizations'] = 'modules/stic_Custom_View_Customizations/stic_Custom_View_Customizations.php';
 $beanFiles['stic_Custom_View_Conditions'] = 'modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php';
-$beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';$beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
+$beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
+$beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
 
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels

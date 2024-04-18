@@ -59,13 +59,6 @@ function initializeEditFields(customView) {
   setAutofill(["name"]);
 
   if (customView != null) {
-    // Readonly name
-    // customView.field("name").readonly();
-    // customView.field("name").content.bold();
-
-    // Set initial name
-    refreshViewName(customView);
-
     // Update name when any change on dependant fields
     customView.field("stic_group_opportunities_accounts_name").onChange(function() {
       refreshViewName(customView);
@@ -74,9 +67,5 @@ function initializeEditFields(customView) {
       refreshViewName(customView);
     });
 
-    if(customView.view=="quickcreate") {
-      customView.field("stic_group_opportunities_opportunities_name").readonly();
-      customView.field("stic_group_opportunities_opportunities_name").content.bold();
-    }
   }
 }
