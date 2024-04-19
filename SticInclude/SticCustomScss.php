@@ -9,7 +9,7 @@ $current_user->getSystemUser();
 // We always extract the pain of Stic_Setting, to avoid any discordance between what is shown and defined in setting
 $db = DBManagerFactory::getInstance();
 $color = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_THEME_COLOR' and deleted=0");
-$settingSidebarColor = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_SIDEBAR_COLOR' and deleted=0");
+$settingSidebarColor = $db->getOne("select value from stic_settings where name='GENERAL_CUSTOM_SUBTHEME_MODE' and deleted=0");
 
 if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Color [$color] is empty. Aborting SticCustom subtheme base color change.");
