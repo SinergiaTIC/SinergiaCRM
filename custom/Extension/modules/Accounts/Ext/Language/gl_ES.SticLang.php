@@ -142,7 +142,7 @@ $mod_strings['LBL_INC_INCORPORA_RECORD_HELP'] = "Cando este campo está activado
 // Cadenas Recursos y Reservas
 $mod_strings['LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE'] = 'Reservas';
 
-// Cadenes Participantes
+// Cadenas Organizaciones subvencionadas
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Participacións en subvencións';
 
 // Virtual Field Kreporter
