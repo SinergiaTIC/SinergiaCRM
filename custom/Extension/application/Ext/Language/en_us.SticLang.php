@@ -118,8 +118,7 @@ $app_list_strings['moduleList']['stic_Custom_Views'] = 'Custom Views';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
-
-$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -161,8 +160,7 @@ $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Custom View';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condition';
-
-$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Participant';
+$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Granted account';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -198,7 +196,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Journal';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Training';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Skills';
-$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display']['Leads'] = 'Leads';
@@ -234,7 +232,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Journal';
 $app_list_strings['record_type_display']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Skills';
-$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Leads';
@@ -270,7 +268,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Journal';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
-$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Granted accounts';
 
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3485,18 +3483,18 @@ $app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Yes
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Anniversary';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Current user';
 
-
-// Participants: Status
+// Granted accounts: Status
 $app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Guest';
 $app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participating';
 $app_list_strings['stic_group_opportunities_status_list']['rejected'] = 'Rejected';
 $app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Granted';
 $app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'Not granted';
 
-// Participants: Documentation Status
+// Granted accounts: Documentation Status
 $app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'In progress';
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Delivered';
+
 
 // SuiteCRM Core modifications
 
@@ -3541,4 +3539,3 @@ $app_list_strings['aow_date_type_list']['week'] = 'Weeks';
 $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
-
