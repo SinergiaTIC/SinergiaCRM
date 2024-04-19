@@ -117,8 +117,7 @@ $app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistes personalitzades';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions';
-
-$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -162,8 +161,7 @@ $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalit
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acció';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalització';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condició';
-
-$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Participant';
+$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organització subvencionada';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -199,7 +197,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competències';
-$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display']['Leads'] = 'Interessats';
@@ -235,7 +233,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competències';
-$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interessats';
@@ -271,7 +269,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
-$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Participants';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3486,14 +3484,14 @@ $app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Ahi
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversari';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuari actual';
 
-// Participants: Estat
+// Organitzacions subvencionades: Estat
 $app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Convidada';
 $app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participant';
 $app_list_strings['stic_group_opportunities_status_list']['rejected'] = 'Rebutjada';
 $app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Concedida';
 $app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'No concedida';
 
-// Participants: Estat de la documentació
+// Organitzacions subvencionades: Estat de la documentació
 $app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pendent';
 $app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'En curs';
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Lliurada';
