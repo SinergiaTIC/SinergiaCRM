@@ -63,17 +63,20 @@ $modList = array_keys($availableModules);
 $modList = array_combine($modList, $modList); // Bug #48693 We need full list of modules here instead of displayed modules
 $groupedTabsClass = new GroupedTabStructure();
 $groupedTabStructure = $groupedTabsClass->get_tab_structure($modList, '', true, true);
-$menu = [];
-foreach ($groupedTabStructure as $mainTab => $subModules) {
-    $m=[];
-    $m['label'] = $mainTab;
+$menu = array_map(function ($mainTab, $subModules) {
+    $children = array_map(function ($key) {
+        return ['label' => $key];
+    }, array_keys($subModules['modules']));
 
-    foreach ($subModules['modules'] as $key => $value) {
-        $m['children'][]['label'] = $key;
+    return [
+        'label' => $mainTab,
+        'children' => $children
+    ];
+}, array_keys($groupedTabStructure), $groupedTabStructure);
+$menu[]=['label'=> 'DISABLED','children'=>['uno','dos','tres','cuatro']];
+// var_dump($menu);die();
 
-    }
-$menu[]=$m;
-}
+
 $jsonMenu = json_encode($menu, JSON_UNESCAPED_UNICODE);
 
 $smarty->assign('jsonMenu', $jsonMenu);

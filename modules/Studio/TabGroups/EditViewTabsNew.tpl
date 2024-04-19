@@ -57,10 +57,8 @@
 <!-- Incluir jqTree script -->
 <script src="https://mbraak.github.io/jqTree/tree.jquery.js"></script>
 <script>
-var jsonMenu ='{$jsonMenu|escape:'javascript'}'
-var data=[JSON.parse(jsonMenu)]
-
-
+	var jsonMenu ='{$jsonMenu|escape:'javascript'}'
+	var data = [JSON.parse(jsonMenu)]
 </script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/TabGroups/multiLevelJS.js'}"></script>
 
@@ -68,18 +66,7 @@ var data=[JSON.parse(jsonMenu)]
 <h2>CONFIGURAR MENU DE SINERGIACRM</h2>
 <p>NUEVO MENU MULTINIVEL</p>
 
-
-
-
-<div id="tree1" style="height:300px;background-color:pink;">
-
-
-
+<div id="tree1" style="min-height:300px;background-color:pink;">
 
 </div>
-{$deleteImage}
-<div>
 
-	{$jsonMenu}
-
-</div> 
