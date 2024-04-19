@@ -308,7 +308,6 @@ $dictionary['Opportunity']['fields']['stic_type_c'] = array (
       'dependency' => 0,
 );
 
-
 $dictionary['Opportunity']['fields']['stic_publishable_c'] = array (
       'id' => 'Opportunitiesstic_publishable_c',
       'custom_module' => 'Opportunities',
@@ -325,7 +324,7 @@ $dictionary['Opportunity']['fields']['stic_publishable_c'] = array (
       'size' => '20',
       'required' => 0,
       'massupdate' => 1,
-      'default' => '',
+      'default' => 'no',
       'no_default' => 0,
       'importable' => 1,
       'audited' => 0,
@@ -360,6 +359,7 @@ $dictionary['Opportunity']['fields']['stic_send_date_c'] = array (
       'no_default' => 0,
       'importable' => 1,
       'audited' => 0,
+      'studio' => 'visible',
       'reportable' => 1,
 );
 
@@ -385,6 +385,7 @@ $dictionary['Opportunity']['fields']['stic_opportunity_url_c'] = array(
       'importable' => 1,
       'audited' => 0,
       'reportable' => 1,
+      'studio' => 'visible',
       'link_target' => '_blank',
 );
 
@@ -410,25 +411,115 @@ $dictionary['Opportunity']['fields']['stic_additional_information_c'] = array(
       'importable' => 1,
       'audited' => 0,
       'reportable' => 1,
+      'studio' => 'visible',
       'rows' => '2',
 );
-
-$dictionary['Opportunity']['fields']['stic_sendto_prospectlist_c']['inline_edit']='1';
-$dictionary['Opportunity']['fields']['stic_sendto_prospectlist_c']['labelValue']='Públic Objectiu per l\'enviament';
-$dictionary['Opportunity']['fields']['prospectlist_id_c']['inline_edit']=1;
-
-
-$dictionary['Opportunity']['fields']['stic_email_template_c']['default']=NULL;
-$dictionary['Opportunity']['fields']['stic_email_template_c']['display_default']=NULL;
-$dictionary['Opportunity']['fields']['stic_email_template_c']['required']=false;
-$dictionary['Opportunity']['fields']['stic_email_template_c']['inline_edit']='1';
-$dictionary['Opportunity']['fields']['stic_email_template_c']['massupdate']='1';
-$dictionary['Opportunity']['fields']['stic_email_template_c']['duplicate_merge']='0';
-$dictionary['Opportunity']['fields']['stic_email_template_c']['duplicate_merge_dom_value']='0';
-$dictionary['Opportunity']['fields']['stic_email_template_c']['merge_filter']='disabled';
-$dictionary['Opportunity']['fields']['stic_email_template_c']['labelValue']='Plantilla de correu electrònic';
-
-$dictionary['Opportunity']['fields']['emailtemplate_id_c']['inline_edit']=1;
+$dictionary['Opportunity']['fields']['stic_sendto_prospectlist_c'] = array(
+      'id' => 'Opportunitiesstic_sendto_prospectlist_c',
+      'custom_module' => 'Opportunities',
+      'name' => 'stic_sendto_prospectlist_c',
+      'vname' => 'LBL_STIC_SENDTO_PROSPECTLIST',
+      'source' => 'non-db',
+      'type' => 'relate',
+      'comments' => '',
+      'help' => '',
+      'len' => '255',
+      'size' => '20',
+      'unified_search' => 0,
+      'required' => 0,
+      'duplicate_merge' => 'enabled',
+      'duplicate_merge_dom_value' => '0',
+      'merge_filter' => 'enabled',
+      'inline_edit' => 1,
+      'massupdate' => 1,
+      'default' => '',
+      'no_default' => 0,
+      'importable' => 1,
+      'audited' => 0,
+      'reportable' => 1,
+      'studio' => 'visible',
+      'module' => 'ProspectLists',
+      'ext2' => 'ProspectLists',
+      'id_name' => 'stic_prospectlist_id_c'
+);
+$dictionary['Opportunity']['fields']['stic_prospectlist_id_c'] = array(
+      'id' => 'Opportunitiesstic_prospectlist_id_c',
+      'custom_module' => 'Opportunities',
+      'name' => 'stic_prospectlist_id_c',
+      'vname' => 'LBL_STIC_SENDTO_PROSPECTLIST_ID',
+      'source' => 'custom_fields',
+      'type' => 'id',
+      'len' => 36,
+      'comments' => '',
+      'help' => '',
+      'size' => '20',
+      'unified_search' => 0,
+      'required' => 0,
+      'duplicate_merge' => 'enabled',
+      'duplicate_merge_dom_value' => '0',
+      'merge_filter' => 'enabled',
+      'inline_edit' => 1,
+      'massupdate' => 1,
+      'default' => '',
+      'no_default' => 0,
+      'importable' => 1,
+      'audited' => 0,
+      'reportable' => 0,
+      //'studio' => 'visible',
+);
+$dictionary['Opportunity']['fields']['stic_email_template_c'] = array(
+      'id' => 'Opportunitiesstic_email_template_c',
+      'custom_module' => 'Opportunities',
+      'name' => 'stic_email_template_c',
+      'vname' => 'LBL_STIC_EMAIL_TEMPLATE',
+      'source' => 'non-db',
+      'type' => 'relate',
+      'comments' => '',
+      'help' => '',
+      'len' => '255',
+      'size' => '20',
+      'unified_search' => 0,
+      'required' => 0,
+      'duplicate_merge' => 'enabled',
+      'duplicate_merge_dom_value' => '0',
+      'merge_filter' => 'enabled',
+      'inline_edit' => 1,
+      'massupdate' => 1,
+      'default' => '',
+      'no_default' => 0,
+      'importable' => 1,
+      'audited' => 0,
+      'reportable' => 1,
+      'studio' => 'visible',
+      'module' => 'EmailTemplates',
+      'ext2' => 'EmailTemplates',
+      'id_name' => 'stic_emailtemplate_id_c'
+);
+$dictionary['Opportunity']['fields']['stic_emailtemplate_id_c'] = array(
+      'id' => 'Opportunitiesstic_emailtemplate_id_c',
+      'custom_module' => 'Opportunities',
+      'name' => 'stic_emailtemplate_id_c',
+      'vname' => 'LBL_STIC_SENDTO_PROSPECTLIST_ID',
+      'source' => 'custom_fields',
+      'type' => 'id',
+      'len' => 36,
+      'comments' => '',
+      'help' => '',
+      'size' => '20',
+      'unified_search' => 0,
+      'required' => 0,
+      'duplicate_merge' => 'enabled',
+      'duplicate_merge_dom_value' => '0',
+      'merge_filter' => 'enabled',
+      'inline_edit' => 1,
+      'massupdate' => 1,
+      'default' => '',
+      'no_default' => 0,
+      'importable' => 1,
+      'audited' => 0,
+      'reportable' => 0,
+      //'studio' => 'visible',
+);
 
 
 $dictionary["Opportunity"]["fields"]["project_opportunities_1"] = array (
