@@ -125,8 +125,7 @@ $app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accións';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizacións';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicións';
-
-$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Participantes';
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -170,7 +169,7 @@ $app_list_strings['moduleList']['stic_Sepe_Actions'] = 'Accións SEPE';
 $app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
 $app_list_strings['moduleListSingular']['stic_Bookings'] = 'Reserva';
 $app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
-$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Participante';
+$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -206,7 +205,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
-$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Participantes';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -242,7 +241,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
-$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Participantes';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -278,7 +277,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
-$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Participantes';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3493,18 +3492,18 @@ $app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Aye
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversario';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuario actual';
 
-
-// Participantes: Estado
+// Organizaciones subvencionadas: Estado
 $app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Invitada';
 $app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participante';
 $app_list_strings['stic_group_opportunities_status_list']['rejected'] = 'Rexeitada';
 $app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Concedida';
 $app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'Non concedida';
 
-// Participantes: Estado de la documentación
+// Organizaciones subvencionadas: Estado de la documentación
 $app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pendente';
 $app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'En curso';
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Entregada';
+
 
 // Modificaciones del core de SuiteCRM
 
