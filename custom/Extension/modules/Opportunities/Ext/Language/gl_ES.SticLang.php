@@ -56,9 +56,9 @@ $mod_strings['LBL_EMAIL_OPPORTUNITIES_SUBJECT'] = '[Recordatorio do CRM] Data re
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_1'] = 'Aproxímase unha data relevante para a seguinte subvención: ';
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = 'Faga clic no enlace para revisala.';
 
-// Cadenas de Participantes
-$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Participantes';
-$mod_strings['LBL_LOAD_PARTICIPANTS'] = "Carga de participantes";
+// Cadenas Organizaciones subvencionadas
+$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organizaciones subvencionadas';
+$mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Carga de participantes';
 
 // Cadeas adaptadas de Oportunidades a Subvencións
 $mod_strings['LBL_MODULE_NAME'] = 'Subvencións';
