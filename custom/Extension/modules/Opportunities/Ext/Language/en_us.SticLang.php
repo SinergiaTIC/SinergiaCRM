@@ -59,6 +59,6 @@ $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = ". Please, click on the followi
 //Strings for Grants
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Grants';
 
-// Strings for Participants
-$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Participants';
-$mod_strings['LBL_LOAD_PARTICIPANTS'] = "Load participants";
+// Strings for Group Opportunities
+$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Granted accounts';
+$mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Load participants';
