@@ -142,8 +142,8 @@ $mod_strings['LBL_INC_INCORPORA_RECORD_HELP'] = "Quan aquest camp és activat, t
 // Cadenes Recursos i Reserves
 $mod_strings['LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE'] = 'Reserves';
 
-// Cadenes Participants
-$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_GROUP_OPPORTUNITIES_TITLE'] = 'Participacions a subvencions';
+// Cadenes Organitzacions subvencionades
+$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_GROUP_OPPORTUNITIES_TITLE'] = 'Participacions en subvencions';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
