@@ -46,10 +46,6 @@ $mod_strings = array(
     'LBL_REMOVE' => 'Desvincula',
     'LBL_ASCENDING' => 'Ascendent',
     'LBL_DESCENDING' => 'Descendent',
-    'LBL_OPT_IN' => 'Alta voluntària',
-    'LBL_OPT_IN_PENDING_EMAIL_NOT_SENT' => 'Alta voluntària pendent de confirmació. Correu de confirmació no enviat.',
-    'LBL_OPT_IN_PENDING_EMAIL_SENT' => 'Alta voluntària pendent de confirmació. Correu de confirmació enviat.',
-    'LBL_OPT_IN_CONFIRMED' => 'Alta voluntària confirmada',
 
     'LBL_LIST_FORM_TITLE' => "Llista d'Organitzacions subvencionades",
     'LBL_MODULE_NAME' => 'Organitzacions subvencionades',
