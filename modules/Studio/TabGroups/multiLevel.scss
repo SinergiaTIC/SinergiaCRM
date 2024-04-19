@@ -1,0 +1,15 @@
+.jstree-anchor {
+    border: 1px solid silver;
+    background-color: #e3e3e3;
+    margin: 1px;
+}
+
+#menu-modules {
+    .jstree-anchor {
+        background-color: #b5bc31;
+        border: 1px solid darken(#b5bc31, 10%);
+    }
+}
+#menu-modules > ul.jstree-container-ul > li[role="treeitem"] {
+    font-weight: bold;
+}

@@ -52,21 +52,43 @@
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/ygDDListStudio.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studiodd.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studio.js'}"></script> *}
+{* JSTREE *}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<link rel="stylesheet" href="modules/Studio/TabGroups/multiLevel.css" />
+<!-- JQTREE-->
 <link rel="stylesheet" href="https://mbraak.github.io/jqTree/jqtree.css">
-<!-- Incluir jqTree script -->
 <script src="https://mbraak.github.io/jqTree/tree.jquery.js"></script>
 <script>
 	var jsonMenu ='{$jsonMenu|escape:'javascript'}'
-	var data = [JSON.parse(jsonMenu)]
+	var menu = [JSON.parse(jsonMenu)]
+
+	var jsonAll ='{$jsonAll|escape:'javascript'}'
+	var allModules = [JSON.parse(jsonAll)]
 </script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/TabGroups/multiLevelJS.js'}"></script>
 
 
 <h2>CONFIGURAR MENU DE SINERGIACRM</h2>
-<p>NUEVO MENU MULTINIVEL</p>
 
-<div id="tree1" style="min-height:300px;background-color:pink;">
+{* <div id="tree1" style="min-height:300px;background-color:pink;width:45%;float:left">
+</div> *}
 
+<div class="row">
+	<div class="panel panel-default col-md-7">
+		<div class="panel-heading">Menú</div>
+		<div class="panel-body">
+			<div id="menu-modules">
+			</div>
+		</div>
+	</div>
+	<div class="col-md-1"></div>
+	<div class="panel panel-default col-md-4">
+		<div class="panel-heading">Modulos ocultos</div>
+		<div class="panel-body">
+			<div id="hidden-modules">
+			</div>
+		</div>
+	</div>
 </div>
-

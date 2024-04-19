@@ -63,23 +63,36 @@ $modList = array_keys($availableModules);
 $modList = array_combine($modList, $modList); // Bug #48693 We need full list of modules here instead of displayed modules
 $groupedTabsClass = new GroupedTabStructure();
 $groupedTabStructure = $groupedTabsClass->get_tab_structure($modList, '', true, true);
-$menu = array_map(function ($mainTab, $subModules) {
-    $children = array_map(function ($key) {
-        return ['label' => $key];
-    }, array_keys($subModules['modules']));
+$menu = [];
 
-    return [
-        'label' => $mainTab,
-        'children' => $children
+foreach ($groupedTabStructure as $mainTab => $subModules) {
+    $children = [];
+    foreach (array_keys($subModules['modules']) as $key) {
+        $children[] = ['id' => $key, 'text' => $app_list_strings['moduleList'][$key]];
+    }
+
+    $menu[] = [
+        'id' => $mainTab,
+        'text' => $app_strings[$mainTab],
+        'children' => $children,
     ];
-}, array_keys($groupedTabStructure), $groupedTabStructure);
-$menu[]=['label'=> 'DISABLED','children'=>['uno','dos','tres','cuatro']];
-// var_dump($menu);die();
-
-
+}
+// die(print_r($menu));
+// $menu[]=['label'=> 'DISABLED','children'=>['uno','dos','tres','cuatro']];
 $jsonMenu = json_encode($menu, JSON_UNESCAPED_UNICODE);
-
 $smarty->assign('jsonMenu', $jsonMenu);
+
+$allModules = [];
+foreach ($availableModules as $key => $value) {
+    if (!findIdInArray($menu, $key)) {
+        $allModules[] = ['id' => $key, 'text' => $value['label']];
+    }
+
+}
+usort($allModules, function ($a, $b) {return strcmp($a['text'], $b['text']);});
+
+$jsonAll = json_encode($allModules, JSON_UNESCAPED_UNICODE);
+$smarty->assign('jsonAll', $jsonAll);
 
 $smarty->assign('tabs', $groupedTabStructure);
 #end of 30205
@@ -129,3 +142,18 @@ $smarty->assign('tabGroupSelected_lang', $tabGroupSelected_lang);
 
 $smarty->assign('available_languages', get_languages());
 $smarty->display("modules/Studio/TabGroups/EditViewTabsNew.tpl");
+
+function findIdInArray($array, $idToFind)
+{
+    foreach ($array as $element) {
+        if (is_array($element)) {
+            if (array_key_exists('id', $element) && $element['id'] === $idToFind) {
+                return true;
+            }
+            if (isset($element['children']) && findIdInArray($element['children'], $idToFind)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
