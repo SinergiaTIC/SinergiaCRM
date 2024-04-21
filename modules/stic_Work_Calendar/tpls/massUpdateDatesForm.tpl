@@ -28,6 +28,24 @@
         </tr>
 	</table>
 	
+    <br /> 
+    <h3><span style="color:red"> {$MOD.LBL_MASS_UPDATE_VALIDATION_IMPORTANT}</span>
+    {$MOD.LBL_MASS_UPDATE_VALIDATION_TEXT}</h3>
+    <ul style="list-style-type:circle; padding: 1rem 3rem">
+        <li>
+            {$MOD.LBL_MASS_UPDATE_VALIDATION_1}
+        </li>
+        <li>
+            {$MOD.LBL_MASS_UPDATE_VALIDATION_2} 
+        </li>
+        <li>
+            {$MOD.LBL_MASS_UPDATE_VALIDATION_3}
+        </li>
+    </ul>
+    <br /><br />
+    
+    <h3>{$MOD.LBL_MASS_UPDATE_TEXT}</h3>
+    <br />
     <form id="MassUpdateDates" name="MassUpdateDates" method="POST">
 		<input type="hidden" id="module" name="module" value="stic_Work_Calendar">
 		<input type="hidden" id="action" name="action" value="runMassUpdateDates">
@@ -260,6 +278,7 @@
                 </td>
             </tr>            
         </table>
+        <br /><br />
 		<div id="cal-edit-buttons" class="ft">
 			<input title="Update" class="button" type="submit" name="button" value="{$MOD.LBL_UPDATE_BUTTON}">
 			<input title="Cancel" class="button"
