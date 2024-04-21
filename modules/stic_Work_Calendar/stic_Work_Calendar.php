@@ -1,4 +1,7 @@
 <?php
+
+use function GuzzleHttp\default_user_agent;
+
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -70,19 +73,37 @@ class stic_Work_Calendar extends Basic
      */
     public function save($check_notify = true)
     {
-        global $app_list_strings, $timedate;
+        global $app_list_strings, $current_user, $timedate;
 
-        $startDate = $_REQUEST["start_date"] ?? $this->start_date;
-        $endDate = $_REQUEST["end_date"] ?? $this->end_date;
+        switch ($_REQUEST["action"]) {
+            case 'save':
+                $startDate = $_REQUEST['start_date'];
+                $endDate = $_REQUEST['end_date'];
+                break;
+            case 'saveHTMLField':
+                $startDate = $this->start_date;
+                $endDate = $this->end_date;
+                break;
+            default: // API | Importation | Mass Periodic Creation | Time Change
+                $bbddFormat = 'Y-m-d H:i:s';
+                $startDate = $timedate->fromDbFormat($this->start_date, $bbddFormat);
+                $startDate = $timedate->asUser($startDate, $current_user);
+                $endDate = $timedate->fromDbFormat($this->end_date, $bbddFormat);
+                $endDate = $timedate->asUser($endDate, $current_user);                
+                break;
+        }
 
         // Set name
         $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
         $type = $app_list_strings['stic_work_calendar_types_list'][$this->type];
-        $this->name = $assignedUser->name . " - " . $type . " - " . $startDate;
-        if (!empty($endDate)) {
-            $this->name .= " - " . substr($endDate, -5);
+        
+        if ($_REQUEST["action"] != "MassUpdate"){
+            $this->name = $assignedUser->name . " - " . $type . " - " . $startDate . " - " . substr($endDate, -5);
+        } else {
+            // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
+            $this->name = $assignedUser->name . " - " . $type . substr($this->name, -25);
         }
-
+            
         // Set weekday field
         if ($this->start_date != $this->fetched_row['start_date']) {
             $this->weekday = date('w', strtotime($this->start_date));
@@ -90,11 +111,9 @@ class stic_Work_Calendar extends Basic
 
         // Set duration field
         if (!empty($this->end_date)) {
-            $startTime = strtotime($this->start_date);
-            $endTime = strtotime($this->end_date);
-            $duration = $endTime - $startTime;            
-            // Casting the result into float, otherwise a string is returned and may give wrong values in workflows
-            $this->duration = (float) number_format($duration / 3600, 2);
+            $this->duration = self::calculateDuration($startDate, $endDate);
+        } else {
+            $this->duration = 0;
         }
 
         // Save the bean
@@ -119,5 +138,20 @@ class stic_Work_Calendar extends Basic
         $result = $db->query($query);
         $data = $db->fetchByAssoc($result);
         return $data['count'] > 0;
+    }
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public static function calculateDuration($startDate, $endDate)
+    {
+        global $timedate;
+        $startTime = strtotime($timedate->to_db($startDate));
+        $endTime = strtotime($timedate->to_db($endDate));
+        $duration = $endTime - $startTime;            
+        // Casting the result into float, otherwise a string is returned and may give wrong values in workflows
+        return (float) number_format($duration / 3600, 2);
     }
 }
