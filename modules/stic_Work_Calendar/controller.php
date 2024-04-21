@@ -20,6 +20,8 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
 class stic_Work_CalendarController extends SugarController {
 
 
@@ -100,6 +102,7 @@ class stic_Work_CalendarController extends SugarController {
      */
     public function action_runMassUpdateDates()
     {
+        global $timedate, $current_user;
         // Check if any operator has been indicated
         if (!empty($_REQUEST['start_date_operator']) || !empty($_REQUEST['end_date_operator'])) 
         {            
@@ -107,6 +110,8 @@ class stic_Work_CalendarController extends SugarController {
             $selectedIds = explode(',', $_REQUEST['selectedIDs']);
             foreach ($selectedIds as $id) 
             {            
+                $bean = BeanFactory::getBean('stic_Work_Calendar', $id);
+                $update = false;
                 if (!empty($_REQUEST['start_date_operator'])) {                
                     $startDateArray = array (
                         'field' => 'start_date',
@@ -114,7 +119,11 @@ class stic_Work_CalendarController extends SugarController {
                         'hours' => $_REQUEST['start_date_hours'],
                         'minutes' => $_REQUEST['start_date_minutes']
                     );
-                    $this->calculateNewDateInRecord($id, $startDateArray);
+                    $bean->start_date = $this->calculateNewDatesInRecord($bean, $startDateArray);
+                    $update = true;
+                } else {
+                   $startDate = $timedate->fromUser($bean->start_date, $current_user);
+                   $bean->start_date = $timedate->asDb($startDate);
                 }
                 if (!empty($_REQUEST['end_date_operator'])) {                
                     $endDateArray = array (
@@ -123,64 +132,56 @@ class stic_Work_CalendarController extends SugarController {
                         'hours' => $_REQUEST['end_date_hours'],
                         'minutes' => $_REQUEST['end_date_minutes']
                     );
-                    $this->calculateNewDateInRecord($id, $endDateArray);
-                }                
+                    $bean->end_date = $this->calculateNewDatesInRecord($bean, $endDateArray);
+                    $update = true;
+                } else {
+                    $endDate = $timedate->fromUser($bean->end_date, $current_user);
+                    $bean->end_date = $timedate->asDb($endDate);
+                }         
+                
+                if ($update) $bean->save(false);  
             }
             // Redirect to the list view
             SugarApplication::redirect('index.php?module=stic_Work_Calendar');
         }
     }
     
+
     /**
      * 
      * @return void
      */
-    protected function calculateNewDateInRecord($id, $infoDateArray)
+    protected function calculateNewDatesInRecord($bean, $infoDateArray)
     {
-        // Get time information from the work calendar record
-        global $db, $current_user;
-        $query = "SELECT start_date, end_date FROM stic_work_calendar WHERE id ='" . $id . "' AND deleted = 0;";
-        $result = $db->query($query);
-
         // Calculate new date
         $stringDate = '';
         if (!empty($infoDateArray['operator'])){
-            $originalDate = $db->fetchByAssoc($result)[$infoDateArray['field']];
-            if (!empty($originalDate)){
-                $infoDateArray['original'] = $originalDate;
+            $field = $infoDateArray['field'];
+            if (!empty($bean->$field)){
+                $infoDateArray['original'] = $bean->$field;
                 $stringDate = $this->calculateNewDate($infoDateArray);
             } else {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'The new date could not be calculated in the work calendar record with id = '  . $id);                        
             }
         }
-
-        // Update time in work calendar record
-        if ($stringDate) {
-            $query = "UPDATE stic_work_calendar SET " . 
-                        $infoDateArray['field'] . " = '" . $stringDate . "',
-                        date_modified = NOW(),
-                        modified_user_id = '" . $current_user->id . "' 
-                        WHERE id ='" . $id . "'";
-            $result = $db->query($query);
-        } else {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Error work calendar record with id = '  . $id . ' has no ' . $infoDateArray['field'] . ' value.');                                            
-        }
-    } 
-
+        return $stringDate;
+    }
     /**
      * 
-     * @return void
+     * @return String
      */
     protected function calculateNewDate($dateInfo) 
     {
         // User timezone and offset in hours
-        global $current_user;
+        global $current_user, $timedate;
         $userTz = $current_user->getUserDateTimePreferences();
         $userGMTOffsetInHours = $userTz["userGmtOffset"] / 60;      
 
         // Calculate the new date
         $format ='Y-m-d H:i:s';
-        $date = DateTime::createFromFormat($format, $dateInfo['original']);
+        $date = $timedate->fromUser($dateInfo['original'], $current_user);
+        $date = $timedate->asDb($date);
+        $date = DateTime::createFromFormat($format, $date);
         switch ($dateInfo['operator']) {
             case '=':
                 $hours = $dateInfo['hours'] - $userGMTOffsetInHours;         
