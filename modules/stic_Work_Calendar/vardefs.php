@@ -162,6 +162,7 @@ VardefManager::createVardef('stic_Work_Calendar', 'stic_Work_Calendar', array('b
 
 
 // Set special values for SuiteCRM base fields
+$dictionary['stic_Work_Calendar']['fields']['assigned_user_name']['required'] = '1'; // Name is not required in this module
 $dictionary['stic_Work_Calendar']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Work_Calendar']['fields']['name']['importable'] = true; // Name is importable but not required in this module
 $dictionary['stic_Work_Calendar']['fields']['name']['massupdate'] = '0';

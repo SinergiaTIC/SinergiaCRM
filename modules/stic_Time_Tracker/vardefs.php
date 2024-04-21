@@ -113,6 +113,7 @@ if (!class_exists('VardefManager')) {
 VardefManager::createVardef('stic_Time_Tracker', 'stic_Time_Tracker', array('basic','assignable','security_groups'));
 
 // Set special values for SuiteCRM base fields
+$dictionary['stic_Time_Tracker']['fields']['assigned_user_name']['required'] = '1'; // Name is not required in this module
 $dictionary['stic_Time_Tracker']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Time_Tracker']['fields']['name']['importable'] = true; // Name is importable but not required in this module
 $dictionary['stic_Time_Tracker']['fields']['name']['massupdate'] = '0';
