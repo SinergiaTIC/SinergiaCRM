@@ -940,9 +940,7 @@ class ExternalReporting
         } else {
             $url = "https://{$this->baseHostname}.sinergiada.org/edapi/updatemodel/update?tks=$token";
         }
-        
-        
-        
+
         $link = "<a href='$url' target='_blank'>$url</a>";
         $link2 = addslashes("Retry <a href='$url' target='_blank'>&#9842;</a>");
 
@@ -1008,7 +1006,7 @@ class ExternalReporting
         $tableLabel = empty($tableLabel) ? '-' : $tableLabel;
         // **Retrieve relationship information:**
         $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
-        
+
         // **Check if necessary information is present for standard join:**
         if (!empty($rel['join_table']) && !empty($rel['join_key_lhs']) && !empty($rel['join_key_rhs'])) {
             // Standard join using join table
@@ -1170,6 +1168,8 @@ class ExternalReporting
      */
     private function resetMetadataViews()
     {
+        global $sugar_config;
+
         $db = DBManagerFactory::getInstance();
 
         $sqlMetadata = [];
@@ -1239,6 +1239,15 @@ class ExternalReporting
                                 AND u.deleted = 0;";
 
         // 4) eda_def_security_group_records
+
+        // Set a switch to determine whether to populate the sda_def_security_group_records view based
+        // on the value of $sugar_config['stic_sinergiada']['group_permissions_enabled']
+        if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
+            $limitQueryClause = ' limit 0 ';
+        } else {
+            $limitQueryClause = '';
+        }
+
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_security_group_records` AS
                             SELECT
                                 CONCAT('{$this->viewPrefix}_', LCASE(module)) as `table`,
@@ -1248,8 +1257,7 @@ class ExternalReporting
                                 securitygroups_records sr
                                 JOIN securitygroups s on sr.securitygroup_id=s.id
                             WHERE sr.deleted=0
-                            -- limite temporal para evitar problemas de colapso al existir un número muy grande de registros
-                            limit 1;
+                            {$limitQueryClause};
                             ";
 
         // run sql queries
@@ -1636,10 +1644,9 @@ class ExternalReporting
             foreach ($allModulesACL as $key => $value) {
                 unset($aclSource);
                 // Access to the users module is allowed only for administrator users
-                if($u['is_admin']==0 && $key=='Users'){
+                if ($u['is_admin'] == 0 && $key == 'Users') {
                     continue;
                 }
-
 
                 $aclSource = $aclSourcesList[$value['module']['view']['aclaccess']];
 
@@ -1663,8 +1670,11 @@ class ExternalReporting
                     switch ($value['module']['view']['aclaccess']) {
                         case '80': // Security groups
 
-                            // In this phase, access to modules where the user has restricted access to their group's records is disabled.
-                            continue 2;
+                            // If $sugar_config['stic_sinergiada']['group_permissions_enabled'] is disabled, access is also disabled to 
+                            // modules where the user has restricted access to their group's records.
+                            if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
+                                continue 2;
+                            }
 
                             // In the case of Secutity Groups we add a unique entry for each of the groups the user belongs to,
                             // ensuring that it does not exist previously for each module.
