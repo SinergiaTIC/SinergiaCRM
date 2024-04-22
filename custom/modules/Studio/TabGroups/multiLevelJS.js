@@ -1,26 +1,6 @@
 $(document).ready(function() {
-  //   var dat = [{
-  //       label: 'Node 1',
-  //       children: [{
-  //           label: 'Child 1'
-  //       }, {
-  //           label: 'Child 2'
-  //       }]
-  //   }, {
-  //       label: 'Node 2',
-  //       children: [{
-  //           label: 'Child 3'
-  //       }]
-  //   }];
-
   $(function() {
-    console.log("tree");
-    // $("#tree1").tree({
-    //   data: data[0],
-    //   dragAndDrop: true,
-    //   saveState: true
-    // //   autoOpen: true
-    // });
+    // Create js menu
     $("#menu-modules").jstree({
       core: {
         data: menu[0],
@@ -67,5 +47,12 @@ $(document).ready(function() {
       },
       plugins: ["dnd", "wholerow", "search", "unique"]
     });
+  });
+
+  // Button command
+  $("#save-menu").on("click", function() {
+    
+    var currentMenu = JSON.stringify($("#menu-modules").jstree(true).get_json());
+    alert(currentMenu);
   });
 });

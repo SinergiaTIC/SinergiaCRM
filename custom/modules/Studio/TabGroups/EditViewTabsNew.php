@@ -141,7 +141,7 @@ if (isset($sugar_config['other_group_tab_displayed'])) {
 $smarty->assign('tabGroupSelected_lang', $tabGroupSelected_lang);
 
 $smarty->assign('available_languages', get_languages());
-$smarty->display("modules/Studio/TabGroups/EditViewTabsNew.tpl");
+$smarty->display("custom/modules/Studio/TabGroups/EditViewTabsNew.tpl");
 
 function findIdInArray($array, $idToFind)
 {

@@ -56,7 +56,7 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
-<link rel="stylesheet" href="modules/Studio/TabGroups/multiLevel.css" />
+<link rel="stylesheet" href="custom/modules/Studio/TabGroups/multiLevel.css" />
 <!-- JQTREE-->
 <link rel="stylesheet" href="https://mbraak.github.io/jqTree/jqtree.css">
 <script src="https://mbraak.github.io/jqTree/tree.jquery.js"></script>
@@ -67,7 +67,7 @@
 	var jsonAll ='{$jsonAll|escape:'javascript'}'
 	var allModules = [JSON.parse(jsonAll)]
 </script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/TabGroups/multiLevelJS.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/multiLevelJS.js'}"></script>
 
 
 <h2>CONFIGURAR MENU DE SINERGIACRM</h2>
@@ -77,10 +77,24 @@
 
 <div class="row">
 	<div class="panel panel-default col-md-7">
-		<div class="panel-heading">Menú</div>
+
+		<div id="menu-buttons" class="row">
+			<div class="col-xs-4">
+				<button id="save-menu" type="button" class="btn btn-md btn-default btn-block">Guardar</button>
+			</div>
+			<div class="col-xs-4">
+				<button id="restore-menu" type="button" class="btn btn-md btn-default btn-block">Restaurar</button>
+			</div>
+			<div class="col-xs-4">
+				<button id="save-and-apply" type="button" class="btn btn-md btn-default btn-block">Aplicar</button>
+			</div>
+
+		</div>
 		<div class="panel-body">
+			<div id="menu-status"></div>
 			<div id="menu-modules">
 			</div>
+
 		</div>
 	</div>
 	<div class="col-md-1"></div>
