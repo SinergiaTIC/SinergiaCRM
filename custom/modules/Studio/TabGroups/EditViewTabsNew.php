@@ -61,6 +61,11 @@ $availableModules = $tg->getAvailableModules($tabGroupSelected_lang);
 $smarty->assign('availableModuleList', $availableModules);
 $modList = array_keys($availableModules);
 $modList = array_combine($modList, $modList); // Bug #48693 We need full list of modules here instead of displayed modules
+
+
+POR AQUI.... PRE CARGAR EL NUEVO ARRAY DEL MENU 
+include_once 'custom/include/SticTabConfig.php';
+
 $groupedTabsClass = new GroupedTabStructure();
 $groupedTabStructure = $groupedTabsClass->get_tab_structure($modList, '', true, true);
 $menu = [];
