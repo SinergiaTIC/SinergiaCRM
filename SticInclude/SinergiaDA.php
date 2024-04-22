@@ -1621,6 +1621,8 @@ class ExternalReporting
      */
     public function getAndSaveUserACL($modules)
     {
+        global $sugar_config;
+
         $db = DBManagerFactory::getInstance();
         include_once 'modules/ACLActions/ACLAction.php';
 
