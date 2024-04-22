@@ -72,6 +72,27 @@ $mod_strings = array (
   'LBL_WEEKDAY' => 'Día de la semana',
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
+
+  // Asistente de creación de registros de Calendario laboral
+  'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registros de forma periódica',
+  'LBL_CANCEL_BUTTON' => 'Cancelar',
+  'LBL_REPEAT_DOW' => 'Día de la semana',
+  'LBL_REPEAT_END_AFTER' => 'Después de',
+  'LBL_REPEAT_END_BY' => 'El día',
+  'LBL_REPEAT_END' => 'Finalizar',
+  'LBL_REPEAT_INTERVAL' => 'Intervalo',
+  'LBL_REPEAT_OCCURRENCES' => 'registros de Calendario laboral',
+  'LBL_REPEAT_TYPE' => 'Repetir',
+  'LBL_REPEAT_UNTIL' => 'Repetir hasta',
+  'LBL_SAVE_BUTTON' => 'Guardar',
+  'LBL_TIME_START' => 'Fecha y hora de inicio del primer registro de Calendario laboral',
+  'LBL_TIME_FINAL' => 'Fecha y hora final del primer registro de Calendario laboral',
+  'LBL_TITLE' => 'Crear registros de Calendario laboral',
+  'LBL_WORK_CALENDAR_DURATION' => 'Duración del registro de Calendario laboral',
+  'LBL_WORK_CALENDAR_ENABLE_FIELDS' => 'Mostrar otros campos del registro de Calendario laboral',
+  'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO' => 'Aparte de los campos obligatorios de fecha y hora inicio y final, y de la frecuencia de repetición, es posible establecer también valores por defecto para otros campos.',
+
+  // Asistente para modificar la hora de registros de Calendario laboral
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Actualizar hora de inicio y de fin',
   'LBL_MASS_UPDATE_DATES_TITTLE' => 'Actualización masiva de la hora de inicio y de finalización',
   'LBL_MASS_UPDATE_VALIDATION_IMPORTANT' => 'IMPORTANTE:',

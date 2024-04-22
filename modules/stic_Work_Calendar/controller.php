@@ -22,9 +22,8 @@
  */
 
 require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
-class stic_Work_CalendarController extends SugarController {
-
-
+class stic_Work_CalendarController extends SugarController 
+{
     /**
      * Check:
      * - If there is already a non-work record that takes up the entire day, in that case, it is not posible to create the record
@@ -86,8 +85,29 @@ class stic_Work_CalendarController extends SugarController {
         }
         die();        
     }
-        
-        /**
+
+
+    /**
+     * 
+     * @return void
+     */
+    public function action_createPeriodicRecords()
+    {
+        $this->view = "workcalendarassistant"; //call for the view file in views dir
+    }
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public function action_createPeriodicWorkCalendarRecords() {
+        include_once 'Utils.php';
+        stic_Work_CalendarUtils::createPeriodicWorkCalendarRecords();
+    }
+    
+    
+    /**
      * 
      * @return void
      */
@@ -95,6 +115,7 @@ class stic_Work_CalendarController extends SugarController {
     {
         $this->view = "massupdatedatesform"; //call for the view file in views dir
     }
+
 
     /**
      * 
@@ -166,6 +187,8 @@ class stic_Work_CalendarController extends SugarController {
         }
         return $stringDate;
     }
+
+    
     /**
      * 
      * @return String

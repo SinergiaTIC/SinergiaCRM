@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-class stic_EmployeesUtils
+class stic_Work_CalendarUtils
 {
     /**
      * This function creates periodic work calendar records for a certain employee, based on the parameters received via $_REQUEST
@@ -269,7 +269,7 @@ class stic_EmployeesUtils
 
         // Loop for work calendar records creation
         $counter = count($date);
-        $assignedUserId = $_REQUEST['employeeId'];        
+        $assignedUserId = $_REQUEST['assigned_user_id'];        
         for ($i = 0; $i < $counter; $i++) 
         {
             $date[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
@@ -300,6 +300,6 @@ class stic_EmployeesUtils
         // Reactivamos la configuración previa de Advanced Open Discovery
         $sugar_config['aod']['enable_aod'] = $aodConfig;
 
-        header("Location: index.php?action=DetailView&module=Employees&record=$assignedUserId");
+        header("Location: index.php?module=stic_Work_Calendar&action=index");
     }
 }

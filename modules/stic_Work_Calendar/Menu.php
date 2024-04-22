@@ -31,6 +31,9 @@ if(ACLController::checkAccess('stic_Work_Calendar', 'edit', true)){
     $module_menu[]=array('index.php?module=stic_Work_Calendar&action=EditView&return_module=stic_Work_Calendar&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Work_Calendar');
 }
 if(ACLController::checkAccess('stic_Work_Calendar', 'list', true)){
+    $module_menu[]=array('index.php?module=stic_Work_Calendar&action=createPeriodicRecords', $mod_strings['LNK_CREATE_PERIODIC_RECORDS'],'list-maps', 'stic_Work_Calendar');
+}
+if(ACLController::checkAccess('stic_Work_Calendar', 'list', true)){
     $module_menu[]=array('index.php?module=stic_Work_Calendar&action=index&return_module=stic_Work_Calendar&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Work_Calendar');
 }
 if(ACLController::checkAccess('stic_Work_Calendar', 'import', true)){

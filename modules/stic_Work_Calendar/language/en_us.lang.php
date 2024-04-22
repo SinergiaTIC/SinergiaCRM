@@ -72,6 +72,27 @@ $mod_strings = array (
   'LBL_WEEKDAY' => 'Weekday',  
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
+  
+  // Work Calendar record creation wizard
+  'LNK_CREATE_PERIODIC_RECORDS' => 'Create records periodically',
+  'LBL_CANCEL_BUTTON' => 'Cancel',
+  'LBL_REPEAT_DOW' => 'Day of week',
+  'LBL_REPEAT_END_AFTER' => 'After',
+  'LBL_REPEAT_END_BY' => 'By',
+  'LBL_REPEAT_END' => 'End',
+  'LBL_REPEAT_INTERVAL' => 'Interval',
+  'LBL_REPEAT_OCCURRENCES' => 'sessions',
+  'LBL_REPEAT_TYPE' => 'Repeat',
+  'LBL_REPEAT_UNTIL' => 'Repetat until',
+  'LBL_SAVE_BUTTON' => 'Save',
+  'LBL_TIME_START' => '1st session final date and hour',
+  'LBL_TIME_FINAL' => '1st session start date and hour',
+  'LBL_TITLE' => 'Create periodic sessions',
+  'LBL_WORK_CALENDAR_DURATION' => 'Session duration',
+  'LBL_WORK_CALENDAR_ENABLE_FIELDS' => 'Show other Sessions fields',
+  'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO' => 'Apart from the mandatory first session start and end fields and repeating frequency, you can also set default values for other fields.',
+
+  // Wizard to modify the time of Work Calendar records
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Update start and end time',
   'LBL_MASS_UPDATE_DATES_TITTLE' => 'Mass update start and end time',
   'LBL_MASS_UPDATE_VALIDATION_IMPORTANT' => 'IMPORTANT:',

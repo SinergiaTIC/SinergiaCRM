@@ -72,6 +72,28 @@ $mod_strings = array (
   'LBL_WEEKDAY' => 'Día de la setmana',  
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
+
+  // Assistent de creació de registres de Calendari laboral
+  'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registres de forma periòdica',
+  'LBL_PERIODIC_WORK_CALENDAR_BUTTON' => 'Crear registros de Calendario laboral',
+  'LBL_CANCEL_BUTTON' => 'Cance·la',
+  'LBL_REPEAT_DOW' => 'Dia de la setmana',
+  'LBL_REPEAT_END_AFTER' => 'Després de',
+  'LBL_REPEAT_END_BY' => 'El dia',
+  'LBL_REPEAT_END' => 'Finalitza',
+  'LBL_REPEAT_INTERVAL' => 'Interval',
+  'LBL_REPEAT_OCCURRENCES' => 'sessions',
+  'LBL_REPEAT_TYPE' => 'Repeteix',
+  'LBL_REPEAT_UNTIL' => 'Repeteix fins',
+  'LBL_SAVE_BUTTON' => 'Desa',
+  'LBL_TIME_START' => 'Data i hora final de la 1a sessió',
+  'LBL_TIME_FINAL' => "Data i hora d'inici de la 1a sessió",
+  'LBL_TITLE' => 'Crea sessions periòdiques',
+  'LBL_WORK_CALENDAR_DURATION' => 'Durada de la sessió',
+  'LBL_WORK_CALENDAR_ENABLE_FIELDS' => 'Mostra altres camps de Sessions',
+  'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO' => "A banda dels camps obligatoris d'inici i final de la primera sessió i de la freqüència de repetició, podeu establir també valors per defecte per a d'altres camps.",
+
+  // Assistent per modificar l'hora de registres de Calendari laboral
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => "Actualitzar hora d'inici i de final",
   'LBL_MASS_UPDATE_DATES_TITTLE' => "Actualització massiva de l'hora d'inici i de finalització",
   'LBL_MASS_UPDATE_VALIDATION_IMPORTANT' => 'IMPORTANT:',
