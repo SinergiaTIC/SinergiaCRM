@@ -1206,7 +1206,7 @@ class ExternalReporting
 
         // 2) eda_def_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
-                                  SELECT name FROM securitygroups WHERE deleted=0
+                                  SELECT CONCAT('SDA_',name) as name FROM securitygroups WHERE deleted=0
                                   UNION SELECT 'EDA_ADMIN'
                                   UNION SELECT 'NO_SINERGIACRM_USERS'
                                   ;";
@@ -1215,7 +1215,7 @@ class ExternalReporting
                             -- Normal users are assigned to their own security groups.
                             SELECT
                                 user_name,
-                                s.name
+                                CONCAT('SDA_',s.name) as name
                             FROM
                                 users u
                             JOIN securitygroups_users su ON
@@ -1252,7 +1252,7 @@ class ExternalReporting
                             SELECT
                                 CONCAT('{$this->viewPrefix}_', LCASE(module)) as `table`,
                                 record_id,
-                                s.name as `group`
+                                CONCAT('SDA_',s.name) as `group`
                             FROM
                                 securitygroups_records sr
                                 JOIN securitygroups s on sr.securitygroup_id=s.id
@@ -1684,7 +1684,7 @@ class ExternalReporting
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
                                 $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
                                     'user_name' => null,
-                                    'group' => $userGroups['group'],
+                                    'group' => "SDA_{$userGroups['group']}",
                                     'table' => $currentTable,
                                     'column' => 'id',
                                     'stic_permission_source' => $aclSource,
