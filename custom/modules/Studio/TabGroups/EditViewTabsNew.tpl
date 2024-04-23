@@ -80,14 +80,14 @@
 
 		<div id="menu-buttons" class="row">
 			<div class="col-xs-4">
-				<button id="save-menu" type="button" class="btn btn-md btn-default btn-block">Guardar</button>
+				<button id="save-menu" type="button" class="btn btn-md btn-default btn-block">Guardar y aplicar
+				<span class="glyphicon glyphicon-ok text-success"></span>
+				</button>
 			</div>
 			<div class="col-xs-4">
 				<button id="restore-menu" type="button" class="btn btn-md btn-default btn-block">Restaurar</button>
 			</div>
-			<div class="col-xs-4">
-				<button id="save-and-apply" type="button" class="btn btn-md btn-default btn-block">Aplicar</button>
-			</div>
+			
 
 		</div>
 		<div class="panel-body">

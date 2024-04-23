@@ -49,14 +49,14 @@ $(document).ready(function() {
     });
   });
 
-  // Button command
-  $("#save-menu").on("click", function() {
-    var $cleanMenu = $("#menu-modules").jstree(true).get_json().map(filterNodes);
+  $("#restore-menu").on("click", function() {
+    if (confirm("¿Restaurar el menu por defecto de SinergiaCRM?") == false) {
+      return;
+    }
 
     // Define los datos que enviarás en la petición
     var dataToSend = {
-      menuJson: JSON.stringify($cleanMenu), // Reemplaza con el valor real que deseas enviar
-      saveMode: "algo" // Reemplaza con el modo de guardar adecuado
+      manageMode: "restore" // Reemplaza con el modo de guardar adecuado
     };
 
     // Realiza la petición AJAX
@@ -65,17 +65,69 @@ $(document).ready(function() {
       type: "POST",
       data: {
         module: "Studio",
-        action: "SticSaveTabs",
+        action: "SticManageTabs",
         ...dataToSend
       },
       success: function(response) {
         console.log("Respuesta recibida:", response);
+        location.href = location.href;
       },
       error: function(xhr, status, error) {
         console.error("Error en la petición:", status, error);
       }
     });
   });
+
+  // Button command
+  $("#save-menu").on("click", function() {
+    var $cleanMenu = $("#menu-modules").jstree(true).get_json().map(filterNodes);
+
+    // Define los datos que enviarás en la petición
+    var dataToSend = {
+      menuJson: JSON.stringify($cleanMenu), // Reemplaza con el valor real que deseas enviar
+      manageMode: "save" // Reemplaza con el modo de guardar adecuado
+    };
+
+    // Realiza la petición AJAX
+    $.ajax({
+      url: "http://localhost:2000/sinergiacrm/index.php",
+      type: "POST",
+      data: {
+        module: "Studio",
+        action: "SticManageTabs",
+        ...dataToSend
+      },
+      success: function(response) {
+        console.log("Respuesta recibida:", response);
+        $("#save-menu .glyphicon")
+          .addClass("text-success")
+          .removeClass("text-danger")
+          .addClass("glyphicon-ok")
+          .removeClass("glyphicon-save");
+      },
+      error: function(xhr, status, error) {
+        console.error("Error en la petición:", status, error);
+      }
+    });
+  });
+
+  // Cambiar el texto y cmabiar el id
+  $("#menu-modules").on("rename_node.jstree", function(e, data) {
+    var tree = $("#menu-modules").jstree(true);
+    var newId = data.text.replace(/\s+/g, "_");
+
+    // Cambiar el ID directamente
+    tree.set_id(data.node, newId);
+
+    // Imprimir el ID actual del nodo para verificar
+    console.log("Nuevo ID establecido:", newId);
+    console.log("ID actual del nodo:", data.node.id); // Verificar el ID después de intentar cambiarlo
+  });
+
+  $("#menu-modules").on("rename_node.jstree", handleTreeChanges);
+  $("#menu-modules").on("move_node.jstree", handleTreeChanges);
+  $("#menu-modules").on("delete_node.jstree", handleTreeChanges);
+  $("#menu-modules").on("create_node.jstree", handleTreeChanges);
 });
 
 function filterNodes(node) {
@@ -100,4 +152,14 @@ function filterNodes(node) {
     }
   }
   return node;
+}
+
+function handleTreeChanges(e, data) {
+  console.log("Se ha modificado el árbol:", data);
+  // Aquí puedes añadir cualquier lógica adicional que necesites ejecutar
+  $("#save-menu .glyphicon")
+    .addClass("glyphicon-save")
+    .removeClass("glyphicon-ok")
+    .addClass("text-danger")
+    .removeClass("text-success");
 }

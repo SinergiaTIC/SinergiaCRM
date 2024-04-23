@@ -129,3 +129,6 @@ codeception.yml
 
 # Ignore application concatenated files
 /custom/application/Ext/*
+
+# Ignore custom Stic tab config
+custom/include/SticTabConfig.php

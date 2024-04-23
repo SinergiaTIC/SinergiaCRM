@@ -62,28 +62,31 @@ $smarty->assign('availableModuleList', $availableModules);
 $modList = array_keys($availableModules);
 $modList = array_combine($modList, $modList); // Bug #48693 We need full list of modules here instead of displayed modules
 
-
-POR AQUI.... PRE CARGAR EL NUEVO ARRAY DEL MENU 
 include_once 'custom/include/SticTabConfig.php';
 
-$groupedTabsClass = new GroupedTabStructure();
-$groupedTabStructure = $groupedTabsClass->get_tab_structure($modList, '', true, true);
-$menu = [];
+if (isset($GLOBALS["SticTabStructure"])) {
+    $menu = $GLOBALS["SticTabStructure"];
+    addTextProperty($menu);
 
-foreach ($groupedTabStructure as $mainTab => $subModules) {
-    $children = [];
-    foreach (array_keys($subModules['modules']) as $key) {
-        $children[] = ['id' => $key, 'text' => $app_list_strings['moduleList'][$key]];
+} else {
+
+    $groupedTabsClass = new GroupedTabStructure();
+    $groupedTabStructure = $groupedTabsClass->get_tab_structure($modList, '', true, true);
+    $menu = [];
+    foreach ($groupedTabStructure as $mainTab => $subModules) {
+        $children = [];
+        foreach (array_keys($subModules['modules']) as $key) {
+            $children[] = ['id' => $key, 'text' => $app_list_strings['moduleList'][$key]];
+        }
+
+        $menu[] = [
+            'id' => $mainTab,
+            'text' => $app_strings[$mainTab],
+            'children' => $children,
+        ];
     }
-
-    $menu[] = [
-        'id' => $mainTab,
-        'text' => $app_strings[$mainTab],
-        'children' => $children,
-    ];
 }
-// die(print_r($menu));
-// $menu[]=['label'=> 'DISABLED','children'=>['uno','dos','tres','cuatro']];
+
 $jsonMenu = json_encode($menu, JSON_UNESCAPED_UNICODE);
 $smarty->assign('jsonMenu', $jsonMenu);
 
@@ -161,4 +164,23 @@ function findIdInArray($array, $idToFind)
         }
     }
     return false;
+}
+
+function addTextProperty(&$array)
+{
+    global $app_list_strings, $mod_strings, $app_strings;
+    foreach ($array as $key => &$value) {
+        if (is_array($value)) {
+            if (isset($value['id'])) {
+                $value['text'] = ($app_list_strings['moduleList'][$value['id']] ?? '');
+                if (empty($value['text'])) {
+                    $value['text'] = $app_strings[$value['id']];
+                }
+                if (empty($value['text'])) {
+                    $value['text'] = str_replace('_', ' ', $value['id']);
+                }
+            }
+            addTextProperty($value); // Recursivamente procesar sub-arrays
+        }
+    }
 }
