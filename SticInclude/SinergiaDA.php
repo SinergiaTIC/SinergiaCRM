@@ -1684,7 +1684,7 @@ class ExternalReporting
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
                                 $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
                                     'user_name' => null,
-                                    'group' => "SDA_{$userGroups['group']}",
+                                    'group' => $userGroups['group'],
                                     'table' => $currentTable,
                                     'column' => 'id',
                                     'stic_permission_source' => $aclSource,
