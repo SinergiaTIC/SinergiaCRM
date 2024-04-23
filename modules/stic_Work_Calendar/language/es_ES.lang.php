@@ -89,8 +89,6 @@ $mod_strings = array (
   'LBL_TIME_FINAL' => 'Fecha y hora final del primer registro de Calendario laboral',
   'LBL_TITLE' => 'Crear registros de Calendario laboral',
   'LBL_WORK_CALENDAR_DURATION' => 'Duración del registro de Calendario laboral',
-  'LBL_WORK_CALENDAR_ENABLE_FIELDS' => 'Mostrar otros campos del registro de Calendario laboral',
-  'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO' => 'Aparte de los campos obligatorios de fecha y hora inicio y final, y de la frecuencia de repetición, es posible establecer también valores por defecto para otros campos.',
 
   // Asistente para modificar la hora de registros de Calendario laboral
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Actualizar hora de inicio y de fin',

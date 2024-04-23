@@ -51,7 +51,7 @@ $mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] = 'Alta voluntaria pendiente de co
 $mod_strings['LBL_OPT_IN_CONFIRMED'] = 'Alta voluntaria confirmada';
 
 // Asistente de creación de registros de Calendario laboral
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Crear registros de Calendario laboral';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Creación periódica de registros de Calendario laboral';
 $mod_strings['LBL_CANCEL_BUTTON'] = 'Cancelar';
 $mod_strings['LBL_REPEAT_DOW'] = 'Día de la semana';
 $mod_strings['LBL_REPEAT_END_AFTER'] = 'Después de';
@@ -66,5 +66,14 @@ $mod_strings['LBL_TIME_START'] = 'Fecha y hora de inicio del primer registro de 
 $mod_strings['LBL_TIME_FINAL'] = 'Fecha y hora final del primer registro de Calendario laboral';
 $mod_strings['LBL_TITLE'] = 'Crear registros de Calendario laboral';
 $mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Duración del registro de Calendario laboral';
-$mod_strings['LBL_WORK_CALENDAR_ENABLE_FIELDS'] = 'Mostrar otros campos del registro de Calendario laboral';
-$mod_strings['LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO'] = 'Aparte de los campos obligatorios de fecha y hora inicio y final, y de la frecuencia de repetición, es posible establecer también valores por defecto para otros campos.';
+$mod_strings['LBL_ERROR_IN_VALIDATION'] = 'Error en el valor indicado en el campo fecha y hora de finalización.';
+$mod_strings['LBL_END_DATE_ERROR'] = 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.';
+$mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.';
+$mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = 'Existen otros registros con tipo incompatible al actual para el mismo usuario asignado y dentro del rango horario definido. Compruebe estos registros y modifique el rango horario de este registro o de aquel que genera el conflicto.';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE'] = 'RESUMEN:';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED'] = 'Número de registros creados';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED'] = 'Número de registros no creados';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE'] = 'Listado de registros no creados';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT'] = 'Los siguientes registros no se han creado debido a que coincidían en rango horario con algún otro registro ya existente de tipo incompatible.';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES'] = 'Ir a Empleados';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR'] = 'Ir a Calendario laboral';

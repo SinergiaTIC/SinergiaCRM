@@ -55,8 +55,6 @@ class stic_EmployeesUtils
         $finalMinute = $_REQUEST['repeat_final_minute'];
 
         // Get absolute values of 'minutes' and set values
-        // for $finalDay and $finalHour if necessary
-
         // Set minute interval as defined in $sugar_config
         $m = 0;
         $minutesInterval = 1;
@@ -65,12 +63,8 @@ class stic_EmployeesUtils
             $m = $m + $minutesInterval;
             $repeatMinuts1[] = str_pad($m, 2, '0', STR_PAD_LEFT);
         } while ($m < (60 - $minutesInterval));
-
         $startMinute = $repeatMinuts1[$startMinute];
         $finalMinute = $repeatMinuts1[$finalMinute];
-        if ($finalDay == '') {$finalDay = $startDay;}
-        if ($finalHour == '00') {$finalHour = $startHour + 1;}
-        if ($finalHour < $startHour and $finalDay == $startDay) {$finalHour = $startHour + 1;}
 
         // Take the dates collected in the smarty template and set their values
         // in order to calculate the duration of the work calendar record
@@ -269,30 +263,49 @@ class stic_EmployeesUtils
 
         // Loop for work calendar records creation
         $counter = count($date);
-        $assignedUserId = $_REQUEST['employeeId'];        
+        if (!empty($_REQUEST["employeeId"])){
+            $employeeIDs = array (0 => $_REQUEST["employeeId"]);
+        } else {
+            $employeeIDs = explode(",", $_REQUEST["employeeIds"]);
+        }
+        $aux = array();
         for ($i = 0; $i < $counter; $i++) 
         {
-            $date[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
-
-            if ($finalDay != '') {
-                $finalDay = strtotime($date[$i]) + $duration;
-                $finalDay = date('Y-m-d H:i:s', $finalDay);
-            }
-            $workCalendarBean = BeanFactory::newBean('stic_Work_Calendar');
-            if (isset($_REQUEST['work_calendar_name']) && $_REQUEST['work_calendar_name'] != '') {
-                $workCalendarBean->name = $_REQUEST['work_calendar_name'];
-            }
-            $workCalendarBean->start_date = $date[$i];
-            $workCalendarBean->end_date = $finalDay;
-            if (isset($_REQUEST['type']) && $_REQUEST['type'] != '') {
-                $workCalendarBean->type = $_REQUEST['type'];
-            }
-            $workCalendarBean->assigned_user_id = $assignedUserId;
-            if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
-                $workCalendarBean->description = $_REQUEST['description'];
-            }
-            $workCalendarBean->save(false);
+            $aux[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
         }
+        
+        $summary = array();
+        foreach ($employeeIDs as $assignedUserId) 
+        {
+            for ($i = 0; $i < $counter; $i++) 
+            {
+                if ($finalDay != '') {
+                    $finalDay = strtotime($aux[$i]) + $duration;
+                    $finalDay = date('Y-m-d H:i:s', $finalDay);
+                }
+                $workCalendarBean = BeanFactory::newBean('stic_Work_Calendar');
+                $workCalendarBean->start_date = $aux[$i];
+                $workCalendarBean->end_date = $finalDay;
+                if (isset($_REQUEST['type']) && $_REQUEST['type'] != '') {
+                    $workCalendarBean->type = $_REQUEST['type'];
+                }
+                $workCalendarBean->assigned_user_id = $assignedUserId;
+                if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
+                    $workCalendarBean->description = $_REQUEST['description'];
+                }
+                
+                require_once 'modules/stic_Work_Calendar/Utils.php';
+                $save = stic_Work_CalendarUtils::existsRecordsWithIncompatibleType('', $aux[$i], $_REQUEST['type'], $assignedUserId);
+                if ($save) {
+                    $workCalendarBean->save(false);
+                    $summary['numRecordsCreated']++;
+                } else {
+                    $user = BeanFactory::getBean('Users', $assignedUserId);
+                    $summary['recordsNotCreated'][] =  array ('username' => $user->name, 'type' => $_REQUEST['type'], 'startDate' => $aux[$i], 'endDate' => $finalDay);
+                }
+            }
+        }
+        $_SESSION['summary'] = $summary;
         $endTime = microtime(true);
         $totalTime = $endTime - $startTime;
         $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ") >> Has been created $i work calendar records in $totalTime seconds");
@@ -300,6 +313,10 @@ class stic_EmployeesUtils
         // Reactivamos la configuración previa de Advanced Open Discovery
         $sugar_config['aod']['enable_aod'] = $aodConfig;
 
-        header("Location: index.php?action=DetailView&module=Employees&record=$assignedUserId");
+        // if (!empty($_REQUEST["employeeId"])) {
+        //     header("Location: index.php?module=Employees&action=DetailView&record=$assignedUserId"); // From detail view
+        // } else {
+            header("Location: index.php?module=Employees&action=workCalendarAssistantSummary"); // From list view
+        // }
     }
 }

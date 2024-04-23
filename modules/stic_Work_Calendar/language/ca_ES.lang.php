@@ -89,9 +89,7 @@ $mod_strings = array (
   'LBL_TIME_START' => 'Data i hora final de la 1a sessió',
   'LBL_TIME_FINAL' => "Data i hora d'inici de la 1a sessió",
   'LBL_TITLE' => 'Crea sessions periòdiques',
-  'LBL_WORK_CALENDAR_DURATION' => 'Durada de la sessió',
-  'LBL_WORK_CALENDAR_ENABLE_FIELDS' => 'Mostra altres camps de Sessions',
-  'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO' => "A banda dels camps obligatoris d'inici i final de la primera sessió i de la freqüència de repetició, podeu establir també valors per defecte per a d'altres camps.",
+  'LBL_WORK_CALENDAR_DURATION' => 'Durada del registre de Calendari laboral',
 
   // Assistent per modificar l'hora de registres de Calendari laboral
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => "Actualitzar hora d'inici i de final",

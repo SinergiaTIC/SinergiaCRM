@@ -51,7 +51,7 @@ $mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] = 'Pending Confirm opt in, Confirm
 $mod_strings['LBL_OPT_IN_CONFIRMED'] = 'Opted in';
 
 // Work Calendar record creation wizard
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Crear registros de Calendario laboral';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Periodic creation of Work Calendar records';
 $mod_strings['LBL_CANCEL_BUTTON'] = 'Cancel';
 $mod_strings['LBL_REPEAT_DOW'] = 'Day of week';
 $mod_strings['LBL_REPEAT_END_AFTER'] = 'After';
@@ -65,6 +65,15 @@ $mod_strings['LBL_SAVE_BUTTON'] = 'Save';
 $mod_strings['LBL_TIME_START'] = '1st session final date and hour';
 $mod_strings['LBL_TIME_FINAL'] = '1st session start date and hour';
 $mod_strings['LBL_TITLE'] = 'Create periodic sessions';
-$mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Session duration';
-$mod_strings['LBL_WORK_CALENDAR_ENABLE_FIELDS'] = 'Show other Sessions fields';
-$mod_strings['LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO'] = 'Apart from the mandatory first session start and end fields and repeating frequency, you can also set default values for other fields.';
+$mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Work Calendar record duration';
+$mod_strings['LBL_ERROR_IN_VALIDATION'] = 'Error in the value indicated in the end date and time field.';
+$mod_strings['LBL_END_DATE_ERROR'] = 'The end date and time must be later than the start date and time.';
+$mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'The difference between the end and start date and time must be less than 24 hours.';
+$mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = 'There are other records with a type incompatible with the current one for the same assigned user and within the defined time range. Check these records and modify the time range of this record or the one that generates the conflict.';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE'] = 'SUNMMARY:';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED'] = 'Number of records created';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED'] = 'Number of records not created';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE'] = 'List of records not created';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT'] = 'Records have not been created due to overlapping with some other existing record of incompatible type';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES'] = 'Go to Employees';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR'] = 'Go to Work Calendar';

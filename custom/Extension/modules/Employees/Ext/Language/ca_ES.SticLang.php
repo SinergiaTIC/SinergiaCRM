@@ -51,7 +51,7 @@ $mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] =  'Alta voluntària pendent de co
 $mod_strings['LBL_OPT_IN_CONFIRMED'] =  'Alta voluntària confirmada';
 
 // Assistent de creació de registres de Calendari laboral
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Crear registros de Calendario laboral';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Creació periòdica de registres de Calendari laboral';
 $mod_strings['LBL_CANCEL_BUTTON'] = 'Cance·la';
 $mod_strings['LBL_REPEAT_DOW'] = 'Dia de la setmana';
 $mod_strings['LBL_REPEAT_END_AFTER'] = 'Després de';
@@ -65,6 +65,15 @@ $mod_strings['LBL_SAVE_BUTTON'] = 'Desa';
 $mod_strings['LBL_TIME_START'] = 'Data i hora final de la 1a sessió';
 $mod_strings['LBL_TIME_FINAL'] = "Data i hora d'inici de la 1a sessió";
 $mod_strings['LBL_TITLE'] = 'Crea sessions periòdiques';
-$mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Durada de la sessió';
-$mod_strings['LBL_WORK_CALENDAR_ENABLE_FIELDS'] = 'Mostra altres camps de Sessions';
-$mod_strings['LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO'] = "A banda dels camps obligatoris d'inici i final de la primera sessió i de la freqüència de repetició, podeu establir també valors per defecte per a d'altres camps.";
+$mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Duració del registre de Calendari laboral';
+$mod_strings['LBL_ERROR_IN_VALIDATION'] = 'Error en el valor indicat al camp data i hora de finalització.';
+$mod_strings['LBL_END_DATE_ERROR'] = 'La data i hora de finalització ha de ser posterior a la data i hora d\'inici.';
+$mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'La diferència entre la data i l\'hora de finalització i la d\'inici ha de ser menor a 24 hores.';
+$mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = "Existeixen altres registres amb tipus incompatible a l'actual per al mateix usuari assignat i dins del rang horari definit. Comproveu aquests registres i modifiqueu el rang horari d'aquest registre o d'aquell que genera el conflicte.";
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE'] = 'RESUM:';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED'] = 'Nombre de registres creats';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED'] = 'Nombre de registres no creats';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE'] = 'Llistat de registres no creats';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT'] = 'Els registres no s\'han creat pel fet que se solapava amb algun altre registre ja existent de tipus incompatible';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES'] = 'Anar a Empleats';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR'] = 'Anar a Calendari laboral';

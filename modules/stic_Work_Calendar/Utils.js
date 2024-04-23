@@ -71,7 +71,7 @@ switch (viewType()) {
 }
 
 /**
- * Used as a callback for the Incorpora Synchronization button
+ * Used as a callback for mass update dates button
  */
 function onClickMassUpdateDatesButton() {
   sugarListView.get_checks();

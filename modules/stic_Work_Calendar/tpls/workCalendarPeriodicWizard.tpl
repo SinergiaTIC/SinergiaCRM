@@ -40,7 +40,7 @@
 
 <table width="100%">
 	<tr>
-		{*TÍTOL*} <th style="text-align:left">
+		<th style="text-align:left">
 			<h2>{$MOD.LBL_TITLE}</h2>
 		</th>
 	</tr>

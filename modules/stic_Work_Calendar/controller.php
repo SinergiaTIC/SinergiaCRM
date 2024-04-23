@@ -40,48 +40,15 @@ class stic_Work_CalendarController extends SugarController
             $startDate = $data["startDate"];
             $type = $data['type'];
             $assignedUserId = $data['assignedUserId'];
-            $allDayTypes = ["working", "punctual_absence"];
 
-            global $db, $timedate;
+            global $timedate;
             $assignedUser = BeanFactory::getBean('Users', $assignedUserId);
             $startDate = $timedate->fromUser($startDate, $assignedUser);
             $startDate = $timedate->asDb($startDate);
             $startDate = substr($startDate, 0, 10);
 
-            // Check if there is already a non-work record that takes up the entire day, in that case, it is not posible to create the record
-            $query = "SELECT * FROM stic_work_calendar
-                    WHERE deleted = 0 
-                        AND id != '". $id . "' 
-                        AND start_date LIKE '%".$startDate."%' 
-                        AND assigned_user_id = '" . $assignedUserId . "' 
-                        AND type NOT IN ('" .  implode("', '", $allDayTypes) . "');";
-
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
-            $result = $db->query($query);
-
-            if (!is_null($result) && $result->num_rows > 0) {
-                echo "0";
-            } else {
-                if (!in_array($type, $allDayTypes)) {
-                    // Checks if exist a record that does not occupy the entire day, in that case, since the record to be created is an all-day record, it is not possible to create the record.
-                    $query = "SELECT * FROM stic_work_calendar
-                    WHERE deleted = 0 
-                        AND id != '". $id . "' 
-                        AND start_date LIKE '%".$startDate."%' 
-                        AND assigned_user_id = '" . $assignedUserId . "' 
-                        AND type IN ('" .  implode("', '", $allDayTypes) . "');";
-                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
-                    $result = $db->query($query);
-
-                    if (!is_null($result) && $result->num_rows > 0) {
-                        echo "0";
-                    } else {
-                        echo "1";
-                    }
-                } else {
-                    echo "1";
-                }
-            }
+            require_once 'modules/stic_Work_Calendar/Utils.php';
+            echo(stic_Work_CalendarUtils::existsRecordsWithIncompatibleType($id, $startDate, $type, $assignedUserId));
         }
         die();        
     }

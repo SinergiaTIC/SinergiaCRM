@@ -88,9 +88,7 @@ $mod_strings = array (
   'LBL_TIME_START' => '1st session final date and hour',
   'LBL_TIME_FINAL' => '1st session start date and hour',
   'LBL_TITLE' => 'Create periodic sessions',
-  'LBL_WORK_CALENDAR_DURATION' => 'Session duration',
-  'LBL_WORK_CALENDAR_ENABLE_FIELDS' => 'Show other Sessions fields',
-  'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO' => 'Apart from the mandatory first session start and end fields and repeating frequency, you can also set default values for other fields.',
+  'LBL_WORK_CALENDAR_DURATION' => 'Work Calendar Record Duration',
 
   // Wizard to modify the time of Work Calendar records
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Update start and end time',

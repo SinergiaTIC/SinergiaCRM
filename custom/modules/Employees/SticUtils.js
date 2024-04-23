@@ -44,8 +44,30 @@ switch (viewType()) {
         break;
 
     case "list":
+        button = {
+            id: "bt_work_calendar_periodic_creation_listview",
+            title: SUGAR.language.get("Employees", "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
+            text: SUGAR.language.get("Employees", "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
+            onclick: "onClickWorkCalendarPeriodicCreationButton()",
+        };
+        createListViewButton(button);
         break;
 
     default:
         break;
 }    
+
+
+/**
+ * Used as a callback for the periodic creation of Work Calendar Records
+ */
+function onClickWorkCalendarPeriodicCreationButton() {
+    sugarListView.get_checks();
+    if(sugarListView.get_checks_count() < 1) {
+        alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
+        return false;
+    }
+    document.MassUpdate.action.value='showWorkCalendarAssistant';
+    document.MassUpdate.module.value='Employees';
+    document.MassUpdate.submit();
+  }

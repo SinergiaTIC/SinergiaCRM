@@ -1,4 +1,3 @@
-  
 <?php
 /**
  * This file is part of SinergiaCRM.
@@ -22,37 +21,27 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'modules/Employees/controller.php';
+require_once 'SticInclude/Views.php';
 
-class CustomEmployeesController extends EmployeesController
+class EmployeesViewWorkCalendarAssistantSummary extends SugarView
 {
-    /**
-     * Show template view of periodic work calendar records generation assistant
-     *
-     * @return void
-     */
-    public function action_showWorkCalendarAssistant() {
-        $this->view = "workcalendarassistant";
+    public function preDisplay() 
+    {
+        parent::preDisplay();
+        SticViews::preDisplay($this);
     }
 
-    /**
-     * 
-     *
-     * @return void
-     */
-    public function action_createPeriodicWorkCalendarRecords() {
-        include_once 'custom/modules/Employees/SticUtils.php';
-        stic_EmployeesUtils::createPeriodicWorkCalendarRecords();
+    public function display()
+    {
+        parent::display();
+        SticViews::display($this);
+        
+        global $sugar_config;
+        $this->ss->assign('TOTAL_RECORDS_CREATED', $_SESSION['summary']['numRecordsCreated'] ?? 0);
+        $this->ss->assign('RECORDS_NOT_CREATED', json_encode($_SESSION['summary']['recordsNotCreated']));
+        $this->ss->assign('TOTAL_RECORDS_NOT_CREATED', count($_SESSION['summary']['recordsNotCreated']) ?? 0);
+        $this->ss->assign('RECORDS_PER_PAGE', $sugar_config['list_max_entries_per_page']);
+        $this->ss->display('custom/modules/Employees/tpls/workCalendarAssistantSummary.tpl'); //call tpl file
+        unset($_SESSION['summary']);
     }
-
-
-    /**
-     * 
-     *
-     * @return void
-     */
-    public function action_workCalendarAssistantSummary() {
-        $this->view = "workcalendarassistantsummary";
-    }
-
 }

@@ -32,13 +32,15 @@
 	</style>
 {/literal}
 
+
+
 <script type="text/javascript">
 	var minutesInterval={$minutes_interval};
 </script>
 
 <table width="100%">
 	<tr>
-		{*TÍTOL*} <th style="text-align:left">
+		<th style="text-align:left">
 			<h2>{$MOD.LBL_TITLE}</h2>
 		</th>
 	</tr>
@@ -57,8 +59,8 @@
 	<form name="CalendarRepeatForm" id="CalendarRepeatForm" method="POST">
 		<input type="hidden" id="module" name="module" value="Employees">
 		<input type="hidden" id="employeeId" name="employeeId" value="{$REQUEST.employeeId}">
-		<input type="hidden" id="employeeName" name="employeeName" value="{$REQUEST.employeeName}">		
 		<input type="hidden" id="action" name="action" value="createPeriodicWorkCalendarRecords">
+		<input type="hidden" id="employeeIds" name="employeeIds" value="{$REQUEST.uid}">
 		<input type="hidden" name="repeat_parent_id">
 
 		<table class="edit view" width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -102,7 +104,7 @@
 							id="repeat_final_day_input" name="repeat_final_day" value="" required>
 						<img border="0" src="index.php?entryPoint=getImage&imageName=jscalendar.gif"
 							alt="{$APP.LBL_TIME_FINAL}" id="repeat_final_day_trigger" align="absmiddle">
-						<select name="repeat_final_hour">{html_options options=$repeat_hours selected="0"}</select>
+						<select name="repeat_final_hour">{html_options options=$repeat_hours selected="18"}</select>
 						<span id="repeat-hours-text"></span> :
 						<select name="repeat_final_minute">{html_options options=$repeat_minutes selected="0"}</select>
 						<span id="repeat-minutes-text"></span>
@@ -125,6 +127,14 @@
 				</td>
 			</tr>
 			<tr id="type_row">
+				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_ASSIGNED_TO}:</td></td>
+				<td>
+					{foreach from=$selectedEmployees key=k item=name}
+						{$name} <br />
+					{/foreach}			
+				</td>
+			</tr>
+			<tr id="type_row">
 				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_TYPE}:<span
 						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td></td>
 				<td width="37.5%" valign="top">
@@ -132,11 +142,20 @@
 						{html_options options=$TYPE}
 				</td>
 			</tr>
+			<tr id="description_row">
+				<td width="12.5%" valign="top" scope="row">
+					{$MOD_WORK_CALENDAR.LBL_DESCRIPTION}:
+				</td>
+				<td width="37.5%" valign="top">
+					<textarea style="width: 290px; resize: 'both';" rows="4" cols="50" name='description' id='description' value='' title=''></textarea>
+				</td>
+			</tr>					
 			<tr>
-				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
+				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:<span
+						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 				<td width="37.5%" valign="top">
 					<select name="repeat_type"
-						onchange="toggle_repeat_type();">{html_options options=$APPLIST.repeat_type_dom}</select>
+						onchange="toggle_repeat_type();" required>{html_options options=$APPLIST.repeat_type_dom}</select>
 				</td>
 			</tr>
 
@@ -195,30 +214,9 @@
 				</td>
 			</tr>
 		</table>
-		<table class="edit view" border="0" cellpadding="0" cellspacing="0" width="50%">
-			<tr id="enable_fields_row">
-				<td width="12.5%" valign="top" scope="row">
-					{$MOD.LBL_WORK_CALENDAR_ENABLE_FIELDS}
-					<span id="stic_work_calendar_enable_fields_info" style='position: relative;'
-						class="inline-help glyphicon glyphicon-info-sign"></span>
-					:
-				</td>
-				<td width="37.5%" valign="top">
-					<input type="checkbox" id="enable_fields">
-				</td>
-			</tr>
-			<tr id="description_row">
-				<td width="12.5%" valign="top" scope="row">
-					{$MOD_WORK_CALENDAR.LBL_DESCRIPTION}:
-				</td>
-				<td width="37.5%" valign="top">
-					<textarea style="width: 290px; resize: 'both';" rows="4" cols="50" name='description' id='description' value='' title=''></textarea>
-				</td>
-			</tr>		
-		</table>
 		<div id="cal-edit-buttons" class="ft">
 			<input class="button" type="submit" name="button" value="{$MOD.LBL_SAVE_BUTTON}">
-			<input class="button" onclick="SUGAR.ajaxUI.loadContent('index.php?action=DetailView&module=Employees&record={$REQUEST.employeeId}'); return false;"
+			<input class="button" onclick="SUGAR.ajaxUI.loadContent('index.php?module=stic_Work_Calendar&action=index'); return false;"
 				type="submit" name="button" value="{$MOD.LBL_CANCEL_BUTTON}">
 		</div>
 	</form>
@@ -226,30 +224,6 @@
 
 <script type="text/javascript">
 	{literal}
-
-		addQtipFunctionality('#stic_work_calendar_enable_fields_info', 'Employees', 'LBL_WORK_CALENDAR_ENABLE_FIELDS_INFO');
-
-
-		$(document).ready(function() {
-			$("#name_row").hide();
-			$("#assigned_user_row").hide();
-			$("#description_row").hide();
-			$("#enable_fields").on("change", function() {
-				if ($(this).is(":checked")) {
-					$("#name_row").show();
-					$("#assigned_user_row").show();
-					$("#description_row").show();
-				} else {
-					$("#name_row").hide();
-					$("#assigned_user_row").hide();
-					$("#description_row").hide();
-
-					$('#work_calendar_name').val('');
-					$('#description').val('');
-					clearRow(this.form, "assigned_user")
-				}
-			});
-		});
 		// Filters array
 		relatedFields = {
 			'stic_Work_Calendar_assigned_user': {
@@ -380,8 +354,8 @@
 
 
 		// added feedback to date and hours select
-		function setHoursInfo() {
-
+		function setHoursInfo() 
+		{
 			var start = $('#repeat_start_day_input').val() + '/' + $('[name=repeat_start_hour]').val() + '/' + $(
 				'[name=repeat_start_minute]').val()
 			start = start.split('/')
@@ -391,8 +365,13 @@
 			final = final.split('/')
 			var final = new Date(final[2], final[1], final[0], final[3], final[4] * minutesInterval);
 			var difference = final.getTime() - start.getTime();
+			console.log(difference);
 			if (difference <= 0) {
-				$('#info_hours').html("<span style='color:red;display:inline-block;'>Error! </span>")
+				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('Employees', 'LBL_END_DATE_ERROR') + "</span>")
+				return;
+			}
+			if ((difference / 3600000) >= 24) {
+				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('Employees', 'LBL_END_DATE_EXCCEDS_24_HOURS') + "</span>")
 				return;
 			}
 			var minutes = Math.round(difference / 60000);
@@ -400,10 +379,17 @@
 			var minutes = (parseInt(minutes) % 60)
 			hours = parseInt(hours) < 10 ? '0' + hours : hours
 			minutes = parseInt(minutes) < 10 ? '0' + minutes : minutes
-			$('#info_hours').text(SUGAR.language.get('Employees', 'LBL_WORK_CALENDAR_DURATION') + ': ' + hours + 'h ' + minutes +
-				'\'')
+			$('#info_hours').text(SUGAR.language.get('Employees', 'LBL_WORK_CALENDAR_DURATION') + ': ' + hours + 'h ' + minutes + '\'')
 
 		}
+
+		document.getElementById("CalendarRepeatForm").addEventListener("submit", function(event) {
+			if ($('#info_hours').text().includes('ERROR')) {
+				event.preventDefault();
+				debugger;
+				alert(SUGAR.language.get('Employees', 'LBL_ERROR_IN_VALIDATION'));
+			}
+		});
 
 		$('[name=repeat_start_hour]').off('change')
 		$('[name=repeat_start_hour],[name=repeat_final_hour],[name=repeat_start_minute],[name=repeat_final_minute]').on(
@@ -428,7 +414,6 @@
 
 		$('#repeat_start_day_input').val(new Date().toLocaleDateString());
 		$('#repeat_final_day_input').val(new Date().toLocaleDateString());
-		$('[name=repeat_final_hour]').val('10');
 
 		setHoursInfo()
 	{/literal}
