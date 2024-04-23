@@ -43,7 +43,7 @@
 
 *}
 
-<br />
+
 {* <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/JSTransaction.js'}"></script>
 <script>
 	var jstransaction = new JSTransaction();
@@ -52,14 +52,18 @@
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/ygDDListStudio.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studiodd.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studio.js'}"></script> *}
-{* JSTREE *}
 
+{* JSTREE *}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 <link rel="stylesheet" href="custom/modules/Studio/TabGroups/multiLevel.css" />
-<!-- JQTREE-->
-<link rel="stylesheet" href="https://mbraak.github.io/jqTree/jqtree.css">
-<script src="https://mbraak.github.io/jqTree/tree.jquery.js"></script>
+
+{* SMART MENUS *}
+<link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
+<link href="SticInclude/vendor/smartmenus/dist/css/sm-blue/sm-blue.css" rel="stylesheet">
+<script src="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"></script>
+{* <script src="SticInclude/vendor/smartmenus/dist/addons/bootstrap/jquery.smartmenus.bootstrap.min.js"></script> *}
+
 <script>
 	var jsonMenu ='{$jsonMenu|escape:'javascript'}'
 	var menu = [JSON.parse(jsonMenu)]
@@ -68,40 +72,44 @@
 	var allModules = [JSON.parse(jsonAll)]
 </script>
 <script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/multiLevelJS.js'}"></script>
+<div id="stic-menu">
 
+	<h2>CONFIGURAR MENU DE SINERGIACRM</h2>
 
-<h2>CONFIGURAR MENU DE SINERGIACRM</h2>
-
-{* <div id="tree1" style="min-height:300px;background-color:pink;width:45%;float:left">
+	{* <div id="tree1" style="min-height:300px;background-color:pink;width:45%;float:left">
 </div> *}
 
-<div class="row">
+	<div class="row">
+
+	
 	<div class="panel panel-default col-md-7">
+	<nav role="navigation"> {$renderedMenu} </nav>
 
-		<div id="menu-buttons" class="row">
-			<div class="col-xs-4">
-				<button id="save-menu" type="button" class="btn btn-md btn-default btn-block">Guardar y aplicar
-				<span class="glyphicon glyphicon-ok text-success"></span>
-				</button>
-			</div>
-			<div class="col-xs-4">
-				<button id="restore-menu" type="button" class="btn btn-md btn-default btn-block">Restaurar</button>
-			</div>
-			
+			<div id="menu-buttons" class="row">
+				<div class="col-xs-4">
+					<button id="save-menu" type="button" class="btn btn-md btn-default btn-block">Guardar y aplicar
+						<span class="glyphicon glyphicon-ok text-success"></span>
+					</button>
+				</div>
+				<div class="col-xs-4">
+					<button id="restore-menu" type="button" class="btn btn-md btn-default btn-block">Restaurar</button>
+				</div>
 
+
+			</div>
+			<div class="panel-body">
+				<div id="menu-status"></div>
+				<div id="menu-modules">
+				</div>
+
+			</div>
 		</div>
-		<div class="panel-body">
-			<div id="menu-status"></div>
-			<div id="menu-modules">
-			</div>
-
-		</div>
-	</div>
-	<div class="col-md-1"></div>
-	<div class="panel panel-default col-md-4">
-		<div class="panel-heading">Modulos ocultos</div>
-		<div class="panel-body">
-			<div id="hidden-modules">
+		<div class="col-md-1"></div>
+		<div class="panel panel-default col-md-4">
+			<div class="panel-heading">Modulos ocultos</div>
+			<div class="panel-body">
+				<div id="hidden-modules">
+				</div>
 			</div>
 		</div>
 	</div>

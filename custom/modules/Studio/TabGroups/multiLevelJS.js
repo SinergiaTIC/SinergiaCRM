@@ -17,8 +17,8 @@ $(document).ready(function() {
           return {
             Create: {
               separator_before: false,
-              separator_after: false,
-              label: "<i class='glyphicon glyphicon-plus'></i>",
+              separator_after: true,
+              label: "<i class='glyphicon glyphicon-plus'></i> Crear",
               action: function(obj) {
                 $node = tree.create_node($node);
                 tree.edit($node);
@@ -26,17 +26,29 @@ $(document).ready(function() {
             },
             Rename: {
               separator_before: false,
-              separator_after: false,
-              label: "<i class='glyphicon glyphicon-pencil'></i>",
+              separator_after: true,
+              label: "<i class='glyphicon glyphicon-pencil'></i> Renombrar",
               action: function(obj) {
                 tree.edit($node);
               }
+            },
+            Delete: {
+              separator_before: false,
+              separator_after: false,
+              label: "<i class='glyphicon glyphicon-remove'></i> Eliminar",
+              action: function(obj) {
+                if (tree.is_selected($node)) {
+                  tree.delete_node(tree.get_selected());
+                } else {
+                  tree.delete_node($node);
+                }
+              }
             }
-            // "Delete" botón ha sido eliminado para no aparecer en el menú
           };
         }
       }
     });
+
     $("#hidden-modules").jstree({
       core: {
         data: allModules[0],
@@ -109,6 +121,21 @@ $(document).ready(function() {
         console.error("Error en la petición:", status, error);
       }
     });
+
+    // Esconde todos los submenús inicialmente
+    $("#stic-menu .dropdown-submenu .dropdown-menu").hide();
+
+    // Gestiona el evento hover para mostrar solo el submenú correspondiente
+    $("#stic-menu .dropdown-submenu").hover(
+      function() {
+        // Muestra solo el submenú del ítem actual
+        $(this).children(".dropdown-menu").stop(true, true).fadeIn(300);
+      },
+      function() {
+        // Oculta el submenú cuando el ratón deja el ítem
+        $(this).children(".dropdown-menu").stop(true, true).fadeOut(300);
+      }
+    );
   });
 
   // Cambiar el texto y cmabiar el id
@@ -128,6 +155,13 @@ $(document).ready(function() {
   $("#menu-modules").on("move_node.jstree", handleTreeChanges);
   $("#menu-modules").on("delete_node.jstree", handleTreeChanges);
   $("#menu-modules").on("create_node.jstree", handleTreeChanges);
+
+
+  $('#main-menu').smartmenus({
+		subMenusSubOffsetX: 1,
+		subMenusSubOffsetY: -8
+	});
+
 });
 
 function filterNodes(node) {

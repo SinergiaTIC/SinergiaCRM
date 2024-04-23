@@ -13,3 +13,27 @@
 #menu-modules > ul.jstree-container-ul > li[role="treeitem"] {
     font-weight: bold;
 }
+#stic-menu {
+    .navbar .dropdown-menu .dropdown-submenu {
+        position: relative;
+    }
+
+    .navbar .dropdown-menu .dropdown-submenu .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 100%;
+        margin-top: -1px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu > a:after {
+        content: "▸";
+        float: right;
+    }
+}
