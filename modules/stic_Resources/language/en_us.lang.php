@@ -59,7 +59,7 @@ $mod_strings = array(
     'LBL_STIC_RESOURCES_SUBPANEL_TITLE' => 'Resources',
     'LBL_NEW_FORM_TITLE' => 'New Resource',
     'LBL_PANEL_STIC_RESOURCES_INFORMATION' => 'Overview',
-    'LBL_DETAILVIEW_PANEL1' => 'Record details',
+    'LBL_PANEL_RECORD_DETAILS' => 'Record details',
 
     'LBL_STATUS' => 'Status',
     'LBL_CODE' => 'Code',

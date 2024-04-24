@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'include/MVC/View/views/view.detail.php';
+require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
 
-class stic_ResourcesViewDetail extends ViewDetail
+class stic_ResourcesViewList2 extends ViewList
 {
 
     public function __construct()
@@ -38,18 +38,29 @@ class stic_ResourcesViewDetail extends ViewDetail
         parent::preDisplay();
 
         SticViews::preDisplay($this);
-    }
-
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Resources/Utils.js");
 
         // Write here you custom code
 
     }
 
+    public function display()
+    {
+        parent::display();
+        echo getVersionedScript("modules/stic_Skills/Utils.js");
+
+        SticViews::display($this);
+
+        // Write here you custom code
+    }
+    
+    function listViewProcess() {
+        $this->processSearchForm();
+            $this->params['custom_where'] = ' AND stic_resources.type = "places" ';
+      
+        if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
+            $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
+            $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+            echo $this->lv->display();
+        }
+    }
 }

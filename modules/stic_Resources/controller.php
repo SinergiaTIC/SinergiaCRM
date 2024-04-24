@@ -21,35 +21,21 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'include/MVC/View/views/view.detail.php';
-require_once 'SticInclude/Views.php';
-
-class stic_ResourcesViewDetail extends ViewDetail
+class stic_ResourcesController extends SugarController
 {
 
-    public function __construct()
+    /**
+     * Show the M182 wizard
+     *
+     * @return void
+     */
+    public function action_places()
     {
-        parent::__construct();
-
+        global $app_list_strings;
+        
+        // Call to the smarty template
+        $this->view = "list2";
     }
 
-    public function preDisplay()
-    {
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-    }
-
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Resources/Utils.js");
-
-        // Write here you custom code
-
-    }
 
 }

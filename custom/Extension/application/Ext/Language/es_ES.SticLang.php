@@ -3106,6 +3106,7 @@ $app_list_strings['stic_resources_types_list']['office_materials'] = 'Material d
 $app_list_strings['stic_resources_types_list']['electronics'] = 'Electrónica';
 $app_list_strings['stic_resources_types_list']['technical_equipment'] = 'Equipamiento técnico';
 $app_list_strings['stic_resources_types_list']['accessory'] = 'Accesorios';
+$app_list_strings['stic_resources_types_list']['places'] = 'Plazas';
 $app_list_strings['stic_resources_types_list']['other'] = 'Otros';
 
 // Recursos: Estados
@@ -3114,6 +3115,29 @@ $app_list_strings['stic_resources_status_list']['active'] = 'Activo';
 $app_list_strings['stic_resources_status_list']['inactive'] = 'Inactivo';
 $app_list_strings['stic_resources_status_list']['unavailable'] = 'No disponible';
 $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'No disponible temporalmente';
+
+// Recursos: Tipo de plaza
+$app_list_strings['stic_resources_places_type_list'][''] = '';
+$app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
+$app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocupación';
+
+// Recursos: Tipo de usuario
+$app_list_strings['stic_resources_places_users_list'][''] = '';
+$app_list_strings['stic_resources_places_users_list']['adults'] = 'Personas adultas';
+$app_list_strings['stic_resources_places_users_list']['families'] = 'Familias';
+$app_list_strings['stic_resources_places_users_list']['minors'] = 'Menores';
+
+// Recursos: Género
+$app_list_strings['stic_resources_places_gender_list'][''] = '';
+$app_list_strings['stic_resources_places_gender_list']['men'] = 'Hombres';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Mujeres';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
+
+// Recursos: Tipo reserva permitida
+$app_list_strings['stic_resources_places_booking_type_list'][''] = '';
+$app_list_strings['stic_resources_places_booking_type_list']['adult'] = 'Familia';
+$app_list_strings['stic_resources_places_booking_type_list']['family'] = 'Persona adulta';
+$app_list_strings['stic_resources_places_booking_type_list']['anonymous'] = 'Anónima';
 
 // Reservas: Estados
 $app_list_strings['stic_bookings_status_list'][''] = '';
