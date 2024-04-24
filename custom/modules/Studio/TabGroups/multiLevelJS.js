@@ -73,7 +73,7 @@ $(document).ready(function() {
 
     // Realiza la petición AJAX
     $.ajax({
-      url: "http://localhost:2000/sinergiacrm/index.php",
+      url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
       data: {
         module: "Studio",
@@ -82,7 +82,12 @@ $(document).ready(function() {
       },
       success: function(response) {
         console.log("Respuesta recibida:", response);
-        location.href = location.href;
+        location.reload(true);
+        // setTimeout(function() {
+          
+          
+        //   location.reload(true);
+        // }, 100);
       },
       error: function(xhr, status, error) {
         console.error("Error en la petición:", status, error);
@@ -102,7 +107,7 @@ $(document).ready(function() {
 
     // Realiza la petición AJAX
     $.ajax({
-      url: "http://localhost:2000/sinergiacrm/index.php",
+      url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
       data: {
         module: "Studio",
@@ -111,11 +116,7 @@ $(document).ready(function() {
       },
       success: function(response) {
         console.log("Respuesta recibida:", response);
-        $("#save-menu .glyphicon")
-          .addClass("text-success")
-          .removeClass("text-danger")
-          .addClass("glyphicon-ok")
-          .removeClass("glyphicon-save");
+        location.reload(true);
       },
       error: function(xhr, status, error) {
         console.error("Error en la petición:", status, error);
@@ -136,6 +137,9 @@ $(document).ready(function() {
         $(this).children(".dropdown-menu").stop(true, true).fadeOut(300);
       }
     );
+
+   
+
   });
 
   // Cambiar el texto y cmabiar el id
@@ -156,12 +160,14 @@ $(document).ready(function() {
   $("#menu-modules").on("delete_node.jstree", handleTreeChanges);
   $("#menu-modules").on("create_node.jstree", handleTreeChanges);
 
+  $("#main-menu").smartmenus({
+    subMenusSubOffsetX: 1,
+    subMenusSubOffsetY: -8
+  });
 
-  $('#main-menu').smartmenus({
-		subMenusSubOffsetX: 1,
-		subMenusSubOffsetY: -8
-	});
-
+  setTimeout(() => {
+    $('#saved-notice').fadeOut(3000);
+  }, 3000);
 });
 
 function filterNodes(node) {

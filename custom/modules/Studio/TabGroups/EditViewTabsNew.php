@@ -42,7 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 
 global $app_list_strings, $app_strings, $mod_strings;
-
+// var_dump($app_strings);die();
 require_once 'modules/Studio/TabGroups/TabGroupHelper.php';
 require_once 'modules/Studio/parsers/StudioParser.php';
 
