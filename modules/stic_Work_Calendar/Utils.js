@@ -30,13 +30,6 @@ var validationDependencies = {
 };
 
 /* VALIDATION CALLBACKS */
-addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
-  return checkStartAndEndDatesCoherence("start_date", "end_date", true);
-});
-addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
-  return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
-});
-
 addToValidateCallback(getFormName(), "name", "name", false, SUGAR.language.get(module, "LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS"), function () {
   return checkIfExistsOtherTypesIncompatibleRecords("start_date", "type", "assigned_user_id");
 });
@@ -51,6 +44,7 @@ switch (viewType()) {
     setAutofill(["name"]);
     // Disable editing of the name field    
     document.getElementById('name').disabled = true;
+    checkAllDay();
     break;
     
   case "detail":
@@ -118,7 +112,7 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUse
   //get Id of the record
   const queryString = window.location.search;
   const params = new URLSearchParams(queryString);
-  const id = params.get('record');
+  const id = params.get('record') || document.querySelector('input[name="record"]').value;
 
   var data = {
     id: id,
@@ -141,6 +135,90 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUse
     }
   } else {
     alert(SUGAR.language.get(module, "LBL_ERROR_REQUEST_INCOMPATIBLE_TYPE") + '\n\n' + SUGAR.language.get(module, "LBL_ERROR_CODE_REQUEST_INCOMPATIBLE_TYPE") + xhr.status);
-    return false;
+    return false;    addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+      return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
+    });
+
   }
+}
+
+
+
+/**
+ * 
+ */
+function checkAllDay() 
+{
+  var allDayTypes = ["", "working", "punctual_absence"];
+  var typeElem = document.getElementById("type");
+
+  previousStartDateHours = "09";
+  previousStartDateMinutes = "00";
+  previousEndDateHours = "18";
+  previousEndDateMinutes = "00";
+
+  if (allDayTypes.includes(typeElem.value)) 
+  {
+    document.getElementById('end_date_date').readOnly = false;
+    addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+      return checkStartAndEndDatesCoherence("start_date", "end_date", true);
+    });
+    addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+      return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
+    });
+  } 
+  else 
+  { 
+    $("#start_date_time_section").parent().hide();
+    $("#end_date_time_section").parent().hide();
+    $("#end_date_trigger").hide();
+    document.getElementById('end_date_date').value = document.getElementById('start_date_date').value;
+    document.getElementById('end_date_date').readOnly = true;
+    removeFromValidate(getFormName(), "end_date");
+  }
+
+  typeElem.addEventListener("change", function() {
+    if (allDayTypes.includes(document.getElementById("type").value)) 
+    {
+      $("#start_date_hours").val(previousStartDateHours);
+      $("#start_date_minutes").val(previousStartDateMinutes);
+      $("#end_date_hours").val(previousEndDateHours);
+      $("#end_date_minutes").val(previousEndDateMinutes);
+      $("#start_date_hours").change();
+      $("#start_date_minutes").change();
+      $("#end_date_hours").change();
+      $("#end_date_minutes").change();
+      $("#start_date_time_section").parent().show();
+      $("#end_date_time_section").parent().show();
+      $("#end_date_trigger").show();
+      document.getElementById('end_date_date').readOnly = false;
+      addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+        return checkStartAndEndDatesCoherence("start_date", "end_date", true);
+      });
+      addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+        return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
+      });
+    } 
+    else 
+    {
+      previousStartDateHours = $("#start_date_hours").val();
+      previousStartDateMinutes = $("#start_date_minutes").val();
+      previousEndDateHours = $("#end_date_hours").val();
+      previousEndDateMinutes = $("#end_date_minutes").val();      
+      $("#start_date_time_section").parent().hide();
+      $("#end_date_time_section").parent().hide();
+      $("#end_date_trigger").hide();
+      $("#start_date_hours").val("00");
+      $("#start_date_minutes").val("00");
+      $("#end_date_hours").val("00");
+      $("#end_date_minutes").val("00");
+      $("#start_date_hours").change();
+      $("#start_date_minutes").change();
+      $("#end_date_hours").change();
+      $("#end_date_minutes").change();      
+      document.getElementById('end_date_date').value = document.getElementById('start_date_date').value;
+      document.getElementById('end_date_date').readOnly = true;
+      removeFromValidate(getFormName(), "end_date");      
+    }
+  });
 }

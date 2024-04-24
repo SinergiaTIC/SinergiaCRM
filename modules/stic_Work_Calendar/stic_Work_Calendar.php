@@ -93,27 +93,47 @@ class stic_Work_Calendar extends Basic
                 break;
         }
 
-        // Set name
         $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
-        $type = $app_list_strings['stic_work_calendar_types_list'][$this->type];
-        
-        if ($_REQUEST["action"] != "MassUpdate"){
-            $this->name = $assignedUser->name . " - " . $type . " - " . $startDate . " - " . substr($endDate, -5);
-        } else {
-            // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
-            $this->name = $assignedUser->name . " - " . $type . substr($this->name, -25);
+        $typeLabel = $app_list_strings['stic_work_calendar_types_list'][$this->type];
+        $allDayTypes = ["working", "punctual_absence"];
+
+        if (in_array($this->type, $allDayTypes)) {
+            // Set name
+            if ($_REQUEST["action"] != "MassUpdate"){
+                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . $startDate . " - " . substr($endDate, -5);
+            } else {
+                // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
+                $this->name = $assignedUser->name . " - " . $typeLabel . substr($this->name, -25);
+            }
+
+            // Set duration field
+            if (!empty($this->end_date)) {
+                $this->duration = self::calculateDuration($startDate, $endDate);
+            } else {
+                $this->duration = 0;
+            }            
+        } else { // All day register
+            // Set name
+            if ($_REQUEST["action"] != "MassUpdate"){
+                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDate, 0, 10);
+            } else {
+                // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
+                $this->name = $assignedUser->name . " - " . $typeLabel . substr($this->name, -10);
+            }
+            
+            // Set the dates - Do not apply the timezone when converting to database format 
+            // $startDate = $timedate->fromUser($startDate, $assignedUser);
+            // $this->start_date = $startDate->format($timedate->get_db_date_time_format());
+            // $endDate = $timedate->fromUser($endDate, $assignedUser);
+            // $this->end_date = $endDate->format($timedate->get_db_date_time_format());
+
+            // Set duration field
+            $this->duration = 24;
         }
             
         // Set weekday field
         if ($this->start_date != $this->fetched_row['start_date']) {
             $this->weekday = date('w', strtotime($this->start_date));
-        }
-
-        // Set duration field
-        if (!empty($this->end_date)) {
-            $this->duration = self::calculateDuration($startDate, $endDate);
-        } else {
-            $this->duration = 0;
         }
 
         // Save the bean

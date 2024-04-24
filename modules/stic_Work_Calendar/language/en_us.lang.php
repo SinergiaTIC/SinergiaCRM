@@ -72,6 +72,7 @@ $mod_strings = array (
   'LBL_WEEKDAY' => 'Weekday',  
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
+  'LBL_ALL_DAY_HELP' => 'If the type of registration is non-working or punctual absence, the registration affects the entire day and it will not be necessary to indicate the start time or the end time and date.',  
   
   // Work Calendar record creation wizard
   'LNK_CREATE_PERIODIC_RECORDS' => 'Create records periodically',

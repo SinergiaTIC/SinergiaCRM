@@ -34,10 +34,11 @@ $dictionary['stic_Work_Calendar'] = array(
             'duplicate_merge' => 'enabled',
             'merge_filter' => 'enabled',
             'type' => 'enum',
-            'massupdate' => '1',
+            'massupdate' => '0',
             'no_default' => 0,
             'comments' => '',
             'help' => '',
+            'popupHelp' => 'LBL_ALL_DAY_HELP',
             'importable' => 'required',
             'audited' => 1,
             'reportable' => 1,
@@ -47,7 +48,7 @@ $dictionary['stic_Work_Calendar'] = array(
             'options' => 'stic_work_calendar_types_list',
             'studio' => 'visible',
             'dependency' => 0,
-            'inline_edit' => 1,
+            'inline_edit' => 0,
             'default' => '',
         ),        
         'start_date' => array(
@@ -70,8 +71,7 @@ $dictionary['stic_Work_Calendar'] = array(
             'options' => 'date_range_search_dom',
             'dbType' => 'datetime',
             'display_default' => 'now&09:00am',
-            'inline_edit' => 1,
-            'validation' => array('type' => 'isbefore', 'compareto' => 'end_date', 'blank' => 0),
+            'inline_edit' => 0,
         ),
         'end_date' => array(
             'required' => 1,
@@ -84,6 +84,7 @@ $dictionary['stic_Work_Calendar'] = array(
             'no_default' => 0,
             'comments' => '',
             'help' => '',
+            'popupHelp' => 'LBL_ALL_DAY_HELP',            
             'importable' => 'true',
             'audited' => 1,
             'reportable' => 1,
@@ -93,8 +94,7 @@ $dictionary['stic_Work_Calendar'] = array(
             'options' => 'date_range_search_dom',
             'dbType' => 'datetime',
             'display_default' => 'now&06:00pm',
-            'inline_edit' => 1,
-            'validation' => array('type' => 'isafter', 'compareto' => 'start_date', 'blank' => 0),
+            'inline_edit' => 0,
         ),
         'duration' => array(
             'required' => 0,
@@ -162,9 +162,10 @@ VardefManager::createVardef('stic_Work_Calendar', 'stic_Work_Calendar', array('b
 
 
 // Set special values for SuiteCRM base fields
-$dictionary['stic_Work_Calendar']['fields']['assigned_user_name']['required'] = '1'; // Name is not required in this module
-$dictionary['stic_Work_Calendar']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Work_Calendar']['fields']['assigned_user_name']['required'] = 1; // Name is not required in this module
+$dictionary['stic_Work_Calendar']['fields']['assigned_user_name']['inline_edit'] = 0; // Name is not required in this module
+$dictionary['stic_Work_Calendar']['fields']['name']['required'] = 0; // Name is not required in this module
 $dictionary['stic_Work_Calendar']['fields']['name']['importable'] = true; // Name is importable but not required in this module
-$dictionary['stic_Work_Calendar']['fields']['name']['massupdate'] = '0';
-$dictionary['stic_Work_Calendar']['fields']['name']['inline_edit'] = '0';
+$dictionary['stic_Work_Calendar']['fields']['name']['massupdate'] = 0;
+$dictionary['stic_Work_Calendar']['fields']['name']['inline_edit'] = 0;
 $dictionary['stic_Work_Calendar']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
