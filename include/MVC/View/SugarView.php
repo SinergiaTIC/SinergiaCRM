@@ -667,6 +667,15 @@ class SugarView
                 $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
             }
 
+            // insertamos 
+            require_once 'SticInclude/SticMenu.php';
+            include_once 'custom/include/SticTabConfig.php';
+            if (isset($GLOBALS["SticTabStructure"])) {
+                $menu = $GLOBALS["SticTabStructure"];
+                addTextProperty($menu);
+            }
+            $ss->assign('renderedMenu', generateMenu($menu));
+
             $topTabList = array();
 
             // Now time to go through each of the tab sets and fix them up.

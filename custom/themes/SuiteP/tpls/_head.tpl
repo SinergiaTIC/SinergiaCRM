@@ -45,6 +45,7 @@
 *}
 <!DOCTYPE html>
 <html {$langHeader}>
+
 <head>
     <link rel="SHORTCUT ICON" href="{$FAVICON_URL}">
     <meta http-equiv="Content-Type" content="text/html; charset={$APP.LBL_CHARSET}">
@@ -53,17 +54,21 @@
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
     <!-- Bootstrap -->
     {* STIC-Custom 20231108 JBL - Versioning Style resources in order to reload resources without cleaning browser cache *}
-	{* #1075 *}
+    {* #1075 *}
     {* 
     <link href="themes/SuiteP/css/normalize.css" rel="stylesheet" type="text/css"/>
     <link href='themes/SuiteP/css/fonts.css' rel='stylesheet' type='text/css'>
     <link href="themes/SuiteP/css/grid.css" rel="stylesheet" type="text/css"/>
     <link href="themes/SuiteP/css/footable.core.css" rel="stylesheet" type="text/css"/>
     *}
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/normalize.css"}'></script>
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/fonts.css"}'></script>
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/grid.css"}'></script>
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/footable.core.css"}'></script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/normalize.css"}'>
+    </script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/fonts.css"}'>
+    </script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/grid.css"}'>
+    </script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/footable.core.css"}'>
+    </script>
     <title>{if $BROWSER_TITLE}{$BROWSER_TITLE}{else}{$APP.LBL_BROWSER_TITLE}{/if}</title>
     {* END STIC-Custom *}
 
@@ -75,23 +80,26 @@
     <![endif]-->
     {$SUGAR_JS}
     {literal}
-    <script type="text/javascript">
-        <!--
+        <script type="text/javascript">
+            <!--
         SUGAR.themes.theme_name = '{/literal}{$THEME}{literal}';
         SUGAR.themes.theme_ie6compat = '{/literal}{$THEME_IE6COMPAT}{literal}';
         SUGAR.themes.hide_image = '{/literal}{sugar_getimagepath file="hide.gif"}{literal}';
         SUGAR.themes.show_image = '{/literal}{sugar_getimagepath file="show.gif"}{literal}';
         SUGAR.themes.loading_image = '{/literal}{sugar_getimagepath file="img_loading.gif"}{literal}';
-        
+
         if (YAHOO.env.ua)
             UA = YAHOO.env.ua;
         -->
-    </script>
+        </script>
     {/literal}
     {$SUGAR_CSS}
     <link rel="stylesheet" type="text/css" href="themes/SuiteP/css/colourSelector.php">
     <script type="text/javascript" src='{sugar_getjspath file="themes/SuiteP/js/jscolor.js"}'></script>
     <script type="text/javascript" src='{sugar_getjspath file="cache/include/javascript/sugar_field_grp.js"}'></script>
     <script type="text/javascript" src='{sugar_getjspath file="vendor/tinymce/tinymce/tinymce.min.js"}'></script>
+    <link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
+    <link href="SticInclude/vendor/smartmenus/dist/css/sm-blue/sm-blue.css" rel="stylesheet">
+    <script src='{sugar_getjspath file="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"}'></script>
+    <script src='{sugar_getjspath file="SticInclude/js/SticSmartmenus.js"}'></script>
 </head>
-

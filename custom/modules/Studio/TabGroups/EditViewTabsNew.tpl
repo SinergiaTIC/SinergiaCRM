@@ -59,9 +59,9 @@
 <link rel="stylesheet" href="custom/modules/Studio/TabGroups/multiLevel.css" />
 
 {* SMART MENUS *}
-<link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
+{* <link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
 <link href="SticInclude/vendor/smartmenus/dist/css/sm-blue/sm-blue.css" rel="stylesheet">
-<script src="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"></script>
+<script src="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"></script> *}
 {* <script src="SticInclude/vendor/smartmenus/dist/addons/bootstrap/jquery.smartmenus.bootstrap.min.js"></script> *}
 
 <script>
@@ -81,9 +81,9 @@
 
 	<div class="row">
 
-	
-	<div class="panel panel-default col-md-7">
-	<nav role="navigation"> {$renderedMenu} </nav>
+
+		<div class="panel panel-default col-md-7">
+			{* <nav role="navigation"> {$renderedMenu} </nav> *}
 
 			<div id="menu-buttons" class="row">
 				<div class="col-xs-4">
