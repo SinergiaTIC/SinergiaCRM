@@ -210,19 +210,19 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     switch (condition.operator) {
       case "Not_Equal_To":
         condition.operator = "Equal_To";
-        return !checkCondition_value(condition);
+        return !this.checkCondition_value(condition);
       case "Not_Contains":
         condition.operator = "Contains";
-        return !checkCondition_value(condition);
+        return !this.checkCondition_value(condition);
       case "Not_Starts_With":
         condition.operator = "Starts_With";
-        return !checkCondition_value(condition);
+        return !this.checkCondition_value(condition);
       case "Not_Ends_With":
         condition.operator = "Ends_With";
-        return !checkCondition_value(condition);
+        return !this.checkCondition_value(condition);
       case "is_not_null":
         condition.operator = "is_null";
-        return !checkCondition_value(condition);
+        return !this.checkCondition_value(condition);
     }
 
     var value_list = condition.value_list;
