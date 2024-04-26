@@ -82,10 +82,6 @@ class stic_Work_Calendar extends Basic
                 $applicationDate = $timedate->fromUserDate($_REQUEST['application_date'], $current_user);
                 $this->application_date = $timedate->asDbDate($applicationDate, false);
                 break;
-            // case 'saveHTMLField': (inline edit)
-            //     $startDate = $this->start_date;
-            //     $endDate = $this->end_date;
-            //     break;
             default: // API | Importation | Mass Periodic Creation | Time Change
                 $bbddFormat = 'Y-m-d H:i:s';
                 $startDate = $timedate->fromDbFormat($this->start_date, $bbddFormat);
@@ -113,14 +109,8 @@ class stic_Work_Calendar extends Basic
                 $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDate, 0, 10);
             } else {
                 // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
-                $this->name = $assignedUser->name . " - " . $typeLabel . substr($this->name, -10);
+                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($this->name, -10);
             }
-            
-            // Set the dates - Do not apply the timezone when converting to database format 
-            // $startDate = $timedate->fromUser($startDate, $assignedUser);
-            // $this->start_date = $startDate->format($timedate->get_db_date_time_format());
-            // $endDate = $timedate->fromUser($endDate, $assignedUser);
-            // $this->end_date = $endDate->format($timedate->get_db_date_time_format());
         }
 
         // Set duration field
