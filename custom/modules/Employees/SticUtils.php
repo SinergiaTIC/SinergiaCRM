@@ -53,7 +53,7 @@ class stic_EmployeesUtils
         $startMinute = $_REQUEST['repeat_start_minute'];
         $finalHour = $_REQUEST['repeat_final_hour'];
         $finalMinute = $_REQUEST['repeat_final_minute'];
-
+        
         // Get absolute values of 'minutes' and set values
         // Set minute interval as defined in $sugar_config
         $m = 0;
@@ -272,6 +272,7 @@ class stic_EmployeesUtils
         for ($i = 0; $i < $counter; $i++) 
         {
             $aux[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
+            $applicationDate[$i] = substr($date[$i], 0, 10);
         }
         
         $summary = array();
@@ -286,6 +287,8 @@ class stic_EmployeesUtils
                 $workCalendarBean = BeanFactory::newBean('stic_Work_Calendar');
                 $workCalendarBean->start_date = $aux[$i];
                 $workCalendarBean->end_date = $finalDay;
+                $workCalendarBean->application_date = $applicationDate[$i];
+
                 if (isset($_REQUEST['type']) && $_REQUEST['type'] != '') {
                     $workCalendarBean->type = $_REQUEST['type'];
                 }
@@ -295,7 +298,7 @@ class stic_EmployeesUtils
                 }
                 
                 require_once 'modules/stic_Work_Calendar/Utils.php';
-                $save = stic_Work_CalendarUtils::existsRecordsWithIncompatibleType('', $aux[$i], $_REQUEST['type'], $assignedUserId);
+                $save = stic_Work_CalendarUtils::existsRecordsWithIncompatibleType('', $applicationDate[$i], $_REQUEST['type'], $assignedUserId);
                 if ($save) {
                     $workCalendarBean->save(false);
                     $summary['numRecordsCreated']++;
