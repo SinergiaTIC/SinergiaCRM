@@ -30,8 +30,8 @@ var validationDependencies = {
 };
 
 /* VALIDATION CALLBACKS */
-addToValidateCallback(getFormName(), "name", "name", false, SUGAR.language.get(module, "LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS"), function () {
-  return checkIfExistsOtherTypesIncompatibleRecords("start_date", "type", "assigned_user_id");
+addToValidateCallback(getFormName(), "type", "type", false, SUGAR.language.get(module, "LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS"), function () {
+  return checkIfExistsOtherTypesIncompatibleRecords("application_date", "type", "assigned_user_id");
 });
 
 
@@ -41,10 +41,12 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":    
     // Set autofill mark beside field label
+    var allDayTypes = ["", "working", "punctual_absence"];
+    var cv = sticCustomizeView.editview();
     setAutofill(["name"]);
-    // Disable editing of the name field    
-    document.getElementById('name').disabled = true;
-    checkAllDay();
+    updateName();
+    updateApplicationDate();
+    updateAllDay();
     break;
     
   case "detail":
@@ -63,6 +65,68 @@ switch (viewType()) {
   default:
     break;
 }
+
+
+
+/**
+ * Updates the name field as other fields are modified
+ */
+function updateName() {
+  cv.field("name").readonly();
+  cv.field("name").content.bold(); // Marcamos en negrita el nombre
+
+  // Función de actualización del campo autogenerado
+  function updateFieldName() {
+    if (allDayTypes.includes(cv.field("type").value())) 
+    {
+      cv.field("name").value(
+        cv.field("assigned_user_name").content.text() + ' - ' +
+        cv.field("type").content.text()  + ' - ' +
+        cv.field("start_date").content.text()  + ' - ' +
+        cv.field("end_date").content.text().substring(11)
+      );
+    } else {
+      cv.field("name").value(
+        cv.field("assigned_user_name").content.text() + ' - ' +
+        cv.field("type").content.text()  + ' - ' +
+        cv.field("start_date").content.text().substring(0 , 10)
+      );
+    }
+  }
+
+  // Actualizamos el nombre cuando cambie algun valor asociado
+  cv.field("start_date").onChange(updateFieldName);
+  cv.field("end_date").onChange(updateFieldName);
+  cv.field("type").onChange(updateFieldName);
+  cv.field("assigned_user_name").onChange(updateFieldName);
+
+  // Forzamos el valor inicial del campo "name"
+  updateFieldName();
+}
+
+
+/**
+ * Updates the name field as other fields are modified
+ */
+function updateApplicationDate() {
+  cv.field("application_date").readonly(); // No permitimos modificar el campo
+  cv.field("application_date").content.bold(); // Marcamos en negrita el nombre
+  
+  // Función de actualización del campo autogenerado
+  function updateFieldApplicationDate() {
+    cv.field("application_date").value(
+      cv.field("start_date").content.text().substring(0, 10)
+    );
+  }
+  
+  // Actualizamos el nombre cuando cambie algun valor asociado
+  cv.field("start_date").onChange(updateFieldApplicationDate);
+  
+  // Forzamos el valor inicial del campo "name"
+  updateFieldApplicationDate();
+
+}
+
 
 /**
  * Used as a callback for mass update dates button
@@ -107,7 +171,7 @@ function checkStartAndEndDatesExcceds24Hours(startDate, endDate)
  * Synchronous verification of whether there are Work Calendar records of incompatible type that match the assigned user and time range.
  * @returns {Boolean} false if there are records of incompatible types for the same assigned user and time range, true if there are not.
  */
-function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUserId) 
+function checkIfExistsOtherTypesIncompatibleRecords(applicationDate, type, assignedUserId) 
 {
   //get Id of the record
   const queryString = window.location.search;
@@ -116,7 +180,7 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUse
 
   var data = {
     id: id,
-    startDate: getFieldValue(startDate),
+    applicationDate: getFieldValue(applicationDate),
     type: getFieldValue(type),
     assignedUserId: getFieldValue(assignedUserId),
   };
@@ -147,9 +211,8 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUse
 /**
  * 
  */
-function checkAllDay() 
+function updateAllDay() 
 {
-  var allDayTypes = ["", "working", "punctual_absence"];
   var typeElem = document.getElementById("type");
 
   previousStartDateHours = "09";
@@ -210,8 +273,8 @@ function checkAllDay()
       $("#end_date_trigger").hide();
       $("#start_date_hours").val("00");
       $("#start_date_minutes").val("00");
-      $("#end_date_hours").val("00");
-      $("#end_date_minutes").val("00");
+      $("#end_date_hours").val("23");
+      $("#end_date_minutes").val("59");
       $("#start_date_hours").change();
       $("#start_date_minutes").change();
       $("#end_date_hours").change();

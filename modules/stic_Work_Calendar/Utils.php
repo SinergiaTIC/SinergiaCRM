@@ -308,7 +308,7 @@ class stic_Work_CalendarUtils
      *
      * @return void
      */
-    public static function existsRecordsWithIncompatibleType($id, $startDate, $type, $assignedUserId)
+    public static function existsRecordsWithIncompatibleType($id, $applicationDate, $type, $assignedUserId)
     {
         global $db;
         $allDayTypes = ["working", "punctual_absence"];
@@ -317,7 +317,7 @@ class stic_Work_CalendarUtils
         $query = "SELECT * FROM stic_work_calendar
                 WHERE deleted = 0 
                     AND id != '". $id . "' 
-                    AND start_date LIKE '%".$startDate."%' 
+                    AND application_date = '".$applicationDate."' 
                     AND assigned_user_id = '" . $assignedUserId . "' 
                     AND type NOT IN ('" .  implode("', '", $allDayTypes) . "');";
 
@@ -332,7 +332,7 @@ class stic_Work_CalendarUtils
                 $query = "SELECT * FROM stic_work_calendar
                 WHERE deleted = 0 
                     AND id != '". $id . "' 
-                    AND start_date LIKE '%".$startDate."%' 
+                    AND application_date = '".$applicationDate."' 
                     AND assigned_user_id = '" . $assignedUserId . "' 
                     AND type IN ('" .  implode("', '", $allDayTypes) . "');";
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);

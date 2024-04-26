@@ -44,16 +44,7 @@ $viewdefs[$module_name]['EditView'] = array(
                 0 => 'name',
                 1 => 'assigned_user_name',
             ),
-            1 => array (
-                0 => 
-                array (
-                    'name' => 'type',
-                    'label' => 'LBL_TYPE',
-                ),              
-                1 => 
-                array (),
-            ),            
-            2 => array(
+            1 => array(
                 0 => array(
                     'name' => 'start_date',
                     'label' => 'LBL_START_DATE',
@@ -63,6 +54,18 @@ $viewdefs[$module_name]['EditView'] = array(
                     'label' => 'LBL_END_DATE',
                 ),
             ),
+            2 => array (
+                0 => 
+                array (
+                    'name' => 'type',
+                    'label' => 'LBL_TYPE',
+                ),              
+                1 => 
+                array (
+                    'name' => 'application_date',
+                    'label' => 'LBL_APPLICATION_DATE',
+                ),
+            ),            
             3 => array (
                 0 => 'description',
             ),              

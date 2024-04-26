@@ -51,6 +51,12 @@ $listViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => true,
     ),
+    'APPLICATION_DATE' => array(
+        'type' => 'varchar',
+        'width' => '32',
+        'label' => 'LBL_APPLICATION_DATE',
+        'default' => true,
+    ),    
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',
         'label' => 'LBL_ASSIGNED_TO_NAME',

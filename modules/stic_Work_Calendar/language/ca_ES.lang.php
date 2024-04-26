@@ -62,6 +62,7 @@ $mod_strings = array (
   'LBL_TYPE' => 'Tipus',  
   'LBL_START_DATE' => "Data i hora d'inici",
   'LBL_END_DATE' => 'Data i hora de finalització',
+  'LBL_APPLICATION_DATE' => "Data d'aplicació",
   'LBL_START_DATE_ERROR' => "La data i hora d'inici ha de ser anterior a la data i hora de finalització.",
   'LBL_END_DATE_ERROR' => "La data i hora de finalització ha de ser posterior a la data i hora d'inici.",
   'LBL_END_DATE_EXCCEDS_24_HOURS' => "La diferència entre la data i l'hora de finalització i la d'inici ha de ser menor a 24 hores.",    

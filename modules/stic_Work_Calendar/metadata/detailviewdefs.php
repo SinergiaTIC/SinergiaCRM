@@ -83,7 +83,10 @@ $viewdefs[$module_name]['DetailView'] = array(
                     'label' => 'LBL_WEEKDAY',
                 ),
                 1 => 
-                array (),
+                array (
+                    'name' => 'application_date',
+                    'label' => 'LBL_APPLICATION_DATE',
+                ),
             ),            
             4 => array (
                 0 => 'description',
