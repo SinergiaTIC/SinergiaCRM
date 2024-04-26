@@ -37,6 +37,7 @@ class EmployeesViewWorkCalendarAssistantSummary extends SugarView
         SticViews::display($this);
         
         global $sugar_config;
+        $this->ss->assign('TOTAL_RECORDS_PROCESSED', $_SESSION['summary']['numRecordsProcessed'] ?? 0);
         $this->ss->assign('TOTAL_RECORDS_CREATED', $_SESSION['summary']['numRecordsCreated'] ?? 0);
         $this->ss->assign('RECORDS_NOT_CREATED', json_encode($_SESSION['summary']['recordsNotCreated']));
         $this->ss->assign('TOTAL_RECORDS_NOT_CREATED', count($_SESSION['summary']['recordsNotCreated']) ?? 0);

@@ -71,6 +71,7 @@ $mod_strings['LBL_END_DATE_ERROR'] = 'The end date and time must be later than t
 $mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'The difference between the end and start date and time must be less than 24 hours.';
 $mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = 'There are other records with a type incompatible with the current one for the same assigned user and within the defined time range. Check these records and modify the time range of this record or the one that generates the conflict.';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE'] = 'SUNMMARY:';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED'] = 'Number of records to create';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED'] = 'Number of records created';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED'] = 'Number of records not created';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE'] = 'List of records not created';

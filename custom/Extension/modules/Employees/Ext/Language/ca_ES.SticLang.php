@@ -71,6 +71,7 @@ $mod_strings['LBL_END_DATE_ERROR'] = 'La data i hora de finalització ha de ser 
 $mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'La diferència entre la data i l\'hora de finalització i la d\'inici ha de ser menor a 24 hores.';
 $mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = "Existeixen altres registres amb tipus incompatible a l'actual per al mateix usuari assignat i dins del rang horari definit. Comproveu aquests registres i modifiqueu el rang horari d'aquest registre o d'aquell que genera el conflicte.";
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE'] = 'RESUM:';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED'] = 'Nombre de registres a crear';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED'] = 'Nombre de registres creats';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED'] = 'Nombre de registres no creats';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE'] = 'Llistat de registres no creats';

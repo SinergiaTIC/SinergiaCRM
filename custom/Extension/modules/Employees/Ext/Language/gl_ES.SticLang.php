@@ -71,6 +71,7 @@ $mod_strings['LBL_END_DATE_ERROR'] = 'La fecha y hora de finalización debe ser 
 $mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.';
 $mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = 'Existen otros registros con tipo incompatible al actual para el mismo usuario asignado y dentro del rango horario definido. Compruebe estos registros y modifique el rango horario de este registro o de aquel que genera el conflicto.';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE'] = 'RESUMEN:';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED'] = 'Número de registros a crear';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED'] = 'Número de registros creados';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED'] = 'Número de registros no creados';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE'] = 'Listado de registros no creados';

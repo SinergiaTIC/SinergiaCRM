@@ -306,6 +306,7 @@ class stic_EmployeesUtils
                     $user = BeanFactory::getBean('Users', $assignedUserId);
                     $summary['recordsNotCreated'][] =  array ('username' => $user->name, 'type' => $_REQUEST['type'], 'startDate' => $aux[$i], 'endDate' => $finalDay);
                 }
+                $summary['numRecordsProcessed']++;
             }
         }
         $_SESSION['summary'] = $summary;
