@@ -64,11 +64,11 @@ $smarty->assign('availableModuleList', $availableModules);
 $modList = array_keys($availableModules);
 $modList = array_combine($modList, $modList); // Bug #48693 We need full list of modules here instead of displayed modules
 
-include_once 'custom/include/SticTabConfig.php';
+include_once 'custom/include/AdvancedTabConfig.php';
 
 if (isset($GLOBALS["SticTabStructure"])) {
     $menu = $GLOBALS["SticTabStructure"];
-    addTextProperty($menu);
+    addMenuProperties($menu);
 
 } else {
 

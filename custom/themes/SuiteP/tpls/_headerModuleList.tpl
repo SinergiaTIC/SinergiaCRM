@@ -176,6 +176,9 @@
                 </div>
             </div>
         </div>
+        {if $STIC_MENU }
+            {include file="custom/themes/SuiteP/tpls/SticMenu.tpl"}
+        {else}    
         <div class="desktop-toolbar" id="toolbar">
             {if $USE_GROUP_TABS}
                 <ul class="nav navbar-nav">
@@ -523,7 +526,7 @@
 
             {/if}
         </div>
-
+        {/if}
         <!-- Right side of the main navigation -->
         <div class="mobile-bar">
             <ul id="toolbar" class="toolbar">
@@ -1070,3 +1073,4 @@
             <!--End Responsive Sidebar -->
         {/if}
         <!--Start Page content -->
+        
