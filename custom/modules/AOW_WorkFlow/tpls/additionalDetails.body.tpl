@@ -58,7 +58,6 @@
     || !empty($FIELD.FLOW_RUN_ON) 
     || !empty($FIELD.RUN_WHEN) 
     || !empty($FIELD.MULTIPLE_RUNS) 
-    || !empty($FIELD.ADDRESS_COUNTRY)
     || !empty($FIELD.URL_LOCATION)}
     <br>
 {/if}
