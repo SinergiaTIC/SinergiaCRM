@@ -47,5 +47,19 @@
 <div class="desktop-toolbar" id="stic-toolbar">
 
     {$renderedMenu}
-
+    {literal}
+        <script>
+            // Ocultamos todos los nodos vacíos
+            $(document).ready(function() {
+                // Selecciona todos los elementos li.dropdown que contienen un ul
+                $('#main-menu li.dropdown').each(function() {
+                    // Verifica si el ul interno está vacío (sin elementos li)
+                    if ($(this).find('ul').children().length === 0) {
+                        // Elimina el li.dropdown si el ul está vacío
+                        $(this).remove();
+                    }
+                });
+            });
+        </script>
+    {/literal}
 </div>

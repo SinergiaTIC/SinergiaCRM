@@ -669,7 +669,7 @@ class SugarView
 
             include_once 'custom/include/SticAdvancedTabConfig.php';
             if (isset($GLOBALS["SticTabStructure"])) {
-                require_once 'SticInclude/SticMenu.php';
+                require_once 'SticInclude/SticAdvancedMenu.php';
                 $menu = $GLOBALS["SticTabStructure"];
                 addMenuProperties($menu);
                 $ss->assign('renderedMenu', generateMenu($menu));

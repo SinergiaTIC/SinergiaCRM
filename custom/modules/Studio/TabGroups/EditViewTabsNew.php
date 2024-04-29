@@ -46,7 +46,7 @@ global $app_list_strings, $app_strings, $mod_strings;
 require_once 'modules/Studio/TabGroups/TabGroupHelper.php';
 require_once 'modules/Studio/parsers/StudioParser.php';
 
-require_once 'SticInclude/SticMenu.php';
+require_once 'SticInclude/SticAdvancedMenu.php';
 
 $tabGroupSelected_lang = (!empty($_GET['lang']) ? $_GET['lang'] : $_SESSION['authenticated_user_language']);
 $tg = new TabGroupHelper();
