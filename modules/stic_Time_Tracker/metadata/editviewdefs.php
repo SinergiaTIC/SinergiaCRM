@@ -55,6 +55,13 @@ $viewdefs[$module_name]['EditView'] = array(
                 ),
             ),
             2 => array (
+                0 => array(
+                    'name' => 'application_date',
+                    'label' => 'LBL_APPLICATION_DATE',
+                ),
+                1 => array(),                
+            ),            
+            3 => array (
                 0 => 'description',
             ),              
         ),

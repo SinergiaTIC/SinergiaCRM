@@ -35,8 +35,9 @@ switch (viewType()) {
   case "popup":    
     // Set autofill mark beside field label
     setAutofill(["name"]);
-    // Disable editing of the name field
-    document.getElementById('name').disabled = true;    
+    var cv = sticCustomizeView.editview();
+    updateName();
+    updateApplicationDate();
     break;
 
   case "detail":
@@ -47,4 +48,53 @@ switch (viewType()) {
 
   default:
     break;
+}
+
+
+/**
+ * Updates the name field as other fields are modified
+ */
+function updateName() {
+  cv.field("name").readonly();
+  cv.field("name").content.bold(); // Marcamos en negrita el nombre
+
+  // Función de actualización del campo autogenerado
+  function updateFieldName() {
+    cv.field("name").value(
+      cv.field("assigned_user_name").content.text() + ' - ' +
+      cv.field("start_date").content.text()  + ' - ' +
+      cv.field("end_date").content.text().substring(11)
+    );
+  }
+
+  // Actualizamos el nombre cuando cambie algun valor asociado
+  cv.field("start_date").onChange(updateFieldName);
+  cv.field("end_date").onChange(updateFieldName);
+  cv.field("type").onChange(updateFieldName);
+  cv.field("assigned_user_name").onChange(updateFieldName);
+
+  // Forzamos el valor inicial del campo "name"
+  updateFieldName();
+}
+
+/**
+ * Updates the name field as other fields are modified
+ */
+function updateApplicationDate() {
+  cv.field("application_date").readonly(); // No permitimos modificar el campo
+  cv.field("application_date").content.bold(); // Marcamos en negrita el nombre
+  
+  // Función de actualización del campo autogenerado
+  function updateFieldApplicationDate() {
+    cv.field("application_date").value(
+      cv.field("start_date").content.text().substring(0, 10)
+    );
+  }
+  
+  // Actualizamos el nombre cuando cambie algun valor asociado
+  cv.field("start_date").onChange(updateFieldApplicationDate);
+  
+  // Forzamos el valor inicial del campo "name"
+  updateFieldApplicationDate();
+
 }

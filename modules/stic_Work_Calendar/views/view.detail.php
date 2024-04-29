@@ -39,13 +39,10 @@ class stic_Work_CalendarViewDetail extends ViewDetail
 
         SticViews::preDisplay($this);
 
+        // Write here you custom code
         global $timedate, $current_user;
         $applicationDate = $timedate->fromDbDate($this->bean->application_date);
-        $applicationDate = $timedate->asUserDate($applicationDate, false, $current_user);
-        $this->bean->application_date = $applicationDate;
-
-        // Write here you custom code
-
+        $this->bean->application_date = $timedate->asUserDate($applicationDate, false, $current_user);
     }
 
     public function display()

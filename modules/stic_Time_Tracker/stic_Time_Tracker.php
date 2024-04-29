@@ -71,13 +71,20 @@ class stic_Time_Tracker extends Basic
         global $timedate, $current_user;
 
         switch ($_REQUEST["action"]) {
-            case 'save':
+            case 'Save':
                 $startDate = $_REQUEST['start_date'];
                 $endDate = $_REQUEST['end_date'];
+                $applicationDate = $timedate->fromUserDate($_REQUEST['application_date'], $current_user);                
+                $this->application_date = $timedate->asDbDate($applicationDate, false);                
                 break;
-            case 'saveHTMLField':
+            case 'createOrUpdateTodayRegister':                
                 $startDate = $this->start_date;
                 $endDate = $this->end_date;
+                if (empty($this->application_date)) {
+                    $applicationDate = substr($this->start_date, 0, 10);
+                    $applicationDate = $timedate->fromUserDate($applicationDate, $current_user);                
+                    $this->application_date = $timedate->asDbDate($applicationDate, false); 
+                }
                 break;
             default: // API | Importation | Mass Periodic Creation 
                 $bbddFormat = 'Y-m-d H:i:s';
@@ -128,7 +135,7 @@ class stic_Time_Tracker extends Basic
         $query = "SELECT * FROM stic_time_tracker
                 WHERE deleted = 0 
                 AND start_date IS NOT NULL AND start_date <> ''
-                AND DATE(start_date) = DATE(NOW())
+                AND DATE(application_date) = DATE(NOW())
                 AND assigned_user_id = '" . $userId . "'  
                 ORDER BY start_date desc
                 LIMIT 1;";
@@ -144,13 +151,13 @@ class stic_Time_Tracker extends Basic
      *
      * @return 
      */
-    public static function existAtLeastOneRecordForEmployeeAndDate($date, $userId)
+    public static function existAtLeastOneRecordForEmployeeAndDate($applicatioDate, $userId)
     {
         global $db;
         $query = "SELECT count(id) as count
                     FROM stic_time_tracker
                   WHERE deleted = 0 
-                    AND start_date LIKE '%" . $date . "%'
+                    AND application_date = '" . $applicatioDate . "'
                     AND assigned_user_id = '" . $userId . "';";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);

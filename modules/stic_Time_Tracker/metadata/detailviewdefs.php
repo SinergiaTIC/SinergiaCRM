@@ -68,10 +68,13 @@ $viewdefs[$module_name]['DetailView'] = array(
             ),
             2 => array(
                 0 => array(
+                    'name' => 'application_date',
+                    'label' => 'LBL_APPLICATION_DATE',
+                ),                
+                1 => array(
                     'name' => 'duration',
                     'label' => 'LBL_DURATION',
                 ),
-                1 => array(),
             ),          
             3 => array (
                 0 => 'description',
