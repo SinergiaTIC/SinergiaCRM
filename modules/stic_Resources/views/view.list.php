@@ -48,7 +48,7 @@ class stic_ResourcesViewList extends ViewList
         parent::display();
 
         SticViews::display($this);
-        echo getVersionedScript("modules/stic_Resources/Utils.js");
+        // echo getVersionedScript("modules/stic_Resources/Utils.js");
 
         // Write here you custom code
     }

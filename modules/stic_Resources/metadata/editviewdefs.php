@@ -42,10 +42,6 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_PANEL_PLACE' => array(
-                    'newTab' => false,
-                    'panelDefault' => 'expanded',
-                ),
             ),
         ),
         'panels' => array(
@@ -96,32 +92,6 @@ array(
                 ),
                 5 => array(
                     0 => 'description',
-                ),
-            ),
-            'LBL_PANEL_PLACES' => array(
-                0 => array(
-                    0 => array(
-                        'name' => 'place_type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_PLACE_TYPE',
-                    ),
-                    1 => array(
-                        'name' => 'user_type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_USER_TYPE',
-                    ),
-                ),
-                1 => array(
-                    0 => array(
-                        'name' => 'gender',
-                        'studio' => 'visible',
-                        'label' => 'LBL_GENDER',
-                    ),
-                    1 => array(
-                        'name' => 'booking_type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_BOOKING_TYPE',
-                    ),
                 ),
             ),
         ),

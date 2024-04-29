@@ -89,10 +89,6 @@ $mod_strings = array(
     'LBL_RESOURCES_START_DATE_ERROR' => 'La fecha de inicio debe ser anterior a la fecha de finalización.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'La reserva no tiene recursos asignados.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'La reserva no tiene recursos asignados. ¿Quiere guardarla de todos modos?',
-  
-    // Used for the adding resources section
-    'LBL_PLACES' => 'Plazas',
-    'LBL_RESOURCES_NAME' => 'Nombre',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurso',
