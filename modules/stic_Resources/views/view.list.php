@@ -52,5 +52,15 @@ class stic_ResourcesViewList extends ViewList
 
         // Write here you custom code
     }
+    function listViewProcess() {
+        $this->processSearchForm();
+            $this->params['custom_where'] = ' AND stic_resources.type <> "places" ';
+      
+        if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
+            $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
+            $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+            echo $this->lv->display();
+        }
+    }
 
 }

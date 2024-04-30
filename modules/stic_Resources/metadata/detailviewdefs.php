@@ -108,8 +108,10 @@ array(
                 ),
                 5 => array(
                     0 => 'description',
-                ),
-            ),
+                    1 => array(
+                        'name' => 'stic_resources_stic_centers_name',
+                    ),
+                )),
             'LBL_PANEL_PLACES' => array(
                 0 => array(
                     0 => array(

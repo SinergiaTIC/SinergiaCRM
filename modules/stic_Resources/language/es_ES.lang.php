@@ -76,4 +76,5 @@ $mod_strings = array(
     'LBL_OWNER_CONTACT' => 'Persona propietaria',
     'LBL_OWNER_ACCOUNT' => 'Organización propietaria',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Reservas',
+    'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE' => 'Centro',
 );
