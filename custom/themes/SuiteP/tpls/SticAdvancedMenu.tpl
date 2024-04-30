@@ -46,7 +46,7 @@
 *}
 
 <link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
-<link href="SticInclude/vendor/smartmenus/dist/css/sm-blue/sm-blue.css" rel="stylesheet">
+<link href="SticInclude/vendor/smartmenus/dist/css/sm-stic/sm-stic.css" rel="stylesheet">
 <script src='{sugar_getjspath file="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"}'></script>
 <script src='{sugar_getjspath file="SticInclude/js/SticSmartmenus.js"}'></script>
 

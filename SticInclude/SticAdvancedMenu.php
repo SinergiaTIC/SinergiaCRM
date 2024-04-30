@@ -25,7 +25,7 @@ function generateMenu($items, $isFirstLevel = true)
 
     // Inicia la construcción del menú principal.
     if ($isFirstLevel) {
-        $html = '<ul id="stic-menu" class="sm sm-blue">';
+        $html = '<ul id="stic-menu" class="sm sm-stic">';
         $html .= '<li><a href="index.php?module=Home&action=index"><i class="glyphicon glyphicon-home"></i></a></li>';
     } else {
         $html = '<ul>';

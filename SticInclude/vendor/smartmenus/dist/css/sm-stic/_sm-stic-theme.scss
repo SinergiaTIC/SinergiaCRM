@@ -171,7 +171,7 @@ $sm-blue__toggle-size: floor($sm-blue__item-height * 0.8);
 $sm-blue__toggle-spacing: floor($sm-blue__item-height * 0.1);
 
 // Main menu box
-.sm-blue {
+.sm-stic {
 	background: $sm-blue__collapsible-bg;
 	border-radius: $sm-blue__collapsible-border-radius;
 	box-shadow: $sm-blue__collapsible-box-shadow;
@@ -298,17 +298,17 @@ $sm-blue__toggle-spacing: floor($sm-blue__item-height * 0.1);
 	   collapsible to desktop (navbar + dropdowns)
 	-----------------------------------------------*/
 	/* start... (it's not recommended editing these rules) */
-	.sm-blue ul{position:absolute;width:12em;}
-	.sm-blue li{float:left;}
-	.sm-blue.sm-rtl li{float:right;}
-	.sm-blue ul li,.sm-blue.sm-rtl ul li,.sm-blue.sm-vertical li{float:none;}
-	.sm-blue a{white-space:nowrap;}
-	.sm-blue ul a,.sm-blue.sm-vertical a{white-space:normal;}
-	.sm-blue .sm-nowrap > li > a,.sm-blue .sm-nowrap > li > :not(ul) a{white-space:nowrap;}
+	.sm-stic ul{position:absolute;width:12em;}
+	.sm-stic li{float:left;}
+	.sm-stic.sm-rtl li{float:right;}
+	.sm-stic ul li,.sm-stic.sm-rtl ul li,.sm-stic.sm-vertical li{float:none;}
+	.sm-stic a{white-space:nowrap;}
+	.sm-stic ul a,.sm-stic.sm-vertical a{white-space:normal;}
+	.sm-stic .sm-nowrap > li > a,.sm-stic .sm-nowrap > li > :not(ul) a{white-space:nowrap;}
 	/* ...end */
 
 	// Main menu box
-	.sm-blue {
+	.sm-stic {
 		background: $sm-blue__desktop-bg;
 		background-image: linear-gradient(to bottom, lighten($sm-blue__desktop-bg, $sm-blue__gradients_amount), darken($sm-blue__desktop-bg, $sm-blue__gradients_amount));
 		border-radius: $sm-blue__desktop-border-radius;

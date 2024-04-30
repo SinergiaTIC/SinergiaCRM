@@ -60,7 +60,7 @@
 
 {* SMART MENUS *}
 {* <link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
-<link href="SticInclude/vendor/smartmenus/dist/css/sm-blue/sm-blue.css" rel="stylesheet">
+<link href="SticInclude/vendor/smartmenus/dist/css/sm-stic/sm-stic.css" rel="stylesheet">
 <script src="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"></script> *}
 {* <script src="SticInclude/vendor/smartmenus/dist/addons/bootstrap/jquery.smartmenus.bootstrap.min.js"></script> *}
 
