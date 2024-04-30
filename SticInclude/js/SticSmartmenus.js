@@ -13,7 +13,7 @@ $(document).ready(function() {
   //     $(this).children(".dropdown-menu").stop(true, true).fadeOut(300);
   //   }
   // );
-  $("#main-menu").smartmenus({
+  $("#stic-menu").smartmenus({
     subMenusSubOffsetX: 1,
     subMenusSubOffsetY: -8
   });

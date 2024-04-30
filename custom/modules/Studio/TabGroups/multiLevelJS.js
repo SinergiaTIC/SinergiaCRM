@@ -1,7 +1,7 @@
 $(document).ready(function() {
   $(function() {
     // Create js menu
-    $("#menu-modules").jstree({
+    $("#stic-menu-manager").jstree({
       core: {
         data: menu[0],
         check_callback: true,
@@ -13,7 +13,7 @@ $(document).ready(function() {
       plugins: ["dnd", "wholerow", "contextmenu"],
       contextmenu: {
         items: function($node) {
-          var tree = $("#menu-modules").jstree(true);
+          var tree = $("#stic-menu-manager").jstree(true);
           return {
             Create: {
               separator_before: false,
@@ -97,7 +97,7 @@ $(document).ready(function() {
 
   // Button command
   $("#save-menu").on("click", function() {
-    var $cleanMenu = $("#menu-modules").jstree(true).get_json().map(filterNodes);
+    var $cleanMenu = $("#stic-menu-manager").jstree(true).get_json().map(filterNodes);
 
     // Define los datos que enviarás en la petición
     var dataToSend = {
@@ -129,9 +129,9 @@ $(document).ready(function() {
 
   });
 
-  // Cambiar el texto y cmabiar el id
-  $("#menu-modules").on("rename_node.jstree", function(e, data) {
-    var tree = $("#menu-modules").jstree(true);
+  // Cambiar el texto y cambiar el id
+  $("#stic-menu-manager").on("rename_node.jstree", function(e, data) {
+    var tree = $("#stic-menu-manager").jstree(true);
     var newId = data.text.replace(/\s+/g, "_");
 
     // Cambiar el ID directamente
@@ -142,10 +142,10 @@ $(document).ready(function() {
     console.log("ID actual del nodo:", data.node.id); // Verificar el ID después de intentar cambiarlo
   });
 
-  $("#menu-modules").on("rename_node.jstree", handleTreeChanges);
-  $("#menu-modules").on("move_node.jstree", handleTreeChanges);
-  $("#menu-modules").on("delete_node.jstree", handleTreeChanges);
-  $("#menu-modules").on("create_node.jstree", handleTreeChanges);
+  $("#stic-menu-manager").on("rename_node.jstree", handleTreeChanges);
+  $("#stic-menu-manager").on("move_node.jstree", handleTreeChanges);
+  $("#stic-menu-manager").on("delete_node.jstree", handleTreeChanges);
+  $("#stic-menu-manager").on("create_node.jstree", handleTreeChanges);
 
   
   

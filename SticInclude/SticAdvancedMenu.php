@@ -18,10 +18,14 @@ function generateMenu($items, $isFirstLevel = true)
     $controller = new TabController();
     // $tabs incluye exclusivamente los modulos que el usuario actual puede ver en función de sus roles y lo definido en su perfil.
     $tabs = $controller->get_tabs($current_user)[0];
+    foreach ($tabs as $key => $value) {
+        $tabs[$key] = $app_list_strings['moduleList'][$key];
+    }
+    asort($tabs);
 
     // Inicia la construcción del menú principal.
     if ($isFirstLevel) {
-        $html = '<ul id="main-menu" class="sm sm-blue">';
+        $html = '<ul id="stic-menu" class="sm sm-blue">';
         $html .= '<li><a href="index.php?module=Home&action=index"><i class="glyphicon glyphicon-home"></i></a></li>';
     } else {
         $html = '<ul>';
@@ -43,9 +47,10 @@ function generateMenu($items, $isFirstLevel = true)
 
         // Solamente incluimos el enlace para los nodos cuyo id están en la lista de módulos
         // de este modo excluimos los enlaces de los nodos que no apuntan a modulos válidos
-        if (in_array($item['id'], $tabs)) {
+        if (array_key_exists($item['id'], $tabs)) {
             $html .= '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>'; // Agrega la clase 'dropdown' si hay submenús.
-            $html .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'>" . $text . '</a>'; // Crea un enlace para el ítem del menú.
+            $lowerModule=str_replace('_','-',strtolower($item['id']));
+            $html .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'><span class='suitepicon suitepicon-module-{$lowerModule}'></span> $text </a>"; // Crea un enlace para el ítem del menú.
         } else {
             if ($hasChildren) {
                 $html .= '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>'; // Agrega la clase 'dropdown' si hay submenús.
@@ -60,6 +65,19 @@ function generateMenu($items, $isFirstLevel = true)
         }
         // $html .= '</li>'; // Cierra el ítem del menú.
     }
+
+    // Añadimos el menu "TODO" incluyendo un buscador para los módulos
+    if ($isFirstLevel) {
+        $html .= '<li class="dropdown">';
+        $html .= "<a href='#' class='no-link'>{$app_strings['LBL_TABGROUP_ALL']} </a>";
+        $html .= '<ul>';
+        $html .= '<li><input type="text" id="search-all" placeholder="'.$app_strings['LBL_SEARCH'].'"></input></li>';
+        foreach ($tabs as $key => $value) {
+            $html .= "<li><a href='index.php?module={$key}&action=index&return_module=Accounts&return_action=DetailView'>" . $value . '</a></li>';
+        }
+        $html .= '</ul>';
+    }
+
     $html .= '</ul>'; // Finaliza la lista del menú.
 
     return $html; // Retorna el HTML construido.

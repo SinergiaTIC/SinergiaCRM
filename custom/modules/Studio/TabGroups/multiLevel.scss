@@ -4,39 +4,17 @@
     margin: 1px;
 }
 
-#menu-modules {
+#stic-menu-manager {
     .jstree-anchor {
         background-color: #b5bc31;
         border: 1px solid darken(#b5bc31, 10%);
     }
 }
-#menu-modules > ul.jstree-container-ul > li[role="treeitem"] {
+#stic-menu-manager > ul.jstree-container-ul > li[role="treeitem"] {
     font-weight: bold;
 }
-#stic-menu {
-    .navbar .dropdown-menu .dropdown-submenu {
-        position: relative;
-    }
 
-    .navbar .dropdown-menu .dropdown-submenu .dropdown-menu {
-        display: none;
-        position: absolute;
-        top: 0;
-        left: 100%;
-        margin-top: -1px;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-    }
 
-    .dropdown-submenu:hover > .dropdown-menu {
-        display: block;
-    }
-
-    .dropdown-submenu > a:after {
-        content: "▸";
-        float: right;
-    }
-}
 #saved-notice {
     position: absolute;
     right: 4px;

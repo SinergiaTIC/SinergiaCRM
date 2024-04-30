@@ -59,6 +59,17 @@
                         $(this).remove();
                     }
                 });
+
+                $("#search-all").on("keyup", function() {
+                debugger    
+                var value = $(this).val().toLowerCase();
+
+                    // Filtra los <li> hermanos
+                    $("#search-all").parent().siblings().filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+
             });
         </script>
     {/literal}

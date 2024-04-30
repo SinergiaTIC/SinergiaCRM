@@ -41,8 +41,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-global $app_list_strings, $app_strings, $mod_strings;
-// var_dump($app_strings);die();
+global $app_list_strings, $app_strings, $mod_strings, $current_user;
+
+require_once 'modules/MySettings/TabController.php';
+$controller = new TabController();
+$tabs = $controller->get_tabs($current_user)[0];
+
+
 require_once 'modules/Studio/TabGroups/TabGroupHelper.php';
 require_once 'modules/Studio/parsers/StudioParser.php';
 
@@ -92,14 +97,26 @@ if (isset($GLOBALS["SticTabStructure"])) {
 $jsonMenu = json_encode($menu, JSON_UNESCAPED_UNICODE);
 $smarty->assign('jsonMenu', $jsonMenu);
 
-$allModules = [];
-foreach ($availableModules as $key => $value) {
-    if (!findIdInArray($menu, $key)) {
-        $allModules[] = ['id' => $key, 'text' => $value['label']];
-    }
+// $allModules = [];
+// foreach ($availableModules as $key => $value) {
+//     if (!findIdInArray($menu, $key)) {
+//         $allModules[] = ['id' => $key, 'text' => $value['label']];
+//     }
+// }
+// usort($allModules, function ($a, $b) {return strcmp($a['text'], $b['text']);});
 
+
+$allModules = [];
+foreach ($tabs as $key => $value) {
+    if (!findIdInArray($menu, $key)) {
+        $allModules[] = ['id' => $key, 'text' => $app_list_strings['moduleList'][$key]];
+    }
 }
 usort($allModules, function ($a, $b) {return strcmp($a['text'], $b['text']);});
+
+
+
+
 
 $jsonAll = json_encode($allModules, JSON_UNESCAPED_UNICODE);
 $smarty->assign('jsonAll', $jsonAll);

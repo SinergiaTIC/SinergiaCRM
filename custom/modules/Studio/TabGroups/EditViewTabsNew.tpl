@@ -98,8 +98,7 @@
 
 			</div>
 			<div class="panel-body">
-				<div id="menu-status"></div>
-				<div id="menu-modules">
+				<div id="stic-menu-manager">
 				</div>
 
 			</div>
