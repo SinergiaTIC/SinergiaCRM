@@ -2,7 +2,7 @@
 //
 // We'll use left border to avoid messing with the padding.
 
-@mixin sm-blue__sub-items-indentation($amount, $chainable: 'ul ', $level: 4, $chain: '') {
+@mixin sm-stic__sub-items-indentation($amount, $chainable: 'ul ', $level: 4, $chain: '') {
 	@for $i from 1 through $level {
 		$chain: $chain + $chainable;
 		#{$chain} a,

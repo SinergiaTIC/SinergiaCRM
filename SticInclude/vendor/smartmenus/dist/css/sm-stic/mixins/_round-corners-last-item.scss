@@ -1,6 +1,6 @@
 // Generate rules to round the corners of the last collapsible item
 
-@mixin sm-blue__round-corners-last-item($amount, $chainable: 'ul > li:last-child > ', $level: 4, $chain_prefix: '> li:last-child > ', $chain: '', $selector: '') {
+@mixin sm-stic__round-corners-last-item($amount, $chainable: 'ul > li:last-child > ', $level: 4, $chain_prefix: '> li:last-child > ', $chain: '', $selector: '') {
 	$chain: $chain_prefix;
 	$selector: $chain + 'a, ' + $chain + '*:not(ul) a, ' + $chain + 'ul';
 	@for $i from 1 through $level {

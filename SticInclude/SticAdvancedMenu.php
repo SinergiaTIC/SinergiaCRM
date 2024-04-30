@@ -49,7 +49,7 @@ function generateMenu($items, $isFirstLevel = true)
         // de este modo excluimos los enlaces de los nodos que no apuntan a modulos válidos
         if (array_key_exists($item['id'], $tabs)) {
             $html .= '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>'; // Agrega la clase 'dropdown' si hay submenús.
-            $lowerModule=str_replace('_','-',strtolower($item['id']));
+            $lowerModule = str_replace('_', '-', strtolower($item['id']));
             $html .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'><span class='suitepicon suitepicon-module-{$lowerModule}'></span> $text </a>"; // Crea un enlace para el ítem del menú.
         } else {
             if ($hasChildren) {
@@ -60,10 +60,8 @@ function generateMenu($items, $isFirstLevel = true)
 
         if ($hasChildren) {
             $html .= generateMenu($item['children'], false); // Recursivamente genera menús para los subítems.
-        } else {
-
         }
-        // $html .= '</li>'; // Cierra el ítem del menú.
+
     }
 
     // Añadimos el menu "TODO" incluyendo un buscador para los módulos
@@ -71,7 +69,7 @@ function generateMenu($items, $isFirstLevel = true)
         $html .= '<li class="dropdown">';
         $html .= "<a href='#' class='no-link'>{$app_strings['LBL_TABGROUP_ALL']} </a>";
         $html .= '<ul>';
-        $html .= '<li><input type="text" id="search-all" placeholder="'.$app_strings['LBL_SEARCH'].'"></input></li>';
+        $html .= '<li><input type="text" id="search-all" placeholder="' . $app_strings['LBL_SEARCH'] . '"></input></li>';
         foreach ($tabs as $key => $value) {
             $html .= "<li><a href='index.php?module={$key}&action=index&return_module=Accounts&return_action=DetailView'>" . $value . '</a></li>';
         }

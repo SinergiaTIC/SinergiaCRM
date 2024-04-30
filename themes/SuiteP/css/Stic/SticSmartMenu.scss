@@ -1,164 +1,155 @@
+@import "../../../../SticInclude/vendor/smartmenus/dist/css/sm-stic/mixins";
+
+// the variables + the CSS
+// @import '_sm-stic-theme.scss';
+
 // This file is best viewed with Tab size 4 code indentation
-
-
-// -----------------------------------------------------------------------------------------------------------------
-// 1. Theme Quick Settings (Variables)
-// (for further control, you will need to dig into the actual CSS in 2.)
-// -----------------------------------------------------------------------------------------------------------------
-
 
 // ----------------------------------------------------------
 // :: 1.1. Colors
 // ----------------------------------------------------------
 
-$sm-stic__stic:											#32ca53 !default;
-$sm-stic__stic-dark:									darken($sm-stic__stic, 5%) !default;
-$sm-stic__stic-darker:									darken($sm-stic__stic, 15%) !default;
-$sm-stic__stic-light:									lighten($sm-stic__stic, 30%) !default;
-$sm-stic__white:										#fff !default;
-$sm-stic__gray:											darken($sm-stic__white, 34%) !default;
+$sm-stic__stic: $stic-base !default;
+// $sm-stic__stic:											rgba(0, 0, 0, 0.8) !default;
+$sm-stic__stic-dark: darken($sm-stic__stic, 5%) !default;
+$sm-stic__stic-darker: darken($sm-stic__stic, 15%) !default;
+$sm-stic__stic-light: lighten($sm-stic__stic, 30%) !default;
+$sm-stic__white: #ebe8e8 !default;
+$sm-stic__gray: darken($sm-stic__white, 34%) !default;
 
-$sm-stic__text-shadow:									rgba(0, 0, 0, 0.2) !default;
-$sm-stic__box-shadow:									rgba(0, 0, 0, 0.2) !default;
+$sm-stic__text-shadow: rgba(0, 0, 0, 0) !default;
+$sm-stic__box-shadow: rgba(0, 0, 0, 0) !default;
 
-$sm-stic__gradients_amount:								2% !default;
-
+$sm-stic__gradients_amount: 0% !default;
 
 // ----------------------------------------------------------
 // :: 1.2. Breakpoints
 // ----------------------------------------------------------
 
-$sm-stic__desktop-vp:									768px !default;		// switch from collapsible to desktop
-
+$sm-stic__desktop-vp: 768px !default; // switch from collapsible to desktop
 
 // ----------------------------------------------------------
 // :: 1.3. Typography
 // ----------------------------------------------------------
 
 // Import "PT Sans Narrow" font from Google fonts
-@import url(https://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700);
+// @import url(https://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700);
 
-$sm-stic__font-family:									"PT Sans Narrow", "Arial Narrow", Arial, Helvetica, sans-serif !default;
-$sm-stic__font-size-base:								18px !default;
-$sm-stic__font-size-small:								16px !default;
-$sm-stic__line-height:									23px !default;
-
+// $sm-stic__font-family:									"PT Sans Narrow", "Arial Narrow", Arial, Helvetica, sans-serif !default;
+$sm-stic__font-family: $font-family-base !default;
+$sm-stic__font-size-base: 16px !default;
+$sm-stic__font-size-small: 14px !default;
+$sm-stic__line-height: 20px !default;
 
 // ----------------------------------------------------------
 // :: 1.4. Borders
 // ----------------------------------------------------------
 
-$sm-stic__border-width:									1px !default;
-$sm-stic__border-radius-base:							8px !default;
-$sm-stic__border-radius-small:							4px !default;
-
+$sm-stic__border-width: 1px !default;
+$sm-stic__border-radius-base: 0px !default;
+$sm-stic__border-radius-small: 0px !default;
 
 // ----------------------------------------------------------
 // :: 1.5. Collapsible main menu
 // ----------------------------------------------------------
 
 // Menu box
-$sm-stic__collapsible-bg:								transparent !default;
-$sm-stic__collapsible-border-radius:					$sm-stic__border-radius-base !default;
-$sm-stic__collapsible-box-shadow:						0 1px 4px $sm-stic__box-shadow !default;
+$sm-stic__collapsible-bg: transparent !default;
+$sm-stic__collapsible-border-radius: $sm-stic__border-radius-base !default;
+$sm-stic__collapsible-box-shadow: 0 1px 4px $sm-stic__box-shadow !default;
 
-// Items                           
-$sm-stic__collapsible-item-color:						$sm-stic__white !default;
-$sm-stic__collapsible-item-bg:							$sm-stic__stic !default;
-$sm-stic__collapsible-item-current-color:				$sm-stic__white !default;
-$sm-stic__collapsible-item-current-bg:					$sm-stic__stic-darker !default;
-$sm-stic__collapsible-item-disabled-color:				lighten($sm-stic__stic, 30%) !default;
-$sm-stic__collapsible-item-padding-vertical:			10px !default;
-$sm-stic__collapsible-item-padding-horizontal:			20px !default;
+// Items
+$sm-stic__collapsible-item-color: $sm-stic__white !default;
+$sm-stic__collapsible-item-bg: $sm-stic__stic !default;
+$sm-stic__collapsible-item-current-color: $sm-stic__white !default;
+$sm-stic__collapsible-item-current-bg: $sm-stic__stic-darker !default;
+$sm-stic__collapsible-item-disabled-color: lighten($sm-stic__stic, 30%) !default;
+$sm-stic__collapsible-item-padding-vertical: 5px !default;
+$sm-stic__collapsible-item-padding-horizontal: 5px !default;
 
 // Toggle button (sub menu indicators)
-$sm-stic__collapsible-toggle-bg:						rgba(0, 0, 0, 0.1) !default;
-
+$sm-stic__collapsible-toggle-bg: rgba(0, 0, 0, 0.1) !default;
 
 // ----------------------------------------------------------
 // :: 1.6. Collapsible sub menus
 // ----------------------------------------------------------
 
 // Menu box
-$sm-stic__collapsible-sub-bg:							$sm-stic__white !default;
+$sm-stic__collapsible-sub-bg: $sm-stic__white !default;
 
 // Items
-$sm-stic__collapsible-sub-item-color:					$sm-stic__stic-dark !default;
-$sm-stic__collapsible-sub-item-bg:						transparent !default;
-$sm-stic__collapsible-sub-item-current-color:			$sm-stic__white !default;
-$sm-stic__collapsible-sub-item-current-bg:				$sm-stic__stic-darker !default;
-$sm-stic__collapsible-sub-item-disabled-color:			darken($sm-stic__white, 30%) !default;
+$sm-stic__collapsible-sub-item-color: $sm-stic__stic-dark !default;
+$sm-stic__collapsible-sub-item-bg: transparent !default;
+$sm-stic__collapsible-sub-item-current-color: $sm-stic__white !default;
+$sm-stic__collapsible-sub-item-current-bg: $sm-stic__stic-darker !default;
+$sm-stic__collapsible-sub-item-disabled-color: darken($sm-stic__white, 30%) !default;
 
 // Items separators
-$sm-stic__collapsible-sub-separators-color:				rgba(0, 0, 0, 0.05) !default;
+$sm-stic__collapsible-sub-separators-color: rgba(0, 0, 0, 0.05) !default;
 
 // Items text indentation for deeper levels
-$sm-stic__collapsible-sub-item-indentation:				8px !default;
-
+$sm-stic__collapsible-sub-item-indentation: 8px !default;
 
 // ----------------------------------------------------------
 // :: 1.7. Desktop main menu
 // ----------------------------------------------------------
 
 // Menu box
-$sm-stic__desktop-bg:									$sm-stic__stic !default;
-$sm-stic__desktop-border-radius:						$sm-stic__border-radius-base !default;
-$sm-stic__desktop-box-shadow:							0 1px 1px $sm-stic__box-shadow !default;
+$sm-stic__desktop-bg: $stic-base !default;
+$sm-stic__desktop-border-radius: $sm-stic__border-radius-base !default;
+$sm-stic__desktop-box-shadow: 0 1px 1px $sm-stic__box-shadow !default;
 
 // Items
-$sm-stic__desktop-item-color:							$sm-stic__white !default;
-$sm-stic__desktop-item-bg:								$sm-stic__stic !default;
-$sm-stic__desktop-item-hover-bg:						darken($sm-stic__stic, 5%) !default;
-$sm-stic__desktop-item-current-color:					$sm-stic__white !default;
-$sm-stic__desktop-item-current-bg:						$sm-stic__stic-darker !default;
-$sm-stic__desktop-item-disabled-color:					lighten($sm-stic__stic, 30%) !default;
-$sm-stic__desktop-item-padding-vertical:				13px !default;
-$sm-stic__desktop-item-padding-horizontal:				24px !default;
+$sm-stic__desktop-item-color: bw($stic-base) !default;
+$sm-stic__desktop-item-bg: $sm-stic__stic !default;
+$sm-stic__desktop-item-hover-bg: darken($sm-stic__stic, 5%) !default;
+$sm-stic__desktop-item-current-color: $sm-stic__white !default;
+$sm-stic__desktop-item-current-bg: $sm-stic__stic-darker !default;
+$sm-stic__desktop-item-disabled-color: lighten($sm-stic__stic, 30%) !default;
+$sm-stic__desktop-item-padding-vertical: 10px !default;
+$sm-stic__desktop-item-padding-horizontal: 10px !default;
 
 // Items separators
-$sm-stic__desktop-separators-size:						1px !default;
-$sm-stic__desktop-separators-color:						darken($sm-stic__stic, 5%) !default;
+$sm-stic__desktop-separators-size: 0px !default;
+$sm-stic__desktop-separators-color: darken($sm-stic__stic, 5%) !default;
 
 // Sub menu indicators
-$sm-stic__desktop-arrow-size:							5px !default;		// border-width
-$sm-stic__desktop-arrow-color:							$sm-stic__stic-light !default;
+$sm-stic__desktop-arrow-size: 5px !default; // border-width
+$sm-stic__desktop-arrow-color: $sm-stic__stic-light !default;
 
 // Vertical menu box
-$sm-stic__desktop-vertical-box-shadow:					0 1px 4px $sm-stic__box-shadow !default;
+$sm-stic__desktop-vertical-box-shadow: 0 1px 4px $sm-stic__box-shadow !default;
 
 // Vertical items
-$sm-stic__desktop-vertical-item-padding-vertical:		9px !default;
-$sm-stic__desktop-vertical-item-padding-horizontal:		23px !default;
-
+$sm-stic__desktop-vertical-item-padding-vertical: 9px !default;
+$sm-stic__desktop-vertical-item-padding-horizontal: 23px !default;
 
 // ----------------------------------------------------------
 // :: 1.8. Desktop sub menus
 // ----------------------------------------------------------
 
 // Menu box
-$sm-stic__desktop-sub-bg:								$sm-stic__white !default;
-$sm-stic__desktop-sub-border-color:						$sm-stic__gray !default;
-$sm-stic__desktop-sub-border-radius:					$sm-stic__border-radius-small !default;
-$sm-stic__desktop-sub-box-shadow:						0 5px 12px $sm-stic__box-shadow !default;
-$sm-stic__desktop-sub-padding-vertical:					7px !default;
-$sm-stic__desktop-sub-padding-horizontal:				0 !default;
+$sm-stic__desktop-sub-bg: $sm-stic__stic-dark !default;
+$sm-stic__desktop-sub-border-color: $sm-stic__gray !default;
+$sm-stic__desktop-sub-border-radius: $sm-stic__border-radius-small !default;
+$sm-stic__desktop-sub-box-shadow: 0 5px 12px $sm-stic__box-shadow !default;
+$sm-stic__desktop-sub-padding-vertical: 7px !default;
+$sm-stic__desktop-sub-padding-horizontal: 0 !default;
 
 // Items
-$sm-stic__desktop-sub-item-color:						$sm-stic__stic-dark !default;
-$sm-stic__desktop-sub-item-bg:							transparent !default;
-$sm-stic__desktop-sub-item-hover-color:					$sm-stic__white !default;
-$sm-stic__desktop-sub-item-hover-bg:					$sm-stic__stic !default;
-$sm-stic__desktop-sub-item-current-color:				$sm-stic__white !default;
-$sm-stic__desktop-sub-item-current-bg:					$sm-stic__stic-darker !default;
-$sm-stic__desktop-sub-item-disabled-color:				darken($sm-stic__white, 30%) !default;
-$sm-stic__desktop-sub-item-padding-vertical:			9px !default;
-$sm-stic__desktop-sub-item-padding-horizontal:			23px !default;
-
+$sm-stic__desktop-sub-item-color: bw($sm-stic__stic-dark) !default;
+$sm-stic__desktop-sub-item-bg: transparent !default;
+$sm-stic__desktop-sub-item-hover-color: bw($stic-base) !default;
+$sm-stic__desktop-sub-item-hover-bg: $stic-base !default;
+$sm-stic__desktop-sub-item-current-color: $sm-stic__white !default;
+$sm-stic__desktop-sub-item-current-bg: $sm-stic__stic-darker !default;
+$sm-stic__desktop-sub-item-disabled-color: darken($sm-stic__white, 30%) !default;
+$sm-stic__desktop-sub-item-padding-vertical: 9px !default;
+$sm-stic__desktop-sub-item-padding-horizontal: 23px !default;
 
 // -----------------------------------------------------------------------------------------------------------------
 // 2. Theme CSS
 // -----------------------------------------------------------------------------------------------------------------
-
 
 // ----------------------------------------------------------
 // :: 2.1. Collapsible mode (mobile first)
@@ -184,9 +175,14 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 		&:active {
 			padding: $sm-stic__collapsible-item-padding-vertical $sm-stic__collapsible-item-padding-horizontal;
 			/* make room for the toggle button (sub indicator) */
-			padding-right: $sm-stic__collapsible-item-padding-horizontal + $sm-stic__toggle-size + $sm-stic__toggle-spacing;
+			padding-right: $sm-stic__collapsible-item-padding-horizontal + $sm-stic__toggle-size +
+				$sm-stic__toggle-spacing;
 			background: $sm-stic__collapsible-item-bg;
-			background-image: linear-gradient(to bottom, lighten($sm-stic__collapsible-item-bg, $sm-stic__gradients_amount), darken($sm-stic__collapsible-item-bg, $sm-stic__gradients_amount));
+			background-image: linear-gradient(
+				to bottom,
+				lighten($sm-stic__collapsible-item-bg, $sm-stic__gradients_amount),
+				darken($sm-stic__collapsible-item-bg, $sm-stic__gradients_amount)
+			);
 			color: $sm-stic__collapsible-item-color;
 			font-family: $sm-stic__font-family;
 			font-size: $sm-stic__font-size-base;
@@ -198,7 +194,11 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 
 		&.current {
 			background: $sm-stic__collapsible-item-current-bg;
-			background-image: linear-gradient(to bottom, darken($sm-stic__collapsible-item-current-bg, $sm-stic__gradients_amount), lighten($sm-stic__collapsible-item-current-bg, $sm-stic__gradients_amount));
+			background-image: linear-gradient(
+				to bottom,
+				darken($sm-stic__collapsible-item-current-bg, $sm-stic__gradients_amount),
+				lighten($sm-stic__collapsible-item-current-bg, $sm-stic__gradients_amount)
+			);
 			color: $sm-stic__collapsible-item-current-color;
 		}
 
@@ -223,15 +223,16 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 			border-radius: $sm-stic__border-radius-small;
 		}
 		.sub-arrow::before {
-			content: '+';
+			content: "+";
 		}
 		&.highlighted .sub-arrow::before {
-			content: '-';
+			content: "-";
 		}
 	}
 
 	// round the corners of the first item
-	> li:first-child > a, > li:first-child > :not(ul) a {
+	> li:first-child > a,
+	> li:first-child > :not(ul) a {
 		border-radius: $sm-stic__collapsible-border-radius $sm-stic__collapsible-border-radius 0 0;
 	}
 	// round the corners of the last item
@@ -262,7 +263,11 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 
 			&.current {
 				background: $sm-stic__collapsible-sub-item-current-bg;
-				background-image: linear-gradient(to bottom, darken($sm-stic__collapsible-sub-item-current-bg, $sm-stic__gradients_amount), lighten($sm-stic__collapsible-sub-item-current-bg, $sm-stic__gradients_amount));
+				background-image: linear-gradient(
+					to bottom,
+					darken($sm-stic__collapsible-sub-item-current-bg, $sm-stic__gradients_amount),
+					lighten($sm-stic__collapsible-sub-item-current-bg, $sm-stic__gradients_amount)
+				);
 				color: $sm-stic__collapsible-sub-item-current-color;
 			}
 
@@ -285,32 +290,53 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 	}
 }
 
-
 // ----------------------------------------------------------
 // :: 2.2. Desktop mode
 // ----------------------------------------------------------
 
 @media (min-width: $sm-stic__desktop-vp) {
-
 	/* Switch to desktop layout
 	-----------------------------------------------
 	   These transform the menu tree from
 	   collapsible to desktop (navbar + dropdowns)
 	-----------------------------------------------*/
 	/* start... (it's not recommended editing these rules) */
-	.sm-stic ul{position:absolute;width:12em;}
-	.sm-stic li{float:left;}
-	.sm-stic.sm-rtl li{float:right;}
-	.sm-stic ul li,.sm-stic.sm-rtl ul li,.sm-stic.sm-vertical li{float:none;}
-	.sm-stic a{white-space:nowrap;}
-	.sm-stic ul a,.sm-stic.sm-vertical a{white-space:normal;}
-	.sm-stic .sm-nowrap > li > a,.sm-stic .sm-nowrap > li > :not(ul) a{white-space:nowrap;}
+	.sm-stic ul {
+		position: absolute;
+		width: 12em;
+	}
+	.sm-stic li {
+		float: left;
+	}
+	.sm-stic.sm-rtl li {
+		float: right;
+	}
+	.sm-stic ul li,
+	.sm-stic.sm-rtl ul li,
+	.sm-stic.sm-vertical li {
+		float: none;
+	}
+	.sm-stic a {
+		white-space: nowrap;
+	}
+	.sm-stic ul a,
+	.sm-stic.sm-vertical a {
+		white-space: normal;
+	}
+	.sm-stic .sm-nowrap > li > a,
+	.sm-stic .sm-nowrap > li > :not(ul) a {
+		white-space: nowrap;
+	}
 	/* ...end */
 
 	// Main menu box
-	.sm-stic {
+	#stic-menu.sm-stic {
 		background: $sm-stic__desktop-bg;
-		background-image: linear-gradient(to bottom, lighten($sm-stic__desktop-bg, $sm-stic__gradients_amount), darken($sm-stic__desktop-bg, $sm-stic__gradients_amount));
+		background-image: linear-gradient(
+			to bottom,
+			lighten($sm-stic__desktop-bg, $sm-stic__gradients_amount),
+			darken($sm-stic__desktop-bg, $sm-stic__gradients_amount)
+		);
 		border-radius: $sm-stic__desktop-border-radius;
 		box-shadow: $sm-stic__desktop-box-shadow;
 
@@ -323,7 +349,11 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 			&.highlighted {
 				padding: $sm-stic__desktop-item-padding-vertical $sm-stic__desktop-item-padding-horizontal;
 				background: $sm-stic__desktop-item-bg;
-				background-image: linear-gradient(to bottom, lighten($sm-stic__desktop-item-bg, $sm-stic__gradients_amount), darken($sm-stic__desktop-item-bg, $sm-stic__gradients_amount));
+				background-image: linear-gradient(
+					to bottom,
+					lighten($sm-stic__desktop-item-bg, $sm-stic__gradients_amount),
+					darken($sm-stic__desktop-item-bg, $sm-stic__gradients_amount)
+				);
 				color: $sm-stic__desktop-item-color;
 			}
 
@@ -332,18 +362,30 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 			&:active,
 			&.highlighted {
 				background: $sm-stic__desktop-item-hover-bg;
-				background-image: linear-gradient(to bottom, lighten($sm-stic__desktop-item-hover-bg, $sm-stic__gradients_amount), darken($sm-stic__desktop-item-hover-bg, $sm-stic__gradients_amount));
+				background-image: linear-gradient(
+					to bottom,
+					lighten($sm-stic__desktop-item-hover-bg, $sm-stic__gradients_amount),
+					darken($sm-stic__desktop-item-hover-bg, $sm-stic__gradients_amount)
+				);
 			}
 
 			&.current {
 				background: $sm-stic__desktop-item-current-bg;
-				background-image: linear-gradient(to bottom, darken($sm-stic__desktop-item-current-bg, $sm-stic__gradients_amount), lighten($sm-stic__desktop-item-current-bg, $sm-stic__gradients_amount));
+				background-image: linear-gradient(
+					to bottom,
+					darken($sm-stic__desktop-item-current-bg, $sm-stic__gradients_amount),
+					lighten($sm-stic__desktop-item-current-bg, $sm-stic__gradients_amount)
+				);
 				color: $sm-stic__desktop-item-current-color;
 			}
 
 			&.disabled {
 				background: $sm-stic__desktop-item-bg;
-				background-image: linear-gradient(to bottom, lighten($sm-stic__desktop-item-bg, $sm-stic__gradients_amount), darken($sm-stic__desktop-item-bg, $sm-stic__gradients_amount));
+				background-image: linear-gradient(
+					to bottom,
+					lighten($sm-stic__desktop-item-bg, $sm-stic__gradients_amount),
+					darken($sm-stic__desktop-item-bg, $sm-stic__gradients_amount)
+				);
 				color: $sm-stic__desktop-item-disabled-color;
 			}
 
@@ -370,10 +412,12 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 		}
 
 		// round the corners of the first and last items
-		> li:first-child > a, > li:first-child > :not(ul) a {
+		> li:first-child > a,
+		> li:first-child > :not(ul) a {
 			border-radius: $sm-stic__desktop-border-radius 0 0 $sm-stic__desktop-border-radius;
 		}
-		> li:last-child > a, > li:last-child > :not(ul) a {
+		> li:last-child > a,
+		> li:last-child > :not(ul) a {
 			border-radius: 0 $sm-stic__desktop-border-radius $sm-stic__desktop-border-radius 0 !important;
 		}
 
@@ -419,13 +463,21 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 				&:active,
 				&.highlighted {
 					background: $sm-stic__desktop-sub-item-hover-bg;
-					background-image: linear-gradient(to bottom, lighten($sm-stic__desktop-sub-item-hover-bg, $sm-stic__gradients_amount), darken($sm-stic__desktop-sub-item-hover-bg, $sm-stic__gradients_amount));
+					background-image: linear-gradient(
+						to bottom,
+						lighten($sm-stic__desktop-sub-item-hover-bg, $sm-stic__gradients_amount),
+						darken($sm-stic__desktop-sub-item-hover-bg, $sm-stic__gradients_amount)
+					);
 					color: $sm-stic__desktop-sub-item-hover-color;
 				}
 
 				&.current {
 					background: $sm-stic__desktop-sub-item-current-bg;
-					background-image: linear-gradient(to bottom, darken($sm-stic__desktop-sub-item-current-bg, $sm-stic__gradients_amount), lighten($sm-stic__desktop-sub-item-current-bg, $sm-stic__gradients_amount));
+					background-image: linear-gradient(
+						to bottom,
+						darken($sm-stic__desktop-sub-item-current-bg, $sm-stic__gradients_amount),
+						lighten($sm-stic__desktop-sub-item-current-bg, $sm-stic__gradients_amount)
+					);
 					color: $sm-stic__desktop-sub-item-current-color;
 				}
 
@@ -484,12 +536,10 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 			border-color: $sm-stic__desktop-sub-item-color transparent transparent transparent;
 		}
 
-
 		// Rigth-to-left
 
 		// Main menu box
 		&.sm-rtl {
-
 			// Vertical main menu items
 			&.sm-vertical {
 				a {
@@ -504,10 +554,12 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 			}
 
 			// round the corners of the first and last items
-			> li:first-child > a, > li:first-child > :not(ul) a {
+			> li:first-child > a,
+			> li:first-child > :not(ul) a {
 				border-radius: 0 $sm-stic__desktop-border-radius $sm-stic__desktop-border-radius 0;
 			}
-			> li:last-child > a, > li:last-child > :not(ul) a {
+			> li:last-child > a,
+			> li:last-child > :not(ul) a {
 				border-radius: $sm-stic__desktop-border-radius 0 0 $sm-stic__desktop-border-radius !important;
 			}
 
@@ -535,7 +587,6 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 			}
 		}
 
-
 		// Vertical main menu
 
 		// Main menu box
@@ -544,7 +595,8 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 
 			// Main menu items
 			a {
-				padding: $sm-stic__desktop-vertical-item-padding-vertical $sm-stic__desktop-vertical-item-padding-horizontal;
+				padding: $sm-stic__desktop-vertical-item-padding-vertical
+					$sm-stic__desktop-vertical-item-padding-horizontal;
 
 				// Sub menu indicators
 				.sub-arrow {
@@ -560,10 +612,12 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 			}
 
 			// round the corners of the first and last items
-			> li:first-child > a, > li:first-child > :not(ul) a {
+			> li:first-child > a,
+			> li:first-child > :not(ul) a {
 				border-radius: $sm-stic__desktop-border-radius $sm-stic__desktop-border-radius 0 0;
 			}
-			> li:last-child > a, > li:last-child > :not(ul) a {
+			> li:last-child > a,
+			> li:last-child > :not(ul) a {
 				border-radius: 0 0 $sm-stic__desktop-border-radius $sm-stic__desktop-border-radius !important;
 			}
 
@@ -580,6 +634,17 @@ $sm-stic__toggle-spacing: floor($sm-stic__item-height * 0.1);
 				a {
 					padding: $sm-stic__desktop-sub-item-padding-vertical $sm-stic__desktop-sub-item-padding-horizontal;
 				}
+			}
+		}
+
+		// Extra stic styles
+		a {
+			&:hover .suitepicon{
+				color: bw($stic-base);
+			}
+			.suitepicon {
+				margin-right: .5em;
+				color: lighten(bw($stic-base), 25%);
 			}
 		}
 	}
