@@ -44,6 +44,12 @@
  */
 
 *}
+
+<link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
+<link href="SticInclude/vendor/smartmenus/dist/css/sm-blue/sm-blue.css" rel="stylesheet">
+<script src='{sugar_getjspath file="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"}'></script>
+<script src='{sugar_getjspath file="SticInclude/js/SticSmartmenus.js"}'></script>
+
 <div class="desktop-toolbar" id="stic-toolbar">
 
     {$renderedMenu}
@@ -61,7 +67,6 @@
                 });
 
                 $("#search-all").on("keyup", function() {
-                debugger    
                 var value = $(this).val().toLowerCase();
 
                     // Filtra los <li> hermanos

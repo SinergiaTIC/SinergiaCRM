@@ -177,7 +177,7 @@
             </div>
         </div>
         {if $STIC_MENU }
-            {include file="custom/themes/SuiteP/tpls/SticMenu.tpl"}
+            {include file="custom/themes/SuiteP/tpls/SticAdvancedMenu.tpl"}
         {else}    
         <div class="desktop-toolbar" id="toolbar">
             {if $USE_GROUP_TABS}

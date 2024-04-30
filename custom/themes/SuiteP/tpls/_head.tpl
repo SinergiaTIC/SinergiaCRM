@@ -60,14 +60,10 @@
     <link href="themes/SuiteP/css/grid.css" rel="stylesheet" type="text/css"/>
     <link href="themes/SuiteP/css/footable.core.css" rel="stylesheet" type="text/css"/>
     *}
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/normalize.css"}'>
-    </script>
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/fonts.css"}'>
-    </script>
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/grid.css"}'>
-    </script>
-    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/footable.core.css"}'>
-    </script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/normalize.css"}'></script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/fonts.css"}'></script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/grid.css"}'></script>
+    <link type="text/css" rel="stylesheet" href='{sugar_getjspath file="themes/SuiteP/css/footable.core.css"}'></script>
     <title>{if $BROWSER_TITLE}{$BROWSER_TITLE}{else}{$APP.LBL_BROWSER_TITLE}{/if}</title>
     {* END STIC-Custom *}
 
@@ -97,8 +93,5 @@
     <script type="text/javascript" src='{sugar_getjspath file="themes/SuiteP/js/jscolor.js"}'></script>
     <script type="text/javascript" src='{sugar_getjspath file="cache/include/javascript/sugar_field_grp.js"}'></script>
     <script type="text/javascript" src='{sugar_getjspath file="vendor/tinymce/tinymce/tinymce.min.js"}'></script>
-    <link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
-    <link href="SticInclude/vendor/smartmenus/dist/css/sm-blue/sm-blue.css" rel="stylesheet">
-    <script src='{sugar_getjspath file="SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js"}'></script>
-    <script src='{sugar_getjspath file="SticInclude/js/SticSmartmenus.js"}'></script>
 </head>
+
