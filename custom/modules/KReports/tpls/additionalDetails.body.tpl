@@ -27,7 +27,7 @@
 <br>
 {if !empty($FIELD.DESCRIPTION)}
     <div>
-        <strong>{$PARAM.LBL_DESCRIPTION}:</strong>
+        <strong>{$PARAM.LBL_DESCRIPTION}</strong>
         {$FIELD.DESCRIPTION}
     </div>
 {/if}

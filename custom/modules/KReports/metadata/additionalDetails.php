@@ -38,6 +38,7 @@ function additionalDetailsKReport($fields, SugarBean $bean = null, $params = arr
     } else {
         global $current_language;
         $mod_strings = return_module_language($current_language, $bean->module_name);
+        $fields['DESCRIPTION']= html_entity_decode($fields['DESCRIPTION']);
         return additional_details($fields, $bean, $mod_strings);
     }    
 }
