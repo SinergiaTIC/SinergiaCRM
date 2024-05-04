@@ -118,7 +118,7 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                 $assignedUser = BeanFactory::getBean('Users', $wcAssignedUser);
             }
 
-            if (!empty($assignedUser) && !in_array($validatedUsers, $assignedUser->id)) 
+            if (!empty($assignedUser) && !in_array($assignedUser->id, $validatedUsers)) 
             {
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Validating the next users: {$assignedUser->name}.");
 
@@ -126,10 +126,10 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                 $count++; 
 
                 // get the durations of both modules
-                $stDuration = $row['stDuration'];
+                $ttDuration = $row['ttDuration'];
                 $wcDuration = $row['wcDuration'];
 
-                if (!empty($stDuration) && !empty($wcDuration)) 
+                if (!empty($ttDuration) && !empty($wcDuration)) 
                 {
                     // Get upper and lower margin settings
                     include_once 'modules/stic_Settings/Utils.php';
@@ -141,17 +141,15 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                     $upperDifference = $wcDuration * $upperMarginPercent;
                     
                     // Get the difference between the two durations
-                    $difference = abs($stDuration - $wcDuration);
+                    $difference = abs($ttDuration - $wcDuration);
                     
-                    if ($difference < $lowerDifference || $difference > $upperDifference) {
+                    if ($difference > $lowerDifference || $difference > $upperDifference) {
                         $errorMsg = $this->getLabel('HOURS_NOT_MATCH') . $assignedUser->name;
                         $error = 1;
                     }
                 } else {
-                    if (empty($stDuration)) {                
-                        $errorMsg = $this->getLabel('HOURS_NOT_MATCH') . $assignedUser->name;
-                        $error = 1;
-                    }
+                    $errorMsg = $this->getLabel('HOURS_NOT_MATCH') . $assignedUser->name;
+                    $error = 1;
                 }
 
                 if ($error == 1) 
@@ -208,7 +206,7 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                     }
             
                     // Add the user id to the validated users array
-                    $validatedUsers[] = $assignedUser->id;
+                    array_push($validatedUsers, $assignedUser->id);
                     $error = 0;
                 }
             }
