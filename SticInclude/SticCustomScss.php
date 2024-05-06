@@ -30,12 +30,12 @@ $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Starting 
 
 $file = 'themes/SuiteP/css/SticCustom/CustomPalette.scss';
 
-if ($settingSidebarColor==0){
-    $sidebarColor= "#D9DEE3";
-    $sidebarTextColor= "#001E40";
-}else{
-    $sidebarColor= " #353535;";
-    $sidebarTextColor= "#F5F5F5";
+if ($settingSidebarColor == 0) {
+    $sidebarColor = "#D9DEE3";
+    $sidebarTextColor = "#001E40";
+} else {
+    $sidebarColor = "#353535";
+    $sidebarTextColor = "#F5F5F5";
 }
 
 $data = "
@@ -71,7 +71,7 @@ unlink('cache/themes/SuiteP/css/SticCustom/style.css');
 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "End SticCustom subtheme base color change to {$color}");
 echo "<li>End SticCustom subtheme base color change to {$color}";
 
-if (isset($_REQUEST['keepUserTheme']) && $_REQUEST['keepUserTheme'] == true ) {
+if (isset($_REQUEST['keepUserTheme']) && $_REQUEST['keepUserTheme'] == true) {
     $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Do not set SticCustom subtheme to all users");
     echo "<li>Do not set SticCustom subtheme to all users";
 } else {
@@ -83,7 +83,7 @@ if (isset($_REQUEST['keepUserTheme']) && $_REQUEST['keepUserTheme'] == true ) {
 
     // Set the config params for each user
     foreach ($userBeanArray as $userBean) {
-        
+
         // Reload user preferences before saving subtheme
         $userBean->reloadPreferences();
 
