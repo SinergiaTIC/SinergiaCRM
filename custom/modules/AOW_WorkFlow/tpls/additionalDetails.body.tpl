@@ -55,7 +55,7 @@
         {$FIELD.DESCRIPTION}
     </div>
 {/if}
-{if !empty($FIELD.DESCRIPTION) 
+{if !empty($FIELD.DESCRIPTION)} 
     <br>
 {/if}
 {if !empty($FIELD.DATE_ENTERED)}
