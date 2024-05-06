@@ -31,7 +31,7 @@ var validationDependencies = {
 
 /* VALIDATION CALLBACKS */
 addToValidateCallback(getFormName(), "type", "type", false, SUGAR.language.get(module, "LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS"), function () {
-  return checkIfExistsOtherTypesIncompatibleRecords("application_date", "type", "assigned_user_id");
+  return checkIfExistsOtherTypesIncompatibleRecords("start_date", "type", "assigned_user_id");
 });
 
 
@@ -180,7 +180,7 @@ function checkStartAndEndDatesExcceds24Hours(startDate, endDate)
  * Synchronous verification of whether there are Work Calendar records of incompatible type that match the assigned user and time range.
  * @returns {Boolean} false if there are records of incompatible types for the same assigned user and time range, true if there are not.
  */
-function checkIfExistsOtherTypesIncompatibleRecords(applicationDate, type, assignedUserId) 
+function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUserId) 
 {
   //get Id of the record
   const queryString = window.location.search;
@@ -189,7 +189,7 @@ function checkIfExistsOtherTypesIncompatibleRecords(applicationDate, type, assig
 
   var data = {
     id: id,
-    applicationDate: getFieldValue(applicationDate),
+    startDate: getFieldValue(startDate),
     type: getFieldValue(type),
     assignedUserId: getFieldValue(assignedUserId),
   };
@@ -208,10 +208,7 @@ function checkIfExistsOtherTypesIncompatibleRecords(applicationDate, type, assig
     }
   } else {
     alert(SUGAR.language.get(module, "LBL_ERROR_REQUEST_INCOMPATIBLE_TYPE") + '\n\n' + SUGAR.language.get(module, "LBL_ERROR_CODE_REQUEST_INCOMPATIBLE_TYPE") + xhr.status);
-    return false;    addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
-      return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
-    });
-
+    return false;
   }
 }
 

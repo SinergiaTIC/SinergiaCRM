@@ -272,7 +272,7 @@ class stic_EmployeesUtils
         for ($i = 0; $i < $counter; $i++) 
         {
             $aux[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
-            $applicationDate[$i] = substr($date[$i], 0, 10);
+            $validationDate[$i] = substr($date[$i], 0, 10);
         }
         
         $summary = array();
@@ -287,7 +287,6 @@ class stic_EmployeesUtils
                 $workCalendarBean = BeanFactory::newBean('stic_Work_Calendar');
                 $workCalendarBean->start_date = $aux[$i];
                 $workCalendarBean->end_date = $finalDay;
-                $workCalendarBean->application_date = $applicationDate[$i];
 
                 if (isset($_REQUEST['type']) && $_REQUEST['type'] != '') {
                     $workCalendarBean->type = $_REQUEST['type'];
@@ -298,7 +297,7 @@ class stic_EmployeesUtils
                 }
                 
                 require_once 'modules/stic_Work_Calendar/Utils.php';
-                $save = stic_Work_CalendarUtils::existsRecordsWithIncompatibleType('', $applicationDate[$i], $_REQUEST['type'], $assignedUserId);
+                $save = stic_Work_CalendarUtils::existsRecordsWithIncompatibleType('', $validationDate[$i], $_REQUEST['type'], $assignedUserId);
                 if ($save) {
                     $workCalendarBean->save(false);
                     $summary['numRecordsCreated']++;
