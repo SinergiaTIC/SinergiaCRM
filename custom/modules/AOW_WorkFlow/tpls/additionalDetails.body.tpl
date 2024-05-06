@@ -48,6 +48,7 @@
         {$APP.LBL_NO}
     </div>
 {/if}
+<br>
 {if !empty($FIELD.DESCRIPTION)}
     <div>
         <strong>{$PARAM.LBL_DESCRIPTION}:</strong>
@@ -55,10 +56,6 @@
     </div>
 {/if}
 {if !empty($FIELD.DESCRIPTION) 
-    || !empty($FIELD.FLOW_RUN_ON) 
-    || !empty($FIELD.RUN_WHEN) 
-    || !empty($FIELD.MULTIPLE_RUNS) 
-    || !empty($FIELD.URL_LOCATION)}
     <br>
 {/if}
 {if !empty($FIELD.DATE_ENTERED)}
