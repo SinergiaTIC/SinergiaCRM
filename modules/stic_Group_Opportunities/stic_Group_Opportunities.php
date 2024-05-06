@@ -73,22 +73,18 @@ class stic_Group_Opportunities extends Basic
         return false;
     }
 
-    private function before_save()
-    {
-        include_once 'SticInclude/Utils.php';
-        // If name is empty: "Account - Opportunity"
-        if (empty($this->name)) {
-            $accountBean = SticUtils::getRelatedBeanObject($this, 'stic_group_opportunities_accounts');
-            $opportunityBean = SticUtils::getRelatedBeanObject($this, 'stic_group_opportunities_opportunities');
-            $this->name = $accountBean->name . ' - ' . $opportunityBean->name;
-        }
-    }
 
     public function save($check_notify = false)
     {
-        $this->before_save();
-
+        include_once 'SticInclude/Utils.php';
         $id = parent::save($check_notify);
+
+        // Update Name: Account - Opportunity
+        $accountBean = SticUtils::getRelatedBeanObject($this, 'stic_group_opportunities_accounts');
+        $opportunityBean = SticUtils::getRelatedBeanObject($this, 'stic_group_opportunities_opportunities');
+        $this->name = $accountBean->name . ' - ' . $opportunityBean->name;
+
+        parent::save($check_notify);
 
         return $id;
     }

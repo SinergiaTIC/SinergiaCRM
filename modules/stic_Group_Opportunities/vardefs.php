@@ -465,5 +465,6 @@ VardefManager::createVardef('stic_Group_Opportunities', 'stic_Group_Opportunitie
 // Set special values for SuiteCRM base fields
 $dictionary['stic_Group_Opportunities']['fields']['name']['required'] = '0'; // Name is not required in this module
 $dictionary['stic_Group_Opportunities']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Group_Opportunities']['fields']['name']['inline_edit'] = false; // Name is not inline editable
 $dictionary['stic_Group_Opportunities']['fields']['assigned_user_name']['required'] = true; // Assigned user is required in this module
 $dictionary['stic_Group_Opportunities']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
