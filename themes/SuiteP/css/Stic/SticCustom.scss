@@ -14,7 +14,7 @@ div.p_login .p_login_top a {
 }
 
 .suitepicon {
-  color:$stic-sidebar-text;
+  color: $stic-sidebar-text;
 }
 
 .sub-panel .suitepicon {
@@ -68,7 +68,7 @@ div.p_login .p_login_top a {
 #recentlyViewedSidebar,
 #favoritesSidebar {
   .suitepicon {
-    color:$stic-sidebar-text;
+    color: $stic-sidebar-text;
   }
 }
 // General customization
@@ -1357,7 +1357,7 @@ a#nonprofitized_by {
 }
 .adminMenuSidebar li a {
   background-color: $stic-sidebar !important;
-  border-top: 1px solid darken($stic-sidebar, 7%);  /* Change orange to your desired color */
+  border-top: 1px solid darken($stic-sidebar, 7%); /* Change orange to your desired color */
 }
 
 .adminMenuSidebar ul li a:hover {
@@ -1370,7 +1370,7 @@ a#nonprofitized_by {
   margin-top: 20px;
   padding-top: 10px;
   background-color: $stic-sidebar;
-  border-top: 5px solid darken($stic-sidebar, 7%); 
+  border-top: 5px solid darken($stic-sidebar, 7%);
   h2.admin_actions_title {
     font-size: 16px;
     font-weight: bold;
