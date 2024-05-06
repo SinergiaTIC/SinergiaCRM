@@ -41,7 +41,7 @@ if ($settingSidebarColor == 0) {
 $data = "
 \$stic-base: $color;
 \$stic-dark: darken(\$stic-base, 7%);
-\$stic-light: lighten(\$stic-base, 7%);;
+\$stic-light: lighten(\$stic-base, 7%);
 \$stic-superlight: lighten(\$stic-base, 35%);
 \$stic-sidebar: $sidebarColor;
 \$stic-sidebar-text: $sidebarTextColor;
