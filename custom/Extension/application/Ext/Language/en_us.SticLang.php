@@ -3531,3 +3531,15 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
+// Campaigns: Campaign types
+$app_list_strings['campaign_type_dom'][''] = '';
+$app_list_strings['campaign_type_dom']['Telesales'] = 'Telesales';
+$app_list_strings['campaign_type_dom']['Mail'] = 'Mail';
+$app_list_strings['campaign_type_dom']['Email'] = 'Email';
+$app_list_strings['campaign_type_dom']['Print'] = 'Print';
+$app_list_strings['campaign_type_dom']['Web'] = 'Web';
+$app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
+$app_list_strings['campaign_type_dom']['Television'] = 'Television';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Newsletter';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Survey';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notification';

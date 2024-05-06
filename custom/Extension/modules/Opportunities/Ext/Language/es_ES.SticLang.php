@@ -84,14 +84,18 @@ $mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = 'Subvenciones ganadas';
 $mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importar Subvenciones';
 
 // Cadenas para la notificación de nuevas subvenciones
-$mod_strings['LBL_OPPORTUNITIES_NOTIFY_TAB'] = "Notificación";
-$mod_strings['LBL_STIC_PUBLISHABLE'] = "Publicable";
-$mod_strings['LBL_STIC_SENDTO_PROSPECTLIST_ID'] = "Público Objetivo para el envío (ID)";
-$mod_strings['LBL_STIC_SENDTO_PROSPECTLIST'] = "Público Objetivo para el envío";
-$mod_strings['LBL_STIC_SEND_DATE'] = "Fecha de envío";
-$mod_strings['LBL_STIC_EMAIL_TEMPLATE_EMAILTEMPLATE_ID'] = "Plantilla de correo electrónico (ID)";
-$mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = "Plantilla de correo electrónico";
-$mod_strings['LBL_STIC_OPPORTUNITY_URL'] = "URL de la convocatoria";
-$mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = "Información adicional";
+$mod_strings['LBL_OPPORTUNITIES_NOTIFY_TAB'] = 'Notificación';
+$mod_strings['LBL_STIC_PUBLISHABLE'] = 'Publicable';
+$mod_strings['LBL_STIC_SENDTO_PROSPECTLIST_ID'] = 'Público Objetivo para el envío (ID)';
+$mod_strings['LBL_STIC_SENDTO_PROSPECTLIST'] = 'Público Objetivo para el envío';
+$mod_strings['LBL_STIC_SEND_DATE'] = 'Fecha de envío';
+$mod_strings['LBL_STIC_EMAIL_TEMPLATE_EMAILTEMPLATE_ID'] = 'Plantilla de correo electrónico (ID)';
+$mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = 'Plantilla de correo electrónico';
+$mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL de la convocatoria';
+$mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Información adicional';
+$mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Enviar notificación ahora';
+$mod_strings['LBL_STIC_NEED_DATA_TO_SEND_NOTIFICATION'] = 'Para enviar una notificación, es necesario informar el Público Objetivo y la Plantilla de correo electrónico';
+$mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE'] = 'Notificaciones';
+
 // Cadenas Ayudas
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';

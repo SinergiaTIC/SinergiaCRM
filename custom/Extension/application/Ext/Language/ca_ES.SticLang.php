@@ -3563,3 +3563,16 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunions';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencions';
 $app_list_strings['map_relate_type_list']['Project'] = 'Projectes';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Públic Objectiu';
+
+// Campanyes: Tipus de campanya
+$app_list_strings['campaign_type_dom'][''] = '';
+$app_list_strings['campaign_type_dom']['Telesales'] = 'Televenda';
+$app_list_strings['campaign_type_dom']['Mail'] = 'Correu';
+$app_list_strings['campaign_type_dom']['Email'] = 'Correu electrònic';
+$app_list_strings['campaign_type_dom']['Print'] = 'Impressió';
+$app_list_strings['campaign_type_dom']['Web'] = 'Web';
+$app_list_strings['campaign_type_dom']['Radio'] = 'Ràdio';
+$app_list_strings['campaign_type_dom']['Television'] = 'Televisió';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Butlletí de Notícies';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Enquesta';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació';

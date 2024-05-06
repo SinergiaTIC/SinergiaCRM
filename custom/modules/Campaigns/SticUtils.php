@@ -20,34 +20,21 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-require_once 'modules/Opportunities/views/view.detail.php';
-require_once 'SticInclude/Views.php';
-
-class CustomOpportunitiesViewDetail extends OpportunitiesViewDetail
+function get_notifications_from_opportunity($params)
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    $args = func_get_args();
+    $opportunityId = $args[0]['opportunity_id'];
+    $campaignType = "Notification";
 
-    public function preDisplay()
-    {
-        parent::preDisplay();
+    $return_array['select'] = " SELECT campaigns.*";
+    $return_array['from'] = " FROM campaigns";
+    $return_array['where'] = " WHERE campaigns.deleted = '0' AND campaigns.campaign_type = '$campaignType'";
+    $return_array['join'] =
+        " INNER JOIN opportunities_campaigns_1_c opp_camp ON" .
+        "  opp_camp.opportunities_campaigns_1campaigns_idb = campaigns.id AND opp_camp.deleted = '0'".
+        " INNER JOIN opportunities opp ON".
+        "  opp.id = opp_camp.opportunities_campaigns_1opportunities_ida AND opp.deleted = '0' AND opp.id = '$opportunityId'";
 
-        SticViews::preDisplay($this);
-
-        // Write here you custom code
-    }
-
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("custom/modules/Opportunities/Utils.js");
-
-        // Write here you custom code
-    }
+    $return_array['join_tables'] = '';
+    return $return_array;
 }

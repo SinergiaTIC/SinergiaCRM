@@ -31,6 +31,37 @@ $dictionary["Campaign"]["fields"]["stic_payment_commitments_campaigns"] = array(
     'side' => 'right',
     'vname' => 'LBL_STIC_PAYMENT_COMMITMENTS_CAMPAIGNS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE',
 );
+$dictionary["Campaign"]["fields"]["opportunities_campaigns_1"] = array(
+    'name' => 'opportunities_campaigns_1',
+    'type' => 'link',
+    'relationship' => 'opportunities_campaigns_1',
+    'source' => 'non-db',
+    'module' => 'Opportunities',
+    'bean_name' => 'Opportunity',
+    'vname' => 'LBL_OPPORTUNITIES_CAMPAIGNS_1_FROM_OPPORTUNITIES_TITLE',
+    'id_name' => 'opportunities_campaigns_1opportunities_ida',
+);
+$dictionary["Campaign"]["fields"]["opportunities_campaigns_1_name"] = array(
+    'name' => 'opportunities_campaigns_1_name',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'vname' => 'LBL_OPPORTUNITIES_CAMPAIGNS_1_FROM_OPPORTUNITIES_TITLE',
+    'save' => true,
+    'id_name' => 'opportunities_campaigns_1opportunities_ida',
+    'link' => 'opportunities_campaigns_1',
+    'table' => 'opportunities',
+    'module' => 'Opportunities',
+    'rname' => 'name',
+);
+$dictionary["Campaign"]["fields"]["opportunities_campaigns_1opportunities_ida"] = array(
+    'name' => 'opportunities_campaigns_1opportunities_ida',
+    'type' => 'link',
+    'relationship' => 'opportunities_campaigns_1',
+    'source' => 'non-db',
+    'reportable' => false,
+    'side' => 'right',
+    'vname' => 'LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE',
+);
 
 $dictionary['Campaign']['fields']['end_date']['required'] = false;
 

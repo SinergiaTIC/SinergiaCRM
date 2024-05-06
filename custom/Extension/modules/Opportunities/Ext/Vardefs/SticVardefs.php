@@ -568,6 +568,19 @@ $dictionary["Opportunity"]["fields"]["stic_grants_opportunities"] = array (
       'vname' => 'LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE',
 );
 
+// Campaings relationship (Notifications)
+$dictionary["Opportunity"]["fields"]["opportunities_campaigns_1"] = array(
+    'name' => 'opportunities_campaigns_1',
+    'type' => 'link',
+    'relationship' => 'opportunities_campaigns_1',
+    'source' => 'non-db',
+    'module' => 'Campaigns',
+    'bean_name' => 'Campaign',
+    'side' => 'right',
+    'vname' => 'LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE',
+);
+
+
 // Base fields from the module
 $dictionary['Opportunity']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 $dictionary['Opportunity']['fields']['description']['massupdate'] = 0;
