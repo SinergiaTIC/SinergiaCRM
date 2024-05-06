@@ -24,13 +24,12 @@
 var module = "stic_Group_Opportunities";
 
 /* VIEWS CUSTOM CODE */
-var customView = sticCustomizeView.For(viewType());
 switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
     $(document).ready(function() {
-      initializeEditFields(customView);
+      initializeEditFields();
     });
     break;
 
@@ -42,30 +41,7 @@ switch (viewType()) {
 
 /* AUX FUNCTIONS */
 
-function refreshViewName(customView) {
-  if (customView == null) {
-    return;
-  }
-  customView
-    .field("name")
-    .value(
-      customView.field("stic_group_opportunities_accounts_name").content.text() +
-        " - " +
-        customView.field("stic_group_opportunities_opportunities_name").content.text()
-    );
-}
-
-function initializeEditFields(customView) {
+function initializeEditFields() {
   setAutofill(["name"]);
 
-  if (customView != null) {
-    // Update name when any change on dependant fields
-    customView.field("stic_group_opportunities_accounts_name").onChange(function() {
-      refreshViewName(customView);
-    });
-    customView.field("stic_group_opportunities_opportunities_name").onChange(function() {
-      refreshViewName(customView);
-    });
-
-  }
 }

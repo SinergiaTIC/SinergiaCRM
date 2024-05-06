@@ -59,9 +59,6 @@ switch (viewType()) {
  * Callback function after selecting a list of Accounts to create Participants
  */
 function setReturnAndCreateParticipants(popupReplyData) {
-  console.log("callback");
-  console.log(window.document.forms["DetailView"].record.value);
-  console.log(popupReplyData);
   var obj = {
     action: "createParticipantsFromAccounts",
     module: "Opportunities",
@@ -70,7 +67,6 @@ function setReturnAndCreateParticipants(popupReplyData) {
     record: window.document.forms["DetailView"].record.value,
     accountIds: popupReplyData.selection_list,
   };
-  console.log(obj);
 
   var url = "?index.php&" + $.param(obj);
   location.href = url;

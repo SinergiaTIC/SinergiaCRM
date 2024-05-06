@@ -127,6 +127,9 @@ class OpportunitiesUtils
         return true;
     }
 
+    /**
+     * Create Participants in an Opportunity: All Accounts in $accountIds will be Participants in the $opportunityBean
+     */
     public static function createParticipantsFromAccounts($accountIds, $opportunityBean) {
         // For each AccountId in $accountIds: Create a Participant with this $opportunityBean
 
