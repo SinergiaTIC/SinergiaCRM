@@ -43,5 +43,27 @@ switch (viewType()) {
 
 function initializeEditFields() {
   setAutofill(["name"]);
+  if ($("#form_SubpanelQuickCreate_stic_Group_Opportunities").length > 0) {
+    switch (module_sugar_grp1) {
+      case "Opportunities":
+        setReadonly($("#stic_group_opportunities_opportunities_name"));
+        break;
+      case "Accounts":
+        setReadonly($("#stic_group_opportunities_accounts_name"));
+        break;
+    }
+  }
+}
 
+function setReadonly($element) {
+  $element
+    .parent()
+    .parent()
+    .append(
+      '<div class="' + $element.attr("class").replaceAll("hidden", "") + ' stic-ReadonlyInput" ' +
+        'style="min-height:20px; height:30px; display:inline-flex; align-items:center; padding-left:5px; border-radius:0.25em;">' +
+        $element.val() +
+        "</div>"
+    );
+  $element.parent().hide();
 }
