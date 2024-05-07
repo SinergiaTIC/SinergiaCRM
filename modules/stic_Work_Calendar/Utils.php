@@ -27,22 +27,19 @@ class stic_Work_CalendarUtils
      *
      * @return void
      */
-    public static function existsRecordsWithIncompatibleType($id, $startDate, $type, $assignedUserId)
+    public static function existsRecordsWithIncompatibleType($id, $startDate, $endDate, $type, $assignedUserId)
     {
         $allDayTypes = ["working", "punctual_absence"];
-        global $db, $current_user;
-        
-        $tzone = $current_user->getPreference('timezone');
-        $dateTimeZone = new DateTimeZone($tzone);
-        $timeZoneOffset = $dateTimeZone->getOffset(new DateTime('now')) / 3600;        
+        global $db;
 
         // Check if there is already a non-work record that takes up the entire day, in that case, it is not posible to create the record
         $query = "SELECT * FROM stic_work_calendar
-                WHERE deleted = 0 
-                    AND id != '". $id . "' 
-                    AND DATE(date_add(start_date, INTERVAL " . $timeZoneOffset . " HOUR)) = '".$startDate."'
-                    AND assigned_user_id = '" . $assignedUserId . "' 
-                    AND type NOT IN ('" .  implode("', '", $allDayTypes) . "');";
+                    WHERE deleted = 0 
+                        AND id != '". $id . "' 
+                        AND assigned_user_id = '" . $assignedUserId . "' 
+                        AND type NOT IN ('" .  implode("', '", $allDayTypes) . "')
+                        AND TIMESTAMPDIFF(SECOND, start_date,'" . $endDate . "') > 0 
+                        AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', end_date) > 0;";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
         $result = $db->query($query);
@@ -53,11 +50,13 @@ class stic_Work_CalendarUtils
             if (!in_array($type, $allDayTypes)) {
                 // Checks if exist a record that does not occupy the entire day, in that case, since the record to be created is an all-day record, it is not possible to create the record.
                 $query = "SELECT * FROM stic_work_calendar
-                WHERE deleted = 0 
-                    AND id != '". $id . "' 
-                    AND DATE(date_add(start_date, INTERVAL " . $timeZoneOffset . " HOUR)) = '".$startDate."'                    
-                    AND assigned_user_id = '" . $assignedUserId . "' 
-                    AND type IN ('" .  implode("', '", $allDayTypes) . "');";
+                    WHERE deleted = 0 
+                        AND id != '". $id . "' 
+                        AND assigned_user_id = '" . $assignedUserId . "' 
+                        AND type IN ('" .  implode("', '", $allDayTypes) . "')
+                        AND TIMESTAMPDIFF(SECOND, start_date,'" . $endDate . "') > 0 
+                        AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', end_date) > 0;";
+
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
                 $result = $db->query($query);
 

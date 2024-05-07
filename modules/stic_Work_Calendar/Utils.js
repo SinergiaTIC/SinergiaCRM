@@ -31,9 +31,8 @@ var validationDependencies = {
 
 /* VALIDATION CALLBACKS */
 addToValidateCallback(getFormName(), "type", "type", false, SUGAR.language.get(module, "LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS"), function () {
-  return checkIfExistsOtherTypesIncompatibleRecords("start_date", "type", "assigned_user_id");
+  return checkIfExistsOtherTypesIncompatibleRecords("start_date", "end_date", "type", "assigned_user_id");
 });
-
 
 /* VIEWS CUSTOM CODE */
 var allDayTypes = ["", "working", "punctual_absence"];
@@ -96,9 +95,9 @@ function checkStartAndEndDatesExcceds24Hours(startDate, endDate)
   var endDate = moment(getFieldValue(endDate), userDateFormat + "HH:mm");
 
   // Calcular la diferencia entre las dos fechas en horas y verificar que sea menor a 24 horas
-  const diferenciaHoras = endDate.diff(startDate, 'hours');
+  const diferenciaHoras = endDate.diff(startDate, 'minutes');
   // Verificar si la diferencia es mayor a 24 horas
-  if (diferenciaHoras >= 24) {
+  if (diferenciaHoras > 24*60) {
       return false;
   } 
 }
@@ -108,7 +107,7 @@ function checkStartAndEndDatesExcceds24Hours(startDate, endDate)
  * Synchronous verification of whether there are Work Calendar records of incompatible type that match the assigned user and time range.
  * @returns {Boolean} false if there are records of incompatible types for the same assigned user and time range, true if there are not.
  */
-function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUserId) 
+function checkIfExistsOtherTypesIncompatibleRecords(startDate, endDate, type, assignedUserId) 
 {
   //get Id of the record
   const queryString = window.location.search;
@@ -118,6 +117,7 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, type, assignedUse
   var data = {
     id: id,
     startDate: getFieldValue(startDate),
+    endDate: getFieldValue(endDate),
     type: getFieldValue(type),
     assignedUserId: getFieldValue(assignedUserId),
   };

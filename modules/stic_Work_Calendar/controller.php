@@ -38,16 +38,19 @@ class stic_Work_CalendarController extends SugarController
         {
             $id = $data['id'];
             $startDate = $data["startDate"];
+            $endDate = $data["endDate"];
             $type = $data['type'];
             $assignedUserId = $data['assignedUserId'];
 
             global $timedate;
             $assignedUser = BeanFactory::getBean('Users', $assignedUserId);            
             $startDate = $timedate->fromUser($startDate, $assignedUser);
-            $startDate = $timedate->asDbDate($startDate);
+            $startDate = $timedate->asDb($startDate);
+            $endDate = $timedate->fromUser($endDate, $assignedUser);
+            $endDate = $timedate->asDb($endDate);            
 
             require_once 'modules/stic_Work_Calendar/Utils.php';
-            echo(stic_Work_CalendarUtils::existsRecordsWithIncompatibleType($id, $startDate, $type, $assignedUserId));
+            echo(stic_Work_CalendarUtils::existsRecordsWithIncompatibleType($id, $startDate, $endDate, $type, $assignedUserId));
         }
         die();        
     }
