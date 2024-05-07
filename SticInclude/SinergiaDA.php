@@ -395,7 +395,7 @@ class ExternalReporting
                                     continue 2;
                                 }
 
-                                $fieldSrc = $res['field'];
+                                $fieldSrc = " IFNULL({$res['field']},'') ";
                                 $leftJoins .= "\n\t{$res['leftJoin']} ";
 
                                 $fieldV['alias'] = substr($fieldV['id_name'], 0, 64);
@@ -445,7 +445,7 @@ class ExternalReporting
                                 $leftJoinAlias = "{$fieldV['name']}_{$relatedTableName}";
 
                                 // Add id field
-                                $fieldSrc = " {$fieldPrefix}.{$fieldV['id_name']} AS {$fieldV['alias']}, ";
+                                $fieldSrc = " IFNULL({$fieldPrefix}.{$fieldV['id_name']},'') AS {$fieldV['alias']}, ";
 
                                 // add column to index list
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
@@ -453,7 +453,7 @@ class ExternalReporting
                                 //Add relate record name
                                 $relatedName = in_array($fieldV['module'], ['Contacts', 'Leads', 'Users']) ? " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) " : "{$leftJoinAlias}.name";
 
-                                $fieldSrc .= " $relatedName AS {$fieldV['name']}";
+                                $fieldSrc .= " IFNULL($relatedName,'') AS {$fieldV['name']}";
 
                                 $leftJoins .= " \n\tLEFT JOIN {$relatedTableName} AS {$leftJoinAlias} ON {$leftJoinAlias}.id = {$fieldPrefix}.{$fieldV['id_name']} AND {$leftJoinAlias}.deleted=0";
 
@@ -515,7 +515,7 @@ class ExternalReporting
 
                         $fieldV['alias'] = $fieldV['name'];
                         $fieldV['bridgeTableName'] = mb_strcut("{$this->viewPrefix}_{$tableName}__{$fieldV['name']}", 0, 64);
-                        $fieldSrc = "{$fieldPrefix}.{$fieldV['name']} AS {$fieldName}";
+                        $fieldSrc = "IFNULL({$fieldPrefix}.{$fieldV['name']},'') AS {$fieldName}";
 
                         $this->addMetadataRecord(
                             'sda_def_enumerations',
@@ -543,7 +543,7 @@ class ExternalReporting
                         // Create listViewName for use in metadata & view creation
                         $listViewName = substr(join('_', [$tableName, $fieldV['name'], $listName]), 0, 58);
 
-                        $fieldSrc = " CAST({$fieldPrefix}.{$fieldV['name']} AS CHAR) AS {$fieldName}";
+                        $fieldSrc = " IFNULL(CAST({$fieldPrefix}.{$fieldV['name']} AS CHAR),'') AS {$fieldName}";
 
                         $createdListView = $this->createEnumView($listName, $listViewName);
 
@@ -570,7 +570,7 @@ class ExternalReporting
                     case 'datetimecombo':
                         $fieldV['alias'] = $fieldV['name'];
                         $tzDateValue = "CONVERT_TZ({$fieldPrefix}.{$fieldV['name']}, 'UTC', 'Europe/Madrid')";
-                        $fieldSrc = "{$tzDateValue} AS {$fieldName}";
+                        $fieldSrc = "IFNULL({$tzDateValue},'') AS {$fieldName}";
                         break;
 
                     case 'date':
@@ -592,15 +592,15 @@ class ExternalReporting
                         $fieldV['alias'] = $fieldV['name'];
                         if ($fieldV['name'] == 'email1' && $fieldV['type'] == 'varchar' && $fieldV['source'] == 'non-db') {
                             // Special field for main email
-                            $fieldSrc = "ea.email_address AS {$fieldV['name']}";
+                            $fieldSrc = "IFNULL(ea.email_address,'') AS {$fieldV['name']}";
 
                             // add left join for email field
                             $leftJoins .= " LEFT JOIN email_addr_bean_rel eabr ON m.id = eabr.bean_id AND eabr.bean_module = '{$moduleName}' AND eabr.deleted = 0 AND eabr.primary_address = 1 LEFT JOIN email_addresses ea ON eabr.email_address_id = ea.id AND ea.deleted = 0 ";
                         } elseif ($fieldV['name'] == 'full_name') {
                             // special query for full_name
-                            $fieldSrc = "CONCAT_WS(' ',m.first_name, m.last_name) as {$fieldV['name']}";
+                            $fieldSrc = "IFNULL(CONCAT_WS(' ',m.first_name, m.last_name),'') as {$fieldV['name']}";
                         } else {
-                            $fieldSrc = "{$fieldPrefix}.{$fieldV['name']} AS {$fieldName}";
+                            $fieldSrc = "IFNULL({$fieldPrefix}.{$fieldV['name']},'') AS {$fieldName}";
                         }
                         break;
 
