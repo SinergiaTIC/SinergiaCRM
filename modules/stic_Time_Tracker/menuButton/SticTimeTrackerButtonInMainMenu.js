@@ -45,7 +45,6 @@ function showTimeTrackerConfirmBox()
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            debugger;
             drawTimeTrackerConfimrBox(data);
         })
         .catch(error => {
