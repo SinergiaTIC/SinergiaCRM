@@ -928,7 +928,11 @@
                                                     href="{sugar_link module=$item.module_name action='DetailView' record=$item.item_id link_only=1}"
                                                     class="recent-links-detail">
                                                     <span class="suitepicon suitepicon-module-{$item.module_name|lower|replace:'_':'-'}"></span>
-                                                    <span>{$item.item_summary_short}</span>
+                                                    {* STIC-Custom - JCH - 20240305 -  Add record tooltip *}
+                                                    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/151 *}
+                                                    {* <span>{$item.item_summary_short}</span> *}
+                                                    <span title="{$item.item_summary}">{$item.item_summary_short}</span>
+                                                    {* END STIC *}
                                                 </a>
                                                 {capture assign='access'}{suite_check_access module=$item.module_name action='edit' record=$item.item_id }{/capture}
                                                 {if $access}
@@ -958,11 +962,19 @@
                                 {if $smarty.foreach.lastViewed.index < 5}
                                     <div class="recently_viewed_link_container_sidebar">
                                         <li class="recentlinks" role="presentation">
-                                            <a title="{$item.module_name}" accessKey="{$smarty.foreach.lastViewed.iteration}"
+                                            {* STIC-Custom - JCH - 20240305 -  Add record tooltip *}
+                                            {* https://github.com/SinergiaTIC/SinergiaCRM/pull/151 *}
+                                            {* <a title="{module=$item.module_name}" accessKey="{$smarty.foreach.lastViewed.iteration}" *}
+                                            <a title="{sugar_translate module=$item.module_name label=LBL_MODULE_NAME}" accessKey="{$smarty.foreach.lastViewed.iteration}"
+                                            {* END STIC *}
                                                 href="{sugar_link module=$item.module_name action='DetailView' record=$item.id link_only=1}"
                                                 class="favorite-links-detail">
                                                 <span class="suitepicon suitepicon-module-{$item.module_name|lower|replace:'_':'-'}"></span>
-                                                <span aria-hidden="true">{$item.item_summary_short}</span>
+                                                {* STIC-Custom - JCH - 20240305 -  Add record tooltip *}
+                                                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/151 *}
+                                                {* <span aria-hidden="true">{$item.item_summary_short}</span> *}
+                                                <span title="{$item.item_summary}" aria-hidden="true">{$item.item_summary_short}</span>
+                                                {* END STIC *}
                                             </a>
                                             {capture assign='access'}{suite_check_access module=$item.module_name action='edit' record=$item.item_id }{/capture}
                                             {if $access}
@@ -1015,6 +1027,19 @@
                                         </div>
                                     </a>
                                 </li>
+                                {* STIC-Custom - JBL - 20240405 -  Custom Views link *}
+                                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=stic_Custom_Views&action=index" target="_blank" >
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-stic-custom-views"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_STIC_CUSTOM_VIEWS_LINK_TITLE"}
+                                        </div>
+                                    </a>
+                                </li>
+                                {* END STIC-Custom *}
                                 <li class="actionmenulinks" role="presentation">
                                     <a href="./index.php?module=Administration&action=Upgrade" target="_blank">
                                         <div class="side-bar-action-icon">
