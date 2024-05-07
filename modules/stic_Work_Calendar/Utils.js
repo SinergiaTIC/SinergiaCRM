@@ -41,22 +41,14 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":    
-    // Set autofill mark beside field label
+    // Set autofill mark and disable editing
     setAutofill(["name"]);
-    var cv = sticCustomizeView.editview();
-    updateName();
+    document.getElementById('name').disabled = true;
+    // Manage all day types
     updateAllDay();
     break;
     
   case "detail":
-    var cv = sticCustomizeView.detailview();
-    // show or hide date fields depending on the value of the type
-    var type = document.getElementById("type").value;
-    if (!allDayTypes.includes(type)) {
-      cv.field("start_date").content.$element.text(cv.field("start_date").value().substring(0,10));
-      cv.field("end_date").content.$element.text(cv.field("end_date").value().substring(0,10));
-    }
-    
     break;
 
   case "list":
@@ -71,44 +63,6 @@ switch (viewType()) {
 
   default:
     break;
-}
-
-
-
-/**
- * Updates the name field as other fields are modified
- */
-function updateName() {
-  cv.field("name").readonly();
-  cv.field("name").content.bold(); // Marcamos en negrita el nombre
-
-  // Función de actualización del campo autogenerado
-  function updateFieldName() {
-    if (allDayTypes.includes(cv.field("type").value())) 
-    {
-      cv.field("name").value(
-        cv.field("assigned_user_name").content.text() + ' - ' +
-        cv.field("type").content.text()  + ' - ' +
-        cv.field("start_date").content.text()  + ' - ' +
-        cv.field("end_date").content.text().substring(11)
-      );
-    } else {
-      cv.field("name").value(
-        cv.field("assigned_user_name").content.text() + ' - ' +
-        cv.field("type").content.text()  + ' - ' +
-        cv.field("start_date").content.text().substring(0 , 10)
-      );
-    }
-  }
-
-  // Actualizamos el nombre cuando cambie algun valor asociado
-  cv.field("start_date").onChange(updateFieldName);
-  cv.field("end_date").onChange(updateFieldName);
-  cv.field("type").onChange(updateFieldName);
-  cv.field("assigned_user_name").onChange(updateFieldName);
-
-  // Forzamos el valor inicial del campo "name"
-  updateFieldName();
 }
 
 /**
