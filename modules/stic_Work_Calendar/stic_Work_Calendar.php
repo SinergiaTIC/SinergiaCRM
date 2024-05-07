@@ -79,8 +79,6 @@ class stic_Work_Calendar extends Basic
             case 'Save':
                 $startDate = $_REQUEST['start_date'];
                 $endDate = $_REQUEST['end_date'];
-                $applicationDate = $timedate->fromUserDate($_REQUEST['application_date'], $current_user);
-                $this->application_date = $timedate->asDbDate($applicationDate, false);
                 break;
             default: // API | Importation | Mass Periodic Creation | Time Change
                 $bbddFormat = 'Y-m-d H:i:s';

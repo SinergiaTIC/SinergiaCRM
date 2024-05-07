@@ -62,7 +62,6 @@ $mod_strings = array (
   'LBL_TYPE' => 'Tipo',
   'LBL_START_DATE' => 'Fecha de y hora de inicio',
   'LBL_END_DATE' => 'Fecha de y hora de finalización',
-  'LBL_APPLICATION_DATE' => 'Fecha de aplicación',
   'LBL_START_DATE_ERROR' => 'La fecha y hora de inicio debe ser anterior a la fecha y hora de finalización.',
   'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
   'LBL_END_DATE_EXCCEDS_24_HOURS' => 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.',  

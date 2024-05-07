@@ -61,10 +61,7 @@ $viewdefs[$module_name]['DetailView'] = array(
                   'name' => 'type',
                   'label' => 'LBL_TYPE',
                 ),
-                1 => array(
-                  'name' => 'duration',
-                  'label' => 'LBL_DURATION',
-                ),
+                1 => array (),
             ),                 
             2 => array(
                 0 => array(
@@ -79,13 +76,12 @@ $viewdefs[$module_name]['DetailView'] = array(
             3 => 
             array (
                 0 => array(
+                    'name' => 'duration',
+                    'label' => 'LBL_DURATION',
+                  ),
+                1 => array(
                     'name' => 'weekday',
                     'label' => 'LBL_WEEKDAY',
-                ),
-                1 => 
-                array (
-                    'name' => 'application_date',
-                    'label' => 'LBL_APPLICATION_DATE',
                 ),
             ),            
             4 => array (

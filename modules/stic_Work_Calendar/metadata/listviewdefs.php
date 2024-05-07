@@ -51,11 +51,12 @@ $listViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => true,
     ),
-    'APPLICATION_DATE' => array(
-        'type' => 'varchar',
-        'width' => '32',
-        'label' => 'LBL_APPLICATION_DATE',
+    'DURATION' => array(
+        'type' => 'decimal',
+        'label' => 'LBL_DURATION',
+        'width' => '10%',
         'default' => true,
+        'align' => 'right',
     ),    
     'ASSIGNED_USER_NAME' => array(
         'width' => '9',
@@ -70,13 +71,6 @@ $listViewDefs[$module_name] = array(
         'sortable' => false,
         'width' => '10%',
         'default' => false,
-    ),
-    'DURATION' => array(
-        'type' => 'decimal',
-        'label' => 'LBL_DURATION',
-        'width' => '10%',
-        'default' => false,
-        'align' => 'right',
     ),
     'WEEKDAY' => array(
         'type' => 'enum',

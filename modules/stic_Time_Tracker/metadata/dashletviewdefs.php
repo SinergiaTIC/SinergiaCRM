@@ -48,6 +48,12 @@ $dashletData['stic_Time_TrackerDashlet']['columns'] = array(
         'width' => '10%',
         'default' => true,
     ),
+    'end_date' => array(
+        'type' => 'datetimecombo',
+        'label' => 'LBL_END_DATE',
+        'width' => '10%',
+        'default' => true,
+    ),       
     'duration' => array(
         'type' => 'int',
         'label' => 'LBL_DURATION',

@@ -62,7 +62,6 @@ $mod_strings = array (
   'LBL_END_DATE' => 'End date and time',
   'LBL_START_DATE_ERROR' => 'The start date and time must be before the end date and time.',
   'LBL_END_DATE_ERROR' => 'The end date and time must be later than the start date and time.',
-  'LBL_APPLICATION_DATE' => 'Application Date',
   'LBL_DURATION' => 'Duration',
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',

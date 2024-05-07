@@ -37,7 +37,6 @@ switch (viewType()) {
     setAutofill(["name"]);
     var cv = sticCustomizeView.editview();
     updateName();
-    updateApplicationDate();
     break;
 
   case "detail":
@@ -75,26 +74,4 @@ function updateName() {
 
   // Forzamos el valor inicial del campo "name"
   updateFieldName();
-}
-
-/**
- * Updates the name field as other fields are modified
- */
-function updateApplicationDate() {
-  cv.field("application_date").readonly(); // No permitimos modificar el campo
-  cv.field("application_date").content.bold(); // Marcamos en negrita el nombre
-  
-  // Función de actualización del campo autogenerado
-  function updateFieldApplicationDate() {
-    cv.field("application_date").value(
-      cv.field("start_date").content.text().substring(0, 10)
-    );
-  }
-  
-  // Actualizamos el nombre cuando cambie algun valor asociado
-  cv.field("start_date").onChange(updateFieldApplicationDate);
-  
-  // Forzamos el valor inicial del campo "name"
-  updateFieldApplicationDate();
-
 }

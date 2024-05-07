@@ -45,18 +45,16 @@ switch (viewType()) {
     setAutofill(["name"]);
     var cv = sticCustomizeView.editview();
     updateName();
-    updateApplicationDate();
     updateAllDay();
     break;
     
   case "detail":
     var cv = sticCustomizeView.detailview();
-    // show or hide application_date field depending on the value of the type
+    // show or hide date fields depending on the value of the type
     var type = document.getElementById("type").value;
     if (!allDayTypes.includes(type)) {
       cv.field("start_date").content.$element.text(cv.field("start_date").value().substring(0,10));
       cv.field("end_date").content.$element.text(cv.field("end_date").value().substring(0,10));
-      cv.field("application_date").show(false);
     }
     
     break;
@@ -112,30 +110,6 @@ function updateName() {
   // Forzamos el valor inicial del campo "name"
   updateFieldName();
 }
-
-
-/**
- * Updates the name field as other fields are modified
- */
-function updateApplicationDate() {
-  cv.field("application_date").readonly(); // No permitimos modificar el campo
-  cv.field("application_date").content.bold(); // Marcamos en negrita el nombre
-  
-  // Función de actualización del campo autogenerado
-  function updateFieldApplicationDate() {
-    cv.field("application_date").value(
-      cv.field("start_date").content.text().substring(0, 10)
-    );
-  }
-  
-  // Actualizamos el nombre cuando cambie algun valor asociado
-  cv.field("start_date").onChange(updateFieldApplicationDate);
-  
-  // Forzamos el valor inicial del campo "name"
-  updateFieldApplicationDate();
-
-}
-
 
 /**
  * Used as a callback for mass update dates button
@@ -228,8 +202,6 @@ function updateAllDay()
 
   if (allDayTypes.includes(typeElem.value)) 
   {
-    cv.field("application_date").show(true);
-    cv.field("application_date").readonly(true);    
     document.getElementById('end_date_date').readOnly = false;
     addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
       return checkStartAndEndDatesCoherence("start_date", "end_date", true);
@@ -240,7 +212,6 @@ function updateAllDay()
   } 
   else 
   { 
-    cv.field("application_date").show(false);
     $("#start_date_time_section").parent().hide();
     $("#end_date_time_section").parent().hide();
     $("#end_date_trigger").hide();
@@ -252,8 +223,6 @@ function updateAllDay()
   typeElem.addEventListener("change", function() {
     if (allDayTypes.includes(document.getElementById("type").value)) 
     {
-      cv.field("application_date").show(true);
-      cv.field("application_date").readonly(true);
       $("#start_date_hours").val(previousStartDateHours);
       $("#start_date_minutes").val(previousStartDateMinutes);
       $("#end_date_hours").val(previousEndDateHours);
@@ -275,7 +244,6 @@ function updateAllDay()
     } 
     else 
     {
-      cv.field("application_date").show(false);
       previousStartDateHours = $("#start_date_hours").val();
       previousStartDateMinutes = $("#start_date_minutes").val();
       previousEndDateHours = $("#end_date_hours").val();

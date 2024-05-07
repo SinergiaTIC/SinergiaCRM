@@ -73,18 +73,11 @@ class stic_Time_Tracker extends Basic
         switch ($_REQUEST["action"]) {
             case 'Save':
                 $startDate = $_REQUEST['start_date'];
-                $endDate = $_REQUEST['end_date'];
-                $applicationDate = $timedate->fromUserDate($_REQUEST['application_date'], $current_user);                
-                $this->application_date = $timedate->asDbDate($applicationDate, false);                
+                $endDate = $_REQUEST['end_date'];            
                 break;
             case 'createOrUpdateTodayRegister':                
                 $startDate = $this->start_date;
                 $endDate = $this->end_date;
-                if (empty($this->application_date)) {
-                    $applicationDate = substr($this->start_date, 0, 10);
-                    $applicationDate = $timedate->fromUserDate($applicationDate, $current_user);                
-                    $this->application_date = $timedate->asDbDate($applicationDate, false); 
-                }
                 break;
             default: // API | Importation | Mass Periodic Creation 
                 $bbddFormat = 'Y-m-d H:i:s';

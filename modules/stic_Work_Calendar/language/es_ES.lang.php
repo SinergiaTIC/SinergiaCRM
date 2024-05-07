@@ -61,7 +61,6 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'Nuevo Calendario Laboral',
   'LBL_TYPE' => 'Tipo',
   'LBL_START_DATE' => 'Fecha de y hora de inicio',
-  'LBL_APPLICATION_DATE' => 'Fecha de aplicación',
   'LBL_END_DATE' => 'Fecha de y hora de finalización',  
   'LBL_START_DATE_ERROR' => 'La fecha y hora de inicio debe ser anterior a la fecha y hora de finalización.',
   'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
