@@ -134,13 +134,13 @@ class stic_Work_Calendar extends Basic
      *
      * @return void
      */
-    public static function existAtLeastOneRecordForEmployeeAndDate($date, $userId)
+    public static function existAtLeastOneRecordFromYesterday($userId)
     {
         global $db;
         $query = "SELECT count(id) as count
                     FROM stic_work_calendar
                   WHERE deleted = 0 
-                    AND start_date LIKE '%" . $date . "%'
+                    AND start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)  AND UTC_TIMESTAMP()
                     AND assigned_user_id = '" . $userId . "';";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
@@ -160,7 +160,6 @@ class stic_Work_Calendar extends Basic
         $startTime = strtotime($timedate->to_db($startDate));
         $endTime = strtotime($timedate->to_db($endDate));
         $duration = $endTime - $startTime;            
-        // Casting the result into float, otherwise a string is returned and may give wrong values in workflows
         return (float) number_format($duration / 3600, 2);
     }
 }

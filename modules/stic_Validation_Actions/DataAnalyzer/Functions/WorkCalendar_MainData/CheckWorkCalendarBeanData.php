@@ -39,8 +39,8 @@ class CheckWorkCalendarBeanData extends DataCheckFunction
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL)
     {
         $sql = "SELECT id, name, start_date, assigned_user_id
-                    FROM stic_work_calendar
-                WHERE start_date LIKE CONCAT('%', DATE_SUB(CURDATE(), INTERVAL 1 DAY), '%')
+                FROM stic_work_calendar
+                WHERE start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND UTC_TIMESTAMP()
                     AND deleted = 0;";
 
         return $sql;
@@ -79,8 +79,8 @@ class CheckWorkCalendarBeanData extends DataCheckFunction
             if ($isActivateWorkCalendar) 
             {
                 if ($isActivateTimeTracker) {
-                    include_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';  
-                    if (!stic_Time_Tracker::existAtLeastOneRecordForEmployeeAndDate(substr($row['start_date'], 0, 10), $assignedUserId)) {
+                    include_once 'modules/stic_Time_Tracker/stic_Time_Tracker.php';  
+                    if (!stic_Time_Tracker::existAtLeastOneRecordFromYesterday($assignedUserId)) {
                         $errorMsg = $this->getLabel('NO_RECORD_IN_TIME_TRACKER');
                         $contTemp = 1;
                     }

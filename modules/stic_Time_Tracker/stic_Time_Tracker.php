@@ -156,13 +156,13 @@ class stic_Time_Tracker extends Basic
      *
      * @return 
      */
-    public static function existAtLeastOneRecordForEmployeeAndDate($applicatioDate, $userId)
+    public static function existAtLeastOneRecordFromYesterday($userId)
     {
         global $db;
         $query = "SELECT count(id) as count
                     FROM stic_time_tracker
                   WHERE deleted = 0 
-                    AND application_date = '" . $applicatioDate . "'
+                    AND start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY)  AND UTC_TIMESTAMP()
                     AND assigned_user_id = '" . $userId . "';";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);

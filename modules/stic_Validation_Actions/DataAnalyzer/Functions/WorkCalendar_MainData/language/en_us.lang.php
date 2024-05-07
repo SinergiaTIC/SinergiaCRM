@@ -24,7 +24,7 @@ $func_strings = array (
     'NAME' => 'Time tracker - Review of records from the previous day', // This tag is required. Indicates the name of the function
     'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'The Time tracking functionality is not activated on the employee: ',
     'EMPLOYEE_NO_ACTIVATE_WORK_CALENDAR'=> 'The Work Calendar functionality is not activated on the employee: ',
-    'NO_RECORD_IN_TIME_TRACKER' => "There should be a time record for the related Work Calendar record since it is a work type.",
+    'NO_RECORD_IN_TIME_TRACKER' => 'There is no time tracker record that supports the work calendar record of working type.',
     'EMAIL_SUBJECT' => 'CRM - Review Work Calendar Record',
     'EMAIL_BODY' => 'An error was encountered during the validation process for the following Work Calendar record:',
 );

@@ -46,16 +46,14 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
             SELECT stt.assigned_user_id, SUM(stt.duration) AS total_duration, sttu.stic_clock_c
             FROM stic_time_tracker as stt
             JOIN users_cstm as sttu ON stt.assigned_user_id = sttu.id_c
-            WHERE stt.application_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                AND stt.application_date < CURDATE()
+            WHERE stt.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
                 AND stt.deleted = 0
             GROUP BY stt. assigned_user_id) AS tt
         LEFT JOIN (
             SELECT swc.assigned_user_id, SUM(swc.duration) AS total_duration, swcu.stic_work_calendar_c
             FROM stic_work_calendar swc
             JOIN users_cstm as swcu ON swc.assigned_user_id = swcu.id_c            
-            WHERE swc.application_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                AND swc.application_date < CURDATE()
+            WHERE swc.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
                 AND swc.type = 'working'
                 AND swc.deleted = 0
             GROUP BY swc.assigned_user_id) AS wc 
@@ -68,16 +66,14 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
             SELECT stt.assigned_user_id, SUM(stt.duration) AS total_duration, sttu.stic_clock_c
             FROM stic_time_tracker as stt
             JOIN users_cstm as sttu ON stt.assigned_user_id = sttu.id_c
-            WHERE stt.application_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                AND stt.application_date < CURDATE()
+            WHERE stt.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
                 AND stt.deleted = 0
             GROUP BY stt. assigned_user_id) AS tt
         RIGHT JOIN (
             SELECT swc.assigned_user_id, SUM(swc.duration) AS total_duration, swcu.stic_work_calendar_c
             FROM stic_work_calendar swc
             JOIN users_cstm as swcu ON swc.assigned_user_id = swcu.id_c            
-            WHERE swc.application_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                AND swc.application_date < CURDATE()
+            WHERE swc.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
                 AND swc.type = 'working'  
                 AND swc.deleted = 0
             GROUP BY swc.assigned_user_id) AS wc 
@@ -117,7 +113,7 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
             } else {
                 $assignedUser = BeanFactory::getBean('Users', $wcAssignedUser);
             }
-
+            // If the user is not empty and has not been previously validated
             if (!empty($assignedUser) && !in_array($assignedUser->id, $validatedUsers)) 
             {
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Validating the next users: {$assignedUser->name}.");
@@ -159,10 +155,10 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                     
                     // Create the validation result
                     if (!empty($errorMsg)) 
-                    {    
+                    {
                         $errorMsg .= '<br /><br />';
-                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Time_Tracker&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_TIME_TRACKER_LIST_VIEW") . '</span></a><br />';
-                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Work_Calendar&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_WORK_CALENDAR_LIST_VIEW") . '</span></a><br />';
+                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Time_Tracker&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '&start_date_advanced_range_choice=last_7_days&range_start_date_advanced=[last_7_days]"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_TIME_TRACKER_LIST_VIEW") . '</span></a><br />';
+                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Work_Calendar&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '&start_date_advanced_range_choice=last_7_days&range_start_date_advanced=[last_7_days]"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_WORK_CALENDAR_LIST_VIEW") . '</span></a><br />';
                         $errorMsg .= '<br />';
                         $validationResultMsg = '<span style="color:red;">' . $errorMsg . '</span>';                        
                         $data = array(
@@ -204,11 +200,10 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                         );
                         $this->logValidationResult($data);
                     }
-            
-                    // Add the user id to the validated users array
-                    array_push($validatedUsers, $assignedUser->id);
                     $error = 0;
                 }
+                // Add the user id to the validated users array
+                array_push($validatedUsers, $assignedUser->id);                
             }
         }
         
