@@ -699,7 +699,7 @@ class actionSendEmail extends actionBase
         
         
         $outboundEmail = new OutboundEmail();
-        if ($mailerName === 'system') {
+        if (empty($mailerName) || $mailerName === 'system') {
             $outboundEmail = $outboundEmail->getSystemMailerSettings();
         }
         else {
