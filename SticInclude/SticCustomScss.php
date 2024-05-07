@@ -17,7 +17,7 @@ if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
     return;
 }
 
-if ($color == '#b5bc31') {
+if ($color == '#b5bc31' && $settingSidebarColor == 1) {
     // If $color is color default, simply clone compiled Stic css
     copy('themes/SuiteP/css/Stic/style.css', 'themes/SuiteP/css/SticCustom/style.css');
     echo '<li> $color is defaulf. Cloned from Stic subtheme. Compiled unnecessary.';
