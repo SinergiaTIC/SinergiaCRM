@@ -70,29 +70,15 @@ class stic_Time_Tracker extends Basic
     {
         global $timedate, $current_user;
 
-        switch ($_REQUEST["action"]) {
-            case 'Save':
-                $startDate = $_REQUEST['start_date'];
-                $endDate = $_REQUEST['end_date'];            
-                break;
-            case 'createOrUpdateTodayRegister':                
-                $startDate = $this->start_date;
-                $endDate = $this->end_date;
-                break;
-            default: // API | Importation | Mass Periodic Creation 
-                $bbddFormat = 'Y-m-d H:i:s';
-                $startDate = $timedate->fromDbFormat($this->start_date, $bbddFormat);
-                $startDate = $timedate->asUser($startDate, $current_user);
-                if (!empty($this->end_date)) {
-                    $endDate = $timedate->fromDbFormat($this->end_date, $bbddFormat);
-                    $endDate = $timedate->asUser($endDate, $current_user);                
-                } else {
-                    $endDate = '';
-                }
-                break;
-        }
-
         // Set name
+        $startDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
+        $startDate = $timedate->asUser($startDate, $current_user);
+        if (!empty($this->end_date)) {
+            $endDate = $timedate->fromDbFormat($this->end_date, TimeDate::DB_DATETIME_FORMAT);
+            $endDate = $timedate->asUser($endDate, $current_user);                
+        } else {
+            $endDate = '';
+        }
         $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
         if ($_REQUEST["action"] != "MassUpdate"){
             $this->name = $assignedUser->name . " - " . $startDate;
@@ -100,17 +86,19 @@ class stic_Time_Tracker extends Basic
                 $this->name .= " - " .  substr($endDate, -5);
             }
         } else {
-            // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
+            // In mass update we do not have access to the dates so the part of the name with the dates is reused
             $this->name = $assignedUser->name . " - " . substr($this->name, -25);
         }
 
-        // Set duration field
-        if (!empty($endDate)) {
-            $startTime = strtotime($timedate->to_db($startDate));
-            $endTime = strtotime($timedate->to_db($endDate));
+        // Set duration
+        if (!empty($this->end_date)) {
+            $startTime = strtotime($this->start_date);
+            $endTime = strtotime($this->end_date);
             $duration = $endTime - $startTime;            
             // Casting the result into float, otherwise a string is returned and may give wrong values in workflows
             $this->duration = (float) number_format($duration / 3600, 2);
+        } else {
+            $this->duration = 0;
         }
 
         // Save the bean

@@ -34,8 +34,12 @@ class stic_Time_TrackerController extends SugarController {
     {
         // Check if the user has started any time registration today
         $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
-        global $current_user;
+        global $timedate, $current_user;
         
+        // Get now in current_user timezone and format
+        $currentUserNow = $timedate->getNow(true);
+        $currentUserNow = $currentUserNow->format($timedate->get_date_time_format($current_user));
+
         // Check if time tracker module is active
         include_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
@@ -47,6 +51,7 @@ class stic_Time_TrackerController extends SugarController {
         $todayRegistrationStarted = !is_array($data) ? 0 : (empty($data["end_date"]) ? 1 : 0);
 
         $data = array(
+            'date' => $currentUserNow,
             'timeTrackerModuleActive' => $timeTrackerModuleActive,
             'timeTrackerActiveInEmployee' => $current_user->stic_clock_c ? 1:0,
             'todayRegistrationStarted' => $todayRegistrationStarted,
@@ -90,22 +95,26 @@ class stic_Time_TrackerController extends SugarController {
         $todayUserRegistrationData = stic_Time_Tracker::getLastTodayTimeTrackerRecord($current_user->id);
         $todayRegistrationStarted =  $todayUserRegistrationData ? empty($todayUserRegistrationData["end_date"]) : false;
 
-        if ($todayRegistrationStarted) {           
-            // Update the end date field of today's time tracker for the current user
-            $bean = BeanFactory::getBean($this->module, $todayUserRegistrationData['id']);
-            $bean->end_date = $timedate->now();
-            $bean->name = ''; // delete the name so that it is recalculated again
-            $bean->description=$bean->description.'
-            
-            '.$data['description']; 
-        } else {
+        $date = $timedate->fromUser($data['date'], $current_user);
+        $date = $timedate->asDb($date);
+
+        if (!$todayRegistrationStarted) {           
             // Create today's time tracker record for the current user
             $bean = BeanFactory::getBean($this->module);
-            $bean->start_date = $timedate->now();
+            $bean->start_date = $date;
             $bean->end_date = '';            
             $bean->assigned_user_id = $current_user->id;
             $bean->assigned_user_name = $current_user->name;
             $bean->description=$data['description'];            
+        } else {
+            // Update the end date field of today's time tracker for the current user
+            $bean = BeanFactory::getBean($this->module, $todayUserRegistrationData['id']);
+            $bean->start_date = $todayUserRegistrationData['start_date'];
+            $bean->end_date = $date;
+            $bean->name = ''; // delete the name so that it is recalculated again
+            $bean->description=$bean->description.'
+            
+            '.$data['description']; 
         }
         $bean->save();
         die();

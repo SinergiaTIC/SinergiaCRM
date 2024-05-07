@@ -11,6 +11,7 @@ function checkTimeTrackerButtonStatus()
         .then(response => response.json())
         .then(data => {
             localStorage.setItem('todayRegistrationStarted', data.todayRegistrationStarted);
+            localStorage.setItem('date', data.date);
             let buttonRow = document.querySelectorAll('.time_tracker_button_row');                             
             if (data.timeTrackerModuleActive == 1 && data.timeTrackerActiveInEmployee == 1){
                 buttonRow.forEach(function(element) {
@@ -44,6 +45,7 @@ function showTimeTrackerConfirmBox()
     fetch(url)
         .then(response => response.json())
         .then(data => {
+            debugger;
             drawTimeTrackerConfimrBox(data);
         })
         .catch(error => {
@@ -62,8 +64,8 @@ function drawTimeTrackerConfimrBox(data)
             <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CREATE')}</span>
             <br /><br />
             <ul class='time-tracker-dialog-row'>
-                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_START_DATE')} ${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NOW')}</li>
-                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE')} ${userName}</li>
+                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_START_DATE')}<span style="font-weight: bold;">` + localStorage.date + `</span></li>
+                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE')}<span style="font-weight: bold;">${userName}</span></li>
             </ul>
             <br />`;
     } else {
@@ -71,13 +73,13 @@ function drawTimeTrackerConfimrBox(data)
         <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1')}</span>
         <br /><br />
         <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')} ${data.name}</li>
+            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')}<span style="font-weight: bold;">${data.name}</span></li>
         </ul>
         <br /><br />   
         <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_2')}</span>
         <br /><br />
         <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_END_DATE')} ${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NOW')}</li>
+            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_END_DATE')}<span style="font-weight: bold;">` + localStorage.date + `</span></li>
         </ul>`;
     }
 
@@ -88,14 +90,10 @@ function drawTimeTrackerConfimrBox(data)
         <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
         <br /><br />
         <div id="time-tracker-dialog-buttons">
-            <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_ACCEPT')}</button>
+            <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(localStorage.date, document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_ACCEPT')}</button>
             <button id="timeTrackerButtonCancel" onclick="timeTrackerDialogCancel()">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CANCEL')}</button>                                
         </div>
     </div>`;
-
-    // mydialog = document.getElementById('time-tracker-dialog-box');
-    // mydialog.innerHTML = content;
-    // mydialog.style.display = 'block';
 
     mydialog = document.querySelectorAll('.time-tracker-dialog-box');
     mydialog.forEach(function(element) {
@@ -105,12 +103,13 @@ function drawTimeTrackerConfimrBox(data)
 }
 
 // Create or Update a time tracker record
-function timeTrackerDialogConfirm(description) 
+function timeTrackerDialogConfirm(date, description) 
 {
     // Call to the action that create or update the correspondient time tracker record
 
     const url = 'index.php?module=stic_Time_Tracker&action=createOrUpdateTodayRegister';
     var data = {
+        'date': date,
         'description': description
     };
 
