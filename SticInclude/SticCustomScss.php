@@ -21,12 +21,12 @@ if(empty($color)){
     $color = '#b5bc31';
 }
 
-if(empty($settingSidebarColor)){
-    $settingSidebarColor = 1;
+if(empty($settingSidebarColor) || $settingSidebarColor != '0'){
+    $settingSidebarColor = '1';
 }
 
 // If $color is the default color and the sidebar retains the original dark theme, simply clone the precompiled CSS
-if ($color == '#b5bc31' && $settingSidebarColor == 1) {
+if ($color == '#b5bc31' && $settingSidebarColor == '1') {
     copy('themes/SuiteP/css/Stic/style.css', 'themes/SuiteP/css/SticCustom/style.css');
     echo '<li> $color is defaulf. Cloned from Stic subtheme. Compiled unnecessary.';
     // Remove cache/themes/SuiteP/css/SticCustom/style.css to force reload css theme
@@ -38,7 +38,7 @@ $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Starting 
 
 $file = 'themes/SuiteP/css/SticCustom/CustomPalette.scss';
 
-if ($settingSidebarColor == 0) {
+if ($settingSidebarColor == '0') {
     $sidebarColor = "#D9DEE3";
     $sidebarTextColor = "#001E40";
 } else {
