@@ -328,7 +328,7 @@ class actionSendEmail extends actionBase
 
     private function get_output_smtps() {
         $emailsList = array();
-        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "user_id in ('1', '')");
+        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "(type = 'system' OR user_id = '')");
         foreach ($oeaList as $oea) {
             $emailsList[$oea->id] = array(
                 'name' => $oea->name,
@@ -534,7 +534,7 @@ class actionSendEmail extends actionBase
                 // STIC-Custom 20240307 EPS - Improve send mail action
                 // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
                 // if (!$this->sendEmail(array($email_to), $emailTemp->subject, $emailTemp->body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
-                if (!$this->sendEmail($emailTemp, array($email_to), $outputSmtp, '', $fromEmail, $fromName, $replyto, $replytoName, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
+                if (!$this->sendEmail($emailTemp, array($email_to), $outputSmtp, $fromEmail, $fromName, $replyto, $replytoName, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
                 // END STIC-Custom
                     $ret = false;
                     $this->lastEmailsFailed++;
@@ -553,7 +553,7 @@ class actionSendEmail extends actionBase
             // STIC-Custom 20240307 EPS - Improve send mail action
             // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
             // if (!$this->sendEmail($emails['to'], $emailTemp->subject, $email_body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
-            if (!$this->sendEmail($emailTemp, $emails['to'], $outputSmtp, '', $fromEmail, $fromName, $replyto, $replytoName, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
+            if (!$this->sendEmail($emailTemp, $emails['to'], $outputSmtp, $fromEmail, $fromName, $replyto, $replytoName, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
             // END STIC-Custom
                 $ret = false;
                 $this->lastEmailsFailed++;
@@ -673,7 +673,7 @@ class actionSendEmail extends actionBase
     // STIC-Custom 20240307 EPS - Improve send mail action
     // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
     // public function sendEmail($emailTo, $emailSubject, $emailBody, $altemailBody, SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
-    public function sendEmail($templateData, $emailTo, $mailerName = 'system', $user = '', $fromEmail = '', $fromName = '', $replyto = '', $replytoName = '', SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    public function sendEmail($templateData, $emailTo, $mailerName = 'system', $fromEmail = '', $fromName = '', $replyto = '', $replytoName = '', SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
     // END STIC-Custom
     {
         require_once('modules/Emails/Email.php');
@@ -703,13 +703,13 @@ class actionSendEmail extends actionBase
             $outboundEmail = $outboundEmail->getSystemMailerSettings();
         }
         else {
+            $user = ''; // User defined SMTPs are not used on Workflows, so User will always be empty
             $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
         }
         $mail->From = $fromEmail? $fromEmail : $outboundEmail->smtp_from_addr;
         $mail->FromName = $fromName ? $fromName : $outboundEmail->smtp_from_name;
         $mail->ClearCustomHeaders();
 
-        $user = $mailerName === 'system' ? 1 : $user;
         $mail->Mailer = 'smtp';
         $mail->Host = $outboundEmail->mail_smtpserver;
         $mail->Port = $outboundEmail->mail_smtpport;
