@@ -22,7 +22,7 @@
  */
 $func_strings = array (
     'NAME' => 'Registre horari - Revisió de les hores treballades durant la setmana anterior', // Aquesta etiqueta és obligatòria. Indica el nom de la funció
-    'HOURS_NOT_MATCH' => "Les hores registrades durant la setmana passada no coincideixen amb les indicades al calendari laboral per a l'usuari: ",
+    'HOURS_NOT_MATCH' => "Les hores registrades durant la setmana passada no coincideixen amb les hores laborals indicades al calendari laboral de l'usuari: ",
     'EMAIL_SUBJECT' => 'CRM - Revisió de les hores treballades durant la setmana anterior',
     'STIC_TIME_TRACKER_LIST_VIEW' => "Vista de la llista amb els registres horaris de l'usuari",
     'STIC_WORK_CALENDAR_LIST_VIEW' => "Vista de la llista amb els registres del calendari laboral de l'usuari",

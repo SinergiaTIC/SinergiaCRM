@@ -129,17 +129,19 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                 {
                     // Get upper and lower margin settings
                     include_once 'modules/stic_Settings/Utils.php';
-                    $lowerMarginPercent = stic_SettingsUtils::getSetting('LOWER_MARGIN_PERCENT') / 100;
-                    $upperMarginPercent = stic_SettingsUtils::getSetting('UPPER_MARGIN_PERCENT') / 100;
-                    
+                    $lowerMarginPercent = stic_SettingsUtils::getSetting('LOWER_MARGIN_PERCENT2');
+                    $upperMarginPercent = stic_SettingsUtils::getSetting('UPPER_MARGIN_PERCENT');
+
                     // Calculate the upper and lower allowed difference
-                    $lowerDifference = $wcDuration * $lowerMarginPercent;
-                    $upperDifference = $wcDuration * $upperMarginPercent;
+                    $lowerDifference = ($lowerMarginPercent === false) ? 0 : $wcDuration * ($lowerMarginPercent/100);
+                    $upperDifference = ($upperMarginPercent === false) ? 0 : $wcDuration * ($upperMarginPercent/100);
                     
                     // Get the difference between the two durations
-                    $difference = abs($ttDuration - $wcDuration);
+                    $difference = $wcDuration - $ttDuration;
                     
-                    if ($difference > $lowerDifference || $difference > $upperDifference) {
+                    if (   ($difference > 0 && $difference > $lowerDifference) 
+                        || ($difference < 0 && $difference > $upperDifference)) 
+                    {
                         $errorMsg = $this->getLabel('HOURS_NOT_MATCH') . $assignedUser->name;
                         $error = 1;
                     }

@@ -22,7 +22,7 @@
  */
 $func_strings = array (
     'NAME' => 'Time tracker - Review of the hours worked during the previous week.', // Esta etiqueta es obligatoria. Indica el nombre de la función
-    'HOURS_NOT_MATCH' => 'The hours recorded during the past week do not match those indicated in the work calendar for the user: ',
+    'HOURS_NOT_MATCH' => "The hours recorded during the past week do not match the working hours indicated in the user's working calendar: ",
     'EMAIL_SUBJECT' => 'CRM - Review of hours worked during the previous week',
     'STIC_TIME_TRACKER_LIST_VIEW' => "List view with the user's time records",
     'STIC_WORK_CALENDAR_LIST_VIEW' => "List view with the user's work calendar records",
