@@ -112,7 +112,7 @@ class actionSendEmail extends actionBase
 
         // Advanced options section
         $html .= "<tr style='margin-top:20px;' >";
-        $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;" > <a href="javascript:$(\'.advancedOptions\').toggle();">' . translate(
+        $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;" > <a href="javascript:void($(\'.advancedOptions\').toggle());">' . translate(
             "LBL_SHOW_ADVANCED",
             "AOW_Actions"
             ) . '<span class="inline-help glyphicon glyphicon-triangle-bottom"></span> <span id="info-availability" class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="1" aria-describedby="qtip-1"></span></a> ';
@@ -328,7 +328,7 @@ class actionSendEmail extends actionBase
 
     private function get_output_smtps() {
         $emailsList = array();
-        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list();
+        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "user_id in ('1', '')");
         foreach ($oeaList as $oea) {
             $emailsList[$oea->id] = array(
                 'name' => $oea->name,
