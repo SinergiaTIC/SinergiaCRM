@@ -44,6 +44,8 @@ $mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Work calendar';
 $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Enable or disable the use of the Work Calendar module for this employee';
 $mod_strings['LBL_STIC_CLOCK'] = 'Time tracker';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Enable or disable the use of the Time tracker module for this employee';
+$mod_strings['LBL_SDA_ALLOWED'] = 'SinergiaDA access';
+$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Sets user access to Sinergia Data Analytics';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";

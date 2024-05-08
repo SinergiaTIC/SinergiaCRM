@@ -44,6 +44,8 @@ $mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Calendari laboral';
 $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = "Activa o desactiva l'ús del mòdul de Disponibilitat horària per a aquest empleat";
 $mod_strings['LBL_STIC_CLOCK'] = 'Registre horari';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = "Activa o desactiva l\'ús del mòdul de Registre horari per a aquest empleat";
+$mod_strings['LBL_SDA_ALLOWED'] = 'Accés a SinergiaDA';
+$mod_strings['LBL_SDA_ALLOWED_INFO'] = "Indica si l'usuari disposa d'accés a Sinergia Data Analytics";
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
