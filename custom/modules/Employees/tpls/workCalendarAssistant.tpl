@@ -47,13 +47,6 @@
 </table>
 <br>
 
-<div id="edit_all_recurrences_block" style="display: none;">
-	<button type="button" id="btn-edit-all-recurrences" onclick="CAL.edit_all_recurrences();">
-		{$MOD.LBL_EDIT_ALL_RECURRENCES} </button>
-	<button type="button" id="btn-remove-all-recurrences" onclick="CAL.remove_all_recurrences();">
-		{$MOD.LBL_REMOVE_ALL_RECURRENCES} </button>
-</div>
-
 <div id="cal-repeat-block">
 
 	<form name="CalendarRepeatForm" id="CalendarRepeatForm" method="POST">
@@ -365,7 +358,6 @@
 			final = final.split('/')
 			var final = new Date(final[2], final[1], final[0], final[3], final[4] * minutesInterval);
 			var difference = final.getTime() - start.getTime();
-			console.log(difference);
 			if (difference <= 0) {
 				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('Employees', 'LBL_END_DATE_ERROR') + "</span>")
 				return;
@@ -380,7 +372,6 @@
 			hours = parseInt(hours) < 10 ? '0' + hours : hours
 			minutes = parseInt(minutes) < 10 ? '0' + minutes : minutes
 			$('#info_hours').text(SUGAR.language.get('Employees', 'LBL_WORK_CALENDAR_DURATION') + ': ' + hours + 'h ' + minutes + '\'')
-
 		}
 
 		document.getElementById("CalendarRepeatForm").addEventListener("submit", function(event) {

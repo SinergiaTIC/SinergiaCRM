@@ -152,10 +152,11 @@
 				</td>
 			</tr>					
 			<tr>
-				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
+				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:<span
+						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 				<td width="37.5%" valign="top">
 					<select name="repeat_type"
-						onchange="toggle_repeat_type();">{html_options options=$APPLIST.repeat_type_dom}</select>
+						onchange="toggle_repeat_type();" required>{html_options options=$APPLIST.repeat_type_dom}</select>
 				</td>
 			</tr>
 
@@ -366,7 +367,11 @@
 			var final = new Date(final[2], final[1], final[0], final[3], final[4] * minutesInterval);
 			var difference = final.getTime() - start.getTime();
 			if (difference <= 0) {
-				$('#info_hours').html("<span style='color:red;display:inline-block;'>Error! </span>")
+				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('stic_Work_Calendar', 'LBL_END_DATE_ERROR') + "</span>")
+				return;
+			}
+			if ((difference / 3600000) >= 24) {
+				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('stic_Work_Calendar', 'LBL_END_DATE_EXCCEDS_24_HOURS') + "</span>")
 				return;
 			}
 			var minutes = Math.round(difference / 60000);
@@ -374,10 +379,16 @@
 			var minutes = (parseInt(minutes) % 60)
 			hours = parseInt(hours) < 10 ? '0' + hours : hours
 			minutes = parseInt(minutes) < 10 ? '0' + minutes : minutes
-			$('#info_hours').text(SUGAR.language.get('stic_Work_Calendar', 'LBL_WORK_CALENDAR_DURATION') + ': ' + hours + 'h ' + minutes +
-				'\'')
-
+			$('#info_hours').text(SUGAR.language.get('stic_Work_Calendar', 'LBL_WORK_CALENDAR_DURATION') + ': ' + hours + 'h ' + minutes + '\'')
 		}
+
+		document.getElementById("CalendarRepeatForm").addEventListener("submit", function(event) {
+			if ($('#info_hours').text().includes('ERROR')) {
+				event.preventDefault();
+				debugger;
+				alert(SUGAR.language.get('stic_Work_Calendar', 'LBL_ERROR_IN_VALIDATION'));
+			}
+		});
 
 		$('[name=repeat_start_hour]').off('change')
 		$('[name=repeat_start_hour],[name=repeat_final_hour],[name=repeat_start_minute],[name=repeat_final_minute]').on(
