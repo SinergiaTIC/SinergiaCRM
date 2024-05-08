@@ -84,7 +84,6 @@ class EmployeesViewWorkCalendarAssistant extends SugarView
         $this->ss->assign('repeat_intervals', $repeat_intervals);
         $this->ss->assign('repeat_hours', $repeat_hours);
         $this->ss->assign('repeat_minutes', $repeat_minutes);
-        $this->ss->assign('minutes_interval', $sugar_config['stic_datetime_combo_minute_interval'] ?: 15);
         $this->ss->assign('dow', $dow);
         $this->ss->assign('MOD_WORK_CALENDAR', return_module_language($current_language, 'stic_Work_Calendar'));
         $this->ss->display('custom/modules/Employees/tpls/workCalendarAssistant.tpl'); //call tpl file

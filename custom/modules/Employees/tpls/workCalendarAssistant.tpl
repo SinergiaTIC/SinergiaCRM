@@ -32,12 +32,6 @@
 	</style>
 {/literal}
 
-
-
-<script type="text/javascript">
-	var minutesInterval={$minutes_interval};
-</script>
-
 <table width="100%">
 	<tr>
 		<th style="text-align:left">
@@ -377,7 +371,6 @@
 		document.getElementById("CalendarRepeatForm").addEventListener("submit", function(event) {
 			if ($('#info_hours').text().includes('ERROR')) {
 				event.preventDefault();
-				debugger;
 				alert(SUGAR.language.get('Employees', 'LBL_ERROR_IN_VALIDATION'));
 			}
 		});
