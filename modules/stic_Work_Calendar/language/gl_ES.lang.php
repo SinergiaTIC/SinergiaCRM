@@ -61,10 +61,10 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'Nuevo Calendario Laboral',
   'LBL_TYPE' => 'Tipo',
   'LBL_START_DATE' => 'Fecha de y hora de inicio',
-  'LBL_END_DATE' => 'Fecha de y hora de finalización',
+  'LBL_END_DATE' => 'Fecha de y hora de finalización',  
   'LBL_START_DATE_ERROR' => 'La fecha y hora de inicio debe ser anterior a la fecha y hora de finalización.',
   'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
-  'LBL_END_DATE_EXCCEDS_24_HOURS' => 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.',  
+  'LBL_END_DATE_EXCCEDS_24_HOURS' => 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.',
   'LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS' => 'Existen otros registros con tipo incompatible al actual para el mismo usuario asignado y dentro del rango horario definido. Compruebe estos registros y modifique el rango horario de este registro o de aquel que genera el conflicto.',
   'LBL_ERROR_REQUEST_INCOMPATIBLE_TYPE' => 'Error al comprobar si ya existen registros de Calendario laboral incompatibles con el registro que se está creando. Consulte con el administrador.',
   'LBL_ERROR_CODE_REQUEST_INCOMPATIBLE_TYPE' => 'Código de error: ',
@@ -73,7 +73,7 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
   'LBL_ALL_DAY_HELP' => 'Si el tipo de registro no es laborable o ausencia puntual, el registro afecta a todo el día y no será necesario indicar la hora de inicio ni la hora y fecha de finalización.',
-  
+
   // Asistente de creación de registros de Calendario laboral
   'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registros de forma periódica',
   'LBL_CANCEL_BUTTON' => 'Cancelar',
@@ -90,6 +90,20 @@ $mod_strings = array (
   'LBL_TIME_FINAL' => 'Fecha y hora final del primer registro de Calendario laboral',
   'LBL_TITLE' => 'Crear registros de Calendario laboral',
   'LBL_WORK_CALENDAR_DURATION' => 'Duración del registro de Calendario laboral',
+  'LBL_ERROR_IN_VALIDATION' => 'Error en el valor indicado en el campo fecha y hora de finalización.',
+  'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
+  'LBL_END_DATE_EXCCEDS_24_HOURS' => 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.',
+  'LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS' => 'Existen otros registros con tipo incompatible al actual para el mismo usuario asignado y dentro del rango horario definido. Compruebe estos registros y modifique el rango horario de este registro o de aquel que genera el conflicto.',
+  
+  // Resumen del asistente de creación de registros de Calendario laboral
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'RESUMEN:',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED' => 'Número de registros a crear',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED' => 'Número de registros creados',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED' => 'Número de registros no creados',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'Listado de registros no creados',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'Los siguientes registros no se han creado debido a que coincidían en rango horario con algún otro registro ya existente de tipo incompatible.',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES' => 'Ir a Empleados',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR' => 'Ir a Calendario laboral',
 
   // Asistente para modificar la hora de registros de Calendario laboral
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Actualizar hora de inicio y de fin',

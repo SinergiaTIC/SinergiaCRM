@@ -41,18 +41,7 @@ class CustomEmployeesController extends EmployeesController
      * @return void
      */
     public function action_createPeriodicWorkCalendarRecords() {
-        include_once 'custom/modules/Employees/SticUtils.php';
-        stic_EmployeesUtils::createPeriodicWorkCalendarRecords();
+        require_once 'modules/stic_Work_Calendar/Utils.php';
+        stic_Work_CalendarUtils::createPeriodicWorkCalendarRecords();
     }
-
-
-    /**
-     * 
-     *
-     * @return void
-     */
-    public function action_workCalendarAssistantSummary() {
-        $this->view = "workcalendarassistantsummary";
-    }
-
 }

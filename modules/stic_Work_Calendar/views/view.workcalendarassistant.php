@@ -23,7 +23,7 @@
 
 require_once 'SticInclude/Views.php';
 
-class EmployeesViewWorkCalendarAssistant extends SugarView
+class stic_Work_CalendarViewWorkCalendarAssistant extends SugarView
 {
     public function preDisplay() {
 
@@ -65,19 +65,7 @@ class EmployeesViewWorkCalendarAssistant extends SugarView
             $dow[] = array("index" => $day_index, "label" => $app_list_strings['dom_cal_day_short'][$day_index + 1]);
         }
 
-        if (!empty($_REQUEST['employeeId'])){
-            $user = BeanFactory::getBean('Employees', $_REQUEST['employeeId']);
-            $selectedEmployees[0] = $user->name;
-        } else {   
-            $selectedEmployees = $_REQUEST["mass"];
-            foreach ($selectedEmployees as $key => $id){
-                $user = BeanFactory::getBean('Employees', $id);
-                $selectedEmployees[$key] = $user->name;
-            }
-        }
-
         $workCalendarBean = BeanFactory::getBean('stic_Work_Calendar');
-        $this->ss->assign('selectedEmployees', $selectedEmployees);
         $this->ss->assign('TYPE', $app_list_strings[$workCalendarBean->field_name_map['type']['options']]);
         $this->ss->assign('REQUEST', $_REQUEST);
         $this->ss->assign('APPLIST', $app_list_strings);
@@ -87,6 +75,6 @@ class EmployeesViewWorkCalendarAssistant extends SugarView
         $this->ss->assign('minutes_interval', $sugar_config['stic_datetime_combo_minute_interval'] ?: 15);
         $this->ss->assign('dow', $dow);
         $this->ss->assign('MOD_WORK_CALENDAR', return_module_language($current_language, 'stic_Work_Calendar'));
-        $this->ss->display('custom/modules/Employees/tpls/workCalendarAssistant.tpl'); //call tpl file
+        $this->ss->display('modules/stic_Work_Calendar/tpls/workCalendarAssistant.tpl'); //call tpl file
     }
 }

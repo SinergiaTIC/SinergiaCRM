@@ -76,7 +76,6 @@ $mod_strings = array (
 
   // Assistent de creació de registres de Calendari laboral
   'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registres de forma periòdica',
-  'LBL_PERIODIC_WORK_CALENDAR_BUTTON' => 'Crear registros de Calendario laboral',
   'LBL_CANCEL_BUTTON' => 'Cance·la',
   'LBL_REPEAT_DOW' => 'Dia de la setmana',
   'LBL_REPEAT_END_AFTER' => 'Després de',
@@ -91,6 +90,20 @@ $mod_strings = array (
   'LBL_TIME_FINAL' => "Data i hora d'inici de la 1a sessió",
   'LBL_TITLE' => 'Crea sessions periòdiques',
   'LBL_WORK_CALENDAR_DURATION' => 'Durada del registre de Calendari laboral',
+  'LBL_ERROR_IN_VALIDATION' => 'Error en el valor indicat al camp data i hora de finalització.',
+  'LBL_END_DATE_ERROR' => 'La data i hora de finalització ha de ser posterior a la data i hora d\'inici.',
+  'LBL_END_DATE_EXCCEDS_24_HOURS' => 'La diferència entre la data i l\'hora de finalització i la d\'inici ha de ser menor a 24 hores.',
+  'LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS' => "Existeixen altres registres amb tipus incompatible a l'actual per al mateix usuari assignat i dins del rang horari definit. Comproveu aquests registres i modifiqueu el rang horari d'aquest registre o d'aquell que genera el conflicte.",
+
+  // Resum de l'assistent de creació de registres del calendari laboral
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'RESUM:',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED' => 'Nombre de registres a crear',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED' => 'Nombre de registres creats',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED' => 'Nombre de registres no creats',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'Llistat de registres no creats',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'Els registres no s\'han creat pel fet que se solapava amb algun altre registre ja existent de tipus incompatible',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES' => 'Anar a Empleats',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR' => 'Anar a Calendari laboral',
 
   // Assistent per modificar l'hora de registres de Calendari laboral
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => "Actualitzar hora d'inici i de final",

@@ -23,7 +23,7 @@
 
 require_once 'SticInclude/Views.php';
 
-class EmployeesViewWorkCalendarAssistantSummary extends SugarView
+class stic_Work_CalendarViewWorkCalendarAssistantSummary extends SugarView
 {
     public function preDisplay() 
     {
@@ -42,7 +42,7 @@ class EmployeesViewWorkCalendarAssistantSummary extends SugarView
         $this->ss->assign('RECORDS_NOT_CREATED', json_encode($_SESSION['summary']['recordsNotCreated']));
         $this->ss->assign('TOTAL_RECORDS_NOT_CREATED', count($_SESSION['summary']['recordsNotCreated']) ?? 0);
         $this->ss->assign('RECORDS_PER_PAGE', $sugar_config['list_max_entries_per_page']);
-        $this->ss->display('custom/modules/Employees/tpls/workCalendarAssistantSummary.tpl'); //call tpl file
+        $this->ss->display('modules/stic_Work_Calendar/tpls/workCalendarAssistantSummary.tpl'); //call tpl file
         unset($_SESSION['summary']);
     }
 }

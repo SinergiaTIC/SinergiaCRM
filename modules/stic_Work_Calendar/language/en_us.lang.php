@@ -90,6 +90,20 @@ $mod_strings = array (
   'LBL_TIME_FINAL' => '1st session start date and hour',
   'LBL_TITLE' => 'Create periodic sessions',
   'LBL_WORK_CALENDAR_DURATION' => 'Work Calendar Record Duration',
+  'LBL_ERROR_IN_VALIDATION' => 'Error in the value indicated in the end date and time field.',
+  'LBL_END_DATE_ERROR' => 'The end date and time must be later than the start date and time.',
+  'LBL_END_DATE_EXCCEDS_24_HOURS' => 'The difference between the end and start date and time must be less than 24 hours.',
+  'LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS' => 'There are other records with a type incompatible with the current one for the same assigned user and within the defined time range. Check these records and modify the time range of this record or the one that generates the conflict.',
+
+  // Work Calendar record creation wizard summary
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'SUMMARY:',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED' => 'Number of records to create',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED' => 'Number of records created',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED' => 'Number of records not created',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'List of records not created',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'Records have not been created due to overlapping with some other existing record of incompatible type',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES' => 'Go to Employees',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR' => 'Go to Work Calendar',
 
   // Wizard to modify the time of Work Calendar records
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Update start and end time',

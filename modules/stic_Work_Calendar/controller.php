@@ -54,7 +54,40 @@ class stic_Work_CalendarController extends SugarController
         }
         die();        
     }
-  
+
+
+    /**
+     * 
+     * @return void
+     */
+    public function action_createPeriodicRecords()
+    {
+        $this->view = "workcalendarassistant"; //call for the view file in views dir
+    }
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public function action_createPeriodicWorkCalendarRecords() {
+        include_once 'Utils.php';
+        stic_Work_CalendarUtils::createPeriodicWorkCalendarRecords();
+    }
+    
+    
+
+    /**
+     * 
+     *
+     * @return void
+     */
+    public function action_workCalendarAssistantSummary() {
+        $this->view = "workcalendarassistantsummary";
+    }
+
+
+
     /**
      * 
      * @return void
