@@ -42,7 +42,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-
+//STIC-Custom 20240326 EPS - Seven SMS Integration
+require_once 'modules/seven/seven_util.php';
+//END STIC-Custom
 
 class EmployeesViewDetail extends ViewDetail
 {
@@ -50,9 +52,6 @@ class EmployeesViewDetail extends ViewDetail
     {
         parent::__construct();
     }
-
-
-
 
     /**
      * Return the "breadcrumbs" to display at the top of the page
@@ -110,6 +109,10 @@ EOHTML;
 
     public function display()
     {
+        //STIC-Custom 20240326 EPS - Seven SMS Integration
+        $this->setSevenPlugin();
+        //END STIC-Custom
+
         if (is_admin($GLOBALS['current_user']) || $_REQUEST['record'] == $GLOBALS['current_user']->id) {
             $this->ss->assign('DISPLAY_EDIT', true);
         }
@@ -131,4 +134,36 @@ EOHTML;
 
         parent::display();
     }
+
+//STIC-Custom 20240326 EPS - Seven SMS Integration
+    protected function setSevenPlugin() {
+        global $sugar_config;
+
+        $history = array_merge($this->getOutboundSms(), $this->getInboundSms());
+
+        usort($history, function (SugarBean $a, SugarBean $b) {
+            return strcmp($a->date_entered, $b->date_entered);
+        });
+
+        /** @var Employee $employee */
+        $employee = $this->bean;
+        $this->ss->assign('SEVEN_BEAN_ID', $this->bean->id);
+        $this->ss->assign('SEVEN_FROM', $sugar_config['seven_sender'] ?? '');
+        $this->ss->assign('SEVEN_MODULE', $this->module);
+        $this->ss->assign('SEVEN_SMS_HISTORY', $history);
+        $this->ss->assign('SEVEN_TO', $employee->phone_mobile);
+
+        echo $this->ss->fetch('modules/seven/tpls/sms_compose.tpl');
+
+        parent::display();
+    }
+
+    private function getInboundSms(): array {
+        return seven_util::getSMS('seven_sms_inbound', $this->bean);
+    }
+
+    private function getOutboundSms(): array {
+        return seven_util::getSMS('seven_sms', $this->bean);
+    }
+//END STIC-Custom
 }

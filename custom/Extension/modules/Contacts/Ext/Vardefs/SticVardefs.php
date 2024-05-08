@@ -2615,3 +2615,8 @@ $dictionary['Contact']['fields']['am_projecttemplates_resources']['vname'] = 'LB
 // STIC#981
 $dictionary['Contact']['fields']['primary_address_postalcode']['inline_edit'] = true;
 $dictionary['Contact']['fields']['do_not_call']['massupdate'] = '1';
+
+// SEVEN SMS PLugin
+$dictionary['Contact']['fields']['seven_compose_sms']['inline_edit'] = '0';
+$dictionary['Contact']['fields']['seven_compose_sms']['labelValue'] = 'Write SMS';
+// END SEVEN SMS Plugin
