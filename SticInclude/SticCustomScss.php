@@ -17,6 +17,14 @@ if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
     return;
 }
 
+if(empty($color)){
+    $color = '#b5bc31';
+}
+
+if(empty($settingSidebarColor)){
+    $settingSidebarColor = 1;
+}
+
 // If $color is the default color and the sidebar retains the original dark theme, simply clone the precompiled CSS
 if ($color == '#b5bc31' && $settingSidebarColor == 1) {
     copy('themes/SuiteP/css/Stic/style.css', 'themes/SuiteP/css/SticCustom/style.css');
