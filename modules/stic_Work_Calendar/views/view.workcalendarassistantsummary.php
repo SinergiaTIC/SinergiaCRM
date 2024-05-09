@@ -37,10 +37,8 @@ class stic_Work_CalendarViewWorkCalendarAssistantSummary extends SugarView
         SticViews::display($this);
         
         global $sugar_config;
-        $this->ss->assign('TOTAL_RECORDS_PROCESSED', $_SESSION['summary']['numRecordsProcessed'] ?? 0);
-        $this->ss->assign('TOTAL_RECORDS_CREATED', $_SESSION['summary']['numRecordsCreated'] ?? 0);
-        $this->ss->assign('RECORDS_NOT_CREATED', json_encode($_SESSION['summary']['recordsNotCreated']));
-        $this->ss->assign('TOTAL_RECORDS_NOT_CREATED', count($_SESSION['summary']['recordsNotCreated']) ?? 0);
+        $this->ss->assign('DATA', $_SESSION['summary']['global']);
+        $this->ss->assign('RECORDS_NOT_CREATED_BY_EMPLOYEE', json_encode($_SESSION['summary']['users']));
         $this->ss->assign('RECORDS_PER_PAGE', $sugar_config['list_max_entries_per_page']);
         $this->ss->display('modules/stic_Work_Calendar/tpls/workCalendarAssistantSummary.tpl'); //call tpl file
         unset($_SESSION['summary']);

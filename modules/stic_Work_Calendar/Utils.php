@@ -80,16 +80,10 @@ class stic_Work_CalendarUtils
     public static function createPeriodicWorkCalendarRecords()
     {
         // Disable Advanced Open Discovery to avoid slowing down the writing of the records affected by this function.
-        global $sugar_config;
+        global $sugar_config, $app_list_strings, $current_user, $timedate;
         $aodConfig = $sugar_config['aod']['enable_aod'];
         $sugar_config['aod']['enable_aod'] = false;
-
         $startTime = microtime(true);
-
-        // TIP: the action can be run from the web browser using this url:
-        // http://<CRM domain>/index.php?module=stic_Work_Calendar&action=createPeriodicWorkCalendarRecords&return_module=stic_Work_Calendar&return_action=index&repeat_type=Daily&repeat_interval=1&repeat_count=3&repeat_until=&repeat_start_day=02/04/2019&repeat_final_day=02/04/2019&repeat_start_hour=09&repeat_start_minute=0&repeat_final_hour=10&repeat_final_minute=1&employeeId=<id_employee>"
-
-        global $current_user, $timedate;
 
         // Get the data from the smarty template
         $repeat_type = $_REQUEST['repeat_type'];
@@ -311,7 +305,6 @@ class stic_Work_CalendarUtils
         }
 
         // Loop for work calendar records creation
-        $counter = count($date);
         if (!empty($_REQUEST["assigned_user_id"])) {
             $employeeIDs = array (0 => $_REQUEST["assigned_user_id"]);
         } else if (!empty($_REQUEST["employeeId"])){
@@ -319,16 +312,28 @@ class stic_Work_CalendarUtils
         } else {
             $employeeIDs = explode(",", $_REQUEST["employeeIds"]);
         } 
+
         $aux = array();
+        $counter = count($date);
         for ($i = 0; $i < $counter; $i++) 
         {
             $aux[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
-            $validationDate[$i] = substr($date[$i], 0, 10);
         }
         
-        $summary = array();
+        $summary['global'] = array(
+            'totalRecordsProcessed' => 0,
+            'totalRecordsCreated' => 0,
+            'totalRecordsNotCreated' => 0,
+        );
         foreach ($employeeIDs as $assignedUserId) 
         {
+            $employee = BeanFactory::getBean('Users', $assignedUserId);
+            $summary['users'][$assignedUserId] = array(
+                'name' => $employee->full_name,
+                'numRecordsProcessed' => 0,
+                'numRecordsCreated' => 0,
+                'numRecordsNotCreated' => 0,
+            );
             for ($i = 0; $i < $counter; $i++) 
             {
                 if ($finalDay != '') {
@@ -347,15 +352,25 @@ class stic_Work_CalendarUtils
                     $workCalendarBean->description = $_REQUEST['description'];
                 }
                 
-                $save = self::existsRecordsWithIncompatibleType('', $validationDate[$i], $finalDay, $_REQUEST['type'], $assignedUserId);
+                $save = self::existsRecordsWithIncompatibleType('', $aux[$i], $finalDay, $_REQUEST['type'], $assignedUserId);
                 if ($save) {
                     $workCalendarBean->save(false);
-                    $summary['numRecordsCreated']++;
+                    $summary['global']['totalRecordsCreated']++;
+                    $summary['users'][$assignedUserId]['numRecordsCreated']++;
                 } else {
                     $user = BeanFactory::getBean('Users', $assignedUserId);
-                    $summary['recordsNotCreated'][] =  array ('username' => $user->name, 'type' => $_REQUEST['type'], 'startDate' => $aux[$i], 'endDate' => $finalDay);
+                    $summary['global']['totalRecordsNotCreated']++;
+                    $summary['users'][$assignedUserId]['numRecordsNotCreated']++;
+                    $startDate = $timedate->fromDbFormat($aux[$i], TimeDate::DB_DATETIME_FORMAT);
+                    $startDate = $timedate->asUser($startDate, $current_user);
+                    // $startDate = $startDate->format($timedate->get_date_format($current_user));
+                    $endDate = $timedate->fromDbFormat($finalDay, TimeDate::DB_DATETIME_FORMAT);
+                    $endDate = $timedate->asUser($endDate, $current_user);    
+                    $type = $app_list_strings['stic_work_calendar_types_list'][$_REQUEST['type']];
+                    $summary['users'][$assignedUserId]['recordsNotCreated'][] =  array ('username' => $user->name, 'type' => $type, 'startDate' => $startDate, 'endDate' => $endDate);
                 }
-                $summary['numRecordsProcessed']++;
+                $summary['global']['totalRecordsProcessed']++;
+                $summary['users'][$assignedUserId]['numRecordsProcessed']++;
             }
         }
         $_SESSION['summary'] = $summary;

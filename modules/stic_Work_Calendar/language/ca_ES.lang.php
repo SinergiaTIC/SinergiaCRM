@@ -76,6 +76,7 @@ $mod_strings = array (
 
   // Assistent de creació de registres de Calendari laboral
   'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registres de forma periòdica',
+  'LBL_PERIODIC_WORK_CALENDAR_BUTTON' => 'Creació periòdica de registres de Calendari laboral',  
   'LBL_CANCEL_BUTTON' => 'Cance·la',
   'LBL_REPEAT_DOW' => 'Dia de la setmana',
   'LBL_REPEAT_END_AFTER' => 'Després de',

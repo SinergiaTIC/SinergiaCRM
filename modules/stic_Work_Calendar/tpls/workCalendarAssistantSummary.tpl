@@ -35,15 +35,15 @@
 <p class="strong">{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE}</p>
 
 <div class="layer">
-    - <span class="strong">{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED} = {$TOTAL_RECORDS_PROCESSED}</span>
+    <span class="strong">{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED} = {$DATA.totalRecordsProcessed}</span>
     <br /><br />
-    - <span class="strong" style='color:green'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED} = {$TOTAL_RECORDS_CREATED}</span>
+    <span class="strong" style='color:green'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED} = {$DATA.totalRecordsCreated ?? 0}</span>
     <br /><br />
-    - <span class="strong" style='color:red'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED} = {$TOTAL_RECORDS_NOT_CREATED}</span>
+    <span class="strong" style='color:red'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED} = {$DATA.totalRecordsNotCreated}</span>
 </div>
 <br /><br />
 
-{if ($TOTAL_RECORDS_NOT_CREATED != 0)}
+{if ($DATA.totalRecordsNotCreated > 0)}
     <div class="layer">
         <h2>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE}</h2>
         <span>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT}</span>
@@ -70,45 +70,50 @@
         <button type='button' class='button'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR}</button>
     </a>
 </div>
+
+
 <script>
-    var data = {$RECORDS_NOT_CREATED};
+    var data = {$RECORDS_NOT_CREATED_BY_EMPLOYEE};
     const pageSize = {$RECORDS_PER_PAGE}; 
 </script>
+
 <script>
     {literal}
         // Función para renderizar la lista
         function renderList(pageNumber, pageSize) 
         {
-            const listContainer = document.getElementById('list');
-            listContainer.innerHTML = '';
+            for (let key in data2) 
+            {
+                const listContainer = document.getElementById('list');
+                listContainer.innerHTML = '';
+                const startIndex = (pageNumber - 1) * pageSize;
+                const pageData = data2[key].slice(startIndex, startIndex + pageSize);
 
-            const startIndex = (pageNumber - 1) * pageSize;
-            const pageData = data.slice(startIndex, startIndex + pageSize);
+                pageData.forEach(item => {
+                    spanItem = document.createElement("span");
+                    spanItem.classList.add("row");
+                    spanItem.textContent = `${item.username}`;
+                    listContainer.appendChild(spanItem);
+                    
+                    spanItem = document.createElement("span");
+                    spanItem.classList.add("row");
+                    spanItem.textContent = `${item.type}`;
+                    listContainer.appendChild(spanItem);
 
-            pageData.forEach(item => {
-                spanItem = document.createElement("span");
-                spanItem.classList.add("row");
-                spanItem.textContent = `${item.username}`;
-                listContainer.appendChild(spanItem);
-                
-                spanItem = document.createElement("span");
-                spanItem.classList.add("row");
-                spanItem.textContent = `${item.type}`;
-                listContainer.appendChild(spanItem);
+                    spanItem = document.createElement("span");
+                    spanItem.classList.add("row");
+                    spanItem.textContent = `${item.startDate}`;
+                    listContainer.appendChild(spanItem);
 
-                spanItem = document.createElement("span");
-                spanItem.classList.add("row");
-                spanItem.textContent = `${item.startDate}`;
-                listContainer.appendChild(spanItem);
-
-                spanItem = document.createElement("span");
-                spanItem.classList.add("row");
-                spanItem.textContent = `${item.endDate}`;
-                listContainer.appendChild(spanItem);
-                
-                brItem = document.createElement("br");
-                listContainer.appendChild(brItem);
-            });
+                    spanItem = document.createElement("span");
+                    spanItem.classList.add("row");
+                    spanItem.textContent = `${item.endDate}`;
+                    listContainer.appendChild(spanItem);
+                    
+                    brItem = document.createElement("br");
+                    listContainer.appendChild(brItem);
+                });
+            });                
         }
 
         // Función para renderizar el paginador
