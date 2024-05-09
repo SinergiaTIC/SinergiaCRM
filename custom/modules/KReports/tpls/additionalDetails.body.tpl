@@ -1,5 +1,4 @@
-<?php
-/**
+{* 
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
  * Copyright (C) 2013 - 2023 SinergiaTIC Association
@@ -19,6 +18,31 @@
  * 02110-1301 USA.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
-//SinergiaDA link
-$app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
+ *}
+{if !empty($FIELD.NAME)}
+    <div>
+        <a href="index.php?action=DetailView&module={$MODULE_NAME}&record={$FIELD.ID}">{$FIELD.NAME}</a>
+    </div>
+{/if}
+<br>
+{if !empty($FIELD.DESCRIPTION)}
+    <div>
+        <strong>{$PARAM.LBL_DESCRIPTION}</strong>
+        {$FIELD.DESCRIPTION}
+    </div>
+{/if}
+{if !empty($FIELD.DESCRIPTION)}
+    <br>
+{/if}
+{if !empty($FIELD.DATE_ENTERED)}
+    <div>
+        <strong>{$PARAM.LBL_DATE_ENTERED}:</strong>
+        {$FIELD.DATE_ENTERED}
+    </div>
+{/if}
+{if !empty($FIELD.DATE_MODIFIED)}
+    <div>
+        <strong>{$PARAM.LBL_DATE_MODIFIED}:</strong>
+        {$FIELD.DATE_MODIFIED}
+    </div>
+{/if}
