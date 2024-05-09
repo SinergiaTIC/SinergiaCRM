@@ -154,8 +154,6 @@ EOHTML;
         $this->ss->assign('SEVEN_TO', $employee->phone_mobile);
 
         echo $this->ss->fetch('modules/seven/tpls/sms_compose.tpl');
-
-        parent::display();
     }
 
     private function getInboundSms(): array {

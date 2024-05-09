@@ -113,6 +113,7 @@ $app_list_strings['moduleList']['stic_Journal'] = 'Diari';
 $app_list_strings['moduleList']['stic_Training'] = 'Formació';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['moduleList']['stic_Skills'] = 'Competències';
+$app_list_strings['moduleList']['stic_Messages'] = 'Missatges';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -152,6 +153,7 @@ $app_list_strings['moduleListSingular']['stic_Journal'] = 'Diari';
 $app_list_strings['moduleListSingular']['stic_Training'] = 'Formació';
 $app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['moduleListSingular']['stic_Skills'] = 'Competència';
+$app_list_strings['moduleListSingular']['stic_Messages'] = 'Missatge';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -187,6 +189,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competències';
+$app_list_strings['parent_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display']['Leads'] = 'Interessats';
@@ -222,6 +225,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competències';
+$app_list_strings['record_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interessats';
@@ -257,6 +261,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
+$app_list_strings['record_type_display_notes']['stic_Messages'] = 'Missatges';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3395,6 +3400,14 @@ $app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DE
 $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DALF - Diplôme Approfondi de Langue Française';
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
+
+// Missatges: Tipus
+$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
+
+// Missatges: Direcció
+$app_list_strings['stic_messages_direction_list']['inblound'] = 'Entrada';
+$app_list_strings['stic_messages_direction_list']['outblound'] = 'Sortida';
 
 // Modificacions del core de SuiteCRM
 

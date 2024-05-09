@@ -114,6 +114,7 @@ $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Security Groups
 $app_list_strings['moduleList']['stic_Training'] = 'Training';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleList']['stic_Skills'] = 'Skills';
+$app_list_strings['moduleList']['stic_Messages'] = 'Messages';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -151,6 +152,7 @@ $app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Securit
 $app_list_strings['moduleListSingular']['stic_Training'] = 'Training';
 $app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleListSingular']['stic_Skills'] = 'Skill';
+$app_list_strings['moduleListSingular']['stic_Messages'] = 'Message';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -186,6 +188,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Journal';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Training';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Skills';
+$app_list_strings['parent_type_display']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display']['Leads'] = 'Leads';
@@ -221,6 +224,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Journal';
 $app_list_strings['record_type_display']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Skills';
+$app_list_strings['record_type_display']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Leads';
@@ -256,6 +260,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Journal';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
+$app_list_strings['record_type_display_notes']['stic_Messages'] = 'Messages';
 
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3394,6 +3399,15 @@ $app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DE
 $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DALF - Diplôme Approfondi de Langue Française';
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
+
+// Messages: Type
+$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
+
+// Messages: Direction
+$app_list_strings['stic_messages_direction_list']['inblound'] = 'Inbound';
+$app_list_strings['stic_messages_direction_list']['outblound'] = 'Outbound';
+
 
 // SuiteCRM Core modifications
 

@@ -41,63 +41,32 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-//STIC-Custom 20240326 EPS - Seven SMS Integration
-require_once 'modules/seven/seven_util.php';
-//END STIC-Custom
-
-
-class LeadsViewDetail extends ViewDetail
-{
-    public function display()
-    {
-        global $sugar_config;
-
-        //STIC-Custom 20240326 EPS - Seven SMS Integration
-        $this->setSevenPlugin();
-        //END STIC-Custom
 
 
 
-        // STIC-Custom 20220124 MHP - Do not add the Print PDF logic in this module because it is added generically through include/DetailView/DetailView2.php
-        // STIC#564   
-        // require_once('modules/AOS_PDF_Templates/formLetter.php');
-        // formLetter::DVPopupHtml('Leads');
-        // END STIC-Custom        
+$GLOBALS['studioDefs']['Calls'] = array(
+    'LBL_DETAILVIEW'=>array(
+                'template'=>'xtpl',
+                'template_file'=>'modules/Calls/DetailView.html',
+                'php_file'=>'modules/Calls/DetailView.php',
+                'type'=>'DetailView',
+                ),
+    'LBL_EDITVIEW'=>array(
+                'template'=>'xtpl',
+                'template_file'=>'modules/Calls/EditView.html',
+                'php_file'=>'modules/Calls/EditView.php',
+                'type'=>'EditView',
+                ),
+    'LBL_LISTVIEW'=>array(
+                'template'=>'listview',
+                'meta_file'=>'modules/Calls/listviewdefs.php',
+                'type'=>'ListView',
+                ),
+    'LBL_SEARCHFORM'=>array(
+                'template'=>'xtpl',
+                'template_file'=>'modules/Calls/SearchForm.html',
+                'php_file'=>'modules/Calls/ListView.php',
+                'type'=>'SearchForm',
+                ),
 
-        //If the convert lead action has been disabled for already converted leads, disable the action link.
-        $disableConvert = ($this->bean->status == 'Converted' && !empty($sugar_config['disable_convert_lead'])) ? true : false;
-        $this->ss->assign("DISABLE_CONVERT_ACTION", $disableConvert);
-        parent::display();
-    }
-
-    //STIC-Custom 20240326 EPS - Seven SMS Integration
-    protected function setSevenPlugin() {
-        global $sugar_config;
-
-        $history = array_merge($this->getOutboundSms(), $this->getInboundSms());
-
-        usort($history, function (SugarBean $a, SugarBean $b) {
-            return strcmp($a->date_entered, $b->date_entered);
-        });
-
-        /** @var Lead $bean */
-        $bean = $this->bean;
-        $this->ss->assign('SEVEN_BEAN_ID', $this->bean->id);
-        $this->ss->assign('SEVEN_FROM', $sugar_config['seven_sender'] ?? '');
-        $this->ss->assign('SEVEN_MODULE', $this->module);
-        $this->ss->assign('SEVEN_SMS_HISTORY', $history);
-        $this->ss->assign('SEVEN_TO', $bean->phone_mobile);
-
-        echo $this->ss->fetch('modules/seven/tpls/sms_compose.tpl');
-    }
-
-    private function getInboundSms(): array {
-        return seven_util::getSMS('seven_sms_inbound', $this->bean);
-    }
-
-    private function getOutboundSms(): array {
-        return seven_util::getSMS('seven_sms', $this->bean);
-    }
-    //END STIC-Custom
-
-}
+);

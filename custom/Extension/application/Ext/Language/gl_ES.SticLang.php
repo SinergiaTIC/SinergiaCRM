@@ -121,6 +121,7 @@ $app_list_strings['moduleList']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleList']['stic_Training'] = 'Formación';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['moduleList']['stic_Skills'] = 'Competencias';
+$app_list_strings['moduleList']['stic_Messages'] = 'Mensajes';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -152,6 +153,7 @@ $app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos 
 $app_list_strings['moduleList']['stic_Training'] = 'Formación';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['moduleList']['stic_Skills'] = 'Competencia';
+$app_list_strings['moduleList']['stic_Messages'] = 'Mensaje';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
@@ -195,6 +197,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
+$app_list_strings['parent_type_display']['stic_Skstic_Messagesills'] = 'Mensajes';
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -230,6 +233,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
+$app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -265,6 +269,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
+$app_list_strings['record_type_display_notes']['stic_Messages'] = 'Mensajes';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3403,6 +3408,15 @@ $app_list_strings['stic_skills_language_certificates_list']['french_delf'] = "DE
 $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DALF - Diplôme Approfondi de Langue Française';
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
+
+// Mensajes: Tipo
+$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
+
+// Mensajes: Dirección
+$app_list_strings['stic_messages_direction_list']['inblound'] = 'Entrada';
+$app_list_strings['stic_messages_direction_list']['outblound'] = 'Salida';
+
 
 // Modificaciones del core de SuiteCRM
 
