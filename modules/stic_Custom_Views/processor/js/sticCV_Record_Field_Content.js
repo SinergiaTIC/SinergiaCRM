@@ -26,7 +26,6 @@
  */
 var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends sticCV_Element_Label {
   constructor(field, $fieldElement, fieldName) {
-    debugger;
     var $contentElement = $fieldElement.children('[field="' + fieldName + '"]');
     if ($contentElement.length == 0) {
       $contentElement = $fieldElement.children(".stic-FieldContent").children('[field="' + fieldName + '"]');
