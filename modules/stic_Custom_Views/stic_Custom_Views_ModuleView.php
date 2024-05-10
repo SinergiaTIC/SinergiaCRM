@@ -478,6 +478,11 @@ class stic_Custom_Views_ModuleView
             case 'field_modification':
                 switch ($action) {
                     case 'visible':
+                    case 'color':
+                    case 'background':
+                    case 'bold':
+                    case 'italic':
+                    case 'underline':
                     case 'css_style':
                         $validSections = array('field', 'field_label', 'field_input');
                         break;
