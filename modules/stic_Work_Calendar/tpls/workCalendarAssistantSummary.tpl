@@ -75,10 +75,10 @@
 
         <div id="recordsContainer" class="recordsContainer">
             <div style="font-weight:bold"> 
-                <span class='row'>Nombre de usuario</span>
-                <span class='row'>Fecha y hora de inicio</span>
-                <span class='row'>Fecha y hora de finalización</span>
-                <span class='row'>Tipo</span>
+                <span class='row'>{$MOD.LBL_ASSIGNED_TO_NAME}</span>
+                <span class='row'>{$MOD.LBL_START_DATE}</span>
+                <span class='row'>{$MOD.LBL_END_DATE}</span>
+                <span class='row'>{$MOD.LBL_TYPE}</span>
             </div>
             <div id="list"></div>
         </div>
@@ -100,11 +100,11 @@
 
 <script>
     {literal}
-
+        // Store the active user
         activeUser = '';
 
-        // Función para renderizar la lista
-        function renderUsersWithRecordsNotCreated(pageNumber, pageSize) 
+        // Render the user area
+        function renderUsersArea(pageNumber, pageSize) 
         {
             const usersContainer = document.getElementById('usersContainer');
             let firstUser = true;
@@ -117,7 +117,7 @@
                 aItem.textContent = data[key].name;
                 aItem.id = 'aUser' + key;
                 aItem.style.margin='2px';                
-                aItem.setAttribute("onclick", "renderRecordsNotCreatedAndPagination('" + key + "', 1, pageSize);");
+                aItem.setAttribute("onclick", "updateDataInListAndPagination('" + key + "', 1, pageSize);");
                 liItem.appendChild(aItem)
                 usersContainer.appendChild(liItem);                
 
@@ -125,14 +125,13 @@
                 if (firstUser) {
                     firstUser = false;
                     activeUser = key;
-                    renderRecordsNotCreatedAndPagination(activeUser, 1, pageSize);
+                    updateDataInListAndPagination(activeUser, 1, pageSize);
                 }
             }
-
         }
 
-        // Función para renderizar la lista
-        function renderRecordsNotCreatedAndPagination(currentUserId, pageNumber, pageSize) 
+        // Update data in list of uncreated records and pagination
+        function updateDataInListAndPagination(currentUserId, pageNumber, pageSize) 
         {
             // User summary
             document.getElementById('userRecordsProcessed').innerText = ' ' + data[currentUserId].numRecordsProcessed;
@@ -146,7 +145,6 @@
             document.getElementById('aUser' + currentUserId).classList.add("current");
             activeUser = currentUserId;
 
-
             // User Records Not Created
             if (data[currentUserId].numRecordsNotCreated > 0) {
                 renderRecordsNotCreated(currentUserId, pageNumber, pageSize);
@@ -156,8 +154,7 @@
             }
         }
 
-
-        // Función para renderizar la lista
+        // Render list of uncreated records
         function renderRecordsNotCreated(currentUserId, pageNumber, pageSize) 
         {
             document.getElementById('listContainer').style.display='block';
@@ -192,27 +189,26 @@
             });           
         }
 
-        // Función para renderizar el paginador
+        // Render the paginator
         function renderPagination(currentUserId, pageNumber, pageSize, totalItems) 
         {
             const paginationContainer = document.getElementById('pagination');
             paginationContainer.innerHTML = '';
 
             const totalPages = Math.ceil(totalItems / pageSize);
-
             for (let i = 1; i <= totalPages; i++) {
                 const pageButton = document.createElement('span');
                 pageButton.textContent = i;
                 pageButton.classList.add('box');
                 pageButton.addEventListener('click', () => {
-                    renderRecordsNotCreatedAndPagination(currentUserId, i, pageSize);
+                    updateDataInListAndPagination(currentUserId, i, pageSize);
                 });
                 paginationContainer.appendChild(pageButton);
             }
         }
 
-        // Renderizar la lista y el paginador inicialmente
-        renderUsersWithRecordsNotCreated(1, pageSize);
+        // Call to render the user area
+        renderUsersArea(1, pageSize);
     {/literal}
 </script>
 
