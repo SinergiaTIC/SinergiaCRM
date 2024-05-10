@@ -32,14 +32,8 @@
 	</style>
 {/literal}
 
-<table width="100%">
-	<tr>
-		<th style="text-align:left">
-			<h2>{$MOD.LBL_TITLE}</h2>
-		</th>
-	</tr>
-</table>
-<br>
+<h1>{$MOD.LBL_TITLE}</h1>
+<br /><br />
 
 <div id="cal-repeat-block">
 

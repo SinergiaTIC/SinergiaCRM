@@ -76,7 +76,7 @@ $mod_strings = array (
 
   // Assistent de creació de registres de Calendari laboral
   'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registres de forma periòdica',
-  'LBL_PERIODIC_WORK_CALENDAR_BUTTON' => 'Creació periòdica de registres de Calendari laboral',  
+  'LBL_PERIODIC_WORK_CALENDAR_BUTTON' => 'Creació periòdica de registres de Calendari laboral', 
   'LBL_CANCEL_BUTTON' => 'Cance·la',
   'LBL_REPEAT_DOW' => 'Dia de la setmana',
   'LBL_REPEAT_END_AFTER' => 'Després de',
@@ -98,6 +98,7 @@ $mod_strings = array (
 
   // Resum de l'assistent de creació de registres del calendari laboral
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'RESUM:',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE_BY_USER' => 'Resum per usuari',  
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED' => 'Nombre de registres a crear',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED' => 'Nombre de registres creats',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED' => 'Nombre de registres no creats',

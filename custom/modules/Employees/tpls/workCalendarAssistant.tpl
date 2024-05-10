@@ -32,14 +32,8 @@
 	</style>
 {/literal}
 
-<table width="100%">
-	<tr>
-		<th style="text-align:left">
-			<h2>{$MOD.LBL_TITLE}</h2>
-		</th>
-	</tr>
-</table>
-<br>
+<h1>{$MOD.LBL_TITLE}</h1>
+<br /><br />
 
 <div id="cal-repeat-block">
 
@@ -346,17 +340,17 @@
 			var start = $('#repeat_start_day_input').val() + '/' + $('[name=repeat_start_hour]').val() + '/' + $(
 				'[name=repeat_start_minute]').val()
 			start = start.split('/')
-			var start = new Date(start[2], start[1], start[0], start[3], start[4] * minutesInterval);
+			var start = new Date(start[2], start[1], start[0], start[3], start[4]);
 			var final = $('#repeat_final_day_input').val() + '/' + $('[name=repeat_final_hour]').val() + '/' + $(
 				'[name=repeat_final_minute]').val()
 			final = final.split('/')
-			var final = new Date(final[2], final[1], final[0], final[3], final[4] * minutesInterval);
+			var final = new Date(final[2], final[1], final[0], final[3], final[4]);
 			var difference = final.getTime() - start.getTime();
 			if (difference <= 0) {
 				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('Employees', 'LBL_END_DATE_ERROR') + "</span>")
 				return;
 			}
-			if ((difference / 3600000) >= 24) {
+			if ((difference / 3600000) > 24) {
 				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('Employees', 'LBL_END_DATE_EXCCEDS_24_HOURS') + "</span>")
 				return;
 			}

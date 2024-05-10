@@ -97,12 +97,14 @@ $mod_strings = array (
   'LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS' => 'Existen otros registros con tipo incompatible al actual para el mismo usuario asignado y dentro del rango horario definido. Compruebe estos registros y modifique el rango horario de este registro o de aquel que genera el conflicto.',
   
   // Resumen del asistente de creación de registros de Calendario laboral
-  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'RESUMEN:',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'Resumen:',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE_BY_USER' => 'Resumen por usuario',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED' => 'Número de registros a crear',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED' => 'Número de registros creados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED' => 'Número de registros no creados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'Listado de registros no creados',
-  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'Los siguientes registros no se han creado debido a que coincidían en rango horario con algún otro registro ya existente de tipo incompatible.',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'Los registros que no han sido creado es debido a que coincidían en rango horario con algún otro registro ya existente de tipo incompatible.',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT2' => 'A continuación se listan los registros no creados por cada uno de los usuarios.',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES' => 'Ir a Empleados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR' => 'Ir a Calendario laboral',
 

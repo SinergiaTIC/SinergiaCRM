@@ -77,6 +77,7 @@ $mod_strings = array (
   // Work Calendar record creation wizard
   'LNK_CREATE_PERIODIC_RECORDS' => 'Create records periodically',
   'LBL_PERIODIC_WORK_CALENDAR_BUTTON' => 'Periodic creation of Work Calendar records',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE_BY_USER' => 'Summary by user',  
   'LBL_CANCEL_BUTTON' => 'Cancel',
   'LBL_REPEAT_DOW' => 'Day of week',
   'LBL_REPEAT_END_AFTER' => 'After',

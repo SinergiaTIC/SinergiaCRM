@@ -363,7 +363,6 @@ class stic_Work_CalendarUtils
                     $summary['users'][$assignedUserId]['numRecordsNotCreated']++;
                     $startDate = $timedate->fromDbFormat($aux[$i], TimeDate::DB_DATETIME_FORMAT);
                     $startDate = $timedate->asUser($startDate, $current_user);
-                    // $startDate = $startDate->format($timedate->get_date_format($current_user));
                     $endDate = $timedate->fromDbFormat($finalDay, TimeDate::DB_DATETIME_FORMAT);
                     $endDate = $timedate->asUser($endDate, $current_user);    
                     $type = $app_list_strings['stic_work_calendar_types_list'][$_REQUEST['type']];
@@ -380,11 +379,7 @@ class stic_Work_CalendarUtils
 
         // Reactivamos la configuración previa de Advanced Open Discovery
         $sugar_config['aod']['enable_aod'] = $aodConfig;
-
-        // if (!empty($_REQUEST["employeeId"])) {
-        //     header("Location: index.php?module=Employees&action=DetailView&record=$assignedUserId"); // From detail view
-        // } else {
-            header("Location: index.php?module=stic_Work_Calendar&action=workCalendarAssistantSummary"); // From list view
-        // }
+        
+        header("Location: index.php?module=stic_Work_Calendar&action=workCalendarAssistantSummary"); // From list view
     }
 }
