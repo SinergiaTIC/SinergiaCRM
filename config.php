@@ -585,4 +585,9 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
     'stic_security_groups_rules_enabled' => false,
     // END STIC
+
+    // STIC-Custom 20240222 MHP - Disable Ajax UI to prevent efficient registration button from sometimes not showing
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
+    'disableAjaxUI'=> true,
+    // END STIC
 );
