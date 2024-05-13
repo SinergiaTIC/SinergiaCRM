@@ -129,7 +129,7 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, endDate, type, as
   xhr.send(JSON.stringify(data));
 
   if (xhr.status === 200) {
-    if (xhr.responseText == 1) {
+    if (xhr.responseText == true) {
       return true;
     } else {
       return false;
