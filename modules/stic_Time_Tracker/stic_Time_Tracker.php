@@ -95,7 +95,6 @@ class stic_Time_Tracker extends Basic
             $startTime = strtotime($this->start_date);
             $endTime = strtotime($this->end_date);
             $duration = $endTime - $startTime;            
-            // Casting the result into float, otherwise a string is returned and may give wrong values in workflows
             $this->duration = (float) number_format($duration / 3600, 2);
         } else {
             $this->duration = 0;
@@ -106,9 +105,9 @@ class stic_Time_Tracker extends Basic
     }
   
     /**
-     * 
-     *
-     * @return void
+     * Return the last record of the indicated user for today
+     * @param userId User Identificator
+     * @return Stic_time_tracker record or false in case it does not exist
      */
     public static function getLastTodayTimeTrackerRecord($userId)
     {
@@ -133,9 +132,9 @@ class stic_Time_Tracker extends Basic
     }
 
     /**
-     * 
-     *
-     * @return 
+     * Checks if the given user has a time tracker record between the previous 24 hours and now, in UTC.
+     * @param userId User Identificator
+     * @return boolean true if exist and false if not
      */
     public static function existAtLeastOneRecordFromYesterday($userId)
     {

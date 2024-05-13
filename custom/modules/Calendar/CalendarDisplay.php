@@ -87,6 +87,7 @@ class CustomCalendarDisplay extends CalendarDisplay
             'text' => 'E5E5EE',
         ),
         // STIC-Custom 20240222 MHP - Adding colors to Work Calendar items
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
         'stic_Work_Calendar' => array(
             'border_working' => '0A2407',
             'body_working' => '1C6114',
@@ -99,6 +100,7 @@ class CustomCalendarDisplay extends CalendarDisplay
     );
 
     // STIC-Custom 20240222 MHP - Overriding to add the stic_Work_Calendar properties
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
     public function checkActivity($activity = "")
     {
         global $current_user, $mod_strings;
@@ -348,7 +350,7 @@ class CustomCalendarDisplay extends CalendarDisplay
         if (
             $sticSessionsSticEventsType || $sticSessionsSticEventId || $sticSessionsSticCenterId || $sticSessionsResponsibleId || $sticSessionsContactId || $sticSessionsProjectId ||
             $sticSessionsColor || $sticSessionsActivityType || $sticFollowUpsColor || $sticFollowUpsContactId || $sticFollowUpsProjectId || $sticFollowUpsType ||
-            $sticWorkCalendarType || $sticWorkCalendarUsersId || $sticWorkCalendarUsersDepartament
+            $sticWorkCalendarType || $sticWorkCalendarUsersDepartament
         ) {
             $ss->assign('applied_filters', true);
         }
@@ -356,6 +358,7 @@ class CustomCalendarDisplay extends CalendarDisplay
         $ss->assign("filters", $filters);
 
         // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
         $display_work_calendar_records = $GLOBALS['current_user']->getPreference('display_work_calendar_records');
         $display_work_calendar_records = $display_work_calendar_records ?: false;
         $ss->assign('display_work_calendar_records', $display_work_calendar_records);

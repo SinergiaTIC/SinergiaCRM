@@ -875,6 +875,7 @@ $($.fullCalendar).ready(function () {
                 valueToPush["editable"] = false;
             }
             // STIC-Custom 20240222 MHP - Add a special class to stic_Work_Calendar events
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
             if (element.module_name == "stic_Work_Calendar") {
                 if (element.event_type == 'working' || element.event_type == 'punctual_absence') {
                     valueToPush["className"] = 'stic-Work-Calendar';
@@ -882,9 +883,12 @@ $($.fullCalendar).ready(function () {
                     valueToPush["allDay"] = true;
                 }
             }
+            // END STIC-Custom         
             if (undefined !== global_colorList[element.module_name]) {
                 // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
                 // STIC#1192
+                // STIC-Custom 20240222 MHP - Adding Color to working and no-working Work Calendar Records
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
                 if (element.module_name != 'stic_Work_Calendar') {
                     valueToPush["backgroundColor"] = element.color ? element.color : "#" + global_colorList[element.module_name].body;
                     valueToPush["borderColor"] = element.color ? element.color : "#" + global_colorList[element.module_name].border;
@@ -1080,6 +1084,7 @@ $($.fullCalendar).ready(function () {
             });
         }
         // STIC-Custom 20240222 MHP - Once the calendar is rendered, display the records with the stic_Work_Calendar class in column shape
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
         if(global_view != 'month' && global_view != 'sharedMonth') {
             prefix = 'stic-Work-Calendar';
             workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');

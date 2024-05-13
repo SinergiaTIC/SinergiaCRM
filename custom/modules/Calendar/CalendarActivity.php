@@ -87,6 +87,7 @@ class CustomCalendarActivity extends CalendarActivity
         // STIC-Custom 20220314 AAM - Adding STIC modules to iCal
         // STIC#625
         // STIC-Custom 20240222 MHP - Adding stic_Work_Calendar module to iCal
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
         } else if ($sugar_bean->object_name === 'stic_Sessions' || $sugar_bean->object_name === 'stic_Work_Calendar') {
             $this->start_time = $timedate->fromUser($this->sugar_bean->start_date);
             if (empty($this->start_time)) {

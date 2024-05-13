@@ -113,7 +113,10 @@ class stic_Work_Calendar extends Basic
 
         // Set duration field
         if (!empty($this->end_date)) {
-            $this->duration = self::calculateDuration($startDate, $endDate);
+            $startTime = strtotime($timedate->to_db($startDate));
+            $endTime = strtotime($timedate->to_db($endDate));
+            $duration = $endTime - $startTime;            
+            $this->duration = (float) number_format($duration / 3600, 2);            
         } else {
             $this->duration = 0;
         }      
@@ -128,8 +131,8 @@ class stic_Work_Calendar extends Basic
     }
 
     /**
-     * 
-     *
+     * Checks if the given user has a work calendar record between the previous 24 hours and now, in UTC.
+     * @param userId User Identificator
      * @return void
      */
     public static function existAtLeastOneRecordFromYesterday($userId)
@@ -145,19 +148,5 @@ class stic_Work_Calendar extends Basic
         $result = $db->query($query);
         $data = $db->fetchByAssoc($result);
         return $data['count'] > 0;
-    }
-
-    /**
-     * 
-     *
-     * @return void
-     */
-    public static function calculateDuration($startDate, $endDate)
-    {
-        global $timedate;
-        $startTime = strtotime($timedate->to_db($startDate));
-        $endTime = strtotime($timedate->to_db($endDate));
-        $duration = $endTime - $startTime;            
-        return (float) number_format($duration / 3600, 2);
     }
 }

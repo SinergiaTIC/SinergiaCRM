@@ -64,6 +64,7 @@ class CustomCalendar extends Calendar
     // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
     // STIC#1192
     // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
     //
     /**
      * This array overrites the original activityList array. It includes the module stic_Sessions, stic_FollowUps y stic_Work_Calendar
@@ -88,15 +89,18 @@ class CustomCalendar extends Calendar
         // STIC-Custom 20211015 - Filters the $this->act_arr array
         // STIC#438
         // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
         $this->acts_arr = $this->filterSticSessions($this->acts_arr);
         $this->acts_arr = $this->filterSticFollowUps($this->acts_arr);
         $this->acts_arr = $this->filterSticWorkCalendar($this->acts_arr);
 
         $field_list = CalendarUtils::get_fields();
 
+        // STIC-Custom 20240222 MHP - Get the user preference
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
         $display_work_calendar_records = $GLOBALS['current_user']->getPreference('display_work_calendar_records');
         $display_work_calendar_records = $display_work_calendar_records ?: false;
-
+        // END STIC-Custom
         $i = 0;
         foreach ($this->acts_arr as $user_id => $acts) {
             if (isset($acts) && empty($acts)) {
@@ -114,9 +118,12 @@ class CustomCalendar extends Calendar
                 continue;
             }
             foreach ($acts as $act) {
+                // STIC-Custom 20240222 MHP - Check if Calendar should show Work Calendar records
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
                 if (!$display_work_calendar_records && $act->sugar_bean->module_dir == 'stic_Work_Calendar'){
                     continue;
                 }
+                // END STIC-Custom
                 $item = array();
                 $item['user_id'] = $user_id;
                 $item['module_name'] = $act->sugar_bean->module_dir;
@@ -189,6 +196,7 @@ class CustomCalendar extends Calendar
                 // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
                 // STIC#1192
                 // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
                 if ($item['module_name'] == 'stic_Sessions') {
                     $totalMinutes = $act->sugar_bean->duration * 60;
                     $item['duration_hours'] = floor($totalMinutes / 60);

@@ -27,8 +27,8 @@ class stic_Time_TrackerController extends SugarController {
 
 
     /**
-     * 
-     * @return void
+     * Returns the information necessary for the user's browser to determine whether to display the time stamp button in the top menu
+     * @return void 
      */
     public function action_getTimeTrackerMenuButtonStatus()
     {
@@ -65,13 +65,13 @@ class stic_Time_TrackerController extends SugarController {
     }
 
     /**
-     * 
+     * Returns today's last time tracking record for the user logged in to the CRM to the user's browser
      * @return void
      */
     public function action_getLastTodayTimeTrackerRecordForEmployee()
     {
         // Check if the user has started any time registration today
-        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking last time tracker record for today.');
         global $current_user;
         $data = stic_Time_Tracker::getLastTodayTimeTrackerRecord($current_user->id);
 
@@ -83,7 +83,7 @@ class stic_Time_TrackerController extends SugarController {
     }
 
     /**
-     * 
+     * Create or update a time record for the user logged in to the CRM
      * @return void
      */
     public function action_createOrUpdateTodayRegister()

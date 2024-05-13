@@ -28,6 +28,7 @@ class stic_Work_CalendarController extends SugarController
      * Check:
      * - If there is already a non-work record that takes up the entire day, in that case, it is not posible to create the record
      * - If exist a record that does not occupy the entire day, in that case, since the record to be created is an all-day record
+     * and returns the result to the browser's user
      * @return void
      */
     public function action_existsOtherTypesIncompatibleRecords()
@@ -57,7 +58,7 @@ class stic_Work_CalendarController extends SugarController
 
 
     /**
-     * 
+     * Renders the view of periodic creation of work calendar records
      * @return void
      */
     public function action_createPeriodicRecords()
@@ -66,8 +67,7 @@ class stic_Work_CalendarController extends SugarController
     }
 
     /**
-     * 
-     *
+     * Runs the periodic creation of work calendar records.
      * @return void
      */
     public function action_createPeriodicWorkCalendarRecords() {
@@ -78,8 +78,7 @@ class stic_Work_CalendarController extends SugarController
     
 
     /**
-     * 
-     *
+     * Renders the summary view with the results of the periodic creation of work calendar records
      * @return void
      */
     public function action_workCalendarAssistantSummary() {
@@ -89,7 +88,7 @@ class stic_Work_CalendarController extends SugarController
 
 
     /**
-     * 
+     * Renders the view to update the time of the Start date and End date fields
      * @return void
      */
     public function action_showMassUpdateDatesForm()
@@ -99,7 +98,7 @@ class stic_Work_CalendarController extends SugarController
 
 
     /**
-     * 
+     * Runs the time update for the Start Date and End Date fields
      * @return void
      */
     public function action_runMassUpdateDates()
@@ -150,8 +149,10 @@ class stic_Work_CalendarController extends SugarController
     
 
     /**
-     * 
-     * @return void
+     * Calculates new dates and times for the Start Date and End Date fields after updating the time
+     * @param $bean record with the information to update
+     * @param $infoDateArray information necessary to perform the update the time
+     * @return String the new date
      */
     protected function calculateNewDatesInRecord($bean, $infoDateArray)
     {
@@ -171,8 +172,9 @@ class stic_Work_CalendarController extends SugarController
 
     
     /**
-     * 
-     * @return String
+     * Update the time of a date
+     * @param $dateInfo information necessary to perform the update the time
+     * @return String the new date
      */
     protected function calculateNewDate($dateInfo) 
     {

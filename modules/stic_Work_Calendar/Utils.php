@@ -23,9 +23,15 @@
 class stic_Work_CalendarUtils
 {
     /**
-     * 
-     *
-     * @return void
+     * Check if the work calendar record to be created causes an error with other records that already exist in the CRM
+     * - If there is already a non-work record that takes up the entire day, in that case, it is not posible to create the record
+     * - If exist a record that does not occupy the entire day, in that case, since the record to be created is an all-day record
+     * @param $id   record identification
+     * @param $startDate record start date
+     * @param $endDate  record end date
+     * @param $type record type
+     * @param $assignedUserId   record assigned user identificator
+     * @return boolean true if exists and false if not
      */
     public static function existsRecordsWithIncompatibleType($id, $startDate, $endDate, $type, $assignedUserId)
     {
@@ -45,7 +51,7 @@ class stic_Work_CalendarUtils
         $result = $db->query($query);
 
         if (!is_null($result) && $result->num_rows > 0) {
-            return "0";
+            return false;
         } else {
             if (!in_array($type, $allDayTypes)) {
                 // Checks if exist a record that does not occupy the entire day, in that case, since the record to be created is an all-day record, it is not possible to create the record.
@@ -61,18 +67,18 @@ class stic_Work_CalendarUtils
                 $result = $db->query($query);
 
                 if (!is_null($result) && $result->num_rows > 0) {
-                    return "0";
+                    return false;
                 } else {
-                    return "1";
+                    return true;
                 }
             } else {
-                return "1";
+                return true;
             }
         }
     }
 
     /**
-     * This function creates periodic work calendar records for a certain employee, based on the parameters received via $_REQUEST
+     * Creates periodic work calendar records for a employee or employees, based on the parameters received via $_REQUEST
      * and defined in the periodic work calendar records creation wizard (custom/modules/stic_Work_Calendar/tpls/workCalendarWizard.tpl)
      *
      * @return void
