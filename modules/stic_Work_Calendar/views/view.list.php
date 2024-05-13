@@ -23,6 +23,7 @@
 
 require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
+require_once 'modules/stic_Work_Calendar/stic_Work_CalendarListViewSmarty.php';
 
 class stic_Work_CalendarViewList extends ViewList
 {
@@ -35,12 +36,16 @@ class stic_Work_CalendarViewList extends ViewList
 
     public function preDisplay()
     {
+
         parent::preDisplay();
 
         SticViews::preDisplay($this);
 
+        // Use a custom ListViewSmarty to transform the start_date and end_date 
+        // depending on the value of the all_day field
+        $this->lv = new stic_Work_CalendarListViewSmarty();
+        
         // Write here you custom code
-
     }
 
     public function display()

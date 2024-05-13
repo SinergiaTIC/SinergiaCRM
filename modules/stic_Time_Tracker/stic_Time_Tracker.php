@@ -94,7 +94,7 @@ class stic_Time_Tracker extends Basic
         if (!empty($this->end_date)) {
             $startTime = strtotime($this->start_date);
             $endTime = strtotime($this->end_date);
-            $duration = $endTime - $startTime;            
+            $duration = $endTime - $startTime;       
             $this->duration = (float) number_format($duration / 3600, 2);
         } else {
             $this->duration = 0;

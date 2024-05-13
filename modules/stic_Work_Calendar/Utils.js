@@ -147,16 +147,15 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, endDate, type, as
  */
 function updateAllDay() 
 {
-  var typeElem = document.getElementById("type");
+  var type = document.getElementById("type");
 
   previousStartDateHours = "09";
   previousStartDateMinutes = "00";
   previousEndDateHours = "18";
   previousEndDateMinutes = "00";
 
-  if (allDayTypes.includes(typeElem.value)) 
+  if (allDayTypes.includes(type.value)) 
   {
-    document.getElementById('end_date_date').readOnly = false;
     addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
       return checkStartAndEndDatesCoherence("start_date", "end_date", true);
     });
@@ -166,15 +165,12 @@ function updateAllDay()
   } 
   else 
   { 
+    document.querySelector('[data-field="end_date"]').style.display='none';
     $("#start_date_time_section").parent().hide();
-    $("#end_date_time_section").parent().hide();
-    $("#end_date_trigger").hide();
-    document.getElementById('end_date_date').value = document.getElementById('start_date_date').value;
-    document.getElementById('end_date_date').readOnly = true;
     removeFromValidate(getFormName(), "end_date");
   }
 
-  typeElem.addEventListener("change", function() {
+  type.addEventListener("change", function() {
     if (allDayTypes.includes(document.getElementById("type").value)) 
     {
       $("#start_date_hours").val(previousStartDateHours);
@@ -185,6 +181,7 @@ function updateAllDay()
       $("#start_date_minutes").change();
       $("#end_date_hours").change();
       $("#end_date_minutes").change();
+      document.querySelector('[data-field="end_date"]').style.display='block';
       $("#start_date_time_section").parent().show();
       $("#end_date_time_section").parent().show();
       $("#end_date_trigger").show();
@@ -201,20 +198,17 @@ function updateAllDay()
       previousStartDateHours = $("#start_date_hours").val();
       previousStartDateMinutes = $("#start_date_minutes").val();
       previousEndDateHours = $("#end_date_hours").val();
-      previousEndDateMinutes = $("#end_date_minutes").val();      
+      previousEndDateMinutes = $("#end_date_minutes").val();
+      document.querySelector('[data-field="end_date"]').style.display='none';
       $("#start_date_time_section").parent().hide();
-      $("#end_date_time_section").parent().hide();
-      $("#end_date_trigger").hide();
       $("#start_date_hours").val("00");
       $("#start_date_minutes").val("00");
-      $("#end_date_hours").val("23");
-      $("#end_date_minutes").val("59");
+      $("#end_date_hours").val("00");
+      $("#end_date_minutes").val("00");
       $("#start_date_hours").change();
       $("#start_date_minutes").change();
       $("#end_date_hours").change();
       $("#end_date_minutes").change();      
-      document.getElementById('end_date_date').value = document.getElementById('start_date_date').value;
-      document.getElementById('end_date_date').readOnly = true;
       removeFromValidate(getFormName(), "end_date");      
     }
   });

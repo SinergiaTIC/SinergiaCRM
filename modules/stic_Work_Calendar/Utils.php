@@ -35,15 +35,15 @@ class stic_Work_CalendarUtils
      */
     public static function existsRecordsWithIncompatibleType($id, $startDate, $endDate, $type, $assignedUserId)
     {
-        $allDayTypes = ["working", "punctual_absence"];
-        global $db;
+        require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
 
         // Check if there is already a non-work record that takes up the entire day, in that case, it is not posible to create the record
+        global $db;
         $query = "SELECT * FROM stic_work_calendar
                     WHERE deleted = 0 
                         AND id != '". $id . "' 
                         AND assigned_user_id = '" . $assignedUserId . "' 
-                        AND type NOT IN ('" .  implode("', '", $allDayTypes) . "')
+                        AND type NOT IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
                         AND TIMESTAMPDIFF(SECOND, start_date,'" . $endDate . "') > 0 
                         AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', end_date) > 0;";
 
@@ -53,13 +53,13 @@ class stic_Work_CalendarUtils
         if (!is_null($result) && $result->num_rows > 0) {
             return false;
         } else {
-            if (!in_array($type, $allDayTypes)) {
+            if (!in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) {
                 // Checks if exist a record that does not occupy the entire day, in that case, since the record to be created is an all-day record, it is not possible to create the record.
                 $query = "SELECT * FROM stic_work_calendar
                     WHERE deleted = 0 
                         AND id != '". $id . "' 
                         AND assigned_user_id = '" . $assignedUserId . "' 
-                        AND type IN ('" .  implode("', '", $allDayTypes) . "')
+                        AND type IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
                         AND TIMESTAMPDIFF(SECOND, start_date,'" . $endDate . "') > 0 
                         AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', end_date) > 0;";
 

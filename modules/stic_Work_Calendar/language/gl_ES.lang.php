@@ -72,7 +72,7 @@ $mod_strings = array (
   'LBL_WEEKDAY' => 'Día de la semana',
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
-  'LBL_ALL_DAY_HELP' => 'Si el tipo de registro no es laborable o ausencia puntual, el registro afecta a todo el día y no será necesario indicar la hora de inicio ni la hora y fecha de finalización.',
+  'LBL_ALL_DAY_HELP' => 'En caso de que el tipo de registro no sea ni laborable ni ausencia puntual, el registro afecta a todo el día y no será necesario indicar la hora de inicio ni la fecha y hora de finalización ya que se calcularán automáticamente.',
 
   // Asistente de creación de registros de Calendario laboral
   'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registros de forma periódica',

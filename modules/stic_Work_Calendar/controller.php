@@ -47,8 +47,16 @@ class stic_Work_CalendarController extends SugarController
             $assignedUser = BeanFactory::getBean('Users', $assignedUserId);            
             $startDate = $timedate->fromUser($startDate, $assignedUser);
             $startDate = $timedate->asDb($startDate);
-            $endDate = $timedate->fromUser($endDate, $assignedUser);
-            $endDate = $timedate->asDb($endDate);            
+
+            require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
+            if (!in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) {
+                $endDate = $timedate->fromDbFormat($startDate, TimeDate::DB_DATETIME_FORMAT);
+                $endDate = $endDate->modify("next day");
+                $endDate = $timedate->asDb($endDate, $current_user);     
+            } else {
+                $endDate = $timedate->fromUser($endDate, $assignedUser);
+                $endDate = $timedate->asDb($endDate);            
+            }
 
             require_once 'modules/stic_Work_Calendar/Utils.php';
             echo(stic_Work_CalendarUtils::existsRecordsWithIncompatibleType($id, $startDate, $endDate, $type, $assignedUserId));

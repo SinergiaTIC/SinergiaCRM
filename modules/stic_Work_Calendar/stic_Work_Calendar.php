@@ -26,6 +26,8 @@ use function GuzzleHttp\default_user_agent;
 
 class stic_Work_Calendar extends Basic
 {
+    const ALL_DAY_TYPES = ["working", "punctual_absence"];
+
     public $new_schema = true;
     public $module_dir = 'stic_Work_Calendar';
     public $object_name = 'stic_Work_Calendar';
@@ -75,46 +77,43 @@ class stic_Work_Calendar extends Basic
     {
         global $app_list_strings, $current_user, $timedate;
 
-        switch ($_REQUEST["action"]) {
-            case 'Save':
-                $startDate = $_REQUEST['start_date'];
-                $endDate = $_REQUEST['end_date'];
-                break;
-            default: // API | Importation | Mass Periodic Creation | Time Change
-                $bbddFormat = 'Y-m-d H:i:s';
-                $startDate = $timedate->fromDbFormat($this->start_date, $bbddFormat);
-                $startDate = $timedate->asUser($startDate, $current_user);
-                $endDate = $timedate->fromDbFormat($this->end_date, $bbddFormat);
-                $endDate = $timedate->asUser($endDate, $current_user);                
-                break;
-        }
-
         $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
         $typeLabel = $app_list_strings['stic_work_calendar_types_list'][$this->type];
-        $allDayTypes = ["working", "punctual_absence"];
+        $startDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
+        $startDate = $timedate->asUser($startDate, $current_user);
 
-        if (in_array($this->type, $allDayTypes)) {
+        
+        if (in_array($this->type, self::ALL_DAY_TYPES)) 
+        {
+            $endDate = $timedate->fromDbFormat($this->end_date, TimeDate::DB_DATETIME_FORMAT);
+            $endDate = $timedate->asUser($endDate, $current_user);                
+
             // Set name
             if ($_REQUEST["action"] != "MassUpdate"){
                 $this->name = $assignedUser->name . " - " . $typeLabel . " - " . $startDate . " - " . substr($endDate, -5);
             } else {
-                // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
+                // In mass update we cannot modify the dates so the part of the name that includes the dates is reused
                 $this->name = $assignedUser->name . " - " . $typeLabel . substr($this->name, -25);
             }
         } else { // All day register
+
+            $endDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
+            $endDate = $endDate->modify("next day");
+            $this->end_date = $timedate->asDb($endDate, $current_user);                         
+
             // Set name
             if ($_REQUEST["action"] != "MassUpdate"){
                 $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDate, 0, 10);
             } else {
-                // En actualización masiva no tenemos acceso a las fechas por lo que se reutiliza la parte del nombre con las fechas
+                // In mass update we cannot modify the dates so the part of the name that includes the dates is reused
                 $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($this->name, -10);
             }
         }
 
         // Set duration field
         if (!empty($this->end_date)) {
-            $startTime = strtotime($timedate->to_db($startDate));
-            $endTime = strtotime($timedate->to_db($endDate));
+            $startTime = strtotime($this->start_date);
+            $endTime = strtotime($this->end_date);
             $duration = $endTime - $startTime;            
             $this->duration = (float) number_format($duration / 3600, 2);            
         } else {

@@ -35,6 +35,21 @@ class stic_Work_CalendarViewDetail extends ViewDetail
 
     public function preDisplay()
     {
+        require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
+        global $timedate, $current_user;
+
+        // If it is an all day type record
+        if (!in_array($this->bean->type, stic_Work_Calendar::ALL_DAY_TYPES)) 
+        {
+            // Start date
+            $startDate = $timedate->fromUser($this->bean->start_date, $current_user);
+            $this->bean->start_date = $timedate->asUserDate($startDate, false, $current_user);
+
+            // End date
+            $endDate = $timedate->fromUser($this->bean->end_date, $current_user);
+            $this->bean->end_date = $timedate->asUserDate($endDate, false, $current_user);
+        }
+
         parent::preDisplay();
 
         SticViews::preDisplay($this);
