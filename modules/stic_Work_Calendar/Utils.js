@@ -43,8 +43,8 @@ switch (viewType()) {
     // Set autofill mark and disable editing
     setAutofill(["name"]);
     document.getElementById('name').disabled = true;
-    // Manage all day types
-    updateAllDay();
+    // Manage view for all day types
+    manageAllDayView();
     break;
     
   case "detail":
@@ -143,12 +143,13 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, endDate, type, as
 
 
 /**
- * 
+ * Check if the record is of type all day or not and show the corresponding view
  */
-function updateAllDay() 
+function manageAllDayView() 
 {
   var type = document.getElementById("type");
 
+  // Store default values in previous values
   previousStartDateHours = "09";
   previousStartDateMinutes = "00";
   previousEndDateHours = "18";
@@ -156,6 +157,7 @@ function updateAllDay()
 
   if (allDayTypes.includes(type.value)) 
   {
+    // Add the validation for end_date field
     addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
       return checkStartAndEndDatesCoherence("start_date", "end_date", true);
     });
@@ -165,14 +167,17 @@ function updateAllDay()
   } 
   else 
   { 
-    document.querySelector('[data-field="end_date"]').style.display='none';
+    // Hide the start time and the end_date section
     $("#start_date_time_section").parent().hide();
+    document.querySelector('[data-field="end_date"]').style.display='none';
+    // Remove the validation for end_date field
     removeFromValidate(getFormName(), "end_date");
   }
 
   type.addEventListener("change", function() {
     if (allDayTypes.includes(document.getElementById("type").value)) 
     {
+      // Set previous values (not all day)
       $("#start_date_hours").val(previousStartDateHours);
       $("#start_date_minutes").val(previousStartDateMinutes);
       $("#end_date_hours").val(previousEndDateHours);
@@ -181,11 +186,12 @@ function updateAllDay()
       $("#start_date_minutes").change();
       $("#end_date_hours").change();
       $("#end_date_minutes").change();
-      document.querySelector('[data-field="end_date"]').style.display='block';
+      
+      // Show the start time and the end_date section
       $("#start_date_time_section").parent().show();
-      $("#end_date_time_section").parent().show();
-      $("#end_date_trigger").show();
-      document.getElementById('end_date_date').readOnly = false;
+      document.querySelector('[data-field="end_date"]').style.display='block';
+
+      // Add the validation for end_date field
       addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
         return checkStartAndEndDatesCoherence("start_date", "end_date", true);
       });
@@ -195,12 +201,13 @@ function updateAllDay()
     } 
     else 
     {
+      // Store previous values
       previousStartDateHours = $("#start_date_hours").val();
       previousStartDateMinutes = $("#start_date_minutes").val();
       previousEndDateHours = $("#end_date_hours").val();
       previousEndDateMinutes = $("#end_date_minutes").val();
-      document.querySelector('[data-field="end_date"]').style.display='none';
-      $("#start_date_time_section").parent().hide();
+
+      // Set all day values
       $("#start_date_hours").val("00");
       $("#start_date_minutes").val("00");
       $("#end_date_hours").val("00");
@@ -209,6 +216,12 @@ function updateAllDay()
       $("#start_date_minutes").change();
       $("#end_date_hours").change();
       $("#end_date_minutes").change();      
+
+      // Hide the start time and the end_date section
+      $("#start_date_time_section").parent().hide();
+      document.querySelector('[data-field="end_date"]').style.display='none';
+
+      // Remove the validation for end_date field
       removeFromValidate(getFormName(), "end_date");      
     }
   });
