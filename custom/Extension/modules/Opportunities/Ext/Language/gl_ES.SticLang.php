@@ -94,7 +94,6 @@ $mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = 'Plantilla de correo electrónico';
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL de la convocatoria';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Información adicional';
 $mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Enviar notificación ahora';
-$mod_strings['LBL_STIC_NEED_DATA_TO_SEND_NOTIFICATION'] = 'Para enviar una notificación, es necesario informar el Público Objetivo y la Plantilla de correo electrónico';
 $mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE'] = 'Notificaciones';
 
 // Cadeas Ayudas

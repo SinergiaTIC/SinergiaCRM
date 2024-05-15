@@ -23,17 +23,20 @@
 function get_notifications_from_opportunity($params)
 {
     $args = func_get_args();
-    $opportunityId = $args[0]['opportunity_id'];
+    $parentId = $args[0]['opportunity_id'];
+    $parentType = "Opportunities";
     $campaignType = "Notification";
 
-    $return_array['select'] = " SELECT campaigns.*";
+    $return_array['select'] = " SELECT campaigns.*, email_marketing.date_start";
     $return_array['from'] = " FROM campaigns";
-    $return_array['where'] = " WHERE campaigns.deleted = '0' AND campaigns.campaign_type = '$campaignType'";
+    $return_array['where'] =
+        " WHERE campaigns.deleted = '0'" .
+        " AND campaigns.campaign_type = '$campaignType'" .
+        " AND campaigns_cstm.parent_type = '$parentType'" .
+        " AND campaigns_cstm.parent_id = '$parentId'";
     $return_array['join'] =
-        " INNER JOIN opportunities_campaigns_1_c opp_camp ON" .
-        "  opp_camp.opportunities_campaigns_1campaigns_idb = campaigns.id AND opp_camp.deleted = '0'".
-        " INNER JOIN opportunities opp ON".
-        "  opp.id = opp_camp.opportunities_campaigns_1opportunities_ida AND opp.deleted = '0' AND opp.id = '$opportunityId'";
+        " LEFT JOIN email_marketing ON" .
+        "  email_marketing.campaign_id = campaigns.id ";
 
     $return_array['join_tables'] = '';
     return $return_array;

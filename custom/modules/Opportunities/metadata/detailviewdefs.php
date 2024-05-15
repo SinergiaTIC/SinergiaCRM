@@ -147,42 +147,12 @@ array (
         array (
           0 => 
           array (
-            'name' => 'stic_publishable_c',
-            'studio' => 'visible',
-            'label' => 'LBL_STIC_PUBLISHABLE',
-          ),
-          1 => 
-          array (
-            'name' => 'stic_send_date_c',
-            'studio' => 'visible',
-            'label' => 'LBL_STIC_SEND_DATE',
-          ),
-        ),
-        9 => 
-        array (
-          0 => 
-          array (
-            'name' => 'stic_sendto_prospectlist_c',
-            'studio' => 'visible',
-            'label' => 'LBL_STIC_SENDTO_PROSPECTLIST',
-          ),
-          1 => 
-          array (
-            'name' => 'stic_email_template_c',
-            'studio' => 'visible',
-            'label' => 'LBL_STIC_EMAIL_TEMPLATE',
-          ),
-        ),
-        10 => 
-        array (
-          0 => 
-          array (
             'name' => 'stic_opportunity_url_c',
             'studio' => 'visible',
             'label' => 'LBL_STIC_OPPORTUNITY_URL',
           ),
         ),
-        11 => 
+        9 => 
         array (
           0 => 
           array (
@@ -191,7 +161,7 @@ array (
             'label' => 'LBL_STIC_ADDITIONAL_INFORMATION',
           ),
         ),
-        12 => 
+        10 => 
         array (
           0 => 
           array (

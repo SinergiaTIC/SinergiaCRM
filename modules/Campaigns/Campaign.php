@@ -464,4 +464,110 @@ class Campaign extends SugarBean
 
         return (int)$result['count'];
     }
+
+    // STIC-Custom - JBL - 20240515 - Notify new Opportunities: Campaigns as Notification Subpanel
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+    public function create_new_list_query(
+        $order_by,
+        $where,
+        $filter = array(),
+        $params = array(),
+        $show_deleted = 0,
+        $join_type = '',
+        $return_array = false,
+        $parentbean = null,
+        $singleSelect = false,
+        $ifListForExport = false
+    ) {
+        if (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Opportunities') {
+            //return $this->opportunity_notifications_create_new_list_query()
+        }
+
+        return parent::create_new_list_query(
+            $order_by,
+            $where,
+            $filter,
+            $params,
+            $show_deleted,
+            $join_type,
+            $return_array,
+            $parentbean,
+            $singleSelect,
+            $ifListForExport
+            );
+    }
+    // public function opportunity_notifications_create_new_list_query(
+    //     $order_by,
+    //     $where,
+    //     $params = array(),
+    //     $return_array = false,
+    //     $parentbean = null,
+    //     $singleSelect = false
+    // ) {
+    //     $query = array('select' => '', 'from' => '', 'where' => '', 'order_by' => '');
+
+    //     $query['select'] = 
+    //     "SELECT $this->table_name.*, email_marketing.* as message_name, "
+    //             . '(CASE related_type '
+    //             . 'WHEN \'Contacts\' THEN '
+    //             . $this->db->concat('contacts', array('first_name', 'last_name'), '&nbsp;')
+    //             . ' '
+    //             . 'WHEN \'Leads\' THEN '
+    //             . $this->db->concat('leads', array('first_name', 'last_name'), '&nbsp;')
+    //             . ' '
+    //             . 'WHEN \'Accounts\' THEN accounts.name '
+    //             . 'WHEN \'Users\' THEN '
+    //             . $this->db->concat('users', array('first_name', 'last_name'), '&nbsp;') . ' '
+    //             . "WHEN 'Prospects' THEN "
+    //             . $this->db->concat('prospects', array('first_name', 'last_name'), '&nbsp;')
+    //             . ' '
+    //             . 'END) recipient_name';
+    
+    //         $query['from'] =
+    //             ' '
+    //             . 'FROM ' . $this->table_name .' '
+    //             . 'LEFT JOIN users ON users.id = '
+    //                 . $this->table_name . '.related_id '
+    //                 . 'and '
+    //                 . $this->table_name . '.related_type =\'Users\' '
+    //             . 'LEFT JOIN contacts ON contacts.id = '
+    //                 . $this->table_name .'.related_id '
+    //                 . 'and '
+    //                 . $this->table_name .'.related_type =\'Contacts\' '
+    //             . 'LEFT JOIN leads ON leads.id = '
+    //                 . $this->table_name .'.related_id '
+    //                 . 'and '
+    //                 . $this->table_name .'.related_type =\'Leads\' '
+    //             . 'LEFT JOIN accounts ON accounts.id = '
+    //             . $this->table_name  . '.related_id and '.$this->table_name.'.related_type =\'Accounts\' '
+    //             . 'LEFT JOIN prospects ON prospects.id = '.$this->table_name.'.related_id and '.$this->table_name.'.related_type =\'Prospects\' '
+    //             . 'LEFT JOIN prospect_lists ON prospect_lists.id = '.$this->table_name.'.list_id '
+    //             . 'LEFT JOIN email_addr_bean_rel ON email_addr_bean_rel.bean_id = '.$this->table_name.'.related_id and '.$this->table_name.'.related_type = email_addr_bean_rel.bean_module and email_addr_bean_rel.primary_address = 1 and email_addr_bean_rel.deleted=0 '
+    //             . 'LEFT JOIN campaigns ON campaigns.id = '.$this->table_name.'.campaign_id '
+    //             . 'LEFT JOIN email_marketing ON email_marketing.id = '.$this->table_name.'.marketing_id ';
+    
+    //         $where_auto = " $this->table_name.deleted=0";
+    
+    //         if (!empty($where)) {
+    //             $query['where'] = "WHERE $where AND " . $where_auto;
+    //         } else {
+    //             $query['where'] = "WHERE " . $where_auto;
+    //         }
+    
+    //         if (isset($params['group_by'])) {
+    //             $query['group_by'] .= " GROUP BY {$params['group_by']}";
+    //         }
+    
+    //         $order_by = $this->process_order_by($order_by);
+    //         if (!empty($order_by)) {
+    //             $query['order_by'] = ' ORDER BY ' . $order_by;
+    //         }
+    
+    //         if ($return_array) {
+    //             return $query;
+    //         }
+    
+    //         return $query['select'] . $query['from'] . $query['where'] . $query['order_by'];
+    // }
+    // END STIC-Custom
 }

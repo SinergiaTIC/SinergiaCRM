@@ -32,6 +32,7 @@ $mod_strings['LBL_MODIFIED'] = 'Modified By';
 $mod_strings['LBL_MODIFIED_NAME'] = 'Modified By';
 $mod_strings['LBL_MODIFIED_USER'] = 'Modified By';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modified By (ID)';
+$mod_strings['LBL_FLEX_RELATE'] = 'Related to';
 $mod_strings['LBL_EDIT_BUTTON_LABEL'] = 'Edit';
 $mod_strings['LBL_STIC_PAYMENT_COMMITMENTS_CAMPAIGNS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE'] = 'Payment Commitments';
 $mod_strings['LBL_CAMPAIGN_ACCOUNTS_SUBPANEL_TITLE'] = 'Accounts';
@@ -52,5 +53,3 @@ $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'In order to include reCAPTCHA val
 // the proper value has been set in the core files. In English case, it has been set in custom extension
 // language file in order to avoid a core modification.
 $mod_strings['LBL_WEB_TO_LEAD'] = 'Create person web form'; 
-
-$mod_strings['LBL_OPPORTUNITIES_CAMPAIGNS_1_FROM_OPPORTUNITIES_TITLE'] = 'Opportunities';

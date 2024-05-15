@@ -74,6 +74,10 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsinc_state_c', 'Accounts', 'inc_state_c'),
 ('Accountsinc_municipality_c', 'Accounts', 'inc_municipality_c'),
 ('Accountsinc_town_c', 'Accounts', 'inc_town_c'),
+-- Campaigns
+('Campaignsparent_id', 'Campaigns', 'parent_id'),
+('Campaignsparent_name', 'Campaigns', 'parent_name'),
+('Campaignsparent_type', 'Campaigns', 'parent_type'),
 -- Contacts
 ('Contactsstic_acquisition_channel_c', 'Contacts', 'stic_acquisition_channel_c'),
 ('Contactsstic_age_c', 'Contacts', 'stic_age_c'),
@@ -187,14 +191,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Opportunitiesstic_resolution_date_c', 'Opportunities', 'stic_resolution_date_c'),
 ('Opportunitiesstic_status_c', 'Opportunities', 'stic_status_c'),
 ('Opportunitiesstic_type_c', 'Opportunities', 'stic_type_c'),
-('Opportunitiesstic_publishable_c', 'Opportunities', 'stic_publishable_c'),
-('Opportunitiesstic_send_date_c', 'Opportunities', 'stic_send_date_c'),
 ('Opportunitiesstic_opportunity_url_c', 'Opportunities', 'stic_opportunity_url_c'),
 ('Opportunitiesstic_additional_information_c', 'Opportunities', 'stic_additional_information_c'),
-('Opportunitiesstic_sendto_prospectlist_c', 'Opportunities', 'stic_sendto_prospectlist_c'),
-('Opportunitiesstic_prospectlist_id_c', 'Opportunities', 'stic_prospectlist_id_c'),
-('Opportunitiesstic_email_template_c', 'Opportunities', 'stic_email_template_c'),
-('Opportunitiesstic_emailtemplate_id_c', 'Opportunities', 'stic_emailtemplate_id_c'),
 -- FP_Event_Locations
 ('FP_Event_Locationsstic_address_county_c','FP_Event_Locations','stic_address_county_c'),
 ('FP_Event_Locationsstic_address_region_c','FP_Event_Locations','stic_address_region_c'),

@@ -94,7 +94,6 @@ $mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = 'Plantilla de correu electrònic';
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL de la convocatòria';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Informació addicional';
 $mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Envia una notificació ara';
-$mod_strings['LBL_STIC_NEED_DATA_TO_SEND_NOTIFICATION'] = 'Per poder enviar una notificació cal informar el Públic Objectiu i la Plantilla de correu electrònic';
 $mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE'] = 'Notificacions';
 
 // Cadenes adaptades Ajuts

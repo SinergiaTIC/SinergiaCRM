@@ -67,7 +67,6 @@ $mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = 'Email template';
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'Opportunity URL';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Additional information';
 $mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Send notification now';
-$mod_strings['LBL_STIC_NEED_DATA_TO_SEND_NOTIFICATION'] = 'To send a notification, it is necessary to inform the Prospect List and the Email Template';
 $mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE'] = 'Notifications';
 
 //Strings for Grants

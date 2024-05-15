@@ -166,19 +166,3 @@ function sticPurgeDatabase()
     }
     return false;
 }
-
-// Scheduled task that send alert emails for new Opportunities
-
-$job_strings[] = 'sendOpportunityAlerts';
-
-/**
- * Send Opportunity alerts by alerts.
- * @param $scheduledJob Object Bean of the scheduled task
- * @return boolean
- */
-function sendOpportunityAlerts($scheduledJob)
-{
-    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Running the task sendOpportunityAlerts');
-    require_once 'custom/modules/Opportunities/SticUtils.php';
-    return OpportunitiesUtils::sendOpportunityAlerts();
-}

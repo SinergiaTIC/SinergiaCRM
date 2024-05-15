@@ -12,8 +12,7 @@ INSERT INTO schedulers (id, deleted, date_entered, date_modified, created_by, mo
 ('98eb0c26-99dd-d656-ee73-611cc6994570', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Purga de la base de dades', 'function::sticPurgeDatabase', NOW(), NULL, '*::2::*::*::0', NULL, NULL, NULL, 'Active', 0),
 ('4d0ac999-2bcb-cc4f-f65d-6192a21c4aff', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Validació i actualització mensual de dades', 'function::validationActions', NOW(), NULL, '*::3::1::*::*', NULL, NULL, NULL, 'Active', 0),
 ('ca564b47-9a06-987d-a115-6442356ca768', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Creació de registres de medicació', 'function::createMedicationLogs', NOW(), NULL, '*::1::*::*::*', NULL, NULL, NULL, 'Active', 0),
-('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Reconstrucció de les fonts de dades de SinergiaDA', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0),
-('4d3b2bdc-16cf-4304-97c6-962c5e872bb1', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Enviament d''alertes de subvencions', 'function::sendOpportunityAlerts', NOW(), NULL, '0::2-6::*::*::*', NULL, NULL, NULL, 'Active', 0);
+('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Reconstrucció de les fonts de dades de SinergiaDA', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0);
 
 INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
 ('0b5b5d41-ae84-11eb-9b56-0242ac180004', 'Compromisos de pagament - Càlcul de registre actiu/inactiu', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '0b5b5d41-ae84-11eb-9b56-0242ac180004', 0, 30),

@@ -32,6 +32,7 @@ $mod_strings['LBL_MODIFIED'] = 'Modificat per';
 $mod_strings['LBL_MODIFIED_NAME'] = 'Modificat per';
 $mod_strings['LBL_MODIFIED_USER'] = 'Modificat per';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modificat per (ID)';
+$mod_strings['LBL_FLEX_RELATE'] = 'Relacionat amb';
 $mod_strings['LBL_EDIT_BUTTON_LABEL'] = 'Edita';
 $mod_strings['LBL_STIC_PAYMENT_COMMITMENTS_CAMPAIGNS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE'] = 'Compromisos de Pagament';
 $mod_strings['LBL_CAMPAIGN_INFORMATION'] = 'Dades generals';
@@ -57,5 +58,3 @@ $mod_strings['LBL_WEBFORMS_INCLUDES_RECAPTCHA'] = 'Inclou validació reCAPTCHA a
 $mod_strings['LBL_WEBFORMS_CHOOSE_RECAPTCHA'] = 'Configuració de reCAPTCHA:';
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_KO_URL'] = "URL de redirecció en cas d'error de reCAPTCHA:";
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'Per poder incloure validació reCAPTCHA al formulari cal tenir-lo correctament configurat. Més informació a: <a href="https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA" target="_blank">https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA</a>';
-
-$mod_strings['LBL_OPPORTUNITIES_CAMPAIGNS_1_FROM_OPPORTUNITIES_TITLE'] = 'Subvencions';

@@ -12,8 +12,7 @@ INSERT INTO schedulers (id, deleted, date_entered, date_modified, created_by, mo
 ('98eb0c26-99dd-d656-ee73-611cc6994570', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Purge database', 'function::sticPurgeDatabase', NOW(), NULL, '*::2::*::*::0', NULL, NULL, NULL, 'Active', 0),
 ('4d0ac999-2bcb-cc4f-f65d-6192a21c4aff', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Monthly data validation and updating', 'function::validationActions', NOW(), NULL, '*::3::1::*::*', NULL, NULL, NULL, 'Active', 0),
 ('ca564b47-9a06-987d-a115-6442356ca768', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Create medication logs', 'function::createMedicationLogs', NOW(), NULL, '*::1::*::*::*', NULL, NULL, NULL, 'Active', 0),
-('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Rebuild SinergiaDA data sources', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0),
-('4d3b2bdc-16cf-4304-97c6-962c5e872bb1', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Send Opportunity Alerts', 'function::sendOpportunityAlerts', NOW(), NULL, '0::2-6::*::*::*', NULL, NULL, NULL, 'Active', 0);
+('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Rebuild SinergiaDA data sources', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0);
 
 INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
 ('d1d60459-3713-488d-94ce-ff38bf3e1f98', 'Accounts - Main data validation', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'd1d60459-3713-488d-94ce-ff38bf3e1f98', 0, 65),

@@ -35,7 +35,6 @@ switch (viewType()) {
   case "quickcreate":
     break;
   case "detail":
-    var cv = sticCustomizeView.detailview();
     addSendNotificationNowButton();
     break;
   case "list":
@@ -47,29 +46,21 @@ switch (viewType()) {
 /* AUX FUNCTIONS */
 
 function addSendNotificationNowButton() {
-  // Create Button only if notification fields are present
-  if (
-    cv.field("stic_publishable_c").isDefined() &&
-    cv.field("stic_sendto_prospectlist_c").isDefined() &&
-    cv.field("stic_email_template_c").isDefined()
-  ) {
-    createDetailViewButton({
-      id: "send_opportunity_alert_now",
-      title: SUGAR.language.get("Opportunities", "LBL_STIC_SEND_NOTIFICATION_NOW"),
-      onclick: "sendNotificationNow()"
-    });
-  }
+  createDetailViewButton({
+    id: "send_opportunity_alert_now",
+    title: SUGAR.language.get("Opportunities", "LBL_STIC_SEND_NOTIFICATION_NOW"),
+    onclick: "sendNotificationNow()"
+  });
 }
 
 function sendNotificationNow() {
-  // Check if needed data is set
-  var prospectList = cv.field("stic_sendto_prospectlist_c").value().split("|")[0];
-  var emailTemplate = cv.field("stic_email_template_c").value().split("|")[0];
-
-  if (prospectList == "" || emailTemplate == "") {
-    alert(SUGAR.language.get("Opportunities", "LBL_STIC_NEED_DATA_TO_SEND_NOTIFICATION"));
-    return;
-  } 
+  // // Check if needed data is set
+  // var prospectList = cv.field("stic_sendto_prospectlist_c").value().split("|")[0];
+  // var emailTemplate = cv.field("stic_email_template_c").value().split("|")[0];
+  // if (prospectList == "" || emailTemplate == "") {
+  //   alert(SUGAR.language.get("Opportunities", "LBL_STIC_NEED_DATA_TO_SEND_NOTIFICATION"));
+  //   return;
+  // }
 
   // Send Notification
   console.log("Send notification now");
@@ -78,11 +69,9 @@ function sendNotificationNow() {
     module: "Opportunities",
     return_module: "Opportunities",
     return_action: "DetailView",
-    record: window.document.forms["DetailView"].record.value,
+    record: window.document.forms["DetailView"].record.value
   };
   console.log(obj);
-
   var url = "?index.php&" + $.param(obj);
   location.href = url;
 }
-
