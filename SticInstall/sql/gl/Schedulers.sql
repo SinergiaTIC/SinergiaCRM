@@ -43,8 +43,8 @@ INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modi
 ('10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 'Unidades familiares - Cálculo de rexistro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '10fff3d4-5dc5-ef7a-3d7f-636bae661c14', 0, 30),
 ('b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'Ayudas - Cálculo de rexistro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 0, 30),
 ('3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 'Registro horario - Revisión de los registros del día anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 0, 90),
-('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendario laboral - Revisión de los registros del día anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95),
-('7acc83f4-f72e-10d5-969c-660bcb36cb56', 'Registro horario - Revisión de las horas trabajadas durante la semana anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95);
+('7acc83f4-f72e-10d5-969c-660bcb36cb56', 'Registro horario - Revisión de las horas trabajadas durante la semana anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95),
+('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendario laboral - Revisión de los registros del día anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95);
 
 INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
 ('16085edd-15a4-e6df-c869-5b406a4611ed', NOW(), 0, 'f512af92-7518-4bbe-b583-5b43bc6223da', '7386c4b1-bcc2-4f6f-be88-7e2a2e5778b5'),
