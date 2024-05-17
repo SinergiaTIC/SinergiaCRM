@@ -61,7 +61,7 @@ class stic_Time_TrackerController extends SugarController {
         $json = json_encode($data);
         header('Content-Type: application/json');
         echo $json;
-        die();
+        sugar_die('');
     }
 
     /**
@@ -79,7 +79,7 @@ class stic_Time_TrackerController extends SugarController {
         $json = json_encode($data);
         header('Content-Type: application/json');
         echo $json;
-        die();
+        sugar_die('');
     }
 
     /**
@@ -117,6 +117,6 @@ class stic_Time_TrackerController extends SugarController {
             '.$data['description']; 
         }
         $bean->save();
-        die();
+        sugar_die('');
     }
 }

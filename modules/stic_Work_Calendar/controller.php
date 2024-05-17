@@ -61,7 +61,7 @@ class stic_Work_CalendarController extends SugarController
             require_once 'modules/stic_Work_Calendar/Utils.php';
             echo(stic_Work_CalendarUtils::existsRecordsWithIncompatibleType($id, $startDate, $endDate, $type, $assignedUserId));
         }
-        die();        
+        sugar_die('');    
     }
 
 
