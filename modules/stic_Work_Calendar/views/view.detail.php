@@ -38,7 +38,7 @@ class stic_Work_CalendarViewDetail extends ViewDetail
         require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
         global $timedate, $current_user;
 
-        // If it is an all day type record
+        // If it is not an all day type record
         if (!in_array($this->bean->type, stic_Work_Calendar::ALL_DAY_TYPES)) 
         {
             // Start date
