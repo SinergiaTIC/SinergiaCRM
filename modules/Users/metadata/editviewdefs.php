@@ -172,10 +172,11 @@ array(
                         'name' => 'UserType',
                         'customCode' => '{if $IS_ADMIN}{$USER_TYPE_DROPDOWN}{else}{$USER_TYPE_READONLY}{/if}',
                     ),
-                    1 => 'sda_allowed_c',
+                    1 => 'photo',
                 ),
                 3 => array (
-                    0 => 'photo',
+
+                    0 => 'sda_allowed_c',
                     1 => array (
                       'name' => 'stic_work_calendar_c',
                       'studio' => 'visible',

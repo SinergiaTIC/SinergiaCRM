@@ -223,17 +223,21 @@ array(
                 ),
                 1 => array(
                     0 => 'status',
-                    1 => array(
+                    1 => array(),
+                ),
+                2 => array(
+                    0 => array(
                         'name' => 'UserType',
                         'customCode' => '{$USER_TYPE_READONLY}',
                     ),
-                ),
-                2 => array(
-                    0 => 'sda_allowed_c',
-                    1 => 'photo',
-                ),
+                    1 => 'photo',                    
+                ),                
                 3 => array(
-                    0 => 'stic_work_calendar_c',
+                    0 => 'sda_allowed_c',
+                    1 => 'stic_work_calendar_c',
+                ),
+                4 => array(
+                    0 => 'factor_auth',
                     1 => 'stic_clock_c',
                 ),                     
             ),
