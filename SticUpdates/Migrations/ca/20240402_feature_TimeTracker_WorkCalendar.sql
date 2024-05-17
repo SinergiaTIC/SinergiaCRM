@@ -5,8 +5,8 @@ REPLACE INTO schedulers (id, deleted, date_entered, date_modified, created_by, m
 -- Inserim les accions de validació
 REPLACE INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
 ('3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 'Registre horari - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 0, 90),
-('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95),
-('7acc83f4-f72e-10d5-969c-660bcb36cb56', "Registre horari - Revisió del total d'hores treballades per empleat durant la setmana anterior", NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95);
+('7acc83f4-f72e-10d5-969c-660bcb36cb56', "Registre horari - Revisió de les hores treballades durant la setmana anterior", NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95),
+('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95);
 
 -- Inserim la relació entre les accions de validació i els seus respectius schedulers
 REPLACE INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
