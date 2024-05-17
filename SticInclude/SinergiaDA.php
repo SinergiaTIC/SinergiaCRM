@@ -622,12 +622,6 @@ class ExternalReporting
                         $edaPrecision = $fieldV['type'] == 'currency' ? 2 : 0;
                         $edaPrecision = $fieldV['precision'] ? $fieldV['precision'] : $edaPrecision;
                         break;
-                    case 'id':
-                        // set id as numeric to allow counts and distinct counts
-                        $edaType = 'numeric';
-                        $edaPrecision = 0;
-                        $edaAggregations = 'count,count_distinct,none';
-                        break;
                     case 'date':
                     case 'datetime':
                     case 'datetimecombo':
