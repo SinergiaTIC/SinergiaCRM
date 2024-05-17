@@ -131,8 +131,8 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                 {
                     // Get upper and lower margin settings
                     include_once 'modules/stic_Settings/Utils.php';
-                    $lowerMarginPercent = stic_SettingsUtils::getSetting('LOWER_MARGIN_PERCENT2');
-                    $upperMarginPercent = stic_SettingsUtils::getSetting('UPPER_MARGIN_PERCENT');
+                    $lowerMarginPercent = stic_SettingsUtils::getSetting('TIMETRACKER_LOWER_MARGIN_PERCENT');
+                    $upperMarginPercent = stic_SettingsUtils::getSetting('TIMETRACKER_UPPER_MARGIN_PERCENT');
 
                     // Calculate the upper and lower allowed difference
                     $lowerDifference = ($lowerMarginPercent === false) ? 0 : $wcDuration * ($lowerMarginPercent/100);
