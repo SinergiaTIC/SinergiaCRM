@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $module_name = 'stic_Time_Tracker';
 $subpanel_layout = array(
     'top_buttons' => array(
-        array('widget_class' => 'SubPanelTopCreateButton'),
+        // array('widget_class' => 'SubPanelTopCreateButton'),
         array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
     ),
 
