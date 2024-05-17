@@ -46,7 +46,6 @@ $app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente informac
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nombre: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_NOW'] = 'Ahora ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = '¿Quieres realizar alguna indicación en el registro horario?: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Aceptar ';

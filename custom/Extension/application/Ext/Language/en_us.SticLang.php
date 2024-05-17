@@ -47,7 +47,6 @@ $app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'with the following inform
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Name:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Start date and time:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'End date and time:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_NOW'] = 'Now';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Employee:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Do you want to make an indication in the time record?:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Accept';
