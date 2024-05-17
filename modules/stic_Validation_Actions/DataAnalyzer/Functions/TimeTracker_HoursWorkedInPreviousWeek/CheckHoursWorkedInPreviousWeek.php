@@ -39,7 +39,9 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL)
     {
         // Obtain the total hours scheduled and worked by each user during the previous week.
-        // Only those users who have activated the use of the Time Registration and Work Calendar modules will be selected.
+        // Only those users who have activated the use of the Time Tracker and Work Calendar modules will be selected.
+        // The query returns duplicate records but there is a subsequent process that eliminates them. This is done to consider the use case 
+        // where there are users who have records in one module and not the other.
         $sql = "
         SELECT tt.assigned_user_id as ttAssignedUser, tt.total_duration as ttDuration, wc.assigned_user_id  as wcAssignedUser, wc.total_duration  as wcDuration
         FROM (
