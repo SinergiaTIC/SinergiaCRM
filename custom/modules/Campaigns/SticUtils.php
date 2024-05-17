@@ -27,16 +27,16 @@ function get_notifications_from_opportunity($params)
     $parentType = "Opportunities";
     $campaignType = "Notification";
 
-    $return_array['select'] = " SELECT campaigns.*, email_marketing.date_start";
+    $return_array['select'] = " SELECT campaigns.*";
     $return_array['from'] = " FROM campaigns";
     $return_array['where'] =
         " WHERE campaigns.deleted = '0'" .
         " AND campaigns.campaign_type = '$campaignType'" .
         " AND campaigns_cstm.parent_type = '$parentType'" .
         " AND campaigns_cstm.parent_id = '$parentId'";
-    $return_array['join'] =
-        " LEFT JOIN email_marketing ON" .
-        "  email_marketing.campaign_id = campaigns.id ";
+    $return_array['join'] = 
+        " LEFT JOIN campaigns_cstm ON" .
+        "  campaigns_cstm.id_c = campaigns.id ";
 
     $return_array['join_tables'] = '';
     return $return_array;

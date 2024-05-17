@@ -44,9 +44,29 @@ $subpanel_layout = array(
             'vname' => 'LBL_LIST_STATUS',
             'width' => '15%',
         ),
-        'date_start' => array(
-            'name' => 'date_start',
-            'vname' => 'LBL_DATE_START',
+        'email_marketing_name' => array(
+            'name' => 'email_marketing_name',
+            'vname' => 'LBL_LIST_EMAIL_MARKETING_NAME',
+            'width' => '15%',
+        ),
+        'email_marketing_date_start' => array(
+            'name' => 'email_marketing_date_start',
+            'vname' => 'LBL_LIST_EMAIL_MARKETING_DATE_START',
+            'width' => '15%',
+        ),
+        'email_marketing_status' => array(
+            'name' => 'email_marketing_status',
+            'vname' => 'LBL_LIST_EMAIL_MARKETING_STATUS',
+            'width' => '15%',
+        ),
+        'email_templates_name' => array(
+            'name' => 'email_templates_name',
+            'vname' => 'LBL_LIST_EMAIL_TEMPLATES_NAME',
+            'width' => '15%',
+        ),
+        'prospect_lists_name' => array(
+            'name' => 'prospect_lists_name',
+            'vname' => 'LBL_LIST_PROSPECT_LISTS_NAME',
             'width' => '15%',
         ),
         // 'quickedit_button' => array(
