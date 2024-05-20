@@ -32,7 +32,7 @@
 	</style>
 {/literal}
 
-<h1>{$MOD.LBL_TITLE}</h1>
+<h1>{$MOD.LBL_PERIODIC_WORK_CALENDAR_TITLE}</h1>
 <br /><br />
 
 <div id="cal-repeat-block">
