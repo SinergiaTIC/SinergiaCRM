@@ -104,6 +104,11 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
         // Array donde ir añadiendo a los usuarios validados ya que la query, al consultar dos módulos, pudiera devolver usuarios repetidos. 
         $validatedUsers = array();
 
+        // Get upper and lower margin settings
+        include_once 'modules/stic_Settings/Utils.php';
+        $lowerMarginPercent = stic_SettingsUtils::getSetting('TIMETRACKER_LOWER_MARGIN_PERCENT');
+        $upperMarginPercent = stic_SettingsUtils::getSetting('TIMETRACKER_UPPER_MARGIN_PERCENT');
+
         while ($row = array_pop($records)) 
         {
             $stAssignedUser = $row['ttAssignedUser'];
@@ -129,11 +134,6 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
 
                 if (!empty($ttDuration) && !empty($wcDuration)) 
                 {
-                    // Get upper and lower margin settings
-                    include_once 'modules/stic_Settings/Utils.php';
-                    $lowerMarginPercent = stic_SettingsUtils::getSetting('TIMETRACKER_LOWER_MARGIN_PERCENT');
-                    $upperMarginPercent = stic_SettingsUtils::getSetting('TIMETRACKER_UPPER_MARGIN_PERCENT');
-
                     // Calculate the upper and lower allowed difference
                     $lowerDifference = ($lowerMarginPercent === false) ? 0 : $wcDuration * ($lowerMarginPercent/100);
                     $upperDifference = ($upperMarginPercent === false) ? 0 : $wcDuration * ($upperMarginPercent/100);
