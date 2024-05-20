@@ -24,11 +24,11 @@ function sendEmailToEmployeeAndResponsible($employee, $row, $info)
     $body .= ' <a href="' . $sugar_config["site_url"] . '/index.php?module=stic_Time_Tracker&&return_module=stic_Time_Tracker&action=DetailView&record=' . $row['id'] . '"> ' . $row['name'] . '</a> <br />';
     $body .= $info['errorMsg']; 
     
-    if ($employee->is_admin == '0' && isset($employee->email1)){
+    if (isset($employee->email1)){
         sendEmail($subject, $body, array($employee->email1));
     }
 
-    if ($responsible->is_admin == '0' && isset($responsible->email1)) {
+    if (isset($responsible->email1)) {
         sendEmail($subject, $body, array($responsible->email1));
     }
 }
