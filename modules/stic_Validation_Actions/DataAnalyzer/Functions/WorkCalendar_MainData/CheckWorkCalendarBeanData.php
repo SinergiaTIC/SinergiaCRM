@@ -38,10 +38,14 @@ class CheckWorkCalendarBeanData extends DataCheckFunction
      */
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL)
     {
+        global $current_user;
+        $tzone = $current_user->getPreference('timezone');
+
         $sql = "SELECT id, name, start_date, assigned_user_id
                 FROM stic_work_calendar
-                WHERE start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 DAY) AND UTC_TIMESTAMP()
-                    AND deleted = 0;";
+                DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
+                    AND deleted = 0
+                ORDER BY assigned_user_id;";
 
         return $sql;
     }

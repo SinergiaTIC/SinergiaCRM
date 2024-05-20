@@ -38,6 +38,10 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
      */
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL)
     {
+
+        global $current_user;
+        $tzone = $current_user->getPreference('timezone');
+
         // Obtain the total hours scheduled and worked by each user during the previous week.
         // Only those users who have activated the use of the Time Tracker and Work Calendar modules will be selected.
         // The query returns duplicate records but there is a subsequent process that eliminates them. This is done to consider the use case 
@@ -48,14 +52,14 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
             SELECT stt.assigned_user_id, SUM(stt.duration) AS total_duration, sttu.stic_clock_c
             FROM stic_time_tracker as stt
             JOIN users_cstm as sttu ON stt.assigned_user_id = sttu.id_c
-            WHERE stt.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
+            WHERE DATE(CONVERT_TZ(stt.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
                 AND stt.deleted = 0
             GROUP BY stt. assigned_user_id) AS tt
         LEFT JOIN (
             SELECT swc.assigned_user_id, SUM(swc.duration) AS total_duration, swcu.stic_work_calendar_c
             FROM stic_work_calendar swc
             JOIN users_cstm as swcu ON swc.assigned_user_id = swcu.id_c            
-            WHERE swc.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
+            WHERE DATE(CONVERT_TZ(swc.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
                 AND swc.type = 'working'
                 AND swc.deleted = 0
             GROUP BY swc.assigned_user_id) AS wc 
@@ -68,14 +72,14 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
             SELECT stt.assigned_user_id, SUM(stt.duration) AS total_duration, sttu.stic_clock_c
             FROM stic_time_tracker as stt
             JOIN users_cstm as sttu ON stt.assigned_user_id = sttu.id_c
-            WHERE stt.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
+            WHERE DATE(CONVERT_TZ(stt.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
                 AND stt.deleted = 0
             GROUP BY stt. assigned_user_id) AS tt
         RIGHT JOIN (
             SELECT swc.assigned_user_id, SUM(swc.duration) AS total_duration, swcu.stic_work_calendar_c
             FROM stic_work_calendar swc
             JOIN users_cstm as swcu ON swc.assigned_user_id = swcu.id_c            
-            WHERE swc.start_date BETWEEN DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) AND UTC_TIMESTAMP()
+            WHERE DATE(CONVERT_TZ(swc.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
                 AND swc.type = 'working'  
                 AND swc.deleted = 0
             GROUP BY swc.assigned_user_id) AS wc 
