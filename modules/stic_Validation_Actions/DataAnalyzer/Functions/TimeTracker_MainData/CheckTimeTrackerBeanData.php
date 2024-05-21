@@ -38,7 +38,7 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
     public function prepareSQL(stic_Validation_Actions $actionBean, $proposedSQL)
     {
         global $current_user;
-        $tzone = $current_user->getPreference('timezone');
+        $tzone = $current_user->getPreference('timezone') ?? $sugar_config['default_timezone'] ?? date_default_timezone_get();
 
         $sql = "SELECT id, name, start_date, end_date, assigned_user_id
                 FROM stic_time_tracker

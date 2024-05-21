@@ -40,7 +40,7 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
     {
 
         global $current_user;
-        $tzone = $current_user->getPreference('timezone');
+        $tzone = $current_user->getPreference('timezone') ?? $sugar_config['default_timezone'] ?? date_default_timezone_get();
 
         // Obtain the total hours scheduled and worked by each user during the previous week.
         // Only those users who have activated the use of the Time Tracker and Work Calendar modules will be selected.
