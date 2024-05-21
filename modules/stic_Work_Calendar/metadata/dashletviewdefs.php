@@ -28,12 +28,39 @@ if (!defined('sugarEntry') || !sugarEntry) {
 global $current_user;
 
 $dashletData['stic_Work_CalendarDashlet']['searchFields'] = array(
-    'date_entered' => array('default' => ''),
-    'date_modified' => array('default' => ''),
-    'assigned_user_id' => array(
-        'type' => 'assigned_user_name',
-        'default' => $current_user->name
-    )
+    'name' => array(
+        'default' => '',
+    ),
+    'assigned_user_name' => array(
+        'default' => '',
+    ),    
+    'start_date' => array(
+        'default' => '',
+    ),
+    'end_date' => array(
+        'default' => '',
+    ),
+    'duration' => array(
+        'default' => '',
+    ),    
+    'type' => array(
+        'default' => '',
+    ),    
+    'description' => array(
+        'default' => '',
+    ),
+    'date_entered' => array(
+        'default' => '',
+    ),
+    'date_modified' => array(
+        'default' => '',
+    ),     
+    'created_by_name' => array(
+        'default' => '',
+    ),
+    'modified_by_name' => array(
+        'default' => '',
+    ),
 );
 $dashletData['stic_Work_CalendarDashlet']['columns'] = array(
     'name' => array(
