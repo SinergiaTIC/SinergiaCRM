@@ -55,7 +55,14 @@ $searchdefs[$module_name] = array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'end_date',
-            ),       
+            ),
+            'duration' => array(
+                'type' => 'decimal',
+                'label' => 'LBL_DURATION',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'duration',
+            ),            
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
