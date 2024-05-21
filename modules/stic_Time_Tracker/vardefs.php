@@ -47,8 +47,7 @@ $dictionary['stic_Time_Tracker'] = array(
             'options' => 'date_range_search_dom',
             'dbType' => 'datetime',
             'display_default' => 'now',
-            'inline_edit' => 0,
-            'validation' => array('type' => 'isbefore', 'compareto' => 'end_date', 'blank' => 0),
+            'inline_edit' => 1,
         ),   
         'end_date' => array(
             'required' => 0,
@@ -70,8 +69,7 @@ $dictionary['stic_Time_Tracker'] = array(
             'options' => 'date_range_search_dom',
             'dbType' => 'datetime',
             'display_default' => '',
-            'inline_edit' => 0,
-            'validation' => array('type' => 'isafter', 'compareto' => 'start_date', 'blank' => 0),
+            'inline_edit' => 1,
         ),
         'duration' => array(
             'required' => 0,

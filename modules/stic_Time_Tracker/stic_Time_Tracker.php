@@ -70,15 +70,31 @@ class stic_Time_Tracker extends Basic
     {
         global $timedate, $current_user;
 
-        // Set name
-        $startDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
-        $startDate = $timedate->asUser($startDate, $current_user);
-        if (!empty($this->end_date)) {
-            $endDate = $timedate->fromDbFormat($this->end_date, TimeDate::DB_DATETIME_FORMAT);
-            $endDate = $timedate->asUser($endDate, $current_user);                
-        } else {
-            $endDate = '';
+        // Calculate datetime fields in user and bbdd format
+        if ($_REQUEST["action"] == 'saveHTMLField') { // Inline Edit
+            $startDate = $this->start_date;
+            $this->start_date = $timedate->fromUser($this->start_date, $current_user);
+            $this->start_date = $timedate->asDb($this->start_date);
+
+            if (!empty($this->end_date)) {
+                $endDate = $this->end_date;
+                $this->end_date = $timedate->fromUser($this->end_date, $current_user);
+                $this->end_date = $timedate->asDb($this->end_date);
+            } else {
+                $endDate = '';
+            }
+        } else { 
+            $startDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
+            $startDate = $timedate->asUser($startDate, $current_user);
+            if (!empty($this->end_date)) {
+                $endDate = $timedate->fromDbFormat($this->end_date, TimeDate::DB_DATETIME_FORMAT);
+                $endDate = $timedate->asUser($endDate, $current_user);                
+            } else {
+                $endDate = '';
+            }
         }
+
+        // Set name
         $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
         if ($_REQUEST["action"] != "MassUpdate"){
             $this->name = $assignedUser->name . " - " . $startDate;

@@ -21,11 +21,22 @@
  */
 
 /* HEADER */
+// Set module name
+var module = "stic_Time_Tracker";
 
 /* VALIDATION DEPENDENCIES */
-var validationDependencies = {};
+var validationDependencies = {
+  start_date: "end_date",
+  end_date: "start_date",
+};
 
 /* VALIDATION CALLBACKS */
+addToValidateCallback(getFormName(), "start_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+  return checkStartAndEndDatesCoherence("start_date", "end_date", true);
+});
+addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+  return checkStartAndEndDatesCoherence("start_date", "end_date", true);
+});
 
 /* VIEWS CUSTOM CODE */
 
