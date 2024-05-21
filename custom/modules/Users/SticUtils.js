@@ -21,7 +21,7 @@
  */
 
 // Set module name
-var module = "Employees";
+var module = "Users";
 
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {

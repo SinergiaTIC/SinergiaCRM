@@ -39,6 +39,8 @@
 
 	<form name="CalendarRepeatForm" id="CalendarRepeatForm" method="POST">
 		<input type="hidden" id="module" name="module" value="stic_Work_Calendar">
+		<input type="hidden" id="employeeId" name="employeeId" value="{$REQUEST.employeeId}">
+		<input type="hidden" id="employeeIds" name="employeeIds" value="{$REQUEST.uid}">
 		<input type="hidden" id="action" name="action" value="createPeriodicWorkCalendarRecords">
 		<input type="hidden" name="repeat_parent_id">
 
@@ -105,24 +107,35 @@
 					</div>
 				</td>
 			</tr>
-			<tr id="assigned_user_row">
-				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_ASSIGNED_TO}:<span
-						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
-				<td width="37.5%" valign="top">
-					<input style="width: 210px" type='text' class='sqsEnabled yui-ac-input assigned_user_data_name'
-						name='assigned_user_name' id='assigned_user_name' autocomplete='new-password' value='' title='' required>
-					<input type='hidden' name='assigned_user_id' id='assigned_user_id' value=''>
-					<span class='id-ff multiple'>
-						<button title='SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE")' type='button'
-							class='button' name='btn_1' onclick='openSelectPopup("Users", "assigned_user")'>
-							<span class='suitepicon suitepicon-action-select' /></span>
-					</button>
-					<button type='button' name='btn_1' class='button lastChild'
-						onclick='clearRow(this.form, "assigned_user");'>
-						<span class='suitepicon suitepicon-action-clear'></span>
-						</span>
-				</td>
-			</tr>
+			{if !empty($selectedEmployees)}
+				<tr id="assigned_user_row">
+					<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_ASSIGNED_TO}:</td></td>
+					<td>
+						{foreach from=$selectedEmployees key=k item=name}
+							{$name} <br />
+						{/foreach}			
+					</td>
+				</tr>
+			{else}
+				<tr id="assigned_user_row">
+					<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_ASSIGNED_TO}:<span
+							class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
+					<td width="37.5%" valign="top">
+						<input style="width: 210px" type='text' class='sqsEnabled yui-ac-input assigned_user_data_name'
+							name='assigned_user_name' id='assigned_user_name' autocomplete='new-password' value='' title='' required>
+						<input type='hidden' name='assigned_user_id' id='assigned_user_id' value=''>
+						<span class='id-ff multiple'>
+							<button title='SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE")' type='button'
+								class='button' name='btn_1' onclick='openSelectPopup("Users", "assigned_user")'>
+								<span class='suitepicon suitepicon-action-select' /></span>
+						</button>
+						<button type='button' name='btn_1' class='button lastChild'
+							onclick='clearRow(this.form, "assigned_user");'>
+							<span class='suitepicon suitepicon-action-clear'></span>
+							</span>
+					</td>
+				</tr>
+			{/if}			
 			<tr id="type_row">
 				<td width="12.5%" valign="top" scope="row">{$MOD_WORK_CALENDAR.LBL_TYPE}:<span
 						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td></td>

@@ -47,3 +47,6 @@ $mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Sets user access to Sinergia Data Analyt
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
+
+// Work Calendar record creation wizard
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Periodic creation of Work Calendar records';

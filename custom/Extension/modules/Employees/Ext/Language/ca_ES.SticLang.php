@@ -52,21 +52,3 @@ $mod_strings['LBL_OPT_IN_CONFIRMED'] =  'Alta voluntària confirmada';
 
 // Assistent de creació de registres de Calendari laboral
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Creació periòdica de registres de Calendari laboral';
-$mod_strings['LBL_CANCEL_BUTTON'] = 'Cance·la';
-$mod_strings['LBL_REPEAT_DOW'] = 'Dia de la setmana';
-$mod_strings['LBL_REPEAT_END_AFTER'] = 'Després de';
-$mod_strings['LBL_REPEAT_END_BY'] = 'El dia';
-$mod_strings['LBL_REPEAT_END'] = 'Finalitza';
-$mod_strings['LBL_REPEAT_INTERVAL'] = 'Interval';
-$mod_strings['LBL_REPEAT_OCCURRENCES'] = 'sessions';
-$mod_strings['LBL_REPEAT_TYPE'] = 'Repeteix';
-$mod_strings['LBL_REPEAT_UNTIL'] = 'Repeteix fins';
-$mod_strings['LBL_SAVE_BUTTON'] = 'Desa';
-$mod_strings['LBL_TIME_START'] = 'Data i hora final de la 1a sessió';
-$mod_strings['LBL_TIME_FINAL'] = "Data i hora d'inici de la 1a sessió";
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_TITLE'] = 'Crea sessions periòdiques';
-$mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Duració del registre de Calendari laboral';
-$mod_strings['LBL_ERROR_IN_VALIDATION'] = 'Error en el valor indicat al camp data i hora de finalització.';
-$mod_strings['LBL_END_DATE_ERROR'] = 'La data i hora de finalització ha de ser posterior a la data i hora d\'inici.';
-$mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'La diferència entre la data i l\'hora de finalització i la d\'inici ha de ser menor a 24 hores.';
-$mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = "Existeixen altres registres amb tipus incompatible a l'actual per al mateix usuari assignat i dins del rang horari definit. Comproveu aquests registres i modifiqueu el rang horari d'aquest registre o d'aquell que genera el conflicte.";

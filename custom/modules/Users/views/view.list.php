@@ -1,4 +1,3 @@
-  
 <?php
 /**
  * This file is part of SinergiaCRM.
@@ -22,26 +21,33 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'modules/Employees/controller.php';
+require_once 'modules/Users/views/view.list.php';
+require_once 'SticInclude/Views.php';
 
-class CustomEmployeesController extends EmployeesController
+class CustomUsersViewList extends UsersViewList
 {
-    /**
-     * Show template view of periodic work calendar records generation assistant
-     *
-     * @return void
-     */
-    public function action_showWorkCalendarAssistant() {
-        $this->view = "workcalendarassistant";
+    public function __construct()
+    {
+        parent::__construct();
     }
 
-    /**
-     * 
-     *
-     * @return void
-     */
-    public function action_createPeriodicWorkCalendarRecords() {
-        require_once 'modules/stic_Work_Calendar/Utils.php';
-        stic_Work_CalendarUtils::createPeriodicWorkCalendarRecords();
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+        // Write here the SinergiaCRM code that must be executed for this module and view
+    }
+
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+        
+        // Write here the SinergiaCRM code that must be executed for this module and view
+        echo getVersionedScript("custom/modules/Users/SticUtils.js");
     }
 }
+

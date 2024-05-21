@@ -52,21 +52,3 @@ $mod_strings['LBL_OPT_IN_CONFIRMED'] = 'Opted in';
 
 // Work Calendar record creation wizard
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Periodic creation of Work Calendar records';
-$mod_strings['LBL_CANCEL_BUTTON'] = 'Cancel';
-$mod_strings['LBL_REPEAT_DOW'] = 'Day of week';
-$mod_strings['LBL_REPEAT_END_AFTER'] = 'After';
-$mod_strings['LBL_REPEAT_END_BY'] = 'By';
-$mod_strings['LBL_REPEAT_END'] = 'End';
-$mod_strings['LBL_REPEAT_INTERVAL'] = 'Interval';
-$mod_strings['LBL_REPEAT_OCCURRENCES'] = 'sessions';
-$mod_strings['LBL_REPEAT_TYPE'] = 'Repeat';
-$mod_strings['LBL_REPEAT_UNTIL'] = 'Repetat until';
-$mod_strings['LBL_SAVE_BUTTON'] = 'Save';
-$mod_strings['LBL_TIME_START'] = '1st session final date and hour';
-$mod_strings['LBL_TIME_FINAL'] = '1st session start date and hour';
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_TITLE'] = 'Create periodic sessions';
-$mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Work Calendar record duration';
-$mod_strings['LBL_ERROR_IN_VALIDATION'] = 'Error in the value indicated in the end date and time field.';
-$mod_strings['LBL_END_DATE_ERROR'] = 'The end date and time must be later than the start date and time.';
-$mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'The difference between the end and start date and time must be less than 24 hours.';
-$mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = 'There are other records with a type incompatible with the current one for the same assigned user and within the defined time range. Check these records and modify the time range of this record or the one that generates the conflict.';

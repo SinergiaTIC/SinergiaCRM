@@ -52,21 +52,3 @@ $mod_strings['LBL_OPT_IN_CONFIRMED'] = 'Alta voluntaria confirmada';
 
 // Asistente de creación de registros de Calendario laboral
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Creación periódica de registros de Calendario laboral';
-$mod_strings['LBL_CANCEL_BUTTON'] = 'Cancelar';
-$mod_strings['LBL_REPEAT_DOW'] = 'Día de la semana';
-$mod_strings['LBL_REPEAT_END_AFTER'] = 'Después de';
-$mod_strings['LBL_REPEAT_END_BY'] = 'El día';
-$mod_strings['LBL_REPEAT_END'] = 'Finalizar';
-$mod_strings['LBL_REPEAT_INTERVAL'] = 'Intervalo';
-$mod_strings['LBL_REPEAT_OCCURRENCES'] = 'registros de Calendario laboral';
-$mod_strings['LBL_REPEAT_TYPE'] = 'Repetir';
-$mod_strings['LBL_REPEAT_UNTIL'] = 'Repetir hasta';
-$mod_strings['LBL_SAVE_BUTTON'] = 'Guardar';
-$mod_strings['LBL_TIME_START'] = 'Fecha y hora de inicio del primer registro de Calendario laboral';
-$mod_strings['LBL_TIME_FINAL'] = 'Fecha y hora final del primer registro de Calendario laboral';
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_TITLE'] = 'Crear registros de Calendario laboral';
-$mod_strings['LBL_WORK_CALENDAR_DURATION'] = 'Duración del registro de Calendario laboral';
-$mod_strings['LBL_ERROR_IN_VALIDATION'] = 'Error en el valor indicado en el campo fecha y hora de finalización.';
-$mod_strings['LBL_END_DATE_ERROR'] = 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.';
-$mod_strings['LBL_END_DATE_EXCCEDS_24_HOURS'] = 'La diferencia entre la fecha y hora de finalización y la de inicio debe de ser menor a 24 horas.';
-$mod_strings['LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS'] = 'Existen otros registros con tipo incompatible al actual para el mismo usuario asignado y dentro del rango horario definido. Compruebe estos registros y modifique el rango horario de este registro o de aquel que genera el conflicto.';

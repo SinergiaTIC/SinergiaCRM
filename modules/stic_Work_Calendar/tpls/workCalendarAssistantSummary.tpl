@@ -116,10 +116,11 @@
                 aItem = document.createElement("a");
                 aItem.textContent = data[key].name;
                 aItem.id = 'aUser' + key;
-                aItem.style.margin='2px';                
+                aItem.style.margin='2px';
+                aItem.style.color='black';
                 aItem.setAttribute("onclick", "updateDataInListAndPagination('" + key + "', 1, pageSize);");
-                liItem.appendChild(aItem)
-                usersContainer.appendChild(liItem);                
+                liItem.appendChild(aItem);
+                usersContainer.appendChild(liItem);   
 
                 // Activate the first user
                 if (firstUser) {

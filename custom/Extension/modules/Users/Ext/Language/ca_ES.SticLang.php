@@ -47,3 +47,6 @@ $mod_strings['LBL_SDA_ALLOWED_INFO'] = "Indica si l'usuari disposa d'accés a Si
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
+
+// Assistent de creació de registres de Calendari laboral
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Creació periòdica de registres de Calendari laboral';

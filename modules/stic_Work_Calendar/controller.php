@@ -69,7 +69,7 @@ class stic_Work_CalendarController extends SugarController
      * Renders the view of periodic creation of work calendar records
      * @return void
      */
-    public function action_createPeriodicRecords()
+    public function action_showWorkCalendarAssistant()
     {
         $this->view = "workcalendarassistant"; //call for the view file in views dir
     }
