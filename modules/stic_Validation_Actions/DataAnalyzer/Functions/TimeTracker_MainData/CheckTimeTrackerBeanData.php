@@ -24,8 +24,7 @@
 require_once 'SticInclude/Utils.php';
 
 /**
- * 
- * 
+ * Class to check the previous day Work Calendar records
  */
 class CheckTimeTrackerBeanData extends DataCheckFunction 
 {
@@ -43,7 +42,7 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
 
         $sql = "SELECT id, name, start_date, end_date, assigned_user_id
                 FROM stic_time_tracker
-                WHERE DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
+                WHERE DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY)) AND DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'))
                     AND deleted = 0
                 ORDER BY assigned_user_id;";
 
