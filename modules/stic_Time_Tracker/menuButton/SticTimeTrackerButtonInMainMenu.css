@@ -24,13 +24,19 @@
 }
 
 /* Time Tracker Dialog box */  
-.time-tracker-dialog-box {
+#time-tracker-dialog-box {
     display: none;
     position: fixed;
+    top: 10%;
+    left: 78%;
+    width: 20%;
+    height: 40%;
+    color:black;
     background-color: #eee;
     border: 1px solid #000;
+    line-height: normal;
     padding: 20px;
-    line-height: normal;          
+    z-index: 1000;
 }
 
 #time-tracker-dialog-description {
@@ -42,6 +48,8 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     resize: vertical;
+    overflow: hidden; 
+    overflow-wrap: break-word;
 }
 
 #time-tracker-dialog-buttons {
@@ -69,10 +77,11 @@
     }
 
     /* Time Tracker Dialog box */
-    .time-tracker-dialog-box {
+    #time-tracker-dialog-box {
         top: 13%;
-        left: 48%;
-        width: 50%; 
+        left: 38%;
+        width: 60%;
+        height: 35%;
     }
 
     .time-tracker-dialog-row {
@@ -85,18 +94,19 @@
 
     .time-tracker-dialog-info {
         text-align: left;
-        font-size: 1.1rem !important;  
+        font-size: 1.1rem !important;
     }
 }
 
 /* Small screen / tablet */
 @media (min-width: 751px) {
     /* Time Tracker Dialog box */
-    .time-tracker-dialog-box {
+    #time-tracker-dialog-box {
         top: 8%;
-
+        left: 45%;
+        width: 53%;
+        height: 33%;
     }
-
     .time-tracker-dialog-info {
         text-align: left;
         font-size: 1.2rem !important;  
@@ -106,10 +116,11 @@
 /* Medium screen / desktop */
 @media (min-width: 992px) {
     /* Time Tracker Dialog box */
-    .time-tracker-dialog-box {
+    #time-tracker-dialog-box {
         top: 8%;
-        left: 58%;
-        width: 40%;
+        left: 60%;
+        width: 38%;
+        height: 35%;
     }
 
     .time-tracker-dialog-info {
@@ -121,10 +132,11 @@
 /* Large screen / wide desktop */
 @media (min-width: 1200px) {  
     /* Time Tracker Dialog box */  
-    .time-tracker-dialog-box {
+    #time-tracker-dialog-box {
         top: 8%;
         left: 68%;
         width: 30%;
+        height: 38%;
     }
 
     .time-tracker-dialog-info {

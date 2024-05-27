@@ -94,11 +94,9 @@ function drawTimeTrackerConfimrBox(data)
         </div>
     </div>`;
 
-    mydialog = document.querySelectorAll('.time-tracker-dialog-box');
-    mydialog.forEach(function(element) {
-        element.innerHTML = content;
-        element.style.display = 'block';
-    });    
+    mydialog = document.getElementById('time-tracker-dialog-box');
+    mydialog.innerHTML = content;
+    mydialog.style.display = 'block';
 }
 
 // Create or Update a time tracker record
@@ -127,17 +125,14 @@ function timeTrackerDialogConfirm(date, description)
         });
       
     // Hide the dialog box
-    mydialog = document.querySelectorAll('.time-tracker-dialog-box');
-    mydialog.forEach(function(element) {
-        element.style.display = 'none';
-    }); 
+    mydialog = document.getElementById('time-tracker-dialog-box');
+    mydialog.style.display = 'none';
 }
 
 // Hide the dialog box
 function timeTrackerDialogCancel() 
 {
-    mydialog = document.querySelectorAll('.time-tracker-dialog-box');
-    mydialog.forEach(function(element) {
-        element.style.display = 'none';
-    }); 
+    // Hide the dialog box
+    mydialog = document.getElementById('time-tracker-dialog-box');
+    mydialog.style.display = 'none';
 }

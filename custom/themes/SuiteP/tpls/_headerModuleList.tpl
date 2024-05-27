@@ -646,9 +646,6 @@
                         </ul>
                     </li>
                 </ul>
-                {* STIC-Custom 20240222 MHP - Add registration button dialog *}
-                <div class="time-tracker-dialog-box"></div>
-                {* END STIC-Custom *}                
             </div>
             <div class="tablet-bar">
                 <ul id="toolbar" class="toolbar">
@@ -771,9 +768,6 @@
                             </ul>
                         </li>
                     </ul>
-                    {* STIC-Custom 20240222 MHP - Add registration button dialog *}
-                    <div class="time-tracker-dialog-box"></div>
-                    {* END STIC-Custom *}                    
                 </div>
                 <div class="desktop-bar">
                     <ul id="toolbar" class="toolbar">
@@ -897,11 +891,11 @@
                                 </ul>
                             </li>
                         </ul>
-                        {* STIC-Custom 20240222 MHP - Add registration button dialog *}
-                        <div class="time-tracker-dialog-box"></div>
-                        {* END STIC-Custom *}
                     </div>
             </nav>
+            {* STIC-Custom 20240222 MHP - Add registration button dialog *}
+            <div id="time-tracker-dialog-box"></div>
+            {* END STIC-Custom *}
             <!--End Responsive Top Navigation Menu -->
             {if $THEME_CONFIG.display_sidebar}
                 <!--Start Page Container and Responsive Sidebar -->
