@@ -49,7 +49,7 @@ $app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Data i hora de finalitzac
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleat:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Vols fer alguna indicació al registre horari?:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Acceptar';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancel';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancel·lar';
 
 // Avís d'actualització de SinergiaCRM
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'Actualització de SinergiaCRM realitzada';
