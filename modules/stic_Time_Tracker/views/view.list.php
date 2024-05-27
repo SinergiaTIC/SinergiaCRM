@@ -45,6 +45,10 @@ class stic_Time_TrackerViewList extends ViewList
 
     public function display()
     {
+        // End date with sensitivity of 1 minute aunque no tenga el valor "now". 
+        echo '<script type="text/javascript">
+            SUGAR.config.stic_datetime_combo_minute_interval = "1";
+        </script>';           
         parent::display();
 
         SticViews::display($this);
