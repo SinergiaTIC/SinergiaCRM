@@ -68,16 +68,18 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
           '<div class="' +
             classes +
             ' stic-ReadonlyInput hidden" ' +
-            'style="min-height:20px; height:30px; display:inline-flex; align-items:center; padding-left:5px; border-radius:0.25em; width:90%">' +
+            'style="min-height:30px; align-items:center; padding-left:5px; border-radius:0.25em; width:90%">' +
             "</div>"
         );
       this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
-      this.$readonlyLabel.text(this.text());
+      sticCVUtils.fillReadonlyText(this);
+      //this.$readonlyLabel.text(this.text());
 
       // Update label when value is changed
       var self = this;
       this.onChange(function() {
-        self.$readonlyLabel.text(self.text());
+        sticCVUtils.fillReadonlyText(self);
+        //self.$readonlyLabel.html(self.text());
       });
     }
 
