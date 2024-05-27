@@ -1201,7 +1201,6 @@ class ExternalReporting
         // 2) eda_def_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
                                   SELECT CONCAT('SDA_',name) as name FROM securitygroups WHERE deleted=0
-                                  UNION SELECT CONCAT('SDA_OWN_',user_name) FROM sda_def_users where active=1   -- auto group for owners
                                   UNION SELECT 'EDA_ADMIN'
                                   UNION SELECT 'NO_SINERGIACRM_USERS'
                                   ;";
@@ -1222,12 +1221,8 @@ class ExternalReporting
                                 AND u.deleted = 0
                                 AND su.deleted = 0
                                 AND s.deleted = 0
-
-                            -- Each user belongs to a group with their name that allows them to view records of which they are the owner                            UNION 
-                            UNION SELECT user_name, CONCAT('SDA_OWN_',user_name) FROM sda_def_users where active=1  
-
-                            -- Administrator users should always belong to the EDA_ADMIN group.
                             UNION
+                            -- Administrator users should always belong to the EDA_ADMIN group.
                             SELECT
                                 user_name,
                                 'EDA_ADMIN'
