@@ -30,7 +30,6 @@
     top: 10%;
     left: 78%;
     width: 20%;
-    height: 40%;
     color:black;
     background-color: #eee;
     border: 1px solid #000;
@@ -81,7 +80,6 @@
         top: 13%;
         left: 38%;
         width: 60%;
-        height: 35%;
     }
 
     .time-tracker-dialog-row {
@@ -105,7 +103,6 @@
         top: 8%;
         left: 45%;
         width: 53%;
-        height: 33%;
     }
     .time-tracker-dialog-info {
         text-align: left;
@@ -120,7 +117,6 @@
         top: 8%;
         left: 60%;
         width: 38%;
-        height: 35%;
     }
 
     .time-tracker-dialog-info {
@@ -136,7 +132,6 @@
         top: 8%;
         left: 68%;
         width: 30%;
-        height: 38%;
     }
 
     .time-tracker-dialog-info {
