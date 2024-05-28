@@ -148,13 +148,13 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, endDate, type, as
 function manageAllDayView() 
 {
   var type = document.getElementById("type");
-  debugger;
+
   // Store default values in previous values
   var previousType = type.value;
-  var previousStartDateHours = $("#start_date_hours").val();
-  var previousStartDateMinutes = $("#start_date_minutes").val();
-  var previousEndDateHours = $("#end_date_hours").val();
-  var previousEndDateMinutes = $("#end_date_minutes").val();
+  var previousStartDateHours = "09";
+  var previousStartDateMinutes = "00";
+  var previousEndDateHours = "18";
+  var previousEndDateMinutes = "00";
 
   if (allDayTypes.includes(type.value)) 
   {
