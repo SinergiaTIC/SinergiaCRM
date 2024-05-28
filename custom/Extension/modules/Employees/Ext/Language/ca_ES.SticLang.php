@@ -51,4 +51,4 @@ $mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] =  'Alta voluntària pendent de co
 $mod_strings['LBL_OPT_IN_CONFIRMED'] =  'Alta voluntària confirmada';
 
 // Assistent de creació de registres de Calendari laboral
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Creació periòdica de registres de Calendari laboral';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Genera el Calendari laboral';
