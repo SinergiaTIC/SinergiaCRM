@@ -42,7 +42,7 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'All names of other compan
 
 // Create a time tracker record from the header
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'A time tracker record will be created with the following information: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Today's last open time tracker record will be updated: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = "Today's last open time tracker record will be updated: ";
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'with the following information: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Name:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Start date and time:';
