@@ -148,12 +148,13 @@ function checkIfExistsOtherTypesIncompatibleRecords(startDate, endDate, type, as
 function manageAllDayView() 
 {
   var type = document.getElementById("type");
-
+  debugger;
   // Store default values in previous values
-  previousStartDateHours = "09";
-  previousStartDateMinutes = "00";
-  previousEndDateHours = "18";
-  previousEndDateMinutes = "00";
+  var previousType = type.value;
+  var previousStartDateHours = $("#start_date_hours").val();
+  var previousStartDateMinutes = $("#start_date_minutes").val();
+  var previousEndDateHours = $("#end_date_hours").val();
+  var previousEndDateMinutes = $("#end_date_minutes").val();
 
   if (allDayTypes.includes(type.value)) 
   {
@@ -174,55 +175,60 @@ function manageAllDayView()
     removeFromValidate(getFormName(), "end_date");
   }
 
-  type.addEventListener("change", function() {
+  type.addEventListener("change", function() 
+  {
     if (allDayTypes.includes(document.getElementById("type").value)) 
     {
-      // Set previous values (not all day)
-      $("#start_date_hours").val(previousStartDateHours);
-      $("#start_date_minutes").val(previousStartDateMinutes);
-      $("#end_date_hours").val(previousEndDateHours);
-      $("#end_date_minutes").val(previousEndDateMinutes);
-      $("#start_date_hours").change();
-      $("#start_date_minutes").change();
-      $("#end_date_hours").change();
-      $("#end_date_minutes").change();
-      
-      // Show the start time and the end_date section
-      $("#start_date_time_section").parent().show();
-      document.querySelector('[data-field="end_date"]').style.display='block';
+      if (!allDayTypes.includes(previousType)) {      // Set the previous values if the previous type was not type: all day
+          $("#start_date_hours").val(previousStartDateHours);
+          $("#start_date_minutes").val(previousStartDateMinutes);
+          $("#end_date_hours").val(previousEndDateHours);
+          $("#end_date_minutes").val(previousEndDateMinutes);
+          $("#start_date_hours").change();
+          $("#start_date_minutes").change();
+          $("#end_date_hours").change();
+          $("#end_date_minutes").change();
 
-      // Add the validation for end_date field
-      addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
-        return checkStartAndEndDatesCoherence("start_date", "end_date", true);
-      });
-      addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
-        return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
-      });
+        // Show the start time and the end_date section
+        $("#start_date_time_section").parent().show();
+        document.querySelector('[data-field="end_date"]').style.display='block';
+
+        // Add the validation for end_date field
+        addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+          return checkStartAndEndDatesCoherence("start_date", "end_date", true);
+        });
+        addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+          return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
+        });
+      }
     } 
     else 
     {
-      // Store previous values
-      previousStartDateHours = $("#start_date_hours").val();
-      previousStartDateMinutes = $("#start_date_minutes").val();
-      previousEndDateHours = $("#end_date_hours").val();
-      previousEndDateMinutes = $("#end_date_minutes").val();
+      if (allDayTypes.includes(previousType)) {   
+        // Store previous values
+        previousStartDateHours = $("#start_date_hours").val();
+        previousStartDateMinutes = $("#start_date_minutes").val();
+        previousEndDateHours = $("#end_date_hours").val();
+        previousEndDateMinutes = $("#end_date_minutes").val();
 
-      // Set all day values
-      $("#start_date_hours").val("00");
-      $("#start_date_minutes").val("00");
-      $("#end_date_hours").val("00");
-      $("#end_date_minutes").val("00");
-      $("#start_date_hours").change();
-      $("#start_date_minutes").change();
-      $("#end_date_hours").change();
-      $("#end_date_minutes").change();      
+        // Set all day values
+        $("#start_date_hours").val("00");
+        $("#start_date_minutes").val("00");
+        $("#end_date_hours").val("00");
+        $("#end_date_minutes").val("00");
+        $("#start_date_hours").change();
+        $("#start_date_minutes").change();
+        $("#end_date_hours").change();
+        $("#end_date_minutes").change();      
 
-      // Hide the start time and the end_date section
-      $("#start_date_time_section").parent().hide();
-      document.querySelector('[data-field="end_date"]').style.display='none';
+        // Hide the start time and the end_date section
+        $("#start_date_time_section").parent().hide();
+        document.querySelector('[data-field="end_date"]').style.display='none';
 
-      // Remove the validation for end_date field
-      removeFromValidate(getFormName(), "end_date");      
+        // Remove the validation for end_date field
+        removeFromValidate(getFormName(), "end_date");
+      }
     }
+    previousType = type.value;
   });
 }
