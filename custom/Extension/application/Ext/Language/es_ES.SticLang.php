@@ -40,14 +40,14 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa es software
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos los nombres de otras empresas y productos mencionados aquí pueden ser marcas registradas de sus respectivas compañías asociadas.';
 
 // Creación de registro horario vía cabecera
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy: '; 
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente información: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy:'; 
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente información:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nombre: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Comentarios: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Aceptar';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancelar';
 
