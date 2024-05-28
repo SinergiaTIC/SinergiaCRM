@@ -585,4 +585,9 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
     'stic_security_groups_rules_enabled' => false,
     // END STIC
+
+    // STIC-Custom 20240538 JBL - Disable AjaxUI calls
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    'disableAjaxUI' => true,
+    // END STIC
 );
