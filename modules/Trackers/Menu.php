@@ -45,5 +45,5 @@
 global $mod_strings, $app_strings, $sugar_config;
 
 if(ACLController::checkAccess('Trackers', 'list', true)){
-    $module_menu[]=array('index.php?module=Trackers&action=index&return_module=Trackers&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'Trackers');
+    $module_menu[]=array('index.php?module=Trackers&action=index', $mod_strings['LNK_LIST'],'View', 'Trackers');
 }
