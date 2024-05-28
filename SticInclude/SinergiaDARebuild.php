@@ -69,7 +69,7 @@ class SinergiaDARebuild
             if (empty($msg)) {
                 return 'ok';
             } else {
-                file_put_contents('sdaRebuildError', $msg);
+                sugar_file_put_contents('sdaRebuildError.txt', $msg);
                 return $msg;
             }
             die();
