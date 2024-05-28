@@ -25,7 +25,7 @@
  $layout_defs["Opportunities"]["subpanel_setup"]['stic_group_opportunities_opportunities'] = array (
     'order' => 100,
     'module' => 'stic_Group_Opportunities',
-    'subpanel_name' => 'default',
+    'subpanel_name' => 'ForOpportunities',
     'sort_order' => 'asc',
     'sort_by' => 'id',
     'title_key' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE',
