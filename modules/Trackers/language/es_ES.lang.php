@@ -53,4 +53,6 @@ $mod_strings = array(
 
     //Administration related labels
     'LBL_MODULE_NAME' => 'Monitorizaciones',
+
+    'LNK_LIST' => 'Mostrar las Monitorizaciones',
 );
