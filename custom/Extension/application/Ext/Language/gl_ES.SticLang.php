@@ -30,14 +30,6 @@ $app_strings['LBL_STIC_VALIDATE_FIELDS_NOT_VISIBLE'] = "Algunhas validacións de
 $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "A validación deste campo depende dun campo que non está visible. Se desexa que esta validación se aplique solicite ao administrador do CRM que inclúa na vista este campo: ";
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Engadir Organizacións e Persoas a unha lista de público obxectivo';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronización Incorpora';
-$app_strings['LBL_BOOKINGS_CALENDAR_OPTIONGROUP_EMPTY'] = '~ Sen categoría ~';
-$app_strings['LBL_BOOKINGS_CALENDAR_FILTER_RESOURCES'] = 'Filtro de recursos: ';
-$app_strings['LBL_BOOKINGS_CALENDAR_FILTER_RESOURCES_PLACEHOLDER'] = 'Para mostrar só as reservas de determinados recursos, seleccióneos aquí.';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_FILTER_RESOURCES_PLACEHOLDER'] = 'Seleccione polo menos un recurso para mostrar a súa dispoñibilidade.';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_MODE_BUTTON_ENABLED'] = 'Mostrar dispoñibilidade';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_MODE_BUTTON_DISABLED'] = 'Mostrar reservas';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_MODE_BUTTON_HELP'] = 'Para mostrar a dispoñibilidade debe seleccionarse polo menos un recurso.';
-$app_strings['LBL_BOOKINGS_CALENDAR_MOBILE_BUTTON'] = 'Móbil';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Enviar PDF por correo';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validar a importación';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'Ocurreu un erro';
@@ -47,15 +39,15 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM foi desenvolv
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software libre. Permítese a súa redistribución e/ou modificación baixo os termos da Licenza Pública Xeral Affero de GNU versión 3, publicada pola Free Software Foundation, incluíndo calquera permiso adicional indicado no encabezamento do código fonte.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
 
-// Crear registro horario desde el menú superior - Ventana emergente de confirmación
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se va a crear un registro horario con la siguiente información:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se va a actualizar tú último registro horario para el día de hoy: '; 
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente información: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nombre:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleado:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = '¿Quieres realizar alguna indicación en el registro horario?:';
+// Creación de registro horario vía cabecera
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy:'; 
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente información:';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nombre: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Aceptar';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancelar';
 
@@ -162,30 +154,31 @@ $app_list_strings['moduleListSingular']['stic_Goals'] = 'Obxectivo';
 $app_list_strings['moduleListSingular']['stic_Personal_Environment'] = 'Entorno persoal';
 $app_list_strings['moduleListSingular']['stic_FollowUps'] = 'Seguimento';
 $app_list_strings['moduleListSingular']['stic_Families'] = 'Unidade familiar';
+$app_list_strings['moduleListSingular']['stic_Incorpora'] = 'Incorpora';
+$app_list_strings['moduleListSingular']['stic_Incorpora_Locations'] = 'Ubicación Incorpora';
+$app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
+$app_list_strings['moduleListSingular']['stic_Job_Offers'] = 'Oferta laboral';
+$app_list_strings['moduleListSingular']['stic_Sepe_Actions'] = 'Acción SEPE';
+$app_list_strings['moduleListSingular']['stic_Sepe_Incidents'] = 'Incidencia SEPE';
+$app_list_strings['moduleListSingular']['stic_Bookings'] = 'Reserva';
+$app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicamento';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescrición médica';
+$app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos de Seguridade - Regra por módulo';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Axuda';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
-$app_list_strings['moduleListSingular']['stic_Journal'] = 'Diario';
-$app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos de Seguridade - Regra por módulo';
 $app_list_strings['moduleListSingular']['stic_Time_Tracker'] = 'Registro horario';
 $app_list_strings['moduleListSingular']['stic_Work_Calendar'] = 'Calendario laboral';
-$app_list_strings['moduleList']['stic_Training'] = 'Formación';
-$app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
-$app_list_strings['moduleList']['stic_Skills'] = 'Competencia';
+$app_list_strings['moduleListSingular']['stic_Journal'] = 'Diario';
+$app_list_strings['moduleListSingular']['stic_Training'] = 'Formación';
+$app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Experiencia laboral';
+$app_list_strings['moduleListSingular']['stic_Skills'] = 'Competencia';
 $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalizada';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
-$app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
-$app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
-$app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
-$app_list_strings['moduleListSingular']['stic_Job_Offers'] = 'Oferta laboral';
-$app_list_strings['moduleList']['stic_Sepe_Actions'] = 'Accións SEPE';
-$app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
-$app_list_strings['moduleListSingular']['stic_Bookings'] = 'Reserva';
-$app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -223,6 +216,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
+
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -260,6 +254,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
+
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -3437,15 +3432,16 @@ $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DA
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
-// Calendario laboral: Tipo de disponibilidad: Tipo de disponibilidad
+// Calendario laboral: Tipos
 $app_list_strings['stic_work_calendar_types_list'][''] = '';
 $app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
-$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Día festivo';
-$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Día personal';
-$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Ausencia Puntual';
-$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja por enfermedad';
-$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedencia';
+$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Festivo';
+$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Personal';
+$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Ausencia puntual';
+$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja';
+$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Permiso/Excedencia';
+
 // Vistas personalizadas: Tipos de usuario
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario normal';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
