@@ -72,13 +72,13 @@ function drawTimeTrackerConfimrBox(data)
         <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1')}</span>
         <br /><br />
         <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')}<span style="font-weight: bold;">${data.recordName}</span></li>
+            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')} <span style="font-weight: bold;">${data.recordName}</span></li>
         </ul>
         <br /><br />   
         <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_2')}</span>
         <br /><br />
         <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_END_DATE')}<span style="font-weight: bold;">` + localStorage.date + `</span></li>
+            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_END_DATE')} <span style="font-weight: bold;">` + localStorage.date + `</span></li>
         </ul>`;
     }
 
