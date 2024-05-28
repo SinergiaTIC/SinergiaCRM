@@ -36,10 +36,6 @@ class stic_Time_TrackerController extends SugarController {
         $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
         global $timedate, $current_user;
         
-        // Get now in current_user timezone and format
-        $currentUserNow = $timedate->getNow(true);
-        $currentUserNow = $currentUserNow->format($timedate->get_date_time_format($current_user));
-
         // Check if time tracker module is active
         include_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
@@ -51,7 +47,6 @@ class stic_Time_TrackerController extends SugarController {
         $todayRegistrationStarted = !is_array($data) ? 0 : (empty($data["end_date"]) ? 1 : 0);
 
         $data = array(
-            'date' => $currentUserNow,
             'timeTrackerModuleActive' => $timeTrackerModuleActive,
             'timeTrackerActiveInEmployee' => $current_user->stic_clock_c ? 1:0,
             'todayRegistrationStarted' => $todayRegistrationStarted,
@@ -72,10 +67,20 @@ class stic_Time_TrackerController extends SugarController {
     {
         // Check if the user has started any time registration today
         $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking last time tracker record for today.');
-        global $current_user;
-        $data = stic_Time_Tracker::getLastTodayTimeTrackerRecord($current_user->id);
+        
+        // Get now in current_user timezone and format
+        global $timedate, $current_user;
+        $currentUserNow = $timedate->getNow(true);
+        $currentUserNow = $currentUserNow->format($timedate->get_date_time_format($current_user));
+
+        // Get record data
+        $recordName = stic_Time_Tracker::getLastTodayTimeTrackerRecord($current_user->id)['name'];
 
         // return the json result
+        $data = array(
+            'date' => $currentUserNow,
+            'recordName' => $recordName,
+        );
         $json = json_encode($data);
         header('Content-Type: application/json');
         echo $json;

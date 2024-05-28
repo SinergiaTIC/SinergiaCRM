@@ -11,7 +11,6 @@ function checkTimeTrackerButtonStatus()
         .then(response => response.json())
         .then(data => {
             localStorage.setItem('todayRegistrationStarted', data.todayRegistrationStarted);
-            localStorage.setItem('date', data.date);
             let buttonRow = document.querySelectorAll('.time_tracker_button_row');                             
             if (data.timeTrackerModuleActive == 1 && data.timeTrackerActiveInEmployee == 1){
                 buttonRow.forEach(function(element) {
@@ -45,6 +44,7 @@ function showTimeTrackerConfirmBox()
     fetch(url)
         .then(response => response.json())
         .then(data => {
+            localStorage.setItem('date', data.date);
             drawTimeTrackerConfimrBox(data);
         })
         .catch(error => {
@@ -72,7 +72,7 @@ function drawTimeTrackerConfimrBox(data)
         <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1')}</span>
         <br /><br />
         <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')}<span style="font-weight: bold;">${data.name}</span></li>
+            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')}<span style="font-weight: bold;">${data.recordName}</span></li>
         </ul>
         <br /><br />   
         <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_2')}</span>
