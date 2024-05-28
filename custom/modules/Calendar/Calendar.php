@@ -118,113 +118,112 @@ class CustomCalendar extends Calendar
                 continue;
             }
             foreach ($acts as $act) {
+                $item = array();
                 // STIC-Custom 20240222 MHP - Check if Calendar should show Work Calendar records
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
-                if (!$display_work_calendar_records && $act->sugar_bean->module_dir == 'stic_Work_Calendar'){
-                    continue;
-                }
-                // END STIC-Custom
-                $item = array();
-                $item['user_id'] = $user_id;
-                $item['module_name'] = $act->sugar_bean->module_dir;
-                $item['type'] = strtolower($act->sugar_bean->object_name);
-                $item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
-                $item['record'] = $act->sugar_bean->id;
+                if ($display_work_calendar_records || $act->sugar_bean->module_dir != 'stic_Work_Calendar')
+                {
+                    $item['user_id'] = $user_id;
+                    $item['module_name'] = $act->sugar_bean->module_dir;
+                    $item['type'] = strtolower($act->sugar_bean->object_name);
+                    $item['assigned_user_id'] = $act->sugar_bean->assigned_user_id;
+                    $item['record'] = $act->sugar_bean->id;
 
-                // STIC-Custom 20230918 - ART - Incorrect names with quotes in the Calendar
-                // STIC#1222
-                // $item['name'] = $act->sugar_bean->name . ' ' . $act->sugar_bean->assigned_user_name;
-                $item['name'] = html_entity_decode($act->sugar_bean->name, ENT_QUOTES) . ' ' . $act->sugar_bean->assigned_user_name;
-                // END STIC-Custom 20230919 - ART
+                    // STIC-Custom 20230918 - ART - Incorrect names with quotes in the Calendar
+                    // STIC#1222
+                    // $item['name'] = $act->sugar_bean->name . ' ' . $act->sugar_bean->assigned_user_name;
+                    $item['name'] = html_entity_decode($act->sugar_bean->name, ENT_QUOTES) . ' ' . $act->sugar_bean->assigned_user_name;
+                    // END STIC-Custom 20230919 - ART
 
-                $item['description'] = $act->sugar_bean->description;
+                    $item['description'] = $act->sugar_bean->description;
 
-                if (isset($act->sugar_bean->duration_hours)) {
-                    $item['duration_hours'] = $act->sugar_bean->duration_hours;
-                    $item['duration_minutes'] = $act->sugar_bean->duration_minutes;
-                }
+                    if (isset($act->sugar_bean->duration_hours)) {
+                        $item['duration_hours'] = $act->sugar_bean->duration_hours;
+                        $item['duration_minutes'] = $act->sugar_bean->duration_minutes;
+                    }
 
-                $item['detail'] = 0;
-                $item['edit'] = 0;
-
-                if ($act->sugar_bean->ACLAccess('DetailView')) {
-                    $item['detail'] = 1;
-                }
-                if ($act->sugar_bean->ACLAccess('Save')) {
-                    $item['edit'] = 1;
-                }
-
-                if (empty($act->sugar_bean->id)) {
                     $item['detail'] = 0;
                     $item['edit'] = 0;
-                }
 
-                if (!empty($act->sugar_bean->repeat_parent_id)) {
-                    $item['repeat_parent_id'] = $act->sugar_bean->repeat_parent_id;
-                }
+                    if ($act->sugar_bean->ACLAccess('DetailView')) {
+                        $item['detail'] = 1;
+                    }
+                    if ($act->sugar_bean->ACLAccess('Save')) {
+                        $item['edit'] = 1;
+                    }
 
-                if ($item['detail'] == 1) {
-                    if (isset($field_list[$item['module_name']])) {
-                        foreach ($field_list[$item['module_name']] as $field) {
-                            if (!isset($item[$field]) && isset($act->sugar_bean->$field)) {
-                                $item[$field] = $act->sugar_bean->$field;
-                                if (empty($item[$field])) {
-                                    $item[$field] = "";
+                    if (empty($act->sugar_bean->id)) {
+                        $item['detail'] = 0;
+                        $item['edit'] = 0;
+                    }
+
+                    if (!empty($act->sugar_bean->repeat_parent_id)) {
+                        $item['repeat_parent_id'] = $act->sugar_bean->repeat_parent_id;
+                    }
+
+                    if ($item['detail'] == 1) {
+                        if (isset($field_list[$item['module_name']])) {
+                            foreach ($field_list[$item['module_name']] as $field) {
+                                if (!isset($item[$field]) && isset($act->sugar_bean->$field)) {
+                                    $item[$field] = $act->sugar_bean->$field;
+                                    if (empty($item[$field])) {
+                                        $item[$field] = "";
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                if (!empty($act->sugar_bean->parent_type) && !empty($act->sugar_bean->parent_id)) {
-                    $focus = BeanFactory::getBean($act->sugar_bean->parent_type, $act->sugar_bean->parent_id);
-                    // If the bean wasn't loaded, e.g. insufficient permissions
-                    if (!empty($focus)) {
-                        $item['related_to'] = $focus->name;
+                    if (!empty($act->sugar_bean->parent_type) && !empty($act->sugar_bean->parent_id)) {
+                        $focus = BeanFactory::getBean($act->sugar_bean->parent_type, $act->sugar_bean->parent_id);
+                        // If the bean wasn't loaded, e.g. insufficient permissions
+                        if (!empty($focus)) {
+                            $item['related_to'] = $focus->name;
+                        }
+                    }
+
+                    if (!isset($item['duration_hours']) || empty($item['duration_hours'])) {
+                        $item['duration_hours'] = 0;
+                    }
+                    if (!isset($item['duration_minutes']) || empty($item['duration_minutes'])) {
+                        $item['duration_minutes'] = 0;
+                    }
+
+                    // STIC-Custom 20210430 AAM - Exception for stic_Sessions module
+                    // STIC#438
+                    // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
+                    // STIC#1192
+                    // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
+                    if ($item['module_name'] == 'stic_Sessions') {
+                        $totalMinutes = $act->sugar_bean->duration * 60;
+                        $item['duration_hours'] = floor($totalMinutes / 60);
+                        $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
+                        $item['color'] = $act->sugar_bean->color ? '#'.$act->sugar_bean->color : '';
+                    }
+
+                    if ($item['module_name'] == 'stic_FollowUps') {
+                        $totalMinutes = $act->sugar_bean->duration;
+                        $item['duration_hours'] = floor($totalMinutes / 60);
+                        $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
+                        $item['color'] = $act->sugar_bean->color ? '#'.$act->sugar_bean->color : '';
+                    }
+                    if ($item['module_name'] == 'stic_Work_Calendar') {
+                        $item['event_type'] = $act->sugar_bean->type;
+                        $totalMinutes = $act->sugar_bean->duration * 60;
+                        $item['duration_hours'] = floor($totalMinutes / 60);
+                        $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
+                    }
+                    // END STIC-Custom
+                    
+                    if (isset($this->activityList[$act->sugar_bean->module_name]['start']) && !empty($this->activityList[$act->sugar_bean->module_name]['start'])) {
+                        $item = array_merge($item, CalendarUtils::get_time_data($act->sugar_bean, $this->activityList[$act->sugar_bean->module_name]['start'], $this->activityList[$act->sugar_bean->module_name]['end']));
+                    } else {
+                        $item = array_merge($item, CalendarUtils::get_time_data($act->sugar_bean));
                     }
                 }
-
-                if (!isset($item['duration_hours']) || empty($item['duration_hours'])) {
-                    $item['duration_hours'] = 0;
-                }
-                if (!isset($item['duration_minutes']) || empty($item['duration_minutes'])) {
-                    $item['duration_minutes'] = 0;
-                }
-
-                // STIC-Custom 20210430 AAM - Exception for stic_Sessions module
-                // STIC#438
-                // STIC-Custom 20230811 AAM - Adding Color to Sessions and FollowUps
-                // STIC#1192
-                // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
-                if ($item['module_name'] == 'stic_Sessions') {
-                    $totalMinutes = $act->sugar_bean->duration * 60;
-                    $item['duration_hours'] = floor($totalMinutes / 60);
-                    $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
-                    $item['color'] = $act->sugar_bean->color ? '#'.$act->sugar_bean->color : '';
-                }
-
-                if ($item['module_name'] == 'stic_FollowUps') {
-                    $totalMinutes = $act->sugar_bean->duration;
-                    $item['duration_hours'] = floor($totalMinutes / 60);
-                    $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
-                    $item['color'] = $act->sugar_bean->color ? '#'.$act->sugar_bean->color : '';
-                }
-                if ($item['module_name'] == 'stic_Work_Calendar') {
-                    $item['event_type'] = $act->sugar_bean->type;
-                    $totalMinutes = $act->sugar_bean->duration * 60;
-                    $item['duration_hours'] = floor($totalMinutes / 60);
-                    $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
-                }
                 // END STIC-Custom
-
-
-                if (isset($this->activityList[$act->sugar_bean->module_name]['start']) && !empty($this->activityList[$act->sugar_bean->module_name]['start'])) {
-                    $item = array_merge($item, CalendarUtils::get_time_data($act->sugar_bean, $this->activityList[$act->sugar_bean->module_name]['start'], $this->activityList[$act->sugar_bean->module_name]['end']));
-                } else {
-                    $item = array_merge($item, CalendarUtils::get_time_data($act->sugar_bean));
-                }
-
+                    
                 $shared_calendar_separate = $GLOBALS['current_user']->getPreference('calendar_display_shared_separate');
                 if (is_null($shared_calendar_separate)) {
                     $shared_calendar_separate = SugarConfig::getInstance()->get('calendar.calendar_display_shared_separate', true);
