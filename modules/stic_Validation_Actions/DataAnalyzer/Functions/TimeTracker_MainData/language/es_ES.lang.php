@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Registro horario - Revisión de los registros del día anterior',		// Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NAME' => 'Registro horario - Revisión de los registros del día anterior', // Esta etiqueta es obligatoria. Indica el nombre de la función
     'NO_END_DATE' => 'El registro horario no tiene fecha de finalización.',
-    'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'La funcionalidad de Registro horario no está activada en el empleado: ',
-    'NO_RECORD_IN_WORK_CALENDAR' => 'No existe ningún registro de tipo laborable en el Calendario Laboral del empleado: ',
-    'EMAIL_SUBJECT' => 'CRM - Revisar registro de Registro horario',
-    'EMAIL_BODY' => 'Se ha encontrado un error durante el proceso de validación del siguiente registro de Registro horario:',
+    'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'La funcionalidad de Registro horario no está activada en el usuario: ',
+    'NO_RECORD_IN_WORK_CALENDAR' => 'No existe ningún registro de tipo laborable en el Calendar<io laboral del usuario: ',
+    'EMAIL_SUBJECT' => 'Registro horario - Revisión de los registros del día anterior',
+    'EMAIL_BODY' => 'Se ha encontrado un error al validar el siguiente registro horario: ',
 );
