@@ -75,7 +75,7 @@ if ($sdaEnabled) {
     $r = $db->query($q);
     $a = $db->fetchByAssoc($r);
 
-    if($a['sda_allowed_c']==1){
+    if ($a['sda_allowed_c'] == 1) {
         // Generate sdaUrl
         $currentDomain = $_SERVER['HTTP_HOST'];
         $lang = explode('_', $sugar_config['default_language'])[0];
@@ -89,7 +89,5 @@ if ($sdaEnabled) {
             ),
         );
         $global_control_links = array_merge($global_control_links, $sinergiaDA);
-    }    
-
-
+    }
 }
