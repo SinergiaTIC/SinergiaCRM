@@ -38,14 +38,15 @@ class stic_Work_CalendarUtils
         require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
 
         // Check if there is already a non-work record that takes up the entire day, in that case, it is not posible to create the record
-        global $db;
+        global $db, $current_user;
+        $tzone = $current_user->getPreference('timezone') ?? $sugar_config['default_timezone'] ?? date_default_timezone_get();        
+
         $query = "SELECT * FROM stic_work_calendar
                     WHERE deleted = 0 
                         AND id != '". $id . "' 
                         AND assigned_user_id = '" . $assignedUserId . "' 
                         AND type NOT IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
-                        AND TIMESTAMPDIFF(SECOND, start_date,'" . $endDate . "') > 0 
-                        AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', end_date) > 0;";
+                        AND DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) = DATE(CONVERT_TZ('" . $startDate . "', '+00:00', '" . $tzone ."'))";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
         $result = $db->query($query);
@@ -60,8 +61,7 @@ class stic_Work_CalendarUtils
                         AND id != '". $id . "' 
                         AND assigned_user_id = '" . $assignedUserId . "' 
                         AND type IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
-                        AND TIMESTAMPDIFF(SECOND, start_date,'" . $endDate . "') > 0 
-                        AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', end_date) > 0;";
+                        AND DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) = DATE(CONVERT_TZ('" . $startDate . "', '+00:00', '" . $tzone ."'))";
 
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
                 $result = $db->query($query);
