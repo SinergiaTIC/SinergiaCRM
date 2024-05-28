@@ -2,23 +2,27 @@
 $module_name = 'Trackers';
 $listViewDefs[$module_name] =
 array(
-    'NAME' => array(
-        'width' => '20%',
-        'label' => 'LBL_NAME',
+    'MONITOR_ID' => array(
+        'type' => 'id',
+        'width' => '5%',
+        'label' => 'LBL_MONITOR_ID',
         'default' => true,
-        'link' => true,
     ),
-    'USER_ID' => array(
+    'TRACKER_USER' => array(
+        'type' => 'relate',
+        'studio' => 'visible',
+        'label' => 'LBL_TRACKER_USER',
+        'id' => 'USER_ID',
+        'link' => true,
         'width' => '10%',
-        'label' => 'LBL_USER_ID',
         'default' => true,
-        'module' => 'Users'
     ),
     'DATE_MODIFIED' => array(
+        'sort_order' => 'asc',
         'type' => 'datetime',
-        'label' => 'LBL_DATE_MODIFIED',
+        'label' => 'LBL_DATE_LAST_ACTION',
         'width' => '10%',
-        'default' => false,
+        'default' => true,
     ),
     'ACTION' => array(
         'type' => 'enum',
