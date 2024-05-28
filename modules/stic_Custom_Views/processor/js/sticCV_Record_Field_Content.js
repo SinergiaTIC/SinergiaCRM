@@ -73,13 +73,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         );
       this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
       sticCVUtils.fillReadonlyText(this);
-      //this.$readonlyLabel.text(this.text());
 
       // Update label when value is changed
       var self = this;
       this.onChange(function() {
         sticCVUtils.fillReadonlyText(self);
-        //self.$readonlyLabel.html(self.text());
       });
     }
 

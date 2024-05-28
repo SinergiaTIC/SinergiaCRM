@@ -547,7 +547,7 @@ var sticCVUtils = class sticCVUtils {
       if (first) {
         first = false;
       } else {
-        fieldContent.$readonlyLabel.append("<br>");
+        fieldContent.$readonlyLabel.append("<br />");
       }
       fieldContent.$readonlyLabel.append(line);
     });
