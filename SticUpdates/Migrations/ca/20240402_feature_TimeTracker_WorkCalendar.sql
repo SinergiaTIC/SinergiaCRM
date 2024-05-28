@@ -5,7 +5,7 @@ REPLACE INTO schedulers (id, deleted, date_entered, date_modified, created_by, m
 -- Inserim les accions de validació
 REPLACE INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
 ('3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 'Registre horari - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 0, 90),
-('7acc83f4-f72e-10d5-969c-660bcb36cb56', "Registre horari - Revisió de les hores treballades durant la setmana anterior", NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95),
+('7acc83f4-f72e-10d5-969c-660bcb36cb56', 'Registre horari - Revisió de les hores treballades durant la setmana anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95),
 ('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95);
 
 -- Inserim la relació entre les accions de validació i els seus respectius schedulers
@@ -16,5 +16,5 @@ REPLACE INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, s
 
 -- Inserim les dues variables de configuració relacionades amb Registre horari
 REPLACE INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_user_id`, `created_by`, `deleted`, `assigned_user_id`, `type`, `name`, `value`, `description`) VALUES
-('78e895d4-b528-7392-5e83-66347f276649', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_LOWER_MARGIN_PERCENT', '20', "El marge inferior de diferència que hi pot haver entre les hores que l'empleat havia de treballar aquesta setmana i les hores treballades. Aquest marge està relacionat amb l'acció de validació: Comprovar la quantitat d'hores treballades per cada empleat durant la setmana anterior. que la diferència en hores superi aquest marge, l'acció de validació ha d'avisar d'un possible error."),
-('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', "El marge superior de diferència que hi pot haver entre les hores que l'empleat havia de treballar aquesta setmana i les hores treballades. Aquest marge està relacionat amb l'acció de validació: Comprovar la quantitat d'hores treballades per cada empleat durant la setmana anterior. que la diferència en hores superi aquest marge, l'acció de validació ha d'avisar d'un possible error.");
+('78e895d4-b528-7392-5e83-66347f276649', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_LOWER_MARGIN_PERCENT', '20', "Indica el percentatge d'hores treballades de menys (respecte de l'horari teòric setmanal) que farà que s'enviï una alerta."),
+('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', "Indica el percentatge d'hores treballades de més (respecte de l'horari teòric setmanal) que farà que s'enviï una alerta.");
