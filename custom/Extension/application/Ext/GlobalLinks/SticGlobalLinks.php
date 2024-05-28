@@ -71,11 +71,11 @@ $sdaEnabled = $sugar_config['stic_sinergiada']['enabled'] ?? false;
 if ($sdaEnabled) {
     $db = DBManagerFactory::getInstance();
 
-    $q = "SELECT sda_allowed_C FROM users_cstm WHERE id=$current_user->id";
+    $q = "SELECT sda_allowed_c FROM users_cstm WHERE id_c='" . $current_user->id . "'";
     $r = $db->query($q);
     $a = $db->fetchByAssoc($r);
 
-    if($a){
+    if($a['sda_allowed_c']==1){
         // Generate sdaUrl
         $currentDomain = $_SERVER['HTTP_HOST'];
         $lang = explode('_', $sugar_config['default_language'])[0];
