@@ -49,3 +49,5 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Delete the sample datas
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Test dataset succesfully deleted.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Errors have occurred while deleting the test dataset. Please review the <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_insertSticData">log</a>.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
+$mod_strings['LBL_TRACKERS_TITLE'] = 'Trackers';
+$mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Monitoring of sessions, user actions';
