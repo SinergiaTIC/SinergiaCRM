@@ -41,7 +41,7 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres em
 
 // Creació de registre horari via capçalera
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Es crearà un registre horari amb la informació següent: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Es tancarà el darrer registre horari obert d'avui: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Es tancarà el darrer registre horari obert avui: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'amb la informació següent: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nom:';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = "Data i hora d'inici:";
