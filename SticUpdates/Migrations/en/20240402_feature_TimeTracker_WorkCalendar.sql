@@ -1,6 +1,6 @@
 -- Insert the scheduler 
 REPLACE INTO schedulers (id, deleted, date_entered, date_modified, created_by, modified_user_id, name, job, date_time_start, date_time_end, job_interval, time_from, time_to, last_run, status, catch_up) VALUES
-('56dca334-679c-266d-fd9a-660bcd6ed93e', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Weekly data validation and update', 'function::validationActions', NOW(), NULL, '*::1::*::*::1', NULL, NULL, NULL, 'Active', 0);
+('56dca334-679c-266d-fd9a-660bcd6ed93e', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Weekly data validation and updating', 'function::validationActions', NOW(), NULL, '*::1::*::*::1', NULL, NULL, NULL, 'Active', 0);
 
 -- Insert the validation actions
 REPLACE INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
@@ -16,5 +16,5 @@ REPLACE INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, s
 
 -- Insert the two configuration variables related to Time Tracker module
 REPLACE INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_user_id`, `created_by`, `deleted`, `assigned_user_id`, `type`, `name`, `value`, `description`) VALUES
-('78e895d4-b528-7392-5e83-66347f276649', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_LOWER_MARGIN_PERCENT', '20', 'Indicates the lower margin of difference that may exist between the hours that the employee was supposed to work that week and the hours worked. This margin is related to the validation action: Check the number of hours worked by each employee during the previous week. If the difference in hours exceeds this margin, the validation action must warn of a possible error.'),
-('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', 'Indicates the upper margin of difference that may exist between the hours that the employee was supposed to work that week and the hours worked. This margin is related to the validation action: Check the number of hours worked by each employee during the previous week. If the difference in hours exceeds this margin, the validation action must warn of a possible error.');
+('78e895d4-b528-7392-5e83-66347f276649', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_LOWER_MARGIN_PERCENT', '20', 'Indicates the percentage of hours worked less (with respect to the theoretical weekly schedule) that will cause an alert to be sent.'),
+('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', 'Indicates the percentage of hours worked in excess (with respect to the theoretical weekly schedule) that will cause an alert to be sent.');
