@@ -39,17 +39,17 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM ha sido desar
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa es software libre. Se permite redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública General Affero de GNU versión 3, publicada por la Free Software Foundation, incluyendo cualquier permiso adicional indicado en la cabecera del código fuente.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos los nombres de otras empresas y productos mencionados aquí pueden ser marcas registradas de sus respectivas compañías asociadas.';
 
-// Crear registro horario desde el menú superior - Ventana emergente de confirmación
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se va a crear un registro horario con la siguiente información: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se va a actualizar tú último registro horario para el día de hoy: '; 
+// Creación de registro horario vía cabecera
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy: '; 
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente información: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nombre: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
 $app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = '¿Quieres realizar alguna indicación en el registro horario?: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Aceptar ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancelar ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Comentarios: ';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Aceptar';
+$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancelar';
 
 // Aviso de actualización de SinergiaCRM
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'Actualización de SinergiaCRM realizada';
@@ -3231,11 +3231,12 @@ $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
 $app_list_strings['stic_work_calendar_types_list'][''] = '';
 $app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
-$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Día festivo';
-$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Día personal';
-$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Ausencia Puntual';
-$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja por enfermedad';
-$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Excedencia';
+$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Festivo';
+$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Asuntos propios';
+$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Ausencia puntual';
+$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja';
+$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Permiso/Excedencia';
+
 // Diario: Tipo de diario
 $app_list_strings['stic_journal_types_list'][''] = '';
 $app_list_strings['stic_journal_types_list']['journal'] = 'Diario';
