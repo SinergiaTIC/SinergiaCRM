@@ -1090,7 +1090,8 @@ $($.fullCalendar).ready(function () {
             workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
             workCalendarEvents.forEach(function(element) {
                 element.textContent = "";
-                element.style.width='5%';  
+                element.style.width='5%';
+                element.style.setProperty('left', '0%', 'important');
             });    
         }
         // END STIC-Custom 
