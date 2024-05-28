@@ -25,6 +25,6 @@ $func_strings = array (
     'NO_END_DATE' => 'Aquest registre horari no té data de finalització.',
     'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> "La funcionalitat de Registre horari no està activada a l'usuari: ",
     'NO_RECORD_IN_WORK_CALENDAR' => "No hi ha cap registre de tipus feiner al Calendari laboral de l'usuari: ",
-    'EMAIL_SUBJECT' => 'Revisió dels registres del dia anterior',
+    'EMAIL_SUBJECT' => 'Registre horari - Revisió dels registres del dia anterior',
     'EMAIL_BODY' => "S'ha trobat un error al validar aquest registre horari: ",
 );
