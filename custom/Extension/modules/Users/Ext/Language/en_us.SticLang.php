@@ -39,9 +39,9 @@ $mod_strings['LBL_INC_REFERENCE_OFFICER'] = 'Reference officer (Incorpora)';
 $mod_strings['LBL_INC_INCORPORA_USER'] = 'Username (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Incorpora connection settings';
 $mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Work calendar';
-$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Enable or disable the use of the Work Calendar module for this employee';
+$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Indicates whether the Work calendar is enabled for the user.';
 $mod_strings['LBL_STIC_CLOCK'] = 'Time tracker';
-$mod_strings['LBL_STIC_CLOCK_INFO'] = 'Enable or disable the use of the Time tracker module for this employee';
+$mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indicates whether the Time tracker is enabled for the user.';
 $mod_strings['LBL_SDA_ALLOWED'] = 'SinergiaDA access';
 $mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Sets user access to Sinergia Data Analytics';
 
@@ -49,4 +49,4 @@ $mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Sets user access to Sinergia Data Analyt
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
 
 // Work Calendar record creation wizard
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Periodic creation of Work Calendar records';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generate Work calendar';
