@@ -39,9 +39,9 @@ $mod_strings['LBL_INC_REFERENCE_OFFICER'] = 'Tècnic de referència (Incorpora)'
 $mod_strings['LBL_INC_INCORPORA_USER'] = 'Identificador (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Paràmetres de connexió amb Incorpora';
 $mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Calendari laboral';
-$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = "Activa o desactiva l'ús del mòdul de Disponibilitat horària per a aquest empleat";
+$mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = "Indica si la funcionalitat de Calendari laboral està activada per a l'usuari.";
 $mod_strings['LBL_STIC_CLOCK'] = 'Registre horari';
-$mod_strings['LBL_STIC_CLOCK_INFO'] = "Activa o desactiva l\'ús del mòdul de Registre horari per a aquest empleat";
+$mod_strings['LBL_STIC_CLOCK_INFO'] = "Indica si la funcionalitat de Registre horari està activada per a l'usuari.";
 $mod_strings['LBL_SDA_ALLOWED'] = 'Accés a SinergiaDA';
 $mod_strings['LBL_SDA_ALLOWED_INFO'] = "Indica si l'usuari disposa d'accés a Sinergia Data Analytics";
 
@@ -49,4 +49,4 @@ $mod_strings['LBL_SDA_ALLOWED_INFO'] = "Indica si l'usuari disposa d'accés a Si
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 
 // Assistent de creació de registres de Calendari laboral
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Creació periòdica de registres de Calendari laboral';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Genera el Calendari laboral';

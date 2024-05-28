@@ -51,4 +51,4 @@ $mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] = 'Pending Confirm opt in, Confirm
 $mod_strings['LBL_OPT_IN_CONFIRMED'] = 'Opted in';
 
 // Work Calendar record creation wizard
-$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Periodic creation of Work Calendar records';
+$mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generate Work calendar';

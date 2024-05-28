@@ -41,9 +41,9 @@ $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = 'Persona en seguiment';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Projecte relacionat';
 
 $mod_strings['LBL FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Calendari laboral';
-$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Tipo';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Tipus';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Departament';
 
-$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Calendari laboral - Mostra registres';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Calendari laboral - Mostra els registres';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = 'Calendari laboral - Disponible';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Calendari laboral - No disponible';
