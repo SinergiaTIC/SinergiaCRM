@@ -1,10 +1,10 @@
 @font-face {
     font-family: "suitepicon";
-    src: url("suitepicon.eot?f0c3c527c0b031710e8c2ed12b6c7c9d?#iefix") format("embedded-opentype"),
-url("suitepicon.woff2?f0c3c527c0b031710e8c2ed12b6c7c9d") format("woff2"),
-url("suitepicon.woff?f0c3c527c0b031710e8c2ed12b6c7c9d") format("woff"),
-url("suitepicon.ttf?f0c3c527c0b031710e8c2ed12b6c7c9d") format("truetype"),
-url("suitepicon.svg?f0c3c527c0b031710e8c2ed12b6c7c9d#suitepicon") format("svg");
+    src: url("suitepicon.eot?1d0890ff4b0db41cc5c6c9a4d896215b?#iefix") format("embedded-opentype"),
+url("suitepicon.woff2?1d0890ff4b0db41cc5c6c9a4d896215b") format("woff2"),
+url("suitepicon.woff?1d0890ff4b0db41cc5c6c9a4d896215b") format("woff"),
+url("suitepicon.ttf?1d0890ff4b0db41cc5c6c9a4d896215b") format("truetype"),
+url("suitepicon.svg?1d0890ff4b0db41cc5c6c9a4d896215b#suitepicon") format("svg");
 }
 
 i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
@@ -663,10 +663,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-stic-grants:before {
     content: "\f1d7";
 }
-.suitepicon-module-stic-job-applications:before {
+.suitepicon-module-stic-group-opportunities:before {
     content: "\f1d8";
 }
-.suitepicon-module-stic-job-offers:before {
+.suitepicon-module-stic-job-applications:before {
     content: "\f1d9";
 }
 .suitepicon-module-stic-journal:before {
@@ -744,15 +744,18 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-tasks:before {
     content: "\f1f2";
 }
-.suitepicon-module-users:before {
+.suitepicon-module-trackers:before {
     content: "\f1f3";
 }
-.suitepicon-template-company:before {
+.suitepicon-module-users:before {
     content: "\f1f4";
 }
-.suitepicon-template-file:before {
+.suitepicon-template-company:before {
     content: "\f1f5";
 }
-.suitepicon-template-issue:before {
+.suitepicon-template-file:before {
     content: "\f1f6";
+}
+.suitepicon-template-issue:before {
+    content: "\f1f7";
 }

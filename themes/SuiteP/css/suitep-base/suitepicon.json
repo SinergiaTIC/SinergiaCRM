@@ -214,8 +214,8 @@
     "module-stic-followups": "\\f1d5",
     "module-stic-goals": "\\f1d6",
     "module-stic-grants": "\\f1d7",
-    "module-stic-job-applications": "\\f1d8",
-    "module-stic-job-offers": "\\f1d9",
+    "module-stic-group-opportunities": "\\f1d8",
+    "module-stic-job-applications": "\\f1d9",
     "module-stic-journal": "\\f1da",
     "module-stic-medication-log": "\\f1db",
     "module-stic-medication": "\\f1dc",
@@ -241,8 +241,9 @@
     "module-surveys": "\\f1f0",
     "module-targets": "\\f1f1",
     "module-tasks": "\\f1f2",
-    "module-users": "\\f1f3",
-    "template-company": "\\f1f4",
-    "template-file": "\\f1f5",
-    "template-issue": "\\f1f6"
+    "module-trackers": "\\f1f3",
+    "module-users": "\\f1f4",
+    "template-company": "\\f1f5",
+    "template-file": "\\f1f6",
+    "template-issue": "\\f1f7"
 }
