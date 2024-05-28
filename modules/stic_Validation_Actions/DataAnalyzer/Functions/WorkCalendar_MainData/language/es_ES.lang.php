@@ -22,8 +22,8 @@
  */
 $func_strings = array (
     'NAME' => 'Registro horario - Revisión de los registros del día anterior', // Esta etiqueta es obligatoria. Indica el nombre de la función
-    'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'La funcionalidad de Registro horario no está activada en el empleado: ',
-    'EMPLOYEE_NO_ACTIVATE_WORK_CALENDAR'=> 'La funcionalidad de Calendario laboral no está activada en el empleado: ',
+    'EMPLOYEE_NO_ACTIVATE_TIME_TRACKER'=> 'La funcionalidad de Registro horario no está activada en el usuario: ',
+    'EMPLOYEE_NO_ACTIVATE_WORK_CALENDAR'=> 'La funcionalidad de Calendario laboral no está activada en el usuario: ',
     'NO_RECORD_IN_TIME_TRACKER' => 'Al registro de calendario laboral teórico de tipo laborable no le corresponde ningún registro horario efectivo.',
     'EMAIL_SUBJECT' => 'Revisión de registro de Calendario laboral',
     'EMAIL_BODY' => 'Se ha encontrado un error al validar el siguiente registro de Calendario laboral: ',
