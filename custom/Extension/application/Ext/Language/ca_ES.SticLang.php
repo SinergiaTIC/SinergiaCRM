@@ -40,16 +40,16 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Aquest programa és progr
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres empreses i productes esmentats poden ser marques registrades de les empreses amb les quals s'associen.";
 
 // Creació de registre horari via capçalera
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Es crearà un registre horari amb la informació següent:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Es tancarà el darrer registre horari obert avui:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'amb la informació següent: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nom: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = "Data i hora d'inici: ";
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Data i hora de finalització: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleat: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Comentaris (opcional):';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Accepta';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancel·la';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Es crearà un registre horari amb la informació següent:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Es tancarà el darrer registre horari obert avui:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'amb la informació següent: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nom: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici: ";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional):';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_ACCEPT'] = 'Accepta';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancel·la';
 
 // Avís d'actualització de SinergiaCRM
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'Actualització de SinergiaCRM realitzada';

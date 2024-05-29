@@ -60,37 +60,37 @@ function drawTimeTrackerConfimrBox(data)
 
     if (localStorage.todayRegistrationStarted == '0') {
         content += `
-            <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CREATE')}</span>
+            <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_CREATE')}</span>
             <br /><br />
             <ul class='time-tracker-dialog-row'>
-                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_START_DATE')} <span style="font-weight: bold;">` + localStorage.date + `</span></li>
-                <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE')} <span style="font-weight: bold;">${userName}</span></li>
+                <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_START_DATE')} <span style="font-weight: bold;">` + localStorage.date + `</span></li>
+                <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE')} <span style="font-weight: bold;">${userName}</span></li>
             </ul>
             <br />`;
     } else {
         content += `
-        <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_1')}</span>
+        <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_UPDATE_1')}</span>
         <br /><br />
         <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_NAME')} <span style="font-weight: bold;">${data.recordName}</span></li>
+            <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_NAME')} <span style="font-weight: bold;">${data.recordName}</span></li>
         </ul>
         <br /><br />   
-        <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_UPDATE_2')}</span>
+        <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_UPDATE_2')}</span>
         <br /><br />
         <ul class='time-tracker-dialog-row'>
-            <li>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_END_DATE')} <span style="font-weight: bold;">` + localStorage.date + `</span></li>
+            <li>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_END_DATE')} <span style="font-weight: bold;">` + localStorage.date + `</span></li>
         </ul>`;
     }
 
     content += `
         <br /><br />
-        <span>${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_QUESTION')}</span>
+        <span>${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_QUESTION')}</span>
         <br /><br />
         <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
         <br /><br />
         <div id="time-tracker-dialog-buttons">
-            <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(localStorage.date, document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_ACCEPT')}</button>
-            <button id="timeTrackerButtonCancel" onclick="timeTrackerDialogCancel()">${SUGAR.language.get('app_strings', 'LBL_CONFIRMATION_POPUP_BOX_CANCEL')}</button>                                
+            <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(localStorage.date, document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_ACCEPT')}</button>
+            <button id="timeTrackerButtonCancel" onclick="timeTrackerDialogCancel()">${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_CANCEL')}</button>                                
         </div>
     </div>`;
 

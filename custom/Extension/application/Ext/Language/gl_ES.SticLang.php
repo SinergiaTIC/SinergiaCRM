@@ -40,16 +40,16 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
 
 // Creación de registro horario vía cabecera
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy:'; 
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_UPDATE_2'] = 'con la siguiente información:';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_NAME'] = 'Nombre: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_ACCEPT'] = 'Aceptar';
-$app_strings['LBL_CONFIRMATION_POPUP_BOX_CANCEL'] = 'Cancelar';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy:'; 
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'con la siguiente información:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nombre: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_ACCEPT'] = 'Aceptar';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancelar';
 
 // Aviso de actualización de SinergiaCRM
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'Actualización de SinergiaCRM realizada';
