@@ -30,4 +30,35 @@ var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends 
 
     this.field = field;
   }
+  applyAction(action) {
+    switch (action.action) {
+      case "color":
+      case "bold":
+      case "italic":
+      case "underline":
+        // Do nothing - These container field actions are made in Label + Content
+        return this;
+      case "background":
+        this.field.header.applyAction({
+          action: "style",
+          value: { "border-top-right-radius": 0, "border-bottom-right-radius": 0 }
+        });
+        this.field.content.applyAction({
+          action: "style",
+          value: { "border-top-left-radius": 0, "border-bottom-left-radius": 0, "margin-left": 0 }
+        });
+        switch (this.field.customView.view) {
+          case "detailview":
+            this.field.content.applyAction({ action: "style", value: { "margin-left": 0 } });
+            break;
+          case "editview":
+          case "quickcreate":
+            this.field.header.applyAction({ action: "style", value: { "margin-left": 0, "margin-right": 0 } });
+            break;
+        }
+
+        return this;
+    }
+    return super.applyAction(action);
+  }
 };
