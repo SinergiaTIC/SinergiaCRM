@@ -162,7 +162,7 @@ function manageAllDayView()
     addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
       return checkStartAndEndDatesCoherence("start_date", "end_date", true);
     });
-    addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+    addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCEEDS_24_HOURS"), function () {
       return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
     });
   } 
@@ -197,7 +197,7 @@ function manageAllDayView()
         addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
           return checkStartAndEndDatesCoherence("start_date", "end_date", true);
         });
-        addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCCEDS_24_HOURS"), function () {
+        addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_EXCEEDS_24_HOURS"), function () {
           return checkStartAndEndDatesExcceds24Hours("start_date", "end_date");
         });
       }

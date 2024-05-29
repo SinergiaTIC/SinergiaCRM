@@ -372,7 +372,7 @@
 				return;
 			}
 			if ((difference / 3600000) > 24) {
-				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('stic_Work_Calendar', 'LBL_END_DATE_EXCCEDS_24_HOURS') + "</span>")
+				$('#info_hours').html("<span style='color:red;display:inline-block;'>ERROR. " + SUGAR.language.get('stic_Work_Calendar', 'LBL_END_DATE_EXCEEDS_24_HOURS') + "</span>")
 				return;
 			}
 			var minutes = Math.round(difference / 60000);
