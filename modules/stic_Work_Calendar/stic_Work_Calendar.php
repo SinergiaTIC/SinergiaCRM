@@ -26,7 +26,7 @@ use function GuzzleHttp\default_user_agent;
 
 class stic_Work_Calendar extends Basic
 {
-    const ALL_DAY_TYPES = ["working", "other"];
+    const ALL_DAY_TYPES = ['vacation', 'holiday', 'personal', 'sick', 'leave'];
 
     public $new_schema = true;
     public $module_dir = 'stic_Work_Calendar';
@@ -83,7 +83,7 @@ class stic_Work_Calendar extends Basic
         $startDate = $timedate->asUser($startDate, $current_user);
 
         
-        if (in_array($this->type, self::ALL_DAY_TYPES)) 
+        if (!in_array($this->type, self::ALL_DAY_TYPES)) 
         {
             $endDate = $timedate->fromDbFormat($this->end_date, TimeDate::DB_DATETIME_FORMAT);
             $endDate = $timedate->asUser($endDate, $current_user);                

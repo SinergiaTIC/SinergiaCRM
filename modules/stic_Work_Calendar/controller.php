@@ -49,7 +49,7 @@ class stic_Work_CalendarController extends SugarController
             $startDate = $timedate->asDb($startDate);
 
             require_once 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
-            if (!in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) {
+            if (in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) {
                 $endDate = $timedate->fromDbFormat($startDate, TimeDate::DB_DATETIME_FORMAT);
                 $endDate = $endDate->modify("next day");
                 $endDate = $timedate->asDb($endDate, $current_user);     

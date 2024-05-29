@@ -39,7 +39,7 @@ class stic_Work_CalendarViewDetail extends ViewDetail
         global $timedate, $current_user;
 
         // If it is not an all day type record
-        if (!in_array($this->bean->type, stic_Work_Calendar::ALL_DAY_TYPES)) 
+        if (in_array($this->bean->type, stic_Work_Calendar::ALL_DAY_TYPES)) 
         {
             // Start date
             $startDate = $timedate->fromUser($this->bean->start_date, $current_user);

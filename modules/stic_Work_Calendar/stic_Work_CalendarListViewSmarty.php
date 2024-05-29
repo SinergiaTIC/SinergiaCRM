@@ -82,7 +82,7 @@ class stic_Work_CalendarListViewSmarty extends SticListViewSmarty
         {
             $type = array_search($row['TYPE'], $app_list_strings['stic_work_calendar_types_list']);
             // If it is an all day type record
-            if (!in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) 
+            if (in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) 
             {
                 // Start date
                 $startDate = $timedate->fromUser($row['START_DATE'], $current_user);

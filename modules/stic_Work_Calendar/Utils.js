@@ -35,7 +35,7 @@ addToValidateCallback(getFormName(), "type", "type", false, SUGAR.language.get(m
 });
 
 /* VIEWS CUSTOM CODE */
-var allDayTypes = ["", "working", "other"];
+var allDayTypes = ['vacation', 'holiday', 'personal', 'sick', 'leave'];
 switch (viewType()) {
   case "edit":
   case "quickcreate":
@@ -156,7 +156,7 @@ function manageAllDayView()
   var previousEndDateHours = "18";
   var previousEndDateMinutes = "00";
 
-  if (allDayTypes.includes(type.value)) 
+  if (!allDayTypes.includes(type.value)) 
   {
     // Add the validation for end_date field
     addToValidateCallback(getFormName(), "end_date", "datetime", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
@@ -177,9 +177,9 @@ function manageAllDayView()
 
   type.addEventListener("change", function() 
   {
-    if (allDayTypes.includes(document.getElementById("type").value)) 
+    if (!allDayTypes.includes(document.getElementById("type").value)) 
     {
-      if (!allDayTypes.includes(previousType)) {      // Set the previous values if the previous type was not type: all day
+      if (allDayTypes.includes(previousType)) {      // Set the previous values if the previous type was not type: all day
           $("#start_date_hours").val(previousStartDateHours);
           $("#start_date_minutes").val(previousStartDateMinutes);
           $("#end_date_hours").val(previousEndDateHours);
@@ -204,7 +204,7 @@ function manageAllDayView()
     } 
     else 
     {
-      if (allDayTypes.includes(previousType)) {   
+      if (!allDayTypes.includes(previousType)) {   
         // Store previous values
         previousStartDateHours = $("#start_date_hours").val();
         previousStartDateMinutes = $("#start_date_minutes").val();

@@ -45,7 +45,7 @@ class stic_Work_CalendarUtils
                     WHERE deleted = 0 
                         AND id != '". $id . "' 
                         AND assigned_user_id = '" . $assignedUserId . "' 
-                        AND type NOT IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
+                        AND type IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
                         AND DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) = DATE(CONVERT_TZ('" . $startDate . "', '+00:00', '" . $tzone ."'))";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
@@ -54,13 +54,13 @@ class stic_Work_CalendarUtils
         if (!is_null($result) && $result->num_rows > 0) {
             return false;
         } else {
-            if (!in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) {
+            if (in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)) {
                 // Checks if exist a record that does not occupy the entire day, in that case, since the record to be created is an all-day record, it is not possible to create the record.
                 $query = "SELECT * FROM stic_work_calendar
                     WHERE deleted = 0 
                         AND id != '". $id . "' 
                         AND assigned_user_id = '" . $assignedUserId . "' 
-                        AND type IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
+                        AND type NOT IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')
                         AND DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) = DATE(CONVERT_TZ('" . $startDate . "', '+00:00', '" . $tzone ."'))";
 
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
