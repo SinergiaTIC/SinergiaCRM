@@ -50,6 +50,13 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         this.$editor = this.$element.find("input,textarea,select");
         break;
     }
+    if (this.customView.view == "detailview") {
+      if (this.$editor.length === 0) {
+        this.$editor = this.$element.find("span");
+      } else {
+        this.$editor.add(this.$element.find("span"));
+      }
+    }
 
     this.$buttons = this.$element.find("button");
     this.$items = this.$element.find(".items,table,option,label");
@@ -207,7 +214,6 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
   }
 
   checkCondition_value(condition) {
-    debugger;
     switch (condition.operator) {
       case "Not_Equal_To":
         condition.operator = "Equal_To";
