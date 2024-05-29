@@ -94,7 +94,7 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
                     $contTemp = 1;
                 }
             } else {
-                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_TIME_TRACKER') . $assignedUser->name;
+                $errorMsg = $this->getLabel('TIME_TRACKER_INACTIVE_IN_USER') . $assignedUser->name;
                 $contTemp = 1;
             }
 

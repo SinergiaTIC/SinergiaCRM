@@ -89,7 +89,7 @@ class CheckWorkCalendarBeanData extends DataCheckFunction
                     }
                 } 
             } else {
-                $errorMsg = $this->getLabel('EMPLOYEE_NO_ACTIVATE_WORK_CALENDAR') . $assignedUser->name;
+                $errorMsg = $this->getLabel('WORK_CALENDAR_INACTIVE_IN_USER') . $assignedUser->name;
                 $contTemp = 1;
             }
 
