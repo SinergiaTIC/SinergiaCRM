@@ -877,7 +877,7 @@ $($.fullCalendar).ready(function () {
             // STIC-Custom 20240222 MHP - Add a special class to stic_Work_Calendar events
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
             if (element.module_name == "stic_Work_Calendar") {
-                if (element.event_type == 'working' || element.event_type == 'punctual_absence') {
+                if (element.event_type == 'working' || element.event_type == 'other') {
                     valueToPush["className"] = 'stic-Work-Calendar';
                 } else {
                     valueToPush["allDay"] = true;

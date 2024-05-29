@@ -3229,15 +3229,15 @@ $app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de aten
 $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Otros';
 
-// Calendario laboral: Tipo de disponibilidad
+// Calendario laboral: Tipo
 $app_list_strings['stic_work_calendar_types_list'][''] = '';
 $app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
-$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Festivo';
-$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Asuntos propios';
-$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Ausencia puntual';
-$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Baja';
-$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Permiso/Excedencia';
+$app_list_strings['stic_work_calendar_types_list']['holiday'] = 'Festivo';
+$app_list_strings['stic_work_calendar_types_list']['personal'] = 'Asuntos propios';
+$app_list_strings['stic_work_calendar_types_list']['sick'] = 'Baja';
+$app_list_strings['stic_work_calendar_types_list']['leave'] = 'Permiso/Excedencia';
+$app_list_strings['stic_work_calendar_types_list']['other'] = 'Otros';
 
 // Diario: Tipo de diario
 $app_list_strings['stic_journal_types_list'][''] = '';

@@ -3232,11 +3232,11 @@ $app_list_strings['stic_centers_types_list']['other'] = 'Other';
 $app_list_strings['stic_work_calendar_types_list'][''] = '';
 $app_list_strings['stic_work_calendar_types_list']['working'] = 'Working';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacation';
-$app_list_strings['stic_work_calendar_types_list']['public_holiday'] = 'Public holiday';
-$app_list_strings['stic_work_calendar_types_list']['personal_day'] = 'Personal day';
-$app_list_strings['stic_work_calendar_types_list']['punctual_absence'] = 'Punctual absence';
-$app_list_strings['stic_work_calendar_types_list']['sick_leave'] = 'Sick';
-$app_list_strings['stic_work_calendar_types_list']['leave_absence'] = 'Leave';
+$app_list_strings['stic_work_calendar_types_list']['holiday'] = 'Public holiday';
+$app_list_strings['stic_work_calendar_types_list']['personal'] = 'Personal day';
+$app_list_strings['stic_work_calendar_types_list']['sick'] = 'Sick';
+$app_list_strings['stic_work_calendar_types_list']['leave'] = 'Leave';
+$app_list_strings['stic_work_calendar_types_list']['other'] = 'Other';
 
 // Journal: Type
 $app_list_strings['stic_journal_types_list'][''] = '';

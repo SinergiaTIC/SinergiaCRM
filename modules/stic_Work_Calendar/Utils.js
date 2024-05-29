@@ -35,7 +35,7 @@ addToValidateCallback(getFormName(), "type", "type", false, SUGAR.language.get(m
 });
 
 /* VIEWS CUSTOM CODE */
-var allDayTypes = ["", "working", "punctual_absence"];
+var allDayTypes = ["", "working", "other"];
 switch (viewType()) {
   case "edit":
   case "quickcreate":

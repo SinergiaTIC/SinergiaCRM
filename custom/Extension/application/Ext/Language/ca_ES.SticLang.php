@@ -3235,9 +3235,9 @@ $app_list_strings['stic_work_calendar_types_list']['working'] = 'Feiner';
 $app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacances';
 $app_list_strings['stic_work_calendar_types_list']['holiday'] = 'Festiu';
 $app_list_strings['stic_work_calendar_types_list']['personal'] = 'Assumptes propis';
-$app_list_strings['stic_work_calendar_types_list']['punctual'] = 'Absència puntual';
 $app_list_strings['stic_work_calendar_types_list']['sick'] = 'Baixa';
 $app_list_strings['stic_work_calendar_types_list']['leave'] = 'Permís/Excedència';
+$app_list_strings['stic_work_calendar_types_list']['other'] = 'Altres';
 
 // Diari: Tipus
 $app_list_strings['stic_journal_types_list'][''] = '';

@@ -26,7 +26,7 @@ use function GuzzleHttp\default_user_agent;
 
 class stic_Work_Calendar extends Basic
 {
-    const ALL_DAY_TYPES = ["working", "punctual_absence"];
+    const ALL_DAY_TYPES = ["working", "other"];
 
     public $new_schema = true;
     public $module_dir = 'stic_Work_Calendar';
