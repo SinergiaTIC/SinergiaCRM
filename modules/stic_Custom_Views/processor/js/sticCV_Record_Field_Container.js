@@ -39,6 +39,7 @@ var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends 
         // Do nothing - These container field actions are made in Label + Content
         return this;
       case "background":
+        // Adapt the the style of Label and Content
         this.field.header.applyAction({
           action: "style",
           value: { "border-top-right-radius": 0, "border-bottom-right-radius": 0 }
