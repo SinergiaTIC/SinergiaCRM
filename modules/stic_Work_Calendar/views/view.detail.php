@@ -47,6 +47,7 @@ class stic_Work_CalendarViewDetail extends ViewDetail
 
             // End date
             $endDate = $timedate->fromUser($this->bean->end_date, $current_user);
+            $endDate = $endDate->modify("previous day");
             $this->bean->end_date = $timedate->asUserDate($endDate, false, $current_user);
         }
 

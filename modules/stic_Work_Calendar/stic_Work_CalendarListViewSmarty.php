@@ -90,6 +90,7 @@ class stic_Work_CalendarListViewSmarty extends SticListViewSmarty
                 
                 // End date
                 $endDate = $timedate->fromUser($row['END_DATE'], $current_user);
+                $endDate = $endDate->modify("previous day");
                 $this->data['data'][$key]['END_DATE'] = $timedate->asUserDate($endDate, false, $current_user);
             }
         }
