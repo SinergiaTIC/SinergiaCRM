@@ -49,7 +49,7 @@ $app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Start date and time: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'End date and time: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Employee: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comments (optional): ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_ACCEPT'] = 'Ok';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Ok';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancel';
 
 // SinergiaCRM update alert

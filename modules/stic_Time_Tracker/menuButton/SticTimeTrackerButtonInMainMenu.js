@@ -89,7 +89,7 @@ function drawTimeTrackerConfimrBox(data)
         <textarea id="time-tracker-dialog-description" rows="2" cols="20"></textarea>
         <br /><br />
         <div id="time-tracker-dialog-buttons">
-            <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(localStorage.date, document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_ACCEPT')}</button>
+            <button id="time-tracker-dialog-button-confirm" onclick="timeTrackerDialogConfirm(localStorage.date, document.getElementById('time-tracker-dialog-description').value)">${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_OK')}</button>
             <button id="timeTrackerButtonCancel" onclick="timeTrackerDialogCancel()">${SUGAR.language.get('app_strings', 'LBL_TIMETRACKER_POPUP_BOX_CANCEL')}</button>                                
         </div>
     </div>`;

@@ -48,7 +48,7 @@ $app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici: ";
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional):';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_ACCEPT'] = 'Accepta';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Accepta';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancel·la';
 
 // Avís d'actualització de SinergiaCRM
