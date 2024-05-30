@@ -482,11 +482,18 @@ var sticCVUtils = class sticCVUtils {
     return field;
   }
   static getRequiredStatus(field) {
-    var validateFields = validate[field.customView.formName];
-    for (var i = 0; i < validateFields.length; i++) {
-      // Array(name, type, required, msg);
-      if (validateFields[i][0] == field.name) {
-        return validateFields[i][2];
+    if (
+      field.customView &&
+      field.customView.formName &&
+      validate[field.customView.formName] &&
+      validate[field.customView.formName].length
+    ) {
+      var validateFields = validate[field.customView.formName];
+      for (var i = 0; i < validateFields.length; i++) {
+        // Array(name, type, required, msg);
+        if (validateFields[i][0] == field.name) {
+          return validateFields[i][2];
+        }
       }
     }
     return false;
@@ -536,5 +543,20 @@ var sticCVUtils = class sticCVUtils {
       return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
     return value;
+  }
+
+  static fillReadonlyText(fieldContent) {
+    fieldContent.$readonlyLabel.empty();
+
+    var lines = fieldContent.text().split("\n");
+    var first = true;
+    lines.forEach(function(line) {
+      if (first) {
+        first = false;
+      } else {
+        fieldContent.$readonlyLabel.append("<br />");
+      }
+      fieldContent.$readonlyLabel.append(line);
+    });
   }
 };
