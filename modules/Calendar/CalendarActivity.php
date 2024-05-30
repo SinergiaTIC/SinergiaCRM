@@ -229,6 +229,16 @@ class CalendarActivity
                 continue;
             }
 
+            // STIC-Custom 20240222 MHP - Get the user preference
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
+            $display_work_calendar_records = $GLOBALS['current_user']->getPreference('display_work_calendar_records');
+            $display_work_calendar_records = $display_work_calendar_records ?: false;
+            
+            if ($key === 'stic_Work_Calendar' && !$display_work_calendar_records) {
+                continue;
+            }
+            // END STIC-Custom
+
             if (ACLController::checkAccess($key, 'list', true)) {
                 /* END - SECURITY GROUPS */
                 $bean = BeanFactory::newBean($key);
