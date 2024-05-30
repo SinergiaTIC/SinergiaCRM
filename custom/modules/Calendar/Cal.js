@@ -839,6 +839,8 @@ CAL.update_vcal = function () {
 };
 CAL.remove_edit_dialog();
 var cal_loaded = true;
+
+
 $($.fullCalendar).ready(function () {
     var calendarContainer = $("#calendarContainer");
     $.each(calendar_items, function (user_id, user_calendar_activities) {
@@ -857,6 +859,10 @@ $($.fullCalendar).ready(function () {
             valueToPush["parent_type"] = element["parent_type"];
             valueToPush["status"] = element["status"];
             valueToPush["date_due"] = element["date_due"];
+            // STIC-Custom 20240222 MHP - Add a special class to stic_Work_Calendar events
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/114            
+            valueToPush["rendering"] = element["rendering"];
+            // END STIC-Custom                      
             valueToPush["start"] = new Date(
                 moment.utc(moment.unix(element["ts_start"])).format("MM/DD/YYYY") +
                     " " +
@@ -873,16 +879,6 @@ $($.fullCalendar).ready(function () {
                 .add(element["duration_minutes"], "minutes");
             if (element.module_name != "Meetings" && element.module_name != "Calls") {
                 valueToPush["editable"] = false;
-            }
-            // STIC-Custom 20240222 MHP - Add a special class to stic_Work_Calendar events
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
-            if (element.module_name == "stic_Work_Calendar") {
-                var allDayTypes = ['vacation', 'holiday', 'personal', 'sick', 'leave'];
-                if (allDayTypes.includes(element.event_type)) {
-                    valueToPush["allDay"] = true;
-                } else {
-                    valueToPush["className"] = 'stic-Work-Calendar';
-                }
             }
             // END STIC-Custom         
             if (undefined !== global_colorList[element.module_name]) {
@@ -1084,17 +1080,5 @@ $($.fullCalendar).ready(function () {
                 $("#calendar_title_" + user_id).html(data.full_name);
             });
         }
-        // STIC-Custom 20240222 MHP - Once the calendar is rendered, display the records with the stic_Work_Calendar class in column shape
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
-        if(global_view != 'month' && global_view != 'sharedMonth') {
-            prefix = 'stic-Work-Calendar';
-            workCalendarEvents = document.querySelectorAll('[class*="' + prefix + '"]');
-            workCalendarEvents.forEach(function(element) {
-                element.textContent = "";
-                element.style.width='5%';
-                element.style.setProperty('left', '0%', 'important');
-            });    
-        }
-        // END STIC-Custom 
     }
 });

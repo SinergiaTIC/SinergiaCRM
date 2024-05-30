@@ -44,6 +44,7 @@ $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Work calendar';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Type';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Department';
 
+$mod_strings['LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO'] = 'If this option is pressed, the work calendar events of the different selected users may overlap. To view Work Calendar information, it is recommended to separate the calendars of different users.';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Work calendar - Display records';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = 'Work calendar - Available';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Work calendar - Not available';

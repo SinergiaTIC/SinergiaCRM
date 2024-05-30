@@ -94,7 +94,13 @@ $(function() {
 									</tr>
 									<tr>
 										<td scope="row" valign="top" width="55%">
-											{$MOD.LBL_SETTINGS_DISPLAY_SHARED_CALENDAR_SEPARATE}
+											<!-- STIC-Custom 20240222 MHP - Add information icon and informational popup -->	
+											<!-- {$MOD.LBL_SETTINGS_DISPLAY_SHARED_CALENDAR_SEPARATE} -->
+											{$MOD.LBL_SETTINGS_DISPLAY_SHARED_CALENDAR_SEPARATE} 
+											<i class="inline-help glyphicon glyphicon-info-sign"></i>
+											<script>setInlineHelpQtip();</script>
+											<div class="inline-help-content" style="display:none;">{$MOD.LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO}</div>
+                                        	<!-- STIC-Custom -->											
 										</td>
 										<td width="45%">
 											<input type="hidden" name="shared_calendar_separate" value="">

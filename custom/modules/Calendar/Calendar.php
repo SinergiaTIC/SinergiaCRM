@@ -205,6 +205,7 @@ class CustomCalendar extends Calendar
                     $totalMinutes = $act->sugar_bean->duration * 60;
                     $item['duration_hours'] = floor($totalMinutes / 60);
                     $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
+                    $item['rendering'] = 'background';
                 }
                 // END STIC-Custom
 
