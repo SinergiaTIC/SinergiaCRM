@@ -234,6 +234,7 @@ $dictionary['stic_Group_Opportunities'] = array(
             'no_default' => false,
             'comments' => '',
             'help' => '',
+            'popupHelp' => 'LBL_RESOLUTION_DATE_DESC',
             'importable' => 'true',
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => '0',

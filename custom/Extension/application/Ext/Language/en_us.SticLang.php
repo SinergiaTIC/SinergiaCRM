@@ -3492,9 +3492,10 @@ $app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Granted'
 $app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'Not granted';
 
 // Granted accounts: Documentation Status
-$app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pending';
-$app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'In progress';
+$app_list_strings['stic_group_opportunities_doc_status_list']['not_required'] = 'Not required';
+$app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'Requested';
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Delivered';
+$app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validated';
 
 
 // SuiteCRM Core modifications

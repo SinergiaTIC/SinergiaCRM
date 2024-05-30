@@ -3493,9 +3493,10 @@ $app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Concedid
 $app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'Non concedida';
 
 // Organizaciones subvencionadas: Estado de la documentación
-$app_list_strings['stic_group_opportunities_doc_status_list']['pending'] = 'Pendente';
-$app_list_strings['stic_group_opportunities_doc_status_list']['in_progress'] = 'En curso';
+$app_list_strings['stic_group_opportunities_doc_status_list']['not_required'] = 'No necesaria';
+$app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'Solicitada';
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Entregada';
+$app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
 
 
 // Modificaciones del core de SuiteCRM
