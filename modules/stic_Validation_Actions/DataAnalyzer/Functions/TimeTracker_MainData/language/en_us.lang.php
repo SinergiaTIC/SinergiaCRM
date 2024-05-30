@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Time tracker - Review of records from the previous day', // This tag is required. Indicates the name of the function
+    'NAME' => 'Time tracker - Previous day records validation', // This tag is required. Indicates the name of the function
     'NO_END_DATE' => 'This time tracker record has no end date.',
     'TIME_TRACKER_INACTIVE_IN_USER'=> 'The Time tracker is not activated for the user: ',
     'NO_RECORD_IN_WORK_CALENDAR' => "There is no work type record in the user's Work calendar: ",
-    'EMAIL_SUBJECT' => 'Time tracker - Review of records from the previous day',
-    'EMAIL_BODY' => 'An error was found during the validation of this Time tracker record: ',
+    'EMAIL_SUBJECT' => 'Time tracker - Previous day records validation',
+    'EMAIL_BODY' => 'An error was found during the validation of this time tracker record: ',
 );
