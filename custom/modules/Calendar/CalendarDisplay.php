@@ -359,9 +359,9 @@ class CustomCalendarDisplay extends CalendarDisplay
 
         // STIC-Custom 20240222 MHP - Adding Work Calendar record in Calendar
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
-        $display_work_calendar_records = $GLOBALS['current_user']->getPreference('display_work_calendar_records');
-        $display_work_calendar_records = $display_work_calendar_records ?: false;
-        $ss->assign('display_work_calendar_records', $display_work_calendar_records);
+        $show_work_calendar = $GLOBALS['current_user']->getPreference('show_work_calendar');
+        $show_work_calendar = $show_work_calendar ?: false;
+        $ss->assign('show_work_calendar', $show_work_calendar);
         // END STIC-Custom
     }
 }

@@ -45,6 +45,6 @@ $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Tipus';
 $mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Departament';
 
 $mod_strings['LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO'] = 'Si està opció està premuda, els esdeveniments de calendari laboral dels diferents usuaris seleccionats poden quedar solapats. Per visualitzar la informació de Calendari laboral es recomana separar els calendaris dels diferents usuaris.';
-$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Calendari laboral - Mostra els registres';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Mostra registres de Calendari laboral';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = 'Calendari laboral - Disponible';
 $mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Calendari laboral - No disponible';

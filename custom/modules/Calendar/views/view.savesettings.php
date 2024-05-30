@@ -45,8 +45,8 @@ class CustomCalendarViewSaveSettings extends CalendarViewSaveSettings
     public function display()
     {
         global $current_user;
-        $active = $_REQUEST['display_work_calendar_records'] == "1";
-        $current_user->setPreference('display_work_calendar_records', $active, 0, 'global', $current_user);
+        $active = $_REQUEST['show_work_calendar'] == "1";
+        $current_user->setPreference('show_work_calendar', $active, 0, 'global', $current_user);
      
         parent::display();
     }

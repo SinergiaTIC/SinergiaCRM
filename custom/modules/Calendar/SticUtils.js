@@ -176,7 +176,13 @@ function callbackSelectPopup(popupReplyData) {
 // selectizing filters
 emptyString = "[" + SUGAR.language.get("app_strings", "LBL_STIC_EMPTY") + "]";
 $("select").each(function () {
-    if (this.id != 'stic_sessions_color' && this.id != 'stic_followups_color') { 
+    if (this.id != 'stic_sessions_color' && 
+        this.id != 'stic_followups_color' && 
+        this.name != document.getElementsByName('show_work_calendar')[0].name &&
+        this.name != document.getElementsByName('show_calls')[0].name &&
+        this.name != document.getElementsByName('show_tasks')[0].name &&
+        this.name != document.getElementsByName('show_completed')[0].name
+    ) { 
         var selectizeOptions = {
             plugins: ["remove_button"],
             allowEmptyOption: true

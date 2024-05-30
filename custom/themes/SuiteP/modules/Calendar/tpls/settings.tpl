@@ -107,17 +107,6 @@ $(function() {
 											<input type="checkbox" id="shared_calendar_separate" name="shared_calendar_separate" {if $shared_calendar_separate}checked{/if} value="1" tabindex="102" >
 										</td>
 									</tr>
-									<!-- STIC-Custom 20240222 MHP - The work calendar records are colored depending on whether they are work type or not. -->	
-									<tr>
-										<td scope="row" valign="top" width="55%">
-											{$MOD.LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY}
-										</td>
-										<td width="45%">
-											<input type="hidden" name="display_work_calendar_records" value="">
-											<input type="checkbox" id="display_work_calendar_records" name="display_work_calendar_records" {if $display_work_calendar_records}checked{/if} value="1" tabindex="102" >
-										</td>
-									</tr>
-									<!-- STIC-Custom -->
 									<tr class="time_range_options_row">
 										<td scope="row" valign="top">
 											{$MOD.LBL_SETTINGS_TIME_STARTS}
@@ -152,6 +141,17 @@ $(function() {
 												&nbsp;
 												{$TIME_END_MERIDIEM}
 											</div>
+										</td>
+									</tr>
+									<tr>
+										<td scope="row" valign="top">
+											{$MOD.LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY}
+										</td>
+										<td>
+											<select size="1" name="show_work_calendar" tabindex="102">
+												<option value='' {if !$show_work_calendar}selected{/if}>{$MOD.LBL_NO}</option>
+												<option value='1' {if $show_work_calendar}selected{/if}>{$MOD.LBL_YES}</option>
+											</select>
 										</td>
 									</tr>
 									<tr>
