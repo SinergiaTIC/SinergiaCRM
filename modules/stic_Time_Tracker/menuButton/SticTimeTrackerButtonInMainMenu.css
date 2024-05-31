@@ -27,7 +27,6 @@
 #time-tracker-dialog-box {
     display: none;
     position: fixed;
-    top: 10%;
     left: 78%;
     width: 20%;
     color:black;
@@ -77,7 +76,7 @@
 
     /* Time Tracker Dialog box */
     #time-tracker-dialog-box {
-        top: 13%;
+        top: 115px;
         left: 38%;
         width: 60%;
     }
@@ -100,7 +99,7 @@
 @media (min-width: 751px) {
     /* Time Tracker Dialog box */
     #time-tracker-dialog-box {
-        top: 8%;
+        top: 65px;        
         left: 45%;
         width: 53%;
     }
@@ -113,8 +112,7 @@
 /* Medium screen / desktop */
 @media (min-width: 992px) {
     /* Time Tracker Dialog box */
-    #time-tracker-dialog-box {
-        top: 8%;
+    #time-tracker-dialog-box {     
         left: 60%;
         width: 38%;
     }
@@ -128,8 +126,7 @@
 /* Large screen / wide desktop */
 @media (min-width: 1200px) {  
     /* Time Tracker Dialog box */  
-    #time-tracker-dialog-box {
-        top: 8%;
+    #time-tracker-dialog-box {       
         left: 68%;
         width: 30%;
     }
