@@ -121,7 +121,7 @@ class stic_Time_TrackerController extends SugarController {
             
             '.$data['description']; 
         }
-        $bean->save();
+        $bean->save(false);
         sugar_die('');
     }
 }
