@@ -99,7 +99,7 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
     public function doAction($records, stic_Validation_Actions $actionBean) 
     {
         include_once 'modules/stic_Validation_Actions/DataAnalyzer/Functions/include/Mailing/Utils.php';
-        global $current_user;
+        global $sugar_config, $current_user;
 
         // It will indicate if records have been found to validate.
         $count = 0;
@@ -164,10 +164,19 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
                     // Create the validation result
                     if (!empty($errorMsg)) 
                     {
+                        $dateFormat = $current_user->getUserDateTimePreferences();
+                        $weekAgoDate = new DateTime();
+                        $weekAgoDate->modify('-1 week');
+                        $weekAgoDate = $weekAgoDate->format($dateFormat["date"]);
+                        $oneDayAgoDate = new DateTime();
+                        $oneDayAgoDate->modify('-1 day');
+                        $oneDayAgoDate = $oneDayAgoDate->format($dateFormat["date"]);
+
                         $errorMsg .= '<br /><br />';
-                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Time_Tracker&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '&start_date_advanced_range_choice=last_7_days&range_start_date_advanced=[last_7_days]"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_TIME_TRACKER_LIST_VIEW") . '</span></a><br />';
-                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Work_Calendar&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '&start_date_advanced_range_choice=last_7_days&range_start_date_advanced=[last_7_days]"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_WORK_CALENDAR_LIST_VIEW") . '</span></a><br />';
+                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Time_Tracker&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '&start_date_advanced_range_choice=between&start_range_start_date_advanced=' . $weekAgoDate .'&end_range_start_date_advanced=' . $oneDayAgoDate.'"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_TIME_TRACKER_LIST_VIEW") . '</span></a><br />';
+                        $errorMsg .= '<a style="text-decoration:none" href="' . $sugar_config["site_url"] . '/index.php?module=stic_Work_Calendar&action=index&query=true&searchFormTab=advanced_search&assigned_user_id_advanced=' . $assignedUser->id . '&start_date_advanced_range_choice=between&start_range_start_date_advanced=' . $weekAgoDate .'&end_range_start_date_advanced=' . $oneDayAgoDate.'"><span class="suitepicon suitepicon-action-list-maps" style="font-size:12px">&nbsp;&nbsp;</span><span> - ' . $this->getLabel("STIC_WORK_CALENDAR_LIST_VIEW") . '</span></a><br />';
                         $errorMsg .= '<br />';
+
                         $validationResultMsg = '<span style="color:red;">' . $errorMsg . '</span>';                        
                         $data = array(
                             'name' => $this->getLabel('NAME'),
