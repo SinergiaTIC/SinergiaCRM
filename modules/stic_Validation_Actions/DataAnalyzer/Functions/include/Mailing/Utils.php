@@ -21,7 +21,7 @@ function sendEmailToEmployeeAndResponsible($employee, $row, $info)
     // Add employee email to $emailsToSendMessage
     $subject = $info['subject'];       
     $body = $info['body'];
-    $body .= ' <a href="' . $sugar_config["site_url"] . '/index.php?module=stic_Time_Tracker&&return_module=stic_Time_Tracker&action=DetailView&record=' . $row['id'] . '"> ' . $row['name'] . '</a> <br />';
+    $body .= ' <a href="' . $sugar_config["site_url"] . '/index.php?module='. $info['module'] .'&return_module=stic_Time_Tracker&action=DetailView&record=' . $row['id'] . '"> ' . $row['name'] . '</a> <br />';
     $body .= $info['errorMsg']; 
     
     if (isset($employee->email1)){

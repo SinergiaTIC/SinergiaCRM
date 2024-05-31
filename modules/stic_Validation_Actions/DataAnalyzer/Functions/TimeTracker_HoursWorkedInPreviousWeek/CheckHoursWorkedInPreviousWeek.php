@@ -52,14 +52,14 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
             SELECT stt.assigned_user_id, SUM(stt.duration) AS total_duration, sttu.stic_clock_c
             FROM stic_time_tracker as stt
             JOIN users_cstm as sttu ON stt.assigned_user_id = sttu.id_c
-            WHERE DATE(CONVERT_TZ(stt.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
+            WHERE DATE(CONVERT_TZ(stt.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY))
                 AND stt.deleted = 0
             GROUP BY stt. assigned_user_id) AS tt
         LEFT JOIN (
             SELECT swc.assigned_user_id, SUM(swc.duration) AS total_duration, swcu.stic_work_calendar_c
             FROM stic_work_calendar swc
             JOIN users_cstm as swcu ON swc.assigned_user_id = swcu.id_c            
-            WHERE DATE(CONVERT_TZ(swc.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
+            WHERE DATE(CONVERT_TZ(swc.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY))
                 AND swc.type = 'working'
                 AND swc.deleted = 0
             GROUP BY swc.assigned_user_id) AS wc 
@@ -72,14 +72,14 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
             SELECT stt.assigned_user_id, SUM(stt.duration) AS total_duration, sttu.stic_clock_c
             FROM stic_time_tracker as stt
             JOIN users_cstm as sttu ON stt.assigned_user_id = sttu.id_c
-            WHERE DATE(CONVERT_TZ(stt.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
+            WHERE DATE(CONVERT_TZ(stt.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY))
                 AND stt.deleted = 0
             GROUP BY stt. assigned_user_id) AS tt
         RIGHT JOIN (
             SELECT swc.assigned_user_id, SUM(swc.duration) AS total_duration, swcu.stic_work_calendar_c
             FROM stic_work_calendar swc
             JOIN users_cstm as swcu ON swc.assigned_user_id = swcu.id_c            
-            WHERE DATE(CONVERT_TZ(swc.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."')
+            WHERE DATE(CONVERT_TZ(swc.start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 7 DAY)) AND DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY))
                 AND swc.type = 'working'  
                 AND swc.deleted = 0
             GROUP BY swc.assigned_user_id) AS wc 
@@ -99,7 +99,7 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
     public function doAction($records, stic_Validation_Actions $actionBean) 
     {
         include_once 'modules/stic_Validation_Actions/DataAnalyzer/Functions/include/Mailing/Utils.php';
-        global $sugar_config;
+        global $current_user;
 
         // It will indicate if records have been found to validate.
         $count = 0;
@@ -182,6 +182,7 @@ class CheckHoursWorkedInPreviousWeek extends DataCheckFunction
 
                         $info['subject'] = $this->getLabel('EMAIL_SUBJECT');
                         $info['errorMsg'] = $errorMsg;
+                        $info['module'] = $this->functionDef["module"];                        
                         sendEmailToEmployeeAndResponsible($assignedUser, $row, $info);
                     }
 

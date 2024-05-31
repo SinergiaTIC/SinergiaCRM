@@ -42,7 +42,7 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
 
         $sql = "SELECT id, name, start_date, end_date, assigned_user_id
                 FROM stic_time_tracker
-                WHERE DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) BETWEEN DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY)) AND DATE(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'))
+                WHERE DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone ."')) = DATE(DATE_SUB(CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '" . $tzone ."'), INTERVAL 1 DAY))
                     AND deleted = 0
                 ORDER BY assigned_user_id;";
 
@@ -116,6 +116,7 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
                 );
                 $this->logValidationResult($data);
                 $info['errorMsg'] = $errorMsg;
+                $info['module'] = $this->functionDef["module"];
                 sendEmailToEmployeeAndResponsible($assignedUser, $row, $info);
             }
                 
@@ -133,6 +134,7 @@ class CheckTimeTrackerBeanData extends DataCheckFunction
                 );
                 $this->logValidationResult($data);
                 $info['errorMsg'] = $errorMsg;
+                $info['module'] = $this->functionDef["module"];                
                 sendEmailToEmployeeAndResponsible($assignedUser, $row, $info);
             }
         }
