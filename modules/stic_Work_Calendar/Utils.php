@@ -96,6 +96,7 @@ class stic_Work_CalendarUtils
         $interval = $_REQUEST['repeat_interval'];
         $count = $_REQUEST['repeat_count'];
         $until = $_REQUEST['repeat_until'];
+        $type = $_REQUEST['type'];
         $startDay = $_REQUEST['repeat_start_day'];
         $finalDay = $_REQUEST['repeat_final_day'];
         $startHour = $_REQUEST['repeat_start_hour'];
@@ -345,20 +346,25 @@ class stic_Work_CalendarUtils
                 if ($finalDay != '') {
                     $finalDay = strtotime($aux[$i]) + $duration;
                     $finalDay = date('Y-m-d H:i:s', $finalDay);
+                    if (in_array($type, stic_Work_Calendar::ALL_DAY_TYPES)){
+                        $finalDay = new DateTime($finalDay);
+                        $finalDay->modify('+24 hours');
+                        $finalDay = $finalDay->format(TimeDate::DB_DATETIME_FORMAT);
+                    }
                 }
                 $workCalendarBean = BeanFactory::newBean('stic_Work_Calendar');
                 $workCalendarBean->start_date = $aux[$i];
                 $workCalendarBean->end_date = $finalDay;
 
-                if (isset($_REQUEST['type']) && $_REQUEST['type'] != '') {
-                    $workCalendarBean->type = $_REQUEST['type'];
+                if (isset($type) && $type != '') {
+                    $workCalendarBean->type = $type;
                 }
                 $workCalendarBean->assigned_user_id = $assignedUserId;
                 if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
                     $workCalendarBean->description = $_REQUEST['description'];
                 }
                 
-                $save = self::existsRecordsWithIncompatibleType('', $aux[$i], $finalDay, $_REQUEST['type'], $assignedUserId);
+                $save = self::existsRecordsWithIncompatibleType('', $aux[$i], $finalDay, $type, $assignedUserId);
                 if ($save) {
                     $workCalendarBean->save(false);
                     $summary['global']['totalRecordsCreated']++;
@@ -371,8 +377,8 @@ class stic_Work_CalendarUtils
                     $startDate = $timedate->asUser($startDate, $current_user);
                     $endDate = $timedate->fromDbFormat($finalDay, TimeDate::DB_DATETIME_FORMAT);
                     $endDate = $timedate->asUser($endDate, $current_user);    
-                    $type = $app_list_strings['stic_work_calendar_types_list'][$_REQUEST['type']];
-                    $summary['users'][$assignedUserId]['recordsNotCreated'][] =  array ('username' => $user->name, 'type' => $type, 'startDate' => $startDate, 'endDate' => $endDate);
+                    $typeLabel = $app_list_strings['stic_work_calendar_types_list'][$type];
+                    $summary['users'][$assignedUserId]['recordsNotCreated'][] =  array ('username' => $user->name, 'type' => $typeLabel, 'startDate' => $startDate, 'endDate' => $endDate);
                 }
                 $summary['global']['totalRecordsProcessed']++;
                 $summary['users'][$assignedUserId]['numRecordsProcessed']++;

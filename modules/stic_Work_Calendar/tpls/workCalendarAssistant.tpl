@@ -54,9 +54,9 @@
 							id="repeat_start_day_input" name="repeat_start_day" value="" required>
 						<img border="0" src="index.php?entryPoint=getImage&imageName=jscalendar.gif"
 							alt="{$APP.LBL_TIME_START}" id="repeat_start_day_trigger" align="absmiddle">
-						<select name="repeat_start_hour">{html_options options=$repeat_hours selected="9"}</select>
-						<span id="repeat-hours-text"></span> :
-						<select name="repeat_start_minute">{html_options options=$repeat_minutes selected="0"}</select>
+						<select id="repeat_start_hour" name="repeat_start_hour">{html_options options=$repeat_hours selected="9"}</select>
+						<span id="repeat-hours-text"> :</span>
+						<select id="repeat_start_minute" name="repeat_start_minute">{html_options options=$repeat_minutes selected="0"}</select>
 						<span id="repeat-minutes-text"></span>
 
 						<script type="text/javascript">
@@ -76,7 +76,7 @@
 				</td>
 			</tr>
 
-			<tr>
+			<tr id='endDateRow'>
 				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_TIME_FINAL}:<span
 						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 				<td width="37.5%" valign="top">
@@ -85,9 +85,9 @@
 							id="repeat_final_day_input" name="repeat_final_day" value="" required>
 						<img border="0" src="index.php?entryPoint=getImage&imageName=jscalendar.gif"
 							alt="{$APP.LBL_TIME_FINAL}" id="repeat_final_day_trigger" align="absmiddle">
-						<select name="repeat_final_hour">{html_options options=$repeat_hours selected="18"}</select>
-						<span id="repeat-hours-text"></span> :
-						<select name="repeat_final_minute">{html_options options=$repeat_minutes selected="0"}</select>
+						<select id="repeat_final_hour" name="repeat_final_hour">{html_options options=$repeat_hours selected="18"}</select>
+						<span id="repeat-hours-text">:</span>
+						<select id="repeat_final_minute" name="repeat_final_minute">{html_options options=$repeat_minutes selected="0"}</select>
 						<span id="repeat-minutes-text"></span>
 						<span id="info_hours" style="font-weight:bolder"></span>
 
@@ -226,6 +226,67 @@
 
 <script type="text/javascript">
 	{literal}
+		var allDayTypes = ['vacation', 'holiday', 'personal', 'sick', 'leave'];
+		var type = document.getElementById("type");
+
+		// Store default values in previous values
+		var previousType = type.value;
+		var previousStartDateHours = "09";
+		var previousStartDateMinutes = "00";
+		var previousEndDateHours = "18";
+		var previousEndDateMinutes = "00";
+
+		type.addEventListener("change", function() 
+		{
+			// Elements
+			repeatStartHour = document.getElementById('repeat_start_hour');
+			repeatStartMinute = document.getElementById('repeat_start_minute');
+			repeatFinalHour = document.getElementById('repeat_final_hour');
+			repeatFinalMinute = document.getElementById('repeat_final_minute');
+
+			if (!allDayTypes.includes(type.value)) 
+			{
+				if (allDayTypes.includes(previousType)) {      // Set the previous values if the previous type was not type: all day
+					// Recover previous values
+					repeatStartHour.value=previousStartDateHours;
+					repeatStartMinute.value=previousStartDateMinutes;
+					repeatFinalHour.value=previousEndDateHours;
+					repeatFinalMinute.value=previousEndDateMinutes;
+					
+					// Show fields neccesary with timed type records
+					repeatStartHour.style.display='inline-block';
+					repeatStartMinute.style.display='inline-block';
+					document.getElementById('repeat-hours-text').style.display='inline-block';
+					document.getElementById('endDateRow').style.display='table-row';
+
+				}
+			} 
+			else 
+			{    
+				if (!allDayTypes.includes(previousType)) {   
+					// Store in previous values
+					previousStartDateHours = repeatStartHour.value;
+					previousStartDateMinutes = repeatStartMinute.value;
+					previousEndDateHours = repeatFinalHour.value;
+					previousEndDateMinutes = repeatFinalMinute.value;
+
+					// Set all day values
+					repeatStartHour.value='0';
+					repeatStartMinute.value='0';
+					repeatFinalHour.value='0';
+					repeatFinalMinute.value='0';
+					
+					// Hide fields not neccesary with all day type records
+					repeatStartHour.style.display='none';
+					repeatStartMinute.style.display='none';
+					document.getElementById('repeat-hours-text').style.display='none';
+					document.getElementById('endDateRow').style.display='none';
+				}
+			}
+			previousType = type.value;
+		});
+
+
 		// Filters array
 		relatedFields = {
 			'stic_Work_Calendar_assigned_user': {
@@ -384,7 +445,7 @@
 		}
 
 		document.getElementById("CalendarRepeatForm").addEventListener("submit", function(event) {
-			if ($('#info_hours').text().includes('ERROR')) {
+			if (allDayTypes.includes(type.value) && $('#info_hours').text().includes('ERROR')) {
 				event.preventDefault();
 				alert(SUGAR.language.get('stic_Work_Calendar', 'LBL_ERROR_IN_VALIDATION'));
 			}
