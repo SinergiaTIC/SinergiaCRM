@@ -67,4 +67,10 @@ function showNewsLetterFields(show) {
   }
 }
 
-function showNotificationFields(show) {}
+function showNotificationFields(show) {
+  if (show) {
+    $('[data-field="parent_name"]').show();
+  } else {
+    $('[data-field="parent_name"]').hide();
+  }
+}
