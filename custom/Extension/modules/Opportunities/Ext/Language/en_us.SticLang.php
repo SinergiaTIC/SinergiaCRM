@@ -67,7 +67,7 @@ $mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = 'Email template';
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'Opportunity URL';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Additional information';
 $mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Send notification now';
-$mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE'] = 'Notifications';
+$mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE'] = 'Notifications';
 
 //Strings for Grants
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Grants';

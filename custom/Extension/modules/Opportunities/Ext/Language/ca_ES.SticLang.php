@@ -94,7 +94,7 @@ $mod_strings['LBL_STIC_EMAIL_TEMPLATE'] = 'Plantilla de correu electrònic';
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL de la convocatòria';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Informació addicional';
 $mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Envia una notificació ara';
-$mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TTITLE'] = 'Notificacions';
+$mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE'] = 'Notificacions';
 
 // Cadenes adaptades Ajuts
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';

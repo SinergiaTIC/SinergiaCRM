@@ -34,40 +34,40 @@ $subpanel_layout = array(
 
     'list_fields' => array(
         'name' => array(
-            'name' => 'name',
+            // 'name' => 'name',
             'vname' => 'LBL_LIST_CAMPAIGN_NAME',
             'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '85%',
+            // 'width' => '20%',
         ),
         'status' => array(
-            'name' => 'status',
+            // 'name' => 'status',
             'vname' => 'LBL_LIST_STATUS',
-            'width' => '15%',
+            // 'width' => '15%',
         ),
         'email_marketing_name' => array(
-            'name' => 'email_marketing_name',
+            // 'name' => 'email_marketing_name',
             'vname' => 'LBL_LIST_EMAIL_MARKETING_NAME',
-            'width' => '15%',
+            // 'width' => '15%',
         ),
         'email_marketing_date_start' => array(
-            'name' => 'email_marketing_date_start',
+            // 'name' => 'email_marketing_date_start',
             'vname' => 'LBL_LIST_EMAIL_MARKETING_DATE_START',
-            'width' => '15%',
+            // 'width' => '15%',
         ),
         'email_marketing_status' => array(
-            'name' => 'email_marketing_status',
+            // 'name' => 'email_marketing_status',
             'vname' => 'LBL_LIST_EMAIL_MARKETING_STATUS',
-            'width' => '15%',
+            // 'width' => '15%',
         ),
         'email_templates_name' => array(
-            'name' => 'email_templates_name',
+            // 'name' => 'email_templates_name',
             'vname' => 'LBL_LIST_EMAIL_TEMPLATES_NAME',
-            'width' => '15%',
+            // 'width' => '15%',
         ),
         'prospect_lists_name' => array(
-            'name' => 'prospect_lists_name',
+            // 'name' => 'prospect_lists_name',
             'vname' => 'LBL_LIST_PROSPECT_LISTS_NAME',
-            'width' => '15%',
+            // 'width' => '15%',
         ),
         // 'quickedit_button' => array(
         //     'vname' => 'LBL_QUICKEDIT_BUTTON',
