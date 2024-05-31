@@ -390,7 +390,7 @@ $dictionary["stic_Group_Opportunities"]["fields"]["stic_group_opportunities_acco
     'source' => 'non-db',
     'module' => 'Accounts',
     'bean_name' => 'Account',
-    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_ACCOUNTS_TITLE',
+    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_NAME',
     'id_name' => 'stic_group_opportunities_accountsaccounts_ida',
 );
 $dictionary["stic_Group_Opportunities"]["fields"]["stic_group_opportunities_accounts_name"] = array(
@@ -398,7 +398,7 @@ $dictionary["stic_Group_Opportunities"]["fields"]["stic_group_opportunities_acco
     'required' => true,
     'type' => 'relate',
     'source' => 'non-db',
-    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_ACCOUNTS_TITLE',
+    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_NAME',
     'save' => true,
     'id_name' => 'stic_group_opportunities_accountsaccounts_ida',
     'link' => 'stic_group_opportunities_accounts',
@@ -422,7 +422,7 @@ $dictionary["stic_Group_Opportunities"]["fields"]["stic_group_opportunities_oppo
     'source' => 'non-db',
     'module' => 'Opportunities',
     'bean_name' => 'Opportunity',
-    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_OPPORTUNITIES_TITLE',
+    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_NAME',
     'id_name' => 'stic_group_opportunities_opportunitiesopportunities_ida',
 );
 $dictionary["stic_Group_Opportunities"]["fields"]["stic_group_opportunities_opportunities_name"] = array(
@@ -430,7 +430,7 @@ $dictionary["stic_Group_Opportunities"]["fields"]["stic_group_opportunities_oppo
     'required' => true,
     'type' => 'relate',
     'source' => 'non-db',
-    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_OPPORTUNITIES_TITLE',
+    'vname' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_NAME',
     'save' => true,
     'id_name' => 'stic_group_opportunities_opportunitiesopportunities_ida',
     'link' => 'stic_group_opportunities_opportunities',

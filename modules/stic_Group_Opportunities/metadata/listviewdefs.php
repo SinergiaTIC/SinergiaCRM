@@ -88,7 +88,7 @@ array(
     'STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_NAME' => array(
         'type' => 'relate',
         'link' => true,
-        'label' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_OPPORTUNITIES_TITLE',
+        'label' => 'LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_NAME',
         'id' => 'STIC_GROUP_OPPORTUNITIES_OPPORTUNITIESOPPORTUNITIES_IDA',
         'width' => '10%',
         'default' => false,
@@ -96,7 +96,7 @@ array(
     'STIC_GROUP_OPPORTUNITIES_ACCOUNTS_NAME' => array(
         'type' => 'relate',
         'link' => true,
-        'label' => 'LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_ACCOUNTS_TITLE',
+        'label' => 'LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_NAME',
         'id' => 'STIC_GROUP_OPPORTUNITIES_ACCOUNTSACCOUNTS_IDA',
         'width' => '10%',
         'default' => false,
