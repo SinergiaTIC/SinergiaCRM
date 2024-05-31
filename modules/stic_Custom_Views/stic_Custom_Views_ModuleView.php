@@ -381,7 +381,6 @@ class stic_Custom_Views_ModuleView
         global $app_list_strings;
 
         $validValues = array();
-        //$fieldType = $this->allModuleFieldTypeList[$fieldKey];
         switch (strtolower($conditionType)) {
             case 'date':
                 $validValues = array('now', 'today', 'tomorrow', 'yesterday' ,'anniversary');
@@ -390,8 +389,7 @@ class stic_Custom_Views_ModuleView
                 $validValues = array('current_user');
                 break;
             case 'field':
-                //IEPA!!
-                //TODO
+                // TODO
                 break;
         }
         $validValuesList = array();
