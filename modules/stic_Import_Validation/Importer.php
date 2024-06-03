@@ -496,7 +496,9 @@ class Importer
             if (count($fields) > 1) {
                 $query .= "
                 OR ";
-            } 
+            } else {
+                $query .= ")";
+            }
 
         } else {
             // If it has not been filtered by Email, we add WHERE to the query
@@ -515,7 +517,7 @@ class Importer
         }
         // Add the deleted = 0 clause
         $query .= "
-        AND m.deleted = 0)";
+        AND m.deleted = 0";
 
         // Get the ID of the first record that meets the query
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __FILE__ . ': Query fo getIDForBBDD(): '. $query);
