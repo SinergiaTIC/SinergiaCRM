@@ -515,7 +515,7 @@ class Importer
         }
         // Add the deleted = 0 clause
         $query .= "
-        AND m.deleted = 0";
+        AND m.deleted = 0)";
 
         // Get the ID of the first record that meets the query
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __FILE__ . ': Query fo getIDForBBDD(): '. $query);
