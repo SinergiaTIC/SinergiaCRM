@@ -28,6 +28,9 @@ var sticCV_Record_Field_Container = class sticCV_Record_Field_Container extends 
   constructor(field, $fieldElement) {
     super(field.customView, $fieldElement);
 
+    // Make same height Header and Content
+    this.$element.css("align-items", "stretch");
+
     this.field = field;
   }
   applyAction(action) {

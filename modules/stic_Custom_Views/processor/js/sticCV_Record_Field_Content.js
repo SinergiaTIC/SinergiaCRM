@@ -31,6 +31,8 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
       $contentElement = $fieldElement.children(".stic-FieldContent").children('[field="' + fieldName + '"]');
     }
     super(field.customView, $contentElement);
+    
+    this.$element.css("height", "auto");
 
     this.field = field;
     this.fieldName = fieldName;
