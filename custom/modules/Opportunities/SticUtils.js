@@ -43,10 +43,15 @@ switch (viewType()) {
         id: "load_participants",
         title: SUGAR.language.get(module, "LBL_LOAD_PARTICIPANTS"),
         onclick:
-          "open_popup('Accounts', 800, 600, '', true, true, {'call_back_function': 'setReturnAndCreateParticipants', 'form_name': 'DetailView', 'passthru_data': { }}, 'MultiSelect', true)",
-      },
+          "open_popup('Accounts', 800, 600, '', true, true, {" +
+          "'call_back_function': 'setReturnAndCreateParticipants', " +
+          "'field_to_name_array': {'id': 'account_id'}," +
+          "'form_name': 'DetailView', " +
+          "'passthru_data': { }" +
+          "}, 'MultiSelect', true)"
+      }
     };
-    createDetailViewButton(buttons.createParticipantsFromAccounts);    
+    createDetailViewButton(buttons.createParticipantsFromAccounts);
     break;
 
   case "list":
@@ -67,6 +72,10 @@ function setReturnAndCreateParticipants(popupReplyData) {
     record: window.document.forms["DetailView"].record.value,
     accountIds: popupReplyData.selection_list,
   };
+
+  if (obj.accountIds === undefined && popupReplyData.name_to_value_array.account_id !== undefined) {
+    obj.accountIds = [popupReplyData.name_to_value_array.account_id];
+  }
 
   var url = "?index.php&" + $.param(obj);
   location.href = url;
