@@ -1090,9 +1090,9 @@ $table-alternate-row-bg: lighten($stic-main-bg, 4%); // STIC-Custom
 $table-row-bg: lighten($stic-main-bg, 0.5%); // STIC-Custom
 
 // Dashlets
-$dashlet-title-bg: $stic-text; // STIC-Custom
-$dashlet-title-color: $color-80;
-$dashlet-toolbar-bg: lighten($stic-text, 10%); // STIC-Custom
+$dashlet-title-bg: $stic-sidebar; // STIC-Custom
+$dashlet-title-color: $stic-sidebar-text;
+$dashlet-toolbar-bg:darken($stic-sidebar, 7%); // STIC-Custom
 $dashlet-pagination-bg: $color-28;
 $dashlet-header-bg: $color-20;
 $dashlet-btn-color: $color-80;
