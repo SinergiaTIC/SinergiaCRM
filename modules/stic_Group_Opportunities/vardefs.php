@@ -93,7 +93,7 @@ $dictionary['stic_Group_Opportunities'] = array(
             'len' => 26,
             'size' => '20',
             'enable_range_search' => false,
-            'precision' => 6,
+            'precision' => 2,
         ),
         'amount_awarded' => array(
             'required' => false,
@@ -115,7 +115,7 @@ $dictionary['stic_Group_Opportunities'] = array(
             'len' => 26,
             'size' => '20',
             'enable_range_search' => false,
-            'precision' => 6,
+            'precision' => 2,
         ),
         'amount_received' => array(
             'required' => false,
@@ -137,7 +137,7 @@ $dictionary['stic_Group_Opportunities'] = array(
             'len' => 26,
             'size' => '20',
             'enable_range_search' => false,
-            'precision' => 6,
+            'precision' => 2,
         ),
         'start_date' => array(
             'required' => false,
