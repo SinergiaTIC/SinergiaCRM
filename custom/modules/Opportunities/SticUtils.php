@@ -147,7 +147,6 @@ class OpportunitiesUtils
             // Assign other data
             $participantBean->name = $accountBean->name . ' - ' . $opportunityBean->name;
             $participantBean->status = "guest";
-            $participantBean->document_status = "pending";
             $participantBean->assigned_user_id = $current_user->id;
 
             $participantBean->save();
