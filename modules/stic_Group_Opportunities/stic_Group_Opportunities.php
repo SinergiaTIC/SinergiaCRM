@@ -49,7 +49,6 @@ class stic_Group_Opportunities extends Basic
     public $status;
     public $document_status;
     public $amount_requested;
-    public $currency_id;
     public $amount_awarded;
     public $amount_received;
     public $start_date;

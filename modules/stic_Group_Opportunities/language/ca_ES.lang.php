@@ -63,7 +63,6 @@ $mod_strings = array(
     'LBL_STATUS' => 'Estat',
     'LBL_DOCUMENT_STATUS' => 'Documentació lliurada',
     'LBL_AMOUNT_REQUESTED' => 'Import sol·licitat',
-    'LBL_CURRENCY' => 'Moneda',
     'LBL_AMOUNT_AWARDED' => 'Import concedit',
     'LBL_AMOUNT_RECEIVED' => 'Import rebut',
     'LBL_START_DATE' => "Data d'alta",
