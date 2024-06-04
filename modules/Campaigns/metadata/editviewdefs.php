@@ -375,7 +375,19 @@ $viewdefs['Campaigns']['EditView'] = array (
         ),
         1 => '',
       ),
-      4 => 
+      4 => array(
+        0 => array(
+          'name' => 'prospect_list_name',
+          'label' => 'LBL_PROSPECT_LIST_NAME',
+          'customCode' => '<input type="text" name="select_prospect_list" id="select_prospect_list" value="">',
+        ),
+        1 => array(
+          'name' => 'email_template_name',
+          'label' => 'LBL_EMAIL_TEMPLATE_NAME',
+          'customCode' => '<input type="text" name="select_email_template" id="select_email_template" value="">',
+        ),
+      ),
+      5 => 
       array (
         0 => 
         array (
