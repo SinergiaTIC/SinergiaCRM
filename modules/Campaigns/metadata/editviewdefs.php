@@ -297,7 +297,8 @@ $viewdefs['Campaigns']['EditView'] = array (
     //  {rdelim}
     // </script>',
     'javascript' => '{sugar_getscript file="include/javascript/popup_parent_helper.js"}
-                     {sugar_getscript file="modules/Campaigns/SticEditView.js"}',
+                     {sugar_getscript file="SticInclude/js/Utils.js"}
+                     {sugar_getscript file="modules/Campaigns/SticUtils.js"}',
     // END STIC-Custom JBL
     'useTabs' => true,
     'tabDefs' => 
@@ -373,21 +374,11 @@ $viewdefs['Campaigns']['EditView'] = array (
           'customCode' => '<div style=\'none\' id=\'freq_field\'>{html_options name="frequency" options=$fields.frequency.options selected=$fields.frequency.value}</div></TD>',
           'customLabel' => '<div style=\'none\' id=\'freq_label\'>{$MOD.LBL_CAMPAIGN_FREQUENCY}</div>',
         ),
-        1 => '',
-      ),
-      4 => array(
-        0 => array(
-          'name' => 'prospect_list_name',
-          'label' => 'LBL_PROSPECT_LIST_NAME',
-          'customCode' => '<input type="text" name="select_prospect_list" id="select_prospect_list" value="">',
-        ),
-        1 => array(
-          'name' => 'email_template_name',
-          'label' => 'LBL_EMAIL_TEMPLATE_NAME',
-          'customCode' => '<input type="text" name="select_email_template" id="select_email_template" value="">',
+        1 => array (
+          'name' => 'parent_name',
         ),
       ),
-      5 => 
+      4 => 
       array (
         0 => 
         array (

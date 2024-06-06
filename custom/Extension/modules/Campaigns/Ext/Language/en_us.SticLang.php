@@ -53,3 +53,6 @@ $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'In order to include reCAPTCHA val
 // the proper value has been set in the core files. In English case, it has been set in custom extension
 // language file in order to avoid a core modification.
 $mod_strings['LBL_WEB_TO_LEAD'] = 'Create person web form'; 
+
+$mod_strings['LBL_PROSPECT_LIST'] = 'Prospect List';
+$mod_strings['LBL_EMAIL_TEMPLATE'] = 'Email Template';

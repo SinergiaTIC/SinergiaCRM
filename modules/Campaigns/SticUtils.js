@@ -19,14 +19,50 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+/* HEADER */
+// Set module name
+var module = "Campaigns";
+
+/* INCLUDES */
+
+/* VALIDATION DEPENDENCIES */
+
+/* VALIDATION CALLBACKS */
+
+/* VIEWS CUSTOM CODE */
+switch (viewType()) {
+  case "quickcreate":
+    $(document).ready(function() {
+    });
+    break;
+
+  case "edit":
+  case "popup":
+    $(document).ready(function() {
+      type_change();
+    });
+    break;
+
+  case "detail":
+    break;
+
+  case "list":
+    break;
+
+  default:
+    break;
+}
+
+$(document).ready(function() {});
+
+
 function type_change() {
   var typeValue = $('[name="campaign_type"]').val();
 
   showNewsLetterFields(typeValue == "NewsLetter");
   showNotificationFields(typeValue == "Notification");
 }
-
-type_change();
 
 function ConvertItems(id) {
   var items = new Array();
