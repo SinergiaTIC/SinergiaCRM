@@ -157,7 +157,18 @@ class CustomCalendarActivity extends CalendarActivity
             $completedTasks = " AND tasks.status != 'Completed' ";
         }
 
-        foreach ($activities as $key => $activity) {
+        foreach ($activities as $key => $activity) 
+        {
+            // STIC-Custom 20240222 MHP - Get the user preference
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
+            $show_work_calendar = $GLOBALS['current_user']->getPreference('show_work_calendar');
+            $show_work_calendar = $show_work_calendar ?: false;
+            
+            if ($key === 'stic_Work_Calendar' && !$show_work_calendar) {
+                continue;
+            }
+            // END STIC-Custom
+
             if (ACLController::checkAccess($key, 'list', true)) {
                 /* END - SECURITY GROUPS */
                 $class = $beanList[$key];
