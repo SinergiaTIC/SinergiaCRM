@@ -128,13 +128,12 @@ class stic_Time_Tracker extends Basic
     public static function getLastTodayTimeTrackerRecord($userId)
     {
         global $db, $current_user;
-
         $tzone = $current_user->getPreference('timezone');
 
         $query = "SELECT * FROM stic_time_tracker
             WHERE deleted = 0 
             AND start_date IS NOT NULL AND start_date <> ''
-            AND DATE(CONVERT_TZ(start_date, '+00:00', '" . $tzone . "')) = DATE(NOW())
+            AND TIMESTAMPDIFF(SECOND, CONVERT_TZ(start_date, '+00:00', '" . $tzone . "'), NOW()) < 86400
             AND assigned_user_id = '" . $userId . "'  
             ORDER BY start_date desc
             LIMIT 1;";
