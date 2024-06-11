@@ -45,10 +45,11 @@ class CampaignsSubpanelQuickCreate extends SubpanelQuickCreate
         echo getVersionedScript("SticInclude/js/Utils.js");
 
         include_once "modules/Campaigns/SticUtils.php";
+        fillDynamicListsForNotifications();
+
         echo getLangStrings();
-        // echo getVersionedScript("modules/stic_Custom_View_Customizations/Utils.js");
-        // echo getVersionedScript("modules/stic_Custom_View_Customizations/action_lines.js");
-        // echo getVersionedScript("modules/stic_Custom_View_Customizations/condition_lines.js");
+
+        echo getVersionedScript("modules/Campaigns/SticUtils.js");
 
         parent::process($module);
     }

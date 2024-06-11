@@ -111,6 +111,24 @@ class Campaign extends SugarBean
      */
     public $survey_name;
 
+    // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+    public $prospect_list;
+    public $email_template;
+
+    public function retrieve($id = -1, $encode = true, $deleted = true)
+    {
+        parent::retrieve($id, $encode, $deleted);
+        
+        if ($this->campaign_type == "Notification") {
+            include_once "modules/Campaigns/SticUtils.php";
+            fillCampaignNotificationFields($this);
+        }
+
+        return $this;
+    }
+    // END STIC-Custom
+
     public function list_view_parse_additional_sections(&$listTmpl)
     {
         global $locale;
@@ -264,8 +282,18 @@ class Campaign extends SugarBean
             $this->frequency = '';
         }
 
-		return parent::save($check_notify);
+        // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+		// return parent::save($check_notify);
+        $return_id = parent::save($check_notify);
 
+        if ($this->campaign_type=="Notification") {
+            // Save/Update ProspectList and EmailTemplate
+            // Campaign -> prospect_list_campaigns -> prospect_lists
+            // Campaign -> email_marketing -> email_templates
+        }
+        return $return_id;
+        // END STIC-Custom
 	}
 
 

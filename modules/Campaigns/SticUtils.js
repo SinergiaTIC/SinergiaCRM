@@ -33,8 +33,7 @@ var module = "Campaigns";
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "quickcreate":
-    $(document).ready(function() {
-    });
+    $(document).ready(function() {});
     break;
 
   case "edit":
@@ -45,6 +44,9 @@ switch (viewType()) {
     break;
 
   case "detail":
+    $(document).ready(function() {
+      type_change();
+    });
     break;
 
   case "list":
@@ -56,9 +58,11 @@ switch (viewType()) {
 
 $(document).ready(function() {});
 
-
 function type_change() {
   var typeValue = $('[name="campaign_type"]').val();
+  if (typeValue === undefined) {
+    typeValue = $('[field="campaign_type"] input').val();
+  }
 
   showNewsLetterFields(typeValue == "NewsLetter");
   showNotificationFields(typeValue == "Notification");

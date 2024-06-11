@@ -249,7 +249,7 @@ $viewdefs['Campaigns']['EditView'] = array (
         'field' => '30',
       ),
     ),
-    // STIC-Custom - JBL - 20240515 - Notify new Opportunities: Campaign new type (Notification)
+    // STIC-Custom - JBL - 20240515 - Notify new Opportunities: New Campaign type (Notification)
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
     // 'javascript' => '<script type="text/javascript" src="include/javascript/popup_parent_helper.js?v=igGzALk_bn-xeyTYyoHxog"></script>
     // <script type="text/javascript">
@@ -371,12 +371,18 @@ $viewdefs['Campaigns']['EditView'] = array (
         0 => 
         array (
           'name' => 'frequency',
-          'customCode' => '<div style=\'none\' id=\'freq_field\'>{html_options name="frequency" options=$fields.frequency.options selected=$fields.frequency.value}</div></TD>',
-          'customLabel' => '<div style=\'none\' id=\'freq_label\'>{$MOD.LBL_CAMPAIGN_FREQUENCY}</div>',
+          // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
+          // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+          // 'customCode' => '<div style=\'none\' id=\'freq_field\'>{html_options name="frequency" options=$fields.frequency.options selected=$fields.frequency.value}</div></TD>',
+          // 'customLabel' => '<div style=\'none\' id=\'freq_label\'>{$MOD.LBL_CAMPAIGN_FREQUENCY}</div>',
+          // END STIC-Custom JBL
         ),
+        // STIC-Custom - JBL - 20240611 - New Campaign type (Notification)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
         1 => array (
           'name' => 'parent_name',
         ),
+        // END STIC-Custom JBL
       ),
       4 => 
       array (

@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-// STIC-Custom - JBL - 20240515 - Notify new Opportunities: Campaign new type (Notification)
+// STIC-Custom - JBL - 20240515 - Notify new Opportunities: New Campaign type (Notification)
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 $viewdefs['Campaigns']['QuickCreate'] = array (
   'templateMeta' => 
@@ -40,8 +40,6 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
         'field' => '30',
       ),
     ),
-    'javascript' => '{sugar_getscript file="include/javascript/popup_parent_helper.js"}
-                     {sugar_getscript file="modules/Campaigns/SticEditView.js"}',
     'useTabs' => false,
     'tabDefs' => 
     array (
@@ -73,10 +71,6 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
         0 => 
         array (
           'name' => 'campaign_type',
-          'displayParams' => 
-          array (
-            'javascript' => 'onchange="type_change();"',
-          ),
         ),
         1 => 
         array (
@@ -105,15 +99,12 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
       ),
       3 => array(
         0 => array(
-          // 'name' => 'prospectlists',
-          'name' => 'leads',
+          'name' => 'prospect_list',
           'label' => 'LBL_PROSPECT_LIST',
-          //'customCode' => '<input type="text" name="select_prospect_list" id="select_prospect_list" value="">',
         ),
         1 => array(
           'name' => 'email_template',
           'label' => 'LBL_EMAIL_TEMPLATE',
-          'customCode' => '<input type="text" name="select_email_template" id="select_email_template" value="">',
         ),
       ),
       4 => 

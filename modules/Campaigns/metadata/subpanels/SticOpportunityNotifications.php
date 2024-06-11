@@ -26,8 +26,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $subpanel_layout = array(
     'top_buttons' => array(
-        array('widget_class' => 'SubPanelTopCreateButton', 'type' => 'Notification'),
-        //array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Campaigns'),
+        array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate', 
+            'additional_fields' => array(
+                'campaign_type' => 'Notification'
+            ),
+        ),
+        // array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Campaigns'),
     ),
 
     'where' => '',
@@ -69,12 +74,12 @@ $subpanel_layout = array(
             'vname' => 'LBL_LIST_PROSPECT_LISTS_NAME',
             // 'width' => '15%',
         ),
-        // 'quickedit_button' => array(
-        //     'vname' => 'LBL_QUICKEDIT_BUTTON',
-        //     'widget_class' => 'SubPanelQuickEditButton',
-        //     'module' => 'Campgains',
-        //     'width' => '4%',
-        // ),
+        'quickedit_button' => array(
+            'vname' => 'LBL_QUICKEDIT_BUTTON',
+            'widget_class' => 'SubPanelQuickEditButton',
+            'module' => 'Campgains',
+            //'width' => '4%',
+        ),
         // 'remove_button' => array(
         //     'vname' => 'LBL_REMOVE',
         //     'widget_class' => 'SubPanelRemoveButton',

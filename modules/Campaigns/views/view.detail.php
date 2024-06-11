@@ -159,5 +159,11 @@ class CampaignsViewDetail extends ViewDetail
         }
         //show filtered subpanel list
         echo $subpanel->display();
+
+        // STIC-Custom - JBL - 20240611 - Notify new Opportunities: Campaign new type (Notification)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+        echo getVersionedScript("SticInclude/js/Utils.js");
+        echo getVersionedScript("modules/Campaigns/SticUtils.js");
+        // END STIC-Custom JBL
     }
 }

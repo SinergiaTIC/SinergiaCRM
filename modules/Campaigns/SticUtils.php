@@ -20,6 +20,28 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+function fillCampaignNotificationFields($beanCampaign) {
+    //Fill prospect_list and email_template
+    global $db;
+
+    $query = 
+    " SELECT c.id as campaigns_id, et.id as email_templates_id, pl.id as prospect_lists_id" . 
+    " FROM campaigns c" .
+    " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
+    " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
+    " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
+    " LEFT JOIN email_marketing em on em.campaign_id = c.id and em.deleted = '0'" .
+    " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'" .
+    " WHERE c.id = '{$beanCampaign->id}'" .
+    " LIMIT 1";
+
+    $result = $db->query($query);
+    if ($row = $db->fetchByAssoc($result)) {
+        $beanCampaign->email_template = $row['email_templates_id'];
+        $beanCampaign->prospect_list =  $row['prospect_lists_id'];
+    }
+}
+
 
 function getLangStrings()
 {
@@ -34,4 +56,36 @@ function getLangStrings()
         $html .= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
     }
     return $html;
+}
+
+function fillDynamicListsForNotifications()
+{
+    fillDynamicListProspectList();
+    fillDynamicListEmailTemplate();
+}
+
+function fillDynamicListProspectList()
+{
+    $prospectListsFocus = BeanFactory::newBean('ProspectLists');
+    $prospectLists = $prospectListsFocus->get_list("name", "prospect_lists.list_type='default'", 0, -99, -99);
+
+    $dynamic_prospect_list_list = array("" => "");
+    foreach ($prospectLists['list'] as $prospectList) {
+        $dynamic_prospect_list_list[$prospectList->id] = $prospectList->name;
+    }
+
+    $GLOBALS['app_list_strings']['dynamic_prospect_list_list'] = $dynamic_prospect_list_list;
+}
+
+function fillDynamicListEmailTemplate()
+{
+    $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
+    $emailTemplates = $emailTemplatesFocus->get_list("name", "", 0, -99, -99);
+
+    $dynamic_email_template_list = array("" => "");
+    foreach ($emailTemplates['list'] as $emailTemplate) {
+        $dynamic_email_template_list[$emailTemplate->id] = $emailTemplate->name;
+    }
+
+    $GLOBALS['app_list_strings']['dynamic_email_template_list'] = $dynamic_email_template_list;
 }
