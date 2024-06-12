@@ -270,17 +270,6 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             return $temp;
         }
 
-        // STIC-Custom - JBL - 20240611 - Notify new Opportunities: Can define initial values for new items
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-        // Add additional_fields to $additionalFormFields to assign initial values
-        if (!empty($defines['additional_fields'])) {
-            if (is_array($additionalFormFields)) {
-                $additionalFormFields = array_merge($additionalFormFields, $defines['additional_fields']);
-            } else {
-                $additionalFormFields = $defines['additional_fields'];
-            }
-        }
-        // END STIC-Custom
 
         global $app_strings;
 

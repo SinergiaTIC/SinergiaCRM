@@ -33,7 +33,9 @@ var module = "Campaigns";
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "quickcreate":
-    $(document).ready(function() {});
+    $(document).ready(function() {
+      initializeQuickCreate();
+    });
     break;
 
   case "edit":
@@ -112,5 +114,16 @@ function showNotificationFields(show) {
     $('[data-field="parent_name"]').show();
   } else {
     $('[data-field="parent_name"]').hide();
+  }
+}
+
+function initializeQuickCreate() {
+  if ($("#subpanel_stic_notifications_newDiv").length == 1) {
+    // Is a New notification subpanel
+
+    $("[data-field='campaign_type']").hide();
+    $("#campaign_type").val("Notification");
+
+    $("#status").val("Active");
   }
 }

@@ -26,12 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $subpanel_layout = array(
     'top_buttons' => array(
-        array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate', 
-            'additional_fields' => array(
-                'campaign_type' => 'Notification'
-            ),
-        ),
+        array('widget_class' => 'SubPanelTopButtonQuickCreate'),
         // array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Campaigns'),
     ),
 
