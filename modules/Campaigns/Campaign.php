@@ -113,8 +113,14 @@ class Campaign extends SugarBean
 
     // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-    public $prospect_list;
-    public $email_template;
+    public $prospect_list_id;
+
+    public $em_template_id;
+    public $em_outbound_email_id;
+    public $em_from_name;
+    public $em_from_addr;
+    public $em_reply_to_name;
+    public $em_reply_to_addr;
 
     public function retrieve($id = -1, $encode = true, $deleted = true)
     {
@@ -282,15 +288,35 @@ class Campaign extends SugarBean
             $this->frequency = '';
         }
 
-        // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
+        // STIC-Custom - JBL - 20240612 - Notify new Opportunities: New Campaign type (Notification)
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 		// return parent::save($check_notify);
         $return_id = parent::save($check_notify);
 
-        if ($this->campaign_type=="Notification") {
-            // Save/Update ProspectList and EmailTemplate
-            // Campaign -> prospect_list_campaigns -> prospect_lists
-            // Campaign -> email_marketing -> email_templates
+        if ($this->campaign_type == "Notification") {
+            // Set ProspectList relationship
+            if ($this->load_relationship('prospectlists')) {
+                $this->prospectlists->add($this->prospect_list_id);
+            }
+
+            // Save or Update EmailMarketing
+            $emailMarketing = BeanFactory::newBean('EmailMarketing');
+            $relatedEmailMarketingList = $emailMarketing->get_list("name", "email_marketing.campaign_id='{$return_id}'", 0, -99, -99);
+            if(!empty($relatedEmailMarketingList['list'])) {
+                $emailMarketing = $relatedEmailMarketingList['list'][0];
+            }
+            $emailMarketing = BeanFactory::newBean('EmailMarketing');
+            $emailMarketing->name = $this->name . ' - Email';
+            $emailMarketing->campaign_id = $return_id;
+            $emailMarketing->template_id = $this->em_template_id;
+            $emailMarketing->outbound_email_id = $this->em_outbound_email_id;
+            $emailMarketing->from_name = $this->em_from_name;
+            $emailMarketing->from_addr = $this->em_from_addr;
+            $emailMarketing->date_start = $this->start_date;
+            $emailMarketing->status = 'active';
+            $emailMarketing->all_prospect_lists = true;
+
+            $emailMarketing->save();
         }
         return $return_id;
         // END STIC-Custom

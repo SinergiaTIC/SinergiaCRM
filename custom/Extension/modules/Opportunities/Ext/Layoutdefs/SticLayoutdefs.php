@@ -75,10 +75,6 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate', 
             'title' => 'LBL_NEW_BUTTON_TITLE',
-            // 'additional_fields' => array(
-            //     'campaign_type' => 'Notification',
-            //     'status' => 'Active',
-            // ),
         ),
     ),
 );

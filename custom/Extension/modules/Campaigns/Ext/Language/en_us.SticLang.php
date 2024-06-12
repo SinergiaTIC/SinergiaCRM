@@ -54,5 +54,3 @@ $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'In order to include reCAPTCHA val
 // language file in order to avoid a core modification.
 $mod_strings['LBL_WEB_TO_LEAD'] = 'Create person web form'; 
 
-$mod_strings['LBL_PROSPECT_LIST'] = 'Prospect List';
-$mod_strings['LBL_EMAIL_TEMPLATE'] = 'Email Template';

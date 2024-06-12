@@ -25,7 +25,14 @@ function fillCampaignNotificationFields($beanCampaign) {
     global $db;
 
     $query = 
-    " SELECT c.id as campaigns_id, et.id as email_templates_id, pl.id as prospect_lists_id" . 
+    " SELECT c.id as campaigns_id" . 
+          ", pl.id as prospect_lists_id" . 
+          ", et.id as email_templates_id" . 
+          ", em.outbound_email_id as email_marketing_outbound_email_id" . 
+          ", em.from_name as email_marketing_from_name".
+          ", em.from_addr as email_marketing_from_addr".
+          ", em.reply_to_name as email_marketing_reply_to_name".
+          ", em.reply_to_addr as email_marketing_reply_to_addr".
     " FROM campaigns c" .
     " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
     " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
@@ -37,8 +44,13 @@ function fillCampaignNotificationFields($beanCampaign) {
 
     $result = $db->query($query);
     if ($row = $db->fetchByAssoc($result)) {
-        $beanCampaign->email_template = $row['email_templates_id'];
-        $beanCampaign->prospect_list =  $row['prospect_lists_id'];
+        $beanCampaign->prospect_list_id =  $row['prospect_lists_id'];
+        $beanCampaign->em_template_id = $row['email_templates_id'];
+        $beanCampaign->em_outbound_email_id = $row['email_marketing_outbound_email_id'];
+        $beanCampaign->em_from_name = $row['email_marketing_from_name'];
+        $beanCampaign->em_from_addr = $row['email_marketing_from_addr'];
+        $beanCampaign->em_reply_to_name = $row['email_marketing_reply_to_name'];
+        $beanCampaign->em_reply_to_addr = $row['email_marketing_reply_to_addr'];
     }
 }
 
@@ -62,6 +74,7 @@ function fillDynamicListsForNotifications()
 {
     fillDynamicListProspectList();
     fillDynamicListEmailTemplate();
+    fillDynamicOutboundEmailAccounts();
 }
 
 function fillDynamicListProspectList()
@@ -88,4 +101,17 @@ function fillDynamicListEmailTemplate()
     }
 
     $GLOBALS['app_list_strings']['dynamic_email_template_list'] = $dynamic_email_template_list;
+}
+
+function fillDynamicOutboundEmailAccounts()
+{
+    $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
+    $outboundEmails = $outboundEmailsFocus->get_list("name", "", 0, -99, -99);
+
+    $dynamic_outbound_email_list = array("" => "");
+    foreach ($outboundEmails['list'] as $outboundEmail) {
+        $dynamic_outbound_email_list[$outboundEmail->id] = $outboundEmail->name;
+    }
+
+    $GLOBALS['app_list_strings']['dynamic_outbound_email_list'] = $dynamic_outbound_email_list;
 }
