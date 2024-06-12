@@ -78,8 +78,8 @@ class stic_Work_CalendarUtils
                         AND id != '". $id . "' 
                         AND assigned_user_id = '" . $assignedUserId . "' 
                         AND type NOT IN ('" .  implode("', '", stic_Work_Calendar::ALL_DAY_TYPES) . "')                        
-                        AND TIMESTAMPDIFF(SECOND, start_date,  '" . $endDate . "') >= 0
-                        AND TIMESTAMPDIFF(SECOND, '" . $startDate . "',end_date) >= 0";
+                        AND TIMESTAMPDIFF(SECOND, start_date,  '" . $endDate . "') > 0
+                        AND TIMESTAMPDIFF(SECOND, '" . $startDate . "',end_date) > 0";
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
                 $result = $db->query($query);
 
