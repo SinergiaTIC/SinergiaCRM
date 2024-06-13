@@ -593,6 +593,12 @@
                         </form>
                     </div>
                 </li>
+                {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                <li class="time_tracker_button_row no-show-time-tracker-button">
+                    <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                        onclick="showTimeTrackerConfirmBox();"></button>
+                </li>
+                {* END STIC-Custom *}
                 <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                     <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                         data-toggle="dropdown" aria-expanded="false">
@@ -726,6 +732,12 @@
                             </div>
                         </form>
                     </li>
+                    {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                    <li class="time_tracker_button_row no-show-time-tracker-button">
+                        <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                            onclick="showTimeTrackerConfirmBox();"></button>
+                    </li>
+                    {* END STIC-Custom *}                    
                     <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                         <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                             data-toggle="dropdown" aria-expanded="false">
@@ -842,6 +854,12 @@
                                 </div>
                             </form>
                         </li>
+                        {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                        <li class="time_tracker_button_row no-show-time-tracker-button">
+                            <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                                onclick="showTimeTrackerConfirmBox();"></button>
+                        </li>
+                        {* END STIC-Custom *}
                         <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                             <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                                 data-toggle="dropdown" aria-expanded="false">
@@ -873,9 +891,11 @@
                                 </ul>
                             </li>
                         </ul>
-
                     </div>
             </nav>
+            {* STIC-Custom 20240222 MHP - Add registration button dialog *}
+            <div id="time-tracker-dialog-box"></div>
+            {* END STIC-Custom *}
             <!--End Responsive Top Navigation Menu -->
             {if $THEME_CONFIG.display_sidebar}
                 <!--Start Page Container and Responsive Sidebar -->
@@ -1003,12 +1023,18 @@
                                 }
                             });
                         </script>
+                        <!-- STIC-Custom - PCS - 20240416 - Sidebar theme options -->
+                        <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/193 -->
+                        <style>
+                          h2.admin_actions_title {font-size: 16px;font-weight: bold; margin: 10px 15px;}
+                        </style>
                     {/literal}
-                        <div id='admin_actions' class="actionMenuSidebar" hidden>
+                        <div id='admin_actions' class="actionMenuSidebar adminMenuSidebar" hidden>
+                        <!-- END STIC-Custom -->
                         <h2 class="admin_actions_title">{sugar_translate module="Administration" label="LBL_ADMIN_ACTIONS"}</h2>
                             <ul>
                                 <li class="actionmenulinks" role="presentation">
-                                    <a href="./index.php?module=Administration">
+                                    <a href="./index.php?module=Administration" target="_blank">
                                         <div class="side-bar-action-icon">
                                             <span class="suitepicon suitepicon-module-administration"></span>
                                         </div>
@@ -1027,6 +1053,19 @@
                                         </div>
                                     </a>
                                 </li>
+                                {* STIC-Custom - JBL - 20240405 -  Custom Views link *}
+                                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=stic_Custom_Views&action=index" target="_blank" >
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-stic-custom-views"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_STIC_CUSTOM_VIEWS_LINK_TITLE"}
+                                        </div>
+                                    </a>
+                                </li>
+                                {* END STIC-Custom *}
                                 <li class="actionmenulinks" role="presentation">
                                     <a href="./index.php?module=Administration&action=Upgrade" target="_blank">
                                         <div class="side-bar-action-icon">
@@ -1038,7 +1077,7 @@
                                     </a>
                                 </li>
                                 <li class="actionmenulinks" role="presentation">
-                                    <a href="./index.php?module=Configurator&action=EditView">
+                                    <a href="./index.php?module=Configurator&action=EditView" target="_blank">
                                         <div class="side-bar-action-icon">
                                             <span class="suitepicon suitepicon-admin-system-settings"></span>
                                         </div>

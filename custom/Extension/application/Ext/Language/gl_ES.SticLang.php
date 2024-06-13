@@ -30,14 +30,6 @@ $app_strings['LBL_STIC_VALIDATE_FIELDS_NOT_VISIBLE'] = "Algunhas validacións de
 $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "A validación deste campo depende dun campo que non está visible. Se desexa que esta validación se aplique solicite ao administrador do CRM que inclúa na vista este campo: ";
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Engadir Organizacións e Persoas a unha lista de público obxectivo';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronización Incorpora';
-$app_strings['LBL_BOOKINGS_CALENDAR_OPTIONGROUP_EMPTY'] = '~ Sen categoría ~';
-$app_strings['LBL_BOOKINGS_CALENDAR_FILTER_RESOURCES'] = 'Filtro de recursos: ';
-$app_strings['LBL_BOOKINGS_CALENDAR_FILTER_RESOURCES_PLACEHOLDER'] = 'Para mostrar só as reservas de determinados recursos, seleccióneos aquí.';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_FILTER_RESOURCES_PLACEHOLDER'] = 'Seleccione polo menos un recurso para mostrar a súa dispoñibilidade.';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_MODE_BUTTON_ENABLED'] = 'Mostrar dispoñibilidade';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_MODE_BUTTON_DISABLED'] = 'Mostrar reservas';
-$app_strings['LBL_BOOKINGS_CALENDAR_AVAILABILITY_MODE_BUTTON_HELP'] = 'Para mostrar a dispoñibilidade debe seleccionarse polo menos un recurso.';
-$app_strings['LBL_BOOKINGS_CALENDAR_MOBILE_BUTTON'] = 'Móbil';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Enviar PDF por correo';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validar a importación';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'Ocurreu un erro';
@@ -46,6 +38,18 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativizado por SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM foi desenvolvido pola Asociación SinergiaTIC. O software é fornecido COMO ESTÁ, sen garantía ningunha. Baixo a licenza AGPLv3. Para máis información, visite o <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software libre. Permítese a súa redistribución e/ou modificación baixo os termos da Licenza Pública Xeral Affero de GNU versión 3, publicada pola Free Software Foundation, incluíndo calquera permiso adicional indicado no encabezamento do código fonte.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
+
+// Creación de registro horario vía cabecera
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy:'; 
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'con la siguiente información:';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nombre: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Aceptar';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancelar';
 
 // Aviso de actualización de SinergiaCRM
 $app_strings['LBL_STIC_UPDATE_ALERT_TITLE'] = 'Actualización de SinergiaCRM realizada';
@@ -75,6 +79,7 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 $app_strings['LBL_STIC_FORUMS_LINK'] = 'Foros de SinergiaCRM';
 $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
+$app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Mensajes: acciones subpanel
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nuevo Mensaje';
@@ -121,11 +126,18 @@ $app_list_strings['moduleList']['stic_Prescription'] = 'Prescricións médicas';
 $app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Grupos de Seguridade - Regras por módulos';
 $app_list_strings['moduleList']['stic_Grants'] = 'Axudas';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centros';
+$app_list_strings['moduleList']['stic_Time_Tracker'] = 'Registro horario';
+$app_list_strings['moduleList']['stic_Work_Calendar'] = 'Calendario laboral';
 $app_list_strings['moduleList']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleList']['stic_Training'] = 'Formación';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['moduleList']['stic_Skills'] = 'Competencias';
 $app_list_strings['moduleList']['stic_Messages'] = 'Mensajes';
+$app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
+$app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accións';
+$app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizacións';
+$app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicións';
+
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -147,25 +159,32 @@ $app_list_strings['moduleListSingular']['stic_Goals'] = 'Obxectivo';
 $app_list_strings['moduleListSingular']['stic_Personal_Environment'] = 'Entorno persoal';
 $app_list_strings['moduleListSingular']['stic_FollowUps'] = 'Seguimento';
 $app_list_strings['moduleListSingular']['stic_Families'] = 'Unidade familiar';
+$app_list_strings['moduleListSingular']['stic_Incorpora'] = 'Incorpora';
+$app_list_strings['moduleListSingular']['stic_Incorpora_Locations'] = 'Ubicación Incorpora';
+$app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
+$app_list_strings['moduleListSingular']['stic_Job_Offers'] = 'Oferta laboral';
+$app_list_strings['moduleListSingular']['stic_Sepe_Actions'] = 'Acción SEPE';
+$app_list_strings['moduleListSingular']['stic_Sepe_Incidents'] = 'Incidencia SEPE';
+$app_list_strings['moduleListSingular']['stic_Bookings'] = 'Reserva';
+$app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Rexistro de medicación';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicamento';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescrición médica';
+$app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos de Seguridade - Regra por módulo';
 $app_list_strings['moduleListSingular']['stic_Grants'] = 'Axuda';
 $app_list_strings['moduleListSingular']['stic_Centers'] = 'Centro';
+$app_list_strings['moduleListSingular']['stic_Time_Tracker'] = 'Registro horario';
+$app_list_strings['moduleListSingular']['stic_Work_Calendar'] = 'Calendario laboral';
 $app_list_strings['moduleListSingular']['stic_Journal'] = 'Diario';
-$app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Grupos de Seguridade - Regra por módulo';
-$app_list_strings['moduleList']['stic_Training'] = 'Formación';
-$app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
-$app_list_strings['moduleList']['stic_Skills'] = 'Competencia';
-$app_list_strings['moduleList']['stic_Messages'] = 'Mensaje';
-$app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
-$app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
-$app_list_strings['moduleListSingular']['stic_Job_Applications'] = 'Candidatura';
-$app_list_strings['moduleListSingular']['stic_Job_Offers'] = 'Oferta laboral';
-$app_list_strings['moduleList']['stic_Sepe_Actions'] = 'Accións SEPE';
-$app_list_strings['moduleList']['stic_Sepe_Incidents'] = 'Incidencias SEPE';
-$app_list_strings['moduleListSingular']['stic_Bookings'] = 'Reserva';
-$app_list_strings['moduleListSingular']['stic_Resources'] = 'Recurso';
+$app_list_strings['moduleListSingular']['stic_Training'] = 'Formación';
+$app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Experiencia laboral';
+$app_list_strings['moduleListSingular']['stic_Skills'] = 'Competencia';
+$app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalizada';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
+$app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
+$app_list_strings['moduleListSingular']['stic_Messages'] = 'Mensaje';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -196,12 +215,15 @@ $app_list_strings['parent_type_display']['stic_Medication_Log'] = 'Rexistro de m
 $app_list_strings['parent_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['parent_type_display']['stic_Prescription'] = 'Prescriciónes médicas';
 $app_list_strings['parent_type_display']['stic_Centers'] = 'Centros';
+$app_list_strings['parent_type_display']['stic_Time_Tracker'] = 'Registro horario';
+$app_list_strings['parent_type_display']['stic_Work_Calendar'] = 'Calendario laboral';
 $app_list_strings['parent_type_display']['stic_Grants'] = 'Ayudas';
 $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
 $app_list_strings['parent_type_display']['stic_Skstic_Messagesills'] = 'Mensajes';
+
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display']['Leads'] = 'Interesados';
@@ -233,11 +255,14 @@ $app_list_strings['record_type_display']['stic_Medication'] = 'Medicamentos';
 $app_list_strings['record_type_display']['stic_Prescription'] = 'Prescricións médicas';
 $app_list_strings['record_type_display']['stic_Grants'] = 'Axudas';
 $app_list_strings['record_type_display']['stic_Centers'] = 'Centros';
+$app_list_strings['record_type_display']['stic_Time_Tracker'] = 'Registro horario';
+$app_list_strings['record_type_display']['stic_Work_Calendar'] = 'Calendario laboral';
 $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
 $app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
+
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
@@ -269,6 +294,8 @@ $app_list_strings['record_type_display_notes']['stic_Medication'] = 'Medicamento
 $app_list_strings['record_type_display_notes']['stic_Prescription'] = 'Prescricións médicas';
 $app_list_strings['record_type_display_notes']['stic_Grants'] = 'Axudas';
 $app_list_strings['record_type_display_notes']['stic_Centers'] = 'Centros';
+$app_list_strings['record_type_display_notes']['stic_Time_Tracker'] = 'Registro horario';
+$app_list_strings['record_type_display_notes']['stic_Work_Calendar'] = 'Calendario laboral';
 $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
@@ -744,7 +771,8 @@ $app_list_strings['stic_payments_methods_list']['bizum'] = 'Bizum';
 $app_list_strings['stic_payments_methods_list']['stripe'] = 'Stripe';
 $app_list_strings['stic_payments_methods_list']['cash'] = 'Efectivo';
 $app_list_strings['stic_payments_methods_list']['check'] = 'Cheque';
-$app_list_strings['stic_payments_methods_list']['card'] = 'Tarxeta';
+$app_list_strings['stic_payments_methods_list']['card'] = 'Tarxeta (vía Redsys) ';
+$app_list_strings['stic_payments_methods_list']['ceca_card'] = 'Tarxeta (vía CECA)';
 $app_list_strings['stic_payments_methods_list']['direct_debit'] = 'Domiciliación';
 $app_list_strings['stic_payments_methods_list']['kind'] = 'Especie';
 $app_list_strings['stic_payments_methods_list']['paypal'] = 'PayPal';
@@ -3210,6 +3238,16 @@ $app_list_strings['stic_centers_types_list']['attention_point'] = 'Punto de aten
 $app_list_strings['stic_centers_types_list']['training'] = 'Formación';
 $app_list_strings['stic_centers_types_list']['other'] = 'Outros';
 
+// Calendario laboral: Tipo
+$app_list_strings['stic_work_calendar_types_list'][''] = '';
+$app_list_strings['stic_work_calendar_types_list']['working'] = 'Laborable';
+$app_list_strings['stic_work_calendar_types_list']['vacation'] = 'Vacaciones';
+$app_list_strings['stic_work_calendar_types_list']['holiday'] = 'Festivo';
+$app_list_strings['stic_work_calendar_types_list']['personal'] = 'Personal';
+$app_list_strings['stic_work_calendar_types_list']['sick'] = 'Baja';
+$app_list_strings['stic_work_calendar_types_list']['leave'] = 'Permiso/Excedencia';
+$app_list_strings['stic_work_calendar_types_list']['other'] = 'Otros';
+
 // Diario: Tipo de diario
 $app_list_strings['stic_journal_types_list'][''] = '';
 $app_list_strings['stic_journal_types_list']['journal'] = 'Diario';
@@ -3420,6 +3458,80 @@ $app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inblound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outblound'] = 'Salida';
+// Vistas personalizadas: Tipos de usuario
+$app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario normal';
+$app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
+$app_list_strings['stic_custom_views_user_type_list']['all'] = 'Todos';
+
+// Vistas personalizadas: Vistas
+$app_list_strings['stic_custom_views_views_list']['detailview'] = 'Vista de detalle';
+$app_list_strings['stic_custom_views_views_list']['editview'] = 'Vista de edición';
+$app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Vista de creación rápida';
+
+// Vistas personalizadas: Tipos de Acciones
+$app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Campo';
+$app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panel';
+$app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Pestaña';
+
+// Vistas personalizadas: Acciones
+$app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
+$app_list_strings['stic_custom_views_action_list']['readonly'] = 'Solo lectura';
+$app_list_strings['stic_custom_views_action_list']['required'] = 'Obligado';
+$app_list_strings['stic_custom_views_action_list']['inline'] = 'Edición en línea';
+$app_list_strings['stic_custom_views_action_list']['fixed_value'] = 'Valor por defecto';
+$app_list_strings['stic_custom_views_action_list']['color'] = 'Color del texto';
+$app_list_strings['stic_custom_views_action_list']['background'] = 'Color del fondo';
+$app_list_strings['stic_custom_views_action_list']['bold'] = 'Negrita';
+$app_list_strings['stic_custom_views_action_list']['italic'] = 'Cursiva';
+$app_list_strings['stic_custom_views_action_list']['underline'] = 'Subrayado';
+$app_list_strings['stic_custom_views_action_list']['css_style'] = 'Estilo CSS';
+$app_list_strings['stic_custom_views_action_list']['fixed_text'] = 'Texto de la etiqueta';
+
+// Vistas personalizadas: Secciones de elementos
+$app_list_strings['stic_custom_views_element_list']['field'] = 'Todo el campo';
+$app_list_strings['stic_custom_views_element_list']['field_label'] = 'Solo la etiqueta';
+$app_list_strings['stic_custom_views_element_list']['field_input'] = 'Solo la casilla';
+$app_list_strings['stic_custom_views_element_list']['panel'] = 'Todo el panel';
+$app_list_strings['stic_custom_views_element_list']['panel_header'] = 'Solo la cabecera del panel';
+$app_list_strings['stic_custom_views_element_list']['panel_content'] = 'Solo el contenido del panel';
+$app_list_strings['stic_custom_views_element_list']['tab'] = 'Toda la pestaña';
+$app_list_strings['stic_custom_views_element_list']['tab_header'] = 'Solo la cabecera de la pestaña';
+$app_list_strings['stic_custom_views_element_list']['tab_content'] = 'Solo el contenido de la pestaña';
+
+// Vistas personalizadas: Estado
+$app_list_strings['stic_custom_views_status_list']['active'] = 'Activo';
+$app_list_strings['stic_custom_views_status_list']['inactive'] = 'Inactivo';
+
+// Vistas personalizadas: Operadores
+$app_list_strings['stic_custom_views_operator_list']['Equal_To'] = 'Igual a';
+$app_list_strings['stic_custom_views_operator_list']['Not_Equal_To'] = 'Non igual a';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than'] = 'Maior que';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than'] = 'Menor que';
+$app_list_strings['stic_custom_views_operator_list']['Greater_Than_or_Equal_To'] = 'Maior ou igual a';
+$app_list_strings['stic_custom_views_operator_list']['Less_Than_or_Equal_To'] = 'Menor ou igual a';
+$app_list_strings['stic_custom_views_operator_list']['Contains'] = 'Contén';
+$app_list_strings['stic_custom_views_operator_list']['Not_Contains'] = 'Non contén';
+$app_list_strings['stic_custom_views_operator_list']['Starts_With'] = 'Comeza con';
+$app_list_strings['stic_custom_views_operator_list']['Not_Starts_With'] = 'Non comeza con';
+$app_list_strings['stic_custom_views_operator_list']['Ends_With'] = 'Finaliza con';
+$app_list_strings['stic_custom_views_operator_list']['Not_Ends_With'] = 'Non finaliza con';
+$app_list_strings['stic_custom_views_operator_list']['is_null'] = 'É Nulo';
+$app_list_strings['stic_custom_views_operator_list']['is_not_null'] = 'É non Nulo';
+
+// Vistas personalizadas: Tipos de condiciones
+$app_list_strings['stic_custom_views_condition_type_list']['value'] = 'Valor';
+$app_list_strings['stic_custom_views_condition_type_list']['date'] = 'Fecha';
+$app_list_strings['stic_custom_views_condition_type_list']['user'] = 'Usuario';
+$app_list_strings['stic_custom_views_condition_type_list']['field'] = 'Campo';
+
+// Vistas personalizadas: Valores definidos
+$app_list_strings['stic_custom_views_condition_values_list']['now'] = 'Ahora';
+$app_list_strings['stic_custom_views_condition_values_list']['today'] = 'Hoy';
+$app_list_strings['stic_custom_views_condition_values_list']['tomorrow'] = 'Mañana';
+$app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Ayer';
+$app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversario';
+$app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuario actual';
+
 
 // Modificaciones del core de SuiteCRM
 
