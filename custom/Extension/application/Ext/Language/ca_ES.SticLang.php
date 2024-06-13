@@ -68,6 +68,10 @@ $app_strings['LBL_STIC_FORUMS_LINK'] = 'Fòrums de SinergiaCRM';
 $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 
+// Missatges: accions subpanell
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nou Missatge';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou Missatge';
+
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
 $app_list_strings['moduleList']['Contacts'] = 'Persones';

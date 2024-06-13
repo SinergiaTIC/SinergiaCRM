@@ -27,7 +27,7 @@ array(
         'templateMeta' => array(
             'form' => array(
                 'buttons' => array(
-                    // 0 => 'EDIT',
+                    0 => 'EDIT',
                     // 1 => 'DUPLICATE',
                     // 2 => 'DELETE',
                     // 3 => 'FIND_DUPLICATES',

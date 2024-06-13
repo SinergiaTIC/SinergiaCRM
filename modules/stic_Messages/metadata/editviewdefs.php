@@ -71,81 +71,27 @@ array(
                 ),
                 3 => array(
                     0 => array(
-                        'name' => 'status',
+                        'name' => 'type',
                         'studio' => 'visible',
-                        'label' => 'LBL_STATUS',
+                        'label' => 'LBL_TYPE',
                     ),
                     1 => array(
-                        'name' => 'stic_training_accounts_name',
+                        'name' => 'direction',
+                        'studio' => 'visible',
+                        'label' => 'LBL_DIRECTION',
                     ),
                 ),
                 4 => array(
                     0 => array(
-                        'name' => 'start_date',
-                        'label' => 'LBL_START_DATE',
-                    ),
-                    1 => array(
-                        'name' => 'end_date',
-                        'label' => 'LBL_END_DATE',
-                    ),
-                ),
-                5 => array(
-                    0 => array(
-                        'name' => 'scope',
+                        'name' => 'phone',
                         'studio' => 'visible',
-                        'label' => 'LBL_SCOPE',
+                        'label' => 'LBL_PHONE',
                     ),
-                    1 => array(
-                        'name' => 'qualification',
-                        'label' => 'LBL_QUALIFICATION',
+                    1 => array (
+                      'name' => 'template',
+                      'studio' => 'visible',
+                      'label' => 'LBL_TEMPLATE',
                     ),
-                ),
-                6 => array(
-                    0 => array(
-                        'name' => 'formal',
-                        'studio' => 'visible',
-                        'label' => 'LBL_FORMAL',
-                    ),
-                    1 => array(
-                        'name' => 'accredited',
-                        'studio' => 'visible',
-                        'label' => 'LBL_ACCREDITED',
-                    ),
-                ),
-                7 => array(
-                    0 => array(
-                        'name' => 'grant_training',
-                        'studio' => 'visible',
-                        'label' => 'LBL_GRANT_TRAINING',
-                    ),
-                    1 => array(
-                        'name' => 'previous',
-                        'studio' => 'visible',
-                        'label' => 'LBL_PREVIOUS',
-                    ),
-                ),
-                8 => array(
-                    0 => array(
-                        'name' => 'grant_amount',
-                        'label' => 'LBL_GRANT_AMOUNT',
-                    ),
-                    1 => array(
-                        'name' => 'certification',
-                        'studio' => 'visible',
-                        'label' => 'LBL_CERTIFICATION',
-                    ),
-                ),
-                9 => array(
-                    0 => array(
-                        'name' => 'amount',
-                        'label' => 'LBL_AMOUNT',
-                    ),
-                    1 => array(
-                        'name' => 'stic_training_stic_registrations_name',
-                    ),
-                ),
-                10 => array(
-                    0 => 'description',
                 ),
             ),
         ),

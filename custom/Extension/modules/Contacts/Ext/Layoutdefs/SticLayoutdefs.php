@@ -429,6 +429,19 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_skills_contacts'] = array(
     ),
 );
 
+// New collection in activities/history
+$layout_defs['Contacts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+$layout_defs['Contacts']['subpanel_setup']['history']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+$layout_defs['Contacts']['subpanel_setup']['history']['collection_list']['messages'] = array(
+    'module' => 'stic_Messages',
+    'subpanel_name' => 'ForHistory',
+    'get_subpanel_data' => 'function:get_stic_messages',
+    'generate_select' => true,
+    // 'function_parameters' => array('import_function_file' => 'include/utils.php', 'return_as_array' => 'true'),
+    'function_parameters' => array('import_function_file' => 'SticInclude/functionUtils.php', 'return_as_array' => 'true'),
+);
+
+
 $layout_defs['Contacts']['subpanel_setup']['leads']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Contacts']['subpanel_setup']['opportunities']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Contacts']['subpanel_setup']['documents']['override_subpanel_name'] = 'SticDefault';

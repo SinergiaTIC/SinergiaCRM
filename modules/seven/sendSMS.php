@@ -20,6 +20,7 @@ if (!empty($number)) {
         $emailTemp->retrieve($templateId);
         seven_parse_template($bean, $emailTemp);
         $text = $emailTemp->body;
+        $_POST['message'] = $text;
     }
     else {
         $text = $_POST['message'];

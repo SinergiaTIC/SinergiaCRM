@@ -74,7 +74,19 @@ class stic_Messages extends Basic
      */
     public function save($check_notify = false)
     {
+        global $sticSavingMessage;
+
+        // To avoid loop with LH on seven_sms
+        if ($sticSavingMessage){
+            return false;
+        }
+        $sticSavingMessage = true;
+
         $this->fillName();
+
+        if ($this->id === null) {
+            $this->sendSMS();
+        }
 
         // Save the bean
         parent::save($check_notify);
@@ -83,6 +95,7 @@ class stic_Messages extends Basic
 
     protected function fillName()
     {
+        global $current_user, $timedate;
         // Auto name
         // if (empty($this->name)) {
         //     global $app_list_strings;
@@ -117,6 +130,47 @@ class stic_Messages extends Basic
             $templateName = ' - ' . $template->name;
         }
 
-        $this->name = $relatedObjectName . ' - ' . $this->date_entered . $templateName;
+        if (empty($this->date_entered)) {
+            $this->date_entered = $GLOBALS['timedate']->nowDb();
+        }
+
+        $messageDateTime = $this->date_entered;
+        if ($userDate = $timedate->fromUser($messageDateTime, $current_user)) {
+            $messageDateTime = $userDate->asDb();
+        }
+
+        $date = SugarDateTime::createFromFormat(TimeDate::DB_DATETIME_FORMAT, $messageDateTime, new DateTimeZone("UTC"));
+
+        // get user timezone
+        $userPreferences = new UserPreference($current_user);
+        $userPreferences->retrieve_by_string_fields(array('assigned_user_id' => $current_user->id));
+
+        // Get the timezone from the user's preferences
+        $timezone = $userPreferences->getPreference('timezone');
+
+        $date = $date->setTimezone(new DateTimeZone($timezone));
+        $formatedDate = $date->format($timedate->get_date_time_format($current_user));
+
+
+        $this->name = $relatedObjectName . ' - ' . $formatedDate . $templateName;
+    }
+
+    public function sendSMS() {
+        if ($_POST['module'] === 'stic_Messages') {
+            $_POST['number'] = $this->phone;
+            $_POST['id'] = $this->parent_id;
+            $_POST['module'] = $this->parent_type;
+            $_POST['template'] = $this->template_id_c;
+            $_POST['message'] = $this->message;
+
+            require 'modules/seven/sendSMS.php';
+
+            // restore overwritten POST values
+            $_POST['module'] = 'stic_Messages';
+            $_POST['id'] = $this->id;
+
+            // retrieve message once template data applied
+            $this->message = $_POST['message'];
+        }
     }
 }

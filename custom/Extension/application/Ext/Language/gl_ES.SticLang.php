@@ -76,6 +76,10 @@ $app_strings['LBL_STIC_FORUMS_LINK'] = 'Foros de SinergiaCRM';
 $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 
+// Mensajes: acciones subpanel
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nuevo Mensaje';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nuevo Mensaje';
+
 // Módulos propios de SinergiaCRM e módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizacións';
 $app_list_strings['moduleList']['Contacts'] = 'Persoas';
@@ -3416,7 +3420,6 @@ $app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inblound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outblound'] = 'Salida';
-
 
 // Modificaciones del core de SuiteCRM
 

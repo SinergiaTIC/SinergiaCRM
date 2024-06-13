@@ -1,6 +1,6 @@
 <?php
 
 $entry_point_registry['seven'] = [
-    'auth' => false,
+    'auth' => true,
     'file' => 'modules/seven/sendSMS.php',
 ];
