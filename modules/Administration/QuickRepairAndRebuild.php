@@ -95,9 +95,9 @@ class RepairAndClear
                 case 'clearThemeCache':
                     $this->clearThemeCache();
                     break;
-                case 'clearVardefs':
-                    $this->clearVardefs();
-                    break;
+                // case 'clearVardefs':
+                //     $this->clearVardefs();
+                //     break;
                 case 'clearJsLangFiles':
                     $this->clearJsLangFiles();
                     break;
@@ -110,9 +110,9 @@ class RepairAndClear
                 case 'clearAll':
                     $this->clearTpls();
                     $this->clearJsFiles();
-                    $this->clearVardefs();
+                    // $this->clearVardefs();
                     $this->clearJsLangFiles();
-                    $this->clearLanguageCache();
+                    // $this->clearLanguageCache();
                     $this->clearDashlets();
                     $this->clearSugarFeedCache();
                     $this->clearSmarty();
@@ -122,7 +122,7 @@ class RepairAndClear
                     $this->clearExternalAPICache();
                     $this->rebuildExtensions();
                     $this->rebuildAuditTables();
-                    $this->repairDatabase();
+                    // $this->repairDatabase();
                     break;
             }
         }

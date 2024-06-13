@@ -128,7 +128,28 @@ if ($file = $_REQUEST['file'])
     }
 
 } else {
+    if ($folder=$_REQUEST['folder']) {
+        // folder='SticUpdates/Migrations/BeforeUpdate'
+        echo "Executing all files from {$folder} <br>";
+        $files = glob("{$folder}/*.php");
+        foreach ($files as $file) {
+            echo "$file <br>";
+            require($file);   
+        }
 
+        echo "Executing all SQL files from {$folder}, both general and language files <br>";
+//        $connection = connectToDBWithPDO();
+
+        // Run all general migrations files from the SticUpdates/Migrations/ folder
+        if($files = glob("{$folder}/*.sql")) {
+            $connection = connectToDBWithPDO();
+            foreach ($files as $file) 
+            {
+                executeSQLFile($connection,$file);
+            }
+        }
+
+    } else {
     echo "File isn't specified in URL";
 
     // SCRIPTS - Check if there are files in the scripts folder and run them
