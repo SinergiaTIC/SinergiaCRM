@@ -30,8 +30,10 @@ switch (viewType()) {
     case "popup":
         // Disable fields if the user is not admin
         if (isAdminCurrentUser == '0') {
-            document.getElementById('stic_work_calendar_c').disabled = 1;
-            document.getElementById('stic_clock_c').disabled = 1;
+            let element = document.getElementById('stic_work_calendar_c');
+            element.style.setProperty('display', 'none', 'important');
+            element = document.getElementById('stic_clock_c');
+            element.style.setProperty('display', 'none', 'important');
         }
         break;
     
