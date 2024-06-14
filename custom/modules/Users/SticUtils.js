@@ -28,7 +28,6 @@ switch (viewType()) {
     case "edit":
     case "quickcreate":
     case "popup":
-        debugger;
         // Disable fields if the user is not admin
         if (isAdminCurrentUser == '0') {
             document.getElementById('stic_work_calendar_c').disabled = 1;
