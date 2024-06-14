@@ -34,7 +34,7 @@ class stic_Time_TrackerController extends SugarController {
     {
         // Check if the user has started any time registration today
         $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
-        global $timedate, $current_user;
+        global $current_user;
         
         // Check if time tracker module is active
         include_once 'modules/MySettings/TabController.php';
