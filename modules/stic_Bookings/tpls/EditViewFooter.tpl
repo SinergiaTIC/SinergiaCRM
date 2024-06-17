@@ -21,7 +21,41 @@
  *}
 {* This template is showed both in Bookings' ListView and Bookings Calendar reservations popups *}
 
-<h2>{$MOD.LBL_RESOURCES}</h2>
+<h2>{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">Reservar Centro</button>
+</h2>
+
+<div class="center_column">
+    <div id="resourceSearchFields">
+        <div id="selectedCentersContainer">
+            <label>Nombre del Centro:</label>
+            <div id="selectedCentersList"></div>
+        </div>
+        <br>
+
+        <label for="resourceType">Tipo de recurso:</label>
+        <select id="resourceType" name="resourceType"></select>
+
+        <label for="resourceStatus">Estado de recurso:</label>
+        <select id="resourceStatus" name="resourceStatus"></select>
+
+        <label for="resourceOffice">Oficina del recurso:</label>
+        <select id="resourceOffice" name="resourceOffice"></select>
+
+        <label for="resourceName">Nombre del recurso:</label>
+        <input type="text" id="resourceName" name="resourceName">
+        <br>
+
+        <label for="numberOfCenters">Número de Centros:</label>
+        <input type="number" id="numberOfCenters" name="numberOfCenters">
+        <br>
+
+        <button id="loadCenterResourcesButton" type="button" class="button">Cargar Plazas</button>
+        <br>
+
+        <label id="resourceCount"></label>
+    </div>
+</div>
+<br>
 <table id="resourceLine" class="resource-table">
     <tr>
         <th class="resource_column resource_name">{$MOD.LBL_RESOURCES_NAME}</th>

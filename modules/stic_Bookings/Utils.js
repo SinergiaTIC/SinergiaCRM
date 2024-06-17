@@ -24,6 +24,7 @@
 var module = "stic_Bookings";
 var resourceLineCount = 0;
 var resourceMaxCount = 0;
+var selectedCenters = [];
 
 /* INCLUDES */
 // Load moment.js to use in validations
@@ -133,6 +134,12 @@ switch (viewType()) {
                 $("#end_date_time_section").parent().show();
             }
         });
+
+        // Set event listener for center popup
+        $("#openCenterPopup").click(function() {
+            openCenterPopup();
+        });
+
 
         // Set autofill mark beside field label
         setAutofill(["name"]);
@@ -408,3 +415,145 @@ function clearRow(form, ln) {
     $(`#resource_daily_rate` + ln).val("");
     $("#resource_color" + ln).css("background-color", "");
 }
+
+
+// Esta función abre el popup para seleccionar el centro
+function openCenterPopup() {
+    var popupRequestData = {
+        call_back_function: "callbackCenterSelectPopup",
+        form_name: "EditView",
+        field_to_name_array: {
+            id: "center_id",
+            name: "center_name"
+        }
+    };
+
+    open_popup("stic_Centers", 600, 400, "", true, false, popupRequestData);
+}
+
+function callbackCenterSelectPopup(popupReplyData) {
+
+    var centerId = popupReplyData.name_to_value_array.center_id;
+    var centerName = popupReplyData.name_to_value_array.center_name;
+    // Actualizar el contenido del elemento con el nombre del centro seleccionado
+    selectedCenters.push({ centerId: centerId, centerName: centerName });
+    updateSelectedCentersList();
+    $("#selectedCenterName").text(centerName);
+    $("#resourceSearchFields").show();
+
+    if (selectedCenters.length === 1) {
+        loadResourceTypes(centerId);
+    }
+
+    // Mostrar el botón y agregar evento click para cargar recursos
+    $("#loadCenterResourcesButton").off('click').on('click', function() {
+        var resourceType = $("#resourceType").val();
+        var resourceName = $("#resourceName").val();
+        var resourceStatus = $("#resourceStatus").val();
+        var numberOfCenters = $("#numberOfCenters").val();
+       
+        loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters);
+
+    });
+
+
+}
+$(document).ready(function() {
+    // Asegurarse de que los campos de búsqueda y el botón estén ocultos al inicio
+    $("#resourceSearchFields").hide();
+});
+function updateSelectedCentersList() {
+    var list = $("#selectedCentersList");
+    list.empty();
+    selectedCenters.forEach(function(center, index) {
+        list.append("<div>" + center.centerName + " <button type='button' class='removeCenterButton' data-index='" + index + "'>Eliminar</button></div>");
+    });
+
+    // Agregar manejador de eventos para los botones de eliminación
+    $(".removeCenterButton").off('click').on('click', function() {
+        var index = $(this).data('index');
+        selectedCenters.splice(index, 1);
+        updateSelectedCentersList();
+        var resourceType = $("#resourceType").val();
+        var resourceName = $("#resourceName").val();
+        var resourceStatus = $("#resourceStatus").val();
+        var numberOfCenters = $("#numberOfCenters").val();
+
+        loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters);
+
+    });
+}
+function loadResourceTypes(centerId) {
+    $.ajax({
+        url: "index.php?module=stic_Bookings&action=getResourceTypes&sugar_body_only=true",
+        dataType: "json",
+        data: { centerId: centerId },
+        success: function(res) {
+            if (res.success) {
+                var options = res.options;
+                var resourceTypeSelect = $("#resourceType");
+                resourceTypeSelect.empty();
+                options.forEach(function(option) {
+                    resourceTypeSelect.append(new Option(option.label, option.value));
+                });
+
+                var options2 = res.options2;
+                var resourceStatusSelect = $("#resourceStatus");
+                resourceStatusSelect.empty();
+                options2.forEach(function(option) {
+                    resourceStatusSelect.append(new Option(option.label, option.value));
+                });
+
+
+            } else {
+                alert("Error al cargar los tipos de recurso");
+            }
+        },
+        error: function() {
+            alert("Error al enviar la solicitud");
+        }
+    });
+}
+
+
+function loadCenterResources(resourceType = '',resourceStatus = '',resourceName = '', numberOfCenters='') {
+    var centerIds = selectedCenters.map(center => center.centerId).join(',');
+    $.ajax({
+        url: "index.php?module=stic_Bookings&action=loadCenterResources&sugar_body_only=true",
+        dataType: "json",
+        data: {
+            centerIds: centerIds,
+            resourceType: resourceType,
+            resourceStatus: resourceStatus,
+            resourceName: resourceName,
+            numberOfCenters: numberOfCenters
+        },
+        success: function(res) {
+            if (res.success) {
+
+                updateResourceLines(res.resources);
+                $("#resourceCount").text("Número de centros encontrados: " + res.resources.length);
+            } else {
+                alert("Error al cargar los recursos del centro");
+            }
+        },
+        error: function() {
+            alert("Error al enviar la solicitud");
+        }
+    });
+}
+
+function updateResourceLines(resources) {
+    // Limpiar las líneas de recursos actuales
+    for (var i = 0; i < resourceMaxCount; i++) {
+        $("#resourceLine" + i).remove();
+    }
+    resourceMaxCount = 0;
+
+    // Insertar las nuevas líneas de recursos
+    resources.forEach(function(resource) {
+        insertResourceLine();
+        populateResourceLine(resource, resourceMaxCount - 1);
+    });
+}
+
