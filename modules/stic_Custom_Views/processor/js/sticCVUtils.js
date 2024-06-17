@@ -268,7 +268,7 @@ var sticCVUtils = class sticCVUtils {
 
   static getValue(fieldContent, value_list) {
     var $elem = fieldContent.$editor;
-    if (fieldContent.customView.view == "detailview") {
+    if (fieldContent.customView.view == "detailview" && fieldContent.type != "bool") {
       $elem = fieldContent.$fieldText;
     }
     if ($elem.length == 0 || $elem.get(0).parentNode === null) {
@@ -278,6 +278,9 @@ var sticCVUtils = class sticCVUtils {
     if (fieldContent.customView.view == "detailview") {
       if (fieldContent.type == "relate") {
         return $elem.attr("data-id-value") + "|" + $elem.text().trim();
+      }
+      if (fieldContent.type == "bool") {
+        return $elem.prop("checked");
       }
       var text = fieldContent.text();
       if (
