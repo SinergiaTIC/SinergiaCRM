@@ -502,11 +502,11 @@ var sticCVUtils = class sticCVUtils {
     return false;
   }
 
-  static onChange($elem, callback, alsoInline = false) {
+  static onChange($elem, callback) {
     $elem.each(function() {
       $(this).on("change paste keyup", callback);
       YAHOO.util.Event.on($(this)[0], "change", callback);
-      if (!$(this).is(":input") || alsoInline) {
+      if (!$(this).is(":input")) {
         var observer = new MutationObserver(callback);
         observer.observe($(this)[0], { attributes: true, childList: true, subtree: true, characterData: true });
       }
