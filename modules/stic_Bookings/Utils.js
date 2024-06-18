@@ -78,7 +78,7 @@ switch (viewType()) {
         previousEndDateHours = "10";
         previousEndDateMinutes = "30";
 
-        // With all_day checked the DateTime fields shouldn't display the time section 
+        // With all_day loadCenterResourcesButtoned the DateTime fields shouldn't display the time section 
         // and the end_date should display one day less
         if ($("#all_day", "form").is(":checked")) {
             $("#start_date_hours").val("00");
@@ -432,7 +432,6 @@ function openCenterPopup() {
 }
 
 function callbackCenterSelectPopup(popupReplyData) {
-
     var centerId = popupReplyData.name_to_value_array.center_id;
     var centerName = popupReplyData.name_to_value_array.center_name;
     // Actualizar el contenido del elemento con el nombre del centro seleccionado
@@ -444,20 +443,32 @@ function callbackCenterSelectPopup(popupReplyData) {
     if (selectedCenters.length === 1) {
         loadResourceTypes(centerId);
     }
-
-    // Mostrar el botón y agregar evento click para cargar recursos
-    $("#loadCenterResourcesButton").off('click').on('click', function() {
-        var resourceType = $("#resourceType").val();
-        var resourceName = $("#resourceName").val();
-        var resourceStatus = $("#resourceStatus").val();
-        var numberOfCenters = $("#numberOfCenters").val();
-       
-        loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters);
-
-    });
-
+    $("#loadCenterResourcesButton").off('click').on('click', loadResources);
 
 }
+$("#loadCenterResourcesButton").on('click', function() {
+    loadResources();
+});
+
+function loadResources() {
+    var startDate = getFieldValue("start_date");
+    var endDate = getFieldValue("end_date");
+    var resourceType = $("#resourceType").val();
+    var resourceName = $("#resourceName").val();
+    var resourceStatus = $("#resourceStatus").val();
+    var numberOfCenters = $("#numberOfCenters").val();
+
+    // Validar que start_date y end_date estén definidos
+    if (startDate === '' || endDate === '') {
+        add_error_style('EditView', 'start_date', SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
+        add_error_style('EditView', 'end_date', SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
+        return;
+    }
+
+    loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters, getDateObject(startDate), getDateObject(endDate));
+}
+
+
 $(document).ready(function() {
     // Asegurarse de que los campos de búsqueda y el botón estén ocultos al inicio
     $("#resourceSearchFields").hide();
@@ -466,9 +477,16 @@ function updateSelectedCentersList() {
     var list = $("#selectedCentersList");
     list.empty();
     selectedCenters.forEach(function(center, index) {
-        list.append("<div>" + center.centerName + " <button type='button' class='removeCenterButton' data-index='" + index + "'>Eliminar</button></div>");
-    });
-
+        list.append(
+            "<div>" +
+            center.centerName +
+            " <input type='button' class='removeCenterButton' data-index='" + index + "' value='" + SUGAR.language.get("app_strings", "LBL_REMOVE") + "'>" +
+            "</div>"
+        );
+    });    
+    var startDate = getFieldValue("start_date");
+    var endDate = getFieldValue("end_date");
+    console.log(startDate + "estoy en update");
     // Agregar manejador de eventos para los botones de eliminación
     $(".removeCenterButton").off('click').on('click', function() {
         var index = $(this).data('index');
@@ -479,7 +497,7 @@ function updateSelectedCentersList() {
         var resourceStatus = $("#resourceStatus").val();
         var numberOfCenters = $("#numberOfCenters").val();
 
-        loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters);
+        loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters, getDateObject(startDate), getDateObject(endDate));
 
     });
 }
@@ -516,12 +534,17 @@ function loadResourceTypes(centerId) {
 }
 
 
-function loadCenterResources(resourceType = '',resourceStatus = '',resourceName = '', numberOfCenters='') {
+function loadCenterResources(resourceType = '',resourceStatus = '',resourceName = '', numberOfCenters='', startDate, endDate) {
     var centerIds = selectedCenters.map(center => center.centerId).join(',');
+    var startDate = getDateObject(getFieldValue("start_date"));
+    var endDate = getDateObject(getFieldValue("end_date"));
+
     $.ajax({
         url: "index.php?module=stic_Bookings&action=loadCenterResources&sugar_body_only=true",
         dataType: "json",
         data: {
+            startDate: dateToYMDHM(startDate),
+            endDate: dateToYMDHM(endDate),
             centerIds: centerIds,
             resourceType: resourceType,
             resourceStatus: resourceStatus,

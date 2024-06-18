@@ -48,8 +48,8 @@ class stic_BookingsController extends SugarController
 
     public function action_loadCenterResources() 
     {
-        $startDate = $_REQUEST['startDate'];
-        $endDate = $_REQUEST['endDate'];
+        $startDate = isset($_REQUEST['startDate']) ? $_REQUEST['startDate'] : '';
+        $endDate = isset($_REQUEST['endDate']) ? $_REQUEST['endDate'] : '';
         $bookingId = $_REQUEST['bookingId'];
         $centerIds = $_REQUEST['centerIds'];
         $resourceType = isset($_REQUEST['resourceType']) ? $_REQUEST['resourceType'] : '';
