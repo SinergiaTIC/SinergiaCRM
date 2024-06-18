@@ -444,7 +444,7 @@
 		}
 
 		document.getElementById("CalendarRepeatForm").addEventListener("submit", function(event) {
-			if (allDayTypes.includes(type.value) && $('#info_hours').text().includes('ERROR')) {
+			if (!allDayTypes.includes(type.value) && $('#info_hours').text().includes('ERROR')) {
 				event.preventDefault();
 				alert(SUGAR.language.get('stic_Work_Calendar', 'LBL_ERROR_IN_VALIDATION'));
 			}
