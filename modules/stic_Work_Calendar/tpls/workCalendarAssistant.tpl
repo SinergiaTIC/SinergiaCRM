@@ -153,11 +153,10 @@
 				</td>
 			</tr>					
 			<tr>
-				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:<span
-						class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
+				<td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
 				<td width="37.5%" valign="top">
 					<select name="repeat_type"
-						onchange="toggle_repeat_type();" required>{html_options options=$APPLIST.repeat_type_dom}</select>
+						onchange="toggle_repeat_type();">{html_options options=$APPLIST.repeat_type_dom}</select>
 				</td>
 			</tr>
 
@@ -176,7 +175,7 @@
 						<input type="radio" name="repeat_end_type" value="number" id="repeat_count_radio" checked
 							onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
 						{$MOD.LBL_REPEAT_END_AFTER}
-						<input type="number" size="3" name="repeat_count" value="10"> {$MOD.LBL_REPEAT_OCCURRENCES}
+						<input type="number" size="3" name="repeat_count" value="1"> {$MOD.LBL_REPEAT_OCCURRENCES}
 					</div>
 
 					<div>
