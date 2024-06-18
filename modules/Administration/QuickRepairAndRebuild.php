@@ -95,12 +95,9 @@ class RepairAndClear
                 case 'clearThemeCache':
                     $this->clearThemeCache();
                     break;
-                // STIC-Custom 20240013 JBL - Repair optimization: Remove duplicate actions
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/270
-                // case 'clearVardefs':
-                //     $this->clearVardefs();
-                //     break;
-                // END STIC-Custom
+                case 'clearVardefs':
+                    $this->clearVardefs();
+                    break;
                 case 'clearJsLangFiles':
                     $this->clearJsLangFiles();
                     break;
@@ -113,15 +110,9 @@ class RepairAndClear
                 case 'clearAll':
                     $this->clearTpls();
                     $this->clearJsFiles();
-                    // STIC-Custom 20240013 JBL - Repair optimization: Remove duplicate actions
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/270
-                    // $this->clearVardefs();
-                    // END STIC-Custom
+                    $this->clearVardefs();
                     $this->clearJsLangFiles();
-                    // STIC-Custom 20240013 JBL - Repair optimization: Remove duplicate actions
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/270
-                    // $this->clearLanguageCache();
-                    // END STIC-Custom
+                    $this->clearLanguageCache();
                     $this->clearDashlets();
                     $this->clearSugarFeedCache();
                     $this->clearSmarty();
@@ -131,10 +122,7 @@ class RepairAndClear
                     $this->clearExternalAPICache();
                     $this->rebuildExtensions();
                     $this->rebuildAuditTables();
-                    // STIC-Custom 20240013 JBL - Repair optimization: Remove duplicate actions
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/270
-                    // $this->repairDatabase();
-                    // END STIC-Custom
+                    $this->repairDatabase();
                     break;
             }
         }
