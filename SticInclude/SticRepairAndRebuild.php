@@ -38,6 +38,7 @@ class SticRepairAndRebuild extends RepairAndClear
         $this->clearLanguageCache();
         $this->rebuildExtensions();
         $this->rebuildAuditTables();
+        $this->repairDatabase();
         $this->rebuildSDA();
     }
 
