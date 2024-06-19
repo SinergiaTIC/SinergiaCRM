@@ -89,14 +89,8 @@ if (!empty($_REQUEST['identifier'])) {
 
         //no opt out for users.
         if (preg_match('/^[0-9A-Za-z\-]*$/', $id) && $module != 'Users') {
-            //record this activity in the campaing log table..
-            $query = "UPDATE email_addresses SET email_addresses.opt_out = 1 WHERE EXISTS(SELECT 1 FROM email_addr_bean_rel ear WHERE ear.bean_id = '$id' AND ear.deleted=0 AND email_addresses.id = ear.email_address_id)";
-            $status=$db->query($query);
-            if ($status) {
-                echo "*";
-            }
 
-        	// STIC-Custom 202410617 MHP - Audit in email_addresses_audit table the unsubscription action through the campaign email 
+            // STIC-Custom 202410617 MHP - Audit in email_addresses_audit table the unsubscription action through the campaign email 
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/277
 
             // SELECT the email_address_id from the emails related to the user who is unsubscribing
@@ -126,6 +120,13 @@ if (!empty($_REQUEST['identifier'])) {
                 }
             }            
             // END STIC-Custom            
+            
+            //record this activity in the campaing log table..
+            $query = "UPDATE email_addresses SET email_addresses.opt_out = 1 WHERE EXISTS(SELECT 1 FROM email_addr_bean_rel ear WHERE ear.bean_id = '$id' AND ear.deleted=0 AND email_addresses.id = ear.email_address_id)";
+            $status=$db->query($query);
+            if ($status) {
+                echo "*";
+            }
         }
     }
     //Print Confirmation Message.
