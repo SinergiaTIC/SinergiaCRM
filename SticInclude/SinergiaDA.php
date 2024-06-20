@@ -52,6 +52,7 @@ class ExternalReporting
         'stic_Web_Forms',
         'stic_Incorpora_Locations',
         'stic_Validation_Results',
+        'stic_Custom_Views',
     ];
 
     public function __construct()
