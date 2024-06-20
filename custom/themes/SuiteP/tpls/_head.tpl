@@ -102,7 +102,10 @@
             // If used, updates the button color based on whether or not there is an active time record for today
             $(document).ready(function() 
             {
-                checkTimeTrackerButtonStatus();
+                // Check that it is not the login view
+                if (!window.location.href.includes('action=Login') && !window.location.href.includes('module=Users')) {
+                    checkTimeTrackerButtonStatus();
+                }
             });
         </script>
     {/literal}
