@@ -473,20 +473,18 @@ $mod_strings = array(
 
     // STIC-Custom 20240604 JBL - New Campaign type: Notification
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-    'LBL_PROSPECT_LIST_ID' => 'Públic Objectiu',
-    'LBL_EM_TEMPLATE_ID' => 'Plantilla de correu electrònic',
-    'LBL_EM_OUTBOUND_EMAIL_ID' => 'Correu electrònic sortint',
-    'LBL_EM_FROM_NAME' => 'Remitent (nom)',
-    'LBL_EM_FROM_ADDR' => 'Remitent (adreça)',
-    'LBL_EM_REPLY_TO_NAME' => 'Respondre a (nom)',
-    'LBL_EM_REPLY_TO_ADDR' => 'Respondre a (adreça)',
+    'LBL_NOTIFICATION_PROSPECT_LIST_NAME' => 'Públic Objectiu',
+    'LBL_NOTIFICATION_PROSPECT_LIST_ID' => 'Públic Objectiu',
+    'LBL_NOTIFICATION_TEMPLATE_ID' => 'Plantilla de correu electrònic',
+    'LBL_NOTIFICATION_OUTBOUND_EMAIL_ID' => 'Correu electrònic sortint',
+    'LBL_NOTIFICATION_FROM_NAME' => 'Remitent (nom)',
+    'LBL_NOTIFICATION_FROM_ADDR' => 'Remitent (adreça)',
+    'LBL_NOTIFICATION_REPLY_TO_NAME' => 'Respondre a (nom)',
+    'LBL_NOTIFICATION_REPLY_TO_ADDR' => 'Respondre a (adreça)',
 
-    'LBL_EMAILMARKETING_INFORMATION' => 'Correu electrònic',
+    'LBL_NOTIFICATION_INFORMATION_PANEL' => 'Notificacions',
 
-    'LBL_LIST_EMAIL_MARKETING_NAME' => 'Màrqueting per correu electrònic',
-    'LBL_LIST_EMAIL_MARKETING_DATE_START' => 'Data Inici',
-    'LBL_LIST_EMAIL_MARKETING_STATUS' => 'Estat del màrqueting',
-    'LBL_LIST_EMAIL_TEMPLATES_NAME' => 'Plantilla de correu electrònic',
-    'LBL_LIST_PROSPECT_LISTS_NAME' => 'Llista de Públic Objectiu',
+    'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME' => 'Plantilla de correu electrònic',
+    'LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAME' => 'Llista de Públic Objectiu',
     // END STIC-Custom
 );

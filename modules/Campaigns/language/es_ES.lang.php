@@ -474,20 +474,18 @@ $mod_strings = array(
 
     // STIC-Custom 20240604 JBL - New Campaign type: Notification
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-    'LBL_PROSPECT_LIST_ID' => 'Lista de Público Objetivo',
-    'LBL_EM_TEMPLATE_ID' => 'Plantilla de Email',
-    'LBL_EM_OUTBOUND_EMAIL_ID' => 'Correo saliente',
-    'LBL_EM_FROM_NAME' => 'Remitente (nombre)',
-    'LBL_EM_FROM_ADDR' => 'Remitente (dirección)',
-    'LBL_EM_REPLY_TO_NAME' => 'Responder a (nombre)',
-    'LBL_EM_REPLY_TO_ADDR' => 'Responder a (dirección)',
+    'LBL_NOTIFICATION_PROSPECT_LIST_NAME' => 'Lista de Público Objetivo',
+    'LBL_NOTIFICATION_PROSPECT_LIST_ID' => 'Lista de Público Objetivo',
+    'LBL_NOTIFICATION_TEMPLATE_ID' => 'Plantilla de Email',
+    'LBL_NOTIFICATION_OUTBOUND_EMAIL_ID' => 'Correo saliente',
+    'LBL_NOTIFICATION_FROM_NAME' => 'Remitente (nombre)',
+    'LBL_NOTIFICATION_FROM_ADDR' => 'Remitente (dirección)',
+    'LBL_NOTIFICATION_REPLY_TO_NAME' => 'Responder a (nombre)',
+    'LBL_NOTIFICATION_REPLY_TO_ADDR' => 'Responder a (dirección)',
 
-    'LBL_EMAILMARKETING_INFORMATION' => 'Email',
+    'LBL_NOTIFICATION_INFORMATION_PANEL' => 'Notificaciones',
 
-    'LBL_LIST_EMAIL_MARKETING_NAME' => 'Marketing por Email',
-    'LBL_LIST_EMAIL_MARKETING_DATE_START' => 'Fecha Inicio',
-    'LBL_LIST_EMAIL_MARKETING_STATUS' => 'Estado del marketing',
-    'LBL_LIST_EMAIL_TEMPLATES_NAME' => 'Plantilla de Email',
-    'LBL_LIST_PROSPECT_LISTS_NAME' => 'Lista de Público Objetivo',
+    'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME' => 'Plantilla de Email',
+    'LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAME' => 'Lista de Público Objetivo',
     // END STIC-Custom
 );

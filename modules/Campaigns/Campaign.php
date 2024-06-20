@@ -113,14 +113,19 @@ class Campaign extends SugarBean
 
     // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-    public $prospect_list_id;
+    public $parent_name;
+    public $parent_type;
+    public $parent_id;
 
-    public $em_template_id;
-    public $em_outbound_email_id;
-    public $em_from_name;
-    public $em_from_addr;
-    public $em_reply_to_name;
-    public $em_reply_to_addr;
+    public $notification_prospect_list_id;
+    public $notification_prospect_list_name;
+
+    public $notification_template_id;
+    public $notification_outbound_email_id;
+    public $notification_from_name;
+    public $notification_from_addr;
+    public $notification_reply_to_name;
+    public $notification_reply_to_addr;
 
     public function retrieve($id = -1, $encode = true, $deleted = true)
     {
@@ -291,12 +296,30 @@ class Campaign extends SugarBean
         // STIC-Custom - JBL - 20240612 - Notify new Opportunities: New Campaign type (Notification)
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 		// return parent::save($check_notify);
+        if ($this->campaign_type == "Notification" && 
+            !empty($_REQUEST['relate_to'] && $_REQUEST['relate_to'] == "get_notifications_from_opportunity" &&
+            !empty($_REQUEST['relate_id']))) {
+            $this->parent_type = "Opportunities";
+            $this->parent_id = $_REQUEST['relate_id'];
+            $_REQUEST['relate_to'] = null;
+            $_REQUEST['relate_id'] = null;
+        }
+
         $return_id = parent::save($check_notify);
 
         if ($this->campaign_type == "Notification") {
+
             // Set ProspectList relationship
             if ($this->load_relationship('prospectlists')) {
-                $this->prospectlists->add($this->prospect_list_id);
+                $relatedProspectLists = $this->prospectlists->get();
+                foreach ($relatedProspectLists as $prospectListId) {
+                    if ($prospectListId != $this->notification_prospect_list_id) {
+                        $this->prospectlists->delete($this->id, $prospectListId);
+                    }
+                }
+                if (!in_array($this->notification_prospect_list_id, $relatedProspectLists)) {
+                    $this->prospectlists->add($this->notification_prospect_list_id);
+                }
             }
 
             // Save or Update EmailMarketing
@@ -305,13 +328,12 @@ class Campaign extends SugarBean
             if(!empty($relatedEmailMarketingList['list'])) {
                 $emailMarketing = $relatedEmailMarketingList['list'][0];
             }
-            $emailMarketing = BeanFactory::newBean('EmailMarketing');
             $emailMarketing->name = $this->name . ' - Email';
             $emailMarketing->campaign_id = $return_id;
-            $emailMarketing->template_id = $this->em_template_id;
-            $emailMarketing->outbound_email_id = $this->em_outbound_email_id;
-            $emailMarketing->from_name = $this->em_from_name;
-            $emailMarketing->from_addr = $this->em_from_addr;
+            $emailMarketing->template_id = $this->notification_template_id;
+            $emailMarketing->outbound_email_id = $this->notification_outbound_email_id;
+            $emailMarketing->from_name = $this->notification_from_name;
+            $emailMarketing->from_addr = $this->notification_from_addr;
             $emailMarketing->date_start = $this->start_date;
             $emailMarketing->status = 'active';
             $emailMarketing->all_prospect_lists = true;

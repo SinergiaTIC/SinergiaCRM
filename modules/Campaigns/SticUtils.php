@@ -20,40 +20,74 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-function fillCampaignNotificationFields($beanCampaign) {
+
+function get_notifications_from_opportunity($params)
+{
+    $args = func_get_args();
+    $parentId = $args[0]['opportunity_id'];
+    $parentType = "Opportunities";
+    $campaignType = "Notification";
+
+    $return_array['select'] =
+        " SELECT campaigns.id, campaigns.name, campaigns.status, campaigns.start_date, campaigns.end_date" .
+        ", pl.id as notification_prospect_list_id" .
+        ", pl.name as notification_prospect_list_name" .
+        ", et.name as notification_email_template_name";
+
+    $return_array['from'] = " FROM campaigns ";
+
+    $return_array['where'] =
+        " WHERE campaigns.deleted = '0'" .
+        " AND campaigns.campaign_type = '$campaignType'" .
+        " AND cc.parent_type = '$parentType'" .
+        " AND cc.parent_id = '$parentId'";
+
+    $return_array['join'] =
+        " LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id" .
+        " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = campaigns.id and plc.deleted = '0'" .
+        " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
+        " LEFT JOIN email_marketing em on em.campaign_id = campaigns.id and em.deleted = '0'" .
+        " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'";
+
+    $return_array['join_tables'] = '';
+
+    return $return_array;
+}
+
+function fillCampaignNotificationFields($beanCampaign)
+{
     //Fill prospect_list and email_template
     global $db;
 
-    $query = 
-    " SELECT c.id as campaigns_id" . 
-          ", pl.id as prospect_lists_id" . 
-          ", et.id as email_templates_id" . 
-          ", em.outbound_email_id as email_marketing_outbound_email_id" . 
-          ", em.from_name as email_marketing_from_name".
-          ", em.from_addr as email_marketing_from_addr".
-          ", em.reply_to_name as email_marketing_reply_to_name".
-          ", em.reply_to_addr as email_marketing_reply_to_addr".
-    " FROM campaigns c" .
-    " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
-    " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
-    " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
-    " LEFT JOIN email_marketing em on em.campaign_id = c.id and em.deleted = '0'" .
-    " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'" .
-    " WHERE c.id = '{$beanCampaign->id}'" .
-    " LIMIT 1";
+    $query =
+        " SELECT c.id as campaigns_id" .
+        ", pl.id as prospect_lists_id" .
+        ", et.id as email_templates_id" .
+        ", em.outbound_email_id as email_marketing_outbound_email_id" .
+        ", em.from_name as email_marketing_from_name" .
+        ", em.from_addr as email_marketing_from_addr" .
+        ", em.reply_to_name as email_marketing_reply_to_name" .
+        ", em.reply_to_addr as email_marketing_reply_to_addr" .
+        " FROM campaigns c" .
+        " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
+        " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
+        " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
+        " LEFT JOIN email_marketing em on em.campaign_id = c.id and em.deleted = '0'" .
+        " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'" .
+        " WHERE c.id = '{$beanCampaign->id}'" .
+        " LIMIT 1";
 
     $result = $db->query($query);
     if ($row = $db->fetchByAssoc($result)) {
-        $beanCampaign->prospect_list_id =  $row['prospect_lists_id'];
-        $beanCampaign->em_template_id = $row['email_templates_id'];
-        $beanCampaign->em_outbound_email_id = $row['email_marketing_outbound_email_id'];
-        $beanCampaign->em_from_name = $row['email_marketing_from_name'];
-        $beanCampaign->em_from_addr = $row['email_marketing_from_addr'];
-        $beanCampaign->em_reply_to_name = $row['email_marketing_reply_to_name'];
-        $beanCampaign->em_reply_to_addr = $row['email_marketing_reply_to_addr'];
+        $beanCampaign->notification_prospect_list_id = $row['prospect_lists_id'];
+        $beanCampaign->notification_template_id = $row['email_templates_id'];
+        $beanCampaign->notification_outbound_email_id = $row['email_marketing_outbound_email_id'];
+        $beanCampaign->notification_from_name = $row['email_marketing_from_name'];
+        $beanCampaign->notification_from_addr = $row['email_marketing_from_addr'];
+        $beanCampaign->notification_reply_to_name = $row['email_marketing_reply_to_name'];
+        $beanCampaign->notification_reply_to_addr = $row['email_marketing_reply_to_addr'];
     }
 }
-
 
 function getLangStrings()
 {
@@ -108,7 +142,7 @@ function fillDynamicOutboundEmailAccounts()
     $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
     $outboundEmails = $outboundEmailsFocus->get_list("name", "", 0, -99, -99);
 
-    $dynamic_outbound_email_list = array("" => "");
+    //$dynamic_outbound_email_list = array("" => "");
     foreach ($outboundEmails['list'] as $outboundEmail) {
         $dynamic_outbound_email_list[$outboundEmail->id] = $outboundEmail->name;
     }

@@ -41,6 +41,7 @@ switch (viewType()) {
   case "edit":
   case "popup":
     $(document).ready(function() {
+      initilizeEditView();
       type_change();
     });
     break;
@@ -111,19 +112,38 @@ function showNewsLetterFields(show) {
 
 function showNotificationFields(show) {
   if (show) {
+    addToValidate(getFormName(), "parent_name", "relate", true, SUGAR.language.get(module, "LBL_FLEX_RELATE"));
+    addRequiredMark("parent_name", "conditional-required");
     $('[data-field="parent_name"]').show();
   } else {
+    removeFromValidate(getFormName(), "parent_name");
+    $("#parent_type").val("");
+    $("#parent_name").val("");
+    $("#parent_id").val("");
     $('[data-field="parent_name"]').hide();
   }
 }
 
 function initializeQuickCreate() {
   if ($("#subpanel_stic_notifications_newDiv").length == 1) {
-    // Is a New notification subpanel
+    // Is a New notification from Subpanel
 
     $("[data-field='campaign_type']").hide();
     $("#campaign_type").val("Notification");
 
     $("#status").val("Active");
+  }
+}
+
+function initilizeEditView() {
+  if ($("#parent_type").length == 1) {
+    // Remove not allowed Modules for Notifications
+    var allowedModules = ["Opportunities"];
+    $("#parent_type").find("option").each(function() {
+      var $option = $(this);
+      if (!allowedModules.includes($option.val())) {
+        $option.remove();
+      }
+    });
   }
 }

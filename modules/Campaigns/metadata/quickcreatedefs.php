@@ -110,46 +110,46 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
         ),
       ),
     ),
-    'lbl_emailmarketing_information' =>
+    'lbl_notification_information_panel' =>
     array (
       0 => array(
         0 => array(
-          'name' => 'prospect_list_id',
-          'label' => 'LBL_PROSPECT_LIST_ID',
+          'name' => 'notification_prospect_list_id',
+          'label' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
         ),
         1 => array(
-          'name' => 'em_template_id',
-          'label' => 'LBL_EM_TEMPLATE_ID',
+          'name' => 'notification_template_id',
+          'label' => 'LBL_NOTIFICATION_TEMPLATE_ID',
         ),
       ),
       1 => array(
         0 => array(
-          'name' => 'em_outbound_email_id',
-          'label' => 'LBL_EM_OUTBOUND_EMAIL_ID',
+          'name' => 'notification_outbound_email_id',
+          'label' => 'LBL_NOTIFICATION_OUTBOUND_EMAIL_ID',
         ),
         1 => array(
         ),
       ),
       2 => array(
         0 => array(
-          'name' => 'em_from_name',
-          'label' => 'LBL_EM_FROM_NAME',
+          'name' => 'notification_from_name',
+          'label' => 'LBL_NOTIFICATION_FROM_NAME',
         ),
         1 => array(
-          'name' => 'em_from_addr',
-          'label' => 'LBL_EM_FROM_ADDR',
+          'name' => 'notification_from_addr',
+          'label' => 'LBL_NOTIFICATION_FROM_ADDR',
         ),
       ),
       3 => array(
         0 => array(
-          'name' => 'em_reply_to_name',
-          'label' => 'LBL_EM_REPLY_TO_NAME',
+          'name' => 'notification_reply_to_name',
+          'label' => 'LBL_NOTIFICATION_REPLY_TO_NAME',
         ),
         1 => array(
-          'name' => 'em_reply_to_addr',
-          'label' => 'LBL_EM_REPLY_TO_ADDR',
+          'name' => 'notification_reply_to_addr',
+          'label' => 'LBL_NOTIFICATION_REPLY_TO_ADDR',
         ),
-      ),      
+      ),
     ),
   ),
 );

@@ -37,43 +37,31 @@ $subpanel_layout = array(
             'name' => 'name',
             'vname' => 'LBL_LIST_CAMPAIGN_NAME',
             'widget_class' => 'SubPanelDetailViewLink',
-            // 'width' => '20%',
         ),
         'status' => array(
             'name' => 'status',
             'vname' => 'LBL_LIST_STATUS',
-            // 'width' => '15%',
         ),
-        'email_marketing_name' => array(
-            'name' => 'email_marketing_name',
-            'vname' => 'LBL_LIST_EMAIL_MARKETING_NAME',
-            // 'width' => '15%',
+        'start_date' => array(
+            'name' => 'start_date',
+            'vname' => 'LBL_LIST_START_DATE',
         ),
-        'email_marketing_date_start' => array(
-            'name' => 'email_marketing_date_start',
-            'vname' => 'LBL_LIST_EMAIL_MARKETING_DATE_START',
-            // 'width' => '15%',
+        'end_date' => array(
+            'name' => 'end_date',
+            'vname' => 'LBL_LIST_END_DATE',
         ),
-        'email_marketing_status' => array(
-            'name' => 'email_marketing_status',
-            'vname' => 'LBL_LIST_EMAIL_MARKETING_STATUS',
-            // 'width' => '15%',
+        'notification_prospect_list_name' => array(
+            'name' => 'notification_prospect_list_name',
+            'vname' => 'LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAME',
         ),
-        'email_templates_name' => array(
-            'name' => 'email_templates_name',
-            'vname' => 'LBL_LIST_EMAIL_TEMPLATES_NAME',
-            // 'width' => '15%',
-        ),
-        'prospect_lists_name' => array(
-            'name' => 'prospect_lists_name',
-            'vname' => 'LBL_LIST_PROSPECT_LISTS_NAME',
-            // 'width' => '15%',
+        'notification_email_template_name' => array(
+            'name' => 'notification_email_template_name',
+            'vname' => 'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME',
         ),
         'quickedit_button' => array(
             'vname' => 'LBL_QUICKEDIT_BUTTON',
             'widget_class' => 'SubPanelQuickEditButton',
             'module' => 'Campgains',
-            //'width' => '4%',
         ),
         // 'remove_button' => array(
         //     'vname' => 'LBL_REMOVE',

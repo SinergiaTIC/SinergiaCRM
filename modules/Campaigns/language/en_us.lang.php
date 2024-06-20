@@ -472,21 +472,19 @@ $mod_strings = array(
 
     // STIC-Custom 20240604 JBL - New Campaign type: Notification
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-    'LBL_PROSPECT_LIST_ID' => 'Prospect List',
-    'LBL_EM_TEMPLATE_ID' => 'Email Template',
-    'LBL_EM_OUTBOUND_EMAIL_ID' => 'Outbound email',
-    'LBL_EM_FROM_NAME' => 'From name',
-    'LBL_EM_FROM_ADDR' => 'From address',
-    'LBL_EM_REPLY_TO_NAME' => 'Reply to name',
-    'LBL_EM_REPLY_TO_ADDR' => 'Reply to address',
+    'LBL_NOTIFICATION_PROSPECT_LIST_NAME' => 'Prospect List',
+    'LBL_NOTIFICATION_PROSPECT_LIST_ID' => 'Prospect List',
+    'LBL_NOTIFICATION_TEMPLATE_ID' => 'Email Template',
+    'LBL_NOTIFICATION_UTBOUND_EMAIL_ID' => 'Outbound email',
+    'LBL_NOTIFICATION_ROM_NAME' => 'From name',
+    'LBL_NOTIFICATION_ROM_ADDR' => 'From address',
+    'LBL_NOTIFICATION_EPLY_TO_NAME' => 'Reply to name',
+    'LBL_NOTIFICATION_REPLY_TO_ADDR' => 'Reply to address',
 
-    'LBL_EMAILMARKETING_INFORMATION' => 'Email',
+    'LBL_NOTIFICATION_INFORMATION_PANEL' => 'Notifications',
 
-    'LBL_LIST_EMAIL_MARKETING_NAME' => 'Email Marketing',
-    'LBL_LIST_EMAIL_MARKETING_DATE_START' => 'Start Date',
-    'LBL_LIST_EMAIL_MARKETING_STATUS' => 'Email Marketing Status',
-    'LBL_LIST_EMAIL_TEMPLATES_NAME' => 'Template Name',
-    'LBL_LIST_PROSPECT_LISTS_NAME' => 'Target List',
+    'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME' => 'Template Name',
+    'LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAME' => 'Target List',
     // END STIC-Custom
 
 );

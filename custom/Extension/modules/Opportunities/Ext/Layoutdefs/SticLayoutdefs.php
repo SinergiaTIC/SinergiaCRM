@@ -62,10 +62,10 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
     'module' => 'Campaigns',
     'subpanel_name' => 'SticOpportunityNotifications',
     'sort_order' => 'asc',
-    'sort_by' => 'id',
+    'sort_by' => 'name',
     'get_subpanel_data' => 'function:get_notifications_from_opportunity',
     'function_parameters' => array(
-        'import_function_file' => 'custom/modules/Campaigns/SticUtils.php',
+        'import_function_file' => 'modules/Campaigns/SticUtils.php',
         'opportunity_id' => $this->_focus->id,
         'return_as_array' => 'true',
     ),
