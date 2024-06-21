@@ -52,6 +52,7 @@ $mod_strings = array(
     'LBL_HOMEPAGE_TITLE' => 'My Resources',
     'LNK_NEW_RECORD' => 'Create a Resource',
     'LNK_LIST' => 'View Resources',
+    'LNK_LIST2' => 'View Places',
     'LNK_IMPORT_STIC_RESOURCES' => 'Import Resources',
     'LBL_SEARCH_FORM_TITLE' => 'Search Resources',
     'LBL_HISTORY_SUBPANEL_TITLE' => 'View History',
@@ -70,4 +71,9 @@ $mod_strings = array(
     'LBL_OWNER_CONTACT' => 'Owner contact',
     'LBL_OWNER_ACCOUNT' => 'Owner account',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Bookings',
+    'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE' => 'Center',
+    'LBL_PLACE_TYPE' => 'Place type',
+    'LBL_GENDER' => 'Gender',
+    'LBL_USER_TYPE' => 'User type',
+    'LBL_BOOKING_TYPE' => 'Booking type',
 );
