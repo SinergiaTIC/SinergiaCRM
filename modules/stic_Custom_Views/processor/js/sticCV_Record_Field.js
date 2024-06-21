@@ -54,12 +54,6 @@ var sticCV_Record_Field = class sticCV_Record_Field extends sticCV_Record_Contai
   value(newValue) {
     return this.fixed_value(newValue);
   }
-  getValue(value_list) {
-    return this.content._getValue(value_list);
-  }
-  setValue(newValue, value_list) {
-    return this.content.value(newValue, value_list);
-  }
 
   applyAction(action) {
     switch (action.action) {

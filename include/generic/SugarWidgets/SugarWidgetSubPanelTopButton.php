@@ -270,7 +270,6 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
             return $temp;
         }
 
-
         global $app_strings;
 
         if (isset($_REQUEST['layout_def_key']) && $_REQUEST['layout_def_key'] == 'UserEAPM') {

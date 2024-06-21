@@ -539,5 +539,5 @@ class Campaign extends SugarBean
         $result = $this->db->fetchOne($query);
 
         return (int)$result['count'];
-    }  
+    }
 }

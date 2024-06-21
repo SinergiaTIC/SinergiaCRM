@@ -469,22 +469,4 @@ $mod_strings = array(
     'LBL_PROSPECT_LISTS' => 'Prospect Lists',
     'LBL_SURVEYRESPONSES_CAMPAIGNS_FROM_SURVEYRESPONSES_TITLE' => 'Survey Responses',
     'LBL_CAMPAIGN_SURVEY' => "Survey",
-
-    // STIC-Custom 20240604 JBL - New Campaign type: Notification
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-    'LBL_NOTIFICATION_PROSPECT_LIST_NAME' => 'Prospect List',
-    'LBL_NOTIFICATION_PROSPECT_LIST_ID' => 'Prospect List',
-    'LBL_NOTIFICATION_TEMPLATE_ID' => 'Email Template',
-    'LBL_NOTIFICATION_UTBOUND_EMAIL_ID' => 'Outbound email',
-    'LBL_NOTIFICATION_ROM_NAME' => 'From name',
-    'LBL_NOTIFICATION_ROM_ADDR' => 'From address',
-    'LBL_NOTIFICATION_EPLY_TO_NAME' => 'Reply to name',
-    'LBL_NOTIFICATION_REPLY_TO_ADDR' => 'Reply to address',
-
-    'LBL_NOTIFICATION_INFORMATION_PANEL' => 'Notifications',
-
-    'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME' => 'Template Name',
-    'LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAME' => 'Target List',
-    // END STIC-Custom
-
 );

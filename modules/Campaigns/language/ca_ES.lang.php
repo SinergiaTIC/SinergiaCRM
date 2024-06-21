@@ -470,21 +470,4 @@ $mod_strings = array(
     'LBL_EMAIL_SUCCESS' => 'Fet',
     'LBL_QUEUE_ITEMS' => 'Elements de la cua',
     'LBL_PROSPECT_LISTS' => 'Llistes de Públic Objectiu',
-
-    // STIC-Custom 20240604 JBL - New Campaign type: Notification
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-    'LBL_NOTIFICATION_PROSPECT_LIST_NAME' => 'Públic Objectiu',
-    'LBL_NOTIFICATION_PROSPECT_LIST_ID' => 'Públic Objectiu',
-    'LBL_NOTIFICATION_TEMPLATE_ID' => 'Plantilla de correu electrònic',
-    'LBL_NOTIFICATION_OUTBOUND_EMAIL_ID' => 'Correu electrònic sortint',
-    'LBL_NOTIFICATION_FROM_NAME' => 'Remitent (nom)',
-    'LBL_NOTIFICATION_FROM_ADDR' => 'Remitent (adreça)',
-    'LBL_NOTIFICATION_REPLY_TO_NAME' => 'Respondre a (nom)',
-    'LBL_NOTIFICATION_REPLY_TO_ADDR' => 'Respondre a (adreça)',
-
-    'LBL_NOTIFICATION_INFORMATION_PANEL' => 'Notificacions',
-
-    'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME' => 'Plantilla de correu electrònic',
-    'LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAME' => 'Llista de Públic Objectiu',
-    // END STIC-Custom
 );
