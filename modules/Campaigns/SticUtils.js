@@ -42,14 +42,11 @@ switch (viewType()) {
   case "popup":
     $(document).ready(function() {
       initilizeEditView();
-      type_change();
     });
     break;
 
   case "detail":
-    $(document).ready(function() {
-      type_change();
-    });
+    $(document).ready(function() {});
     break;
 
   case "list":
@@ -59,7 +56,9 @@ switch (viewType()) {
     break;
 }
 
-$(document).ready(function() {});
+$(document).ready(function() {
+  type_change();
+});
 
 function type_change() {
   var typeValue = $('[name="campaign_type"]').val();
@@ -110,17 +109,32 @@ function showNewsLetterFields(show) {
   }
 }
 
-function showNotificationFields(show) {
-  if (show) {
-    addToValidate(getFormName(), "parent_name", "relate", true, SUGAR.language.get(module, "LBL_FLEX_RELATE"));
-    addRequiredMark("parent_name", "conditional-required");
-    $('[data-field="parent_name"]').show();
+function setRequired(require, field, type, label) {
+  if (require) {
+    addToValidate(getFormName(), field, type, true, SUGAR.language.get(module, label));
+    addRequiredMark(field, "conditional-required");
   } else {
-    removeFromValidate(getFormName(), "parent_name");
+    removeFromValidate(getFormName(), field);
+  }
+}
+
+function showNotificationFields(show) {
+  setRequired(show, "parent_name", "relate", "LBL_FLEX_RELATE");
+  setRequired(show, "notification_prospect_list_id", "enum", "LBL_NOTIFICATION_PROSPECT_LIST_ID");
+  setRequired(show, "notification_template_id", "enum", "LBL_NOTIFICATION_TEMPLATE_ID");
+  setRequired(show, "notification_from_name", "varchar", "LBL_NOTIFICATION_FROM_NAME");
+  setRequired(show, "notification_from_addr", "varchar", "LBL_NOTIFICATION_FROM_ADDR");
+
+  if (show) {
+    $('[data-field="parent_name"]').show();
+    $(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().show();
+  } else {
     $("#parent_type").val("");
     $("#parent_name").val("");
     $("#parent_id").val("");
     $('[data-field="parent_name"]').hide();
+
+    $(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
   }
 }
 

@@ -20,37 +20,43 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once 'include/EditView/SubpanelQuickCreate.php';
+require_once 'include/MVC/View/views/view.edit.php';
+require_once 'SticInclude/Views.php';
 
-class CampaignsSubpanelQuickCreate extends SubpanelQuickCreate
+class CustomCampaignsViewEdit extends ViewEdit
 {
-    public function __construct($module, $view = 'QuickCreate', $proccessOverride = false)
+
+    public function __construct()
     {
-        parent::__construct($module, $view, $proccessOverride);
+        parent::__construct();
+        $this->useForSubpanel = false;
+        $this->useModuleQuickCreateTemplate = true;
     }
 
-    public function process($module)
+    public function preDisplay()
     {
-        // Remove 'SUBPANELFULLFORM' button
-        if (($key = array_search('SUBPANELFULLFORM', $this->ev->defs['templateMeta']['form']['buttons'])) !== false) {
-            unset($this->ev->defs['templateMeta']['form']['buttons'][$key]);
-        }
+        parent::preDisplay();
 
-        // Link basic stic css and JS files
-        echo getVersionedScript("SticInclude/js/Utils.js");
+        SticViews::preDisplay($this);
 
+        // Write here you custom code
         include_once "modules/Campaigns/SticUtils.php";
         fillDynamicListsForNotifications();
+    }
 
-        echo getLangStrings();
+    public function display()
+    {
+        parent::display();
 
+        SticViews::display($this);
+
+        // Write here you custom code
         echo getVersionedScript("modules/Campaigns/SticUtils.js");
 
-        parent::process($module);
     }
+
 }
