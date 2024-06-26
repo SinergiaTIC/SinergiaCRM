@@ -36,6 +36,7 @@ $layout_defs['Opportunities']['subpanel_setup']['contacts']['sort_by'] = 'last_n
 unset($layout_defs['Opportunities']['subpanel_setup']['project']);
 unset($layout_defs['Opportunities']['subpanel_setup']['leads']);
 
+
 // Grants subpanel
 $layout_defs["Opportunities"]["subpanel_setup"]['stic_grants_opportunities'] = array (
     'order' => 100,
@@ -47,15 +48,15 @@ $layout_defs["Opportunities"]["subpanel_setup"]['stic_grants_opportunities'] = a
     'get_subpanel_data' => 'stic_grants_opportunities',
     'top_buttons' => 
     array(
-        0 => 
-        array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
-        ),
-        1 => 
-        array(
-            'widget_class' => 'SubPanelTopSelectButton',
-            'mode' => 'MultiSelect',
-        ),
+      0 => 
+      array(
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      1 => 
+      array(
+        'widget_class' => 'SubPanelTopSelectButton',
+        'mode' => 'MultiSelect',
+      ),
     ),
 );
 
@@ -81,4 +82,4 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
         ),
     ),
 );
-
+  
