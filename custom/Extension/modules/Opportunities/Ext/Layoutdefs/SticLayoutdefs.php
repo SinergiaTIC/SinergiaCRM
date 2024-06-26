@@ -47,13 +47,13 @@ $layout_defs["Opportunities"]["subpanel_setup"]['stic_grants_opportunities'] = a
     'title_key' => 'LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE',
     'get_subpanel_data' => 'stic_grants_opportunities',
     'top_buttons' => 
-    array(
+    array (
       0 => 
-      array(
+      array (
         'widget_class' => 'SubPanelTopButtonQuickCreate',
       ),
       1 => 
-      array(
+      array (
         'widget_class' => 'SubPanelTopSelectButton',
         'mode' => 'MultiSelect',
       ),
