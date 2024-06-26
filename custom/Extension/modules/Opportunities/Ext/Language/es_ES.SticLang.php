@@ -83,5 +83,11 @@ $mod_strings['LBL_TOTAL_OPPORTUNITIES'] = 'Total de Subvenciones';
 $mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = 'Subvenciones ganadas';
 $mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importar Subvenciones';
 
+// Cadenas para la notificación de nuevas subvenciones
+$mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL de la convocatoria';
+$mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Información adicional';
+$mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Enviar notificación ahora';
+$mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE'] = 'Notificaciones';
+
 // Cadenas Ayudas
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';

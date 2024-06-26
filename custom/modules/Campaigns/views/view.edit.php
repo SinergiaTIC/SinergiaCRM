@@ -20,15 +20,21 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
-require_once 'modules/Opportunities/views/view.detail.php';
+require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 
-class CustomOpportunitiesViewDetail extends OpportunitiesViewDetail
+class CustomCampaignsViewEdit extends ViewEdit
 {
+
     public function __construct()
     {
         parent::__construct();
+        $this->useForSubpanel = false;
+        $this->useModuleQuickCreateTemplate = true;
     }
 
     public function preDisplay()
@@ -38,6 +44,8 @@ class CustomOpportunitiesViewDetail extends OpportunitiesViewDetail
         SticViews::preDisplay($this);
 
         // Write here you custom code
+        include_once "modules/Campaigns/SticUtils.php";
+        fillDynamicListsForNotifications();
     }
 
     public function display()
@@ -46,8 +54,9 @@ class CustomOpportunitiesViewDetail extends OpportunitiesViewDetail
 
         SticViews::display($this);
 
-        echo getVersionedScript("custom/modules/Opportunities/Utils.js");
-
         // Write here you custom code
+        echo getVersionedScript("modules/Campaigns/SticUtils.js");
+
     }
+
 }

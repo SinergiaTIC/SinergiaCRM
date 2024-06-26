@@ -3,8 +3,6 @@
 var module = "Campaigns";
 
 /* INCLUDES */
-// Load moment.js to use in validations
-loadScript("include/javascript/moment.min.js");
 
 /* VALIDATION DEPENDENCIES */
 var validationDependencies = {

@@ -59,4 +59,27 @@ $layout_defs["Opportunities"]["subpanel_setup"]['stic_grants_opportunities'] = a
       ),
     ),
 );
+
+// Notifications subpanel
+$layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
+    'order' => 100,
+    'module' => 'Campaigns',
+    'subpanel_name' => 'SticOpportunityNotifications',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'get_subpanel_data' => 'function:get_notifications_from_opportunity',
+    'function_parameters' => array(
+        'import_function_file' => 'modules/Campaigns/SticUtils.php',
+        'opportunity_id' => $this->_focus->id,
+        'return_as_array' => 'true',
+    ),
+    'generate_select' => true,
+    'title_key' => 'LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate', 
+            'title' => 'LBL_NEW_BUTTON_TITLE',
+        ),
+    ),
+);
   

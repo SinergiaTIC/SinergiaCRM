@@ -111,6 +111,35 @@ class Campaign extends SugarBean
      */
     public $survey_name;
 
+    // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+    public $parent_name;
+    public $parent_type;
+    public $parent_id;
+
+    public $notification_prospect_list_id;
+    public $notification_prospect_list_name;
+
+    public $notification_template_id;
+    public $notification_outbound_email_id;
+    public $notification_from_name;
+    public $notification_from_addr;
+    public $notification_reply_to_name;
+    public $notification_reply_to_addr;
+
+    public function retrieve($id = -1, $encode = true, $deleted = true)
+    {
+        parent::retrieve($id, $encode, $deleted);
+        
+        if ($this->campaign_type == "Notification") {
+            include_once "modules/Campaigns/SticUtils.php";
+            fillCampaignNotificationFields($this);
+        }
+
+        return $this;
+    }
+    // END STIC-Custom
+
     public function list_view_parse_additional_sections(&$listTmpl)
     {
         global $locale;
@@ -264,8 +293,55 @@ class Campaign extends SugarBean
             $this->frequency = '';
         }
 
-		return parent::save($check_notify);
+        // STIC-Custom - JBL - 20240612 - Notify new Opportunities: New Campaign type (Notification)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+		// return parent::save($check_notify);
+        if ($this->campaign_type == "Notification" && 
+            !empty($_REQUEST['relate_to'] && $_REQUEST['relate_to'] == "get_notifications_from_opportunity" &&
+            !empty($_REQUEST['relate_id']))) {
+            $this->parent_type = "Opportunities";
+            $this->parent_id = $_REQUEST['relate_id'];
+            $_REQUEST['relate_to'] = null;
+            $_REQUEST['relate_id'] = null;
+        }
 
+        $return_id = parent::save($check_notify);
+
+        if ($this->campaign_type == "Notification") {
+
+            // Set ProspectList relationship
+            if ($this->load_relationship('prospectlists')) {
+                $relatedProspectLists = $this->prospectlists->get();
+                foreach ($relatedProspectLists as $prospectListId) {
+                    if ($prospectListId != $this->notification_prospect_list_id) {
+                        $this->prospectlists->delete($this->id, $prospectListId);
+                    }
+                }
+                if (!in_array($this->notification_prospect_list_id, $relatedProspectLists)) {
+                    $this->prospectlists->add($this->notification_prospect_list_id);
+                }
+            }
+
+            // Save or Update EmailMarketing
+            $emailMarketing = BeanFactory::newBean('EmailMarketing');
+            $relatedEmailMarketingList = $emailMarketing->get_list("name", "email_marketing.campaign_id='{$return_id}'", 0, -99, -99);
+            if(!empty($relatedEmailMarketingList['list'])) {
+                $emailMarketing = $relatedEmailMarketingList['list'][0];
+            }
+            $emailMarketing->name = $this->name . ' - Email';
+            $emailMarketing->campaign_id = $return_id;
+            $emailMarketing->template_id = $this->notification_template_id;
+            $emailMarketing->outbound_email_id = $this->notification_outbound_email_id;
+            $emailMarketing->from_name = $this->notification_from_name;
+            $emailMarketing->from_addr = $this->notification_from_addr;
+            $emailMarketing->date_start = $_REQUEST["start_date"];
+            $emailMarketing->status = 'active';
+            $emailMarketing->all_prospect_lists = true;
+
+            $emailMarketing->save();
+        }
+        return $return_id;
+        // END STIC-Custom
 	}
 
 
