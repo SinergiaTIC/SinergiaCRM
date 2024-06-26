@@ -1666,7 +1666,7 @@ class ExternalReporting
                                 continue 2;
                             }
 
-                            // In the case of Secutity Groups we add a unique entry for each of the groups the user belongs to,
+                            // In the case of Security Groups we add a unique entry for each of the groups the user belongs to,
                             // ensuring that it does not exist previously for each module.
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
@@ -1678,17 +1678,28 @@ class ExternalReporting
                                     'stic_permission_source' => $aclSource,
                                     'global' => 0,
                                 ];
+
+                        // Additionally we insert a record that allows each user's access to the records in which coinicide
+                        // the user_name with the assigned_user_name field content in each module in which the user has group permission                                
+                        $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
+                                    'user_name' => $u['user_name'],
+                                    'group' => null,
+                                    'table' => $currentTable,
+                                    'column' => 'assigned_user_name',
+                                    'stic_permission_source' => "{$aclSource}_private",
+                                    'global' => 0,
+                                ];
                             }
+
                             break;
 
                         case '75': // Owner case
-                            // In this phase, access to modules where the user has restricted access to their own/assigned records is disabled.
-                            continue 2;
+                            // Modules where the user has restricted access to their own/assigned records .
 
                             $userModuleAccessMode["{$aclSource}_{$u['user_name']}_{$currentTable}"] = [
                                 'user_name' => $u['user_name'],
                                 'table' => $currentTable,
-                                'column' => 'users_id',
+                                'column' => 'assigned_user_name',
                                 'stic_permission_source' => $aclSource,
                                 'global' => 0,
                             ];
