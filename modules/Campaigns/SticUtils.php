@@ -89,7 +89,7 @@ function fillCampaignNotificationFields($beanCampaign)
     }
 }
 
-function getLangStrings()
+function getLangStringsForCampaigns()
 {
     $html = "";
     // Load related lang strings
