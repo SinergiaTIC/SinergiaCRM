@@ -699,11 +699,6 @@ $app_list_strings['stic_opportunities_documents_list']['project'] = 'Document de
 $app_list_strings['stic_opportunities_documents_list']['estatutes'] = 'Estatuts';
 $app_list_strings['stic_opportunities_documents_list']['annual_report'] = 'Memòria anual';
 
-// Oportunitats: Notificació de noves convocatòries
-$app_list_strings['stic_opportunities_publishable_list']['no'] = 'No';
-$app_list_strings['stic_opportunities_publishable_list']['yes_pending'] = 'Sí (pendent)';
-$app_list_strings['stic_opportunities_publishable_list']['yes_sent'] = 'Sí (enviat)';
-
 // Projectes: Estats
 $app_list_strings['stic_projects_status_list'][''] = '';
 $app_list_strings['stic_projects_status_list']['idea'] = 'Idea';

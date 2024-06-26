@@ -678,12 +678,6 @@ $app_list_strings['stic_opportunities_documents_list']['project'] = 'Project doc
 $app_list_strings['stic_opportunities_documents_list']['estatutes'] = 'Estatutes';
 $app_list_strings['stic_opportunities_documents_list']['annual_report'] = 'Annual report';
 
-// Opportunities: Notify new opportunities
-$app_list_strings['stic_opportunities_publishable_list']['no'] = 'No';
-$app_list_strings['stic_opportunities_publishable_list']['yes_pending'] = 'Yes (pending)';
-$app_list_strings['stic_opportunities_publishable_list']['yes_sent'] = 'Yes (sent)';
-
-
 // Projects: Status
 $app_list_strings['stic_projects_status_list'][''] = '';
 $app_list_strings['stic_projects_status_list']['idea'] = 'Idea';
