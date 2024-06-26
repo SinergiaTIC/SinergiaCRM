@@ -30,11 +30,13 @@ var sticCVUtils = class sticCVUtils {
     show = sticCVUtils.isTrue(show);
     $elem.each(function() {
       if (show) {
-        sticCVUtils.removeClass($(this), customView, "hidden");
+        if (!$(this).hasClass("auto-hidden")) {
+          sticCVUtils.removeClass($(this), customView, "hidden");
+        }
       } else {
         sticCVUtils.addClass($(this), customView, "hidden");
+        sticCVUtils.removeClass($(this), customView, "auto-hidden");
       }
-      sticCVUtils.removeClass($(this), customView, "auto-hidden");
     });
   }
   static show_auto($elem, customView = null, show = true) {
