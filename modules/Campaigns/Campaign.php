@@ -334,7 +334,7 @@ class Campaign extends SugarBean
             $emailMarketing->outbound_email_id = $this->notification_outbound_email_id;
             $emailMarketing->from_name = $this->notification_from_name;
             $emailMarketing->from_addr = $this->notification_from_addr;
-            $emailMarketing->date_start = $this->start_date;
+            $emailMarketing->date_start = $_REQUEST["start_date"];
             $emailMarketing->status = 'active';
             $emailMarketing->all_prospect_lists = true;
 
