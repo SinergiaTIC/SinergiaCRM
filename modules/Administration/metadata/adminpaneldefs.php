@@ -196,6 +196,13 @@ $admin_option_defs['Administration']['configure_group_tabs'] = [
     './index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureGroupTabs',
     'configure-module-menu-filters'
 ];
+$admin_option_defs['Administration']['configure_group_tabs_new'] = [
+    'ConfigureTabs',
+    'LBL_CONFIGURE_GROUP_TABS',
+    'LBL_CONFIGURE_GROUP_TABS_DESC',
+    './index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureGroupTabsNew',
+    'configure-module-menu-filters-new'
+];
 $admin_option_defs['Administration']['connector_settings'] = [
     'icon_Connectors',
     'LBL_CONNECTOR_SETTINGS',

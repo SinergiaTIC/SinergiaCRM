@@ -667,6 +667,21 @@ class SugarView
                 $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
             }
 
+            include_once 'custom/include/SticAdvancedTabConfig.php';
+            if (isset($GLOBALS["SticTabStructure"])) {
+                require_once 'SticInclude/SticAdvancedMenu.php';
+                $menu = $GLOBALS["SticTabStructure"];
+                addMenuProperties($menu);
+                $ss->assign('renderedMenu', generateMenu($menu));
+                $ss->assign('STIC_MENU', true);
+            } else {
+                $ss->assign('STIC_MENU', false);
+
+            }
+
+
+
+
             $topTabList = array();
 
             // Now time to go through each of the tab sets and fix them up.
@@ -794,7 +809,7 @@ class SugarView
         }
 
         if ($retModTabs) {
-            return $ss->fetch($themeObject->getTemplate('_headerModuleList.tpl'));
+                return $ss->fetch($themeObject->getTemplate('_headerModuleList.tpl'));
         } else {
             $ss->display($headerTpl);
 
