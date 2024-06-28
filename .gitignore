@@ -132,3 +132,6 @@ codeception.yml
 
 # Ignore custom Stic tab config
 custom/include/AdvancedTabConfig.php
+
+# Ignore SDA check rebuild errors
+sdaRebuildError.txt
