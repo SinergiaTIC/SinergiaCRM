@@ -268,14 +268,18 @@ var sticCVUtils = class sticCVUtils {
 
   static getValue(fieldContent, value_list) {
     var $elem = fieldContent.$editor;
-    if (fieldContent.customView.view == "detailview" && fieldContent.type != "bool") {
+    if (
+      fieldContent.customView.view == "detailview" &&
+      fieldContent.type != "bool" &&
+      !fieldContent.$element.hasClass("inlineEditActive")
+    ) {
       $elem = fieldContent.$fieldText;
     }
     if ($elem.length == 0 || $elem.get(0).parentNode === null) {
       $elem = fieldContent.$element;
     }
 
-    if (fieldContent.customView.view == "detailview") {
+    if (fieldContent.customView.view == "detailview" && !fieldContent.$element.hasClass("inlineEditActive")) {
       if (fieldContent.type == "relate") {
         return $elem.attr("data-id-value") + "|" + $elem.text().trim();
       }
