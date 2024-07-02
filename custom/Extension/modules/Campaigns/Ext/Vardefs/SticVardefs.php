@@ -102,10 +102,10 @@ $dictionary["Campaign"]["fields"]['parent_id'] = array(
 );
 $dictionary["Campaign"]["fields"]['notification_prospect_list_name'] = array(
     'name' => 'notification_prospect_list_name',
-    'id_name' => 'notification_prospect_list_id',
     'vname' => 'LBL_NOTIFICATION_PROSPECT_LIST_NAME',
-    'module' => 'ProspectLists',
-    'dbType' => 'varchar',
+    //'id_name' => 'notification_prospect_list_id',
+    //'module' => 'ProspectLists',
+    'type' => 'varchar',
     'len' => '255',
     'source' => 'non-db',
 );
@@ -151,6 +151,15 @@ $dictionary["Campaign"]["fields"]['notification_template_id'] = array(
     'size' => '20',
     'options' => 'dynamic_email_template_list',
     'dependency' => false,
+);
+$dictionary["Campaign"]["fields"]['notification_email_template_name'] = array(
+    'name' => 'notification_email_template_name',
+    'vname' => 'LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME',
+    //'id_name' => 'notification_template_id',
+    //'module' => 'EmailTemplates',
+    'type' => 'varchar',
+    'len' => '255',
+    'source' => 'non-db',
 );
 $dictionary["Campaign"]["fields"]['notification_outbound_email_id'] = array(
     'name' => 'notification_outbound_email_id',

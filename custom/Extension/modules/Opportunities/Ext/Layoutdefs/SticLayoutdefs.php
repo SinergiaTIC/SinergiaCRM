@@ -71,9 +71,8 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
     'function_parameters' => array(
         'import_function_file' => 'modules/Campaigns/SticUtils.php',
         'opportunity_id' => $this->_focus->id,
-        'return_as_array' => 'true',
+        'return_as_array' => false,
     ),
-    'generate_select' => true,
     'title_key' => 'LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE',
     'top_buttons' => array(
         0 => array(

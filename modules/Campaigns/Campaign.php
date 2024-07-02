@@ -121,6 +121,7 @@ class Campaign extends SugarBean
     public $notification_prospect_list_name;
 
     public $notification_template_id;
+    public $notification_template_name;
     public $notification_outbound_email_id;
     public $notification_from_name;
     public $notification_from_addr;
@@ -343,7 +344,6 @@ class Campaign extends SugarBean
         return $return_id;
         // END STIC-Custom
 	}
-
 
     public function mark_deleted($id)
     {

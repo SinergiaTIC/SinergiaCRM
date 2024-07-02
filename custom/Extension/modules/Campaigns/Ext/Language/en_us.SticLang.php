@@ -57,6 +57,7 @@ $mod_strings['LBL_WEB_TO_LEAD'] = 'Create person web form';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_NAME'] = 'Prospect List';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Prospect List';
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID'] = 'Email Template';
+$mod_strings['LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Template Name';
 $mod_strings['LBL_NOTIFICATION_UTBOUND_EMAIL_ID'] = 'Outbound email';
 $mod_strings['LBL_NOTIFICATION_ROM_NAME'] = 'From name';
 $mod_strings['LBL_NOTIFICATION_ROM_ADDR'] = 'From address';

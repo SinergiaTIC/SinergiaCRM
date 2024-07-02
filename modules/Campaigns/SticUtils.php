@@ -24,12 +24,13 @@
 function get_notifications_from_opportunity($params)
 {
     $args = func_get_args();
-    $parentId = $args[0]['opportunity_id'];
+    $return_as_array = isset($args[0]['return_as_array']) ? $args[0]['return_as_array'] : false;
+    $parentId = $args[0]['opportunity_id'] ?? $_REQUEST['record'];
     $parentType = "Opportunities";
     $campaignType = "Notification";
 
     $return_array['select'] =
-        " SELECT campaigns.id, campaigns.name, campaigns.status, campaigns.start_date, campaigns.end_date" .
+        " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date, campaigns.end_date" .
         ", pl.id as notification_prospect_list_id" .
         ", pl.name as notification_prospect_list_name" .
         ", et.name as notification_email_template_name";
@@ -51,7 +52,11 @@ function get_notifications_from_opportunity($params)
 
     $return_array['join_tables'] = '';
 
-    return $return_array;
+    if ($return_as_array) {
+        return $return_array;
+    } else {
+        return $return_array['select'].' '.$return_array['from'].' '.$return_array['join'].' '.$return_array['where'];
+    }
 }
 
 function fillCampaignNotificationFields($beanCampaign)
