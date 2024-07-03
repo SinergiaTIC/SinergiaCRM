@@ -58,11 +58,11 @@ $subpanel_layout = array(
             'name' => 'notification_email_template_name',
             'vname' => 'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME',
         ),
-        'quickedit_button' => array(
-            'vname' => 'LBL_QUICKEDIT_BUTTON',
-            'widget_class' => 'SubPanelQuickEditButton',
-            'module' => 'Campgains',
-        ),
+        // 'quickedit_button' => array(
+        //     'vname' => 'LBL_QUICKEDIT_BUTTON',
+        //     'widget_class' => 'SubPanelQuickEditButton',
+        //     'module' => 'Campgains',
+        // ),
         // 'remove_button' => array(
         //     'vname' => 'LBL_REMOVE',
         //     'widget_class' => 'SubPanelRemoveButton',

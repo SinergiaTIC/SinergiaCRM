@@ -497,7 +497,7 @@ array (
         ),
         4 => 
         array (
-          // Hide/Show fields managed in modules/Campaigns/SticUtils.js
+          // Hide/Show fields managed in custom/modules/Campaigns/SticUtils.js
           0 => array (
             'name' => 'frequency', 
           ),

@@ -21,12 +21,23 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once('modules/Campaigns/controller.php');
+require_once 'modules/Campaigns/controller.php';
 class CustomCampaignsController extends CampaignsController
 {
     // STIC - 20210624  - We override the process function to recover the classic view to create or edit a campaign
     public function process()
     {
+        // Notifications can not be editable
+        if ($this->action == 'EditView' && !empty($_REQUEST['record'])) {
+            $db = DBManagerFactory::getInstance();
+            $query = "SELECT campaign_type FROM campaigns WHERE id ='{$_REQUEST['record']}'";
+            $result = $db->query($query);
+            $typeArray = $db->fetchByAssoc($result);
+            if ($typeArray['campaign_type'] == "Notification") {
+                $this->action = 'DetailView';
+            }
+        }
+
         SugarController::process();
     }
 }

@@ -147,7 +147,7 @@ class CampaignsViewDetail extends ViewDetail
             //     $subpanel->subpanel_definitions->exclude_tab('tracked_urls');
             // }
             // only show email marketing subpanel for email/newsletter/notification campaigns
-            if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter' && $this->bean->campaign_type != 'Notification') {
+            if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter' && $this->bean->campaign_type != "Notification") {
                 //exclude emailmarketing subpanel if not on an email, newsletter or notification campaign
                 $subpanel->subpanel_definitions->exclude_tab('emailmarketing');
             }
@@ -159,11 +159,5 @@ class CampaignsViewDetail extends ViewDetail
         }
         //show filtered subpanel list
         echo $subpanel->display();
-
-        // STIC-Custom - JBL - 20240611 - Notify new Opportunities: Campaign new type (Notification)
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-        echo getVersionedScript("SticInclude/js/Utils.js");
-        echo getVersionedScript("modules/Campaigns/SticUtils.js");
-        // END STIC-Custom JBL
     }
 }

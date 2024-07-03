@@ -94,21 +94,6 @@ function fillCampaignNotificationFields($beanCampaign)
     }
 }
 
-function getLangStringsForCampaigns()
-{
-    $html = "";
-    // Load related lang strings
-    $moduleNames = array('Campaigns');
-    foreach ($moduleNames as $moduleName) {
-        if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
-            require_once 'include/language/jsLanguage.php';
-            jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
-        }
-        $html .= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-    }
-    return $html;
-}
-
 function fillDynamicListsForNotifications()
 {
     fillDynamicListProspectList();

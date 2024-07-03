@@ -298,7 +298,7 @@ $viewdefs['Campaigns']['EditView'] = array (
     // </script>',
     'javascript' => '{sugar_getscript file="include/javascript/popup_parent_helper.js"}
                      {sugar_getscript file="SticInclude/js/Utils.js"}
-                     {sugar_getscript file="modules/Campaigns/SticUtils.js"}',
+                     {sugar_getscript file="custom/modules/Campaigns/SticUtils.js"}',
     // END STIC-Custom JBL
     'useTabs' => true,
     'tabDefs' => 

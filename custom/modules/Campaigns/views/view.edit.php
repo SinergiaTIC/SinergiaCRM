@@ -55,8 +55,7 @@ class CustomCampaignsViewEdit extends ViewEdit
         SticViews::display($this);
 
         // Write here you custom code
-        echo getVersionedScript("modules/Campaigns/SticUtils.js");
-
+        echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
     }
 
 }

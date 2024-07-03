@@ -88,14 +88,8 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
             'showFormats' => true,
           ),
         ),
-        1 => 
-        array (
-          'name' => 'end_date',
-          'displayParams' => 
-          array (
-            'showFormats' => true,
-          ),
-        ),
+        1 =>
+        array (),
       ),
       3 => 
       array (
