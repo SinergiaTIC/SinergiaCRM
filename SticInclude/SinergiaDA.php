@@ -696,6 +696,85 @@ class ExternalReporting
                 unset($edaPrecision);
             }
 
+            
+            // VIRTUAL FIELDS
+            // Include existing files in modules and custom/modules/ to create virtual fields in SinergiaCRM
+            $sourceDir = [
+                "modules/$moduleName/SDAVirtualFields",
+                "custom/modules/$moduleName/SDAVirtualFields",
+            ];
+
+            foreach ($sourceDir as $dir) {
+                if (is_dir($dir)) {
+                    // Get the list of files in the directory
+                    $files = scandir($dir);
+
+                    // Iterate through the files
+                    foreach ($files as $file) {
+                        // Ignore . and ..
+                        if ($file != "." && $file != "..") {
+                            $fullPath = $dir . '/' . $file;
+
+                            // Check if it's a file and has .php extension
+                            if (is_file($fullPath) && pathinfo($fullPath, PATHINFO_EXTENSION) == 'php') {
+                                // Include the file
+                                require_once $fullPath;
+
+                                // Get the translated label or use the original if not available
+                                $virtualFieldLabel = $modStrings[$virtualFieldLabel] ?? $virtualFieldLabel;
+
+                                // Check if the virtual field label is empty
+                                if (empty($virtualFieldLabel)) {
+                                    $this->info .= "<div style='color:red;'>VIRTUAL FIELD ERROR: <b>[{$fullPath}]</b> - The virtual field was not processed because there is no translation available for {$this->langCode}</div>";
+                                    $this->info .= "[FATAL: Virtual Field without label $viewName - $fullPath]";
+                                }
+
+                                // Get the translated description or use the original if not available
+                                $virtualFieldDescription = $modStrings[$virtualFieldDescription] ?? $virtualFieldDescription;
+
+                                // Replace spaces and hyphens with underscores in the virtual field label
+                                $virtualFieldLabel = preg_replace('/[\s-]+/', '_', $virtualFieldLabel);
+
+                                // Add the virtual field to the fieldList array
+                                $fieldList['virtual'][$file] = " $virtualFieldExpression AS '$virtualFieldLabel'";
+
+                                // Determine aggregations based on the virtual field type
+                                switch ($virtualFieldType) {
+                                    case 'numeric':
+                                        $virtualFieldAggregations = 'sum,avg,max,min,count,count_distinct,none';
+                                        break;
+                                    case 'text':
+                                    case 'enumeration':
+                                    case 'date':
+                                        $virtualFieldAggregations = 'count,count_distinct,none';
+                                        break;
+                                    default:
+                                        $virtualFieldAggregations = 'none';
+                                        break;
+                                }
+
+                                // Add metadata record for the virtual field
+                                $this->addMetadataRecord(
+                                    'sda_def_columns',
+                                    [
+                                        'table' => "{$this->viewPrefix}_{$tableName}",
+                                        'column' => $virtualFieldLabel,
+                                        'type' => $virtualFieldType,
+                                        'decimals' => $virtualFieldPrecision,
+                                        'aggregations' => empty($virtualFieldAggregations) ? 'none' : $virtualFieldAggregations,
+                                        'label' => html_entity_decode($virtualFieldLabel, ENT_QUOTES),
+                                        'description' => addslashes($virtualFieldDescription),
+                                        'sda_hidden' => $virtualFieldHidden ?: 0,
+                                        'stic_type' => 'virtual',
+                                    ]
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            // END VIRTUAL FIELDS
+
             // Add module metadata
             $this->addMetadataRecord(
                 'sda_def_tables',
@@ -728,6 +807,13 @@ class ExternalReporting
             if (!empty($fieldList['custom'])) {
                 foreach ($fieldList['custom'] as $cKey => $cValue) {
                     $createViewQueryFields .= " {$cValue}, ";
+                }
+            }
+
+            // Add virtual fields
+            if (!empty($fieldList['virtual'])) {
+                foreach ($fieldList['virtual'] as $vKey => $vValue) {
+                    $createViewQueryFields .= " {$vValue}, ";
                 }
             }
 
@@ -807,6 +893,8 @@ class ExternalReporting
             $this->info .= print_r($fieldList['base'], true);
             $this->info .= "<h2>Custom fields</h2>";
             $this->info .= print_r($fieldList['custom'], true);
+            $this->info .= "<h2>Virtual Fields</h2>";
+            $this->info .= print_r($fieldList['virtual'], true);
 
             $this->info .= "</div>";
             $isTable = $tableMode == 'table' ? ' <b style=color:orange>[Table]</b> ' : ' <b style=color:green>[View]</b> ';
@@ -1660,7 +1748,7 @@ class ExternalReporting
                     switch ($value['module']['view']['aclaccess']) {
                         case '80': // Security groups
 
-                            // If $sugar_config['stic_sinergiada']['group_permissions_enabled'] is disabled, access is also disabled to 
+                            // If $sugar_config['stic_sinergiada']['group_permissions_enabled'] is disabled, access is also disabled to
                             // modules where the user has restricted access to their group's records.
                             if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
                                 continue 2;
@@ -1679,9 +1767,9 @@ class ExternalReporting
                                     'global' => 0,
                                 ];
 
-                        // Additionally we insert a record that allows each user's access to the records in which coinicide
-                        // the user_name with the assigned_user_name field content in each module in which the user has group permission                                
-                        $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
+                                // Additionally we insert a record that allows each user's access to the records in which coinicide
+                                // the user_name with the assigned_user_name field content in each module in which the user has group permission
+                                $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
                                     'user_name' => $u['user_name'],
                                     'group' => null,
                                     'table' => $currentTable,
@@ -1751,7 +1839,7 @@ class ExternalReporting
         // Get an instance of the DBManager
         $db = DBManagerFactory::getInstance();
         // Query to get all the rows from the sda_def_columns table
-        $query = "SELECT `table`, `column` FROM sda_def_columns";
+        $query = "SELECT `table`, `column` FROM sda_def_columns WHERE stic_type != 'virtual'";
         $result = $db->query($query);
 
         // Loop through each row

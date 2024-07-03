@@ -76,4 +76,15 @@ $mod_strings = array(
     'LBL_STIC_ACCOUNTS_RELATIONSHIPS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organització',
     'LBL_START_DATE_ERROR' => "La data d'alta ha de ser igual o anterior a la data de baixa.",
     'LBL_END_DATE_ERROR' => "La data de baixa ha de ser igual o posterior a la data d'alta.",
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_0' => 'Relació activa aquest any',
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_0_DESCRIPTION' => "Informa si la relació va estar activa en qualsevol moment d'aquest any",
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_1' => "Relació activa l'any anterior",
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_1_DESCRIPTION' => "Informa si la relació va estar activa en qualsevol moment l'any anterior",
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_2' => 'Relació activa fa dos anys',
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_2_DESCRIPTION' => 'Informa si la relació va estar activa en qualsevol moment fa dos anys',
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_3' => 'Relació activa fa tres anys',
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_3_DESCRIPTION' => 'Informa si la relació va estar activa en qualsevol moment fa tres anys',
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_4' => 'Relació activa fa quatre anys',
+    'LBL_SDA_ACTIVE_CURRENT_YEAR_MINUS_4_DESCRIPTION' => 'Informa si la relació va estar activa en qualsevol moment fa quatre anys',
+
 );
