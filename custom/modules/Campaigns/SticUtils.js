@@ -26,26 +26,27 @@ var module = "Campaigns";
 
 /* INCLUDES */
 
-/* VALIDATION DEPENDENCIES */
-var validationDependencies = {
-  start_date: "end_date",
-  end_date: "start_date",
-};
+if ($('[data-field="end_date"]').length > 0 && $('[data-field="start_date"]').length > 0) {
+  /* VALIDATION DEPENDENCIES */
+  var validationDependencies = {
+    start_date: "end_date",
+    end_date: "start_date"
+  };
 
-/* VALIDATION CALLBACKS */
-addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
-  return checkStartAndEndDatesCoherence("start_date", "end_date");
-});
-
-addToValidateCallback(getFormName(), "start_date", "date", false, SUGAR.language.get(module, "LBL_START_DATE_ERROR"), function () {
-  return checkStartAndEndDatesCoherence("start_date", "end_date");
-});
+  /* VALIDATION CALLBACKS */
+  addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
+    return checkStartAndEndDatesCoherence("start_date", "end_date");
+  });
+  addToValidateCallback(getFormName(), "start_date", "date", false, SUGAR.language.get(module, "LBL_START_DATE_ERROR"), function () {
+    return checkStartAndEndDatesCoherence("start_date", "end_date");
+  });
+}
 
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "quickcreate":
   case "popup":
-      $(document).ready(function() {
+    $(document).ready(function() {
       initializeQuickCreate();
     });
     break;
@@ -70,6 +71,7 @@ switch (viewType()) {
 }
 
 $(document).ready(function() {
+  $("select:not(#parent_type)").selectize({plugins: ["remove_button"]});
   type_change();
 });
 
@@ -127,42 +129,45 @@ function showNewsLetterFields(show) {
   }
 }
 
-function setRequired(require, field, type, label) {
+function setRequired(require, field) {
+  var labelText = $("[data-field='"+field+"'] [data-label]").text().trim().slice(0, -1);
+  var type = $("[field='"+field+"']").attr("type");
+
   if (require) {
-    addToValidate(getFormName(), field, type, true, SUGAR.language.get(module, label));
+    addToValidate(getFormName(), field, type, true, labelText);
     addRequiredMark(field);
   } else {
     removeFromValidate(getFormName(), field);
-    removeRequiredMark(field)
+    removeRequiredMark(field);
   }
 }
 
 function showNotificationFields(show) {
-  setRequired(show, "start_date", "date", "LBL_CAMPAIGN_START_DATE");
-  setRequired(show, "parent_name", "relate", "LBL_FLEX_RELATE");
-  setRequired(show, "notification_outbound_email_id", "enum", "LBL_NOTIFICATION_OUTBOUND_EMAIL_ID");
-  setRequired(show, "notification_prospect_list_id", "enum", "LBL_NOTIFICATION_PROSPECT_LIST_ID");
-  setRequired(show, "notification_template_id", "enum", "LBL_NOTIFICATION_TEMPLATE_ID");
-  setRequired(show, "notification_from_name", "varchar", "LBL_NOTIFICATION_FROM_NAME");
-  setRequired(show, "notification_from_addr", "varchar", "LBL_NOTIFICATION_FROM_ADDR");
+  setRequired(show, "start_date");
+  setRequired(show, "parent_name");
+  setRequired(show, "notification_outbound_email_id");
+  setRequired(show, "notification_prospect_list_ids");
+  setRequired(show, "notification_template_id");
+  setRequired(show, "notification_from_name");
+  setRequired(show, "notification_from_addr");
 
   if (show) {
-    $("#status").val("Active")
+    $("#status").val("Active");
     $('[data-field="status"]').hide();
     $('[data-field="end_date"]').hide();
     $('[data-field="parent_name"]').show();
     $(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().show();
-    $("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide()
+    $("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
   } else {
     $("#parent_type").val("");
     $("#parent_name").val("");
     $("#parent_id").val("");
-    $("#status").val("")
+    $("#status").val("");
     $('[data-field="status"]').show();
     $('[data-field="end_date"]').show();
     $('[data-field="parent_name"]').hide();
     $(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
-    $("[data-label='LBL_NAVIGATION_MENU_GEN2']").show()
+    $("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
   }
 }
 
@@ -178,16 +183,16 @@ function initializeQuickCreate() {
 }
 
 function initilizeEditView() {
-  if ($("#parent_type").length == 1) {
-    // Remove not allowed Modules for Notifications
-    var allowedModules = ["Opportunities"];
-    $("#parent_type").find("option").each(function() {
-      var $option = $(this);
-      if (!allowedModules.includes($option.val())) {
-        $option.remove();
-      }
-    });
-  }
+  // if ($("#parent_type").length == 1) {
+  //   // Remove not allowed Modules for Notifications
+  //   var allowedModules = ["Opportunities"];
+  //   $("#parent_type").find("option").each(function() {
+  //     var $option = $(this);
+  //     if (!allowedModules.includes($option.val())) {
+  //       $option.remove();
+  //     }
+  //   });
+  // }
 }
 
 function initilizeDetailView() {
@@ -202,8 +207,6 @@ function initilizeDetailView() {
     $("#launch_wizard_button").hide();
 
     // All Subpanels buttons
-    $(".clickMenu").hide(); 
+    $(".clickMenu").hide();
   }
 }
-
-

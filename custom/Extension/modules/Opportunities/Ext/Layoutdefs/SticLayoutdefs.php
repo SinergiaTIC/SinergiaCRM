@@ -67,10 +67,11 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
     'subpanel_name' => 'SticOpportunityNotifications',
     'sort_order' => 'asc',
     'sort_by' => 'name',
-    'get_subpanel_data' => 'function:get_notifications_from_opportunity',
+    'get_subpanel_data' => 'function:getNotificationsFromParent',
     'function_parameters' => array(
         'import_function_file' => 'modules/Campaigns/SticUtils.php',
-        'opportunity_id' => $this->_focus->id,
+        'parent_id' => $this->_focus->id,
+        'parent_type' => 'Opportunities',
         'return_as_array' => false,
     ),
     'title_key' => 'LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE',

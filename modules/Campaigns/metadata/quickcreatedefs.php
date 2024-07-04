@@ -108,7 +108,7 @@ $viewdefs['Campaigns']['QuickCreate'] = array (
     array (
       0 => array(
         0 => array(
-          'name' => 'notification_prospect_list_id',
+          'name' => 'notification_prospect_list_ids',
           'label' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
         ),
         1 => array(

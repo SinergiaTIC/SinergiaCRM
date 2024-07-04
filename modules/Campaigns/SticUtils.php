@@ -21,18 +21,18 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-function get_notifications_from_opportunity($params)
+function getNotificationsFromParent($params)
 {
     $args = func_get_args();
     $return_as_array = isset($args[0]['return_as_array']) ? $args[0]['return_as_array'] : false;
-    $parentId = $args[0]['opportunity_id'] ?? $_REQUEST['record'];
-    $parentType = "Opportunities";
+    $parentId = $args[0]['parent_id'] ?? $_REQUEST['record'];
+    $parentType = $args[0]['parent_type'];
     $campaignType = "Notification";
 
     $return_array['select'] =
         " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date, campaigns.end_date" .
-        ", pl.id as notification_prospect_list_id" .
-        ", pl.name as notification_prospect_list_name" .
+        ", pl.id as notification_prospect_list_ids" .
+        ", pl.name as notification_prospect_list_names" .
         ", et.name as notification_email_template_name";
 
     $return_array['from'] = " FROM campaigns ";
@@ -66,7 +66,7 @@ function fillCampaignNotificationFields($beanCampaign)
 
     $query =
         " SELECT c.id as campaigns_id" .
-        ", pl.id as prospect_lists_id" .
+        ", pl.id as prospect_lists_ids" .
         ", et.id as email_templates_id" .
         ", em.outbound_email_id as email_marketing_outbound_email_id" .
         ", em.from_name as email_marketing_from_name" .
@@ -84,7 +84,7 @@ function fillCampaignNotificationFields($beanCampaign)
 
     $result = $db->query($query);
     if ($row = $db->fetchByAssoc($result)) {
-        $beanCampaign->notification_prospect_list_id = $row['prospect_lists_id'];
+        $beanCampaign->notification_prospect_list_ids = $row['prospect_lists_ids'];
         $beanCampaign->notification_template_id = $row['email_templates_id'];
         $beanCampaign->notification_outbound_email_id = $row['email_marketing_outbound_email_id'];
         $beanCampaign->notification_from_name = $row['email_marketing_from_name'];

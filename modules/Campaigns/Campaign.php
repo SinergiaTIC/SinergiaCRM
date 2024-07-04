@@ -117,8 +117,8 @@ class Campaign extends SugarBean
     public $parent_type;
     public $parent_id;
 
-    public $notification_prospect_list_id;
-    public $notification_prospect_list_name;
+    public $notification_prospect_list_ids;
+    public $notification_prospect_list_names;
 
     public $notification_template_id;
     public $notification_template_name;
@@ -309,17 +309,20 @@ class Campaign extends SugarBean
         $return_id = parent::save($check_notify);
 
         if ($this->campaign_type == "Notification") {
+            // Set ProspectList relationships
+            $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
 
-            // Set ProspectList relationship
             if ($this->load_relationship('prospectlists')) {
                 $relatedProspectLists = $this->prospectlists->get();
                 foreach ($relatedProspectLists as $prospectListId) {
-                    if ($prospectListId != $this->notification_prospect_list_id) {
+                    if (!in_array($prospectListId, $prospect_list_id_array)) {
                         $this->prospectlists->delete($this->id, $prospectListId);
                     }
                 }
-                if (!in_array($this->notification_prospect_list_id, $relatedProspectLists)) {
-                    $this->prospectlists->add($this->notification_prospect_list_id);
+                foreach ($prospect_list_id_array as $prospect_list_id) {
+                    if (!in_array($prospect_list_id, $relatedProspectLists)) {
+                        $this->prospectlists->add($prospect_list_id);
+                    }
                 }
             }
 

@@ -293,6 +293,8 @@ $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
 
+$app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
+
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';

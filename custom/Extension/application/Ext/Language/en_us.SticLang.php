@@ -292,6 +292,8 @@ $app_list_strings['record_type_display_notes']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
 
+$app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
+
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';
