@@ -29,11 +29,8 @@ class CustomCampaignsController extends CampaignsController
     {
         // Notifications can not be editable
         if ($this->action == 'EditView' && !empty($_REQUEST['record'])) {
-            $db = DBManagerFactory::getInstance();
-            $query = "SELECT campaign_type FROM campaigns WHERE id ='{$_REQUEST['record']}'";
-            $result = $db->query($query);
-            $typeArray = $db->fetchByAssoc($result);
-            if ($typeArray['campaign_type'] == "Notification") {
+            $campaingBean = BeanFactory::getBean('Campaigns', $_REQUEST['record']);
+            if ($campaingBean->campaign_type == "Notification") {
                 $this->action = 'DetailView';
             }
         }

@@ -59,8 +59,8 @@ $mod_strings['LBL_WEBFORMS_CHOOSE_RECAPTCHA'] = 'Configuración de reCAPTCHA:';
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_KO_URL'] = 'URL de redirección en caso de error de reCAPTCHA:';
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'Para poder incluir validación reCAPTCHA en el formulario es necesario tenerlo correctamente configurado. Más información en: <a href="https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA" target="_blank">https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA</a>';
 
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_NAME'] = 'Lista de Público Objetivo';
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Lista de Público Objetivo';
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Listas de Público Objetivo';
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Listas de Público Objetivo';
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla de Email';
 $mod_strings['LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de Email';
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID'] = 'Correo saliente';
@@ -71,4 +71,4 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
 $mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de Email';
-$mod_strings['LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAME'] = 'Lista de Público Objetivo';
+$mod_strings['LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Listas de Público Objetivo';

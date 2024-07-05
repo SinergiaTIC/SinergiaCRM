@@ -30,9 +30,8 @@ function getNotificationsFromParent($params)
     $campaignType = "Notification";
 
     $return_array['select'] =
-        " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date, campaigns.end_date" .
-        ", pl.id as notification_prospect_list_ids" .
-        ", pl.name as notification_prospect_list_names" .
+        " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date" .
+        ", cc.notification_prospect_list_names as notification_prospect_list_names" .
         ", et.name as notification_email_template_name";
 
     $return_array['from'] = " FROM campaigns ";
@@ -45,8 +44,6 @@ function getNotificationsFromParent($params)
 
     $return_array['join'] =
         " LEFT JOIN campaigns_cstm cc on cc.id_c = campaigns.id" .
-        " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = campaigns.id and plc.deleted = '0'" .
-        " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
         " LEFT JOIN email_marketing em on em.campaign_id = campaigns.id and em.deleted = '0'" .
         " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'";
 
@@ -55,18 +52,17 @@ function getNotificationsFromParent($params)
     if ($return_as_array) {
         return $return_array;
     } else {
-        return $return_array['select'].' '.$return_array['from'].' '.$return_array['join'].' '.$return_array['where'];
+        return $return_array['select'] . ' ' . $return_array['from'] . ' ' . $return_array['join'] . ' ' . $return_array['where'];
     }
 }
 
 function fillCampaignNotificationFields($beanCampaign)
 {
-    //Fill prospect_list and email_template
     global $db;
 
+    // Fill email_marketing fields
     $query =
         " SELECT c.id as campaigns_id" .
-        ", pl.id as prospect_lists_ids" .
         ", et.id as email_templates_id" .
         ", em.outbound_email_id as email_marketing_outbound_email_id" .
         ", em.from_name as email_marketing_from_name" .
@@ -75,8 +71,6 @@ function fillCampaignNotificationFields($beanCampaign)
         ", em.reply_to_addr as email_marketing_reply_to_addr" .
         " FROM campaigns c" .
         " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
-        " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
-        " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
         " LEFT JOIN email_marketing em on em.campaign_id = c.id and em.deleted = '0'" .
         " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'" .
         " WHERE c.id = '{$beanCampaign->id}'" .
@@ -84,7 +78,6 @@ function fillCampaignNotificationFields($beanCampaign)
 
     $result = $db->query($query);
     if ($row = $db->fetchByAssoc($result)) {
-        $beanCampaign->notification_prospect_list_ids = $row['prospect_lists_ids'];
         $beanCampaign->notification_template_id = $row['email_templates_id'];
         $beanCampaign->notification_outbound_email_id = $row['email_marketing_outbound_email_id'];
         $beanCampaign->notification_from_name = $row['email_marketing_from_name'];
@@ -92,6 +85,23 @@ function fillCampaignNotificationFields($beanCampaign)
         $beanCampaign->notification_reply_to_name = $row['email_marketing_reply_to_name'];
         $beanCampaign->notification_reply_to_addr = $row['email_marketing_reply_to_addr'];
     }
+
+    // Fill prospect_lists
+    $query =
+        " SELECT c.id as campaigns_id" .
+        ", pl.id as prospect_lists_id" .
+        " FROM campaigns c" .
+        " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
+        " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
+        " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
+        " WHERE c.id = '{$beanCampaign->id}'";
+
+    $result = $db->query($query);
+    $plArray = array();
+    while ($row = $db->fetchByAssoc($result)) {
+        $plArray[] = $row['prospect_lists_id'];
+    }
+    $beanCampaign->notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
 }
 
 function fillDynamicListsForNotifications()

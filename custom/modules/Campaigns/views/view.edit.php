@@ -44,7 +44,7 @@ class CustomCampaignsViewEdit extends ViewEdit
         SticViews::preDisplay($this);
 
         // Write here you custom code
-        include_once "modules/Campaigns/SticUtils.php";
+        include_once "custom/modules/Campaigns/SticUtils.php";
         fillDynamicListsForNotifications();
     }
 

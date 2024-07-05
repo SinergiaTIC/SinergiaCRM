@@ -133,7 +133,7 @@ class Campaign extends SugarBean
         parent::retrieve($id, $encode, $deleted);
         
         if ($this->campaign_type == "Notification") {
-            include_once "modules/Campaigns/SticUtils.php";
+            include_once "custom/modules/Campaigns/SticUtils.php";
             fillCampaignNotificationFields($this);
         }
 
@@ -298,19 +298,33 @@ class Campaign extends SugarBean
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 		// return parent::save($check_notify);
         if ($this->campaign_type == "Notification" && 
-            !empty($_REQUEST['relate_to'] && $_REQUEST['relate_to'] == "get_notifications_from_opportunity" &&
+            !empty($_REQUEST['relate_to'] && $_REQUEST['relate_to'] == "getNotificationsFromParent" &&
             !empty($_REQUEST['relate_id']))) {
             $this->parent_type = "Opportunities";
             $this->parent_id = $_REQUEST['relate_id'];
             $_REQUEST['relate_to'] = null;
             $_REQUEST['relate_id'] = null;
         }
+        if ($this->campaign_type != "Notification") {
+            $this->notification_prospect_list_ids = "";
+        }
+
+        $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
+        $prospect_list_name_array = array();
+
+        // Set notification_prospect_list_names
+        foreach ($prospect_list_id_array as $prospect_list_id) {
+            $prospect_listBean = BeanFactory::getBean('ProspectLists', $prospect_list_id);
+            $prospect_list_name_array[] = $prospect_listBean->name;
+        }
+        $this->notification_prospect_list_names = implode(", ", $prospect_list_name_array);
 
         $return_id = parent::save($check_notify);
 
         if ($this->campaign_type == "Notification") {
             // Set ProspectList relationships
             $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
+            $prospect_list_name_array = array();
 
             if ($this->load_relationship('prospectlists')) {
                 $relatedProspectLists = $this->prospectlists->get();

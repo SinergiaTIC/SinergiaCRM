@@ -43,7 +43,7 @@ class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
         // Link basic stic css and JS files
         echo getVersionedScript("SticInclude/js/Utils.js");
 
-        include_once "modules/Campaigns/SticUtils.php";
+        include_once "custom/modules/Campaigns/SticUtils.php";
         fillDynamicListsForNotifications();
 
         echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
