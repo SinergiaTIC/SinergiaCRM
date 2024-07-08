@@ -26,7 +26,7 @@ if (!empty($number)) {
     //     $text = $_POST['message'];
     // }
     $emailTemp = sevenReplaceEmailVariables($_POST['message'], $templateId);
-    $text = $emailTemp->body;
+    $text = $emailTemp;
     $_POST['message'] = $text;
     // END STIC-Custom
 
