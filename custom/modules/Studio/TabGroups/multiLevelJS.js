@@ -1,10 +1,16 @@
+console.clear()
 $(document).ready(function() {
   $(function() {
     // Create js menu
     $("#stic-menu-manager").jstree({
       core: {
         data: menu[0],
-        check_callback: true,
+        check_callback: function(operation, node, parent, position, more) {
+          if (operation === "move_node" || operation === "copy_node") {
+            return true; // Permitir mover y copiar nodos
+          }
+          return true; // Permitir todas las otras operaciones
+        },
         themes: {
           icons: false,
           dots: true
@@ -84,8 +90,7 @@ $(document).ready(function() {
         console.log("Respuesta recibida:", response);
         location.reload(true);
         // setTimeout(function() {
-          
-          
+
         //   location.reload(true);
         // }, 100);
       },
@@ -122,11 +127,17 @@ $(document).ready(function() {
         console.error("Error en la petición:", status, error);
       }
     });
+  });
 
+  // Aseguramos que los módulos arrastardos desde hidden-modules mantienen el id original
+  $("#stic-menu-manager").on("copy_node.jstree", function(e, data) {
+    var original_node = data.original;
+    var new_node = data.node;
+
+    // Preservar el ID y el texto original
+    var tree = $("#stic-menu-manager").jstree(true);
+    tree.set_id(new_node, original_node.id);
    
-
-   
-
   });
 
   // Cambiar el texto y cambiar el id
@@ -147,12 +158,8 @@ $(document).ready(function() {
   $("#stic-menu-manager").on("delete_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("create_node.jstree", handleTreeChanges);
 
-  
-  
-
-
   setTimeout(() => {
-    $('#saved-notice').fadeOut(3000);
+    $("#saved-notice").fadeOut(3000);
   }, 3000);
 });
 
