@@ -15,16 +15,19 @@ if (!empty($number)) {
 
     // STIC-Custom EPS 20240404
     $templateId = $_POST['template'];
-    if (!empty($templateId)) {
-        $emailTemp = BeanFactory::newBean('EmailTemplates');
-        $emailTemp->retrieve($templateId);
-        seven_parse_template($bean, $emailTemp);
-        $text = $emailTemp->body;
-        $_POST['message'] = $text;
-    }
-    else {
-        $text = $_POST['message'];
-    }
+    // if (!empty($templateId)) {
+    //     $emailTemp = BeanFactory::newBean('EmailTemplates');
+    //     $emailTemp->retrieve($templateId);
+    //     seven_parse_template($bean, $emailTemp);
+    //     $text = $emailTemp->body;
+    //     $_POST['message'] = $text;
+    // }
+    // else {
+    //     $text = $_POST['message'];
+    // }
+    $emailTemp = sevenReplaceEmailVariables($_POST['message'], $templateId);
+    $text = $emailTemp->body;
+    $_POST['message'] = $text;
     // END STIC-Custom
 
     $sms->setNumber($number);
@@ -54,6 +57,41 @@ if (!empty($number)) {
 
 
 // STIC-Custom EPS 20240404
+function sevenReplaceEmailVariables($screenText, $templateId)
+{
+    // request validation before replace bean variables
+        $request = $_REQUEST;
+
+        $macro_nv = array();
+
+        $focusName = $request['parent_type'];
+        $focus = BeanFactory::getBean($focusName, $request['parent_id']);
+
+        /**
+         * @var EmailTemplate $emailTemplate
+         */
+        $emailTemplate = BeanFactory::getBean(
+            'EmailTemplates',
+            $templateId
+        );
+        $templateData = $emailTemplate->parse_email_template(
+            array(
+                'subject' => '',
+                'body_html' => $screenText,
+                'body' => $screenText,
+            ),
+            $focusName,
+            $focus,
+            $macro_nv
+        );
+
+    return $templateData['body'];
+}
+
+
+
+
+
 function seven_parse_template(SugarBean $bean, &$template, $object_override = array())
 {
     global $sugar_config;
