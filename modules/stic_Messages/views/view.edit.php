@@ -21,26 +21,27 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'modules/Contacts/views/view.detail.php';
+require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 
-class CustomContactsViewDetail extends ContactsViewDetail
+class stic_MessagesViewEdit extends ViewEdit
 {
+
     public function __construct()
     {
         parent::__construct();
+        $this->useForSubpanel = true;
+        $this->useModuleQuickCreateTemplate = true;
     }
 
     public function preDisplay()
     {
         parent::preDisplay();
 
-        $this->dv->defs['templateMeta']['form']['buttons']['SEND_CONFIRM_OPT_IN_EMAIL'] = EmailAddress::getSendConfirmOptInEmailActionLinkDefs('Contacts');
-
-
         SticViews::preDisplay($this);
 
         // Write here you custom code
+
     }
 
     public function display()
@@ -48,10 +49,11 @@ class CustomContactsViewDetail extends ContactsViewDetail
         parent::display();
 
         SticViews::display($this);
-        echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
-        echo getVersionedScript("modules/stic_Messages/modal.js");
+
+        // echo getVersionedScript("modules/stic_Training/Utils.js");
 
         // Write here you custom code
+
     }
 
 }

@@ -16,6 +16,7 @@ $modules_exempt_from_availability_check['seven_sms_inbound'] = 'seven_sms_inboun
 $modules_exempt_from_availability_check['seven_sms'] = 'seven_sms';
 $modules_exempt_from_availability_check['seven_templates'] = 'seven_templates';
 
-$report_include_modules['seven_sms_inbound'] = 'seven_sms_inbound';
-$report_include_modules['seven_sms'] = 'seven_sms';
-$report_include_modules['seven_templates'] = 'seven_templates';
+// We don't want the modules to show on KReporter
+// $report_include_modules['seven_sms_inbound'] = 'seven_sms_inbound';
+// $report_include_modules['seven_sms'] = 'seven_sms';
+// $report_include_modules['seven_templates'] = 'seven_templates';

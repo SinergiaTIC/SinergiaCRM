@@ -3456,8 +3456,8 @@ $app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
 
 // Mensajes: Dirección
-$app_list_strings['stic_messages_direction_list']['inblound'] = 'Entrada';
-$app_list_strings['stic_messages_direction_list']['outblound'] = 'Salida';
+$app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
+$app_list_strings['stic_messages_direction_list']['outbound'] = 'Salida';
 // Vistas personalizadas: Tipos de usuario
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario normal';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';

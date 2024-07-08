@@ -430,7 +430,11 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_skills_contacts'] = array(
 );
 
 // New collection in activities/history
-$layout_defs['Contacts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+// $layout_defs['Contacts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+// $layout_defs['Contacts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelTopComposeMessageButton');
+$layout_defs['Contacts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelTopEPSButton');
+
+
 $layout_defs['Contacts']['subpanel_setup']['history']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
 $layout_defs['Contacts']['subpanel_setup']['history']['collection_list']['messages'] = array(
     'module' => 'stic_Messages',

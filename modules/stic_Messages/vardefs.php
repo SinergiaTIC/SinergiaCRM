@@ -81,6 +81,7 @@ $dictionary['stic_Messages'] = array(
             'vname' => 'LBL_DIRECTION',
             'type' => 'enum',
             'massupdate' => '1',
+            'default' => 'outbound',
             'no_default' => false,
             'comments' => '',
             'help' => '',
