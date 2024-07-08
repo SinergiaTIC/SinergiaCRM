@@ -13,14 +13,13 @@ switch ($_POST['manageMode']) {
         sugar_file_put_contents('custom/include/AdvancedTabConfig.php', $fileContents);
         ob_clean();
         SugarApplication::appendSuccessMessage("<div id='saved-notice' class='alert alert-success' role='alert'>{$app_strings['LBL_SAVED']}</div>");
-        // $header_URL = "Location: index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureGroupTabsNew";
-        // SugarApplication::headerRedirect($header_URL);
         die('ok');
 
         break;
 
     case 'restore':
         unlink('custom/include/AdvancedTabConfig.php');
+        unset($GLOBALS["SticTabStructure"]);
         die('ok');
         break;
 

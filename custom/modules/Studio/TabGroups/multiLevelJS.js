@@ -1,71 +1,7 @@
-console.clear()
+console.clear();
 $(document).ready(function() {
-  $(function() {
-    // Create js menu
-    $("#stic-menu-manager").jstree({
-      core: {
-        data: menu[0],
-        check_callback: function(operation, node, parent, position, more) {
-          if (operation === "move_node" || operation === "copy_node") {
-            return true; // Permitir mover y copiar nodos
-          }
-          return true; // Permitir todas las otras operaciones
-        },
-        themes: {
-          icons: false,
-          dots: true
-        }
-      },
-      plugins: ["dnd", "wholerow", "contextmenu"],
-      contextmenu: {
-        items: function($node) {
-          var tree = $("#stic-menu-manager").jstree(true);
-          return {
-            Create: {
-              separator_before: false,
-              separator_after: true,
-              label: "<i class='glyphicon glyphicon-plus'></i> Crear",
-              action: function(obj) {
-                $node = tree.create_node($node);
-                tree.edit($node);
-              }
-            },
-            Rename: {
-              separator_before: false,
-              separator_after: true,
-              label: "<i class='glyphicon glyphicon-pencil'></i> Renombrar",
-              action: function(obj) {
-                tree.edit($node);
-              }
-            },
-            Delete: {
-              separator_before: false,
-              separator_after: false,
-              label: "<i class='glyphicon glyphicon-remove'></i> Eliminar",
-              action: function(obj) {
-                if (tree.is_selected($node)) {
-                  tree.delete_node(tree.get_selected());
-                } else {
-                  tree.delete_node($node);
-                }
-              }
-            }
-          };
-        }
-      }
-    });
-
-    $("#hidden-modules").jstree({
-      core: {
-        data: allModules[0],
-        themes: {
-          icons: false
-        },
-        check_callback: true
-      },
-      plugins: ["dnd", "wholerow", "search", "unique"]
-    });
-  });
+  removeMenu();
+  createMenu();
 
   $("#restore-menu").on("click", function() {
     if (confirm("¿Restaurar el menu por defecto de SinergiaCRM?") == false) {
@@ -87,12 +23,8 @@ $(document).ready(function() {
         ...dataToSend
       },
       success: function(response) {
-        console.log("Respuesta recibida:", response);
-        location.reload(true);
-        // setTimeout(function() {
-
-        //   location.reload(true);
-        // }, 100);
+          window.location.reload(true);
+        
       },
       error: function(xhr, status, error) {
         console.error("Error en la petición:", status, error);
@@ -137,7 +69,6 @@ $(document).ready(function() {
     // Preservar el ID y el texto original
     var tree = $("#stic-menu-manager").jstree(true);
     tree.set_id(new_node, original_node.id);
-   
   });
 
   // Cambiar el texto y cambiar el id
@@ -195,4 +126,78 @@ function handleTreeChanges(e, data) {
     .removeClass("glyphicon-ok")
     .addClass("text-danger")
     .removeClass("text-success");
+}
+
+// Create js menu
+function createMenu() {
+  $("#stic-menu-manager").jstree({
+    core: {
+      data: menu[0],
+      check_callback: function(operation, node, parent, position, more) {
+        if (operation === "move_node" || operation === "copy_node") {
+          return true; // Permitir mover y copiar nodos
+        }
+        return true; // Permitir todas las otras operaciones
+      },
+      themes: {
+        icons: false,
+        dots: true
+      }
+    },
+    plugins: ["dnd", "wholerow", "contextmenu"],
+    contextmenu: {
+      items: function($node) {
+        var tree = $("#stic-menu-manager").jstree(true);
+        return {
+          Create: {
+            separator_before: false,
+            separator_after: true,
+            label: "<i class='glyphicon glyphicon-plus'></i> Crear",
+            action: function(obj) {
+              $node = tree.create_node($node);
+              tree.edit($node);
+            }
+          },
+          Rename: {
+            separator_before: false,
+            separator_after: true,
+            label: "<i class='glyphicon glyphicon-pencil'></i> Renombrar",
+            action: function(obj) {
+              tree.edit($node);
+            }
+          },
+          Delete: {
+            separator_before: false,
+            separator_after: false,
+            label: "<i class='glyphicon glyphicon-remove'></i> Eliminar",
+            action: function(obj) {
+              if (tree.is_selected($node)) {
+                tree.delete_node(tree.get_selected());
+              } else {
+                tree.delete_node($node);
+              }
+            }
+          }
+        };
+      }
+    }
+  });
+
+  $("#hidden-modules").jstree({
+    core: {
+      data: allModules[0],
+      themes: {
+        icons: false
+      },
+      check_callback: true
+    },
+    plugins: ["dnd", "wholerow", "search", "unique"]
+  });
+}
+
+function removeMenu() {
+  var tree = $("#stic-menu-manager").jstree(true);
+  if (tree) {
+    tree.destroy();
+  }
 }
