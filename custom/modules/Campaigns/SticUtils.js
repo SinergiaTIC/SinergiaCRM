@@ -34,12 +34,26 @@ if ($('[data-field="end_date"]').length > 0 && $('[data-field="start_date"]').le
   };
 
   /* VALIDATION CALLBACKS */
-  addToValidateCallback(getFormName(), "end_date", "date", false, SUGAR.language.get(module, "LBL_END_DATE_ERROR"), function () {
-    return checkStartAndEndDatesCoherence("start_date", "end_date");
-  });
-  addToValidateCallback(getFormName(), "start_date", "date", false, SUGAR.language.get(module, "LBL_START_DATE_ERROR"), function () {
-    return checkStartAndEndDatesCoherence("start_date", "end_date");
-  });
+  addToValidateCallback(
+    getFormName(),
+    "end_date",
+    "date",
+    false,
+    SUGAR.language.get(module, "LBL_END_DATE_ERROR"),
+    function() {
+      return checkStartAndEndDatesCoherence("start_date", "end_date");
+    }
+  );
+  addToValidateCallback(
+    getFormName(),
+    "start_date",
+    "date",
+    false,
+    SUGAR.language.get(module, "LBL_START_DATE_ERROR"),
+    function() {
+      return checkStartAndEndDatesCoherence("start_date", "end_date");
+    }
+  );
 }
 
 /* VIEWS CUSTOM CODE */
@@ -71,11 +85,10 @@ switch (viewType()) {
 }
 
 $(document).ready(function() {
-  $("select:not(#parent_type)").selectize({plugins: ["remove_button"]});
   type_change();
 });
 
-function get_CampaingType() {
+function getCampaingType() {
   var typeValue = $('[name="campaign_type"]').val();
   if (typeValue === undefined) {
     typeValue = $('[field="campaign_type"] input').val();
@@ -84,7 +97,7 @@ function get_CampaingType() {
 }
 
 function type_change() {
-  var typeValue = get_CampaingType();
+  var typeValue = getCampaingType();
 
   showNewsLetterFields(typeValue == "NewsLetter");
   showNotificationFields(typeValue == "Notification");
@@ -130,8 +143,8 @@ function showNewsLetterFields(show) {
 }
 
 function setRequired(require, field) {
-  var labelText = $("[data-field='"+field+"'] [data-label]").text().trim().slice(0, -1);
-  var type = $("[field='"+field+"']").attr("type");
+  var labelText = $("[data-field='" + field + "'] [data-label]").text().trim().slice(0, -1);
+  var type = $("[field='" + field + "']").attr("type");
 
   if (require) {
     addToValidate(getFormName(), field, type, true, labelText);
@@ -172,6 +185,8 @@ function showNotificationFields(show) {
 }
 
 function initializeQuickCreate() {
+  $("select:not(#parent_type)").selectize({ plugins: ["remove_button"] });
+
   if ($("#subpanel_stic_notifications_newDiv").length == 1) {
     // Is a New notification from Subpanel
 
@@ -183,27 +198,33 @@ function initializeQuickCreate() {
 }
 
 function initilizeEditView() {
-  // if ($("#parent_type").length == 1) {
-  //   // Remove not allowed Modules for Notifications
-  //   var allowedModules = ["Opportunities"];
-  //   $("#parent_type").find("option").each(function() {
-  //     var $option = $(this);
-  //     if (!allowedModules.includes($option.val())) {
-  //       $option.remove();
-  //     }
-  //   });
-  // }
+  var record = $("[name='record']").val();
+  var isEdition = record !== undefined && record != "";
+
+  $("select:not(#parent_type)").selectize({ plugins: ["remove_button"] });
+  if (isEdition && getCampaingType() == "Notification") {
+    // Disable editions
+    $("#campaign_type")[0].selectize.disable();
+    $("#start_date").parent().children().prop("disabled", true);
+    $("#parent_id").parent().children().prop("disabled", true);
+    $("#parent_id").parent().find("span").hide();
+    $("#notification_prospect_list_ids")[0].selectize.disable();
+    $("#notification_outbound_email_id")[0].selectize.disable();
+    $("#notification_template_id")[0].selectize.disable();
+    $("#notification_from_name").parent().children().prop("disabled", true);
+    $("#notification_from_addr").parent().children().prop("disabled", true);
+    $("#notification_reply_to_name").parent().children().prop("disabled", true);
+    $("#notification_reply_to_addr").parent().children().prop("disabled", true);
+  }
 }
 
 function initilizeDetailView() {
-  var typeValue = get_CampaingType();
+  var typeValue = getCampaingType();
 
   if (typeValue == "Notification") {
     // Disable all editable actions
 
     // Action menu buttons
-    $("#edit_button").hide();
-    $("#delete_button").hide();
     $("#launch_wizard_button").hide();
 
     // All Subpanels buttons

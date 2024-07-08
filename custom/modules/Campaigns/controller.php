@@ -27,14 +27,6 @@ class CustomCampaignsController extends CampaignsController
     // STIC - 20210624  - We override the process function to recover the classic view to create or edit a campaign
     public function process()
     {
-        // Notifications can not be editable
-        if ($this->action == 'EditView' && !empty($_REQUEST['record'])) {
-            $campaingBean = BeanFactory::getBean('Campaigns', $_REQUEST['record']);
-            if ($campaingBean->campaign_type == "Notification") {
-                $this->action = 'DetailView';
-            }
-        }
-
         SugarController::process();
     }
 }
