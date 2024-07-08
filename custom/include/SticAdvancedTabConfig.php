@@ -2,6 +2,7 @@
 
 include_once 'custom/include/AdvancedTabConfig.php';
 
+// If the menu is not defined in the instance, the default menu is loaded
 if (empty($GLOBALS["SticTabStructure"])) {
     $GLOBALS["SticTabStructure"] = array(
         0 => array(
