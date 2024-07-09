@@ -100,6 +100,9 @@ class StudioWizard
             case 'ConfigureGroupTabs':
                 require_once('modules/Studio/TabGroups/EditViewTabs.php');
                 break;
+            case 'ConfigureGroupTabsNew':
+                require_once('custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.php');
+                break;
             case 'Workflow':
                 header('Location: index.php?module=WorkFlow&action=ListView');
                 sugar_cleanup(true);
