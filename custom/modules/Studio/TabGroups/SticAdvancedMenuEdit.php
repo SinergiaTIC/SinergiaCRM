@@ -31,7 +31,7 @@ require_once 'modules/MySettings/TabController.php';
 require_once 'modules/Studio/TabGroups/TabGroupHelper.php';
 require_once 'modules/Studio/parsers/StudioParser.php';
 require_once 'SticInclude/SticAdvancedMenu.php';
-require_once 'custom/include/AdvancedTabConfig.php';
+require_once 'custom/include/SticAdvancedTabConfig.php';
 
 // Get the current user's tabs
 $controller = new TabController();
