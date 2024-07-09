@@ -176,9 +176,12 @@
                 </div>
             </div>
         </div>
+        {* STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist *}
+        {* STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208 *}
         {if $STIC_MENU }
             {include file="custom/themes/SuiteP/tpls/SticAdvancedMenu.tpl"}
         {else}    
+        {* END STIC *}    
         <div class="desktop-toolbar" id="toolbar">
             {if $USE_GROUP_TABS}
                 <ul class="nav navbar-nav">
@@ -526,7 +529,10 @@
 
             {/if}
         </div>
+        {* STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist *}
+        {* STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208 *}
         {/if}
+        {* END STIC *}
         <!-- Right side of the main navigation -->
         <div class="mobile-bar">
             <ul id="toolbar" class="toolbar">

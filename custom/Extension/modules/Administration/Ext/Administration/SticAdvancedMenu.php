@@ -28,7 +28,7 @@ $admin_option_defs['Administration']['configure_group_tabs_new'] = [
     'ConfigureTabs',
     'LBL_STIC_ADVANCED_MENU',
     'LBL_STIC_ADVANCED_MENU_DESC',
-    './index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureGroupTabsNew',
+    './index.php?action=wizard&module=Studio&wizard=StudioWizard&option=SticAdvancedMenuEdit',
     'configure-module-menu-filters-new'
 ];
 
