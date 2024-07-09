@@ -127,10 +127,4 @@ class OpportunitiesUtils
         return true;
     }
 
-    /**
-     * 
-     */
-    public static function sendNotificationNow($bean) {
-    
-    }
 }

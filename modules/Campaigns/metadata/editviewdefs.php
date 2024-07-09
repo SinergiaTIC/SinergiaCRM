@@ -429,6 +429,8 @@ $viewdefs['Campaigns']['EditView'] = array (
           'label' => 'LBL_NOTIFICATION_OUTBOUND_EMAIL_ID',
         ),
         1 => array(
+          'name' => 'notification_inbound_email_id',
+          'label' => 'LBL_NOTIFICATION_INBOUND_EMAIL_ID',
         ),
       ),
       2 => array(

@@ -159,10 +159,11 @@ function showNotificationFields(show) {
   setRequired(show, "start_date");
   setRequired(show, "parent_name");
   setRequired(show, "notification_outbound_email_id");
+  setRequired(show, "notification_inbound_email_id");
   setRequired(show, "notification_prospect_list_ids");
   setRequired(show, "notification_template_id");
-  setRequired(show, "notification_from_name");
-  setRequired(show, "notification_from_addr");
+  // setRequired(show, "notification_from_name");
+  // setRequired(show, "notification_from_addr");
 
   if (show) {
     $("#status").val("Active");
@@ -185,8 +186,6 @@ function showNotificationFields(show) {
 }
 
 function initializeQuickCreate() {
-  $("select:not(#parent_type)").selectize({ plugins: ["remove_button"] });
-
   if ($("#subpanel_stic_notifications_newDiv").length == 1) {
     // Is a New notification from Subpanel
 
@@ -195,6 +194,7 @@ function initializeQuickCreate() {
 
     $("#status").val("Active");
   }
+  $("select:not(#parent_type)").selectize({ plugins: ["remove_button"] });
 }
 
 function initilizeEditView() {
@@ -210,6 +210,7 @@ function initilizeEditView() {
     $("#parent_id").parent().find("span").hide();
     $("#notification_prospect_list_ids")[0].selectize.disable();
     $("#notification_outbound_email_id")[0].selectize.disable();
+    $("#notification_inbound_email_id")[0].selectize.disable();
     $("#notification_template_id")[0].selectize.disable();
     $("#notification_from_name").parent().children().prop("disabled", true);
     $("#notification_from_addr").parent().children().prop("disabled", true);

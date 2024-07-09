@@ -122,6 +122,7 @@ class Campaign extends SugarBean
 
     public $notification_template_id;
     public $notification_template_name;
+    public $notification_inbound_email_id;
     public $notification_outbound_email_id;
     public $notification_from_name;
     public $notification_from_addr;
@@ -349,14 +350,29 @@ class Campaign extends SugarBean
             $emailMarketing->name = $this->name . ' - Email';
             $emailMarketing->campaign_id = $return_id;
             $emailMarketing->template_id = $this->notification_template_id;
+            $emailMarketing->inbound_email_id = $this->notification_inbound_email_id;
             $emailMarketing->outbound_email_id = $this->notification_outbound_email_id;
             $emailMarketing->from_name = $this->notification_from_name;
             $emailMarketing->from_addr = $this->notification_from_addr;
+            $emailMarketing->reply_to_name = $this->notification_reply_to_name;
+            $emailMarketing->reply_to_addr = $this->notification_reply_to_addr;
             $emailMarketing->date_start = $_REQUEST["start_date"];
             $emailMarketing->status = 'active';
-            $emailMarketing->all_prospect_lists = true;
+            $emailMarketing->all_prospect_lists = 1;
 
-            $emailMarketing->save();
+            $emailMarketingId = $emailMarketing->save();
+
+            // Queue Notification
+            $_POST['mass'] = array(0 => $emailMarketingId);
+            $_REQUEST['module'] = "Campaigns";
+            $_REQUEST['record'] = $return_id;
+            $_REQUEST['return_action'] = "TrackDetailView";
+            $_REQUEST['return_module'] = "Campaigns";
+            $_REQUEST['return_id'] = $return_id;
+            $_REQUEST['action'] = "QueueCampaign";
+            $_REQUEST['campaign_id'] = $return_id;
+
+            include_once("modules/Campaigns/QueueCampaign.php");
         }
         return $return_id;
         // END STIC-Custom

@@ -46,8 +46,6 @@ class CustomOpportunitiesViewDetail extends OpportunitiesViewDetail
 
         SticViews::display($this);
 
-        echo getVersionedScript("custom/modules/Opportunities/Utils.js");
-
         // Write here you custom code
     }
 }

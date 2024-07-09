@@ -64,6 +64,7 @@ $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Llistes de Públic Objectiu
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla de correu electrònic';
 $mod_strings['LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de correu electrònic';
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID'] = 'Correu electrònic sortint';
+$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID'] = 'Fer servir bustia';
 $mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'Remitent (nom)';
 $mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'Remitent (adreça)';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Respondre a (nom)';

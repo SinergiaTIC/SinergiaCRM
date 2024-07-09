@@ -3574,3 +3574,11 @@ $app_list_strings['campaign_type_dom']['Television'] = 'Television';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Newsletter';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Survey';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notification';
+
+// Email Templates: Template types
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaign';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notification';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';

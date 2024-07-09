@@ -127,6 +127,14 @@ $dictionary["Campaign"]["fields"]['notification_outbound_email_id'] = array(
     'isnull' => true,
     'options' => 'dynamic_outbound_email_list',
 );
+$dictionary["Campaign"]["fields"]['notification_inbound_email_id'] = array(
+    'name' => 'notification_inbound_email_id',
+    'vname' => 'LBL_NOTIFICATION_INBOUND_EMAIL_ID',
+    'type' => 'enum',
+    'source' => 'non-db',
+    'isnull' => true,
+    'options' => 'dynamic_inbound_email_list',
+);
 $dictionary["Campaign"]["fields"]['notification_from_name'] = array(
     'name' => 'notification_from_name',
     'vname' => 'LBL_NOTIFICATION_FROM_NAME',

@@ -109,6 +109,7 @@ function fillDynamicListsForNotifications()
     fillDynamicListProspectList();
     fillDynamicListEmailTemplate();
     fillDynamicOutboundEmailAccounts();
+    fillDynamicInboundEmailAccounts();
 }
 
 function fillDynamicListProspectList()
@@ -127,7 +128,7 @@ function fillDynamicListProspectList()
 function fillDynamicListEmailTemplate()
 {
     $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
-    $emailTemplates = $emailTemplatesFocus->get_list("name", "", 0, -99, -99);
+    $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='notification'", 0, -99, -99);
 
     $dynamic_email_template_list = array("" => "");
     foreach ($emailTemplates['list'] as $emailTemplate) {
@@ -148,4 +149,12 @@ function fillDynamicOutboundEmailAccounts()
     }
 
     $GLOBALS['app_list_strings']['dynamic_outbound_email_list'] = $dynamic_outbound_email_list;
+}
+
+function fillDynamicInboundEmailAccounts()
+{
+    include_once ("modules/Campaigns/utils.php");
+    $emails=array();
+    $mailboxes=get_campaign_mailboxes($emails);
+    $GLOBALS['app_list_strings']['dynamic_inbound_email_list'] = $mailboxes;
 }

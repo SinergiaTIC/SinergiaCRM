@@ -59,7 +59,6 @@ $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = ". Please, click on the followi
 // Strings for new Opportunities notification
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'Opportunity URL';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Additional information';
-$mod_strings['LBL_STIC_SEND_NOTIFICATION_NOW'] = 'Send notification now';
 $mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE'] = 'Notifications';
 
 //Strings for Grants

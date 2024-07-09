@@ -34,10 +34,4 @@ class CustomOpportunitiesController extends SugarController
         OpportunitiesUtils::opportunitiesReminder();
         SugarApplication::redirect('index.php?module=Opportunities&action=index');
     }
-
-    public function action_sendNotificationNow() {
-        require_once 'custom/modules/Opportunities/SticUtils.php';
-        OpportunitiesUtils::sendNotificationNow($this->bean);
-        SugarApplication::redirect("index.php?module={$this->bean->module_dir}&action=DetailView&record={$this->bean->id}");
-    }
 }
