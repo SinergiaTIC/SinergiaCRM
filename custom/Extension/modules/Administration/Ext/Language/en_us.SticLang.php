@@ -58,3 +58,7 @@ $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Rebuild and repair the v
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Go to Sinergia Data Analytics';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'Rebuild of Sinergia Data Analytics has been successfully completed.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'The following errors have been found in the rebuild of Sinergia Data Analytics';
+
+// Advanced Menu
+$mod_strings['LBL_STIC_ADVANCED_MENU'] = 'Configure multilevel menu';
+$mod_strings['LBL_STIC_ADVANCED_MENU_DESC'] = 'Configuration of SinergiaCRM multilevel menu';
