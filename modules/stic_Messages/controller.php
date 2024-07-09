@@ -50,4 +50,36 @@ class stic_MessagesController extends SugarController
             echo $relateLine;
         }
     }
+
+    public function action_getParentPhone() {
+        $parentId = $_POST["parentId"];
+        $parentType = $_POST["parentType"];
+        
+        $response['code'] = 'No data';
+        $db = DBManagerFactory::getInstance();
+
+        switch ($parentType) {
+            case 'Contacts':
+            case 'Leads':
+                $sql = "SELECT phone_mobile as phone FROM contacts where id = '{$parentId}'";
+                break;
+            case 'Accounts':
+                $sql = "SELECT phone_office as phone FROM accounts where id = '{$parentId}'";
+                break;
+            default:
+                $sql = "";
+        }
+
+        $result = $db->query($sql);
+        if($row = $result->fetch_assoc()) {
+            $response['code'] = 'OK';
+            $response['data']['phone'] = $row['phone'];
+        }
+        else {
+            $response['data']['phone'] = '';
+        }
+
+        echo json_encode($response);
+        exit;
+    }
 }
