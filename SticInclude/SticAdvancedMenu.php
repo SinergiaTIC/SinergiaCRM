@@ -22,83 +22,87 @@
  */
 
 /**
- * Generates an HTML menu from a list of items.
+ * Generates an HTML menu from a list of items, filtering out invalid nodes.
  *
  * This function builds an HTML list for a navigation menu using a recursive
- * structure if the elements have submenus. It relies on global variables
- * to obtain the corresponding texts for the menu items.
+ * structure. It filters out menu items that don't correspond to valid modules
+ * and don't have valid children. It relies on global variables to obtain the
+ * corresponding texts for the menu items.
  *
  * @param array $items The menu items to process, each item can contain subitems.
  * @param bool $isFirstLevel Indicates if it's the top level of the menu.
+ * @param array|null $validTabs Array of valid tabs/modules for the current user.
  * @return string The generated HTML code for the menu.
  */
-function generateMenu($items, $isFirstLevel = true)
+function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 {
-    require_once 'modules/MySettings/TabController.php';
+    global $app_list_strings, $app_strings, $current_user;
 
-    global $app_list_strings, $app_strings, $current_user; // Access globally defined string lists.
-    $controller = new TabController();
-    // $tabs includes only the modules that the current user can see based on their roles and profile settings.
-    $tabs = $controller->get_tabs($current_user)[0];
-    foreach ($tabs as $key => $value) {
-        $tabs[$key] = $app_list_strings['moduleList'][$key];
+    if ($validTabs === null) {
+        require_once 'modules/MySettings/TabController.php';
+        $controller = new TabController();
+        $validTabs = $controller->get_tabs($current_user)[0];
+        foreach ($validTabs as $key => $value) {
+            $validTabs[$key] = $app_list_strings['moduleList'][$key];
+        }
+        asort($validTabs);
     }
-    asort($tabs);
 
-    // Start building the main menu.
-    if ($isFirstLevel) {
-        $html = '<ul id="stic-menu" class="sm sm-stic">';
-        $html .= '<li><a href="index.php?module=Home&action=index"><i class="glyphicon glyphicon-home"></i></a></li>';
-    } else {
-        $html = '<ul>';
-    }
+    $html = '';
+    $validItemsCount = 0;
 
     foreach ($items as $item) {
-        // Try to get the item text from module strings or use the id as a last resort.
-        $text = ($app_list_strings['moduleList'][$item['id']] ?? ''); // First attempt with moduleList.
-        if (empty($text)) {
-            $text = $app_strings[$item['id']]; // Second attempt with app_strings.
-        }
-        if (empty($text)) {
-            $text = str_replace('_', ' ', $item['id']); // Use the item ID, replacing underscores with spaces.
-        }
+        $text = ($app_list_strings['moduleList'][$item['id']] ?? $app_strings[$item['id']] ?? str_replace('_', ' ', $item['id']));
 
-        // Determine if the current item has submenus.
-        $hasChildren = isset($item['children']) && is_array($item['children']) && count($item['children']) > 0;
+        $hasChildren = isset($item['children']) && is_array($item['children']) && !empty($item['children']);
+        $isValidModule = array_key_exists($item['id'], $validTabs);
 
-        // Only include links for nodes whose id is in the module list
-        // This way we exclude links for nodes that don't point to valid modules
-        if (array_key_exists($item['id'], $tabs)) {
-            $html .= '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>'; // Add 'dropdown' class if there are submenus.
-            $lowerModule = str_replace('_', '-', strtolower($item['id']));
-            $html .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'><span class='suitepicon suitepicon-module-{$lowerModule}'></span> $text </a>"; // Create a link for the menu item.
-        } else {
-            if ($hasChildren) {
-                $html .= '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>'; // Add 'dropdown' class if there are submenus.
-                $html .= "<a href='#' class='no-link'>" . $text . '</a>'; // Create a link for the menu item.
-            }
-        }
-
+        $childrenHtml = '';
         if ($hasChildren) {
-            $html .= generateMenu($item['children'], false); // Recursively generate menus for subitems.
+            $childrenHtml = generateMenu($item['children'], false, $validTabs);
+        }
+
+        if ($isValidModule || !empty($childrenHtml)) {
+            $validItemsCount++;
+            $itemHtml = '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>';
+            
+            if ($isValidModule) {
+                $lowerModule = str_replace('_', '-', strtolower($item['id']));
+                $itemHtml .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'><span class='suitepicon suitepicon-module-{$lowerModule}'></span> $text </a>";
+            } elseif ($hasChildren) {
+                $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
+            }
+
+            $itemHtml .= $childrenHtml;
+            $itemHtml .= '</li>';
+            $html .= $itemHtml;
         }
     }
 
-    // Add the "ALL" menu including a search for modules
-    if ($isFirstLevel) {
-        $html .= '<li class="dropdown">';
-        $html .= "<a href='#' class='no-link'>{$app_strings['LBL_TABGROUP_ALL']} </a>";
-        $html .= '<ul>';
-        $html .= '<li><input type="text" id="search-all" placeholder="' . $app_strings['LBL_SEARCH'] . '"></input></li>';
-        foreach ($tabs as $key => $value) {
-            $html .= "<li><a href='index.php?module={$key}&action=index&return_module=Accounts&return_action=DetailView'>" . $value . '</a></li>';
+    if ($validItemsCount > 0 || $isFirstLevel) {
+        $menuHtml = $isFirstLevel ? '<ul id="stic-menu" class="sm sm-stic">' : '<ul>';
+        if ($isFirstLevel) {
+            $menuHtml .= '<li><a href="index.php?module=Home&action=index"><i class="glyphicon glyphicon-home"></i></a></li>';
         }
-        $html .= '</ul>';
+        $menuHtml .= $html;
+
+        if ($isFirstLevel) {
+            $menuHtml .= '<li class="dropdown">';
+            $menuHtml .= "<a href='#' class='no-link'>{$app_strings['LBL_TABGROUP_ALL']} </a>";
+            $menuHtml .= '<ul>';
+            $menuHtml .= '<li><input type="text" id="search-all" placeholder="' . $app_strings['LBL_SEARCH'] . '"></input></li>';
+            foreach ($validTabs as $key => $value) {
+                $menuHtml .= "<li><a href='index.php?module={$key}&action=index&return_module=Accounts&return_action=DetailView'>" . $value . '</a></li>';
+            }
+            $menuHtml .= '</ul>';
+            $menuHtml .= '</li>';
+        }
+
+        $menuHtml .= '</ul>';
+        return $menuHtml;
     }
 
-    $html .= '</ul>'; // Finalize the menu list.
-
-    return $html; // Return the constructed HTML.
+    return '';
 }
 
 /**
