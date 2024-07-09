@@ -45,13 +45,11 @@ array(
                 ),
             ),
             'syncDetailEditViews' => false,
-            'includes' => array(
-                array(
-                    // STIC (17-06-2021)
-                    // Select the JS file that customizes the TinyMCE configuration in the composition view of the Emails module.
-                    'file' => 'modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js',
-                ),
-            ),
+            // 'includes' => array(
+            //     array(
+            //         'file' => 'modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js',
+            //     ),
+            // ),
         ),
         'panels' => array(
             'lbl_default_panel' => array(

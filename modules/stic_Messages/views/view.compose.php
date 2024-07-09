@@ -43,7 +43,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-
+require_once 'include/MVC/View/views/view.edit.php';
+require_once 'SticInclude/Views.php';
 class stic_MessagesViewCompose extends ViewEdit
 {
 
@@ -93,6 +94,17 @@ class stic_MessagesViewCompose extends ViewEdit
         );
     }
 
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+
+        echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
+        
+        // Write here you custom code
+
+    }
     /**
      * Get EditView object
      * @return EditView
