@@ -74,7 +74,7 @@ class stic_Messages extends Basic
      */
     public function save($check_notify = false)
     {
-        global $sticSavingMessage;
+        global $sticSavingMessage, $current_user;
 
         // To avoid loop with LH on seven_sms
         if ($sticSavingMessage){
@@ -83,6 +83,7 @@ class stic_Messages extends Basic
         $sticSavingMessage = true;
 
         $this->fillName();
+        $this->assigned_user_id = $current_user->id;
 
         if ($this->id === null) {
             $this->sendSMS();

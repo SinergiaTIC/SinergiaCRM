@@ -252,8 +252,8 @@
 
     <script>
         {* Compose view has a TEMP ID in case you want to display multi instance of the ComposeView *}
-      $( "#emails_email_templates_name" ).change(function() {ldelim}
-          $.fn.EmailsComposeView.onTemplateChange()
+      $( "#template" ).change(function() {ldelim}
+          $.fn.stic_MessagesComposeView.onTemplateChange()
       {rdelim});
     </script>
     {/if}

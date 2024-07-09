@@ -56,37 +56,6 @@ array(
                         'name' => 'parent_name',
                         'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
                     ),
-                    1 => array(
-                        'name' => 'date_entered',
-                        'customCode' => '{$fields.date_entered.value}',
-                        'label' => 'LBL_DATE_ENTERED',
-                    ),
-                ),
-                2 => array(
-                    0 => array(
-                        'name' => 'message',
-                        'comment' => 'Full text of the message',
-                        'label' => 'LBL_MESSAGE',
-                    ),
-                ),
-                3 => array(
-                    0 => array(
-                        'name' => 'type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_TYPE',
-                    ),
-                    1 => array(
-                        'name' => 'direction',
-                        'studio' => 'visible',
-                        'label' => 'LBL_DIRECTION',
-                    ),
-                ),
-                4 => array(
-                    0 => array(
-                        'name' => 'phone',
-                        'studio' => 'visible',
-                        'label' => 'LBL_PHONE',
-                    ),
                     1 => array (
                       'name' => 'template',
                       'studio' => 'visible',
