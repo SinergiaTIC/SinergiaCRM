@@ -41,7 +41,7 @@ $(document).ready(function() {
       type: "POST",
       data: {
         module: "Studio",
-        action: "SticManageTabs",
+        action: "SticAdvancedMenuController",
         ...dataToSend
       },
       success: function(response) {
@@ -69,7 +69,7 @@ $(document).ready(function() {
       type: "POST",
       data: {
         module: "Studio",
-        action: "SticManageTabs",
+        action: "SticAdvancedMenuController",
         ...dataToSend
       },
       success: function(response) {

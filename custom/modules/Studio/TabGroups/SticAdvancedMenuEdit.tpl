@@ -21,7 +21,7 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 {* JSTREE *}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
-<link rel="stylesheet" href="custom/modules/Studio/TabGroups/SticEditViewTabs.css" />
+<link rel="stylesheet" href="custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.css" />
 
 <script>
 	var jsonMenu ='{$jsonMenu|escape:'javascript'}'
@@ -30,7 +30,7 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 	var jsonAll ='{$jsonAll|escape:'javascript'}'
 	var allModules = [JSON.parse(jsonAll)]
 </script>
-<script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/SticEditViewTabs.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.js'}"></script>
 <div id="stic-menu">
 
 	<h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>

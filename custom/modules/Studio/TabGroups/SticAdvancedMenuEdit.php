@@ -75,7 +75,7 @@ $smarty->assign('dropdown_languages', get_languages());
 $smarty->assign('tabGroupSelected_lang', $tabGroupSelected_lang);
 
 // Display the Smarty template
-$smarty->display("custom/modules/Studio/TabGroups/SticEditViewTabs.tpl");
+$smarty->display("custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.tpl");
 
 /**
  * Recursively search for an ID in a nested array structure
