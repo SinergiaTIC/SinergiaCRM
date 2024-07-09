@@ -1,19 +1,41 @@
-console.clear();
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
 $(document).ready(function() {
   removeMenu();
   createMenu();
 
+  // Restore default menu
   $("#restore-menu").on("click", function() {
-    if (confirm("¿Restaurar el menu por defecto de SinergiaCRM?") == false) {
+    if (confirm("Restore the default SinergiaCRM menu?") == false) {
       return;
     }
 
-    // Define los datos que enviarás en la petición
+    // Define data to be sent in the request
     var dataToSend = {
-      manageMode: "restore" // Reemplaza con el modo de guardar adecuado
+      manageMode: "restore"
     };
 
-    // Realiza la petición AJAX
+    // Perform AJAX request
     $.ajax({
       url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
@@ -23,26 +45,25 @@ $(document).ready(function() {
         ...dataToSend
       },
       success: function(response) {
-          window.location.reload(true);
-        
+        window.location.reload(true);
       },
       error: function(xhr, status, error) {
-        console.error("Error en la petición:", status, error);
+        console.error("Request error:", status, error);
       }
     });
   });
 
-  // Button command
+  // Save menu button
   $("#save-menu").on("click", function() {
     var $cleanMenu = $("#stic-menu-manager").jstree(true).get_json().map(filterNodes);
 
-    // Define los datos que enviarás en la petición
+    // Define data to be sent in the request
     var dataToSend = {
-      menuJson: JSON.stringify($cleanMenu), // Reemplaza con el valor real que deseas enviar
-      manageMode: "save" // Reemplaza con el modo de guardar adecuado
+      menuJson: JSON.stringify($cleanMenu),
+      manageMode: "save"
     };
 
-    // Realiza la petición AJAX
+    // Perform AJAX request
     $.ajax({
       url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
@@ -52,65 +73,65 @@ $(document).ready(function() {
         ...dataToSend
       },
       success: function(response) {
-        console.log("Respuesta recibida:", response);
+        console.log("Response received:", response);
         location.reload(true);
       },
       error: function(xhr, status, error) {
-        console.error("Error en la petición:", status, error);
+        console.error("Request error:", status, error);
       }
     });
   });
 
-  // Aseguramos que los módulos arrastardos desde hidden-modules mantienen el id original
+  // Ensure that modules dragged from hidden-modules maintain the original id
   $("#stic-menu-manager").on("copy_node.jstree", function(e, data) {
     var original_node = data.original;
     var new_node = data.node;
 
-    // Preservar el ID y el texto original
+    // Preserve the original ID and text
     var tree = $("#stic-menu-manager").jstree(true);
     tree.set_id(new_node, original_node.id);
   });
 
-  // Cambiar el texto y cambiar el id
+  // Change text and id when renaming a node
   $("#stic-menu-manager").on("rename_node.jstree", function(e, data) {
     var tree = $("#stic-menu-manager").jstree(true);
     var newId = data.text.replace(/\s+/g, "_");
 
-    // Cambiar el ID directamente
+    // Change the ID directly
     tree.set_id(data.node, newId);
 
-    // Imprimir el ID actual del nodo para verificar
-    console.log("Nuevo ID establecido:", newId);
-    console.log("ID actual del nodo:", data.node.id); // Verificar el ID después de intentar cambiarlo
+    // Log the current node ID for verification
+    console.log("New ID set:", newId);
+    console.log("Current node ID:", data.node.id);
   });
 
+  // Handle tree changes
   $("#stic-menu-manager").on("rename_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("move_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("delete_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("create_node.jstree", handleTreeChanges);
 
+  // Hide saved notice after 3 seconds
   setTimeout(() => {
     $("#saved-notice").fadeOut(3000);
   }, 3000);
 });
 
+/**
+ * Filter node properties, keeping only 'id' and 'children'
+ * @param {Object} node - The node to filter
+ * @return {Object} The filtered node
+ */
 function filterNodes(node) {
-  // Verificar si el nodo es un objeto
   if (typeof node === "object" && node !== null) {
-    // Filtrar las claves del objeto
     const keys = Object.keys(node);
-    // Iterar sobre las claves y eliminar aquellas que no sean "id" o "children"
     for (const key of keys) {
       if (key !== "id" && key !== "children") {
         delete node[key];
-      } else {
-        // Si la clave es "children", iterar sobre los hijos y filtrarlos también
-        if (key === "children") {
-          node[key] = node[key].map(filterNodes);
-          // Si children es un array vacío, eliminar la clave "children"
-          if (node[key].length === 0) {
-            delete node[key];
-          }
+      } else if (key === "children") {
+        node[key] = node[key].map(filterNodes);
+        if (node[key].length === 0) {
+          delete node[key];
         }
       }
     }
@@ -118,9 +139,13 @@ function filterNodes(node) {
   return node;
 }
 
+/**
+ * Handle tree changes and update save button appearance
+ * @param {Event} e - The event object
+ * @param {Object} data - The data associated with the event
+ */
 function handleTreeChanges(e, data) {
-  console.log("Se ha modificado el árbol:", data);
-  // Aquí puedes añadir cualquier lógica adicional que necesites ejecutar
+  console.log("Tree has been modified:", data);
   $("#save-menu .glyphicon")
     .addClass("glyphicon-save")
     .removeClass("glyphicon-ok")
@@ -128,16 +153,15 @@ function handleTreeChanges(e, data) {
     .removeClass("text-success");
 }
 
-// Create js menu
+/**
+ * Create jsTree menu
+ */
 function createMenu() {
   $("#stic-menu-manager").jstree({
     core: {
       data: menu[0],
       check_callback: function(operation, node, parent, position, more) {
-        if (operation === "move_node" || operation === "copy_node") {
-          return true; // Permitir mover y copiar nodos
-        }
-        return true; // Permitir todas las otras operaciones
+        return true; // Allow all operations
       },
       themes: {
         icons: false,
@@ -152,7 +176,7 @@ function createMenu() {
           Create: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-plus'></i> Crear",
+            label: "<i class='glyphicon glyphicon-plus'></i> Create",
             action: function(obj) {
               $node = tree.create_node($node);
               tree.edit($node);
@@ -161,7 +185,7 @@ function createMenu() {
           Rename: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-pencil'></i> Renombrar",
+            label: "<i class='glyphicon glyphicon-pencil'></i> Rename",
             action: function(obj) {
               tree.edit($node);
             }
@@ -169,7 +193,7 @@ function createMenu() {
           Delete: {
             separator_before: false,
             separator_after: false,
-            label: "<i class='glyphicon glyphicon-remove'></i> Eliminar",
+            label: "<i class='glyphicon glyphicon-remove'></i> Delete",
             action: function(obj) {
               if (tree.is_selected($node)) {
                 tree.delete_node(tree.get_selected());
@@ -183,6 +207,7 @@ function createMenu() {
     }
   });
 
+  // Create jsTree for hidden modules
   $("#hidden-modules").jstree({
     core: {
       data: allModules[0],
@@ -195,6 +220,9 @@ function createMenu() {
   });
 }
 
+/**
+ * Remove existing jsTree menu
+ */
 function removeMenu() {
   var tree = $("#stic-menu-manager").jstree(true);
   if (tree) {
