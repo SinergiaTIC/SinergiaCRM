@@ -63,6 +63,16 @@ array(
                     0 => array(
                         'name' => 'parent_name',
                         'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
+                        'displayParams' => array(
+                            'call_back_function' => '$.fn.stic_MessagesComposeView.onParentSelect',
+                            'field_to_name_array' => array(
+                                'id' => 'parent_id',
+                                'name' => 'parent_name',
+                                'email1' => 'email1',
+                                'phone_mobile' => 'phone_mobile',
+                                'phone_office' => 'phone_office',
+                            )
+                        ),
                     ),
                     1 => array(
                         'name' => 'date_entered',

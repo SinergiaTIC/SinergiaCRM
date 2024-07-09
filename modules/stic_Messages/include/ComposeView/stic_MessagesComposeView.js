@@ -1338,15 +1338,12 @@ console.log('Loading stic_MessagesComposeView.js');
 console.log('$.fn.stic_MessagesComposeView.onTemplateSelect');
 
   $.fn.stic_MessagesComposeView.onTemplateSelect = function (args) {
-debugger;
     var confirmed = function (args) {
-      debugger;
       var args = JSON.parse(args);
       var form = $('[name="' + args.form_name + '"]');
       $.post('index.php?entryPoint=emailTemplateData', {
         emailTemplateId: args.name_to_value_array.template_id_c
       }, function (jsonResponse) {
-        debugger;
         var response = JSON.parse(jsonResponse);
         // $.fn.stic_MessagesComposeView.loadAttachmentDataFromAjaxResponse(response);
         // $(form).find('[name="name"]').val(response.data.subject);
@@ -1381,7 +1378,6 @@ debugger;
 
   $.fn.stic_MessagesComposeView.onTemplateChange = function (args) {
     var confirmed = function (args) {
-      debugger;
       var args = JSON.parse(args);
       var form = $('[name="' + args.form_name + '"]');
       $.post('index.php?entryPoint=emailTemplateData', {
@@ -1416,20 +1412,22 @@ debugger;
   }
 
   $.fn.stic_MessagesComposeView.onParentSelect = function (args) {
+    debugger;
     set_return(args);
-    if (isValidEmail(args.name_to_value_array.email1)) {
-      var emailAddress = args.name_to_value_array.email1;
-      var self = $('[name="' + args.form_name + '"]');
-      var toField = $(self).find('[name=to_addrs_names]');
-      if (toField.val().indexOf(emailAddress) === -1) {
-        var toFieldVal = toField.val();
-        if (toFieldVal === '') {
-          toField.val(emailAddress);
-        } else {
-          toField.val(toFieldVal + ', ' + emailAddress);
-        }
-
-      }
+    if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
+      $("#phone").val(args.name_to_value_array.phone_mobile);  
+    }
+    if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
+      $("#phone").val(args.name_to_value_array.phone_office);  
+    }
+  };
+  $.fn.stic_MessagesComposeView.onParentChange = function (args) {
+    debugger;
+    if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
+      $("#phone").val(args.name_to_value_array.phone_mobile);  
+    }
+    if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
+      $("#phone").val(args.name_to_value_array.phone_office);  
     }
   };
 
@@ -1449,3 +1447,51 @@ debugger;
     }
   };
 }(jQuery));
+
+YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
+
+function parentIdChanged() {
+  debugger;
+  console.log('goalchanged');
+  let parentName = $('#parent_name').val();
+  let parentId = $('#parent_id').val();
+  let parentType = $('#parent_type').val();
+  // We check the name and not the id because when removed manually the name, the id is not automatically cleared
+  if (parentName != null && parentName != '' ) {
+    getParentAsync(parentId, parentType, applyParent);
+  }
+
+}
+
+function applyParent(parentData) {
+  debugger;
+  if(parentData!= null) {
+    $('#phone').val(parentData['phone']);
+  }
+}
+
+function getParentAsync(parentId, parentType, callbackFunction) {
+  $.ajax({
+    url: "index.php?module=stic_Messages&action=getParentPhone",
+    type: "post",
+    dataType: "json",
+    data: {
+      "parentId": parentId,
+      "parentType": parentType
+    },
+    success: function(resultado) {
+      debugger;
+      if (resultado.code == 'OK') {
+        callbackFunction(resultado.data);
+      }
+      else if (resultado.code == 'No data') {
+        console.log('No data');
+        return null;
+      }
+      else {
+        console.log('Error:', resultado.code);
+      }
+    }
+  });
+}
+
