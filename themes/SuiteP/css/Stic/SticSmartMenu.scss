@@ -556,4 +556,9 @@ $sm-stic__desktop-sub-item-padding-horizontal: 23px !default;
 			border: none;
 		}
 	}
+	span.suitepicon{
+		width:12px;
+		display:inline-block;
+		color:bw($sm-stic__stic-light) !important;
+	}
 }
