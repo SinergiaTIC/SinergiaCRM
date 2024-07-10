@@ -49,7 +49,7 @@ class CustomContactsViewDetail extends ContactsViewDetail
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
-        echo getVersionedScript("modules/stic_Messages/modal.js");
+        // echo getVersionedScript("modules/stic_Messages/modal.js");
 
         // Write here you custom code
     }

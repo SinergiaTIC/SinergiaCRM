@@ -94,7 +94,9 @@
                 'include/javascript/jquery/jquery.ui.touch-punch.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
                 'jssource/src_files/include/javascript/message-box.js'              => 'include/javascript/sugar_grp1_jquery.js',
                 'jssource/src_files/include/javascript/EmailsComposeViewModal.js'              => 'include/javascript/sugar_grp1_jquery.js',
-                'jssource/src_files/include/javascript/MessagesComposeViewModal.js'              => 'include/javascript/sugar_grp1_jquery.js',
+                // STIC-Custom XXXXX
+                'modules/stic_Messages/modal.js' => 'include/javascript/sugar_grp1_jquery.js',
+                // END STIC-Custom
             ),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
