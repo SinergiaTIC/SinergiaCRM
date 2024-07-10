@@ -187,8 +187,8 @@ function showNotificationFields(show) {
   setRequired(show, "notification_inbound_email_id");
   setRequired(show, "notification_prospect_list_ids");
   setRequired(show, "notification_template_id");
-  // setRequired(show, "notification_from_name");
-  // setRequired(show, "notification_from_addr");
+  setRequired(show, "notification_from_name");
+  setRequired(show, "notification_from_addr");
 
   if (show) {
     $("#status").val("Active");
