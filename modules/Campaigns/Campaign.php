@@ -320,9 +320,12 @@ class Campaign extends SugarBean
         }
         $this->notification_prospect_list_names = implode(", ", $prospect_list_name_array);
 
+        $isNewCampaign = empty($this->id);
         $return_id = parent::save($check_notify);
 
-        if ($this->campaign_type == "Notification") {
+        // Notifications can not be modified: 
+        // Set relationships and queue campaign only for new Notifications
+        if ($isNewCampaign && $this->campaign_type == "Notification") {
             // Set ProspectList relationships
             $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
             $prospect_list_name_array = array();
