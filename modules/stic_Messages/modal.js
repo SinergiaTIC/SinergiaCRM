@@ -38,23 +38,23 @@ function openCustomModal(source, paramsJson) {
             // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
             title: '',
             width: '80%',
-            buttons: {
-                'Save': function() {
-                    var form = panelBody.find('form');
-                    $.post(form.attr('action'), form.serialize(), function(response) {
-                        if (response.sugar_body) {
-                            $(this).dialog('close');
-                            SUGAR.mySugar.retrieveDashlet();
-                            if (typeof SUGAR.subpanelUtils != "undefined" && typeof SUGAR.subpanelUtils.loadSubpanels != "undefined") {
-                                SUGAR.subpanelUtils.loadSubpanels();
-                            }
-                        }
-                    }, 'json');
-                },
-                'Cancel': function() {
-                    $(this).dialog('close');
-                }
-            }
+            // buttons: {
+            //     'Save': function() {
+            //         var form = panelBody.find('form');
+            //         $.post(form.attr('action'), form.serialize(), function(response) {
+            //             if (response.sugar_body) {
+            //                 $(this).dialog('close');
+            //                 SUGAR.mySugar.retrieveDashlet();
+            //                 if (typeof SUGAR.subpanelUtils != "undefined" && typeof SUGAR.subpanelUtils.loadSubpanels != "undefined") {
+            //                     SUGAR.subpanelUtils.loadSubpanels();
+            //                 }
+            //             }
+            //         }, 'json');
+            //     },
+            //     'Cancel': function() {
+            //         $(this).dialog('close');
+            //     }
+            // }
         });
         $( "#template" ).change(function() {
             console.log('template change');
