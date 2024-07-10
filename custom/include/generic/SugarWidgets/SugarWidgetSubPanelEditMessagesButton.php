@@ -53,10 +53,19 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
         $parent_module = $defines['focus']->module_name;
         $button_module = $defines['module'];
 
+
+        if ($bean->module_dir === 'Accounts') {
+            $phone = $bean->phone_office;
+        }
+        else {
+            $phone = $bean->phone_mobile;
+        }
+
+
         $form = "<input type='button' name='button' id='custom_modal_button' class='button' 
             title='{$button}' value='{$button}' accesskey='{$accesskey}'
             onclick='openCustomModal(this); return false;'
-                 data-phone='{$bean->phone_mobile}'
+                 data-phone='{$phone}'
                  data-module='{$bean->module_name}'
                  data-record-id='{$bean->id}'
                  >";
