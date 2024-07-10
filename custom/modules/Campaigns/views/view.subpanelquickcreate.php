@@ -45,6 +45,7 @@ class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
 
         include_once "custom/modules/Campaigns/SticUtils.php";
         fillDynamicListsForNotifications();
+        echo getCampaignsLangStrings();
 
         echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
 

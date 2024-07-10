@@ -74,3 +74,5 @@ $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
 
 $mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de Email';
 $mod_strings['LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Listas de Público Obxectivo';
+
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar una nueva Notificación se añadirán automáticamente los emails correspondientes a la cola de envío';

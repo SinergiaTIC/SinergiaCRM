@@ -85,6 +85,13 @@ switch (viewType()) {
 }
 
 $(document).ready(function() {
+  if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
+    $(
+      "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
+        SUGAR.language.get("Campaigns", "LBL_NOTIFICATION_NEW_INFO") +
+        "</div>"
+    ).prependTo("[data-id='LBL_NOTIFICATION_INFORMATION_PANEL'] .tab-content .row");
+  }
   type_change();
 });
 
@@ -204,6 +211,7 @@ function initilizeEditView() {
   $("select:not(#parent_type)").selectize({ plugins: ["remove_button"] });
   if (isEdition && getCampaingType() == "Notification") {
     // Disable editions
+    $("#LBL_NOTIFICATION_NEW_INFO").hide();
     $("#campaign_type")[0].selectize.disable();
     $("#start_date").parent().children().prop("disabled", true);
     $("#parent_id").parent().children().prop("disabled", true);

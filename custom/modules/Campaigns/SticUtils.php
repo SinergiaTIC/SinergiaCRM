@@ -158,3 +158,18 @@ function fillDynamicInboundEmailAccounts()
     $mailboxes=get_campaign_mailboxes($emails);
     $GLOBALS['app_list_strings']['dynamic_inbound_email_list'] = $mailboxes;
 }
+
+function getCampaignsLangStrings()
+{
+    $html = "";
+    // Load related lang strings
+    $moduleNames = array('Campaigns');
+    foreach ($moduleNames as $moduleName) {
+        if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
+            require_once 'include/language/jsLanguage.php';
+            jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
+        }
+        $html .= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
+    }
+    return $html;
+}

@@ -69,3 +69,6 @@ $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
 
 $mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Template Name';
 $mod_strings['LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Target Lists';
+
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving a new Notification, the corresponding emails will be automatically added to the sending queue";
+

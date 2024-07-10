@@ -74,3 +74,5 @@ $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 
 $mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de correu electrònic';
 $mod_strings['LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Llistes de Públic Objectiu';
+
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al desar una nova Notificació s'afegiran automàticament els correus electrònics corresponents a la cua d'enviament";
