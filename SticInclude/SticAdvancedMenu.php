@@ -26,11 +26,11 @@
  *
  * This function builds an HTML list for a navigation menu using a recursive
  * structure. It filters out menu items that don't correspond to valid modules
- * and don't have valid children. It relies on global variables to obtain the
- * corresponding texts for the menu items and respects configuration for
- * displaying icons and the "All" menu.
+ * and don't have valid children. It also handles custom URLs embedded in menu items.
+ * The function relies on global variables to obtain the corresponding texts for 
+ * the menu items and respects configuration for displaying icons and the "All" menu.
  *
- * @param array $items The menu items to process, each item can contain subitems.
+ * @param array $items The menu items to process, each item can contain subitems and custom URLs.
  * @param bool $isFirstLevel Indicates if it's the top level of the menu.
  * @param array|null $validTabs Array of valid tabs/modules for the current user.
  * @return string The generated HTML code for the menu.
@@ -57,6 +57,12 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         // Get the display text for the menu item
         $text = ($app_list_strings['moduleList'][$item['id']] ?? $app_strings[$item['id']] ?? str_replace('_', ' ', $item['id']));
 
+        // If item contains URL, extract it and cut text
+        $itemURL = extractUrl($text);
+        if ($itemURL) {
+            $text = str_replace("|{$itemURL}", '', $text);
+        }
+
         $hasChildren = isset($item['children']) && is_array($item['children']) && !empty($item['children']);
         $isValidModule = array_key_exists($item['id'], $validTabs);
 
@@ -66,20 +72,25 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
             $childrenHtml = generateMenu($item['children'], false, $validTabs);
         }
 
-        // Only include valid modules or items with valid children
-        if ($isValidModule || !empty($childrenHtml)) {
+        // Only include valid modules, items with valid children, or items with custom URLs
+        if ($isValidModule || !empty($childrenHtml) || $itemURL) {
             $validItemsCount++;
             $itemHtml = '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>';
 
             if ($isValidModule) {
+                // Generate link for valid modules
                 $lowerModule = str_replace('_', '-', strtolower($item['id']));
                 // Include icon if enabled in configuration
                 $iconString = $sugar_config['stic-advanced-menu-icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
                 $itemHtml .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'>$iconString $text </a>";
             } elseif ($hasChildren) {
+                // Generate dropdown toggle for items with children
                 $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
+            } elseif($itemURL){
+                // Generate external link for items with custom URLs
+                $itemHtml .= "<a title='$itemURL' target='_blank' href='$itemURL'><span class='glyphicon glyphicon-link'></span> $text </a>";
             }
-
+            
             $itemHtml .= $childrenHtml;
             $itemHtml .= '</li>';
             $html .= $itemHtml;
@@ -90,6 +101,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
     if ($validItemsCount > 0 || $isFirstLevel) {
         $menuHtml = $isFirstLevel ? '<ul id="stic-menu" class="sm sm-stic">' : '<ul>';
         if ($isFirstLevel) {
+            // Add home link at the first level
             $menuHtml .= '<li><a href="index.php?module=Home&action=index"><i class="glyphicon glyphicon-home"></i></a></li>';
         }
         $menuHtml .= $html;
@@ -140,4 +152,24 @@ function addMenuProperties(&$array)
             addMenuProperties($value); // Recursively process sub-arrays
         }
     }
+}
+
+
+/**
+ * Extracts a URL from the end of a string if preceded by a pipe character ('|').
+ *
+ * Matches URLs with or without 'http(s)://' prefix, including domain and optional path.
+ *
+ * @param string $string Input string to search for a URL.
+ * @return string|null Extracted URL if found, null otherwise.
+ */
+function extractUrl($string)
+{
+    $pattern = '/\|((https?:\/\/)?([a-z0-9\.-]+)(:\d+)?(\/[^?#]*)?(\?[^#]*)?(#.*)?$)/i';
+
+    if (preg_match($pattern, $string, $matches)) {
+        return $matches[1];
+    }
+
+    return null;
 }

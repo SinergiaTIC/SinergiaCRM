@@ -60,8 +60,8 @@ $(document).ready(function() {
     // Define data to be sent in the request
     var dataToSend = {
       menuJson: JSON.stringify($cleanMenu),
-      sticAdvancedMenuIcons: document.getElementById("stic-advanced-menu-icons").checked ? '1' : '0',
-      sticAdvancedMenuAll: document.getElementById("stic-advanced-menu-all").checked ? '1' : '0',
+      sticAdvancedMenuIcons: document.getElementById("stic-advanced-menu-icons").checked ? "1" : "0",
+      sticAdvancedMenuAll: document.getElementById("stic-advanced-menu-all").checked ? "1" : "0",
       manageMode: "save"
     };
 
@@ -184,7 +184,7 @@ function createMenu() {
             separator_after: true,
             label: "<i class='glyphicon glyphicon-plus'></i> Create",
             action: function(obj) {
-              $node = tree.create_node($node);
+              $node = tree.create_node($node, { text: "New Node", url: "" });
               tree.edit($node);
             }
           },
@@ -196,6 +196,31 @@ function createMenu() {
               tree.edit($node);
             }
           },
+          EditURL: {
+            separator_before: false,
+            separator_after: true,
+            label: "<i class='glyphicon glyphicon-link'></i> Edit URL",
+            action: function(obj) {
+              var editUrlPrompt = function() {
+                var url = prompt("Enter URL:", $node.original.url || "");
+                if (url !== null) {
+                  if (url === "") {
+                    // Allow empty URL to clear the value
+                    tree.get_node($node).original.url = "";
+                    updateNodeDisplay($node);
+                  } else if (isValidUrl(url)) {
+                    tree.get_node($node).original.url = url;
+                    updateNodeDisplay($node);
+                  } else {
+                    alert("Please enter a valid URL.");
+                    editUrlPrompt(); // Show the prompt again
+                  }
+                }
+              };
+              editUrlPrompt();
+            }
+          },
+
           Delete: {
             separator_before: false,
             separator_after: false,
@@ -233,5 +258,25 @@ function removeMenu() {
   var tree = $("#stic-menu-manager").jstree(true);
   if (tree) {
     tree.destroy();
+  }
+}
+
+function updateNodeDisplay(node) {
+  var tree = $("#stic-menu-manager").jstree(true);
+  var nodeObj = tree.get_node(node);
+  var displayText = nodeObj.text.split("|")[0]; // Remove any existing URL display
+  if (nodeObj.original.url) {
+    displayText += "|" + nodeObj.original.url;
+  }
+  tree.rename_node(node, displayText);
+}
+
+// Function to validate URL
+function isValidUrl(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
   }
 }
