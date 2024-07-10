@@ -164,6 +164,8 @@ $dictionary["Campaign"]["fields"]['notification_reply_to_addr'] = array(
     'len' => '100',
 );
 
+$dictionary['Campaign']['fields']['campaign_type']['inline_edit'] = false;
+
 $dictionary['Campaign']['fields']['end_date']['required'] = false;
 
 $dictionary['Campaign']['fields']['budget']['massupdate'] = 0;

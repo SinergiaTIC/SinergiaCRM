@@ -306,6 +306,41 @@ class Campaign extends SugarBean
             $_REQUEST['relate_to'] = null;
             $_REQUEST['relate_id'] = null;
         }
+
+        if (empty($this->name)) {
+            // Name: Parent_name - Campaign_Type - Start_Date
+            global $app_list_strings, $current_user, $timedate;
+
+            $nameArray = array();
+            if (!empty($this->parent_type) && !empty($this->parent_id)) {
+                if (empty($this->parent_name)) {
+                    global $beanList, $beanFiles;
+    
+                    if (isset($beanList[$this->parent_type])) {
+                        $class = $beanList[$this->parent_type];
+                        if (!class_exists($class)) {
+                            require_once($beanFiles[$class]);
+                        }
+                        $parent = new $class();
+                        $parent->retrieve($this->parent_id);
+                        $this->parent_name = $parent->name;
+                    }
+                }
+                $nameArray[] = $this->parent_name;
+            }
+            $nameArray[] = $app_list_strings['campaign_type_dom'][$this->campaign_type];
+
+            $startDate = $this->start_date;
+            if ($userDate = $timedate->fromUserDate($startDate, false, $current_user)) {
+                $startDate = $userDate->asDBDate();
+            }
+            $date = SugarDateTime::createFromFormat(TimeDate::DB_DATE_FORMAT, $startDate, null);
+            $startDateFormatted = $date->format($timedate->get_date_format($user));
+
+            $nameArray[] = $startDateFormatted;
+            
+            $this->name = implode(" - ", $nameArray);
+        }
         if ($this->campaign_type != "Notification") {
             $this->notification_prospect_list_ids = "";
         }

@@ -85,14 +85,16 @@ switch (viewType()) {
 }
 
 $(document).ready(function() {
-  if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
-    $(
-      "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
-        SUGAR.language.get("Campaigns", "LBL_NOTIFICATION_NEW_INFO") +
-        "</div>"
-    ).prependTo("[data-id='LBL_NOTIFICATION_INFORMATION_PANEL'] .tab-content .row");
+  if (viewType() != "list") {
+    if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
+      $(
+        "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
+          SUGAR.language.get("Campaigns", "LBL_NOTIFICATION_NEW_INFO") +
+          "</div>"
+      ).prependTo("[data-id='LBL_NOTIFICATION_INFORMATION_PANEL'] .tab-content .row");
+    }
+    type_change();
   }
-  type_change();
 });
 
 function getCampaingType() {
@@ -150,8 +152,11 @@ function showNewsLetterFields(show) {
 }
 
 function setRequired(require, field) {
-  var labelText = $("[data-field='" + field + "'] [data-label]").text().trim().slice(0, -1);
-  var type = $("[field='" + field + "']").attr("type");
+  var $form = $("form#" + getFormName());
+
+  var labelText = $("[data-field='" + field + "'] [data-label]", $form).text().trim().slice(0, -1);
+  var type = $("[field='" + field + "']", $form).attr("type");
+  $("[data-field='" + field + "'] div.label span.required", $form).remove();
 
   if (require) {
     addToValidate(getFormName(), field, type, true, labelText);
@@ -162,7 +167,20 @@ function setRequired(require, field) {
   }
 }
 
+function setAutofillMark(autofill, field) {
+  if (autofill) {
+    setAutofill([field]);
+  } else {
+    $row = $("form #" + field).closest(".edit-view-row-item");
+    $row.find(".label").removeClass("autofill");
+    $row.removeAttr("title");
+  }
+}
+
 function showNotificationFields(show) {
+  setRequired(!show, "name");
+  setAutofillMark(show, "name");
+
   setRequired(show, "start_date");
   setRequired(show, "parent_name");
   setRequired(show, "notification_outbound_email_id");
@@ -208,7 +226,7 @@ function initilizeEditView() {
   var record = $("[name='record']").val();
   var isEdition = record !== undefined && record != "";
 
-  $("select:not(#parent_type)").selectize({ plugins: ["remove_button"] });
+  $("select:not(#parent_type, #status)").selectize({ plugins: ["remove_button"] });
   if (isEdition && getCampaingType() == "Notification") {
     // Disable editions
     $("#LBL_NOTIFICATION_NEW_INFO").hide();
