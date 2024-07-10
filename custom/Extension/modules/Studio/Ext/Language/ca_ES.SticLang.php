@@ -25,3 +25,5 @@ $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Mòduls ocults';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Desar i aplicar';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Arrossegueu els elements del menú al node on voleu que apareguin';
+$mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar icones de mòduls al menú';
+$mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar el menú "TOT"';

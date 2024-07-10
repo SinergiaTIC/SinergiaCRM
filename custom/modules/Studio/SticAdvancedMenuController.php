@@ -38,6 +38,17 @@ switch ($_POST['manageMode']) {
         sugar_file_put_contents('custom/include/AdvancedTabConfig.php', $fileContents);
         ob_clean();
         SugarApplication::appendSuccessMessage("<div id='saved-notice' class='alert alert-success' role='alert'>{$app_strings['LBL_SAVED']}</div>");
+
+        // Save options in sugar_config
+        require_once 'modules/Configurator/Configurator.php';
+        $configurator = new Configurator();
+
+        $configurator->config['stic-advanced-menu-icons'] = $_POST['sticAdvancedMenuIcons'];
+        $configurator->config['stic-advanced-menu-all'] = $_POST['sticAdvancedMenuAll'];
+        // $configurator->config['stic-advanced-menu-icons'] = false;
+        // $configurator->config['stic-advanced-menu-all'] = $_POST['sticAdvancedMenuAll'] ? 'true' : 'false';
+        $configurator->saveConfig();
+
         die('ok');
 
         break;

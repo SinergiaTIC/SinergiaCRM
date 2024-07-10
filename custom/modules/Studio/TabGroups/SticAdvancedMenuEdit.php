@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 // Include necessary files and initialize global variables
-global $app_list_strings, $app_strings, $mod_strings, $current_user;
+global $app_list_strings, $app_strings, $mod_strings, $current_user, $sugar_config;
 require_once 'modules/MySettings/TabController.php';
 require_once 'modules/Studio/TabGroups/TabGroupHelper.php';
 require_once 'modules/Studio/parsers/StudioParser.php';
@@ -71,6 +71,9 @@ $smarty->assign('jsonAll', $jsonAll);
 
 // Assign variables to the Smarty template
 $smarty->assign('MOD', $GLOBALS['mod_strings']);
+$smarty->assign('sticAdvancedMenuIcons', $sugar_config['stic-advanced-menu-icons']);
+$smarty->assign('sticAdvancedMenuAll', $sugar_config['stic-advanced-menu-all']);
+
 $smarty->assign('dropdown_languages', get_languages());
 $smarty->assign('tabGroupSelected_lang', $tabGroupSelected_lang);
 

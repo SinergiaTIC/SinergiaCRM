@@ -25,3 +25,5 @@ $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Módulos ocultos';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Gardar e aplicar';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Arrastre os elementos do menú ao nodo onde quere que aparezan';
+$mod_strings['LBL_STIC_MENU_ICONS'] = 'Amosar iconas de módulos no menú';
+$mod_strings['LBL_STIC_MENU_ALL'] = 'Amosar o menú "TODO"';

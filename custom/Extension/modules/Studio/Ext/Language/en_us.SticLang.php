@@ -25,3 +25,5 @@ $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Hidden modules';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Save and apply';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restore';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Drag menu items to the node where you want them to appear';
+$mod_strings['LBL_STIC_MENU_ICONS'] = 'Show module icons in the menu';
+$mod_strings['LBL_STIC_MENU_ALL'] = 'Show the "ALL" menu';

@@ -27,7 +27,8 @@
  * This function builds an HTML list for a navigation menu using a recursive
  * structure. It filters out menu items that don't correspond to valid modules
  * and don't have valid children. It relies on global variables to obtain the
- * corresponding texts for the menu items.
+ * corresponding texts for the menu items and respects configuration for
+ * displaying icons and the "All" menu.
  *
  * @param array $items The menu items to process, each item can contain subitems.
  * @param bool $isFirstLevel Indicates if it's the top level of the menu.
@@ -36,8 +37,9 @@
  */
 function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 {
-    global $app_list_strings, $app_strings, $current_user;
+    global $app_list_strings, $app_strings, $current_user, $sugar_config;
 
+    // Initialize valid tabs if not provided
     if ($validTabs === null) {
         require_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
@@ -52,23 +54,28 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
     $validItemsCount = 0;
 
     foreach ($items as $item) {
+        // Get the display text for the menu item
         $text = ($app_list_strings['moduleList'][$item['id']] ?? $app_strings[$item['id']] ?? str_replace('_', ' ', $item['id']));
 
         $hasChildren = isset($item['children']) && is_array($item['children']) && !empty($item['children']);
         $isValidModule = array_key_exists($item['id'], $validTabs);
 
+        // Recursively generate HTML for child items
         $childrenHtml = '';
         if ($hasChildren) {
             $childrenHtml = generateMenu($item['children'], false, $validTabs);
         }
 
+        // Only include valid modules or items with valid children
         if ($isValidModule || !empty($childrenHtml)) {
             $validItemsCount++;
             $itemHtml = '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>';
-            
+
             if ($isValidModule) {
                 $lowerModule = str_replace('_', '-', strtolower($item['id']));
-                $itemHtml .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'><span class='suitepicon suitepicon-module-{$lowerModule}'></span> $text </a>";
+                // Include icon if enabled in configuration
+                $iconString = $sugar_config['stic-advanced-menu-icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
+                $itemHtml .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'>$iconString $text </a>";
             } elseif ($hasChildren) {
                 $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
             }
@@ -79,6 +86,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         }
     }
 
+    // Wrap the menu items in a <ul> if there are valid items or it's the first level
     if ($validItemsCount > 0 || $isFirstLevel) {
         $menuHtml = $isFirstLevel ? '<ul id="stic-menu" class="sm sm-stic">' : '<ul>';
         if ($isFirstLevel) {
@@ -86,7 +94,8 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         }
         $menuHtml .= $html;
 
-        if ($isFirstLevel) {
+        // Add the "All" menu if it's the first level and enabled in configuration
+        if ($isFirstLevel && $sugar_config['stic-advanced-menu-all']) {
             $menuHtml .= '<li class="dropdown">';
             $menuHtml .= "<a href='#' class='no-link'>{$app_strings['LBL_TABGROUP_ALL']} </a>";
             $menuHtml .= '<ul>';

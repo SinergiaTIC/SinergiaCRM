@@ -30,7 +30,8 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 	var jsonAll ='{$jsonAll|escape:'javascript'}'
 	var allModules = [JSON.parse(jsonAll)]
 </script>
-<script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.js'}">
+</script>
 <div id="stic-menu">
 
 	<h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>
@@ -51,6 +52,25 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 				</div>
 
 
+
+			</div>
+			<div id="menu-options">
+				<div class="col-xs-4 text-center">
+					<div class="checkbox">
+						<label>
+							<input id="stic-advanced-menu-icons" type="checkbox" {if $sticAdvancedMenuIcons}checked{/if}>
+						</label>
+					</div>
+					 {$MOD.LBL_STIC_MENU_ICONS}
+				</div>
+				<div class="col-xs-4 text-center">
+					<div class="checkbox">
+						<label>
+							<input id="stic-advanced-menu-all" type="checkbox" {if $sticAdvancedMenuAll}checked{/if}>
+						</label>
+					</div>
+					 {$MOD.LBL_STIC_MENU_ALL}
+				</div>
 			</div>
 			<div class="panel-body">
 				<div id="stic-menu-manager">

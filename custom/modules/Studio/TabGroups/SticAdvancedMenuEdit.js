@@ -60,6 +60,8 @@ $(document).ready(function() {
     // Define data to be sent in the request
     var dataToSend = {
       menuJson: JSON.stringify($cleanMenu),
+      sticAdvancedMenuIcons: document.getElementById("stic-advanced-menu-icons").checked ? '1' : '0',
+      sticAdvancedMenuAll: document.getElementById("stic-advanced-menu-all").checked ? '1' : '0',
       manageMode: "save"
     };
 
@@ -110,6 +112,10 @@ $(document).ready(function() {
   $("#stic-menu-manager").on("move_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("delete_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("create_node.jstree", handleTreeChanges);
+
+  // Handle options changes
+  $("#stic-advanced-menu-icons").on("change", handleTreeChanges);
+  $("#stic-advanced-menu-all").on("change", handleTreeChanges);
 
   // Hide saved notice after 3 seconds
   setTimeout(() => {
