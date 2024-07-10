@@ -25,15 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-switch ($_POST['manageMode']) {
+switch ($_REQUEST['manageMode']) {
     case 'save':
-        // Decodificas los caracteres HTML
+        // Decode HTML entities in the JSON string
         $decodedJson = html_entity_decode($_POST['menuJson']);
 
-        // Convirtiendo el JSON decodificado en un array de PHP
+        // Convert the decoded JSON to a PHP array
         $GLOBALS["SticTabStructure"] = json_decode($decodedJson, true);
 
-        //Write the tabstructure to custom so that the grouping are not shown for the un-selected scenarios
+        // Write the tab structure to a custom file
         $fileContents = "<?php \n" . '$GLOBALS["SticTabStructure"] =' . var_export($GLOBALS['SticTabStructure'], true) . ';';
         sugar_file_put_contents('custom/include/AdvancedTabConfig.php', $fileContents);
         ob_clean();
@@ -43,17 +43,16 @@ switch ($_POST['manageMode']) {
         require_once 'modules/Configurator/Configurator.php';
         $configurator = new Configurator();
 
+        // Update configuration with new menu settings
         $configurator->config['stic-advanced-menu-icons'] = $_POST['sticAdvancedMenuIcons'];
         $configurator->config['stic-advanced-menu-all'] = $_POST['sticAdvancedMenuAll'];
-        // $configurator->config['stic-advanced-menu-icons'] = false;
-        // $configurator->config['stic-advanced-menu-all'] = $_POST['sticAdvancedMenuAll'] ? 'true' : 'false';
         $configurator->saveConfig();
 
         die('ok');
-
         break;
 
     case 'restore':
+        // Remove custom tab configuration and reset global variable
         unlink('custom/include/AdvancedTabConfig.php');
         unset($GLOBALS["SticTabStructure"]);
         die('ok');
