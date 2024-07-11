@@ -27,5 +27,9 @@ $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Arrastre los elementos del menú al nodo en que quiere que aparezcan';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar iconos de módulos en el menú';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar el menu "TODO"';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar al menú antiguo';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = '¿Desea cambiar al menú antiguo? Esto restaurará la configuración que tenía en el momento de la activación del nuevo menú. Puede volver a activar el nuevo menú más adelante.';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Cambiar al menú avanzado';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = '¿Desea cambiar al menú avanzado? Esto activará el menú avanzado utilizando la configuración actual del menú.';
 
 

@@ -50,7 +50,27 @@ switch ($_REQUEST['manageMode']) {
 
         die('ok');
         break;
+    case 'legacy_mode':
 
+        // Disable advanced menu
+        require_once 'modules/Configurator/Configurator.php';
+        $configurator = new Configurator();
+        $configurator->config['stic-advanced-menu-enabled'] = false;
+        $configurator->saveConfig();
+
+        die('ok');
+        break;
+    case 'advanced_mode':
+
+        // Enable advanced menu
+        require_once 'modules/Configurator/Configurator.php';
+        $configurator = new Configurator();
+        $configurator->config['stic-advanced-menu-enabled'] = true;
+        $configurator->saveConfig();
+        require_once 'SticUpdates/Scripts/ConvertSuiteCRMMenuToAdvancedMenu.php';
+
+        die('ok');
+        break;
     case 'restore':
         // Remove custom tab configuration and reset global variable
         unlink('custom/include/AdvancedTabConfig.php');

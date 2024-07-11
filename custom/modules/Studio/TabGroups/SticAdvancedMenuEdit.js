@@ -53,6 +53,36 @@ $(document).ready(function() {
     });
   });
 
+  // Restore default menu
+  $("#legacy-menu").on("click", function() {
+    if (confirm(SUGAR.language.get('Studio', "LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM")) == false) {
+      return;
+    }
+
+    // Define data to be sent in the request
+    var dataToSend = {
+      manageMode: "legacy_mode",
+      sticAdvancedMenuEnabled: "1"
+    };
+
+    // Perform AJAX request
+    $.ajax({
+      url: location.href.slice(0, location.href.indexOf(location.search)),
+      type: "POST",
+      data: {
+        module: "Studio",
+        action: "SticAdvancedMenuController",
+        ...dataToSend
+      },
+      success: function(response) {
+        window.location.reload(true);
+      },
+      error: function(xhr, status, error) {
+        console.error("Request error:", status, error);
+      }
+    });
+  });
+
   // Save menu button
   $("#save-menu").on("click", function() {
     var $cleanMenu = $("#stic-menu-manager").jstree(true).get_json().map(filterNodes);

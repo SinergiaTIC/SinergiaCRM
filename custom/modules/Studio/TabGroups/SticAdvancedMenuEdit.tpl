@@ -37,31 +37,32 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 	<h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>
 	<small>{$MOD.LBL_STIC_MENU_INFO}</small>
 
+	<div id="menu-buttons" class="btn-group btn-group-justified" role="group">
 	<div class="row">
+
+			<button id="save-menu" type="button" class="btn btn-md btn-default ">{$MOD.LBL_STIC_MENU_SAVE}
+				<span class="glyphicon glyphicon-ok text-success"></span>
+			</button>
+
+
+			<button id="restore-menu" type="button"
+				class="btn btn-md btn-default ">{$MOD.LBL_STIC_MENU_RESTORE}</button>
+
+			<button class="btn btn-link" id="legacy-menu">{$MOD.LBL_STIC_MENU_CHANGE_TO_LEGACY}</button>
+
+
+
+		</div>
 		<div class="panel panel-default col-md-7">
-			<div id="menu-buttons" class="row">
-				<div class="col-xs-4">
-					<button id="save-menu" type="button"
-						class="btn btn-md btn-default btn-block">{$MOD.LBL_STIC_MENU_SAVE}
-						<span class="glyphicon glyphicon-ok text-success"></span>
-					</button>
-				</div>
-				<div class="col-xs-4">
-					<button id="restore-menu" type="button"
-						class="btn btn-md btn-default btn-block">{$MOD.LBL_STIC_MENU_RESTORE}</button>
-				</div>
-
-
-
-			</div>
 			<div id="menu-options">
 				<div class="col-xs-4 text-center">
 					<div class="checkbox">
 						<label>
-							<input id="stic-advanced-menu-icons" type="checkbox" {if $sticAdvancedMenuIcons}checked{/if}>
+							<input id="stic-advanced-menu-icons" type="checkbox"
+								{if $sticAdvancedMenuIcons}checked{/if}>
 						</label>
 					</div>
-					 {$MOD.LBL_STIC_MENU_ICONS}
+					{$MOD.LBL_STIC_MENU_ICONS}
 				</div>
 				<div class="col-xs-4 text-center">
 					<div class="checkbox">
@@ -69,7 +70,7 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 							<input id="stic-advanced-menu-all" type="checkbox" {if $sticAdvancedMenuAll}checked{/if}>
 						</label>
 					</div>
-					 {$MOD.LBL_STIC_MENU_ALL}
+					{$MOD.LBL_STIC_MENU_ALL}
 				</div>
 			</div>
 			<div class="panel-body">
@@ -88,5 +89,6 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 				</div>
 			</div>
 		</div>
+
 	</div>
 </div>

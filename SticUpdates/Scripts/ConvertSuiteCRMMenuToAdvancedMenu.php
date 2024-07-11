@@ -27,6 +27,7 @@ if (file_exists('custom/include/tabConfig.php')) {
     } else {
         echo "An error occurred while saving the file";
     }
+    
 }
 
 /**

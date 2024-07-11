@@ -30,17 +30,17 @@
  * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- * 
+ *
  * The interactive user interfaces in modified source and object code versions
  * of this program must display Appropriate Legal Notices, as required under
  * Section 5 of the GNU Affero General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo. 
- * If the display of the logos is not reasonably feasible for technical reasons, 
- * the Appropriate Legal Notices must display the words "Powered by SugarCRM", 
- * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
+ * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo.
+ * If the display of the logos is not reasonably feasible for technical reasons,
+ * the Appropriate Legal Notices must display the words "Powered by SugarCRM",
+ * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”.
  */
 
 // created: 2022-06-15 12:16:26
@@ -557,7 +557,7 @@ $sugar_config = array(
     // STIC#708
     'stic_datetime_combo_minute_interval' => 15,
     // END STIC
-    
+
     // STIC-Custom 20231122 AAM - Deactivate to allow installation through SticInstall.php
     // STIC#1298
     'stic_install_locked' => true,
@@ -573,7 +573,7 @@ $sugar_config = array(
         2 => 'stic_security_groups_rules_enabled',
     ),
     // END STIC
-    
+
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
     'sinergiacrm_version' => '1.6.2',
@@ -589,5 +589,12 @@ $sugar_config = array(
     // STIC-Custom 20240528 JBL - Disable AjaxUI calls
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/253
     'disableAjaxUI' => true,
+    // END STIC
+
+    // STIC CUSTOM 20240709 JCH - Advanced Tab config (multilevel) 
+    // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
+    'stic-advanced-menu-enabled' => true,
+    'stic-advanced-menu-icons' => '1',
+    'stic-advanced-menu-all' => '1',
     // END STIC
 );

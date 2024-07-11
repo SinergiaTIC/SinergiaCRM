@@ -27,3 +27,7 @@ $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Arrossegueu els elements del menú al node on voleu que apareguin';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar icones de mòduls al menú';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar el menú "TOT"';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Canviar al menú antic';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Voleu canviar al menú antic? Això restaurarà la configuració que tenia en el moment de l\'activació del nou menú. Podeu tornar a activar el nou menú més endavant.';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Canviar al menú avançat';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Voleu canviar al menú avançat? Això activarà el menú avançat utilitzant la configuració actual del menú.';

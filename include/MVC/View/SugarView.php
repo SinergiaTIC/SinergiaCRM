@@ -670,20 +670,23 @@ class SugarView
             // STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist
             // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
 
-            // Skip loading the menu during AJAX calls that manage the menu
-            // This prevents redundant loading and associated issues
-            if (!isset($_POST['manageMode'])) {
-                include_once 'custom/include/SticAdvancedTabConfig.php';
-            }
-            if (isset($GLOBALS["SticTabStructure"])) {
-                require_once 'SticInclude/SticAdvancedMenu.php';
-                $menu = $GLOBALS["SticTabStructure"];
-                addMenuProperties($menu);
-                $ss->assign('renderedMenu', generateMenu($menu));
-                $ss->assign('STIC_MENU', true);
-            } else {
-                $ss->assign('STIC_MENU', false);
-
+            if($sugar_config['stic-advanced-menu-enabled']){
+                
+                // Skip loading the menu during AJAX calls that manage the menu
+                // This prevents redundant loading and associated issues
+                if (!isset($_POST['manageMode'])) {
+                    include_once 'custom/include/SticAdvancedTabConfig.php';
+                }
+                if (isset($GLOBALS["SticTabStructure"])) {
+                    require_once 'SticInclude/SticAdvancedMenu.php';
+                    $menu = $GLOBALS["SticTabStructure"];
+                    addMenuProperties($menu);
+                    $ss->assign('renderedMenu', generateMenu($menu));
+                    $ss->assign('STIC_MENU', true);
+                } else {
+                    $ss->assign('STIC_MENU', false);
+                    
+                }
             }
             // END STIC
 
