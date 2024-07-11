@@ -20,36 +20,46 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+
 $(document).ready(function() {
+  // Initialize SmartMenus plugin with specific offsets
   $("#stic-menu").smartmenus({
     subMenusSubOffsetX: 1,
     subMenusSubOffsetY: -8
   });
 
-  // Actualizar el menú cuando se abra
+  // Update the menu when the first item is clicked (presumably the menu toggle)
   $("#stic-menu > li:first-child > a").on("click", function(e) {
     e.preventDefault();
     updateActionMenu();
   });
 
-  // También actualizar el menú en la carga inicial
+  // Update the menu on initial page load
   updateActionMenu();
 });
 
+/**
+ * Builds the action menu by cloning elements from the sidebar
+ * @returns {jQuery} A new unordered list containing the action menu items
+ */
 function buildActionMenu() {
   var $newActionMenu = $("<ul>");
 
+  // Iterate through each action menu link in the sidebar
   $("#actionMenuSidebar ul li.actionmenulinks").each(function() {
     var $originalLink = $(this).find("a");
     var $icon = $originalLink.find(".side-bar-action-icon span").clone();
     var linkText = $originalLink.find(".actionmenulink").text();
 
+    // Create a new link with the same attributes as the original
     var $newLink = $("<a>")
       .attr("href", $originalLink.attr("href"))
       .attr("data-action-name", $originalLink.data("action-name"));
 
+    // Append the icon and text to the new link
     $newLink.append($icon).append(linkText);
 
+    // Wrap the new link in a list item and add it to the menu
     var $newListItem = $("<li>").append($newLink);
     $newActionMenu.append($newListItem);
   });
@@ -57,11 +67,19 @@ function buildActionMenu() {
   return $newActionMenu;
 }
 
-// Función para actualizar el menú de acciones
+/**
+ * Updates the action menu in the main navigation
+ * This function rebuilds the action menu and inserts it into the appropriate area
+ */
 function updateActionMenu() {
   var $newActionMenu = buildActionMenu();
   var $actionsArea = $("#stic-menu #actions-area");
 
-  // Añadir el nuevo menú de acciones
+  // Insert the new action menu at the beginning of the actions area
   $actionsArea.prepend($newActionMenu.children());
+
+  // If there are no action items, reduce the opacity of the entire section
+  if ($actionsArea.find("a").length == 0) {
+    $actionsArea.closest("li").css("opacity", 0.2);
+  }
 }

@@ -556,13 +556,15 @@ $sm-stic__desktop-sub-item-padding-horizontal: 23px !default;
 			border: none;
 		}
 
-		ul#actions-area .dropdown-header {
-			color: bw($sm-stic__stic-light) !important;
-			background-color: $stic-light !important;
-			padding-left: 6px;
-			padding-top:6px;
-			margin-top: 0px;
-			font-weight: bold;
+		ul#actions-area {
+			.dropdown-header {
+				color: bw($sm-stic__stic-light) !important;
+				background-color: $stic-light !important;
+				padding-left: 6px;
+				padding-top: 6px;
+				margin-top: 0px;
+				font-weight: bold;
+			}
 		}
 	}
 	span.suitepicon {
