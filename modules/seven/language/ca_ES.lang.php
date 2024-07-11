@@ -4,7 +4,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings['LBL_SEVEN_ACCOUNT_ACTIVE'] = 'Activa';
 $mod_strings['LBL_SEVEN_ACCOUNT_TITLE'] = "Configuració plantilla d'Organitzacions";
 $mod_strings['LBL_SEVEN_ACTIVE'] = 'Activa';
+$mod_strings['LBL_SEVEN_ACTIVE_HELP'] = 'Si actiu, s\'enviaran els missatges, en cas contrari no s\'enviaran';
 $mod_strings['LBL_SEVEN_API_KEY'] = 'API Key';
+$mod_strings['LBL_SEVEN_API_KEY_HELP'] = 'Aquesta és la clau creada a la secció Development del vostre compte de Seven';
 
 $mod_strings['LBL_SEVEN_HISTORY'] = 'Historial SMS';
 
@@ -19,6 +21,7 @@ $mod_strings['LBL_SEVEN_PROPERTY_PLACEHOLDERS'] = 'Variables emprables a la plan
 
 $mod_strings['LBL_SEVEN_SEND_SMS_VIA'] = 'Enviar SMS via Seven';
 $mod_strings['LBL_SEVEN_SENDER'] = 'Remitent';
+$mod_strings['LBL_SEVEN_SENDER_HELP'] = 'Aquest és el nom del remitent que apareixerà en els vostres missatges';
 $mod_strings['LBL_SEVEN_SMS_ON_CREATION'] = "Si activa, s'enviarà un SMS cada cop que es creï un nou registre";
 
 $mod_strings['LBL_SEVEN_TEXT'] = 'Text';

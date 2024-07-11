@@ -4,7 +4,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $mod_strings['LBL_SEVEN_ACCOUNT_ACTIVE'] = 'Active';
 $mod_strings['LBL_SEVEN_ACCOUNT_TITLE'] = 'Account Template Configuration';
 $mod_strings['LBL_SEVEN_ACTIVE'] = 'Active';
+$mod_strings['LBL_SEVEN_ACTIVE_HELP'] = 'If Active, messages will be sent, otherwise they will not be sent';
 $mod_strings['LBL_SEVEN_API_KEY'] = 'API Key';
+$mod_strings['LBL_SEVEN_API_KEY_HELP'] = 'This is the key created on your Seven account under Development section';
 
 $mod_strings['LBL_SEVEN_HISTORY'] = 'SMS History';
 
@@ -19,6 +21,7 @@ $mod_strings['LBL_SEVEN_PROPERTY_PLACEHOLDERS'] = 'Property Placeholders';
 
 $mod_strings['LBL_SEVEN_SEND_SMS_VIA'] = 'Send SMS via seven';
 $mod_strings['LBL_SEVEN_SENDER'] = 'Sender';
+$mod_strings['LBL_SEVEN_SENDER_HELP'] = 'This is the sender name that will appear in your messages';
 $mod_strings['LBL_SEVEN_SMS_ON_CREATION'] = 'If active, an SMS gets sent when a new entity gets created.';
 
 $mod_strings['LBL_SEVEN_TEXT'] = 'Text';

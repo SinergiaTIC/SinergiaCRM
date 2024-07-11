@@ -4,9 +4,15 @@
 
     <span class='error'>{$error.main}</span>
 
-    <table>
+    {* STIC-Custom XXXXX *}
+    {* <table> *}
+    <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+    {* END STIC-Custom *}
         <tr>
-            <td><label for='seven_api_key'>{$MOD.LBL_SEVEN_API_KEY}</label></td>
+            {* STIC-Custom XXXXX *}
+            {* <td><label for='seven_api_key'>{$MOD.LBL_SEVEN_API_KEY}</label></td> *}
+            <td><label for='seven_api_key'>{$MOD.LBL_SEVEN_API_KEY}</label>&nbsp;{sugar_help text=$MOD.LBL_SEVEN_API_KEY_HELP}</td>
+            {* END STIC-Cusotm *}
             <td>
                 {if empty($config.seven_api_key)}
                     {assign var='seven_api_key' value=$seven_config.seven_api_key.default}
@@ -27,7 +33,10 @@
         </tr>
 
         <tr>
-            <td><label for='seven_sender'>{$MOD.LBL_SEVEN_SENDER}</label></td>
+            {* STIC-Custom XXXXX *}
+            {* <td><label for='seven_sender'>{$MOD.LBL_SEVEN_SENDER}</label></td> *}
+            <td><label for='seven_sender'>{$MOD.LBL_SEVEN_SENDER}</label>&nbsp;{sugar_help text=$MOD.LBL_SEVEN_SENDER_HELP}</td>
+            {* END STIC-Cusotm *}
 
             <td>
                 {if empty($config.seven_sender)}
@@ -49,7 +58,10 @@
         </tr>
 
         <tr>
-            <td>{$MOD.LBL_SEVEN_ACTIVE}</td>
+            {* STIC-Custom XXXXX *}
+            {* <td>{$MOD.LBL_SEVEN_ACTIVE}</td> *}
+            <td><label>{$MOD.LBL_SEVEN_ACTIVE}</label>&nbsp;{sugar_help text=$MOD.LBL_SEVEN_ACTIVE_HELP}</td>
+            {* END STIC-Custom *}
 
             <td>
                 {if empty($config.seven_active)}
@@ -78,6 +90,7 @@
             </td>
         </tr>
 
+<!-- STIC-Custom XXXX   : Parameter friendly respone not used because we prefer to log the information
         <tr>
             <td>{$MOD.LBL_SEVEN_USER_FRIENDLY_RESPONSES}</td>
 
@@ -107,6 +120,7 @@
                 />
             </td>
         </tr>
+-->
     </table>
     <br/>
     <div>

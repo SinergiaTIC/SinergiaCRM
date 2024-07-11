@@ -34,13 +34,14 @@ if (!empty($number)) {
     // STIC-Custom EPS 20240404
     // $res = $res = $sms->sendSMS();
     $res = $res = $sms->sendSMSwithText($text);
+    
+    // if (!$sms->isUserFriendlyResponses()) {
+    //     echo json_encode($res);
+    //     return;
+    // }
+    $GLOBALS['log']->fatal('SEVEN response ' . __METHOD__ . __LINE__ , $res);
     // END STIC-Custom
-
-    if (!$sms->isUserFriendlyResponses()) {
-        echo json_encode($res);
-        return;
-    }
-
+    
     $json = $res[0];
     $count = 0;
     $price = $json['total_price'];
