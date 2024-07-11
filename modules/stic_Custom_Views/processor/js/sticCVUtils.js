@@ -286,6 +286,9 @@ var sticCVUtils = class sticCVUtils {
       if (fieldContent.type == "bool") {
         return $elem.prop("checked");
       }
+      if ($elem.length > 0 && (fieldContent.type == "multienum" || fieldContent.type == "enum")) {
+        return $elem.val().replace(new RegExp('\\^', 'g'), '');
+      }
       var text = fieldContent.text();
       if (
         value_list != undefined &&

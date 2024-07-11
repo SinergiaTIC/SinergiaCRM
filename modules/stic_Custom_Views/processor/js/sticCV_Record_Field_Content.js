@@ -31,7 +31,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
       $contentElement = $fieldElement.children(".stic-FieldContent").children('[field="' + fieldName + '"]');
     }
     super(field.customView, $contentElement);
-    
+
     this.$element.css("height", "auto");
 
     this.field = field;
@@ -281,6 +281,9 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     }
 
     var currentValue = sticCVUtils.normalizeToCompare(this._getValue(value_list));
+    if (currentValue === undefined) {
+      currentValue = "";
+    }
     var conditionValue = sticCVUtils.normalizeToCompare(condition.value);
     switch (condition.operator) {
       case "Equal_To":
