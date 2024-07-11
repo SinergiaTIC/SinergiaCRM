@@ -44,35 +44,37 @@
  */
 
 *}
-
+<!-- Include SmartMenus core CSS -->
 <link href="SticInclude/vendor/smartmenus/dist/css/sm-core-css.css" rel="stylesheet">
+<!-- Include SticCRM custom SmartMenus theme -->
 <link href="SticInclude/vendor/smartmenus/dist/css/sm-stic/sm-stic.css" rel="stylesheet">
 
+<!-- Main toolbar container for desktop view -->
 <div class="desktop-toolbar" id="stic-toolbar">
 
     {$renderedMenu}
     {literal}
         <script>
-            // Ocultamos todos los nodos vacíos
             $(document).ready(function() {
-                // Selecciona todos los elementos li.dropdown que contienen un ul
+                // Remove empty dropdown menus
                 $('#main-menu li.dropdown').each(function() {
-                    // Verifica si el ul interno está vacío (sin elementos li)
+                    // Check if the inner ul is empty (has no li elements)
                     if ($(this).find('ul').children().length === 0) {
-                        // Elimina el li.dropdown si el ul está vacío
+                        // Remove the li.dropdown if its ul is empty
                         $(this).remove();
                     }
                 });
 
+                // Implement live search functionality for the "All" menu
                 $("#search-all").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
+                    var searchTerm = $(this).val().toLowerCase();
 
-                    // Filtra los <li> hermanos
-                    $("#search-all").parent().siblings().filter(function() {
-                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    // Filter and toggle visibility of sibling <li> elements based on search term
+                    $("#search-all").parent().siblings().each(function() {
+                        var matchFound = $(this).text().toLowerCase().indexOf(searchTerm) > -1;
+                        $(this).toggle(matchFound);
                     });
                 });
-
             });
         </script>
     {/literal}
