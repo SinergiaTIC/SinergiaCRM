@@ -25,4 +25,43 @@ $(document).ready(function() {
     subMenusSubOffsetX: 1,
     subMenusSubOffsetY: -8
   });
+
+  // Actualizar el menú cuando se abra
+  $("#stic-menu > li:first-child > a").on("click", function(e) {
+    e.preventDefault();
+    updateActionMenu();
+  });
+
+  // También actualizar el menú en la carga inicial
+  updateActionMenu();
 });
+
+function buildActionMenu() {
+  var $newActionMenu = $("<ul>");
+
+  $("#actionMenuSidebar ul li.actionmenulinks").each(function() {
+    var $originalLink = $(this).find("a");
+    var $icon = $originalLink.find(".side-bar-action-icon span").clone();
+    var linkText = $originalLink.find(".actionmenulink").text();
+
+    var $newLink = $("<a>")
+      .attr("href", $originalLink.attr("href"))
+      .attr("data-action-name", $originalLink.data("action-name"));
+
+    $newLink.append($icon).append(linkText);
+
+    var $newListItem = $("<li>").append($newLink);
+    $newActionMenu.append($newListItem);
+  });
+
+  return $newActionMenu;
+}
+
+// Función para actualizar el menú de acciones
+function updateActionMenu() {
+  var $newActionMenu = buildActionMenu();
+  var $actionsArea = $("#stic-menu #actions-area");
+
+  // Añadir el nuevo menú de acciones
+  $actionsArea.prepend($newActionMenu.children());
+}

@@ -27,7 +27,7 @@
  * This function builds an HTML list for a navigation menu using a recursive
  * structure. It filters out menu items that don't correspond to valid modules
  * and don't have valid children. It also handles custom URLs embedded in menu items.
- * The function relies on global variables to obtain the corresponding texts for 
+ * The function relies on global variables to obtain the corresponding texts for
  * the menu items and respects configuration for displaying icons and the "All" menu.
  *
  * @param array $items The menu items to process, each item can contain subitems and custom URLs.
@@ -52,6 +52,51 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 
     $html = '';
     $validItemsCount = 0;
+
+    $module = $_REQUEST['module'];
+    $moduleLabel = $app_list_strings['moduleList'][$module];
+
+    $recents = array_slice(getUserModuleRecents($current_user->id, $module), 0, 5);
+    $favs = array_slice(getUserModuleFavs($current_user->id, $module), 0, 5);
+
+    // Add the new menu icon as the first item if it's the first level
+    if ($isFirstLevel) {
+        $html .= '<li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-menu-hamburger"></i>
+                </a>
+                <ul class="dropdown-menu" id="actions-area">
+
+
+                    <li class="divider"></li>';
+
+        if (!empty($recents)) {
+            $html .= '<li class="dropdown-header" id="recents-area">Recientes</li>';
+            foreach ($recents as $recent) {
+                $text = strlen($recent['item_summary']) > 70 ? $recent['item_summary_short'] : $recent['item_summary'];
+                $html .= "<li style='display:flex;justify-content: space-between;'>
+                    <a style='width:80%' href='index.php?module=$module&action=DetailView&record={$recent['item_id']}' title='{$recent['item_summary']}'>$text</a>
+                    <a style='width:20%' href='index.php?module=$module&action=EditView&record={$recent['item_id']}' title='{$recent['item_summary']}'><i class='glyphicon glyphicon-pencil' aria-hidden='true'></i></a>
+                    </li>";
+
+            }
+            $html .= '<li class="divider"></li>';
+        }
+        if (!empty($favs)) {
+            $html .= '<li class="dropdown-header" id="recents-area">Favoritos</li>';
+            foreach ($favs as $fav) {
+                $text = strlen($fav['item_summary']) > 70 ? $fav['item_summary_short'] : $fav['item_summary'];
+                $html .= "<li style='display:flex;justify-content: space-between;'>
+                    <a style='width:80%' href='index.php?module=$module&action=DetailView&record={$fav['item_id']}' title='{$fav['item_summary']}'>$text</a>
+                    <a style='width:20%' href='index.php?module=$module&action=DetailView&record={$fav['item_id']}' title='{$fav['item_summary']}'><i class='glyphicon glyphicon-pencil' aria-hidden='true'></i></a>
+                    </li>";
+            }
+            $html .= '<li class="divider"></li>';
+        }
+
+        $html .= '</ul></li>';
+        $validItemsCount++;
+    }
 
     foreach ($items as $item) {
         // Get the display text for the menu item
@@ -86,11 +131,11 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
             } elseif ($hasChildren) {
                 // Generate dropdown toggle for items with children
                 $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
-            } elseif($itemURL){
+            } elseif ($itemURL) {
                 // Generate external link for items with custom URLs
                 $itemHtml .= "<a title='$itemURL' target='_blank' href='$itemURL'><span class='glyphicon glyphicon-link'></span> $text </a>";
             }
-            
+
             $itemHtml .= $childrenHtml;
             $itemHtml .= '</li>';
             $html .= $itemHtml;
@@ -154,7 +199,6 @@ function addMenuProperties(&$array)
     }
 }
 
-
 /**
  * Extracts a URL from the end of a string if preceded by a pipe character ('|').
  *
@@ -172,4 +216,58 @@ function extractUrl($string)
     }
 
     return null;
+}
+
+function getUserModuleRecents($userId, $module)
+{
+    $tracker = BeanFactory::getBean('Trackers');
+    $history = $tracker->get_recently_viewed($userId);
+
+    $history = array_filter($history, function ($item) use ($module) {
+        return $item['module_name'] == $module;
+    });
+
+    foreach ($history as $key => $row) {
+        $history[$key]['item_summary_short'] =
+            to_html(getTrackerSubstring($row['item_summary'])); //bug 56373 - need to re-HTML-encode
+        $history[$key]['image'] =
+        SugarThemeRegistry::current()->getImage(
+            $row['module_name'],
+            'border="0" align="absmiddle"',
+            null,
+            null,
+            '.gif',
+            $row['item_summary']
+        );
+    }
+
+    return $history;
+
+}
+function getUserModuleFavs($userId, $module)
+{
+
+    $favoritesBean = BeanFactory::getBean('Favorites');
+    $favs = $favoritesBean->getCurrentUserSidebarFavorites();
+
+    $favs = array_filter($favs, function ($item) use ($module) {
+        return $item['module_name'] == $module;
+    });
+
+    foreach ($favs as $key => $row) {
+        $history[$key]['item_summary_short'] =
+            to_html(getTrackerSubstring($row['item_summary'])); //bug 56373 - need to re-HTML-encode
+        $history[$key]['image'] =
+        SugarThemeRegistry::current()->getImage(
+            $row['module_name'],
+            'border="0" align="absmiddle"',
+            null,
+            null,
+            '.gif',
+            $row['item_summary']
+        );
+    }
+
+    return $favs;
+
 }
