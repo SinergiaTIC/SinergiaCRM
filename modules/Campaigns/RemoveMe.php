@@ -94,32 +94,30 @@ if (!empty($_REQUEST['identifier'])) {
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/277
 
             // SELECT the email_address_id from the emails related to the user who is unsubscribing
-            $query = "SELECT email_address_id FROM email_addr_bean_rel WHERE bean_id = '$id';";
+            $query = "SELECT email_address_id FROM email_addr_bean_rel WHERE deleted = 0 AND bean_id = '$id';";
             $result = $db->query($query);
             
             while ($row = $db->fetchByAssoc($result)) {
                 $emailAddressesID[] = "'" . $row['email_address_id'] . "'" ;
             }
-            $emailsContidion = implode(", ", $emailAddressesID);
-            $query = "SELECT id, opt_out FROM `email_addresses` WHERE `id` IN ($emailsContidion);"; 
+            $emailsCondition = implode(", ", $emailAddressesID);
+            $query = "SELECT id, opt_out FROM `email_addresses` WHERE opt_out != '1' AND `id` IN ($emailsCondition);"; 
             $result = $db->query($query);
 
             // Retrieve the opt-out value for each email and, if the value has changed, insert the audit log
             while ($row = $db->fetchByAssoc($result)) 
             {
-                if ($row['opt_out'] != '1') {
-                    $newId = create_guid();
-                    $emailAddressId = $row['id'];
-                    $query = "INSERT INTO email_addresses_audit
-                             (id, parent_id, date_created, created_by, field_name, data_type, before_value_string, after_value_string, before_value_text, after_value_text) VALUES
-                             ('$newId', '$emailAddressId', UTC_TIMESTAMP(), '1', 'opt_out','bool','0','1',NULL,NULL)";
-                    $result2 = $db->query($query);
-                    if ($result2) {
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error inserting the corresponding record with parent_id = $id into the email_addresses_audit table");
-                    }                
+                $newId = create_guid();
+                $emailAddressId = $row['id'];
+                $query = "INSERT INTO email_addresses_audit
+                            (id, parent_id, date_created, created_by, field_name, data_type, before_value_string, after_value_string, before_value_text, after_value_text) VALUES
+                            ('$newId', '$emailAddressId', UTC_TIMESTAMP(), '1', 'opt_out','bool','0','1',NULL,NULL)";
+                $result2 = $db->query($query);
+                if ($result2) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error inserting the corresponding record with parent_id = $id into the email_addresses_audit table");
                 }
-            }            
-            // END STIC-Custom            
+            }
+            // END STIC-Custom
             
             //record this activity in the campaing log table..
             $query = "UPDATE email_addresses SET email_addresses.opt_out = 1 WHERE EXISTS(SELECT 1 FROM email_addr_bean_rel ear WHERE ear.bean_id = '$id' AND ear.deleted=0 AND email_addresses.id = ear.email_address_id)";
