@@ -40,15 +40,16 @@ class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
             unset($this->ev->defs['templateMeta']['form']['buttons'][$key]);
         }
 
-        // Link basic stic css and JS files
-        echo getVersionedScript("SticInclude/js/Utils.js");
-
         include_once "custom/modules/Campaigns/SticUtils.php";
         fillDynamicListsForNotifications();
-        echo getCampaignsLangStrings();
-
-        echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
 
         parent::process($module);
+
+        // Link basic stic css and JS files
+        echo getVersionedScript("SticInclude/js/Utils.js");
+        echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
+
+        echo getCampaignsLangStrings();
+        echo getNotificationFromInfo();
     }
 }

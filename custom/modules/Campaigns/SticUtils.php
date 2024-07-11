@@ -145,7 +145,7 @@ function fillDynamicOutboundEmailAccounts()
 
     //$dynamic_outbound_email_list = array("" => "");
     foreach ($outboundEmails['list'] as $outboundEmail) {
-        $dynamic_outbound_email_list[$outboundEmail->id] = $outboundEmail->name;
+        $dynamic_outbound_email_list[$outboundEmail->id] = "{$outboundEmail->name} ({$outboundEmail->smtp_from_addr})";
     }
 
     $GLOBALS['app_list_strings']['dynamic_outbound_email_list'] = $dynamic_outbound_email_list;
@@ -153,10 +153,14 @@ function fillDynamicOutboundEmailAccounts()
 
 function fillDynamicInboundEmailAccounts()
 {
-    include_once ("modules/Campaigns/utils.php");
-    $emails=array();
-    $mailboxes=get_campaign_mailboxes($emails);
-    $GLOBALS['app_list_strings']['dynamic_inbound_email_list'] = $mailboxes;
+    include_once "modules/Campaigns/utils.php";
+    $emails = array();
+    $mailboxes = get_campaign_mailboxes($emails);
+    $mailboxesWithEmail = array();
+    foreach ($mailboxes as $id => $name) {
+        $mailboxesWithEmail[$id] = "{$name} ({$emails[$id]})";
+    }
+    $GLOBALS['app_list_strings']['dynamic_inbound_email_list'] = $mailboxesWithEmail;
 }
 
 function getCampaignsLangStrings()
@@ -171,5 +175,31 @@ function getCampaignsLangStrings()
         }
         $html .= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
     }
+    return $html;
+}
+
+function getNotificationFromInfo()
+{
+    $html = "";
+    $html .= "<script>";
+    $html .= "STIC.campaignEmails = {";
+    $inboundMailboxes = get_campaign_mailboxes_with_stored_options();
+    $html .= "inbound: [";
+    foreach($inboundMailboxes as $id => $mailbox) {
+        $html .= "{id: '{$id}', name: '{$mailbox['from_name']}', addr: '{$mailbox['from_addr']}'},";
+    }
+    $html .= "],";
+
+    $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
+    $outboundEmails = $outboundEmailsFocus->get_list("name", "", 0, -99, -99);
+    $html .= "outbound: [";
+    foreach ($outboundEmails['list'] as $outboundEmail) {
+        $html .= "{id: '{$outboundEmail->id}', name: '{$outboundEmail->smtp_from_name}', addr: '{$outboundEmail->smtp_from_addr}'},";
+    }
+    $html .= "],";
+
+    $html .= "};";
+
+    $html .= "</script>";
     return $html;
 }

@@ -86,13 +86,19 @@ switch (viewType()) {
 
 $(document).ready(function() {
   if (viewType() != "list") {
+    $("#notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
+
     if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
       $(
         "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
           SUGAR.language.get("Campaigns", "LBL_NOTIFICATION_NEW_INFO") +
           "</div>"
       ).prependTo("[data-id='LBL_NOTIFICATION_INFORMATION_PANEL'] .tab-content .row");
+
+      $("#notification_outbound_email_id").on("change paste keyup", mail_change);
+      $("#notification_inbound_email_id").on("change paste keyup", mail_change);
     }
+
     type_change();
   }
 });
@@ -108,8 +114,21 @@ function getCampaingType() {
 function type_change() {
   var typeValue = getCampaingType();
 
-  showNewsLetterFields(typeValue == "NewsLetter");
-  showNotificationFields(typeValue == "Notification");
+  updateViewNewsLetterType(typeValue == "NewsLetter");
+  updateViewNotificationType(typeValue == "Notification");
+  mail_change();
+}
+
+function mail_change() {
+  // var outbound = STIC.campaignEmails.outbound.find(item => item.id === $("#notification_outbound_email_id").val());
+  // $("#notification_from_name").val(outbound ? outbound.name : "");
+  // $("#notification_from_addr").val(outbound ? outbound.addr : "");
+
+  var inbound = STIC.campaignEmails.inbound.find(item => item.id === $("#notification_inbound_email_id").val());
+  $("#notification_from_name").val(inbound ? inbound.name : "");
+  $("#notification_from_addr").val(inbound ? inbound.addr : "");
+  // $("#notification_reply_to_name").val(inbound ? inbound.name : "");
+  // $("#notification_reply_to_addr").val(inbound ? inbound.addr : "");
 }
 
 function ConvertItems(id) {
@@ -143,8 +162,8 @@ function ConvertItems(id) {
   actual_cost.value = formatNumber(actual_cost.value, num_grp_sep, dec_sep);
 }
 
-function showNewsLetterFields(show) {
-  if (show) {
+function updateViewNewsLetterType(isNewsLetter) {
+  if (isNewsLetter) {
     $('[data-field="frequency"]').show();
   } else {
     $('[data-field="frequency"]').hide();
@@ -177,26 +196,35 @@ function setAutofillMark(autofill, field) {
   }
 }
 
-function showNotificationFields(show) {
-  setRequired(!show, "name");
-  setAutofillMark(show, "name");
+function updateViewNotificationType(isNotification) {
+  setRequired(!isNotification, "name");
+  setAutofillMark(isNotification, "name");
 
-  setRequired(show, "start_date");
-  setRequired(show, "parent_name");
-  setRequired(show, "notification_outbound_email_id");
-  setRequired(show, "notification_inbound_email_id");
-  setRequired(show, "notification_prospect_list_ids");
-  setRequired(show, "notification_template_id");
-  setRequired(show, "notification_from_name");
-  setRequired(show, "notification_from_addr");
+  setRequired(isNotification, "start_date");
+  setRequired(isNotification, "parent_name");
+  setRequired(isNotification, "notification_outbound_email_id");
+  setRequired(isNotification, "notification_inbound_email_id");
+  setRequired(isNotification, "notification_prospect_list_ids");
+  setRequired(isNotification, "notification_template_id");
+  setRequired(isNotification, "notification_from_name");
+  setRequired(isNotification, "notification_from_addr");
 
-  if (show) {
+  if (isNotification) {
     $("#status").val("Active");
     $('[data-field="status"]').hide();
     $('[data-field="end_date"]').hide();
     $('[data-field="parent_name"]').show();
     $(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().show();
     $("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
+    if ($("#start_date").val() == "") {
+      var formatDate = $("#start_date").parent().children(".dateFormat").text().toUpperCase();
+      if (formatDate == "") {
+        formatDate = STIC.userDateFormat.toUpperCase();
+      }
+      if (formatDate != "") {
+        $("#start_date").val(moment().format(formatDate));
+      }
+    }
   } else {
     $("#parent_type").val("");
     $("#parent_name").val("");
@@ -219,14 +247,12 @@ function initializeQuickCreate() {
 
     $("#status").val("Active");
   }
-  $("select:not(#parent_type)").selectize({ plugins: ["remove_button"] });
 }
 
 function initilizeEditView() {
   var record = $("[name='record']").val();
   var isEdition = record !== undefined && record != "";
 
-  $("select:not(#parent_type, #status)").selectize({ plugins: ["remove_button"] });
   if (isEdition && getCampaingType() == "Notification") {
     // Disable editions
     $("#LBL_NOTIFICATION_NEW_INFO").hide();
