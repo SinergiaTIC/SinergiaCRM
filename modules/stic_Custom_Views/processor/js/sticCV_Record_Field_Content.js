@@ -292,6 +292,9 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     if (currentValue === undefined) {
       currentValue = "";
     }
+    if(this.type == "date") {
+      currentValue = currentValue.split(" ")[0];
+    }
 
     var conditionValue = condition.value ? condition.value : "";
     if (this.type == "multienum") {
@@ -300,6 +303,9 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
       } else {
         conditionValue = conditionValue.replaceAll("^", "").split(",").sort().join(",");
       }
+    }
+    if(this.type == "date") {
+      conditionValue = conditionValue.split(" ")[0];
     }
     if (!this._isMultienumCancelledInline()) {
       conditionValue = sticCVUtils.normalizeToCompare(conditionValue);
