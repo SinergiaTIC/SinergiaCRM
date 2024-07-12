@@ -696,7 +696,6 @@ class ExternalReporting
                 unset($edaPrecision);
             }
 
-            
             // VIRTUAL FIELDS
             // Include existing files in modules and custom/modules/ to create virtual fields in SinergiaCRM
             $sourceDir = [
@@ -1757,26 +1756,36 @@ class ExternalReporting
                             // In the case of Security Groups we add a unique entry for each of the groups the user belongs to,
                             // ensuring that it does not exist previously for each module.
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
-                            while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
-                                $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
-                                    'user_name' => null,
-                                    'group' => $userGroups['group'],
-                                    'table' => $currentTable,
-                                    'column' => 'id',
-                                    'stic_permission_source' => $aclSource,
-                                    'global' => 0,
-                                ];
 
-                                // Additionally we insert a record that allows each user's access to the records in which coinicide
-                                // the user_name with the assigned_user_name field content in each module in which the user has group permission
-                                $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
-                                    'user_name' => $u['user_name'],
-                                    'group' => null,
-                                    'table' => $currentTable,
-                                    'column' => 'assigned_user_name',
-                                    'stic_permission_source' => "{$aclSource}_private",
-                                    'global' => 0,
-                                ];
+                            while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
+
+                                $crmGroupName = explode('SDA_', $userGroups['group'])[1];
+
+                                // Verify whether or not the group has access to the module for their roles
+                                $groupHasAccessToModule = groupHasAccess($crmGroupName, $key, 'view');
+
+                                if ($groupHasAccessToModule) {
+
+                                    $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
+                                        'user_name' => null,
+                                        'group' => $userGroups['group'],
+                                        'table' => $currentTable,
+                                        'column' => 'id',
+                                        'stic_permission_source' => $aclSource,
+                                        'global' => 0,
+                                    ];
+
+                                    // Additionally we insert a record that allows each user's access to the records in which coinicide
+                                    // the user_name with the assigned_user_name field content in each module in which the user has group permission
+                                    $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
+                                        'user_name' => $u['user_name'],
+                                        'group' => null,
+                                        'table' => $currentTable,
+                                        'column' => 'assigned_user_name',
+                                        'stic_permission_source' => "{$aclSource}_private",
+                                        'global' => 0,
+                                    ];
+                                }
                             }
 
                             break;
@@ -1811,8 +1820,7 @@ class ExternalReporting
         }
 
         // Add the permissions with the values determined in the previous switch case to the metadata table, based on the case.
-        foreach ($userModuleAccessMode as $key => $value) {
-
+        foreach (array_unique($userModuleAccessMode, SORT_REGULAR) as $key => $value) {
             $this->addMetadataRecord(
                 'sda_def_permissions',
                 [
@@ -1922,4 +1930,79 @@ class ExternalReporting
         }
     }
 
+}
+
+/**
+ * Checks if a security group has access to a specific action in a given module.
+ *
+ * This function determines whether a security group, identified by its name, has the necessary
+ * permissions to perform a specific action in a given module. It looks up the roles associated
+ * with the group and checks the highest access levels available for those roles.
+ *
+ * @param string $group_name The name of the security group to check.
+ * @param string $category The name of the module or category (e.g., 'Accounts', 'Contacts').
+ * @param string $action The specific action to check (e.g., 'view', 'edit', 'delete').
+ * @param string $type The type of ACL, defaults to 'module'.
+ *
+ * @return bool Returns true if the group has access, false otherwise.
+ *
+ * @global object $db SuiteCRM's global database object.
+ *
+ * @throws SQLException If there's an error in executing the SQL queries.
+ */
+function groupHasAccess($group_name, $category, $action, $type = 'module')
+{
+    global $db;
+
+    // Escape the group name to prevent SQL injection
+    $group_name = $db->quote($group_name);
+
+    // Get the group ID based on the name
+    $query = "SELECT id FROM securitygroups WHERE name = '$group_name' AND deleted = 0";
+    $result = $db->query($query);
+    $row = $db->fetchByAssoc($result);
+
+    if (empty($row)) {
+        return false; // The group doesn't exist
+    }
+
+    $group_id = $row['id'];
+
+    // Get the roles associated with this security group
+    $query = "SELECT role_id FROM securitygroups_acl_roles
+              WHERE securitygroup_id = '$group_id' AND deleted = 0";
+    $result = $db->query($query);
+
+    $roles = array();
+    while ($row = $db->fetchByAssoc($result)) {
+        $roles[] = $row['role_id'];
+    }
+
+    if (empty($roles)) {
+        return false; // If there are no roles, there's no access
+    }
+
+    // Check permissions for these roles
+    $roleIds = implode("','", $roles);
+    $query = "SELECT acl_actions.*, acl_roles_actions.access_override
+              FROM acl_actions
+              LEFT JOIN acl_roles_actions ON acl_roles_actions.action_id = acl_actions.id
+                  AND acl_roles_actions.role_id IN ('$roleIds')
+              WHERE acl_actions.category = '$category'
+                AND acl_actions.name = '$action'
+                AND acl_actions.acltype = '$type'
+                AND acl_actions.deleted = 0";
+
+    $result = $db->query($query);
+
+    $highestAccess = -1;
+    while ($row = $db->fetchByAssoc($result)) {
+        // Use access_override if set, otherwise use the default aclaccess
+        $access = $row['access_override'] ?? $row['aclaccess'];
+        $highestAccess = max($highestAccess, $access);
+    }
+
+    // Determine if the access is sufficient
+    // ACL_ALLOW_GROUP should be defined elsewhere in the system
+    return $highestAccess >= ACL_ALLOW_GROUP;
 }
