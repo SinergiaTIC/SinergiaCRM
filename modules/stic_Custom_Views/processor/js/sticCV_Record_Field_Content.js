@@ -245,6 +245,15 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     return false;
   }
 
+  _isMultienumCancelledInline() {
+    return (
+      this.type == "multienum" &&
+      this.customView.view == "detailview" &&
+      !this.$element.hasClass("inlineEditActive") &&
+      this.$fieldText.length == 0
+    );
+  }
+
   checkCondition_value(condition) {
     switch (condition.operator) {
       case "Not_Equal_To":
@@ -275,16 +284,26 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     }
 
     var value_list = condition.value_list;
-    if (this.type == "multienum") {
-      condition.value = condition.value ? condition.value : "";
-      condition.value = condition.value.replaceAll("^", "").split(",").sort().join(",");
-    }
 
-    var currentValue = sticCVUtils.normalizeToCompare(this._getValue(value_list));
+    var currentValue = this._getValue(value_list);
+    if (!this._isMultienumCancelledInline()) {
+      currentValue = sticCVUtils.normalizeToCompare(currentValue);
+    }
     if (currentValue === undefined) {
       currentValue = "";
     }
-    var conditionValue = sticCVUtils.normalizeToCompare(condition.value);
+
+    var conditionValue = condition.value ? condition.value : "";
+    if (this.type == "multienum") {
+      if (this._isMultienumCancelledInline()) {
+        conditionValue = sticCVUtils.getMultienumLabelFromKeys(value_list, conditionValue);
+      } else {
+        conditionValue = conditionValue.replaceAll("^", "").split(",").sort().join(",");
+      }
+    }
+    if (!this._isMultienumCancelledInline()) {
+      conditionValue = sticCVUtils.normalizeToCompare(conditionValue);
+    }
     switch (condition.operator) {
       case "Equal_To":
         if (this.type == "relate") {

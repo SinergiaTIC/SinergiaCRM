@@ -274,6 +274,9 @@ var sticCVUtils = class sticCVUtils {
       !fieldContent.$element.hasClass("inlineEditActive")
     ) {
       $elem = fieldContent.$fieldText;
+      if ($elem.length > 0 && (fieldContent.type == "multienum" || fieldContent.type == "enum")) {
+        return $elem.val().replaceAll("^", "").split(",").sort().join(",");
+      }
     }
     if ($elem.length == 0 || $elem.get(0).parentNode === null) {
       $elem = fieldContent.$element;
@@ -286,16 +289,14 @@ var sticCVUtils = class sticCVUtils {
       if (fieldContent.type == "bool") {
         return $elem.prop("checked");
       }
-      if ($elem.length > 0 && (fieldContent.type == "multienum" || fieldContent.type == "enum")) {
-        return $elem.val().replace(new RegExp('\\^', 'g'), '');
-      }
       var text = fieldContent.text();
       if (
         value_list != undefined &&
         value_list != "" &&
         fieldContent.type != "date" &&
         fieldContent.type != "datetime" &&
-        fieldContent.type != "datetimecombo"
+        fieldContent.type != "datetimecombo" &&
+        fieldContent.type != "multienum"
       ) {
         return sticCVUtils.getListValueFromLabel(value_list, text);
       }
@@ -548,6 +549,19 @@ var sticCVUtils = class sticCVUtils {
       }
     });
     return res;
+  }
+
+  static getMultienumLabelFromKeys(app_list_stringsName, keyValues) {
+    var keyValueArray = keyValues.replaceAll("^", "").split(",");
+    var labelValueArray = [];
+  
+    for (var i = 0; i < keyValueArray.length; i++) {
+      var label = SUGAR.language.languages.app_list_strings[app_list_stringsName][keyValueArray[i]];
+      if(label !== undefined) {
+        labelValueArray.push(label);  
+      }
+    }
+    return labelValueArray.join(", ");
   }
 
   static isTrue(value) {
