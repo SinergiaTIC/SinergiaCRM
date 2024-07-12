@@ -42,9 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-//STIC-Custom 20240326 EPS - Seven SMS Integration
-require_once 'modules/seven/seven_util.php';
-//END STIC-Custom
+
 
 class ContactsViewDetail extends ViewDetail
 {
@@ -56,11 +54,6 @@ class ContactsViewDetail extends ViewDetail
      */
     public function display()
     {
-
-        //STIC-Custom 20240326 EPS - Seven SMS Integration
-        $this->setSevenPlugin();
-        //END STIC-Custom
-
         global $sugar_config;
 
         $aop_portal_enabled = !empty($sugar_config['aop']['enable_portal']) && !empty($sugar_config['aop']['enable_aop']);
@@ -80,35 +73,4 @@ class ContactsViewDetail extends ViewDetail
         }
         parent::display();
     }
-
-    //STIC-Custom 20240326 EPS - Seven SMS Integration
-    protected function setSevenPlugin() {
-        global $sugar_config;
-
-        $history = array_merge($this->getOutboundSms(), $this->getInboundSms());
-
-        usort($history, function (SugarBean $a, SugarBean $b) {
-            return strcmp($a->date_entered, $b->date_entered);
-        });
-
-        /** @var Contact $contact */
-        $contact = $this->bean;
-        $this->ss->assign('SEVEN_BEAN_ID', $this->bean->id);
-        $this->ss->assign('SEVEN_FROM', $sugar_config['seven_sender'] ?? '');
-        $this->ss->assign('SEVEN_MODULE', $this->module);
-        $this->ss->assign('SEVEN_SMS_HISTORY', $history);
-        $this->ss->assign('SEVEN_TO', $contact->phone_mobile);
-
-        echo $this->ss->fetch('modules/seven/tpls/sms_compose.tpl');
-
-    }
-
-    private function getInboundSms(): array {
-        return seven_util::getSMS('seven_sms_inbound', $this->bean);
-    }
-
-    private function getOutboundSms(): array {
-        return seven_util::getSMS('seven_sms', $this->bean);
-    }
-    //END STIC-Custom
 }
