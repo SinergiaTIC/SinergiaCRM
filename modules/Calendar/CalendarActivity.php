@@ -229,6 +229,7 @@ class CalendarActivity
                 continue;
             }
 
+
             if (ACLController::checkAccess($key, 'list', true)) {
                 /* END - SECURITY GROUPS */
                 $bean = BeanFactory::newBean($key);

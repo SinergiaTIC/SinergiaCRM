@@ -46,7 +46,8 @@ $dictionary['stic_Medication_Log'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'size' => '20',
-    'enable_range_search' => false,
+    'options' => 'date_range_search_dom',
+    'enable_range_search' => 1,
   ),
   'medication' => 
   array (
@@ -290,6 +291,7 @@ $dictionary['stic_Medication_Log'] = array(
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
+    'unified_search_default_enabled' => false,
 );
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
