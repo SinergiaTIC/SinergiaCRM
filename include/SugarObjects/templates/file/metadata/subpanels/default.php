@@ -52,16 +52,40 @@ $subpanel_layout = array(
     'where' => '',
 
     'list_fields' => array(
+        // STIC-Custom 20240715 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/62
+        // Add the file name and options to download and view the file in a new tab in the subpanel of a new module of type File    
+        // 'object_image' => array(
+        //     'widget_class' => 'SubPanelIcon',
+        //     'width' => '2%',
+        //     'image2' => 'attachment',
+        //     'image2_url_field' => array(
+        //         'id_field' => 'selected_revision_id',
+        //         'filename_field' => 'selected_revision_filename'
+        //     ),
+        //     'attachment_image_only' => true,
+
+        // ),
+        // 'document_name' => array(
+        //     'name' => 'document_name',
+        //     'vname' => 'LBL_LIST_DOCUMENT_NAME',
+        //     'widget_class' => 'SubPanelDetailViewLink',
+        //     'width' => '45%',
+        // ),
         'object_image' => array(
+            'vname' => 'LBL_OBJECT_IMAGE',            
             'widget_class' => 'SubPanelIcon',
             'width' => '2%',
             'image2' => 'attachment',
             'image2_url_field' => array(
-                'id_field' => 'selected_revision_id',
-                'filename_field' => 'selected_revision_filename'
+                'id_field' => 'id',
+                'filename_field' => 'filename'
             ),
             'attachment_image_only' => true,
-
+        ),
+        'uploadfile' => array (
+          'name' => 'uploadfile',
+          'width' => '2%',
+          'sortable'=>false,
         ),
         'document_name' => array(
             'name' => 'document_name',
@@ -69,7 +93,13 @@ $subpanel_layout = array(
             'widget_class' => 'SubPanelDetailViewLink',
             'width' => '45%',
         ),
-
+        'filename' => array(
+            'name' => 'filename',
+            'vname' => 'LBL_FILENAME',
+            'width' => '20%',
+            'sortable'=>false,
+        ),
+        // END STIC-Custom
         'active_date' => array(
             'name' => 'active_date',
             'vname' => 'LBL_DOC_ACTIVE_DATE',
