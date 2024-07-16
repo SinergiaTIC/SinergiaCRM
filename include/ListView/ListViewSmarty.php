@@ -283,27 +283,6 @@ class ListViewSmarty extends ListViewDisplay
             return $this->getSearchIcon().$GLOBALS['app_strings']['LBL_SEARCH_POPULATE_ONLY'];
         }
         global $app_strings, $sugar_version, $sugar_flavor, $currentModule, $app_list_strings;
-        // STIC#870 20231127 MHP - Delete the value of an enum or dynamicEnum field if it does not exist
-        // in the list of values associated with the field to not show it in the list view, subpanels and dashlets.
-        foreach($this->data['data'] as $keyRecord => $record){
-            foreach($record as $key => $value){
-                $field = strtolower($key);
-                $type = $this->seed->field_name_map[strtolower($key)]["type"];
-                if (in_array($type, ["enum", "dynamicenum"])) {
-                    $associatedList = $app_list_strings[$this->seed->field_name_map[$field]["options"]];
-                    if ($type == 'enum') {
-                        if (!in_array($value, $associatedList)) {
-                            $this->data['data'][$keyRecord][$key] = "";
-                        }
-                    }  else {
-                        if (!in_array($value, array_keys($associatedList))) {
-                            $this->data['data'][$keyRecord][$key] = "";
-                        }
-                    }
-                }
-            }
-        }
-        // END STIC#870
         $this->ss->assign('moduleListSingular', $app_list_strings["moduleListSingular"]);
         $this->ss->assign('moduleList', $app_list_strings['moduleList']);
         $this->ss->assign('data', $this->data['data']);
