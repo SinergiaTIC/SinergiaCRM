@@ -256,18 +256,18 @@ function initilizeEditView() {
   if (isEdition && getCampaingType() == "Notification") {
     // Disable editions
     $("#LBL_NOTIFICATION_NEW_INFO").hide();
-    $("#campaign_type")[0].selectize.disable();
+    $("#campaign_type").prop("disabled", true);
     $("#start_date").parent().children().prop("disabled", true);
     $("#parent_id").parent().children().prop("disabled", true);
     $("#parent_id").parent().find("span").hide();
-    $("#notification_prospect_list_ids")[0].selectize.disable();
-    $("#notification_outbound_email_id")[0].selectize.disable();
-    $("#notification_inbound_email_id")[0].selectize.disable();
-    $("#notification_template_id")[0].selectize.disable();
+    $("#notification_outbound_email_id").prop("disabled", true);
+    $("#notification_inbound_email_id").prop("disabled", true);
+    $("#notification_template_id").prop("disabled", true);
     $("#notification_from_name").parent().children().prop("disabled", true);
     $("#notification_from_addr").parent().children().prop("disabled", true);
     $("#notification_reply_to_name").parent().children().prop("disabled", true);
     $("#notification_reply_to_addr").parent().children().prop("disabled", true);
+    $("#notification_prospect_list_ids")[0].selectize.disable();
   }
 }
 
