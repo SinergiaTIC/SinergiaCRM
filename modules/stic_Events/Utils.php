@@ -318,12 +318,15 @@ class stic_EventsUtils
             if (isset($_REQUEST['color']) && $_REQUEST['color'] != '') {
                 $sessionBean->color = $_REQUEST['color'];
             } else {
-                $sessionBean->color = $user;
+                $sessionBean->color;
             }
             if (isset($_REQUEST['description']) && $_REQUEST['description'] != '') {
                 $sessionBean->description = $_REQUEST['description'];
-            } else {
-                $sessionBean->description = $user;
+            }
+             else {
+                $eventBean = BeanFactory::getBean('stic_Events', $sessionBean->stic_sessions_stic_eventsstic_events_ida);
+
+                $sessionBean->description = $eventBean->description;
             }
             if (isset($_REQUEST['activity_type'])) {
                 $activityType = $_REQUEST['activity_type'];
