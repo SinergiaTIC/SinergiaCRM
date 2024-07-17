@@ -129,12 +129,16 @@ $(function() {
         phone.setAttribute(attr, 'true')
     }
 
+
+    let obj = { return_action: "DetailView" };
+    let jsonString = JSON.stringify(obj);
+
     $(`img.${triggerClass}:not(.${attachedClass})`)
         .addClass(attachedClass)
         .on('click', function() {
             $('#seven_to').val($(this).data('to'))
 
             // seven_suitecrm.openSmsDialog()
-            openCustomModal(this);
+            openMessagesModal(this, jsonString);
         })
 })

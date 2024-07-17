@@ -13,6 +13,39 @@ include_once __DIR__ . '/EmailsControllerActionGetFromFields.php';
 
 class stic_MessagesController extends SugarController
 {
+    // public function action_MassSave() {
+    //     // $this->action_save();
+    //     $this->bean->save(!empty($this->bean->notify_on_save));
+    // }
+
+    public function action_Save() {
+        // $this->action_save();
+        if (isset($_REQUEST['mass_ids']) && $_REQUEST['mass_ids'] !== '') {
+            $idsArray = explode(';', $_REQUEST['mass_ids']);
+            $phonesArray = explode(';', $_REQUEST['phone']);
+            // foreach($idsArray as $relatedId) {
+            //     $newBean = BeanFactory::newBean('stic_Messages');
+            //     $this->bean = $newBean;
+            //     $this->pre_save();
+            //     $this->bean->parent_id = $relatedId;
+            //     $this->bean->save(!empty($this->bean->notify_on_save));    
+            // }
+            array_map(function($id, $phone) {
+                $newBean = BeanFactory::newBean('stic_Messages');
+                $this->bean = $newBean;
+                $this->pre_save();
+                $this->bean->parent_id = $id;
+                $this->bean->phone = $phone;
+                $this->bean->save(!empty($this->bean->notify_on_save));  
+            }, $idsArray, $phonesArray);
+        }
+        else {
+            $this->bean->save(!empty($this->bean->notify_on_save));
+        }
+    }
+
+
+
     /**
      * @see EmailsViewCompose
      */
@@ -32,11 +65,16 @@ class stic_MessagesController extends SugarController
             foreach ($toAddressIds as $id) {
                 $destinataryBean = BeanFactory::getBean($_REQUEST['targetModule'], $id);
                 if ($destinataryBean) {
-                    $idLine = '<input type="hidden" class="email-compose-view-to-list" ';
+                    $idLine = '<input type="hidden" class="phone-compose-view-to-list" ';
                     $idLine .= 'data-record-module="' . $_REQUEST['targetModule'] . '" ';
                     $idLine .= 'data-record-id="' . $id . '" ';
                     $idLine .= 'data-record-name="' . $destinataryBean->name . '" ';
-                    $idLine .= 'data-record-email="' . $destinataryBean->email1 . '">';
+                    if ($_REQUEST['targetModule'] === 'Accounts') {
+                        $idLine .= 'data-record-phone="' . $destinataryBean->phone_office . '">';
+                    }
+                    else {
+                        $idLine .= 'data-record-phone="' . $destinataryBean->phone_mobile . '">';
+                    }
                     echo $idLine;
                 }
             }
@@ -82,4 +120,90 @@ class stic_MessagesController extends SugarController
         echo json_encode($response);
         exit;
     }
+
+    /**
+     * This action runs when the user wants to syncronize the data with Incorpora from the ViewList
+     * of any Module.
+     *
+     * It runs a query that returns all the records that where selected by the user in the ViewList. Returning
+     * its SugarCRM ID and Incorpora ID, if any. And get the User connection params from the user profile details.
+     *
+     * Then it sets the current view and the next action.
+     *
+     * @return void
+     */
+    public function action_fromMassUpdate()
+    {
+        global $db;
+        $ids = array();
+
+        $GLOBALS['log']->debug(__METHOD__ . ' ' . __LINE__ . ' ' . ' Sending messages from ListView/MassUpdate ');
+
+        // Retrieving and setting user syncronization params
+        $this->setIncorporaUserParams();
+
+        // This may only happen if the URL is introduced manually
+        if (!$this->returnModule = $_REQUEST['return_module']) {
+            echo "There are missing some URL parameters. Expected 'return_module'.";
+            die();
+        }
+        $bean = BeanFactory::getBean($this->returnModule);
+        $moduleTable = $bean->table_name;
+        switch ($this->returnModule) {
+            case 'stic_Job_Offers':
+                $tableQuery = 'FROM ' . $moduleTable;
+                $incIdFieldSql = 'inc_id';
+                $incIdField = 'inc_id';
+                break;
+
+            default:
+                $tableQuery = 'FROM ' . $moduleTable . ' JOIN ' . $moduleTable . '_cstm c ON id=c.id_c';
+                $incIdFieldSql = 'c.inc_id_c';
+                $incIdField = 'inc_id_c';
+                break;
+        }
+
+        // Building and running the query that retrieves all the record that were selected in ListView
+        $sql = "SELECT id, $incIdFieldSql $tableQuery WHERE {$moduleTable}.deleted=0";
+        $where = '';
+        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
+            require_once 'include/export_utils.php';
+            $retArray = generateSearchWhere($moduleTable, $_REQUEST['current_query_by_page']);
+            $where = '';
+            if (!empty($retArray['where'])) {
+                $where = " AND " . $retArray['where'];
+            }
+        } else {
+            $ids = explode(',', $_REQUEST['uid']);
+            $idList = implode("','", $ids);
+            $where = " AND id in ('{$idList}')";
+        }
+        $sql .= $where;
+        $resultado = $db->query($sql);
+        unset($ids);
+        $ids = array();
+
+        while ($row = $db->fetchByAssoc($resultado)) {
+            // Building the Summary count table
+            $ids[] = $row['id'];
+            $this->summary['crm_ids']++;
+            $incIds[$row['id']] = $row[$incIdField];
+            if ($row[$incIdField]) {
+                $this->summary['inc_ids']++;
+            } else {
+                $this->summary['no_inc_ids']++;
+            }
+        }
+
+        // Sending the params that the UI will use
+        $this->view_object_map['SUMMARY'] = $this->summary;
+        $this->view_object_map['IDS'] = $ids;
+        $this->view_object_map['INC_IDS'] = $incIds;
+
+        $GLOBALS['log']->debug(__METHOD__ . ' ' . __LINE__ . ' ' . ' Syncronization Incorpora action from ListView/MassUpdate finished with Summary: ', $this->summary);
+
+        $this->view = "syncoptions"; //call for the view file in views dir
+        $this->mapStepNavigation('results'); //next action to be run
+    }
+
 }

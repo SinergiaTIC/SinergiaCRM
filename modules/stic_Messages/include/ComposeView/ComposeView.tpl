@@ -50,6 +50,7 @@
     <input type="hidden" name="return_module" value="{$RETURN_MODULE}">
     <input type="hidden" name="return_action" value="{$RETURN_ACTION}">
     <input type="hidden" name="return_id" value="{$RETURN_ID}">
+    <input type="hidden" name="mass_ids" id = "mass_ids" value="">
 <div class="content">
 <div id="EditView_tabs">
     {*display tabs*}

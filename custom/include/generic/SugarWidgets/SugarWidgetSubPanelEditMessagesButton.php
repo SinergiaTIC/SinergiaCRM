@@ -61,10 +61,14 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
             $phone = $bean->phone_mobile;
         }
 
+        $jsonData = json_encode([
+            'return_action' => 'DetailView',
+        ]);
+        $jsonData = str_replace("'", "\\'", $jsonData);
 
         $form = "<input type='button' name='button' id='custom_modal_button' class='button' 
             title='{$button}' value='{$button}' accesskey='{$accesskey}'
-            onclick='openCustomModal(this); return false;'
+            onclick='openMessagesModal(this); return false;'
                  data-phone='{$phone}'
                  data-module='{$bean->module_name}'
                  data-record-id='{$bean->id}'
