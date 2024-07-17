@@ -1,4 +1,25 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 
 class ExternalReporting
 {
@@ -698,78 +719,65 @@ class ExternalReporting
 
             // VIRTUAL FIELDS
             // Include existing files in modules and custom/modules/ to create virtual fields in SinergiaCRM
-            $sourceDir = [
-                "modules/$moduleName/SDAVirtualFields",
-                "custom/modules/$moduleName/SDAVirtualFields",
+            $sourceFiles = [
+                "modules/$moduleName/SDAVardefs.php",
+                "custom/modules/$moduleName/Ext/SDAVardefs/SDAVardefs.ext.php",
             ];
 
-            foreach ($sourceDir as $dir) {
-                if (is_dir($dir)) {
-                    // Get the list of files in the directory
-                    $files = scandir($dir);
+            foreach ($sourceFiles as $file) {
+                if (file_exists($file)) {
+                    require_once $file;
 
-                    // Iterate through the files
-                    foreach ($files as $file) {
-                        // Ignore . and ..
-                        if ($file != "." && $file != "..") {
-                            $fullPath = $dir . '/' . $file;
+                    $fieldsToProcess = [];
 
-                            // Check if it's a file and has .php extension
-                            if (is_file($fullPath) && pathinfo($fullPath, PATHINFO_EXTENSION) == 'php') {
-                                // Include the file
-                                require_once $fullPath;
-
-                                // Get the translated label or use the original if not available
-                                $virtualFieldLabel = $modStrings[$virtualFieldLabel] ?? $virtualFieldLabel;
-
-                                // Check if the virtual field label is empty
-                                if (empty($virtualFieldLabel)) {
-                                    $this->info .= "<div style='color:red;'>VIRTUAL FIELD ERROR: <b>[{$fullPath}]</b> - The virtual field was not processed because there is no translation available for {$this->langCode}</div>";
-                                    $this->info .= "[FATAL: Virtual Field without label $viewName - $fullPath]";
-                                }
-
-                                // Get the translated description or use the original if not available
-                                $virtualFieldDescription = $modStrings[$virtualFieldDescription] ?? $virtualFieldDescription;
-
-                                // Replace spaces and hyphens with underscores in the virtual field label
-                                $virtualFieldLabel = preg_replace('/[\s-]+/', '_', $virtualFieldLabel);
-
-                                // Add the virtual field to the fieldList array
-                                $fieldList['virtual'][$file] = " $virtualFieldExpression AS '$virtualFieldLabel'";
-
-                                // Determine aggregations based on the virtual field type
-                                switch ($virtualFieldType) {
-                                    case 'numeric':
-                                        $virtualFieldAggregations = 'sum,avg,max,min,count,count_distinct,none';
-                                        break;
-                                    case 'text':
-                                    case 'enumeration':
-                                    case 'date':
-                                        $virtualFieldAggregations = 'count,count_distinct,none';
-                                        break;
-                                    default:
-                                        $virtualFieldAggregations = 'none';
-                                        break;
-                                }
-
-                                // Add metadata record for the virtual field
-                                $this->addMetadataRecord(
-                                    'sda_def_columns',
-                                    [
-                                        'table' => "{$this->viewPrefix}_{$tableName}",
-                                        'column' => $virtualFieldLabel,
-                                        'type' => $virtualFieldType,
-                                        'decimals' => $virtualFieldPrecision,
-                                        'aggregations' => empty($virtualFieldAggregations) ? 'none' : $virtualFieldAggregations,
-                                        'label' => html_entity_decode($virtualFieldLabel, ENT_QUOTES),
-                                        'description' => addslashes($virtualFieldDescription),
-                                        'sda_hidden' => $virtualFieldHidden ?: 0,
-                                        'stic_type' => 'virtual',
-                                    ]
-                                );
-                            }
-                        }
+                    if (basename($file) === 'SDAVardefs.ext.php') {
+                        // For custom files, use $dictionary[$moduleName]['SDAVirtualFields']
+                        $fieldsToProcess = $dictionary[$moduleName]['SDAVirtualFields'] ?? [];
+                    } else {
+                        // For standard files, use $SDAVirtualFields
+                        $fieldsToProcess = $SDAVirtualFields ?? [];
                     }
+
+                    if (!empty($fieldsToProcess) && is_array($fieldsToProcess)) {
+                        foreach ($fieldsToProcess as $fieldName => $fieldData) {
+                            // Get the translated label or use the original if not available
+                            $virtualFieldLabel = $modStrings[$fieldData['label']] ?? $fieldData['label'];
+
+                            // Check if the virtual field label is empty
+                            if (empty($virtualFieldLabel)) {
+                                $this->info .= "<div style='color:red;'>VIRTUAL FIELD ERROR: <b>[{$file}]</b> - The virtual field was not processed because there is no translation available for {$this->langCode}</div>";
+                                $this->info .= "[FATAL: Virtual Field without label $viewName - $file]";
+                                continue;
+                            }
+
+                            // Get the translated description or use the original if not available
+                            $virtualFieldDescription = $modStrings[$fieldData['description']] ?? $fieldData['description'];
+
+                            // Add the virtual field to the fieldList array
+                            $fieldList['virtual'][$fieldName] = " {$fieldData['expression']} AS '{$fieldName}'";
+
+                            // Add metadata record for the virtual field
+                            $this->addMetadataRecord(
+                                'sda_def_columns',
+                                [
+                                    'table' => "{$this->viewPrefix}_{$tableName}",
+                                    'column' => $fieldName,
+                                    'type' => $fieldData['type'],
+                                    'decimals' => $fieldData['precision'] ?? 0,
+                                    'aggregations' => $fieldData['aggregations'] ?? 'none',
+                                    'label' => html_entity_decode($virtualFieldLabel, ENT_QUOTES),
+                                    'description' => addslashes($virtualFieldDescription),
+                                    'sda_hidden' => $fieldData['hidden'] ?? 0,
+                                    'stic_type' => 'virtual',
+                                ]
+                            );
+                        }
+                    } else {
+                        $this->info .= "<div style='color:orange;'>WARNING: The file {$file} does not contain a valid array of virtual fields.</div>";
+                    }
+
+                    // Clear the variables after processing to avoid conflicts with the next file
+                    unset($SDAVirtualFields, $dictionary);
                 }
             }
             // END VIRTUAL FIELDS
