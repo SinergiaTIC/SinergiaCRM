@@ -21,122 +21,122 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- /**
+/**
  * Array of virtual fields for SinergiaDA (Sinergia Data Analytics).
- * 
+ *
  * This array defines various virtual fields that can be used in SinergiaDA for different purposes.
- * 
+ *
  * Each element of the array represents a virtual field.
- * 
+ *
  * General structure of each element:
- * 
+ *
  * @key string The key is the virtual field name without the 'LBL_' prefix
- * 
+ *
  * @param string label          Label of the virtual field (includes the 'LBL_' prefix)
  * @param string description    Description of the virtual field (includes the 'LBL_' prefix)
  * @param string type           Data type of the virtual field (e.g., 'numeric', 'text', 'date')
  * @param int    precision      Precision for numeric fields (number of decimal places)
  * @param int    hidden         Visibility flag (0 = visible to all, 1 = visible only to administrators in SDA)
  * @param string expression     SQL expression to calculate the virtual field value
- * 
- 
+ *
+
  */
 
-$SDAVirtualFields = [
-    'SDA_EXPECTED_PAYMENTS_MONTH_1' => [
+$SDAVirtualFields = array(
+    'SDA_EXPECTED_PAYMENTS_MONTH_1' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_1',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_1',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(expected_payments_detail, '|', 1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_2' => [
+        'expression' => "SUBSTRING_INDEX(expected_payments_detail, '|', 1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_2' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_2',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_2',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 2), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_3' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 2), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_3' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_3',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_3',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 3), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_4' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 3), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_4' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_4',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_4',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 4), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_5' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 4), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_5' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_5',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_5',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 5), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_6' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 5), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_6' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_6',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_6',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 6), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_7' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 6), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_7' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_7',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_7',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 7), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_8' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 7), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_8' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_8',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_8',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 8), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_9' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 8), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_9' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_9',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_9',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 9), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_10' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 9), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_10' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_10',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_10',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 10), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_11' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 10), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_11' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_11',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_11',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 11), '|', -1)"
-    ],
-    'SDA_EXPECTED_PAYMENTS_MONTH_12' => [
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 11), '|', -1)",
+    ),
+    'SDA_EXPECTED_PAYMENTS_MONTH_12' => array(
         'label' => 'LBL_SDA_EXPECTED_PAYMENTS_MONTH_12',
         'description' => 'LBL_SDA_EXPECTED_PAYMENTS_DESCRIPTION_MONTH_12',
         'type' => 'numeric',
         'precision' => 2,
         'hidden' => 0,
-        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 12), '|', -1)"
-    ]
-];
+        'expression' => "SUBSTRING_INDEX(SUBSTRING_INDEX(expected_payments_detail, '|', 12), '|', -1)",
+    ),
+);
