@@ -63,9 +63,9 @@ $dictionary["Campaign"]["fields"]['parent_id'] = array(
     'reportable' => false,
     'vname' => 'LBL_PARENT_ID',
 );
-$dictionary["Campaign"]["fields"]['notification_prospect_list_names'] = array(
-    'name' => 'notification_prospect_list_names',
-    'vname' => 'notification_prospect_list_names',
+$dictionary["Campaign"]["fields"]['stic_notification_prospect_list_names_c'] = array(
+    'name' => 'stic_notification_prospect_list_names_c',
+    'vname' => 'stic_notification_prospect_list_names_c',
     'type' => 'varchar',
     'len' => '255',
 );

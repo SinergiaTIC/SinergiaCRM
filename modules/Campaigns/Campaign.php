@@ -118,7 +118,7 @@ class Campaign extends SugarBean
     public $parent_id;
 
     public $notification_prospect_list_ids;
-    public $notification_prospect_list_names;
+    public $stic_notification_prospect_list_names_c;
 
     public $notification_template_id;
     public $notification_template_name;
@@ -348,12 +348,12 @@ class Campaign extends SugarBean
         $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
         $prospect_list_name_array = array();
 
-        // Set notification_prospect_list_names
+        // Set stic_notification_prospect_list_names_c
         foreach ($prospect_list_id_array as $prospect_list_id) {
             $prospect_listBean = BeanFactory::getBean('ProspectLists', $prospect_list_id);
             $prospect_list_name_array[] = $prospect_listBean->name;
         }
-        $this->notification_prospect_list_names = implode(", ", $prospect_list_name_array);
+        $this->stic_notification_prospect_list_names_c = implode(", ", $prospect_list_name_array);
 
         $isNewCampaign = empty($this->id);
         $return_id = parent::save($check_notify);

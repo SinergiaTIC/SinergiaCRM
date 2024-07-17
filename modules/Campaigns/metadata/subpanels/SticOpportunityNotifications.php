@@ -46,9 +46,9 @@ $subpanel_layout = array(
             'name' => 'start_date',
             'vname' => 'LBL_LIST_START_DATE',
         ),
-        'notification_prospect_list_names' => array(
-            'name' => 'notification_prospect_list_names',
-            'vname' => 'LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAMES',
+        'stic_notification_prospect_list_names_c' => array(
+            'name' => 'stic_notification_prospect_list_names_c',
+            'vname' => 'LBL_LIST_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C',
         ),
         'notification_email_template_name' => array(
             'name' => 'notification_email_template_name',

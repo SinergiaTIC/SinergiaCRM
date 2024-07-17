@@ -54,7 +54,7 @@ $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'In order to include reCAPTCHA val
 // language file in order to avoid a core modification.
 $mod_strings['LBL_WEB_TO_LEAD'] = 'Create person web form'; 
 
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Target Lists';
+$mod_strings['LBL_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Target Lists';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Target Lists';
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID'] = 'Email Template';
 $mod_strings['LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Template Name';
@@ -68,7 +68,7 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
 
 $mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Template Name';
-$mod_strings['LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Target Lists';
+$mod_strings['LBL_LIST_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Target Lists';
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving a new Notification, the corresponding emails will be automatically added to the sending queue";
 

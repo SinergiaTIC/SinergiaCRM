@@ -31,7 +31,7 @@ function getNotificationsFromParent($params)
 
     $return_array['select'] =
         " SELECT campaigns.id, campaigns.campaign_type, campaigns.name, campaigns.status, campaigns.start_date" .
-        ", cc.notification_prospect_list_names as notification_prospect_list_names" .
+        ", cc.stic_notification_prospect_list_names_c as stic_notification_prospect_list_names_c" .
         ", et.name as notification_email_template_name";
 
     $return_array['from'] = " FROM campaigns ";

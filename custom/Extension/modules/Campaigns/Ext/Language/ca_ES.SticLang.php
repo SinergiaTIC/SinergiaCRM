@@ -59,7 +59,7 @@ $mod_strings['LBL_WEBFORMS_CHOOSE_RECAPTCHA'] = 'Configuració de reCAPTCHA:';
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_KO_URL'] = "URL de redirecció en cas d'error de reCAPTCHA:";
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'Per poder incloure validació reCAPTCHA al formulari cal tenir-lo correctament configurat. Més informació a: <a href="https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA" target="_blank">https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA</a>';
 
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Llistes de Públic Objectiu';
+$mod_strings['LBL_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Llistes de Públic Objectiu';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Llistes de Públic Objectiu';
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID'] = 'Plantilla de correu electrònic';
 $mod_strings['LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de correu electrònic';
@@ -73,6 +73,6 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 
 $mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de correu electrònic';
-$mod_strings['LBL_LIST_NOTIFICATION_PROSPECT_LIST_NAMES'] = 'Llistes de Públic Objectiu';
+$mod_strings['LBL_LIST_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Llistes de Públic Objectiu';
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al desar una nova Notificació s'afegiran automàticament els correus electrònics corresponents a la cua d'enviament";
