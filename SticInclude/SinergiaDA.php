@@ -187,14 +187,6 @@ class ExternalReporting
             $modulesList['SurveyQuestionResponses'] = 'SurveyQuestionResponses';
         }
 
-        // If Surveys module is enabled, we automatically activate the related Surveys modules
-        if (in_array('Surveys', $modulesList)) {
-            $modulesList['SurveyResponses'] = 'SurveyResponses';
-            $modulesList['SurveyQuestions'] = 'SurveyQuestions';
-            $modulesList['SurveyQuestionOptions'] = 'SurveyQuestionOptions';
-            $modulesList['SurveyQuestionResponses'] = 'SurveyQuestionResponses';
-        }
-
         natsort($modulesList);
 
         // Get & populate users ACL metadata (must run after $modulesList is created)
@@ -282,6 +274,10 @@ class ExternalReporting
                 // We reset certain variables to avoid errors
                 unset($fieldSrc, $relatedModuleName, $secureName, $edaAggregations, $sdaHiddenField, $excludeColumnFromMetadada);
 
+                // To avoid exceptional cases where the table name is defined in uppercase
+                // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
+                $fieldV['table'] = strtolower($fieldV['table']);
+
                 $fieldName = $fieldV['name'];
 
                 $fieldPrefix = $fieldV['source'] == 'custom_fields' ? 'c' : 'm';
@@ -291,8 +287,10 @@ class ExternalReporting
                     continue;
                 }
 
-                // If field is in detailview, set as visible, hidden if not.
-                if (in_array($fieldV['name'], $detailViewVisibleFields) || $fieldV['name'] == 'id') {
+                // Conditionally controls the visibility of fields in the detail view:
+                // * Shows fields present in the detail view.
+                // * Always shows the "full_name" & "id" field, regardless of its presence in the detail view.
+                if (in_array($fieldV['name'], $detailViewVisibleFields) || in_array($fieldV['name'], ['id', 'full_name'])) {
                     $sdaHiddenField = false;
                 } else {
                     $sdaHiddenField = true;
@@ -300,9 +298,16 @@ class ExternalReporting
 
                 $fieldV['label'] = $this->sanitizeText($modStrings[$fieldV['vname']]);
 
-                // If there is no translation for the label we go to the next and do not include the field
+                // Attempts to assign a translated label to the field.
+                // If no translation is found, it tries to translate it directly.
+                // The field is skipped if no translation is obtained.
                 if (empty($fieldV['label']) && $fieldV['name'] != 'id') {
-                    continue;
+                    $directTranslate = translate($fieldV['vname'], $fieldV['module']);
+                    if (!empty($directTranslate)) {
+                        $fieldV['label'] = $this->sanitizeText($directTranslate);
+                    } else {
+                        continue;
+                    }
                 }
 
                 // There are some exceptions that must be applied in specific modules that have not been seen how to solve otherwise
@@ -350,6 +355,8 @@ class ExternalReporting
                     case 'time':
                     case 'iframe':
                     case 'currency_id':
+                    case 'emailbody':
+                    case 'none':
                         continue 2;
                         break;
                     case 'relate':
@@ -368,23 +375,20 @@ class ExternalReporting
                                 $fieldV['link'] = 'accounts_contacts';
                             }
 
-                            if (isset($fieldV['link']) && $fieldV['name'] != 'assigned_user_name') {
+                            if (isset($fieldV['link']) && !empty($fieldV['link']) && $fieldV['name'] != 'assigned_user_name') {
 
-                                //*********************** */
-                                // Es una relación 1:n normal
-                                if ($fieldV['module'] == $moduleName) {
-                                    // The normal relationships between the same module are directly excluded, because they cannot be represented in EDA
-                                    continue 2;
-                                }
+                                // Build and obtain the translated value from the other side of the relationship so it can be properly displayed in SinergiaDA
+                                $joinModuleRelLabel = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_TITLE';
+                                $joinLabel = translate($joinModuleRelLabel, $fieldV['module']);
+                                $joinLabel = empty($joinLabel) || $joinLabel == $joinModuleRelLabel ? $txModuleName : $joinLabel;
 
-                                $res = $this->createRelateLeftJoin($fieldV);
+                                $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel);
 
                                 if (empty($res)) {
-                                    // It has not been possible to recover the relationship
                                     continue 2;
                                 }
 
-                                $fieldSrc = $res['field'];
+                                $fieldSrc = " IFNULL({$res['field']},'') ";
                                 $leftJoins .= "\n\t{$res['leftJoin']} ";
 
                                 $fieldV['alias'] = substr($fieldV['id_name'], 0, 64);
@@ -403,6 +407,7 @@ class ExternalReporting
                                 } else {
                                     $fieldList['failedRelations'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
                                 }
+
                             } else {
                                 /**
                                  * Management of 'relate' type fields:
@@ -416,13 +421,7 @@ class ExternalReporting
                                  *    if it's a 'Person' type module.
                                  *    This column allows for easy use of the related record's name, without the
                                  *    need for establishing additional relationships.
-                                 * 3) Fields related to the module itself are omitted since they cannot be represented in EDA,
-                                 *    and using subqueries to display the name of the related record would negatively impact performance.
                                  */
-
-                                if ($fieldV['module'] == $moduleName) {
-                                    continue 2;
-                                }
 
                                 $secureName = preg_replace('([^A-Za-z0-9])', '_', $app_list_strings['moduleList'][$fieldV['module']]) . ' (' . $fieldV['label'] . ')';
 
@@ -439,7 +438,7 @@ class ExternalReporting
                                 $leftJoinAlias = "{$fieldV['name']}_{$relatedTableName}";
 
                                 // Add id field
-                                $fieldSrc = " {$fieldPrefix}.{$fieldV['id_name']} AS {$fieldV['alias']}, ";
+                                $fieldSrc = " IFNULL({$fieldPrefix}.{$fieldV['id_name']},'') AS {$fieldV['alias']}, ";
 
                                 // add column to index list
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
@@ -447,7 +446,7 @@ class ExternalReporting
                                 //Add relate record name
                                 $relatedName = in_array($fieldV['module'], ['Contacts', 'Leads', 'Users']) ? " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) " : "{$leftJoinAlias}.name";
 
-                                $fieldSrc .= " $relatedName AS {$fieldV['name']}";
+                                $fieldSrc .= " IFNULL($relatedName,'') AS {$fieldV['name']}";
 
                                 $leftJoins .= " \n\tLEFT JOIN {$relatedTableName} AS {$leftJoinAlias} ON {$leftJoinAlias}.id = {$fieldPrefix}.{$fieldV['id_name']} AND {$leftJoinAlias}.deleted=0";
 
@@ -486,7 +485,7 @@ class ExternalReporting
                                         'target_table' => "{$this->viewPrefix}_{$fieldV['targetModule']}",
                                         'target_column' => 'id',
                                         'info' => 'relate',
-                                        'label' => $fieldV['label'],
+                                        'label' => "{$fieldV['label']}|{$txModuleName}",
                                     ]
                                 );
                             }
@@ -509,7 +508,7 @@ class ExternalReporting
 
                         $fieldV['alias'] = $fieldV['name'];
                         $fieldV['bridgeTableName'] = mb_strcut("{$this->viewPrefix}_{$tableName}__{$fieldV['name']}", 0, 64);
-                        $fieldSrc = "{$fieldPrefix}.{$fieldV['name']} AS {$fieldName}";
+                        $fieldSrc = "IFNULL({$fieldPrefix}.{$fieldV['name']},'') AS {$fieldName}";
 
                         $this->addMetadataRecord(
                             'sda_def_enumerations',
@@ -537,7 +536,7 @@ class ExternalReporting
                         // Create listViewName for use in metadata & view creation
                         $listViewName = substr(join('_', [$tableName, $fieldV['name'], $listName]), 0, 58);
 
-                        $fieldSrc = " CAST({$fieldPrefix}.{$fieldV['name']} AS CHAR) AS {$fieldName}";
+                        $fieldSrc = " IFNULL(CAST({$fieldPrefix}.{$fieldV['name']} AS CHAR),'') AS {$fieldName}";
 
                         $createdListView = $this->createEnumView($listName, $listViewName);
 
@@ -564,7 +563,7 @@ class ExternalReporting
                     case 'datetimecombo':
                         $fieldV['alias'] = $fieldV['name'];
                         $tzDateValue = "CONVERT_TZ({$fieldPrefix}.{$fieldV['name']}, 'UTC', 'Europe/Madrid')";
-                        $fieldSrc = "{$tzDateValue} AS {$fieldName}";
+                        $fieldSrc = "IFNULL({$tzDateValue},'') AS {$fieldName}";
                         break;
 
                     case 'date':
@@ -584,21 +583,22 @@ class ExternalReporting
                     case 'ColorPicker':
                     case 'email':
                         $fieldV['alias'] = $fieldV['name'];
-                        if ($fieldV['name'] == 'email1') {
+                        if ($fieldV['name'] == 'email1' && $fieldV['type'] == 'varchar' && $fieldV['source'] == 'non-db') {
                             // Special field for main email
-                            $fieldSrc = "ea.email_address AS {$fieldV['name']}";
+                            $fieldSrc = "IFNULL(ea.email_address,'') AS {$fieldV['name']}";
 
                             // add left join for email field
                             $leftJoins .= " LEFT JOIN email_addr_bean_rel eabr ON m.id = eabr.bean_id AND eabr.bean_module = '{$moduleName}' AND eabr.deleted = 0 AND eabr.primary_address = 1 LEFT JOIN email_addresses ea ON eabr.email_address_id = ea.id AND ea.deleted = 0 ";
                         } elseif ($fieldV['name'] == 'full_name') {
                             // special query for full_name
-                            $fieldSrc = "CONCAT_WS(' ',m.first_name, m.last_name) as {$fieldV['name']}";
+                            $fieldSrc = "IFNULL(CONCAT_WS(' ',m.first_name, m.last_name),'') as {$fieldV['name']}";
                         } else {
-                            $fieldSrc = "{$fieldPrefix}.{$fieldV['name']} AS {$fieldName}";
+                            $fieldSrc = "IFNULL({$fieldPrefix}.{$fieldV['name']},'') AS {$fieldName}";
                         }
                         break;
 
                     default:
+                        $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";
                         $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
                         $this->info .= print_r($fieldV, true);
 
@@ -614,12 +614,6 @@ class ExternalReporting
                         $edaType = 'numeric';
                         $edaPrecision = $fieldV['type'] == 'currency' ? 2 : 0;
                         $edaPrecision = $fieldV['precision'] ? $fieldV['precision'] : $edaPrecision;
-                        break;
-                    case 'id':
-                        // set id as numeric to allow counts and distinct counts
-                        $edaType = 'numeric';
-                        $edaPrecision = 0;
-                        $edaAggregations = 'count,count_distinct,none';
                         break;
                     case 'date':
                     case 'datetime':
@@ -661,10 +655,10 @@ class ExternalReporting
 
                 if (isset($fieldSrc)) {
                     // Add to the array of normal base and custom fields
-                    if ($fieldV['source'] == 'custom_fields' || $fieldV['name'] == 'email1') {
+                    if ($fieldV['source'] == 'custom_fields') {
                         $fieldList['custom'][$fieldK] = $fieldSrc;
                         $addColumnToMetadata = 1;
-                    } else if ($fieldV['source'] == 'non-db' && $fieldV['name'] != 'full_name') {
+                    } else if ($fieldV['source'] == 'non-db' && $fieldV['name'] != 'full_name' && $fieldV['name'] != 'email1') {
                         // This source is not processed, so we are moving them away
                         $fieldList['non-db'][$fieldK] = $fieldSrc;
                         $addColumnToMetadata = 0;
@@ -926,8 +920,14 @@ class ExternalReporting
         $token = md5($token);
         $this->info .= "<li>Token md5: $token";
 
-        // Specify the URL to fetch content from.
-        $url = $sugar_config['stic_sinergiada_public']['url'] ?? "https://{$this->baseHostname}.sinergiada.org/edapi/updatemodel/update?tks=$token";
+        // Builds the URL to be called to execute the updateModel method in SinergiaDA,
+        // depending on whether a specific URL has been indicated or if a standard location will be used.
+        if ($sugar_config['stic_sinergiada_public']['url'] ?? null) {
+            $url = "{$sugar_config['stic_sinergiada_public']['url']}/edapi/updatemodel/update?tks=$token";
+        } else {
+            $url = "https://{$this->baseHostname}.sinergiada.org/edapi/updatemodel/update?tks=$token";
+        }
+
         $link = "<a href='$url' target='_blank'>$url</a>";
         $link2 = addslashes("Retry <a href='$url' target='_blank'>&#9842;</a>");
 
@@ -971,78 +971,109 @@ class ExternalReporting
     }
 
     /**
-     * Creates a LEFT JOIN for a relationship field
+     * Creates a LEFT JOIN for a relationship field, handling both standard and special cases.
      *
-     * This function creates a LEFT JOIN that retrieves information from a related table based on the relationship defined in the 'relationships' table.
-     * It first retrieves the relationship information from the 'relationships' table, and then checks if the necessary information to create the query is present.
-     * If the necessary information is present, it creates the LEFT JOIN based on whether the current module is the left-hand side or right-hand side of the relationship,
-     * and adds metadata to the 'sda_def_relationships' table.
+     * This function retrieves information about a relationship based on the field's `link` property.
+     * If the relationship uses a join table (`join_table`, `join_key_lhs`, and `join_key_rhs` are defined),
+     * it creates a LEFT JOIN based on whether the current module is the left or right side of the relationship.
+     * If no join table is used, it checks if the relationship is a one-to-many relationship for the
+     * current table and builds the join accordingly. If no suitable relationship is found, it does not return a join.
      *
      * @param array $field The field array containing information about the current field
+     * @param string $tableName The name of the table being processed
+     * @param string $tableLabel The label of the other side relationships
      *
-     * @return string|void The LEFT JOIN string, or void if the necessary information is not present
+     * @return array|null An array containing the 'field' and 'leftJoin' information, or null if no join is created
      */
 
-    private function createRelateLeftJoin($field)
+    private function createRelateLeftJoin($field, $tableName, $tableLabel)
     {
         $db = DBManagerFactory::getInstance();
 
-        // We recover the registration of the Relationships table
+        $tableLabel = empty($tableLabel) ? '-' : $tableLabel;
+        // **Retrieve relationship information:**
         $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
 
-        if (empty($rel['join_table']) || empty($rel['join_key_lhs']) || empty($rel['join_key_rhs'])) {
-            // We do not have the necessary information to build the Query
+        // **Check if necessary information is present for standard join:**
+        if (!empty($rel['join_table']) && !empty($rel['join_key_lhs']) && !empty($rel['join_key_rhs'])) {
+            // Standard join using join table
+
+            // **Determine join side based on current module:**
+            if ($rel['lhs_module'] == $field['module']) {
+                // Current module is on the left side
+
+                // Add metadata record
+                $this->addMetadataRecord(
+                    'sda_def_relationships',
+                    [
+                        'id' => $field['link'],
+                        'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
+                        'source_column' => $field['id_name'],
+                        'target_table' => "{$this->viewPrefix}_{$field['table']}",
+                        'target_column' => 'id',
+                        'info' => 'link_lhs',
+                        'label' => "{$field['label']}|{$tableLabel}",
+                    ]
+                );
+
+                return [
+                    'field' => "{$rel['join_table']}.{$rel['join_key_lhs']}",
+                    'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
+                ];
+            } elseif ($rel['rhs_module'] == $field['module']) {
+                // Current module is on the right side
+
+                // Add metadata record
+                $this->addMetadataRecord(
+                    'sda_def_relationships',
+                    [
+                        'id' => $field['link'],
+                        'source_table' => "{$this->viewPrefix}_{$rel['lhs_table']}",
+                        'source_column' => $field['id_name'],
+                        'target_table' => "{$this->viewPrefix}_{$field['table']}",
+                        'target_column' => 'id',
+                        'info' => 'link_rhs',
+                        'label' => "{$field['label']}|{$tableLabel}",
+                    ]
+                );
+
+                return [
+                    'field' => "{$rel['join_table']}.{$rel['join_key_rhs']} ",
+                    'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_lhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
+                ];
+            }
+        } else {
+            // **Handle cases where no join table is used:**
+
+            // Check for one-to-many relationship with the current table
+            $sql = "SELECT * FROM relationships WHERE (lhs_table='{$tableName}' OR rhs_table='{$tableName}') AND (lhs_table='{$field['table']}' OR rhs_table='{$field['table']}') AND relationship_type='one-to-many'";
+            $rel = $db->fetchOne($sql);
+
+            if ($rel) {
+                // One-to-many relationship - use direct join
+                $res['field'] = "m.{$field['id_name']}";
+                $res['leftJoin'] = " LEFT JOIN {$field['table']} ON {$field['table']}.id=m.{$field['id_name']} AND {$field['table']}.deleted=0 ";
+
+                // Add metadata record
+                $this->addMetadataRecord(
+                    'sda_def_relationships',
+                    [
+                        'id' => $field['link'],
+                        'source_table' => "{$this->viewPrefix}_{$tableName}",
+                        'source_column' => $field['id_name'],
+                        'target_table' => "{$this->viewPrefix}_{$field['table']}",
+                        'target_column' => 'id',
+                        'info' => 'no-join-table-relationship ',
+                        'label' => "{$field['label']}|{$tableLabel}",
+                    ]
+                );
+
+                return $res;
+
+            }
+
             return;
         }
-
-        // If the current module is on the left side of the relationship ...
-        if ($rel['lhs_module'] == $field['module']) {
-
-            $this->addMetadataRecord(
-                'sda_def_relationships',
-                [
-                    'id' => $field['link'],
-                    'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
-                    'source_column' => $field['id_name'],
-                    'target_table' => "{$this->viewPrefix}_{$field['table']}",
-                    'target_column' => 'id',
-                    'info' => 'link_lhs',
-                    'label' => $field['label'],
-                ]
-            );
-
-            $res = [];
-            $res['field'] = "{$rel['join_table']}.{$rel['join_key_lhs']}";
-            $res['leftJoin'] = " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ";
-            return $res;
-
-        }
-        // Or if the current module is on the right side of the relationship ...
-        elseif ($rel['rhs_module'] == $field['module']) {
-
-            $this->addMetadataRecord(
-                'sda_def_relationships',
-                [
-                    'id' => $field['link'],
-                    'source_table' => "{$this->viewPrefix}_{$rel['lhs_table']}",
-                    'source_column' => $field['id_name'],
-                    'target_table' => "{$this->viewPrefix}_{$field['table']}",
-                    'target_column' => 'id',
-                    'info' => 'link_rhs',
-                    'label' => $field['label'],
-
-                ]
-            );
-
-            $res = [];
-            $res['field'] = "{$rel['join_table']}.{$rel['join_key_rhs']} ";
-            $res['leftJoin'] = " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_lhs']}=m.id AND {$rel['join_table']}.deleted=0 ";
-
-            return $res;
-
-        }
-
-        return;
     }
 
     /**
@@ -1124,6 +1155,8 @@ class ExternalReporting
      */
     private function resetMetadataViews()
     {
+        global $sugar_config;
+
         $db = DBManagerFactory::getInstance();
 
         $sqlMetadata = [];
@@ -1151,17 +1184,16 @@ class ExternalReporting
                                     1
                             ) email,
                             u.user_hash AS password,
-                            if(u.status='Active' AND uc.sda_allowed_c=1 AND is_admin=1 ,1,0) as 'active'
+                            if(u.status='Active' AND uc.sda_allowed_c=1 ,1,0) as 'active'
                         FROM
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c
-
                         WHERE
                             deleted = 0;";
 
         // 2) eda_def_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
-                                  SELECT name FROM securitygroups WHERE deleted=0
+                                  SELECT CONCAT('SDA_',name) as name FROM securitygroups WHERE deleted=0
                                   UNION SELECT 'EDA_ADMIN'
                                   UNION SELECT 'NO_SINERGIACRM_USERS'
                                   ;";
@@ -1170,7 +1202,7 @@ class ExternalReporting
                             -- Normal users are assigned to their own security groups.
                             SELECT
                                 user_name,
-                                s.name
+                                CONCAT('SDA_',s.name) as name
                             FROM
                                 users u
                             JOIN securitygroups_users su ON
@@ -1194,17 +1226,25 @@ class ExternalReporting
                                 AND u.deleted = 0;";
 
         // 4) eda_def_security_group_records
+
+        // Set a switch to determine whether to populate the sda_def_security_group_records view based
+        // on the value of $sugar_config['stic_sinergiada']['group_permissions_enabled']
+        if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
+            $limitQueryClause = ' limit 0 ';
+        } else {
+            $limitQueryClause = '';
+        }
+
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_security_group_records` AS
                             SELECT
                                 CONCAT('{$this->viewPrefix}_', LCASE(module)) as `table`,
                                 record_id,
-                                s.name as `group`
+                                CONCAT('SDA_',s.name) as `group`
                             FROM
                                 securitygroups_records sr
                                 JOIN securitygroups s on sr.securitygroup_id=s.id
                             WHERE sr.deleted=0
-                            -- limite temporal para evitar problemas de colapso al existir un número muy grande de registros
-                            limit 1;
+                            {$limitQueryClause};
                             ";
 
         // run sql queries
@@ -1531,7 +1571,7 @@ class ExternalReporting
                  '{$listElement['code']}' as 'code'
                  FROM
                     {$multiField['source_table']}
-                 WHERE ({$multiField['source_column']} LIKE '%^{$listElement['code']}^%' OR {$multiField['source_column']} = '{$listElement['code']}') 
+                 WHERE ({$multiField['source_column']} LIKE '%^{$listElement['code']}^%' OR {$multiField['source_column']} = '{$listElement['code']}')
                  ";
             }
 
@@ -1568,6 +1608,8 @@ class ExternalReporting
      */
     public function getAndSaveUserACL($modules)
     {
+        global $sugar_config;
+
         $db = DBManagerFactory::getInstance();
         include_once 'modules/ACLActions/ACLAction.php';
 
@@ -1589,8 +1631,17 @@ class ExternalReporting
 
             $allModulesACL = array_intersect_key(ACLAction::getUserActions($u['id'], true), $modules);
             foreach ($allModulesACL as $key => $value) {
+                unset($aclSource);
+                // Access to the users module is allowed only for administrator users
+                if ($u['is_admin'] == 0 && $key == 'Users') {
+                    continue;
+                }
 
                 $aclSource = $aclSourcesList[$value['module']['view']['aclaccess']];
+
+                // Fix for special cases when the module name is different from the table name
+                $key = $key == 'ProjectTask' ? 'Project_Task' : $key;
+                $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
 
                 $currentTable = $this->viewPrefix . '_' . strtolower($key);
                 if ($u['is_admin'] == 1) {
@@ -1607,12 +1658,19 @@ class ExternalReporting
                     // first we'll add them to the $userModuleAccessMode array with a unique key to avoid duplicates
                     switch ($value['module']['view']['aclaccess']) {
                         case '80': // Security groups
+
+                            // If $sugar_config['stic_sinergiada']['group_permissions_enabled'] is disabled, access is also disabled to 
+                            // modules where the user has restricted access to their group's records.
+                            if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
+                                continue 2;
+                            }
+
                             // In the case of Secutity Groups we add a unique entry for each of the groups the user belongs to,
                             // ensuring that it does not exist previously for each module.
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
                                 $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
-                                    'user_name' => $u['user_name'],
+                                    'user_name' => null,
                                     'group' => $userGroups['group'],
                                     'table' => $currentTable,
                                     'column' => 'id',
@@ -1623,6 +1681,9 @@ class ExternalReporting
                             break;
 
                         case '75': // Owner case
+                            // In this phase, access to modules where the user has restricted access to their own/assigned records is disabled.
+                            continue 2;
+
                             $userModuleAccessMode["{$aclSource}_{$u['user_name']}_{$currentTable}"] = [
                                 'user_name' => $u['user_name'],
                                 'table' => $currentTable,

@@ -256,6 +256,10 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     
     	// Treat the persistence field
     	if (! empty($this->persistentData)) {
+			// Ensure $this->persistentData is correct
+			if(strpos($this->persistentData, '"') !== false) {
+				$this->persistentData = htmlentities($this->persistentData);
+			}
     		$this->persistentData = json_decode(html_entity_decode($this->persistentData),true);
     	} 
     	else {
@@ -483,8 +487,8 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
 	
     		// Conditions of exclusion from the list by field no editable 
 			if ((in_array('studio', $field_def))
-				&& ($field_def['studio'] === false || $field_def['studio']['view'] === false)
-    		   ) 
+				&& ($field_def['studio'] === false || ($field_def['studio']['view'] ?? true) === false)
+			   )
     		{
     			$GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [{$field_def['name']}] excluded by field no editable.");
     			continue;

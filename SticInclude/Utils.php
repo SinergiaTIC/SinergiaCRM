@@ -596,4 +596,78 @@ EOQ;
         // Return the new ID
         return $newId;
     }
+    /**
+     * unformatDecimal - Function to convert formatted decimal number to float value
+     * @param mixed $number The formatted decimal number as string or float
+     * @param int $precision The number of decimal places in the input number (default is 2)
+     * @return float The float value of the input number after removing formatting
+     */
+    public static function unformatDecimal($number, $precision = 2)
+    {
+        if (is_float($number)) {
+            // If the input number is already a float value, return it
+            return $number;
+        } elseif (is_string($number)) {
+            // If the input number is a string, remove formatting and convert to float
+            if (!ctype_punct(substr($number, -$precision - 1, 1))) {
+                // If the last character before the decimal is not a punctuation mark, remove all non-numeric characters
+                $number = floatval(preg_replace("/[^0-9]/", "", $number));
+            } else {
+                // If the last character before the decimal is a punctuation mark, remove all non-numeric characters and format the decimal places
+                $number = preg_replace("/[^0-9]/", "", $number);
+                $number = floatval(substr($number, 0, -2) . '.' . substr($number, -2));
+            }
+            return $number; // Return the float value of the input number after removing formatting
+        }
+    }
+
+    /**
+     * Formats date and datetime strings into the standard database format.
+     * This function is based on the getDBFormat function found in modules/AOW_Actions/FormulaCalculator.php.
+     * It ensures that both date and datetime strings are standardized for database storage, accommodating both
+     * the database's default format and user-specific formats.
+     *
+     * @param string $date String representing a date. This can be in the format expected by the database or a SuiteCRM user-defined format.
+     *                     It attempts to standardize dates (Y-m-d) and datetimes (Y-m-d H:i:s) for database insertion.
+     * @return string|null Returns a formatted string suitable for database storage if the input is valid. If the input date
+     *                     cannot be processed or is invalid, it returns null. 
+     */
+    public static function formatDateForDatabase($date)
+    {
+        $originalDate=$date;
+        $formatDate = 'Y-m-d'; // Defines the standard date format for comparison and formatting.
+        $validDate = DateTime::createFromFormat($formatDate, $date); // Attempts to create a DateTime object based on the standard date format.
+
+        if (!$validDate) {
+            // If the initial attempt fails, it tries to create a DateTime object with a datetime format.
+            $validDate = DateTime::createFromFormat('Y-m-d H:i:s', $date);
+            if ($validDate) {
+                // If successful, formats the DateTime object to the standard date format.
+                $date = $validDate->format('Y-m-d');
+            }
+        }
+
+        // Checks if the string matches the date format without time, returning it unchanged if it does.
+        if ($validDate && $validDate->format($formatDate) === $date) {
+            return $date;
+        } else {
+            global $current_user, $timedate;
+            // Determines if the string includes a time component by checking for a space character.
+            if (strpos($date, " ") !== false) {
+                $type = 'datetime';
+            } else {
+                $type = 'date';
+            }
+            // Converts the date from the user's format to the database format, leveraging the user's settings.
+            $date = $timedate->fromUserType($date, $type, $current_user);
+            if ($date) {
+                // If conversion is successful, returns the date as a string in database format.
+                return $date->asDbDate(false);
+            }
+            // Returns null if the date cannot be formatted to the database's expectations, indicating an invalid input.
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': '."The date [$originalDate] is invalid or uses an unsupported format.");
+            return null;
+        }
+    }
+
 }
