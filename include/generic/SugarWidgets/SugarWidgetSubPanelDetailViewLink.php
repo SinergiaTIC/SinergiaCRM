@@ -120,7 +120,7 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
         }
         // STIC-Custom - JBL - 20240702 - Notify new Opportunities: New Campaign type (Notification)
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-        if($module == "Campaigns" && $layout_def["subpanel_id"] == "stic_notifications") {
+        if($module == "Campaigns" && $layout_def["subpanel_id"] == "stic_campaigns_notification") {
             $action = 'TrackDetailView';
         }
         // END STIC-Custom

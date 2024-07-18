@@ -129,11 +129,26 @@ class Campaign extends SugarBean
     public $notification_reply_to_name;
     public $notification_reply_to_addr;
 
+    /**
+     * Function fetches a single row of data given the primary key value.
+     *
+     * The fetched data is then set into the bean. The function also processes the fetched data by formatting
+     * date/time and numeric values.
+     *
+     * @param string|int $id Optional, default -1, is set to -1 id value from the bean is used, else,
+     * passed value is used
+     * @param bool $encode Optional, default true, encodes the values fetched from the database.
+     * @param bool $deleted Optional, default true, if set to false deleted filter will not be added.
+     * @return SugarBean|null
+     *
+     * Internal function, do not override.
+     */    
     public function retrieve($id = -1, $encode = true, $deleted = true)
     {
         parent::retrieve($id, $encode, $deleted);
         
         if ($this->campaign_type == "Notification") {
+            // Notifications need some non-db fields from related prospect_lists, email_marketing and email_templates
             include_once "custom/modules/Campaigns/SticUtils.php";
             fillCampaignNotificationFields($this);
         }
@@ -308,14 +323,16 @@ class Campaign extends SugarBean
         }
 
         if (empty($this->name)) {
-            // Name: Parent_name - Campaign_Type - Start_Date
+            // If Name is empty: Name = Parent_Mame - Campaign_Type - Start_Date
             global $app_list_strings, $current_user, $timedate;
 
             $nameArray = array();
+            // Parent_Name 
             if (!empty($this->parent_type) && !empty($this->parent_id)) {
                 if (empty($this->parent_name)) {
                     global $beanList, $beanFiles;
     
+                    // Obtain an object of parent_type and get its name
                     if (isset($beanList[$this->parent_type])) {
                         $class = $beanList[$this->parent_type];
                         if (!class_exists($class)) {
@@ -328,8 +345,11 @@ class Campaign extends SugarBean
                 }
                 $nameArray[] = $this->parent_name;
             }
+
+            // Campaign_Type
             $nameArray[] = $app_list_strings['campaign_type_dom'][$this->campaign_type];
 
+            // Start_Date
             $startDate = $this->start_date;
             if ($userDate = $timedate->fromUserDate($startDate, false, $current_user)) {
                 $startDate = $userDate->asDBDate();
@@ -339,16 +359,18 @@ class Campaign extends SugarBean
 
             $nameArray[] = $startDateFormatted;
             
+            // Name = Parent_Mame - Campaign_Type - Start_Date
             $this->name = implode(" - ", $nameArray);
         }
         if ($this->campaign_type != "Notification") {
+            // Reset Prospect lists
             $this->notification_prospect_list_ids = "";
         }
 
         $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
         $prospect_list_name_array = array();
 
-        // Set stic_notification_prospect_list_names_c
+        // Set stic_notification_prospect_list_names_c field with Prospect lists names
         foreach ($prospect_list_id_array as $prospect_list_id) {
             $prospect_listBean = BeanFactory::getBean('ProspectLists', $prospect_list_id);
             $prospect_list_name_array[] = $prospect_listBean->name;

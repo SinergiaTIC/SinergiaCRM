@@ -61,10 +61,10 @@ $layout_defs["Opportunities"]["subpanel_setup"]['stic_grants_opportunities'] = a
 );
 
 // Notifications subpanel
-$layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
+$layout_defs['Opportunities']['subpanel_setup']['stic_campaigns_notification'] = array(
     'order' => 100,
     'module' => 'Campaigns',
-    'subpanel_name' => 'SticOpportunityNotifications',
+    'subpanel_name' => 'SticForNotifications',
     'sort_order' => 'asc',
     'sort_by' => 'name',
     'get_subpanel_data' => 'function:getNotificationsFromParent',
@@ -74,7 +74,7 @@ $layout_defs['Opportunities']['subpanel_setup']['stic_notifications'] = array(
         'parent_type' => 'Opportunities',
         'return_as_array' => false,
     ),
-    'title_key' => 'LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE',
+    'title_key' => 'LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE',
     'top_buttons' => array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate', 

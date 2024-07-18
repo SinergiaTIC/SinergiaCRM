@@ -117,11 +117,13 @@ class EmailTemplateParser
         if ($campaign->campaign_type == "Notification" && !empty($campaign->parent_id)) {
             global $beanList, $beanFiles;
 
+            // If Campaign is a Notification: Parse with related object defined in parent_id
             if (isset($beanList[$campaign->parent_type])) {
                 $class = $beanList[$campaign->parent_type];
                 if (!class_exists($class)) {
                     require_once($beanFiles[$class]);
                 }
+                // Assign the object to parse with (defined in parent_id)
                 $this->module = new $class();
                 $this->module->retrieve($campaign->parent_id);
             }

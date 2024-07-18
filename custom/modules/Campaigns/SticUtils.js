@@ -239,7 +239,7 @@ function updateViewNotificationType(isNotification) {
 }
 
 function initializeQuickCreate() {
-  if ($("#subpanel_stic_notifications_newDiv").length == 1) {
+  if ($("#subpanel_stic_campaigns_notification_newDiv").length == 1) {
     // Is a New notification from Subpanel
 
     $("[data-field='campaign_type']").hide();

@@ -86,7 +86,7 @@ $mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importar Subvencións';
 // Cadeas de notificación de novas subvencións
 $mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL de la convocatoria';
 $mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Información adicional';
-$mod_strings['LBL_OPPORTUNITIES_NOTIFICATIONS_TITLE'] = 'Notificaciones';
+$mod_strings['LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE'] = 'Notificaciones';
 
 // Cadeas Ayudas
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Axudas';

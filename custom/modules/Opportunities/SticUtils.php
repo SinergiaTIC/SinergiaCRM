@@ -126,5 +126,4 @@ class OpportunitiesUtils
         }
         return true;
     }
-
 }
