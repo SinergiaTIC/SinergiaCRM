@@ -465,8 +465,12 @@ class ExternalReporting
                                 // add column to index list
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
 
-                                //Add relate record name
-                                $relatedName = in_array($fieldV['module'], ['Contacts', 'Leads', 'Users']) ? " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) " : "{$leftJoinAlias}.name";
+                                //Add relate record name 
+                                if (in_array($fieldV['module'], ['Contacts', 'Leads'])) {
+                                    $relatedName = " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) ";
+                                } elseif ($fieldV['module'] == 'Users') {
+                                    $relatedName = "{$leftJoinAlias}.user_name";
+                                } else { $relatedName = "{$leftJoinAlias}.name";}
 
                                 $fieldSrc .= " IFNULL($relatedName,'') AS {$fieldV['name']}";
 
