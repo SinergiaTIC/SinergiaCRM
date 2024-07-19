@@ -90,6 +90,12 @@ class stic_Messages extends Basic
 
         // TODOEPS: Treure a funció i potser agafar una part comuna amb fillName?
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+
+        if (empty($this->message) && !empty($this->template_id_c)) {
+            $template = BeanFactory::getBean('EmailTemplates', $this->template_id_c);
+            $this->message = $template->body;
+        }
+
         $processedText = $this->replaceTemplateVariables($this->message, $bean);
         $this->message = $processedText;
 
