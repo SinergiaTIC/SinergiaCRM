@@ -17,7 +17,7 @@ if (!empty($number)) {
     }
 
     // STIC-Custom EPS 20240404
-    $templateId = $_POST['template'];
+    // $templateId = $_POST['template'];
     // if (!empty($templateId)) {
     //     $emailTemp = BeanFactory::newBean('EmailTemplates');
     //     $emailTemp->retrieve($templateId);
@@ -28,7 +28,8 @@ if (!empty($number)) {
     // else {
     //     $text = $_POST['message'];
     // }
-    $emailTemp = sevenReplaceEmailVariables($_POST['message'], $templateId);
+    // $emailTemp = sevenReplaceEmailVariables($_POST['message'], $templateId);
+    $emailTemp = sevenReplaceEmailVariables($_POST['message'], $id);
     $text = $emailTemp;
     $_POST['message'] = $text;
     // END STIC-Custom

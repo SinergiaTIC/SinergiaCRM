@@ -1,43 +1,112 @@
 <?php
-require_once 'seven.php';
 
-// STIC-Custom EPS 20240404
-function sevenReplaceEmailVariables($screenText, $templateId)
-{
-    // request validation before replace bean variables
-        $request = $_REQUEST;
+class SMSHelper {
 
-        $macro_nv = array();
+    protected bool $active = false;
+    protected ?string $apiKey = null;
+    protected ?string $sender;
 
-        $focusName = $request['parent_type'];
-        $focus = BeanFactory::getBean($focusName, $request['parent_id']);
+    public function __construct() {
+        global $sugar_config;
 
-        /**
-         * @var EmailTemplate $emailTemplate
-         */
-        $emailTemplate = BeanFactory::getBean(
-            'EmailTemplates',
-            $templateId
-        );
-        $templateData = $emailTemplate->parse_email_template(
-            array(
-                'subject' => '',
-                'body_html' => $screenText,
-                'body' => $screenText,
-            ),
-            $focusName,
-            $focus,
-            $macro_nv
-        );
+        $this->setActive($sugar_config['seven_active'] ?? false);
 
-    return $templateData['body'];
+        $this->setApiKey($sugar_config['seven_api_key'] ?? '');
+
+
+        $this->setSender($sugar_config['seven_sender'] ?? '');
+
+    }
+
+    public function getActive(): bool {
+        return $this->active;
+    }
+
+    public function setActive(string $active): self {
+        $this->active = 'yes' === $active;
+        return $this;
+    }
+
+    public function getApiKey(): ?string {
+        return $this->apiKey;
+    }
+
+    public function setApiKey(string $apiKey): self {
+        $this->apiKey = $apiKey;
+        return $this;
+    }
+
+    public function getSender(): ?string {
+        return $this->sender;
+    }
+
+    public function setSender($sender): self {
+        $this->sender = $sender;
+        return $this;
+    }
+
+    public function sendSMSwithText(?string $from, string $text, string $to): array {
+        $to = preg_replace('~\D~', '', $to);
+        $result =  $this->apiCall($from, $text, $to);
+        return $result['success'] == 100;
+    }
+
+public function apiCall(?string $from, string $text, string $to): array {
+    if (!$this->getActive()) return [null, null];
+
+    $curlOpts = [
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/json',
+            'Content-type: application/json',
+            'SentWith: SuiteCRM',
+            'X-Api-Key: ' . $this->getApiKey(),
+        ],
+        CURLOPT_POSTFIELDS => json_encode(compact('from', 'text', 'to')),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 7500,
+    ];
+    $curl = curl_init('https://gateway.seven.io/api/sms');
+    curl_setopt_array($curl, $curlOpts);
+    $response = curl_exec($curl);
+    curl_close($curl);
+
+    return json_decode($response, true);
 }
 
+// function sevenReplaceEmailVariables($screenText, $templateId)
+// public function sevenReplaceEmailVariables($screenText, $relatedId)
+// public function sevenReplaceEmailVariables($screenText, $bean)
+// {
+//     // request validation before replace bean variables
+//         $request = $_REQUEST;
 
+//         $macro_nv = array();
 
+//         // $focusName = $request['parent_type'];
+//         $focusName = $bean->module_name;
+//         // $focus = BeanFactory::getBean($focusName, $request['parent_id']);
+//         // $focus = BeanFactory::getBean($focusName, $relatedId);
+//         $focus = $bean;
 
+//         /**
+//          * @var EmailTemplate $emailTemplate
+//          */
+//         $emailTemplate = BeanFactory::newBean('EmailTemplates');
+//         $templateData = $emailTemplate->parse_email_template(
+//             array(
+//                 'subject' => '',
+//                 'body_html' => $screenText,
+//                 'body' => $screenText,
+//             ),
+//             $focusName,
+//             $focus,
+//             $macro_nv
+//         );
 
-function seven_parse_template(SugarBean $bean, &$template, $object_override = array())
+//     return $templateData['body'];
+// }
+
+public function seven_parse_template(SugarBean $bean, &$template, $object_override = array())
 {
     global $sugar_config;
 
@@ -101,6 +170,5 @@ function seven_parse_template(SugarBean $bean, &$template, $object_override = ar
     $template->body = str_replace("\$url", $url, $template->body);
     $template->body = str_replace('$sugarurl', $sugar_config['site_url'], $template->body);
 }
-// END STIC-Custom
 
-
+}
