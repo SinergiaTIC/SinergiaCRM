@@ -593,8 +593,8 @@ $sugar_config = array(
 
     // STIC CUSTOM 20240709 JCH - Advanced Tab config (multilevel) 
     // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
-    'stic-advanced-menu-enabled' => true,
-    'stic-advanced-menu-icons' => '1',
-    'stic-advanced-menu-all' => '1',
+    'stic_advanced_menu_enabled' => true,
+    'stic_advanced_menu_icons' => '1',
+    'stic_advanced_menu_all' => '1',
     // END STIC
 );

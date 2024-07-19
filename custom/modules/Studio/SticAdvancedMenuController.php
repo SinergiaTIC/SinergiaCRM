@@ -44,8 +44,8 @@ switch ($_REQUEST['manageMode']) {
         $configurator = new Configurator();
 
         // Update configuration with new menu settings
-        $configurator->config['stic-advanced-menu-icons'] = $_POST['sticAdvancedMenuIcons'];
-        $configurator->config['stic-advanced-menu-all'] = $_POST['sticAdvancedMenuAll'];
+        $configurator->config['stic_advanced_menu_icons'] = $_POST['sticAdvancedMenuIcons'];
+        $configurator->config['stic_advanced_menu_all'] = $_POST['sticAdvancedMenuAll'];
         $configurator->saveConfig();
 
         die('ok');
@@ -55,7 +55,7 @@ switch ($_REQUEST['manageMode']) {
         // Disable advanced menu
         require_once 'modules/Configurator/Configurator.php';
         $configurator = new Configurator();
-        $configurator->config['stic-advanced-menu-enabled'] = false;
+        $configurator->config['stic_advanced_menu_enabled'] = false;
         $configurator->saveConfig();
 
         die('ok');
@@ -65,7 +65,7 @@ switch ($_REQUEST['manageMode']) {
         // Enable advanced menu
         require_once 'modules/Configurator/Configurator.php';
         $configurator = new Configurator();
-        $configurator->config['stic-advanced-menu-enabled'] = true;
+        $configurator->config['stic_advanced_menu_enabled'] = true;
         $configurator->saveConfig();
         require_once 'SticUpdates/Scripts/ConvertSuiteCRMMenuToAdvancedMenu.php';
 

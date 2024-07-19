@@ -58,7 +58,7 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 				<div class="col-xs-4 text-center">
 					<div class="checkbox">
 						<label>
-							<input id="stic-advanced-menu-icons" type="checkbox"
+							<input id="stic_advanced_menu_icons" type="checkbox"
 								{if $sticAdvancedMenuIcons}checked{/if}>
 						</label>
 					</div>
@@ -67,7 +67,7 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 				<div class="col-xs-4 text-center">
 					<div class="checkbox">
 						<label>
-							<input id="stic-advanced-menu-all" type="checkbox" {if $sticAdvancedMenuAll}checked{/if}>
+							<input id="stic_advanced_menu_all" type="checkbox" {if $sticAdvancedMenuAll}checked{/if}>
 						</label>
 					</div>
 					{$MOD.LBL_STIC_MENU_ALL}

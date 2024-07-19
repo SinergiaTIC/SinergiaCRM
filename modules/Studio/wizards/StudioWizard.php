@@ -105,7 +105,7 @@ class StudioWizard
             
                 case 'ConfigureGroupTabs':
                     global $sugar_config;
-                    if($sugar_config['stic-advanced-menu-enabled']){
+                    if($sugar_config['stic_advanced_menu_enabled']){
                         require_once('custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.php');
                     }else{
                         require_once('modules/Studio/TabGroups/EditViewTabs.php');

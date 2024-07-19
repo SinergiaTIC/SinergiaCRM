@@ -126,7 +126,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
                 // Generate link for valid modules
                 $lowerModule = str_replace('_', '-', strtolower($item['id']));
                 // Include icon if enabled in configuration
-                $iconString = $sugar_config['stic-advanced-menu-icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
+                $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
                 $itemHtml .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'>$iconString $text </a>";
             } elseif ($hasChildren) {
                 // Generate dropdown toggle for items with children
@@ -152,7 +152,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         $menuHtml .= $html;
 
         // Add the "All" menu if it's the first level and enabled in configuration
-        if ($isFirstLevel && $sugar_config['stic-advanced-menu-all']) {
+        if ($isFirstLevel && $sugar_config['stic_advanced_menu_all']) {
             $menuHtml .= '<li class="dropdown">';
             $menuHtml .= "<a href='#' class='no-link'>{$app_strings['LBL_TABGROUP_ALL']} </a>";
             $menuHtml .= '<ul>';

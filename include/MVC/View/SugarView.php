@@ -670,7 +670,7 @@ class SugarView
             // STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist
             // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
 
-            if($sugar_config['stic-advanced-menu-enabled']){
+            if($sugar_config['stic_advanced_menu_enabled']){
                 
                 // Skip loading the menu during AJAX calls that manage the menu
                 // This prevents redundant loading and associated issues

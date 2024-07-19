@@ -71,8 +71,8 @@ $smarty->assign('jsonAll', $jsonAll);
 
 // Assign variables to the Smarty template
 $smarty->assign('MOD', $GLOBALS['mod_strings']);
-$smarty->assign('sticAdvancedMenuIcons', $sugar_config['stic-advanced-menu-icons']);
-$smarty->assign('sticAdvancedMenuAll', $sugar_config['stic-advanced-menu-all']);
+$smarty->assign('sticAdvancedMenuIcons', $sugar_config['stic_advanced_menu_icons']);
+$smarty->assign('sticAdvancedMenuAll', $sugar_config['stic_advanced_menu_all']);
 
 $smarty->assign('dropdown_languages', get_languages());
 $smarty->assign('tabGroupSelected_lang', $tabGroupSelected_lang);
