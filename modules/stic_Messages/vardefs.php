@@ -105,6 +105,7 @@ $dictionary['stic_Messages'] = array(
             'type' => 'phone',
             'dbType' => 'varchar',
             'len' => 100,
+            'required' => true,
             'unified_search' => true,
             'full_text_search' => array('boost' => 1),
             'comment' => 'Phone number',

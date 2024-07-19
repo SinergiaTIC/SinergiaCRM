@@ -43,7 +43,11 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         var panelBody = $('<div>').append(data).find('#EditView').parent();
 
       var dataPhone = $(source).attr('data-phone');
-      if (typeof dataPhone !== 'undefined'&& dataPhone !== '') {
+
+      // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
+      // if (typeof dataPhone !== 'undefined' && dataPhone !== '') {
+        var dataRecordId = $(source).attr('data-record-id');
+      if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
         panelBody.find('#phone').val(dataPhone);
       }
       else {
@@ -55,7 +59,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           dataId = $(this).attr('data-record-id');
           if (dataPhone !== '') {
             if (targetCount > 0 ){
-              phoneList += ';';
+              phoneList += ',';
               idsList += ';';
             }
             phoneList += dataPhone;

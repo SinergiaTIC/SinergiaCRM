@@ -77,6 +77,7 @@ class stic_MessagesViewCompose extends ViewEdit
     public function preDisplay()
     {
         parent::preDisplay();
+        SticViews::preDisplay($this);
         $this->ev->ss->assign('RETURN_MODULE', isset($_GET['return_module']) ? $_GET['return_module'] : '');
         $this->ev->ss->assign('RETURN_ACTION', isset($_GET['return_action']) ? $_GET['return_action'] : '');
         $this->ev->ss->assign('RETURN_ID', isset($_GET['return_id']) ? $_GET['return_id'] : '');
@@ -84,6 +85,9 @@ class stic_MessagesViewCompose extends ViewEdit
 
         $this->bean->parent_type = $_GET['relatedModule'];
         $this->bean->parent_id = $_GET['relatedId'];
+
+        global $sugar_config;
+        $this->bean->sender = $sugar_config['seven_sender'] ?? '';
 
         $metadataFile = $this->getMetaDataFile();
         $this->ev->setup(

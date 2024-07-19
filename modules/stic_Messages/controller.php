@@ -22,7 +22,7 @@ class stic_MessagesController extends SugarController
         // $this->action_save();
         if (isset($_REQUEST['mass_ids']) && $_REQUEST['mass_ids'] !== '') {
             $idsArray = explode(';', $_REQUEST['mass_ids']);
-            $phonesArray = explode(';', $_REQUEST['phone']);
+            $phonesArray = explode(',', $_REQUEST['phone']);
             // foreach($idsArray as $relatedId) {
             //     $newBean = BeanFactory::newBean('stic_Messages');
             //     $this->bean = $newBean;

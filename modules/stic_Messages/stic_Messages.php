@@ -21,6 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+// require_once 'seven/sendSMSfunctions.php';
+require_once 'modules/stic_Messages/SMSHelper.php';
+
 class stic_Messages extends Basic
 {
     public $new_schema = true;
@@ -76,6 +79,7 @@ class stic_Messages extends Basic
     {
         global $sticSavingMessage, $current_user;
 
+        // TODOEPS: Si eliminem el mòdul de seven, això ja no és necessari
         // To avoid loop with LH on seven_sms
         if ($sticSavingMessage){
             return false;
@@ -83,6 +87,12 @@ class stic_Messages extends Basic
         $sticSavingMessage = true;
 
         $this->fillName();
+
+        // TODOEPS: Treure a funció i potser agafar una part comuna amb fillName?
+        $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+        $processedText = $this->replaceTemplateVariables($this->message, $bean);
+        $this->message = $processedText;
+
         $this->assigned_user_id = $current_user->id;
 
         if ($this->id === null) {
@@ -158,21 +168,71 @@ class stic_Messages extends Basic
     }
 
     public function sendSMS() {
-        if ($_POST['module'] === 'stic_Messages') {
-            $_POST['number'] = $this->phone;
-            $_POST['id'] = $this->parent_id;
-            $_POST['module'] = $this->parent_type;
-            $_POST['template'] = $this->template_id_c;
-            $_POST['message'] = $this->message;
-
-            require 'modules/seven/sendSMS.php';
-
-            // restore overwritten POST values
-            $_POST['module'] = 'stic_Messages';
-            $_POST['id'] = $this->id;
-
-            // retrieve message once template data applied
-            $this->message = $_POST['message'];
-        }
+        // TODOEPS; Veure si enlloc de crear instància cada vegada, millor utilitzar static, singleton o quelcom
+        $smsHelper = new SMSHelper();
+        $smsHelper->sendSMSwithText($this->sender, $this->message, $this->phone);
     }
+    // public function sendSMS() {
+    //     if ($_POST['module'] === 'stic_Messages') {
+    //         $_POST['number'] = $this->phone;
+    //         $_POST['id'] = $this->parent_id;
+    //         $_POST['module'] = $this->parent_type;
+    //         $_POST['template'] = $this->template_id_c;
+    //         $_POST['message'] = $this->message;
+
+    //         require 'modules/seven/sendSMS.php';
+
+    //         // restore overwritten POST values
+    //         $_POST['module'] = 'stic_Messages';
+    //         $_POST['id'] = $this->id;
+
+    //         // retrieve message once template data applied
+    //         $this->message = $_POST['message'];
+    //     }
+    // }
+
+    protected function replaceTemplateVariables($screenText, $bean)
+    {
+            $macro_nv = array();
+    
+            // $focusName = $request['parent_type'];
+            $focusName = $bean->module_name;
+            // $focus = BeanFactory::getBean($focusName, $request['parent_id']);
+            // $focus = BeanFactory::getBean($focusName, $relatedId);
+            $focus = $bean;
+    
+            /**
+             * @var EmailTemplate $emailTemplate
+             */
+            $emailTemplate = BeanFactory::newBean('EmailTemplates');
+            $templateData = $emailTemplate->parse_email_template(
+                array(
+                    // 'subject' => '',
+                    // 'body_html' => $screenText,
+                    'body' => $screenText,
+                ),
+                $focusName,
+                $focus,
+                $macro_nv
+            );
+
+            $emailTemplate = BeanFactory::newBean('EmailTemplates');
+            if ($focusName === 'Leads') {
+                $templateData = $emailTemplate->parse_email_template(
+                    array(
+                        // 'subject' => '',
+                        // 'body_html' => $screenText,
+                        'body' => $templateData['body'],
+                    ),
+                    'Contacts',
+                    $focus,
+                    $macro_nv
+                );
+    
+            }
+    
+        return $templateData['body'];
+    }
+    
+
 }
