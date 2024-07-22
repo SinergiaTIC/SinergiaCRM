@@ -58,7 +58,7 @@ class CustomCampaignsViewEdit extends ViewEdit
         echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
 
         include_once "custom/modules/Campaigns/SticUtils.php";
-        echo getNotificationFromInfo();
+        echo getNotificationCampaignEmailDataScript();
     }
 
 }

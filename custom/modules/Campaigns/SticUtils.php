@@ -56,11 +56,17 @@ function getNotificationsFromParent($params)
     }
 }
 
+/**
+ * Function populates custom 'non-db' fields for a Campaign record of the type 'Notification'.
+ * It retrieves and sets values related to email marketing and prospect lists associated with the campaign.
+ *
+ * @param $beanCampaign: The campaign bean (object) which represents the current campaign record being processed.
+ */
 function fillCampaignNotificationFields($beanCampaign)
 {
     global $db;
 
-    // Fill email_marketing fields
+    // Find email_marketing information
     $query =
         " SELECT c.id as campaigns_id" .
         ", et.id as email_templates_id" .
@@ -76,6 +82,7 @@ function fillCampaignNotificationFields($beanCampaign)
         " WHERE c.id = '{$beanCampaign->id}'" .
         " LIMIT 1";
 
+    // Fill Notification fields related to email_marketing
     $result = $db->query($query);
     if ($row = $db->fetchByAssoc($result)) {
         $beanCampaign->notification_template_id = $row['email_templates_id'];
@@ -86,7 +93,7 @@ function fillCampaignNotificationFields($beanCampaign)
         $beanCampaign->notification_reply_to_addr = $row['email_marketing_reply_to_addr'];
     }
 
-    // Fill prospect_lists
+    // Find prospect_lists information
     $query =
         " SELECT c.id as campaigns_id" .
         ", pl.id as prospect_lists_id" .
@@ -96,6 +103,7 @@ function fillCampaignNotificationFields($beanCampaign)
         " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
         " WHERE c.id = '{$beanCampaign->id}'";
 
+    // Fill Notification prospect_lists field (multienum)
     $result = $db->query($query);
     $plArray = array();
     while ($row = $db->fetchByAssoc($result)) {
@@ -104,6 +112,9 @@ function fillCampaignNotificationFields($beanCampaign)
     $beanCampaign->notification_prospect_list_ids = "^" . implode("^,^", $plArray) . "^";
 }
 
+/**
+ * Populates custom dynamic lists used in 'non-db' enum and multienum fields for a Campaigns records of type 'Notification'
+ */
 function fillDynamicListsForNotifications()
 {
     fillDynamicListProspectList();
@@ -112,6 +123,9 @@ function fillDynamicListsForNotifications()
     fillDynamicInboundEmailAccounts();
 }
 
+/**
+ * Populates list 'dynamic_prospect_list_list' with ProspectLists available to be selected in a Campaign of type 'Notification'
+ */
 function fillDynamicListProspectList()
 {
     $prospectListsFocus = BeanFactory::newBean('ProspectLists');
@@ -125,6 +139,9 @@ function fillDynamicListProspectList()
     $GLOBALS['app_list_strings']['dynamic_prospect_list_list'] = $dynamic_prospect_list_list;
 }
 
+/**
+ * Populates list 'dynamic_email_template_list' with EmailTemplates available to be selected in a Campaign of type 'Notification'
+ */
 function fillDynamicListEmailTemplate()
 {
     $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
@@ -138,6 +155,9 @@ function fillDynamicListEmailTemplate()
     $GLOBALS['app_list_strings']['dynamic_email_template_list'] = $dynamic_email_template_list;
 }
 
+/**
+ * Populates list 'dynamic_outbound_email_list' with OutboundEmailAccounts for a Campaign of type 'Notification'
+ */
 function fillDynamicOutboundEmailAccounts()
 {
     $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
@@ -151,6 +171,9 @@ function fillDynamicOutboundEmailAccounts()
     $GLOBALS['app_list_strings']['dynamic_outbound_email_list'] = $dynamic_outbound_email_list;
 }
 
+/**
+ * Populates list 'dynamic_inbound_email_list' with InboundEmails (campaign_mailboxes) for a Campaign of type 'Notification'
+ */
 function fillDynamicInboundEmailAccounts()
 {
     include_once "modules/Campaigns/utils.php";
@@ -163,6 +186,9 @@ function fillDynamicInboundEmailAccounts()
     $GLOBALS['app_list_strings']['dynamic_inbound_email_list'] = $mailboxesWithEmail;
 }
 
+/**
+ * Loads Campaign language strings, for use in subpanels in other modules
+ */
 function getCampaignsLangStrings()
 {
     $html = "";
@@ -178,22 +204,33 @@ function getCampaignsLangStrings()
     return $html;
 }
 
-function getNotificationFromInfo()
+/**
+ * Generates a JavaScript snippet containing information about inbound and outbound email accounts.
+ * The snippet assigns this information to the `STIC.campaignEmails` object.
+ *
+ * @return string HTML script tag with JavaScript content
+ */
+function getNotificationCampaignEmailDataScript()
 {
     $html = "";
     $html .= "<script>";
     $html .= "STIC.campaignEmails = {";
+    
+    // Inbound mailboxes
     $inboundMailboxes = get_campaign_mailboxes_with_stored_options();
     $html .= "inbound: [";
-    foreach($inboundMailboxes as $id => $mailbox) {
+    foreach ($inboundMailboxes as $id => $mailbox) {
+        // Add each inbound mailbox to the JavaScript array
         $html .= "{id: '{$id}', name: '{$mailbox['from_name']}', addr: '{$mailbox['from_addr']}'},";
     }
     $html .= "],";
 
+    // Outbound email accounts
     $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
     $outboundEmails = $outboundEmailsFocus->get_list("name", "", 0, -99, -99);
     $html .= "outbound: [";
     foreach ($outboundEmails['list'] as $outboundEmail) {
+        // Add each outbound email account to the JavaScript array
         $html .= "{id: '{$outboundEmail->id}', name: '{$outboundEmail->smtp_from_name}', addr: '{$outboundEmail->smtp_from_addr}'},";
     }
     $html .= "],";

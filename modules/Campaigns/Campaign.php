@@ -113,10 +113,15 @@ class Campaign extends SugarBean
 
     // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+
+    // New property fields
+
+    // Record related to Notification
     public $parent_name;
     public $parent_type;
     public $parent_id;
 
+    // Calculated non-db fields required for Notifications 
     public $notification_prospect_list_ids;
     public $stic_notification_prospect_list_names_c;
 
@@ -316,6 +321,7 @@ class Campaign extends SugarBean
         if ($this->campaign_type == "Notification" && 
             !empty($_REQUEST['relate_to'] && $_REQUEST['relate_to'] == "getNotificationsFromParent" &&
             !empty($_REQUEST['relate_id']))) {
+            // Set parent type and ID for Notification campaigns
             $this->parent_type = "Opportunities";
             $this->parent_id = $_REQUEST['relate_id'];
             $_REQUEST['relate_to'] = null;
@@ -327,12 +333,12 @@ class Campaign extends SugarBean
             global $app_list_strings, $current_user, $timedate;
 
             $nameArray = array();
-            // Parent_Name 
+            // Add Parent_Name to nameArray
             if (!empty($this->parent_type) && !empty($this->parent_id)) {
                 if (empty($this->parent_name)) {
                     global $beanList, $beanFiles;
     
-                    // Obtain an object of parent_type and get its name
+                    // Retrieve the parent record to get its name
                     if (isset($beanList[$this->parent_type])) {
                         $class = $beanList[$this->parent_type];
                         if (!class_exists($class)) {
@@ -346,10 +352,10 @@ class Campaign extends SugarBean
                 $nameArray[] = $this->parent_name;
             }
 
-            // Campaign_Type
+            // Add Campaign_Type to nameArray
             $nameArray[] = $app_list_strings['campaign_type_dom'][$this->campaign_type];
 
-            // Start_Date
+            // Add Start_Date to nameArray
             $startDate = $this->start_date;
             if ($userDate = $timedate->fromUserDate($startDate, false, $current_user)) {
                 $startDate = $userDate->asDBDate();
@@ -359,11 +365,11 @@ class Campaign extends SugarBean
 
             $nameArray[] = $startDateFormatted;
             
-            // Name = Parent_Mame - Campaign_Type - Start_Date
+            // Set campaign name with nameArray (Parent_Mame - Campaign_Type - Start_Date)
             $this->name = implode(" - ", $nameArray);
         }
         if ($this->campaign_type != "Notification") {
-            // Reset Prospect lists
+            // Reset Prospect lists for non-Notification campaigns
             $this->notification_prospect_list_ids = "";
         }
 
@@ -380,8 +386,7 @@ class Campaign extends SugarBean
         $isNewCampaign = empty($this->id);
         $return_id = parent::save($check_notify);
 
-        // Notifications can not be modified: 
-        // Set relationships and queue campaign only for new Notifications
+        // For new Notification campaigns, set relationships and queue the campaign
         if ($isNewCampaign && $this->campaign_type == "Notification") {
             // Set ProspectList relationships
             $prospect_list_id_array = explode("^,^", trim($this->notification_prospect_list_ids, "^"));
@@ -401,12 +406,13 @@ class Campaign extends SugarBean
                 }
             }
 
-            // Save or Update EmailMarketing
+            // Save or Update EmailMarketing record
             $emailMarketing = BeanFactory::newBean('EmailMarketing');
             $relatedEmailMarketingList = $emailMarketing->get_list("name", "email_marketing.campaign_id='{$return_id}'", 0, -99, -99);
             if(!empty($relatedEmailMarketingList['list'])) {
                 $emailMarketing = $relatedEmailMarketingList['list'][0];
             }
+            // Set EmailMarketing fields
             $emailMarketing->name = $this->name . ' - Email';
             $emailMarketing->campaign_id = $return_id;
             $emailMarketing->template_id = $this->notification_template_id;
@@ -422,7 +428,7 @@ class Campaign extends SugarBean
 
             $emailMarketingId = $emailMarketing->save();
 
-            // Queue Notification
+            // Queue Notification campaign
             $_POST['mass'] = array(0 => $emailMarketingId);
             $_REQUEST['module'] = "Campaigns";
             $_REQUEST['record'] = $return_id;

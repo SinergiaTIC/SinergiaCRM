@@ -50,6 +50,6 @@ class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
         echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
 
         echo getCampaignsLangStrings();
-        echo getNotificationFromInfo();
+        echo getNotificationCampaignEmailDataScript();
     }
 }
