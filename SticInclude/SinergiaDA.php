@@ -1726,7 +1726,9 @@ class ExternalReporting
         ];
 
         // Get list of active users
-        $res = $db->query("SELECT id,user_name, is_admin FROM users WHERE status='Active' AND deleted=0;");
+        // $res = $db->query("SELECT id,user_name, is_admin FROM users WHERE status='Active' AND deleted=0;");
+        $res = $db->query("SELECT id,user_name, is_admin FROM users join users_cstm on users.id = users_cstm.id_c  WHERE status='Active' AND deleted=0 AND sda_allowed_c=1;");
+        
         while ($u = $db->fetchByAssoc($res, false)) {
 
             $allModulesACL = array_intersect_key(ACLAction::getUserActions($u['id'], true), $modules);
