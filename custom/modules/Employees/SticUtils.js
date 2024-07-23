@@ -22,7 +22,7 @@
 
 // Set module name
 var module = "Employees";
-
+debugger;
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
     case "edit":
@@ -46,13 +46,22 @@ switch (viewType()) {
         break;
 
     case "list":
-        button = {
-            id: "bt_work_calendar_periodic_creation_listview",
-            title: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
-            text: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
-            onclick: "onClickWorkCalendarPeriodicCreationButton()",
+        buttons = {
+            workcalendar: {
+                id: "bt_work_calendar_periodic_creation_listview",
+                title: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
+                text: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
+                onclick: "onClickWorkCalendarPeriodicCreationButton()",
+            },
+            sentMessage: {
+                id: "bt_sentMessage_listview",
+                title: SUGAR.language.get("Employees", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
+                text: SUGAR.language.get("Employees", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
+                onclick: "onClickMassSendMessagesButton()"
+              }
         };
-        createListViewButton(button);
+        createListViewButton(buttons.workcalendar);
+        createListViewButton(buttons.sentMessage);
         break;
 
     default:

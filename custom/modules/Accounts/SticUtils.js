@@ -120,14 +120,23 @@ switch (viewType()) {
     break;
 
   case "list":
-    button = {
-      id: "bt_sync_incorpora_listview",
-      title: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
-      text: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
-      onclick: "onClickIncorporaSyncButton()",
+    buttons = {
+      syncIncorpora: {
+        id: "bt_sync_incorpora_listview",
+        title: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
+        text: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
+        onclick: "onClickIncorporaSyncButton()",
+      },
+      sentMessage: {
+        id: "bt_sentMessage_listview",
+        title: SUGAR.language.get("Accounts", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
+        text: SUGAR.language.get("Accounts", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
+        onclick: "onClickMassSendMessagesButton()"
+      }
     };
 
-    createListViewButton(button);
+    createListViewButton(buttons.syncIncorpora);
+    createListViewButton(buttons.sentMessage);
     break;
 
   default:

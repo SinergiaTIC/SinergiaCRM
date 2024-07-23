@@ -217,25 +217,7 @@ function onClickMassJobApplicationsButton() {
     document.getElementById("ajaxStatusDiv").style.zIndex = 1040; // No need this line when this PR is merged: https://github.com/salesagility/SuiteCRM/issues/8266
 }
 
-/**
- * 
- * Used as a callback for sending various messages from list view
- */
-function onClickMassSendMessagesButton() {
-    // sugarListView.get_checks();
-    // if(sugarListView.get_checks_count() < 1) {
-    //     alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
-    //     return false;
-    // }
-    // document.MassUpdate.action.value='fromMassUpdate';
-    // document.MassUpdate.module.value='stic_Messages';
-    // document.MassUpdate.submit();
 
-    let obj = { return_action: "ListView" };
-    let jsonString = JSON.stringify(obj);
-
-    openMessagesModal(this, jsonString);
-  }
 
 /**
  * 

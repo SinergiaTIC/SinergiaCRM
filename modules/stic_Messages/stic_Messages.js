@@ -1,8 +1,29 @@
 console.log('patata');
 
+/**
+ * 
+ * Used as a callback for sending various messages from list view
+ */
+function onClickMassSendMessagesButton() {
+  // sugarListView.get_checks();
+  // if(sugarListView.get_checks_count() < 1) {
+  //     alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
+  //     return false;
+  // }
+  // document.MassUpdate.action.value='fromMassUpdate';
+  // document.MassUpdate.module.value='stic_Messages';
+  // document.MassUpdate.submit();
+
+  let obj = { return_action: "ListView" };
+  let jsonString = JSON.stringify(obj);
+
+  openMessagesModal(this, jsonString);
+}
+
+
 // function openCustomModal(buttonModule, parentModule) {
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
-
+  debugger;
     // return_action = 'DetailView';
     let params = JSON.parse(paramsJson);
     return_action = params['return_action'];
@@ -113,3 +134,37 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           });
     });
 }
+
+$(function() {
+  debugger;
+  if (viewType() === 'detail') {
+
+const attr = 'sms-button'
+const triggerClass = 'seven-send-sms'
+const attachedClass = 'seven-attached'
+
+const recordId = $("input[name=record]")[0].value;
+
+for (const phone of [...document.querySelectorAll('[type=phone]')]) {
+    if (phone.getAttribute(attr) !== null) continue
+
+    const to = phone.textContent.trim()
+    if (to === '') continue
+
+    // TODOEPS: Incloure la nova icona via font
+    const src = 'themes/SuiteP/images/message20.png'
+    const alt = SUGAR.language.get(window.module_sugar_grp1, 'LBL_SEVEN_SEND_SMS_VIA')
+    phone.insertAdjacentHTML('beforeend',
+        `<img alt='${alt}' class='${triggerClass}' data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' title='${alt}' />`)
+    phone.setAttribute(attr, 'true')
+}
+
+$(`img.${triggerClass}:not(.${attachedClass})`)
+    .addClass(attachedClass)
+    .on('click', function() {
+        $('#seven_to').val($(this).data('to'))
+
+        openMessagesModal(this);
+    });
+  }
+});

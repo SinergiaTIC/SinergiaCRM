@@ -3609,3 +3609,12 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunions';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencions';
 $app_list_strings['map_relate_type_list']['Project'] = 'Projectes';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Públic Objectiu';
+
+// Plantilles de Correu electrònic: Tipus de plantilla
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campanya';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificació';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu electrònic';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';

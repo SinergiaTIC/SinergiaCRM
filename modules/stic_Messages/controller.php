@@ -79,6 +79,7 @@ class stic_MessagesController extends SugarController
                 }
             }
         }
+        // TODOEPS: Reminiscència de Emails. necessari? Què fa?
         if (isset($_REQUEST['relatedModule']) && isset($_REQUEST['relatedId'])) {
             $relateBean = BeanFactory::getBean($_REQUEST['relatedModule'], $_REQUEST['relatedId']);
             $relateLine = '<input type="hidden" class="email-relate-target" ';

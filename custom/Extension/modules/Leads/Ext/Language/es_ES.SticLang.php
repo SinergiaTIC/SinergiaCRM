@@ -132,6 +132,7 @@ $mod_strings['LBL_COPY_TIP'] = 'Si la casilla está seleccionada, los campos del
 $mod_strings['LBL_SELECTION_TIP'] = 'Los módulos con un campo relacionado con Personas pueden ser seleccionados en lugar de creados durante el proceso de conversión del Interesado.';
 $mod_strings['LBL_ACTIVITIES_MOVE_HELP'] = 'Seleccione los registros de actividad (tareas, llamadas, reuniones, notas y correos electrónicos) que desee mover del Interesado a los nuevos registros creados.';
 $mod_strings['LBL_ACTIVITIES_COPY_HELP'] = 'Seleccione los registros a los que desea copiar las actividades (tareas, llamadas, reuniones y notas) del Interesado. Los correos electrónicos se relacionarán con los registros seleccionados.';
+$mod_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nuevo mensaje';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direcciones de correo";

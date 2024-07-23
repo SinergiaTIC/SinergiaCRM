@@ -171,6 +171,7 @@ $mod_strings['LNK_IMPORT_ACCOUNTS'] = 'Importa Organitzacions';
 $mod_strings['MSG_DUPLICATE'] = "El registre que esteu a punt de crear podria ser un duplicat d'una altra organització existent. Els registres d'organització amb noms similars es llisten a continuació. Per confirmar la creació d'aquesta organització feu clic a Desa. En cas contrari, cliqueu Cancel·la.";
 $mod_strings['MSG_SHOW_DUPLICATES'] = "El registre que esteu a punt de crear podria ser un duplicat d'una altra organització existent. Els registres d'organització amb noms similars es llisten a continuació. Per confirmar la creació d'aquesta organització feu clic a Desa. En cas contrari, cliqueu Cancel·la.";
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organitzacions';
+$mod_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
 
 // Cadenes Ajuts
 $mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Ajuts';

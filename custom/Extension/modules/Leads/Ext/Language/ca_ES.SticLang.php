@@ -132,6 +132,7 @@ $mod_strings['LBL_COPY_TIP'] = "Si la casella està seleccionada, els camps de l
 $mod_strings['LBL_SELECTION_TIP'] = "Els mòduls amb un camp relacionat amb Persones poden ser seleccionats en lloc de creats durant el procés de conversió de l'Interessat.";
 $mod_strings['LBL_ACTIVITIES_MOVE_HELP'] = "Seleccioneu els registres d'activitat (tasques, trucades, reunions, notes i correus electrònics) que vulgueu moure de l'Interessat als nous registres creats.";
 $mod_strings['LBL_ACTIVITIES_COPY_HELP'] = "Seleccioneu els registres als quals vulgueu copiar les activitats (tasques, trucades, reunions i notes) de l'Interessat.  Els correus electrònics es relacionaran amb els registres seleccionats.";
+$mod_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";

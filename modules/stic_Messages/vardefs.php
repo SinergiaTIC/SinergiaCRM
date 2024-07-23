@@ -125,6 +125,7 @@ $dictionary['stic_Messages'] = array(
             'name' => 'message',
             'vname' => 'LBL_MESSAGE',
             'type' => 'text',
+            'required' => true,
             'comment' => 'Full text of the message',
             'rows' => 6,
             'cols' => 80,
