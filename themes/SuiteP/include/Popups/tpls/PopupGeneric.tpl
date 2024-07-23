@@ -193,7 +193,8 @@
 										Show the value in case it does not belong to the values ​​in the list *}
 									{* {sugar_translate label=$params.options select=$item}{if $oCount !=  count($vals)},{/if} *}
 									{assign var=itemInArray value=false}
-									{foreach from=$fields.stic_professional_profile_c.options key=key item=value}
+									{assign var=fieldName value=$params.name}
+									{foreach from=$fields.$fieldName.options key=key item=value}
 										{if ($key == $item)}
 											{assign var=itemInArray value=true}
 										{/if}
