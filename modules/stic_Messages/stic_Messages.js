@@ -155,7 +155,8 @@ for (const phone of [...document.querySelectorAll('[type=phone]')]) {
     const src = 'themes/SuiteP/images/message20.png'
     const alt = SUGAR.language.get(window.module_sugar_grp1, 'LBL_SEVEN_SEND_SMS_VIA')
     phone.insertAdjacentHTML('beforeend',
-        `<img alt='${alt}' class='${triggerClass}' data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' title='${alt}' />`)
+        // `<img alt='${alt}' class='${triggerClass}' data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' title='${alt}' />`)
+        `<span class="suitepicon suitepicon-module-stic-work-experience" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}'></span>`)
     phone.setAttribute(attr, 'true')
 }
 
