@@ -1,0 +1,33 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+$mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configurar menú de SinergiaCRM';
+$mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Mòduls ocults';
+$mod_strings['LBL_STIC_MENU_SAVE'] = 'Desar i aplicar';
+$mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
+$mod_strings['LBL_STIC_MENU_INFO'] = 'Arrossegueu els elements del menú al node on voleu que apareguin';
+$mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar icones de mòduls al menú';
+$mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar el menú "TOT"';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Canviar al menú antic';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Voleu canviar al menú antic? Això restaurarà la configuració que tenia en el moment de l\'activació del nou menú. Podeu tornar a activar el nou menú més endavant.';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Canviar al menú avançat';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Voleu canviar al menú avançat? Això activarà el menú avançat utilitzant la configuració actual del menú.';

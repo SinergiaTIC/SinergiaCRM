@@ -58,3 +58,9 @@ $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Reconstruye y repara las
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ir a Sinergia Data Analytics';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'La reconstrucción de Sinergia Data Analytics se ha completado con éxito.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Durante la reconstrucción de Sinergia Data Analytics se han encontrado los siguientes errores';
+
+
+// Advanced Menu
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar menu de SinergiaCRM';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración del menu de SinergiaCRM (avanzado o antiguo)';
+

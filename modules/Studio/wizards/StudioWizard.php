@@ -97,9 +97,21 @@ class StudioWizard
                 header('Location: index.php?module=Administration&action=ConfigureTabs');
                 sugar_cleanup(true);
                 // no break
-            case 'ConfigureGroupTabs':
-                require_once('modules/Studio/TabGroups/EditViewTabs.php');
+            // STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist
+            // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
+            // case 'ConfigureGroupTabs':
+            //     require_once('modules/Studio/TabGroups/EditViewTabs.php');
+            //     break;
+            
+                case 'ConfigureGroupTabs':
+                    global $sugar_config;
+                    if($sugar_config['stic_advanced_menu_enabled']){
+                        require_once('custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.php');
+                    }else{
+                        require_once('modules/Studio/TabGroups/EditViewTabs.php');
+                    }
                 break;
+            // END STIC    
             case 'Workflow':
                 header('Location: index.php?module=WorkFlow&action=ListView');
                 sugar_cleanup(true);
