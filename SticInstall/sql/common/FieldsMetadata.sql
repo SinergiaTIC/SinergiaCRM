@@ -74,6 +74,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsinc_state_c', 'Accounts', 'inc_state_c'),
 ('Accountsinc_municipality_c', 'Accounts', 'inc_municipality_c'),
 ('Accountsinc_town_c', 'Accounts', 'inc_town_c'),
+-- AOW_WorkFlows
+('AOW_WorkFlowstic_run_on_record', 'AOW_WorkFlows', 'stic_run_on_record'),
 -- Contacts
 ('Contactsstic_acquisition_channel_c', 'Contacts', 'stic_acquisition_channel_c'),
 ('Contactsstic_age_c', 'Contacts', 'stic_age_c'),

@@ -109,8 +109,19 @@ class DetailView2 extends EditView
                 $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['AOS_GENLET'] = array ('customCode' => '<input type="button" class="button" onClick="showPopup(\'pdf\');" value="{$APP.LBL_PRINT_AS_PDF}">');
                 require_once('modules/AOS_PDF_Templates/formLetter.php');
                 formLetter::DVPopupHtml($this->module);
+                
             }
-            // END STIC-Custom            
+            // END STIC-Custom          
+            // STIC_Custom 20231124 AAM - Adding button to run Workflows
+            // 
+            global $app_list_strings;
+            $workflowBean = BeanFactory::newBean('AOW_WorkFlow');
+            if (in_array($this->module, $app_list_strings['aow_moduleList'])) {
+                $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['AOW_WORKFLOW'] = array ('customCode' => '<input type="button" class="button" onClick="showPopupWorkflow(\'workflow\');" value="{$APP.LBL_RUN_WORKFLOW}">');
+                require_once('custom/modules/AOW_WorkFlow/AOW_WorkFlowForms.php');
+                AOW_WorkFlowForms::DVPopupHtml($this->module);
+            }
+            // END STIC-Custom   
         } else {
             //If file doesn't exist we create a best guess
             if (!file_exists("modules/$this->module/metadata/$metadataFileName.php") &&
