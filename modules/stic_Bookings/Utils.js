@@ -24,6 +24,7 @@
 var module = "stic_Bookings";
 var resourceLineCount = 0;
 var resourceMaxCount = 0;
+var selectedCenters = [];
 
 /* INCLUDES */
 // Load moment.js to use in validations
@@ -77,7 +78,7 @@ switch (viewType()) {
         previousEndDateHours = "10";
         previousEndDateMinutes = "30";
 
-        // With all_day checked the DateTime fields shouldn't display the time section 
+        // With all_day loadCenterResourcesButtoned the DateTime fields shouldn't display the time section 
         // and the end_date should display one day less
         if ($("#all_day", "form").is(":checked")) {
             $("#start_date_hours").val("00");
@@ -133,6 +134,12 @@ switch (viewType()) {
                 $("#end_date_time_section").parent().show();
             }
         });
+
+        // Set event listener for center popup
+        $("#openCenterPopup").click(function() {
+            openCenterPopup();
+        });
+
 
         // Set autofill mark beside field label
         setAutofill(["name"]);
@@ -408,3 +415,168 @@ function clearRow(form, ln) {
     $(`#resource_daily_rate` + ln).val("");
     $("#resource_color" + ln).css("background-color", "");
 }
+
+
+// Esta función abre el popup para seleccionar el centro
+function openCenterPopup() {
+    var popupRequestData = {
+        call_back_function: "callbackCenterSelectPopup",
+        form_name: "EditView",
+        field_to_name_array: {
+            id: "center_id",
+            name: "center_name"
+        }
+    };
+
+    open_popup("stic_Centers", 600, 400, "", true, false, popupRequestData);
+}
+
+function callbackCenterSelectPopup(popupReplyData) {
+    var centerId = popupReplyData.name_to_value_array.center_id;
+    var centerName = popupReplyData.name_to_value_array.center_name;
+    // Actualizar el contenido del elemento con el nombre del centro seleccionado
+    selectedCenters.push({ centerId: centerId, centerName: centerName });
+    updateSelectedCentersList();
+    $("#selectedCenterName").text(centerName);
+    $("#resourceSearchFields").show();
+
+    if (selectedCenters.length === 1) {
+        loadResourceTypes(centerId);
+    }
+    $("#loadCenterResourcesButton").off('click').on('click', loadResources);
+
+}
+$("#loadCenterResourcesButton").on('click', function() {
+    loadResources();
+});
+
+function loadResources() {
+    var startDate = getFieldValue("start_date");
+    var endDate = getFieldValue("end_date");
+    var resourceType = $("#resourceType").val();
+    var resourceName = $("#resourceName").val();
+    var resourceStatus = $("#resourceStatus").val();
+    var numberOfCenters = $("#numberOfCenters").val();
+
+    // Validar que start_date y end_date estén definidos
+    if (startDate === '' || endDate === '') {
+        add_error_style('EditView', 'start_date', SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
+        add_error_style('EditView', 'end_date', SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'));
+        return;
+    }
+
+    loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters, getDateObject(startDate), getDateObject(endDate));
+}
+
+
+$(document).ready(function() {
+    // Asegurarse de que los campos de búsqueda y el botón estén ocultos al inicio
+    $("#resourceSearchFields").hide();
+});
+function updateSelectedCentersList() {
+    var list = $("#selectedCentersList");
+    list.empty();
+    selectedCenters.forEach(function(center, index) {
+        list.append(
+            "<div>" +
+            center.centerName +
+            " <input type='button' class='removeCenterButton' data-index='" + index + "' value='" + SUGAR.language.get("app_strings", "LBL_REMOVE") + "'>" +
+            "</div>"
+        );
+    });    
+    var startDate = getFieldValue("start_date");
+    var endDate = getFieldValue("end_date");
+    console.log(startDate + "estoy en update");
+    // Agregar manejador de eventos para los botones de eliminación
+    $(".removeCenterButton").off('click').on('click', function() {
+        var index = $(this).data('index');
+        selectedCenters.splice(index, 1);
+        updateSelectedCentersList();
+        var resourceType = $("#resourceType").val();
+        var resourceName = $("#resourceName").val();
+        var resourceStatus = $("#resourceStatus").val();
+        var numberOfCenters = $("#numberOfCenters").val();
+
+        loadCenterResources(resourceType, resourceStatus, resourceName, numberOfCenters, getDateObject(startDate), getDateObject(endDate));
+
+    });
+}
+function loadResourceTypes(centerId) {
+    $.ajax({
+        url: "index.php?module=stic_Bookings&action=getResourceTypes&sugar_body_only=true",
+        dataType: "json",
+        data: { centerId: centerId },
+        success: function(res) {
+            if (res.success) {
+                var options = res.options;
+                var resourceTypeSelect = $("#resourceType");
+                resourceTypeSelect.empty();
+                options.forEach(function(option) {
+                    resourceTypeSelect.append(new Option(option.label, option.value));
+                });
+
+                var options2 = res.options2;
+                var resourceStatusSelect = $("#resourceStatus");
+                resourceStatusSelect.empty();
+                options2.forEach(function(option) {
+                    resourceStatusSelect.append(new Option(option.label, option.value));
+                });
+
+
+            } else {
+                alert("Error al cargar los tipos de recurso");
+            }
+        },
+        error: function() {
+            alert("Error al enviar la solicitud");
+        }
+    });
+}
+
+
+function loadCenterResources(resourceType = '',resourceStatus = '',resourceName = '', numberOfCenters='', startDate, endDate) {
+    var centerIds = selectedCenters.map(center => center.centerId).join(',');
+    var startDate = getDateObject(getFieldValue("start_date"));
+    var endDate = getDateObject(getFieldValue("end_date"));
+
+    $.ajax({
+        url: "index.php?module=stic_Bookings&action=loadCenterResources&sugar_body_only=true",
+        dataType: "json",
+        data: {
+            startDate: dateToYMDHM(startDate),
+            endDate: dateToYMDHM(endDate),
+            centerIds: centerIds,
+            resourceType: resourceType,
+            resourceStatus: resourceStatus,
+            resourceName: resourceName,
+            numberOfCenters: numberOfCenters
+        },
+        success: function(res) {
+            if (res.success) {
+
+                updateResourceLines(res.resources);
+                $("#resourceCount").text("Número de centros encontrados: " + res.resources.length);
+            } else {
+                alert("Error al cargar los recursos del centro");
+            }
+        },
+        error: function() {
+            alert("Error al enviar la solicitud");
+        }
+    });
+}
+
+function updateResourceLines(resources) {
+    // Limpiar las líneas de recursos actuales
+    for (var i = 0; i < resourceMaxCount; i++) {
+        $("#resourceLine" + i).remove();
+    }
+    resourceMaxCount = 0;
+
+    // Insertar las nuevas líneas de recursos
+    resources.forEach(function(resource) {
+        insertResourceLine();
+        populateResourceLine(resource, resourceMaxCount - 1);
+    });
+}
+

@@ -52,6 +52,7 @@ $mod_strings = array(
     'LBL_HOMEPAGE_TITLE' => 'Els meus Recursos',
     'LNK_NEW_RECORD' => 'Crea un Recurs',
     'LNK_LIST' => 'Mostra els Recursos',
+    'LNK_LIST2' => 'Mostra les Places',
     'LNK_IMPORT_STIC_RESOURCES' => 'Importa Recursos',
     'LBL_SEARCH_FORM_TITLE' => 'Cerca Recursos',
     'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
@@ -59,7 +60,7 @@ $mod_strings = array(
     'LBL_STIC_RESOURCES_SUBPANEL_TITLE' => 'Recursos',
     'LBL_NEW_FORM_TITLE' => 'Nou Recurs',
     'LBL_PANEL_STIC_RESOURCES_INFORMATION' => 'Dades generals',
-    'LBL_DETAILVIEW_PANEL1' => 'Detalls del registre',
+    'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
     'LBL_STATUS' => 'Estat',
     'LBL_CODE' => 'Codi',
@@ -70,4 +71,9 @@ $mod_strings = array(
     'LBL_OWNER_CONTACT' => 'Persona propietària',
     'LBL_OWNER_ACCOUNT' => 'Organització propietària',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Reserves',
+    'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE' => 'Centre',
+    'LBL_PLACE_TYPE' => 'Tipus de plaça',
+    'LBL_GENDER' => 'Gènere',
+    'LBL_USER_TYPE' => "tipus d'usuari",
+    'LBL_BOOKING_TYPE' => 'Tipus de reserve',
 );

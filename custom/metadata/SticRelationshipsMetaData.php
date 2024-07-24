@@ -6707,3 +6707,88 @@ $dictionary["stic_custom_views_stic_custom_view_customizations"] = array (
       ),
     ),
 );
+$dictionary["stic_resources_stic_centers"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'from_studio' => true,
+    'relationships' => 
+    array (
+      'stic_resources_stic_centers' => 
+      array (
+        'lhs_module' => 'stic_Centers',
+        'lhs_table' => 'stic_centers',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Resources',
+        'rhs_table' => 'stic_resources',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_resources_stic_centers_c',
+        'join_key_lhs' => 'stic_resources_stic_centersstic_centers_ida',
+        'join_key_rhs' => 'stic_resources_stic_centersstic_resources_idb',
+      ),
+    ),
+    'table' => 'stic_resources_stic_centers_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_resources_stic_centersstic_centers_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_resources_stic_centersstic_resources_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_resources_stic_centersspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_resources_stic_centers_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_resources_stic_centersstic_centers_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_resources_stic_centers_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_resources_stic_centersstic_resources_idb',
+        ),
+      ),
+    ),
+  );
