@@ -137,7 +137,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 
 $(function() {
   debugger;
-  if (viewType() === 'detail') {
+  if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 
 const attr = 'sms-button'
 const triggerClass = 'seven-send-sms'

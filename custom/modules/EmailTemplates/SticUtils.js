@@ -1,5 +1,6 @@
 /* HEADER */
 // Set module name
+debugger;
 var module = "EmailTemplates";
 
 /* VIEWS CUSTOM CODE */
@@ -38,7 +39,12 @@ switch (viewType()) {
       break;
   
     case "detail":
+      debugger;
       // Set autofill mark beside field label
+      if ($('#text_only').prop('checked')) {
+        toggle_textarea(this);
+        $("#html_div").hide();
+      }
       break;
   
     case "list":
