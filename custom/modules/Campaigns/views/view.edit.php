@@ -20,13 +20,45 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
-require_once 'modules/Campaigns/controller.php';
-class CustomCampaignsController extends CampaignsController
+require_once 'include/MVC/View/views/view.edit.php';
+require_once 'SticInclude/Views.php';
+
+class CustomCampaignsViewEdit extends ViewEdit
 {
-    // STIC - 20210624  - We override the process function to recover the classic view to create or edit a campaign
-    public function process()
+
+    public function __construct()
     {
-        SugarController::process();
+        parent::__construct();
+        $this->useForSubpanel = false;
+        $this->useModuleQuickCreateTemplate = true;
     }
+
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+        // Write here you custom code
+        include_once "custom/modules/Campaigns/SticUtils.php";
+        fillDynamicListsForNotifications();
+    }
+
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+
+        // Write here you custom code
+        echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
+
+        include_once "custom/modules/Campaigns/SticUtils.php";
+        echo getNotificationCampaignEmailDataScript();
+    }
+
 }

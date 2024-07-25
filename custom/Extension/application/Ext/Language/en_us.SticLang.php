@@ -292,6 +292,8 @@ $app_list_strings['record_type_display_notes']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
 
+$app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
+
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';
@@ -3560,3 +3562,23 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
+// Campaigns: Campaign types
+$app_list_strings['campaign_type_dom'][''] = '';
+$app_list_strings['campaign_type_dom']['Telesales'] = 'Telesales';
+$app_list_strings['campaign_type_dom']['Mail'] = 'Mail';
+$app_list_strings['campaign_type_dom']['Email'] = 'Email';
+$app_list_strings['campaign_type_dom']['Print'] = 'Print';
+$app_list_strings['campaign_type_dom']['Web'] = 'Web';
+$app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
+$app_list_strings['campaign_type_dom']['Television'] = 'Television';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Newsletter';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Survey';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notification';
+
+// Email Templates: Template types
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaign';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notification';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';

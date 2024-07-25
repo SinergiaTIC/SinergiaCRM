@@ -293,6 +293,8 @@ $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
 
+$app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
+
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';
@@ -3593,3 +3595,24 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunions';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencions';
 $app_list_strings['map_relate_type_list']['Project'] = 'Projectes';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Públic Objectiu';
+
+// Campanyes: Tipus de campanya
+$app_list_strings['campaign_type_dom'][''] = '';
+$app_list_strings['campaign_type_dom']['Telesales'] = 'Televenda';
+$app_list_strings['campaign_type_dom']['Mail'] = 'Correu';
+$app_list_strings['campaign_type_dom']['Email'] = 'Correu electrònic';
+$app_list_strings['campaign_type_dom']['Print'] = 'Impressió';
+$app_list_strings['campaign_type_dom']['Web'] = 'Web';
+$app_list_strings['campaign_type_dom']['Radio'] = 'Ràdio';
+$app_list_strings['campaign_type_dom']['Television'] = 'Televisió';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Butlletí de Notícies';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Enquesta';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació';
+
+// Plantilles de Correu electrònic: Tipus de plantilla
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campanya';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificació';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu electrònic';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';

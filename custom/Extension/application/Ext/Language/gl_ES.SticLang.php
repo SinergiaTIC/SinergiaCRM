@@ -293,6 +293,8 @@ $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
 
+$app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
+
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';
@@ -3593,3 +3595,24 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reunións';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvencións';
 $app_list_strings['map_relate_type_list']['Project'] = 'Proxectos';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Obxectivo';
+
+// Campañas: Tipos de campaña
+$app_list_strings['campaign_type_dom'][''] = '';
+$app_list_strings['campaign_type_dom']['Telesales'] = 'Televenta';
+$app_list_strings['campaign_type_dom']['Mail'] = 'Correo';
+$app_list_strings['campaign_type_dom']['Email'] = 'Email';
+$app_list_strings['campaign_type_dom']['Print'] = 'Imprenta';
+$app_list_strings['campaign_type_dom']['Web'] = 'Web';
+$app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
+$app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de Noticias';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
+
+// Plantillas de email: Tipos de plantilla
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
