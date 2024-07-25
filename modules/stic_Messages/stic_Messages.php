@@ -22,10 +22,12 @@
  */
 
 // require_once 'seven/sendSMSfunctions.php';
-require_once 'modules/stic_Messages/SMSHelper.php';
+// require_once 'modules/stic_Messages/SevenSMSHelper.php';
 
 class stic_Messages extends Basic
 {
+    const ERROR_NO_HELPER_CLASS = 11;
+
     public $new_schema = true;
     public $module_dir = 'stic_Messages';
     public $object_name = 'stic_Messages';
@@ -57,6 +59,7 @@ class stic_Messages extends Basic
     public $template_id_c;
     public $parent_type;
     public $parent_id;
+    public $status;
 
 
     public function bean_implements($interface)
@@ -101,8 +104,9 @@ class stic_Messages extends Basic
 
         $this->assigned_user_id = $current_user->id;
 
+        // If Message is being created
         if ($this->id === null) {
-            $this->sendSMS();
+            $this->sendMessage();
         }
 
         // Save the bean
@@ -173,29 +177,30 @@ class stic_Messages extends Basic
         $this->name = $relatedObjectName . ' - ' . $formatedDate . $templateName;
     }
 
-    public function sendSMS() {
-        // TODOEPS; Veure si enlloc de crear instància cada vegada, millor utilitzar static, singleton o quelcom
-        $smsHelper = new SMSHelper();
-        $smsHelper->sendSMSwithText($this->sender, $this->message, $this->phone);
+    public function sendMessage() {
+
+
+        $messageHelper = null;
+        $file = $this->type;
+        //TODOEPS: Triar la classe Helper en funció del tipus
+        if (file_exists('custom/modules/stic_Messages/Helpers/' . $file . '.php')) {
+            require_once('custom/modules/stic_Messages/Helpers/' . $file . '.php');
+            $messageHelper = new $file; 
+        }
+        else if (file_exists('modules/stic_Messages/Helpers/' . $file . '.php')) {
+            require_once('modules/stic_Messages/Helpers/' . $file . '.php');
+            $messageHelper = new $file; 
+        }
+
+        if ($messageHelper !== null) {
+            $returnCode = $messageHelper->sendMessage($this->sender, $this->message, $this->phone);
+        }
+        else {
+            $returnCode = self::ERROR_NO_HELPER_CLASS;
+        }
+        return $returnCode;
+
     }
-    // public function sendSMS() {
-    //     if ($_POST['module'] === 'stic_Messages') {
-    //         $_POST['number'] = $this->phone;
-    //         $_POST['id'] = $this->parent_id;
-    //         $_POST['module'] = $this->parent_type;
-    //         $_POST['template'] = $this->template_id_c;
-    //         $_POST['message'] = $this->message;
-
-    //         require 'modules/seven/sendSMS.php';
-
-    //         // restore overwritten POST values
-    //         $_POST['module'] = 'stic_Messages';
-    //         $_POST['id'] = $this->id;
-
-    //         // retrieve message once template data applied
-    //         $this->message = $_POST['message'];
-    //     }
-    // }
 
     protected function replaceTemplateVariables($screenText, $bean)
     {

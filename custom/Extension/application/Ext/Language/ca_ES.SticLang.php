@@ -3452,7 +3452,7 @@ $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = '
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
 // Missatges: Tipus
-$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
 
 // Missatges: Direcció

@@ -1,6 +1,6 @@
 <?php
 
-class SMSHelper {
+class SevenSMSHelper {
 
     protected bool $active = false;
     protected ?string $apiKey = null;
@@ -45,7 +45,7 @@ class SMSHelper {
         return $this;
     }
 
-    public function sendSMSwithText(?string $from, string $text, string $to): bool {
+    public function sendMessage(?string $from, string $text, string $to): bool {
         // $to = preg_replace('~\D~', '', $to);
         $to = preg_replace('~[^\d,]~', '', $to);
         $result = $this->apiCall($from, $text, $to);
