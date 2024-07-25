@@ -1,5 +1,8 @@
 <?php
 
+// SMS Helper class to send SMS messages through Seven provider.
+// Info about API can be found at: https://docs.seven.io/en/rest-api/endpoints/sms
+
 class SevenSMSHelper {
 
     protected bool $active = false;
@@ -45,14 +48,23 @@ class SevenSMSHelper {
         return $this;
     }
 
-    public function sendMessage(?string $from, string $text, string $to): bool {
+    public function sendMessage(?string $from, string $text, string $to): array {
         // $to = preg_replace('~\D~', '', $to);
         $to = preg_replace('~[^\d,]~', '', $to);
         $result = $this->apiCall($from, $text, $to);
-        return $result['success'] == 100;
+        $resultArray = json_decode($result, true);
+        if ($resultArray['success'] != 100) {
+            return array('code' => stic_Messages::ERROR_NOT_SENT, 'message' => $result);
+        }
+        if ($resultArray['messages'][0]['success']) {
+            return array('code' => stic_Messages::OK);
+        }
+        else {
+            return array('code' => stic_Messages::ERROR_NOT_SENT, 'message' => $result);
+        }
     }
 
-    public function apiCall(?string $from, string $text, string $to): array {
+    public function apiCall(?string $from, string $text, string $to): string {
         if (!$this->getActive()) return [null, null];
 
         $curlOpts = [
@@ -71,7 +83,7 @@ class SevenSMSHelper {
         $response = curl_exec($curl);
         curl_close($curl);
 
-        return json_decode($response, true);
+        return $response;
     }
 
 

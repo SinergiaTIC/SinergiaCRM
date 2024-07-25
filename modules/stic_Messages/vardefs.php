@@ -131,6 +131,16 @@ $dictionary['stic_Messages'] = array(
             'cols' => 80,
             'inline_edit' => false,
         ),
+        'response' => array(
+            'name' => 'response',
+            'vname' => 'LBL_RESPONSE',
+            'type' => 'text',
+            'required' => true,
+            'comment' => 'Message returned from provider',
+            'rows' => 6,
+            'cols' => 80,
+            'inline_edit' => false,
+        ),
         'parent_type' => array(
             'name' => 'parent_type',
             'vname' => 'LBL_PARENT_TYPE',

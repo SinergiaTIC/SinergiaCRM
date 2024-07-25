@@ -62,6 +62,13 @@ array(
                       'label' => 'LBL_TEMPLATE',
                     ),
                 ),
+                2 => array(
+                    0 => array(
+                        'name' => 'status',
+                        'studio' => 'visible',
+                        'label' => 'LBL_STATUS',
+                    ),
+                ),
             ),
         ),
     ),

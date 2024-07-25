@@ -63,6 +63,7 @@ $mod_strings = array (
   'LBL_MESSAGE' => 'Missatge',
   'LBL_TYPE' => 'Tipus',
   'LBL_STATUS' => 'Estat',
+  'LBL_RESPONSE' => 'Resposta',
   'LBL_DIRECTION' => 'Direcció',
   'LBL_PHONE' => 'Telèfon',
   'LBL_TEMPLATE' => 'Plantilla',

@@ -26,7 +26,9 @@
 
 class stic_Messages extends Basic
 {
+    const OK = 1;
     const ERROR_NO_HELPER_CLASS = 11;
+    const ERROR_NOT_SENT = 12;
 
     public $new_schema = true;
     public $module_dir = 'stic_Messages';
@@ -60,6 +62,7 @@ class stic_Messages extends Basic
     public $parent_type;
     public $parent_id;
     public $status;
+    public $response;
 
 
     public function bean_implements($interface)
@@ -105,9 +108,18 @@ class stic_Messages extends Basic
         $this->assigned_user_id = $current_user->id;
 
         // If Message is being created
-        if ($this->id === null) {
-            $this->sendMessage();
+        if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
+            $response = $this->sendMessage();
+            if ($response['code'] === self::OK) {
+                $this->status = 'sent';
+                $this->response = $response['message'];
+            }
+            else {
+                $this->status = 'error';
+                $this->response = $response['message'];
+            }
         }
+
 
         // Save the bean
         parent::save($check_notify);
