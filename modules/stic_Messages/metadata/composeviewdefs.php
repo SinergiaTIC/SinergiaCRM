@@ -73,17 +73,18 @@ array(
                             )
                         ),
                     ),
-                    1 => array(
-                        'name' => 'date_entered',
-                        'customCode' => '{$fields.date_entered.value}',
-                        'label' => 'LBL_DATE_ENTERED',
-                    ),
+
                 ),
                 2 => array(
                     0 => array(
                         'name' => 'sender',
                         'comment' => 'Sender',
                         'label' => 'LBL_SENDER',
+                    ),
+                    1 => array(
+                        'name' => 'phone',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PHONE',
                     ),
                 ),
                 3 => array(
@@ -107,9 +108,9 @@ array(
                 ),
                 5 => array(
                     0 => array(
-                        'name' => 'phone',
+                        'name' => 'status',
                         'studio' => 'visible',
-                        'label' => 'LBL_PHONE',
+                        'label' => 'LBL_STATUS',
                     ),
                     1 => array (
                       'name' => 'template',

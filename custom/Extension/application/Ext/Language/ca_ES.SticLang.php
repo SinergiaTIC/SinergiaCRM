@@ -3458,6 +3458,12 @@ $app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
 // Missatges: Direcció
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
+
+// Missatges: Status
+$app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
+$app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
+
 // Vistes personalitzades: Tipus d'usuari
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';

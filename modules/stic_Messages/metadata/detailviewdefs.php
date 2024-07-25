@@ -80,6 +80,11 @@ array(
                         'comment' => 'Sender',
                         'label' => 'LBL_SENDER',
                     ),
+                    1 => array(
+                        'name' => 'phone',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PHONE',
+                    ),
                 ),
                 3 => array(
                     0 => array(
@@ -102,9 +107,9 @@ array(
                 ),
                 5 => array(
                     0 => array(
-                        'name' => 'phone',
+                        'name' => 'status',
                         'studio' => 'visible',
-                        'label' => 'LBL_PHONE',
+                        'label' => 'LBL_STATUS',
                     ),
                     1 => array (
                       'name' => 'template',

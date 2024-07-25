@@ -24,7 +24,7 @@ $module_name = 'stic_Messages';
 $listViewDefs[$module_name] =
 array(
     'NAME' => array(
-        'width' => '32%',
+        'width' => '30%',
         'label' => 'LBL_NAME',
         'default' => true,
         'link' => true,
@@ -48,18 +48,25 @@ array(
         'type' => 'enum',
         'studio' => 'visible',
         'label' => 'LBL_TYPE',
-        'width' => '10%',
+        'width' => '7%',
         'default' => true,
     ),
     'DIRECTION' => array(
         'type' => 'enum',
         'studio' => 'visible',
         'label' => 'LBL_DIRECTION',
-        'width' => '10%',
+        'width' => '7%',
         'default' => true,
     ),
+    'STATUS' => array(
+        'type' => 'enum',
+        'studio' => 'visible',
+        'width' => '7%',
+        'label' => 'LBL_STATUS',
+        'default' => true
+    ),
     'PHONE' => array(
-        'width' => '15%',
+        'width' => '7%',
         'label' => 'LBL_PHONE',
         'default' => true
     ),
@@ -71,10 +78,10 @@ array(
       'label' => 'LBL_TEMPLATE',
       'id' => 'TEMPLATE_ID',
       'link' => true,
-      'width' => '10%',
+      'width' => '7%',
     ),
     'SENDER' => array(
-        'width' => '15%',
+        'width' => '10%',
         'label' => 'LBL_SENDER',
         'default' => false
     ),
@@ -82,7 +89,7 @@ array(
         'type' => 'text',
         'label' => 'LBL_MESSAGE',
         'sortable' => false,
-        'width' => '10%',
+        'width' => '20%',
         'default' => false,
     ),
     'ASSIGNED_USER_NAME' => array(

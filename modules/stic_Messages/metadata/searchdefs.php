@@ -30,14 +30,6 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'type' => array(
-                'type' => 'enum',
-                'studio' => 'visible',
-                'label' => 'LBL_TYPE',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'level',
-            ),
             'parent_name' => array(
                 'type' => 'parent',
                 'label' => 'LBL_LIST_RELATED_TO',
@@ -45,12 +37,13 @@ array(
                 'default' => true,
                 'name' => 'parent_name',
             ),
-            'date_entered' => array(
-                'type' => 'datetime',
-                'label' => 'LBL_DATE_ENTERED',
+            'type' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_TYPE',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'date_entered',
+                'name' => 'type',
             ),
             'direction' => array(
                 'type' => 'enum',
@@ -58,7 +51,15 @@ array(
                 'label' => 'LBL_DIRECTION',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'level',
+                'name' => 'direction',
+            ),
+            'STATUS' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_STATUS',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'status',
             ),
             'phone' =>array(
                 'name' => 'phone',
@@ -66,6 +67,13 @@ array(
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
+            ),
+            'date_entered' => array(
+                'type' => 'datetime',
+                'label' => 'LBL_DATE_ENTERED',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'date_entered',
             ),
             'sender' =>array(
                 'name' => 'sender',
@@ -107,14 +115,6 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'type' => array(
-                'type' => 'enum',
-                'studio' => 'visible',
-                'label' => 'LBL_TYPE',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'level',
-            ),
             'parent_name' => array(
                 'type' => 'parent',
                 'label' => 'LBL_LIST_RELATED_TO',
@@ -122,12 +122,13 @@ array(
                 'default' => true,
                 'name' => 'parent_name',
             ),
-            'date_entered' => array(
-                'type' => 'datetime',
-                'label' => 'LBL_DATE_ENTERED',
+            'type' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_TYPE',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'date_entered',
+                'name' => 'level',
             ),
             'direction' => array(
                 'type' => 'enum',
@@ -137,6 +138,14 @@ array(
                 'default' => true,
                 'name' => 'level',
             ),
+            'status' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_STATUS',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'status',
+            ),
             'phone' =>array(
                 'name' => 'phone',
                 'label' => 'LBL_PHONE',
@@ -144,6 +153,13 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
+            'date_entered' => array(
+                'type' => 'datetime',
+                'label' => 'LBL_DATE_ENTERED',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'date_entered',
+            ),            
             'sender' =>array(
                 'name' => 'sender',
                 'label' => 'LBL_SENDER',
