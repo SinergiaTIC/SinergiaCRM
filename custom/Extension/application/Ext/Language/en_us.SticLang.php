@@ -85,6 +85,7 @@ $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 // Messages: subpanel actions
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New Message';
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New Message';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content, do you want to continue?';
 
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';
@@ -3460,10 +3461,16 @@ $app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Outbound';
 
-// Missatges: Status
+// Messages: Status
 $app_list_strings['stic_messages_status_list']['sent'] = 'Sent';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
 $app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
+
+// Messages: Parent types
+$app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Accounts';
+$app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Contacts';
+$app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Leads';
+$app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Employees';
 
 // Custom Views: User Types
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Regular user';

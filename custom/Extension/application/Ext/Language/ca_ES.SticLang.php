@@ -84,6 +84,7 @@ $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 // Missatges: accions subpanell
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nou Missatge';
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou Missatge';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge, ¿vol continuar?';
 
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
@@ -3463,6 +3464,12 @@ $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
 $app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
+
+// Missatges: Parent types
+$app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organitzacions';
+$app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persones';
+$app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interessats';
+$app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Empleats';
 
 // Vistes personalitzades: Tipus d'usuari
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
