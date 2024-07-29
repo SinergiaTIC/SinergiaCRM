@@ -5,7 +5,7 @@
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2019 SalesAgility Ltd.
+ * Copyright (C) 2011 - 2022 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -42,53 +42,58 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$mod_strings = array(
-    'LBL_MODULE_NAME' => 'Llistes de Públic Objectiu',
-    'LBL_MODULE_ID' => 'Llistes de Prospectes',
-    'LBL_MODULE_TITLE' => 'Llistes de Públic Objectiu: Inici',
-    'LBL_SEARCH_FORM_TITLE' => 'Cerca de Llistes de Públic Objectiu',
-    'LBL_LIST_FORM_TITLE' => 'Llistes de Públic Objectiu',
-    'LBL_PROSPECT_LIST_NAME' => 'Llistes de Públic Objectiu:',
-    'LBL_NAME' => 'Nom',
-    'LBL_ENTRIES' => 'Total d\'Entrades',
-    'LBL_LIST_PROSPECT_LIST_NAME' => 'Llista de Públic Objectiu',
-    'LBL_LIST_ENTRIES' => 'Públic Objectiu en la Lista',
-    'LBL_LIST_DESCRIPTION' => 'Descripció',
-    'LBL_LIST_TYPE_NO' => 'Tipus',
-    'LBL_LIST_END_DATE' => 'Data Fi',
-    'LBL_DATE_ENTERED' => 'Data Creació',
-    'LBL_MARKETING_ID' => 'Id de Màrqueting',
-    'LBL_DATE_MODIFIED' => 'Data Modificació',
-    'LBL_MODIFIED' => 'Modificada per',
-    'LBL_CREATED' => 'Creada per',
-    'LBL_ASSIGNED_TO' => 'Assignada a',
+$mod_strings = [
+
+    'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
+    'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
+    'LBL_ID' => 'ID',
+    'LBL_DATE_ENTERED' => 'Data de Creació',
+    'LBL_DATE_MODIFIED' => 'Data de Modificació',
+    'LBL_MODIFIED' => 'Modificat per',
+    'LBL_MODIFIED_NAME' => 'Modificat per',
+    'LBL_CREATED' => 'Creat per',
     'LBL_DESCRIPTION' => 'Descripció',
-    'LNK_NEW_CAMPAIGN' => 'Crear Campanya',
-    'LNK_CAMPAIGN_LIST' => 'Campanyes',
-    'LNK_NEW_PROSPECT_LIST' => 'Crear Llista de Públic Objectiu',
-    'LNK_PROSPECT_LIST_LIST' => 'Llista de Públic Objectiu',
-    'LBL_MODIFIED_BY' => 'Modificada per',
-    'LBL_CREATED_BY' => 'Creada per',
-    'LNK_NEW_PROSPECT' => 'Crear Públic Objectiu',
-    'LNK_PROSPECT_LIST' => 'Públic Objectiu',
+    'LBL_DELETED' => 'Suprimit',
+    'LBL_NAME' => 'Nom',
+    'LBL_CREATED_USER' => 'Creat per',
+    'LBL_MODIFIED_USER' => 'Modificat per',
+    'LBL_LIST_NAME' => 'Nom',
+    'LBL_EDIT_BUTTON' => 'Edita',
+    'LBL_REMOVE' => 'Desvincula',
+    'LBL_LIST_FORM_TITLE' => 'Llista de Connexions OAuth Externes',
+    'LBL_MODULE_NAME' => 'Connexions OAuth Externes',
+    'LBL_MODULE_TITLE' => 'Connexions OAuth Externes',
+    'LBL_HOMEPAGE_TITLE' => 'Les Meves Connexions OAuth Externes',
+    'LNK_NEW_RECORD' => 'Nova Connexió OAuth Externa',
 
-    'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contactes',
-    'LBL_LEADS_SUBPANEL_TITLE' => 'Clients Potencials',
-    'LBL_PROSPECTS_SUBPANEL_TITLE' => 'Públic Objectiu',
-    'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Comptes',
-    'LBL_COPY_PREFIX' => 'Copia de',
-    'LBL_USERS_SUBPANEL_TITLE' => 'Usuaris',
+    'LNK_LIST' => 'Connexions OAuth Externes',
+    'LBL_SEARCH_FORM_TITLE' => 'Cerca Connexions OAuth Externes',
+    'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
+    'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
+    'LBL_NEW_FORM_TITLE' => 'Nova Connexió OAuth Externa',
+
+    'LBL_LIST_DELETE' => 'Eliminar',
     'LBL_TYPE' => 'Tipus',
-    'LBL_LIST_TYPE' => 'Tipus',
-    'LBL_LIST_TYPE_LIST_NAME' => 'Tipus',
-    'LBL_NEW_FORM_TITLE' => 'Nova Llista de Públic Objectiu',
-    'LBL_MARKETING_NAME' => 'Nom de màrqueting',
-    'LBL_DOMAIN_NAME' => 'Nom de Domini',
-    'LBL_DOMAIN' => 'No hi ha correus electrònics per aquest domini',
-    'LBL_LIST_PROSPECTLIST_NAME' => 'Nom',
 
-    'LBL_EMAIL_MARKETING' => 'Màrqueting per correu electrònic',
+    'LBL_CLIENT_ID' => 'ID del Client',
+    'LBL_CLIENT_SECRET' => 'Secret del Client',
+    'LBL_TOKEN_TYPE' => 'Tipus de Token',
+    'LBL_EXPIRES_IN' => 'Caduca en',
+    'LBL_ACCESS_TOKEN' => "Token d'Accés",
+    'LBL_REFRESH_TOKEN' => 'Token de Refresc',
+    'LBL_PROVIDER' => 'Proveïdor',
 
-    'LBL_ASCENDING' => 'Ascendent',
-    'LBL_DESCENDING' => 'Descendent',
-);
+    'LBL_AUTHENTICATE' => 'Autenticar',
+
+    'LBL_EXTERNAL_OAUTH_PROVIDER' => 'Proveïdor',
+    'LBL_EXTERNAL_OAUTH_PROVIDER_NAME' => 'Proveïdor',
+    'LBL_EXTERNAL_OAUTH_PROVIDER_ID' => 'ID del Proveïdor',
+
+    'LNK_LIST_CREATE_NEW_PERSONAL' => 'Nova Connexió OAuth Personal',
+    'LNK_LIST_CREATE_NEW_GROUP' => 'Nova Connexió OAuth de Grup',
+    'LNK_LIST_INBOUND_EMAILS' => 'Comptes de Correu Electrònic Entrant',
+    'LNK_LIST_OUTBOUND_EMAILS' => 'Comptes de Correu Electrònic Sortint',
+    'LNK_LIST_EXTERNAL_OAUTH_PROVIDERS' => 'Proveïdors OAuth Externs',
+
+    'LBL_OWNER' => 'Propietari',
+];

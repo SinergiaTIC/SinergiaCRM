@@ -5,7 +5,7 @@
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2019 SalesAgility Ltd.
+ * Copyright (C) 2011 - 2022 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -42,53 +42,58 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$mod_strings = array(
-    'LBL_MODULE_NAME' => 'Listas de Público Objetivo',
-    'LBL_MODULE_ID' => 'Listas de Público Objetivo',
-    'LBL_MODULE_TITLE' => 'Listas de Público Objetivo: Inicio',
-    'LBL_SEARCH_FORM_TITLE' => 'Búsqueda de Listas de Público Objetivo',
-    'LBL_LIST_FORM_TITLE' => 'Listas de Público Objetivo',
-    'LBL_PROSPECT_LIST_NAME' => 'Listas de Público Objetivo:',
-    'LBL_NAME' => 'Nombre',
-    'LBL_ENTRIES' => 'Total de Entradas',
-    'LBL_LIST_PROSPECT_LIST_NAME' => 'Lista de Público Objetivo',
-    'LBL_LIST_ENTRIES' => 'Público Objetivo en la Lista',
-    'LBL_LIST_DESCRIPTION' => 'Descripción',
-    'LBL_LIST_TYPE_NO' => 'Tipo',
-    'LBL_LIST_END_DATE' => 'Fecha Fin',
+$mod_strings = [
+
+    'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
+    'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
+    'LBL_ID' => 'ID',
     'LBL_DATE_ENTERED' => 'Fecha de Creación',
-    'LBL_MARKETING_ID' => 'Id de Marketing',
     'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
-    'LBL_MODIFIED' => 'Modificada por',
-    'LBL_CREATED' => 'Creada por',
-    'LBL_ASSIGNED_TO' => 'Asignado a',
+    'LBL_MODIFIED' => 'Modificado por',
+    'LBL_MODIFIED_NAME' => 'Modificado por',
+    'LBL_CREATED' => 'Creado por',
     'LBL_DESCRIPTION' => 'Descripción',
-    'LNK_NEW_CAMPAIGN' => 'Crear Campaña',
-    'LNK_CAMPAIGN_LIST' => 'Campañas',
-    'LNK_NEW_PROSPECT_LIST' => 'Crear Lista de Público Objetivo',
-    'LNK_PROSPECT_LIST_LIST' => 'Lista de Público Objetivo',
-    'LBL_MODIFIED_BY' => 'Modificada por',
-    'LBL_CREATED_BY' => 'Creada por',
-    'LNK_NEW_PROSPECT' => 'Crear Público Objetivo',
-    'LNK_PROSPECT_LIST' => 'Público Objetivo',
+    'LBL_DELETED' => 'Eliminado',
+    'LBL_NAME' => 'Nombre',
+    'LBL_CREATED_USER' => 'Creado por',
+    'LBL_MODIFIED_USER' => 'Modificado por',
+    'LBL_LIST_NAME' => 'Nombre',
+    'LBL_EDIT_BUTTON' => 'Editar',
+    'LBL_REMOVE' => 'Desvincular',
+    'LBL_LIST_FORM_TITLE' => 'Lista de Conexiones OAuth Externas',
+    'LBL_MODULE_NAME' => 'Conexiones OAuth Externas',
+    'LBL_MODULE_TITLE' => 'Conexiones OAuth Externas',
+    'LBL_HOMEPAGE_TITLE' => 'Mis Conexiones OAuth Externas',
+    'LNK_NEW_RECORD' => 'Crear una Conexión OAuth Externa',
 
-    'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contactos',
-    'LBL_LEADS_SUBPANEL_TITLE' => 'Clientes Potenciales',
-    'LBL_PROSPECTS_SUBPANEL_TITLE' => 'Público Objetivo',
-    'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Cuentas',
-    'LBL_COPY_PREFIX' => 'Copia de',
-    'LBL_USERS_SUBPANEL_TITLE' => 'Usuarios',
+    'LNK_LIST' => 'Conexiones OAuth Externas',
+    'LBL_SEARCH_FORM_TITLE' => 'Buscar Conexiones OAuth Externas',
+    'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
+    'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
+    'LBL_NEW_FORM_TITLE' => 'Nueva Conexión OAuth Externa',
+
+    'LBL_LIST_DELETE' => 'Eliminar',
     'LBL_TYPE' => 'Tipo',
-    'LBL_LIST_TYPE' => 'Tipo',
-    'LBL_LIST_TYPE_LIST_NAME' => 'Tipo',
-    'LBL_NEW_FORM_TITLE' => 'Nueva Lista de Público Objetivo',
-    'LBL_MARKETING_NAME' => 'Nombre de Marketing',
-    'LBL_DOMAIN_NAME' => 'Nombre de Dominio',
-    'LBL_DOMAIN' => 'No hay correos para este dominio',
-    'LBL_LIST_PROSPECTLIST_NAME' => 'Nombre',
 
-    'LBL_EMAIL_MARKETING' => 'Marketing por Email',
+    'LBL_CLIENT_ID' => 'ID del Cliente',
+    'LBL_CLIENT_SECRET' => 'Secreto del Cliente',
+    'LBL_TOKEN_TYPE' => 'Tipo de Token',
+    'LBL_EXPIRES_IN' => 'Expira en',
+    'LBL_ACCESS_TOKEN' => 'Token de Acceso',
+    'LBL_REFRESH_TOKEN' => 'Token de Refresco',
+    'LBL_PROVIDER' => 'Proveedor',
 
-    'LBL_ASCENDING' => 'Ascendente',
-    'LBL_DESCENDING' => 'Descendente',
-);
+    'LBL_AUTHENTICATE' => 'Autenticar',
+
+    'LBL_EXTERNAL_OAUTH_PROVIDER' => 'Proveedor',
+    'LBL_EXTERNAL_OAUTH_PROVIDER_NAME' => 'Proveedor',
+    'LBL_EXTERNAL_OAUTH_PROVIDER_ID' => 'ID del Proveedor',
+
+    'LNK_LIST_CREATE_NEW_PERSONAL' => 'Nueva Conexión OAuth Personal',
+    'LNK_LIST_CREATE_NEW_GROUP' => 'Nueva Conexión OAuth de Grupo',
+    'LNK_LIST_INBOUND_EMAILS' => 'Cuentas de Correo Electrónico Entrante',
+    'LNK_LIST_OUTBOUND_EMAILS' => 'Cuentas de Correo Electrónico Saliente',
+    'LNK_LIST_EXTERNAL_OAUTH_PROVIDERS' => 'Proveedores OAuth Externos',
+
+    'LBL_OWNER' => 'Propietario',
+];
