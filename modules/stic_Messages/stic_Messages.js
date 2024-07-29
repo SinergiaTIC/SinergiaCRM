@@ -34,10 +34,13 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
     var relatedId = $('[name="record"]').val();
     var ids = '&ids=';
     if (typeof $(source).attr('data-record-id') !== 'undefined' && $(source).attr('data-record-id') !== '') {
+      // One record
       ids = ids + $(source).attr('data-record-id');
       relatedId = $(source).attr('data-record-id');
     }
     else{
+      // Multiple record (bulk actions)
+      $("div[data-field='parent_name']").hide();
       var inputs = document.MassUpdate.elements;
       for (var i = 0; i < inputs.length; i++) {
         if (inputs[i].name === 'mass[]' && inputs[i].checked) {
@@ -72,23 +75,57 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         panelBody.find('#phone').val(dataPhone);
       }
       else {
+        // Mass send messages
+        debugger;
         phoneList = '';
+        namesList = '';
         idsList = '';
         targetCount = 0;
         panelBody.find('.phone-compose-view-to-list').each(function () {
           dataPhone = $(this).attr('data-record-phone');
           dataId = $(this).attr('data-record-id');
+          dataName = $(this).attr('data-record-name');
           if (dataPhone !== '') {
             if (targetCount > 0 ){
               phoneList += ',';
+              namesList += ', ';
               idsList += ';';
             }
             phoneList += dataPhone;
+            namesList += '<' + dataName + '> ' + dataPhone;
             idsList += dataId;
             targetCount++;
           }
         });
         panelBody.find('#phone').val(phoneList);
+        function replacePhoneField(panelBody) {
+          var originalPhone = panelBody.find('#phone');
+          if (!originalPhone) return; // Exit if the original phone input doesn't exist
+      
+          // originalPhone.parent().append('<span>' + namesList + '</span>');
+          originalPhone.parent().append('<input type="text" id="namesList" size="30" disabled>');
+
+          // // Create the new phone input
+          // var newPhone = document.createElement('input');
+          // newPhone.type = 'text';
+          // newPhone.id = 'newPhone';
+          // newPhone.name = 'newPhone';
+          // newPhone.value = 'ZZZZZ' + originalPhone.value; // Copy the original value
+      
+          // // Optional: Copy attributes from the original input
+          // ['placeholder', 'class', 'required', 'pattern'].forEach(function(attr) {
+          //     if (originalPhone.hasAttribute(attr)) {
+          //         newPhone.setAttribute(attr, originalPhone.getAttribute(attr));
+          //     }
+          // });
+      
+          // Insert the new phone input before the original one
+          // originalPhone.parentNode.insertBefore(newPhone, originalPhone);
+      
+          // Hide the original phone input
+          originalPhone[0].style='display:none'
+        }
+        replacePhoneField(panelBody);
         phoneElement = panelBody.find('#phone')
         phoneElement.attr('readonly', true);
         phoneElement.css('background', '#F8F8F8');
@@ -104,6 +141,8 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 
         
         SUGAR.ajaxUI.hideLoadingPanel();
+
+        debugger;
         
         $('<div>').append(panelBody).dialog({
             modal: true,
@@ -128,6 +167,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             //     }
             // }
         });
+        $('#namesList').val(namesList);
         $( "#template" ).change(function() {
             console.log('template change');
             $.fn.stic_MessagesComposeView.onTemplateChange()
