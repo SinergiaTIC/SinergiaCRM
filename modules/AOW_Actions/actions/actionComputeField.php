@@ -50,8 +50,8 @@ require_once('modules/AOW_Actions/actions/actionBase.php');
  */
 class actionComputeField extends actionBase
 {
-    const RAW_VALUE = "raw";
-    const FORMATTED_VALUE = "formatted";
+    public const RAW_VALUE = "raw";
+    public const FORMATTED_VALUE = "formatted";
 
     /**
      * @return array
@@ -102,22 +102,9 @@ class actionComputeField extends actionBase
             );
 
             $relateFields = $this->getAllRelatedFields($bean);
-
-            // STIC-Custom 20240110 - ART - Error in formula to calculate month
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/49
-            // for ($i = 0; $i < count($formulas); $i++) {
-            //     if (array_key_exists($formulas[$i], $relateFields) && isset($relateFields[$formulas[$i]]['id_name'])) {
-            //         $calcValue = $calculator->calculateFormula($formulaContents[$i]);
-            //         $bean->{$relateFields[$formulas[$i]]['id_name']} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
-            //     } else {
-            //         $calcValue = $calculator->calculateFormula($formulaContents[$i]);
-            //         $bean->{$formulas[$i]} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
-            //     }
-            // }
-
             $formulasCount = is_countable($formulas) ? count($formulas) : 0;
 
-            for ($i = 0; $i < $formulasCount; $i++) {
+             for ($i = 0; $i < $formulasCount; $i++) {
                 if (array_key_exists($formulas[$i], $relateFields) && isset($relateFields[$formulas[$i]]['id_name'])) {
                     $bean->{$relateFields[$formulas[$i]]['id_name']} = $calculator->calculateFormula($formulaContents[$i]);
                 } else {
@@ -169,8 +156,9 @@ class actionComputeField extends actionBase
     private function resolveParameters($bean, $parameters, $parameterTypes)
     {
         $resolvedParameters = array();
+        $parametersCount = is_countable($parameters) ? count($parameters) : 0;
 
-        for ($i = 0; $i < count($parameters); $i++) {
+        for ($i = 0; $i < $parametersCount; $i++) {
             if ($parameterTypes[$i] == actionComputeField::FORMATTED_VALUE) {
                 $dataType = $bean->field_name_map[$parameters[$i]]['type'];
 
@@ -230,13 +218,8 @@ class actionComputeField extends actionBase
 
         array_walk(
             $displayFieldValues,
-            // STIC-Custom AAM 20220314 - Wrong usage of function and Array
-            // STIC#635
-            // function ($val) use ($bean, $fieldName) {
-                // $val = $GLOBALS['app_list_strings'][$bean->field_defs[$fieldName]['options'][$bean->$fieldName]];
             function (&$val) use ($bean, $fieldName) {
                 $val = $GLOBALS['app_list_strings'][$bean->field_defs[$fieldName]['options']][$val];
-            // END STIC
             }
         );
 
@@ -282,8 +265,9 @@ class actionComputeField extends actionBase
         $resolvedRelationParameters = array();
 
         $relateFields = $this->getAllRelatedFields($bean);
+        $relationParametersCount = is_countable($relateFields) ? count($relationParameters) : 0;
 
-        for ($i = 0; $i < count($relationParameters); $i++) {
+        for ($i = 0; $i < $relationParametersCount; $i++) {
             $entity = null;
 
             if (isset($relateFields[$relationParameters[$i]]) &&
@@ -561,7 +545,7 @@ class actionComputeField extends actionBase
      */
     public function getModuleFieldsDropdown($bean)
     {
-        $moduleFields = json_decode(getModuleFields($bean->module_name, "JSON"), true);
+        $moduleFields = json_decode((string) getModuleFields($bean->module_name, "JSON"), true);
         $optionsString = "";
 
         foreach ($moduleFields as $key => $value) {
@@ -754,7 +738,7 @@ class actionComputeField extends actionBase
                 $compareString1 = $item1['module'] . ' : ' . $item1['relation'];
                 $compareString2 = $item2['module'] . ' : ' . $item2['relation'];
 
-                if ($compareString1 == $compareString2) {
+                if ($compareString1 === $compareString2) {
                     return 0;
                 }
 
@@ -796,6 +780,8 @@ class actionComputeField extends actionBase
      */
     private function getOption($relationName, $oppositeModule)
     {
+        $oneRelation = [];
+
         return "<option value='" .
             $oneRelation['name'] .
             "'>" .
@@ -823,11 +809,11 @@ class actionComputeField extends actionBase
         $row = $db->fetchByAssoc($result);
 
         if ($row != null) {
-            if (strtolower($row['rhs_module']) == strtolower($module)) {
+            if (strtolower($row['rhs_module']) === strtolower($module)) {
                 return $row['lhs_module'];
             }
 
-            if (strtolower($row['lhs_module']) == strtolower($module)) {
+            if (strtolower($row['lhs_module']) === strtolower($module)) {
                 return $row['rhs_module'];
             }
         }

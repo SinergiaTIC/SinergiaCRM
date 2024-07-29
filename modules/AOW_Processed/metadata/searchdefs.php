@@ -34,11 +34,13 @@
                     // 'layout' => array(
                     //     'basic_search' => array(
                     //         'aow_workflow',
+                    //         'status',
                     //         ),
                     //     'advanced_search' => array(
                     //         'aow_workflow',
-                    //         'parent_name',
-                    //         'status'
+                    //         'status',
+                    //         'date_entered',
+                    //         'date_modified',
                     //     ),
                     // ),                    
                     'layout' => array(

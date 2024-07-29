@@ -3046,7 +3046,7 @@ SUGAR.util = function () {
               // Bug #49205 : Subpanels fail to load when selecting subpanel tab
               // Create a YUI instance using the io-base module.
               (function (srcResult) {
-                $.ajax({ 
+                $.ajax({
                   url: srcResult,
                   async: false,
                   method: 'GET'
@@ -3708,6 +3708,7 @@ SUGAR.savedViews = function () {
         }
         // Firefox needs this to be set after all the option nodes are created.
         document.getElementById('orderBySelect').selectedIndex = selectedIndex;
+
       };
       SUGAR.tabChooser.movementCallback(document.getElementById('display_tabs_td').getElementsByTagName('select')[0]);
 
@@ -3724,6 +3725,25 @@ SUGAR.savedViews = function () {
       // handle direction
       if (SUGAR.savedViews.selectedSortOrder == 'DESC') document.getElementById('sort_order_desc_radio').checked = true;
       else document.getElementById('sort_order_asc_radio').checked = true;
+      var sortableColumnsCount = 0;
+
+      var columnDefs = SUGAR.savedViews.columnsMeta;
+      if(columnDefs && typeof columnDefs === 'object' && Object.keys(columnDefs))  {
+        Object.keys(columnDefs).forEach(function (columnKey) {
+          var column = columnDefs[columnKey];
+          if (!column) {
+            return;
+          }
+
+          if (column.sortable !== false) {
+            sortableColumnsCount++;
+          }
+        })
+      }
+
+      if (sortableColumnsCount < 1 ) {
+        $('.saved-search-sort-column-config-row').hide();
+      }
     }
   };
 }();
