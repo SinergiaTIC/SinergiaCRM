@@ -49,7 +49,9 @@ class CustomEmployeesViewDetail extends EmployeesViewDetail
         
         // Write here the SinergiaCRM code that must be executed for this module and view
         echo getVersionedScript("custom/modules/Employees/SticUtils.js");
-        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        if (isset($currentTabs['stic_Messages'])) {
+            echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        }
     }
 }
 

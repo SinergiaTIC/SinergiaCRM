@@ -49,7 +49,13 @@ class CustomContactsViewDetail extends ContactsViewDetail
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
-        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+
+        include_once 'modules/MySettings/TabController.php';
+        $controller = new TabController();
+        $currentTabs = $controller->get_system_tabs();
+        if (isset($currentTabs['stic_Messages'])) {
+            echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        }
 
         // Write here you custom code
     }
