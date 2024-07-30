@@ -46,6 +46,7 @@ class CustomAccountsViewList extends AccountsViewList
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Accounts/SticUtils.js");
+        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 
         // Write here you custom code
     }

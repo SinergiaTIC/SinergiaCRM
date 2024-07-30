@@ -50,7 +50,7 @@ class stic_MessagesViewEdit extends ViewEdit
 
         SticViews::display($this);
 
-        // echo getVersionedScript("modules/stic_Training/Utils.js");
+        echo getVersionedScript("modules/stic_Messages/Utils.js");
 
         // Write here you custom code
 

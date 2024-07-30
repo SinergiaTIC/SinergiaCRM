@@ -46,6 +46,7 @@ class CustomLeadsViewList extends LeadsViewList
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Leads/SticUtils.js");
+        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 
         // Write here you custom code
     }

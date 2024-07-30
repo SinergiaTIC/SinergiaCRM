@@ -95,6 +95,6 @@ $js_groupings[] = $newGrouping = array(
 );
 
 // Messages
-$js_groupings[] = $newGrouping = array(
-    'modules/stic_Messages/stic_Messages.js' => 'include/javascript/sugar_grp1_jquery.js',
-);
+// $js_groupings[] = $newGrouping = array(
+//     'modules/stic_Messages/stic_Messages.js' => 'include/javascript/sugar_grp1_jquery.js',
+// );

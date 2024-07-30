@@ -46,6 +46,7 @@ class CustomLeadsViewDetail extends LeadsViewDetail
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Leads/SticUtils.js");
+        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 
         // Write here the SinergiaCRM code that must be executed for this module and view
     }
