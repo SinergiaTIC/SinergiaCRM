@@ -21,6 +21,59 @@ function onClickMassSendMessagesButton() {
 }
 
 
+function onClickMassRetryMessagesButton() {
+  // confirmation panel
+  var confirmed = function (args) {
+    // var args = JSON.parse(args);
+    // var form = $('[name="' + args.form_name + '"]');
+    // var URL = 'index.php?module=stic_Messages&action=Retry&return_module='+currentModule+'&return_action='+return_action+'&in_popup=1';
+    // // $.post('index.php?entryPoint=emailTemplateData', {
+    // $.post(URL, {
+    //   emailTemplateId: args.name_to_value_array.template_id_c
+    // }, function (jsonResponse) {
+    //   var response = JSON.parse(jsonResponse);
+    //   $("#message").val(response.data.body);
+    // });
+    // set_return(args);
+debugger;
+    sugarListView.get_checks();
+    if(sugarListView.get_checks_count() < 1) {
+        alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
+        return false;
+    }
+    document.MassUpdate.action.value='Retry';
+    document.MassUpdate.module.value='stic_Messages';
+    document.MassUpdate.submit();
+
+
+
+  };
+debugger;
+  var mb = messageBox();
+  mb.setTitle(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE'));
+  mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY'));
+  mb.show();
+
+  var popupId = mb.controls.modal.container.attr('id');
+  $('#' + popupId).css('z-index', '25000');
+
+  var args = JSON.stringify(args);
+
+  mb.on('ok', function () {
+    "use strict";
+    confirmed(args);
+    mb.remove();
+  });
+
+  mb.on('cancel', function () {
+    "use strict";
+    mb.remove();
+  });
+
+  // call controller action to change status from draft or error to sent
+}
+
+
 // function openCustomModal(buttonModule, parentModule) {
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
   debugger;

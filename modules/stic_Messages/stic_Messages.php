@@ -107,7 +107,7 @@ class stic_Messages extends Basic
 
         $this->assigned_user_id = $current_user->id;
 
-        // If Message is being created
+        // If Message is being created or status chenged to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
             $response = $this->sendMessage();
             if ($response['code'] === self::OK) {

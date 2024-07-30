@@ -49,6 +49,16 @@ switch (viewType()) {
     break;
 
   case "list":
+    var buttons = {
+      retry: {
+        id: "bt_retryMessage_listview",
+        title: SUGAR.language.get("stic_Messages", "LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE"),
+        text: SUGAR.language.get("stic_Messages", "LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE"),
+        onclick: "onClickMassRetryMessagesButton()"
+    }
+  };
+
+  createListViewButton(buttons.retry);
     break;
 
   default:

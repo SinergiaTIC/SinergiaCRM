@@ -70,4 +70,7 @@ $mod_strings = array (
   'LBL_SENDER' => 'Remitent',
   'LBL_LIST_RELATED_TO' => 'Relacionat amb',
   'LBL_LIST_RELATED_TO_ID' => 'Relacionat amb ID',
+  'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Reintentar enviament',
+  'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Enviar grup de missatges',
+  'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => "Aquesta operació enviarà un missatge per cada registre seleccionat. N'esteu segurs?",
 );

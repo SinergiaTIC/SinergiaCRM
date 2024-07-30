@@ -45,6 +45,39 @@ class stic_MessagesController extends SugarController
     }
 
 
+    public function action_Retry(){
+
+        $db = DBManagerFactory::getInstance();
+        // only messages not sent and with direction outbound can be retried
+        $sql = "SELECT id,name,`type`,direction,phone,sender,message,status  FROM stic_messages WHERE deleted = 0 and status <> 'sent' and direction = 'outbound'";
+        $where = '';
+        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
+            require_once 'include/export_utils.php';
+            $retArray = generateSearchWhere($moduleTable, $_REQUEST['current_query_by_page']);
+            $where = '';
+            if (!empty($retArray['where'])) {
+                $where = " AND " . $retArray['where'];
+            }
+        } else {
+            $ids = explode(',', $_REQUEST['uid']);
+            $idList = implode("','", $ids);
+            $where = " AND id in ('{$idList}')";
+        }
+        $sql .= $where;
+        $result = $db->query($sql);
+
+        while ($row = $db->fetchByAssoc($result)) {
+            $bean = BeanFactory::getBean('stic_Messages', $row['id']);
+            $bean->status = 'sent';
+            $bean->save();
+        }
+
+        // $_REQUEST['return_module'] = 'stic_Messages';
+        // $_REQUEST['return_action'] = 'index';
+        SugarApplication::redirect("index.php?module=stic_Messages&action=index");
+    }
+
+
 
     /**
      * @see EmailsViewCompose
