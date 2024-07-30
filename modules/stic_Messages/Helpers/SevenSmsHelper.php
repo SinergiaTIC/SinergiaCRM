@@ -32,7 +32,7 @@ class SevenSMSHelper {
     }
 
     public function setActive(string $active): self {
-        $this->active = 'yes' === $active;
+        $this->active = '1' === $active;
         return $this;
     }
 
