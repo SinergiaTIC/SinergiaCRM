@@ -3,6 +3,7 @@
 // SMS Helper class to send SMS messages through Seven provider.
 // Info about API can be found at: https://docs.seven.io/en/rest-api/endpoints/sms
 
+require_once('modules/stic_Settings/Utils.php');
 class SevenSMSHelper {
 
     protected bool $active = false;
@@ -10,15 +11,20 @@ class SevenSMSHelper {
     protected ?string $sender;
 
     public function __construct() {
-        global $sugar_config;
+        // global $sugar_config;
 
-        $this->setActive($sugar_config['seven_active'] ?? false);
-
-        $this->setApiKey($sugar_config['seven_api_key'] ?? '');
-
-
-        $this->setSender($sugar_config['seven_sender'] ?? '');
-
+        // $this->setActive($sugar_config['seven_active'] ?? false);
+        $active = stic_SettingsUtils::getSetting('seven_active');
+        $this->setActive($active);
+        
+        // $this->setApiKey($sugar_config['seven_api_key'] ?? '');
+        $apiKey = stic_SettingsUtils::getSetting('seven_api_key');
+        $this->setApiKey($apiKey);
+        
+        
+        // $this->setSender($sugar_config['seven_sender'] ?? '');
+        $sender = stic_SettingsUtils::getSetting('seven_sender');
+        $this->setSender($sender);
     }
 
     public function getActive(): bool {
