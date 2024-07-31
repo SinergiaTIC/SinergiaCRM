@@ -134,7 +134,7 @@ class Application implements ResetInterface
      *
      * @throws \Exception When running fails. Bypass this when {@link setCatchExceptions()}.
      */
-    public function run(InputInterface $input = null, OutputInterface $output = null)
+    public function run(?InputInterface $input = null, ?OutputInterface $output = null)
     {
         if (\function_exists('putenv')) {
             @putenv('LINES='.$this->terminal->getHeight());
@@ -778,7 +778,7 @@ class Application implements ResetInterface
      *
      * @return Command[]
      */
-    public function all(string $namespace = null)
+    public function all(?string $namespace = null)
     {
         $this->init();
 
@@ -1012,10 +1012,6 @@ class Application implements ResetInterface
                         });
                     }
                 }
-
-                foreach ($commandSignals as $signal) {
-                    $this->signalRegistry->register($signal, [$command, 'handleSignal']);
-                }
             }
 
             if (null !== $this->dispatcher) {
@@ -1033,6 +1029,10 @@ class Application implements ResetInterface
                         }
                     });
                 }
+            }
+
+            foreach ($commandSignals as $signal) {
+                $this->signalRegistry->register($signal, [$command, 'handleSignal']);
             }
         }
 
@@ -1147,7 +1147,7 @@ class Application implements ResetInterface
      *
      * @return string
      */
-    public function extractNamespace(string $name, int $limit = null)
+    public function extractNamespace(string $name, ?int $limit = null)
     {
         $parts = explode(':', $name, -1);
 
