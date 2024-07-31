@@ -23,7 +23,6 @@
 $module_name = 'stic_Messages';
 $viewdefs[$module_name] =
 array(
-    // 'ComposeView' => array(
     'EditView' => array(
         'templateMeta' => array(
             'maxColumns' => '2',
@@ -45,18 +44,9 @@ array(
                 ),
             ),
             'syncDetailEditViews' => false,
-            // 'includes' => array(
-            //     array(
-            //         'file' => 'modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js',
-            //     ),
-            // ),
         ),
         'panels' => array(
             'lbl_default_panel' => array(
-                // 0 => array(
-                //     0 => 'name',
-                //     1 => 'assigned_user_name',
-                // ),
                 1 => array(
                     0 => array(
                         'name' => 'parent_name',
@@ -67,7 +57,6 @@ array(
                             'field_to_name_array' => array(
                                 'id' => 'parent_id',
                                 'name' => 'parent_name',
-                                'email1' => 'email1',
                                 'phone_mobile' => 'phone_mobile',
                                 'phone_office' => 'phone_office',
                             )

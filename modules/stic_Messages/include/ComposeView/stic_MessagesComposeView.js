@@ -159,7 +159,7 @@ addRequiredMark('parent_id', 'conditional-required');
 
     var mb = messageBox();
     mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
-    mb.setBody(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
+    mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
     mb.show();
 
     var popupId = mb.controls.modal.container.attr('id');

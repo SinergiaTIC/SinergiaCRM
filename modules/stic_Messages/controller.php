@@ -8,8 +8,7 @@ use SuiteCRM\Utility\SuiteValidator;
 
 include_once 'include/Exceptions/SugarControllerException.php';
 
-include_once __DIR__ . '/EmailsDataAddressCollector.php';
-include_once __DIR__ . '/EmailsControllerActionGetFromFields.php';
+
 
 class stic_MessagesController extends SugarController
 {
@@ -85,7 +84,7 @@ class stic_MessagesController extends SugarController
     public function action_ComposeView()
     {
         $this->view = 'compose';
-        // For viewing the Compose as modal from other modules we need to load the Emails language strings
+        // For viewing the Compose as modal from other modules we need to load the stic_Messages language strings
         if (isset($_REQUEST['in_popup']) && $_REQUEST['in_popup']) {
             if (!is_file('cache/jsLanguage/stic_Messages/' . $GLOBALS['current_language'] . '.js')) {
                 require_once('include/language/jsLanguage.php');
@@ -111,15 +110,6 @@ class stic_MessagesController extends SugarController
                     echo $idLine;
                 }
             }
-        }
-        // TODOEPS: Reminiscència de Emails. necessari? Què fa?
-        if (isset($_REQUEST['relatedModule']) && isset($_REQUEST['relatedId'])) {
-            $relateBean = BeanFactory::getBean($_REQUEST['relatedModule'], $_REQUEST['relatedId']);
-            $relateLine = '<input type="hidden" class="email-relate-target" ';
-            $relateLine .= 'data-relate-module="' . $_REQUEST['relatedModule'] . '" ';
-            $relateLine .= 'data-relate-id="' . $_REQUEST['relatedId'] . '" ';
-            $relateLine .= 'data-relate-name="' . $relateBean->name . '">';
-            echo $relateLine;
         }
     }
 

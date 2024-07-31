@@ -30,7 +30,7 @@ global $mod_strings, $app_strings, $sugar_config;
 // if(ACLController::checkAccess('stic_Messages', 'edit', true)){
 //     $module_menu[]=array('index.php?module=stic_Messages&action=EditView&return_module=stic_Messages&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Messages');
 // }
-if (ACLController::checkAccess('Emails', 'edit', true)) {
+if (ACLController::checkAccess('stic_Messages', 'edit', true)) {
     $module_menu[]=array("index.php?module=stic_Messages&action=ComposeView&return_module=stic_Messages&return_action=DetailView", $mod_strings['LBL_NEW_FORM_TITLE'],"Create", 'stic_Messages');
 }
 if(ACLController::checkAccess('stic_Messages', 'list', true)){
