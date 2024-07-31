@@ -36,6 +36,8 @@ class PaymentController extends WebFormDataController {
 
     protected $version = 1; // Use the same logic for forms generated with different versions of the wizard
 
+    protected $paypalResponseEntryPoint = "stic_Web_Forms_paypal_response";
+
     /**
      * Controller Builder
      */
@@ -658,7 +660,7 @@ class PaymentController extends WebFormDataController {
 
         $paypal_url = $settings["PAYPAL_URL"];
         $paypal_id = $settings["PAYPAL_ID"];
-        $ipn = self::getMerchantPaypalURL();
+        $ipn = $this->getMerchantPaypalURL();
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieving template...");
         $xtpl->assign('paypal_url', $paypal_url);
         $xtpl->assign('paypal_id', $paypal_id);
@@ -676,10 +678,10 @@ class PaymentController extends WebFormDataController {
         return $this->createResponse(self::RESPONSE_STATUS_PENDING, self::RESPONSE_TYPE_TEMPLATE, $xtpl);
     }
 
-    private static function getMerchantPaypalURL() {
+    private function getMerchantPaypalURL() {
         require_once 'modules/stic_Web_Forms/controller.php';
         $server = stic_Web_FormsController::getServerURL();
-        $url = "{$server}/index.php?entryPoint=stic_Web_Forms_paypal_response";
+        $url = "{$server}/index.php?entryPoint={$this->paypalResponseEntryPoint}";
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$url}");
         return $url;
     }
