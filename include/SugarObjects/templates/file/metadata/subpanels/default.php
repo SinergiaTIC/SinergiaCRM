@@ -71,6 +71,11 @@ $subpanel_layout = array(
         //     'widget_class' => 'SubPanelDetailViewLink',
         //     'width' => '45%',
         // ),
+        // 'active_date' => array(
+        //     'name' => 'active_date',
+        //     'vname' => 'LBL_DOC_ACTIVE_DATE',
+        //     'width' => '45%',
+        // ),        
         'object_image' => array(
             'vname' => 'LBL_OBJECT_IMAGE',            
             'widget_class' => 'SubPanelIcon',
@@ -82,30 +87,41 @@ $subpanel_layout = array(
             ),
             'attachment_image_only' => true,
         ),
-        'uploadfile' => array (
-          'name' => 'uploadfile',
-          'width' => '2%',
-          'sortable'=>false,
-        ),
-        'document_name' => array(
-            'name' => 'document_name',
-            'vname' => 'LBL_LIST_DOCUMENT_NAME',
-            'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '45%',
-        ),
         'filename' => array(
             'name' => 'filename',
-            'vname' => 'LBL_FILENAME',
+            'vname' => 'LBL_LIST_DOCUMENT_NAME',
             'width' => '20%',
             'sortable'=>false,
+            'widget_class' => 'SubPanelDetailViewLink',   
+          ),
+        'document_name' => array(
+            'name' => 'document_name',
+            'vname' => 'LBL_FILENAME',
+            'widget_class' => 'SubPanelFileDownloadViewLink',
+            'width' => '45%',
         ),
-        // END STIC-Custom
+        'status_id' => array(
+          'type' => 'enum',
+          'vname' => 'LBL_DOC_STATUS',
+          'width' => '10%',
+        ),
         'active_date' => array(
             'name' => 'active_date',
             'vname' => 'LBL_DOC_ACTIVE_DATE',
             'width' => '45%',
         ),
-
+        'assigned_user_name' => 
+        array (
+          'link' => true,
+          'type' => 'relate',
+          'vname' => 'LBL_ASSIGNED_TO_NAME',
+          'id' => 'ASSIGNED_USER_ID',
+          'width' => '10%',
+          'widget_class' => 'SubPanelDetailViewLink',
+          'target_module' => 'Users',
+          'target_record_key' => 'assigned_user_id',
+        ),        
+        // END STIC-Custom
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubPanelEditButton',
