@@ -1079,7 +1079,7 @@ class PaymentBO extends WebFormDataBO
      * @param Array $ipnMessage IPN message content
      * @return Object payment bean
      */
-    private function getPaymentByIPNMessage($ipnMessage)
+    protected function getPaymentByIPNMessage($ipnMessage)
     {
         $paymentDate = date('Ym', strtotime($ipnMessage['payment_date']));
         $paymentIdSQL = "SELECT
