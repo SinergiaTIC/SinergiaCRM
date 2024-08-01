@@ -61,6 +61,15 @@ function onClickMassRetryMessagesButton() {
 // function openCustomModal(buttonModule, parentModule) {
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
   debugger;
+
+    let numRecordsSelected = $(".selectedRecords.value").eq(0).text();
+
+    if (numRecordsSelected > 10) {
+      debugger;
+      alert(SUGAR.language.get('app_strings', 'LBL_TOO_MANY_RECORDS_SELECTED'));
+      return;
+    }
+
     // return_action = 'DetailView';
     let params = JSON.parse(paramsJson);
     return_action = params['return_action'];
@@ -139,27 +148,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           var originalPhone = panelBody.find('#phone');
           if (!originalPhone) return; // Exit if the original phone input doesn't exist
       
-          // originalPhone.parent().append('<span>' + namesList + '</span>');
           originalPhone.parent().append('<input type="text" id="namesList" size="30" disabled>');
-
-          // // Create the new phone input
-          // var newPhone = document.createElement('input');
-          // newPhone.type = 'text';
-          // newPhone.id = 'newPhone';
-          // newPhone.name = 'newPhone';
-          // newPhone.value = 'ZZZZZ' + originalPhone.value; // Copy the original value
-      
-          // // Optional: Copy attributes from the original input
-          // ['placeholder', 'class', 'required', 'pattern'].forEach(function(attr) {
-          //     if (originalPhone.hasAttribute(attr)) {
-          //         newPhone.setAttribute(attr, originalPhone.getAttribute(attr));
-          //     }
-          // });
-      
-          // Insert the new phone input before the original one
-          // originalPhone.parentNode.insertBefore(newPhone, originalPhone);
-      
-          // Hide the original phone input
           originalPhone[0].style='display:none'
         }
         replacePhoneField(panelBody);
