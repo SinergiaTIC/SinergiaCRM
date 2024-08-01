@@ -4,7 +4,9 @@
 // Info about API can be found at: https://docs.seven.io/en/rest-api/endpoints/sms
 
 require_once('modules/stic_Settings/Utils.php');
-class SevenSMSHelper {
+require_once('modules/stic_Messages/Helpers/stic_MessagesHelper.php');
+
+class SevenSMSHelper implements stic_MessagesHelper {
 
     protected bool $active = false;
     protected ?string $apiKey = null;
