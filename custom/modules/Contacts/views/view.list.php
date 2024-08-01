@@ -22,10 +22,13 @@
  */
 
 require_once 'modules/Contacts/views/view.list.php';
+require_once 'modules/stic_Messages/Checkstic_Messages.php';
 require_once 'SticInclude/Views.php';
 
 class CustomContactsViewList extends ContactsViewList
 {
+    use Checkstic_Messages;
+
     public function __construct()
     {
         parent::__construct();
@@ -45,9 +48,11 @@ class CustomContactsViewList extends ContactsViewList
         parent::display();
 
         SticViews::display($this);
+        $this->echoIsMessagesModuleActive();
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
         echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 
         // Write here you custom code
     }
+
 }

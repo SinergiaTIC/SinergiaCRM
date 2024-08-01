@@ -22,10 +22,13 @@
  */
 
 require_once 'modules/Employees/views/view.list.php';
+require_once 'modules/stic_Messages/Checkstic_Messages.php';
 require_once 'SticInclude/Views.php';
 
 class CustomEmployeesViewList extends EmployeesViewList
 {
+    use Checkstic_Messages;
+    
     public function __construct()
     {
         parent::__construct();
@@ -47,6 +50,7 @@ class CustomEmployeesViewList extends EmployeesViewList
         SticViews::display($this);
         
         // Write here the SinergiaCRM code that must be executed for this module and view
+        $this->echoIsMessagesModuleActive();
         echo getVersionedScript("custom/modules/Employees/SticUtils.js");
         echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
     }

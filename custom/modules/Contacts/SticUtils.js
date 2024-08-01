@@ -129,7 +129,9 @@ switch (viewType()) {
     
         createListViewButton(buttons.syncIncorpora);
         createListViewButton(buttons.massJobApplications);
-        createListViewButton(buttons.sentMessage);
+        if (getMessagesActive()){
+          createListViewButton(buttons.sentMessage);
+        }
         break;
   default:
     break;

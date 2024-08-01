@@ -22,10 +22,13 @@
  */
 
 require_once 'modules/Leads/views/view.list.php';
+require_once 'modules/stic_Messages/Checkstic_Messages.php';
 require_once 'SticInclude/Views.php';
 
 class CustomLeadsViewList extends LeadsViewList
 {
+    use Checkstic_Messages;
+
     public function __construct()
     {
         parent::__construct();
@@ -45,6 +48,7 @@ class CustomLeadsViewList extends LeadsViewList
         parent::display();
 
         SticViews::display($this);
+        $this->echoIsMessagesModuleActive();
         echo getVersionedScript("custom/modules/Leads/SticUtils.js");
         echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 

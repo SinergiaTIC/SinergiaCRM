@@ -108,6 +108,14 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
 
     public function display($defines, $additionalFormFields = null, $nonbutton = false)
     {
+        require_once 'modules/MySettings/TabController.php';
+        $controller = new TabController();
+        $currentTabs = $controller->get_system_tabs();
+
+        if (!$currentTabs['stic_Messages']){
+            return '';
+        }
+
         $focus = $defines['focus'];
         $button = $this->_get_form($defines, $additionalFormFields);
         
