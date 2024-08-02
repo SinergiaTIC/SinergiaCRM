@@ -86,6 +86,8 @@ $app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nou Missatge';
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou Missatge';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge, ¿vol continuar?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Sobrepassat el límit de missatges a enviar simultàniament';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
+
 
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';

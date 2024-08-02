@@ -87,6 +87,7 @@ $app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New Message';
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New Message';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content, do you want to continue?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Too many records selected to send a bulk message';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
 
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';

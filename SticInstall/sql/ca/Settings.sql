@@ -52,4 +52,5 @@ INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_us
 ('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', "Indica el percentatge d'hores treballades de més (respecte de l'horari teòric setmanal) que farà que s'enviï una alerta."),
 ('652c33e1-522e-4f06-8a66-755d05a318e6', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_ACTIVE', '0', "0 indica que no s'han d'enviar missatges. 1 indica que s'han d'enviar missatges."),
 ('d9f0118c-b752-444d-9057-456b18f9f360', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_API_KEY', 'XXXXX', "Clau per connectar amb Seven. S'obté al panell de control de Seven."),
-('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_SENDER', '<ORGANITZACIÓ>', "Nom que apareixerà com a remitent en els missatges enviats");
+('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_SENDER', '<ORGANITZACIÓ>', "Nom que apareixerà com a remitent en els missatges enviats"),
+('64b1554a-cf95-423b-ae78-7f75951f3976', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_LIMIT', '10', "Nombre màxim de missatges permesos en enviament massiu");

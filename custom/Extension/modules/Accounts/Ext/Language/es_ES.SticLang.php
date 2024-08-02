@@ -80,7 +80,6 @@ $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Listas de Público Obj
 $mod_strings['LBL_ACCOUNT_IDENTIFICATION_NUMBER_ERROR'] = 'El número de identificación no es correcto. Debe ser un NIF de persona jurídica válido.';
 $mod_strings['LBL_STIC_PERSONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_PERSONAL_ENVIRONMENT_TITLE']='Relaciones de entorno personal de las que la organización forma parte';
 $mod_strings['LBL_STIC_CENTERS_ACCOUNTS_FROM_STIC_CENTERS_TITLE'] = 'Centros';
-$mod_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nuevo mensaje';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';

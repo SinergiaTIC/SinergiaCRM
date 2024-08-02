@@ -52,4 +52,5 @@ INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_us
 ('6ac2d1e7-ff90-61f0-85c2-66347f0d8311', NOW(), NOW(), '1', '1', 0, '1', 'TIMETRACKER', 'TIMETRACKER_UPPER_MARGIN_PERCENT', '20', 'Indicates the percentage of hours worked in excess (with respect to the theoretical weekly schedule) that will cause an alert to be sent.'),
 ('652c33e1-522e-4f06-8a66-755d05a318e6', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_ACTIVE', '0', "0 means no messages will be sent. 1 means that messages will be sent."),
 ('d9f0118c-b752-444d-9057-456b18f9f360', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_API_KEY', 'XXXXX', "Key to connect with SEVEN. It is generated at Seven dashboard."),
-('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_SENDER', '<ORGANITZACIÓ>', "Sender name that will be shown on messages sent");
+('c8d720bd-2c7b-47a6-98ce-9664529559ca', NOW(), NOW(), '1', '1', 0, '1', 'SEVEN', 'SEVEN_SENDER', '<ORGANITZACIÓ>', "Sender name that will be shown on messages sent"),
+('64b1554a-cf95-423b-ae78-7f75951f3976', NOW(), NOW(), '1', '1', 0, '1', 'MESSAGES', 'MESSAGES_LIMIT', '10', "Max number of messages allowed on bulk send");

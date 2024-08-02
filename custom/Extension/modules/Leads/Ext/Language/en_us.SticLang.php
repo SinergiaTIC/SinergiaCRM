@@ -60,7 +60,6 @@ $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS '] = 'Record details';
 $mod_strings['LBL_FP_EVENTS_LEADS_1_FROM_FP_EVENTS_TITLE '] = 'Events-FP'; // This module is not used in SinergiaCRM and it's relabelled to avoid confusion with SinergiaCRM Events module
 $mod_strings['LBL_STIC_INVALID_IDENTIFICATION_NUMBER_OR_TYPE'] = 'If an identification type is provided, an identification number must be provided too and vice versa. If the type is NIF or NIE the identification number must have the right format.';
 $mod_strings['LBL_ATTACHMENT_DESCRIPTION'] = 'File received from a web form related to the campaign: ';
-$mod_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";

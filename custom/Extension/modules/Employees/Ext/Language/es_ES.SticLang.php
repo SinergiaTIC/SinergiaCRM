@@ -49,7 +49,6 @@ $mod_strings['LBL_OPT_IN'] = 'Alta voluntaria';
 $mod_strings['LBL_OPT_IN_PENDING_EMAIL_NOT_SENT'] = 'Alta voluntaria pendiente de confirmación. Correo de confirmación no enviado.';
 $mod_strings['LBL_OPT_IN_PENDING_EMAIL_SENT'] = 'Alta voluntaria pendiente de confirmación. Correo de confirmación enviado.';
 $mod_strings['LBL_OPT_IN_CONFIRMED'] = 'Alta voluntaria confirmada';
-$mod_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nuevo mensaje';
 
 // Asistente de creación de registros de Calendario laboral
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generar Calendario laboral';
