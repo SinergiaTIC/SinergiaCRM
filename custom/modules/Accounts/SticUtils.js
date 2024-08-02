@@ -120,14 +120,16 @@ switch (viewType()) {
     break;
 
   case "list":
-    button = {
-      id: "bt_sync_incorpora_listview",
-      title: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
-      text: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
-      onclick: "onClickIncorporaSyncButton()",
+    buttons = {
+      syncIncorpora: {
+        id: "bt_sync_incorpora_listview",
+        title: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
+        text: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
+        onclick: "onClickIncorporaSyncButton()",
+      }
     };
 
-    createListViewButton(button);
+    createListViewButton(buttons.syncIncorpora);
     break;
 
   default:

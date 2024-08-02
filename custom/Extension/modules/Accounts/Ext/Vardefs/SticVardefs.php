@@ -2067,3 +2067,8 @@ $dictionary['Account']['fields']['emails_list'] = array(
         ),
     ),
 );
+
+// SEVEN SMS PLugin
+$dictionary['Account']['fields']['seven_compose_sms']['inline_edit'] = '0';
+$dictionary['Account']['fields']['seven_compose_sms']['labelValue'] = 'Write SMS';
+// END SEVEN SMS Plugin

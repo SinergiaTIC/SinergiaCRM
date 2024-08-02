@@ -82,6 +82,13 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaCRM wiki';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
+// Messages: subpanel actions
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New Message';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New Message';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content, do you want to continue?';
+$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Too many records selected to send a bulk message';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
+
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';
 $app_list_strings['moduleList']['Contacts'] = 'Contacts';
@@ -129,6 +136,7 @@ $app_list_strings['moduleList']['stic_Work_Calendar'] = 'Work calendar';
 $app_list_strings['moduleList']['stic_Training'] = 'Training';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleList']['stic_Skills'] = 'Skills';
+$app_list_strings['moduleList']['stic_Messages'] = 'Messages';
 $app_list_strings['moduleList']['stic_Custom_Views'] = 'Custom Views';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
@@ -173,6 +181,7 @@ $app_list_strings['moduleListSingular']['stic_Work_Calendar'] = 'Work calendar';
 $app_list_strings['moduleListSingular']['stic_Training'] = 'Training';
 $app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleListSingular']['stic_Skills'] = 'Skill';
+$app_list_strings['moduleListSingular']['stic_Messages'] = 'Message';
 $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Custom View';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
@@ -215,6 +224,8 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Journal';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Training';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Skills';
+$app_list_strings['parent_type_display']['stic_Messages'] = 'Messages';
+$app_list_strings['parent_type_display']['Employees'] = 'Employees';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
@@ -253,6 +264,8 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Journal';
 $app_list_strings['record_type_display']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Skills';
+$app_list_strings['record_type_display']['stic_Messages'] = 'Messages';
+$app_list_strings['record_type_display']['Employees'] = 'Employees';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
@@ -291,6 +304,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Journal';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
+$app_list_strings['record_type_display_notes']['stic_Messages'] = 'Messages';
 
 // Current VAT percentages (IVA)
 $app_list_strings['vat_list']['21'] = '21%';
@@ -3441,6 +3455,25 @@ $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DA
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
+// Messages: Type
+$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
+
+// Messages: Direction
+$app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
+$app_list_strings['stic_messages_direction_list']['outbound'] = 'Outbound';
+
+// Messages: Status
+$app_list_strings['stic_messages_status_list']['sent'] = 'Sent';
+$app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
+
+// Messages: Parent types
+$app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Accounts';
+$app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Contacts';
+$app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Leads';
+$app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Employees';
+
 // Custom Views: User Types
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Regular user';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrator';
@@ -3560,3 +3593,11 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
+// Email Templates: Template types
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaign';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notification';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
+$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';

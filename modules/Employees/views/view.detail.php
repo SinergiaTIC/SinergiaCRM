@@ -43,16 +43,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 
 
-
 class EmployeesViewDetail extends ViewDetail
 {
     public function __construct()
     {
         parent::__construct();
     }
-
-
-
 
     /**
      * Return the "breadcrumbs" to display at the top of the page

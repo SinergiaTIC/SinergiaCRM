@@ -46,6 +46,9 @@ class CustomAccountsViewDetail extends AccountsViewDetail
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Accounts/SticUtils.js");
+        if (isset($currentTabs['stic_Messages'])) {
+            echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        }
 
         // Write here the SinergiaCRM code that must be executed for this module and view
     }

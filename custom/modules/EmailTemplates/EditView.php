@@ -453,3 +453,9 @@ $javascript->setFormName('EditView');
 $javascript->setSugarBean($focus);
 $javascript->addAllFields('');
 echo $javascript->getScript();
+
+// TODOEPS: Add script in case SMS type selected, only text must be checked.
+echo getVersionedScript("SticInclude/js/Utils.js");
+echo "<script type='text/javascript' language='JavaScript' src='custom/modules/EmailTemplates/SticUtils.js'> </script>";
+
+
