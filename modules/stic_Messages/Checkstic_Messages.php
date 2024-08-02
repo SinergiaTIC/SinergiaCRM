@@ -17,5 +17,6 @@ trait Checkstic_Messages {
         $messagesLimit = stic_SettingsUtils::getSetting('MESSAGES_LIMIT');
 
         echo "<script type='text/javascript'>function getMessagesActive() {return {$active};} function getMessagesLimit() {return {$messagesLimit};} </script>";
+        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
     }
 }

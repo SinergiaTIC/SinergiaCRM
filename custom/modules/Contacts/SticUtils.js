@@ -118,20 +118,11 @@ switch (viewType()) {
                 title: SUGAR.language.get("Contacts", "LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE"),
                 text: SUGAR.language.get("Contacts", "LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE"),
                 onclick: "onClickMassJobApplicationsButton()"
-            },
-            sentMessage: {
-              id: "bt_sentMessage_listview",
-              title: SUGAR.language.get("Contacts", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
-              text: SUGAR.language.get("Contacts", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
-              onclick: "onClickMassSendMessagesButton()"
-          }
+            }
         };
     
         createListViewButton(buttons.syncIncorpora);
         createListViewButton(buttons.massJobApplications);
-        if (getMessagesActive()){
-          createListViewButton(buttons.sentMessage);
-        }
         break;
   default:
     break;

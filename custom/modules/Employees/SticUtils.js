@@ -52,16 +52,9 @@ switch (viewType()) {
                 title: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
                 text: SUGAR.language.get(module, "LBL_PERIODIC_WORK_CALENDAR_BUTTON"),
                 onclick: "onClickWorkCalendarPeriodicCreationButton()",
-            },
-            sentMessage: {
-                id: "bt_sentMessage_listview",
-                title: SUGAR.language.get("Employees", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
-                text: SUGAR.language.get("Employees", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
-                onclick: "onClickMassSendMessagesButton()"
-              }
+            }
         };
         createListViewButton(buttons.workcalendar);
-        createListViewButton(buttons.sentMessage);
         break;
 
     default:

@@ -48,9 +48,8 @@ class CustomLeadsViewList extends LeadsViewList
         parent::display();
 
         SticViews::display($this);
-        $this->echoIsMessagesModuleActive();
         echo getVersionedScript("custom/modules/Leads/SticUtils.js");
-        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        $this->echoIsMessagesModuleActive();
 
         // Write here you custom code
     }

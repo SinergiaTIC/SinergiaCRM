@@ -50,9 +50,8 @@ class CustomEmployeesViewList extends EmployeesViewList
         SticViews::display($this);
         
         // Write here the SinergiaCRM code that must be executed for this module and view
-        $this->echoIsMessagesModuleActive();
         echo getVersionedScript("custom/modules/Employees/SticUtils.js");
-        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        $this->echoIsMessagesModuleActive();
     }
 }
 

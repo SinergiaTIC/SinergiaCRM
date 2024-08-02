@@ -64,8 +64,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 
     let numRecordsSelected = $(".selectedRecords.value").eq(0).text();
 
-    if (numRecordsSelected > 10) {
-      debugger;
+    if (numRecordsSelected > getMessagesLimit()) {
       alert(SUGAR.language.get('app_strings', 'LBL_TOO_MANY_RECORDS_SELECTED'));
       return;
     }
@@ -205,33 +204,57 @@ $(function() {
   debugger;
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 
-const attr = 'sms-button'
-const triggerClass = 'seven-send-sms'
-const attachedClass = 'seven-attached'
+    const attr = 'sms-button'
+    const triggerClass = 'seven-send-sms'
+    const attachedClass = 'seven-attached'
 
-const recordId = $("input[name=record]")[0].value;
+    const recordId = $("input[name=record]")[0].value;
 
-for (const phone of [...document.querySelectorAll('[type=phone]')]) {
-    if (phone.getAttribute(attr) !== null) continue
+    for (const phone of [...document.querySelectorAll('[type=phone]')]) {
+        if (phone.getAttribute(attr) !== null) continue
+    
+        const to = phone.textContent.trim()
+        if (to === '') continue
+    
+        // TODOEPS: Incloure la nova icona via font
+        const src = 'themes/SuiteP/images/message20.png'
+        const alt = SUGAR.language.get(window.module_sugar_grp1, 'LBL_SEVEN_SEND_SMS_VIA')
+        phone.insertAdjacentHTML('beforeend',
+            // `<img alt='${alt}' class='${triggerClass}' data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' title='${alt}' />`)
+            `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' onclick='openMessagesModal(this)'></span>`)
+        phone.setAttribute(attr, 'true')
+    }
 
-    const to = phone.textContent.trim()
-    if (to === '') continue
 
-    // TODOEPS: Incloure la nova icona via font
-    const src = 'themes/SuiteP/images/message20.png'
-    const alt = SUGAR.language.get(window.module_sugar_grp1, 'LBL_SEVEN_SEND_SMS_VIA')
-    phone.insertAdjacentHTML('beforeend',
-        // `<img alt='${alt}' class='${triggerClass}' data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' title='${alt}' />`)
-        `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' onclick='openMessagesModal(this)'></span>`)
-    phone.setAttribute(attr, 'true')
-}
+  // $(`img.${triggerClass}:not(.${attachedClass})`)
+  //     .addClass(attachedClass)
+  //     .on('click', function() {
+  //         $('#seven_to').val($(this).data('to'))
 
-$(`img.${triggerClass}:not(.${attachedClass})`)
-    .addClass(attachedClass)
-    .on('click', function() {
-        $('#seven_to').val($(this).data('to'))
-
-        openMessagesModal(this);
-    });
+  //         openMessagesModal(this);
+  // });
   }
+
+  if (typeof viewType !== 'undefined' && viewType() === 'list') {
+    buttons = {
+      // syncIncorpora: {
+      //   id: "bt_sync_incorpora_listview",
+      //   title: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
+      //   text: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
+      //   onclick: "onClickIncorporaSyncButton()",
+      // },
+      sentMessage: {
+        id: "bt_sentMessage_listview",
+        title: SUGAR.language.get("app_strings", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
+        text: SUGAR.language.get("app_strings", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),
+        onclick: "onClickMassSendMessagesButton()"
+      }
+    };
+    if (getMessagesActive()){
+      createListViewButton(buttons.sentMessage);
+    }
+
+  }
+
+
 });
