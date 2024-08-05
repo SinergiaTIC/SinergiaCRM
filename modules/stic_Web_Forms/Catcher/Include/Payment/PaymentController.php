@@ -407,6 +407,20 @@ class PaymentController extends WebFormDataController {
         $tpvSys->setParameter("DS_MERCHANT_URLOK", $okURL);
         $tpvSys->setParameter("DS_MERCHANT_CONSUMERLANGUAGE", PaymentBO::getTPVLanguage($this->getLanguage()));
 
+        // Set the Titular name to the TPV (DS_MERCHANT_TITULAR)
+        $merchant_titular = "";
+        if (isset($_REQUEST['Contacts___last_name']) && !empty($_REQUEST['Contacts___last_name'])) {
+            $merchant_titular = $_REQUEST['Contacts___last_name'];
+            if (isset($_REQUEST['Contacts___first_name']) && !empty($_REQUEST['Contacts___first_name'])) {
+                $merchant_titular .= ", " . $_REQUEST['Contacts___first_name'];
+            }
+        } elseif (isset($_REQUEST['Accounts___name']) && !empty($_REQUEST['Accounts___name'])) {
+            $merchant_titular = $_REQUEST['Accounts___name'];
+        }
+        if (!empty($merchant_titular)) {
+            $tpvSys->setParameter("DS_MERCHANT_TITULAR", $merchant_titular);
+        }
+
         // Configuration data
         $version = $settings["TPV_VERSION"];
         $kc = $settings["TPV_PASSWORD"];
