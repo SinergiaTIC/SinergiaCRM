@@ -418,6 +418,8 @@ class PaymentController extends WebFormDataController {
             $merchant_titular = $_REQUEST['Accounts___name'];
         }
         if (!empty($merchant_titular)) {
+            // Limit to length 16
+            $merchant_titular = substr($merchant_titular, 0, 16);
             $tpvSys->setParameter("DS_MERCHANT_TITULAR", $merchant_titular);
         }
 
