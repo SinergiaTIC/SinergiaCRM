@@ -52,6 +52,7 @@ $mod_strings = array(
     'ERR_NO_IMAP' => 'No se han encontrado las librerías de IMAP.  Por favor, resuelva esto antes de continuar con la configuración de correo entrante',
     'ERR_NO_OPTS_SAVED' => 'No se han guardado valores óptimos con su cuenta de correo entrante.  Por favor, revise la configuración',
     'ERR_TEST_MAILBOX' => 'Por favor, compruebe su configuración e inténtelo de nuevo.',
+    'ERR_INVALID_PORT' => 'Puerto Inválido',
 
     'LBL_ASSIGN_TO_USER' => 'Asignar a Usuario',
     'LBL_AUTOREPLY' => 'Plantilla de Respuesta Automática',

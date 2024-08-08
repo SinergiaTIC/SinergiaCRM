@@ -52,6 +52,7 @@ $mod_strings = array(
     'ERR_NO_IMAP' => 'No s\'han trobat les llibreries d\'IMAP. Si us plau, resolgui això abans de continuar amb la configuració de correu electrònic entrant',
     'ERR_NO_OPTS_SAVED' => 'No s\'han guardat valors òptims amb el seu compte de correu electrònic entrant. Si us plau, revisi la configuració',
     'ERR_TEST_MAILBOX' => 'Si us plau, comprovi la seva configuració i intenti-ho de nou.',
+    'ERR_INVALID_PORT' => 'Port Invàlid',
 
     'LBL_ASSIGN_TO_USER' => 'Assignar a Usuari',
     'LBL_AUTOREPLY' => 'Plantilla de Resposta Automàtica',

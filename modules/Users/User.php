@@ -637,7 +637,7 @@ class User extends Person implements EmailInterface
                     SugarApplication::appendErrorMessage($mod_strings['ERR_USER_FACTOR_SMTP_REQUIRED']);
                 }
             } else {
-                if (($tmpUser instanceof User) && ($this->factor_auth != $tmpUser->factor_auth || $this->factor_auth_interface != $tmpUser->factor_auth_interface)) {
+                if (($tmpUser instanceof User) && ($this->factor_auth !== $tmpUser->factor_auth || $this->factor_auth_interface !== $tmpUser->factor_auth_interface)) {
                     $msg .= 'Current user is not able to change two factor authentication settings.';
                     $GLOBALS['log']->warn($msg);
                     SugarApplication::appendErrorMessage($mod_strings['ERR_USER_FACTOR_CHANGE_DISABLED']);
@@ -935,6 +935,8 @@ class User extends Person implements EmailInterface
 
             if (isset($_POST['timezone'])) {
                 $this->setPreference('timezone', $_POST['timezone'], 0, 'global');
+            } else {
+                $this->setPreference('timezone', 'UTC', 0, 'global');
             }
             if (isset($_POST['ut'])) {
                 $this->setPreference('ut', '0', 0, 'global');
@@ -1150,7 +1152,7 @@ class User extends Person implements EmailInterface
     public function encrypt_password($username_password)
     {
         // encrypt the password.
-        $salt = substr($this->user_name, 0, 2);
+        $salt = substr((string) $this->user_name, 0, 2);
         $encrypted_password = crypt($username_password, $salt);
 
         return $encrypted_password;
@@ -1511,7 +1513,7 @@ EOQ;
         $onespecial = $sugar_config['passwordsetting']['onespecial'];
 
 
-        if ($minpwdlength && strlen($newPassword) < $minpwdlength) {
+        if ($minpwdlength && strlen((string) $newPassword) < $minpwdlength) {
             $messages[] = sprintf($mod_strings['ERR_PASSWORD_MINPWDLENGTH'], $minpwdlength);
         }
 
@@ -1523,7 +1525,7 @@ EOQ;
             $messages[] = $mod_strings['ERR_PASSWORD_ONELOWER'];
         }
 
-        if ($onenumber && !preg_match('/[0-9]/', $newPassword)) {
+        if ($onenumber && !preg_match('/[0-9]/', (string) $newPassword)) {
             $messages[] = $mod_strings['ERR_PASSWORD_ONENUMBER'];
         }
 
@@ -1702,7 +1704,7 @@ EOQ;
             $user_fields['IS_ADMIN'] = '';
         }
         if ($this->is_group) {
-            $user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '', null, null, '.gif', $mod_strings['LBL_CHECKMARK']);
+            $user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '', null, null, '.gif', translate('LBL_CHECKMARK', 'Users'));
         } else {
             $user_fields['IS_GROUP_IMAGE'] = '';
         }
@@ -1984,6 +1986,7 @@ EOQ;
             }
         }
 
+        $ret = [];
         $ret['name'] = $fromName;
         $ret['email'] = $fromaddr;
 
@@ -2014,8 +2017,9 @@ EOQ;
         $emailLink = '';
 
         $emailUI = new EmailUI();
-        for ($i = 0; $i < count($focus->emailAddress->addresses); $i++) {
-            $emailField = 'email' . (string) ($i + 1);
+        $addressesCount = is_countable($focus->emailAddress->addresses) ? count($focus->emailAddress->addresses) : 0;
+        for ($i = 0; $i < $addressesCount; $i++) {
+            $emailField = 'email' . ($i + 1);
             $optOut = (bool)$focus->emailAddress->addresses[$i]['opt_out'];
             if (!$optOut && $focus->emailAddress->addresses[$i]['email_address'] === $emailAddress) {
                 $focus->$emailField = $emailAddress;
@@ -2090,11 +2094,13 @@ EOQ;
         global $mod_strings;
         global $app_strings;
 
+        $format = [];
         $format['f'] = $mod_strings['LBL_LOCALE_DESC_FIRST'];
         $format['l'] = $mod_strings['LBL_LOCALE_DESC_LAST'];
         $format['s'] = $mod_strings['LBL_LOCALE_DESC_SALUTATION'];
         $format['t'] = $mod_strings['LBL_LOCALE_DESC_TITLE'];
 
+        $name = [];
         $name['f'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_FIRST'];
         $name['l'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_LAST'];
         $name['s'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_SALUTATION'];
@@ -2104,7 +2110,7 @@ EOQ;
 
         $ret1 = '';
         $ret2 = '';
-        for ($i = 0, $iMax = strlen($macro); $i < $iMax; $i++) {
+        for ($i = 0, $iMax = strlen((string) $macro); $i < $iMax; $i++) {
             if (array_key_exists($macro[$i], $format)) {
                 $ret1 .= "<i>" . $format[$macro[$i]] . "</i>";
                 $ret2 .= "<i>" . $name[$macro[$i]] . "</i>";
@@ -2133,7 +2139,7 @@ EOQ;
         if ($module == 'ContractTypes') {
             $module = 'Contracts';
         }
-        if (preg_match('/Product[a-zA-Z]*/', $module)) {
+        if (preg_match('/Product[a-zA-Z]*/', (string) $module)) {
             $module = 'Products';
         }
 
@@ -2325,7 +2331,7 @@ EOQ;
     {
         global $locale;
         $localeFormat = $locale->getLocaleFormatMacro($this);
-        if (strpos($localeFormat, 'l') > strpos($localeFormat, 'f')) {
+        if (strpos((string) $localeFormat, 'l') > strpos((string) $localeFormat, 'f')) {
             return false;
         }
         return true;
@@ -2463,11 +2469,11 @@ EOQ;
         $htmlBody = $emailTemp->body_html;
         $body = $emailTemp->body;
         if (isset($additionalData['link']) && $additionalData['link'] == true) {
-            $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], $htmlBody);
-            $body = str_replace('$contact_user_link_guid', $additionalData['url'], $body);
+            $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], (string) $htmlBody);
+            $body = str_replace('$contact_user_link_guid', $additionalData['url'], (string) $body);
         } else {
-            $htmlBody = str_replace('$contact_user_user_hash', $additionalData['password'], $htmlBody);
-            $body = str_replace('$contact_user_user_hash', $additionalData['password'], $body);
+            $htmlBody = str_replace('$contact_user_user_hash', $additionalData['password'], (string) $htmlBody);
+            $body = str_replace('$contact_user_user_hash', $additionalData['password'], (string) $body);
         }
         // Bug 36833 - Add replacing of special value $instance_url
         $htmlBody = str_replace('$config_site_url', $sugar_config['site_url'], $htmlBody);
@@ -2581,7 +2587,7 @@ EOQ;
      */
     public function isPrimaryEmail($email)
     {
-        if (!empty($this->email1) && !empty($email) && strcasecmp($this->email1, $email) == 0) {
+        if (!empty($this->email1) && !empty($email) && strcasecmp($this->email1, $email) === 0) {
             return true;
         }
         return false;
