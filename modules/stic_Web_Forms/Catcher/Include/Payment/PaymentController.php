@@ -408,14 +408,16 @@ class PaymentController extends WebFormDataController {
         $tpvSys->setParameter("DS_MERCHANT_CONSUMERLANGUAGE", PaymentBO::getTPVLanguage($this->getLanguage()));
 
         // Set the Titular name to the TPV (DS_MERCHANT_TITULAR)
+        include_once 'SticInclude/Utils.php';
         $merchant_titular = "";
-        if (isset($_REQUEST['Contacts___last_name']) && !empty($_REQUEST['Contacts___last_name'])) {
-            $merchant_titular = $_REQUEST['Contacts___last_name'];
-            if (isset($_REQUEST['Contacts___first_name']) && !empty($_REQUEST['Contacts___first_name'])) {
-                $merchant_titular .= ", " . $_REQUEST['Contacts___first_name'];
+        $relatedContactBean = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts');
+        if($relatedContactBean) {
+            $merchant_titular = $relatedContactBean->full_name;
+        } else {
+            $relatedAccountBean = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_accounts');
+            if($relatedAccountBean) {
+                $merchant_titular = $relatedAccountBean->name;
             }
-        } elseif (isset($_REQUEST['Accounts___name']) && !empty($_REQUEST['Accounts___name'])) {
-            $merchant_titular = $_REQUEST['Accounts___name'];
         }
         if (!empty($merchant_titular)) {
             // Limit to length 16
