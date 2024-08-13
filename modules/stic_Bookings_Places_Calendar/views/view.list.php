@@ -23,7 +23,7 @@
 require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
 
-class stic_Bookings_CalendarViewList extends ViewList
+class stic_Bookings_Places_CalendarViewList extends ViewList
 {
     public function __construct()
     {
@@ -40,20 +40,13 @@ class stic_Bookings_CalendarViewList extends ViewList
 
     public function display()
     {
-        global $mod_strings, $current_user, $app_strings, $sugar_config;
+        global $mod_strings, $current_user, $app_strings, $app_list_strings, $sugar_config;
         SticViews::display($this);
 
         $initialCalendarDate = $_REQUEST['start_date'] ? $_REQUEST['start_date'] : '';
         $initialCalendarDate = json_encode($initialCalendarDate);
         echo <<<SCRIPT
         <script>initialCalendarDate = $initialCalendarDate;</script>
-    SCRIPT;
-
-        // Define the default color for Calendar items in the calendar
-        $defaultCalendarObjectColor = $sugar_config['stic_bookings_calendar_default_event_color'];
-        $defaultCalendarObjectColor = json_encode($defaultCalendarObjectColor);
-        echo <<<SCRIPT
-        <script>defaultCalendarObjectColor = $defaultCalendarObjectColor;</script>
     SCRIPT;
 
         // Define the language of the calendar
@@ -82,8 +75,8 @@ class stic_Bookings_CalendarViewList extends ViewList
         SCRIPT;
 
         // Pass the resources to the template and javascript, to be used in the CSS and in the filters
-        require_once "modules/stic_Bookings_Calendar/Utils.php";
-        $resources = stic_Bookings_CalendarUtils::getAllResources();
+        require_once "modules/stic_Bookings_Places_Calendar/Utils.php";
+        $resources = stic_Bookings_Places_CalendarUtils::getAllPlaces();
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('RESOURCESGROUP', $resources['resourcesArrayByGroup']);
@@ -92,11 +85,51 @@ class stic_Bookings_CalendarViewList extends ViewList
         <script>resourcesGroupArray = $resourcesArrayJson;</script>
     SCRIPT;
 
-        echo getVersionedScript("SticInclude/vendor/fullcalendar_new/index.global.min.js");
-        echo getVersionedScript("modules/stic_Bookings_Calendar/Utils.js");
+    require_once 'modules/UserPreferences/UserPreference.php';
 
-        $this->ss->display("modules/stic_Bookings_Calendar/tpls/filter.tpl");
-        $this->ss->display("modules/stic_Bookings_Calendar/tpls/calendar.tpl");
+    // $sticPlacesUser = $current_user->getPreference('places_calendar_stic_resources_places_users_list');
+    // $sticPlacesType = $current_user->getPreference('places_calendar_stic_sessions_activity_type');
+    // $sticPlacesBookingsType = $current_user->getPreference('places_calendar_stic_resources_places_booking_type_list');
+
+
+    // $sticPlacesUserOptions = get_select_options_with_id($app_list_strings['stic_resources_places_users_list'], $sticPlacesUserOptions);
+    // $this->ss->assign('stic_resources_places_users_list', $sticPlacesUserOptions);
+        
+    // $sticPlacesTypeOptions = get_select_options_with_id($app_list_strings['stic_resources_places_type_list'], $sticPlacesTypeOptions);
+    // $this->ss->assign('stic_resources_places_type_list', $sticPlacesTypeOptions);
+    
+    // $sticPlacesBookingsTypeOptions = get_select_options_with_id($app_list_strings['stic_resources_places_booking_type_list'], $sticPlacesBookingsTypeOptions);
+    // $this->ss->assign('stic_resources_places_booking_type_list', $sticPlacesBookingsTypeOptions);
+
+
+    $savedFilters = json_decode($current_user->getPreference('stic_bookings_places_calendar_filters'), true) ?? [];
+
+    $sticPlacesUser = $savedFilters['stic_resources_places_users_list'];
+    $sticPlacesType =$savedFilters['stic_resources_places_type_list'];
+    $sticPlacesBookingsType = $savedFilters['stic_resources_places_booking_type_list'];
+
+    $this->ss->assign('stic_resources_places_users_list', get_select_options_with_id($app_list_strings['stic_resources_places_users_list'], $sticPlacesUser ?? []));
+    $this->ss->assign('stic_resources_places_type_list', get_select_options_with_id($app_list_strings['stic_resources_places_type_list'], $sticPlacesType ?? []));
+    $this->ss->assign('stic_resources_places_booking_type_list', get_select_options_with_id($app_list_strings['stic_resources_places_booking_type_list'], $sticPlacesBookingsType ?? []));
+
+
+     if (
+         $sticPlacesUser || $sticPlacesType || $sticPlacesBookingsType
+     ) {
+         $this->ss->assign('applied_filters', true);
+     }else{
+        $this->ss->assign('applied_filters', false);
+   
+     }
+
+        echo getVersionedScript("SticInclude/vendor/fullcalendar_new/index.global.min.js");
+        echo getVersionedScript("modules/stic_Bookings_Places_Calendar/Utils.js");
+        
+        $this->ss->display("modules/stic_Bookings_Places_Calendar/tpls/filters.tpl");
+        $this->ss->display("modules/stic_Bookings_Places_Calendar/tpls/calendar.tpl");
+
 
     }
+    
 }
+
