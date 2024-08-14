@@ -670,6 +670,7 @@ class KReport extends SugarBean {
             // Following the above statement, a specific condition is added for decimal and datetimecombo types.
             // STIC#222
             // STIC#296
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/338
             if ($this->fieldNameMap[$fieldID]['type'] == 'decimal' || $this->fieldNameMap[$fieldID]['type'] == 'float' || $this->fieldNameMap[$fieldID]['type'] == 'datetimecombo') {
                $thisFieldRenderer = $this->getXtypeRenderer((!empty($fieldDetails['overridetype']) ? $fieldDetails['overridetype'] : $this->fieldNameMap [$fieldID] ['type']) , $fieldID);
             }
