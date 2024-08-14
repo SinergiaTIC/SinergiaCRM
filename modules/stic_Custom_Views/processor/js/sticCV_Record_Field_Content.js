@@ -26,7 +26,13 @@
  */
 var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends sticCV_Element_Label {
   constructor(field, $fieldElement, fieldName) {
-    super(field.customView, $fieldElement.children('[field="' + fieldName + '"]'));
+    var $contentElement = $fieldElement.children('[field="' + fieldName + '"]');
+    if ($contentElement.length == 0) {
+      $contentElement = $fieldElement.children(".stic-FieldContent").children('[field="' + fieldName + '"]');
+    }
+    super(field.customView, $contentElement);
+
+    this.$element.css("height", "auto");
 
     this.field = field;
     this.fieldName = fieldName;
@@ -50,32 +56,59 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
         this.$editor = this.$element.find("input,textarea,select");
         break;
     }
+    if (this.customView.view == "detailview") {
+      if (this.$editor.length === 0) {
+        this.$editor = this.$element.find("span");
+      } else {
+        this.$editor.add(this.$element.find("span"));
+      }
+    }
 
     this.$buttons = this.$element.find("button");
     this.$items = this.$element.find(".items,table,option,label");
     this.$fieldText = this.$element.find(".sugar_field");
 
     this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
-    if (this.$readonlyLabel.length == 0 && this.$element.length > 0) {
-      var classes = this.$element.attr("class").replaceAll("hidden", "");
+    if (this.field.customView.view == "editview" || this.field.customView.view == "quickcreate") {
+      // Create $readonlyLabel
+      var classes = this.$element.attr("class").replace(/\bhidden\b/g, "").replace(/\s+/g, " ").trim();
+      if (this.$readonlyLabel.length == 0 && this.$element.length > 0) {
+        this.$element
+          .parent()
+          .append(
+            '<div class="' +
+              classes +
+              ' stic-ReadonlyInput hidden" ' +
+              'style="min-height:30px; display: inline-flex; align-items:center; padding-left:5px; border-radius:0.25em; width:90%">' +
+              "</div>"
+          );
+        this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
+        sticCVUtils.fillReadonlyText(this);
 
-      this.$element
-        .parent()
-        .append(
-          '<div class="' +
-            classes +
-            ' stic-ReadonlyInput hidden" ' +
-            'style="min-height:20px; height:30px; display:inline-flex; align-items:center; padding-left:5px; border-radius:0.25em;">' +
-            "</div>"
-        );
-      this.$readonlyLabel = this.$element.parent().find(".stic-ReadonlyInput");
-      this.$readonlyLabel.text(this.text());
+        // Update label when value is changed
+        var self = this;
+        this.onChange(function() {
+          sticCVUtils.fillReadonlyText(self);
+        });
+      }
 
-      // Update label when value is changed
-      var self = this;
-      this.onChange(function() {
-        self.$readonlyLabel.text(self.text());
-      });
+      // Move $element and $readonlyLabel inside new $element div
+      this.$elementEditor = this.$element;
+      this.$element = $fieldElement.find(".stic-FieldContent");
+      if (this.$element.length == 0 && this.$elementEditor.length > 0) {
+        this.$element = $('<div class="' + classes + ' stic-FieldContent" ' + "></div>");
+        this.$elementEditor.after(this.$element);
+        this.$element.append(this.$readonlyLabel);
+        this.$element.append(this.$elementEditor);
+
+        // Remove "col-" classes
+        this.$elementEditor.removeClass(function(index, className) {
+          return (className.match(/\bcol-\S+/g) || []).join(" ");
+        });
+        this.$readonlyLabel.removeClass(function(index, className) {
+          return (className.match(/\bcol-\S+/g) || []).join(" ");
+        });
+      }
     }
   }
 
@@ -165,7 +198,7 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
           return false;
         }
         var readonly = sticCVUtils.isTrue(action.value);
-        this.applyAction({ action: "visible", value: !readonly });
+        sticCVUtils.show(this.$elementEditor, this.customView, !readonly);
         sticCVUtils.show(this.$readonlyLabel, this.customView, readonly);
         return this;
       case "inline":
@@ -181,8 +214,11 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
   }
 
   onChange(callback) {
-    var alsoInline = this.customView.view == "detailview";
-    return sticCVUtils.onChange(this.$editor, callback, alsoInline) || super.onChange(callback, alsoInline);
+    if (this.customView.view == "detailview") {
+      return this.field.container.onChange(callback);
+    } else {
+      return sticCVUtils.onChange(this.$editor, callback) || super.onChange(callback);
+    }
   }
   change() {
     return sticCVUtils.change(this.$editor) || super.change();
@@ -206,33 +242,71 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     return false;
   }
 
+  _isMultienumCancelledInline() {
+    return (
+      this.type == "multienum" &&
+      this.customView.view == "detailview" &&
+      !this.$element.hasClass("inlineEditActive") &&
+      this.$fieldText.length == 0
+    );
+  }
+
   checkCondition_value(condition) {
     switch (condition.operator) {
       case "Not_Equal_To":
         condition.operator = "Equal_To";
-        return !checkCondition_value(condition);
+        var ret = !this.checkCondition_value(condition);
+        condition.operator = "Not_Equal_To";
+        return ret;
       case "Not_Contains":
         condition.operator = "Contains";
-        return !checkCondition_value(condition);
+        var ret = !this.checkCondition_value(condition);
+        condition.operator = "Not_Contains";
+        return ret;
       case "Not_Starts_With":
         condition.operator = "Starts_With";
-        return !checkCondition_value(condition);
+        var ret = !this.checkCondition_value(condition);
+        condition.operator = "Not_Starts_With";
+        return ret;
       case "Not_Ends_With":
         condition.operator = "Ends_With";
-        return !checkCondition_value(condition);
+        var ret = !this.checkCondition_value(condition);
+        condition.operator = "Not_Ends_With";
+        return ret;
       case "is_not_null":
         condition.operator = "is_null";
-        return !checkCondition_value(condition);
+        var ret = !this.checkCondition_value(condition);
+        condition.operator = "is_not_null";
+        return ret;
     }
 
     var value_list = condition.value_list;
-    if (this.type == "multienum") {
-      condition.value = condition.value ? condition.value : "";
-      condition.value = condition.value.replaceAll("^", "").split(",").sort().join(",");
+
+    var currentValue = this._getValue(value_list);
+    if (!this._isMultienumCancelledInline()) {
+      currentValue = sticCVUtils.normalizeToCompare(currentValue);
+    }
+    if (currentValue === undefined) {
+      currentValue = "";
+    }
+    if(this.type == "date") {
+      currentValue = currentValue.split(" ")[0];
     }
 
-    var currentValue = sticCVUtils.normalizeToCompare(this._getValue(value_list));
-    var conditionValue = sticCVUtils.normalizeToCompare(condition.value);
+    var conditionValue = condition.value ? condition.value : "";
+    if (this.type == "multienum") {
+      if (this._isMultienumCancelledInline()) {
+        conditionValue = sticCVUtils.getMultienumLabelFromKeys(value_list, conditionValue);
+      } else {
+        conditionValue = conditionValue.replaceAll("^", "").split(",").sort().join(",");
+      }
+    }
+    if(this.type == "date") {
+      conditionValue = conditionValue.split(" ")[0];
+    }
+    if (!this._isMultienumCancelledInline()) {
+      conditionValue = sticCVUtils.normalizeToCompare(conditionValue);
+    }
     switch (condition.operator) {
       case "Equal_To":
         if (this.type == "relate") {
@@ -311,7 +385,9 @@ var sticCV_Record_Field_Content = class sticCV_Record_Field_Content extends stic
     switch (condition.operator) {
       case "Not_Equal_To":
         condition.operator = "Equal_To";
-        return !checkCondition_date(condition);
+        var ret = !this.checkCondition_value(condition);
+        condition.operator = "Not_Equal_To";
+        return ret;
     }
 
     var value_list = condition.value_list;

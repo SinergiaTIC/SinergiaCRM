@@ -67,6 +67,9 @@ var sticCV_Element_Div = class sticCV_Element_Div {
       case "visible":
         sticCVUtils.show(this.$element, this.customView, action.value);
         return this;
+      case "visible_auto":
+        sticCVUtils.show_auto(this.$element, this.customView, action.value);
+        return this;
       case "color":
         sticCVUtils.color(this.$element, this.customView, action.value);
         return this;
@@ -92,5 +95,12 @@ var sticCV_Element_Div = class sticCV_Element_Div {
         return this;
     }
     return false;
+  }
+
+  onChange(callback) {
+    return sticCVUtils.onChange(this.$element, callback);
+  }
+  change() {
+    return sticCVUtils.change(this.$element, callback);
   }
 };

@@ -30,9 +30,28 @@ var sticCVUtils = class sticCVUtils {
     show = sticCVUtils.isTrue(show);
     $elem.each(function() {
       if (show) {
-        sticCVUtils.removeClass($(this), customView, "hidden");
+        if (!$(this).hasClass("auto-hidden")) {
+          sticCVUtils.removeClass($(this), customView, "hidden");
+        }
       } else {
         sticCVUtils.addClass($(this), customView, "hidden");
+        sticCVUtils.removeClass($(this), customView, "auto-hidden");
+      }
+    });
+  }
+  static show_auto($elem, customView = null, show = true) {
+    show = sticCVUtils.isTrue(show);
+    $elem.each(function() {
+      if (show) {
+        if ($(this).hasClass("auto-hidden")) {
+          sticCVUtils.removeClass($(this), customView, "hidden");
+          sticCVUtils.removeClass($(this), customView, "auto-hidden");
+        }
+      } else {
+        if (!$(this).hasClass("hidden")) {
+          sticCVUtils.addClass($(this), customView, "hidden");
+          sticCVUtils.addClass($(this), customView, "auto-hidden");
+        }
       }
     });
   }
@@ -268,16 +287,26 @@ var sticCVUtils = class sticCVUtils {
 
   static getValue(fieldContent, value_list) {
     var $elem = fieldContent.$editor;
-    if (fieldContent.customView.view == "detailview") {
+    if (
+      fieldContent.customView.view == "detailview" &&
+      fieldContent.type != "bool" &&
+      !fieldContent.$element.hasClass("inlineEditActive")
+    ) {
       $elem = fieldContent.$fieldText;
+      if ($elem.length > 0 && (fieldContent.type == "multienum" || fieldContent.type == "enum")) {
+        return $elem.val().replaceAll("^", "").split(",").sort().join(",");
+      }
     }
     if ($elem.length == 0 || $elem.get(0).parentNode === null) {
       $elem = fieldContent.$element;
     }
 
-    if (fieldContent.customView.view == "detailview") {
+    if (fieldContent.customView.view == "detailview" && !fieldContent.$element.hasClass("inlineEditActive")) {
       if (fieldContent.type == "relate") {
         return $elem.attr("data-id-value") + "|" + $elem.text().trim();
+      }
+      if (fieldContent.type == "bool") {
+        return $elem.prop("checked");
       }
       var text = fieldContent.text();
       if (
@@ -285,7 +314,8 @@ var sticCVUtils = class sticCVUtils {
         value_list != "" &&
         fieldContent.type != "date" &&
         fieldContent.type != "datetime" &&
-        fieldContent.type != "datetimecombo"
+        fieldContent.type != "datetimecombo" &&
+        fieldContent.type != "multienum"
       ) {
         return sticCVUtils.getListValueFromLabel(value_list, text);
       }
@@ -410,7 +440,7 @@ var sticCVUtils = class sticCVUtils {
   }
 
   static inline_edit(fieldContent, inline_edit = true) {
-    //IEPA!!
+    // TODO
     console.log("Inline not available. Requested:" + inline_edit);
     return false;
   }
@@ -447,16 +477,25 @@ var sticCVUtils = class sticCVUtils {
     var oldRequired = sticCVUtils.getRequiredStatus(field);
 
     var customView = field.customView;
+    sticCVUtils.show(field.header.$element.find("span.required"), customView, false);
     if (required) {
       sticCVUtils.addClass(field.header.$element, customView, "conditional-required");
-      sticCVUtils.show(field.header.$element.find("span.required"), customView, false);
       removeFromValidate(customView.formName, field.name);
+      var fieldName = field.header.text();
+      if (fieldName === null || fieldName === undefined || fieldName.trim() === "") {
+        fieldName = SUGAR.language.get("app_strings", "ERR_MISSING_REQUIRED_FIELDS");
+      } else {
+        fieldName = fieldName.trim();
+        if (fieldName.endsWith(":")) {
+          fieldName = fieldName.slice(0, -1);
+        }
+      }
       addToValidate(
         customView.formName,
         field.name,
         field.content.type,
         true,
-        SUGAR.language.get("app_strings", "ERR_MISSING_REQUIRED_FIELDS")
+        fieldName
       );
       if (!oldRequired) {
         customView.addUndoFunction(function() {
@@ -482,22 +521,36 @@ var sticCVUtils = class sticCVUtils {
     return field;
   }
   static getRequiredStatus(field) {
-    var validateFields = validate[field.customView.formName];
-    for (var i = 0; i < validateFields.length; i++) {
-      // Array(name, type, required, msg);
-      if (validateFields[i][0] == field.name) {
-        return validateFields[i][2];
+    if (
+      field.customView &&
+      field.customView.formName &&
+      validate[field.customView.formName] &&
+      validate[field.customView.formName].length
+    ) {
+      var validateFields = validate[field.customView.formName];
+      for (var i = 0; i < validateFields.length; i++) {
+        // Array(name, type, required, msg);
+        if (validateFields[i][0] == field.name) {
+          return validateFields[i][2];
+        }
       }
     }
     return false;
   }
 
-  static onChange($elem, callback, alsoInline = false) {
+  static createObserverCallback($elem, callback) {
+    return function() {
+      sticCVUtils.onChange($elem.find("input"), callback);
+      callback();
+    };
+  }
+
+  static onChange($elem, callback) {
     $elem.each(function() {
       $(this).on("change paste keyup", callback);
       YAHOO.util.Event.on($(this)[0], "change", callback);
-      if (!$(this).is(":input") || alsoInline) {
-        var observer = new MutationObserver(callback);
+      if (!$(this).is(":input")) {
+        var observer = new MutationObserver(sticCVUtils.createObserverCallback($(this), callback));
         observer.observe($(this)[0], { attributes: true, childList: true, subtree: true, characterData: true });
       }
     });
@@ -526,8 +579,21 @@ var sticCVUtils = class sticCVUtils {
     return res;
   }
 
+  static getMultienumLabelFromKeys(app_list_stringsName, keyValues) {
+    var keyValueArray = keyValues.replaceAll("^", "").split(",");
+    var labelValueArray = [];
+  
+    for (var i = 0; i < keyValueArray.length; i++) {
+      var label = SUGAR.language.languages.app_list_strings[app_list_stringsName][keyValueArray[i]];
+      if(label !== undefined) {
+        labelValueArray.push(label);  
+      }
+    }
+    return labelValueArray.join(", ");
+  }
+
   static isTrue(value) {
-    return value === true || value === "1" || value === 1;
+    return value === true || value === "1" || value === 1 || value === "yes" || value === "true";
   }
 
   static normalizeToCompare(value) {
@@ -536,5 +602,20 @@ var sticCVUtils = class sticCVUtils {
       return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
     return value;
+  }
+
+  static fillReadonlyText(fieldContent) {
+    fieldContent.$readonlyLabel.empty();
+
+    var lines = fieldContent.text().split("\n");
+    var first = true;
+    lines.forEach(function(line) {
+      if (first) {
+        first = false;
+      } else {
+        fieldContent.$readonlyLabel.append("<br />");
+      }
+      fieldContent.$readonlyLabel.append(line);
+    });
   }
 };
