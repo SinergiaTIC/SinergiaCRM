@@ -2,6 +2,10 @@
 
 $surveyName = !empty($_REQUEST['name']) ? $_REQUEST['name'] : 'Survey';
 
+// STIC - ART - Thank you message in surveys
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+$surveyThanks = translate('LBL_SURVEY_THANKS', 'Surveys');
+// END STIC
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +27,11 @@ $surveyName = !empty($_REQUEST['name']) ? $_REQUEST['name'] : 'Survey';
     <div class="row well">
         <div class="col-md-offset-2 col-md-8">
             <h1><?= $surveyName; ?></h1>
-            <p>Thanks for completing this survey.</p>
+            <!-- STIC - ART - Thank you message in surveys -->
+            <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/ -->
+            <!-- <p>Thanks for completing this survey.</p> -->
+            <p><?= $surveyThanks; ?></p>
+            <!-- END STIC -->
         </div>
     </div>
 </div>
