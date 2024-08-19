@@ -74,7 +74,7 @@ class stic_Work_CalendarViewWorkCalendarAssistant extends SugarView
                 $user = BeanFactory::getBean('Employees', $id);
                 $selectedEmployees[$key] = $user->name;
             }
-        } else {
+        } else if (!$_REQUEST['selectUser']) {
             $selectedEmployees = $_SESSION["summaryEmployeeNames"];
             $_REQUEST['uid'] = $_SESSION["summaryEmployeeIds"];
         }
