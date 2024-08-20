@@ -33,6 +33,8 @@ $dictionary["Campaign"]["fields"]["stic_payment_commitments_campaigns"] = array(
 );
 
 // Fields for Campaign type Notification
+
+// parent_name, parent_type and parent_id: The Parent element of the Notification 
 $dictionary["Campaign"]["fields"]["parent_name"] = array(
     'name' => 'parent_name',
     'parent_type' => 'record_type_display',
@@ -42,7 +44,7 @@ $dictionary["Campaign"]["fields"]["parent_name"] = array(
     'type' => 'parent',
     'group' => 'parent_name',
     'source' => 'non-db',
-    'options' => 'parent_type_display_notifications',
+    'options' => 'parent_type_display_notifications', // Available Notification parent types
     'inline_edit' => 0,
     'studio' => 'visible',
 );
@@ -52,7 +54,7 @@ $dictionary["Campaign"]["fields"]['parent_type'] = array(
     'type' => 'parent_type',
     'dbType' => 'varchar',
     'group' => 'parent_name',
-    'options' => 'parent_type_display_notifications',
+    'options' => 'parent_type_display_notifications', // Available Notification parent types
     'len' => 255,
     'studio' => 'hidden',
 );
@@ -63,12 +65,18 @@ $dictionary["Campaign"]["fields"]['parent_id'] = array(
     'reportable' => false,
     'vname' => 'LBL_PARENT_ID',
 );
+
+// The names of the selected Prospect Lists for the Notification (saved in db)
 $dictionary["Campaign"]["fields"]['stic_notification_prospect_list_names_c'] = array(
     'name' => 'stic_notification_prospect_list_names_c',
     'vname' => 'stic_notification_prospect_list_names_c',
     'type' => 'varchar',
     'len' => '255',
 );
+
+// The related Prospect Lists to the Notification 
+// In edit: Filled by user, used to create relationsiphs
+// In detail: Filled from relationships
 $dictionary["Campaign"]["fields"]['notification_prospect_list_ids'] = array(
     'name' => 'notification_prospect_list_ids',
     'vname' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
@@ -91,6 +99,10 @@ $dictionary["Campaign"]["fields"]['notification_prospect_list_ids'] = array(
     'options' => 'dynamic_prospect_list_list',
     'dependency' => false,
 );
+
+// These fields are from the EmailMarketing related to the Notification 
+// In edit: Filled by user, used to assign in the related EmailMarketing
+// In detail: Filled from the related EmailMarketing data
 $dictionary["Campaign"]["fields"]['notification_template_id'] = array(
     'name' => 'notification_template_id',
     'vname' => 'LBL_NOTIFICATION_TEMPLATE_ID',
