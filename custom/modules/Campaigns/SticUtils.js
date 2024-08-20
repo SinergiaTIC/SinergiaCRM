@@ -120,15 +120,19 @@ function type_change() {
 }
 
 function mail_change() {
-  // var outbound = STIC.campaignEmails.outbound.find(item => item.id === $("#notification_outbound_email_id").val());
-  // $("#notification_from_name").val(outbound ? outbound.name : "");
-  // $("#notification_from_addr").val(outbound ? outbound.addr : "");
+  // if (STIC && STIC.campaignEmails && STIC.campaignEmails.outbound) {
+  //   var outbound = STIC.campaignEmails.outbound.find(item => item.id === $("#notification_outbound_email_id").val());
+  //   $("#notification_from_name").val(outbound ? outbound.name : "");
+  //   $("#notification_from_addr").val(outbound ? outbound.addr : "");
+  // }
 
-  var inbound = STIC.campaignEmails.inbound.find(item => item.id === $("#notification_inbound_email_id").val());
-  $("#notification_from_name").val(inbound ? inbound.name : "");
-  $("#notification_from_addr").val(inbound ? inbound.addr : "");
-  // $("#notification_reply_to_name").val(inbound ? inbound.name : "");
-  // $("#notification_reply_to_addr").val(inbound ? inbound.addr : "");
+  if (STIC && STIC.campaignEmails && STIC.campaignEmails.inbound) {
+    var inbound = STIC.campaignEmails.inbound.find(item => item.id === $("#notification_inbound_email_id").val());
+    $("#notification_from_name").val(inbound ? inbound.name : "");
+    $("#notification_from_addr").val(inbound ? inbound.addr : "");
+    // $("#notification_reply_to_name").val(inbound ? inbound.name : "");
+    // $("#notification_reply_to_addr").val(inbound ? inbound.addr : "");
+  }
 }
 
 function ConvertItems(id) {

@@ -111,57 +111,6 @@ class Campaign extends SugarBean
      */
     public $survey_name;
 
-    // STIC-Custom - JBL - 20240611 - Notify new Opportunities: New Campaign type (Notification)
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
-
-    // New property fields
-
-    // Record related to Notification
-    public $parent_name;
-    public $parent_type;
-    public $parent_id;
-
-    // Calculated non-db fields required for Notifications 
-    public $notification_prospect_list_ids;
-    public $stic_notification_prospect_list_names_c;
-
-    public $notification_template_id;
-    public $notification_template_name;
-    public $notification_inbound_email_id;
-    public $notification_outbound_email_id;
-    public $notification_from_name;
-    public $notification_from_addr;
-    public $notification_reply_to_name;
-    public $notification_reply_to_addr;
-
-    /**
-     * Function fetches a single row of data given the primary key value.
-     *
-     * The fetched data is then set into the bean. The function also processes the fetched data by formatting
-     * date/time and numeric values.
-     *
-     * @param string|int $id Optional, default -1, is set to -1 id value from the bean is used, else,
-     * passed value is used
-     * @param bool $encode Optional, default true, encodes the values fetched from the database.
-     * @param bool $deleted Optional, default true, if set to false deleted filter will not be added.
-     * @return SugarBean|null
-     *
-     * Internal function, do not override.
-     */    
-    public function retrieve($id = -1, $encode = true, $deleted = true)
-    {
-        parent::retrieve($id, $encode, $deleted);
-        
-        if ($this->campaign_type == "Notification") {
-            // Notifications need some non-db fields from related prospect_lists, email_marketing and email_templates
-            include_once "custom/modules/Campaigns/SticUtils.php";
-            CampaignsUtils::fillCampaignNotificationFields($this);
-        }
-
-        return $this;
-    }
-    // END STIC-Custom
-
     public function list_view_parse_additional_sections(&$listTmpl)
     {
         global $locale;
