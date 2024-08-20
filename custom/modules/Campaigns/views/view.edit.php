@@ -45,7 +45,7 @@ class CustomCampaignsViewEdit extends ViewEdit
 
         // Write here you custom code
         include_once "custom/modules/Campaigns/SticUtils.php";
-        fillDynamicListsForNotifications();
+        CampaignsUtils::fillDynamicListsForNotifications();
     }
 
     public function display()
@@ -58,7 +58,7 @@ class CustomCampaignsViewEdit extends ViewEdit
         echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
 
         include_once "custom/modules/Campaigns/SticUtils.php";
-        echo getNotificationCampaignEmailDataScript();
+        echo CampaignsUtils::getNotificationCampaignEmailDataScript();
     }
 
 }

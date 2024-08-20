@@ -41,7 +41,7 @@ class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
         }
 
         include_once "custom/modules/Campaigns/SticUtils.php";
-        fillDynamicListsForNotifications();
+        CampaignsUtils::fillDynamicListsForNotifications();
 
         parent::process($module);
 
@@ -49,7 +49,7 @@ class CustomCampaignsSubpanelQuickCreate extends SubpanelQuickCreate
         echo getVersionedScript("SticInclude/js/Utils.js");
         echo getVersionedScript("custom/modules/Campaigns/SticUtils.js");
 
-        echo getCampaignsLangStrings();
-        echo getNotificationCampaignEmailDataScript();
+        echo CampaignsUtils::getCampaignsLangStrings();
+        echo CampaignsUtils::getNotificationCampaignEmailDataScript();
     }
 }

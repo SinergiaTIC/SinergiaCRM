@@ -155,7 +155,7 @@ class Campaign extends SugarBean
         if ($this->campaign_type == "Notification") {
             // Notifications need some non-db fields from related prospect_lists, email_marketing and email_templates
             include_once "custom/modules/Campaigns/SticUtils.php";
-            fillCampaignNotificationFields($this);
+            CampaignsUtils::fillCampaignNotificationFields($this);
         }
 
         return $this;
