@@ -67,10 +67,14 @@ $mod_strings = array(
     'LBL_ALL_DAY' => 'All day',
     'LBL_START_DATE' => 'Start date',
     'LBL_END_DATE' => 'End date',
+    'LBL_PLANNED_START_DATE' => 'Planned start date',
+    'LBL_PLANNED_END_DATE' => 'Planned end date',
     'LBL_FLEX_RELATE' => 'Related with',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Resources',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Booking account',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Booking contact',
+    'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Booking family',
+    'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Booking payment commitment',
 
     // Adding resources section
     'LBL_RESOURCES' => 'Resources',
@@ -89,6 +93,14 @@ $mod_strings = array(
     'LBL_RESOURCES_START_DATE_ERROR' => 'Start date must be before End date.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'This booking has no resources.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'This booking has no resources. Do you want to save it anyway?',
+    'LBL_RESOURCES_PLACE_TYPE' => 'Place type',
+    'LBL_RESOURCES_GENDER' => 'Gender',
+    'LBL_RESOURCES_USER_TYPE' => 'User type',
+    'LBL_RESOURCES_BOOKING_TYPE' => 'Booking type',
+    'LBL_RESOURCES_AMOUNT_DAY_OCCUPIED' => 'Daily amount per occupied place',
+    'LBL_RESOURCES_AMOUNT_DAY_UNOCCUPIED' => 'Daily amount per unoccupied place',
+    'LBL_RESOURCES_AMOUNT_DAY_OVEROCCUPIED' => 'Daily amount per overoccupied place',
+    'LBL_RESOURCES_AMOUNT_COPAYMENT' => 'Copayment daily amount',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Resource',

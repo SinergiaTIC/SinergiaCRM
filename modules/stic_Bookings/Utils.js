@@ -157,6 +157,11 @@ switch (viewType()) {
 
 // This function adds rows to the resources table at the bottom of the Editview
 function insertResourceLine() {
+    if (!config_resource_fields || !Array.isArray(config_resource_fields)) {
+        console.error('config_resource_fields is not defined or is not an array');
+        return;
+    }
+
     ln = 0;
     // If there is any empty line, it won't add more lines
     for (var i = 0; i <= resourceMaxCount; i++) {
@@ -167,84 +172,61 @@ function insertResourceLine() {
             break;
         }
     }
-    
+    if ($("#resourceLine thead").length === 0) {
+        var header = "<thead><tr>";
+        config_resource_fields.forEach(function(field) {
+            header += "<th class='resource_column " + field + "'>" + SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_' + field.toUpperCase()) + "</th>";
+        });
+        header += "<th class='resource_column'></th></tr></thead>";
+        $("#resourceLine").prepend(header);
+    }
+
     var x = document.getElementById("resourceLine").insertRow(-1);
-    var y = x.insertCell(0);
-    var v = x.insertCell(1);
-    var z = x.insertCell(2);
-    var a = x.insertCell(3);
-    var h = x.insertCell(4);
-    var b = x.insertCell(5);
-    var p = x.insertCell(6);
-    var c = x.insertCell(7);
-
     x.id = "resourceLine" + ln;
-    y.className = "dataField ";
-    v.className = "dataField resource_code";
-    z.className = "dataField resource_status";
-    a.className = "dataField resource_type";
-    h.className = "dataField resource_color";
-    b.className = "dataField resource_hourly_rate hidden-xs hidden-sm";
-    p.className = "dataField resource_daily_rate hidden-xs hidden-sm";
 
-    y.innerHTML =
-        "<div class='resouce_data_group'> <input type='text' class='sqsEnabled yui-ac-input resouce_data_name' name='resource_name" +
-        ln +
-        "' id='resource_name" +
-        ln +
-        "' autocomplete='new-password' value='' title='' tabindex='3' >" +
-        "<input type='hidden' name='resource_id[]' id='resource_id" +
-        ln +
-        "' value=''>" +
-        "<span class='id-ff multiple'>" +
-        "<button title='" +
-        SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE") +
-        "' type='button' class='button' name='btn_1' onclick='openResourceSelectPopup(" +
-        ln +
-        ")'>" +
-        "<span class='suitepicon suitepicon-action-select'/></span></button>" +
-        "<button type='button' name='btn_1' class='button lastChild' onclick='clearRow(this.form," +
-        ln +
-        ");'>" +
-        "<span class='suitepicon suitepicon-action-clear'></span>" +
-        "</span></div>";
-    v.innerHTML =
-        "<div><input class='resource_data resource_code' type='text' name='resource_code" +
-        ln +
-        "' id='resource_code" +
-        ln +
-        "' value=''  title='' tabindex='3' readonly='readonly'></div>";
-    z.innerHTML =
-        "<input class='resource_data resource_status' type='text' name='resource_status" +
-        ln +
-        "' id='resource_status" +
-        ln +
-        "' value=''  title='' tabindex='3' readonly='readonly'>";
-    a.innerHTML =
-        "<input class='resource_data resource_type' type='text' name='resource_type" +
-        ln +
-        "' id='resource_type" +
-        ln +
-        "' value=''  title='' tabindex='3' readonly='readonly'>";
-    h.innerHTML =
-        "<input class='resource_data resource_color' type='text' name='resource_color" +
-        ln +
-        "' id='resource_color" +
-        ln +
-        "' tabindex='3' disabled='disabled' readonly='readonly' >";
-    b.innerHTML =
-        "<input class='resource_data resource_hourly_rate' type='text' name='resource_hourly_rate" +
-        ln +
-        "' id='resource_hourly_rate" +
-        ln +
-        "' value=''  title='' tabindex='3' readonly='readonly'>";
-    p.innerHTML =
-        "<input class='resource_data resource_daily_rate' type='text' name='resource_daily_rate" +
-        ln +
-        "' id='resource_daily_rate" +
-        ln +
-        "' value=''  title='' tabindex='3' readonly='readonly'>";
-    c.innerHTML =
+    config_resource_fields.forEach(function(field) {
+        var cell = x.insertCell(-1);
+        cell.className = "dataField " + field;
+        
+        if (field === "name") {
+            cell.innerHTML =
+                "<div class='resouce_data_group'> <input type='text' class='sqsEnabled yui-ac-input resouce_data_name' name='resource_name" +
+                ln +
+                "' id='resource_name" +
+                ln +
+                "' autocomplete='new-password' value='' title='' tabindex='3' >" +
+                "<input type='hidden' name='resource_id[]' id='resource_id" +
+                ln +
+                "' value=''>" +
+                "<span class='id-ff multiple'>" +
+                "<button title='" +
+                SUGAR.language.get("app_strings", "LBL_SELECT_BUTTON_TITLE") +
+                "' type='button' class='button' name='btn_1' onclick='openResourceSelectPopup(" +
+                ln +
+                ")'>" +
+                "<span class='suitepicon suitepicon-action-select'/></span></button>" +
+                "<button type='button' name='btn_1' class='button lastChild' onclick='clearRow(this.form," +
+                ln +
+                ");'>" +
+                "<span class='suitepicon suitepicon-action-clear'></span>" +
+                "</span></div>";
+        } else {
+            var input = document.createElement("input");
+            input.type = "text";
+            input.className = "resource_data " + field;
+            input.name = "resource_" + field + ln;
+            input.id = "resource_" + field + ln;
+            input.value = "";
+            input.title = "";
+            input.tabIndex = "3";
+            input.readOnly = true;
+            cell.appendChild(input);
+        }
+    });
+
+    // Add remove button
+    var removeCell = x.insertCell(-1);
+    removeCell.innerHTML =
         "<input type='button' class='button' value='" +
         SUGAR.language.get("app_strings", "LBL_REMOVE") +
         "' tabindex='3' onclick='markResourceLineDeleted(" +
@@ -258,17 +240,8 @@ function insertResourceLine() {
         method: "query",
         modules: ["stic_Resources"],
         group: "or",
-        field_list: ["name", "id", "code", "color", "status", "type", "hourly_rate", "daily_rate"],
-        populate_list: [
-            "resource_name" + ln,
-            "resource_id" + ln,
-            "resource_code" + ln,
-            "resource_color" + ln,
-            "resource_status" + ln,
-            "resource_type" + ln,
-            "resource_hourly_rate" + ln,
-            "resource_daily_rate" + ln
-        ],
+        field_list: ["name", "id"].concat(config_resource_fields.filter(field => field !== "name")),
+        populate_list: ["resource_name" + ln, "resource_id" + ln].concat(config_resource_fields.filter(field => field !== "name").map(field => "resource_" + field + ln)),
         conditions: [
             {
                 name: "name",
@@ -283,6 +256,7 @@ function insertResourceLine() {
         post_onblur_function: "callbackResourceSelectQS(" + ln + ")",
         no_match_text: "No Match"
     };
+
     QSProcessedFieldsArray[getFormName() + "_resource_name" + ln] = false;
     enableQS(false);
     addToValidateCallback(getFormName(), "resource_name" + ln, "text", false, SUGAR.language.get(module, "LBL_RESOURCES_ERROR"), function(
@@ -293,7 +267,6 @@ function insertResourceLine() {
     });
     resourceMaxCount++;
 }
-
 function resourceLineWithData(resourcesCount) {
     for (var i = 0; i <= resourceMaxCount; i++) {
         if ($("#resource_id" + i).length && $("#resource_id" + i).val()) {
@@ -312,33 +285,59 @@ function markResourceLineDeleted(ln) {
     }
 }
 
-// Callback function used in the resources popup
+// // Callback function used in the resources popup
+// function openResourceSelectPopup(ln) {
+//     var popupRequestData = {
+//         call_back_function: "callbackResourceSelectPopup",
+//         passthru_data: {
+//             ln: ln
+//         },
+//         form_name: "EditView",
+//         field_to_name_array: {
+//             id: "resource_id",
+//             name: "resource_name",
+//             code: "resource_code",
+//             color: "resource_color",
+//             status: "resource_status",
+//             type: "resource_type",
+//             hourly_rate: "resource_hourly_rate",
+//             daily_rate: "resource_daily_rate"
+//         }
+//     };
+//     open_popup("stic_Resources", 600, 400, "", true, false, popupRequestData);
+// }
 function openResourceSelectPopup(ln) {
+    var field_to_name_array = {
+        id: "resource_id"
+    };
+
+    // Agregar dinámicamente los campos de config_resource_fields
+    config_resource_fields.forEach(function(field) {
+        field_to_name_array[field] = "resource_" + field;
+    });
+
     var popupRequestData = {
         call_back_function: "callbackResourceSelectPopup",
         passthru_data: {
             ln: ln
         },
         form_name: "EditView",
-        field_to_name_array: {
-            id: "resource_id",
-            name: "resource_name",
-            code: "resource_code",
-            color: "resource_color",
-            status: "resource_status",
-            type: "resource_type",
-            hourly_rate: "resource_hourly_rate",
-            daily_rate: "resource_daily_rate"
-        }
+        field_to_name_array: field_to_name_array
     };
+
     open_popup("stic_Resources", 600, 400, "", true, false, popupRequestData);
 }
 
 function callbackResourceSelectQS(ln) {
     if ($("#resource_id" + ln).val()) {
-        $("#resource_hourly_rate" + ln).val(myFormatNumber($("#resource_hourly_rate" + ln).val()));
-        $("#resource_daily_rate" + ln).val(myFormatNumber($("#resource_daily_rate" + ln).val()));
-        $("#resource_color" + ln).colorPicker({ opacity: false });
+        config_resource_fields.forEach(function(field) {
+            if (field === 'hourly_rate' || field === 'daily_rate') {
+                $("#resource_" + field + ln).val(myFormatNumber($("#resource_" + field + ln).val()));
+            } else if (field === 'color') {
+                $("#resource_" + field + ln).colorPicker({ opacity: false });
+            }
+            // Puedes agregar más condiciones aquí si otros campos necesitan un tratamiento especial
+        });
     }
 }
 
@@ -352,6 +351,7 @@ function callbackResourceSelectPopup(popupReplyData) {
 
 // Fill a resource row with its data
 function populateResourceLine(resource, ln) {
+    console.log(resource);
     Object.keys(resource).forEach(function(key, index) {
         $("#" + key + ln).val(resource[key]);
     }, resource);
@@ -406,14 +406,16 @@ function isResourceAvailable(resourceElement = null) {
 
 // Clean a resource row
 function clearRow(form, ln) {
-    SUGAR.clearRelateField(form, `resource_name` + ln, `resource_id` + ln);
-    $(`#resource_code` + ln).val("");
-    $(`#resource_color` + ln).val("");
-    $(`#resource_status` + ln).val("");
-    $(`#resource_type` + ln).val("");
-    $(`#resource_hourly_rate` + ln).val("");
-    $(`#resource_daily_rate` + ln).val("");
-    $("#resource_color" + ln).css("background-color", "");
+    // Asumimos que 'name' es siempre el primer campo y se usa para el campo relacionado
+    SUGAR.clearRelateField(form, `resource_name${ln}`, `resource_id${ln}`);
+
+    config_resource_fields.forEach(function(field) {
+        $(`#resource_${field}${ln}`).val("");
+        // Manejo especial para el campo de color
+        if (field === 'color') {
+            $(`#resource_${field}${ln}`).css("background-color", "");
+        }
+    });
 }
 
 
@@ -486,7 +488,6 @@ function updateSelectedCentersList() {
     });    
     var startDate = getFieldValue("start_date");
     var endDate = getFieldValue("end_date");
-    console.log(startDate + "estoy en update");
     // Agregar manejador de eventos para los botones de eliminación
     $(".removeCenterButton").off('click').on('click', function() {
         var index = $(this).data('index');

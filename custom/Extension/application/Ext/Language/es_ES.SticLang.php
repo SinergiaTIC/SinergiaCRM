@@ -3158,12 +3158,6 @@ $app_list_strings['stic_resources_places_gender_list']['men'] = 'Hombres';
 $app_list_strings['stic_resources_places_gender_list']['women'] = 'Mujeres';
 $app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
 
-// Recursos: Tipo reserva permitida
-$app_list_strings['stic_resources_places_booking_type_list'][''] = '';
-$app_list_strings['stic_resources_places_booking_type_list']['adult'] = 'Familia';
-$app_list_strings['stic_resources_places_booking_type_list']['family'] = 'Persona adulta';
-$app_list_strings['stic_resources_places_booking_type_list']['anonymous'] = 'Anónima';
-
 // Reservas: Estados
 $app_list_strings['stic_bookings_status_list'][''] = '';
 $app_list_strings['stic_bookings_status_list']['confirmed'] = 'Confirmada';

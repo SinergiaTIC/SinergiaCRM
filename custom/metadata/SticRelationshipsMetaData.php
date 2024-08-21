@@ -4448,7 +4448,160 @@ $dictionary["stic_bookings_contacts"] = array(
         ),
     ),
 );
-
+$dictionary["stic_bookings_stic_families"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_bookings_stic_families' => array(
+            'lhs_module' => 'stic_Families',
+            'lhs_table' => 'stic_families',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Bookings',
+            'rhs_table' => 'stic_bookings',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_bookings_stic_families_c',
+            'join_key_lhs' => 'stic_bookings_stic_familiesstic_families_ida',
+            'join_key_rhs' => 'stic_bookings_stic_familiesstic_bookings_idb',
+        ),
+    ),
+    'table' => 'stic_bookings_stic_families_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_bookings_stic_familiesstic_families_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_bookings_stic_familiesstic_bookings_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_bookings_stic_familiesspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_bookings_stic_families_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_bookings_stic_familiesstic_families_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_bookings_stic_families_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_bookings_stic_familiesstic_bookings_idb',
+            ),
+        ),
+    ),
+);
+$dictionary["stic_bookings_stic_payment_commitments"] = array (
+    'true_relationship_type' => 'one-to-one',
+    'from_studio' => true,
+    'relationships' => 
+    array (
+      'stic_bookings_stic_payment_commitments' => 
+      array (
+        'lhs_module' => 'stic_Bookings',
+        'lhs_table' => 'stic_bookings',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Payment_Commitments',
+        'rhs_table' => 'stic_payment_commitments',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_bookings_stic_payment_commitments_c',
+        'join_key_lhs' => 'stic_bookings_stic_payment_commitmentsstic_bookings_ida',
+        'join_key_rhs' => 'stic_booki93ceitments_idb',
+      ),
+    ),
+    'table' => 'stic_bookings_stic_payment_commitments_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_bookings_stic_payment_commitmentsstic_bookings_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_booki93ceitments_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_bookings_stic_payment_commitmentsspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_bookings_stic_payment_commitments_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_bookings_stic_payment_commitmentsstic_bookings_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_bookings_stic_payment_commitments_idb2',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_booki93ceitments_idb',
+        ),
+      ),
+    ),
+  );
 $dictionary["stic_resources_stic_bookings"] = array(
     'true_relationship_type' => 'many-to-many',
     'relationships' => array(

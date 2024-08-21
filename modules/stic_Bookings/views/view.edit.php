@@ -77,7 +77,7 @@ class stic_BookingsViewEdit extends ViewEdit
             }
         }
 
-	    parent::preDisplay();
+        parent::preDisplay();
 
         SticViews::preDisplay($this);
 
@@ -88,24 +88,30 @@ class stic_BookingsViewEdit extends ViewEdit
     public function display()
     {
         require_once 'SticInclude/Utils.php';
-
+        require_once 'modules/stic_Bookings/config_resource_fields.php';
+        global $config_resource_fields;        
+        
         // Add the resources template
         $this->ev->defs['templateMeta']['form']['footerTpl'] = 'modules/stic_Bookings/tpls/EditViewFooter.tpl';
 
         $relationshipName = 'stic_resources_stic_bookings';
 
-        // If the Bookings editview is launched from the "new" button in the Resources detailview Bookings subpanel, 
+        // Pasar la configuración de los campos al JavaScript
+        $config_resource_fields_json = json_encode(array_keys($config_resource_fields));
+        echo "<script>var config_resource_fields = $config_resource_fields_json;</script>";
+    
+        // If the Bookings editview is launched from the "new" button in the Resources detailview Bookings subpanel,
         // then add the resource into the new booking. Notice that stic_resources_id is only available in that case,
         // not when Bookings editview is launched from the "edit" button in an already existing booking in the subpanel.
         if ($_REQUEST['return_module'] == 'stic_Resources' && $_REQUEST['stic_resources_id']) {
 
-            // When creating a record from a subpanel, the record in the detailview will be set as the parent record of the new one, 
+            // When creating a record from a subpanel, the record in the detailview will be set as the parent record of the new one,
             // ie, it will be assigned to the flex related field if there is any. In this case, the new booking would have a resource
             // as a parent record, what is nonsense. So let's remove the assignment from the $_REQUEST array.
             unset($_REQUEST['parent_type']);
             unset($_REQUEST['parent_name']);
             unset($_REQUEST['parent_id']);
-            
+
             $resources[] = BeanFactory::getBean('stic_Resources', $_REQUEST['stic_resources_id']);
             $parsedResources = $this->parseResourceItems($resources);
             $parsedResourcesJson = json_encode($parsedResources);
@@ -143,20 +149,21 @@ class stic_BookingsViewEdit extends ViewEdit
     // Prepare resources data to be displayed in the editview
     public function parseResourceItems($resourcesBeanArray)
     {
-        global $app_list_strings;
+        global $app_list_strings, $config_resource_fields;
 
         $parsedResources = array();
         foreach ($resourcesBeanArray as $resourceBean) {
-            $parsedResources[] = array(
-                'resource_id' => $resourceBean->id,
-                'resource_name' => $resourceBean->name,
-                'resource_code' => $resourceBean->code,
-                'resource_color' => $resourceBean->color,
-                'resource_status' => $app_list_strings['stic_resources_status_list'][$resourceBean->status],
-                'resource_type' => $app_list_strings['stic_resources_types_list'][$resourceBean->type],
-                'resource_daily_rate' => self::formatNumberDec($resourceBean->daily_rate),
-                'resource_hourly_rate' => self::formatNumberDec($resourceBean->hourly_rate),
-            );
+            $resource = array();
+            foreach ($config_resource_fields as $field => $label) {
+                $value = $resourceBean->$field;
+                if ($field === 'status' || $field === 'type') {
+                    $value = $app_list_strings['stic_resources_' . $field . '_list'][$value];
+                } elseif ($field === 'daily_rate' || $field === 'hourly_rate') {
+                    $value = self::formatNumberDec($value);
+                }
+                $resource['resource_' . $field] = $value;
+            }
+            $parsedResources[] = $resource;
         }
         return $parsedResources;
     }

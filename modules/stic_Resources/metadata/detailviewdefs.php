@@ -132,11 +132,33 @@ array(
                         'label' => 'LBL_GENDER',
                     ),
                     1 => array(
-                        'name' => 'booking_type',
-                        'studio' => 'visible',
-                        'label' => 'LBL_BOOKING_TYPE',
                     ),
                 ),
+                2 => array(
+                    0 => array(
+                        'name' => 'amount_day_occupied',
+                        'studio' => 'visible',
+                        'label' => 'LBL_AMOUNT_DAY_OCCUPIED',
+                    ),
+                    1 => array(
+                        'name' => 'amount_day_unoccupied',
+                        'studio' => 'visible',
+                        'label' => 'LBL_AMOUNT_DAY_UNOCCUPIED',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'amount_day_overoccupied',
+                        'studio' => 'visible',
+                        'label' => 'LBL_AMOUNT_DAY_OVEROCCUPIED',
+                    ),
+                    1 => array(
+                        'name' => 'amount_copayment',
+                        'studio' => 'visible',
+                        'label' => 'LBL_AMOUNT_COPAYMENT',
+                    ),
+                ),
+
             ),
             'LBL_PANEL_RECORD_DETAILS' => array(
                 0 => array(

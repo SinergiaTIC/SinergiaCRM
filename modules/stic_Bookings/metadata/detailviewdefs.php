@@ -64,17 +64,18 @@ array(
                 ),
                 1 => array(
                     0 => array(
-                        'name' => 'code',
-                        'label' => 'LBL_CODE',
-                    ),
-                    1 => '',
-                ),
-                2 => array(
-                    0 => array(
                         'name' => 'stic_bookings_contacts_name',
                     ),
                     1 => array(
                         'name' => 'stic_bookings_accounts_name',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'stic_bookings_stic_families_name',
+                    ),
+                    1 => array(
+                        'name' => 'stic_bookings_stic_payment_commitments_name',
                     ),
                 ),
                 3 => array(
@@ -96,6 +97,16 @@ array(
                 ),
                 5 => array(
                     0 => array(
+                        'name' => 'planned_start_date',
+                        'label' => 'LBL_PLANNED_START_DATE',
+                    ),
+                    1 => array(
+                        'name' => 'planned_end_date',
+                        'label' => 'LBL_PLANNED_END_DATE',
+                    ),
+                ),
+                6 => array(
+                    0 => array(
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
                     ),
@@ -105,7 +116,7 @@ array(
                         'label' => 'LBL_FLEX_RELATE',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => 'description',
                 ),
             ),

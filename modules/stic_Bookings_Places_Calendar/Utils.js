@@ -45,10 +45,6 @@ function initializeCalendar() {
             var start = moment(fetchInfo.start).format('YYYY-MM-DD');
             var end = moment(fetchInfo.end).format('YYYY-MM-DD');
 
-console.log("veo start" + start);
-            // var sticPlacesUser = $('#stic_resources_places_users_list').val();
-            // var sticPlacesType = $('#stic_resources_places_type_list').val();
-            // var sticPlacesBookingsType = $('#stic_resources_places_booking_type_list').val();
             $.ajax({
                 url: 'index.php?module=stic_Bookings_Places_Calendar&action=get_places_availability_data&sugar_body_only=true',
                 method: 'POST',
@@ -60,11 +56,15 @@ console.log("veo start" + start);
                     try {
                         var data = JSON.parse(response);
                         var events = [];
-                        for (var date in data) {
+                        for (var date in data) { 
                             events.push({
-                                title: `Disponibles: ${data[date].available}, Ocupados: ${data[date].occupied}`,
                                 start: date,
-                                allDay: true
+                                allDay: true,
+                                extendedProps: {
+                                    available: data[date].available,
+                                    occupied: Object.keys(data[date].occupied).length,
+                                    occupiedInfo:data[date].occupied,
+                                }
                             });
                         }
                         successCallback(events);
@@ -79,7 +79,95 @@ console.log("veo start" + start);
                 }
             });
         },
+        eventContent: function(arg) {
+            let eventEl = document.createElement('div');
+            eventEl.classList.add('custom-event-content');
+            eventEl.innerHTML = `
+                <div class="availability-info">
+                    <span class="available">${arg.event.extendedProps.available}</span>
+                    <img src="themes/SuiteP/images/icon_home.png" alt="Home" class="home-icon">
+                    <span class="occupied">${arg.event.extendedProps.occupied}</span>
+                </div>
+            `;
+            return { domNodes: [eventEl] };
+        },
 
+        eventDidMount: function(info) {
+            // console.log("vamos a ver que tenemos"+info)
+            // console.log("vamos a ver que tenemos222"+info.event)
+             console.dir(info.event.extendedProps.occupiedInfo);
+            
+            // Obtén la información del evento desde info.event
+            var eventData = info.event.title; // Este contiene el texto "Disponibles: X, Ocupados: Y"
+        
+            // Configura el título del tooltip (opcional)
+            var title = '<div class="qtip-title-text">' + SUGAR.language.translate("app_strings", "LBL_ADDITIONAL_DETAILS") + "</div>" + '<div class="qtip-title-buttons">' + "</div>";
+            var occupiedInfo = info.event.extendedProps.occupiedInfo;
+
+            // Configura el cuerpo del tooltip con la información deseada
+            var body = '';
+    
+            for (var booking in occupiedInfo) {
+                if (occupiedInfo.hasOwnProperty(booking)) {
+                    body += `<div><strong>SUGAR.language.translate("app_strings", "LBL_LOADING_PAGE")</strong>${booking}</div>`;
+                    
+                    var centers = occupiedInfo[booking];
+                    for (var center in centers) {
+                        if (centers.hasOwnProperty(center)) {
+                            body += `<div>Centro: ${center}</div>`;
+                            
+                            var resources = centers[center];
+                            body += '<div>Recursos:</div><ul>';
+                            resources.forEach(function(resource) {
+                                body += `<li>${resource}</li>`;
+                            });
+                            body += '</ul>';
+                        }
+                    }
+                }
+            }   
+            // Genera el tooltip usando qTip2
+            $(info.el).qtip({
+                content: { 
+                    title: title,
+                    text: body
+                },
+                position: {
+                    my: 'bottom left',
+                    at: 'top left',
+                    target: 'mouse',
+                    adjust: {
+                        mouse: false  // Esto evita que el tooltip siga el mouse
+                    }
+                },
+                show: {
+                    solo: true  // Solo se muestra un tooltip a la vez
+                },
+                hide: {
+                    event: 'mouseleave', 
+                    fixed: true,
+                    delay: 200
+                },
+                style: {
+                    width: 224,
+                    padding: 5,
+                    color: "black",
+                    textAlign: "left",
+                    border: {
+                        width: 1,
+                        radius: 3
+                    },
+                    tip: "bottomLeft",
+                    classes: {
+                        tooltip: "ui-widget",
+                        tip: "ui-widget",
+                        title: "ui-widget-header",
+                        content: "ui-widget-content"
+                    }
+                }
+            });
+        },
+        
         selectable: true,
         selectMirror: true,
         // This is used for the click in an empty space of the calendar
@@ -94,6 +182,46 @@ console.log("veo start" + start);
             );
         },
     });
+    // Add custom CSS to the page
+    var style = document.createElement('style');
+    style.textContent = `
+        .fc-daygrid-day-events {
+            margin-top: 0 !important;
+        }
+        .custom-event-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            background: transparent !important;
+        }
+        .availability-info {
+            font-size: 1.5em;
+            line-height: 1.2;
+            text-align: center;
+        }
+        .home-icon {
+            width: 16px;
+            height: 16px;
+            margin: 0 3px;
+            vertical-align: middle;
+        }
+        .available {
+            display: block;
+            color: green;
+        }
+        .occupied {
+            display: block;
+            color: red;
+        }
+        .fc-event {
+            background: transparent !important;
+            border: none !important;
+        }
+    `;
+    document.head.appendChild(style);
 
     calendar.render();
     return calendar;
@@ -169,11 +297,11 @@ $(document).ready(function() {
 
 function saveFilters() {
     var filters = {
-        stic_resources_places_users_list: $('#stic_center_id').val() || [],
-
+        stic_center_id: $('#stic_center_id').val() || '',
+        stic_center_name: $('#stic_center_name').val() || '',
         stic_resources_places_users_list: $('#stic_resources_places_users_list').val() || [],
         stic_resources_places_type_list: $('#stic_resources_places_type_list').val() || [],
-        stic_resources_places_booking_type_list: $('#stic_resources_places_booking_type_list').val() || []
+        stic_resources_places_gender_list: $('#stic_resources_places_gender_list').val() || []
     };
 
     $.ajax({
@@ -204,10 +332,11 @@ function loadSavedFilters() {
         success: function(response) {
             var data = JSON.parse(response);
             if (data.savedFilters) {
-                $('#stic_center_name').val(data.savedFilters.stic_resources_centers_name || []);
+                $('#stic_center_name').val(data.savedFilters.stic_center_name || '');
+                $('#stic_center_id').val(data.savedFilters.stic_center_id || '');
                 $('#stic_resources_places_users_list').val(data.savedFilters.stic_resources_places_users_list || []);
                 $('#stic_resources_places_type_list').val(data.savedFilters.stic_resources_places_type_list || []);
-                $('#stic_resources_places_booking_type_list').val(data.savedFilters.stic_resources_places_booking_type_list || []);
+                $('#stic_resources_places_gender_list').val(data.savedFilters.stic_resources_places_gender_list || []);
             }
             if (globalCalendar) {
                 globalCalendar.refetchEvents();
@@ -223,16 +352,19 @@ function loadSavedFilters() {
 }
 
 function hasAppliedFilters() {
-    return $('#stic_resources_places_users_list').val().length > 0 ||
+    return $('#stic_center_id').val() !== '' ||
+           $('#stic_resources_places_users_list').val().length > 0 ||
            $('#stic_resources_places_type_list').val().length > 0 ||
-           $('#stic_resources_places_booking_type_list').val().length > 0;
+           $('#stic_resources_places_gender_list').val().length > 0;
 }
 
 function handleCrossRemoveFilters() {
     // Limpiar todos los selectores
+    $('#stic_center_name').val('');
+    $('#stic_center_id').val('');
     $('#stic_resources_places_users_list').val([]);
     $('#stic_resources_places_type_list').val([]);
-    $('#stic_resources_places_booking_type_list').val([]);
+    $('#stic_resources_places_gender_list').val([]);
 
     // Guardar los filtros (que ahora están vacíos)
     saveFilters();

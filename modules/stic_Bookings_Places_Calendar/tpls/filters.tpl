@@ -46,8 +46,8 @@
         {$MOD.LBL_FILTERS_STIC_PLACE_GENDER}
     </td>
     <td>
-        <select multiple id="stic_resources_places_users_list" name="stic_resources_places_users_list[]" tabindex="102">
-            {$stic_resources_places_users_list}
+        <select multiple id="stic_resources_places_gender_list" name="stic_resources_places_gender_list[]" tabindex="102">
+            {$stic_resources_places_gender_list}
         </select>
     </td>
     <td scope="row" style="width:60%;">
@@ -62,8 +62,8 @@
         {$MOD.LBL_FILTERS_STIC_PLACE_USER_TYPE}
     </td>
     <td>
-        <select multiple id="stic_resources_places_booking_type_list" name="stic_resources_places_booking_type_list[]" tabindex="102">
-            {$stic_resources_places_booking_type_list}
+        <select multiple id="stic_resources_places_users_list" name="stic_resources_places_users_list[]" tabindex="102">
+            {$stic_resources_places_users_list}
         </select>
     </td>
     <div class="filter-group">

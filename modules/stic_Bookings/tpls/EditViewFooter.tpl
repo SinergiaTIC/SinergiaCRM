@@ -58,15 +58,15 @@
 <br>
 <table id="resourceLine" class="resource-table">
     <tr>
-        <th class="resource_column resource_name">{$MOD.LBL_RESOURCES_NAME}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_CODE}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_STATUS}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_TYPE}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_COLOR}</th>
-        <th class="resource_column hidden-xs hidden-sm">{$MOD.LBL_RESOURCES_HOURLY_RATE}</th>
-        <th class="resource_column hidden-xs hidden-sm">{$MOD.LBL_RESOURCES_DAILY_RATE}</th>
+        {foreach from=$config_resource_fields key=field item=label}
+            <th class="resource_column {if $field eq 'name'}resource_name{/if}
+                {if $field eq 'hourly_rate' || $field eq 'daily_rate'}hidden-xs hidden-sm{/if}">
+                {$label}
+            </th>
+        {/foreach}
         <th class="resource_column"></th>
     </tr>
+    <!-- Aquí irían las filas con los datos -->
 </table>
 <div style="padding-top: 2px">
     <input type="button" class="button" value="{$MOD.LBL_RESOURCES_ADD}" id="addResourceLine" />

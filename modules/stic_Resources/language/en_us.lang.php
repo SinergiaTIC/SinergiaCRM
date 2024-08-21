@@ -76,4 +76,8 @@ $mod_strings = array(
     'LBL_GENDER' => 'Gender',
     'LBL_USER_TYPE' => 'User type',
     'LBL_BOOKING_TYPE' => 'Booking type',
+    'LBL_AMOUNT_DAY_OCCUPIED' => 'Daily amount per occupied place',
+    'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Daily amount per unoccupied place',
+    'LBL_AMOUNT_DAY_OVEROCCUPIED' => 'Daily amount per overoccupied place',
+    'LBL_AMOUNT_COPAYMENT' => 'Copayment daily amount',
 );
