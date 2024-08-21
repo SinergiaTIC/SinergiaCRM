@@ -3605,7 +3605,7 @@ $app_list_strings['campaign_type_dom']['Print'] = 'Imprenta';
 $app_list_strings['campaign_type_dom']['Web'] = 'Web';
 $app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
 $app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
-$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de Noticias';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
 
