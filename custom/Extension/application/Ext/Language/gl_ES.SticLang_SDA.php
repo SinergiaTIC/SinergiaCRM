@@ -20,16 +20,5 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-$mod_strings = array(
-    // Campos do módulo
-    'LBL_CONDITION_ORDER' => 'Orde',
-    'LBL_FIELD' => 'Campo',
-    'LBL_OPERATOR' => 'Operador',
-    'LBL_CONDITION_TYPE' => 'Tipo',
-    'LBL_VALUE' => 'Valor',
-    'LBL_VALUE_TYPE' => 'Tipo do valor',
-
-    // Relaciones y subpaneles
-    'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizacións',
-);
+//SinergiaDA link
+$app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
