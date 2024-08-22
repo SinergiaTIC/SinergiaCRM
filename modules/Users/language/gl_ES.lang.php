@@ -122,6 +122,7 @@ $mod_strings = array(
     'LBL_NUMBER_GROUPING_SEP_TEXT' => 'Carácter utilizado para separar as unidades de millar',
     'LBL_DECIMAL_SEP' => 'Símbolo Decimal',
     'LBL_DECIMAL_SEP_TEXT' => 'Carácter utilizado como separador de decimais',
+    'LBL_USER_LANGUAGE' => 'Idioma del usuario',
     'LBL_FDOW' => 'Primeiro Día da Semana',
     'LBL_FDOW_TEXT' => 'Primeiro Día a mostrar nas vistas de Semana, Mes e Ano.',
     'LBL_DATE_FORMAT_TEXT' => 'Establece o formato de texto para a data',

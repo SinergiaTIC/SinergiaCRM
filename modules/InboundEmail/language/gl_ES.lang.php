@@ -160,6 +160,7 @@ $mod_strings = array(
     'LNK_QUICK_REPLY' => 'Responder',
     'LNK_SENT_EMAIL_LIST' => 'Emails Enviados',
     'LBL_EDIT_LAYOUT' => 'Editar deseño' /*for 508 compliance fix*/,
+    'LBL_TYPE_DIFFERENT' => 'El tipo de conexión OAuth externa debe ser el MISMO que el tipo de la cuenta de correo electrónico entrante',
 
     'LBL_MODIFIED_BY' => 'Modificado Por',
     'LBL_SERVICE' => 'Servizo',
