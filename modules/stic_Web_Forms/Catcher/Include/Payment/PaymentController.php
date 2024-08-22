@@ -421,7 +421,7 @@ class PaymentController extends WebFormDataController {
         }
         if (!empty($merchant_titular)) {
             // Limit to length 16
-            $merchant_titular = substr($merchant_titular, 0, 16);
+            $merchant_titular = substr($merchant_titular, 0, 60);
             $tpvSys->setParameter("DS_MERCHANT_TITULAR", $merchant_titular);
         }
 
