@@ -466,11 +466,13 @@ class ExternalReporting
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
 
                                 //Add relate record name 
-                                if (in_array($fieldV['module'], ['Contacts', 'Leads'])) {
+                                if (in_array($fieldV['module'], ['Contacts', 'Leads']) || Beanfactory::newBean($fieldV['module'])->field_defs['last_name']) {
                                     $relatedName = " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) ";
                                 } elseif ($fieldV['module'] == 'Users') {
                                     $relatedName = "{$leftJoinAlias}.user_name";
-                                } else { $relatedName = "{$leftJoinAlias}.name";}
+                                } else { 
+                                    $relatedName = "{$leftJoinAlias}.name";
+                                }
 
                                 $fieldSrc .= " IFNULL($relatedName,'') AS {$fieldV['name']}";
 
