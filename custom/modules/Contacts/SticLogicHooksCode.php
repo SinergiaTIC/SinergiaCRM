@@ -34,6 +34,22 @@ class ContactsLogicHooks {
             include_once 'modules/stic_Incorpora_Locations/Utils.php';
             stic_Incorpora_LocationsUtils::transferLocationData($bean);
         }
+
+        // In order to avoid identification number loss due to GUI JS validation, set the right identification type
+        // when this field is empty and the identification number is set.
+        if (!empty($bean->stic_identification_number_c) && (empty($bean->stic_identification_type_c) || trim($bean->stic_identification_type_c) == '')) {
+            include_once 'SticInclude/Utils.php';
+            if (!SticUtils::isValidNIForNIE($bean->stic_identification_number_c)) {
+                $bean->stic_identification_type_c = 'other';
+            } else {
+                $firstCharacter = strtoupper($bean->stic_identification_number_c[0]);
+                if (is_numeric($firstCharacter) || in_array($firstCharacter, array('K', 'L', 'M'))) {
+                    $bean->stic_identification_type_c = 'nif';
+                } else {
+                    $bean->stic_identification_type_c = 'nie';
+                }
+            };
+        }
     }
 
     public function after_save(&$bean, $event, $arguments) {
@@ -52,25 +68,6 @@ class ContactsLogicHooks {
         if ($bean->stic_postal_mail_return_reason_c != $bean->fetched_row['stic_postal_mail_return_reason_c']) {
             include_once 'custom/modules/Contacts/SticUtils.php';
             ContactsUtils::generateCallFromReturnMailReason($bean);
-        }
-    }
-
-    public function after_retrieve(&$bean, $event, $arguments) {
-        // In order to avoid identification number loss due to GUI JS validation, set the right identification type
-        // when this field is empty and the identification number is set.
-        if (!empty($bean->stic_identification_number_c) && (empty($bean->stic_identification_type_c) || trim($bean->stic_identification_type_c) == '')) {
-            include_once 'SticInclude/Utils.php';
-            if (!SticUtils::isValidNIForNIE($bean->stic_identification_number_c)) {
-                $bean->stic_identification_type_c = 'other';
-            } else {
-                $firstCharacter = strtoupper($bean->stic_identification_number_c[0]);
-                if (is_numeric($firstCharacter) || in_array($firstCharacter, array('K', 'L', 'M'))) {
-                    $bean->stic_identification_type_c = 'nif';
-                } else {
-                    $bean->stic_identification_type_c = 'nie';
-                }
-            };
-            $bean->save();
         }
     }
 }
