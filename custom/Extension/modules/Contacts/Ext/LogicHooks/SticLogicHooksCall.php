@@ -27,3 +27,4 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 $hook_array['before_save'][] = array(100, 'before_save', 'custom/modules/Contacts/SticLogicHooksCode.php', 'ContactsLogicHooks', 'before_save');
 $hook_array['after_save'][] = array(100, 'after_save', 'custom/modules/Contacts/SticLogicHooksCode.php', 'ContactsLogicHooks', 'after_save');
+$hook_array['after_retrieve'][] = array(100, 'after_retrieve', 'custom/modules/Contacts/SticLogicHooksCode.php', 'ContactsLogicHooks', 'after_retrieve');
