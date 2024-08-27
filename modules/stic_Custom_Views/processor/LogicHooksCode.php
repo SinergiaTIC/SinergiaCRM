@@ -272,7 +272,7 @@ class stic_Custom_Views_ProcessorLogicHooks
     private function string_contains_any($str, array $arr)
     {
         foreach ($arr as $a) {
-            if (stripos($str, $a) !== false) {
+            if (stripos($str, (string) $a) !== false) {
                 return true;
             }
         }

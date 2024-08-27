@@ -117,7 +117,7 @@ class stic_Import_ValidationView extends SugarView
             'script'        => $script);
 
         if ($encode) {
-            $function = function (&$val) {
+            $function = function (&$val): void {
                 $val = htmlspecialchars($val, ENT_NOQUOTES);
             };
 

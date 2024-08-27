@@ -37,7 +37,7 @@ class AOS_PDF_Templates extends AOS_PDF_Templates_sugar
         // STIC-Custom 20220124 MHP - Set in pdf_template_type_dom an ordered list with the names of the modules displayed in the menu tabs in the current user's language  
         // STIC#564   
         global $app_list_strings;
-        $app_list_strings['pdf_template_type_dom'] = $this->loadTabModules();
+        $app_list_strings['pdf_template_type_dom'] = static::loadTabModules();
         // END STIC-Custom        
     }
 

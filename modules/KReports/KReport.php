@@ -48,7 +48,7 @@ if (file_exists('./custom/modules/KReports/includes')) {
 class KReportPluginManager {
 
    // constructor
-   var $plugins = array();
+   public $plugins = array();
 
    public function __construct() {
 
@@ -277,42 +277,42 @@ class KReportPluginManager {
 
 class KReport extends SugarBean {
 
-   var $field_name_map;
+   public $field_name_map;
    // Stored fields
-   var $id;
-   var $date_entered;
-   var $date_modified;
-   var $assigned_user_id;
-   var $modified_user_id;
-   var $created_by;
-   var $created_by_name;
-   var $modified_by_name;
-   var $report_module = '';
-   var $reportoptions = '';
-   var $report_status ;
-   var $report_segmentation ;
-   var $team_id;
-   var $description;
-   var $name;
-   var $status;
-   var $assigned_user_name;
-   var $team_name;
-   var $table_name = "kreports";
-   var $object_name = "KReport";
-   var $module_dir = 'KReports';
-   var $importable = true;
-   var $listtype;
-   var $listfields='';
-   var $selectionlimit;
-   var $presentation_params ='';
-   var $visualization_params ='';
-   var $integration_params ='';
-   var $whereconditions ='';
-   var $wheregroups ='';
-   var $unionlistfields='';
-   var $union_modules='';
-   var $listtypeproperties ='';
-   var $advancedoptions;
+   public $id;
+   public $date_entered;
+   public $date_modified;
+   public $assigned_user_id;
+   public $modified_user_id;
+   public $created_by;
+   public $created_by_name;
+   public $modified_by_name;
+   public $report_module = '';
+   public $reportoptions = '';
+   public $report_status ;
+   public $report_segmentation ;
+   public $team_id;
+   public $description;
+   public $name;
+   public $status;
+   public $assigned_user_name;
+   public $team_name;
+   public $table_name = "kreports";
+   public $object_name = "KReport";
+   public $module_dir = 'KReports';
+   public $importable = true;
+   public $listtype;
+   public $listfields='';
+   public $selectionlimit;
+   public $presentation_params ='';
+   public $visualization_params ='';
+   public $integration_params ='';
+   public $whereconditions ='';
+   public $wheregroups ='';
+   public $unionlistfields='';
+   public $union_modules='';
+   public $listtypeproperties ='';
+   public $advancedoptions;
    // This is used to retrieve related fields from form posts.
    // var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'contact_name', 'contact_phone', 'contact_email', 'parent_name');
 
@@ -324,26 +324,26 @@ class KReport extends SugarBean {
      var $rootGuid;
      var $fromString;
     */
-   var $whereOverride;
+   public $whereOverride;
    //2010-02-10 add Field name Mapping
-   var $fieldNameMap;
+   public $fieldNameMap;
    // the query Array
-   var $kQueryArray;
+   public $kQueryArray;
    //2011-02-03 for the total values
-   var $totalResult = '';
+   public $totalResult = '';
    // 2011-03-29 array for the formula evaluation
-   var $formulaArray = '';
+   public $formulaArray = '';
    // variable taht allows to turn off the evaluation of SQL Functions
    // needed if we let the Grid do this
-   var $evalSQLFunctions = true;
+   public $evalSQLFunctions = true;
    // varaible to hold the depth of the join tree
-   var $maxDepth;
+   public $maxDepth;
    // var to hold an array of all list fields with index fieldid
-   var $listFieldArrayById = array();
+   public $listFieldArrayById = [];
    // for the context handling
-   var $hasContext = false;
-   var $contextFields = array();
-   var $contexts = array();
+   public $hasContext = false;
+   public $contextFields = [];
+   public $contexts = [];
 
    function __construct() {
       /*
@@ -393,7 +393,7 @@ class KReport extends SugarBean {
       } else {
          $this->team_set_id = '';
       }
-      
+
       if (isset($sugar_config['KReports']) && isset($sugar_config['KReports']['authCheck']))
          switch ($sugar_config['KReports']['authCheck']) {
                case 'KAuthObjects':
@@ -401,7 +401,7 @@ class KReport extends SugarBean {
                   $this->korgobjectmultiple = json_encode(array('primary' => $_REQUEST['authaccess_id'], 'secondary' => array()));
                   break;
          }
-   
+
       parent::save($checkNotify);
 
       // STIC-Custom 20211118 - This was removed because the SecuritySuite groups can be added now directly from the subpanel in the DetailView or ListView
@@ -1991,7 +1991,7 @@ class KReport extends SugarBean {
 
 class KReportRenderer {
 
-   var $report = null;
+   public $report = null;
 
    public function __construct($thisReport) {
       $this->report = $thisReport;

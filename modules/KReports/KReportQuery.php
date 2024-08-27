@@ -37,32 +37,32 @@ require_once('modules/ACL/ACLController.php');
 // class for the query Array if we have multiple query we join
 class KReportQueryArray {
 
-   var $thisKReport;
-   var $root_module;
-   var $union_modules;
-   var $listArray;
-   var $whereArray;
-   var $whereAddtionalFilter;
-   var $whereGroupsArray;
-   var $groupsByLimit;
-   var $additionalGroupBy;
-   var $evalSQLFunctions;
-   var $whereOverrideArray;
-   var $unionListArray;
-   var $fieldNameMap;
+   public $thisKReport;
+   public $root_module;
+   public $union_modules;
+   public $listArray;
+   public $whereArray;
+   public $whereAddtionalFilter;
+   public $whereGroupsArray;
+   public $groupsByLimit;
+   public $additionalGroupBy;
+   public $evalSQLFunctions;
+   public $whereOverrideArray;
+   public $unionListArray;
+   public $fieldNameMap;
    // the selct strings
-   var $selectString;
-   var $countSelectString;
-   var $totalSelectString;
-   var $summarySelectString;
-   var $fromString;
-   var $whereString;
-   var $groupbyString;
-   var $havingString;
-   var $orderbyString;
-   var $queryContext = array();
-   var $addParams;
-   var $queryArray;
+   public $selectString;
+   public $countSelectString;
+   public $totalSelectString;
+   public $summarySelectString;
+   public $fromString;
+   public $whereString;
+   public $groupbyString;
+   public $havingString;
+   public $orderbyString;
+   public $queryContext = array();
+   public $addParams;
+   public $queryArray;
 
    public function __construct($rootModule = '', $unionModules = '', $evalSQLFunctions = true, $listFields = array(), $unionListFields = array(), $whereFields = array(), $additonalFilter = '', $whereGroupFields = array(), $additionalGroupBy = array(), $addParams = array()) {
       // set the various Fields
@@ -597,51 +597,51 @@ class KReportQuery {
     * after tha you can call the other functions
     */
 
-   var $root_module;
-   var $unionId = '';
-   var $whereArray;
-   var $whereAddtionalFilter = '';
-   var $whereOverrideArray;
-   var $listArray;
-   var $whereGroupsArray;
-   var $fieldNameMap;
+   public $root_module;
+   public $unionId = '';
+   public $whereArray;
+   public $whereAddtionalFilter = '';
+   public $whereOverrideArray;
+   public $listArray;
+   public $whereGroupsArray;
+   public $fieldNameMap;
    // 2012-11-04 a var for the root field nam map Array
    // will feed that sop we now in union what types the root field is ... to react properly on that 
    // especially reqwuired for the currency handling since we need to ensure we have the same number of fields
-   var $rootfieldNameMap;
-   var $tablePath;
-   var $rootGuid;
-   var $joinSegments;
-   var $unionJoinSegments;
-   var $maxDepth;
-   var $queryID = '';
-   var $orderByFieldID = false;
-   var $groupByFieldID = false;
+   public $rootfieldNameMap;
+   public $tablePath;
+   public $rootGuid;
+   public $joinSegments;
+   public $unionJoinSegments;
+   public $maxDepth;
+   public $queryID = '';
+   public $orderByFieldID = false;
+   public $groupByFieldID = false;
    // parts of the SQL Query
-   var $selectString;
-   var $countSelectString;
-   var $totalSelectString;
+   public $selectString;
+   public $countSelectString;
+   public $totalSelectString;
    //2010-03-28 add a select for the union with cosndieration of functions
-   var $unionSelectString;
-   var $fromString;
-   var $whereString;
-   var $havingString;
-   var $groupbyString;
-   var $additionalGroupBy;
-   var $orderbyString;
+   public $unionSelectString;
+   public $fromString;
+   public $whereString;
+   public $havingString;
+   public $groupbyString;
+   public $additionalGroupBy;
+   public $orderbyString;
    // Parameters
-   var $evalSQLFunctions = true;
+   public $evalSQLFunctions = true;
    // auth Check level (full, top, none)
-   var $authChecklevel = 'full';
-   var $showDeleted = false;
+   public $authChecklevel = 'full';
+   public $showDeleted = false;
    //for a custom sort
-   var $sortOverride = array();
+   public $sortOverride = [];
    // for the exclusive Groping required for the tree if add grouping params are sent in
-   var $exclusiveGroupinbgByAddParams = false;
+   public $exclusiveGroupinbgByAddParams = false;
    // array for all fields we are selcting from the database
-   var $fieldArray = array();
+   public $fieldArray = [];
    // for MSSQL 
-   var $isGrouped = false;
+   public $isGrouped = false;
 
    // constructor
    /*
@@ -1465,7 +1465,7 @@ class KReportQuery {
       }
 
     	$GLOBALS['log']->info('KReporter query: ' . $this->whereString);
-		
+
       // bugfix 2010-08-19, respect ACL access for owner required
       // check for Role based access on root module
       // 2013-02-22 ... added anyway for each segment ... no need to add here again ... 
@@ -1794,7 +1794,7 @@ class KReportQuery {
             }
             break;
          case 'today':
-            $todayDate = date('Y-m-d', mktime());
+            $todayDate = date('Y-m-d', time());
             // STIC 20210714 AAM - MariaDB does not accept the time 24:00:00
             // STIC#354
             // $thisWhereString .= ' >= \'' . $todayDate . ' 00:00:00\' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . ' < \'' . $todayDate . ' 24:00:00\'';
@@ -2203,7 +2203,7 @@ class KReportQuery {
                         } else {
                            // 2013-01-20 change in call paramteres
                            // $sortArray['100'][] = $thisList['sqlfunction'] . '(' . $this->get_field_name($pathName, $fieldArray[1], $fieldArray[0]) . ')' . ' ' . strtoupper($thisList['sort']);
-                           
+
                            // STIC 20210714 AAM - It was using COUNT_DISTINCT in the sort query but it's wrong. COUNT_DISTINCT is only an internal name for the function COUNT(DISTINCT <field>)
                            // STIC#354
                            // $sortArray['100'][] = $thisList['sqlfunction'] . '(' . $this->get_field_name($pathName, $fieldArray[1], $thisList['fieldid']) . ')' . ' ' . strtoupper($thisList['sort']);

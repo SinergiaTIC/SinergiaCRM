@@ -424,7 +424,7 @@ abstract class ImportDataSource implements Iterator
             file_put_contents(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(), $contentFile);
             // If it is a DUPLICATE error we copy the ID obtained from the database
             global $mod_strings;
-            if (strpos($errorMessage, $mod_strings['LBL_ERROR_DUPLICATE_RECORD'])) {
+            if (strpos($errorMessage, (string) $mod_strings['LBL_ERROR_DUPLICATE_RECORD'])) {
                 $idPosition = count($columns) - 2;
                 $columns[$idPosition] = $rowData[$idPosition];
             }

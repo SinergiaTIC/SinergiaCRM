@@ -33,7 +33,7 @@ require_once('include/upload_file.php');
 
 class stic_Import_ValidationViewConfirm extends stic_Import_ValidationView
 {
-    const SAMPLE_ROW_SIZE = 3;
+    public const SAMPLE_ROW_SIZE = 3;
     protected $pageTitleKey = 'LBL_CONFIRM_TITLE';
     protected $errorScript = "";
     

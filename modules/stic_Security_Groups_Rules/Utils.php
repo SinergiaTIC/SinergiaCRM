@@ -49,7 +49,7 @@ class stic_Security_Groups_RulesUtils
         $options = array();
 
         // Retrieve systemTabs to filter out irrelevant modules
-        $systemTabs = TabController::get_system_tabs();
+        $systemTabs = (new TabController())->get_system_tabs();
 
         // Check if the main module bean is initialized
         if (!empty($mainModuleBean)) {
@@ -171,7 +171,7 @@ class stic_Security_Groups_RulesUtils
         global $app_list_strings;
 
         // Retrieve system tabs
-        $systemTabs = TabController::get_system_tabs();
+        $systemTabs = (new TabController())->get_system_tabs();
 
         // Initialize options array
         $options = [];

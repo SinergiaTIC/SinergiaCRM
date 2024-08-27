@@ -29,13 +29,13 @@ require_once __DIR__ . '/WebFormDataBO.php';
 class WebFormDataController
 {
     // Response constants
-    const RESPONSE_STATUS_OK = 0; // Status finished OK
-    const RESPONSE_STATUS_PENDING = 1; // Pending status
-    const RESPONSE_STATUS_ERROR = 2; // Status terminated with error
+    public const RESPONSE_STATUS_OK = 0; // Status finished OK
+    public const RESPONSE_STATUS_PENDING = 1; // Pending status
+    public const RESPONSE_STATUS_ERROR = 2; // Status terminated with error
 
-    const RESPONSE_TYPE_TXT = 0; // Text type response
-    const RESPONSE_TYPE_REDIRECTION = 1; // Redirect Response
-    const RESPONSE_TYPE_TEMPLATE = 2; // Template based response
+    public const RESPONSE_TYPE_TXT = 0; // Text type response
+    public const RESPONSE_TYPE_REDIRECTION = 1; // Redirect Response
+    public const RESPONSE_TYPE_TEMPLATE = 2; // Template based response
 
     // Specific controller
     protected $controller = null;
@@ -239,7 +239,7 @@ class WebFormDataController
             // Received fields
             foreach ($_REQUEST as $key => $value) {
                 if (!strpos($key, '___') === false) {
-                    if (strpos($_REQUEST['req_id'], $key) === false) {
+                    if (strpos($_REQUEST['req_id'], (string) $key) === false) {
                         $formData[$key] = "<b>{$value}</b>";
                     } else {
                         $formData[$key . ' <span style="color:red;">(' . $msg['required'] . ')</span>'] = "<b>{$value}</b>";
