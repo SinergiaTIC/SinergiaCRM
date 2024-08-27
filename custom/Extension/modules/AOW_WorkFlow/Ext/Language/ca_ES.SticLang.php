@@ -20,34 +20,4 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
- $dictionary['AOW_WorkFlow']['fields']['stic_run_on_record'] = array(
-    'id' => 'AOW_WorkFlowstic_run_on_record',
-    'name' => 'stic_run_on_record',
-    'vname' => 'LBL_STIC_RUN_ON_RECORD',
-    'custom_module' => 'AOW_WorkFlow',
-    'source' => 'custom_fields',
-    'comments' => '',
-    'help' => '',
-    'type' => 'bool',
-    'len' => '255',
-    'size' => '20',
-    'required' => 0,
-    'audited' => 0,
-    'unified_search' => 0,
-    'default' => '0',
-    'no_default' => 0,
-    'inline_edit' => 0,
-    'importable' => 1,
-    'massupdate' => 0,
-    'reportable' => 1,
-    'duplicate_merge' => 'enabled',
-    'duplicate_merge_dom_value' => 1,
-    'merge_filter' => 'enabled',
-);
-
-$dictionary['AOW_WorkFlow']['fields']['multiple_runs']['massupdate'] = 1;
-$dictionary['AOW_WorkFlow']['fields']['status']['massupdate'] = 1;
-$dictionary['AOW_WorkFlow']['fields']['run_on_import']['massupdate'] = 1;
-
-$dictionary['AOW_WorkFlow']['unified_search_default_enabled'] = false;
+$mod_strings['LBL_STIC_RUN_ON_RECORD'] = 'Executar en registre';

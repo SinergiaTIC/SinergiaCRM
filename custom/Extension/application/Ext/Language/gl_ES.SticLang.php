@@ -3575,6 +3575,10 @@ $app_list_strings['aow_date_type_list']['week'] = 'Semanas';
 $app_list_strings['aow_date_type_list']['month'] = 'Meses';
 $app_list_strings['aow_date_type_list']['year'] = 'Anos'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Horario laboral';
+$app_list_strings['aow_run_when_list']['Always'] = 'Sempre';
+$app_list_strings['aow_run_when_list']['On_Save'] = 'Só ao gardar';
+$app_list_strings['aow_run_when_list']['In_Scheduler'] = 'Só no Planificador';
+$app_list_strings['aow_run_when_list']['Never'] = 'Nunca';
 
 // Mapas: listas adaptadas
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organizacións';
