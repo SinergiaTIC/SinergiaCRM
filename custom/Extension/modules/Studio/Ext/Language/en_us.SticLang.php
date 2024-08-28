@@ -20,14 +20,14 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configure SinergiaCRM menu';
+$mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Main menu settings';
 $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Hidden modules';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Save and apply';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restore';
-$mod_strings['LBL_STIC_MENU_INFO'] = 'Drag menu items to the node where you want them to appear';
-$mod_strings['LBL_STIC_MENU_ICONS'] = 'Show module icons in the menu';
-$mod_strings['LBL_STIC_MENU_ALL'] = 'Show the "ALL" menu';
+$mod_strings['LBL_STIC_MENU_INFO'] = 'Drag module items to the appropiate menu node';
+$mod_strings['LBL_STIC_MENU_ICONS'] = 'Show module icons';
+$mod_strings['LBL_STIC_MENU_ALL'] = 'Show ALL option';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Switch to legacy menu';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Do you want to switch to the legacy menu? This will restore the configuration it had when the new menu was activated. You can reactivate the new menu later.';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Do you want to switch to the legacy menu? This will restore the settings it had when the advanced menu was activated. You can re-enable the advanced menu later.';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Switch to advanced menu';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Do you want to switch to the advanced menu? This will activate the advanced menu using the current menu configuration.';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Do you want to switch to the advanced menu? This will activate the advanced menu using the current menu settings.';
