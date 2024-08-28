@@ -20,14 +20,14 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configurar menú de SinergiaCRM';
+$mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuración do menú principal';
 $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Módulos ocultos';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Gardar e aplicar';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
-$mod_strings['LBL_STIC_MENU_INFO'] = 'Arrastre os elementos do menú ao nodo onde quere que aparezan';
-$mod_strings['LBL_STIC_MENU_ICONS'] = 'Amosar iconas de módulos no menú';
-$mod_strings['LBL_STIC_MENU_ALL'] = 'Amosar o menú "TODO"';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar ao menú antigo';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Quere cambiar ao menú antigo? Isto restaurará a configuración que tiña no momento da activación do novo menú. Pode volver activar o novo menú máis adiante.';
+$mod_strings['LBL_STIC_MENU_INFO'] = 'Arrastre os módulos ata os nodos do menú onde quere que aparezan.';
+$mod_strings['LBL_STIC_MENU_ICONS'] = 'Amosar iconas de módulos';
+$mod_strings['LBL_STIC_MENU_ALL'] = 'Amosar opción TODO';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar ao menú clásico';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Quere cambiar ao menú clásico? Se restaurará a configuración que tiña no momento da activación do menú avanzado. Pode volver activar o menú avanzado máis adiante.';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Cambiar ao menú avanzado';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Quere cambiar ao menú avanzado? Isto activará o menú avanzado utilizando a configuración actual do menú.';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Quere cambiar ao menú avanzado? Aplicarase a configuración actual do menú clásico.';
