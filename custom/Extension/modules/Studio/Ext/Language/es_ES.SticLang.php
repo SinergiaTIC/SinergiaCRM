@@ -28,6 +28,6 @@ $mod_strings['LBL_STIC_MENU_INFO'] = 'Arrastre los módulos hacia los nodos del 
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar iconos de módulos';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar la opción TODO';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar al menú clásico';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = '¿Desea cambiar al menú clásico? Se restaurará la configuración que tenía cuando se activó el nuevo menú. Podrá reactivar el menú avanzado más adelante.';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = '¿Desea cambiar al menú clásico? Se restaurará la configuración que tenía cuando se activó el menú avanzado. Podrá reactivar el menú avanzado más adelante.';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Cambiar al menú avanzado';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = '¿Desea cambiar al menú avanzado? Se aplicará la configuración actual del menú clásico.';
