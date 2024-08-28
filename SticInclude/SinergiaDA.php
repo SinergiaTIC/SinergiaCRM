@@ -1,5 +1,5 @@
 <?php
-
+#[\AllowDynamicProperties]
 class ExternalReporting
 {
     // Default language, it will be used if the instance language cannot be obtained from the settings.

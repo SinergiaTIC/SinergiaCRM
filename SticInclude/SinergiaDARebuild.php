@@ -5,6 +5,7 @@
  *
  * This class is used to rebuild the Sinergia Data Analytics system.
  */
+#[\AllowDynamicProperties]
 class SinergiaDARebuild
 {
 

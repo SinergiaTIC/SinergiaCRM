@@ -5,6 +5,7 @@
  * used in the view.xxx.php files that exist in the custom/modules/<moduleName>/view.xxxx.php or modules/<moduleName>/view.xxxx.php
  * depending on whether they are SuiteCRM base modules or SinergiaTIC's own modules
  */
+#[\AllowDynamicProperties]
 class SticViews {
     /**
      * Add the SinergiaCRM functionality in the view(s) display method
