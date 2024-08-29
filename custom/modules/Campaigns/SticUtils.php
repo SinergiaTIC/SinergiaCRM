@@ -156,9 +156,11 @@ class CampaignsUtils
         $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
         $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='notification'", 0, -99, -99);
 
-        $dynamic_email_template_list = array("" => "");
         foreach ($emailTemplates['list'] as $emailTemplate) {
             $dynamic_email_template_list[$emailTemplate->id] = $emailTemplate->name;
+        }
+        if (empty($dynamic_email_template_list)) {
+            $dynamic_email_template_list = array("" => translate("LBL_NONE", "app_strings"));
         }
 
         $GLOBALS['app_list_strings']['dynamic_email_template_list'] = $dynamic_email_template_list;
@@ -172,9 +174,11 @@ class CampaignsUtils
         $outboundEmailsFocus = BeanFactory::newBean('OutboundEmailAccounts');
         $outboundEmails = $outboundEmailsFocus->get_list("name", "", 0, -99, -99);
 
-        //$dynamic_outbound_email_list = array("" => "");
         foreach ($outboundEmails['list'] as $outboundEmail) {
             $dynamic_outbound_email_list[$outboundEmail->id] = "{$outboundEmail->name} ({$outboundEmail->smtp_from_addr})";
+        }
+        if (empty($dynamic_outbound_email_list)) {
+            $dynamic_outbound_email_list = array("" => translate("LBL_NONE", "app_strings"));
         }
 
         $GLOBALS['app_list_strings']['dynamic_outbound_email_list'] = $dynamic_outbound_email_list;
@@ -190,7 +194,12 @@ class CampaignsUtils
         $mailboxes = get_campaign_mailboxes($emails);
         $mailboxesWithEmail = array();
         foreach ($mailboxes as $id => $name) {
-            $mailboxesWithEmail[$id] = "{$name} ({$emails[$id]})";
+            if ($id != "") {
+                $mailboxesWithEmail[$id] = "{$name} ({$emails[$id]})";
+            }
+        }
+        if (empty($mailboxesWithEmail)) {
+            $mailboxesWithEmail = array("" => translate("LBL_NONE", "app_strings"));
         }
         $GLOBALS['app_list_strings']['dynamic_inbound_email_list'] = $mailboxesWithEmail;
     }
