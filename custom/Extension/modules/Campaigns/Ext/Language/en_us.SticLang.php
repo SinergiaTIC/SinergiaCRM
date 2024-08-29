@@ -58,11 +58,11 @@ $mod_strings['LBL_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Target Lists';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Target Lists';
 $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID'] = 'Email template';
 $mod_strings['LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Template name';
-$mod_strings['LBL_NOTIFICATION_UTBOUND_EMAIL_ID'] = 'Outbound email';
+$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID'] = 'Outbound email';
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID'] = 'Use mailbox';
-$mod_strings['LBL_NOTIFICATION_ROM_NAME'] = 'From name';
-$mod_strings['LBL_NOTIFICATION_ROM_ADDR'] = 'From address';
-$mod_strings['LBL_NOTIFICATION_EPLY_TO_NAME'] = 'Reply to name';
+$mod_strings['LBL_NOTIFICATION_FROM_NAME'] = 'From name';
+$mod_strings['LBL_NOTIFICATION_FROM_ADDR'] = 'From address';
+$mod_strings['LBL_NOTIFICATION_REPLY_TO_NAME'] = 'Reply to name';
 $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
