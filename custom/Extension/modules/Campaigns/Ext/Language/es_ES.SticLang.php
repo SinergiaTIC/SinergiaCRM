@@ -72,4 +72,4 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar una nueva notificación se añadirán automáticamente los mensajes correspondientes a la cola de envío.';
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar una nueva notificación se añadirán automáticamente a la cola de envío los mensajes correspondientes.';
