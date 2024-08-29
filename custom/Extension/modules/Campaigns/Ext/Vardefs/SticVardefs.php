@@ -57,6 +57,7 @@ $dictionary["Campaign"]["fields"]['parent_type'] = array(
     'options' => 'parent_type_display_notifications', // Available Notification parent types
     'len' => 255,
     'studio' => 'hidden',
+    'source' => 'custom_fields',
 );
 $dictionary["Campaign"]["fields"]['parent_id'] = array(
     'name' => 'parent_id',
@@ -64,6 +65,7 @@ $dictionary["Campaign"]["fields"]['parent_id'] = array(
     'group' => 'parent_name',
     'reportable' => false,
     'vname' => 'LBL_PARENT_ID',
+    'source' => 'custom_fields',
 );
 
 // The names of the selected Prospect Lists for the Notification (saved in db)
@@ -72,6 +74,7 @@ $dictionary["Campaign"]["fields"]['stic_notification_prospect_list_names_c'] = a
     'vname' => 'stic_notification_prospect_list_names_c',
     'type' => 'varchar',
     'len' => '255',
+    'source' => 'custom_fields',
 );
 
 // The related Prospect Lists to the Notification 
