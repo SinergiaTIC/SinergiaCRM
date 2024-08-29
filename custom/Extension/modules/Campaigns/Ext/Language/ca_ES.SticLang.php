@@ -72,4 +72,4 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al desar una nova notificació s'afegiran automàticament els correus electrònics corresponents a la cua d'enviament.";
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al desar una nova notificació s'afegiran automàticament a la cua d'enviament els correus electrònics corresponents.";
