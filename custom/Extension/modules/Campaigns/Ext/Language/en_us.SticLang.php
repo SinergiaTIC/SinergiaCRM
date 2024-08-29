@@ -67,4 +67,4 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving a new notification the email messages will be automatically added to the sending queue.";
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving a new notification the email messages will be automatically added to the sending queue.';
