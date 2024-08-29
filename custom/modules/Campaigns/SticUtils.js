@@ -99,6 +99,15 @@ $(document).ready(function() {
       $("#notification_inbound_email_id").on("change paste keyup", mail_change);
     }
 
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.attributeName === 'style') {
+          type_change();
+        }
+      });
+    });
+    observer.observe($(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent()[0], { attributes: true, attributeFilter: ['style'] });
+
     type_change();
   }
 });
