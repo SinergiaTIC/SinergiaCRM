@@ -48,11 +48,11 @@ $subpanel_layout = array(
         ),
         'stic_notification_prospect_list_names_c' => array(
             'name' => 'stic_notification_prospect_list_names_c',
-            'vname' => 'LBL_LIST_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C',
+            'vname' => 'LBL_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C',
         ),
         'notification_email_template_name' => array(
             'name' => 'notification_email_template_name',
-            'vname' => 'LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME',
+            'vname' => 'LBL_NOTIFICATION_EMAIL_TEMPLATE_NAME',
         ),
         // 'quickedit_button' => array(
         //     'vname' => 'LBL_QUICKEDIT_BUTTON',

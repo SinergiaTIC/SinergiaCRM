@@ -72,7 +72,4 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 
-$mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de correu electrònic';
-$mod_strings['LBL_LIST_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Llistes de Públic Objectiu';
-
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al desar una nova notificació s'afegiran automàticament els correus electrònics corresponents a la cua d'enviament.";

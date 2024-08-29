@@ -72,7 +72,4 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
 
-$mod_strings['LBL_LIST_NOTIFICATION_EMAIL_TEMPLATE_NAME'] = 'Plantilla de correo';
-$mod_strings['LBL_LIST_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Listas de Público Obxectivo';
-
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar una nueva notificación se añadirán automáticamente los mensajes correspondientes a la cola de envío.';
