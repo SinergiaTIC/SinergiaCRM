@@ -112,7 +112,7 @@ class EmailTemplateParser
         $this->siteUrl = $siteUrl;
         $this->trackerId = $trackerId;
 
-        // STIC-Custom - JBL - 20240709 - Notify new Opportunities: Parse Email Templates with notified module
+        // STIC-Custom - JBL - 20240709 - Notifications: Parse Email Templates with notified module
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
         if ($campaign->campaign_type == "Notification" && !empty($campaign->parent_id)) {
             global $beanList, $beanFiles;
