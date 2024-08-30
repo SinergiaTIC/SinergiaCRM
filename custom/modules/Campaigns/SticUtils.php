@@ -85,7 +85,6 @@ class CampaignsUtils
             ", em.reply_to_name as email_marketing_reply_to_name" .
             ", em.reply_to_addr as email_marketing_reply_to_addr" .
             " FROM campaigns c" .
-            " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
             " LEFT JOIN email_marketing em on em.campaign_id = c.id and em.deleted = '0'" .
             " LEFT JOIN email_templates et on et.id = em.template_id and et.deleted = '0'" .
             " WHERE c.id = '{$beanCampaign->id}'" .
@@ -107,7 +106,6 @@ class CampaignsUtils
             " SELECT c.id as campaigns_id" .
             ", pl.id as prospect_lists_id" .
             " FROM campaigns c" .
-            " LEFT JOIN campaigns_cstm cc on cc.id_c = c.id" .
             " LEFT JOIN prospect_list_campaigns plc on plc.campaign_id = c.id and plc.deleted = '0'" .
             " LEFT JOIN prospect_lists pl on pl.id = plc.prospect_list_id and pl.deleted = '0'" .
             " WHERE c.id = '{$beanCampaign->id}'";
@@ -211,14 +209,12 @@ class CampaignsUtils
     {
         $html = "";
         // Load related lang strings
-        $moduleNames = array('Campaigns');
-        foreach ($moduleNames as $moduleName) {
-            if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
-                require_once 'include/language/jsLanguage.php';
-                jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
-            }
-            $html .= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
+        $moduleName = 'Campaigns';
+        if (!is_file("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js")) {
+            require_once 'include/language/jsLanguage.php';
+            jsLanguage::createModuleStringsCache($moduleName, $GLOBALS['current_language']);
         }
+        $html .= getVersionedScript("cache/jsLanguage/{$moduleName}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
         return $html;
     }
 

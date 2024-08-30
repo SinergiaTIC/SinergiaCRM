@@ -48,7 +48,11 @@
 	</td>
 		<td align='right'></td>
 	<td align='right'>		    
+		{* STIC-Custom - JBL - 20240830 - Notifications: Remove buttons *}
+		{* https://github.com/SinergiaTIC/SinergiaCRM/pull/44 *}
+		{* <input type="button" class="button" id="launch_wizard_button" onclick="javascript:window.location='index.php?module=Campaigns&action=WizardHome&record={$ID}';" value="{$MOD.LBL_TO_WIZARD_TITLE}" /> *}
 		{$TRACK_WIZARD_BUTTON}
+		{* END STIC-Custom *}
 		<input type="button" class="button" id="view_details_button" onclick="javascript:window.location='index.php?module=Campaigns&action=DetailView&record={$ID}';" value="{$MOD.LBL_TODETAIL_BUTTON_LABEL}" />
 		<span style="{$DISABLE_LINK}"><input type="button" class="button" id="view_roi_button" onclick="javascript:window.location='index.php?module=Campaigns&action=RoiDetailView&record={$ID}';" value="{$MOD.LBL_TRACK_ROI_BUTTON_LABEL}" /></SPAN>{$ADMIN_EDIT}
 	</td>
