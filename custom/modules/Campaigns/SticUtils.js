@@ -97,6 +97,7 @@ $(document).ready(function() {
 
       $("#notification_outbound_email_id").on("change paste keyup", mail_change);
       $("#notification_inbound_email_id").on("change paste keyup", mail_change);
+      $("#notification_template_id").on("change paste keyup", template_change);
     }
 
     var observer = new MutationObserver(function(mutations) {
@@ -109,6 +110,7 @@ $(document).ready(function() {
     observer.observe($(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent()[0], { attributes: true, attributeFilter: ['style'] });
 
     type_change();
+    template_change();
   }
 });
 
@@ -129,18 +131,18 @@ function type_change() {
 }
 
 function mail_change() {
-  // if (STIC && STIC.campaignEmails && STIC.campaignEmails.outbound) {
-  //   var outbound = STIC.campaignEmails.outbound.find(item => item.id === $("#notification_outbound_email_id").val());
-  //   $("#notification_from_name").val(outbound ? outbound.name : "");
-  //   $("#notification_from_addr").val(outbound ? outbound.addr : "");
-  // }
-
   if (STIC && STIC.campaignEmails && STIC.campaignEmails.inbound) {
     var inbound = STIC.campaignEmails.inbound.find(item => item.id === $("#notification_inbound_email_id").val());
     $("#notification_from_name").val(inbound ? inbound.name : "");
     $("#notification_from_addr").val(inbound ? inbound.addr : "");
-    // $("#notification_reply_to_name").val(inbound ? inbound.name : "");
-    // $("#notification_reply_to_addr").val(inbound ? inbound.addr : "");
+  }
+}
+
+function template_change() {
+  if ($("#notification_template_id").val() == "") {
+    $("#notification_template_id_edit_link").hide();
+  } else {
+    $("#notification_template_id_edit_link").show();
   }
 }
 
@@ -259,6 +261,7 @@ function initializeQuickCreate() {
     $("#campaign_type").val("Notification");
 
     $("#status").val("Active");
+    addEditCreateTemplateLinks();
   }
 }
 
@@ -281,6 +284,8 @@ function initilizeEditView() {
     $("#notification_reply_to_name").parent().children().prop("disabled", true);
     $("#notification_reply_to_addr").parent().children().prop("disabled", true);
     $("#notification_prospect_list_ids")[0].selectize.disable();
+  } else {
+    addEditCreateTemplateLinks();
   }
 }
 
@@ -296,4 +301,97 @@ function initilizeDetailView() {
     // All Subpanels buttons
     $(".clickMenu").hide();
   }
+}
+
+function addEditCreateTemplateLinks() {
+  if ($("#notification_template_id_edit_link").length == 0) {
+    var $select = $("#notification_template_id");
+    var $div = $select.parent();
+
+    $select.css("width","50%");
+
+    var editText = SUGAR.language.translate("app_strings", "LNK_EDIT");
+    var $editLink = $('<a href="#" id="notification_template_id_edit_link" style="margin-left:10px;">'+editText+'</a>').on("click", function(e) {
+      e.preventDefault();
+      edit_email_template_form();
+    });
+    $div.append($editLink);
+
+    var createText = SUGAR.language.translate("app_strings", "LNK_CREATE");
+    var $createLink = $('<a href="#" id="notification_template_id_create_link" style="margin-left:10px;">'+createText+'</a>').on("click", function(e) {
+      e.preventDefault();
+      open_email_template_form();
+    });
+    $div.append($createLink);
+  }
+}
+
+function open_email_template_form() {
+  var inboundId = $("#notification_outbound_email_id").val();
+  var parent_type = "";
+  if ($("#parent_type").length>0) {
+    parent_type = $("#parent_type").val();
+  } else if(typeof currentModule !== 'undefined') {
+    parent_type = currentModule;
+  } 
+  URL = "index.php?module=EmailTemplates&action=EditView&type=notification&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
+  URL += "&show_js=1";
+
+  windowName = 'email_template';
+  windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
+
+  win = window.open(URL, windowName, windowFeatures);
+  if (window.focus) {
+      // put the focus on the popup if the browser supports the focus() method
+      win.focus();
+  }
+}
+
+function edit_email_template_form() {
+  var inboundId = $("#notification_outbound_email_id").val();
+  var parent_type = "";
+  if ($("#parent_type").length>0) {
+    parent_type = $("#parent_type").val();
+  } else if(typeof currentModule !== 'undefined') {
+    parent_type = currentModule;
+  } 
+  URL = "index.php?module=EmailTemplates&action=EditView&type=notification&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
+
+  var field = document.getElementById('notification_template_id');
+  if (field.options[field.selectedIndex].value != 'undefined') {
+      URL += "&record=" + field.options[field.selectedIndex].value;
+  }
+  URL += "&show_js=1";
+
+  windowName = 'email_template';
+  windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
+
+  win = window.open(URL, windowName, windowFeatures);
+  if (window.focus) {
+      // put the focus on the popup if the browser supports the focus() method
+      win.focus();
+  }
+}
+
+function refresh_email_template_list(template_id, template_name) {
+  var field = document.getElementById('notification_template_id');
+  var bfound = 0;
+  for (var i = 0; i < field.options.length; i++) {
+      if (field.options[i].value == template_id) {
+          if (field.options[i].selected == false) {
+              field.options[i].selected = true;
+          }
+          field.options[i].text = template_name;
+          bfound = 1;
+      }
+  }
+  //add item to selection list.
+  if (bfound == 0) {
+      var newElement = document.createElement('option');
+      newElement.text = template_name;
+      newElement.value = template_id;
+      field.options.add(newElement);
+      newElement.selected = true;
+  }
+  template_change();
 }
