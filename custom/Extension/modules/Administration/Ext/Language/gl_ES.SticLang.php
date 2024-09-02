@@ -61,4 +61,4 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Na reconstrución de Sinergia Data
 
 // Menú principal avanzado
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar el menú principal';
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración do menú de SinergiaCRM (avanzado ou antigo)';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración do menú de SinergiaCRM';

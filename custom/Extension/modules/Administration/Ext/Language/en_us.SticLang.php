@@ -61,4 +61,4 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'The following errors have been fou
 
 // Advanced Menu
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Main menu settings';
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuration of SinergiaCRM menu (advanced or legacy)';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuration of SinergiaCRM menu';

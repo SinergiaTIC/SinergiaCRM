@@ -62,5 +62,5 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Durante la reconstrucción de Sine
 
 // Menú principal avanzado
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar el menú principal';
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración del menu de SinergiaCRM (avanzado o antiguo)';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración del menú de SinergiaCRM';
 
