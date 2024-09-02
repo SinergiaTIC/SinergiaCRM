@@ -294,6 +294,7 @@ $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experi
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
+$app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';

@@ -382,19 +382,33 @@ if (true) {
                 $defaultModule = "";
             }
             
-            array_multisort($app_list_strings['parent_type_display_notifications'], SORT_ASC, $app_list_strings['parent_type_display_notifications']);
-            foreach ($app_list_strings['parent_type_display_notifications'] as $key => $name) {
-                if (isset($app_list_strings['moduleListSingular'][$key])) {
-                    $dropdown .= "<option value='" . $key . "'>
-                        " . $app_list_strings['moduleListSingular'][$key] . "
+            if ($defaultModule != "") {
+                // Add $defaultModule as first module in dropdown
+                if (isset($app_list_strings['moduleListSingular'][$defaultModule])) {
+                    $dropdown .= "<option value='" . $defaultModule . "'>
+                        " . $app_list_strings['moduleListSingular'][$defaultModule] . "
                         </option>";
                 } else {
-                    $dropdown .= "<option value='" . $key . "'>
-                        " . $app_list_strings['moduleList'][$key] . "
+                    $dropdown .= "<option value='" . $defaultModule . "'>
+                        " . $app_list_strings['moduleList'][$defaultModule] . "
                         </option>";
                 }
-                if ($defaultModule=="") {
-                    $defaultModule = $key;
+            }
+            array_multisort($app_list_strings['parent_type_display_notifications'], SORT_ASC, $app_list_strings['parent_type_display_notifications']);
+            foreach ($app_list_strings['parent_type_display_notifications'] as $key => $name) {
+                if ($key != $defaultModule) {
+                    if (isset($app_list_strings['moduleListSingular'][$key])) {
+                        $dropdown .= "<option value='" . $key . "'>
+                            " . $app_list_strings['moduleListSingular'][$key] . "
+                            </option>";
+                    } else {
+                        $dropdown .= "<option value='" . $key . "'>
+                            " . $app_list_strings['moduleList'][$key] . "
+                            </option>";
+                    }
+                    if ($defaultModule == "") {
+                        $defaultModule = $key;
+                    }
                 }
             }
             $xtpl->assign("DROPDOWN", $dropdown);
