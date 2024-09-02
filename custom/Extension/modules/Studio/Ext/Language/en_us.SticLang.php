@@ -22,10 +22,11 @@
  */
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Main menu settings';
 $mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Enabled modules not included in the menu';
+$mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Menu Configuration';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Save and apply';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restore';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restore the default SinergiaCRM menu?';
-$mod_strings['LBL_STIC_MENU_INFO'] = 'Drag module items to the appropiate menu node';
+$mod_strings['LBL_STIC_MENU_INFO'] = '<li>Drag the modules to the menu nodes where you want them to appear. <li>In the context menu of each element (right mouse button) you can create new nodes, rename or delete them. You can also direct nodes to specific URLs.<li>You can drag nodes between the included or not included module areas to modify their visibility.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Show module icons';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Show ALL option';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Switch to legacy menu';

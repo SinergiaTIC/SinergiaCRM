@@ -35,20 +35,19 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 <div id="stic-menu">
 
 	<h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>
-	<small>{$MOD.LBL_STIC_MENU_INFO}</small>
 
 	<div id="menu-buttons" class="btn-group btn-group-justified" role="group">
-	<div class="row">
+		<div class="row">
 
-			<button id="save-menu" type="button" class="btn btn-md btn-default ">{$MOD.LBL_STIC_MENU_SAVE}
+			<button id="save-menu" type="button" class="btn btn-md btn-default text-uppercase">{$MOD.LBL_STIC_MENU_SAVE}
 				<span class="glyphicon glyphicon-ok text-success"></span>
 			</button>
 
 
 			<button id="restore-menu" type="button"
-				class="btn btn-md btn-default ">{$MOD.LBL_STIC_MENU_RESTORE}</button>
+				class="btn btn-md btn-default text-uppercase">{$MOD.LBL_STIC_MENU_RESTORE}</button>
 
-			
+
 			{* 
 			The button to switch to the old menu remains hidden, but all the necessary logic to activate it
    			in the context of SuiteCRM is maintained if needed
@@ -58,42 +57,49 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 
 
 		</div>
-		<div class="panel panel-default col-md-7">
-			<div id="menu-options">
-				<div class="col-xs-4 text-center">
-					<div class="checkbox">
-						<label>
-							<input id="stic_advanced_menu_icons" type="checkbox"
-								{if $sticAdvancedMenuIcons}checked{/if}>
-						</label>
-					</div>
-					{$MOD.LBL_STIC_MENU_ICONS}
+		{* <div class="panel panel-default"> *}
+		<div id="menu-options">
+			<div class="col-xs-4 ">
+				<div class="checkbox">
+					<label>
+						<input id="stic_advanced_menu_icons" type="checkbox" {if $sticAdvancedMenuIcons}checked{/if}>
+					</label>
 				</div>
-				<div class="col-xs-4 text-center">
-					<div class="checkbox">
-						<label>
-							<input id="stic_advanced_menu_all" type="checkbox" {if $sticAdvancedMenuAll}checked{/if}>
-						</label>
-					</div>
-					{$MOD.LBL_STIC_MENU_ALL}
-				</div>
+				<strong>{$MOD.LBL_STIC_MENU_ICONS}</strong>
 			</div>
-			<div class="panel-body">
-				<div id="stic-menu-manager">
+			<div class="col-xs-4 ">
+				<div class="checkbox">
+					<label>
+						<input id="stic_advanced_menu_all" type="checkbox" {if $sticAdvancedMenuAll}checked{/if}>
+					</label>
 				</div>
-
+				<strong>{$MOD.LBL_STIC_MENU_ALL}</strong>
 			</div>
 		</div>
-		<div class="col-md-1"></div>
-		<div class="panel panel-primary col-md-4">
-			<div class="panel-heading">
-				<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_NOT_INCLUDED}</h3>
-			</div>
-			<div class="panel-body">
-				<div id="hidden-modules">
-				</div>
-			</div>
-		</div>
-
+		{* </div> *}
 	</div>
+	<div class="panel col-md-8" id="enabled-modules">
+
+		<div class="panel-heading">
+			<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_INCLUDED}</h3>
+		</div>
+		
+		<div class="panel-body col-md-8">
+			<div id="stic-menu-manager">
+			</div>
+			<div id="menu-config-info">{$MOD.LBL_STIC_MENU_INFO}</div>
+
+		</div>
+	</div>
+	<div class="panel panel-primary col-md-4" id="not-included-modules">
+		<div class="panel-heading">
+			<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_NOT_INCLUDED}</h3>
+		</div>
+		<div class="panel-body">
+			<div id="hidden-modules">
+			</div>
+		</div>
+	</div>
+</div>
+</div>
 </div>

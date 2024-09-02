@@ -22,10 +22,11 @@
  */
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuración del menú principal';
 $mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Módulos habilitados no incluidos en el menú';
+$mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Configuración del menú';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Guardar y aplicar';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = '¿Restaurar el menu prederminado de SinergiaCRM?';
-$mod_strings['LBL_STIC_MENU_INFO'] = 'Arrastre los módulos hacia los nodos del menú donde quiera que aparezcan.';
+$mod_strings['LBL_STIC_MENU_INFO'] = '<li>Arrastre los módulos hacia los nodos del menú donde quiera que aparezcan. <li>En el menu contextual de cada elemento (botón recho del ratón) puede crear nuevos nodos, renombrarlos o eliminarlos. También puede dirigir nodos hacia URL\'s específicas.<li>Puede arrastrar nodos entre la áreas de módulos incluidos o no incluidos para modificar su visibilidad.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar iconos de módulos';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar la opción TODO';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar al menú clásico';
