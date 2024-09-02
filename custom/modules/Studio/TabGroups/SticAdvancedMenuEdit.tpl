@@ -33,7 +33,7 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 <script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.js'}">
 </script>
 
-<div id="stic-menu" class="content">
+<div id="stic-menu">
 
     <div class="moduleTitle">
 	    <h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>
@@ -80,17 +80,14 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 	</div>
 	
     <div class="panel col-md-8" id="enabled-modules">
-
 		<div class="panel-heading">
 			<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_INCLUDED}</h3>
 		</div>
-		
 		<div class="panel-body col-md-8">
 			<div id="stic-menu-manager">
 			</div>
 			<div id="menu-config-info">{$MOD.LBL_STIC_MENU_INFO}</div>
 		</div>
-	
     </div>
 
     <div class="panel panel-primary col-md-4" id="not-included-modules">
