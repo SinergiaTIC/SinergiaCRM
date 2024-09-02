@@ -24,6 +24,7 @@ $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Main menu settings';
 $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Hidden modules';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Save and apply';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restore';
+$mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restore the default SinergiaCRM menu?';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Drag module items to the appropiate menu node';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Show module icons';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Show ALL option';

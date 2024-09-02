@@ -24,6 +24,7 @@ $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuración del menú princi
 $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Módulos ocultos';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Guardar y aplicar';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
+$mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = '¿Restaurar el menu prederminado de SinergiaCRM?';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Arrastre los módulos hacia los nodos del menú donde quiera que aparezcan.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar iconos de módulos';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar la opción TODO';

@@ -26,7 +26,7 @@ $(document).ready(function() {
 
   // Restore default menu
   $("#restore-menu").on("click", function() {
-    if (confirm("Restore the default SinergiaCRM menu?") == false) {
+    if (confirm(SUGAR.language.languages.Studio.LBL_STIC_MENU_RESTORE_CONFIRM) == false) {
       return;
     }
 

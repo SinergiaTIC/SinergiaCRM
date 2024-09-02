@@ -24,6 +24,7 @@ $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuració del menú princip
 $mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Mòduls ocults';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Desa i aplica';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaura';
+$mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restaurar el menú predeterminat de SinergiaCRM?';
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Arrossegueu els mòduls al node del menú on vulgueu que apareguin.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostra les icones dels mòduls';
 $mod_strings['LBL_STIC_MENU_ALL'] = "Mostra l'opció TOT";
