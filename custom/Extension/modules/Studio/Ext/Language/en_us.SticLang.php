@@ -26,7 +26,7 @@ $mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Menu Configuration';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Save and apply';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restore';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restore the default SinergiaCRM menu?';
-$mod_strings['LBL_STIC_MENU_INFO'] = '<li>Drag the modules to the menu nodes where you want them to appear. <li>In the context menu of each element (right mouse button) you can create new nodes, rename or delete them. You can also direct nodes to specific URLs.<li>You can drag nodes between the included or not included module areas to modify their visibility.';
+$mod_strings['LBL_STIC_MENU_INFO'] = 'To include a module in the main menu it must be <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">enabled</a>. If it already is, you can drag it from the excluded modules area (right) and drop it over the menu node where you want it to appear (left). To hide it, do the opposite. To resort the nodes, drag them to the desired position. With the right mouse button you can show the item context menu, which allows you to create new nodes (which can point to any URL), rename them or delete them.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Show module icons';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Show ALL option';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Switch to legacy menu';
