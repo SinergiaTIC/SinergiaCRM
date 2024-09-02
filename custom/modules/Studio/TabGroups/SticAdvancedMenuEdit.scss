@@ -19,7 +19,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
- 
+
 .jstree-anchor {
     border: 1px solid silver;
     background-color: #e3e3e3;
@@ -36,12 +36,21 @@
     font-weight: bold;
 }
 
+.jstree-default {
+    .jstree-wholerow-hovered {
+        background: lighten(#b5bc31, 40);
+    }
+    .jstree-wholerow-clicked {
+        background: lighten(#b5bc31, 20);
+    }
+}
+
 #saved-notice {
     position: absolute;
     right: 4px;
     top: 4px;
 }
 
-#menu-options{
+#menu-options {
     margin-bottom: 2em;
 }
