@@ -32,7 +32,8 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 </script>
 <script type="text/javascript" src="{sugar_getjspath file='custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.js'}">
 </script>
-<div id="stic-menu">
+
+<div id="stic-menu" class="content">
 
     <div class="moduleTitle">
 	    <h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>
@@ -77,7 +78,8 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 		</div>
 		{* </div> *}
 	</div>
-	<div class="panel col-md-8" id="enabled-modules">
+	
+    <div class="panel col-md-8" id="enabled-modules">
 
 		<div class="panel-heading">
 			<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_INCLUDED}</h3>
@@ -87,10 +89,11 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 			<div id="stic-menu-manager">
 			</div>
 			<div id="menu-config-info">{$MOD.LBL_STIC_MENU_INFO}</div>
-
 		</div>
-	</div>
-	<div class="panel panel-primary col-md-4" id="not-included-modules">
+	
+    </div>
+
+    <div class="panel panel-primary col-md-4" id="not-included-modules">
 		<div class="panel-heading">
 			<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_NOT_INCLUDED}</h3>
 		</div>
@@ -99,6 +102,5 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 			</div>
 		</div>
 	</div>
-</div>
-</div>
+
 </div>
