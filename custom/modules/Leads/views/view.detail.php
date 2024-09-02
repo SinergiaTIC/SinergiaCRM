@@ -23,9 +23,12 @@
 
 require_once 'modules/Leads/views/view.detail.php';
 require_once 'SticInclude/Views.php';
+require_once 'modules/stic_Messages/Checkstic_Messages.php';
 
 class CustomLeadsViewDetail extends LeadsViewDetail
 {
+    use Checkstic_Messages;
+
     public function __construct()
     {
         parent::__construct();
@@ -46,9 +49,7 @@ class CustomLeadsViewDetail extends LeadsViewDetail
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Leads/SticUtils.js");
-        if (isset($currentTabs['stic_Messages'])) {
-            echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
-        }
+        $this->echoIsMessagesModuleActive();
 
         // Write here the SinergiaCRM code that must be executed for this module and view
     }
