@@ -34,7 +34,9 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 </script>
 <div id="stic-menu">
 
-	<h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>
+    <div class="moduleTitle">
+	    <h2>{$MOD.LBL_STIC_MENU_CONFIGURE_TITLE}</h2>
+    </div>
 
 	<div id="menu-buttons" class="btn-group btn-group-justified" role="group">
 		<div class="row">
@@ -43,10 +45,8 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 				<span class="glyphicon glyphicon-ok text-success"></span>
 			</button>
 
-
 			<button id="restore-menu" type="button"
 				class="btn btn-md btn-default text-uppercase">{$MOD.LBL_STIC_MENU_RESTORE}</button>
-
 
 			{* 
 			The button to switch to the old menu remains hidden, but all the necessary logic to activate it
@@ -54,10 +54,9 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
    			<button class="btn btn-link" id="legacy-menu">{$MOD.LBL_STIC_MENU_CHANGE_TO_LEGACY}</button> 
 			*}
 
-
-
 		</div>
-		{* <div class="panel panel-default"> *}
+
+        {* <div class="panel panel-default"> *}
 		<div id="menu-options">
 			<div class="col-xs-4 ">
 				<div class="checkbox">
