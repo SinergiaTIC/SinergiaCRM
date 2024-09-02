@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuració del menú principal';
-$mod_strings['LBL_STIC_MENU_HIDDEN_MODULES'] = 'Mòduls ocults';
+$mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Mòduls habilitats no inclosos al menú';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Desa i aplica';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaura';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restaurar el menú predeterminat de SinergiaCRM?';
