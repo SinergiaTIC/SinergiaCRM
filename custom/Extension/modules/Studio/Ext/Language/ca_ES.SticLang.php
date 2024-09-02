@@ -26,7 +26,7 @@ $mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Configuració del menú';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Desa i aplica';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaura';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restaurar el menú predeterminat de SinergiaCRM?';
-$mod_strings['LBL_STIC_MENU_INFO'] = '<li>Arrossegueu els mòduls cap als nodes del menú on vulgueu que apareguin. <li>Al menú contextual de cada element (botó dret del ratolí) podeu crear nous nodes, canviar-los el nom o eliminar-los. També podeu dirigir nodes cap a URL específiques.<li>Podeu arrossegar nodes entre les àrees de mòduls inclosos o no inclosos per modificar-ne la visibilitat.';
+$mod_strings['LBL_STIC_MENU_INFO'] = "Per incloure un mòdul al menú principal cal que estigui <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">habilitat</a>. Si ja ho està, podeu arrossegar-lo de la zona de mòduls no inclosos (dreta) cap al node del menú on vulgueu que aparegui (esquerra). Per amagar-lo, feu el moviment invers. Alhora, amb el botó dret del ratolí podeu fer aparèixer el menú contextual associat a cada element del menú, que us permetrà crear nous nodes (que poden apuntar a qualsevol URL), canviar-ne el nom o eliminar-los.";
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostra les icones dels mòduls';
 $mod_strings['LBL_STIC_MENU_ALL'] = "Mostra l'opció TOT";
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Canvia al menú clàssic';
