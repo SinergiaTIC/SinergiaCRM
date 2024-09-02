@@ -182,11 +182,20 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
  */
 function addMenuProperties(&$array)
 {
+
+    include_once 'modules/MySettings/TabController.php';
+    $controller = new TabController();
+    $currentTabs = $controller->get_system_tabs();
+
     global $app_list_strings, $app_strings;
     foreach ($array as $key => &$value) {
         if (is_array($value)) {
             if (isset($value['id'])) {
                 $value['text'] = ($app_list_strings['moduleList'][$value['id']] ?? '');
+                // Set disabled property if module is disabled
+                if (!in_array($value['id'], $currentTabs) && isset($app_list_strings['moduleList'][$value['id']])) {
+                    $value['disabled'] = true;
+                }
                 if (empty($value['text'])) {
                     $value['text'] = $app_strings[$value['id']];
                 }

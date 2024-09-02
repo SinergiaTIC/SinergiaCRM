@@ -22,6 +22,7 @@
 
 $(document).ready(function() {
   removeMenu();
+  removeDisabledObjects(menu);
   createMenu();
 
   // Restore default menu
@@ -55,7 +56,7 @@ $(document).ready(function() {
 
   // Restore default menu
   $("#legacy-menu").on("click", function() {
-    if (confirm(SUGAR.language.get('Studio', "LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM")) == false) {
+    if (confirm(SUGAR.language.get("Studio", "LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM")) == false) {
       return;
     }
 
@@ -309,4 +310,47 @@ function isValidUrl(string) {
   } catch (_) {
     return false;
   }
+}
+
+/**
+ * Recursively removes objects with the property 'disabled' set to true from an array.
+ * This function modifies the original array and its nested structures.
+ * 
+ * @param {Array} arr - The array to process.
+ * @returns {Array} The modified array with disabled objects removed.
+ * 
+ */
+function removeDisabledObjects(arr) {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    let element = arr[i];
+
+    if (Array.isArray(element)) {
+      // If the element is an array, recursively call the function
+      removeDisabledObjects(element);
+      // If the array became empty after recursion, remove it
+      if (element.length === 0) {
+        arr.splice(i, 1);
+      }
+    } else if (typeof element === "object" && element !== null) {
+      // If the element is an object, check if it has the disabled property set to true
+      if (element.hasOwnProperty("disabled") && element.disabled === true) {
+        arr.splice(i, 1);
+        continue;
+      }
+      // If the object has properties that are arrays or objects, process them recursively
+      for (let prop in element) {
+        if (Array.isArray(element[prop])) {
+          removeDisabledObjects(element[prop]);
+          if (element[prop].length === 0) {
+            delete element[prop];
+          }
+        } else if (typeof element[prop] === "object" && element[prop] !== null) {
+          if (removeDisabledObjects([element[prop]]).length === 0) {
+            delete element[prop];
+          }
+        }
+      }
+    }
+  }
+  return arr;
 }
