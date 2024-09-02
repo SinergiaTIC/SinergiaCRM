@@ -87,7 +87,7 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 		<div class="col-md-1"></div>
 		<div class="panel panel-primary col-md-4">
 			<div class="panel-heading">
-				<h3 class="panel-title">{$MOD.LBL_STIC_MENU_HIDDEN_MODULES}</h3>
+				<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_NOT_INCLUDED}</h3>
 			</div>
 			<div class="panel-body">
 				<div id="hidden-modules">
