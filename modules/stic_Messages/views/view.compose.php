@@ -45,6 +45,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
+require_once('modules/stic_Settings/Utils.php');
 class stic_MessagesViewCompose extends ViewEdit
 {
 
@@ -87,7 +88,7 @@ class stic_MessagesViewCompose extends ViewEdit
         $this->bean->parent_id = $_GET['relatedId'];
 
         global $sugar_config;
-        $this->bean->sender = $sugar_config['seven_sender'] ?? '';
+        $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
 
         $metadataFile = $this->getMetaDataFile();
         $this->ev->setup(
