@@ -67,4 +67,10 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
 
+$mod_strings['LBL_FLEX_RELATE_TITLE'] = 'The parent item for which the Notification is to be created';
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_TITLE'] = 'The Target Lists with the recipients of the Notification. More than one can be selected. They must be of type "Default"';
+$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_TITLE'] = 'The Email Template that will be used to create the content of the Notification to be sent. It must be an email template of the "Notification" type. Fields from the parent item module of the Notification can be used in the template.';
+$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_TITLE'] = 'The email account that will be used to send the Notifications. It can be configured in the "Outbound Email" section of the Admin menu';
+$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_TITLE'] = 'The bounce email box that will be used to track the status of the Notifications. It can be configured in the "Inbound Email" section of the Admin menu';
+
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving a new notification the email messages will be automatically added to the sending queue.';

@@ -47,6 +47,7 @@ $dictionary["Campaign"]["fields"]["parent_name"] = array(
     'options' => 'parent_type_display_notifications', // Available Notification parent types
     'inline_edit' => 0,
     'studio' => 'visible',
+    'popupHelp' => 'LBL_FLEX_RELATE_TITLE',
 );
 $dictionary["Campaign"]["fields"]['parent_type'] = array(
     'name' => 'parent_type',
@@ -101,6 +102,7 @@ $dictionary["Campaign"]["fields"]['notification_prospect_list_ids'] = array(
     'size' => '20',
     'options' => 'dynamic_prospect_list_list',
     'dependency' => false,
+    'popupHelp' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID_TITLE',
 );
 
 // These fields are from the EmailMarketing related to the Notification 
@@ -126,6 +128,7 @@ $dictionary["Campaign"]["fields"]['notification_template_id'] = array(
     'size' => '20',
     'options' => 'dynamic_email_template_list',
     'dependency' => false,
+    'popupHelp' => 'LBL_NOTIFICATION_TEMPLATE_ID_TITLE',
 );
 $dictionary["Campaign"]["fields"]['notification_email_template_name'] = array(
     'name' => 'notification_email_template_name',
@@ -141,6 +144,7 @@ $dictionary["Campaign"]["fields"]['notification_outbound_email_id'] = array(
     'source' => 'non-db',
     'isnull' => true,
     'options' => 'dynamic_outbound_email_list',
+    'popupHelp' => 'LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_TITLE',
 );
 $dictionary["Campaign"]["fields"]['notification_inbound_email_id'] = array(
     'name' => 'notification_inbound_email_id',
@@ -149,6 +153,7 @@ $dictionary["Campaign"]["fields"]['notification_inbound_email_id'] = array(
     'source' => 'non-db',
     'isnull' => true,
     'options' => 'dynamic_inbound_email_list',
+    'popupHelp' => 'LBL_NOTIFICATION_INBOUND_EMAIL_ID_TITLE',
 );
 $dictionary["Campaign"]["fields"]['notification_from_name'] = array(
     'name' => 'notification_from_name',
