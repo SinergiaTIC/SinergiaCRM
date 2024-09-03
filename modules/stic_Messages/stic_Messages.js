@@ -192,7 +192,9 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             //     }
             // }
         });
-        $('#namesList').val(namesList);
+        if (typeof namesList !== 'undefined') {
+          $('#namesList').val(namesList);
+        }
         $( "#template" ).change(function() {
             console.log('template change');
             $.fn.stic_MessagesComposeView.onTemplateChange()
