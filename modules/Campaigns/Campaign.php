@@ -264,7 +264,7 @@ class Campaign extends SugarBean
             $this->frequency = '';
         }
 
-        // STIC-Custom - JBL - 20240612 - Notify new Opportunities: New Campaign type (Notification)
+        // STIC-Custom - JBL - 20240612 - New Campaign type (Notification)
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 		// return parent::save($check_notify);
         if ($this->campaign_type == "Notification" && 
