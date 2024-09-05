@@ -72,11 +72,11 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 
-$mod_strings['LBL_FLEX_RELATE_TITLE'] = "L'element pare sobre el que es vol crear la Notificació";
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_TITLE'] = "Les Llistes de Públic Objectiu amb els destinataris de la Notificació. Es poden seleccionar més d'una. Han de ser del tipus 'Per defecte'";
-$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_TITLE'] = "La Plantilla de correu electrònic que s'usarà per a crear el contingut de la Notificació que s'enviarà. Ha de ser una plantilla de mail del tipus 'Notificació'. En la plantilla es poden utilitzar camps del mòdul de l'element pare de la Notificació."; 
-$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_TITLE'] = "El compte de correu que s'usarà per l'enviament de les Notificacions. Es pot configurar a l'apartat 'Correu electrònic sortint' del menú d'Adminstració";
-$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_TITLE'] = "La bústia de correu pels rebots que s'usarà per a fer el seguiment de l'estat de les Notificacions. Es pot configurar en l'apartat 'Correu electrònic entrant' del menú d'Administració";
+$mod_strings['LBL_FLEX_RELATE_HELP'] = "L'element pare sobre el que es vol crear la Notificació";
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "Les Llistes de Públic Objectiu amb els destinataris de la Notificació. Es poden seleccionar més d'una. Han de ser del tipus 'Per defecte'";
+$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La Plantilla de correu electrònic que s'usarà per a crear el contingut de la Notificació que s'enviarà. Ha de ser una plantilla de mail del tipus 'Notificació'. En la plantilla es poden utilitzar camps del mòdul de l'element pare de la Notificació."; 
+$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "El compte de correu que s'usarà per l'enviament de les Notificacions. Es pot configurar a l'apartat 'Correu electrònic sortint' del menú d'Adminstració";
+$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "La bústia de correu pels rebots que s'usarà per a fer el seguiment de l'estat de les Notificacions. Es pot configurar en l'apartat 'Correu electrònic entrant' del menú d'Administració";
 
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al desar una nova notificació s'afegiran automàticament a la cua d'enviament els correus electrònics corresponents.";

@@ -72,10 +72,10 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
 
-$mod_strings['LBL_FLEX_RELATE_TITLE'] = 'El elemento padre sobre el que se quiere crear la Notificación';
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_TITLE'] = 'Las Listas de Público Objetivo con los destinatarios de la Notificación. Se pueden seleccionar más de una. Deben ser del tipo "Por defecto"';
-$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_TITLE'] = 'La Plantilla de correo electrónico que se usará para crear el contenido de la Notificación que se enviará. Debe ser una plantilla de correo del tipo "Notificación". En la plantilla se pueden utilizar campos del módulo del elemento padre de la Notificación.';
-$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_TITLE'] = 'La cuenta de correo que se usará para el envío de las Notificaciones. Se puede configurar en la sección "Correo saliente" del menú de Administración';
-$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_TITLE'] = 'El buzón de correo para los rebotes que se usará para hacer el seguimiento del estado de las Notificaciones. Se puede configurar en la sección "Correo entrante" del menú de Administración';
+$mod_strings['LBL_FLEX_RELATE_HELP'] = 'El elemento padre sobre el que se quiere crear la Notificación';
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = 'Las Listas de Público Objetivo con los destinatarios de la Notificación. Se pueden seleccionar más de una. Deben ser del tipo "Por defecto"';
+$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = 'La Plantilla de correo electrónico que se usará para crear el contenido de la Notificación que se enviará. Debe ser una plantilla de correo del tipo "Notificación". En la plantilla se pueden utilizar campos del módulo del elemento padre de la Notificación.';
+$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = 'La cuenta de correo que se usará para el envío de las Notificaciones. Se puede configurar en la sección "Correo saliente" del menú de Administración';
+$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = 'El buzón de correo para los rebotes que se usará para hacer el seguimiento del estado de las Notificaciones. Se puede configurar en la sección "Correo entrante" del menú de Administración';
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar una nueva notificación se añadirán automáticamente a la cola de envío los mensajes correspondientes.';
