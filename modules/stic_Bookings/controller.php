@@ -46,92 +46,6 @@ class stic_BookingsController extends SugarController
         return;
     }
 
-    // public function action_loadCenterResources() 
-    // {
-    //     $startDate = isset($_REQUEST['startDate']) ? $_REQUEST['startDate'] : '';
-    //     $endDate = isset($_REQUEST['endDate']) ? $_REQUEST['endDate'] : '';
-    //     $bookingId = $_REQUEST['bookingId'];
-    //     $centerIds = $_REQUEST['centerIds'];
-    //     $resourceType = isset($_REQUEST['resourceType']) ? $_REQUEST['resourceType'] : '';
-    //     $resourceName = isset($_REQUEST['resourceName']) ? $_REQUEST['resourceName'] : '';
-    //     $resourceStatus = isset($_REQUEST['resourceStatus']) ? $_REQUEST['resourceStatus'] : '';
-    //     $numberOfCenters = isset($_REQUEST['numberOfCenters']) ? $_REQUEST['numberOfCenters'] : '';
-    
-    //     if (empty($centerIds)) {
-    //         echo json_encode(['success' => false, 'message' => 'ID del centro inválido.']);
-    //         return;
-    //     }
-    
-    //     $db = DBManagerFactory::getInstance();
-    //     $centerIdsArray = explode(',', $centerIds);
-    //     $resources = [];
-    //     $totalCenters = 0;
-    
-    //     foreach ($centerIdsArray as $centerId) {
-    //         $query = "SELECT stic_resources_stic_centersstic_resources_idb 
-    //                   FROM stic_resources_stic_centers_c 
-    //                   WHERE stic_resources_stic_centersstic_centers_ida = '$centerId'";
-    //         $result = $db->query($query, true);
-    
-    //         while ($row = $db->fetchByAssoc($result)) {
-    //             $resourceId = $row['stic_resources_stic_centersstic_resources_idb'];
-    
-    //             if ($numberOfCenters && $totalCenters >= $numberOfCenters) {
-    //                 break;
-    //             }
-    //             $availability = $this->checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
-
-    //            /// $availability = $this->checkResourceAvailability($resourceId, null, null, null);
-    
-    //             if ($availability['resources_allowed']) {
-    //                 $resourceQuery = "SELECT * 
-    //                                   FROM stic_resources 
-    //                                   WHERE id = '$resourceId'";
-    
-    //                 if (!empty($resourceType)) {
-    //                     $resourceQuery .= " AND type LIKE '%$resourceType%'";
-    //                 }
-    //                 if (!empty($resourceStatus)) {
-    //                     $resourceQuery .= " AND status LIKE '%$resourceStatus%'";
-    //                 }
-    //                 if (!empty($resourceName)) {
-    //                     $resourceQuery .= " AND name LIKE '%$resourceName%'";
-    //                 }
-    //                 if (!empty($numberOfCenters)) {
-    //                     $query .= " LIMIT $numberOfCenters";
-    //                 }
-    
-    //                 $resourceResult = $db->query($resourceQuery);
-    
-    //                 if ($resourceResult !== false) {
-    //                     $resourceData = $db->fetchByAssoc($resourceResult);
-    //                     if ($resourceData !== false) {
-    //                         $resources[] = [
-    //                             'resource_id' => $resourceData['id'],
-    //                             'resource_name' => $resourceData['name'],
-    //                             'resource_code' => $resourceData['code'],
-    //                             'resource_gender' => $resourceData['gender'],
-    //                             'resource_color' => $resourceData['color'],
-    //                             'resource_status' => $resourceData['status'],
-    //                             'resource_type' => $resourceData['type'],
-    //                             'resource_hourly_rate' => $resourceData['hourly_rate'],
-    //                             'resource_daily_rate' => $resourceData['daily_rate']
-    //                         ];
-    //                     }
-    //                 }
-    //                 $totalCenters++;
-
-    //             }
-    //         }
-    
-    //         if ($numberOfCenters && $totalCenters >= $numberOfCenters) {
-    //             break;
-    //         }
-    //     }
-    
-    //     echo json_encode(['success' => true, 'resources' => $resourceData]);
-    //     return;
-    // }
     public function action_loadCenterResources() 
     {
         $startDate = isset($_REQUEST['startDate']) ? $_REQUEST['startDate'] : '';
@@ -150,8 +64,9 @@ class stic_BookingsController extends SugarController
     
         // Incluir el archivo de configuración
         require_once 'modules/stic_Bookings/config_resource_fields.php';
-    
-        global $config_resource_fields;
+        require_once 'modules/stic_Bookings/config_place_fields.php';
+
+        global $config_resource_fields, $config_place_fields;
     
         $db = DBManagerFactory::getInstance();
         $centerIdsArray = explode(',', $centerIds);
@@ -301,6 +216,79 @@ class stic_BookingsController extends SugarController
         echo json_encode($response);
         sugar_cleanup(true);
     }
+    public function action_closeResource()
+    {
+        global $app_list_strings, $timedate, $current_user;
 
+    
+        if (empty($_REQUEST['record_id']) || empty($_REQUEST['resource_id'])) {
+            echo json_encode(['success' => false, 'message' => 'ID del registro o recurso inválido.']);
+            return;
+        }
+    
+        $bookingId = $_REQUEST['record_id'];
+        $resourceId = $_REQUEST['resource_id'];
+        
+        // Obtener la reserva actual
+        $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
+        
+        // Crear una nueva reserva
+        $newBooking = BeanFactory::newBean('stic_Bookings');
+        
+    // Inicializar el nombre base con el name_i
+    $baseName = $booking->name;
+    
+    // Buscar si ya existen reservas con un nombre similar
+    $counter = 0;
+    $uniqueName = $baseName;
+    while (true) {
+        // Crear una consulta para buscar reservas con el mismo nombre
+        $existingBooking = $GLOBALS['db']->getOne("SELECT COUNT(*) FROM stic_bookings WHERE name = '{$uniqueName}' and deleted =0");
+
+        // Si no se encontró una reserva con ese nombre, romper el bucle
+        if ($existingBooking == 0) {
+            break;
+        }
+
+        // Si ya existe una reserva con ese nombre, incrementar el contador y actualizar el nombre
+        $counter++;
+        $uniqueName = $baseName . '.' . $counter;
+    }
+
+        // Asignar el nombre único al nuevo booking
+        $newBooking->name =  $uniqueName;
+        $newBooking->status = $booking->status;
+        $newBooking->start_date = $booking->start_date;
+        $newBooking->end_date = $timedate->to_display_date_time($timedate->nowDb()) ; // Establecer la fecha de finalización a la actual
+        $newBooking->parent_name = $booking->parent_name;
+        $newBooking->parent_type = $booking->parent_type;
+        $newBooking->parent_id = $booking->parent_id;
+        $newBooking->code = $booking->code . $counter;
+        $newBooking->status = $app_list_strings['stic_bookings_status_list']['closed'];
+        $newBooking->assigned_user_id = $booking->assigned_user_id;
+        $newBooking->assigned_user_name = $booking->assigned_user_name;
+        $newBooking->description = $booking->description;
+        
+        // Guardar la nueva reserva
+        $newBooking->save();
+        
+        // Verificar que la relación esté correctamente cargada antes de llamar a `add()`
+        if ($newBooking->load_relationship('stic_resources_stic_bookings')) {
+            // Vincular el recurso a la nueva reserva
+            $newBooking->stic_resources_stic_bookings->add($resourceId);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No se pudo cargar la relación stic_resources_stic_bookings.']);
+            return;
+        }
+    
+        // Opcionalmente, desvincular el recurso de la reserva anterior
+ if ($booking->load_relationship('stic_resources_stic_bookings')) {
+         $booking->stic_resources_stic_bookings->delete($bookingId, $resourceId);
+    }
+    
+        echo json_encode(['success' => true, 'booking_id' => $newBooking->id]);
+        return;
+    }
+        
 
 }

@@ -89,8 +89,10 @@ class stic_BookingsViewEdit extends ViewEdit
     {
         require_once 'SticInclude/Utils.php';
         require_once 'modules/stic_Bookings/config_resource_fields.php';
-        global $config_resource_fields;        
-        
+        require_once 'modules/stic_Bookings/config_place_fields.php';
+
+        global $config_resource_fields, $config_place_fields;
+
         // Add the resources template
         $this->ev->defs['templateMeta']['form']['footerTpl'] = 'modules/stic_Bookings/tpls/EditViewFooter.tpl';
 
@@ -98,8 +100,13 @@ class stic_BookingsViewEdit extends ViewEdit
 
         // Pasar la configuración de los campos al JavaScript
         $config_resource_fields_json = json_encode(array_keys($config_resource_fields));
-        echo "<script>var config_resource_fields = $config_resource_fields_json;</script>";
-    
+        $config_place_fields_json = json_encode(array_keys($config_place_fields)); 
+        
+        echo "<script>
+            var config_resource_fields = $config_resource_fields_json;
+            var config_place_fields = $config_place_fields_json;
+        </script>";
+
         // If the Bookings editview is launched from the "new" button in the Resources detailview Bookings subpanel,
         // then add the resource into the new booking. Notice that stic_resources_id is only available in that case,
         // not when Bookings editview is launched from the "edit" button in an already existing booking in the subpanel.

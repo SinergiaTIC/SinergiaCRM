@@ -83,7 +83,10 @@ array(
                         'name' => 'all_day',
                         'label' => 'LBL_ALL_DAY',
                     ),
-                    1 => '',
+                    1 => array(
+                        'name' => 'place_booking',
+                        'label' => 'LBL_PLACE_BOOKING',
+                    ),
                 ),
                 4 => array(
                     0 => array(

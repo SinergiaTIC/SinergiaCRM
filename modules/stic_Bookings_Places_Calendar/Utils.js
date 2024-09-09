@@ -32,159 +32,178 @@ loadScript("include/javascript/moment.min.js");
 // });
 
 function initializeCalendar() {
-    var calendarEl = document.getElementById("calendar");
-    if (!calendarEl) {
-        console.error("Calendar element not found");
-        return;
-    }
+  var calendarEl = document.getElementById("calendar");
+  if (!calendarEl) {
+    console.error("Calendar element not found");
+    return;
+  }
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: function(fetchInfo, successCallback, failureCallback) {
-            // Formatear las fechas al formato YYYY-MM-DD
-            var start = moment(fetchInfo.start).format('YYYY-MM-DD');
-            var end = moment(fetchInfo.end).format('YYYY-MM-DD');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: "dayGridMonth",
+    events: function (fetchInfo, successCallback, failureCallback) {
+      // Formatear las fechas al formato YYYY-MM-DD
+      var start = moment(fetchInfo.start).format("YYYY-MM-DD");
+      var end = moment(fetchInfo.end).format("YYYY-MM-DD");
 
-            $.ajax({
-                url: 'index.php?module=stic_Bookings_Places_Calendar&action=get_places_availability_data&sugar_body_only=true',
-                method: 'POST',
-                data: {
-                    start: start,
-                    end: end,
-                },
-                success: function(response) {
-                    try {
-                        var data = JSON.parse(response);
-                        var events = [];
-                        for (var date in data) { 
-                            events.push({
-                                start: date,
-                                allDay: true,
-                                extendedProps: {
-                                    available: data[date].available,
-                                    occupied: Object.keys(data[date].occupied).length,
-                                    occupiedInfo:data[date].occupied,
-                                }
-                            });
-                        }
-                        successCallback(events);
-                    } catch (e) {
-                        console.error('Error parsing availability data:', e);
-                        failureCallback(e);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching availability data:', error);
-                    failureCallback(error);
-                }
-            });
+      $.ajax({
+        url: "index.php?module=stic_Bookings_Places_Calendar&action=get_places_availability_data&sugar_body_only=true",
+        method: "POST",
+        data: {
+          start: start,
+          end: end,
         },
-        eventContent: function(arg) {
-            let eventEl = document.createElement('div');
-            eventEl.classList.add('custom-event-content');
-            eventEl.innerHTML = `
+        success: function (response) {
+          try {
+            var data = JSON.parse(response);
+            var events = [];
+            for (var date in data) {
+              let occupiedCount = 0;
+              // Contar el número total de recursos ocupados
+              for (var booking in data[date].occupied) {
+                for (var center in data[date].occupied[booking]) {
+                  occupiedCount += data[date].occupied[booking][center].length;
+                }
+              }
+
+              events.push({
+                start: date,
+                allDay: true,
+                extendedProps: {
+                  available: data[date].available,
+                  occupied: occupiedCount,
+                  occupiedInfo: data[date].occupied,
+                },
+              });
+            }
+            successCallback(events);
+          } catch (e) {
+            console.error("Error parsing availability data:", e);
+            failureCallback(e);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("Error fetching availability data:", error);
+          failureCallback(error);
+        },
+      });
+    },
+    eventContent: function (arg) {
+      let eventEl = document.createElement("div");
+      eventEl.classList.add("custom-event-content");
+      eventEl.innerHTML = `
                 <div class="availability-info">
                     <span class="available">${arg.event.extendedProps.available}</span>
                     <img src="themes/SuiteP/images/icon_home.png" alt="Home" class="home-icon">
                     <span class="occupied">${arg.event.extendedProps.occupied}</span>
                 </div>
             `;
-            return { domNodes: [eventEl] };
-        },
+      return { domNodes: [eventEl] };
+    },
 
-        eventDidMount: function(info) {
-            // console.log("vamos a ver que tenemos"+info)
-            // console.log("vamos a ver que tenemos222"+info.event)
-             console.dir(info.event.extendedProps.occupiedInfo);
-            
-            // Obtén la información del evento desde info.event
-            var eventData = info.event.title; // Este contiene el texto "Disponibles: X, Ocupados: Y"
-        
-            // Configura el título del tooltip (opcional)
-            var title = '<div class="qtip-title-text">' + SUGAR.language.translate("app_strings", "LBL_ADDITIONAL_DETAILS") + "</div>" + '<div class="qtip-title-buttons">' + "</div>";
-            var occupiedInfo = info.event.extendedProps.occupiedInfo;
+    eventDidMount: function (info) {
+      // console.log("vamos a ver que tenemos"+info)
+      // console.log("vamos a ver que tenemos222"+info.event)
+      console.dir(info.event.extendedProps.occupiedInfo);
 
-            // Configura el cuerpo del tooltip con la información deseada
-            var body = '';
-    
-            for (var booking in occupiedInfo) {
-                if (occupiedInfo.hasOwnProperty(booking)) {
-                    body += `<div><strong>SUGAR.language.translate("app_strings", "LBL_LOADING_PAGE")</strong>${booking}</div>`;
-                    
-                    var centers = occupiedInfo[booking];
-                    for (var center in centers) {
-                        if (centers.hasOwnProperty(center)) {
-                            body += `<div>Centro: ${center}</div>`;
-                            
-                            var resources = centers[center];
-                            body += '<div>Recursos:</div><ul>';
-                            resources.forEach(function(resource) {
-                                body += `<li>${resource}</li>`;
-                            });
-                            body += '</ul>';
-                        }
-                    }
-                }
-            }   
-            // Genera el tooltip usando qTip2
-            $(info.el).qtip({
-                content: { 
-                    title: title,
-                    text: body
-                },
-                position: {
-                    my: 'bottom left',
-                    at: 'top left',
-                    target: 'mouse',
-                    adjust: {
-                        mouse: false  // Esto evita que el tooltip siga el mouse
-                    }
-                },
-                show: {
-                    solo: true  // Solo se muestra un tooltip a la vez
-                },
-                hide: {
-                    event: 'mouseleave', 
-                    fixed: true,
-                    delay: 200
-                },
-                style: {
-                    width: 224,
-                    padding: 5,
-                    color: "black",
-                    textAlign: "left",
-                    border: {
-                        width: 1,
-                        radius: 3
-                    },
-                    tip: "bottomLeft",
-                    classes: {
-                        tooltip: "ui-widget",
-                        tip: "ui-widget",
-                        title: "ui-widget-header",
-                        content: "ui-widget-content"
-                    }
-                }
-            });
+      // Obtén la información del evento desde info.event
+      var eventData = info.event.title; // Este contiene el texto "Disponibles: X, Ocupados: Y"
+
+      // Configura el título del tooltip (opcional)
+      var title =
+        '<div class="qtip-title-text">' +
+        SUGAR.language.translate("app_strings", "LBL_ADDITIONAL_DETAILS") +
+        "</div>" +
+        '<div class="qtip-title-buttons">' +
+        "</div>";
+      var occupiedInfo = info.event.extendedProps.occupiedInfo;
+
+      // Configura el cuerpo del tooltip con la información deseada
+      var body = "";
+
+      for (var booking in occupiedInfo) {
+        if (occupiedInfo.hasOwnProperty(booking)) {
+          body += `<div><strong>${booking}</strong></div>`;
+
+          var centers = occupiedInfo[booking];
+          for (var center in centers) {
+            if (centers.hasOwnProperty(center)) {
+              body += `<div><strong>- ${SUGAR.language.get(
+                "stic_Bookings_Places_Calendar",
+                "LBL_STIC_CENTERS"
+              )}: </strong>${center}</div>`;
+
+              var resources = centers[center];
+              body += `<div> ${SUGAR.language.get(
+                "stic_Bookings_Places_Calendar",
+                "LBL_STIC_RESOURCES"
+              )}</div><ul>`;
+              resources.forEach(function (resource) {
+                body += `<li>•${resource}</li>`;
+              });
+              body += "</ul>";
+            }
+          }
+        }
+      }
+      // Genera el tooltip usando qTip2
+      $(info.el).qtip({
+        content: {
+          title: title,
+          text: body,
         },
-        
-        selectable: true,
-        selectMirror: true,
-        // This is used for the click in an empty space of the calendar
-        select: function(arg) {
-            window.location.assign(
-                "index.php?module=stic_Bookings&action=EditView&return_action=index&return_module=stic_Bookings_Calendar&start=" +
-                    arg.startStr +
-                    "&end=" +
-                    arg.endStr +
-                    "&allDay=" +
-                    arg.allDay
-            );
+        position: {
+          my: "bottom left",
+          at: "top left",
+          target: "mouse",
+          adjust: {
+            mouse: false, // Esto evita que el tooltip siga el mouse
+          },
         },
-    });
-    // Add custom CSS to the page
-    var style = document.createElement('style');
-    style.textContent = `
+        show: {
+          solo: true, // Solo se muestra un tooltip a la vez
+        },
+        hide: {
+          event: "mouseleave",
+          fixed: true,
+          delay: 200,
+        },
+        style: {
+          width: 224,
+          padding: 5,
+          color: "black",
+          textAlign: "left",
+          border: {
+            width: 1,
+            radius: 3,
+          },
+          tip: "bottomLeft",
+          classes: {
+            tooltip: "ui-widget",
+            tip: "ui-widget",
+            title: "ui-widget-header",
+            content: "ui-widget-content",
+          },
+        },
+      });
+    },
+
+    selectable: true,
+    selectMirror: true,
+    // This is used for the click in an empty space of the calendar
+    select: function (arg) {
+      window.location.assign(
+        "index.php?module=stic_Bookings&action=EditView&return_action=index&return_module=stic_Bookings_Calendar&start=" +
+          arg.startStr +
+          "&end=" +
+          arg.endStr +
+          "&allDay=" +
+          arg.allDay
+      );
+    },
+  });
+  // Add custom CSS to the page
+  var style = document.createElement("style");
+  style.textContent = `
         .fc-daygrid-day-events {
             margin-top: 0 !important;
         }
@@ -221,167 +240,171 @@ function initializeCalendar() {
             border: none !important;
         }
     `;
-    document.head.appendChild(style);
+  document.head.appendChild(style);
 
-    calendar.render();
-    return calendar;
+  calendar.render();
+  return calendar;
 }
 
-$("#openCenterPopup").click(function() {
-    openCenterPopup();
+$("#openCenterPopup").click(function () {
+  openCenterPopup();
 });
 var globalCalendar; // Declarar una variable global para el calendario
 
 function runCheckInterval() {
-    var checkIfSearchPaneIsLoaded = setInterval(function() {
-        if (SUGAR_callsInProgress === 0) {
-            globalCalendar = initializeCalendar();
-            clearInterval(checkIfSearchPaneIsLoaded);
-            loadSavedFilters();
-        }
-    }, 200);
+  var checkIfSearchPaneIsLoaded = setInterval(function () {
+    if (SUGAR_callsInProgress === 0) {
+      globalCalendar = initializeCalendar();
+      clearInterval(checkIfSearchPaneIsLoaded);
+      loadSavedFilters();
+    }
+  }, 200);
 }
-
-
 
 // Check device screen width
 function mobileCheck() {
-    if (window.innerWidth >= 768) {
-        return false;
-    } else {
-        return true;
-    }
+  if (window.innerWidth >= 768) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 // callback function used in the Popup that select events
 function openSelectPopup(module, field) {
-    var popupRequestData = {
-        call_back_function: "callbackSelectPopup",
-        form_name: "form_filters",
-        field_to_name_array: {
-            id: field + "_id",
-            name: field + "_name",
-        },
-    };
-    open_popup(module, 600, 400, "", true, false, popupRequestData);
+  var popupRequestData = {
+    call_back_function: "callbackSelectPopup",
+    form_name: "form_filters",
+    field_to_name_array: {
+      id: field + "_id",
+      name: field + "_name",
+    },
+  };
+  open_popup(module, 600, 400, "", true, false, popupRequestData);
 }
 
 var fromPopupReturn = false;
 // callback function used after the Popup that select events
 function callbackSelectPopup(popupReplyData) {
-    fromPopupReturn = true;
-    var nameToValueArray = popupReplyData.name_to_value_array;
-    // It fills the data of the events
-    Object.keys(nameToValueArray).forEach(function(key, index) {
-        $('#'+key).val(nameToValueArray[key]);
-    }, nameToValueArray);
+  fromPopupReturn = true;
+  var nameToValueArray = popupReplyData.name_to_value_array;
+  // It fills the data of the events
+  Object.keys(nameToValueArray).forEach(function (key, index) {
+    $("#" + key).val(nameToValueArray[key]);
+  }, nameToValueArray);
 }
-
-
 
 // Clears a single filter, name and id fields
 function clearRow(form, field) {
-    SUGAR.clearRelateField(form, field + '_name', field + '_id');
+  SUGAR.clearRelateField(form, field + "_name", field + "_id");
 }
-$(document).ready(function() {
-    globalCalendar = initializeCalendar();
-    loadSavedFilters();
-    setTimeout(updateCrossVisibility, 500);
+$(document).ready(function () {
+  globalCalendar = initializeCalendar();
+  loadSavedFilters();
+  setTimeout(updateCrossVisibility, 500);
 
-    $('#btn-save-filters').click(function(e) {
-        e.preventDefault();
-        saveFilters();
-    });
+  $("#btn-save-filters").click(function (e) {
+    e.preventDefault();
+    saveFilters();
+  });
 });
 
-
 function saveFilters() {
-    var filters = {
-        stic_center_id: $('#stic_center_id').val() || '',
-        stic_center_name: $('#stic_center_name').val() || '',
-        stic_resources_places_users_list: $('#stic_resources_places_users_list').val() || [],
-        stic_resources_places_type_list: $('#stic_resources_places_type_list').val() || [],
-        stic_resources_places_gender_list: $('#stic_resources_places_gender_list').val() || []
-    };
+  var filters = {
+    stic_center_id: $("#stic_center_id").val() || "",
+    stic_center_name: $("#stic_center_name").val() || "",
+    stic_resources_places_users_list:
+      $("#stic_resources_places_users_list").val() || [],
+    stic_resources_places_type_list:
+      $("#stic_resources_places_type_list").val() || [],
+    stic_resources_places_gender_list:
+      $("#stic_resources_places_gender_list").val() || [],
+  };
 
-    $.ajax({
-        url: 'index.php?module=stic_Bookings_Places_Calendar&action=SaveFilters&sugar_body_only=true',
-        method: 'POST',
-        data: filters,
-        success: function(response) {
-            if (globalCalendar) {
-                globalCalendar.refetchEvents();
-            }
-            updateCrossVisibility();
-        },
-        error: function(xhr, status, error) {
-            console.error('Error saving filters:', error);
-        }
-    });
+  $.ajax({
+    url: "index.php?module=stic_Bookings_Places_Calendar&action=SaveFilters&sugar_body_only=true",
+    method: "POST",
+    data: filters,
+    success: function (response) {
+      if (globalCalendar) {
+        globalCalendar.refetchEvents();
+      }
+      updateCrossVisibility();
+    },
+    error: function (xhr, status, error) {
+      console.error("Error saving filters:", error);
+    },
+  });
 }
 
-
 function loadSavedFilters() {
-    $.ajax({
-        url: 'index.php?module=stic_Bookings_Places_Calendar&action=get_places_availability_data&sugar_body_only=true',
-        method: 'POST',
-        data: {
-            start: moment().startOf('month').format('YYYY-MM-DD'),
-            end: moment().endOf('month').format('YYYY-MM-DD')
-        },
-        success: function(response) {
-            var data = JSON.parse(response);
-            if (data.savedFilters) {
-                $('#stic_center_name').val(data.savedFilters.stic_center_name || '');
-                $('#stic_center_id').val(data.savedFilters.stic_center_id || '');
-                $('#stic_resources_places_users_list').val(data.savedFilters.stic_resources_places_users_list || []);
-                $('#stic_resources_places_type_list').val(data.savedFilters.stic_resources_places_type_list || []);
-                $('#stic_resources_places_gender_list').val(data.savedFilters.stic_resources_places_gender_list || []);
-            }
-            if (globalCalendar) {
-                globalCalendar.refetchEvents();
-            } else {
-                console.warn('Calendar not initialized yet');
-            }
-            updateCrossVisibility();
-        },
-        error: function(xhr, status, error) {
-            console.error('Error loading saved filters:', error);
-        }
-    });
+  $.ajax({
+    url: "index.php?module=stic_Bookings_Places_Calendar&action=get_places_availability_data&sugar_body_only=true",
+    method: "POST",
+    data: {
+      start: moment().startOf("month").format("YYYY-MM-DD"),
+      end: moment().endOf("month").format("YYYY-MM-DD"),
+    },
+    success: function (response) {
+      var data = JSON.parse(response);
+      if (data.savedFilters) {
+        $("#stic_center_name").val(data.savedFilters.stic_center_name || "");
+        $("#stic_center_id").val(data.savedFilters.stic_center_id || "");
+        $("#stic_resources_places_users_list").val(
+          data.savedFilters.stic_resources_places_users_list || []
+        );
+        $("#stic_resources_places_type_list").val(
+          data.savedFilters.stic_resources_places_type_list || []
+        );
+        $("#stic_resources_places_gender_list").val(
+          data.savedFilters.stic_resources_places_gender_list || []
+        );
+      }
+      if (globalCalendar) {
+        globalCalendar.refetchEvents();
+      } else {
+        console.warn("Calendar not initialized yet");
+      }
+      updateCrossVisibility();
+    },
+    error: function (xhr, status, error) {
+      console.error("Error loading saved filters:", error);
+    },
+  });
 }
 
 function hasAppliedFilters() {
-    return $('#stic_center_id').val() !== '' ||
-           $('#stic_resources_places_users_list').val().length > 0 ||
-           $('#stic_resources_places_type_list').val().length > 0 ||
-           $('#stic_resources_places_gender_list').val().length > 0;
+  return (
+    $("#stic_center_id").val() !== "" ||
+    $("#stic_resources_places_users_list").val().length > 0 ||
+    $("#stic_resources_places_type_list").val().length > 0 ||
+    $("#stic_resources_places_gender_list").val().length > 0
+  );
 }
 
 function handleCrossRemoveFilters() {
-    // Limpiar todos los selectores
-    $('#stic_center_name').val('');
-    $('#stic_center_id').val('');
-    $('#stic_resources_places_users_list').val([]);
-    $('#stic_resources_places_type_list').val([]);
-    $('#stic_resources_places_gender_list').val([]);
+  // Limpiar todos los selectores
+  $("#stic_center_name").val("");
+  $("#stic_center_id").val("");
+  $("#stic_resources_places_users_list").val([]);
+  $("#stic_resources_places_type_list").val([]);
+  $("#stic_resources_places_gender_list").val([]);
 
-    // Guardar los filtros (que ahora están vacíos)
-    saveFilters();
+  // Guardar los filtros (que ahora están vacíos)
+  saveFilters();
 
-    // Actualizar la visibilidad de la cruz
-    updateCrossVisibility();
+  // Actualizar la visibilidad de la cruz
+  updateCrossVisibility();
 
-    // Recargar los eventos del calendario
-    if (globalCalendar) {
-        globalCalendar.refetchEvents();
-    }
+  // Recargar los eventos del calendario
+  if (globalCalendar) {
+    globalCalendar.refetchEvents();
+  }
 }
 function updateCrossVisibility() {
-    if (hasAppliedFilters()) {
-        $('#cross_filters').show();
-    } else {
-        $('#cross_filters').hide();
-    }
+  if (hasAppliedFilters()) {
+    $("#cross_filters").show();
+  } else {
+    $("#cross_filters").hide();
+  }
 }
-

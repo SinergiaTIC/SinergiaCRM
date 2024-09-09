@@ -38,7 +38,6 @@ class stic_Bookings_Places_CalendarController extends SugarController
     {
         global $current_user, $timedate;
 
-
         // Parse the timeZone parameter if it is present.
         $userTimeZone = $current_user->getPreference('timezone');
         if (empty($userTimeZone)) {
@@ -191,7 +190,7 @@ class stic_Bookings_Places_CalendarController extends SugarController
         $resourcesBean = BeanFactory::getBean('stic_Resources');
         $bookedResources = array();
         $query = "
-            SELECT 
+            SELECT
                 sr.id AS resource_id,
                 sr.name AS resource_name,
                 sr.place_type,
@@ -211,21 +210,21 @@ class stic_Bookings_Places_CalendarController extends SugarController
             JOIN stic_bookings sb ON srsb.stic_resources_stic_bookingsstic_bookings_idb = sb.id
             LEFT JOIN stic_resources_stic_centers_c srsc ON sr.id = srsc.stic_resources_stic_centersstic_resources_idb
             LEFT JOIN stic_centers sc ON srsc.stic_resources_stic_centersstic_centers_ida = sc.id
-            WHERE sb.end_date >= '$start_date' 
-            AND sb.start_date <= '$end_date' 
+            WHERE sb.end_date >= '$start_date'
+            AND sb.start_date <= '$end_date'
             AND sb.status != 'cancelled'
             AND sb.deleted = 0
             AND sr.deleted = 0
             AND srsb.deleted = 0
         ";
-        
+
         if (!empty($filteredResources)) {
             $filteredResourcesStr = implode("','", $filteredResources);
             $query .= " AND sr.id IN ('$filteredResourcesStr')";
         }
-    
+
         $result = $db->query($query);
-    
+
         while ($row = $db->fetchByAssoc($result)) {
             $bookedResources[] = array(
                 'title' => $row['booking_name'] . ' - ' . str_pad($row['booking_code'], 5, "0", STR_PAD_LEFT),
@@ -246,7 +245,7 @@ class stic_Bookings_Places_CalendarController extends SugarController
                 'className' => 'id-' . $row['resource_id'],
             );
         }
-    
+
         return $bookedResources;
     }
     /**
@@ -345,128 +344,68 @@ class stic_Bookings_Places_CalendarController extends SugarController
         return $resourcesAvailability;
     }
 
-    // public function action_get_places_availability_data()
-    // {
-        
-    //     global $current_user, $timedate;
-    //     $savedFilters = json_decode($current_user->getPreference('stic_bookings_places_calendar_filters'), true) ?? [];
-
-    //     if (!isset($_POST['start']) || !isset($_POST['end'])) {
-    //         echo json_encode(array('error' => 'Please provide start and end dates.'));
-    //         die();
-    //     }
-    
-    //     $startDate = $_POST['start'];
-    //     $endDate = $_POST['end'];
-    
-    //     // Validar el formato de las fechas
-    //     if (!$this->validateDate($startDate, 'Y-m-d') || !$this->validateDate($endDate, 'Y-m-d')) {
-    //         echo json_encode(array('error' => 'Invalid date format. Please use YYYY-MM-DD.'));
-    //         die();
-    //     }
-
-    //     $sticPlacesUser = $_POST['stic_resources_places_users_list'] ?? $savedFilters['stic_resources_places_users_list'] ?? [];
-    //     $sticPlacesType = $_POST['stic_resources_places_type_list'] ?? $savedFilters['stic_resources_places_type_list'] ?? [];
-    //     $sticPlacesGender = $_POST['stic_resources_places_gender_list'] ?? $savedFilters['stic_resources_places_gender_list'] ?? [];
-    
-
-    //     $filteredResources = $this->getFilteredResources($sticPlacesUser, $sticPlacesType, $sticPlacesGender);
-
-    //     $bookedResources = $this->getBookedResources($startDate, $endDate, $filteredResources);
-    //     $availableResources = $this->getPlacesAvailability($startDate, $endDate, $filteredResources);
-
-    //     $result = array();
-    //     $dates = $this->getDatesArray($startDate, $endDate);
-
-    //     foreach ($dates as $date) {
-    //         $result[$date] = array(
-    //             'occupied' => 0,
-    //             'available' => count($availableResources[$date]),
-    //         );
-    //     }
-
-    //     foreach ($bookedResources as $resource) {
-    //         $resourceStart = max($startDate, $resource['start']);
-    //         $resourceEnd = min($endDate, $resource['end']);
-    //         $currentDate = $resourceStart;
-        
-    //         // Verificar si el recurso es del tipo 'places' y si su ID está en los recursos filtrados
-    //         if ($resource['resourceType'] == 'places' && in_array($resource['resourceId'], $filteredResources)) {
-    //             while ($currentDate <= $resourceEnd) {
-    //                 $dateKey = date('Y-m-d', strtotime($currentDate));
-    //                 if (isset($result[$dateKey])) {
-    //                     $result[$dateKey]['occupied']++;
-    //                 }
-    //                 $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
-    //             }
-    //         }
-    //     }
-        
-    //     echo json_encode($result);
-    //     die();
-    // }
     public function action_get_places_availability_data()
-{
-    global $current_user, $timedate;
-    $savedFilters = json_decode($current_user->getPreference('stic_bookings_places_calendar_filters'), true) ?? [];
+    {
+        global $current_user, $timedate;
+        $savedFilters = json_decode($current_user->getPreference('stic_bookings_places_calendar_filters'), true) ?? [];
 
-    if (!isset($_POST['start']) || !isset($_POST['end'])) {
-        echo json_encode(array('error' => 'Please provide start and end dates.'));
-        die();
-    }
+        if (!isset($_POST['start']) || !isset($_POST['end'])) {
+            echo json_encode(array('error' => 'Please provide start and end dates.'));
+            die();
+        }
 
-    $startDate = $_POST['start'];
-    $endDate = $_POST['end'];
+        $startDate = $_POST['start'];
+        $endDate = $_POST['end'];
 
-    if (!$this->validateDate($startDate, 'Y-m-d') || !$this->validateDate($endDate, 'Y-m-d')) {
-        echo json_encode(array('error' => 'Invalid date format. Please use YYYY-MM-DD.'));
-        die();
-    }
+        if (!$this->validateDate($startDate, 'Y-m-d') || !$this->validateDate($endDate, 'Y-m-d')) {
+            echo json_encode(array('error' => 'Invalid date format. Please use YYYY-MM-DD.'));
+            die();
+        }
 
-    $sticPlacesUser = $_POST['stic_resources_places_users_list'] ?? $savedFilters['stic_resources_places_users_list'] ?? [];
-    $sticPlacesType = $_POST['stic_resources_places_type_list'] ?? $savedFilters['stic_resources_places_type_list'] ?? [];
-    $sticPlacesGender = $_POST['stic_resources_places_gender_list'] ?? $savedFilters['stic_resources_places_gender_list'] ?? [];
+        $sticPlacesUser = $_POST['stic_resources_places_users_list'] ?? $savedFilters['stic_resources_places_users_list'] ?? [];
+        $sticPlacesType = $_POST['stic_resources_places_type_list'] ?? $savedFilters['stic_resources_places_type_list'] ?? [];
+        $sticPlacesGender = $_POST['stic_resources_places_gender_list'] ?? $savedFilters['stic_resources_places_gender_list'] ?? [];
 
-    $filteredResources = $this->getFilteredResources($sticPlacesUser, $sticPlacesType, $sticPlacesGender);
+        $filteredResources = $this->getFilteredResources($sticPlacesUser, $sticPlacesType, $sticPlacesGender);
 
-    $bookedResources = $this->getBookedResources($startDate, $endDate, $filteredResources);
-    $availableResources = $this->getPlacesAvailability($startDate, $endDate, $filteredResources);
+        $bookedResources = $this->getBookedResources($startDate, $endDate, $filteredResources);
+        $availableResources = $this->getPlacesAvailability($startDate, $endDate, $filteredResources);
 
-    $result = array();
-    $dates = $this->getDatesArray($startDate, $endDate);
+        $result = array();
+        $dates = $this->getDatesArray($startDate, $endDate);
 
-    foreach ($dates as $date) {
-        $result[$date] = array(
-            'occupied' => array(),
-            'available' => count($availableResources[$date]),
-        );
-    }
+        foreach ($dates as $date) {
+            $result[$date] = array(
+                'occupied' => array(),
+                'available' => count($availableResources[$date]),
+            );
+        }
 
-    foreach ($bookedResources as $resource) {
-        $resourceStart = max($startDate, $resource['start']);
-        $resourceEnd = min($endDate, $resource['end']);
-        $currentDate = $resourceStart;
+        foreach ($bookedResources as $resource) {
+            $resourceStart = max($startDate, $resource['start']);
+            $resourceEnd = min($endDate, $resource['end']);
+            $currentDate = $resourceStart;
 
-        if ($resource['resourceType'] == 'places' && in_array($resource['resourceId'], $filteredResources)) {
-            while ($currentDate <= $resourceEnd) {
-                $dateKey = date('Y-m-d', strtotime($currentDate));
-                if (isset($result[$dateKey])) {
-                    if (!isset($result[$dateKey]['occupied'][$resource['title']])) {
-                        $result[$dateKey]['occupied'][$resource['title']] = array();
+            if ($resource['resourceType'] == 'places' && in_array($resource['resourceId'], $filteredResources)) {
+                while ($currentDate <= $resourceEnd) {
+                    $dateKey = date('Y-m-d', strtotime($currentDate));
+                    if (isset($result[$dateKey])) {
+                        if (!isset($result[$dateKey]['occupied'][$resource['title']])) {
+                            $result[$dateKey]['occupied'][$resource['title']] = array();
+                        }
+                        if (!isset($result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']])) {
+                            $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']] = array();
+                        }
+                        $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']][] = $resource['resourceName'];
                     }
-                    if (!isset($result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']])) {
-                        $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']] = array();
-                    }
-                    $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']][] = $resource['resourceName'];
+                    $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
                 }
-                $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
             }
         }
-    }
 
-    echo json_encode($result);
-    die();
-}
+        echo json_encode($result);
+        die();
+    }
     private function getPlacesAvailability($start_date, $end_date, $filteredResources = null)
     {
         global $db;
@@ -484,10 +423,10 @@ class stic_Bookings_Places_CalendarController extends SugarController
                 ON    stic_centers.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_centers_ida
                 WHERE
                     stic_resources.deleted = 0 AND stic_resources.type = 'places'";
-    // Filters are added
+        // Filters are added
         $query .= " AND stic_resources.id IN ('" . implode("','", $filteredResources) . "')";
-        
-    $result = $db->query($query);
+
+        $result = $db->query($query);
 
         $allResources = array();
         while ($row = $db->fetchByAssoc($result)) {
@@ -569,7 +508,7 @@ class stic_Bookings_Places_CalendarController extends SugarController
 
         return $dates;
     }
-    function action_SaveFilters()
+    public function action_SaveFilters()
     {
         global $current_user, $timedate;
 
@@ -582,51 +521,48 @@ class stic_Bookings_Places_CalendarController extends SugarController
             'stic_resources_places_gender_list' => $_POST['stic_resources_places_gender_list'] ?? []
         );
         $current_user->setPreference('stic_bookings_places_calendar_filters', json_encode($filters));
-        
+
         if (isset($_REQUEST['day']) && !empty($_REQUEST['day'])) {
-            header("Location: index.php?module=stic_Bookings_Places_Calendar&action=index&view=".$_REQUEST['view']."&hour=0&day=".$_REQUEST['day']."&month=".$_REQUEST['month']."&year=".$_REQUEST['year']);
+            header("Location: index.php?module=stic_Bookings_Places_Calendar&action=index&view=" . $_REQUEST['view'] . "&hour=0&day=" . $_REQUEST['day'] . "&month=" . $_REQUEST['month'] . "&year=" . $_REQUEST['year']);
         } else {
             header("Location: index.php?module=stic_Bookings_Places_Calendar&action=index");
         }
-            exit;
-
+        exit;
 
     }
     private function getFilteredResources($users, $types, $gender)
     {
         global $db;
-    
+
         $query = "SELECT id FROM stic_resources WHERE deleted = 0 AND type = 'places'";
-    
+
         if (!empty($users)) {
             $quotedUsers = array_map(array($db, 'quote'), $users);
             // Convertir el array en una cadena separada por comas
             $usersStr = implode("','", $quotedUsers);
             $query .= " AND user_type IN ('$usersStr')";
         }
-    
+
         if (!empty($types)) {
             $quotedTypes = array_map(array($db, 'quote'), $types);
             // Convertir el array en una cadena separada por comas
             $typesStr = implode("','", $quotedTypes);
             $query .= " AND place_type IN ('$typesStr')";
         }
-    
+
         if (!empty($gender)) {
             $quotedGender = array_map(array($db, 'quote'), $gender);
             // Convertir el array en una cadena separada por comas
             $genderStr = implode("','", $quotedGender);
             $query .= " AND gender IN ('$genderStr')";
         }
-    
+
         $result = $db->query($query);
         $filteredResources = array();
         while ($row = $db->fetchByAssoc($result)) {
             $filteredResources[] = $row['id'];
         }
-    
+
         return $filteredResources;
     }
-    
-    
 }

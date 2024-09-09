@@ -65,6 +65,7 @@ $mod_strings = array(
     'LBL_CODE' => 'Code',
     'LBL_STATUS' => 'Status',
     'LBL_ALL_DAY' => 'All day',
+    'LBL_PLACE_BOOKING' => 'Place booking',
     'LBL_START_DATE' => 'Start date',
     'LBL_END_DATE' => 'End date',
     'LBL_PLANNED_START_DATE' => 'Planned start date',
@@ -101,7 +102,9 @@ $mod_strings = array(
     'LBL_RESOURCES_AMOUNT_DAY_UNOCCUPIED' => 'Daily amount per unoccupied place',
     'LBL_RESOURCES_AMOUNT_DAY_OVEROCCUPIED' => 'Daily amount per overoccupied place',
     'LBL_RESOURCES_AMOUNT_COPAYMENT' => 'Copayment daily amount',
+    'LBL_CLOSE_RESOURCE_CONFIRM' => 'Do you want to end the booking of this resource?',
 
+    
     // Additional details
     'LBL_RESOURCE_NAME' => 'Resource',
     'LBL_RESOURCE_COUNT' => 'Total Resources',
