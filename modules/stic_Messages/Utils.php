@@ -14,28 +14,6 @@ $messageableModules = array(
 
 
 function getMessageableModules() {
-    // global $beanFiles, $beanList, $app_list_strings, $dictionary;
-    // $messageableModules = array();
-    // // foreach ($app_list_strings['aow_moduleList'] as $bean_name => $bean_dis) {
-    // foreach ($beanList as $bean_name => $bean_dis) {
-    //     // if (isset($beanList[$bean_name]) && isset($beanFiles[$beanList[$bean_name]])) {
-    //     //     require_once($beanFiles[$beanList[$bean_name]]);
-    //     //     $obj = new $beanList[$bean_name];
-    //     //     if ($obj instanceof Person || $obj instanceof Company) {
-    //     //         $emailableModules[] = $bean_name;
-    //     //     }
-    //     // }
-    //     if (isset($beanList[$bean_name]) && isset($beanFiles[$beanList[$bean_name]])) {
-    //         $obj = new $beanList[$bean_name]; // We need to create a bean to force dictionary to load
-    //         $beanNameOnDictionary = $beanList[$bean_name];
-    //         if (isset($dictionary[$beanNameOnDictionary]['stic_properties']) && $dictionary[$beanNameOnDictionary]['stic_properties']['messagesAllowed']){
-    //             $messageableModules[] = $bean_name;
-    //         }
-    //     }
-    // }
-    // asort($messageableModules);
-    // return $messageableModules;
-
     global $messageableModules;
     $modules = array_keys($messageableModules);
     asort($modules);
@@ -45,9 +23,9 @@ function getMessageableModules() {
 
 function getRelatedMessageableFields($module) {
     global $beanList, $app_list_strings;
-    $relEmailFields = array();
+    $relPhoneFields = array();
     $checked_link = array();
-    $emailableModules = getMessageableModules();
+    $msgModules = getMessageableModules();
     if ($module != '') {
         if (isset($beanList[$module]) && $beanList[$module]) {
             $mod = new $beanList[$module]();
@@ -56,13 +34,10 @@ function getRelatedMessageableFields($module) {
                 if (isset($field['link'])) {
                     $checked_link[] = $field['link'];
                 }
-                if (!isset($field['module']) || !in_array($field['module'], $emailableModules) || (isset($field['dbType']) && $field['dbType'] == "id")) {
+                if (!isset($field['module']) || !in_array($field['module'], $msgModules) || (isset($field['dbType']) && $field['dbType'] == "id")) {
                     continue;
                 }
-                // STIC 20210720 AAM - Fix regarding the Emailable modules returned in Send Email Action
-                // STIC#362
-                // $relEmailFields[$field['name']] = translate($field['module']) . ": "
-                $relEmailFields[$field['link'] ? $field['link'] : $field['name']] = translate($field['module']) . ": "
+                $relPhoneFields[$field['link'] ? $field['link'] : $field['name']] = translate($field['module']) . ": "
                     . trim(translate($field['vname'], $mod->module_name), ":");
             }
 
@@ -75,37 +50,23 @@ function getRelatedMessageableFields($module) {
                         $rel_module = $mod->$relField->getRelatedModuleName();
                     }
 
-                    if (in_array($rel_module, $emailableModules)) {
+                    if (in_array($rel_module, $msgModules)) {
                         if (isset($field['vname']) && $field['vname'] != '') {
-                            $relEmailFields[$field['name']] = $app_list_strings['moduleList'][$rel_module] . ' : ' . translate($field['vname'], $mod->module_dir);
+                            $relPhoneFields[$field['name']] = $app_list_strings['moduleList'][$rel_module] . ' : ' . translate($field['vname'], $mod->module_dir);
                         } else {
-                            $relEmailFields[$field['name']] = $app_list_strings['moduleList'][$rel_module] . ' : ' . $field['name'];
+                            $relPhoneFields[$field['name']] = $app_list_strings['moduleList'][$rel_module] . ' : ' . $field['name'];
                         }
                     }
                 }
             }
 
-            array_multisort($relEmailFields, SORT_ASC, $relEmailFields);
+            array_multisort($relPhoneFields, SORT_ASC, $relPhoneFields);
         }
     }
-    return $relEmailFields;
+    return $relPhoneFields;
 }
 
 function getPhoneForMessage($bean) {
-    // switch ($bean->module_name) {
-    //     case 'Contacts':
-    //     case 'Leads':
-    //     case 'Employees':
-    //     case 'Users':
-    //         return $bean->phone_mobile;
-    //         break;
-    //     case 'Accounts':
-    //         return $bean->phone_office;
-    //         break;
-    //     default:
-    //         return '';
-    // }
-
     global $messageableModules;
 
     $fieldName = $messageableModules[$bean->module_name];

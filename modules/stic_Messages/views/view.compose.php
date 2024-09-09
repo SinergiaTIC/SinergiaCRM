@@ -50,12 +50,12 @@ class stic_MessagesViewCompose extends ViewEdit
 {
 
     /**
-     * @var Email $bean
+     * @var stic_Message $bean
      */
     public $bean;
 
     /**
-     * EmailsViewCompose constructor.
+     * stic_MessagesViewCompose constructor.
      */
     public function __construct()
     {

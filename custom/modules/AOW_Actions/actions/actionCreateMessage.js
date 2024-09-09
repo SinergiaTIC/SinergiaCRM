@@ -22,7 +22,7 @@
  */
 
 var currentln;
-var emailln = new Array();
+var phoneln = new Array();
 
 function show_edit_template_link(field, ln) {
     var field1 = document.getElementById('aow_actions_edit_template_link' + ln);
@@ -103,75 +103,74 @@ function show_PhoneField(ln, cln, value){
     if (typeof value === 'undefined') { value = ''; }
 
     flow_module = document.getElementById('flow_module').value;
-    var aow_emailtype = document.getElementById('aow_actions_param'+ln+'_email_target_type'+cln).value;
-    if(aow_emailtype != ''){
+    var aow_phonetype = document.getElementById('aow_actions_param'+ln+'_phone_target_type'+cln).value;
+    if(aow_phonetype != ''){
         var callback = {
             success: function(result) {
-                document.getElementById('emailLine'+ln+'_field'+cln).innerHTML = result.responseText;
+                document.getElementById('phoneLine'+ln+'_field'+cln).innerHTML = result.responseText;
                 SUGAR.util.evalScript(result.responseText);
                 enableQS(false);
             },
             failure: function(result) {
-                document.getElementById('emailLine'+ln+'_field'+cln).innerHTML = '';
+                document.getElementById('phoneLine'+ln+'_field'+cln).innerHTML = '';
             }
         }
 
-        var aow_field_name = "aow_actions_param["+ln+"][email]["+cln+"]";
+        var aow_field_name = "aow_actions_param["+ln+"][phone]["+cln+"]";
 
-        YAHOO.util.Connect.asyncRequest ("GET", "index.php?module=stic_Messages&action=getPhoneField&aow_module="+flow_module+"&aow_newfieldname="+aow_field_name+"&aow_type="+aow_emailtype+"&aow_value="+value,callback);
+        YAHOO.util.Connect.asyncRequest ("GET", "index.php?module=stic_Messages&action=getPhoneField&aow_module="+flow_module+"&aow_newfieldname="+aow_field_name+"&aow_type="+aow_phonetype+"&aow_value="+value,callback);
     }
     else {
-        document.getElementById('emailLine'+ln+'_field'+cln).innerHTML = '';
+        document.getElementById('phoneLine'+ln+'_field'+cln).innerHTML = '';
     }
 }
 
 function load_phoneline(ln, type, value){
     debugger;
     cln = add_phoneLine(ln);
-    document.getElementById("aow_actions_param"+ln+"_email_target_type"+cln).value = type;
+    document.getElementById("aow_actions_param"+ln+"_phone_target_type"+cln).value = type;
     show_PhoneField(ln, cln, value);
 }
 
 function add_phoneLine(ln){
     debugger;
-    var aow_email_type_list = document.getElementById("aow_message_type_list").value;
-    // var aow_email_to_list = document.getElementById("aow_email_to_list").value;
+    var aow_phone_type_list = document.getElementById("aow_message_type_list").value;
 
-    if(emailln[ln] == null){emailln[ln] = 0}
+    if(phoneln[ln] == null){phoneln[ln] = 0}
 
     tablebody = document.createElement("tbody");
-    tablebody.id = 'emailLine'+ln+'_body' + emailln[ln];
-    document.getElementById('emailLine'+ln+'_table').appendChild(tablebody);
+    tablebody.id = 'phoneLine'+ln+'_body' + phoneln[ln];
+    document.getElementById('phoneLine'+ln+'_table').appendChild(tablebody);
 
     var x = tablebody.insertRow(-1);
-    x.id = 'emailLine'+ln+'_line' + emailln[ln];
+    x.id = 'phoneLine'+ln+'_line' + phoneln[ln];
 
     var a = x.insertCell(0);
-    a.innerHTML = "<button type='button' id='emailLine"+ln+"_delete" + emailln[ln]+"' class='button' value='Remove Line' tabindex='116' onclick='clear_emailLine(" + ln + ",this);'><span class='suitepicon suitepicon-action-minus'></span></button> ";
+    a.innerHTML = "<button type='button' id='phoneLine"+ln+"_delete" + phoneln[ln]+"' class='button' value='Remove Line' tabindex='116' onclick='clear_phoneLine(" + ln + ",this);'><span class='suitepicon suitepicon-action-minus'></span></button> ";
 
-    a.innerHTML += "<select tabindex='116' name='aow_actions_param["+ln+"][email_target_type]["+emailln[ln]+"]' id='aow_actions_param"+ln+"_email_target_type"+emailln[ln]+"' onchange='show_PhoneField(" + ln + "," + emailln[ln] + ");'>" + aow_email_type_list + "</select> ";
+    a.innerHTML += "<select tabindex='116' name='aow_actions_param["+ln+"][phone_target_type]["+phoneln[ln]+"]' id='aow_actions_param"+ln+"_phone_target_type"+phoneln[ln]+"' onchange='show_PhoneField(" + ln + "," + phoneln[ln] + ");'>" + aow_phone_type_list + "</select> ";
 
-    a.innerHTML += "<span id='emailLine"+ln+"_field"+emailln[ln]+"'><input id='aow_actions_param["+ln+"][email]["+emailln[ln]+"]' type='text' tabindex='116' size='25' name='aow_actions_param["+ln+"][email]["+emailln[ln]+"]'></span>";
+    a.innerHTML += "<span id='phoneLine"+ln+"_field"+phoneln[ln]+"'><input id='aow_actions_param["+ln+"][phone]["+phoneln[ln]+"]' type='text' tabindex='116' size='25' name='aow_actions_param["+ln+"][phone]["+phoneln[ln]+"]'></span>";
 
 
-    emailln[ln]++;
+    phoneln[ln]++;
 
-    return emailln[ln] -1;
+    return phoneln[ln] -1;
 
 }
 
-function clear_emailLine(ln, cln){
+function clear_phoneLine(ln, cln){
 
-    document.getElementById('emailLine'+ln+'_table').deleteRow(cln.parentNode.parentNode.rowIndex);
+    document.getElementById('phoneLine'+ln+'_table').deleteRow(cln.parentNode.parentNode.rowIndex);
 }
 
-function clear_emailLines(ln){
+function clear_phoneLines(ln){
 
-    var email_rows = document.getElementById('emailLine'+ln+'_table').getElementsByTagName('tr');
-    var email_row_length = email_rows.length;
+    var phone_rows = document.getElementById('phoneLine'+ln+'_table').getElementsByTagName('tr');
+    var phone_row_length = phone_rows.length;
     var i;
-    for (i=0; i < email_row_length; i++) {
-        document.getElementById('emailLine'+ln+'_table').deleteRow(email_rows[i]);
+    for (i=0; i < phone_row_length; i++) {
+        document.getElementById('phoneLine'+ln+'_table').deleteRow(phone_rows[i]);
     }
 }
 
@@ -185,26 +184,5 @@ function hideElem(id){
 function showElem(id){
     if(document.getElementById(id)){
         document.getElementById(id).style.display = "";
-    }
-}
-
-function targetTypeChanged(ln){
-    var elem = document.getElementById("aow_actions_param_email_target_type"+ln);
-    if(elem.value === 'Email Address'){
-        showElem("aow_actions_param_email"+ln);
-        hideElem("aow_actions_param_email_target"+ln);
-        hideElem("aow_actions_email_user_span"+ln);
-    }else if(elem.value === 'Specify User'){
-        hideElem("aow_actions_param_email"+ln);
-        hideElem("aow_actions_param_email_target"+ln);
-        showElem("aow_actions_email_user_span"+ln);
-    }else if(elem.value === 'Related Field'){
-        hideElem("aow_actions_param_email"+ln);
-        showElem("aow_actions_param_email_target"+ln);
-        hideElem("aow_actions_email_user_span"+ln);
-    }else if(elem.value === 'Record Email'){
-        hideElem("aow_actions_param_email"+ln);
-        hideElem("aow_actions_param_email_target"+ln);
-        hideElem("aow_actions_email_user_span"+ln);
     }
 }
