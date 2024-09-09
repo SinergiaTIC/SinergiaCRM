@@ -304,7 +304,7 @@ class ActivitiesRelationship extends OneToManyRelationship
                         'get_subpanel_data' => 'function:get_stic_messages',
                         'generate_select' => true,
                         // 'function_parameters' => array('import_function_file' => 'include/utils.php', 'return_as_array' => 'true'),
-                        'function_parameters' => array('import_function_file' => 'SticInclude/functionUtils.php', 'return_as_array' => 'true'),
+                        'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php.php', 'return_as_array' => 'true'),
                     )
                     // END STIC
                     ) )  ;

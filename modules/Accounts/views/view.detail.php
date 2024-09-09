@@ -38,7 +38,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * "Powered by SugarCRM".
  */
 
- 
+
 class AccountsViewDetail extends ViewDetail
 {
     public function __construct()
