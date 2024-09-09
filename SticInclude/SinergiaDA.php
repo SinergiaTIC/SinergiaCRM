@@ -465,12 +465,12 @@ class ExternalReporting
                                 // add column to index list
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
 
-                                //Add relate record name 
+                                //Add relate record name
                                 if (in_array($fieldV['module'], ['Contacts', 'Leads']) || Beanfactory::newBean($fieldV['module'])->field_defs['last_name']) {
                                     $relatedName = " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) ";
                                 } elseif ($fieldV['module'] == 'Users') {
                                     $relatedName = "{$leftJoinAlias}.user_name";
-                                } else { 
+                                } else {
                                     $relatedName = "{$leftJoinAlias}.name";
                                 }
 
@@ -1729,9 +1729,8 @@ class ExternalReporting
 
         // Get list of active users
         $res = $db->query("SELECT id,user_name, is_admin FROM users join users_cstm on users.id = users_cstm.id_c  WHERE status='Active' AND deleted=0 AND sda_allowed_c=1;");
-        
-        while ($u = $db->fetchByAssoc($res, false)) {
 
+        while ($u = $db->fetchByAssoc($res, false)) {
             $allModulesACL = array_intersect_key(ACLAction::getUserActions($u['id'], true), $modules);
             foreach ($allModulesACL as $key => $value) {
                 unset($aclSource);
@@ -1773,11 +1772,14 @@ class ExternalReporting
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
 
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
+                                if ($u['user_name'] == 'u1') {
+                                    echo '';
+                                }
 
                                 $crmGroupName = explode('SDA_', $userGroups['group'])[1];
 
-                                // Verify whether or not the group has access to the module for their roles
-                                $groupHasAccessToModule = groupHasAccess($crmGroupName, $key, 'view');
+                                // Verify whether or not the group or user has access to the module for their roles
+                                $groupHasAccessToModule = groupHasAccess($crmGroupName, $u['id'], $key, 'view');
 
                                 if ($groupHasAccessToModule) {
 
@@ -1948,13 +1950,14 @@ class ExternalReporting
 }
 
 /**
- * Checks if a security group has access to a specific action in a given module.
+ * Checks if a security group or user has access to a specific action in a given module.
  *
- * This function determines whether a security group, identified by its name, has the necessary
+ * This function determines whether a security group, identified by its name, or an user, identified by its id has the necessary
  * permissions to perform a specific action in a given module. It looks up the roles associated
- * with the group and checks the highest access levels available for those roles.
+ * with the group or user and checks the highest access levels available for those roles.
  *
  * @param string $group_name The name of the security group to check.
+ * @param string $userId The id of the user to check.
  * @param string $category The name of the module or category (e.g., 'Accounts', 'Contacts').
  * @param string $action The specific action to check (e.g., 'view', 'edit', 'delete').
  * @param string $type The type of ACL, defaults to 'module'.
@@ -1965,7 +1968,7 @@ class ExternalReporting
  *
  * @throws SQLException If there's an error in executing the SQL queries.
  */
-function groupHasAccess($group_name, $category, $action, $type = 'module')
+function groupHasAccess($group_name, $userId, $category, $action, $type = 'module')
 {
     global $db;
 
@@ -1983,9 +1986,14 @@ function groupHasAccess($group_name, $category, $action, $type = 'module')
 
     $group_id = $row['id'];
 
-    // Get the roles associated with this security group
-    $query = "SELECT role_id FROM securitygroups_acl_roles
-              WHERE securitygroup_id = '$group_id' AND deleted = 0";
+    // Get the roles associated with this security group or user
+    $query = "SELECT role_id FROM (
+                SELECT role_id FROM securitygroups_acl_roles
+                WHERE securitygroup_id = '$group_id' AND deleted = 0
+                UNION SELECT role_id from acl_roles_users aru
+                WHERE aru.user_id='$userId' AND deleted=false ) m
+             LIMIT 1
+                ";
     $result = $db->query($query);
 
     $roles = array();
