@@ -7,8 +7,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 use SuiteCRM\Utility\SuiteValidator;
 
 include_once 'include/Exceptions/SugarControllerException.php';
-
-
+require_once 'modules/stic_Messages/Utils.php';
+require_once("modules/AOW_WorkFlow/aow_utils.php");
 
 class stic_MessagesController extends SugarController
 {
@@ -229,5 +229,53 @@ class stic_MessagesController extends SugarController
         $this->view = "syncoptions"; //call for the view file in views dir
         $this->mapStepNavigation('results'); //next action to be run
     }
+
+    protected function action_getPhoneField()
+    {
+        $module = $_REQUEST['aow_module'];
+        $aow_field = $_REQUEST['aow_newfieldname'];
+
+        if (isset($_REQUEST['view'])) {
+            $view = $_REQUEST['view'];
+        } else {
+            $view= 'EditView';
+        }
+
+        if (isset($_REQUEST['aow_value'])) {
+            $value = $_REQUEST['aow_value'];
+        } else {
+            $value = '';
+        }
+
+        switch ($_REQUEST['aow_type']) {
+            case 'Record Phone':
+                echo '';
+                break;
+            case 'Related Field':
+                $rel_field_list = getRelatedMessageableFields($module);
+                if ($view == 'EditView') {
+                    echo "<select type='text'  name='$aow_field' id='$aow_field' title='' tabindex='116'>". get_select_options_with_id($rel_field_list, $value) ."</select>";
+                } else {
+                    echo $rel_field_list[$value];
+                }
+                break;
+            case 'Specify User':
+                echo getModuleField('Accounts', 'assigned_user_name', $aow_field, $view, $value);
+                break;
+            case 'Users':
+                echo getAssignField($aow_field, $view, $value);
+                break;
+            case 'Phone':
+            default:
+                if ($view == 'EditView') {
+                    echo "<input type='text' name='$aow_field' id='$aow_field' size='25' title='' tabindex='116' value='$value'>";
+                } else {
+                    echo $value;
+                }
+                break;
+        }
+        die;
+    }
+
 
 }

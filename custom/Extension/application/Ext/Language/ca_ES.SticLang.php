@@ -3608,6 +3608,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Mesos';
 $app_list_strings['aow_date_type_list']['year'] = 'Anys'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Horari laboral';
 
+// Fluxos de treball: destinataris de missatges
+$app_list_strings['aow_message_type_list']['Phone'] = 'Telèfon';
+$app_list_strings['aow_message_type_list']['Record Phone'] = 'Telèfon del registre';
+$app_list_strings['aow_message_type_list']['Related Field'] = 'Camp relacionat';
+$app_list_strings['aow_message_type_list']['Specify User'] = 'Usuari';
+$app_list_strings['aow_message_type_list']['Users'] = 'Usuaris';
+
 // Mapes: llistes adaptades
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organitzacions';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Persones';

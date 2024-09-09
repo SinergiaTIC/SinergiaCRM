@@ -3593,6 +3593,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
+// Fluxos de treball: destinataris de missatges
+$app_list_strings['aow_message_type_list']['Phone'] = 'Phone';
+$app_list_strings['aow_message_type_list']['Record Phone'] = 'Record Phone';
+$app_list_strings['aow_message_type_list']['Related Field'] = 'Related Field';
+$app_list_strings['aow_message_type_list']['Specify User'] = 'User';
+$app_list_strings['aow_message_type_list']['Users'] = 'Users';
+
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
 $app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaign';

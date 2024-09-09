@@ -109,14 +109,20 @@ class stic_Messages extends Basic
 
         // If Message is being created or status chenged to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
-            $response = $this->sendMessage();
-            if ($response['code'] === self::OK) {
-                $this->status = 'sent';
-                $this->response = $response['message'];
+            if (!empty($this->phone)){
+                $response = $this->sendMessage();
+                if ($response['code'] === self::OK) {
+                    $this->status = 'sent';
+                    $this->response = $response['message'];
+                }
+                else {
+                    $this->status = 'error';
+                    $this->response = $response['message'];
+                }
             }
             else {
                 $this->status = 'error';
-                $this->response = $response['message'];
+                $this->response = 'No phone number';
             }
         }
 
@@ -214,7 +220,7 @@ class stic_Messages extends Basic
 
     }
 
-    protected function replaceTemplateVariables($screenText, $bean)
+    public function replaceTemplateVariables($screenText, $bean)
     {
             $macro_nv = array();
     

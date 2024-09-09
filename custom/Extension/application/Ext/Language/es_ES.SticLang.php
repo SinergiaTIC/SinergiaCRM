@@ -3607,6 +3607,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Meses';
 $app_list_strings['aow_date_type_list']['year'] = 'Años'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Horario laboral';
 
+// Fluxos de treball: destinataris de missatges
+$app_list_strings['aow_message_type_list']['Phone'] = 'Teléfono';
+$app_list_strings['aow_message_type_list']['Record Phone'] = 'Teléfono del registro';
+$app_list_strings['aow_message_type_list']['Related Field'] = 'Campo relacionado';
+$app_list_strings['aow_message_type_list']['Specify User'] = 'Usuario';
+$app_list_strings['aow_message_type_list']['Users'] = 'Usuarios';
+
 // Mapas: listas adaptadas
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organizaciones';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Personas';
