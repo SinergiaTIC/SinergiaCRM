@@ -218,33 +218,14 @@ $(function() {
         const to = phone.textContent.trim()
         if (to === '') continue
     
-        // TODOEPS: Incloure la nova icona via font
-        const src = 'themes/SuiteP/images/message20.png'
-        const alt = SUGAR.language.get(window.module_sugar_grp1, 'LBL_SEVEN_SEND_SMS_VIA')
         phone.insertAdjacentHTML('beforeend',
-            // `<img alt='${alt}' class='${triggerClass}' data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' title='${alt}' />`)
-            `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' src='${src}' onclick='openMessagesModal(this)'></span>`)
+            `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' onclick='openMessagesModal(this)'></span>`)
         phone.setAttribute(attr, 'true')
     }
-
-
-  // $(`img.${triggerClass}:not(.${attachedClass})`)
-  //     .addClass(attachedClass)
-  //     .on('click', function() {
-  //         $('#seven_to').val($(this).data('to'))
-
-  //         openMessagesModal(this);
-  // });
   }
 
   if (typeof viewType !== 'undefined' && viewType() === 'list') {
     buttons = {
-      // syncIncorpora: {
-      //   id: "bt_sync_incorpora_listview",
-      //   title: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
-      //   text: SUGAR.language.get("app_strings", "LBL_INCORPORA_BUTTON_TITTLE"),
-      //   onclick: "onClickIncorporaSyncButton()",
-      // },
       sentMessage: {
         id: "bt_sentMessage_listview",
         title: SUGAR.language.get("app_strings", "LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE"),

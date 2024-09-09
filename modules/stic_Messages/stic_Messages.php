@@ -85,16 +85,8 @@ class stic_Messages extends Basic
     {
         global $sticSavingMessage, $current_user;
 
-        // TODOEPS: Si eliminem el mòdul de seven, això ja no és necessari
-        // To avoid loop with LH on seven_sms
-        if ($sticSavingMessage){
-            return false;
-        }
-        $sticSavingMessage = true;
-
         $this->fillName();
 
-        // TODOEPS: Treure a funció i potser agafar una part comuna amb fillName?
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
 
         if (empty($this->message) && !empty($this->template_id_c)) {
@@ -136,29 +128,7 @@ class stic_Messages extends Basic
     protected function fillName()
     {
         global $current_user, $timedate;
-        // Auto name
-        // if (empty($this->name)) {
-        //     global $app_list_strings;
-        //     include_once 'SticInclude/Utils.php';
 
-        //     $contactName = '';
-        //     $contactBean = BeanFactory::getBean('Contacts', $this->stic_training_contactscontacts_ida);
-        //     if ($contactBean) {
-        //         $contactName = $contactBean->first_name . ' ' . $contactBean->last_name;
-        //     }
-
-        //     $this->name = $contactName . ' - ' .
-        //         $app_list_strings['stic_training_levels_list'][$this->level];
-
-        //     if (!empty($this->course_year)) {
-        //         $this->name .= ' - ' . $app_list_strings['stic_training_courses_list'][$this->course_year];
-        //     }
-        // }
-        /*
-        Recuperar objecte relacionat
-        Recuperar nom del template
-        Nom = nom de l'objecte relacionat - data-hora[ - nom del template]
-        */
         $relatedObjectName = '';
         if (!empty($this->parent_id)){
             $relatedObject = BeanFactory::getBean($this->parent_type, $this->parent_id);
@@ -197,10 +167,9 @@ class stic_Messages extends Basic
 
     public function sendMessage() {
 
-
+        // In the list stic_messages_type_list, the keypart is the name of the file containing the helper class.
         $messageHelper = null;
         $file = $this->type;
-        //TODOEPS: Triar la classe Helper en funció del tipus
         if (file_exists('custom/modules/stic_Messages/Helpers/' . $file . '.php')) {
             require_once('custom/modules/stic_Messages/Helpers/' . $file . '.php');
             $messageHelper = new $file; 

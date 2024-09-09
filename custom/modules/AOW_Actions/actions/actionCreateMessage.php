@@ -74,10 +74,9 @@ class actionCreateMessage extends actionBase
             unset($app_list_strings['aow_message_type_list']['Record Phone']);
         }
         $targetOptions = getRelatedMessageableFields($bean->module_dir);
-        // TODOEPS: Tornar a habilitar el segünet. Comentat per proves.
-        // if (empty($targetOptions)) {
-        //     unset($app_list_strings['aow_message_type_list']['Related Field']);
-        // }
+        if (empty($targetOptions)) {
+            unset($app_list_strings['aow_message_type_list']['Related Field']);
+        }
 
         // $html = '<input type="hidden" name="aow_messages_to_list" id="aow_messages_to_list" value="'.get_select_options_with_id($app_list_strings['aow_messages_to_list'], '').'">';
         // $html = '<input type="hidden" name="aow_message_type_list" id="aow_message_type_list" value="'.get_select_options_with_id($app_list_strings['aow_message_type_list'], '').'">
@@ -419,8 +418,6 @@ class actionCreateMessage extends actionBase
                         if ($linkedBeans) {
                             foreach ($linkedBeans as $linkedBean) {
                                 if (!empty($linkedBean)) {
-                                    //TODOEPS: Tenir una funció que en funció del bean, m'agafi el camp que toca.... l'hauria de tenir a stic_Messages/Utils.php
-                                    // $rel_email = $linkedBean->emailAddress->getPrimaryAddress($linkedBean);
                                     $rel_email = getPhoneForMessage($linkedBean);
                                     if (trim($rel_email) != '') {
                                         // $emails[$params['email_to_type'][$key]][] = $rel_email;ç
@@ -465,27 +462,20 @@ class actionCreateMessage extends actionBase
     {
         include_once __DIR__ . '/../../EmailTemplates/EmailTemplate.php';
 
-
-
-        // Recuperar telèfon o telèfons i beans destinataris
-
-
-
-        // TODOEPS:
-        // 1. Aplicar el template (si n'hi ha amb el bean principal), cridant potser a la funció d'aplicar variables del propi bean
-        // 2. Si el tipus de destinatari és diferent de "Record mail", eliminar el template_id_c per evitar que s'apliqui.
-        // 3. Verificar que si hi ha un text i el template buit, es guarda el text
-
+        // Recuperamos el template (si lo hay)
         $emailTemplate = BeanFactory::getBean('EmailTemplates', $params['email_template']);
         $txt = $emailTemplate->body;
 
+        // Se sustituyen las variables con la información del bean y se genera un TXT sin variables
+        // No se puede dejar la sustitución al propio bean en el save, ya que el mensaje se relaciona con un bean distinto del que origina el mensaje.
         $messageBean = BeanFactory::newBean('stic_Messages');
         $txt = $messageBean->replaceTemplateVariables($txt, $bean);
 
+        // Se recuperan los objetos a los que enviar el mensaje (tipo, id y teléfono)
+        $recipients = $this->getEmailsFromParams($bean, $params);
 
-        $emails = $this->getEmailsFromParams($bean, $params);
-
-        foreach($emails as $recipient) {
+        foreach($recipients as $recipient) {
+            // Por cada destinatario se crea un mensaje
             $messageBean = BeanFactory::newBean('stic_Messages');
             $messageBean->sender = $params['sender_name'];
             $messageBean->template_id_c = $params['email_template'];

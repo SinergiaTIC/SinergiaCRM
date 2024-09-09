@@ -454,8 +454,9 @@ $javascript->setSugarBean($focus);
 $javascript->addAllFields('');
 echo $javascript->getScript();
 
-// TODOEPS: Add script in case SMS type selected, only text must be checked.
+// STIC Custom 20240909 EPS - SMS messages
 echo getVersionedScript("SticInclude/js/Utils.js");
-echo "<script type='text/javascript' language='JavaScript' src='custom/modules/EmailTemplates/SticUtils.js'> </script>";
+echo getVersionedScript("custom/modules/EmailTemplates/SticUtils.js");
+// END STIC Custom
 
 

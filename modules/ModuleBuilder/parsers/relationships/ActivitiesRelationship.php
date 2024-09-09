@@ -273,9 +273,6 @@ class ActivitiesRelationship extends OneToManyRelationship
                 array( 'widget_class' => 'SubPanelTopCreateNoteButton' ) ,
                 array( 'widget_class' => 'SubPanelTopArchiveEmailButton'),
                 array( 'widget_class' => 'SubPanelTopSummaryButton' ) ) ,
-                // STIC Custom 2024xxxx EPS - xxx
-                // TODOEPS
-                // END STIC
                 'collection_list' => array(
                     'meetings' => array(
                         'module' => 'Meetings' ,
@@ -297,16 +294,15 @@ class ActivitiesRelationship extends OneToManyRelationship
                         'module' => 'Emails' ,
                         'subpanel_name' => 'ForHistory' ,
                         'get_subpanel_data' => $relationshipName. '_emails' ) ,
-                    // STIC Custom 2024xxxx EPS - SEVEN SMS Integration
+                    // STIC Custom 20240909 EPS - SMS Messages
                     'messages' => array(
                         'module' => 'stic_Messages',
                         'subpanel_name' => 'ForHistory',
                         'get_subpanel_data' => 'function:get_stic_messages',
                         'generate_select' => true,
-                        // 'function_parameters' => array('import_function_file' => 'include/utils.php', 'return_as_array' => 'true'),
                         'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php.php', 'return_as_array' => 'true'),
                     )
-                    // END STIC
+                    // END STIC Custom
                     ) )  ;
     }
 }
