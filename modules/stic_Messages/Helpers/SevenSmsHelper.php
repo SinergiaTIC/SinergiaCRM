@@ -25,7 +25,7 @@ class SevenSMSHelper implements stic_MessagesHelper {
         
         
         // $this->setSender($sugar_config['seven_sender'] ?? '');
-        $sender = stic_SettingsUtils::getSetting('seven_sender');
+        $sender = stic_SettingsUtils::getSetting('messages_sender');
         $this->setSender($sender);
     }
 
