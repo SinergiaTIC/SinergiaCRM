@@ -20,36 +20,28 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
-require_once 'include/MVC/View/views/view.detail.php';
-require_once 'SticInclude/Views.php';
-
-class stic_ResourcesViewDetail extends ViewDetail
+class SugarWidgetSubPanelCloseButtonstic_Resources extends SugarWidgetField
 {
-
-    public function __construct()
+    public function displayList(&$layout_def)
     {
-        parent::__construct();
+        global $app_strings;
+        global $subpanel_item_count;
+        $return_module = $_REQUEST['module'];
+        $return_id = $_REQUEST['record'];
+        $module_name = $layout_def['module'];
+        $record_id = $layout_def['fields']['ID'];
+        $unique_id = $layout_def['subpanel_id'] . "_close_" . $subpanel_item_count;
 
+        if ($module_name === 'stic_Resources') {
+
+            $html = "<a id=\"$unique_id\" href=\"javascript:void(0);\" onclick='closeResource(\"$record_id\", \"$return_id\");'>" . $app_strings['LNK_CLOSE'] . "</a>";
+            return $html;
+        } else {
+            return parent::displayList($layout_def);
+        }
     }
-
-    public function preDisplay()
-    {
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-    }
-
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Resources/Utils.js");
-
-        // Write here you custom code
-
-    }
-
 }

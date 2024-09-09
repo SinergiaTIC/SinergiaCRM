@@ -3130,6 +3130,7 @@ $app_list_strings['stic_resources_types_list']['office_materials'] = 'Office mat
 $app_list_strings['stic_resources_types_list']['electronics'] = 'Electronics';
 $app_list_strings['stic_resources_types_list']['technical_equipment'] = 'Technical equipment';
 $app_list_strings['stic_resources_types_list']['accessory'] = 'Accessory';
+$app_list_strings['stic_resources_types_list']['places'] = 'Places';
 $app_list_strings['stic_resources_types_list']['other'] = 'Other';
 
 // Resources: Status
@@ -3138,6 +3139,23 @@ $app_list_strings['stic_resources_status_list']['active'] = 'Active';
 $app_list_strings['stic_resources_status_list']['inactive'] = 'Inactive';
 $app_list_strings['stic_resources_status_list']['unavailable'] = 'Not available';
 $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'Temporarily unavailable';
+
+// Resources: Place type
+$app_list_strings['stic_resources_places_type_list'][''] = '';
+$app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
+$app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Overcrowded';
+
+// Resources: User type
+$app_list_strings['stic_resources_places_users_list'][''] = '';
+$app_list_strings['stic_resources_places_users_list']['adults'] = 'Adults';
+$app_list_strings['stic_resources_places_users_list']['families'] = 'Families';
+$app_list_strings['stic_resources_places_users_list']['minors'] = 'Minors';
+
+// Resources: Gender
+$app_list_strings['stic_resources_places_gender_list'][''] = '';
+$app_list_strings['stic_resources_places_gender_list']['men'] = 'Men';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Women';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixed';
 
 // Bookings: Status
 $app_list_strings['stic_bookings_status_list'][''] = '';

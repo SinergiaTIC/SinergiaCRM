@@ -21,35 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'include/MVC/View/views/view.detail.php';
-require_once 'SticInclude/Views.php';
-
-class stic_ResourcesViewDetail extends ViewDetail
-{
-
-    public function __construct()
-    {
-        parent::__construct();
-
-    }
-
-    public function preDisplay()
-    {
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-    }
-
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Resources/Utils.js");
-
-        // Write here you custom code
-
-    }
-
-}
+//prevents directly accessing this file from a web browser
