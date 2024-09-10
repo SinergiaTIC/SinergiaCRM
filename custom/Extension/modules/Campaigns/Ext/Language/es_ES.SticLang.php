@@ -72,10 +72,10 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Responder a (dirección)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificaciones';
 
-$mod_strings['LBL_FLEX_RELATE_HELP'] = 'El elemento padre sobre el que se quiere crear la Notificación';
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = 'Las Listas de Público Objetivo con los destinatarios de la Notificación. Se pueden seleccionar más de una. Deben ser del tipo "Por defecto"';
-$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = 'La Plantilla de correo electrónico que se usará para crear el contenido de la Notificación que se enviará. Debe ser una plantilla de correo del tipo "Notificación". En la plantilla se pueden utilizar campos del módulo del elemento padre de la Notificación.';
-$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = 'La cuenta de correo que se usará para el envío de las Notificaciones. Se puede configurar en la sección "Correo saliente" del menú de Administración';
-$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = 'El buzón de correo para los rebotes que se usará para hacer el seguimiento del estado de las Notificaciones. Se puede configurar en la sección "Correo entrante" del menú de Administración';
+$mod_strings['LBL_FLEX_RELATE_HELP'] = 'Registro del que se desea realizar la notificación. Puede ser un evento o una subvención.';
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificación se enviará a los miembros de las listas de público objetivo seleccionadas, que deben ser del tipo 'Por defecto'.";
+$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correo electrónico debe ser del tipo 'Notificación' y se pueden incluir en ella campos del registro asociado a la notificación (el evento o la subvención).";
+$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Cuenta de correo que se utilizará para enviar la notificación. Se puede configurar en el apartado 'Correo electrónico saliente' del área de Adminstración.";
+$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde recibir los mensajes de error que se puedan producir tras el envío. Se puede configurar en el apartado 'Correo electrónico entrante' del área de Administración.";
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar una nueva notificación se añadirán automáticamente a la cola de envío los mensajes correspondientes.';
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.";
