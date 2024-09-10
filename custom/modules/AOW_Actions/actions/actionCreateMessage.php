@@ -329,9 +329,19 @@ class actionCreateMessage extends actionBase
         // Se recuperan los objetos a los que enviar el mensaje (tipo, id y teléfono)
         $recipients = $this->getPhonesFromParams($bean, $params);
 
+        $messageBean->sender = $params['sender_name'];
+        $messageBean->template_id_c = $params['email_template'];
+        $messageBean->status = $params['status'];
+        $messageBean->type = $params['type'];
+        $messageBean->direction = $params['direction'];
+        $messageBean->phone = $recipient['phone'];
+        $messageBean->message = $txt;
+        $name = $messageBean->fillName($bean->module_name, $bean->id);
+
         foreach($recipients as $recipient) {
             // Por cada destinatario se crea un mensaje
             $messageBean = BeanFactory::newBean('stic_Messages');
+
             $messageBean->sender = $params['sender_name'];
             $messageBean->template_id_c = $params['email_template'];
             $messageBean->status = $params['status'];
@@ -341,6 +351,7 @@ class actionCreateMessage extends actionBase
             $messageBean->parent_type = $recipient['parent_type'];
             $messageBean->parent_id = $recipient['parent_id'];
             $messageBean->message = $txt;
+            $messageBean->name = $name;
             $messageBean->save();
         }
 

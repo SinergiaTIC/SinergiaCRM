@@ -21,9 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-// require_once 'seven/sendSMSfunctions.php';
-// require_once 'modules/stic_Messages/SevenSMSHelper.php';
-
 class stic_Messages extends Basic
 {
     const OK = 1;
@@ -85,7 +82,9 @@ class stic_Messages extends Basic
     {
         global $sticSavingMessage, $current_user;
 
-        $this->fillName();
+        if (empty($this->name)){
+            $this->fillName();
+        }
 
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
 
@@ -125,13 +124,16 @@ class stic_Messages extends Basic
 
     }
 
-    protected function fillName()
+    public function fillName($parentType = null, $parentId = null)
     {
         global $current_user, $timedate;
 
+        $parentType = $parentType?? $this->parent_type;
+        $parentId = $parentId ?? $this->parent_id;
+
         $relatedObjectName = '';
-        if (!empty($this->parent_id)){
-            $relatedObject = BeanFactory::getBean($this->parent_type, $this->parent_id);
+        if (!empty($parentType)){
+            $relatedObject = BeanFactory::getBean($parentType, $parentId);
             $relatedObjectName = $relatedObject->name;
         }
         $templateName = '';
@@ -163,6 +165,7 @@ class stic_Messages extends Basic
 
 
         $this->name = $relatedObjectName . ' - ' . $formatedDate . $templateName;
+        return $this->name;
     }
 
     public function sendMessage() {

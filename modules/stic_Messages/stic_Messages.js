@@ -207,8 +207,6 @@ $(function() {
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 
     const attr = 'sms-button'
-    const triggerClass = 'seven-send-sms'
-    const attachedClass = 'seven-attached'
 
     const recordId = $("input[name=record]")[0].value;
 

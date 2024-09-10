@@ -76,11 +76,6 @@ class stic_MessagesController extends SugarController
         SugarApplication::redirect("index.php?module=stic_Messages&action=index");
     }
 
-
-
-    /**
-     * @see EmailsViewCompose
-     */
     public function action_ComposeView()
     {
         $this->view = 'compose';
