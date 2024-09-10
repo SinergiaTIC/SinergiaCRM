@@ -72,11 +72,10 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Respondre a (adreça)';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notificacions';
 
-$mod_strings['LBL_FLEX_RELATE_HELP'] = "L'element pare sobre el que es vol crear la Notificació";
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificació s'enviarà als membres de les Llistes de Públic Objectiu seleccionades, que han de ser del tipus 'Per defecte'.";
-$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correu electrònic ha de ser del tipus 'Notificació' i s'hi poden incloure camps del registre associat a la notificació (la subvenció, l'esdeveniment...)."; 
+$mod_strings['LBL_FLEX_RELATE_HELP'] = 'Registre del qual es vol realitzar la notificació. Pot ser un esdeveniment o una subvenció.';
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "La notificació s'enviarà als membres de les llistes de públic objectiu seleccionades, que han de ser del tipus 'Per defecte'.";
+$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correu electrònic ha de ser del tipus 'Notificació' i s'hi poden incloure camps del registre associat a la notificació (l'esdeveniment o la subvenció)."; 
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Compte de correu que es farà servir per enviar la notificació. Es pot configurar a l'apartat 'Correu electrònic sortint' de l'àrea d'Adminstració.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Bústia de correu on rebre els missatges d'error que es puguin produir en l'enviament. Es pot configurar a l'apartat 'Correu electrònic entrant' de l'àrea d'Administració.";
-
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
