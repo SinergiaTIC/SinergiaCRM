@@ -67,10 +67,11 @@ $mod_strings['LBL_NOTIFICATION_REPLY_TO_ADDR'] = 'Reply to address';
 
 $mod_strings['LBL_NOTIFICATION_INFORMATION_PANEL'] = 'Notifications';
 
-$mod_strings['LBL_FLEX_RELATE_HELP'] = 'The parent item for which the Notification is to be created';
-$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = 'The Target Lists with the recipients of the Notification. More than one can be selected. They must be of type "Default"';
-$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = 'The Email Template that will be used to create the content of the Notification to be sent. It must be an email template of the "Notification" type. Fields from the parent item module of the Notification can be used in the template.';
-$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = 'The email account that will be used to send the Notifications. It can be configured in the "Outbound Email" section of the Admin menu';
-$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = 'The bounce email box that will be used to track the status of the Notifications. It can be configured in the "Inbound Email" section of the Admin menu';
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving a new notification the email messages will be automatically added to the sending queue.';
+$mod_strings['LBL_FLEX_RELATE_HELP'] = 'Record for which the notification is to be made. It can be an event or an opportunity.';
+$mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID_HELP'] = "Notification will be sent to members of selected target lists, which must be of type 'Default'.";
+$mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "The email template must be of type 'Notification' and can include fields from the record related to the notification (the event or the opportunity).";
+$mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Email account that will be used to send the notification. It can be configured in the 'Outbound email' section of the Administration area.";
+$mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive error messages that may occur after sending. It can be configured in the 'Inbound email' section of the Administration area.";
+
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving the notification the emails to be sent will be automatically added to the sending queue.";
