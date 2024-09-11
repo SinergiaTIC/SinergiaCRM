@@ -10,9 +10,10 @@ class Users_TrackLogin
 		$tracker = new Tracker();
 		$tracker->item_summary = $bean->name.' - Login';
 		$tracker->user_id = $bean->id;
-		$tracker->item_id = $bean->name;
+		$tracker->item_id = $bean->id;
 		$tracker->action = 'login_ok';
 		$tracker->module_name = $bean->module_name;
+		$tracker->tracker_user = $bean->user_name;
 
 		
 		$tracker->save();

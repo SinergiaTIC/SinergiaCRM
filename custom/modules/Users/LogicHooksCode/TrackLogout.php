@@ -10,8 +10,10 @@ class Users_TrackLogout
 		$tracker = new Tracker();
 		$tracker->item_summary = $bean->name.' - Logout';
 		$tracker->user_id = $bean->id;
+		$tracker->item_id = $bean->id;
 		$tracker->module_name = 'Users';
 		$tracker->action = 'logout';
+		$tracker->tracker_user = $bean->user_name;
 
 		$tracker->save();
 	}
