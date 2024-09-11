@@ -466,7 +466,7 @@ class ExternalReporting
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
 
                                 //Add relate record name
-                                if (in_array($fieldV['module'], ['Contacts', 'Leads']) || Beanfactory::newBean($fieldV['module'])->field_defs['last_name']) {
+                                if (in_array($fieldV['module'], ['Contacts', 'Leads']) || (Beanfactory::newBean($fieldV['module'])->field_defs['last_name']) && $fieldV['module'] != 'Users') {
                                     $relatedName = " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) ";
                                 } elseif ($fieldV['module'] == 'Users') {
                                     $relatedName = "{$leftJoinAlias}.user_name";
@@ -1792,7 +1792,7 @@ class ExternalReporting
                                         'global' => 0,
                                     ];
 
-                                    // Additionally we insert a record that allows each user's access to the records in which coinicide
+                                    // Additionally we insert a record that allows each user's access to the records in which match
                                     // the user_name with the assigned_user_name field content in each module in which the user has group permission
                                     $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
                                         'user_name' => $u['user_name'],
