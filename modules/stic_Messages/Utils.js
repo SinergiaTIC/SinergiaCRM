@@ -34,7 +34,7 @@ switch (viewType()) {
     });
     state = $('#status').val();
     if (state !== 'draft') {
-      // $('#status').prop('disabled', true);
+      $('#status').prop('disabled', true);
       $('#status').attr('readonly', true);
       $('#status').css('background', '#F8F8F8');
       $('#status').css('border-color', '#E2E7EB');
