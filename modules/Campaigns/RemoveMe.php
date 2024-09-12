@@ -113,7 +113,7 @@ if (!empty($_REQUEST['identifier'])) {
                             (id, parent_id, date_created, created_by, field_name, data_type, before_value_string, after_value_string, before_value_text, after_value_text) VALUES
                             ('$newId', '$emailAddressId', UTC_TIMESTAMP(), '1', 'opt_out','bool','0','1',NULL,NULL)";
                 $result2 = $db->query($query);
-                if ($result2) {
+                if (!$result2) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error inserting the corresponding record with parent_id = $id into the email_addresses_audit table");
                 }
             }
