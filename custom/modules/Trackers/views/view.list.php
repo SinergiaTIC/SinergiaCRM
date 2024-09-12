@@ -38,7 +38,8 @@ class CustomTrackersViewList extends ViewList
         SticViews::preDisplay($this);
 
         // Write here you custom code
-        
+        $this->params["orderBy"] = "DATE_MODIFIED";
+        $this->params["sortOrder"] = "ASC";
 
     }
 
@@ -51,9 +52,6 @@ class CustomTrackersViewList extends ViewList
         // echo getVersionedScript("custom/modules/Trackers/SticUtils.js");
 
         // Write here you custom code
-        
-        $this->params["orderBy"] = "DATE_MODIFIED";
-        $this->params["sortOrder"] = "ASC";
         
     }
 }
