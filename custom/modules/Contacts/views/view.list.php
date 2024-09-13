@@ -53,5 +53,4 @@ class CustomContactsViewList extends ContactsViewList
 
         // Write here you custom code
     }
-
 }
