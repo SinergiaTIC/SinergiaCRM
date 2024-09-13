@@ -52,7 +52,7 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
         $button = $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'];
         $accesskey = $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'];
 
-        $phone = getPhoneForMessage($bean);
+        $phone = stic_MessagesUtils::getPhoneForMessage($bean);
 
         $jsonData = json_encode([
             'return_action' => 'DetailView',

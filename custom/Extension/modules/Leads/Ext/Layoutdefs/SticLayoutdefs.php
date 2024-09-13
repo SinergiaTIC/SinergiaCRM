@@ -84,7 +84,7 @@ $layout_defs['Leads']['subpanel_setup']['history']['top_buttons'][] = array('wid
 $layout_defs['Leads']['subpanel_setup']['history']['collection_list']['messages'] = array(
     'module' => 'stic_Messages',
     'subpanel_name' => 'ForHistory',
-    'get_subpanel_data' => 'function:get_stic_messages',
+    'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
     'generate_select' => true,
     'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true'),
 );

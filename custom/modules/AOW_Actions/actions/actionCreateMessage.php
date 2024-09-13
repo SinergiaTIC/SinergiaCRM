@@ -54,11 +54,11 @@ class actionCreateMessage extends actionBase
         $email_templates_arr = get_bean_select_array(true, 'EmailTemplate', 'name', "type = 'sms'", 'name');
 
         // If the bean has no phone record, the option is removed from list
-        if (!in_array($bean->module_dir, getMessageableModules())) {
+        if (!in_array($bean->module_dir, stic_MessagesUtils::getMessageableModules())) {
             unset($app_list_strings['aow_message_type_list']['Record Phone']);
         }
         // If the bean has no valid related records, the option is removed from list
-        $targetOptions = getRelatedMessageableFields($bean->module_dir);
+        $targetOptions = stic_MessagesUtils::getRelatedMessageableFields($bean->module_dir);
         if (empty($targetOptions)) {
             unset($app_list_strings['aow_message_type_list']['Related Field']);
         }
@@ -279,7 +279,7 @@ class actionCreateMessage extends actionBase
                         if ($linkedBeans) {
                             foreach ($linkedBeans as $linkedBean) {
                                 if (!empty($linkedBean)) {
-                                    $rel_phone = getPhoneForMessage($linkedBean);
+                                    $rel_phone = stic_MessagesUtils::getPhoneForMessage($linkedBean);
                                     if (trim($rel_phone) != '') {
                                         $recipients[] = array(
                                             'phone' => $rel_phone,
@@ -292,7 +292,7 @@ class actionCreateMessage extends actionBase
                         }
                         break;
                     case 'Record Phone':
-                        $recordPhone = getPhoneForMessage($bean);
+                        $recordPhone = stic_MessagesUtils::getPhoneForMessage($bean);
                         if (trim($recordPhone) != '') {
                             $recipients[] = array(
                                 'phone' =>$recordPhone,

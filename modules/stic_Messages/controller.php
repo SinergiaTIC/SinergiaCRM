@@ -235,7 +235,7 @@ class stic_MessagesController extends SugarController
                 echo '';
                 break;
             case 'Related Field':
-                $rel_field_list = getRelatedMessageableFields($module);
+                $rel_field_list = stic_MessagesUtils::getRelatedMessageableFields($module);
                 if ($view == 'EditView') {
                     echo "<select type='text'  name='$aow_field' id='$aow_field' title='' tabindex='116'>". get_select_options_with_id($rel_field_list, $value) ."</select>";
                 } else {
