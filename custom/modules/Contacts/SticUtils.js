@@ -210,8 +210,6 @@ function onClickMassJobApplicationsButton() {
     document.getElementById("ajaxStatusDiv").style.zIndex = 1040; // No need this line when this PR is merged: https://github.com/salesagility/SuiteCRM/issues/8266
 }
 
-
-
 /**
  * 
  * Runs the controller action after a job offer is selected in the job applications mass creation process
