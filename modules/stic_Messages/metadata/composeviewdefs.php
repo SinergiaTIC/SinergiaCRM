@@ -51,7 +51,6 @@ array(
                     0 => array(
                         'name' => 'parent_name',
                         'label' => 'LBL_LIST_RELATED_TO',
-                        // 'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
                         'displayParams' => array(
                             'call_back_function' => '$.fn.stic_MessagesComposeView.onParentSelect',
                             'field_to_name_array' => array(

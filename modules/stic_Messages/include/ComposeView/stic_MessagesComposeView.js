@@ -37,7 +37,6 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-console.log('Loading stic_MessagesComposeView.js');
 var module = 'stic_Messages';
 
 addToValidateCallback(
@@ -64,9 +63,6 @@ addRequiredMark('parent_id', 'conditional-required');
   $.fn.stic_MessagesComposeView = function (options) {
     "use strict";
     var self = $(this);
-    // var opts = $.extend({}, $.fn.stic_MessagesComposeView.defaults, options);
-    // var jQueryFormComposeView = $('form[name="ComposeView"]')[0];
-
 
     /**
      * @return string UUID

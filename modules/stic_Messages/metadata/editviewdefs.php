@@ -55,7 +55,6 @@ array(
                     0 => array(
                         'name' => 'parent_name',
                         'label' => 'LBL_LIST_RELATED_TO',
-                        // 'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
                     ),
                     1 => array (
                       'name' => 'template',

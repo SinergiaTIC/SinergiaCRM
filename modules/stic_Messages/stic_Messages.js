@@ -1,5 +1,3 @@
-console.log('patata');
-
 /**
  * 
  * Used as a callback for sending various messages from list view
@@ -54,14 +52,9 @@ function onClickMassRetryMessagesButton() {
     mb.remove();
   });
 
-  // call controller action to change status from draft or error to sent
 }
 
-
-// function openCustomModal(buttonModule, parentModule) {
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
-  debugger;
-
     let numRecordsSelected = $(".selectedRecords.value").eq(0).text();
 
     if (numRecordsSelected > getMessagesLimit()) {
@@ -101,9 +94,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 
 
     var URL = 'index.php?module=stic_Messages&return_module='+currentModule+'&return_action='+return_action+'&return_id='+relatedId+'&action=ComposeView&in_popup=1&targetModule=' + targetModule + ids + '&relatedModule=' + currentModule + '&relatedId=' + relatedId;
-    // var URL = 'index.php?to_pdf=true&module=' + buttonModule + 
-    //           '&action=EditView&return_module=' + parentModule + 
-    //           '&return_action=DetailView';
 
     SUGAR.ajaxUI.showLoadingPanel();
     
@@ -114,7 +104,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
       var dataPhone = $(source).attr('data-phone');
 
       // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
-      // if (typeof dataPhone !== 'undefined' && dataPhone !== '') {
         var dataRecordId = $(source).attr('data-record-id');
       if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
         panelBody.find('#phone').val(dataPhone);
@@ -160,37 +149,13 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         panelBody.find('#mass_ids').val(idsList);
       }
 
-
-      var self = this;
-    //   $(self).find('#phone').val(dataPhone);
-
-        
         SUGAR.ajaxUI.hideLoadingPanel();
 
-        debugger;
-        
         $('<div>').append(panelBody).dialog({
             modal: true,
             // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
             title: '',
             width: '80%',
-            // buttons: {
-            //     'Save': function() {
-            //         var form = panelBody.find('form');
-            //         $.post(form.attr('action'), form.serialize(), function(response) {
-            //             if (response.sugar_body) {
-            //                 $(this).dialog('close');
-            //                 SUGAR.mySugar.retrieveDashlet();
-            //                 if (typeof SUGAR.subpanelUtils != "undefined" && typeof SUGAR.subpanelUtils.loadSubpanels != "undefined") {
-            //                     SUGAR.subpanelUtils.loadSubpanels();
-            //                 }
-            //             }
-            //         }, 'json');
-            //     },
-            //     'Cancel': function() {
-            //         $(this).dialog('close');
-            //     }
-            // }
         });
         if (typeof namesList !== 'undefined') {
           $('#namesList').val(namesList);

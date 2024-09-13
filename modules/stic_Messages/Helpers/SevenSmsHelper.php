@@ -1,4 +1,26 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
 
 // SMS Helper class to send SMS messages through Seven provider.
 // Info about API can be found at: https://docs.seven.io/en/rest-api/endpoints/sms
@@ -13,8 +35,6 @@ class SevenSMSHelper implements stic_MessagesHelper {
     protected ?string $sender;
 
     public function __construct() {
-        // global $sugar_config;
-
         // $this->setActive($sugar_config['seven_active'] ?? false);
         $active = stic_SettingsUtils::getSetting('seven_active');
         $this->setActive($active);
@@ -57,9 +77,10 @@ class SevenSMSHelper implements stic_MessagesHelper {
     }
 
     public function sendMessage(?string $from, string $text, string $to): array {
-        // $to = preg_replace('~\D~', '', $to);
-        $to = preg_replace('~[^\d,]~', '', $to);
+        $to = preg_replace('~[^\d,]~', '', $to); // remove non numeric values
+
         $result = $this->apiCall($from, $text, $to);
+        
         $resultArray = json_decode($result, true);
         if ($resultArray['success'] != 100) {
             return array('code' => stic_Messages::ERROR_NOT_SENT, 'message' => $result);

@@ -12,23 +12,13 @@ require_once("modules/AOW_WorkFlow/aow_utils.php");
 
 class stic_MessagesController extends SugarController
 {
-    // public function action_MassSave() {
-    //     // $this->action_save();
-    //     $this->bean->save(!empty($this->bean->notify_on_save));
-    // }
+
 
     public function action_Save() {
-        // $this->action_save();
         if (isset($_REQUEST['mass_ids']) && $_REQUEST['mass_ids'] !== '') {
             $idsArray = explode(';', $_REQUEST['mass_ids']);
             $phonesArray = explode(',', $_REQUEST['phone']);
-            // foreach($idsArray as $relatedId) {
-            //     $newBean = BeanFactory::newBean('stic_Messages');
-            //     $this->bean = $newBean;
-            //     $this->pre_save();
-            //     $this->bean->parent_id = $relatedId;
-            //     $this->bean->save(!empty($this->bean->notify_on_save));    
-            // }
+
             array_map(function($id, $phone) {
                 $newBean = BeanFactory::newBean('stic_Messages');
                 $this->bean = $newBean;
@@ -71,8 +61,6 @@ class stic_MessagesController extends SugarController
             $bean->save();
         }
 
-        // $_REQUEST['return_module'] = 'stic_Messages';
-        // $_REQUEST['return_action'] = 'index';
         SugarApplication::redirect("index.php?module=stic_Messages&action=index");
     }
 

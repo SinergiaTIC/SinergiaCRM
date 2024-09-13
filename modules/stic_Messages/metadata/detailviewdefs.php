@@ -50,10 +50,6 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                // 'LBL_PANEL_RECORD_DETAILS' => array(
-                //     'newTab' => true,
-                //     'panelDefault' => 'expanded',
-                // ),
             ),
             'syncDetailEditViews' => false,
         ),

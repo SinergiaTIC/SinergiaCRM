@@ -196,10 +196,7 @@ class stic_Messages extends Basic
     {
             $macro_nv = array();
     
-            // $focusName = $request['parent_type'];
             $focusName = $bean->module_name;
-            // $focus = BeanFactory::getBean($focusName, $request['parent_id']);
-            // $focus = BeanFactory::getBean($focusName, $relatedId);
             $focus = $bean;
     
             /**
@@ -208,8 +205,6 @@ class stic_Messages extends Basic
             $emailTemplate = BeanFactory::newBean('EmailTemplates');
             $templateData = $emailTemplate->parse_email_template(
                 array(
-                    // 'subject' => '',
-                    // 'body_html' => $screenText,
                     'body' => $screenText,
                 ),
                 $focusName,
@@ -221,8 +216,6 @@ class stic_Messages extends Basic
             if ($focusName === 'Leads') {
                 $templateData = $emailTemplate->parse_email_template(
                     array(
-                        // 'subject' => '',
-                        // 'body_html' => $screenText,
                         'body' => $templateData['body'],
                     ),
                     'Contacts',
