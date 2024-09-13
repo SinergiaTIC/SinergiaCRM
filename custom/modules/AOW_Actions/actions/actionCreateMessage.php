@@ -49,14 +49,15 @@ class actionCreateMessage extends actionBase
         $defaultDirection = $messagesBean->field_defs['direction']['default'];
         $defaultStatus = $messagesBean->field_defs['status']['default'];
 
-
-
+        // Get the email templates of type SMS
         global $app_list_strings;
         $email_templates_arr = get_bean_select_array(true, 'EmailTemplate', 'name', "type = 'sms'", 'name');
 
+        // If the bean has no phone record, the option is removed from list
         if (!in_array($bean->module_dir, getMessageableModules())) {
             unset($app_list_strings['aow_message_type_list']['Record Phone']);
         }
+        // If the bean has no valid related records, the option is removed from list
         $targetOptions = getRelatedMessageableFields($bean->module_dir);
         if (empty($targetOptions)) {
             unset($app_list_strings['aow_message_type_list']['Related Field']);
@@ -140,6 +141,7 @@ class actionCreateMessage extends actionBase
         $html .= '</td>';
         $html .= '</tr>';
 
+        // Phone: Different parts of the phone field, will be loaded on recipient type selection
         $html .= "<tr>";
         $html .= '<td id="name_label" scope="row" valign="top"><label>' . translate(
             "LBL_PHONE",
