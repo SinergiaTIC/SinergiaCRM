@@ -357,9 +357,6 @@ class actionCreateMessage extends actionBase
             $messageBean->save();
         }
 
-        // TODOEPS : Recuperar status de l'enviament?
-        // Probablement no es pot. Ja queda el propi missatge amb l'estat que correspon.
-        // Potser es pot sobre-escriure el save per recuperar l'estat iq ue el torni? Fa return?
         return true;
     }
 }
