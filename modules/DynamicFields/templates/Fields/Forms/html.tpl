@@ -66,7 +66,7 @@
 SUGAR.ajaxLoad = true;
 {if $hideLevel < 5}
     // STIC-Custom 20240916 MHP - Close editor before reopening it under the same ID
-    // 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/388
     tinymce.execCommand('mceRemoveControl', false, 'htmlarea');
     // END STIC-Custom
     setTimeout("tinyMCE.execCommand('mceAddControl', false, 'htmlarea');", 500);  
