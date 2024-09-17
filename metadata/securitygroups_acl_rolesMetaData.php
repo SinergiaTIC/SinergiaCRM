@@ -15,7 +15,6 @@ $dictionary['securitygroups_acl_roles'] = array(
        // END STIC Custom
     ),
     'relationships' => array(
-
         'securitygroups_acl_roles' => array(
             'lhs_module'=> 'SecurityGroups', 'lhs_table'=> 'securitygroups', 'lhs_key' => 'id',
             'rhs_module'=> 'ACLRoles', 'rhs_table'=> 'acl_roles', 'rhs_key' => 'id',
