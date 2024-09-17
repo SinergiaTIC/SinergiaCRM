@@ -10,7 +10,8 @@ $dictionary['securitygroups_acl_roles'] = array(
     ),
     'indices' => array(
        array('name' =>'securitygroups_acl_rolespk', 'type' =>'primary', 'fields'=>array('id')),
-       // STIC Custom 20240917 EPS: New index to speed up the query at modules/ACLActions/ACLAction.php
+       // STIC-Custom 20240917 EPS: New index to speed up the query at modules/ACLActions/ACLAction.php
+       // https://github.com/SinergiaTIC/SinergiaCRM/pull/391
        array('name' => 'idx_SG_roles', 'type' => 'index', 'fields' => array('securitygroup_id', 'role_id')),
        // END STIC Custom
     ),
