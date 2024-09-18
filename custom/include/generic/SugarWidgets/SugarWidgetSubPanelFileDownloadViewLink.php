@@ -94,7 +94,7 @@ class SugarWidgetSubPanelFileDownloadViewLink extends SugarWidgetField
             || $layout_def['DetailView'] && !ACLController::moduleSupportsACL($layout_def['owner_module'])
             || ACLController::checkAccess($layout_def['owner_module'], 'view', $layout_def['owner_id'] == $current_user->id, 'module',  $groupAccessView))) {
             $link = ajaxLink("index.php?entryPoint=download&id={$record}&type={$module}");
-            return '<a href="' . $link . '" >'.$value.'</a><a href="' . $link . '&preview=yes" ><i class="glyphicon glyphicon-eye-open" style="margin-left: 16px"></i></a>';
+            return '<a href="' . $link . '" >'.$value.'</a><a href="' . $link . '&preview=yes" target=”_blank”><i class="glyphicon glyphicon-eye-open" style="margin-left: 16px"></i></a>';
         } else {
             return $value;
         }
