@@ -32,13 +32,43 @@
     </div>
 {/if}
 <br>
+{if !empty($FIELD.TYPE)}
+    <div>
+        <strong>{$PARAM.LBL_TYPE}:</strong>
+        {$FIELD.TYPE}
+    </div>
+{/if}
+{if !empty($FIELD.DIRECTION)}
+    <div>
+        <strong>{$PARAM.LBL_DIRECTION}:</strong>
+        {$FIELD.DIRECTION}
+    </div>
+{/if}
+{if !empty($FIELD.STATUS)}
+    <div>
+        <strong>{$PARAM.LBL_STATUS}:</strong>
+        {$FIELD.STATUS}
+    </div>
+{/if}
+{if !empty($FIELD.PHONE)}
+    <div>
+        <strong>{$PARAM.LBL_PHONE}:</strong>
+        {$FIELD.PHONE}
+    </div>
+{/if}
+{if !empty($FIELD.TEMPLATE)}
+    <div>
+        <strong>{$PARAM.LBL_TEMPLATE}:</strong>
+        {$FIELD.TEMPLATE}
+    </div>
+{/if}
 {if !empty($FIELD.DATE_ENTERED)}
     <div>
         <strong>{$PARAM.LBL_DATE_ENTERED}:</strong>
         {$FIELD.DATE_ENTERED}
     </div>
 {/if}
-
+<br>
 {if !empty($FIELD.MESSAGE)}
     <div>
         <strong>{$PARAM.LBL_MESSAGE}:</strong>
