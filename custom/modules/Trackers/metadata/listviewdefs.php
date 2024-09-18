@@ -11,7 +11,7 @@ array(
     ),
     'TRACKER_USER' => array(
         'type' => 'varchar',
-        'width' => '5%',
+        'width' => '10%',
         'label' => 'LBL_TRACKER_USER',
         'default' => true,
         'id' => 'USER_ID',
@@ -42,14 +42,21 @@ array(
         'type' => 'varchar',
         'label' => 'LBL_ITEM_ID',
         'width' => '10%',
-        'default' => true,
+        'default' => false,
     ),
     'ITEM_SUMMARY' => array(
         'type' => 'varchar',
         'label' => 'LBL_ITEM_SUMMARY',
-        'width' => '10%',
+        'width' => '20%',
         'default' => true,
         'id' => 'ITEM_ID',
         'link' => true,
+    ),
+    'SESSION_ID' => array(
+        'name' => 'session_id',
+        'label' => 'LBL_SESSION_ID',
+        'type' => 'varchar',
+        'width' => '10%',
+        'default' => false,
     ),
 );

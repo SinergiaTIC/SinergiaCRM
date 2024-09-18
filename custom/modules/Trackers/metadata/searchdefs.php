@@ -4,13 +4,26 @@ $searchdefs[$module_name] =
 array(
     'layout' => array(
         'basic_search' => array(
+            'tracker_user' => array(
+                'name' => 'tracker_user',
+                'type' => 'varchar',
+                'width' => '10%',
+                'default' => true,
+                'vname' => 'LBL_TRACKER_USER',
+            ),
             'action' => array(
                 'type' => 'enum',
-                'studio' => 'visible',
                 'label' => 'LBL_ACTION',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'action',
+            ),
+            'module_name' => array(
+                'type' => 'enum',
+                'label' => 'LBL_MODULE_NAME',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'module_name',
             ),
             'current_user_only' => array(
                 'name' => 'current_user_only',
@@ -21,24 +34,29 @@ array(
             ),
         ),
         'advanced_search' => array(
-            'action' => array(
-                'type' => 'enum',
-                'studio' => 'visible',
-                'label' => 'LBL_ACTION',
+            'tracker_user' => array(
+                'name' => 'tracker_user',
+                'type' => 'varchar',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'action',
+                'vname' => 'LBL_TRACKER_USER',
             ),
             'date_modified' => array(
-                'sort_order' => 'asc',
-                'type' => 'datetime',
+                'type' => 'datetimecombo',
                 'label' => 'LBL_DATE_LAST_ACTION',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'date_modified',
             ),
+            'action' => array(
+                'type' => 'enum',
+                'label' => 'LBL_ACTION',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'action',
+            ),
             'module_name' => array(
-                'type' => 'varchar',
+                'type' => 'enum',
                 'label' => 'LBL_MODULE_NAME',
                 'width' => '10%',
                 'default' => true,
@@ -50,6 +68,13 @@ array(
                 'label' => 'LBL_MONITOR_ID',
                 'default' => true,
                 'name' => 'monitor_id',
+            ),
+            'session_id' => array(
+                'name' => 'session_id',
+                'label' => 'LBL_SESSION_ID',
+                'type' => 'varchar',
+                'width' => '5%',
+                'default' => true,
             ),
             'item_summary' => array(
                 'type' => 'varchar',
