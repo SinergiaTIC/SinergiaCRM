@@ -43,12 +43,12 @@ $searchFields[$module_name] =
 array(
     'current_user_only' => array(
         'query_type' => 'default',
-        'db_field' => array('tracker_user'),
+        'db_field' => array('user_id'),
         'my_items' => true,
         'vname' => 'LBL_CURRENT_USER_FILTER',
         'type' => 'bool'
     ),
-    'tracker_user' => array('query_type' => 'default'),
+    'user_id' => array('query_type' => 'default'),
 
     //Range Search Support
     'range_date_modified' => array(
