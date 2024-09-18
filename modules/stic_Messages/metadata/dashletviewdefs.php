@@ -24,10 +24,22 @@ $dashletData['stic_MessagesDashlet']['searchFields'] = array(
     'name' => array(
         'default' => '',
     ),
-    'date_entered' => array(
+    // 'parent_name' => array(
+    //     'default' => '',
+    // ),
+    'type' => array(
         'default' => '',
     ),
-    'date_modified' => array(
+    'direction' => array(
+        'default' => '',
+    ),
+    'status' => array(
+        'default' => '',
+    ),
+    'phone' => array(
+        'default' => '',
+    ),
+    'date_entered' => array(
         'default' => '',
     ),
     'assigned_user_id' => array(
@@ -41,12 +53,6 @@ $dashletData['stic_MessagesDashlet']['columns'] = array(
         'link' => true,
         'default' => true,
         'name' => 'name',
-    ),
-    'date_entered' => array(
-        'width' => '15%',
-        'label' => 'LBL_DATE_ENTERED',
-        'default' => true,
-        'name' => 'date_entered',
     ),
     'parent_name' => array(
         'width' => '30%',
@@ -62,6 +68,41 @@ $dashletData['stic_MessagesDashlet']['columns'] = array(
         ),
         'default' => true,
         'name' => 'parent_name',
+    ),
+    'type' => array(
+        'width' => '7%',
+        'label' => 'LBL_TYPE',
+        'sortable' => true,
+        'default' => true,
+        'name' => 'type',
+    ),
+    'direction' => array(
+        'width' => '7%',
+        'label' => 'LBL_DIRECTION',
+        'sortable' => true,
+        'default' => false,
+        'name' => 'direction',
+    ),
+    'template' => array(
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_TEMPLATE',
+        'id' => 'TEMPLATE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'template',
+    ),
+    'status' => array(
+        'width' => '7%',
+        'label' => 'LBL_STATUS',
+        'default' => true,
+        'name' => 'status',
+    ),
+    'date_entered' => array(
+        'width' => '15%',
+        'label' => 'LBL_DATE_ENTERED',
+        'default' => true,
+        'name' => 'date_entered',
     ),
     'created_by_name' => array(
         'type' => 'relate',
