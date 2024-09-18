@@ -3516,6 +3516,16 @@ $app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Ahi
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversari';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuari actual';
 
+// Monitoratges: Accions realitzades per l'usuari
+$app_list_strings['trackers_actions_list']['save'] = 'Registre guardat';
+$app_list_strings['trackers_actions_list']['record_creation'] = 'Registre creat';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Registre accedit';
+$app_list_strings['trackers_actions_list']['editview'] = "Vista d'edició";
+$app_list_strings['trackers_actions_list']['record_update'] = 'Registre actualitzat';
+$app_list_strings['trackers_actions_list']['record_deletion'] = 'Registre eliminat';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'Login';
+$app_list_strings['trackers_actions_list']['logout'] = 'Logout';
+
 
 // Modificacions del core de SuiteCRM
 

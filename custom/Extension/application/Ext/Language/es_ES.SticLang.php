@@ -3516,6 +3516,16 @@ $app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Aye
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversario';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuario actual';
 
+// Monitorizaciones: Acciones realizadas por el usuario
+$app_list_strings['trackers_actions_list']['save'] = 'Registro guardado';
+$app_list_strings['trackers_actions_list']['record_creation'] = 'Registro creado';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
+$app_list_strings['trackers_actions_list']['editview'] = 'Vista de edición';
+$app_list_strings['trackers_actions_list']['record_update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['record_deletion'] = 'Registro eliminado';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'Login';
+$app_list_strings['trackers_actions_list']['logout'] = 'Logout';
+
 
 // Modificaciones del core de SuiteCRM
 
