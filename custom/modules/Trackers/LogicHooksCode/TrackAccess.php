@@ -47,7 +47,11 @@ class App_TrackAccess
             $_SESSION['TRACKER']['MODULE'] = $bean->module_name;
 
             $tracker = new Tracker();
-            $tracker->item_summary = $bean->name;
+            if($bean->name == ''){
+                $tracker->item_summary = $bean->id . ' - ' . $bean->module_name;
+            } else {
+                $tracker->item_summary = $bean->name;
+            }
             $tracker->user_id = $current_user->id;
             $tracker->action = self::decodeEvent($bean, $event, $arguments);
             $tracker->module_name = $bean->module_name;
