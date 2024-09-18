@@ -29,5 +29,9 @@ if (!isset($hook_array['after_save']) || !is_array($hook_array['after_save'])) {
     $hook_array['after_save'] = array();
 }
 
-$hook_array['after_delete'] = array(); 
+$hook_array['after_save'][] = array(1, 'Track record modification', 'custom/modules/Trackers/LogicHooksCode/TrackAccess.php','App_TrackAccess', 'TrackAccess'); 
+
+if (!isset($hook_array['after_delete']) || !is_array($hook_array['after_delete'])) {
+    $hook_array['after_delete'] = array();
+}
 $hook_array['after_delete'][] = array(1, 'Track record deletion', 'custom/modules/Trackers/LogicHooksCode/TrackAccess.php','App_TrackAccess', 'TrackAccess'); 

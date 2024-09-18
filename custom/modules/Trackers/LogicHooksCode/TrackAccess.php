@@ -23,50 +23,73 @@
  */
 
 //prevents directly accessing this file from a web browser
-if(!defined('sugarEntry') ||!sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
 class App_TrackAccess
 {
-	public function TrackAccess(&$bean, $event, $arguments)
-	{
-		global $current_user;
-		
-		if (! isset($_SESSION['TRACKER'])) {
-			$_SESSION['TRACKER'] = array();
-		}
+    public function TrackAccess(&$bean, $event, $arguments)
+    {
+        global $current_user;
 
-		// prevents multiples entries on same action and event
-		if ($_SESSION['TRACKER']['ID'] != $_SERVER['UNIQUE_ID'] || 
-			$_SESSION['TRACKER']['EVENT'] != $event || 
-			$_SESSION['TRACKER']['MODULE'] != $bean->module_name) {
+        if (!isset($_SESSION['TRACKER'])) {
+            $_SESSION['TRACKER'] = array();
+        }
 
-			$_SESSION['TRACKER']['ID'] = $_SERVER['UNIQUE_ID'];
-			$_SESSION['TRACKER']['EVENT'] = $event;
-			$_SESSION['TRACKER']['MODULE'] = $bean->module_name;
-			
-			$tracker = new Tracker();
-			$tracker->item_summary = $bean->name;
-			$tracker->user_id = $current_user->id;
-			$tracker->action = self::decodeEvent($bean, $event, $arguments);
-			$tracker->module_name = $bean->module_name;
-			$tracker->item_id = $bean->id;
-			$tracker->tracker_user = $current_user->user_name;
+        // prevents multiples entries on same action and event
+        if ($_SESSION['TRACKER']['ID'] != $_SERVER['UNIQUE_ID'] ||
+            $_SESSION['TRACKER']['EVENT'] != $event ||
+            $_SESSION['TRACKER']['MODULE'] != $bean->module_name) {
 
-			$tracker->save();
-		}
-	}
+            $_SESSION['TRACKER']['ID'] = $_SERVER['UNIQUE_ID'];
+            $_SESSION['TRACKER']['EVENT'] = $event;
+            $_SESSION['TRACKER']['MODULE'] = $bean->module_name;
 
-	// decode event to action list element
-	protected static function decodeEvent ($bean, $event, $arguments) {
-	
-		switch ($event) {
+            $tracker = new Tracker();
+            $tracker->item_summary = $bean->name;
+            $tracker->user_id = $current_user->id;
+            $tracker->action = self::decodeEvent($bean, $event, $arguments);
+            $tracker->module_name = $bean->module_name;
+            $tracker->item_id = $bean->id;
+            $tracker->tracker_user = $current_user->user_name;
 
-			case 'before_delete': 				//Executes before a record is deleted
-			case 'after_delete':				//Executes after a record is deleted
-				return 'record_deletion';	
+            // Modules that are excluded to track
+            $excludedModules = ['vCals', 'Reminders', 'Reminders_Invitees', 'UserPreferences', 'SugarFeed'];
 
-			default: 							//Other events
-				return '';
-		}
-	}
+            // Untrack the innecesary information
+            if (in_array($bean->module_name, $excludedModules) ||
+                $bean->action == 'login_ok' ||
+                $bean->action == 'logout' ||
+                $bean->action == 'record_deletion' &&
+                $event == 'after_save') {
+                return;
+            } else {
+                $tracker->save();
+            }
+
+        }
+    }
+
+    // decode event to action list element
+    protected static function decodeEvent($bean, $event, $arguments)
+    {
+        switch ($event) {
+            case 'after_save': //Executes after a record is saved.
+            case 'before_save': //Executes before a record is saved.
+                if (empty($bean->fetched_row['id'])) {
+                    return 'record_creation';
+                } else {
+                    return 'record_update';
+                }
+
+            case 'before_delete': //Executes before a record is deleted
+            case 'after_delete': //Executes after a record is deleted
+                return 'record_deletion';
+
+            default: //Other events
+                return '';
+        }
+
+    }
 }
