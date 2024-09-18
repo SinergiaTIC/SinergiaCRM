@@ -11,6 +11,13 @@ array(
                 'default' => true,
                 'vname' => 'LBL_TRACKER_USER',
             ),
+            'date_modified' => array(
+                'type' => 'datetimecombo',
+                'label' => 'LBL_DATE_LAST_ACTION',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'date_modified',
+            ),
             'action' => array(
                 'type' => 'enum',
                 'label' => 'LBL_ACTION',

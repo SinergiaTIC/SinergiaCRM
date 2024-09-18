@@ -4,7 +4,7 @@ $listViewDefs[$module_name] =
 array(
     'DATE_MODIFIED' => array(
         'sort_order' => 'asc',
-        'type' => 'datetime',
+        'type' => 'datetimecombo',
         'label' => 'LBL_DATE_LAST_ACTION',
         'width' => '5%',
         'default' => true,
@@ -50,7 +50,7 @@ array(
         'width' => '20%',
         'default' => true,
         'id' => 'ITEM_ID',
-        'link' => true,
+        'link' => false,
     ),
     'SESSION_ID' => array(
         'name' => 'session_id',

@@ -48,6 +48,7 @@ array(
         'vname' => 'LBL_CURRENT_USER_FILTER',
         'type' => 'bool'
     ),
+    'tracker_user' => array('query_type' => 'default'),
 
     //Range Search Support
     'range_date_modified' => array(
