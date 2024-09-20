@@ -54,7 +54,8 @@ function buildActionMenu() {
     // Create a new link with the same attributes as the original
     var $newLink = $("<a>")
       .attr("href", $originalLink.attr("href"))
-      .attr("data-action-name", $originalLink.data("action-name"));
+      .attr("data-action-name", $originalLink.data("action-name"))
+      .addClass("link-cloned");
 
     // Append the icon and text to the new link
     $newLink.append($icon).append(linkText);
@@ -75,9 +76,10 @@ function updateActionMenu() {
   var $newActionMenu = buildActionMenu();
   var $actionsArea = $("#stic-menu #actions-area");
 
-  // Insert the new action menu at the beginning of the actions area
-  $actionsArea.prepend($newActionMenu.children());
-
+  // Insert the new action menu at the beginning of the actions area, checking that the action is not being repeated
+  if ($("#stic-menu #actions-area .link-cloned").length == 0) {
+    $actionsArea.prepend($newActionMenu.children());
+  }
   // If there are no action items, reduce the opacity of the entire section
   if ($actionsArea.find("a").length == 0) {
     $actionsArea.closest("li").css("opacity", 0.2);
