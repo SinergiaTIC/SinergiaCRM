@@ -215,7 +215,7 @@ function createMenu() {
             separator_after: true,
             label: "<i class='glyphicon glyphicon-plus'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_CREATE,
             action: function(obj) {
-              $node = tree.create_node($node, { text: "New Node", url: "" });
+              $node = tree.create_node($node, { text: SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT, url: "" });
               tree.edit($node);
             }
           },
@@ -243,7 +243,7 @@ function createMenu() {
                     tree.get_node($node).original.url = url;
                     updateNodeDisplay($node);
                   } else {
-                    alert("Please enter a valid URL.");
+                    alert(SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE);
                     editUrlPrompt(); // Show the prompt again
                   }
                 }
