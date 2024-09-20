@@ -241,7 +241,8 @@ class iCal extends vCal
          || (!empty($sugar_config['show_tasks_as_events']) && $sugar_config['show_tasks_as_events'] == false)) {
             $taskAsVTODO = true;
         }
-        // STIC-Custom 
+        // END STIC-Custom
+
         $activityList = array(
             "Meetings" => array(
                 "showCompleted" => true,
