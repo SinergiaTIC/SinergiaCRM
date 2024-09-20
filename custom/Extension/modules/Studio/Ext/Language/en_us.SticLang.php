@@ -33,3 +33,7 @@ $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Switch to legacy menu';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Do you want to switch to the legacy menu? This will restore the settings it had when the advanced menu was activated. You can re-enable the advanced menu later.';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Switch to advanced menu';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Do you want to switch to the advanced menu? This will activate the advanced menu using the current menu settings.';
+$mod_strings['LBL_STIC_MENU_COMMAND_CREATE'] = 'Create';
+$mod_strings['LBL_STIC_MENU_COMMAND_RENAME'] = 'Rename';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Edit URL';
+$mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Remove';

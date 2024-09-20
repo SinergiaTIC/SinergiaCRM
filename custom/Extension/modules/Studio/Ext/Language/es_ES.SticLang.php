@@ -33,3 +33,8 @@ $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar al menú clásico';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = '¿Desea cambiar al menú clásico? Se restaurará la configuración que tenía cuando se activó el menú avanzado. Podrá reactivar el menú avanzado más adelante.';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Cambiar al menú avanzado';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = '¿Desea cambiar al menú avanzado? Se aplicará la configuración actual del menú clásico.';
+$mod_strings['LBL_STIC_MENU_COMMAND_CREATE'] = 'Crear';
+$mod_strings['LBL_STIC_MENU_COMMAND_RENAME'] = 'Renombrar';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Editar URL';
+$mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Eliminar';
+

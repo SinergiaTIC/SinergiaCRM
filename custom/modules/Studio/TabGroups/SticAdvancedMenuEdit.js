@@ -213,7 +213,7 @@ function createMenu() {
           Create: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-plus'></i> Create",
+            label: "<i class='glyphicon glyphicon-plus'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_CREATE,
             action: function(obj) {
               $node = tree.create_node($node, { text: "New Node", url: "" });
               tree.edit($node);
@@ -222,7 +222,7 @@ function createMenu() {
           Rename: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-pencil'></i> Rename",
+            label: "<i class='glyphicon glyphicon-pencil'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_RENAME,
             action: function(obj) {
               tree.edit($node);
             }
@@ -230,7 +230,7 @@ function createMenu() {
           EditURL: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-link'></i> Edit URL",
+            label: "<i class='glyphicon glyphicon-link'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_EDITURL,
             action: function(obj) {
               var editUrlPrompt = function() {
                 var url = prompt("Enter URL:", $node.original.url || "");
@@ -255,7 +255,7 @@ function createMenu() {
           Delete: {
             separator_before: false,
             separator_after: false,
-            label: "<i class='glyphicon glyphicon-remove'></i> Delete",
+            label: "<i class='glyphicon glyphicon-remove'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_REMOVE,
             action: function(obj) {
               if (tree.is_selected($node)) {
                 tree.delete_node(tree.get_selected());
