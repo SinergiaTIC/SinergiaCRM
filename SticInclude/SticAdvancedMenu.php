@@ -147,7 +147,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         $menuHtml = $isFirstLevel ? '<ul id="stic-menu" class="sm sm-stic">' : '<ul>';
         if ($isFirstLevel) {
             // Add home link at the first level
-            $menuHtml .= '<li><a href="index.php?module=Home&action=index"><i class="glyphicon glyphicon-home"></i></a></li>';
+            $menuHtml .= '<li><a href="index.php?module=Home&action=index" onclick="window.location.href=this.href; return false;"><i class="glyphicon glyphicon-home"></i></a></li>';
         }
         $menuHtml .= $html;
 
