@@ -233,7 +233,7 @@ function createMenu() {
             label: "<i class='glyphicon glyphicon-link'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_EDITURL,
             action: function(obj) {
               var editUrlPrompt = function() {
-                var url = prompt("Enter URL:", $node.original.url || "");
+                var url = prompt(SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT+":", $node.original.url || "");
                 if (url !== null) {
                   if (url === "") {
                     // Allow empty URL to clear the value

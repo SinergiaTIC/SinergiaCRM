@@ -36,4 +36,5 @@ $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = 'Do you want to switc
 $mod_strings['LBL_STIC_MENU_COMMAND_CREATE'] = 'Create';
 $mod_strings['LBL_STIC_MENU_COMMAND_RENAME'] = 'Rename';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Edit URL';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Enter the URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Remove';
