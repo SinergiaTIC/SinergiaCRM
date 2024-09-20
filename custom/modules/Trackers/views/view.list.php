@@ -37,16 +37,6 @@ class CustomTrackersViewList extends ViewList
 
         SticViews::preDisplay($this);
 
-        // See the module if the user is admin
-        global $current_user;
-        if (!is_admin($current_user)) {
-            sugar_die("Unauthorized access to administration.");
-        }
-
-        // Write here you custom code
-        $this->params["orderBy"] = "DATE_MODIFIED";
-        $this->params["sortOrder"] = "ASC";
-
     }
 
     public function display()
