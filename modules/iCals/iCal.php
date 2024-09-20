@@ -231,14 +231,14 @@ class iCal extends vCal
         }
 
         // STIC-Custom 20240920 MHP - Change behavior so that tasks are synchronized by default
-        // 
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/394
         // $taskAsVTODO = true;
         // if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true")) {
         //     $taskAsVTODO = false;
         // }        
         $taskAsVTODO = false;
         if ((!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "0"  || $_REQUEST['show_tasks_as_events'] == "false")) 
-        || ($sugar_config['show_tasks_as_events'] == false)) {
+         || (!empty($sugar_config['show_tasks_as_events']) && $sugar_config['show_tasks_as_events'] == false)) {
             $taskAsVTODO = true;
         }
         // STIC-Custom 
