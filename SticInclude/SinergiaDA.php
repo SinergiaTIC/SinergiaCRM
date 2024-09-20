@@ -1772,10 +1772,7 @@ class ExternalReporting
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
 
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
-                                if ($u['user_name'] == 'u1') {
-                                    echo '';
-                                }
-
+                                
                                 $crmGroupName = explode('SDA_', $userGroups['group'])[1];
 
                                 // Verify whether or not the group or user has access to the module for their roles
