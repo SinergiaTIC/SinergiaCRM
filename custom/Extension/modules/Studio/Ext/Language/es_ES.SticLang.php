@@ -36,8 +36,8 @@ $mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = '¿Desea cambiar al m
 $mod_strings['LBL_STIC_MENU_COMMAND_CREATE'] = 'Crear';
 $mod_strings['LBL_STIC_MENU_COMMAND_CREATE_DEFAULT'] = 'Nuevo nodo';
 $mod_strings['LBL_STIC_MENU_COMMAND_RENAME'] = 'Renombrar';
-$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Editar URL';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Editar la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Escriba la URL';
-$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Por favor escriba una URL válida';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Escriba una URL válida';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Eliminar';
 
