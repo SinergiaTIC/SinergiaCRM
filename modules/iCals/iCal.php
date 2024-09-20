@@ -237,8 +237,8 @@ class iCal extends vCal
         //     $taskAsVTODO = false;
         // }        
         $taskAsVTODO = false;
-        if ((!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "0"  || $_REQUEST['show_tasks_as_events'] == "false")) 
-         || (!empty($sugar_config['show_tasks_as_events']) && $sugar_config['show_tasks_as_events'] == false)) {
+        if ((isset($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "0"  || $_REQUEST['show_tasks_as_events'] == "false")) 
+         || (isset($sugar_config['show_tasks_as_events']) && $sugar_config['show_tasks_as_events'] == false)) {
             $taskAsVTODO = true;
         }
         // END STIC-Custom
