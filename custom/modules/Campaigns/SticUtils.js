@@ -188,7 +188,7 @@ function updateViewNewsLetterType(isNewsLetter) {
 function setRequired(require, field) {
   var $form = $("form#" + getFormName());
 
-  var labelText = $("[data-field='notification_prospect_list_ids'] [data-label]").contents().filter(function() {
+  var labelText = $("[data-field='" + field + "'] [data-label]").contents().filter(function() {
     return this.nodeType === Node.TEXT_NODE;
   }).text().trim().slice(0, -1);
   var type = $("[field='" + field + "']", $form).attr("type");
