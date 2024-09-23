@@ -226,43 +226,47 @@ function updateViewNotificationType(isNotification) {
   setRequired(isNotification, "notification_from_name");
   setRequired(isNotification, "notification_from_addr");
 
+  var $form = $("form#" + getFormName());
+
   if (isNotification) {
-    $("#status").val("Active");
-    $('[data-field="status"]').hide();
-    $('[data-field="end_date"]').hide();
-    $('[data-field="parent_name"]').show();
-    $(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().show();
-    $("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
-    if ($("#start_date").val() == "") {
-      var formatDate = $("#start_date").parent().children(".dateFormat").text().toUpperCase();
+    $form.find("#status").val("Active");
+    $form.find('[data-field="status"]').hide();
+    $form.find('[data-field="end_date"]').hide();
+    $form.find('[data-field="parent_name"]').show();
+    $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().show();
+    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").hide();
+    if ($form.find("#start_date").val() == "") {
+      var formatDate = $form.find("#start_date").parent().children(".dateFormat").text().toUpperCase();
       if (formatDate == "") {
         formatDate = STIC.userDateFormat.toUpperCase();
       }
       if (formatDate != "") {
-        $("#start_date").val(moment().format(formatDate));
+        $form.find("#start_date").val(moment().format(formatDate));
       }
     }
   } else {
-    $("#parent_type").val("");
-    $("#parent_name").val("");
-    $("#parent_id").val("");
-    $("#status").val("");
-    $('[data-field="status"]').show();
-    $('[data-field="end_date"]').show();
-    $('[data-field="parent_name"]').hide();
-    $(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
-    $("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
+    $form.find("#parent_type").val("");
+    $form.find("#parent_name").val("");
+    $form.find("#parent_id").val("");
+    $form.find("#status").val("");
+    $form.find('[data-field="status"]').show();
+    $form.find('[data-field="end_date"]').show();
+    $form.find('[data-field="parent_name"]').hide();
+    $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
+    $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
   }
 }
 
 function initializeQuickCreate() {
-  if ($("#subpanel_stic_campaigns_notification_newDiv").length == 1) {
+  var formName = getFormName();
+  if (formName == "form_SubpanelQuickCreate_Campaigns") {
     // Is a New notification from Subpanel
 
-    $("[data-field='campaign_type']").hide();
-    $("#campaign_type").val("Notification");
+    var $form = $("form#" + formName);
+    $form.find("[data-field='campaign_type']").hide();
+    $form.find("#campaign_type").val("Notification");
 
-    $("#status").val("Active");
+    $form.find("#status").val("Active");
     addEditCreateTemplateLinks();
   }
 }

@@ -268,10 +268,10 @@ class Campaign extends SugarBean
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
 		// return parent::save($check_notify);
         if ($this->campaign_type == "Notification" && 
-            !empty($_REQUEST['relate_to'] && $_REQUEST['relate_to'] == "getNotificationsFromParent" &&
-            !empty($_REQUEST['relate_id']))) {
+            !empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == "getNotificationsFromParent" &&
+            !empty($_REQUEST['relate_id']) && !empty($_REQUEST['return_module'])) {
             // Set parent type and ID for Notification campaigns
-            $this->parent_type = "Opportunities";
+            $this->parent_type = $_REQUEST['return_module'];
             $this->parent_id = $_REQUEST['relate_id'];
             $_REQUEST['relate_to'] = null;
             $_REQUEST['relate_id'] = null;
