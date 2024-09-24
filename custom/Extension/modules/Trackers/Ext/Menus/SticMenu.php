@@ -38,12 +38,12 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
+if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
 global $mod_strings, $app_strings, $sugar_config;
 
-if(ACLController::checkAccess('Trackers', 'list', true)){
-    $module_menu[]=array('index.php?module=Trackers&action=index', $mod_strings['LNK_LIST'],'View', 'Trackers');
+if (ACLController::checkAccess('Trackers', 'list', true)) {
+    $module_menu[] = array('index.php?module=Trackers&action=index', $mod_strings['LNK_LIST'], 'View', 'Trackers');
 }
