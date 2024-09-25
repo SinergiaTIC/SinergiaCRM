@@ -125,6 +125,7 @@ function getCampaingType() {
 function type_change() {
   var typeValue = getCampaingType();
 
+  debugger;
   updateViewNewsLetterType(typeValue == "NewsLetter");
   updateViewNotificationType(typeValue == "Notification");
   mail_change();
@@ -180,8 +181,12 @@ function ConvertItems(id) {
 function updateViewNewsLetterType(isNewsLetter) {
   if (isNewsLetter) {
     $('[data-field="frequency"]').show();
+    $('#freq_label').show();
+    $('#freq_field').show();
   } else {
     $('[data-field="frequency"]').hide();
+    $('#freq_label').hide();
+    $('#freq_field').hide();
   }
 }
 
