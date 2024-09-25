@@ -61,6 +61,6 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Durante la reconstrucción de Sine
 
 
 // Menú principal avanzado
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Menú principal';
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración de la estructura y el contenido del menú';
+$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
+$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración de la estructura y el contenido del menú';
 
