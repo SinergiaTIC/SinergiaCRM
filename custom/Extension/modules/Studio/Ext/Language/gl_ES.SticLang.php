@@ -38,3 +38,7 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Editar o URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Escriba o URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Escriba un URL válido';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Eliminar';
+
+// Agrupación de subpaneis
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar a agrupación de subpaneis';
+$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Os seguintes grupos utilizaranse para agrupar os subpaneis mediante pestanas nas vistas de detalle para os usuarios que elixan ver Módulos Agrupados. Arrastre e solte módulos cara a e desde os Grupos para configurar que módulos aparecen baixo os grupos. Nota: Os grupos baleiros non serán tidos en conta. <span class="warning"><strong><br>NOTA:</strong> Se quere cambiar o menú da aplicación, pode facelo desde o <a href="index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu">Menú principal</a></span>';
