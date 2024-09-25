@@ -90,6 +90,9 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 3 => array(
                     'id' => 'Opportunities',
                 ),
+                4 => array(
+                    'id' => 'stic_Group_Opportunities',
+                ),
             ),
         ),
         3 => array(
