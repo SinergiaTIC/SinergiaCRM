@@ -58,8 +58,9 @@ class CustomCampaignsViewEdit extends ViewEdit
             0 => array(
                 0 => array(
                     'name' => 'parent_name',
-                    'label' => 'LBL_PARENT_NAME',
+                    'label' => 'LBL_FLEX_RELATE',
                 ),
+                1 => '',
             ),
             1 => array(
                 0 => array(
