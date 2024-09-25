@@ -31,8 +31,6 @@ $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar iconos de módulos';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar la opción TODO';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar al menú clásico';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = '¿Desea cambiar al menú clásico? Se restaurará la configuración que tenía cuando se activó el menú avanzado. Podrá reactivar el menú avanzado más adelante.';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED'] = 'Cambiar al menú avanzado';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM'] = '¿Desea cambiar al menú avanzado? Se aplicará la configuración actual del menú clásico.';
 $mod_strings['LBL_STIC_MENU_COMMAND_CREATE'] = 'Crear';
 $mod_strings['LBL_STIC_MENU_COMMAND_CREATE_DEFAULT'] = 'Nuevo nodo';
 $mod_strings['LBL_STIC_MENU_COMMAND_RENAME'] = 'Renombrar';
@@ -40,4 +38,7 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Editar la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Escriba la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Escriba una URL válida';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Eliminar';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar la agrupación de subpaneles';
+$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Los siguientes grupos se utilizarán para agrupar los subpaneles mediante pestañas en las vistas de detalle a los usuarios que elijan ver Módulos Agrupados. Arrastre y suele módulos a y desde los Grupos para configurar qué módulos aparecen bajo los grupos. Nota: Los grupos vacíos no serán tenidos en cuenta. <span class="warning"><strong><br>NOTA:</strong> Si desea cambiar el menú de la aplicación, puede hacerlo desde <a href="index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu">Menú principal</a></span> ';
+
 

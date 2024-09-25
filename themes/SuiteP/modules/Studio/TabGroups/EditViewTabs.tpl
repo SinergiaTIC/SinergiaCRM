@@ -65,43 +65,6 @@
             onmouseup='this.className="button"' onmouseout='this.className="button"'
             onclick='studiotabs.generateForm("edittabs");document.edittabs.submit()'>
             {$MOD.LBL_BTN_SAVEPUBLISH}</button>
-			
-			{* STIC CUSTOM 20240709 JCH - Advanced Tab config (multilevel)  *}
-			{* STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208 *}
-			<button class="btn btn-link" id="advanced-menu" onclick="setAdvancedMenu();">{$MOD.LBL_STIC_MENU_CHANGE_TO_ADVANCED}</button>			
-			{literal}
-				<script>
-					$("#advanced-menu").on("click", function() {
-						if (confirm(SUGAR.language.get('Studio', "LBL_STIC_MENU_CHANGE_TO_ADVANCED_CONFIRM")) == false) {
-							return;
-						}
-
-						var dataToSend = {
-      						manageMode: "advanced_mode",
-    					};
-						// Perform AJAX request
-						$.ajax({
-							url: location.href.slice(0, location.href.indexOf(location.search)),
-							type: "POST",
-							data: {
-								module: "Studio",
-								action: "SticAdvancedMenuController",
-								...dataToSend
-							},
-							success: function(response) {
-								window.location.href="index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureGroupTabs";
-							},
-							error: function(xhr, status, error) {
-								console.error("Request error:", status, error);
-							}
-						});
-
-					});
-				</script>
-				{/literal}
-			{* END STIC *}
-
-
 </table>
 <p />
 <form name='edittabs' id='edittabs' method='POST' action='index.php'>
