@@ -64,3 +64,6 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Durante la reconstrucción de Sine
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración de la estructura y el contenido del menú';
 
+// Renombrar opciones de menu originales
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar el modo en que se agrupan los subpaneles en las vista de detalle';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar la agrupación de subpaneles';

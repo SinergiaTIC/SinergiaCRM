@@ -62,3 +62,7 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'The following errors have been fou
 // Advanced Menu
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Main menu';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Set main menu structure and content';
+
+// Rename original menu options
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configure how subpanels are grouped in the detail view';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configure subpanel grouping';

@@ -62,3 +62,7 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Na reconstrución de Sinergia Data
 // Menú principal avanzado
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración da estrutura e do contido do menú';
+
+// Renomear opcións de menú orixinais
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar o xeito en que se agrupan os subpaneis na vista de detalle';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar a agrupación de subpaneis';

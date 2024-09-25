@@ -62,3 +62,7 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = "Durant la reconstrucció de Sinerg
 // Menú principal avançat
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = "Configuració de l'estructura i el contingut del menú";
+
+// Reanomenar opcions de menú originals
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar la manera com s\'agrupen els subpanells a la vista de detall';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar l\'agrupació de subpanells';
