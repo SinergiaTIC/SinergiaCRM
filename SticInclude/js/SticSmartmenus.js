@@ -25,7 +25,8 @@ $(document).ready(function() {
   // Initialize SmartMenus plugin with specific offsets
   $("#stic-menu").smartmenus({
     subMenusSubOffsetX: 1,
-    subMenusSubOffsetY: -8
+    subMenusSubOffsetY: -8,
+    showTimeout: 100
   });
 
   // Update the menu when the first item is clicked (presumably the menu toggle)
