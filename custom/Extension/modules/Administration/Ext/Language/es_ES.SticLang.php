@@ -20,9 +20,12 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+// Sección de administración de SinergiaCRM
 $mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'SinergiaCRM';
 $mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Opciones de administración de SinergiaCRM';
 
+// Elementos de la sección de administración (títulos y descripciones cortas)
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_LINK_TITLE'] = 'Acciones de validación';
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_DESCRIPTION'] = 'Gestiona las acciones de validación y permite vincularlas a las tareas programadas.';
 
@@ -35,10 +38,13 @@ $mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Personalización condiciona
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Configuración';
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Opciones de configuración de SinergiaCRM.';
 
-$mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de correo que se usará cuando el sistema genere la contraseña de un nuevo usuario.';
-
 $mod_strings['LBL_STIC_TEST_DATA_LINK_TITLE'] = 'Datos de prueba';
 $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Cargar o eliminar datos de prueba.';
+
+$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
+$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstruye la integración con Sinergia Data Analytics.';
+
+// Datos de prueba
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = '<strong>Importante:</strong> Los registros de prueba cargados en los diferentes módulos no deben usarse para almacenar datos reales, ya que pueden ser eliminados en el futuro.';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_LINK_TITLE'] = 'Cargar el conjunto de datos de prueba';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_DESCRIPTION'] = 'Cargar un conjunto de datos de prueba para facilitar el aprendizaje del uso de SinergiaCRM. Estos datos podrán ser eliminados a voluntad en cualquier momento posterior.';
@@ -48,22 +54,22 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_LINK_TITLE'] = 'Eliminar el conjunto de 
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Eliminar el conjunto de datos de prueba previamente cargado.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Se han eliminado los datos de prueba correctamente.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Se han producido errores al eliminar los datos de prueba. Revise el <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_removeSticData">log</a>.';
-$mod_strings['LBL_ADMIN_ACTIONS'] = 'Acciones de Administración';
 
 // SinergiaDA
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstruye la integración con Sinergia Data Analytics.';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Reconstruir ahora';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Reconstruye y repara las vistas y los elementos necesarios para la integración con Sinergia Data Analytics. Añade nuevos campos si los hay.';
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ir a Sinergia Data Analytics';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'La reconstrucción de Sinergia Data Analytics se ha completado con éxito.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Durante la reconstrucción de Sinergia Data Analytics se han encontrado los siguientes errores';
 
-
 // Menú principal avanzado
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración de la estructura y el contenido del menú';
 
-// Renombrar opciones de menu originales
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar el modo en que se agrupan los subpaneles en las vista de detalle';
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar la agrupación de subpaneles';
+// Cadenas de SuiteCRM modificadas
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración de la agrupación de los subpaneles en las vistas de detalle';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupación de subpaneles';
+
+// Otras cadenas
+$mod_strings['LBL_ADMIN_ACTIONS'] = 'Acciones de Administración';
+$mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de correo que se usará cuando el sistema genere la contraseña de un nuevo usuario.';
