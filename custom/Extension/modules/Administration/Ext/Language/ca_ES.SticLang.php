@@ -20,9 +20,12 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+// Secció d'administració de SinergiaCRM
 $mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'SinergiaCRM';
 $mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = "Opcions d'administració de SinergiaCRM";
 
+// Elements de la secció d'administració (títols i descripcions curtes)
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_LINK_TITLE'] = 'Accions de validació';
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_DESCRIPTION'] = 'Gestiona les accions de validació i permet vincular-les a les tasques programades.';
 
@@ -35,10 +38,13 @@ $mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Personalització condiciona
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Configuració';
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Opcions de configuració de SinergiaCRM.';
 
-$mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = "Indiqueu la plantilla de correu que es farà servir quan el sistema generi la contrasenya d'un nou usuari.";
-
 $mod_strings['LBL_STIC_TEST_DATA_LINK_TITLE'] = 'Dades de prova';
 $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Carrega o elimina dades de prova.';
+
+$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
+$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstrueix la integració amb Sinergia Data Analytics.';
+
+// Dades de prova
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = "<strong>Important:</strong> Els registres de prova carregats als diferents mòduls no s'han de fer servir per emmagatzemar dades reals, ja que poden ser eliminats en el futur.";
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_LINK_TITLE'] = 'Carrega el conjunt de dades de prova';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_DESCRIPTION'] = "Carrega un conjunt de dades de prova per facilitar l'aprenentatge de l'ús de SinergiaCRM. Aquestes dades podran ser eliminades lliurement en qualsevol moment posterior.";
@@ -48,11 +54,8 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_LINK_TITLE'] = 'Elimina el conjunt de da
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Elimina el conjunt de dades de prova prèviament carregat.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Dades de prova eliminades correctament.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = "Hi ha hagut errors a l'eliminar les dades de prova. " & 'Reviseu el <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_removeSticData">log</a>.';
-$mod_strings['LBL_ADMIN_ACTIONS'] = "Accions d'Administració";
 
 // SinergiaDA
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstrueix la integració amb Sinergia Data Analytics.';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Reconstrueix ara';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = "Reconstrueix i repara les vistes i els elements necessaris per a la integració amb Sinergia Data Analytics. Si n'hi ha, afegeix els nous camps.";
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ves a Sinergia Data Analytics';
@@ -63,6 +66,10 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = "Durant la reconstrucció de Sinerg
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = "Configuració de l'estructura i el contingut del menú";
 
-// Reanomenar opcions de menú originals
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar la manera com s\'agrupen els subpanells a la vista de detall';
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar l\'agrupació de subpanells';
+// Cadenes de SuiteCRM modificades
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupació de subpanells';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = "Configuració de l'agrupació dels subpanells a les vistes de detall";
+
+// Altres cadenes
+$mod_strings['LBL_ADMIN_ACTIONS'] = "Accions d'Administració";
+$mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = "Indiqueu la plantilla de correu que es farà servir quan el sistema generi la contrasenya d'un nou usuari.";
