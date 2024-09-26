@@ -43,8 +43,8 @@
  * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
  */
 
-// STIC-Custom - MHP - 
-//
+// STIC-Custom - MHP - Defines popup settings for the notes module
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/402/
 $popupMeta = 
 array (
   'moduleMain' => 'Notes',
