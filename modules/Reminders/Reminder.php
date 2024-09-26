@@ -216,9 +216,18 @@ class Reminder extends Basic
             foreach ($reminders as $reminderId => $reminder) {
                 $recipients = self::getEmailReminderInviteesRecipients($reminderId, $checkDecline);
                 $eventBean = BeanFactory::getBean($reminder->related_event_module, $reminder->related_event_module_id);
-                if ($eventBean && $emailReminder->sendReminders($eventBean, $admin, $recipients)) {
-                    $reminder->email_sent = 1;
-                    $reminder->save();
+                
+                // STIC-Custom 20240926 ART - “Run Email Reminder Notifications” does not run when deleting a person
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+
+                // Current date added to compare with meeting start date to avoid sending past reminders
+                $dateNow = date('d/m/Y H:i');
+                if($eventBean->date_start > $dateNow || $eventBean->date_start == $dateNow){
+                // END STIC-Custom
+                    if ($eventBean && $emailReminder->sendReminders($eventBean, $admin, $recipients)) {
+                        $reminder->email_sent = 1;
+                        $reminder->save();
+                    }
                 }
             }
         }
@@ -238,14 +247,22 @@ class Reminder extends Basic
                 $inviteeModuleId = $invitee->related_invitee_module_id;
                 $personBean = BeanFactory::getBean($inviteeModule, $inviteeModuleId);
                 // The original email reminders check the accept_status field in related users/leads/contacts etc. and filtered these users who not decline this event.
-                if ($checkDecline && !self::isDecline($event, $personBean)) {
-                    if (!empty($personBean->email1)) {
-                        $arr = array(
-                            'type' => $inviteeModule,
-                            'name' => $personBean->full_name,
-                            'email' => $personBean->email1,
-                        );
-                        $emails[] = $arr;
+
+                // STIC-Custom 20240926 ART - “Run Email Reminder Notifications” does not run when deleting a person
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+
+                // Prevent a deleted contact, user, etc. from being deleted in order for the task to run
+                if($personBean != false) {
+                // END STIC-Custom
+                    if ($checkDecline && !self::isDecline($event, $personBean)) {
+                        if (!empty($personBean->email1)) {
+                            $arr = array(
+                                'type' => $inviteeModule,
+                                'name' => $personBean->full_name,
+                                'email' => $personBean->email1,
+                            );
+                            $emails[] = $arr;
+                        }
                     }
                 }
             }
