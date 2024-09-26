@@ -20,9 +20,12 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+// Sección de administración de SinergiaCRM
 $mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'SinergiaCRM';
 $mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Opcións de administración de SinergiaCRM';
 
+// Elementos de la sección de administración (títulos y descripciones cortas)
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_LINK_TITLE'] = 'Accións de validación';
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_DESCRIPTION'] = 'Xestiona as accións de validación e permite vinculalas ás tarefas programadas.';
 
@@ -35,10 +38,13 @@ $mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Personalización condiciona
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Configuración';
 $mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Opcións de configuración de SinergiaCRM.';
 
-$mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de correo que se enviará ao crear un usuario.';
-
 $mod_strings['LBL_STIC_TEST_DATA_LINK_TITLE'] = 'Datos de proba';
 $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Cargar ou eliminar datos de proba.';
+
+$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
+$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstrúe a integración con Sinergia Data Analytics.';
+
+// Datos de proba
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = '<strong>Importante:</strong> Os rexistros de proba cargados nos diferentes módulos non deben usarse para almacenar datos reais, xa que poden ser eliminados no futuro.';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_LINK_TITLE'] = 'Cargar o conxunto de datos de proba';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_DESCRIPTION'] = 'Cargar un conxunto de datos de proba para facilitar a aprendizaxe do uso de SinergiaCRM. Estes datos poderán ser eliminados a vontade en cualquera momento posterior.';
@@ -48,11 +54,8 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_LINK_TITLE'] = 'Eliminar o conxunto de d
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Eliminar o conxunto de datos de proba previamente cargado.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Elimináronse os datos de proba correctamente.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Producíronse erros ao eliminar os datos de proba. Revise o <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_removeSticData">log</a>.';
-$mod_strings['LBL_ADMIN_ACTIONS'] = 'Accións de Administración';
 
 // SinergiaDA
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstrúe a integración con Sinergia Data Analytics.';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Reconstruir agora';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Reconstrúe e repara as vistas e os elementos necesarios para a integración con Sinergia Data Analytics. Engade novos campos se os hai.';
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ir a Sinergia Data Analytics';
@@ -63,6 +66,10 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Na reconstrución de Sinergia Data
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración da estrutura e do contido do menú';
 
-// Renomear opcións de menú orixinais
+// Cadenas de SuiteCRM modificadas
 $mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar o xeito en que se agrupan os subpaneis na vista de detalle';
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar a agrupación de subpaneis';
+
+// Otras cadenas
+$mod_strings['LBL_ADMIN_ACTIONS'] = 'Accións de Administración';
+$mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de correo que se enviará ao crear un usuario.';
