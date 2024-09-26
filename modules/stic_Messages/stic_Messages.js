@@ -1,17 +1,31 @@
 /**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+
+/**
  * 
  * Used as a callback for sending various messages from list view
  */
 function onClickMassSendMessagesButton() {
-  // sugarListView.get_checks();
-  // if(sugarListView.get_checks_count() < 1) {
-  //     alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
-  //     return false;
-  // }
-  // document.MassUpdate.action.value='fromMassUpdate';
-  // document.MassUpdate.module.value='stic_Messages';
-  // document.MassUpdate.submit();
-
   let obj = { return_action: "ListView" };
   let jsonString = JSON.stringify(obj);
 
@@ -94,78 +108,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
     }
 
     SUGAR.ajaxUI.showLoadingPanel();
-
-    // var URL = 'index.php?module=stic_Messages&return_module='+currentModule+'&return_action='+return_action+'&return_id='+relatedId+'&action=ComposeView&in_popup=1&targetModule=' + targetModule + ids + '&relatedModule=' + currentModule + '&relatedId=' + relatedId;
-
-    
-    // $.get(URL, function(data) {
-    //     debugger;
-    //     var panelBody = $('<div>').append(data).find('#EditView').parent();
-
-    //   var dataPhone = $(source).attr('data-phone');
-
-    //   // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
-    //     var dataRecordId = $(source).attr('data-record-id');
-    //   if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
-    //     panelBody.find('#phone').val(dataPhone);
-    //   }
-    //   else {
-    //     // Mass send messages
-    //     debugger;
-    //     phoneList = '';
-    //     namesList = '';
-    //     idsList = '';
-    //     targetCount = 0;
-    //     panelBody.find('.phone-compose-view-to-list').each(function () {
-    //       dataPhone = $(this).attr('data-record-phone');
-    //       dataId = $(this).attr('data-record-id');
-    //       dataName = $(this).attr('data-record-name');
-    //       if (dataPhone !== '') {
-    //         if (targetCount > 0 ){
-    //           phoneList += ',';
-    //           namesList += ', ';
-    //           idsList += ';';
-    //         }
-    //         phoneList += dataPhone;
-    //         namesList += '<' + dataName + '> ' + dataPhone;
-    //         idsList += dataId;
-    //         targetCount++;
-    //       }
-    //     });
-    //     panelBody.find('#phone').val(phoneList);
-    //     function replacePhoneField(panelBody) {
-    //       var originalPhone = panelBody.find('#phone');
-    //       if (!originalPhone) return; // Exit if the original phone input doesn't exist
-      
-    //       originalPhone.parent().append('<input type="text" id="namesList" size="30" disabled>');
-    //       originalPhone[0].style='display:none'
-    //     }
-    //     replacePhoneField(panelBody);
-    //     phoneElement = panelBody.find('#phone')
-    //     phoneElement.attr('readonly', true);
-    //     phoneElement.css('background', '#F8F8F8');
-    //     phoneElement.css('border-color', '#E2E7EB');
-
-    //     // panelBody.find('#phone').attr('disabled', true);
-    //     panelBody.find('#mass_ids').val(idsList);
-    //   }
-
-    //     SUGAR.ajaxUI.hideLoadingPanel();
-
-    //     $('<div>').append(panelBody).dialog({
-    //         modal: true,
-    //         // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
-    //         title: '',
-    //         width: '80%',
-    //     });
-    //     if (typeof namesList !== 'undefined') {
-    //       $('#namesList').val(namesList);
-    //     }
-    //     $( "#template" ).change(function() {
-    //         console.log('template change');
-    //         $.fn.stic_MessagesComposeView.onTemplateChange()
-    //       });
-    // });
 
     var baseURL = 'index.php';
 
