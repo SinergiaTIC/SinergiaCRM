@@ -55,6 +55,7 @@ function onClickMassRetryMessagesButton() {
 }
 
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
+  debugger;
     let numRecordsSelected = $(".selectedRecords.value").eq(0).text();
 
     if (numRecordsSelected > getMessagesLimit()) {
@@ -92,13 +93,115 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         targetModule = $(source).attr('data-module');
     }
 
-
-    var URL = 'index.php?module=stic_Messages&return_module='+currentModule+'&return_action='+return_action+'&return_id='+relatedId+'&action=ComposeView&in_popup=1&targetModule=' + targetModule + ids + '&relatedModule=' + currentModule + '&relatedId=' + relatedId;
-
     SUGAR.ajaxUI.showLoadingPanel();
+
+    // var URL = 'index.php?module=stic_Messages&return_module='+currentModule+'&return_action='+return_action+'&return_id='+relatedId+'&action=ComposeView&in_popup=1&targetModule=' + targetModule + ids + '&relatedModule=' + currentModule + '&relatedId=' + relatedId;
+
     
-    $.get(URL, function(data) {
-        debugger;
+    // $.get(URL, function(data) {
+    //     debugger;
+    //     var panelBody = $('<div>').append(data).find('#EditView').parent();
+
+    //   var dataPhone = $(source).attr('data-phone');
+
+    //   // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
+    //     var dataRecordId = $(source).attr('data-record-id');
+    //   if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
+    //     panelBody.find('#phone').val(dataPhone);
+    //   }
+    //   else {
+    //     // Mass send messages
+    //     debugger;
+    //     phoneList = '';
+    //     namesList = '';
+    //     idsList = '';
+    //     targetCount = 0;
+    //     panelBody.find('.phone-compose-view-to-list').each(function () {
+    //       dataPhone = $(this).attr('data-record-phone');
+    //       dataId = $(this).attr('data-record-id');
+    //       dataName = $(this).attr('data-record-name');
+    //       if (dataPhone !== '') {
+    //         if (targetCount > 0 ){
+    //           phoneList += ',';
+    //           namesList += ', ';
+    //           idsList += ';';
+    //         }
+    //         phoneList += dataPhone;
+    //         namesList += '<' + dataName + '> ' + dataPhone;
+    //         idsList += dataId;
+    //         targetCount++;
+    //       }
+    //     });
+    //     panelBody.find('#phone').val(phoneList);
+    //     function replacePhoneField(panelBody) {
+    //       var originalPhone = panelBody.find('#phone');
+    //       if (!originalPhone) return; // Exit if the original phone input doesn't exist
+      
+    //       originalPhone.parent().append('<input type="text" id="namesList" size="30" disabled>');
+    //       originalPhone[0].style='display:none'
+    //     }
+    //     replacePhoneField(panelBody);
+    //     phoneElement = panelBody.find('#phone')
+    //     phoneElement.attr('readonly', true);
+    //     phoneElement.css('background', '#F8F8F8');
+    //     phoneElement.css('border-color', '#E2E7EB');
+
+    //     // panelBody.find('#phone').attr('disabled', true);
+    //     panelBody.find('#mass_ids').val(idsList);
+    //   }
+
+    //     SUGAR.ajaxUI.hideLoadingPanel();
+
+    //     $('<div>').append(panelBody).dialog({
+    //         modal: true,
+    //         // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
+    //         title: '',
+    //         width: '80%',
+    //     });
+    //     if (typeof namesList !== 'undefined') {
+    //       $('#namesList').val(namesList);
+    //     }
+    //     $( "#template" ).change(function() {
+    //         console.log('template change');
+    //         $.fn.stic_MessagesComposeView.onTemplateChange()
+    //       });
+    // });
+
+    var baseURL = 'index.php';
+
+    // Create an object with all the parameters
+    var paramsPost = {
+        module: 'stic_Messages',
+        return_module: currentModule,
+        return_action: return_action,
+        return_id: relatedId,
+        action: 'ComposeView',
+        in_popup: '1',
+        targetModule: targetModule,
+        relatedModule: currentModule,
+        relatedId: relatedId,
+        current_query_by_page: $("[name='current_query_by_page']").val(),
+        select_entire_list: $("[name='select_entire_list']").val()
+    };
+    
+    // Add the ids to the params object
+    // Assuming 'ids' is a string like '&id=123&id=456'
+    ids.split(',').forEach(function(item) {
+        if (item) {
+            var parts = item.split('=');
+            if (parts.length === 2) {
+                paramsPost[parts[0]] = parts[1];
+            }
+        }
+    });
+    
+    // Make the POST request
+    $.ajax({
+        url: baseURL,
+        type: 'POST',
+        data: paramsPost,
+        success: function(data) {
+    debugger;
         var panelBody = $('<div>').append(data).find('#EditView').parent();
 
       var dataPhone = $(source).attr('data-phone');
@@ -164,7 +267,12 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             console.log('template change');
             $.fn.stic_MessagesComposeView.onTemplateChange()
           });
+        },
+        error: function(xhr, status, error) {
+            // Your error handler here
+        }
     });
+
 }
 
 $(function() {

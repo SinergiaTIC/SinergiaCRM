@@ -75,25 +75,64 @@ class stic_MessagesController extends SugarController
             }
             echo '<script src="cache/jsLanguage/stic_Messages/'. $GLOBALS['current_language'] . '.js"></script>';
         }
-        if (isset($_REQUEST['ids']) && isset($_REQUEST['targetModule'])) {
-            $toAddressIds = explode(',', rtrim($_REQUEST['ids'], ','));
-            foreach ($toAddressIds as $id) {
-                $destinataryBean = BeanFactory::getBean($_REQUEST['targetModule'], $id);
-                if ($destinataryBean) {
-                    $idLine = '<input type="hidden" class="phone-compose-view-to-list" ';
-                    $idLine .= 'data-record-module="' . $_REQUEST['targetModule'] . '" ';
-                    $idLine .= 'data-record-id="' . $id . '" ';
-                    $idLine .= 'data-record-name="' . $destinataryBean->name . '" ';
-                    if ($_REQUEST['targetModule'] === 'Accounts') {
-                        $idLine .= 'data-record-phone="' . $destinataryBean->phone_office . '">';
-                    }
-                    else {
-                        $idLine .= 'data-record-phone="' . $destinataryBean->phone_mobile . '">';
-                    }
-                    echo $idLine;
-                }
+
+
+        // Building and running the query that retrieves all the record that were selected in ListView
+        
+        $bean = BeanFactory::getBean($_REQUEST['targetModule']);
+        $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($bean);
+        $nameFieldName = stic_MessagesUtils::getNameFieldNameForMessage($bean);
+        $moduleTable = $bean->table_name;
+        $moduleName = $bean->module_name;
+        $sql = "SELECT id, $phoneFieldName as phone, $nameFieldName as name FROM {$moduleTable} WHERE {$moduleTable}.deleted=0";
+        $where = '';
+        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
+            require_once 'include/export_utils.php';
+            $retArray = generateSearchWhere($moduleName, $_REQUEST['current_query_by_page']);
+            $where = '';
+            if (!empty($retArray['where'])) {
+                $where = " AND " . $retArray['where'];
             }
+        } else {
+            $ids = explode(',', rtrim($_REQUEST['ids'], ','));
+            $idList = implode("','", $ids);
+            $where = " AND id in ('{$idList}')";
         }
+        $sql .= $where;
+        $db = DBManagerFactory::getInstance();
+        $resultado = $db->query($sql);
+        unset($ids);
+        $ids = array();
+
+        while ($row = $db->fetchByAssoc($resultado)) {
+            // Building the Summary count table
+            $idLine = '<input type="hidden" class="phone-compose-view-to-list" ';
+            $idLine .= 'data-record-module="' . $_REQUEST['targetModule'] . '" ';
+            $idLine .= 'data-record-id="' . $row['id'] . '" ';
+            $idLine .= 'data-record-name="' . $row['name'] . '" ';
+            $idLine .= 'data-record-phone="' . $row['phone'] . '">';
+            echo $idLine;
+        }
+
+        // if (isset($_REQUEST['ids']) && isset($_REQUEST['targetModule'])) {
+        //     $toAddressIds = explode(',', rtrim($_REQUEST['ids'], ','));
+        //     foreach ($toAddressIds as $id) {
+        //         $destinataryBean = BeanFactory::getBean($_REQUEST['targetModule'], $id);
+        //         if ($destinataryBean) {
+        //             $idLine = '<input type="hidden" class="phone-compose-view-to-list" ';
+        //             $idLine .= 'data-record-module="' . $_REQUEST['targetModule'] . '" ';
+        //             $idLine .= 'data-record-id="' . $id . '" ';
+        //             $idLine .= 'data-record-name="' . $destinataryBean->name . '" ';
+        //             if ($_REQUEST['targetModule'] === 'Accounts') {
+        //                 $idLine .= 'data-record-phone="' . $destinataryBean->phone_office . '">';
+        //             }
+        //             else {
+        //                 $idLine .= 'data-record-phone="' . $destinataryBean->phone_mobile . '">';
+        //             }
+        //             echo $idLine;
+        //         }
+        //     }
+        // }
     }
 
     public function action_getParentPhone() {

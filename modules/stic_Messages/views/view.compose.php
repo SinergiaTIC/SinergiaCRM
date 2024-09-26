@@ -45,7 +45,8 @@ class stic_MessagesViewCompose extends ViewEdit
         parent::__construct();
 
         $this->type = 'compose';
-        if(!empty($_GET['in_popup'])&& $_GET['in_popup'] == '1'){
+        if(!empty($_GET['in_popup'])&& $_GET['in_popup'] == '1' ||
+           !empty($_POST['in_popup'])&& $_POST['in_popup'] == '1'){
             $this->options['show_title'] = false;
             $this->options['show_header'] = false;
             $this->options['show_footer'] = false;

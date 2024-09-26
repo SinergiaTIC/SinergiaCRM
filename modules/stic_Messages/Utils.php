@@ -4,11 +4,11 @@ global $messageableModules;
 
 // This array can be extended in custom folder to add new modules or change default fields
 $messageableModules = array(
-    'Contacts' => 'phone_mobile',
-    'Accounts' => 'phone_office',
-    'Leads' => 'phone_mobile',
-    'Employees' => 'phone_mobile',
-    'Users' => 'phone_mobile'
+    'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+    'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name'),
+    'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+    'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+    'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
 );
 
 
@@ -68,11 +68,25 @@ class stic_MessagesUtils {
     public static function getPhoneForMessage($bean) {
         global $messageableModules;
     
-        $fieldName = $messageableModules[$bean->module_name];
+        $fieldName = $messageableModules[$bean->module_name]['phoneField'];
         if ($fieldName !== null){
             return $bean->$fieldName;
         }
         return '';
+    }
+    public static function getPhoneFieldNameForMessage($bean) {
+        global $messageableModules;
+    
+        $fieldName = $messageableModules[$bean->module_name]['phoneField'];
+
+        return $fieldName;
+    }
+    public static function getNameFieldNameForMessage($bean) {
+        global $messageableModules;
+    
+        $fieldName = $messageableModules[$bean->module_name]['name'];
+
+        return $fieldName;
     }
     public static function get_stic_messages($type) {
         $beanId = $_REQUEST['record'];
