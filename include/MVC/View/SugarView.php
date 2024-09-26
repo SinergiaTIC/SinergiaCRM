@@ -667,7 +667,7 @@ class SugarView
                 $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
             }
 
-            // STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist
+            // STIC CUSTOM 20240709 JCH - Show Advanced tab config (multilevel) if exists
             // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
 
             if($sugar_config['stic_advanced_menu_enabled']){
