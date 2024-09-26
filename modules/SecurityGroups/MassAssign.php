@@ -71,18 +71,37 @@ if (isset($_POST['mass']) && is_array($_POST['mass'])) {
         if (isset($_POST['Delete'])) {
             $sugarbean->retrieve($id);
 
-            //if($sugarbean->ACLAccess('Delete')){
+            // $securityGroup = $groupFocus->id;
 
-            $GLOBALS['log']->debug("MassAssign - deleting relationship: $groupFocus->name");
-            if ($sugarbean->module_dir == 'Users') {
-                $rel_name = "SecurityGroups";
+            //if($sugarbean->ACLAccess('Delete')){
+            
+            // BeanFactory::getBean('Users', 1);
+            $aclaccess_is_owner = false;
+            $aclaccess_in_group = false;
+
+            global $current_user;
+            if (is_admin($current_user)) {
+                $aclaccess_is_owner = true;
             } else {
-                if (empty($rel_name) || !isset($rel_name)) {
-                    $rel_name = $groupFocus->getLinkName($sugarbean->module_dir, "SecurityGroups");
-                }
+                $aclaccess_is_owner = $groupFocus->isOwner($current_user->id);
             }
-            $sugarbean->load_relationship($rel_name);
-            $sugarbean->$rel_name->delete($sugarbean->id, $groupFocus->id);
+            require_once("modules/SecurityGroups/SecurityGroup.php");
+            $aclaccess_in_group = SecurityGroup::groupHasAccess($groupFocus->module_dir, $groupFocus->id);
+            $canEdit = $groupFocus->ACLAccess('EditView', $aclaccess_is_owner, $aclaccess_in_group);
+
+            if ($canEdit) {
+                $GLOBALS['log']->debug("MassAssign - deleting relationship: $groupFocus->name");
+                if ($sugarbean->module_dir == 'Users') {
+                    $rel_name = "SecurityGroups";
+                } else {
+                    //###EPS###
+                    if (empty($rel_name) || !isset($rel_name)) {
+                        $rel_name = $groupFocus->getLinkName($sugarbean->module_dir, "SecurityGroups");
+                    }
+                }
+                $sugarbean->load_relationship($rel_name);
+                $sugarbean->$rel_name->delete($sugarbean->id, $groupFocus->id);
+            }
 
         //As of 6.3.0 many-to-many requires a link field set in both modules...so lets bypass that
                 //$groupFocus->removeGroupFromRecord($sugarbean->module_dir, $id, $groupFocus->id);
