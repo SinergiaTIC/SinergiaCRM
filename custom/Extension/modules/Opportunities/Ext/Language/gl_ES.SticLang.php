@@ -56,6 +56,10 @@ $mod_strings['LBL_EMAIL_OPPORTUNITIES_SUBJECT'] = '[Recordatorio do CRM] Data re
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_1'] = 'Aproxímase unha data relevante para a seguinte subvención: ';
 $mod_strings['LBL_EMAIL_OPPORTUNITIES_BODY_2'] = 'Faga clic no enlace para revisala.';
 
+// Cadenas Organizaciones subvencionadas
+$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_OPPORTUNITIES_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organizaciones subvencionadas';
+$mod_strings['LBL_LOAD_PARTICIPANTS'] = 'Carga de participantes';
+
 // Cadeas adaptadas de Oportunidades a Subvencións
 $mod_strings['LBL_MODULE_NAME'] = 'Subvencións';
 $mod_strings['LBL_MODULE_TITLE'] = 'Subvencións: Inicio';
@@ -82,6 +86,11 @@ $mod_strings['LBL_MY_CLOSED_OPPORTUNITIES'] = 'As miñas Subvencións cerradas';
 $mod_strings['LBL_TOTAL_OPPORTUNITIES'] = 'Total de Subvencións';
 $mod_strings['LBL_CLOSED_WON_OPPORTUNITIES'] = 'Subvencións gañadas';
 $mod_strings['LNK_IMPORT_OPPORTUNITIES'] = 'Importar Subvencións';
+
+// Cadeas de notificación de novas subvencións
+$mod_strings['LBL_STIC_OPPORTUNITY_URL'] = 'URL de la convocatoria';
+$mod_strings['LBL_STIC_ADDITIONAL_INFORMATION'] = 'Información adicional';
+$mod_strings['LBL_STIC_CAMPAIGNS_NOTIFICATION_FROM_OPPORTUNITIES_TITLE'] = 'Notificaciones';
 
 // Cadeas Ayudas
 $mod_strings['LBL_STIC_GRANTS_OPPORTUNITIES_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
