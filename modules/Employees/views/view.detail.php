@@ -53,7 +53,7 @@ class EmployeesViewDetail extends ViewDetail
 
 
 
-    
+
     /**
      * Return the "breadcrumbs" to display at the top of the page
      *
