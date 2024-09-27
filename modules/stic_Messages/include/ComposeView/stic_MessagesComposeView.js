@@ -194,7 +194,6 @@ addRequiredMark('parent_id', 'conditional-required');
   }
 
   $.fn.stic_MessagesComposeView.onParentSelect = function (args) {
-    debugger;
     set_return(args);
     if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
       $("#phone").val(args.name_to_value_array.phone_mobile);  
@@ -204,7 +203,6 @@ addRequiredMark('parent_id', 'conditional-required');
     }
   };
   $.fn.stic_MessagesComposeView.onParentChange = function (args) {
-    debugger;
     if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
       $("#phone").val(args.name_to_value_array.phone_mobile);  
     }
@@ -230,7 +228,6 @@ function checkStatus() {
 YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
 
 function parentIdChanged() {
-  debugger;
   console.log('goalchanged');
   let parentName = $('#parent_name').val();
   let parentId = $('#parent_id').val();
@@ -243,7 +240,6 @@ function parentIdChanged() {
 }
 
 function applyParent(parentData) {
-  debugger;
   if(parentData!= null) {
     $('#phone').val(parentData['phone']);
   }
@@ -259,7 +255,6 @@ function getParentAsync(parentId, parentType, callbackFunction) {
       "parentType": parentType
     },
     success: function(resultado) {
-      debugger;
       if (resultado.code == 'OK') {
         callbackFunction(resultado.data);
       }

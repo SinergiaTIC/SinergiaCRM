@@ -69,7 +69,6 @@ function onClickMassRetryMessagesButton() {
 }
 
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
-  debugger;
     let numRecordsSelected = $(".selectedRecords.value").eq(0).text();
 
     if (numRecordsSelected > getMessagesLimit()) {
@@ -144,72 +143,71 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         type: 'POST',
         data: paramsPost,
         success: function(data) {
-    debugger;
-        var panelBody = $('<div>').append(data).find('#EditView').parent();
 
-      var dataPhone = $(source).attr('data-phone');
+          var panelBody = $('<div>').append(data).find('#EditView').parent();
 
-      // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
-        var dataRecordId = $(source).attr('data-record-id');
-      if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
-        panelBody.find('#phone').val(dataPhone);
-      }
-      else {
-        // Mass send messages
-        debugger;
-        phoneList = '';
-        namesList = '';
-        idsList = '';
-        targetCount = 0;
-        panelBody.find('.phone-compose-view-to-list').each(function () {
-          dataPhone = $(this).attr('data-record-phone');
-          dataId = $(this).attr('data-record-id');
-          dataName = $(this).attr('data-record-name');
-          if (dataPhone !== '') {
-            if (targetCount > 0 ){
-              phoneList += ',';
-              namesList += ', ';
-              idsList += ';';
+        var dataPhone = $(source).attr('data-phone');
+
+        // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
+          var dataRecordId = $(source).attr('data-record-id');
+        if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
+          panelBody.find('#phone').val(dataPhone);
+        }
+        else {
+          // Mass send messages
+          phoneList = '';
+          namesList = '';
+          idsList = '';
+          targetCount = 0;
+          panelBody.find('.phone-compose-view-to-list').each(function () {
+            dataPhone = $(this).attr('data-record-phone');
+            dataId = $(this).attr('data-record-id');
+            dataName = $(this).attr('data-record-name');
+            if (dataPhone !== '') {
+              if (targetCount > 0 ){
+                phoneList += ',';
+                namesList += ', ';
+                idsList += ';';
+              }
+              phoneList += dataPhone;
+              namesList += '<' + dataName + '> ' + dataPhone;
+              idsList += dataId;
+              targetCount++;
             }
-            phoneList += dataPhone;
-            namesList += '<' + dataName + '> ' + dataPhone;
-            idsList += dataId;
-            targetCount++;
-          }
-        });
-        panelBody.find('#phone').val(phoneList);
-        function replacePhoneField(panelBody) {
-          var originalPhone = panelBody.find('#phone');
-          if (!originalPhone) return; // Exit if the original phone input doesn't exist
-      
-          originalPhone.parent().append('<input type="text" id="namesList" size="30" disabled>');
-          originalPhone[0].style='display:none'
-        }
-        replacePhoneField(panelBody);
-        phoneElement = panelBody.find('#phone')
-        phoneElement.attr('readonly', true);
-        phoneElement.css('background', '#F8F8F8');
-        phoneElement.css('border-color', '#E2E7EB');
-
-        // panelBody.find('#phone').attr('disabled', true);
-        panelBody.find('#mass_ids').val(idsList);
-      }
-
-        SUGAR.ajaxUI.hideLoadingPanel();
-
-        $('<div>').append(panelBody).dialog({
-            modal: true,
-            // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
-            title: '',
-            width: '80%',
-        });
-        if (typeof namesList !== 'undefined') {
-          $('#namesList').val(namesList);
-        }
-        $( "#template" ).change(function() {
-            console.log('template change');
-            $.fn.stic_MessagesComposeView.onTemplateChange()
           });
+          panelBody.find('#phone').val(phoneList);
+          function replacePhoneField(panelBody) {
+            var originalPhone = panelBody.find('#phone');
+            if (!originalPhone) return; // Exit if the original phone input doesn't exist
+        
+            originalPhone.parent().append('<input type="text" id="namesList" size="30" disabled>');
+            originalPhone[0].style='display:none'
+          }
+          replacePhoneField(panelBody);
+          phoneElement = panelBody.find('#phone')
+          phoneElement.attr('readonly', true);
+          phoneElement.css('background', '#F8F8F8');
+          phoneElement.css('border-color', '#E2E7EB');
+
+          // panelBody.find('#phone').attr('disabled', true);
+          panelBody.find('#mass_ids').val(idsList);
+        }
+
+          SUGAR.ajaxUI.hideLoadingPanel();
+
+          $('<div>').append(panelBody).dialog({
+              modal: true,
+              // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
+              title: '',
+              width: '80%',
+          });
+          if (typeof namesList !== 'undefined') {
+            $('#namesList').val(namesList);
+          }
+          $( "#template" ).change(function() {
+              console.log('template change');
+              $.fn.stic_MessagesComposeView.onTemplateChange()
+            });
         },
         error: function(xhr, status, error) {
             // Your error handler here
@@ -219,7 +217,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 }
 
 $(function() {
-  debugger;
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 
     const attr = 'sms-button'

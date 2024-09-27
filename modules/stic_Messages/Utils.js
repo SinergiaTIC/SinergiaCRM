@@ -22,7 +22,6 @@
 /* HEADER */
 // Set module name
 var module = "stic_Messages";
-debugger;
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "edit":
