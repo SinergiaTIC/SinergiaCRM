@@ -87,7 +87,7 @@ class stic_IncorporaController extends SugarController
         $where = '';
         if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
             require_once 'include/export_utils.php';
-            $retArray = generateSearchWhere($moduleTable, $_REQUEST['current_query_by_page']);
+            $retArray = generateSearchWhere($bean->module_name, $_REQUEST['current_query_by_page']);
             $where = '';
             if (!empty($retArray['where'])) {
                 $where = " AND " . $retArray['where'];
