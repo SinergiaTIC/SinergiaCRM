@@ -85,10 +85,10 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
     }
     
     var relatedId = $('[name="record"]').val();
-    var ids = '&ids=';
+    var ids = '';
     if (typeof $(source).attr('data-record-id') !== 'undefined' && $(source).attr('data-record-id') !== '') {
       // One record
-      ids = ids + $(source).attr('data-record-id');
+      ids = '&ids=' + $(source).attr('data-record-id');
       relatedId = $(source).attr('data-record-id');
     }
     else{
@@ -122,20 +122,21 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         targetModule: targetModule,
         relatedModule: currentModule,
         relatedId: relatedId,
+        ids: ids,
         current_query_by_page: $("[name='current_query_by_page']").val(),
         select_entire_list: $("[name='select_entire_list']").val()
     };
     
     // Add the ids to the params object
     // Assuming 'ids' is a string like '&id=123&id=456'
-    ids.split(',').forEach(function(item) {
-        if (item) {
-            var parts = item.split('=');
-            if (parts.length === 2) {
-                paramsPost[parts[0]] = parts[1];
-            }
-        }
-    });
+    // ids.split(',').forEach(function(item) {
+    //     if (item) {
+    //         var parts = item.split('=');
+    //         if (parts.length === 2) {
+    //             paramsPost[parts[0]] = parts[1];
+    //         }
+    //     }
+    // });
     
     // Make the POST request
     $.ajax({
