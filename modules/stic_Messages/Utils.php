@@ -21,22 +21,21 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-global $messageableModules;
+// global $messageableModules;
 
 // This array can be extended in custom folder to add new modules or change default fields
-$messageableModules = array(
-    'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
-    'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name'),
-    'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
-    'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
-    'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
-);
 
 
 class stic_MessagesUtils {
+    public static $messageableModules = array(
+        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name'),
+        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+    );
     public static function getMessageableModules() {
-        global $messageableModules;
-        $modules = array_keys($messageableModules);
+        $modules = array_keys(self::$messageableModules);
         asort($modules);
         return $modules;
     }
@@ -87,25 +86,22 @@ class stic_MessagesUtils {
     }
 
     public static function getPhoneForMessage($bean) {
-        global $messageableModules;
     
-        $fieldName = $messageableModules[$bean->module_name]['phoneField'];
+        $fieldName = self::$messageableModules[$bean->module_name]['phoneField'];
         if ($fieldName !== null){
             return $bean->$fieldName;
         }
         return '';
     }
     public static function getPhoneFieldNameForMessage($bean) {
-        global $messageableModules;
     
-        $fieldName = $messageableModules[$bean->module_name]['phoneField'];
+        $fieldName = self::$messageableModules[$bean->module_name]['phoneField'];
 
         return $fieldName;
     }
     public static function getNameFieldNameForMessage($bean) {
-        global $messageableModules;
     
-        $fieldName = $messageableModules[$bean->module_name]['name'];
+        $fieldName = self::$messageableModules[$bean->module_name]['name'];
 
         return $fieldName;
     }
