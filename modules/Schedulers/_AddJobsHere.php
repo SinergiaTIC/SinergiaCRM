@@ -454,8 +454,17 @@ function removeDocumentsFromFS()
     $return = true;
     while ($row = $db->fetchByAssoc($resource)) {
         $bean = BeanFactory::getBean($row['module']);
+
+        // Update the database to mark the document as deleted
+        $db->query('UPDATE ' . $tableName . ' SET deleted=1 WHERE id=' . $db->quoted($row['id']));
         $bean->retrieve($row['bean_id'], true, false);
-        if (empty($bean->id)) {
+
+        // STIC 20230929 ART - "Removal of Documents from Filesystem" task has erratic behavior
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+        // if (empty($bean->id)) {
+        if ($bean->id) {
+        // End STIC 20240116 ART
+        
             $isSuccess = true;
             $bean->id = $row['bean_id'];
             $directory = $bean->deleteFileDirectory();
