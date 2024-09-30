@@ -112,6 +112,26 @@ class EmailTemplateParser
         $this->module = $module;
         $this->siteUrl = $siteUrl;
         $this->trackerId = $trackerId;
+
+        // STIC-Custom - JBL - 20240709 - Notifications: Parse Email Templates with notified module
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+        if ($campaign->campaign_type == "Notification" && !empty($campaign->parent_id)) {
+            global $beanList, $beanFiles;
+
+            // If the Campaign is of type 'Notification' and has a parent_id
+            // Set up to parse with the related object specified in parent_id
+            if (isset($beanList[$campaign->parent_type])) {
+                $class = $beanList[$campaign->parent_type];
+                // Ensure the class is loaded
+                if (!class_exists($class)) {
+                    require_once($beanFiles[$class]);
+                }
+                // Instantiate the related object and retrieve its data using parent_id
+                $this->module = new $class();
+                $this->module->retrieve($campaign->parent_id);
+            }
+        }
+        // END STIC-Custom
     }
 
     /**
@@ -200,7 +220,8 @@ class EmailTemplateParser
             }
             // STIC-custom 20210922 - Parse decimal symbol in templates according to configuration
             // STIC#390
-            else if (($this->module->field_name_map[$attribute]['type']) && ($this->module->field_name_map[$attribute]['type']) === 'decimal'){
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/338
+            else if (($this->module->field_name_map[$attribute]['type']) && (($this->module->field_name_map[$attribute]['type']) === 'decimal' || ($this->module->field_name_map[$attribute]['type']) === 'float')){
                 require_once('SticInclude/Utils.php');
                 $value = SticUtils::formatDecimalInConfigSettings($this->module->$attribute, false);
                 return $value;
