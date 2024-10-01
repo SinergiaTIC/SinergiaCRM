@@ -41,4 +41,4 @@ $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Remove';
 
 // Subpanel grouping
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configure subpanel grouping';
-$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'The following groups will be used to group subpanels into tabs in the detail views for users who choose to view Grouped Modules. Drag and drop modules to and from the Groups to configure which modules appear under the groups. Note: Empty groups will not be taken into account. <span class="warning"><strong><br>NOTE:</strong> If you want to change the application menu, you can do so from the <a href="index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu">Main Menu</a></span>';
+$mod_strings['LBL_GROUP_TAB_WELCOME'] = "Create the groups and drag the appropriate modules into them to define the subpanel groupings that will be displayed to users who choose to view grouped modules in detail views. If you want to change the main menu, you can do it <a href='index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu'>here</a>.";
