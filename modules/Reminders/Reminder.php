@@ -216,18 +216,9 @@ class Reminder extends Basic
             foreach ($reminders as $reminderId => $reminder) {
                 $recipients = self::getEmailReminderInviteesRecipients($reminderId, $checkDecline);
                 $eventBean = BeanFactory::getBean($reminder->related_event_module, $reminder->related_event_module_id);
-
-                // STIC-Custom 20240926 ART - “Run Email Reminder Notifications” does not run when deleting a person
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/406
-
-                // Current date added to compare with meeting start date to avoid sending past reminders
-                $dateNow = date('d/m/Y H:i');
-                if($eventBean->date_start > $dateNow || $eventBean->date_start == $dateNow){
-                // END STIC-Custom
-                    if ($eventBean && $emailReminder->sendReminders($eventBean, $admin, $recipients)) {
-                        $reminder->email_sent = 1;
-                        $reminder->save();
-                    }
+                if ($eventBean && $emailReminder->sendReminders($eventBean, $admin, $recipients)) {
+                    $reminder->email_sent = 1;
+                    $reminder->save();
                 }
             }
         }
@@ -251,6 +242,7 @@ class Reminder extends Basic
                 // STIC-Custom 20240926 ART - “Run Email Reminder Notifications” does not run when deleting a person
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/406
 
+                // The task generated a blocking error that prevented the task from moving forward
                 // Prevent a deleted contact, user, etc. from being deleted in order for the task to run
                 if($personBean != false) {
                 // END STIC-Custom
@@ -281,7 +273,13 @@ class Reminder extends Basic
                 if ($eventBean) {
                     $remind_ts = $timedate->fromUser($eventBean->date_start)->modify("-{$reminderBean->timer_email} seconds")->ts;
                     $now_ts = $timedate->getNow()->ts;
-                    if ($now_ts >= $remind_ts) {
+
+                    // STIC-Custom 20241001 ART - Do not send a reminder if the meeting has already taken place 
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/406
+                    // if ($now_ts >= $remind_ts) {
+                    $event_ts = $timedate->fromUser($eventBean->date_start)->ts;
+                    if ($now_ts >= $remind_ts && $now_ts <= $event_ts) {
+                    // END STIC-Custom
                         $reminders[$reminderBean->id] = $reminderBean;
                     }
                 } else {
