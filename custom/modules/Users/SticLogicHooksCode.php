@@ -58,7 +58,7 @@ class UsersLogicHooks
 		$tracker->item_id = $bean->id;
 		$tracker->action = 'login_ok';
 		$tracker->module_name = $bean->module_name;
-		$tracker->assigned_user_link = $bean->user_name;
+		$tracker->tracker_user = $bean->user_name;
 		$tracker->session_id = $monitor;
 
 		$tracker->save();
@@ -75,7 +75,7 @@ class UsersLogicHooks
 		$tracker->item_id = $bean->id;
 		$tracker->module_name = 'Users';
 		$tracker->action = 'logout';
-		$tracker->assigned_user_link = $bean->user_name;
+		$tracker->tracker_user = $bean->user_name;
 		$tracker->session_id = $monitor;
 
 		$tracker->save();
