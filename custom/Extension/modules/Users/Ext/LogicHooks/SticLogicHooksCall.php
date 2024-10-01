@@ -28,3 +28,5 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $hook_array['before_save'][] = array(100, 'before_save', 'custom/modules/Users/SticLogicHooksCode.php', 'UsersLogicHooks', 'before_save');
 
 $hook_array['after_login'][] = array(100, 'after_login', 'custom/modules/Users/SticLogicHooksCode.php', 'UsersLogicHooks', 'after_login');
+
+$hook_array['before_logout'][] = array(1, 'before_logout', 'custom/modules/Users/SticLogicHooksCode.php','UsersLogicHooks', 'before_logout'); 

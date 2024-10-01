@@ -27,13 +27,9 @@ $hook_array = Array();
 // position, file, function 
 $hook_array['after_login'] = Array(); 
 $hook_array['after_login'][] = Array(1, 'SugarFeed old feed entry remover', 'modules/SugarFeed/SugarFeedFlush.php','SugarFeedFlush', 'flushStaleEntries'); 
-$hook_array['after_login'][] = Array(1, 'Track successful login', 'custom/modules/Users/LogicHooksCode/TrackLogin.php','Users_TrackLogin', 'TrackLogin'); 
 
 $hook_array['after_ui_frame'] = Array(); 
 $hook_array['after_ui_frame'][] = Array(1002, 'Document Templates after_ui_frame Hook', 'custom/modules/Users/DHA_DocumentTemplatesHooks.php','DHA_DocumentTemplatesUsersHook_class', 'after_ui_frame_method'); 
-
-$hook_array['before_logout'] = Array(); 
-$hook_array['before_logout'][] = Array(1, 'Track logout', 'custom/modules/Users/LogicHooksCode/TrackLogout.php','Users_TrackLogout', 'TrackLogout'); 
 
 
 ?>
