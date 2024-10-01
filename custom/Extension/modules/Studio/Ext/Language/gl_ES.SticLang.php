@@ -41,4 +41,4 @@ $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Eliminar';
 
 // Agrupación de subpaneis
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar a agrupación de subpaneis';
-$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Os seguintes grupos utilizaranse para agrupar os subpaneis mediante pestanas nas vistas de detalle para os usuarios que elixan ver Módulos Agrupados. Arrastre e solte módulos cara a e desde os Grupos para configurar que módulos aparecen baixo os grupos. Nota: Os grupos baleiros non serán tidos en conta. <span class="warning"><strong><br>NOTA:</strong> Se quere cambiar o menú da aplicación, pode facelo desde o <a href="index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu">Menú principal</a></span>';
+$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Cree os grupos e arrastre os módulos apropiados neles para definir as agrupacións de subpaneles que se mostrarán aos usuarios que elixen ver os módulos agrupados en vistas detalladas. Se quere cambiar o menú principal, debe facelo <a href="index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu">aquí</a>.';
