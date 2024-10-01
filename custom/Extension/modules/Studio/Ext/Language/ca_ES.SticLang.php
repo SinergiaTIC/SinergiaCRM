@@ -41,4 +41,4 @@ $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Elimina';
 
 // Agrupació de subpanells
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = "Configurar l'agrupació de subpanells";
-$mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Els següents grups s\'utilitzaran per agrupar els subpanells mitjançant pestanyes a les vistes de detall pels usuaris que triïn veure Mòduls Agrupats. Arrossegueu i deixeu anar mòduls cap a i des dels Grups per configurar quins mòduls apareixen sota els grups. Nota: Els grups buits no seran tinguts en compte. <span class="warning"><strong><br>NOTA:</strong> Si voleu canviar el menú de l\'aplicació, podeu fer-ho des de <a href="index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu">Menú principal</a></span>';
+$mod_strings['LBL_GROUP_TAB_WELCOME'] = "Creeu els grups i arrossegueu-hi els mòduls que s'escaigui per definir les agrupacions de subpanells que es mostraran als usuaris que triïn veure els mòduls agrupats a les vistes de detall. Si voleu canviar el menú principal, podeu fer-ho <a href='index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu'>aquí</a>.";
