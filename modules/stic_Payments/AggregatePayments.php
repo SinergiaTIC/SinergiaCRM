@@ -59,6 +59,7 @@ WHERE
     sp.deleted = 0
     AND u.deleted = 0
     AND MONTH(sp.payment_date) = MONTH(NOW())
+    AND YEAR(sp.payment_date) = YEAR(NOW())
     AND sp.payment_type = 'aggregated_services'
     AND sp.status != 'paid'
     ORDER BY sp.name ASC";
@@ -134,6 +135,7 @@ WHERE
     AND sp.deleted = 0
     AND sa.deleted = 0
     AND MONTH(sp.payment_date) = MONTH(NOW())
+    AND YEAR(sp.payment_date) = YEAR(NOW())
     AND sa.start_date < DATE_FORMAT(curdate(),'%Y-%m-01')
     AND CASE
             WHEN spc.periodicity = 'monthly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 1 MONTH)
@@ -226,6 +228,7 @@ WHERE
     AND sp.deleted = 0
     AND sa.deleted = 0
     AND MONTH(sp.payment_date) = MONTH(NOW())
+    AND YEAR(sp.payment_date) = YEAR(NOW())
     AND sa.start_date < subdate(curdate(), (day(curdate())-1))
     AND CASE
             WHEN spc.periodicity = 'monthly' THEN sa.start_date >= subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 1 MONTH)
