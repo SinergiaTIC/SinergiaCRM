@@ -31,4 +31,5 @@ $hook_array['after_ui_frame'] = Array();
 $hook_array['after_ui_frame'][] = Array(1002, 'Document Templates after_ui_frame Hook', 'custom/modules/Users/DHA_DocumentTemplatesHooks.php','DHA_DocumentTemplatesUsersHook_class', 'after_ui_frame_method'); 
 
 
+
 ?>
