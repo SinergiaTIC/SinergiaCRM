@@ -740,7 +740,7 @@ class SugarEmailAddress extends SugarBean
                     }
                 }
             }
-            // STIC-Custom 20241002 MHP - Set the createdAuditRecords flag to true once any changes to email properties have been audited
+            // STIC-Custom 20241002 MHP - Set the createdAuditRecords flag to true once changes to all emails in the record have been audited
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/277   
             $this->createdAuditRecords = true;
             // END STIC-Custom            
