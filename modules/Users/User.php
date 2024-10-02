@@ -2424,7 +2424,7 @@ EOQ;
         $SPECIAL = '~!@#$%^&*()_+=-{}|';
 
         // STIC - JBL - 20241002 - Generate password with security requeriments
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/417
         // $condition = 0;
         // $charBKT .= $UPPERCASE . $LOWERCASE . $NUMBER;
         // $password = "";
