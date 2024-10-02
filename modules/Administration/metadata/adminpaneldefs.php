@@ -189,13 +189,6 @@ $admin_option_defs['Administration']['aop'] = [
     './index.php?module=Administration&action=AOPAdmin',
     'aop-settings'
 ];
-$admin_option_defs['Administration']['configure_advanced_menu_tabs'] = [
-    'ConfigureTabs',
-    'LBL_CONFIGURE_MAIN_MENU',
-    'LBL_CONFIGURE_MAIN_MENU_DESC',
-    './index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu',
-    'stic-configure-main-menu'
-];
 $admin_option_defs['Administration']['configure_group_tabs'] = [
     'ConfigureTabs',
     'LBL_CONFIGURE_GROUP_TABS',
