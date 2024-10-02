@@ -2423,7 +2423,7 @@ EOQ;
         $UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $SPECIAL = '~!@#$%^&*()_+=-{}|';
 
-        // STIC - JBL - 20241002 - Generate password with security requeriments
+        // STIC - JBL - 20241002 - Generate password with security requirements
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/417
         // $condition = 0;
         // $charBKT .= $UPPERCASE . $LOWERCASE . $NUMBER;
