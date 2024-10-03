@@ -118,10 +118,13 @@
 
   $.fn.openComposeViewModal = function (source) {
     "use strict";
-
+    
     window.event.preventDefault();
     window.event.stopImmediatePropagation();
-
+    // STIC-Custom 20241003 EPS - Warning when entire list selected
+    alert(SUGAR.language.get('app_strings', 'LBL_ONLY_CURRENT_PAGE'));
+    // END STIC-Custom
+    
     var self = this;
     self.emailComposeView = null;
     var opts = $.extend({}, $.fn.EmailsComposeViewModal.defaults);
