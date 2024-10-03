@@ -350,32 +350,19 @@ function updateResourceFields() {
     header += "<th class='resource_column'></th></tr>";
     $("#resourceLine thead").html(header);
   
-    // Actualizar los campos de las líneas de recursos existentes
-    for (var i = 0; i < resourceMaxCount; i++) {
-      if ($("#resource_id" + i).length) {
-        var row = $("#resourceLine tbody").find("tr").eq(i); // Obtener la fila de la tabla correspondiente
-        fields.forEach(function (field) {
-          var inputField = $("#resource_" + field + i);
-  
-          if (!inputField.length) {
-            // Crear un nuevo input si no existe
-            var newInput = document.createElement("input");
-            newInput.type = "text";
-            newInput.className = "resource_data " + field;
-            newInput.name = "resource_" + field + i;
-            newInput.id = "resource_" + field + i;
-            newInput.value = ""; // Aquí puedes agregar lógica para inicializar el valor del input
-            newInput.tabIndex = "3";
-            newInput.readOnly = false; // Cambiar a true si es necesario
-            
-            // Añadir el input a la celda correspondiente en la fila
-            var cell = $("<td>").addClass("resource_column " + field);
-            $(cell).append(newInput);
-            $(row).append(cell); // Añadir la celda a la fila actual
-          }
-        });
-      }
-    }
+    $("#resourceLine tbody").empty();
+    resourceMaxCount = 0;
+
+    insertResourceLine();
+    if (!isPlaceBooking) {
+      $("#resourceSearchFields").hide();
+      $("#resourceType").val('');
+      $("#resourceStatus").val('');
+      $("#resourceName").val('');
+      $("#numberOfCenters").val('');
+  }
+
+
   }
   // Delete a resource row
 function markResourceLineDeleted(ln) {
@@ -389,25 +376,33 @@ function markResourceLineDeleted(ln) {
 function openResourceSelectPopup(ln) {
   var isPlaceBooking = $("#place_booking").is(":checked");
   var fields = isPlaceBooking ? config_place_fields : config_resource_fields;
+
   var field_to_name_array = {
     id: "resource_id",
   };
 
-  // Agregar dinámicamente los campos de config_resource_fields
   fields.forEach(function (field) {
     field_to_name_array[field] = "resource_" + field;
   });
 
   var popupRequestData = {
     call_back_function: "callbackResourceSelectPopup",
-    passthru_data: {
-      ln: ln,
-    },
+    passthru_data: { ln: ln },
     form_name: "EditView",
     field_to_name_array: field_to_name_array,
   };
 
-  open_popup("stic_Resources", 600, 400, "", true, false, popupRequestData);
+  var resourceTypes = SUGAR.language.languages['app_list_strings']['stic_resources_types_list'];
+  var filteredTypes = Object.keys(resourceTypes).filter(function (type) {
+    return isPlaceBooking ? type === "places" : type !== "places" && type !== "";
+  });
+
+  var typeQuery = filteredTypes.map(function (type) {
+    return "&type_advanced[]=" + encodeURIComponent(type);
+  }).join("");
+
+  open_popup("stic_Resources", 600, 400, typeQuery, true, false, popupRequestData);
+
 }
 
 function callbackResourceSelectQS(ln) {
