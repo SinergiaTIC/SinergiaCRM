@@ -35,43 +35,39 @@ class SevenSMSHelper implements stic_MessagesHelper {
     protected ?string $sender;
 
     public function __construct() {
-        // $this->setActive($sugar_config['seven_active'] ?? false);
         $active = stic_SettingsUtils::getSetting('seven_active');
         $this->setActive($active);
         
-        // $this->setApiKey($sugar_config['seven_api_key'] ?? '');
         $apiKey = stic_SettingsUtils::getSetting('seven_api_key');
         $this->setApiKey($apiKey);
         
-        
-        // $this->setSender($sugar_config['seven_sender'] ?? '');
         $sender = stic_SettingsUtils::getSetting('messages_sender');
         $this->setSender($sender);
     }
 
-    public function getActive(): bool {
+    protected function getActive(): bool {
         return $this->active;
     }
 
-    public function setActive(string $active): self {
+    protected function setActive(string $active): self {
         $this->active = '1' === $active;
         return $this;
     }
 
-    public function getApiKey(): ?string {
+    protected function getApiKey(): ?string {
         return $this->apiKey;
     }
 
-    public function setApiKey(string $apiKey): self {
+    protected function setApiKey(string $apiKey): self {
         $this->apiKey = $apiKey;
         return $this;
     }
 
-    public function getSender(): ?string {
+    protected function getSender(): ?string {
         return $this->sender;
     }
 
-    public function setSender($sender): self {
+    protected function setSender($sender): self {
         $this->sender = $sender;
         return $this;
     }
@@ -93,7 +89,7 @@ class SevenSMSHelper implements stic_MessagesHelper {
         }
     }
 
-    public function apiCall(?string $from, string $text, string $to): string {
+    protected function apiCall(?string $from, string $text, string $to): string {
         if (!$this->getActive()) return [null, null];
 
         $curlOpts = [

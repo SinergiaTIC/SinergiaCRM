@@ -21,18 +21,19 @@
  */
 
 var module = 'stic_Messages';
-
-addToValidateCallback(
-  getFormName(),
-  "parent_id",
-  "related",
-  true,
-  SUGAR.language.get(module, "LBL_LIST_RELATED_TO"),
-  function() {
-      return true;
-  }
-);
-addRequiredMark('parent_id', 'conditional-required');
+if (!$("#mass_ids") || $("#mass_ids").val() == ''){
+  addToValidateCallback(
+    getFormName(),
+    "parent_id",
+    "related",
+    true,
+    SUGAR.language.get(module, "LBL_LIST_RELATED_TO"),
+    function() {
+        return true;
+    }
+  );
+  addRequiredMark('parent_id', 'conditional-required');
+}
 
 
 
