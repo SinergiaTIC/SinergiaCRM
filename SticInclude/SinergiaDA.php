@@ -1295,7 +1295,7 @@ class ExternalReporting
 
         // 2) eda_def_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
-                                  SELECT CONCAT('SDA_',name) as name FROM securitygroups WHERE deleted=0
+                                  SELECT CONCAT('SCRM_',name) as name FROM securitygroups WHERE deleted=0
                                   UNION SELECT 'EDA_ADMIN'
                                   UNION SELECT 'NO_SINERGIACRM_USERS'
                                   ;";
@@ -1304,7 +1304,7 @@ class ExternalReporting
                             -- Normal users are assigned to their own security groups.
                             SELECT
                                 user_name,
-                                CONCAT('SDA_',s.name) as name
+                                CONCAT('SCRM_',s.name) as name
                             FROM
                                 users u
                             JOIN securitygroups_users su ON
@@ -1341,7 +1341,7 @@ class ExternalReporting
                             SELECT
                                 CONCAT('{$this->viewPrefix}_', LCASE(module)) as `table`,
                                 record_id,
-                                CONCAT('SDA_',s.name) as `group`
+                                CONCAT('SCRM_',s.name) as `group`
                             FROM
                                 securitygroups_records sr
                                 JOIN securitygroups s on sr.securitygroup_id=s.id
@@ -1773,7 +1773,7 @@ class ExternalReporting
 
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
                                 
-                                $crmGroupName = explode('SDA_', $userGroups['group'])[1];
+                                $crmGroupName = explode('SCRM_', $userGroups['group'])[1];
 
                                 // Verify whether or not the group or user has access to the module for their roles
                                 $groupHasAccessToModule = groupHasAccess($crmGroupName, $u['id'], $key, 'view');
