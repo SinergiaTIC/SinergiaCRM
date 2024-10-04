@@ -602,11 +602,7 @@ class ExternalReporting
                     case 'fullname':
                     case 'name':
                     case 'url':
-                    case 'decimal':
-                    case 'int':
                     case 'html':
-                    case 'currency':
-                    case 'float':
                     case 'user_name':
                     case 'ColorPicker':
                     case 'email':
@@ -623,6 +619,17 @@ class ExternalReporting
                         } else {
                             $fieldSrc = "IFNULL({$fieldPrefix}.{$fieldV['name']},'') AS {$fieldName}";
                         }
+                        break;
+
+                    // Numeric types
+                    case 'decimal':
+                    case 'int':
+                    case 'currency':
+                    case 'float':
+                        $fieldV['alias'] = $fieldV['name'];
+                        // Numeric type columns are converted to decimal to ensure they remain in this type in the view,
+                        // avoiding errors in min and max aggregations due to ordering
+                        $fieldSrc = "CONVERT(IFNULL({$fieldPrefix}.{$fieldV['name']},''), decimal(10,4)  ) AS {$fieldName}";
                         break;
 
                     default:
@@ -1772,7 +1779,7 @@ class ExternalReporting
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
 
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
-                                
+
                                 $crmGroupName = explode('SCRM_', $userGroups['group'])[1];
 
                                 // Verify whether or not the group or user has access to the module for their roles
