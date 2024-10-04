@@ -28,11 +28,11 @@
 
 class stic_MessagesUtils {
     public static $messageableModules = array(
-        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
-        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name'),
-        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
-        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
-        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)"),
+        'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts' ),
+        'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts'),
+        'Leads' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'leads'),
+        'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
+        'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
     );
     public static function getMessageableModules() {
         $modules = array_keys(self::$messageableModules);
@@ -93,17 +93,23 @@ class stic_MessagesUtils {
         }
         return '';
     }
-    public static function getPhoneFieldNameForMessage($bean) {
+    public static function getPhoneFieldNameForMessage($moduleName) {
     
-        $fieldName = self::$messageableModules[$bean->module_name]['phoneField'];
+        $fieldName = self::$messageableModules[$moduleName]['phoneField'];
 
         return $fieldName;
     }
-    public static function getNameFieldNameForMessage($bean) {
+    public static function getNameFieldNameForMessage($moduleName) {
     
-        $fieldName = self::$messageableModules[$bean->module_name]['name'];
+        $fieldName = self::$messageableModules[$moduleName]['name'];
 
         return $fieldName;
+    }
+    public static function getTableNameForMessage($moduleName) {
+    
+        $tableName = self::$messageableModules[$moduleName]['dbTable'];
+
+        return $tableName;
     }
     public static function get_stic_messages($type) {
         $beanId = $_REQUEST['record'];

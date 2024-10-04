@@ -102,8 +102,8 @@ class stic_MessagesController extends SugarController
         // Building and running the query that retrieves all the record that were selected in ListView
         
         $bean = BeanFactory::getBean($_REQUEST['targetModule']);
-        $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($bean);
-        $nameFieldName = stic_MessagesUtils::getNameFieldNameForMessage($bean);
+        $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($bean->module_name);
+        $nameFieldName = stic_MessagesUtils::getNameFieldNameForMessage($bean->module_name);
         $moduleTable = $bean->table_name;
         $moduleName = $bean->module_name;
         $sql = "SELECT id, $phoneFieldName as phone, $nameFieldName as name FROM {$moduleTable} WHERE {$moduleTable}.deleted=0";
@@ -141,20 +141,14 @@ class stic_MessagesController extends SugarController
         $parentId = $_POST["parentId"];
         $parentType = $_POST["parentType"];
         
+        require_once('modules/stic_Messages/Utils.php');
+        $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($parentType);
+        $tableName = stic_MessagesUtils::gettableNameForMessage($parentType);
+
         $response['code'] = 'No data';
         $db = DBManagerFactory::getInstance();
 
-        switch ($parentType) {
-            case 'Contacts':
-            case 'Leads':
-                $sql = "SELECT phone_mobile as phone FROM contacts where id = '{$parentId}'";
-                break;
-            case 'Accounts':
-                $sql = "SELECT phone_office as phone FROM accounts where id = '{$parentId}'";
-                break;
-            default:
-                $sql = "";
-        }
+        $sql = "SELECT {$phoneFieldName} as phone FROM {$tableName} WHERE id = '{$parentId}'";
 
         $result = $db->query($sql);
         if($row = $result->fetch_assoc()) {
