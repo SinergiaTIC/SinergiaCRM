@@ -87,7 +87,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
     var ids = '';
     if (typeof $(source).attr('data-record-id') !== 'undefined' && $(source).attr('data-record-id') !== '') {
       // One record
-      ids = '&ids=' + $(source).attr('data-record-id');
+      ids = $(source).attr('data-record-id');
       relatedId = $(source).attr('data-record-id');
     }
     else{
@@ -144,7 +144,7 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         data: paramsPost,
         success: function(data) {
 
-          var panelBody = $('<div>').append(data).find('#EditView').parent();
+        var panelBody = $('<div>').append(data).find('#EditView').parent();
 
         var dataPhone = $(source).attr('data-phone');
 
