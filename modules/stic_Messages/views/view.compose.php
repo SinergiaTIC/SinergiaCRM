@@ -63,13 +63,13 @@ class stic_MessagesViewCompose extends ViewEdit
     {
         parent::preDisplay();
         SticViews::preDisplay($this);
-        $this->ev->ss->assign('RETURN_MODULE', isset($_GET['return_module']) ? $_GET['return_module'] : '');
-        $this->ev->ss->assign('RETURN_ACTION', isset($_GET['return_action']) ? $_GET['return_action'] : '');
-        $this->ev->ss->assign('RETURN_ID', isset($_GET['return_id']) ? $_GET['return_id'] : '');
-        $this->ev->ss->assign('IS_MODAL', isset($_GET['in_popup']) ? $_GET['in_popup'] : false);
+        $this->ev->ss->assign('RETURN_MODULE', isset($_REQUEST['return_module']) ? $_REQUEST['return_module'] : '');
+        $this->ev->ss->assign('RETURN_ACTION', isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] : '');
+        $this->ev->ss->assign('RETURN_ID', isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '');
+        $this->ev->ss->assign('IS_MODAL', isset($_REQUEST['in_popup']) ? $_REQUEST['in_popup'] : false);
 
-        $this->bean->parent_type = $_GET['relatedModule'];
-        $this->bean->parent_id = $_GET['relatedId'];
+        $this->bean->parent_type = $_REQUEST['relatedModule'];
+	    $this->bean->parent_id = $_REQUEST['relatedId'];
 
         global $sugar_config;
         $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
