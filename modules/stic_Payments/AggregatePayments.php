@@ -94,6 +94,7 @@ while ($row = $db->fetchByAssoc($res)) {
     $includedPaymentsData[$paymentId] = $row;
     $includedPayments++;
 }
+$includePaymentIds = "'" . implode("','", array_keys($includedPaymentsData)) . "'";
 
 // Select attendances that should be included in current payments
 // but they can't due to lack of status and payment_exception values
@@ -135,10 +136,8 @@ WHERE
     AND sr.deleted = 0
     AND spcsrc.deleted = 0
     AND spspcc.deleted = 0
-    AND sp.deleted = 0
+    AND sp.id IN ($includePaymentIds)
     AND sa.deleted = 0
-    AND MONTH(sp.payment_date) = MONTH(NOW())
-    AND YEAR(sp.payment_date) = YEAR(NOW())
     AND sa.start_date < DATE_FORMAT(curdate(),'%Y-%m-01')
     AND CASE
             WHEN spc.periodicity = 'monthly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 1 MONTH)
@@ -148,8 +147,6 @@ WHERE
             WHEN spc.periodicity = 'half_yearly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 6 MONTH)
             WHEN spc.periodicity = 'yearly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 12 MONTH)
         END
-    AND sp.payment_type = 'aggregated_services'
-    AND sp.status != 'paid'
     AND (sa.payment_exception IS NULL OR sa.payment_exception = '')
     AND (sa.status IS NULL OR sa.status = '')
     AND sa.id NOT IN (
@@ -229,25 +226,7 @@ WHERE
     AND sr.deleted = 0
     AND spcsrc.deleted = 0
     AND spspcc.deleted = 0
-    AND sp.id = (
-        SELECT 
-            MAX(sp_inner.id)
-        FROM 
-            stic_payments sp_inner
-        JOIN stic_payments_stic_payment_commitments_c spspcc_inner
-        ON 
-            sp_inner.id = spspcc_inner.stic_payments_stic_payment_commitmentsstic_payments_idb
-        WHERE 
-            spspcc_inner.stic_paymebfe2itments_ida = spc.id
-            AND spspcc_inner.deleted = 0
-            AND spspcc_inner.deleted = 0
-            AND sp_inner.deleted = 0
-            AND sp_inner.status != 'paid'
-            AND MONTH(sp_inner.payment_date) = MONTH(NOW())
-            AND YEAR(sp_inner.payment_date) = YEAR(NOW())
-            AND sp_inner.payment_type = 'aggregated_services'
-            AND sp_inner.status != 'paid'
-    )
+    AND sp.id IN ($includePaymentIds)
     AND sa.deleted = 0
     AND sa.start_date < subdate(curdate(), (day(curdate())-1))
     AND CASE
