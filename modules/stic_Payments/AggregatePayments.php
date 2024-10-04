@@ -166,8 +166,7 @@ WHERE
             spx.id = spsac.stic_payments_stic_attendancesstic_payments_ida
         WHERE
             spsac.deleted = 0)
-    GROUP BY spspcc.stic_paymebfe2itments_ida
-    ORDER BY sa.name ASC";
+        ORDER BY sa.name ASC";
 
 $res = $db->query($warningAttendanceQuery);
 
