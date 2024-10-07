@@ -97,19 +97,6 @@ class StudioWizard
                 header('Location: index.php?module=Administration&action=ConfigureTabs');
                 sugar_cleanup(true);
                 // no break
-            
-            // STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist
-            // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
-            case 'ConfigureMainMenu':
-                global $sugar_config;
-                if($sugar_config['stic_advanced_menu_enabled']){
-                    require_once('custom/modules/Studio/TabGroups/SticAdvancedMenuEdit.php');
-                }else{
-                    require_once('modules/Studio/TabGroups/EditViewTabs.php');
-                }
-                break;
-            // END STIC
-
             case 'ConfigureGroupTabs':
                 require_once('modules/Studio/TabGroups/EditViewTabs.php');
                 break;

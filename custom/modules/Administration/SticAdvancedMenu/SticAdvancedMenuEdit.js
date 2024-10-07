@@ -27,7 +27,7 @@ $(document).ready(function() {
 
   // Restore default menu
   $("#restore-menu").on("click", function() {
-    if (confirm(SUGAR.language.languages.Studio.LBL_STIC_MENU_RESTORE_CONFIRM) == false) {
+    if (confirm(SUGAR.language.languages.Administration.LBL_STIC_MENU_RESTORE_CONFIRM) == false) {
       return;
     }
 
@@ -41,7 +41,7 @@ $(document).ready(function() {
       url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
       data: {
-        module: "Studio",
+        module: "Administration",
         action: "SticAdvancedMenuController",
         ...dataToSend
       },
@@ -56,7 +56,7 @@ $(document).ready(function() {
 
   // Restore default menu
   $("#legacy-menu").on("click", function() {
-    if (confirm(SUGAR.language.get("Studio", "LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM")) == false) {
+    if (confirm(SUGAR.language.get("Administration", "LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM")) == false) {
       return;
     }
 
@@ -71,7 +71,7 @@ $(document).ready(function() {
       url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
       data: {
-        module: "Studio",
+        module: "Administration",
         action: "SticAdvancedMenuController",
         ...dataToSend
       },
@@ -101,7 +101,7 @@ $(document).ready(function() {
       url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
       data: {
-        module: "Studio",
+        module: "Administration",
         action: "SticAdvancedMenuController",
         ...dataToSend
       },
@@ -213,16 +213,16 @@ function createMenu() {
           Create: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-plus'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_CREATE,
+            label: "<i class='glyphicon glyphicon-plus'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE,
             action: function(obj) {
-              $node = tree.create_node($node, { text: SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT, url: "" });
+              $node = tree.create_node($node, { text: SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT, url: "" });
               tree.edit($node);
             }
           },
           Rename: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-pencil'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_RENAME,
+            label: "<i class='glyphicon glyphicon-pencil'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_RENAME,
             action: function(obj) {
               tree.edit($node);
             }
@@ -230,10 +230,10 @@ function createMenu() {
           EditURL: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-link'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_EDITURL,
+            label: "<i class='glyphicon glyphicon-link'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL,
             action: function(obj) {
               var editUrlPrompt = function() {
-                var url = prompt(SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT+":", $node.original.url || "");
+                var url = prompt(SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT+":", $node.original.url || "");
                 if (url !== null) {
                   if (url === "") {
                     // Allow empty URL to clear the value
@@ -243,7 +243,7 @@ function createMenu() {
                     tree.get_node($node).original.url = url;
                     updateNodeDisplay($node);
                   } else {
-                    alert(SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE);
+                    alert(SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE);
                     editUrlPrompt(); // Show the prompt again
                   }
                 }
@@ -255,7 +255,7 @@ function createMenu() {
           Delete: {
             separator_before: false,
             separator_after: false,
-            label: "<i class='glyphicon glyphicon-remove'></i>" + SUGAR.language.languages.Studio.LBL_STIC_MENU_COMMAND_REMOVE,
+            label: "<i class='glyphicon glyphicon-remove'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_REMOVE,
             action: function(obj) {
               if (tree.is_selected($node)) {
                 tree.delete_node(tree.get_selected());

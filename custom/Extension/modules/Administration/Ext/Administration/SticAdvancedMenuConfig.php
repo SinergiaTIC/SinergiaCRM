@@ -27,7 +27,7 @@ $admin_option_defs['Administration']['configure_advanced_menu_tabs'] = [
     'ConfigureTabs',
     'LBL_CONFIGURE_MAIN_MENU',
     'LBL_CONFIGURE_MAIN_MENU_DESC',
-    './index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureMainMenu',
+    './index.php?module=Administration&action=SticManageMainMenu',
     'stic-configure-main-menu'
 ];
 $admin_group_header['sagility'][3] = array_replace_recursive($admin_option_defs, $admin_group_header['sagility'][3]);

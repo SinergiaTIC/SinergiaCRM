@@ -65,6 +65,24 @@ $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = "Durant la reconstrucció de Sinerg
 // Menú principal avançat
 $mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
 $mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = "Configuració de l'estructura i el contingut del menú";
+$mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuració del menú principal';
+$mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Mòduls habilitats no inclosos al menú';
+$mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Configuració del menú';
+$mod_strings['LBL_STIC_MENU_SAVE'] = 'Desa i aplica';
+$mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaura';
+$mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restaurar el menú predeterminat de SinergiaCRM?';
+$mod_strings['LBL_STIC_MENU_INFO'] = 'Per incloure un mòdul al menú principal cal que estigui <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">habilitat</a>. Si ja ho està, podeu arrossegar-lo de la zona de mòduls no inclosos (dreta) cap al node del menú on vulgueu que aparegui (esquerra). Per amagar-lo, feu el moviment invers. Per reordenar els nodes, arrossegueu-los a la posició desitjada. Amb el botó dret del ratolí podeu fer aparèixer el menú contextual associat a cada element del menú, que us permetrà crear nous nodes (que poden apuntar a qualsevol URL), canviar-ne el nom o eliminar-los.';
+$mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostra les icones dels mòduls';
+$mod_strings['LBL_STIC_MENU_ALL'] = "Mostra l'opció TOT";
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Canvia al menú clàssic';
+$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = "Voleu canviar al menú clàssic? Es restaurarà la configuració que hi havia quan es va activar el menú avançat. Podreu tornar a activar el menú avançat més endavant.";
+$mod_strings['LBL_STIC_MENU_COMMAND_CREATE'] = 'Crea';
+$mod_strings['LBL_STIC_MENU_COMMAND_CREATE_DEFAULT'] = 'Nou node';
+$mod_strings['LBL_STIC_MENU_COMMAND_RENAME'] = 'Canvia el nom';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Edita la URL';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Introduïu la URL';
+$mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Introduïu una URL vàlida';
+$mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Elimina';
 
 // Cadenes de SuiteCRM modificades
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupació de subpanells';
