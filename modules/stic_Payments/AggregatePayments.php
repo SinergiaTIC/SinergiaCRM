@@ -272,6 +272,7 @@ $processedAttendances = 0;
 $completePaymentsId = array();
 
 // Process included payments
+global $sugar_config;
 while ($row = $db->fetchByAssoc($res)) {
     if (!$paymentId = $row['payment_id']) {
         continue;
@@ -290,7 +291,9 @@ while ($row = $db->fetchByAssoc($res)) {
     }
 
     // Set the payment amount
-    $paymentBean->amount = str_replace('.', $current_user->getPreference('dec_sep'), $row['attendances_amount']);
+    $user_dec_sep = $current_user->getPreference('dec_sep');
+    $dec_sep = (empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep);
+    $paymentBean->amount = str_replace('.', $dec_sep, $row['attendances_amount']);
 
     // Build an array of complete payments
     if (!in_array($paymentId, $uncompletePaymentsId)) {
