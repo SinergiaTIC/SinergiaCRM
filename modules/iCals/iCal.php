@@ -290,9 +290,9 @@ class iCal extends vCal
             $event = $act->sugar_bean;
             if (!$hide_calls || ($hide_calls && $event->object_name != "Call")) {
                 // STIC-Custom 20241004 MHP - Exclude canceled work calendar records from synchronization
-                //  
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/425
                 if ($event->module_dir == "stic_Work_Calendar" && $event->type == 'canceled'){
-                    break;
+                    continue;
                 }
                 // END STIC-Custom
                 $ical_array[] = array("BEGIN", "VEVENT");
