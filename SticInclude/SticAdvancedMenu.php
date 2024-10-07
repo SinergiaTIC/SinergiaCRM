@@ -127,7 +127,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
                 $lowerModule = str_replace('_', '-', strtolower($item['id']));
                 // Include icon if enabled in configuration
                 $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
-                $itemHtml .= "<a href='index.php?module={$item['id']}&action=index&return_module=Accounts&return_action=DetailView'>$iconString $text </a>";
+                $itemHtml .= "<a href='index.php?module={$item['id']}&action=index'>$iconString $text </a>";
             } elseif ($hasChildren) {
                 // Generate dropdown toggle for items with children
                 $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
@@ -158,7 +158,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
             $menuHtml .= '<ul>';
             $menuHtml .= '<li><input type="text" id="search-all" placeholder="' . $app_strings['LBL_SEARCH'] . '"></input></li>';
             foreach ($validTabs as $key => $value) {
-                $menuHtml .= "<li><a href='index.php?module={$key}&action=index&return_module=Accounts&return_action=DetailView'>" . $value . '</a></li>';
+                $menuHtml .= "<li><a href='index.php?module={$key}&action=index'>" . $value . '</a></li>';
             }
             $menuHtml .= '</ul>';
             $menuHtml .= '</li>';
