@@ -82,7 +82,7 @@ $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Enviament massiu de correus
-$app_strings['LBL_ONLY_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Si voleu incloure-hi tots els registres llistats haureu de fer l'enviament pàgina a pàgina, ampliar el nombre de registres per pàgina o, preferentment, fer servir el mòdul Campanyes.";
+$app_strings['LBL_ONLY_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
 
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
