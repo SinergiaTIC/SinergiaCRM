@@ -81,7 +81,7 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
-// Enviament massiu emails
+// Envío masivo de correos
 $app_strings['LBL_ONLY_CURRENT_PAGE'] = 'El envío sólo se aplicará a los registros de la página actual. Para envíos masivos se recomienda utilizar el módulo Campañas.';
 
 // Módulos propios de SinergiaCRM y módulos de SuiteCRM renombrados
