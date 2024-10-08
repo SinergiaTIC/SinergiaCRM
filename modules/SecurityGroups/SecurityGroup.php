@@ -332,10 +332,10 @@ class SecurityGroup extends SecurityGroup_sugar
      */
     // STIC custom - JCH - 20221128 - Don't apply assigned user inheritance when saving an existing record
     // STIC#929
-    // public static function inherit_assigned($focus, $isUpdate)
+    // public static function inherit_assigned($focus)
     // {
     //     global $sugar_config;
-    //     if (isset($sugar_config['securitysuite_inherit_assigned']) && $sugar_config['securitysuite_inherit_assigned'] == true && $isUpdate == false) {
+    //     if (isset($sugar_config['securitysuite_inherit_assigned']) && $sugar_config['securitysuite_inherit_assigned'] == true) {
     public static function inherit_assigned($focus, $isUpdate)
     {
         global $sugar_config;
