@@ -75,8 +75,6 @@ $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restaurar o menú predeterminad
 $mod_strings['LBL_STIC_MENU_INFO'] = 'Para incluir un módulo en el menú principal debe estar <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">habilitado</a>. Si ya lo está, puede arrastrarlo de la zona de módulos no incluidos (derecha) hacia el nodo del menú donde desee que aparezca (izquierda). Para esconderlo, haga el movimiento inverso. Para reordenar los nodos, arrástrelos a la posición deseada. Con el botón derecho del ratón puede mostrar el menú contextual asociado a cada elemento del menú, que le permitirá crear nuevos nodos (que pueden apuntar a cualquier URL), duplicarlos, cambiar su nombre o eliminarlos.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Amosar iconas de módulos';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Amosar opción TODO';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar ao menú clásico';
-$mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY_CONFIRM'] = 'Quere cambiar ao menú clásico? Se restaurará a configuración que tiña no momento da activación do menú avanzado. Pode volver activar o menú avanzado máis adiante.';
 $mod_strings['LBL_STIC_MENU_COMMAND_CREATE'] = 'Crear';
 $mod_strings['LBL_STIC_MENU_COMMAND_CREATE_DEFAULT'] = 'Novo nodo';
 $mod_strings['LBL_STIC_MENU_COMMAND_RENAME'] = 'Renomear';

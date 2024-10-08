@@ -50,13 +50,6 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 
 				<button id="restore-menu" type="button"
 					class="btn btn-md btn-default text-uppercase">{$MOD.LBL_STIC_MENU_RESTORE}</button>
-
-				{* 
-			The button to switch to the old menu remains hidden, but all the necessary logic to activate it
-   			in the context of SuiteCRM is maintained if needed
-   			<button class="btn btn-link" id="legacy-menu">{$MOD.LBL_STIC_MENU_CHANGE_TO_LEGACY}</button> 
-			*}
-
 			</div>
 
 			{* <div class="panel panel-default"> *}
