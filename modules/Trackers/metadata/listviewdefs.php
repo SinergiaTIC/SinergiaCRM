@@ -25,7 +25,7 @@ array(
         'default' => true,
     ),
     'ACTION' => array(
-        'type' => 'varchar',
+        'type' => 'enum',
         'studio' => 'visible',
         'label' => 'LBL_ACTION',
         'width' => '10%',
@@ -36,7 +36,6 @@ array(
         'label' => 'LBL_MODULE_NAME',
         'width' => '10%',
         'default' => true,
-        'options' => 'moduleList',
     ),
     'ITEM_ID' => array(
         'type' => 'varchar',

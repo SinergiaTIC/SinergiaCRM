@@ -35,10 +35,22 @@ $dictionary['Tracker']['fields']['assigned_user_link'] = array (
 );
 
 $dictionary['Tracker']['fields']['user_id']['module'] = 'Users';
+$dictionary['Tracker']['fields']['user_id']['inline_edit'] = 0;
+
 $dictionary['Tracker']['fields']['module_name']['type'] = 'enum';
 $dictionary['Tracker']['fields']['module_name']['options'] = 'moduleList';
+$dictionary['Tracker']['fields']['module_name']['inline_edit'] = 0;
+
+$dictionary['Tracker']['fields']['action']['type'] = 'enum';
+$dictionary['Tracker']['fields']['action']['options'] = 'trackers_actions_list';
+$dictionary['Tracker']['fields']['action']['inline_edit'] = 0;
+
 $dictionary['Tracker']['fields']['date_modified']['options'] = 'date_range_search_dom';
 $dictionary['Tracker']['fields']['date_modified']['enable_range_search'] = true;
 $dictionary['Tracker']['fields']['date_modified']['dbType'] = 'datetimecombo';
+$dictionary['Tracker']['fields']['date_modified']['inline_edit'] = 0;
 
-$dictionary['Tracker']['fields']['action']['inline_edit'] = 0;
+$dictionary['Tracker']['fields']['item_id']['inline_edit'] = 0;
+$dictionary['Tracker']['fields']['item_summary']['inline_edit'] = 0;
+$dictionary['Tracker']['fields']['session_id']['inline_edit'] = 0;
+$dictionary['Tracker']['fields']['monitor_id']['inline_edit'] = 0;
