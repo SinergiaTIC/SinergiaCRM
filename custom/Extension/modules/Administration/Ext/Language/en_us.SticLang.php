@@ -44,6 +44,9 @@ $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Load or delete test data.';
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Rebuild the integration with Sinergia Data Analytics.';
 
+$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Main menu';
+$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Set main menu structure and content';
+
 // Test data
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = "<strong>Important:</strong> Loaded sample records should not be used to store real data, since they can be deleted in the future.";
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_LINK_TITLE'] = 'Load test dataset';
@@ -63,11 +66,9 @@ $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'Rebuild of Sinergia Data Analyti
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'The following errors have been found in the rebuild of Sinergia Data Analytics';
 
 // Advanced main menu
-$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Main menu';
-$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Set main menu structure and content';
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Main menu settings';
 $mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Enabled modules not included in the menu';
-$mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Menu Configuration';
+$mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Menu configuration';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Save and apply';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restore';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restore the default SinergiaCRM menu?';
@@ -89,8 +90,8 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = 'Expand tree';
 $mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = 'Collapse tree';
 
 // SuiteCRM modified strings
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configure how subpanels are grouped in the detail views';
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Subpanel grouping';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configure how subpanels are grouped in the detail views';
 
 // Other strings
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
