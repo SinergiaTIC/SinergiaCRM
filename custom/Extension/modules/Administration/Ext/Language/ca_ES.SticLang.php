@@ -44,6 +44,9 @@ $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Carrega o elimina dades de pro
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstrueix la integració amb Sinergia Data Analytics.';
 
+$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
+$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = "Configuració de l'estructura i el contingut del menú";
+
 // Dades de prova
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = "<strong>Important:</strong> Els registres de prova carregats als diferents mòduls no s'han de fer servir per emmagatzemar dades reals, ja que poden ser eliminats en el futur.";
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_LINK_TITLE'] = 'Carrega el conjunt de dades de prova';
@@ -63,8 +66,6 @@ $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'La reconstrucció de Sinergia Da
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = "Durant la reconstrucció de Sinergia Data Analytics s'han trobat els següents errors";
 
 // Menú principal avançat
-$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
-$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = "Configuració de l'estructura i el contingut del menú";
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuració del menú principal';
 $mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Mòduls habilitats no inclosos al menú';
 $mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Configuració del menú';
@@ -83,10 +84,10 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Edita la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Introduïu la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Introduïu una URL vàlida';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Elimina';
-$mod_strings['LBL_STIC_MENU_COMMAND_DUPLICATE'] = 'Duplicar';
+$mod_strings['LBL_STIC_MENU_COMMAND_DUPLICATE'] = 'Duplica';
 $mod_strings['LBL_STIC_MENU_COMMAND_NEW_MAIN_NODE'] = 'Nou node principal';
-$mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = 'Expandir arbre';
-$mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = 'Contraure arbre';
+$mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = "Expandeix l'arbre";
+$mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = "Contrau l'arbre";
 
 // Cadenes de SuiteCRM modificades
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupació de subpanells';
