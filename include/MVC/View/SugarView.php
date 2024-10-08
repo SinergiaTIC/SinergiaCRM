@@ -338,6 +338,7 @@ class SugarView
 
     /**
      * trackView
+     * Track the view of the current bean
      */
     protected function _trackView()
     {
@@ -363,11 +364,10 @@ class SugarView
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);
 
-            if($monitor->action == 'editview'){
-                $monitor->setValue('visible', 0);
-            } else {
-                $monitor->setValue('visible', 1);
-            }
+            $monitor->setValue(
+                'visible',
+                (($monitor->action == 'detailview') || ($monitor->action == 'editview')) ? 1 : 0
+            );
 
             if (!empty($this->bean->id)) {
                 $monitor->setValue('item_id', $this->bean->id);
