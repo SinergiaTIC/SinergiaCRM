@@ -44,6 +44,9 @@ $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Cargar ou eliminar datos de pr
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstrúe a integración con Sinergia Data Analytics.';
 
+$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
+$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración da estrutura e do contido do menú';
+
 // Datos de proba
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = '<strong>Importante:</strong> Os rexistros de proba cargados nos diferentes módulos non deben usarse para almacenar datos reais, xa que poden ser eliminados no futuro.';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_LINK_TITLE'] = 'Cargar o conxunto de datos de proba';
@@ -63,8 +66,6 @@ $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'A reconstrución de Sinergia Dat
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Na reconstrución de Sinergia Data Analytics atopáronse os seguintes erros';
 
 // Menú principal avanzado
-$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
-$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración da estrutura e do contido do menú';
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuración do menú principal';
 $mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Módulos habilitados non incluídos no menú';
 $mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Configuración do menú';
@@ -89,8 +90,8 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = 'Expandir árbore';
 $mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = 'Contraer árbore';
 
 // Cadenas de SuiteCRM modificadas
-$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar o xeito en que se agrupan os subpaneis na vista de detalle';
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar a agrupación de subpaneis';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar o xeito en que se agrupan os subpaneis na vista de detalle';
 
 // Otras cadenas
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Accións de Administración';
