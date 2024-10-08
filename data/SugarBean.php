@@ -3469,29 +3469,29 @@ class SugarBean
      */
     public function track_view($user_id, $current_module, $current_view = '')
     {
-        $trackerManager = TrackerManager::getInstance();
+        // Track the bean as saved or updated
+        if ($this->action != 'deleted') {
+            $trackerManager = TrackerManager::getInstance();
 
-        if ($monitor = $trackerManager->getMonitor('tracker')) {
-            $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
-            $monitor->setValue('user_id', $user_id);
-            $monitor->setValue('assigned_user_link', $this->modified_by_name);
-            $monitor->setValue('module_name', $current_module);
-            $monitor->setValue('action', $current_view);
-            $monitor->setValue('item_id', $this->id);
-            $monitor->setValue('visible', $this->tracker_visibility);
-            $monitor->setValue('item_summary', $this->get_summary_text());
+            if ($monitor = $trackerManager->getMonitor('tracker')) {
+                $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
+                $monitor->setValue('user_id', $user_id);
+                $monitor->setValue('assigned_user_link', $this->modified_by_name);
+                $monitor->setValue('module_name', $current_module);
+                $monitor->setValue('action', $current_view);
+                if (empty($this->fetched_row['id'])) {
+                    $monitor->action = 'save';
+                } else {
+                    $monitor->action = 'update';
+                }
+                $monitor->setValue('item_id', $this->id);
+                $monitor->setValue('item_summary', $this->get_summary_text());
+                $monitor->setValue('visible', $this->tracker_visibility);
 
-            if (empty($this->fetched_row['id'])) {
-                $monitor->action = 'save';
-            } else if ($current_view === 'deleted') {
-                $monitor->item_summary = $this->name;
-                $monitor->visible = false;
-            } else {
-                $monitor->action = 'update';
+                $trackerManager->saveMonitor($monitor, true, true);
             }
-
-            $trackerManager->saveMonitor($monitor, true, true);
         }
+
     }
 
     /**
@@ -5344,7 +5344,20 @@ class SugarBean
             $tracker->makeInvisibleForAll($id);
 
             // Track the record to mark that is deleted
-            $this->track_view($current_user->id, $this->module_name, 'deleted');
+            $trackerManager = TrackerManager::getInstance();
+            if ($monitor = $trackerManager->getMonitor('tracker')) {
+                $monitor->setValue('date_modified', $date_modified);
+                $monitor->setValue('user_id', $current_user->id);
+                $monitor->setValue('assigned_user_link', $current_user->user_name);
+                $monitor->setValue('module_name', $this->module_name);
+                $monitor->setValue('action', 'deleted');
+                $monitor->setValue('visible', false);
+                $monitor->setValue('item_id', $id);
+                $monitor->setValue('item_summary', $this->name);
+
+                $trackerManager->saveMonitor($monitor, true, true);
+            }
+
 
             $this->deleteFiles();
 
