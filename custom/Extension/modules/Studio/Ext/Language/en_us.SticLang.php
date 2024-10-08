@@ -22,5 +22,5 @@
  */
 
 // Subpanel grouping
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configure subpanel grouping';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Subpanel grouping';
 $mod_strings['LBL_GROUP_TAB_WELCOME'] = 'Create the groups and drag the appropriate modules into them to define the subpanel groupings that will be displayed to users who choose to view grouped modules in detail views. If you want to change the main menu, you can do it <a href="index.php?module=Administration&action=SticManageMainMenu">here</a>.';
