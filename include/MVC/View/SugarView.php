@@ -350,18 +350,33 @@ class SugarView
         $trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
         if ($monitor = $trackerManager->getMonitor('tracker')) {
-            $monitor->setValue('action', $action);
-            $monitor->setValue('user_id', $GLOBALS['current_user']->id);
+            if($action == 'editview') {
+                $monitor->setValue('action', 'save');
+            } else {
+                $monitor->setValue('action', $action);
+            }
+
+            $user = $GLOBALS['current_user'];
+            
+            $monitor->setValue('user_id', $user->id);
+            $monitor->setValue('assigned_user_link', $user->user_name);
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);
-            $monitor->setValue(
-                'visible',
-                (($monitor->action == 'detailview') || ($monitor->action == 'editview')) ? 1 : 0
-            );
+
+            if($monitor->action == 'editview'){
+                $monitor->setValue('visible', 0);
+            } else {
+                $monitor->setValue('visible', 1);
+            }
 
             if (!empty($this->bean->id)) {
                 $monitor->setValue('item_id', $this->bean->id);
                 $monitor->setValue('item_summary', $this->bean->get_summary_text());
+                if($monitor->action == 'authenticate' || $monitor->action == 'logout'){
+                    $monitor->setValue('item_id', $user->id);
+                    $monitor->setValue('item_summary', $user->full_name);
+                }
+                
             }
 
             //If visible is true, but there is no bean, do not track (invalid/unauthorized reference)
