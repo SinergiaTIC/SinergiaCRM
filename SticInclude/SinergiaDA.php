@@ -1304,7 +1304,6 @@ class ExternalReporting
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
                                   SELECT CONCAT('SCRM_',name) as name FROM securitygroups WHERE deleted=0
                                   UNION SELECT 'EDA_ADMIN'
-                                  UNION SELECT 'NO_SINERGIACRM_USERS'
                                   ;";
         // 3) eda_def_users_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS
