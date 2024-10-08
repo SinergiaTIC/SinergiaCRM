@@ -22,5 +22,5 @@
  */
 
 // Agrupació de subpanells
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = "Configurar l'agrupació de subpanells";
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupació de subpanells';
 $mod_strings['LBL_GROUP_TAB_WELCOME'] = "Creeu els grups i arrossegueu-hi els mòduls que s'escaigui per definir les agrupacions de subpanells que es mostraran als usuaris que triïn veure els mòduls agrupats a les vistes de detall. Si voleu canviar el menú principal, podeu fer-ho <a href='index.php?module=Administration&action=SticManageMainMenu'>aquí</a>.";
