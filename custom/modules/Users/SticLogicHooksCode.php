@@ -39,7 +39,7 @@ class UsersLogicHooks
         }
     }
 
-    public function after_login(&$bean, $event, $arguments)
+    public function after_login($event, $arguments)
     {
         // Create cookie with SinergiaCRM version number if not exists
         if (!isset($_COOKIE['SticVersion'])) {
@@ -48,36 +48,5 @@ class UsersLogicHooks
             $_COOKIE['SticVersion'] = $sugar_config['sinergiacrm_version'];
             setcookie('SticVersion', $_COOKIE['SticVersion'], time() + 999999999, '/');
         }
-
-        // Track the id of the current session
-        $monitor = Monitor::getSessionId();
-        // Track the login of the user
-        $tracker = new Tracker();
-		$tracker->item_summary = $bean->name.' - Login';
-		$tracker->user_id = $bean->id;
-		$tracker->item_id = $bean->id;
-		$tracker->action = 'login_ok';
-		$tracker->module_name = $bean->module_name;
-		$tracker->tracker_user = $bean->user_name;
-		$tracker->session_id = $monitor;
-
-		$tracker->save();
-    }
-
-    public function before_logout(&$bean, $event, $arguments)
-    {
-        // Track the id of the current session
-        $monitor = Monitor::getSessionId();
-        // Track the logout of the user
-        $tracker = new Tracker();
-		$tracker->item_summary = $bean->name.' - Logout';
-		$tracker->user_id = $bean->id;
-		$tracker->item_id = $bean->id;
-		$tracker->module_name = 'Users';
-		$tracker->action = 'logout';
-		$tracker->tracker_user = $bean->user_name;
-		$tracker->session_id = $monitor;
-
-		$tracker->save();
     }
 }
