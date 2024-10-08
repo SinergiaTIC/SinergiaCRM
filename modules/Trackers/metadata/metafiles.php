@@ -34,8 +34,10 @@
  * "Powered by SugarCRM".
  ********************************************************************************/
 
-/**
- * This file adds support for studio
- */
-
+$module_name = 'Trackers';
+ $metafiles[$module_name] = array(
+ 	'listviewdefs'    => 	'modules/' . $module_name . '/metadata/listviewdefs.php',
+ 	'searchdefs'      =>    'modules/' . $module_name . '/metadata/searchdefs.php',
+ 	'searchfields'	  =>    'modules/' . $module_name . '/metadata/SearchFields.php',
+ );
 ?>

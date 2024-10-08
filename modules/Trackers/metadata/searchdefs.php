@@ -4,12 +4,12 @@ $searchdefs[$module_name] =
 array(
     'layout' => array(
         'basic_search' => array(
-            'tracker_user' => array(
-                'name' => 'tracker_user',
+            'assigned_user_link' => array(
+                'name' => 'assigned_user_link',
                 'type' => 'varchar',
                 'width' => '10%',
                 'default' => true,
-                'vname' => 'LBL_TRACKER_USER',
+                'vname' => 'LBL_ASSIGNED_TO_USER',
             ),
             'date_modified' => array(
                 'type' => 'datetimecombo',
@@ -41,12 +41,12 @@ array(
             ),
         ),
         'advanced_search' => array(
-            'tracker_user' => array(
-                'name' => 'tracker_user',
+            'assigned_user_link' => array(
+                'name' => 'assigned_user_link',
                 'type' => 'varchar',
                 'width' => '10%',
                 'default' => true,
-                'vname' => 'LBL_TRACKER_USER',
+                'vname' => 'LBL_ASSIGNED_TO_USER',
             ),
             'date_modified' => array(
                 'type' => 'datetimecombo',
