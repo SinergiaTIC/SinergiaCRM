@@ -206,6 +206,9 @@ function createMenu() {
       }
     },
     plugins: ["dnd", "wholerow", "contextmenu"],
+    dnd: {
+      copy: false
+    },
     contextmenu: {
       items: function($node) {
         var tree = $("#stic-menu-manager").jstree(true);
@@ -213,27 +216,113 @@ function createMenu() {
           Create: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-plus'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE,
+            label:
+              "<i class='glyphicon glyphicon-plus'></i>" +
+              SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE,
             action: function(obj) {
-              $node = tree.create_node($node, { text: SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT, url: "" });
+              $node = tree.create_node($node, {
+                text: SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT,
+                url: ""
+              });
               tree.edit($node);
             }
           },
+
           Rename: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-pencil'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_RENAME,
+            label:
+              "<i class='glyphicon glyphicon-pencil'></i>" +
+              SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_RENAME,
             action: function(obj) {
               tree.edit($node);
+            }
+          },
+          Duplicate: {
+            separator_before: false,
+            separator_after: false,
+            label: "<i class='glyphicon glyphicon-duplicate'></i>Duplicar",
+            action: function(obj) {
+              var nodeData = tree.get_json($node, { no_state: true, no_id: false, no_children: false, no_data: false });
+              
+              function generateCustomId(baseId) {
+                var randomSuffix = Math.random().toString(36).substr(2, 4);
+                return baseId + "__" + randomSuffix;
+              }
+    
+              function duplicateNodeRecursively(node) {
+                var nodeCopy = $.extend(true, {}, node);
+                
+                // Generate a new custom ID
+                nodeCopy.id = generateCustomId(node.id.split('__')[0]);
+                
+                if (typeof nodeCopy.text === 'string') {
+                  nodeCopy.text = nodeCopy.text.split("|")[0];
+                } else if (nodeCopy.original && typeof nodeCopy.original.text === 'string') {
+                  nodeCopy.text = nodeCopy.original.text.split("|")[0];
+                } else {
+                  nodeCopy.text = "_";
+                }
+                
+                if (nodeCopy.original && nodeCopy.original.url) {
+                  nodeCopy.data = { url: nodeCopy.original.url };
+                }
+                
+                if (nodeCopy.children && nodeCopy.children.length > 0) {
+                  nodeCopy.children = nodeCopy.children.map(duplicateNodeRecursively);
+                }
+                
+                return nodeCopy;
+              }
+              
+              var duplicatedNode = duplicateNodeRecursively(nodeData);
+              
+              // Get the current node index
+              var siblings = tree.get_children_dom(tree.get_parent($node));
+              var currentIndex = siblings.index(tree.get_node($node, true));
+              
+              // Create the new node after the current node
+              var newNodeId = tree.create_node(tree.get_parent($node), duplicatedNode, currentIndex + 1);
+              
+              if (newNodeId) {
+                tree.deselect_all();
+                tree.select_node(newNodeId);
+                console.log("Nuevo nodo creado:", newNodeId);
+                
+                function updateNodeDisplayRecursively(nodeId) {
+                  var node = tree.get_node(nodeId);
+                  if (node.data && node.data.url) {
+                    var displayText = node.text + "|" + node.data.url;
+                    tree.rename_node(node, displayText);
+                  }
+                  var children = tree.get_children_dom(nodeId);
+                  children.each(function() {
+                    updateNodeDisplayRecursively(this.id);
+                  });
+                }
+                
+                updateNodeDisplayRecursively(newNodeId);
+                handleTreeChanges();
+              } else {
+                console.error("No se pudo crear el nuevo nodo");
+              }
+            },
+            _disabled: function(data) {
+              return false; // Allow duplication for all nodes
             }
           },
           EditURL: {
             separator_before: false,
             separator_after: true,
-            label: "<i class='glyphicon glyphicon-link'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL,
+            label:
+              "<i class='glyphicon glyphicon-link'></i>" +
+              SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL,
             action: function(obj) {
               var editUrlPrompt = function() {
-                var url = prompt(SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT+":", $node.original.url || "");
+                var url = prompt(
+                  SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT + ":",
+                  $node.original.url || ""
+                );
                 if (url !== null) {
                   if (url === "") {
                     // Allow empty URL to clear the value
@@ -255,7 +344,9 @@ function createMenu() {
           Delete: {
             separator_before: false,
             separator_after: false,
-            label: "<i class='glyphicon glyphicon-remove'></i>" + SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_REMOVE,
+            label:
+              "<i class='glyphicon glyphicon-remove'></i>" +
+              SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_REMOVE,
             action: function(obj) {
               if (tree.is_selected($node)) {
                 tree.delete_node(tree.get_selected());
@@ -292,14 +383,17 @@ function removeMenu() {
   }
 }
 
-function updateNodeDisplay(node) {
+// Actualizar la función updateNodeDisplay para manejar IDs
+function updateNodeDisplay(nodeId) {
   var tree = $("#stic-menu-manager").jstree(true);
-  var nodeObj = tree.get_node(node);
-  var displayText = nodeObj.text.split("|")[0]; // Remove any existing URL display
-  if (nodeObj.original.url) {
-    displayText += "|" + nodeObj.original.url;
+  var nodeObj = tree.get_node(nodeId);
+  if (nodeObj) {
+    var displayText = nodeObj.text ? nodeObj.text.split("|")[0] : "Nodo sin título";
+    if (nodeObj.original && nodeObj.original.url) {
+      displayText += "|" + nodeObj.original.url;
+    }
+    tree.rename_node(nodeId, displayText);
   }
-  tree.rename_node(node, displayText);
 }
 
 // Function to validate URL

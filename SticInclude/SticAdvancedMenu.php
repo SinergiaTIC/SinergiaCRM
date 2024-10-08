@@ -99,8 +99,12 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
     }
 
     foreach ($items as $item) {
+
+        
+        $cleanId = preg_replace('/__.*$/', '', $item['id']);
+
         // Get the display text for the menu item
-        $text = ($app_list_strings['moduleList'][$item['id']] ?? $app_strings[$item['id']] ?? str_replace('_', ' ', $item['id']));
+        $text = ($app_list_strings['moduleList'][$cleanId] ?? $app_strings[$cleanId] ?? str_replace('_', ' ', $cleanId));
 
         // If item contains URL, extract it and cut text
         $itemURL = extractUrl($text);
@@ -109,7 +113,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         }
 
         $hasChildren = isset($item['children']) && is_array($item['children']) && !empty($item['children']);
-        $isValidModule = array_key_exists($item['id'], $validTabs);
+        $isValidModule = array_key_exists($cleanId, $validTabs);
 
         // Recursively generate HTML for child items
         $childrenHtml = '';
@@ -124,10 +128,10 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 
             if ($isValidModule) {
                 // Generate link for valid modules
-                $lowerModule = str_replace('_', '-', strtolower($item['id']));
+                $lowerModule = str_replace('_', '-', strtolower($cleanId));
                 // Include icon if enabled in configuration
                 $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
-                $itemHtml .= "<a href='index.php?module={$item['id']}&action=index'>$iconString $text </a>";
+                $itemHtml .= "<a href='index.php?module={$cleanId}&action=index'>$iconString $text </a>";
             } elseif ($hasChildren) {
                 // Generate dropdown toggle for items with children
                 $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
@@ -191,16 +195,18 @@ function addMenuProperties(&$array)
     foreach ($array as $key => &$value) {
         if (is_array($value)) {
             if (isset($value['id'])) {
-                $value['text'] = ($app_list_strings['moduleList'][$value['id']] ?? '');
+                $cleanValueId= preg_replace('/__.*$/', '', $value['id']);
+
+                $value['text'] = ($app_list_strings['moduleList'][$cleanValueId] ?? '');
                 // Set disabled property if module is disabled
-                if (!in_array($value['id'], $currentTabs) && isset($app_list_strings['moduleList'][$value['id']])) {
+                if (!in_array($cleanValueId, $currentTabs) && isset($app_list_strings['moduleList'][$cleanValueId])) {
                     $value['disabled'] = true;
                 }
                 if (empty($value['text'])) {
-                    $value['text'] = $app_strings[$value['id']];
+                    $value['text'] = $app_strings[$cleanValueId];
                 }
                 if (empty($value['text'])) {
-                    $value['text'] = str_replace('_', ' ', $value['id']);
+                    $value['text'] = str_replace('_', ' ', $cleanValueId);
                 }
             }
             addMenuProperties($value); // Recursively process sub-arrays

@@ -29,12 +29,13 @@ if ($_REQUEST['manageMode'] ?? false) {
         case 'save':
             // Decode HTML entities in the JSON string
             $decodedJson = html_entity_decode($_POST['menuJson']);
-
+            
             // Convert the decoded JSON to a PHP array
             $GLOBALS["SticTabStructure"] = json_decode($decodedJson, true);
 
             // Write the tab structure to a custom file
             $fileContents = "<?php \n" . '$GLOBALS["SticTabStructure"] =' . var_export($GLOBALS['SticTabStructure'], true) . ';';
+            
             sugar_file_put_contents('custom/include/AdvancedTabConfig.php', $fileContents);
             ob_clean();
             SugarApplication::appendSuccessMessage("<div id='saved-notice' class='alert alert-success' role='alert'>{$app_strings['LBL_SAVED']}</div>");
