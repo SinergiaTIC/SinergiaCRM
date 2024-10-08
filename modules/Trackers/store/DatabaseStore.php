@@ -73,37 +73,22 @@ class DatabaseStore implements Store
                 } elseif ($metrics[$name]->_type == 'datetime') {
                     $values[] = DBManagerFactory::getInstance()->convert(DBManagerFactory::getInstance()->quoted($monitor->$name), "datetime");
                 } else {
-                    // STIC - ART - Module Tracker
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
-                    // Track the username
-                    if ($monitor->user_id) {
-                        $userId = $monitor->user_id;
-                        $user = BeanFactory::getBean('Users', $userId);
-                        $monitor->tracker_user = $user->user_name;
-                    } 
-                    // END STIC
                     $values[] = DBManagerFactory::getInstance()->quoted($monitor->$name);
                 }
             }
         } //foreach
 
-        // Don't save a record of the tracker module
-        if($monitor->action == 'save' && $monitor->module_name == 'Trackers'){
+        if (empty($values)) {
             return;
-        } else {
-            if (empty($values)) {
-                return;
-            }
-    
-            $id = DBManagerFactory::getInstance()->getAutoIncrementSQL($monitor->table_name, 'id');
-            if (!empty($id)) {
-                $columns[] = 'id';
-                $values[] = $id;
-            }
-    
-            $query = "INSERT INTO $monitor->table_name (" .implode(",", $columns). " ) VALUES ( ". implode(",", $values). ')';
-            DBManagerFactory::getInstance()->query($query);
         }
-        
+
+        $id = DBManagerFactory::getInstance()->getAutoIncrementSQL($monitor->table_name, 'id');
+        if (!empty($id)) {
+            $columns[] = 'id';
+            $values[] = $id;
+        }
+
+        $query = "INSERT INTO $monitor->table_name (" .implode(",", $columns). " ) VALUES ( ". implode(",", $values). ')';
+        DBManagerFactory::getInstance()->query($query);
     }
 }

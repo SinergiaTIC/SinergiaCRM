@@ -21,4 +21,3 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings['LNK_LIST'] = 'View Trackers';
-$mod_strings['LBL_TRACKER_USER'] = 'User';
