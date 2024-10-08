@@ -35,17 +35,17 @@ $mod_strings['LBL_STIC_VALIDATION_RESULTS_DESCRIPTION'] = 'Manage and review the
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Custom views';
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Module views conditional customization.';
 
-$mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Settings';
-$mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Settings management for SinergiaCRM.';
+$mod_strings['LBL_STIC_SETTINGS_LINK_TITLE'] = 'Settings';
+$mod_strings['LBL_STIC_SETTINGS_DESCRIPTION'] = 'Settings management for SinergiaCRM.';
 
 $mod_strings['LBL_STIC_TEST_DATA_LINK_TITLE'] = 'Test data';
 $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Load or delete test data.';
 
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Rebuild the integration with Sinergia Data Analytics.';
+$mod_strings['LBL_STIC_SINERGIADA_LINK_TITLE'] = 'Sinergia Data Analytics';
+$mod_strings['LBL_STIC_SINERGIADA_DESCRIPTION'] = 'Rebuild the integration with Sinergia Data Analytics.';
 
-$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Main menu';
-$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Set main menu structure and content';
+$mod_strings['LBL_STIC_MAIN_MENU_LINK_TITLE'] = 'Main menu';
+$mod_strings['LBL_STIC_MAIN_MENU_DESCRIPTION'] = 'Set main menu structure and content';
 
 // Test data
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = "<strong>Important:</strong> Loaded sample records should not be used to store real data, since they can be deleted in the future.";

@@ -25,8 +25,8 @@
 $admin_option_defs = [];
 $admin_option_defs['Administration']['configure_advanced_menu_tabs'] = [
     'ConfigureTabs',
-    'LBL_CONFIGURE_MAIN_MENU',
-    'LBL_CONFIGURE_MAIN_MENU_DESC',
+    'LBL_STIC_MAIN_MENU_LINK_TITLE',
+    'LBL_STIC_MAIN_MENU_DESCRIPTION',
     './index.php?module=Administration&action=SticManageMainMenu',
     'stic-configure-main-menu'
 ];

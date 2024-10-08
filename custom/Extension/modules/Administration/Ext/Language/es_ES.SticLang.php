@@ -35,17 +35,17 @@ $mod_strings['LBL_STIC_VALIDATION_RESULTS_DESCRIPTION'] = 'Gestiona y revisa los
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Vistas personalizadas';
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Personalización condicional de las vistas de los módulos.';
 
-$mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE'] = 'Configuración';
-$mod_strings['LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION'] = 'Opciones de configuración de SinergiaCRM.';
+$mod_strings['LBL_STIC_SETTINGS_LINK_TITLE'] = 'Configuración';
+$mod_strings['LBL_STIC_SETTINGS_DESCRIPTION'] = 'Opciones de configuración de SinergiaCRM.';
 
 $mod_strings['LBL_STIC_TEST_DATA_LINK_TITLE'] = 'Datos de prueba';
 $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Cargar o eliminar datos de prueba.';
 
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
-$mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Reconstruye la integración con Sinergia Data Analytics.';
+$mod_strings['LBL_STIC_SINERGIADA_LINK_TITLE'] = 'Sinergia Data Analytics';
+$mod_strings['LBL_STIC_SINERGIADA_DESCRIPTION'] = 'Reconstruye la integración con Sinergia Data Analytics.';
 
-$mod_strings['LBL_CONFIGURE_MAIN_MENU'] = 'Menú principal';
-$mod_strings['LBL_CONFIGURE_MAIN_MENU_DESC'] = 'Configuración de la estructura y el contenido del menú';
+$mod_strings['LBL_STIC_MAIN_MENU_LINK_TITLE'] = 'Menú principal';
+$mod_strings['LBL_STIC_MAIN_MENU_DESCRIPTION'] = 'Configuración de la estructura y el contenido del menú';
 
 // Datos de prueba
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = '<strong>Importante:</strong> Los registros de prueba cargados en los diferentes módulos no deben usarse para almacenar datos reales, ya que pueden ser eliminados en el futuro.';

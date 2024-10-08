@@ -26,8 +26,8 @@ $admin_option_defs = array();
 // Create menu element
 $admin_option_defs['Administration']['stic_settings'] = array(
     'stic_Settings',
-    'LBL_SINERGIACRM_TAB_STIC_SETTINGS_LINK_TITLE',
-    'LBL_SINERGIACRM_TAB_STIC_SETTINGS_DESCRIPTION',
+    'LBL_STIC_SETTINGS_LINK_TITLE',
+    'LBL_STIC_SETTINGS_DESCRIPTION',
     './index.php?module=stic_Settings&action=index',
     'stic-settings',
 );
