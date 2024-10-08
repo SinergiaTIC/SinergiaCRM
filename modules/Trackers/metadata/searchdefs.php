@@ -6,7 +6,7 @@ array(
         'basic_search' => array(
             'assigned_user_link' => array(
                 'name' => 'assigned_user_link',
-                'type' => 'varchar',
+                'type' => 'relate',
                 'width' => '10%',
                 'default' => true,
                 'vname' => 'LBL_ASSIGNED_TO_USER',
@@ -43,7 +43,7 @@ array(
         'advanced_search' => array(
             'assigned_user_link' => array(
                 'name' => 'assigned_user_link',
-                'type' => 'varchar',
+                'type' => 'relate',
                 'width' => '10%',
                 'default' => true,
                 'vname' => 'LBL_ASSIGNED_TO_USER',
