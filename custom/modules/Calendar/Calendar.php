@@ -238,15 +238,11 @@ class CustomCalendar extends Calendar
                     $item['color'] = $act->sugar_bean->color ? '#'.$act->sugar_bean->color : '';
                 }
                 if ($item['module_name'] == 'stic_Work_Calendar') {
-                    // if ($act->sugar_bean->type == 'canceled' ) {
-                    //     break;
-                    // } else {
-                        $item['event_type'] = $act->sugar_bean->type;
-                        $totalMinutes = $act->sugar_bean->duration * 60;
-                        $item['duration_hours'] = floor($totalMinutes / 60);
-                        $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
-                        $item['rendering'] = 'background';
-                    // }
+                    $item['event_type'] = $act->sugar_bean->type;
+                    $totalMinutes = $act->sugar_bean->duration * 60;
+                    $item['duration_hours'] = floor($totalMinutes / 60);
+                    $item['duration_minutes'] = round($totalMinutes - $item['duration_hours'] * 60);
+                    $item['rendering'] = 'background';
                 }
                 // END STIC-Custom
 
