@@ -100,7 +100,6 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 
     foreach ($items as $item) {
 
-        
         $cleanId = preg_replace('/__.*$/', '', $item['id']);
 
         // Get the display text for the menu item
@@ -132,12 +131,12 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
                 // Include icon if enabled in configuration
                 $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
                 $itemHtml .= "<a href='index.php?module={$cleanId}&action=index'>$iconString $text </a>";
-            } elseif ($hasChildren) {
-                // Generate dropdown toggle for items with children
-                $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
             } elseif ($itemURL) {
                 // Generate external link for items with custom URLs
                 $itemHtml .= "<a title='$itemURL' target='_blank' href='$itemURL'><span class='glyphicon glyphicon-link'></span> $text </a>";
+            } elseif ($hasChildren) {
+                // Generate dropdown toggle for items with children
+                $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
             }
 
             $itemHtml .= $childrenHtml;
@@ -195,7 +194,7 @@ function addMenuProperties(&$array)
     foreach ($array as $key => &$value) {
         if (is_array($value)) {
             if (isset($value['id'])) {
-                $cleanValueId= preg_replace('/__.*$/', '', $value['id']);
+                $cleanValueId = preg_replace('/__.*$/', '', $value['id']);
 
                 $value['text'] = ($app_list_strings['moduleList'][$cleanValueId] ?? '');
                 // Set disabled property if module is disabled

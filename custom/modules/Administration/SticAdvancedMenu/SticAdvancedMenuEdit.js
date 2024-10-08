@@ -369,7 +369,12 @@ function createMenu() {
       themes: {
         icons: false
       },
-      check_callback: true
+      check_callback: function(operation, node, node_parent, node_position, more) {
+        if (operation === "move_node") {
+          //Allow movement only if the father node is the root node
+          return node_parent.id === "#";
+        }
+      }
     },
     plugins: ["dnd", "wholerow", "search", "unique"]
   });
@@ -450,7 +455,6 @@ function removeDisabledObjects(arr) {
   }
   return arr;
 }
-
 
 /**
  * Creates a new main node in the jsTree.
