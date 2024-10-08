@@ -87,6 +87,13 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 				<h3 class="panel-title">{$MOD.LBL_STIC_MENU_ENABLED_INCLUDED}</h3>
 			</div>
 			<div class="panel-body">
+				<div class="btn-toolbar" role="toolbar" aria-label="...">
+					<div class="btn-group" role="group">
+						<div type="button" class="btn btn-link" onclick="newMainNode();">{$MOD.LBL_STIC_MENU_COMMAND_NEW_MAIN_NODE}</div>
+						<div type="button" class="btn btn-link" onclick="expandAll();">{$MOD.LBL_STIC_MENU_COMMAND_EXPAND}</div>
+						<div type="button" class="btn btn-link" onclick="collapseAll();">{$MOD.LBL_STIC_MENU_COMMAND_COLLAPSE}</div>
+					</div>
+				</div>
 				<div id="stic-menu-manager">
 				</div>
 				<div id="menu-config-info">{$MOD.LBL_STIC_MENU_INFO}</div>

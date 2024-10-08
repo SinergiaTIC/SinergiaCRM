@@ -71,7 +71,7 @@ $mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Configuración del menú';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Guardar y aplicar';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restaurar';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = '¿Restaurar el menu prederminado de SinergiaCRM?';
-$mod_strings['LBL_STIC_MENU_INFO'] = 'Para incluir un módulo en el menú principal debe estar <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">habilitado</a>. Si ya lo está, puede arrastrarlo de la zona de módulos no incluidos (derecha) hacia el nodo del menú donde desee que aparezca (izquierda). Para esconderlo, haga el movimiento inverso. Para reordenar los nodos, arrástrelos a la posición deseada. Con el botón derecho del ratón puede mostrar el menú contextual asociado a cada elemento del menú, que le permitirá crear nuevos nodos (que pueden apuntar a cualquier URL), cambiar su nombre o eliminarlos.';
+$mod_strings['LBL_STIC_MENU_INFO'] = 'Para incluir un módulo en el menú principal debe estar <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">habilitado</a>. Si ya lo está, puede arrastrarlo de la zona de módulos no incluidos (derecha) hacia el nodo del menú donde desee que aparezca (izquierda). Para esconderlo, haga el movimiento inverso. Para reordenar los nodos, arrástrelos a la posición deseada. Con el botón derecho del ratón puede mostrar el menú contextual asociado a cada elemento del menú, que le permitirá crear nuevos nodos (que pueden apuntar a cualquier URL), duplicarlos, cambiar su nombre o eliminarlos.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Mostrar iconos de módulos';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Mostrar la opción TODO';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Cambiar al menú clásico';
@@ -84,6 +84,9 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Escriba la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Escriba una URL válida';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Eliminar';
 $mod_strings['LBL_STIC_MENU_COMMAND_DUPLICATE'] = 'Duplicar';
+$mod_strings['LBL_STIC_MENU_COMMAND_NEW_MAIN_NODE'] = 'Nuevo nodo principal';
+$mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = 'Expandir árbol';
+$mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = 'Contraer árbol';
 
 
 // Cadenas de SuiteCRM modificadas

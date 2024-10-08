@@ -71,7 +71,7 @@ $mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Menu Configuration';
 $mod_strings['LBL_STIC_MENU_SAVE'] = 'Save and apply';
 $mod_strings['LBL_STIC_MENU_RESTORE'] = 'Restore';
 $mod_strings['LBL_STIC_MENU_RESTORE_CONFIRM'] = 'Restore the default SinergiaCRM menu?';
-$mod_strings['LBL_STIC_MENU_INFO'] = 'To include a module in the main menu it must be <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">enabled</a>. If it already is, you can drag it from the excluded modules area (right) and drop it over the menu node where you want it to appear (left). To hide it, do the opposite. To resort the nodes, drag them to the desired position. With the right mouse button you can show the item context menu, which allows you to create new nodes (which can point to any URL), rename them or delete them.';
+$mod_strings['LBL_STIC_MENU_INFO'] = 'To include a module in the main menu it must be <a href="index.php?module=Administration&action=ConfigureTabs" target="_blank">enabled</a>. If it already is, you can drag it from the excluded modules area (right) and drop it over the menu node where you want it to appear (left). To hide it, do the opposite. To resort the nodes, drag them to the desired position. With the right mouse button you can show the item context menu, which allows you to create new nodes (which can point to any URL), duplicate them, rename them or delete them.';
 $mod_strings['LBL_STIC_MENU_ICONS'] = 'Show module icons';
 $mod_strings['LBL_STIC_MENU_ALL'] = 'Show ALL option';
 $mod_strings['LBL_STIC_MENU_CHANGE_TO_LEGACY'] = 'Switch to legacy menu';
@@ -84,6 +84,9 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Enter the URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Please enter a valid URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Remove';
 $mod_strings['LBL_STIC_MENU_COMMAND_DUPLICATE'] = 'Duplicate';
+$mod_strings['LBL_STIC_MENU_COMMAND_NEW_MAIN_NODE'] = 'New main node';
+$mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = 'Expand tree';
+$mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = 'Collapse tree';
 
 // SuiteCRM modified strings
 $mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configure how subpanels are grouped in the detail views';
