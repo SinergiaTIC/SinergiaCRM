@@ -19,31 +19,7 @@
  * 02110-1301 USA.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
-// $dictionary['Tracker']['fields']['action'] = array(
-//     // 'name' => 'action',
-//     // 'vname' => 'LBL_ACTION',
-//     'type' => 'enum',
-//     'massupdate' => 0,
-//     'no_default' => false,
-//     'comments' => '',
-//     'help' => '',
-//     'importable' => 'required',
-//     'duplicate_merge' => 'disabled',
-//     'duplicate_merge_dom_value' => '0',
-//     'audited' => false,
-//     'inline_edit' => false,
-//     'reportable' => true,
-//     'unified_search' => false,
-//     'merge_filter' => 'disabled',
-//     'len' => 100,
-//     'size' => '20',
-//     'options' => 'trackers_actions_list',
-//     'studio' => 'visible',
-//     'dependency' => false,
-// );
-
-
+ */ 
 
 $dictionary['Tracker']['fields']['assigned_user_link'] = array (
     'name' => 'assigned_user_link',
@@ -55,6 +31,7 @@ $dictionary['Tracker']['fields']['assigned_user_link'] = array (
     'id_name' => 'user_id',
     'link' => true,
     'rname' => 'user_name',
+    'inline_edit' => 0,
 );
 
 $dictionary['Tracker']['fields']['user_id']['module'] = 'Users';
@@ -63,3 +40,5 @@ $dictionary['Tracker']['fields']['module_name']['options'] = 'moduleList';
 $dictionary['Tracker']['fields']['date_modified']['options'] = 'date_range_search_dom';
 $dictionary['Tracker']['fields']['date_modified']['enable_range_search'] = true;
 $dictionary['Tracker']['fields']['date_modified']['dbType'] = 'datetimecombo';
+
+$dictionary['Tracker']['fields']['action']['inline_edit'] = 0;
