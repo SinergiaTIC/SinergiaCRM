@@ -83,6 +83,7 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Editar la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Escriba la URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Escriba una URL válida';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Eliminar';
+$mod_strings['LBL_STIC_MENU_COMMAND_DUPLICATE'] = 'Duplicar';
 
 
 // Cadenas de SuiteCRM modificadas

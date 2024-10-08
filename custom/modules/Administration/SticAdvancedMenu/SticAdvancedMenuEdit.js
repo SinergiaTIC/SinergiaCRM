@@ -241,7 +241,7 @@ function createMenu() {
           Duplicate: {
             separator_before: false,
             separator_after: false,
-            label: "<i class='glyphicon glyphicon-duplicate'></i>Duplicar",
+            label: "<i class='glyphicon glyphicon-duplicate'></i>"+SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_DUPLICATE,
             action: function(obj) {
               var nodeData = tree.get_json($node, { no_state: true, no_id: false, no_children: false, no_data: false });
               

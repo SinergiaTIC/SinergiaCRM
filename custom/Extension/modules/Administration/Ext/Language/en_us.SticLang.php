@@ -83,6 +83,7 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL'] = 'Edit URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT'] = 'Enter the URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE'] = 'Please enter a valid URL';
 $mod_strings['LBL_STIC_MENU_COMMAND_REMOVE'] = 'Remove';
+$mod_strings['LBL_STIC_MENU_COMMAND_DUPLICATE'] = 'Duplicate';
 
 // SuiteCRM modified strings
 $mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configure how subpanels are grouped in the detail views';
