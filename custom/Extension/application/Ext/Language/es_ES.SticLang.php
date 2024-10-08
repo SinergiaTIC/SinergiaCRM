@@ -3536,14 +3536,13 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'En
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
 
 // Monitorizaciones: Acciones realizadas por el usuario
-$app_list_strings['trackers_actions_list']['save'] = 'Registro guardado';
-$app_list_strings['trackers_actions_list']['record_creation'] = 'Registro creado';
+$app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
 $app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
-$app_list_strings['trackers_actions_list']['editview'] = 'Vista de edición';
-$app_list_strings['trackers_actions_list']['record_update'] = 'Registro modificado';
-$app_list_strings['trackers_actions_list']['record_deletion'] = 'Registro eliminado';
+$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Login';
 $app_list_strings['trackers_actions_list']['logout'] = 'Logout';
+
 
 // Modificaciones del core de SuiteCRM
 

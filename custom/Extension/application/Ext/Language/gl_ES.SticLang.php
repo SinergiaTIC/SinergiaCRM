@@ -3537,12 +3537,10 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'En
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
 
 // Monitoraxes: Accións realizadas polo usuario
-$app_list_strings['trackers_actions_list']['save'] = 'Rexistro gardado';
-$app_list_strings['trackers_actions_list']['record_creation'] = 'Rexistro creado';
+$app_list_strings['trackers_actions_list']['save'] = 'Rexistro creado';
 $app_list_strings['trackers_actions_list']['detailview'] = 'Rexistro accedido';
-$app_list_strings['trackers_actions_list']['editview'] = 'Vista de edición';
-$app_list_strings['trackers_actions_list']['record_update'] = 'Registro modificado';
-$app_list_strings['trackers_actions_list']['record_deletion'] = 'Rexistro eliminado';
+$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Rexistro eliminado';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Login';
 $app_list_strings['trackers_actions_list']['logout'] = 'Logout';
 
