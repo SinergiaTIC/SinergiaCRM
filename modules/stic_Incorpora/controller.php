@@ -76,8 +76,8 @@ class stic_IncorporaController extends SugarController
                 break;
 
             default:
-                $tableQuery = 'FROM ' . $moduleTable . ' JOIN ' . $moduleTable . '_cstm c ON id=c.id_c';
-                $incIdFieldSql = 'c.inc_id_c';
+                $tableQuery = 'FROM ' . $moduleTable . ' JOIN ' . $moduleTable . '_cstm ON id=' . $moduleTable . '_cstm.id_c';
+                $incIdFieldSql = $moduleTable . '_cstm.inc_id_c';
                 $incIdField = 'inc_id_c';
                 break;
         }
