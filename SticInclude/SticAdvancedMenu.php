@@ -161,7 +161,9 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
             $menuHtml .= '<ul>';
             $menuHtml .= '<li><input type="text" id="search-all" placeholder="' . $app_strings['LBL_SEARCH'] . '"></input></li>';
             foreach ($validTabs as $key => $value) {
-                $menuHtml .= "<li><a href='index.php?module={$key}&action=index'>" . $value . '</a></li>';
+                $lowerModule=str_replace('_','-',strtolower($key));
+                $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
+                $menuHtml .= "<li><a href='index.php?module={$key}&action=index'> $iconString  $value </a></li>";
             }
             $menuHtml .= '</ul>';
             $menuHtml .= '</li>';
