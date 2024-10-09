@@ -21,7 +21,7 @@
  * You can contact Izertis at email address info@izertis.com.
  */
 // STIC-Custom 20241009 ART - Does not show available fields in Popup View
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/432
 
 // if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
