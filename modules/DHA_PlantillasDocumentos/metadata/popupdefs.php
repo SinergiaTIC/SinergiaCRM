@@ -20,20 +20,98 @@
  *
  * You can contact Izertis at email address info@izertis.com.
  */
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+// STIC-Custom 20241003 ART - Does not show available fields in Popup View
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/
 
-$module_name = 'DHA_PlantillasDocumentos';
-$object_name = 'DHA_PlantillasDocumentos';
-$_module_name = 'dha_plantillasdocumentos';
+// if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+// $module_name = 'DHA_PlantillasDocumentos';
+// $object_name = 'DHA_PlantillasDocumentos';
+// $_module_name = 'dha_plantillasdocumentos';
+// $popupMeta = array(
+//    'moduleMain' => $module_name,
+//    'varName' => $object_name,
+//    'orderBy' => $_module_name.'.name',
+//    'whereClauses' => array(
+//       'name' => $_module_name . '.name', 
+//    ),
+//    'searchInputs'=> array(
+//       'name', 
+//    ),
+// );
 $popupMeta = array(
-   'moduleMain' => $module_name,
-   'varName' => $object_name,
-   'orderBy' => $_module_name.'.name',
-   'whereClauses' => array(
-      'name' => $_module_name . '.name', 
-   ),
-   'searchInputs'=> array(
-      'name', 
-   ),
+    'moduleMain' => 'DHA_PlantillasDocumentos',
+    'varName' => 'DHA_PlantillasDocumentos',
+    'orderBy' => 'dha_plantillasdocumentos.name',
+    'whereClauses' => array(
+        'name' => 'dha_plantillasdocumentos.name',
+    ),
+    'searchInputs' => array(
+        0 => 'name',
+    ),
+    'listviewdefs' => array(
+        'FILE_URL' => array(
+            'width' => '2%',
+            'label' => '&nbsp;',
+            'link' => true,
+            'default' => true,
+            'related_fields' => array(
+                0 => 'file_ext',
+            ),
+            'sortable' => false,
+            'studio' => false,
+            'name' => 'file_url',
+        ),
+        'MODULO_URL' => array(
+            'width' => '2%',
+            'label' => '&nbsp;',
+            'link' => false,
+            'default' => true,
+            'sortable' => false,
+            'studio' => false,
+            'name' => 'modulo_url',
+        ),
+        'DOCUMENT_NAME' => array(
+            'width' => '25%',
+            'label' => 'LBL_NAME',
+            'link' => true,
+            'default' => true,
+            'name' => 'document_name',
+        ),
+        'MODULO' => array(
+            'type' => 'enum',
+            'default' => true,
+            'studio' => 'visible',
+            'label' => 'LBL_MODULO',
+            'width' => '10%',
+            'name' => 'modulo',
+        ),
+        'IDIOMA' => array(
+            'type' => 'enum',
+            'default' => true,
+            'studio' => 'visible',
+            'label' => 'LBL_IDIOMA_PLANTILLA',
+            'width' => '10%',
+            'name' => 'idioma',
+        ),
+        'STATUS_ID' => array(
+            'type' => 'enum',
+            'default' => true,
+            'studio' => 'visible',
+            'label' => 'LBL_DOC_STATUS',
+            'width' => '10%',
+            'name' => 'status_id',
+        ),
+        'ASSIGNED_USER_NAME' => array(
+            'link' => 'assigned_user_link',
+            'type' => 'relate',
+            'label' => 'LBL_ASSIGNED_TO_NAME',
+            'width' => '10%',
+            'default' => true,
+            'module' => 'Employees',
+            'name' => 'assigned_user_name',
+        ),
+    ),
 );
+// END STIC-Custom
 ?>
