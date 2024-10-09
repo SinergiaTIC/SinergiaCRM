@@ -1,7 +1,7 @@
 <?php
 /**
  * This file is part of Mail Merge Reports by Izertis.
- * Copyright (C) 2015 Izertis. 
+ * Copyright (C) 2015 Izertis.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE as published by
@@ -20,7 +20,7 @@
  *
  * You can contact Izertis at email address info@izertis.com.
  */
-// STIC-Custom 20241003 ART - Does not show available fields in Popup View
+// STIC-Custom 20241009 ART - Does not show available fields in Popup View
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/
 
 // if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
@@ -33,10 +33,10 @@
 //    'varName' => $object_name,
 //    'orderBy' => $_module_name.'.name',
 //    'whereClauses' => array(
-//       'name' => $_module_name . '.name', 
+//       'name' => $_module_name . '.name',
 //    ),
 //    'searchInputs'=> array(
-//       'name', 
+//       'name',
 //    ),
 // );
 $popupMeta = array(
@@ -44,10 +44,123 @@ $popupMeta = array(
     'varName' => 'DHA_PlantillasDocumentos',
     'orderBy' => 'dha_plantillasdocumentos.name',
     'whereClauses' => array(
-        'name' => 'dha_plantillasdocumentos.name',
+        'document_name' => 'dha_plantillasdocumentos.document_name',
+        'modulo' => 'dha_plantillasdocumentos.modulo',
+        'idioma' => 'dha_plantillasdocumentos.idioma',
+        'status_id' => 'dha_plantillasdocumentos.status_id',
+        'assigned_user_id' => 'dha_plantillasdocumentos.assigned_user_id',
+        'description' => 'dha_plantillasdocumentos.description',
+        'created_by' => 'dha_plantillasdocumentos.created_by',
+        'date_entered' => 'dha_plantillasdocumentos.date_entered',
+        'modified_user_id' => 'dha_plantillasdocumentos.modified_user_id',
+        'date_modified' => 'dha_plantillasdocumentos.date_modified',
+        'aclroles' => 'dha_plantillasdocumentos.aclroles',
+        'current_user_only' => 'dha_plantillasdocumentos.current_user_only',
+        'favorites_only' => 'dha_plantillasdocumentos.favorites_only',
     ),
     'searchInputs' => array(
-        0 => 'name',
+        1 => 'document_name',
+        2 => 'modulo',
+        3 => 'idioma',
+        4 => 'status_id',
+        5 => 'assigned_user_id',
+        6 => 'description',
+        7 => 'created_by',
+        8 => 'date_entered',
+        9 => 'modified_user_id',
+        10 => 'date_modified',
+        11 => 'aclroles',
+        12 => 'current_user_only',
+        13 => 'favorites_only',
+    ),
+    'searchdefs' => array(
+        'document_name' => array(
+            'name' => 'document_name',
+            'width' => '10%',
+        ),
+        'modulo' => array(
+            'type' => 'enum',
+            'studio' => 'visible',
+            'label' => 'LBL_MODULO',
+            'width' => '10%',
+            'name' => 'modulo',
+        ),
+        'idioma' => array(
+            'type' => 'enum',
+            'studio' => 'visible',
+            'label' => 'LBL_IDIOMA_PLANTILLA',
+            'width' => '10%',
+            'name' => 'idioma',
+        ),
+        'status_id' => array(
+            'type' => 'enum',
+            'studio' => 'visible',
+            'label' => 'LBL_DOC_STATUS',
+            'width' => '10%',
+            'name' => 'status_id',
+        ),
+        'assigned_user_id' => array(
+            'name' => 'assigned_user_id',
+            'label' => 'LBL_ASSIGNED_TO',
+            'type' => 'enum',
+            'function' => array(
+                'name' => 'get_user_array',
+                'params' => array(
+                    0 => false,
+                ),
+            ),
+            'width' => '10%',
+        ),
+        'description' => array(
+            'type' => 'text',
+            'label' => 'LBL_DESCRIPTION',
+            'sortable' => false,
+            'width' => '10%',
+            'name' => 'description',
+        ),
+        'created_by' => array(
+            'type' => 'assigned_user_name',
+            'label' => 'LBL_CREATED',
+            'width' => '10%',
+            'name' => 'created_by',
+        ),
+        'date_entered' => array(
+            'type' => 'datetime',
+            'label' => 'LBL_DATE_ENTERED',
+            'width' => '10%',
+            'name' => 'date_entered',
+        ),
+        'modified_user_id' => array(
+            'type' => 'assigned_user_name',
+            'label' => 'LBL_MODIFIED',
+            'width' => '10%',
+            'name' => 'modified_user_id',
+        ),
+        'date_modified' => array(
+            'type' => 'datetime',
+            'label' => 'LBL_DATE_MODIFIED',
+            'width' => '10%',
+            'name' => 'date_modified',
+        ),
+        'aclroles' => array(
+            'type' => 'multienum',
+            'studio' => 'visible',
+            'label' => 'LBL_ROLES_WITH_ACCESS',
+            'width' => '10%',
+            'name' => 'aclroles',
+        ),
+        'current_user_only' => array(
+            'label' => 'LBL_CURRENT_USER_FILTER',
+            'type' => 'bool',
+            'width' => '10%',
+            'name' => 'current_user_only',
+        ),
+        'favorites_only' => array(
+            'name' => 'favorites_only',
+            'label' => 'LBL_FAVORITES_FILTER',
+            'type' => 'bool',
+            'width' => '10%',
+        ),
     ),
     'listviewdefs' => array(
         'FILE_URL' => array(
@@ -114,4 +227,3 @@ $popupMeta = array(
     ),
 );
 // END STIC-Custom
-?>
