@@ -122,6 +122,67 @@ $(document).ready(function() {
   setTimeout(() => {
     $("#saved-notice").fadeOut(3000);
   }, 3000);
+
+  /**
+ * Handles the deletion of nodes from the stic-menu-manager tree.
+ * When a node is deleted, it and its descendants are added to the hidden-modules tree.
+ */
+  $("#stic-menu-manager").on("delete_node.jstree", function(e, data) {
+    /**
+   * Recursively collects node data and its descendants into a flat array.
+   * @param {Object} node - The node to process.
+   * @returns {Array} An array of node data objects.
+   */
+    function getNodeDataArray(node) {
+      var nodeDataArray = [];
+
+      function addNodeToArray(n) {
+        var nodeData = {
+          id: n.id,
+          text: n.text,
+          parent: n.parent
+        };
+
+        // Add other relevant properties
+        if (n.data) {
+          nodeData.data = n.data;
+        }
+        if (n.original) {
+          nodeData.original = n.original;
+        }
+
+        nodeDataArray.push(nodeData);
+
+        // Process children iteratively
+        if (n.children && n.children.length > 0) {
+          n.children.forEach(function(childId) {
+            var childNode = data.instance.get_node(childId);
+            addNodeToArray(childNode);
+          });
+        }
+      }
+
+      addNodeToArray(node);
+      return nodeDataArray;
+    }
+
+    // Get data of the deleted node and its descendants
+    var deletedNodesArray = getNodeDataArray(data.node);
+
+    // Add each deleted node to the hidden-modules tree
+    deletedNodesArray.forEach(element => {
+      addNewItemToHiddenModules({
+        id: element.id,
+        text: element.text
+      });
+    });
+
+    // Log the deleted nodes data
+    console.log("Nodes deleted from stic-menu-manager:", deletedNodesArray);
+
+    // If you need to return this array for use elsewhere:
+    // return deletedNodesArray;
+  });
 });
 
 /**
@@ -320,6 +381,7 @@ function createMenu() {
               "<i class='glyphicon glyphicon-remove'></i>" +
               SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_REMOVE,
             action: function(obj) {
+              console.log("eliminando");
               if (tree.is_selected($node)) {
                 tree.delete_node(tree.get_selected());
               } else {
@@ -341,12 +403,22 @@ function createMenu() {
       },
       check_callback: function(operation, node, node_parent, node_position, more) {
         if (operation === "move_node") {
-          //Allow movement only if the father node is the root node
-          return node_parent.id === "#";
+          // Prevent any movement inside the tree
+          return false;
         }
+        // Allow other operations (such as copying out)
+        return true;
       }
     },
-    plugins: ["dnd", "wholerow", "search", "unique"]
+    plugins: ["dnd", "wholerow", "search", "unique"],
+    dnd: {
+      is_draggable: function(nodes) {
+        // Allow to drag nodes out, but not inside the tree
+        return true;
+      },
+      copy: false, // Allow to copy nodes instead of moving them
+      always_copy: false // Always copy, never move
+    }
   });
 }
 
@@ -483,4 +555,102 @@ function collapseAll() {
   } else {
     console.warn("jsTree not found");
   }
+}
+
+/**
+ * Adds a new item to the hidden modules tree and applies a highlight effect.
+ * 
+ * @param {Object} nodeData - The data for the new node.
+ * @param {string} nodeData.id - The unique identifier for the node.
+ * @param {string} nodeData.text - The display text for the node.
+ * @param {string} [nodeData.url] - Optional URL associated with the node.
+ * @returns {string|null} The ID of the newly created node, or null if creation failed.
+ */
+function addNewItemToHiddenModules(nodeData) {
+  // Verify required properties
+  if (!nodeData.id || !nodeData.text) {
+    console.error("Properties 'id' and 'text' are required to create a new node");
+    return null;
+  }
+
+  var hiddenModulesTree = $.jstree.reference("#hidden-modules");
+
+  if (!hiddenModulesTree) {
+    console.error("Could not find the hidden-modules tree");
+    return null;
+  }
+
+  // Check if the node already exists
+  if (hiddenModulesTree.get_node(nodeData.id)) {
+    return null;
+  }
+
+  // Prepare the display text
+  var displayText = nodeData.text + (nodeData.url ? "|" + nodeData.url : "");
+
+  // Create the new node
+  var newNode = hiddenModulesTree.create_node("#", {
+    id: nodeData.id,
+    text: displayText,
+    data: nodeData,
+    original: nodeData
+  });
+
+  if (newNode) {
+    // Apply highlight effect
+    setTimeout(function() {
+      var $node = $("#" + newNode);
+      $node.css({
+        transition: "background-color 0.5s ease",
+        "background-color": "#B5BC31" // Light yellow color
+      });
+      setTimeout(function() {
+        $node.css({
+          transition: "background-color 1s ease",
+          "background-color": ""
+        });
+      }, 300);
+    }, 100);
+
+    sortHiddenModulesAlphabetically();
+    return newNode;
+  } else {
+    console.error("Failed to create new node in hidden-modules");
+    return null;
+  }
+}
+
+/**
+ * Sorts the nodes in the hidden modules tree alphabetically by their text.
+ */
+function sortHiddenModulesAlphabetically() {
+  var hiddenModulesTree = $.jstree.reference("#hidden-modules");
+
+  if (!hiddenModulesTree) {
+    console.error("Could not find the hidden-modules tree");
+    return;
+  }
+
+  // Get all top-level nodes
+  var topLevelNodes = hiddenModulesTree.get_node("#").children;
+
+  // Sort nodes alphabetically by text
+  topLevelNodes.sort(function(a, b) {
+    var nodeA = hiddenModulesTree.get_node(a);
+    var nodeB = hiddenModulesTree.get_node(b);
+
+    // Extract text without URL (if exists)
+    var textA = nodeA.text.split("|")[0].trim().toLowerCase();
+    var textB = nodeB.text.split("|")[0].trim().toLowerCase();
+
+    return textA.localeCompare(textB);
+  });
+
+  // Reorder nodes in the tree
+  for (var i = 0; i < topLevelNodes.length; i++) {
+    hiddenModulesTree.move_node(topLevelNodes[i], "#", i);
+  }
+
+  // Refresh the tree to show the new order
+  hiddenModulesTree.redraw(true);
 }
