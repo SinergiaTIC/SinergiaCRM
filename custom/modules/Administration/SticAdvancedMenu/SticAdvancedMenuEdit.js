@@ -93,14 +93,14 @@ $(document).ready(function() {
     // Preserve the original ID and text
     var tree = $("#stic-menu-manager").jstree(true);
     tree.set_id(new_node, original_node.id);
-    
+
     handleTreeChanges();
   });
 
   // Change text and id when renaming a node
   $("#stic-menu-manager").on("rename_node.jstree", function(e, data) {
     var tree = $("#stic-menu-manager").jstree(true);
-    var newId = data.text.replace(/\s+/g, "_");
+    var newId = data.text.replace(/\s+/g, "_") + "__" + Math.random().toString(36).substr(2, 4);
 
     // Change the ID directly
     tree.set_id(data.node, newId);
