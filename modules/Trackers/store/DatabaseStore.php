@@ -74,7 +74,7 @@ class DatabaseStore implements Store
                     $values[] = DBManagerFactory::getInstance()->convert(DBManagerFactory::getInstance()->quoted($monitor->$name), "datetime");
                 } else {
                     $values[] = DBManagerFactory::getInstance()->quoted($monitor->$name);
-                } 
+                }
             }
         } //foreach
 
