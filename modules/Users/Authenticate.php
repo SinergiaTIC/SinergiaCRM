@@ -86,6 +86,31 @@ if (isset($_SESSION['authenticated_user_id'])) {
     } else {
         $url = $GLOBALS['app']->getLoginRedirect();
     }
+
+    // STIC-Custom 20241014 ART - Tracker Module
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+    // Track the login of the current user
+    if($action === 'Authenticate'){
+        $trackerManager = TrackerManager::getInstance();
+        $monitor = $trackerManager->getMonitor('tracker');
+
+        if ($monitor) {
+
+            $user = $GLOBALS['current_user'];
+
+            $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
+            $monitor->setValue('user_id', $user->id);
+            $monitor->setValue('assigned_user_link', $user->user_name);
+            $monitor->setValue('module_name', 'Users');
+            $monitor->setValue('action', 'login_ok');
+            $monitor->setValue('item_id', $user->id);
+            $monitor->setValue('item_summary', $user->full_name .' - Login');
+            $monitor->setValue('visible', true);
+
+            $trackerManager->saveMonitor($monitor, true, true);
+        }
+    }
+    // END STIC Custom
 } else {
     // Login has failed
     if (isset($_POST['login_language']) && !empty($_POST['login_language'])) {
