@@ -300,12 +300,8 @@ class actionCreateRecord extends actionBase
                                     $date = $params['value'][$key][0];
                                 } else {
                                     $dateToUse = $params['value'][$key][0];
-                                    // STIC-Custom 20230417 JBL - There is a an error with dates when a Scheduled Workflow creates a registry with dates from the original bean
-                                    // The following workaround uses the date of fetched_row if is set
-                                    // When a workflow is executed "after save", the date format is correct, and the fetched_row is empty
-                                    // STIC#1052
-                                    $date = (isset($bean->fetched_row) && isset($bean->fetched_row[$dateToUse])) ? $bean->fetched_row[$dateToUse] : $bean->$dateToUse;
-                                    // End STIC-Custom 20230417 JBL
+                                    $bean->retrieve($bean->id);
+                                    $date = $timedate->fromUser($bean->$dateToUse)->asDB();
                                 }
 
                                 if ($params['value'][$key][1] !== 'now') {
