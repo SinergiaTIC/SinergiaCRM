@@ -351,6 +351,10 @@ class SugarView
         $trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
         if ($monitor = $trackerManager->getMonitor('tracker')) {
+            // STIC-Custom 20241014 ART - Tracker Module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+            // $monitor->setValue('action', $action);
+            // $monitor->setValue('user_id', $GLOBALS['current_user']->id);
             if($action == 'editview') {
                 $monitor->setValue('action', 'save');
             } else {
@@ -378,6 +382,7 @@ class SugarView
                 }
                 
             }
+            // END STIC Custom
 
             //If visible is true, but there is no bean, do not track (invalid/unauthorized reference)
             //Also, do not track save actions where there is no bean id

@@ -3473,6 +3473,9 @@ class SugarBean
         $trackerManager = TrackerManager::getInstance();
 
         if ($monitor = $trackerManager->getMonitor('tracker')) {
+            // STIC-Custom 20241014 ART - Tracker Module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+            // $trackerManager->saveMonitor($monitor);
             $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
             $monitor->setValue('user_id', $user_id);
             $monitor->setValue('assigned_user_link', $this->modified_by_name);
@@ -3494,6 +3497,7 @@ class SugarBean
 
             $trackerManager->saveMonitor($monitor, true, true);
         }
+        // END STIC Custom
 
     }
 
@@ -5346,10 +5350,13 @@ class SugarBean
             $tracker = BeanFactory::newBean('Trackers');
             $tracker->makeInvisibleForAll($id);
 
+            // STIC-Custom 20241014 ART - Tracker Module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
             // If we aren't in setup mode and we have a current user and module, then we track it as deleted
             if (isset($GLOBALS['current_user']) && isset($this->module_dir)) {
                 $this->track_view($current_user->id, $this->module_dir, 'deleted');
             }
+            // END STIC Custom
 
             $this->deleteFiles();
 
