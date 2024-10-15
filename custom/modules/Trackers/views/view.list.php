@@ -31,9 +31,11 @@ class CustomTrackersViewList extends ViewList
     {
         parent::preDisplay();
 
-        // Don't Mass Update the list
         $this->lv = new ListViewSmarty();
+        // Don't Mass Update the list
         $this->lv->showMassupdateFields = false;
+        // Hide Quick Edit Pencil
+        $this->lv->quickViewLinks = false;
 
     }
 }
