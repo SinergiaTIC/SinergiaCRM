@@ -328,13 +328,6 @@ if (!defined('TEMPLATE_URL')) {
         'upgrade-wizard'
     ];
 }
-$admin_option_defs['Administration']['trackers'] = [
-    'Trackers',
-    'LBL_TRACKERS_TITLE',
-    'LBL_TRACKERS_DESCRIPTION',
-    './index.php?module=Trackers&action=index',
-    'module-trackers'
-];
 
 $admin_group_header[] = ['LBL_ADMIN_TOOLS_TITLE', '', false, $admin_option_defs, 'LBL_ADMIN_TOOLS_HEADER_DESC'];
 
