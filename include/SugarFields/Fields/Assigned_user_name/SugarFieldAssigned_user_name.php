@@ -44,7 +44,13 @@ class SugarFieldAssigned_user_name extends SugarFieldBase
 {
     public function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
     {
-        $vardef['options'] = get_user_array(false);
+        $options = '';
+        $users = get_user_array(false);
+        foreach ($users as $key => $value) {
+            $options .= "<option label={$value} value={$key}></option>";
+        }
+        $vardef['options'] = $options;
+        
         if (!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html') {
             $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
             return $this->fetch($this->findTemplate('EditViewFunction'));
