@@ -1978,22 +1978,11 @@ function groupHasAccess($group_name, $userId, $category, $action, $type = 'modul
     // Escape the group name to prevent SQL injection
     $group_name = $db->quote($group_name);
 
-    // Get the group ID based on the name
-    $query = "SELECT id FROM securitygroups WHERE name = '$group_name' AND deleted = 0";
-    $result = $db->query($query);
-    $row = $db->fetchByAssoc($result);
-
-    if (empty($row)) {
-        return false; // The group doesn't exist
-    }
-
-    $group_id = $row['id'];
-
     // Get the roles associated with this security group or user
     $query = "SELECT role_id FROM (
                 SELECT role_id FROM securitygroups_acl_roles
-                WHERE securitygroup_id = '$group_id' AND deleted = 0
-                UNION SELECT role_id from acl_roles_users aru
+                WHERE securitygroup_id IN (SELECT DISTINCT securitygroup_id FROM securitygroups_users sgu WHERE sgu.user_id='$userId' AND sgu.deleted = false)
+                UNION SELECT role_id FROM acl_roles_users aru
                 WHERE aru.user_id='$userId' AND deleted=false ) m
              LIMIT 1
                 ";
