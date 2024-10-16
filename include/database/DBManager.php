@@ -1039,13 +1039,13 @@ abstract class DBManager
             }
             if (isset($fielddef2[$key])) {
                 if (!is_array($fielddef1[$key]) && !is_array($fielddef2[$key])) {
-                    if (strtolower($fielddef1[$key]) === strtolower($fielddef2[$key])) {
+                    if (strtolower($fielddef1[$key]) == strtolower($fielddef2[$key])) {
                         continue;
                     }
                 } else {
                     $f1 = fixIndexArrayFormat($fielddef1[$key]);
                     $f2 = fixIndexArrayFormat($fielddef2[$key]);
-                    if (array_map('strtolower', $f1) === array_map('strtolower', $f2)) {
+                    if (array_map('strtolower', $f1) == array_map('strtolower', $f2)) {
                         continue;
                     }
                 }
