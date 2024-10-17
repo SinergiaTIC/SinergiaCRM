@@ -647,9 +647,7 @@ $viewdefs['Meetings']['ConvertLead'] = array(
                             </script>
                         {/literal}
                         <input name="Meetingsduration_hours" tabindex="1" size="2" maxlength="2" type="text" value="{$fields.duration_hours.value}" />
-                        {php}
-                            $this->_tpl_vars["minutes_values"] = $this->_tpl_vars["bean"]->minutes_values;
-                        {/php}
+                        {assign var="minutes_values" value=$bean->minutes_values}
                         {html_options name="Meetingsduration_minutes" options=$minutes_values selected=$fields.duration_minutes.value}
                         &nbsp;
                         <span class="dateFormat">
