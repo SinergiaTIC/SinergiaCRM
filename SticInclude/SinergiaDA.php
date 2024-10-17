@@ -1433,8 +1433,8 @@ class ExternalReporting
                         ) ENGINE = MyISAM;';
 
         // 5) eda_def_permissions
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions`';
-        $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_permissions` (
+        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions_actions`';
+        $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_permissions_actions` (
                             `user_name` VARCHAR(64) NOT NULL,
                             `group` VARCHAR(64) NOT NULL,
                             `table` VARCHAR(64) NOT NULL,
@@ -1709,7 +1709,7 @@ class ExternalReporting
      * This function retrieves the list of active users from the 'users' table, and for each user,
      * it retrieves their ACL for the specified modules using the 'ACLAction::getUserActions' method.
      * Then it processes the ACL for each module and saves metadata for the user's access level and source of access,
-     * such as 'ACL_ALLOW_GROUP' or 'ACL_ALLOW_OWNER' in the 'sda_def_permissions' table.
+     * such as 'ACL_ALLOW_GROUP' or 'ACL_ALLOW_OWNER' in the 'sda_def_permissions_actions' table.
      * It also saves the user's access level for each module in the 'aclList' array.
      *
      * @return void
@@ -1799,10 +1799,10 @@ class ExternalReporting
                                     // the user_name with the assigned_user_name field content in each module in which the user has group permission
                                     $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
                                         'user_name' => $u['user_name'],
-                                        'group' => null,
+                                        'group' => $userGroups['group'],
                                         'table' => $currentTable,
                                         'column' => 'assigned_user_name',
-                                        'stic_permission_source' => "{$aclSource}_private",
+                                        'stic_permission_source' => "{$aclSource}_priv",
                                         'global' => 0,
                                     ];
                                 }
@@ -1842,7 +1842,7 @@ class ExternalReporting
         // Add the permissions with the values determined in the previous switch case to the metadata table, based on the case.
         foreach (array_unique($userModuleAccessMode, SORT_REGULAR) as $key => $value) {
             $this->addMetadataRecord(
-                'sda_def_permissions',
+                'sda_def_permissions_actions',
                 [
                     'user_name' => $value['user_name'],
                     'group' => $value['group'],
@@ -1917,7 +1917,7 @@ class ExternalReporting
             UNION SELECT `table`,'sda_def_tables', 'table' FROM sda_def_tables
             UNION SELECT source_table,'sda_def_enumerations','source_table' FROM sda_def_enumerations
             UNION SELECT master_table,'sda_def_enumerations', 'master_table' FROM sda_def_enumerations
-            UNION SELECT `table`, 'sda_def_permissions','table' FROM sda_def_permissions
+            UNION SELECT `table`, 'sda_def_permissions_actions','table' FROM sda_def_permissions_actions
             UNION SELECT source_table,'sda_def_relationships','source_table' FROM sda_def_relationships
             UNION SELECT target_table,'sda_def_relationships','target_table' FROM sda_def_relationships)
             AS source WHERE (
