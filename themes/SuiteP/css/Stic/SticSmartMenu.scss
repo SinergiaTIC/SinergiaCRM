@@ -528,21 +528,21 @@ $sm-stic__desktop-sub-item-padding-horizontal: 23px !default;
 		flex-wrap: wrap;
 		align-content: center;
 		max-height: 100%;
-		& > li:first-child > a > i {
-			// home icon
-			// font-size: 25px;
-			// float: left;
-		}
 		li > a {
-			font-size: 13px;
+			font-size: 14px;
 			font-weight: 400;
 		}
+		// & > li > a  {
+		// 	font-size: 13px;
+		// 	font-weight: 600;
+		// }
 		& > li {
 			&:last-child a:not(.has-submenu) {
 				padding-top: 0px;
 			}
 			& > a {
-				font-weight: bolder;
+				font-size: 13px;
+				font-weight: 600;
 				letter-spacing: 2px;
 				text-transform: uppercase;
 				& > .sub-arrow {
