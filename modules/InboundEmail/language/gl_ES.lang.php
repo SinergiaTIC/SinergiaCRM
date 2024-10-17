@@ -52,6 +52,7 @@ $mod_strings = array(
     'ERR_NO_IMAP' => 'Non se encontraron as librerías de IMAP.  Por favor, resolva isto antes de continuar coa configuración de correo entrante',
     'ERR_NO_OPTS_SAVED' => 'Non se gardaron valores óptimos coa súa conta de correo entrante.  Por favor, revise a configuración',
     'ERR_TEST_MAILBOX' => 'Por favor, comprobe a súa configuración e inténteo de novo.',
+    'ERR_INVALID_PORT' => 'Puerto Inválido',
 
     'LBL_ASSIGN_TO_USER' => 'Asignar a Usuario',
     'LBL_AUTOREPLY' => 'Plantilla de Resposta Automática',
@@ -159,6 +160,7 @@ $mod_strings = array(
     'LNK_QUICK_REPLY' => 'Responder',
     'LNK_SENT_EMAIL_LIST' => 'Emails Enviados',
     'LBL_EDIT_LAYOUT' => 'Editar deseño' /*for 508 compliance fix*/,
+    'LBL_TYPE_DIFFERENT' => 'El tipo de conexión OAuth externa debe ser el MISMO que el tipo de la cuenta de correo electrónico entrante',
 
     'LBL_MODIFIED_BY' => 'Modificado Por',
     'LBL_SERVICE' => 'Servizo',

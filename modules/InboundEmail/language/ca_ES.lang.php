@@ -52,6 +52,7 @@ $mod_strings = array(
     'ERR_NO_IMAP' => 'No s\'han trobat les llibreries d\'IMAP. Si us plau, resolgui això abans de continuar amb la configuració de correu electrònic entrant',
     'ERR_NO_OPTS_SAVED' => 'No s\'han guardat valors òptims amb el seu compte de correu electrònic entrant. Si us plau, revisi la configuració',
     'ERR_TEST_MAILBOX' => 'Si us plau, comprovi la seva configuració i intenti-ho de nou.',
+    'ERR_INVALID_PORT' => 'Port Invàlid',
 
     'LBL_ASSIGN_TO_USER' => 'Assignar a Usuari',
     'LBL_AUTOREPLY' => 'Plantilla de Resposta Automàtica',
@@ -159,6 +160,7 @@ $mod_strings = array(
     'LNK_QUICK_REPLY' => 'Contestar',
     'LNK_SENT_EMAIL_LIST' => 'Correus electrònics enviats',
     'LBL_EDIT_LAYOUT' => 'Editar Diseny' /*for 508 compliance fix*/,
+    'LBL_TYPE_DIFFERENT' => 'El tipus de connexió OAuth externa ha de ser el MATEIX que el tipus del compte de correu electrònic entrant',
 
     'LBL_MODIFIED_BY' => 'Modificat Per',
     'LBL_SERVICE' => 'Servei',

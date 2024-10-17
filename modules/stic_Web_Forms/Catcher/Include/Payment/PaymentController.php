@@ -28,11 +28,11 @@ require_once __DIR__ . '/../../WebFormDataController.php';
  * Class that controls the flow for donation forms
  */
 class PaymentController extends WebFormDataController {
-    const RESPONSE_TYPE_NEW_PAYMENT = '';
-    const RESPONSE_TYPE_TPV_RESPONSE = 'TPV_RESPONSE';
-    const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_CECA_RESPONSE';
-    const RESPONSE_TYPE_PAYPAL_RESPONSE = 'PAYPAL_RESPONSE';
-    const RESPONSE_TYPE_STRIPE_RESPONSE = 'STRIPE_RESPONSE';
+    public const RESPONSE_TYPE_NEW_PAYMENT = '';
+    public const RESPONSE_TYPE_TPV_RESPONSE = 'TPV_RESPONSE';
+    public const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_CECA_RESPONSE';
+    public const RESPONSE_TYPE_PAYPAL_RESPONSE = 'PAYPAL_RESPONSE';
+    public const RESPONSE_TYPE_STRIPE_RESPONSE = 'STRIPE_RESPONSE';
 
     protected $version = 1; // Use the same logic for forms generated with different versions of the wizard
 

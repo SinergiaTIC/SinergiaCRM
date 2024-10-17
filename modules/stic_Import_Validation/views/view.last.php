@@ -117,7 +117,7 @@ class stic_Import_ValidationViewLast extends stic_Import_ValidationView
         }
 
         // Display a list of related modules for multi-module validation
-        $moduleList = $this->loadTabModules();
+        $moduleList = static::loadTabModules();
         $this->ss->assign("MODULELIST", $moduleList);
         // END STIC-Code MHP
 
@@ -313,18 +313,18 @@ EOJAVASCRIPT;
                 'id' => 'prospect_list_id',
             ),
             'passthru_data' => array(
-                'child_field' => 'notused',
-                'return_url' => 'notused',
-                'link_field_name' => 'notused',
-                'module_name' => 'notused',
-                'refresh_page'=>'1',
-                'return_type'=>'addtoprospectlist',
-                'parent_module'=>'ProspectLists',
-                'parent_type'=>'ProspectList',
-                'child_id'=>'id',
-                'link_attribute'=>'prospects',
-                'link_type'=>'default',	 //polymorphic or default
-                'prospect_ids'=>$prospect_id,
+            'child_field' => 'notused',
+            'return_url' => 'notused',
+            'link_field_name' => 'notused',
+            'module_name' => 'notused',
+            'refresh_page'=>'1',
+            'return_type'=>'addtoprospectlist',
+            'parent_module'=>'ProspectLists',
+            'parent_type'=>'ProspectList',
+            'child_id'=>'id',
+            'link_attribute'=>'prospects',
+            'link_type'=>'default',	 //polymorphic or default
+            'prospect_ids'=>$prospect_id,
             )
         );
 

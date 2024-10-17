@@ -25,7 +25,7 @@ require_once 'include/utils.php';
 
 class WebFormMailer
 {
-    const TEMP_FILE_NAME_PREFIX = 'stic_dmdata_';
+    public const TEMP_FILE_NAME_PREFIX = 'stic_dmdata_';
     public $subject = '';
     public $from = '';
     public $fromName = '';
