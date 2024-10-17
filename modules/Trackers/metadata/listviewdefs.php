@@ -16,12 +16,11 @@ array(
         'link' => true,
         'width' => '10%',
         'default' => false,
-        'customCode' => '<a href="index.php?module=Users&action=DetailView&record={$USER_ID}">{$USER_ID}</a>',
     ),
     'ASSIGNED_USER_LINK' => array(
-        'type' => 'relate',
+        'type' => 'enum',
         'width' => '10%',
-        'label' => 'LBL_ASSIGNED_TO_USER',
+        'label' => 'LBL_ASSIGNED_TO',
         'default' => true,
     ),
     'ACTION' => array(
@@ -42,16 +41,13 @@ array(
         'label' => 'LBL_ITEM_ID',
         'width' => '10%',
         'default' => false,
-        'customCode' => '<a href="index.php?module={$MODULE_NAME}&action=DetailView&record={$ITEM_ID}">{$ITEM_ID}</a>',
     ),
     'ITEM_SUMMARY' => array(
         'type' => 'varchar',
         'label' => 'LBL_ITEM_SUMMARY',
         'width' => '20%',
         'default' => true,
-        'id' => 'ITEM_ID',
         'link' => false,
-        'customCode' => '<a href="index.php?module={$MODULE_NAME}&action=DetailView&record={$ITEM_ID}">{$ITEM_SUMMARY}</a>',
     ),
     'SESSION_ID' => array(
         'name' => 'session_id',
