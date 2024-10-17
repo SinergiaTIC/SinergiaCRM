@@ -3469,17 +3469,38 @@ class SugarBean
      */
     public function track_view($user_id, $current_module, $current_view = '')
     {
+        // Track the bean as saved, updated or deleted
         $trackerManager = TrackerManager::getInstance();
+
         if ($monitor = $trackerManager->getMonitor('tracker')) {
+            // STIC-Custom 20241014 ART - Tracker Module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+            // $trackerManager->saveMonitor($monitor);
+            $current_user = $GLOBALS['current_user'];
+
             $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
             $monitor->setValue('user_id', $user_id);
+            $monitor->setValue('assigned_user_link', $current_user->full_name);
             $monitor->setValue('module_name', $current_module);
             $monitor->setValue('action', $current_view);
             $monitor->setValue('item_id', $this->id);
+
             $monitor->setValue('item_summary', $this->get_summary_text());
             $monitor->setValue('visible', $this->tracker_visibility);
-            $trackerManager->saveMonitor($monitor);
+
+            if (empty($this->fetched_row['id'])) {
+                $monitor->action = 'save';
+            } else if ($current_view == 'deleted') {
+                $monitor->action = 'deleted';
+                $monitor->item_summary = $this->name;
+            } else {
+                $monitor->action = 'update';
+            }
+
+            $trackerManager->saveMonitor($monitor, true, true);
         }
+        // END STIC Custom
+
     }
 
     /**
@@ -5331,6 +5352,13 @@ class SugarBean
             $tracker = BeanFactory::newBean('Trackers');
             $tracker->makeInvisibleForAll($id);
 
+            // STIC-Custom 20241014 ART - Tracker Module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+            // If we aren't in setup mode and we have a current user and module, then we track it as deleted
+            if (isset($GLOBALS['current_user']) && isset($this->module_dir)) {
+                $this->track_view($current_user->id, $this->module_dir, 'deleted');
+            }
+            // END STIC Custom
 
             $this->deleteFiles();
 

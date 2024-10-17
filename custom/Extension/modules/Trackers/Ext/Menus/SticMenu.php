@@ -1,7 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
 /**
  *
  * SugarCRM Community Edition is a customer relationship management program developed by
@@ -41,54 +38,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-
-
-
-
-// record the last theme the user used
-$current_user->setPreference('lastTheme', $theme);
-$GLOBALS['current_user']->call_custom_logic('before_logout');
-
-if (method_exists($authController->authController, 'preLogout')) {
-    $authController->authController->preLogout();
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
 }
 
-// submitted by Tim Scott from SugarCRM forums
-foreach ($_SESSION as $key => $val) {
-    $_SESSION[$key] = ''; // cannot just overwrite session data, causes segfaults in some versions of PHP
+global $mod_strings, $app_strings, $sugar_config;
+
+if (ACLController::checkAccess('Trackers', 'list', true)) {
+    $module_menu[] = array('index.php?module=Trackers&action=index', $mod_strings['LNK_LIST'], 'View', 'Trackers');
 }
-if (isset($_COOKIE[session_name()])) {
-    SugarApplication::setCookie(session_name(), '', time()-42000, '/', null, isSSL(), true);
-}
-
-//Update the tracker_sessions table
-// STIC-Custom 20241014 ART - Tracker Module
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/211
-// Track the logout of the current user
-if($action === 'Logout') {
-    $trackerManager = TrackerManager::getInstance();
-    $monitor = $trackerManager->getMonitor('tracker');
-
-    if ($monitor) {
-
-        $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
-        $monitor->setValue('user_id', $current_user->id);
-        $monitor->setValue('assigned_user_link', $current_user->full_name);
-        $monitor->setValue('module_name', 'Users');
-        $monitor->setValue('action', 'logout');
-        $monitor->setValue('item_id', $current_user->id);
-        $monitor->setValue('item_summary', $current_user->full_name .' - Logout');
-        $monitor->setValue('visible', true);
-        
-        $trackerManager->saveMonitor($monitor, true, true);
-    }
-}
-// END STIC Custom
-// clear out the authenticating flag
-session_destroy();
-
-LogicHook::initialize();
-$GLOBALS['logic_hook']->call_custom_logic('Users', 'after_logout');
-
-/** @var AuthenticationController $authController */
-$authController->authController->logout();

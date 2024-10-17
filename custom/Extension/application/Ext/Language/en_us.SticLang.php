@@ -3534,6 +3534,14 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'Re
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Delivered';
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validated';
 
+// Trackers: User actions
+$app_list_strings['trackers_actions_list']['save'] = 'Record created';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Record accessed';
+$app_list_strings['trackers_actions_list']['update'] = 'Record updated';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Record deleted';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'Login';
+$app_list_strings['trackers_actions_list']['logout'] = 'Logout';
+
 
 // SuiteCRM Core modifications
 
