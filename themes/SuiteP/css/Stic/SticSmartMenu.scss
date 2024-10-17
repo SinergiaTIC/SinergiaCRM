@@ -34,7 +34,7 @@ $sm-stic__desktop-vp: 768px !default; // switch from collapsible to desktop
 // Import "PT Sans Narrow" font from Google fonts
 // @import url(https://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700);
 
-$sm-stic__font-family: "Lato, Lato, Arial, sans-serif" !default;
+// $sm-stic__font-family: "Lato, Lato, Arial, sans-serif" !default;
 // $sm-stic__font-family: $font-family-base !default;
 $sm-stic__font-size-base: 16px !default;
 $sm-stic__font-size-small: 14px !default;
@@ -542,8 +542,8 @@ $sm-stic__desktop-sub-item-padding-horizontal: 23px !default;
 				padding-top: 0px;
 			}
 			& > a {
-				font-weight: 600;
-				letter-spacing: 1px;
+				font-weight: bolder;
+				letter-spacing: 2px;
 				text-transform: uppercase;
 				& > .sub-arrow {
 					display: none;
