@@ -3,7 +3,7 @@
         'name' => 'salesagility/suitecrm',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '916cb9ca46974979166dd583d762ba0162255372',
+        'reference' => '0f2e519c0f2c39eda76a074d7a58b530064f0e5a',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -1064,7 +1064,7 @@
         'salesagility/suitecrm' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '916cb9ca46974979166dd583d762ba0162255372',
+            'reference' => '0f2e519c0f2c39eda76a074d7a58b530064f0e5a',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
