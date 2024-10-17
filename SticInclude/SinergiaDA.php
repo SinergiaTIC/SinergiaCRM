@@ -1332,8 +1332,38 @@ class ExternalReporting
                             WHERE
                                 u.is_admin = 1
                                 AND u.deleted = 0;";
+        // 4) eda_def_permissions
 
-        // 4) eda_def_security_group_records
+        $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_permissions` AS
+                            SELECT * from sda_def_permissions_actions  p where p.stic_permission_source IN ('ACL_ALLOW_ALL', 'ACL_ALLOW_GROUP_priv','ACL_ALLOW_OWNER')
+                            UNION
+                     SELECT
+                        sdug.user_name,
+                        `group`,
+                        `table`,
+                        `column`,
+                        `global`,
+                        stic_permission_source
+                        FROM
+                        sda_def_permissions_actions p
+                        JOIN sda_def_user_groups sdug ON
+                        p.`group` = sdug.name
+                        WHERE
+                        p.stic_permission_source IN('ACL_ALLOW_GROUP') AND(
+                            CONCAT(sdug.user_name, `table`) NOT IN(
+                            SELECT
+                                CONCAT(p.user_name, `table`)
+                            FROM
+                                sda_def_permissions_actions p
+                            WHERE
+                                p.stic_permission_source = 'ACL_ALLOW_ALL'
+                        )
+                        )
+                        GROUP BY
+                        `group`,
+                        `table`,
+                        sdug.user_name;";
+        // 5) eda_def_security_group_records
 
         // Set a switch to determine whether to populate the sda_def_security_group_records view based
         // on the value of $sugar_config['stic_sinergiada']['group_permissions_enabled']
