@@ -3476,9 +3476,11 @@ class SugarBean
             // STIC-Custom 20241014 ART - Tracker Module
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
             // $trackerManager->saveMonitor($monitor);
+            $current_user = $GLOBALS['current_user'];
+
             $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
             $monitor->setValue('user_id', $user_id);
-            $monitor->setValue('assigned_user_link', $this->modified_by_name);
+            $monitor->setValue('assigned_user_link', $current_user->full_name);
             $monitor->setValue('module_name', $current_module);
             $monitor->setValue('action', $current_view);
             $monitor->setValue('item_id', $this->id);

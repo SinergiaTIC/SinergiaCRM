@@ -95,16 +95,13 @@ if (isset($_SESSION['authenticated_user_id'])) {
         $monitor = $trackerManager->getMonitor('tracker');
 
         if ($monitor) {
-
-            $user = $GLOBALS['current_user'];
-
             $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
-            $monitor->setValue('user_id', $user->id);
-            $monitor->setValue('assigned_user_link', $user->user_name);
+            $monitor->setValue('user_id', $current_user->id);
+            $monitor->setValue('assigned_user_link', $current_user->full_name);
             $monitor->setValue('module_name', 'Users');
             $monitor->setValue('action', 'login_ok');
-            $monitor->setValue('item_id', $user->id);
-            $monitor->setValue('item_summary', $user->full_name .' - Login');
+            $monitor->setValue('item_id', $current_user->id);
+            $monitor->setValue('item_summary', $current_user->full_name .' - Login');
             $monitor->setValue('visible', true);
 
             $trackerManager->saveMonitor($monitor, true, true);

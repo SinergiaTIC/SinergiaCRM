@@ -361,10 +361,10 @@ class SugarView
                 $monitor->setValue('action', $action);
             }
 
-            $user = $GLOBALS['current_user'];
+            $current_user = $GLOBALS['current_user'];
             
-            $monitor->setValue('user_id', $user->id);
-            $monitor->setValue('assigned_user_link', $user->user_name);
+            $monitor->setValue('user_id', $current_user->id);
+            $monitor->setValue('assigned_user_link', $current_user->full_name);
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);
 
@@ -376,11 +376,6 @@ class SugarView
             if (!empty($this->bean->id)) {
                 $monitor->setValue('item_id', $this->bean->id);
                 $monitor->setValue('item_summary', $this->bean->get_summary_text());
-                if($monitor->action == 'authenticate' || $monitor->action == 'logout'){
-                    $monitor->setValue('item_id', $user->id);
-                    $monitor->setValue('item_summary', $user->full_name);
-                }
-                
             }
             // END STIC Custom
 
