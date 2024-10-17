@@ -354,9 +354,10 @@ function createMenu() {
               SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL,
             action: function(obj) {
               var editUrlPrompt = function() {
+                var urlOld=tree.get_node($node).id?.split('|')[1]?.split('__')[0] || ''
                 var url = prompt(
                   SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT + ":",
-                  $node.original.url || ""
+                  urlOld || ""
                 );
                 if (url !== null) {
                   if (url === "") {
