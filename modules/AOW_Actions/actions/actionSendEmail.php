@@ -328,7 +328,7 @@ class actionSendEmail extends actionBase
 
     private function get_output_smtps() {
         $emailsList = array();
-        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "(type = 'system' OR user_id = '')");
+        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "(type = 'system' OR type = 'group')"); // Personal and overrides are ignored, as this will be a system based email
         foreach ($oeaList as $oea) {
             $emailsList[$oea->id] = array(
                 'name' => $oea->name,
