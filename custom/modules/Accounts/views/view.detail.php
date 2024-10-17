@@ -27,8 +27,6 @@ require_once 'modules/stic_Messages/Checkstic_Messages.php';
 
 class CustomAccountsViewDetail extends AccountsViewDetail
 {
-    use Checkstic_Messages;
-
     public function __construct()
     {
         parent::__construct();
@@ -49,7 +47,8 @@ class CustomAccountsViewDetail extends AccountsViewDetail
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Accounts/SticUtils.js");
-        $this->echoIsMessagesModuleActive();
+        require_once('modules/stic_Messages/Utils.php');
+        stic_MessagesUtils::echoIsMessagesModuleActive();
 
         // Write here the SinergiaCRM code that must be executed for this module and view
     }

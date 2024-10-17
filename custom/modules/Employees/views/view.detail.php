@@ -27,8 +27,6 @@ require_once 'modules/stic_Messages/Checkstic_Messages.php';
 
 class CustomEmployeesViewDetail extends EmployeesViewDetail
 {
-    use Checkstic_Messages;
-
     public function __construct()
     {
         parent::__construct();
@@ -52,7 +50,8 @@ class CustomEmployeesViewDetail extends EmployeesViewDetail
         
         // Write here the SinergiaCRM code that must be executed for this module and view
         echo getVersionedScript("custom/modules/Employees/SticUtils.js");
-        $this->echoIsMessagesModuleActive();
+        require_once('modules/stic_Messages/Utils.php');
+        stic_MessagesUtils::echoIsMessagesModuleActive();
 
     }
 }

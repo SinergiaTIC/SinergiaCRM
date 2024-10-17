@@ -27,8 +27,6 @@ require_once 'SticInclude/Views.php';
 
 class CustomLeadsViewList extends LeadsViewList
 {
-    use Checkstic_Messages;
-
     public function __construct()
     {
         parent::__construct();
@@ -49,7 +47,8 @@ class CustomLeadsViewList extends LeadsViewList
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Leads/SticUtils.js");
-        $this->echoIsMessagesModuleActive();
+        require_once('modules/stic_Messages/Utils.php');
+        stic_MessagesUtils::echoIsMessagesModuleActive();
 
         // Write here you custom code
     }
