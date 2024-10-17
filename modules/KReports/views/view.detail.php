@@ -34,6 +34,7 @@ if (!class_exists('JSMin'))
 
 global $dictionary;
 
+#[\AllowDynamicProperties]
 class KReportsViewDetail extends ViewDetail {
 
    function __construct() {
