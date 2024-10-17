@@ -6,10 +6,16 @@ array(
         'basic_search' => array(
             'assigned_user_link' => array(
                 'name' => 'assigned_user_link',
-                'type' => 'relate',
+                'type' => 'enum',
+                'function' => array (
+                    'name' => 'get_user_array',
+                    'params' => array (
+                        0 => false,
+                    ),
+                ),
                 'width' => '10%',
                 'default' => true,
-                'vname' => 'LBL_ASSIGNED_TO_USER',
+                'label' => 'LBL_ASSIGNED_TO_USER',
             ),
             'date_modified' => array(
                 'type' => 'datetimecombo',
@@ -43,10 +49,16 @@ array(
         'advanced_search' => array(
             'assigned_user_link' => array(
                 'name' => 'assigned_user_link',
-                'type' => 'relate',
+                'type' => 'enum',
+                'function' => array (
+                    'name' => 'get_user_array',
+                    'params' => array (
+                        0 => false,
+                    ),
+                ),
                 'width' => '10%',
                 'default' => true,
-                'vname' => 'LBL_ASSIGNED_TO_USER',
+                'label' => 'LBL_ASSIGNED_TO_USER',
             ),
             'date_modified' => array(
                 'type' => 'datetimecombo',

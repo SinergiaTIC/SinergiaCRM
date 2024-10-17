@@ -48,7 +48,7 @@ array(
         'vname' => 'LBL_CURRENT_USER_FILTER',
         'type' => 'bool'
     ),
-    'user_id' => array('query_type' => 'default'),
+    'assigned_user_link' => array('query_type' => 'default', 'db_field' => array('user_id'),),
 
     //Range Search Support
     'range_date_modified' => array(
