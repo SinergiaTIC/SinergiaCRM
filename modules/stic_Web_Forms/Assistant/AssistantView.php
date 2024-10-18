@@ -23,6 +23,7 @@
 
 require_once 'include/MVC/View/SugarView.php';
 
+#[\AllowDynamicProperties]
 class stic_Web_FormsAssistantView extends SugarView
 {
     protected $tpl = '';

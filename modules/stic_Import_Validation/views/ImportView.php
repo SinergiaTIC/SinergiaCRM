@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once('include/MVC/View/SugarView.php');
 
-
+#[\AllowDynamicProperties]
 class stic_Import_ValidationView extends SugarView
 {
     protected $currentStep;
