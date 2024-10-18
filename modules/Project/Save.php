@@ -134,6 +134,7 @@ if ($sugarbean->is_template) {
 } else {
     //customize default retrun view to make it to redirect to GanttChart view
     // STIC-Custom 20241002 AAM - In case custom actions returned, get action from $_REQUEST
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/442
     // $_REQUEST['return_url'] = "index.php?module=Project&action=view_GanttChart&record=" . $return_id;
     $_REQUEST['return_url'] = "index.php?module=Project&action=".$_REQUEST['return_action']."&record=" . $return_id;
     // END STIC

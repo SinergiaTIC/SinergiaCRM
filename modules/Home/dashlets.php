@@ -45,6 +45,7 @@
 
 /**
  * STIC-Custom AAM 20241015 
+ * https://github.com/SinergiaTIC/SinergiaCRM/pull/442
  * The defaultDashlet array is transformed to contain the default column number. 
  * To accomplish this we overwrite the index.php file of this module in custom, placing the new version in the custom folder.
  * And we customize the default dashlet list.

@@ -126,6 +126,7 @@ if ($has_campaign || $inboundEmail) {
     // STIC-Custom 20210816 MHP - Insert var in the subject body
 	// STIC#368
     // STIC-Custom 20241002 AAM - Extend custom funcionality
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/442
     // $xtpl = new XTemplate('modules/EmailTemplates/EditView.html');
     $xtpl = new XTemplate(get_custom_file_if_exists('modules/EmailTemplates/EditView.html'));
     // END STIC
