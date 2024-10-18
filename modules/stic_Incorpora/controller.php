@@ -321,7 +321,7 @@ class stic_IncorporaController extends SugarController
                 // No Incorpora ID
                 $bean = BeanFactory::getBean($this->returnModule, $beanId);
                 $this->log['logs'][$beanId]['msg'] = $mod_strings['LBL_RESULTS_SYNC_RECORD_WITHOUT_INCORPORA_ID'];
-                $this->log['logs'][$beanId]['url'] = $this->createLinkToDetailView($this->returnModule, $beanId, $bean->name);
+                $this->log['logs'][$beanId]['url'] = static::createLinkToDetailView($this->returnModule, $beanId, $bean->name);
                 $this->log['logs'][$beanId]['cod'] = '999';
                 $this->log['logs'][$beanId]['error'] = true;
                 $GLOBALS['log']->error(__METHOD__ . ' ' . __LINE__ . ' ' . $mod_strings['LBL_RESULTS_SYNC_RECORD_WITHOUT_INCORPORA_ID'], $beanId);
@@ -388,7 +388,7 @@ class stic_IncorporaController extends SugarController
                 // Record has Incorpora ID
                 $bean = BeanFactory::getBean($this->returnModule, $beanId);
                 $this->log['logs'][$beanId]['msg'] = $mod_strings['LBL_RESULTS_NEW_RECORD_WITH_INCORPORA_ID'];
-                $this->log['logs'][$beanId]['url'] = $this->createLinkToDetailView($this->returnModule, $beanId, $bean->name);
+                $this->log['logs'][$beanId]['url'] = static::createLinkToDetailView($this->returnModule, $beanId, $bean->name);
                 $this->log['logs'][$beanId]['cod'] = '999';
                 $this->log['logs'][$beanId]['error'] = true;
                 $GLOBALS['log']->error(__METHOD__ . ' ' . __LINE__ . ' ' . $mod_strings['LBL_RESULTS_NEW_RECORD_WITH_INCORPORA_ID'], $beanId);
@@ -452,7 +452,7 @@ class stic_IncorporaController extends SugarController
                     $syncDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
                     $bean->$inc_synchronization_date = $timedate->asUser($syncDate, $current_user);
                     $bean->save();
-                    $this->log['logs'][$beanId]['url'] = $this->createLinkToDetailView($this->returnModule, $beanId, $bean->name);
+                    $this->log['logs'][$beanId]['url'] = static::createLinkToDetailView($this->returnModule, $beanId, $bean->name);
                     $this->log['logs'][$beanId]['error'] = true;
                 } else {
                     // If successful, save the data into the bean
@@ -464,7 +464,7 @@ class stic_IncorporaController extends SugarController
             } else {
                 $bean = BeanFactory::getBean($this->returnModule, $beanId);
                 $this->log['logs'][$beanId]['msg'] = $mod_strings['LBL_RESULTS_SYNC_RECORD_WITHOUT_INCORPORA_ID'];
-                $this->log['logs'][$beanId]['url'] = $this->createLinkToDetailView($this->returnModule, $beanId, $bean->name);
+                $this->log['logs'][$beanId]['url'] = static::createLinkToDetailView($this->returnModule, $beanId, $bean->name);
                 $this->log['logs'][$beanId]['cod'] = '999';
                 $this->log['logs'][$beanId]['error'] = true;
             }

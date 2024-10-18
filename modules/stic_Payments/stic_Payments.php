@@ -206,7 +206,7 @@ class stic_Payments extends Basic
             if (isset($arguments['related_module']) && $arguments['related_module'] == 'stic_Payment_Commitments') {
                 $PCBean = $arguments['related_bean'];
                 require_once 'modules/stic_Payment_Commitments/Utils.php';
-                stic_Payment_CommitmentsUtils::setPaidAnnualizedFee($PCBean, $this);
+                stic_Payment_CommitmentsUtils::setPaidAnnualizedFee($PCBean);
             }
         }
 
