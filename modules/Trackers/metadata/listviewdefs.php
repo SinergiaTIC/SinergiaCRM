@@ -56,11 +56,4 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'MONITOR_ID'=>array(
-        'name' => 'monitor_id',
-        'label' => 'LBL_MONITOR_ID',
-        'type' => 'id',
-        'width' => '10%',
-        'default' => false,
-    ),
 );

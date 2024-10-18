@@ -81,13 +81,6 @@ array(
                 'default' => true,
                 'name' => 'module_name',
             ),
-            'monitor_id' => array(
-                'type' => 'id',
-                'width' => '5%',
-                'label' => 'LBL_MONITOR_ID',
-                'default' => true,
-                'name' => 'monitor_id',
-            ),
             'session_id' => array(
                 'name' => 'session_id',
                 'label' => 'LBL_SESSION_ID',
