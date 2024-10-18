@@ -78,7 +78,6 @@ if($action === 'Logout') {
         $monitor->setValue('action', 'logout');
         $monitor->setValue('item_id', $current_user->id);
         $monitor->setValue('item_summary', $current_user->full_name .' - Logout');
-        $monitor->setValue('visible', true);
         
         $trackerManager->saveMonitor($monitor, true, true);
     }

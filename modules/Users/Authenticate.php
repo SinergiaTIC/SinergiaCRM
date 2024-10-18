@@ -102,7 +102,6 @@ if (isset($_SESSION['authenticated_user_id'])) {
             $monitor->setValue('action', 'login_ok');
             $monitor->setValue('item_id', $current_user->id);
             $monitor->setValue('item_summary', $current_user->full_name .' - Login');
-            $monitor->setValue('visible', true);
 
             $trackerManager->saveMonitor($monitor, true, true);
         }
