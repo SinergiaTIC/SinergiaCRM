@@ -1350,13 +1350,13 @@ class ExternalReporting
                         p.`group` = sdug.name
                         WHERE
                         p.stic_permission_source IN('ACL_ALLOW_GROUP') AND(
-                            CONCAT(sdug.user_name, `table`) NOT IN(
+                            CONCAT(sdug.user_name, `table`) IN(
                             SELECT
                                 CONCAT(p.user_name, `table`)
                             FROM
                                 sda_def_permissions_actions p
                             WHERE
-                                p.stic_permission_source = 'ACL_ALLOW_ALL'
+                                p.stic_permission_source = 'ACL_ALLOW_GROUP_priv'
                         )
                         )
                         GROUP BY
