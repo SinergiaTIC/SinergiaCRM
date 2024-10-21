@@ -1388,3 +1388,8 @@ a#nonprofitized_by {
 #stic-menu li a{
   font-family: Lato, Arial, sans-serif;
 }
+
+// Prevents the overlap of the general search box
+.desktop-toolbar{
+  z-index: 0; 
+}
