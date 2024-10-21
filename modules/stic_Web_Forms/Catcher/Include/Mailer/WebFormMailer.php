@@ -238,7 +238,7 @@ class WebFormMailer
                 $indice++;
             }
         } else {
-            LoggerManager::getLogger()->fatal('Attachements not found');
+            LoggerManager::getLogger()->warn('Attachements not found');
         }
         ////    END ATTACHMENTS
         ///////////////////////////////////////////////////////////////////////
