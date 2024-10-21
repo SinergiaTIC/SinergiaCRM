@@ -245,7 +245,7 @@ class WebFormMailer
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Sending mail...");
         if (!$mail->Send()) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  There was an error sending the mail.");
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ":  There was an error sending the mail.");
             return false;
         }
         return true;
