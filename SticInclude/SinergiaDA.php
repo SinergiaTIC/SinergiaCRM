@@ -1782,16 +1782,8 @@ class ExternalReporting
                 $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
 
                 $currentTable = $this->viewPrefix . '_' . strtolower($key);
-                if ($u['is_admin'] == 1) {
-                    $userModuleAccessMode["{$aclSource}_{$u['user_name']}_{$currentTable}"] = [
-                        'user_name' => $u['user_name'],
-                        'table' => $currentTable,
-                        'column' => 'users_id',
-                        'stic_permission_source' => 'ACL_ALLOW_ALL',
-                        'global' => 1,
-                    ];
-                } elseif ($value['module']['access']['aclaccess'] >= 0 && $value['module']['view']['aclaccess'] >= 0) {
-
+                
+                if ($u['is_admin'] == 0 && $value['module']['access']['aclaccess'] >= 0 && $value['module']['view']['aclaccess'] >= 0) {
                     // Determine the metadata to be saved based on the type of permissions,
                     // first we'll add them to the $userModuleAccessMode array with a unique key to avoid duplicates
                     switch ($value['module']['view']['aclaccess']) {
