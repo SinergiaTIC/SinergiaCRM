@@ -53,7 +53,7 @@ $dictionary['Tracker'] = array(
             'auto_increment' => true,
             'reportable'=>true,
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             // END STIC Custom
         ),
@@ -64,7 +64,7 @@ $dictionary['Tracker'] = array(
             'required'=>true,
             'reportable'=>false,
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             // END STIC Custom
         ),
@@ -75,7 +75,7 @@ $dictionary['Tracker'] = array(
             'len' => '36',
             'isnull' => 'false',
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'module' => 'Users',
             'id' => 'user_id',
             'inline_edit' => 0,
@@ -86,7 +86,7 @@ $dictionary['Tracker'] = array(
             'vname' => 'LBL_MODULE_NAME',
             // STIC Custom 20241016 ART - Tracker Module
             // 'type' => 'varchar',
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'type' => 'enum',
             'options' => 'moduleList',
             'inline_edit' => 0,
@@ -101,7 +101,7 @@ $dictionary['Tracker'] = array(
             'len' => '36',
             'isnull' => 'false',
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             'link' => true,
             'id' => 'item_id',
@@ -114,7 +114,7 @@ $dictionary['Tracker'] = array(
             'len' => '255',
             'isnull' => 'false',
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             'id' => 'item_id',
             // END STIC Custom
@@ -125,7 +125,7 @@ $dictionary['Tracker'] = array(
             'type' => 'datetime',
             'isnull' => 'false',
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'options' => 'date_range_search_dom',
             'enable_range_search' => true,
             'dbType' => 'datetimecombo',
@@ -139,7 +139,7 @@ $dictionary['Tracker'] = array(
             'isnull' => 'false',
             // STIC Custom 20241016 ART - Tracker Module
             // 'type' => 'varchar',
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'type' => 'enum',
             'options' => 'trackers_actions_list',
             'inline_edit' => 0,
@@ -153,7 +153,7 @@ $dictionary['Tracker'] = array(
             'isnull' => 'true',
             'exportable' => false,
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             // END STIC Custom
         ),
@@ -164,7 +164,7 @@ $dictionary['Tracker'] = array(
             'len' => '1',
             'default' => '0',
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             // END STIC Custom
         ),
@@ -176,7 +176,7 @@ $dictionary['Tracker'] = array(
             'reportable'=>false,
             'comment' => 'Record deletion indicator',
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             // END STIC Custom
         ),
@@ -190,7 +190,7 @@ $dictionary['Tracker'] = array(
             // 'link_type' => 'one',
             // 'bean_name'=>'User',
             // 'source'=>'non-db',
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'type' => 'enum',
             'vname' => 'LBL_ASSIGNED_TO',
             'table' => 'users',
@@ -210,7 +210,7 @@ $dictionary['Tracker'] = array(
             'bean_name'=>'TrackerPerf',
             'source'=>'non-db',
             // STIC Custom 20241016 ART - Tracker Module
-            // We add the properties, since in extension does not pick them up correctly 
+            // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
             // END STIC Custom
         ),

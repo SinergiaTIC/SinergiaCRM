@@ -3469,38 +3469,43 @@ class SugarBean
      */
     public function track_view($user_id, $current_module, $current_view = '')
     {
-        // Track the bean as saved, updated or deleted
         $trackerManager = TrackerManager::getInstance();
-
         if ($monitor = $trackerManager->getMonitor('tracker')) {
-            // STIC-Custom 20241014 ART - Tracker Module
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
-            // $trackerManager->saveMonitor($monitor);
-            $current_user = $GLOBALS['current_user'];
-
             $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
             $monitor->setValue('user_id', $user_id);
-            $monitor->setValue('assigned_user_link', $current_user->full_name);
             $monitor->setValue('module_name', $current_module);
             $monitor->setValue('action', $current_view);
             $monitor->setValue('item_id', $this->id);
-
             $monitor->setValue('item_summary', $this->get_summary_text());
             $monitor->setValue('visible', $this->tracker_visibility);
 
+            // STIC-Custom 20241014 ART - Tracker Module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+            // $trackerManager->saveMonitor($monitor);
+
+            // Track the bean as saved, updated or deleted
+            // Get the current user
+            $current_user = $GLOBALS['current_user'];
+            // Set the assigned user link
+            $monitor->setValue('assigned_user_link', $current_user->full_name);
+
             if (empty($this->fetched_row['id'])) {
+                // If the bean is new (has no ID), mark it as saved
                 $monitor->action = 'save';
             } else if ($current_view == 'deleted') {
+                // If the bean is marked as deleted, mark it as deleted in the monitor
                 $monitor->action = 'deleted';
+                // Set the item summary to the bean's name
                 $monitor->item_summary = $this->name;
             } else {
+                // If the bean is neither new nor deleted, it must have been updated
                 $monitor->action = 'update';
             }
 
+            // Save the monitor to the database
             $trackerManager->saveMonitor($monitor, true, true);
+            // END STIC Custom
         }
-        // END STIC Custom
-
     }
 
     /**

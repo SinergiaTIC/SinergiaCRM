@@ -338,7 +338,6 @@ class SugarView
 
     /**
      * trackView
-     * Track the view of the current bean
      */
     protected function _trackView()
     {
@@ -355,19 +354,25 @@ class SugarView
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
             // $monitor->setValue('action', $action);
             // $monitor->setValue('user_id', $GLOBALS['current_user']->id);
-            if($action == 'editview') {
+
+            // Track the view of the current bean
+            if ($action == 'editview') {
+                // If the action is 'editview', mark it as 'save' (assuming the user is saving changes)
                 $monitor->setValue('action', 'save');
             } else {
+                // Otherwise, use the original action
                 $monitor->setValue('action', $action);
             }
 
+            // Get the current user
             $current_user = $GLOBALS['current_user'];
-            
+
+            // Set the user ID and assigned user link
             $monitor->setValue('user_id', $current_user->id);
             $monitor->setValue('assigned_user_link', $current_user->full_name);
+            // END STIC Custom
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);
-
             $monitor->setValue(
                 'visible',
                 (($monitor->action == 'detailview') || ($monitor->action == 'editview')) ? 1 : 0
@@ -377,7 +382,6 @@ class SugarView
                 $monitor->setValue('item_id', $this->bean->id);
                 $monitor->setValue('item_summary', $this->bean->get_summary_text());
             }
-            // END STIC Custom
 
             //If visible is true, but there is no bean, do not track (invalid/unauthorized reference)
             //Also, do not track save actions where there is no bean id

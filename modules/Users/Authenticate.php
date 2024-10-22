@@ -90,22 +90,30 @@ if (isset($_SESSION['authenticated_user_id'])) {
     // STIC-Custom 20241014 ART - Tracker Module
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
     // Track the login of the current user
-    if($action === 'Authenticate'){
-        $trackerManager = TrackerManager::getInstance();
-        $monitor = $trackerManager->getMonitor('tracker');
+    if ($action === 'Authenticate') {
+    // Get the instance of the TrackerManager
+    $trackerManager = TrackerManager::getInstance();
 
-        if ($monitor) {
-            $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
-            $monitor->setValue('user_id', $current_user->id);
-            $monitor->setValue('assigned_user_link', $current_user->full_name);
-            $monitor->setValue('module_name', 'Users');
-            $monitor->setValue('action', 'login_ok');
-            $monitor->setValue('item_id', $current_user->id);
-            $monitor->setValue('item_summary', $current_user->full_name .' - Login');
+    // Get the tracker monitor
+    $monitor = $trackerManager->getMonitor('tracker');
 
-            $trackerManager->saveMonitor($monitor, true, true);
-        }
+    // If the monitor exists, set its values
+    if ($monitor) {
+        // Set the date and time of the login
+        $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
+
+        // Set the user ID, full name, module name, action, item ID, and item summary
+        $monitor->setValue('user_id', $current_user->id);
+        $monitor->setValue('assigned_user_link', $current_user->full_name);
+        $monitor->setValue('module_name', 'Users');
+        $monitor->setValue('action', 'login_ok');
+        $monitor->setValue('item_id', $current_user->id);
+        $monitor->setValue('item_summary', $current_user->full_name .' - Login');
+
+        // Save the monitor to the database
+        $trackerManager->saveMonitor($monitor, true, true);
     }
+}
     // END STIC Custom
 } else {
     // Login has failed
