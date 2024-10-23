@@ -2866,9 +2866,12 @@ class SugarBean
         if (!empty($new_rel_id) 
             && ( // Relationships with an ID in the _ida field of the relationship different from the parent record
                  (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})
-                 // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
-                 || (empty($this->{$new_rel_link}) && !empty($this->parent_id) && $new_rel_id !=$this->parent_id)
-                )
+                 // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
+                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
+                    // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
+                    // || (empty($this->{$new_rel_link}) && !empty($this->parent_id) && $new_rel_id !=$this->parent_id)
+                 // END STIC-Custom
+                 )
         ) {
             $new_rel_id = ''; // Assign the empty value to this variable, in the same way as when creating the record from the edit view
         }
