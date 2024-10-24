@@ -99,8 +99,11 @@ class stic_Registrations extends Basic
 
     public function save($check_notify = true)
     {
-        $this->qrcode = $this->generateQRCode();
-
+        // Generate QR in case the record has not been created yet
+        if (empty ($this->qrcode)) {
+            $this->qrcode = $this->generateQRCode();
+        }
+    
         // Save the bean
         parent::save($check_notify);
     }
