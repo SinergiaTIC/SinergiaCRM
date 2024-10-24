@@ -54,6 +54,7 @@ class stic_Registrations extends Basic
     public $special_needs_description;
     public $attendance_percentage;
     public $attended_hours;
+    public $qrcode;
 
     public function bean_implements($interface)
     {
@@ -63,6 +64,45 @@ class stic_Registrations extends Basic
         }
 
         return false;
+    }
+
+    /**
+     * Generate a QR code using the library included in SuiteCRM TCPDF2DBarcode
+     */
+
+    private function generateQRCode()
+    {
+        global $sugar_config;
+
+        // QR Url
+        $url = $sugar_config['site_url'] .'/index.php?action=DetailView&module=stic_Registrations&record=' . $this->id;
+        
+        // Create a folder to save QR codes if it doesn't exist
+        $qrFolder = 'custom/uploads/qrcodes/';
+        if (!file_exists($qrFolder)) {
+            mkdir($qrFolder, 0755, true);
+        }
+
+        // Path where the QR image will be saved
+        $qrImagePath = $qrFolder . $this->id . '_qrcode.png';
+
+        // Generate the QR code using the internal library
+        $qrCode = new TCPDF2DBarcode($url, 'QRCODE,H');
+
+        // Save the QR Code image as a PNG file
+        $qrImage = $qrCode->getBarcodePngData(6, 6, array(0, 0, 0));
+        file_put_contents($qrImagePath, $qrImage);
+
+        return $sugar_config['site_url'] . '/' . $qrImagePath;
+    }
+
+
+    public function save($check_notify = true)
+    {
+        $this->qrcode = $this->generateQRCode();
+
+        // Save the bean
+        parent::save($check_notify);
     }
 
     public function save_relationship_changes($is_update, $exclude = array())

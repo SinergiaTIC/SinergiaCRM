@@ -74,6 +74,7 @@ $mod_strings = array(
     'LBL_ATTENDEES' => 'Asistentes',
     'LBL_DISABLED_WEEKDAYS'=>'Días inhábiles',
     'LBL_SESSION_AMOUNT' => 'Importe da sesión',
+    'LBL_QRCODE' => 'Código QR',    
     'LBL_DISABLED_WEEKDAYS_INFO'=>'Non se xerarán asistencias para os días da semana marcados.',
     'LBL_SESSION_AMOUNT_INFO' => 'Se ao crear unha inscrición este campo se deixa baleiro, reencherase automaticamente co valor d campo "Importe da sesión" do evento relacionado.',
     'LBL_STIC_PAYMENTS_STIC_REGISTRATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Pago',
