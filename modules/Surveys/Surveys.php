@@ -42,6 +42,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+#[\AllowDynamicProperties]
 class Surveys extends Basic
 {
 
@@ -191,6 +192,7 @@ class Surveys extends Basic
                     $_REQUEST['survey_question_options'][$key],
                     $_REQUEST['survey_question_options_id'][$key],
                     $_REQUEST['survey_question_options_deleted'][$key],
+            // END STIC
                     $question->id
                 );
             }

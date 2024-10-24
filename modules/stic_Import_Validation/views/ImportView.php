@@ -26,7 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once('include/MVC/View/SugarView.php');
 
-
+#[\AllowDynamicProperties]
 class stic_Import_ValidationView extends SugarView
 {
     protected $currentStep;
@@ -117,7 +117,7 @@ class stic_Import_ValidationView extends SugarView
             'script'        => $script);
 
         if ($encode) {
-            $function = function (&$val) {
+            $function = function (&$val): void {
                 $val = htmlspecialchars($val, ENT_NOQUOTES);
             };
 
