@@ -1,4 +1,4 @@
-ab<a href="https://suitecrm.com">
+abc<a href="https://suitecrm.com">
   <img width="180px" height="60px" src="https://github.com/SinergiaTIC/SinergiaCRM-SuiteCRM/assets/125350097/af3300d0-1b17-427c-b681-1971d39a1528" align="right" />
 </a>
 
