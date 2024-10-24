@@ -74,7 +74,6 @@ $mod_strings = array(
     'LBL_ATTENDEES' => 'Attendees',
     'LBL_DISABLED_WEEKDAYS'=>'Disabled weekdays',
     'LBL_SESSION_AMOUNT' => 'Session amount',
-    'LBL_QRCODE' => 'QR Code',
     'LBL_DISABLED_WEEKDAYS_INFO'=>'No attendances will be generated on selected days.',
     'LBL_SESSION_AMOUNT_INFO' => 'If this field is left blank when creating a registration, it will be automatically filled in with the value of the "Session amount" field of the related event.',
     'LBL_STIC_PAYMENTS_STIC_REGISTRATIONS_FROM_STIC_PAYMENTS_TITLE' => 'Payment',

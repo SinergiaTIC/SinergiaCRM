@@ -170,22 +170,6 @@ array(
                 11 => array(
                     0 => 'description',
                 ),
-                12 => array (
-                    0 => 
-                    array (
-                        'name' => 'qrcode',
-                        'label' => 'LBL_QRCODE',
-                        'customCode' => '<img src="{$fields.qrcode.value}" alt="QR Code" />'
-                        // 'customCode' => '
-                        //     <div id="qrcode"></div>
-                        //     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-                        //     <script>
-                        //         var url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/sinergiacrm/index.php?module=stic_Registrations&action=DetailView&record={$fields.id.value}1212121212";
-                        //         new QRCode(document.getElementById("qrcode"), url);
-                        //     </script>',            
-                    ),
-                    1 => '',
-                ),                
             ),
             'lbl_panel_record_details' => array(
                 0 => array(
