@@ -293,6 +293,16 @@ class ActivitiesRelationship extends OneToManyRelationship
                     'emails' => array(
                         'module' => 'Emails' ,
                         'subpanel_name' => 'ForHistory' ,
-                        'get_subpanel_data' => $relationshipName. '_emails' ) ) )  ;
+                        'get_subpanel_data' => $relationshipName. '_emails' ) ,
+                    // STIC Custom 20240909 EPS - SMS Messages
+                    'messages' => array(
+                        'module' => 'stic_Messages',
+                        'subpanel_name' => 'ForHistory',
+                        'get_subpanel_data' => 'function:get_stic_messages',
+                        'generate_select' => true,
+                        'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php.php', 'return_as_array' => 'true'),
+                    )
+                    // END STIC Custom
+                    ) )  ;
     }
 }

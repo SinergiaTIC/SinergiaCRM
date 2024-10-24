@@ -22,6 +22,7 @@
  */
 
 require_once 'modules/Employees/views/view.list.php';
+require_once 'modules/stic_Messages/Checkstic_Messages.php';
 require_once 'SticInclude/Views.php';
 
 class CustomEmployeesViewList extends EmployeesViewList
@@ -48,6 +49,8 @@ class CustomEmployeesViewList extends EmployeesViewList
         
         // Write here the SinergiaCRM code that must be executed for this module and view
         echo getVersionedScript("custom/modules/Employees/SticUtils.js");
+        require_once('modules/stic_Messages/Utils.php');
+        stic_MessagesUtils::echoIsMessagesModuleActive();
     }
 }
 

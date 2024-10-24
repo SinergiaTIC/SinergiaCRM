@@ -22,6 +22,7 @@
  */
 
 require_once 'modules/Accounts/views/view.list.php';
+require_once 'modules/stic_Messages/Checkstic_Messages.php';
 require_once 'SticInclude/Views.php';
 
 class CustomAccountsViewList extends AccountsViewList
@@ -46,6 +47,8 @@ class CustomAccountsViewList extends AccountsViewList
 
         SticViews::display($this);
         echo getVersionedScript("custom/modules/Accounts/SticUtils.js");
+        require_once('modules/stic_Messages/Utils.php');
+        stic_MessagesUtils::echoIsMessagesModuleActive();
 
         // Write here you custom code
     }
