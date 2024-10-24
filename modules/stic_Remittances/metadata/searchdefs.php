@@ -61,6 +61,14 @@ array(
                 'default' => true,
                 'name' => 'bank_account',
             ),
+            'origin_organization' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_ORIGIN_ORGANIZATION',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'origin_organization',
+            ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
