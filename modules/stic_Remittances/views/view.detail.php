@@ -54,6 +54,8 @@ class stic_RemittancesViewDetail extends ViewDetail
 
         SticViews::preDisplay($this);
 
+        include_once "modules/stic_Remittances/Utils.php";
+        stic_RemittancesUtils::fillDynamicListForOriginOrganizations();
     }
 
     public function display()

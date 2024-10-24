@@ -139,4 +139,29 @@ class stic_RemittancesUtils
 
     }
 
+    /**
+     * Populates the dynamic list used in the "origin_organization" enum field
+     * Organizations are defined in GENERAL Settings: 
+     *    - GENERAL_ORGANIZATION_NAME: Default organization
+     *    - GENERAL_ORGANIZATION_NAME_XXXX: Organization XXXX
+     */
+    public static function fillDynamicListForOriginOrganizations()
+    {
+        // Load GENERAL Settings
+        $generalSettings = stic_SettingsUtils::getSettingsByType('GENERAL');
+
+        // Default Organization name
+        $dynamic_origin_organization_list = array("" => $generalSettings['GENERAL_ORGANIZATION_NAME']);
+
+        // Other Organization names
+        foreach ($generalSettings as $key => $value) {
+            if (strpos($key, 'GENERAL_ORGANIZATION_NAME_') === 0) {
+                $organizationKey = str_replace('GENERAL_ORGANIZATION_NAME_', '', $key);
+                $dynamic_origin_organization_list[$organizationKey] = $value;
+            }
+        }
+
+        // Set Organization names to dynamic list
+        $GLOBALS['app_list_strings']['dynamic_origin_organization_list'] = $dynamic_origin_organization_list;
+    }
 }
