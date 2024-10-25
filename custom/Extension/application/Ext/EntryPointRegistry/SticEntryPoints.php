@@ -46,5 +46,5 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
 
-// This entry point re-compiles SticCustom CSS
+// This entry point return a QR image
 $entry_point_registry['sticGenerateQR'] = array('file' => 'SticInclude/GenerateQR.php', 'auth' => true);
