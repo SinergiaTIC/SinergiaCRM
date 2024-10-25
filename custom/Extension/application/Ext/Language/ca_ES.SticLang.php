@@ -3535,11 +3535,11 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'So
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Lliurada';
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
 
-// Monitoratges: Accions realitzades per l'usuari
-$app_list_strings['trackers_actions_list']['save'] = 'Registre creat';
-$app_list_strings['trackers_actions_list']['detailview'] = 'Registre accedit';
-$app_list_strings['trackers_actions_list']['update'] = 'Registre actualitzat';
-$app_list_strings['trackers_actions_list']['deleted'] = 'Registre eliminat';
+// Monitorizaciones: Acciones realizadas por el usuario
+$app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
+$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Login';
 $app_list_strings['trackers_actions_list']['logout'] = 'Logout';
 

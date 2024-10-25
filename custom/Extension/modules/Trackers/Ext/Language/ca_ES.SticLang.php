@@ -20,4 +20,4 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LNK_LIST'] = 'Mostra les Monitoratges';
+$mod_strings['LNK_LIST'] = 'Mostrar las Monitorizaciones';
