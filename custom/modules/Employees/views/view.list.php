@@ -22,7 +22,6 @@
  */
 
 require_once 'modules/Employees/views/view.list.php';
-require_once 'modules/stic_Messages/Checkstic_Messages.php';
 require_once 'SticInclude/Views.php';
 
 class CustomEmployeesViewList extends EmployeesViewList

@@ -23,7 +23,6 @@
 
 require_once 'modules/Leads/views/view.detail.php';
 require_once 'SticInclude/Views.php';
-require_once 'modules/stic_Messages/Checkstic_Messages.php';
 
 class CustomLeadsViewDetail extends LeadsViewDetail
 {

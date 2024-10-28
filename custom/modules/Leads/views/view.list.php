@@ -22,7 +22,6 @@
  */
 
 require_once 'modules/Leads/views/view.list.php';
-require_once 'modules/stic_Messages/Checkstic_Messages.php';
 require_once 'SticInclude/Views.php';
 
 class CustomLeadsViewList extends LeadsViewList

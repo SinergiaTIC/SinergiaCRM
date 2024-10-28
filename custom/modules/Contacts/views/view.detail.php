@@ -23,7 +23,6 @@
 
 require_once 'modules/Contacts/views/view.detail.php';
 require_once 'SticInclude/Views.php';
-require_once 'modules/stic_Messages/Checkstic_Messages.php';
 
 class CustomContactsViewDetail extends ContactsViewDetail
 {
