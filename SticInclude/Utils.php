@@ -507,7 +507,7 @@ EOQ;
         // Set the user preferences or the default preferences
         $dec_sep = empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep;
         $grp_sep = empty($user_grp_sep) ? $sugar_config['default_number_grouping_seperator'] : $user_grp_sep;
-        $sig_digits = empty($user_sig_digits) ? $sugar_config['sigDigits'] : $user_sig_digits;
+        $sig_digits = empty($user_sig_digits) ? $sugar_config['default_currency_significant_digits'] : $user_sig_digits;
 
         // Format the number
         $value = number_format($decimalValue, $sig_digits, $dec_sep, $grp_sep);
