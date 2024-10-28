@@ -77,9 +77,9 @@ array(
                 3 => array(
                     0 => array(),
                     1 => array(
-                        'name' => 'origin_organization',
+                        'name' => 'issuing_organization',
                         'studio' => 'visible',
-                        'label' => 'LBL_ORIGIN_ORGANIZATION',
+                        'label' => 'LBL_ISSUING_ORGANIZATION',
                     ),
                 ),
                 4 => array(

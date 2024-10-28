@@ -57,10 +57,10 @@ array(
         'width' => '10%',
         'default' => true,
     ),
-    'ORIGIN_ORGANIZATION' => array(
+    'ISSUING_ORGANIZATION' => array(
         'type' => 'enum',
         'studio' => 'visible',
-        'label' => 'LBL_ORIGIN_ORGANIZATION',
+        'label' => 'LBL_ISSUING_ORGANIZATION',
         'width' => '10%',
         'default' => false,
     ),

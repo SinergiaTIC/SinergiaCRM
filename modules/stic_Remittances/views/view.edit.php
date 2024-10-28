@@ -42,7 +42,7 @@ class stic_RemittancesViewEdit extends ViewEdit
 
         // Write here you custom code
         include_once "modules/stic_Remittances/Utils.php";
-        stic_RemittancesUtils::fillDynamicListForOriginOrganizations();
+        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations();
     }
 
     public function display()

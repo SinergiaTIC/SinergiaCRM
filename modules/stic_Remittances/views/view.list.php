@@ -41,7 +41,7 @@ class stic_RemittancesViewList extends ViewList
 
         // Write here you custom code
         include_once "modules/stic_Remittances/Utils.php";
-        stic_RemittancesUtils::fillDynamicListForOriginOrganizations();
+        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations();
     }
 
     public function display()

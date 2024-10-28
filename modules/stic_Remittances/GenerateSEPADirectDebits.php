@@ -73,8 +73,8 @@ function generateSEPADirectDebits($remittance)
     // Join SEPA & GENERAL Settings
     $directDebitsVars = array_merge($sepaSettingsTemp, $generalSettingsTemp);
 
-    // Get Origin Organization Suffix
-    $orgKey = $remittance->bean->origin_organization;
+    // Get Issuing Organization Suffix
+    $orgKey = $remittance->bean->issuing_organization;
     if (!empty($orgKey)) {
         $orgKey = "_".$orgKey;
     }
