@@ -2437,7 +2437,7 @@ EOQ;
 
         // Get password requirements
         $length = 6;
-        if (isset($res['minpwdlength']) && is_numeric($res['minpwdlength']) && $res['minpwdlength'] < $length) {
+        if (isset($res['minpwdlength']) && is_numeric($res['minpwdlength']) && $res['minpwdlength'] > $length) {
             $length = $res['minpwdlength'];
         }
 
@@ -2462,7 +2462,7 @@ EOQ;
         $password .= implode('', $requirements);
 
         // Create other random characters 
-        for ($i = 0; $i < $length - count($requirements) + 1; $i++) {  // loop and create password
+        for ($i = 0; $i < $length - count($requirements); $i++) {  // loop and create password
             $password .= $charBKT[mt_rand(0, strlen($charBKT) - 1)];
         }
 
