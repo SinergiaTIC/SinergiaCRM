@@ -454,37 +454,58 @@ function removeDocumentsFromFS()
     $return = true;
     while ($row = $db->fetchByAssoc($resource)) {
         $bean = BeanFactory::getBean($row['module']);
-
-        // Update the database to mark the document as deleted
-        $db->query('UPDATE ' . $tableName . ' SET deleted=1 WHERE id=' . $db->quoted($row['id']));
         $bean->retrieve($row['bean_id'], true, false);
-
-        // STIC 20230929 ART - "Removal of Documents from Filesystem" task has erratic behavior
+        // STIC-Custom 20241028 ART - "Removal of Documents from Filesystem" task has erratic behavior
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
         // if (empty($bean->id)) {
+        // If the bean (record) has a valid ID (meaning it exists)
         if ($bean->id) {
-        // End STIC 20240116 ART
-        
+        // END STIC-Custom
             $isSuccess = true;
-            $bean->id = $row['bean_id'];
+            // STIC-Custom 20241028 ART - "Removal of Documents from Filesystem" task has erratic behavior
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+            // $bean->id = $row['bean_id'];
+            // END STIC-Custom
             $directory = $bean->deleteFileDirectory();
             if (!empty($directory) && is_dir('upload://deleted/' . $directory)) {
-                if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
+                // STIC-Custom 20241028 ART - "Removal of Documents from Filesystem" task has erratic behavior
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+                // if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
+                try {
+                    // Attempt to remove the directory and its contents recursively
+                    $isSuccess = rmdir_recursive('upload://deleted/' . $directory);
+                } catch (Exception $e) {
+                    // Handle any exceptions during directory removal
+                    $isSuccess = false;
+                    $GLOBALS['log']->error("Error removing directory: {$e->getMessage()}");
+                }
+
+                // If directory removal was successful
+                if ($isSuccess) {
+                    // END STIC-Custom
                     $directory = explode('/', $directory);
                     while (!empty($directory)) {
                         $path = 'upload://deleted/' . implode('/', $directory);
-                        if (is_dir($path)) {
-                            $directoryIterator = new DirectoryIterator($path);
-                            $empty = true;
-                            foreach ($directoryIterator as $item) {
-                                if ($item->getFilename() == '.' || $item->getFilename() == '..') {
-                                    continue;
-                                }
-                                $empty = false;
-                                break;
-                            }
-                            if ($empty) {
-                                rmdir($path);
+                        // STIC-Custom 20241028 ART - "Removal of Documents from Filesystem" task has erratic behavior
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+                        // if (is_dir($path)) {
+                        //     $directoryIterator = new DirectoryIterator($path);
+                        //     $empty = true;
+                        //     foreach ($directoryIterator as $item) {
+                        //         if ($item->getFilename() == '.' || $item->getFilename() == '..') {
+                        //             continue;
+                        //         }
+                        //         $empty = false;
+                        //         break;
+                        //     }
+                        //     if ($empty) {
+                        //         rmdir($path);
+                        // Check if the directory exists and is truly empty (excluding '.' and '..')
+                        if (is_dir($path) && !count(scandir($path, -1, SCANDIR_SORT_NONE))) {
+                            // If the directory is empty, remove it
+                            if (!rmdir($path)) {
+                                $GLOBALS['log']->error("Error removing directory: $path");
+                                // END STIC-Custom
                             }
                         }
                         array_pop($directory);
@@ -492,12 +513,37 @@ function removeDocumentsFromFS()
                 }
             }
             if ($isSuccess) {
-                $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
+                // STIC-Custom 20241028 ART - "Removal of Documents from Filesystem" task has erratic behavior
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+                // $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
+                // If directory removal was successful (and the bean exists)
+                // Delete the entry from the `cron_remove_documents` table
+                $result = $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
+                if (!$result) {
+                    $GLOBALS['log']->error('Failed to delete from cron_remove_documents table');
+                }
+                // END STIC-Custom
             } else {
                 $return = false;
+                // STIC-Custom 20241028 ART - "Removal of Documents from Filesystem" task has erratic behavior
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+                // If directory removal failed, update the `date_modified` in the table
+                $result = $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+                if (!$result) {
+                    $GLOBALS['log']->error('Failed to update cron_remove_documents table');
+                }
+                // END STIC-Custom
             }
         } else {
-            $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+            // STIC-Custom 20241028 ART - "Removal of Documents from Filesystem" task has erratic behavior
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+            // $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+            // If the bean (record) doesn't exist, update the `date_modified` in the table
+            $result = $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+            if (!$result) {
+                $GLOBALS['log']->error('Failed to update cron_remove_documents table');
+            }
+            // END STIC-Custom
         }
     }
 
