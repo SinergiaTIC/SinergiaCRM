@@ -241,8 +241,8 @@ class Reminder extends Basic
 
                 // STIC-Custom 20240926 ART - “Run Email Reminder Notifications” does not run when deleting a person
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/406
+                // Avoid sending the reminder to any guest if the guest does not already exist in the CRM, as it causes an error that prevents the “Run Email Reminder Notifications” task from finishing correctly
 
-                // The task generated a blocking error that prevented the task from moving forward
                 // Prevent a deleted contact, user, etc. from being deleted in order for the task to run
                 if($personBean != false) {
                 // END STIC-Custom
