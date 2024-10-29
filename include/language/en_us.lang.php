@@ -1928,6 +1928,8 @@ $app_strings = array(
 
     'LBL_NO_IMAGE' => 'No Image',
 
+    'LBL_MODULE' => 'Module',
+
     //adding a label for address copy from left
     'LBL_COPY_ADDRESS_FROM_LEFT' => 'Copy address from left:',
     'LBL_SAVE_AND_CONTINUE' => 'Save and Continue',
@@ -1946,7 +1948,7 @@ $app_strings = array(
 
     'LBL_MONITOR_ID' => 'Monitor Id',
     'LBL_USER_ID' => 'User Id',
-    'LBL_MODULE' => 'Module',
+    'LBL_MODULE_NAME' => 'Module Name',
     'LBL_ITEM_ID' => 'Item Id',
     'LBL_ITEM_SUMMARY' => 'Item Summary',
     'LBL_ACTION' => 'Action',
@@ -1954,7 +1956,7 @@ $app_strings = array(
     'LBL_BREADCRUMBSTACK_CREATED' => 'BreadCrumbStack created for user id {0}',
     'LBL_VISIBLE' => 'Record Visible',
     'LBL_DATE_LAST_ACTION' => 'Date of Last Action',
-
+    
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'is not before',
     'MSG_IS_MORE_THAN' => 'is more than',
