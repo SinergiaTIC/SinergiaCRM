@@ -33,7 +33,7 @@ array(
     ),
     'MODULE_NAME' => array(
         'type' => 'enum',
-        'label' => 'LBL_MODULE_NAME',
+        'label' => 'LBL_MODULE',
         'width' => '10%',
         'default' => true,
     ),
