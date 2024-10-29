@@ -1983,8 +1983,6 @@ $app_strings = array(
 
     'LBL_NO_IMAGE' => 'Sense Imatge',
 
-    'LBL_MODULE' => 'Mòdul',
-
     //adding a label for address copy from left
     'LBL_COPY_ADDRESS_FROM_LEFT' => 'Copiar adreça de l\'esquerra:',
     'LBL_SAVE_AND_CONTINUE' => 'Desa i continua',
@@ -2003,7 +2001,7 @@ $app_strings = array(
 
     'LBL_MONITOR_ID' => 'Id del Monitor',
     'LBL_USER_ID' => "Id de l'Usuari",
-    'LBL_MODULE_NAME' => 'Mòdul',
+    'LBL_MODULE' => 'Mòdul',
     'LBL_ITEM_ID' => "Id de l'Element",
     'LBL_ITEM_SUMMARY' => "Resum de l'Element",
     'LBL_ACTION' => 'Acció',
