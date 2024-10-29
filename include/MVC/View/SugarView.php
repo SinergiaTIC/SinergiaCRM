@@ -367,9 +367,8 @@ class SugarView
             // Get the current user
             $current_user = $GLOBALS['current_user'];
 
-            // Set the user ID and assigned user link
+            // Set the user ID
             $monitor->setValue('user_id', $current_user->id);
-            $monitor->setValue('assigned_user_link', $current_user->full_name);
             // END STIC Custom
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);

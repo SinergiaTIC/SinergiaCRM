@@ -17,10 +17,11 @@ array(
         'width' => '10%',
         'default' => false,
     ),
-    'ASSIGNED_USER_LINK' => array(
-        'type' => 'enum',
-        'width' => '10%',
-        'label' => 'LBL_ASSIGNED_TO',
+    'ASSIGNED_USER_NAME' => array(
+        'width' => '9%',
+        'label' => 'LBL_ASSIGNED_TO_NAME',
+        'module' => 'Users',
+        'id' => 'ASSIGNED_USER_ID',
         'default' => true,
     ),
     'ACTION' => array(

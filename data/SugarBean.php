@@ -3484,11 +3484,6 @@ class SugarBean
             // $trackerManager->saveMonitor($monitor);
 
             // Track the bean as saved, updated or deleted
-            // Get the current user
-            $current_user = $GLOBALS['current_user'];
-            // Set the assigned user link
-            $monitor->setValue('assigned_user_link', $current_user->full_name);
-
             if (empty($this->fetched_row['id'])) {
                 // If the bean is new (has no ID), mark it as saved
                 $monitor->action = 'save';

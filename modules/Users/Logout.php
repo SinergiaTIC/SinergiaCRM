@@ -77,9 +77,8 @@ if ($action === 'Logout') {
         // Set the date and time of the logout
         $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
 
-        // Set the user ID, full name, module name, action, item ID, and item summary
+        // Set the user ID, module name, action, item ID, and item summary
         $monitor->setValue('user_id', $current_user->id);
-        $monitor->setValue('assigned_user_link', $current_user->full_name);
         $monitor->setValue('module_name', 'Users');
         $monitor->setValue('action', 'logout');
         $monitor->setValue('item_id', $current_user->id);

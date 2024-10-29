@@ -4,8 +4,8 @@ $searchdefs[$module_name] =
 array(
     'layout' => array(
         'basic_search' => array(
-            'assigned_user_link' => array(
-                'name' => 'assigned_user_link',
+            'assigned_user_id' => array(
+                'name' => 'assigned_user_id',
                 'type' => 'enum',
                 'function' => array (
                     'name' => 'get_user_array',
@@ -15,7 +15,7 @@ array(
                 ),
                 'width' => '10%',
                 'default' => true,
-                'label' => 'LBL_ASSIGNED_TO_USER',
+                'label' => 'LBL_ASSIGNED_TO_NAME',
             ),
             'date_modified' => array(
                 'type' => 'datetimecombo',
@@ -38,17 +38,10 @@ array(
                 'default' => true,
                 'name' => 'module_name',
             ),
-            'current_user_only' => array(
-                'name' => 'current_user_only',
-                'label' => 'LBL_CURRENT_USER_FILTER',
-                'type' => 'bool',
-                'default' => true,
-                'width' => '10%',
-            ),
         ),
         'advanced_search' => array(
-            'assigned_user_link' => array(
-                'name' => 'assigned_user_link',
+            'assigned_user_id' => array(
+                'name' => 'assigned_user_id',
                 'type' => 'enum',
                 'function' => array (
                     'name' => 'get_user_array',
@@ -58,7 +51,7 @@ array(
                 ),
                 'width' => '10%',
                 'default' => true,
-                'label' => 'LBL_ASSIGNED_TO_USER',
+                'label' => 'LBL_ASSIGNED_TO_NAME',
             ),
             'date_modified' => array(
                 'type' => 'datetimecombo',
@@ -101,20 +94,6 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'item_id',
-            ),
-            'current_user_only' => array(
-                'label' => 'LBL_CURRENT_USER_FILTER',
-                'type' => 'bool',
-                'default' => true,
-                'width' => '10%',
-                'name' => 'current_user_only',
-            ),
-            'favorites_only' => array(
-                'name' => 'favorites_only',
-                'label' => 'LBL_FAVORITES_FILTER',
-                'type' => 'bool',
-                'default' => true,
-                'width' => '10%',
             ),
         ),
     ),
