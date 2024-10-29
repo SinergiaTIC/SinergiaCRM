@@ -513,12 +513,18 @@ function removeDocumentsFromFS()
                     while (!empty($directory)) {
                         $path = 'upload://deleted/' . implode('/', $directory);
                         // Check if the directory exists and is truly empty (excluding '.' and '..')
-                        if (is_dir($path) && !count(scandir($path, -1, SCANDIR_SORT_NONE))) {
-                            // If the directory is empty, remove it
-                            if (!rmdir($path)) {
-                                $GLOBALS['log']->debug("Error removing directory: $path");
+                        $scanned_directory = scandir($path, SCANDIR_SORT_ASCENDING); // Sort ascending for consistency
+                        if ($scanned_directory === false) {
+                            $GLOBALS['log']->debug("Error while scanning the directory: $path");
+                        } else {
+                            // Count elements, excluding '.' and '..'
+                            if (count($scanned_directory) <= 2) {
+                                if (!rmdir($path)) {
+                                    $GLOBALS['log']->debug("Error removing directory: $path");
+                                }
                             }
                         }
+                    
                         array_pop($directory);
                     }
                 }
