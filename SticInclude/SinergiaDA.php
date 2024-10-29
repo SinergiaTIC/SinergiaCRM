@@ -629,7 +629,7 @@ class ExternalReporting
                         $fieldV['alias'] = $fieldV['name'];
                         // Numeric type columns are converted to decimal to ensure they remain in this type in the view,
                         // avoiding errors in min and max aggregations due to ordering
-                        $fieldSrc = "CONVERT(IFNULL({$fieldPrefix}.{$fieldV['name']},''), decimal(10,4)  ) AS {$fieldName}";
+                        $fieldSrc = "CONVERT(IFNULL({$fieldPrefix}.{$fieldV['name']},''), decimal(20,4)  ) AS {$fieldName}";
                         break;
 
                     default:
