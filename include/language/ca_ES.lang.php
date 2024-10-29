@@ -2008,7 +2008,7 @@ $app_strings = array(
     'LBL_SESSION_ID' => 'Id de la Sessió',
     'LBL_BREADCRUMBSTACK_CREATED' => 'Pluja d\'idees creada per l\'usuari {0}',
     'LBL_VISIBLE' => 'Registre visible',
-    'LBL_DATE_LAST_ACTION' => "Data",
+    'LBL_DATE_LAST_ACTION' => 'Data',
 
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'no és abans de',
