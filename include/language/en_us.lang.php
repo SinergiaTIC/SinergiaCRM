@@ -1956,7 +1956,7 @@ $app_strings = array(
     'LBL_BREADCRUMBSTACK_CREATED' => 'BreadCrumbStack created for user id {0}',
     'LBL_VISIBLE' => 'Record Visible',
     'LBL_DATE_LAST_ACTION' => 'Date of Last Action',
-    
+
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'is not before',
     'MSG_IS_MORE_THAN' => 'is more than',
@@ -3750,4 +3750,3 @@ $app_strings['LBL_TCPDF_ENGINE'] = 'TCPDF Engine';
 $app_strings['ERR_INVALID_FILE_NAME'] = 'Invalid file name:';
 $app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'This can only be alphanumeric characters, plus \'.\' , \'-\' and \'_\'';
 $app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'Invalid import file name';
-
