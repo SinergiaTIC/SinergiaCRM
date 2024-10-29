@@ -3750,3 +3750,4 @@ $app_strings['LBL_TCPDF_ENGINE'] = 'TCPDF Engine';
 $app_strings['ERR_INVALID_FILE_NAME'] = 'Invalid file name:';
 $app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'This can only be alphanumeric characters, plus \'.\' , \'-\' and \'_\'';
 $app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'Invalid import file name';
+
