@@ -2001,16 +2001,16 @@ $app_strings = array(
     'ERR_UNDEFINED_METRIC' => 'Error: No s\'ha pogut establir un valor per una mètrica no definida',
     'ERR_STORE_FILE_MISSING' => 'Error: No s\'ha pogut trobar l\'arxiu d\'implementació d\'Emmagatzemament',
 
-    'LBL_MONITOR_ID' => 'Id de Monitor',
-    'LBL_USER_ID' => 'Id d\'Usuari',
-    'LBL_MODULE_NAME' => 'Nom de Mòdul',
-    'LBL_ITEM_ID' => 'Id d\'Element',
-    'LBL_ITEM_SUMMARY' => 'Resum d\'Element',
+    'LBL_MONITOR_ID' => 'Id del Monitor',
+    'LBL_USER_ID' => "Id de l'Usuari",
+    'LBL_MODULE_NAME' => 'Mòdul',
+    'LBL_ITEM_ID' => "Id de l'Element",
+    'LBL_ITEM_SUMMARY' => "Resum de l'Element",
     'LBL_ACTION' => 'Acció',
-    'LBL_SESSION_ID' => 'Id de Sessió',
+    'LBL_SESSION_ID' => 'Id de la Sessió',
     'LBL_BREADCRUMBSTACK_CREATED' => 'Pluja d\'idees creada per l\'usuari {0}',
-    'LBL_VISIBLE' => 'Registre Visible',
-    'LBL_DATE_LAST_ACTION' => 'Data de la Última Acció',
+    'LBL_VISIBLE' => 'Registre visible',
+    'LBL_DATE_LAST_ACTION' => "Data de l'última acció",
 
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'no és abans de',
@@ -2024,12 +2024,12 @@ $app_strings = array(
 
     'LBL_OBJECT_IMAGE' => 'imatge d\'objecte',
     //jchi #12300
-    'LBL_MASSUPDATE_DATE' => 'Seleccioni Data',
+    'LBL_MASSUPDATE_DATE' => 'Seleccioneu la data',
 
     'LBL_VALUE' => 'valor',
     'LBL_VALIDATE_RANGE' => 'no està dins del rang vàlid',
-    'LBL_CHOOSE_START_AND_END_DATES' => "Si us plau, triï una data d\'inici i de finalització", // Excepció d'escapat 
-    'LBL_CHOOSE_START_AND_END_ENTRIES' => "Si us plau, triï un període d\'inici i de finalització", // Excepció d'escapat 
+    'LBL_CHOOSE_START_AND_END_DATES' => "Trieu una data d\'inici i de finalització", // Excepció d'escapat 
+    'LBL_CHOOSE_START_AND_END_ENTRIES' => "Trieu un període d\'inici i de finalització", // Excepció d'escapat 
 
     //jchi #  20776
     'LBL_DROPDOWN_LIST_ALL' => 'Tot',
