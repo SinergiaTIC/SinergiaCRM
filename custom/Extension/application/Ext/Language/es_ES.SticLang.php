@@ -3543,7 +3543,6 @@ $app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Login';
 $app_list_strings['trackers_actions_list']['logout'] = 'Logout';
 
-
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)
@@ -3634,10 +3633,18 @@ $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
 
-// Plantillas de email: Tipos de plantilla
+// Plantillas de correo: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
 $app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+
+// Monitorizaciones: Acciones
+$app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
+$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
+$app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
