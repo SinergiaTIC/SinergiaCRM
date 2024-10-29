@@ -104,7 +104,26 @@ class Monitor implements Trackable
             //1) it is the same value no matter where it is set
             //2) ensure it follows some filter rules.
             $this->setValue('session_id', $this->getSessionId());
+        } 
+
+        // STIC Custom 20241029 ART - Tracker Module
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+        // Checks if the metric assigned_user_id, if not, creates it and assigns the current user's ID to it
+        if (!isset($this->metrics['assigned_user_id'])) {
+            // If the 'assigned_user_id' metric doesn't exist yet, create it
+            $this->metrics['assigned_user_id'] = new Metric('varchar', 'assigned_user_id');
+            // Get the currently logged-in user
+            $current_user = $GLOBALS['current_user'];
+            // Set the value of the 'assigned_user_id' metric to the ID of the current user
+            $this->setValue('assigned_user_id', $current_user->id);
+        // If it exist, assign the current user
+        } else {
+            // Get the currently logged-in user
+            $current_user = $GLOBALS['current_user'];
+            // Set the value of the 'assigned_user_id' metric to the ID of the current user
+            $this->setValue('assigned_user_id', $current_user->id);
         }
+        // END STIC Custom
     }
 
     /**
