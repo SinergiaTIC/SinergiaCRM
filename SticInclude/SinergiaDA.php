@@ -1298,7 +1298,8 @@ class ExternalReporting
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c
                         WHERE
-                            deleted = 0;";
+                            deleted = 0
+                        AND user_hash IS NOT NULL;";
 
         // 2) eda_def_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
@@ -1764,7 +1765,7 @@ class ExternalReporting
         ];
 
         // Get list of active users
-        $res = $db->query("SELECT id,user_name, is_admin FROM users join users_cstm on users.id = users_cstm.id_c  WHERE status='Active' AND deleted=0 AND sda_allowed_c=1;");
+        $res = $db->query("SELECT id,user_name, is_admin FROM users join users_cstm on users.id = users_cstm.id_c  WHERE status='Active' AND deleted=0 AND sda_allowed_c=1 AND user_hash IS NOT NULL;");
 
         while ($u = $db->fetchByAssoc($res, false)) {
             $allModulesACL = array_intersect_key(ACLAction::getUserActions($u['id'], true), $modules);
