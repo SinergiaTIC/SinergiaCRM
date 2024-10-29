@@ -50,9 +50,8 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Dades de prova eliminades c
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = "Hi ha hagut errors a l'eliminar les dades de prova. " & 'Reviseu el <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_removeSticData">log</a>.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = "Accions d'Administració";
 
-$mod_strings['LBL_TRACKERS_TITLE'] = 'Monitorizaciones';
-$mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Monitorización de sesiones, acciones del usuario';
-
+$mod_strings['LBL_TRACKERS_TITLE'] = 'Monitoratge';
+$mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Registre de les sessions d'usuari i de les accions sobre registres';
 
 // SinergiaDA
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
