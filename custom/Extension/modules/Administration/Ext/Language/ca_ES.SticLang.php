@@ -51,7 +51,7 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = "Hi ha hagut errors a l'elimin
 $mod_strings['LBL_ADMIN_ACTIONS'] = "Accions d'Administració";
 
 $mod_strings['LBL_TRACKERS_TITLE'] = 'Monitoratge';
-$mod_strings['LBL_TRACKERS_DESCRIPTION'] = "Registre de les sessions d'usuari i de les accions sobre registres";
+$mod_strings['LBL_TRACKERS_DESCRIPTION'] = "Registre de les sessions d'usuari i de les accions sobre registres.";
 
 // SinergiaDA
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
