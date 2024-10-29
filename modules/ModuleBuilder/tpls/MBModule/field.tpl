@@ -86,7 +86,7 @@ var closeButtonSelector = "a.sugar-tab-close[href='javascript:void(0);']";
 			 
 			&nbsp;<input type='button' class='button' name='fclonebtn' value='{/literal}{$mod_strings.LBL_BTN_CLONE}{literal}' onclick='document.popup_form.action.value="CloneField";ModuleBuilder.submitForm("popup_form_id");'> *}	        
 			{literal}
-			&nbsp;<input type='button' class='button' name='fclonebtn' value='{/literal}{$mod_strings.LBL_BTN_CLONE}{literal}' onclick='if (tinyMCE.get("htmlarea")) { tinymce.execCommand("mceRemoveControl", true, "htmlarea"); } document.popup_form.action.value="CloneField";ModuleBuilder.submitForm("popup_form_id");'>
+			&nbsp;<input type='button' class='button' name='fclonebtn' value='{/literal}{$mod_strings.LBL_BTN_CLONE}{literal}' onclick='if (tinyMCE.get("htmlarea")) { tinymce.execCommand("mceRemoveControl", false, "htmlarea"); } document.popup_form.action.value="CloneField";ModuleBuilder.submitForm("popup_form_id");'>
 	        {/literal}
 			{* END STIC-Custom *}			
 	    {/if}
@@ -100,7 +100,7 @@ var closeButtonSelector = "a.sugar-tab-close[href='javascript:void(0);']";
 		https://github.com/SinergiaTIC/SinergiaCRM/pull/388		 
 		&nbsp;<input type='button' class='button' name='fclonebtn' value='{/literal}{$mod_strings.LBL_BTN_CLONE}{literal}' onclick='document.popup_form.action.value="CloneField";ModuleBuilder.submitForm("popup_form_id");'> *}	        
 	    {literal}
-	        &nbsp;<input type='button' class='button' name='fclonebtn' value='{/literal}{$mod_strings.LBL_BTN_CLONE}{literal}' onclick='if (tinyMCE.get("htmlarea")) { tinymce.execCommand("mceRemoveControl", true, "htmlarea"); } document.popup_form.action.value="CloneField";ModuleBuilder.submitForm("popup_form_id");'>
+	        &nbsp;<input type='button' class='button' name='fclonebtn' value='{/literal}{$mod_strings.LBL_BTN_CLONE}{literal}' onclick='if (tinyMCE.get("htmlarea")) { tinymce.execCommand("mceRemoveControl", false, "htmlarea"); } document.popup_form.action.value="CloneField";ModuleBuilder.submitForm("popup_form_id");'>
 	     {/literal}
 		{* END STIC-Custom *}			 
 		 {literal}
