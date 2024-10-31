@@ -67,6 +67,33 @@ class PhpDocNode implements Node
         });
     }
     /**
+     * @return ParamImmediatelyInvokedCallableTagValueNode[]
+     */
+    public function getParamImmediatelyInvokedCallableTagValues(string $tagName = '@param-immediately-invoked-callable') : array
+    {
+        return array_filter(array_column($this->getTagsByName($tagName), 'value'), static function (\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode $value) : bool {
+            return $value instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\ParamImmediatelyInvokedCallableTagValueNode;
+        });
+    }
+    /**
+     * @return ParamLaterInvokedCallableTagValueNode[]
+     */
+    public function getParamLaterInvokedCallableTagValues(string $tagName = '@param-later-invoked-callable') : array
+    {
+        return array_filter(array_column($this->getTagsByName($tagName), 'value'), static function (\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode $value) : bool {
+            return $value instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\ParamLaterInvokedCallableTagValueNode;
+        });
+    }
+    /**
+     * @return ParamClosureThisTagValueNode[]
+     */
+    public function getParamClosureThisTagValues(string $tagName = '@param-closure-this') : array
+    {
+        return array_filter(array_column($this->getTagsByName($tagName), 'value'), static function (\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode $value) : bool {
+            return $value instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\ParamClosureThisTagValueNode;
+        });
+    }
+    /**
      * @return TemplateTagValueNode[]
      */
     public function getTemplateTagValues(string $tagName = '@template') : array
@@ -127,6 +154,24 @@ class PhpDocNode implements Node
     {
         return array_filter(array_column($this->getTagsByName($tagName), 'value'), static function (\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode $value) : bool {
             return $value instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\MixinTagValueNode;
+        });
+    }
+    /**
+     * @return RequireExtendsTagValueNode[]
+     */
+    public function getRequireExtendsTagValues(string $tagName = '@phpstan-require-extends') : array
+    {
+        return array_filter(array_column($this->getTagsByName($tagName), 'value'), static function (\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode $value) : bool {
+            return $value instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\RequireExtendsTagValueNode;
+        });
+    }
+    /**
+     * @return RequireImplementsTagValueNode[]
+     */
+    public function getRequireImplementsTagValues(string $tagName = '@phpstan-require-implements') : array
+    {
+        return array_filter(array_column($this->getTagsByName($tagName), 'value'), static function (\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode $value) : bool {
+            return $value instanceof \PHPStan\PhpDocParser\Ast\PhpDoc\RequireImplementsTagValueNode;
         });
     }
     /**

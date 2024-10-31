@@ -12,6 +12,7 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
+use Rector\Doctrine\Enum\MappingClass;
 use Rector\NodeNameResolver\NodeNameResolver;
 /**
  * @api
@@ -28,7 +29,7 @@ final class AttributeFinder
         $this->nodeNameResolver = $nodeNameResolver;
     }
     /**
-     * @param class-string $attributeClass
+     * @param MappingClass::* $attributeClass
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Param $node
      */
     public function findAttributeByClassArgByName($node, string $attributeClass, string $argName) : ?Expr
@@ -36,7 +37,7 @@ final class AttributeFinder
         return $this->findAttributeByClassesArgByName($node, [$attributeClass], $argName);
     }
     /**
-     * @param class-string[] $attributeClasses
+     * @param string[] $attributeClasses
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Param $node
      */
     public function findAttributeByClassesArgByName($node, array $attributeClasses, string $argName) : ?Expr
@@ -48,7 +49,6 @@ final class AttributeFinder
         return $this->findArgByName($attribute, $argName);
     }
     /**
-     * @param class-string $attributeClass
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Param $node
      */
     public function findAttributeByClass($node, string $attributeClass) : ?Attribute
@@ -67,7 +67,7 @@ final class AttributeFinder
         return null;
     }
     /**
-     * @param class-string[] $attributeClasses
+     * @param string[] $attributeClasses
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Stmt\ClassLike|\PhpParser\Node\Param $node
      */
     public function findAttributeByClasses($node, array $attributeClasses) : ?Attribute

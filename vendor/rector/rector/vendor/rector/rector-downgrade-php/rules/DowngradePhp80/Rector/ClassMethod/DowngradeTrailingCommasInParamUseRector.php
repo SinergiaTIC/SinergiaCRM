@@ -9,9 +9,9 @@ use PhpParser\Node\Expr\ClosureUse;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
-use Rector\Core\Rector\AbstractRector;
 use Rector\DowngradePhp73\Tokenizer\FollowedByCommaAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -108,6 +108,7 @@ CODE_SAMPLE
     {
         \end($array);
         $lastPosition = \key($array);
+        \reset($array);
         $last = $array[$lastPosition];
         if (!$this->followedByCommaAnalyzer->isFollowed($this->file, $last)) {
             return null;

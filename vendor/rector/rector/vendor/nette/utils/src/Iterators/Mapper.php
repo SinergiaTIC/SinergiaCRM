@@ -5,7 +5,7 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202305\Nette\Iterators;
+namespace RectorPrefix202407\Nette\Iterators;
 
 /**
  * Applies the callback to the elements of the inner iterator.
@@ -19,7 +19,9 @@ class Mapper extends \IteratorIterator
         parent::__construct($iterator);
         $this->callback = $callback;
     }
-    #[\ReturnTypeWillChange]
+    /**
+     * @return mixed
+     */
     public function current()
     {
         return ($this->callback)(parent::current(), parent::key());

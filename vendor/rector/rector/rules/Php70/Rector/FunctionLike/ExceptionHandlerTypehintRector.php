@@ -8,15 +8,13 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Util\StringUtils;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Rector\AbstractRector;
+use Rector\Util\StringUtils;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://wiki.php.net/rfc/typed_properties_v2#proposal
- *
  * @see \Rector\Tests\Php70\Rector\FunctionLike\ExceptionHandlerTypehintRector\ExceptionHandlerTypehintRectorTest
  */
 final class ExceptionHandlerTypehintRector extends AbstractRector implements MinPhpVersionInterface

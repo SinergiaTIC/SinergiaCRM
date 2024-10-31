@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Output;
+namespace RectorPrefix202407\Symfony\Component\Console\Output;
 
-use RectorPrefix202305\Symfony\Component\Console\Formatter\NullOutputFormatter;
-use RectorPrefix202305\Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use RectorPrefix202407\Symfony\Component\Console\Formatter\NullOutputFormatter;
+use RectorPrefix202407\Symfony\Component\Console\Formatter\OutputFormatterInterface;
 /**
  * NullOutput suppresses all output.
  *
@@ -26,6 +26,9 @@ class NullOutput implements OutputInterface
      * @var \Symfony\Component\Console\Formatter\NullOutputFormatter
      */
     private $formatter;
+    /**
+     * @return void
+     */
     public function setFormatter(OutputFormatterInterface $formatter)
     {
         // do nothing
@@ -35,6 +38,9 @@ class NullOutput implements OutputInterface
         // to comply with the interface we must return a OutputFormatterInterface
         return $this->formatter = $this->formatter ?? new NullOutputFormatter();
     }
+    /**
+     * @return void
+     */
     public function setDecorated(bool $decorated)
     {
         // do nothing
@@ -43,6 +49,9 @@ class NullOutput implements OutputInterface
     {
         return \false;
     }
+    /**
+     * @return void
+     */
     public function setVerbosity(int $level)
     {
         // do nothing
@@ -68,14 +77,16 @@ class NullOutput implements OutputInterface
         return \false;
     }
     /**
-     * @param string|mixed[] $messages
+     * @return void
+     * @param string|iterable $messages
      */
     public function writeln($messages, int $options = self::OUTPUT_NORMAL)
     {
         // do nothing
     }
     /**
-     * @param string|mixed[] $messages
+     * @return void
+     * @param string|iterable $messages
      */
     public function write($messages, bool $newline = \false, int $options = self::OUTPUT_NORMAL)
     {

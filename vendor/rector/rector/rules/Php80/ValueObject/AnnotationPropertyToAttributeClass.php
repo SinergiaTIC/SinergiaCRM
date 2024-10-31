@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Php80\ValueObject;
 
-use Rector\Core\Validation\RectorAssert;
+use Rector\Validation\RectorAssert;
 final class AnnotationPropertyToAttributeClass
 {
     /**
@@ -13,7 +13,7 @@ final class AnnotationPropertyToAttributeClass
     private $attributeClass;
     /**
      * @readonly
-     * @var string|int|null
+     * @var int|string|null
      */
     private $annotationProperty = null;
     /**
@@ -32,7 +32,7 @@ final class AnnotationPropertyToAttributeClass
         RectorAssert::className($attributeClass);
     }
     /**
-     * @return string|int|null
+     * @return int|string|null
      */
     public function getAnnotationProperty()
     {

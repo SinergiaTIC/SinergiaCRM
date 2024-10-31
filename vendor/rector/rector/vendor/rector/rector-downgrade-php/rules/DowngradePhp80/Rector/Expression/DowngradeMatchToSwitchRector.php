@@ -24,9 +24,11 @@ use PhpParser\Node\Stmt\Echo_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Switch_;
-use Rector\Core\Rector\AbstractRector;
+use PhpParser\NodeTraverser;
+use PHPStan\Analyser\Scope;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Php72\NodeFactory\AnonymousFunctionFactory;
+use Rector\Rector\AbstractScopeAwareRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -34,7 +36,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  *
  * @see \Rector\Tests\DowngradePhp80\Rector\Expression\DowngradeMatchToSwitchRector\DowngradeMatchToSwitchRectorTest
  */
-final class DowngradeMatchToSwitchRector extends AbstractRector
+final class DowngradeMatchToSwitchRector extends AbstractScopeAwareRector
 {
     /**
      * @readonly
@@ -92,38 +94,90 @@ CODE_SAMPLE
     /**
      * @param Echo_|Expression|Return_ $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
-        $match = $this->betterNodeFinder->findFirst($node, static function (Node $subNode) : bool {
-            return $subNode instanceof Match_;
+        /** @var Match_|null $match */
+        $match = null;
+        $hasChanged = \false;
+        $this->traverseNodesWithCallable($node, function (Node $subNode) use($node, &$match, &$hasChanged, $scope) {
+            if (($subNode instanceof ArrayItem || $subNode instanceof Arg) && $subNode->value instanceof Match_ && $this->isEqualScope($subNode->value, $scope)) {
+                $switchCases = $this->createSwitchCasesFromMatchArms($node, $subNode->value, \true);
+                $switch = new Switch_($subNode->value->cond, $switchCases);
+                $subNode->value = new FuncCall($this->anonymousFunctionFactory->create([], [$switch], null));
+                $hasChanged = \true;
+                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            }
+            if ($subNode instanceof Arg && $subNode->value instanceof ArrowFunction && $subNode->value->expr instanceof Match_) {
+                $refactoredNode = $this->refactorInArrowFunction($subNode, $subNode->value, $subNode->value->expr);
+                if ($refactoredNode instanceof Node) {
+                    $hasChanged = \true;
+                }
+                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            }
+            if ($subNode instanceof Assign && $subNode->expr instanceof ArrowFunction && $subNode->expr->expr instanceof Match_) {
+                $refactoredNode = $this->refactorInArrowFunction($subNode, $subNode->expr, $subNode->expr->expr);
+                if ($refactoredNode instanceof Node) {
+                    $hasChanged = \true;
+                }
+                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            }
+            if ($subNode instanceof Expression && $subNode->expr instanceof ArrowFunction && $subNode->expr->expr instanceof Match_) {
+                $refactoredNode = $this->refactorInArrowFunction($subNode, $subNode->expr, $subNode->expr->expr);
+                if ($refactoredNode instanceof Node) {
+                    $hasChanged = \true;
+                }
+                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            }
+            if ($subNode instanceof Return_ && $subNode->expr instanceof ArrowFunction && $subNode->expr->expr instanceof Match_) {
+                $refactoredNode = $this->refactorInArrowFunction($subNode, $subNode->expr, $subNode->expr->expr);
+                if ($refactoredNode instanceof Node) {
+                    $hasChanged = \true;
+                }
+                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            }
+            if ($subNode instanceof FuncCall && $subNode->name instanceof ArrowFunction && $subNode->name->expr instanceof Match_) {
+                $refactoredNode = $this->refactorInArrowFunction($subNode, $subNode->name, $subNode->name->expr);
+                if ($refactoredNode instanceof Node) {
+                    $hasChanged = \true;
+                }
+                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+            }
+            if ($subNode instanceof Match_) {
+                $match = $subNode;
+                return NodeTraverser::STOP_TRAVERSAL;
+            }
         });
+        if ($hasChanged) {
+            return $node;
+        }
         if (!$match instanceof Match_) {
             return null;
         }
-        $currentStmt = $this->betterNodeFinder->resolveCurrentStatement($match);
-        if ($currentStmt !== $node) {
+        if (!$this->isEqualScope($match, $scope)) {
             return null;
         }
         $switchCases = $this->createSwitchCasesFromMatchArms($node, $match);
-        $switch = new Switch_($match->cond, $switchCases);
-        $parentMatch = $match->getAttribute(AttributeKey::PARENT_NODE);
-        if ($parentMatch instanceof ArrowFunction) {
-            return $this->refactorInArrowFunction($parentMatch, $match, $node);
+        return new Switch_($match->cond, $switchCases);
+    }
+    private function isEqualScope(Match_ $match, ?Scope $containerScope) : bool
+    {
+        $matchScope = $match->getAttribute(AttributeKey::SCOPE);
+        if (!$matchScope instanceof Scope) {
+            return \false;
         }
-        if ($parentMatch instanceof ArrayItem) {
-            $parentMatch->value = new FuncCall($this->anonymousFunctionFactory->create([], [$switch], null));
-            return $node;
+        if (!$containerScope instanceof Scope) {
+            return \false;
         }
-        return $switch;
+        return $matchScope->getParentScope() === $containerScope->getParentScope();
     }
     /**
-     * @param \PhpParser\Node\Stmt\Echo_|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Return_ $node
-     * @return \PhpParser\Node\Stmt\Echo_|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Return_|null
+     * @param \PhpParser\Node\Arg|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\Assign|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Return_ $containerArrowFunction
+     * @return \PhpParser\Node\Arg|\PhpParser\Node\Expr\FuncCall|\PhpParser\Node\Expr\Assign|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Return_|null
      */
-    private function refactorInArrowFunction(ArrowFunction $arrowFunction, Match_ $match, $node)
+    private function refactorInArrowFunction($containerArrowFunction, ArrowFunction $arrowFunction, Match_ $match)
     {
-        $parentOfParentMatch = $arrowFunction->getAttribute(AttributeKey::PARENT_NODE);
-        if (!$parentOfParentMatch instanceof Node) {
+        $containerArrowFunctionScope = $containerArrowFunction->getAttribute(AttributeKey::SCOPE);
+        if (!$this->isEqualScope($match, $containerArrowFunctionScope)) {
             return null;
         }
         /**
@@ -132,17 +186,17 @@ CODE_SAMPLE
          */
         $stmts = [new Return_($match)];
         $closure = $this->anonymousFunctionFactory->create($arrowFunction->params, $stmts, $arrowFunction->returnType, $arrowFunction->static);
-        if ($parentOfParentMatch instanceof Arg && $parentOfParentMatch->value === $arrowFunction) {
-            $parentOfParentMatch->value = $closure;
-            return $node;
+        if ($containerArrowFunction instanceof Arg && $containerArrowFunction->value === $arrowFunction) {
+            $containerArrowFunction->value = $closure;
+            return $containerArrowFunction;
         }
-        if (($parentOfParentMatch instanceof Assign || $parentOfParentMatch instanceof Expression || $parentOfParentMatch instanceof Return_) && $parentOfParentMatch->expr === $arrowFunction) {
-            $parentOfParentMatch->expr = $closure;
-            return $node;
+        if (($containerArrowFunction instanceof Assign || $containerArrowFunction instanceof Expression || $containerArrowFunction instanceof Return_) && $containerArrowFunction->expr === $arrowFunction) {
+            $containerArrowFunction->expr = $closure;
+            return $containerArrowFunction;
         }
-        if ($parentOfParentMatch instanceof FuncCall && $parentOfParentMatch->name === $arrowFunction) {
-            $parentOfParentMatch->name = $closure;
-            return $node;
+        if ($containerArrowFunction instanceof FuncCall && $containerArrowFunction->name === $arrowFunction) {
+            $containerArrowFunction->name = $closure;
+            return $containerArrowFunction;
         }
         return null;
     }
@@ -150,10 +204,9 @@ CODE_SAMPLE
      * @return Case_[]
      * @param \PhpParser\Node\Stmt\Echo_|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Return_ $node
      */
-    private function createSwitchCasesFromMatchArms($node, Match_ $match) : array
+    private function createSwitchCasesFromMatchArms($node, Match_ $match, bool $isInsideArrayItem = \false) : array
     {
         $switchCases = [];
-        $parentNode = $match->getAttribute(AttributeKey::PARENT_NODE);
         foreach ($match->arms as $matchArm) {
             if (\count((array) $matchArm->conds) > 1) {
                 $lastCase = null;
@@ -162,9 +215,9 @@ CODE_SAMPLE
                     $switchCases[] = $lastCase;
                 }
                 /** @var Case_ $lastCase */
-                $lastCase->stmts = $this->createSwitchStmts($node, $matchArm, $parentNode);
+                $lastCase->stmts = $this->createSwitchStmts($node, $matchArm, $isInsideArrayItem);
             } else {
-                $stmts = $this->createSwitchStmts($node, $matchArm, $parentNode);
+                $stmts = $this->createSwitchStmts($node, $matchArm, $isInsideArrayItem);
                 $switchCases[] = new Case_($matchArm->conds[0] ?? null, $stmts);
             }
         }
@@ -174,10 +227,10 @@ CODE_SAMPLE
      * @return Stmt[]
      * @param \PhpParser\Node\Stmt\Echo_|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Return_ $node
      */
-    private function createSwitchStmts($node, MatchArm $matchArm, ?Node $parentNode) : array
+    private function createSwitchStmts($node, MatchArm $matchArm, bool $isInsideArrayItem) : array
     {
         $stmts = [];
-        if ($parentNode instanceof ArrayItem) {
+        if ($isInsideArrayItem) {
             $stmts[] = new Return_($matchArm->body);
         } elseif ($matchArm->body instanceof Throw_) {
             $stmts[] = new Expression($matchArm->body);

@@ -9,10 +9,11 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
-use Rector\Core\Enum\ObjectReference;
-use Rector\Core\Rector\AbstractScopeAwareRector;
-use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Enum\ObjectReference;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Reflection\ReflectionResolver;
 use Rector\TypeDeclaration\NodeAnalyzer\CallerParamMatcher;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -28,13 +29,19 @@ final class ParamTypeByParentCallTypeRector extends AbstractScopeAwareRector
     private $callerParamMatcher;
     /**
      * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
+     * @var \Rector\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    public function __construct(CallerParamMatcher $callerParamMatcher, ReflectionResolver $reflectionResolver)
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(CallerParamMatcher $callerParamMatcher, ReflectionResolver $reflectionResolver, BetterNodeFinder $betterNodeFinder)
     {
         $this->callerParamMatcher = $callerParamMatcher;
         $this->reflectionResolver = $reflectionResolver;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
     public function getRuleDefinition() : RuleDefinition
     {

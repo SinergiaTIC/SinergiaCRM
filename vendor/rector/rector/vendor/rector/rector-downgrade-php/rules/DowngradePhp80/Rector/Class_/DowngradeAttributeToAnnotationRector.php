@@ -13,13 +13,15 @@ use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\DowngradePhp80\ValueObject\DowngradeAttributeToAnnotation;
 use Rector\NodeFactory\DoctrineAnnotationFactory;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202305\Webmozart\Assert\Assert;
+use RectorPrefix202407\Webmozart\Assert\Assert;
 /**
  * @changelog https://php.watch/articles/php-attributes#syntax
  *
@@ -27,6 +29,21 @@ use RectorPrefix202305\Webmozart\Assert\Assert;
  */
 final class DowngradeAttributeToAnnotationRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /**
+     * @readonly
+     * @var \Rector\NodeFactory\DoctrineAnnotationFactory
+     */
+    private $doctrineAnnotationFactory;
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
     /**
      * @var string[]
      */
@@ -39,14 +56,11 @@ final class DowngradeAttributeToAnnotationRector extends AbstractRector implemen
      * @var bool
      */
     private $isDowngraded = \false;
-    /**
-     * @readonly
-     * @var \Rector\NodeFactory\DoctrineAnnotationFactory
-     */
-    private $doctrineAnnotationFactory;
-    public function __construct(DoctrineAnnotationFactory $doctrineAnnotationFactory)
+    public function __construct(DoctrineAnnotationFactory $doctrineAnnotationFactory, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory)
     {
         $this->doctrineAnnotationFactory = $doctrineAnnotationFactory;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -88,6 +102,9 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
+        if ($node->attrGroups === []) {
+            return null;
+        }
         $this->isDowngraded = \false;
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
         foreach ($node->attrGroups as $attrGroup) {
@@ -102,13 +119,15 @@ CODE_SAMPLE
                     continue;
                 }
                 unset($attrGroup->attrs[$key]);
+                $this->isDowngraded = \true;
                 if (\strpos($attributeToAnnotation->getTag(), '\\') === \false) {
                     $phpDocInfo->addPhpDocTagNode(new PhpDocTagNode('@' . $attributeToAnnotation->getTag(), new GenericTagValueNode('')));
-                } else {
-                    $doctrineAnnotation = $this->doctrineAnnotationFactory->createFromAttribute($attribute, $attributeToAnnotation->getTag());
-                    $phpDocInfo->addTagValueNode($doctrineAnnotation);
+                    $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
+                    continue;
                 }
-                $this->isDowngraded = \true;
+                $doctrineAnnotation = $this->doctrineAnnotationFactory->createFromAttribute($attribute, $attributeToAnnotation->getTag());
+                $phpDocInfo->addTagValueNode($doctrineAnnotation);
+                $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
             }
         }
         // cleanup empty attr groups

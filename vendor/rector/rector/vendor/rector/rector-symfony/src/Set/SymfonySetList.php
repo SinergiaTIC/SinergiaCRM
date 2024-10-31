@@ -12,6 +12,10 @@ final class SymfonySetList implements SetListInterface
     /**
      * @var string
      */
+    public const CONFIGS = __DIR__ . '/../../config/sets/symfony/configs.php';
+    /**
+     * @var string
+     */
     public const SYMFONY_25 = __DIR__ . '/../../config/sets/symfony/symfony25.php';
     /**
      * @var string
@@ -105,6 +109,18 @@ final class SymfonySetList implements SetListInterface
      * @var string
      */
     public const SYMFONY_62 = __DIR__ . '/../../config/sets/symfony/symfony62.php';
+    /**
+     * @var string
+     */
+    public const SYMFONY_63 = __DIR__ . '/../../config/sets/symfony/symfony63.php';
+    /**
+     * @var string
+     */
+    public const SYMFONY_64 = __DIR__ . '/../../config/sets/symfony/symfony64.php';
+    /**
+     * @var string
+     */
+    public const SYMFONY_71 = __DIR__ . '/../../config/sets/symfony/symfony71.php';
     /**
      * @var string
      */

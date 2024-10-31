@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace Rector\DowngradePhp73\Tokenizer;
 
 use PhpParser\Node;
-use Rector\Core\ValueObject\Application\File;
+use Rector\ValueObject\Application\File;
 final class FollowedByNewlineOnlyMaybeWithSemicolonAnalyzer
 {
     public function isFollowed(File $file, Node $node) : bool
@@ -14,6 +14,6 @@ final class FollowedByNewlineOnlyMaybeWithSemicolonAnalyzer
         if (isset($oldTokens[$nextTokenPosition]) && $oldTokens[$nextTokenPosition] === ';') {
             ++$nextTokenPosition;
         }
-        return !isset($oldTokens[$nextTokenPosition]) || isset($oldTokens[$nextTokenPosition][1]) && \strncmp((string) $oldTokens[$nextTokenPosition][1], "\n", \strlen("\n")) === 0;
+        return !isset($oldTokens[$nextTokenPosition]) || isset($oldTokens[$nextTokenPosition][1]) && \strncmp($oldTokens[$nextTokenPosition][1], "\n", \strlen("\n")) === 0;
     }
 }

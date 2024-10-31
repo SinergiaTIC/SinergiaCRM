@@ -1,12 +1,12 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\PhpParser\Parser;
+namespace Rector\PhpParser\Parser;
 
 use PhpParser\Lexer;
 use PhpParser\Node\Stmt;
 use PHPStan\Parser\Parser;
-use Rector\Core\PhpParser\ValueObject\StmtsAndTokens;
+use Rector\PhpParser\ValueObject\StmtsAndTokens;
 final class RectorParser
 {
     /**
@@ -25,15 +25,24 @@ final class RectorParser
         $this->parser = $parser;
     }
     /**
+     * @api used by rector-symfony
+     *
      * @return Stmt[]
      */
     public function parseFile(string $filePath) : array
     {
         return $this->parser->parseFile($filePath);
     }
-    public function parseFileToStmtsAndTokens(string $filePath) : StmtsAndTokens
+    /**
+     * @return Stmt[]
+     */
+    public function parseString(string $fileContent) : array
     {
-        $stmts = $this->parseFile($filePath);
+        return $this->parser->parseString($fileContent);
+    }
+    public function parseFileContentToStmtsAndTokens(string $fileContent) : StmtsAndTokens
+    {
+        $stmts = $this->parser->parseString($fileContent);
         $tokens = $this->lexer->getTokens();
         return new StmtsAndTokens($stmts, $tokens);
     }

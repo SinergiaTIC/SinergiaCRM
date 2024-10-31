@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Composer\Semver;
+namespace RectorPrefix202407\Composer\Semver;
 
-use RectorPrefix202305\Composer\Semver\Constraint\ConstraintInterface;
-use RectorPrefix202305\Composer\Semver\Constraint\MatchAllConstraint;
-use RectorPrefix202305\Composer\Semver\Constraint\MultiConstraint;
-use RectorPrefix202305\Composer\Semver\Constraint\Constraint;
+use RectorPrefix202407\Composer\Semver\Constraint\ConstraintInterface;
+use RectorPrefix202407\Composer\Semver\Constraint\MatchAllConstraint;
+use RectorPrefix202407\Composer\Semver\Constraint\MultiConstraint;
+use RectorPrefix202407\Composer\Semver\Constraint\Constraint;
 /**
  * Version parser.
  *
@@ -72,10 +72,14 @@ class VersionParser
      * @param string $stability
      *
      * @return string
+     * @phpstan-return 'stable'|'RC'|'beta'|'alpha'|'dev'
      */
     public static function normalizeStability($stability)
     {
         $stability = \strtolower((string) $stability);
+        if (!\in_array($stability, array('stable', 'rc', 'beta', 'alpha', 'dev'), \true)) {
+            throw new \InvalidArgumentException('Invalid stability string "' . $stability . '", expected one of stable, RC, beta, alpha or dev');
+        }
         return $stability === 'rc' ? 'RC' : $stability;
     }
     /**
@@ -116,12 +120,12 @@ class VersionParser
             $version = $match[1];
         }
         // match classical versioning
-        if (\preg_match('{^v?(\\d{1,5})(\\.\\d++)?(\\.\\d++)?(\\.\\d++)?' . self::$modifierRegex . '$}i', $version, $matches)) {
+        if (\preg_match('{^v?(\\d{1,5}+)(\\.\\d++)?(\\.\\d++)?(\\.\\d++)?' . self::$modifierRegex . '$}i', $version, $matches)) {
             $version = $matches[1] . (!empty($matches[2]) ? $matches[2] : '.0') . (!empty($matches[3]) ? $matches[3] : '.0') . (!empty($matches[4]) ? $matches[4] : '.0');
             $index = 5;
             // match date(time) based versioning
-        } elseif (\preg_match('{^v?(\\d{4}(?:[.:-]?\\d{2}){1,6}(?:[.:-]?\\d{1,3})?)' . self::$modifierRegex . '$}i', $version, $matches)) {
-            $version = \preg_replace('{\\D}', '.', $matches[1]);
+        } elseif (\preg_match('{^v?(\\d{4}(?:[.:-]?\\d{2}){1,6}(?:[.:-]?\\d{1,3}){0,2})' . self::$modifierRegex . '$}i', $version, $matches)) {
+            $version = (string) \preg_replace('{\\D}', '.', $matches[1]);
             $index = 2;
         }
         // add version modifiers if a version was matched
@@ -222,16 +226,16 @@ class VersionParser
             throw new \RuntimeException('Failed to preg_split string: ' . $constraints);
         }
         $orGroups = array();
-        foreach ($orConstraints as $constraints) {
-            $andConstraints = \preg_split('{(?<!^|as|[=>< ,]) *(?<!-)[, ](?!-) *(?!,|as|$)}', $constraints);
+        foreach ($orConstraints as $orConstraint) {
+            $andConstraints = \preg_split('{(?<!^|as|[=>< ,]) *(?<!-)[, ](?!-) *(?!,|as|$)}', $orConstraint);
             if (\false === $andConstraints) {
-                throw new \RuntimeException('Failed to preg_split string: ' . $constraints);
+                throw new \RuntimeException('Failed to preg_split string: ' . $orConstraint);
             }
             if (\count($andConstraints) > 1) {
                 $constraintObjects = array();
-                foreach ($andConstraints as $constraint) {
-                    foreach ($this->parseConstraint($constraint) as $parsedConstraint) {
-                        $constraintObjects[] = $parsedConstraint;
+                foreach ($andConstraints as $andConstraint) {
+                    foreach ($this->parseConstraint($andConstraint) as $parsedAndConstraint) {
+                        $constraintObjects[] = $parsedAndConstraint;
                     }
                 }
             } else {
@@ -244,9 +248,9 @@ class VersionParser
             }
             $orGroups[] = $constraint;
         }
-        $constraint = MultiConstraint::create($orGroups, \false);
-        $constraint->setPrettyString($prettyConstraint);
-        return $constraint;
+        $parsedConstraint = MultiConstraint::create($orGroups, \false);
+        $parsedConstraint->setPrettyString($prettyConstraint);
+        return $parsedConstraint;
     }
     /**
      * @param string $constraint

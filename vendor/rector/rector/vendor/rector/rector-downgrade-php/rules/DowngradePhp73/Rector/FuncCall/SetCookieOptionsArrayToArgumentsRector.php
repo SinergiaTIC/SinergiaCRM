@@ -10,9 +10,8 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\String_;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Exception\ShouldNotHappenException;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -34,15 +33,6 @@ final class SetCookieOptionsArrayToArgumentsRector extends AbstractRector
      * @var int
      */
     private $highestIndex = 1;
-    /**
-     * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
-     */
-    private $argsAnalyzer;
-    public function __construct(ArgsAnalyzer $argsAnalyzer)
-    {
-        $this->argsAnalyzer = $argsAnalyzer;
-    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Convert setcookie option array to arguments', [new CodeSample(<<<'CODE_SAMPLE'
@@ -76,14 +66,15 @@ CODE_SAMPLE
         if (!$this->isNames($funcCall, ['setcookie', 'setrawcookie'])) {
             return \true;
         }
-        $argsCount = \count($funcCall->args);
-        if ($argsCount <= 2) {
+        if ($funcCall->isFirstClassCallable()) {
             return \true;
         }
-        if (!isset($funcCall->args[2])) {
+        $args = $funcCall->getArgs();
+        if (\count($args) < 3) {
             return \true;
         }
-        return !($funcCall->args[2] instanceof Arg && $funcCall->args[2]->value instanceof Array_);
+        $thirdArg = $args[2];
+        return !$thirdArg->value instanceof Array_;
     }
     /**
      * @return Arg[]
@@ -91,19 +82,16 @@ CODE_SAMPLE
     private function composeNewArgs(FuncCall $funcCall) : array
     {
         $this->highestIndex = 1;
-        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($funcCall->args, [0, 1, 2])) {
+        $args = $funcCall->getArgs();
+        if (\count($args) < 3) {
             return [];
         }
-        /** @var Arg $firstArg */
-        $firstArg = $funcCall->args[0];
-        /** @var Arg $secondArg */
-        $secondArg = $funcCall->args[1];
+        $firstArg = $args[0];
+        $secondArg = $args[1];
         $newArgs = [$firstArg, $secondArg];
-        /** @var Arg $thirdArg */
-        $thirdArg = $funcCall->args[2];
+        $thirdArg = $args[2];
         /** @var Array_ $optionsArray */
         $optionsArray = $thirdArg->value;
-        /** @var ArrayItem|null $arrayItem */
         foreach ($optionsArray->items as $arrayItem) {
             if (!$arrayItem instanceof ArrayItem) {
                 continue;

@@ -6,8 +6,8 @@ namespace Rector\CodingStyle\ClassNameImport\ClassNameImportSkipVoter;
 use PhpParser\Node;
 use Rector\CodingStyle\ClassNameImport\ShortNameResolver;
 use Rector\CodingStyle\Contract\ClassNameImport\ClassNameImportSkipVoterInterface;
-use Rector\Core\ValueObject\Application\File;
 use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
+use Rector\ValueObject\Application\File;
 /**
  * Prevents adding:
  *
@@ -30,7 +30,7 @@ final class ClassLikeNameClassNameImportSkipVoter implements ClassNameImportSkip
     }
     public function shouldSkip(File $file, FullyQualifiedObjectType $fullyQualifiedObjectType, Node $node) : bool
     {
-        $classLikeNames = $this->shortNameResolver->resolveShortClassLikeNamesForNode($node);
+        $classLikeNames = $this->shortNameResolver->resolveShortClassLikeNames($file);
         if ($classLikeNames === []) {
             return \false;
         }

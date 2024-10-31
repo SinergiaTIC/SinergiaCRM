@@ -8,15 +8,15 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
-use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
-use Rector\Core\ValueObject\MethodName;
+use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\ValueObject\MethodName;
 final class ConstructorAssignPropertyAnalyzer
 {
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
     /**
@@ -26,7 +26,7 @@ final class ConstructorAssignPropertyAnalyzer
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     public function __construct(BetterNodeFinder $betterNodeFinder, NodeNameResolver $nodeNameResolver, PropertyFetchAnalyzer $propertyFetchAnalyzer)
@@ -35,26 +35,19 @@ final class ConstructorAssignPropertyAnalyzer
         $this->nodeNameResolver = $nodeNameResolver;
         $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
     }
-    public function resolveConstructorAssign(Property $property) : ?Node
+    public function resolveConstructorAssign(Class_ $class, Property $property) : ?Node
     {
-        $class = $this->betterNodeFinder->findParentType($property, Class_::class);
-        if (!$class instanceof Class_) {
-            return null;
-        }
         $constructClassMethod = $class->getMethod(MethodName::CONSTRUCT);
         if (!$constructClassMethod instanceof ClassMethod) {
             return null;
         }
         /** @var string $propertyName */
         $propertyName = $this->nodeNameResolver->getName($property);
-        return $this->betterNodeFinder->findFirst((array) $constructClassMethod->stmts, function (Node $node) use($propertyName) : ?Assign {
+        return $this->betterNodeFinder->findFirst((array) $constructClassMethod->stmts, function (Node $node) use($propertyName) : bool {
             if (!$node instanceof Assign) {
-                return null;
+                return \false;
             }
-            if (!$this->propertyFetchAnalyzer->isLocalPropertyFetchName($node->var, $propertyName)) {
-                return null;
-            }
-            return $node;
+            return $this->propertyFetchAnalyzer->isLocalPropertyFetchName($node->var, $propertyName);
         });
     }
 }

@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Completion;
+namespace RectorPrefix202407\Symfony\Component\Console\Completion;
 
-use RectorPrefix202305\Symfony\Component\Console\Exception\RuntimeException;
-use RectorPrefix202305\Symfony\Component\Console\Input\ArgvInput;
-use RectorPrefix202305\Symfony\Component\Console\Input\InputDefinition;
-use RectorPrefix202305\Symfony\Component\Console\Input\InputOption;
+use RectorPrefix202407\Symfony\Component\Console\Exception\RuntimeException;
+use RectorPrefix202407\Symfony\Component\Console\Input\ArgvInput;
+use RectorPrefix202407\Symfony\Component\Console\Input\InputDefinition;
+use RectorPrefix202407\Symfony\Component\Console\Input\InputOption;
 /**
  * An input specialized for shell completion.
  *
@@ -28,10 +28,25 @@ final class CompletionInput extends ArgvInput
     public const TYPE_OPTION_VALUE = 'option_value';
     public const TYPE_OPTION_NAME = 'option_name';
     public const TYPE_NONE = 'none';
+    /**
+     * @var mixed[]
+     */
     private $tokens;
+    /**
+     * @var int
+     */
     private $currentIndex;
+    /**
+     * @var string
+     */
     private $completionType;
-    private $completionName = null;
+    /**
+     * @var string|null
+     */
+    private $completionName;
+    /**
+     * @var string
+     */
     private $completionValue = '';
     /**
      * Converts a terminal string into tokens.
@@ -47,7 +62,7 @@ final class CompletionInput extends ArgvInput
      * Create an input based on an COMP_WORDS token list.
      *
      * @param string[] $tokens       the set of split tokens (e.g. COMP_WORDS or argv)
-     * @param          $currentIndex the index of the cursor (e.g. COMP_CWORD)
+     * @param int      $currentIndex the index of the cursor (e.g. COMP_CWORD)
      */
     public static function fromTokens(array $tokens, int $currentIndex) : self
     {
@@ -69,7 +84,7 @@ final class CompletionInput extends ArgvInput
                 $this->completionValue = $relevantToken;
                 return;
             }
-            if (($option2 = $option) ? $option2->acceptValue() : null) {
+            if (($nullsafeVariable1 = $option) ? $nullsafeVariable1->acceptValue() : null) {
                 $this->completionType = self::TYPE_OPTION_VALUE;
                 $this->completionName = $option->getName();
                 $this->completionValue = $optionValue ?: (\strncmp($optionToken, '--', \strlen('--')) !== 0 ? \substr($optionToken, 2) : '');
@@ -80,7 +95,7 @@ final class CompletionInput extends ArgvInput
         if ('-' === $previousToken[0] && '' !== \trim($previousToken, '-')) {
             // check if previous option accepted a value
             $previousOption = $this->getOptionFromToken($previousToken);
-            if (($previousOption2 = $previousOption) ? $previousOption2->acceptValue() : null) {
+            if (($nullsafeVariable2 = $previousOption) ? $nullsafeVariable2->acceptValue() : null) {
                 $this->completionType = self::TYPE_OPTION_VALUE;
                 $this->completionName = $previousOption->getName();
                 $this->completionValue = $relevantToken;
@@ -98,6 +113,7 @@ final class CompletionInput extends ArgvInput
             if (\is_array($argumentValue)) {
                 \end($argumentValue);
                 $this->completionValue = $argumentValue ? $argumentValue[\key($argumentValue)] : null;
+                \reset($argumentValue);
             } else {
                 $this->completionValue = $argumentValue;
             }
@@ -122,7 +138,9 @@ final class CompletionInput extends ArgvInput
      * TYPE_OPTION_NAME    when completing the name of an input option
      * TYPE_NONE           when nothing should be completed
      *
-     * @return string One of self::TYPE_* constants. TYPE_OPTION_NAME and TYPE_NONE are already implemented by the Console component
+     * TYPE_OPTION_NAME and TYPE_NONE are already implemented by the Console component.
+     *
+     * @return self::TYPE_*
      */
     public function getCompletionType() : string
     {

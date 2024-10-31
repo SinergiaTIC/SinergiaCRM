@@ -9,8 +9,9 @@ use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\Cast\Bool_;
 use PhpParser\Node\Expr\Ternary;
-use Rector\Core\PhpParser\Node\AssignAndBinaryMap;
-use Rector\Core\Rector\AbstractRector;
+use Rector\PhpParser\Node\AssignAndBinaryMap;
+use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -20,12 +21,18 @@ final class UnnecessaryTernaryExpressionRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\AssignAndBinaryMap
+     * @var \Rector\PhpParser\Node\AssignAndBinaryMap
      */
     private $assignAndBinaryMap;
-    public function __construct(AssignAndBinaryMap $assignAndBinaryMap)
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(AssignAndBinaryMap $assignAndBinaryMap, ValueResolver $valueResolver)
     {
         $this->assignAndBinaryMap = $assignAndBinaryMap;
+        $this->valueResolver = $valueResolver;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -43,20 +50,18 @@ final class UnnecessaryTernaryExpressionRector extends AbstractRector
      */
     public function refactor(Node $node) : ?Node
     {
-        /** @var Ternary $ternaryExpression */
-        $ternaryExpression = $node;
-        if (!$ternaryExpression->if instanceof Expr) {
+        if (!$node->if instanceof Expr) {
             return null;
         }
-        $ifExpression = $ternaryExpression->if;
+        $ifExpression = $node->if;
         if (!$this->valueResolver->isTrueOrFalse($ifExpression)) {
             return null;
         }
-        $elseExpression = $ternaryExpression->else;
+        $elseExpression = $node->else;
         if (!$this->valueResolver->isTrueOrFalse($elseExpression)) {
             return null;
         }
-        $condition = $ternaryExpression->cond;
+        $condition = $node->cond;
         if (!$condition instanceof BinaryOp) {
             return $this->processNonBinaryCondition($ifExpression, $elseExpression, $condition);
         }

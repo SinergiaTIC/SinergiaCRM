@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\CodingStyle\Rector\Encapsed;
 
-use RectorPrefix202305\Nette\Utils\Strings;
+use RectorPrefix202407\Nette\Utils\Strings;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -16,19 +16,29 @@ use PhpParser\Node\Scalar\Encapsed;
 use PhpParser\Node\Scalar\EncapsedStringPart;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Type\Type;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector\EncapsedStringsToSprintfRectorTest
  */
-final class EncapsedStringsToSprintfRector extends AbstractRector
+final class EncapsedStringsToSprintfRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /**
+     * @api
+     * @var string
+     */
+    public const ALWAYS = 'always';
     /**
      * @var array<string, array<class-string<Type>>>
      */
     private const FORMAT_SPECIFIERS = ['%s' => ['PHPStan\\Type\\StringType'], '%d' => ['PHPStan\\Type\\Constant\\ConstantIntegerType', 'PHPStan\\Type\\IntegerRangeType', 'PHPStan\\Type\\IntegerType']];
+    /**
+     * @var bool
+     */
+    private $always = \false;
     /**
      * @var string
      */
@@ -37,15 +47,33 @@ final class EncapsedStringsToSprintfRector extends AbstractRector
      * @var Expr[]
      */
     private $argumentVariables = [];
+    public function configure(array $configuration) : void
+    {
+        $this->always = $configuration[self::ALWAYS] ?? \false;
+    }
     public function getRuleDefinition() : RuleDefinition
     {
-        return new RuleDefinition('Convert enscaped {$string} to more readable sprintf or concat, if no mask is used', [new CodeSample(<<<'CODE_SAMPLE'
-echo "Unsupported format {$format}";
+        return new RuleDefinition('Convert enscaped {$string} to more readable sprintf or concat, if no mask is used', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
+echo "Unsupported format {$format} - use another";
+
+echo "Try {$allowed}";
 CODE_SAMPLE
 , <<<'CODE_SAMPLE'
-echo sprintf('Unsupported format %s', $format);
+echo sprintf('Unsupported format %s - use another', $format);
+
+echo 'Try ' . $allowed;
 CODE_SAMPLE
-)]);
+, [self::ALWAYS => \false]), new ConfiguredCodeSample(<<<'CODE_SAMPLE'
+echo "Unsupported format {$format} - use another";
+
+echo "Try {$allowed}";
+CODE_SAMPLE
+, <<<'CODE_SAMPLE'
+echo sprintf('Unsupported format %s - use another', $format);
+
+echo sprintf('Try %s', $allowed);
+CODE_SAMPLE
+, [self::ALWAYS => \true])]);
     }
     /**
      * @return array<class-string<Node>>
@@ -75,13 +103,6 @@ CODE_SAMPLE
     }
     private function shouldSkip(Encapsed $encapsed) : bool
     {
-        $parentNode = $encapsed->getAttribute(AttributeKey::PARENT_NODE);
-        if ($parentNode instanceof Arg) {
-            $node = $parentNode->getAttribute(AttributeKey::PARENT_NODE);
-            if ($node instanceof FuncCall && $this->isNames($node, ['_', 'dcgettext', 'dcngettext', 'dgettext', 'dngettext', 'gettext', 'ngettext'])) {
-                return \true;
-            }
-        }
         return $encapsed->hasAttribute(AttributeKey::DOC_LABEL);
     }
     private function collectEncapsedStringPart(EncapsedStringPart $encapsedStringPart) : void
@@ -127,6 +148,12 @@ CODE_SAMPLE
             }
             return $this->nodeFactory->createConcat($argumentVariables);
         }
+        if (!$this->always) {
+            $singleValueConcat = $this->createSingleValueEdgeConcat($argumentVariables, $mask);
+            if ($singleValueConcat instanceof Concat) {
+                return $singleValueConcat;
+            }
+        }
         // checks for windows or linux line ending. \n is contained in both.
         if (\strpos($mask, "\n") !== \false) {
             return null;
@@ -136,5 +163,27 @@ CODE_SAMPLE
             $arguments[] = new Arg($argumentVariable);
         }
         return new FuncCall(new Name('sprintf'), $arguments);
+    }
+    /**
+     * @param Expr[] $argumentVariables
+     */
+    private function createSingleValueEdgeConcat(array $argumentVariables, string $mask) : ?Concat
+    {
+        if (\count($argumentVariables) !== 1) {
+            return null;
+        }
+        if (\substr_count($mask, '%s') !== 1 && \substr_count($mask, '%d') !== 1) {
+            return null;
+        }
+        $cleanMask = Strings::replace($mask, '#\\%\\%#', '%');
+        if (\substr_compare($mask, '%s', -\strlen('%s')) === 0 || \substr_compare($mask, '%d', -\strlen('%d')) === 0) {
+            $bareString = new String_(\substr($cleanMask, 0, -2));
+            return new Concat($bareString, $argumentVariables[0]);
+        }
+        if (\strncmp($mask, '%s', \strlen('%s')) === 0 || \strncmp($mask, '%d', \strlen('%d')) === 0) {
+            $bareString = new String_(\substr($cleanMask, 2));
+            return new Concat($argumentVariables[0], $bareString);
+        }
+        return null;
     }
 }

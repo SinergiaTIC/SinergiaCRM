@@ -7,21 +7,21 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\String_;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
-use Rector\Core\Rector\AbstractRector;
+use Rector\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Rector\AbstractRector;
 use ReflectionFunction;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @changelog https://www.php.net/manual/en/function.number-format.php#refsect1-function.number-format-changelog
  *
- * @see Rector\Tests\DowngradePhp80\Rector\FuncCall\DowngradeNumberFormatNoFourthArgRector\DowngradeNumberFormatNoFourthArgRectorTest
+ * @see \Rector\Tests\DowngradePhp80\Rector\FuncCall\DowngradeNumberFormatNoFourthArgRector\DowngradeNumberFormatNoFourthArgRectorTest
  */
 final class DowngradeNumberFormatNoFourthArgRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
+     * @var \Rector\NodeAnalyzer\ArgsAnalyzer
      */
     private $argsAnalyzer;
     public function __construct(ArgsAnalyzer $argsAnalyzer)

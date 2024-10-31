@@ -9,15 +9,13 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://github.com/gueff/blogimus/commit/04086a10320595470efe446c7ddd90e602aa7228 https://github.com/pxgamer/youtube-dl-php/commit/83cb32b8b36844f2e39f82a862a5ab73da77b608
- *
  * @see \Rector\Tests\Php72\Rector\FuncCall\ParseStrWithResultArgumentRector\ParseStrWithResultArgumentRectorTest
  */
 final class ParseStrWithResultArgumentRector extends AbstractRector implements MinPhpVersionInterface
@@ -52,13 +50,14 @@ CODE_SAMPLE
     {
         return $this->processStrWithResult($node, \false);
     }
-    private function processStrWithResult(StmtsAwareInterface $stmtsAware, bool $hasChanged, int $jumpToKey = 0) : ?\Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface
+    private function processStrWithResult(StmtsAwareInterface $stmtsAware, bool $hasChanged, int $jumpToKey = 0) : ?\Rector\Contract\PhpParser\Node\StmtsAwareInterface
     {
         if ($stmtsAware->stmts === null) {
             return null;
         }
         \end($stmtsAware->stmts);
         $totalKeys = \key($stmtsAware->stmts);
+        \reset($stmtsAware->stmts);
         for ($key = $jumpToKey; $key < $totalKeys; ++$key) {
             if (!isset($stmtsAware->stmts[$key], $stmtsAware->stmts[$key + 1])) {
                 break;

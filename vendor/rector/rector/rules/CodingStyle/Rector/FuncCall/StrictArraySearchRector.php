@@ -5,7 +5,7 @@ namespace Rector\CodingStyle\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -34,7 +34,8 @@ final class StrictArraySearchRector extends AbstractRector
         }
         if (\count($node->args) === 2) {
             $node->args[2] = $this->nodeFactory->createArg($this->nodeFactory->createTrue());
+            return $node;
         }
-        return $node;
+        return null;
     }
 }

@@ -4,17 +4,15 @@ declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\FuncCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://stackoverflow.com/questions/559844/whats-better-to-use-in-php-array-value-or-array-pusharray-value
- *
  * @see \Rector\Tests\CodeQuality\Rector\FuncCall\ChangeArrayPushToArrayAssignRector\ChangeArrayPushToArrayAssignRectorTest
  */
 final class ChangeArrayPushToArrayAssignRector extends AbstractRector
@@ -39,8 +37,8 @@ CODE_SAMPLE
         return [Expression::class];
     }
     /**
-     * @param Expression[] $node
-     * @param Expression[]|null $node
+     * @param Expression $node
+     * @return Stmt[]|null
      */
     public function refactor(Node $node) : ?array
     {
@@ -61,7 +59,6 @@ CODE_SAMPLE
         if ($args === []) {
             return null;
         }
-        /** @var Arg $firstArg */
         $firstArg = \array_shift($args);
         if ($args === []) {
             return null;

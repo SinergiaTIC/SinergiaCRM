@@ -12,13 +12,17 @@ final class SymfonyAnnotation
     /**
      * @var string
      */
-    public const SENSIO_METHOD = 'Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Method';
-    /**
-     * @var string
-     */
-    public const SENSIO_TEMPLATE = 'Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Template';
-    /**
-     * @var string
-     */
     public const TWIG_TEMPLATE = 'Symfony\\Bridge\\Twig\\Attribute\\Template';
+    /**
+     * @var string
+     */
+    public const MAP_ENTITY = 'Symfony\\Bridge\\Doctrine\\Attribute\\MapEntity';
+    /**
+     * @var string
+     */
+    public const TEMPLATE = 'Sensio\\Bundle\\FrameworkExtraBundle\\Configuration\\Template';
+    /**
+     * @var string
+     */
+    public const AS_COMMAND = 'Symfony\\Component\\Console\\Attribute\\AsCommand';
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace RectorPrefix202305\React\Stream;
+namespace RectorPrefix202407\React\Stream;
 
-use RectorPrefix202305\Evenement\EventEmitter;
+use RectorPrefix202407\Evenement\EventEmitter;
 use InvalidArgumentException;
 /**
  * The `ThroughStream` implements the
@@ -89,15 +89,17 @@ final class ThroughStream extends EventEmitter implements DuplexStreamInterface
     }
     public function pause()
     {
-        $this->paused = \true;
+        // only allow pause if still readable, false otherwise
+        $this->paused = $this->readable;
     }
     public function resume()
     {
+        $this->paused = \false;
+        // emit drain event if previous write was paused (throttled)
         if ($this->drain) {
             $this->drain = \false;
             $this->emit('drain');
         }
-        $this->paused = \false;
     }
     public function pipe(WritableStreamInterface $dest, array $options = array())
     {
@@ -126,11 +128,12 @@ final class ThroughStream extends EventEmitter implements DuplexStreamInterface
             }
         }
         $this->emit('data', array($data));
+        // emit drain event on next resume if currently paused (throttled)
         if ($this->paused) {
             $this->drain = \true;
-            return \false;
         }
-        return \true;
+        // continue writing if still writable and not paused (throttled), false otherwise
+        return $this->writable && !$this->paused;
     }
     public function end($data = null)
     {
@@ -146,7 +149,7 @@ final class ThroughStream extends EventEmitter implements DuplexStreamInterface
         }
         $this->readable = \false;
         $this->writable = \false;
-        $this->paused = \true;
+        $this->paused = \false;
         $this->drain = \false;
         $this->emit('end');
         $this->close();
@@ -158,9 +161,9 @@ final class ThroughStream extends EventEmitter implements DuplexStreamInterface
         }
         $this->readable = \false;
         $this->writable = \false;
-        $this->closed = \true;
-        $this->paused = \true;
+        $this->paused = \false;
         $this->drain = \false;
+        $this->closed = \true;
         $this->callback = null;
         $this->emit('close');
         $this->removeAllListeners();

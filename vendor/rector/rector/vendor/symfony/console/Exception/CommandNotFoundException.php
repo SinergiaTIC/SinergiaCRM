@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Exception;
+namespace RectorPrefix202407\Symfony\Component\Console\Exception;
 
 /**
  * Represents an incorrect command name typed in the console.
@@ -27,7 +27,7 @@ class CommandNotFoundException extends \InvalidArgumentException implements Exce
      * @param int             $code         Exception code
      * @param \Throwable|null $previous     Previous exception used for the exception chaining
      */
-    public function __construct(string $message, array $alternatives = [], int $code = 0, \Throwable $previous = null)
+    public function __construct(string $message, array $alternatives = [], int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->alternatives = $alternatives;

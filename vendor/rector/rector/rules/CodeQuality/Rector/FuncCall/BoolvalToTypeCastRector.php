@@ -4,16 +4,16 @@ declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\FuncCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Cast\Bool_;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Configuration\Deprecation\Contract\DeprecatedInterface;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @see \Rector\Tests\CodeQuality\Rector\FuncCall\BoolvalToTypeCastRector\BoolvalToTypeCastRectorTest
+ * @deprecated Since 1.1.2 as no clear performance difference and both are equivalent.
  */
-final class BoolvalToTypeCastRector extends AbstractRector
+final class BoolvalToTypeCastRector extends AbstractRector implements DeprecatedInterface
 {
     public function getRuleDefinition() : RuleDefinition
     {
@@ -49,15 +49,15 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
+        if ($node->isFirstClassCallable()) {
+            return null;
+        }
         if (!$this->isName($node, 'boolval')) {
             return null;
         }
-        if (!isset($node->args[0])) {
+        if (!isset($node->getArgs()[0])) {
             return null;
         }
-        if (!$node->args[0] instanceof Arg) {
-            return null;
-        }
-        return new Bool_($node->args[0]->value);
+        return new Bool_($node->getArgs()[0]->value);
     }
 }

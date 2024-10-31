@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202305;
+namespace RectorPrefix202407;
 
 use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
@@ -11,22 +11,22 @@ use Rector\Arguments\Rector\ClassMethod\ReplaceArgumentDefaultValueRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
 use Rector\Arguments\ValueObject\ReplaceArgumentDefaultValue;
 use Rector\Config\RectorConfig;
-use Rector\Core\ValueObject\MethodName;
-use Rector\Core\ValueObject\Visibility;
 use Rector\Removing\Rector\ClassMethod\ArgumentRemoverRector;
 use Rector\Removing\ValueObject\ArgumentRemover;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
-use Rector\Symfony\Rector\MethodCall\ContainerGetToConstructorInjectionRector;
-use Rector\Symfony\Rector\New_\RootNodeTreeBuilderRector;
-use Rector\Symfony\Rector\New_\StringToArrayArgumentProcessRector;
+use Rector\Symfony\Symfony42\Rector\MethodCall\ContainerGetToConstructorInjectionRector;
+use Rector\Symfony\Symfony42\Rector\New_\RootNodeTreeBuilderRector;
+use Rector\Symfony\Symfony42\Rector\New_\StringToArrayArgumentProcessRector;
 use Rector\Transform\Rector\ClassMethod\WrapReturnRector;
 use Rector\Transform\Rector\New_\NewToStaticCallRector;
 use Rector\Transform\ValueObject\NewToStaticCall;
 use Rector\Transform\ValueObject\WrapReturn;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddReturnTypeDeclaration;
+use Rector\ValueObject\MethodName;
+use Rector\ValueObject\Visibility;
 use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
 use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 # https://github.com/symfony/symfony/pull/28447

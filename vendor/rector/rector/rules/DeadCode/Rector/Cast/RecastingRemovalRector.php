@@ -13,10 +13,7 @@ use PhpParser\Node\Expr\Cast\Int_;
 use PhpParser\Node\Expr\Cast\Object_;
 use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\StaticPropertyFetch;
-use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Reflection\Php\PhpPropertyReflection;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
@@ -26,12 +23,10 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
-use PHPStan\Type\UnionType;
-use Rector\Core\NodeAnalyzer\ExprAnalyzer;
-use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
-use Rector\Core\PhpParser\AstResolver;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Reflection\ReflectionResolver;
+use Rector\NodeAnalyzer\ExprAnalyzer;
+use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Rector\AbstractRector;
+use Rector\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -40,35 +35,29 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class RecastingRemovalRector extends AbstractRector
 {
     /**
-     * @var array<class-string<Node>, class-string<Type>>
-     */
-    private const CAST_CLASS_TO_NODE_TYPE = [String_::class => StringType::class, Bool_::class => BooleanType::class, Array_::class => ArrayType::class, Int_::class => IntegerType::class, Object_::class => ObjectType::class, Double::class => FloatType::class];
-    /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
+     * @var \Rector\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ExprAnalyzer
+     * @var \Rector\NodeAnalyzer\ExprAnalyzer
      */
     private $exprAnalyzer;
     /**
-     * @readonly
-     * @var \Rector\Core\PhpParser\AstResolver
+     * @var array<class-string<Node>, class-string<Type>>
      */
-    private $astResolver;
-    public function __construct(PropertyFetchAnalyzer $propertyFetchAnalyzer, ReflectionResolver $reflectionResolver, ExprAnalyzer $exprAnalyzer, AstResolver $astResolver)
+    private const CAST_CLASS_TO_NODE_TYPE = [String_::class => StringType::class, Bool_::class => BooleanType::class, Array_::class => ArrayType::class, Int_::class => IntegerType::class, Object_::class => ObjectType::class, Double::class => FloatType::class];
+    public function __construct(PropertyFetchAnalyzer $propertyFetchAnalyzer, ReflectionResolver $reflectionResolver, ExprAnalyzer $exprAnalyzer)
     {
         $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
         $this->reflectionResolver = $reflectionResolver;
         $this->exprAnalyzer = $exprAnalyzer;
-        $this->astResolver = $astResolver;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -104,7 +93,7 @@ CODE_SAMPLE
         if (!isset(self::CAST_CLASS_TO_NODE_TYPE[$nodeClass])) {
             return null;
         }
-        $nodeType = $this->getType($node->expr);
+        $nodeType = $this->nodeTypeResolver->getNativeType($node->expr);
         if ($nodeType instanceof MixedType) {
             return null;
         }
@@ -125,25 +114,17 @@ CODE_SAMPLE
         if (!$expr instanceof MethodCall && !$expr instanceof StaticCall) {
             return \false;
         }
-        $classMethod = $this->astResolver->resolveClassMethodFromCall($expr);
-        if (!$classMethod instanceof ClassMethod) {
-            return \false;
-        }
-        return !$classMethod->returnType instanceof Node;
+        $type = $this->nodeTypeResolver->getNativeType($expr);
+        return $type instanceof MixedType && !$type->isExplicitMixed();
     }
     private function shouldSkip(Expr $expr) : bool
     {
         if (!$this->propertyFetchAnalyzer->isPropertyFetch($expr)) {
             return $this->exprAnalyzer->isNonTypedFromParam($expr);
         }
-        /** @var PropertyFetch|StaticPropertyFetch $expr */
         $phpPropertyReflection = $this->reflectionResolver->resolvePropertyReflectionFromPropertyFetch($expr);
         if (!$phpPropertyReflection instanceof PhpPropertyReflection) {
-            $propertyType = $expr instanceof StaticPropertyFetch ? $this->nodeTypeResolver->getType($expr->class) : $this->nodeTypeResolver->getType($expr->var);
-            // need to UnionType check due rectify with RecastingRemovalRector + CountOnNullRector
-            // cause add (array) cast on $node->args
-            // on union $node types FuncCall|MethodCall|StaticCall
-            return !$propertyType instanceof UnionType;
+            return \true;
         }
         $nativeType = $phpPropertyReflection->getNativeType();
         return $nativeType instanceof MixedType;

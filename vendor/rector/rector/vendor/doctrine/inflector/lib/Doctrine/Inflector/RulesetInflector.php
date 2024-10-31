@@ -1,9 +1,9 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202305\Doctrine\Inflector;
+namespace RectorPrefix202407\Doctrine\Inflector;
 
-use RectorPrefix202305\Doctrine\Inflector\Rules\Ruleset;
+use RectorPrefix202407\Doctrine\Inflector\Rules\Ruleset;
 use function array_merge;
 /**
  * Inflects based on multiple rulesets.

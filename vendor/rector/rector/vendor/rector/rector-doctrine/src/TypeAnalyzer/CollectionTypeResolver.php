@@ -11,7 +11,9 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
+use Rector\BetterPhpDocParser\PhpDoc\StringNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Doctrine\CodeQuality\Enum\ToManyMappings;
 use Rector\Doctrine\PhpDoc\ShortClassExpander;
 use Rector\StaticTypeMapper\Naming\NameScopeFactory;
 use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
@@ -55,10 +57,10 @@ final class CollectionTypeResolver
         }
         return null;
     }
-    public function resolveFromOneToManyProperty(Property $property) : ?FullyQualifiedObjectType
+    public function resolveFromToManyProperties(Property $property) : ?FullyQualifiedObjectType
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($property);
-        $doctrineAnnotationTagValueNode = $phpDocInfo->getByAnnotationClass('Doctrine\\ORM\\Mapping\\OneToMany');
+        $doctrineAnnotationTagValueNode = $phpDocInfo->getByAnnotationClasses(ToManyMappings::TO_MANY_CLASSES);
         if (!$doctrineAnnotationTagValueNode instanceof DoctrineAnnotationTagValueNode) {
             return null;
         }
@@ -66,10 +68,14 @@ final class CollectionTypeResolver
         if (!$targetEntityArrayItemNode instanceof ArrayItemNode) {
             return null;
         }
-        if (!\is_string($targetEntityArrayItemNode->value)) {
+        $targetEntityClass = $targetEntityArrayItemNode->value;
+        if ($targetEntityClass instanceof StringNode) {
+            $targetEntityClass = $targetEntityClass->value;
+        }
+        if (!\is_string($targetEntityClass)) {
             return null;
         }
-        $fullyQualifiedTargetEntity = $this->shortClassExpander->resolveFqnTargetEntity($targetEntityArrayItemNode->value, $property);
+        $fullyQualifiedTargetEntity = $this->shortClassExpander->resolveFqnTargetEntity($targetEntityClass, $property);
         return new FullyQualifiedObjectType($fullyQualifiedTargetEntity);
     }
 }

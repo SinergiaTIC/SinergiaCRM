@@ -11,7 +11,8 @@ use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\Rector\AbstractRector;
 use Rector\StaticTypeMapper\ValueObject\Type\ShortenedObjectType;
 use Rector\TypeDeclaration\TypeAnalyzer\NullableTypeAnalyzer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -26,9 +27,15 @@ final class FlipTypeControlToUseExclusiveTypeRector extends AbstractRector
      * @var \Rector\TypeDeclaration\TypeAnalyzer\NullableTypeAnalyzer
      */
     private $nullableTypeAnalyzer;
-    public function __construct(NullableTypeAnalyzer $nullableTypeAnalyzer)
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(NullableTypeAnalyzer $nullableTypeAnalyzer, ValueResolver $valueResolver)
     {
         $this->nullableTypeAnalyzer = $nullableTypeAnalyzer;
+        $this->valueResolver = $valueResolver;
     }
     public function getRuleDefinition() : RuleDefinition
     {

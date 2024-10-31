@@ -9,7 +9,7 @@ declare (strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\SebastianBergmann\Diff\Output;
+namespace RectorPrefix202407\SebastianBergmann\Diff\Output;
 
 use function array_merge;
 use function array_splice;
@@ -25,8 +25,8 @@ use function min;
 use function sprintf;
 use function stream_get_contents;
 use function substr;
-use RectorPrefix202305\SebastianBergmann\Diff\ConfigurationException;
-use RectorPrefix202305\SebastianBergmann\Diff\Differ;
+use RectorPrefix202407\SebastianBergmann\Diff\ConfigurationException;
+use RectorPrefix202407\SebastianBergmann\Diff\Differ;
 /**
  * Strict Unified diff output builder.
  *
@@ -230,11 +230,11 @@ final class StrictUnifiedDiffOutputBuilder implements DiffOutputBuilderInterface
                 $this->changed = \true;
                 fwrite($output, $diff[$i][0]);
             }
-            //} elseif ($diff[$i][1] === Differ::DIFF_LINE_END_WARNING) { // custom comment inserted by PHPUnit/diff package
+            // } elseif ($diff[$i][1] === Differ::DIFF_LINE_END_WARNING) { // custom comment inserted by PHPUnit/diff package
             //  skip
-            //} else {
+            // } else {
             //  unknown/invalid
-            //}
+            // }
         }
     }
     private function assertString(array $options, string $option) : void

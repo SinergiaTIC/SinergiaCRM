@@ -5,23 +5,26 @@ namespace Rector\CodeQuality\Rector\Array_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Stmt\ClassConst;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\NodeTraverser;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\Php\PhpMethodReflection;
-use Rector\Core\Rector\AbstractScopeAwareRector;
-use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Configuration\Deprecation\Contract\DeprecatedInterface;
 use Rector\NodeCollector\NodeAnalyzer\ArrayCallableMethodMatcher;
 use Rector\NodeCollector\ValueObject\ArrayCallable;
 use Rector\Php72\NodeFactory\AnonymousFunctionFactory;
+use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://www.php.net/manual/en/language.types.callable.php#117260
- * @changelog https://3v4l.org/MsMbQ
- * @changelog https://3v4l.org/KM1Ji
- *
  * @see \Rector\Tests\CodeQuality\Rector\Array_\CallableThisArrayToAnonymousFunctionRector\CallableThisArrayToAnonymousFunctionRectorTest
+ *
+ * @deprecated This rule is surpassed by more advanced one
+ * Use @see FirstClassCallableRector instead
  */
-final class CallableThisArrayToAnonymousFunctionRector extends AbstractScopeAwareRector
+final class CallableThisArrayToAnonymousFunctionRector extends AbstractScopeAwareRector implements DeprecatedInterface
 {
     /**
      * @readonly
@@ -30,7 +33,7 @@ final class CallableThisArrayToAnonymousFunctionRector extends AbstractScopeAwar
     private $anonymousFunctionFactory;
     /**
      * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
+     * @var \Rector\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     /**
@@ -89,14 +92,21 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [Array_::class];
+        return [Property::class, ClassConst::class, Array_::class];
     }
     /**
-     * @param Array_ $node
+     * @param Property|ClassConst|Array_ $node
+     * @return null|int|\PhpParser\Node
      */
-    public function refactorWithScope(Node $node, Scope $scope) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope)
     {
-        $arrayCallable = $this->arrayCallableMethodMatcher->match($node);
+        if ($node instanceof Property || $node instanceof ClassConst) {
+            return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+        }
+        if ($this->shouldSkipTwigExtension($scope)) {
+            return null;
+        }
+        $arrayCallable = $this->arrayCallableMethodMatcher->match($node, $scope);
         if (!$arrayCallable instanceof ArrayCallable) {
             return null;
         }
@@ -105,5 +115,13 @@ CODE_SAMPLE
             return null;
         }
         return $this->anonymousFunctionFactory->createFromPhpMethodReflection($phpMethodReflection, $arrayCallable->getCallerExpr());
+    }
+    private function shouldSkipTwigExtension(Scope $scope) : bool
+    {
+        if (!$scope->isInClass()) {
+            return \false;
+        }
+        $classReflection = $scope->getClassReflection();
+        return $classReflection->isSubclassOf('Twig\\Extension\\ExtensionInterface');
     }
 }

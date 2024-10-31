@@ -5,16 +5,14 @@ namespace Rector\Php74\Rector\Ternary;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Ternary;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Php74\Tokenizer\ParenthesizedNestedTernaryAnalyzer;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://www.php.net/manual/en/migration74.deprecated.php
- * @changelog https://3v4l.org/vhdlJ
  * @see \Rector\Tests\Php74\Rector\Ternary\ParenthesizeNestedTernaryRector\ParenthesizeNestedTernaryRectorTest
  */
 final class ParenthesizeNestedTernaryRector extends AbstractRector implements MinPhpVersionInterface
@@ -54,14 +52,14 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
-        if (!$parentNode instanceof Ternary) {
-            return null;
+        if ($node->cond instanceof Ternary || $node->else instanceof Ternary) {
+            if ($this->parenthesizedNestedTernaryAnalyzer->isParenthesized($this->file, $node)) {
+                return null;
+            }
+            // re-print with brackets
+            $node->setAttribute(AttributeKey::ORIGINAL_NODE, null);
+            return $node;
         }
-        if ($this->parenthesizedNestedTernaryAnalyzer->isParenthesized($this->file, $parentNode)) {
-            return null;
-        }
-        $node->setAttribute(AttributeKey::ORIGINAL_NODE, null);
-        return $node;
+        return null;
     }
 }

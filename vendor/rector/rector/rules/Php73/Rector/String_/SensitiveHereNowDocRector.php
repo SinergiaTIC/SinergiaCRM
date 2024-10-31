@@ -5,14 +5,13 @@ namespace Rector\Php73\Rector\String_;
 
 use PhpParser\Node;
 use PhpParser\Node\Scalar\String_;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://wiki.php.net/rfc/flexible_heredoc_nowdoc_syntaxes
  * @see \Rector\Tests\Php73\Rector\String_\SensitiveHereNowDocRector\SensitiveHereNowDocRectorTest
  */
 final class SensitiveHereNowDocRector extends AbstractRector implements MinPhpVersionInterface

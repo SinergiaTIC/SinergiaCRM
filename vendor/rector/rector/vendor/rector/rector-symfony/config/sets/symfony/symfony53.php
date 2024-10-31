@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202305;
+namespace RectorPrefix202407;
 
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
@@ -11,9 +11,8 @@ use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassConstFetch;
-use Rector\Symfony\Rector\Class_\CommandDescriptionToPropertyRector;
-use Rector\Symfony\Rector\StaticPropertyFetch\KernelTestCaseContainerPropertyDeprecationRector;
 use Rector\Symfony\Set\SymfonySetList;
+use Rector\Symfony\Symfony53\Rector\StaticPropertyFetch\KernelTestCaseContainerPropertyDeprecationRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddParamTypeDeclarationRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration;
@@ -59,6 +58,5 @@ return static function (RectorConfig $rectorConfig) : void {
         // @see https://github.com/symfony/symfony/commit/ce77be2507631cd12e4ca37510dab37f4c2b759a
         new AddParamTypeDeclaration('Symfony\\Component\\Form\\DataMapperInterface', 'mapDataToForms', 1, new ObjectType(\Traversable::class)),
     ]);
-    $rectorConfig->rule(KernelTestCaseContainerPropertyDeprecationRector::class);
-    $rectorConfig->rule(CommandDescriptionToPropertyRector::class);
+    $rectorConfig->rules([KernelTestCaseContainerPropertyDeprecationRector::class]);
 };

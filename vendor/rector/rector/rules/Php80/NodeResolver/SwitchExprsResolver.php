@@ -23,15 +23,18 @@ final class SwitchExprsResolver
         $newSwitch = clone $switch;
         $condAndExpr = [];
         $collectionEmptyCasesCond = [];
+        if (!$this->areCasesValid($newSwitch)) {
+            return [];
+        }
         $this->moveDefaultCaseToLast($newSwitch);
         foreach ($newSwitch->cases as $key => $case) {
-            \assert(\is_int($key));
-            if (!$this->isValidCase($case)) {
-                return [];
+            if ($case->stmts !== []) {
+                continue;
             }
-            if ($case->stmts === [] && $case->cond instanceof Expr) {
-                $collectionEmptyCasesCond[$key] = $case->cond;
+            if (!$case->cond instanceof Expr) {
+                continue;
             }
+            $collectionEmptyCasesCond[$key] = $case->cond;
         }
         foreach ($newSwitch->cases as $key => $case) {
             if ($case->stmts === []) {
@@ -122,5 +125,14 @@ final class SwitchExprsResolver
         }
         // default value
         return !$case->cond instanceof Expr;
+    }
+    private function areCasesValid(Switch_ $newSwitch) : bool
+    {
+        foreach ($newSwitch->cases as $case) {
+            if (!$this->isValidCase($case)) {
+                return \false;
+            }
+        }
+        return \true;
     }
 }

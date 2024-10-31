@@ -8,8 +8,8 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
-use Rector\Core\ValueObject\Visibility;
-use RectorPrefix202305\Webmozart\Assert\Assert;
+use Rector\ValueObject\Visibility;
+use RectorPrefix202407\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Privatization\NodeManipulator\VisibilityManipulatorTest
  */
@@ -53,6 +53,7 @@ final class VisibilityManipulator
         $node->flags -= Class_::MODIFIER_ABSTRACT;
     }
     /**
+     * @api
      * @param \PhpParser\Node\Stmt\Class_|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\ClassConst $node
      */
     public function makeFinal($node) : void
@@ -101,6 +102,7 @@ final class VisibilityManipulator
         $this->replaceVisibilityFlag($node, Visibility::PRIVATE);
     }
     /**
+     * @api
      * @param \PhpParser\Node\Stmt\Class_|\PhpParser\Node\Stmt\ClassConst $node
      */
     public function removeFinal($node) : void
@@ -115,6 +117,7 @@ final class VisibilityManipulator
         $this->addVisibilityFlag($node, Visibility::READONLY);
     }
     /**
+     * @api
      * @param \PhpParser\Node\Stmt\Class_|\PhpParser\Node\Stmt\Property|\PhpParser\Node\Param $node
      */
     public function isReadonly($node) : bool

@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Process;
+namespace RectorPrefix202407\Symfony\Component\Process;
 
-use RectorPrefix202305\Symfony\Component\Process\Exception\RuntimeException;
+use RectorPrefix202407\Symfony\Component\Process\Exception\RuntimeException;
 /**
  * Provides a way to continuously write to the input of a Process until the InputStream is closed.
  *
@@ -20,23 +20,35 @@ use RectorPrefix202305\Symfony\Component\Process\Exception\RuntimeException;
  */
 class InputStream implements \IteratorAggregate
 {
-    /** @var callable|null */
-    private $onEmpty = null;
+    /**
+     * @var \Closure|null
+     */
+    private $onEmpty;
+    /**
+     * @var mixed[]
+     */
     private $input = [];
+    /**
+     * @var bool
+     */
     private $open = \true;
     /**
      * Sets a callback that is called when the write buffer becomes empty.
+     *
+     * @return void
      */
-    public function onEmpty(callable $onEmpty = null)
+    public function onEmpty(?callable $onEmpty = null)
     {
-        $this->onEmpty = $onEmpty;
+        $this->onEmpty = null !== $onEmpty ? \Closure::fromCallable($onEmpty) : null;
     }
     /**
-    * Appends an input to the write buffer.
-    *
+     * Appends an input to the write buffer.
+     *
      * @param mixed $input The input to append as scalar,
-                                                              stream resource or \Traversable
-    */
+     *                                                                stream resource or \Traversable
+     *
+     * @return void
+     */
     public function write($input)
     {
         if (null === $input) {
@@ -49,6 +61,8 @@ class InputStream implements \IteratorAggregate
     }
     /**
      * Closes the write buffer.
+     *
+     * @return void
      */
     public function close()
     {
@@ -56,6 +70,8 @@ class InputStream implements \IteratorAggregate
     }
     /**
      * Tells whether the write buffer is closed or not.
+     *
+     * @return bool
      */
     public function isClosed()
     {

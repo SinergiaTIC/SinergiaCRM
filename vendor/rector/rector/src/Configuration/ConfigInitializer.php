@@ -1,16 +1,13 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\Configuration;
+namespace Rector\Configuration;
 
-use RectorPrefix202305\Nette\Utils\FileSystem;
-use RectorPrefix202305\Nette\Utils\Strings;
-use Rector\Core\Contract\Rector\RectorInterface;
-use Rector\Core\FileSystem\InitFilePathsResolver;
-use Rector\Core\Php\PhpVersionProvider;
-use Rector\PostRector\Contract\Rector\ComplementaryRectorInterface;
+use RectorPrefix202407\Nette\Utils\FileSystem;
+use Rector\Contract\Rector\RectorInterface;
+use Rector\FileSystem\InitFilePathsResolver;
 use Rector\PostRector\Contract\Rector\PostRectorInterface;
-use RectorPrefix202305\Symfony\Component\Console\Style\SymfonyStyle;
+use RectorPrefix202407\Symfony\Component\Console\Style\SymfonyStyle;
 final class ConfigInitializer
 {
     /**
@@ -20,7 +17,7 @@ final class ConfigInitializer
     private $rectors;
     /**
      * @readonly
-     * @var \Rector\Core\FileSystem\InitFilePathsResolver
+     * @var \Rector\FileSystem\InitFilePathsResolver
      */
     private $initFilePathsResolver;
     /**
@@ -29,19 +26,13 @@ final class ConfigInitializer
      */
     private $symfonyStyle;
     /**
-     * @readonly
-     * @var \Rector\Core\Php\PhpVersionProvider
-     */
-    private $phpVersionProvider;
-    /**
      * @param RectorInterface[] $rectors
      */
-    public function __construct(array $rectors, InitFilePathsResolver $initFilePathsResolver, SymfonyStyle $symfonyStyle, PhpVersionProvider $phpVersionProvider)
+    public function __construct(array $rectors, InitFilePathsResolver $initFilePathsResolver, SymfonyStyle $symfonyStyle)
     {
         $this->rectors = $rectors;
         $this->initFilePathsResolver = $initFilePathsResolver;
         $this->symfonyStyle = $symfonyStyle;
-        $this->phpVersionProvider = $phpVersionProvider;
     }
     public function createConfig(string $projectDirectory) : void
     {
@@ -51,14 +42,14 @@ final class ConfigInitializer
             return;
         }
         $response = $this->symfonyStyle->ask('No "rector.php" config found. Should we generate it for you?', 'yes');
-        if ($response !== 'yes') {
+        // be tolerant about input
+        if (!\in_array($response, ['yes', 'YES', 'y', 'Y'], \true)) {
             // okay, nothing we can do
             return;
         }
         $configContents = FileSystem::read(__DIR__ . '/../../templates/rector.php.dist');
-        $configContents = $this->replacePhpLevelContents($configContents);
         $configContents = $this->replacePathsContents($configContents, $projectDirectory);
-        FileSystem::write($commonRectorConfigPath, $configContents);
+        FileSystem::write($commonRectorConfigPath, $configContents, null);
         $this->symfonyStyle->success('The config is added now. Re-run command to make Rector do the work!');
     }
     public function areSomeRectorsLoaded() : bool
@@ -73,17 +64,8 @@ final class ConfigInitializer
     private function filterActiveRectors(array $rectors) : array
     {
         return \array_filter($rectors, static function (RectorInterface $rector) : bool {
-            if ($rector instanceof PostRectorInterface) {
-                return \false;
-            }
-            return !$rector instanceof ComplementaryRectorInterface;
+            return !$rector instanceof PostRectorInterface;
         });
-    }
-    private function replacePhpLevelContents(string $rectorPhpTemplateContents) : string
-    {
-        $fullPHPVersion = (string) $this->phpVersionProvider->provide();
-        $phpVersion = Strings::substring($fullPHPVersion, 0, 1) . Strings::substring($fullPHPVersion, 2, 1);
-        return \str_replace('LevelSetList::UP_TO_PHP_XY', 'LevelSetList::UP_TO_PHP_' . $phpVersion, $rectorPhpTemplateContents);
     }
     private function replacePathsContents(string $rectorPhpTemplateContents, string $projectDirectory) : string
     {

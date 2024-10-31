@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Input;
+namespace RectorPrefix202407\Symfony\Component\Console\Input;
 
-use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
-use RectorPrefix202305\Symfony\Component\Console\Exception\RuntimeException;
+use RectorPrefix202407\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202407\Symfony\Component\Console\Exception\RuntimeException;
 /**
  * InputInterface is the interface implemented by all input classes.
  *
@@ -56,11 +56,15 @@ interface InputInterface
     /**
      * Binds the current Input instance with the given arguments and options.
      *
+     * @return void
+     *
      * @throws RuntimeException
      */
     public function bind(InputDefinition $definition);
     /**
      * Validates the input.
+     *
+     * @return void
      *
      * @throws RuntimeException When not enough arguments are given
      */
@@ -81,6 +85,8 @@ interface InputInterface
     public function getArgument(string $name);
     /**
      * Sets an argument value by name.
+     *
+     * @return void
      *
      * @throws InvalidArgumentException When argument given doesn't exist
      * @param mixed $value
@@ -107,6 +113,8 @@ interface InputInterface
     /**
      * Sets an option value by name.
      *
+     * @return void
+     *
      * @throws InvalidArgumentException When option given doesn't exist
      * @param mixed $value
      */
@@ -121,6 +129,8 @@ interface InputInterface
     public function isInteractive() : bool;
     /**
      * Sets the input interactivity.
+     *
+     * @return void
      */
     public function setInteractive(bool $interactive);
 }

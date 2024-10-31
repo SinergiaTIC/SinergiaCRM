@@ -8,10 +8,12 @@ use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\Cast\Bool_;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
-use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\NodeTypeResolver\PHPStan\Type\StaticTypeAnalyzer;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\PHPStanStaticTypeMapper\Utils\TypeUnwrapper;
 final class ExprBoolCaster
 {
@@ -32,7 +34,7 @@ final class ExprBoolCaster
     private $staticTypeAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
+     * @var \Rector\PhpParser\Node\NodeFactory
      */
     private $nodeFactory;
     public function __construct(NodeTypeResolver $nodeTypeResolver, TypeUnwrapper $typeUnwrapper, StaticTypeAnalyzer $staticTypeAnalyzer, NodeFactory $nodeFactory)
@@ -44,13 +46,13 @@ final class ExprBoolCaster
     }
     public function boolCastOrNullCompareIfNeeded(Expr $expr) : Expr
     {
-        if (!$this->nodeTypeResolver->isNullableType($expr)) {
-            if (!$this->isBoolCastNeeded($expr)) {
+        $exprStaticType = $this->nodeTypeResolver->getType($expr);
+        if (!TypeCombinator::containsNull($exprStaticType)) {
+            if (!$this->isBoolCastNeeded($expr, $exprStaticType)) {
                 return $expr;
             }
             return new Bool_($expr);
         }
-        $exprStaticType = $this->nodeTypeResolver->getType($expr);
         // if we remove null type, still has to be trueable
         if ($exprStaticType instanceof UnionType) {
             $unionTypeWithoutNullType = $this->typeUnwrapper->removeNullTypeFromUnionType($exprStaticType);
@@ -60,17 +62,16 @@ final class ExprBoolCaster
         } elseif ($this->staticTypeAnalyzer->isAlwaysTruableType($exprStaticType)) {
             return new NotIdentical($expr, $this->nodeFactory->createNull());
         }
-        if (!$this->isBoolCastNeeded($expr)) {
+        if (!$this->isBoolCastNeeded($expr, $exprStaticType)) {
             return $expr;
         }
         return new Bool_($expr);
     }
-    private function isBoolCastNeeded(Expr $expr) : bool
+    private function isBoolCastNeeded(Expr $expr, Type $exprType) : bool
     {
         if ($expr instanceof BooleanNot) {
             return \false;
         }
-        $exprType = $this->nodeTypeResolver->getType($expr);
         if ($exprType->isBoolean()->yes()) {
             return \false;
         }

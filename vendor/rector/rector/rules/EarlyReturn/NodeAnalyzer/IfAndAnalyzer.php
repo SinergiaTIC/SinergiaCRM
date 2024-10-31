@@ -9,18 +9,21 @@ use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
-use Rector\Core\PhpParser\Comparing\NodeComparator;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\PhpParser\Comparing\NodeComparator;
+use Rector\PhpParser\Node\BetterNodeFinder;
+/**
+ * @deprecated Since 1.1.2, as related rule creates inverted conditions and makes code much less readable.
+ */
 final class IfAndAnalyzer
 {
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
+     * @var \Rector\PhpParser\Comparing\NodeComparator
      */
     private $nodeComparator;
     public function __construct(BetterNodeFinder $betterNodeFinder, NodeComparator $nodeComparator)
@@ -42,14 +45,8 @@ final class IfAndAnalyzer
             return \false;
         }
         $ifExprs = $this->betterNodeFinder->findInstanceOf($if->stmts, Expr::class);
-        foreach ($ifExprs as $ifExpr) {
-            $isExprFoundInReturn = (bool) $this->betterNodeFinder->findFirst($return->expr, function (Node $node) use($ifExpr) : bool {
-                return $this->nodeComparator->areNodesEqual($node, $ifExpr);
-            });
-            if ($isExprFoundInReturn) {
-                return \true;
-            }
-        }
-        return \false;
+        return (bool) $this->betterNodeFinder->findFirst($return->expr, function (Node $node) use($ifExprs) : bool {
+            return $this->nodeComparator->isNodeEqual($node, $ifExprs);
+        });
     }
 }

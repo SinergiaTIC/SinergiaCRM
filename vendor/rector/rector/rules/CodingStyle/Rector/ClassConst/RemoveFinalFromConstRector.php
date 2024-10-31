@@ -5,15 +5,13 @@ namespace Rector\CodingStyle\Rector\ClassConst;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://php.watch/versions/8.1/final-class-const
- *
  * @see \Rector\Tests\CodingStyle\Rector\ClassConst\RemoveFinalFromConstRector\RemoveFinalFromConstRectorTest
  */
 final class RemoveFinalFromConstRector extends AbstractRector implements MinPhpVersionInterface

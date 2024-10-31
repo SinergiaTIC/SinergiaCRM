@@ -5,29 +5,28 @@ namespace Rector\Php55\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Stmt\Class_;
-use Rector\Core\Enum\ObjectReference;
-use Rector\Core\NodeAnalyzer\ClassAnalyzer;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use PHPStan\Analyser\Scope;
+use Rector\Enum\ObjectReference;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
+use Rector\Reflection\ClassModifierChecker;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://www.php.net/ChangeLog-5.php#5.5.0
- * @changelog https://3v4l.org/GU9dP
  * @see \Rector\Tests\Php55\Rector\FuncCall\GetCalledClassToSelfClassRector\GetCalledClassToSelfClassRectorTest
  */
 final class GetCalledClassToSelfClassRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ClassAnalyzer
+     * @var \Rector\Reflection\ClassModifierChecker
      */
-    private $classAnalyzer;
-    public function __construct(ClassAnalyzer $classAnalyzer)
+    private $classModifierChecker;
+    public function __construct(ClassModifierChecker $classModifierChecker)
     {
-        $this->classAnalyzer = $classAnalyzer;
+        $this->classModifierChecker = $classModifierChecker;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -66,14 +65,17 @@ CODE_SAMPLE
         if (!$this->isName($node, 'get_called_class')) {
             return null;
         }
-        $class = $this->betterNodeFinder->findParentType($node, Class_::class);
-        if (!$class instanceof Class_) {
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if (!$scope instanceof Scope) {
             return null;
         }
-        if ($class->isFinal()) {
+        if (!$scope->isInClass()) {
+            return null;
+        }
+        if ($this->classModifierChecker->isInsideFinalClass($node)) {
             return $this->nodeFactory->createClassConstFetch(ObjectReference::SELF, 'class');
         }
-        if ($this->classAnalyzer->isAnonymousClass($class)) {
+        if ($scope->isInAnonymousFunction()) {
             return $this->nodeFactory->createClassConstFetch(ObjectReference::SELF, 'class');
         }
         return null;

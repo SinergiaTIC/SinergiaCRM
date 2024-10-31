@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -20,10 +19,9 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeWithClassName;
-use Rector\Core\ValueObject\MethodName;
 use Rector\Naming\Naming\PropertyNaming;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\ValueObject\MethodName;
 final class TypeProvidingExprFromClassResolver
 {
     /**
@@ -60,11 +58,7 @@ final class TypeProvidingExprFromClassResolver
             return $methodCallProvidingType;
         }
         // B. match existing property
-        $scope = $class->getAttribute(AttributeKey::SCOPE);
-        if (!$scope instanceof Scope) {
-            return null;
-        }
-        $propertyFetch = $this->resolvePropertyFetchProvidingType($classReflection, $scope, $objectType);
+        $propertyFetch = $this->resolvePropertyFetchProvidingType($classReflection, $objectType);
         if ($propertyFetch instanceof PropertyFetch) {
             return $propertyFetch;
         }
@@ -85,12 +79,12 @@ final class TypeProvidingExprFromClassResolver
         }
         return null;
     }
-    private function resolvePropertyFetchProvidingType(ClassReflection $classReflection, Scope $scope, ObjectType $objectType) : ?PropertyFetch
+    private function resolvePropertyFetchProvidingType(ClassReflection $classReflection, ObjectType $objectType) : ?PropertyFetch
     {
         $nativeReflectionClass = $classReflection->getNativeReflection();
         foreach ($nativeReflectionClass->getProperties() as $reflectionProperty) {
             /** @var PhpPropertyReflection $phpPropertyReflection */
-            $phpPropertyReflection = $classReflection->getProperty($reflectionProperty->getName(), $scope);
+            $phpPropertyReflection = $classReflection->getNativeProperty($reflectionProperty->getName());
             $readableType = $phpPropertyReflection->getReadableType();
             if (!$this->isMatchingType($readableType, $objectType)) {
                 continue;
@@ -123,9 +117,9 @@ final class TypeProvidingExprFromClassResolver
      */
     private function getClassMethodReflections(ClassReflection $classReflection) : array
     {
-        $nativeClassReflection = $classReflection->getNativeReflection();
+        $nativeReflection = $classReflection->getNativeReflection();
         $methodReflections = [];
-        foreach ($nativeClassReflection->getMethods() as $reflectionMethod) {
+        foreach ($nativeReflection->getMethods() as $reflectionMethod) {
             $methodReflections[] = $classReflection->getNativeMethod($reflectionMethod->getName());
         }
         return $methodReflections;

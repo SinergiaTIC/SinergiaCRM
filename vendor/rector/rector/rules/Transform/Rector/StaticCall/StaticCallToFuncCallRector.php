@@ -7,12 +7,12 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name\FullyQualified;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 use Rector\Transform\ValueObject\StaticCallToFuncCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202305\Webmozart\Assert\Assert;
+use RectorPrefix202407\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\StaticCall\StaticCallToFuncCallRector\StaticCallToFuncCallRectorTest
  */
@@ -22,13 +22,6 @@ final class StaticCallToFuncCallRector extends AbstractRector implements Configu
      * @var StaticCallToFuncCall[]
      */
     private $staticCallsToFunctions = [];
-    /**
-     * @param StaticCallToFuncCall[] $staticCallsToFunctions
-     */
-    public function __construct(array $staticCallsToFunctions = [])
-    {
-        $this->staticCallsToFunctions = $staticCallsToFunctions;
-    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Turns static call to function call.', [new ConfiguredCodeSample('OldClass::oldMethod("args");', 'new_function("args");', [new StaticCallToFuncCall('OldClass', 'oldMethod', 'new_function')])]);

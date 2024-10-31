@@ -1,10 +1,10 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202305;
+namespace RectorPrefix202407;
 
 use Rector\Config\RectorConfig;
-use Rector\Doctrine\Rector\Param\ReplaceLifecycleEventArgsByDedicatedEventArgsRector;
+use Rector\Doctrine\Orm214\Rector\Param\ReplaceLifecycleEventArgsByDedicatedEventArgsRector;
 return static function (RectorConfig $rectorConfig) : void {
     $rectorConfig->rule(ReplaceLifecycleEventArgsByDedicatedEventArgsRector::class);
 };

@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace Rector\Arguments\ValueObject;
 
 use PHPStan\Type\ObjectType;
+use Rector\Validation\RectorAssert;
 final class RemoveMethodCallParam
 {
     /**
@@ -26,6 +27,8 @@ final class RemoveMethodCallParam
         $this->class = $class;
         $this->methodName = $methodName;
         $this->paramPosition = $paramPosition;
+        RectorAssert::className($class);
+        RectorAssert::methodName($methodName);
     }
     public function getObjectType() : ObjectType
     {

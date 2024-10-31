@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Filesystem\Exception;
+namespace RectorPrefix202407\Symfony\Component\Filesystem\Exception;
 
 /**
  * Exception class thrown when a file couldn't be found.
@@ -18,7 +18,7 @@ namespace RectorPrefix202305\Symfony\Component\Filesystem\Exception;
  */
 class FileNotFoundException extends IOException
 {
-    public function __construct(string $message = null, int $code = 0, \Throwable $previous = null, string $path = null)
+    public function __construct(?string $message = null, int $code = 0, ?\Throwable $previous = null, ?string $path = null)
     {
         if (null === $message) {
             if (null === $path) {

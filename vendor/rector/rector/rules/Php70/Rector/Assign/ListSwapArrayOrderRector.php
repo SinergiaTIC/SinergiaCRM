@@ -10,26 +10,25 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\List_;
-use Rector\Core\Contract\PhpParser\NodePrinterInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\PhpParser\Printer\BetterStandardPrinter;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog http://php.net/manual/en/migration70.incompatible.php#migration70.incompatible.variable-handling.list
  * @see \Rector\Tests\Php70\Rector\Assign\ListSwapArrayOrderRector\ListSwapArrayOrderRectorTest
  */
 final class ListSwapArrayOrderRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\Core\Contract\PhpParser\NodePrinterInterface
+     * @var \Rector\PhpParser\Printer\BetterStandardPrinter
      */
-    private $nodePrinter;
-    public function __construct(NodePrinterInterface $nodePrinter)
+    private $betterStandardPrinter;
+    public function __construct(BetterStandardPrinter $betterStandardPrinter)
     {
-        $this->nodePrinter = $nodePrinter;
+        $this->betterStandardPrinter = $betterStandardPrinter;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -58,7 +57,7 @@ final class ListSwapArrayOrderRector extends AbstractRector implements MinPhpVer
                 continue;
             }
             if ($arrayItem->value instanceof ArrayDimFetch && !$arrayItem->value->dim instanceof Expr) {
-                $printedVariables[] = $this->nodePrinter->print($arrayItem->value->var);
+                $printedVariables[] = $this->betterStandardPrinter->print($arrayItem->value->var);
             } else {
                 return null;
             }

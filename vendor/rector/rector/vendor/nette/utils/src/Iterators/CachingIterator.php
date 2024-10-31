@@ -5,9 +5,9 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202305\Nette\Iterators;
+namespace RectorPrefix202407\Nette\Iterators;
 
-use RectorPrefix202305\Nette;
+use RectorPrefix202407\Nette;
 /**
  * Smarter caching iterator.
  *
@@ -23,7 +23,9 @@ use RectorPrefix202305\Nette;
 class CachingIterator extends \CachingIterator implements \Countable
 {
     use Nette\SmartObject;
-    /** @var int */
+    /**
+     * @var int
+     */
     private $counter = 0;
     public function __construct($iterator)
     {
@@ -38,7 +40,7 @@ class CachingIterator extends \CachingIterator implements \Countable
         } elseif ($iterator instanceof \Traversable) {
             $iterator = new \IteratorIterator($iterator);
         } else {
-            throw new Nette\InvalidArgumentException(\sprintf('Invalid argument passed to %s; array or Traversable expected, %s given.', self::class, \is_object($iterator) ? \get_class($iterator) : \gettype($iterator)));
+            throw new Nette\InvalidArgumentException(\sprintf('Invalid argument passed to %s; array or Traversable expected, %s given.', self::class, \get_debug_type($iterator)));
         }
         parent::__construct($iterator, 0);
     }

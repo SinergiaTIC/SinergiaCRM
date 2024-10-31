@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Descriptor;
+namespace RectorPrefix202407\Symfony\Component\Console\Descriptor;
 
-use RectorPrefix202305\Symfony\Component\Console\Output\OutputInterface;
+use RectorPrefix202407\Symfony\Component\Console\Output\OutputInterface;
 /**
  * Descriptor interface.
  *
@@ -18,5 +18,8 @@ use RectorPrefix202305\Symfony\Component\Console\Output\OutputInterface;
  */
 interface DescriptorInterface
 {
+    /**
+     * @return void
+     */
     public function describe(OutputInterface $output, object $object, array $options = []);
 }

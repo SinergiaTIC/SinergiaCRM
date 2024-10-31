@@ -5,12 +5,14 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202305\Nette\Utils;
+namespace RectorPrefix202407\Nette\Utils;
 
-use RectorPrefix202305\Nette;
+use RectorPrefix202407\Nette;
 /**
  * Provides objects to work as array.
  * @template T
+ * @implements \IteratorAggregate<array-key, T>
+ * @implements \ArrayAccess<array-key, T>
  */
 class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -23,17 +25,19 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
     {
         $obj = new static();
         foreach ($array as $key => $value) {
-            $obj->{$key} = $recursive && \is_array($value) ? static::from($value, \true) : $value;
+            $obj->{$key} = $recursive && \is_array($value) ? static::from($value) : $value;
         }
         return $obj;
     }
     /**
      * Returns an iterator over all items.
-     * @return \RecursiveArrayIterator<array-key, T>
+     * @return \Iterator<array-key, T>
      */
-    public function getIterator() : \RecursiveArrayIterator
+    public function &getIterator() : \Iterator
     {
-        return new \RecursiveArrayIterator((array) $this);
+        foreach ((array) $this as $key => $foo) {
+            (yield $key => $this->{$key});
+        }
     }
     /**
      * Returns items count.
@@ -44,20 +48,20 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
     }
     /**
      * Replaces or appends a item.
-     * @param  string|int  $key
+     * @param  array-key  $key
      * @param  T  $value
      */
     public function offsetSet($key, $value) : void
     {
         if (!\is_scalar($key)) {
             // prevents null
-            throw new Nette\InvalidArgumentException(\sprintf('Key must be either a string or an integer, %s given.', \gettype($key)));
+            throw new Nette\InvalidArgumentException(\sprintf('Key must be either a string or an integer, %s given.', \get_debug_type($key)));
         }
         $this->{$key} = $value;
     }
     /**
      * Returns a item.
-     * @param  string|int  $key
+     * @param  array-key  $key
      * @return T
      */
     #[\ReturnTypeWillChange]
@@ -67,7 +71,7 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
     }
     /**
      * Determines whether a item exists.
-     * @param  string|int  $key
+     * @param  array-key  $key
      */
     public function offsetExists($key) : bool
     {
@@ -75,7 +79,7 @@ class ArrayHash extends \stdClass implements \ArrayAccess, \Countable, \Iterator
     }
     /**
      * Removes the element from this list.
-     * @param  string|int  $key
+     * @param  array-key  $key
      */
     public function offsetUnset($key) : void
     {

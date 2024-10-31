@@ -5,38 +5,38 @@ namespace Rector\TypeDeclaration\Rector\Property;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Property;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\StringType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
+use Rector\Rector\AbstractScopeAwareRector;
+use Rector\StaticTypeMapper\StaticTypeMapper;
 use Rector\TypeDeclaration\ValueObject\AddPropertyTypeDeclaration;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202305\Webmozart\Assert\Assert;
+use RectorPrefix202407\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\TypeDeclaration\Rector\Property\AddPropertyTypeDeclarationRector\AddPropertyTypeDeclarationRectorTest
  */
-final class AddPropertyTypeDeclarationRector extends AbstractRector implements ConfigurableRectorInterface
+final class AddPropertyTypeDeclarationRector extends AbstractScopeAwareRector implements ConfigurableRectorInterface
 {
+    /**
+     * @readonly
+     * @var \Rector\StaticTypeMapper\StaticTypeMapper
+     */
+    private $staticTypeMapper;
     /**
      * @var AddPropertyTypeDeclaration[]
      */
     private $addPropertyTypeDeclarations = [];
-    /**
-     * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
-     */
-    private $reflectionResolver;
-    public function __construct(ReflectionResolver $reflectionResolver)
+    public function __construct(StaticTypeMapper $staticTypeMapper)
     {
-        $this->reflectionResolver = $reflectionResolver;
+        $this->staticTypeMapper = $staticTypeMapper;
     }
     public function getRuleDefinition() : RuleDefinition
     {
-        $configuration = [new AddPropertyTypeDeclaration('ParentClass', 'name', new StringType())];
         return new RuleDefinition('Add type to property by added rules, mostly public/property by parent type', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
 class SomeClass extends ParentClass
 {
@@ -49,7 +49,7 @@ class SomeClass extends ParentClass
     public string $name;
 }
 CODE_SAMPLE
-, $configuration)]);
+, [new AddPropertyTypeDeclaration('ParentClass', 'name', new StringType())])]);
     }
     /**
      * @return array<class-string<Node>>
@@ -61,13 +61,13 @@ CODE_SAMPLE
     /**
      * @param Property $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
         // type is already known
         if ($node->type !== null) {
             return null;
         }
-        $classReflection = $this->reflectionResolver->resolveClassReflection($node);
+        $classReflection = $scope->getClassReflection();
         if (!$classReflection instanceof ClassReflection) {
             return null;
         }
@@ -79,7 +79,7 @@ CODE_SAMPLE
                 continue;
             }
             $typeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($addPropertyTypeDeclaration->getType(), TypeKind::PROPERTY);
-            if ($typeNode === null) {
+            if (!$typeNode instanceof Node) {
                 // invalid configuration
                 throw new ShouldNotHappenException();
             }

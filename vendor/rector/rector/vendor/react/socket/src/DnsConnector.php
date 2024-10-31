@@ -1,10 +1,10 @@
 <?php
 
-namespace RectorPrefix202305\React\Socket;
+namespace RectorPrefix202407\React\Socket;
 
-use RectorPrefix202305\React\Dns\Resolver\ResolverInterface;
-use RectorPrefix202305\React\Promise;
-use RectorPrefix202305\React\Promise\PromiseInterface;
+use RectorPrefix202407\React\Dns\Resolver\ResolverInterface;
+use RectorPrefix202407\React\Promise;
+use RectorPrefix202407\React\Promise\PromiseInterface;
 final class DnsConnector implements ConnectorInterface
 {
     private $connector;
@@ -27,7 +27,7 @@ final class DnsConnector implements ConnectorInterface
             $parts = \parse_url($uri);
         }
         if (!$parts || !isset($parts['host'])) {
-            return Promise\reject(new \InvalidArgumentException('Given URI "' . $original . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22));
+            return Promise\reject(new \InvalidArgumentException('Given URI "' . $original . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22)));
         }
         $host = \trim($parts['host'], '[]');
         $connector = $this->connector;

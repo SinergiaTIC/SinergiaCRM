@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Helper;
+namespace RectorPrefix202407\Symfony\Component\Console\Helper;
 
-use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202407\Symfony\Component\Console\Exception\InvalidArgumentException;
 /**
  * HelperSet represents a set of helpers to be used with a command.
  *
@@ -31,7 +31,10 @@ class HelperSet implements \IteratorAggregate
             $this->set($helper, \is_int($alias) ? null : $alias);
         }
     }
-    public function set(HelperInterface $helper, string $alias = null)
+    /**
+     * @return void
+     */
+    public function set(HelperInterface $helper, ?string $alias = null)
     {
         $this->helpers[$helper->getName()] = $helper;
         if (null !== $alias) {

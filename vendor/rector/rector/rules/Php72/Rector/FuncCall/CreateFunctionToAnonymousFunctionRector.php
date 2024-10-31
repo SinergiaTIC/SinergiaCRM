@@ -16,26 +16,23 @@ use PhpParser\Node\Scalar\Encapsed;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
-use Rector\Core\Php\ReservedKeywordAnalyzer;
-use Rector\Core\PhpParser\Parser\InlineCodeParser;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Exception\ShouldNotHappenException;
+use Rector\Php\ReservedKeywordAnalyzer;
 use Rector\Php72\NodeFactory\AnonymousFunctionFactory;
+use Rector\PhpParser\Parser\InlineCodeParser;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://stackoverflow.com/q/48161526/1348344 http://php.net/manual/en/migration72.deprecated.php#migration72.deprecated.create_function-function
- *
  * @see \Rector\Tests\Php72\Rector\FuncCall\CreateFunctionToAnonymousFunctionRector\CreateFunctionToAnonymousFunctionRectorTest
  */
 final class CreateFunctionToAnonymousFunctionRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Parser\InlineCodeParser
+     * @var \Rector\PhpParser\Parser\InlineCodeParser
      */
     private $inlineCodeParser;
     /**
@@ -45,20 +42,14 @@ final class CreateFunctionToAnonymousFunctionRector extends AbstractRector imple
     private $anonymousFunctionFactory;
     /**
      * @readonly
-     * @var \Rector\Core\Php\ReservedKeywordAnalyzer
+     * @var \Rector\Php\ReservedKeywordAnalyzer
      */
     private $reservedKeywordAnalyzer;
-    /**
-     * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
-     */
-    private $argsAnalyzer;
-    public function __construct(InlineCodeParser $inlineCodeParser, AnonymousFunctionFactory $anonymousFunctionFactory, ReservedKeywordAnalyzer $reservedKeywordAnalyzer, ArgsAnalyzer $argsAnalyzer)
+    public function __construct(InlineCodeParser $inlineCodeParser, AnonymousFunctionFactory $anonymousFunctionFactory, ReservedKeywordAnalyzer $reservedKeywordAnalyzer)
     {
         $this->inlineCodeParser = $inlineCodeParser;
         $this->anonymousFunctionFactory = $anonymousFunctionFactory;
         $this->reservedKeywordAnalyzer = $reservedKeywordAnalyzer;
-        $this->argsAnalyzer = $argsAnalyzer;
     }
     public function provideMinPhpVersion() : int
     {
@@ -104,15 +95,16 @@ CODE_SAMPLE
         if (!$this->isName($node, 'create_function')) {
             return null;
         }
-        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($node->args, [0, 1])) {
+        if ($node->isFirstClassCallable()) {
             return null;
         }
-        /** @var Arg $firstArg */
-        $firstArg = $node->args[0];
-        /** @var Arg $secondArg */
-        $secondArg = $node->args[1];
-        $params = $this->createParamsFromString($firstArg->value);
-        $stmts = $this->parseStringToBody($secondArg->value);
+        if (\count($node->getArgs()) < 2) {
+            return null;
+        }
+        $firstExpr = $node->getArgs()[0]->value;
+        $secondExpr = $node->getArgs()[1]->value;
+        $params = $this->createParamsFromString($firstExpr);
+        $stmts = $this->parseStringToBody($secondExpr);
         $refactored = $this->anonymousFunctionFactory->create($params, $stmts, null);
         foreach ($refactored->uses as $key => $use) {
             $variableName = $this->getName($use->var);
@@ -132,7 +124,7 @@ CODE_SAMPLE
     {
         $content = $this->inlineCodeParser->stringify($expr);
         $content = '<?php $value = function(' . $content . ') {};';
-        $nodes = $this->inlineCodeParser->parse($content);
+        $nodes = $this->inlineCodeParser->parseString($content);
         /** @var Expression $expression */
         $expression = $nodes[0];
         /** @var Assign $assign */
@@ -144,7 +136,7 @@ CODE_SAMPLE
         return $function->params;
     }
     /**
-     * @return Expression[]|Stmt[]
+     * @return Stmt[]
      */
     private function parseStringToBody(Expr $expr) : array
     {
@@ -152,8 +144,8 @@ CODE_SAMPLE
             // special case of code elsewhere
             return [$this->createEval($expr)];
         }
-        $expr = $this->inlineCodeParser->stringify($expr);
-        return $this->inlineCodeParser->parse($expr);
+        $content = $this->inlineCodeParser->stringify($expr);
+        return $this->inlineCodeParser->parseString($content);
     }
     private function createEval(Expr $expr) : Expression
     {

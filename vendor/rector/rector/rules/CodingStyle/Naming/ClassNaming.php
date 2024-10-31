@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\CodingStyle\Naming;
 
-use RectorPrefix202305\Nette\Utils\Strings;
+use RectorPrefix202407\Nette\Utils\Strings;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\ClassLike;
@@ -29,10 +29,5 @@ final class ClassNaming
             return $shortName;
         }
         return $name;
-    }
-    public function getNamespace(string $fullyQualifiedName) : ?string
-    {
-        $fullyQualifiedName = \trim($fullyQualifiedName, '\\');
-        return Strings::before($fullyQualifiedName, '\\', -1);
     }
 }

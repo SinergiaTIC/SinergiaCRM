@@ -10,14 +10,10 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Core\NodeAnalyzer\ParamAnalyzer;
+use Rector\NodeAnalyzer\ParamAnalyzer;
 use Rector\NodeNameResolver\NodeNameResolver;
 final class OnLogoutClassMethodFactory
 {
-    /**
-     * @var array<string, string>
-     */
-    private const PARAMETER_TO_GETTER_NAMES = ['request' => 'getRequest', 'response' => 'getResponse', 'token' => 'getToken'];
     /**
      * @readonly
      * @var \Rector\NodeNameResolver\NodeNameResolver
@@ -30,9 +26,13 @@ final class OnLogoutClassMethodFactory
     private $bareLogoutClassMethodFactory;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ParamAnalyzer
+     * @var \Rector\NodeAnalyzer\ParamAnalyzer
      */
     private $paramAnalyzer;
+    /**
+     * @var array<string, string>
+     */
+    private const PARAMETER_TO_GETTER_NAMES = ['request' => 'getRequest', 'response' => 'getResponse', 'token' => 'getToken'];
     public function __construct(NodeNameResolver $nodeNameResolver, \Rector\Symfony\NodeFactory\BareLogoutClassMethodFactory $bareLogoutClassMethodFactory, ParamAnalyzer $paramAnalyzer)
     {
         $this->nodeNameResolver = $nodeNameResolver;

@@ -1,9 +1,10 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\ValueObject;
+namespace Rector\ValueObject;
 
 /**
+ * @api
  * @enum
  */
 final class MethodName

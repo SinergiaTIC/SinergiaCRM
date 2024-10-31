@@ -5,7 +5,7 @@ namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
+use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
 class Catch_ extends Node\Stmt implements StmtsAwareInterface
 {
     /** @var Node\Name[] Types of exceptions to catch */
@@ -22,7 +22,7 @@ class Catch_ extends Node\Stmt implements StmtsAwareInterface
      * @param Node\Stmt[]           $stmts      Statements
      * @param array                 $attributes Additional attributes
      */
-    public function __construct(array $types, Expr\Variable $var = null, array $stmts = [], array $attributes = [])
+    public function __construct(array $types, ?Expr\Variable $var = null, array $stmts = [], array $attributes = [])
     {
         $this->attributes = $attributes;
         $this->types = $types;

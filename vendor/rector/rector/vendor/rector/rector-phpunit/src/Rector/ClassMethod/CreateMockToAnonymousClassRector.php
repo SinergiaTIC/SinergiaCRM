@@ -18,10 +18,10 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
-use Rector\Core\Exception\NotImplementedYetException;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Exception\NotImplementedYetException;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\PHPUnit\NodeAnalyzer\TestsNodeAnalyzer;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -111,6 +111,9 @@ CODE_SAMPLE
                     if (!$this->isName($rootMethodCall->name, 'method')) {
                         continue;
                     }
+                    if ($methodCall->isFirstClassCallable()) {
+                        continue;
+                    }
                     // has dynamic return?
                     if ($hasDynamicReturnExprs === \false) {
                         $returnedExpr = $methodCall->getArgs()[0]->value;
@@ -127,6 +130,9 @@ CODE_SAMPLE
             // change to anonymous class
             /** @var MethodCall $methodCall */
             $methodCall = $createMockMethodCallAssign->expr;
+            if ($methodCall->isFirstClassCallable()) {
+                continue;
+            }
             $firstArg = $methodCall->getArgs()[0];
             $mockExpr = $createMockMethodCallAssign->var;
             $anonymousClass = $this->createAnonymousClass($firstArg);

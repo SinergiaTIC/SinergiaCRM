@@ -20,9 +20,12 @@
         "symfony\/polyfill-ctype": "~1.8",
         "symfony\/polyfill-mbstring": "~1.8"
     },
+    "require-dev": {
+        "symfony\/process": "^5.4|^6.4|^7.0"
+    },
     "autoload": {
         "psr-4": {
-            "RectorPrefix202305\\Symfony\\Component\\Filesystem\\": ""
+            "RectorPrefix202407\\Symfony\\Component\\Filesystem\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

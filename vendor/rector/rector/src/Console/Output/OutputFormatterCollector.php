@@ -1,10 +1,10 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\Console\Output;
+namespace Rector\Console\Output;
 
 use Rector\ChangesReporting\Contract\Output\OutputFormatterInterface;
-use Rector\Core\Exception\Configuration\InvalidConfigurationException;
+use Rector\Exception\Configuration\InvalidConfigurationException;
 final class OutputFormatterCollector
 {
     /**
@@ -14,7 +14,7 @@ final class OutputFormatterCollector
     /**
      * @param OutputFormatterInterface[] $outputFormatters
      */
-    public function __construct(array $outputFormatters)
+    public function __construct(iterable $outputFormatters)
     {
         foreach ($outputFormatters as $outputFormatter) {
             $this->outputFormatters[$outputFormatter->getName()] = $outputFormatter;

@@ -8,7 +8,6 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Ternary;
 use PHPStan\Analyser\Scope;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Strict\NodeFactory\ExactCompareFactory;
 use Rector\Strict\Rector\AbstractFalsyScalarRuleFixerRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -26,6 +25,10 @@ final class DisallowedShortTernaryRuleFixerRector extends AbstractFalsyScalarRul
      * @var \Rector\Strict\NodeFactory\ExactCompareFactory
      */
     private $exactCompareFactory;
+    /**
+     * @var bool
+     */
+    private $hasChanged = \false;
     public function __construct(ExactCompareFactory $exactCompareFactory)
     {
         $this->exactCompareFactory = $exactCompareFactory;
@@ -63,12 +66,9 @@ CODE_SAMPLE
     /**
      * @param Ternary $node
      */
-    public function refactor(Node $node) : ?Ternary
+    public function refactorWithScope(Node $node, Scope $scope) : ?Ternary
     {
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
-        if (!$scope instanceof Scope) {
-            return null;
-        }
+        $this->hasChanged = \false;
         // skip non-short ternary
         if ($node->if instanceof Expr) {
             return null;
@@ -76,9 +76,12 @@ CODE_SAMPLE
         // special case for reset() function
         if ($node->cond instanceof FuncCall && $this->isName($node->cond, 'reset')) {
             $this->refactorResetFuncCall($node, $node->cond, $scope);
+            if (!$this->hasChanged) {
+                return null;
+            }
             return $node;
         }
-        $exprType = $scope->getType($node->cond);
+        $exprType = $scope->getNativeType($node->cond);
         $compareExpr = $this->exactCompareFactory->createNotIdenticalFalsyCompare($exprType, $node->cond, $this->treatAsNonEmpty);
         if (!$compareExpr instanceof Expr) {
             return null;
@@ -90,12 +93,16 @@ CODE_SAMPLE
     private function refactorResetFuncCall(Ternary $ternary, FuncCall $resetFuncCall, Scope $scope) : void
     {
         $ternary->if = $ternary->cond;
-        $firstArgValue = $resetFuncCall->args[0]->value;
-        $firstArgType = $scope->getType($firstArgValue);
+        if ($resetFuncCall->isFirstClassCallable()) {
+            return;
+        }
+        $firstArgValue = $resetFuncCall->getArgs()[0]->value;
+        $firstArgType = $scope->getNativeType($firstArgValue);
         $falsyCompareExpr = $this->exactCompareFactory->createNotIdenticalFalsyCompare($firstArgType, $firstArgValue, $this->treatAsNonEmpty);
         if (!$falsyCompareExpr instanceof Expr) {
             return;
         }
         $ternary->cond = $falsyCompareExpr;
+        $this->hasChanged = \true;
     }
 }

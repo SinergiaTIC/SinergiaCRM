@@ -5,9 +5,9 @@ namespace Rector\DowngradePhp73\Rector\Unset_;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Unset_;
-use Rector\Core\Rector\AbstractRector;
 use Rector\DowngradePhp73\Tokenizer\FollowedByCommaAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -55,6 +55,7 @@ CODE_SAMPLE
         if ($node->vars !== []) {
             \end($node->vars);
             $lastArgumentPosition = \key($node->vars);
+            \reset($node->vars);
             $last = $node->vars[$lastArgumentPosition];
             if (!$this->followedByCommaAnalyzer->isFollowed($this->file, $last)) {
                 return null;

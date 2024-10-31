@@ -8,17 +8,19 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Reflection\ReflectionResolver;
-use Rector\Core\ValueObject\MethodName;
 use Rector\DeadCode\NodeAnalyzer\IsClassMethodUsedAnalyzer;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Reflection\ReflectionResolver;
+use Rector\ValueObject\MethodName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\DeadCode\Rector\ClassMethod\RemoveUnusedPrivateMethodRector\RemoveUnusedPrivateMethodRectorTest
  */
-final class RemoveUnusedPrivateMethodRector extends AbstractRector
+final class RemoveUnusedPrivateMethodRector extends AbstractScopeAwareRector
 {
     /**
      * @readonly
@@ -27,13 +29,19 @@ final class RemoveUnusedPrivateMethodRector extends AbstractRector
     private $isClassMethodUsedAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
+     * @var \Rector\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    public function __construct(IsClassMethodUsedAnalyzer $isClassMethodUsedAnalyzer, ReflectionResolver $reflectionResolver)
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(IsClassMethodUsedAnalyzer $isClassMethodUsedAnalyzer, ReflectionResolver $reflectionResolver, BetterNodeFinder $betterNodeFinder)
     {
         $this->isClassMethodUsedAnalyzer = $isClassMethodUsedAnalyzer;
         $this->reflectionResolver = $reflectionResolver;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -67,32 +75,52 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [ClassMethod::class];
+        return [Class_::class];
     }
     /**
-     * @param ClassMethod $node
+     * @param Class_ $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
-        if ($this->shouldSkip($node)) {
+        $classMethods = $node->getMethods();
+        if ($classMethods === []) {
             return null;
         }
-        if ($this->isClassMethodUsedAnalyzer->isClassMethodUsed($node)) {
+        $filter = static function (ClassMethod $classMethod) : bool {
+            return $classMethod->isPrivate();
+        };
+        if (\array_filter($classMethods, $filter) === []) {
             return null;
         }
-        if ($this->hasDynamicMethodCallOnFetchThis($node)) {
+        if ($this->hasDynamicMethodCallOnFetchThis($classMethods)) {
             return null;
         }
-        $this->removeNode($node);
+        $hasChanged = \false;
+        $classReflection = $this->reflectionResolver->resolveClassReflection($node);
+        foreach ($node->stmts as $key => $stmt) {
+            if (!$stmt instanceof ClassMethod) {
+                continue;
+            }
+            if ($this->shouldSkip($stmt, $classReflection)) {
+                continue;
+            }
+            if ($this->isClassMethodUsedAnalyzer->isClassMethodUsed($node, $stmt, $scope)) {
+                continue;
+            }
+            unset($node->stmts[$key]);
+            $hasChanged = \true;
+        }
+        if ($hasChanged) {
+            return $node;
+        }
         return null;
     }
-    private function shouldSkip(ClassMethod $classMethod) : bool
+    private function shouldSkip(ClassMethod $classMethod, ?ClassReflection $classReflection) : bool
     {
-        $classReflection = $this->reflectionResolver->resolveClassReflection($classMethod);
         if (!$classReflection instanceof ClassReflection) {
             return \true;
         }
-        // unreliable to detect trait, interface doesn't make sense
+        // unreliable to detect trait, interface, anonymous class: doesn't make sense
         if ($classReflection->isTrait()) {
             return \true;
         }
@@ -102,7 +130,6 @@ CODE_SAMPLE
         if ($classReflection->isAnonymous()) {
             return \true;
         }
-        // skips interfaces by default too
         if (!$classMethod->isPrivate()) {
             return \true;
         }
@@ -112,14 +139,13 @@ CODE_SAMPLE
         }
         return $classReflection->hasMethod(MethodName::CALL);
     }
-    private function hasDynamicMethodCallOnFetchThis(ClassMethod $classMethod) : bool
+    /**
+     * @param ClassMethod[] $classMethods
+     */
+    private function hasDynamicMethodCallOnFetchThis(array $classMethods) : bool
     {
-        $class = $this->betterNodeFinder->findParentType($classMethod, Class_::class);
-        if (!$class instanceof Class_) {
-            return \false;
-        }
-        foreach ($class->getMethods() as $method) {
-            $isFound = (bool) $this->betterNodeFinder->findFirst((array) $method->getStmts(), function (Node $subNode) : bool {
+        foreach ($classMethods as $classMethod) {
+            $isFound = (bool) $this->betterNodeFinder->findFirst((array) $classMethod->getStmts(), function (Node $subNode) : bool {
                 if (!$subNode instanceof MethodCall) {
                     return \false;
                 }

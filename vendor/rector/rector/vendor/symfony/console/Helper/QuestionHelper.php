@@ -8,22 +8,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Helper;
+namespace RectorPrefix202407\Symfony\Component\Console\Helper;
 
-use RectorPrefix202305\Symfony\Component\Console\Cursor;
-use RectorPrefix202305\Symfony\Component\Console\Exception\MissingInputException;
-use RectorPrefix202305\Symfony\Component\Console\Exception\RuntimeException;
-use RectorPrefix202305\Symfony\Component\Console\Formatter\OutputFormatter;
-use RectorPrefix202305\Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use RectorPrefix202305\Symfony\Component\Console\Input\InputInterface;
-use RectorPrefix202305\Symfony\Component\Console\Input\StreamableInputInterface;
-use RectorPrefix202305\Symfony\Component\Console\Output\ConsoleOutputInterface;
-use RectorPrefix202305\Symfony\Component\Console\Output\ConsoleSectionOutput;
-use RectorPrefix202305\Symfony\Component\Console\Output\OutputInterface;
-use RectorPrefix202305\Symfony\Component\Console\Question\ChoiceQuestion;
-use RectorPrefix202305\Symfony\Component\Console\Question\Question;
-use RectorPrefix202305\Symfony\Component\Console\Terminal;
-use function RectorPrefix202305\Symfony\Component\String\s;
+use RectorPrefix202407\Symfony\Component\Console\Cursor;
+use RectorPrefix202407\Symfony\Component\Console\Exception\MissingInputException;
+use RectorPrefix202407\Symfony\Component\Console\Exception\RuntimeException;
+use RectorPrefix202407\Symfony\Component\Console\Formatter\OutputFormatter;
+use RectorPrefix202407\Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use RectorPrefix202407\Symfony\Component\Console\Input\InputInterface;
+use RectorPrefix202407\Symfony\Component\Console\Input\StreamableInputInterface;
+use RectorPrefix202407\Symfony\Component\Console\Output\ConsoleOutputInterface;
+use RectorPrefix202407\Symfony\Component\Console\Output\ConsoleSectionOutput;
+use RectorPrefix202407\Symfony\Component\Console\Output\OutputInterface;
+use RectorPrefix202407\Symfony\Component\Console\Question\ChoiceQuestion;
+use RectorPrefix202407\Symfony\Component\Console\Question\Question;
+use RectorPrefix202407\Symfony\Component\Console\Terminal;
+use function RectorPrefix202407\Symfony\Component\String\s;
 /**
  * The QuestionHelper class provides helpers to interact with the user.
  *
@@ -83,6 +83,8 @@ class QuestionHelper extends Helper
     }
     /**
      * Prevents usage of stty.
+     *
+     * @return void
      */
     public static function disableStty()
     {
@@ -112,7 +114,14 @@ class QuestionHelper extends Helper
                 }
             }
             if (\false === $ret) {
+                $isBlocked = \stream_get_meta_data($inputStream)['blocked'] ?? \true;
+                if (!$isBlocked) {
+                    \stream_set_blocking($inputStream, \true);
+                }
                 $ret = $this->readInput($inputStream, $question);
+                if (!$isBlocked) {
+                    \stream_set_blocking($inputStream, \false);
+                }
                 if (\false === $ret) {
                     throw new MissingInputException('Aborted.');
                 }
@@ -145,7 +154,7 @@ class QuestionHelper extends Helper
             return $default;
         }
         if ($validator = $question->getValidator()) {
-            return \call_user_func($question->getValidator(), $default);
+            return \call_user_func($validator, $default);
         } elseif ($question instanceof ChoiceQuestion) {
             $choices = $question->getChoices();
             if (!$question->isMultiselect()) {
@@ -161,6 +170,8 @@ class QuestionHelper extends Helper
     }
     /**
      * Outputs the question prompt.
+     *
+     * @return void
      */
     protected function writePrompt(OutputInterface $output, Question $question)
     {
@@ -186,6 +197,8 @@ class QuestionHelper extends Helper
     }
     /**
      * Outputs an error message.
+     *
+     * @return void
      */
     protected function writeError(OutputInterface $output, \Exception $error)
     {
@@ -409,17 +422,7 @@ class QuestionHelper extends Helper
         if (isset(self::$stdinIsInteractive)) {
             return self::$stdinIsInteractive;
         }
-        if (\function_exists('stream_isatty')) {
-            return self::$stdinIsInteractive = @\stream_isatty(\fopen('php://stdin', 'r'));
-        }
-        if (\function_exists('posix_isatty')) {
-            return self::$stdinIsInteractive = @\posix_isatty(\fopen('php://stdin', 'r'));
-        }
-        if (!\function_exists('exec')) {
-            return self::$stdinIsInteractive = \true;
-        }
-        \exec('stty 2> /dev/null', $output, $status);
-        return self::$stdinIsInteractive = 1 !== $status;
+        return self::$stdinIsInteractive = @\stream_isatty(\fopen('php://stdin', 'r'));
     }
     /**
      * Reads one or more lines of input and returns what is read.

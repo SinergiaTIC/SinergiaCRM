@@ -7052,22 +7052,22 @@
                 },
                 {
                         "name": "rector/rector",
-                        "version": "0.16.0",
-                        "version_normalized": "0.16.0.0",
+                        "version": "1.2.2",
+                        "version_normalized": "1.2.2.0",
                         "source": {
                                 "type": "git",
                                 "url": "https://github.com/rectorphp/rector.git",
-                                "reference": "2125ff71ea05b079562a8f59ca48a97eb78dc07f"
+                                "reference": "044e6364017882d1e346da8690eeabc154da5495"
                         },
                         "dist": {
                                 "type": "zip",
-                                "url": "https://api.github.com/repos/rectorphp/rector/zipball/2125ff71ea05b079562a8f59ca48a97eb78dc07f",
-                                "reference": "2125ff71ea05b079562a8f59ca48a97eb78dc07f",
+                                "url": "https://api.github.com/repos/rectorphp/rector/zipball/044e6364017882d1e346da8690eeabc154da5495",
+                                "reference": "044e6364017882d1e346da8690eeabc154da5495",
                                 "shasum": ""
                         },
                         "require": {
                                 "php": "^7.2|^8.0",
-                                "phpstan/phpstan": "^1.10.14"
+                                "phpstan/phpstan": "^1.11"
                         },
                         "conflict": {
                                 "rector/rector-doctrine": "*",
@@ -7075,16 +7075,14 @@
                                 "rector/rector-phpunit": "*",
                                 "rector/rector-symfony": "*"
                         },
-                        "time": "2023-05-05T12:12:17+00:00",
+                        "suggest": {
+                                "ext-dom": "To manipulate phpunit.xml via the custom-rule command"
+                        },
+                        "time": "2024-07-25T07:44:34+00:00",
                         "bin": [
                                 "bin/rector"
                         ],
                         "type": "library",
-                        "extra": {
-                                "branch-alias": {
-                                        "dev-main": "0.15-dev"
-                                }
-                        },
                         "installation-source": "dist",
                         "autoload": {
                                 "files": [
@@ -7104,7 +7102,7 @@
                         ],
                         "support": {
                                 "issues": "https://github.com/rectorphp/rector/issues",
-                                "source": "https://github.com/rectorphp/rector/tree/0.16.0"
+                                "source": "https://github.com/rectorphp/rector/tree/1.2.2"
                         },
                         "funding": [
                                 {

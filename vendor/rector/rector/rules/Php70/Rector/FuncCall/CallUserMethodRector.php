@@ -7,8 +7,8 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -56,7 +56,7 @@ final class CallUserMethodRector extends AbstractRector implements MinPhpVersion
         $newArgs = [$this->nodeFactory->createArg([$oldArgs[1]->value, $oldArgs[0]->value])];
         unset($oldArgs[0]);
         unset($oldArgs[1]);
-        $node->args = $this->appendArgs($newArgs, $oldArgs);
+        $node->args = \array_merge($newArgs, $oldArgs);
         return $node;
     }
 }

@@ -4,12 +4,11 @@ declare (strict_types=1);
 namespace Rector\DowngradePhp73\Rector\FuncCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Name\FullyQualified;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -46,14 +45,12 @@ CODE_SAMPLE
         if (!$this->isName($node, 'is_countable')) {
             return null;
         }
-        if (!isset($node->args[0])) {
+        $args = $node->getArgs();
+        if (!isset($args[0])) {
             return null;
         }
-        if (!$node->args[0] instanceof Arg) {
-            return null;
-        }
-        $isArrayFuncCall = $this->nodeFactory->createFuncCall('is_array', $node->args);
-        $instanceof = new Instanceof_($node->args[0]->value, new FullyQualified('Countable'));
+        $isArrayFuncCall = $this->nodeFactory->createFuncCall('is_array', $args);
+        $instanceof = new Instanceof_($args[0]->value, new FullyQualified('Countable'));
         return new BooleanOr($isArrayFuncCall, $instanceof);
     }
 }

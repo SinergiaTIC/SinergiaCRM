@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Input;
+namespace RectorPrefix202407\Symfony\Component\Console\Input;
 
-use RectorPrefix202305\Symfony\Component\Console\Command\Command;
-use RectorPrefix202305\Symfony\Component\Console\Completion\CompletionInput;
-use RectorPrefix202305\Symfony\Component\Console\Completion\CompletionSuggestions;
-use RectorPrefix202305\Symfony\Component\Console\Completion\Suggestion;
-use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
-use RectorPrefix202305\Symfony\Component\Console\Exception\LogicException;
+use RectorPrefix202407\Symfony\Component\Console\Command\Command;
+use RectorPrefix202407\Symfony\Component\Console\Completion\CompletionInput;
+use RectorPrefix202407\Symfony\Component\Console\Completion\CompletionSuggestions;
+use RectorPrefix202407\Symfony\Component\Console\Completion\Suggestion;
+use RectorPrefix202407\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202407\Symfony\Component\Console\Exception\LogicException;
 /**
  * Represents a command line option.
  *
@@ -48,7 +48,7 @@ class InputOption
      */
     private $name;
     /**
-     * @var string|mixed[]|null
+     * @var mixed[]|string|null
      */
     private $shortcut;
     /**
@@ -56,7 +56,7 @@ class InputOption
      */
     private $mode;
     /**
-     * @var string|int|bool|mixed[]|null|float
+     * @var mixed[]|bool|float|int|string|null
      */
     private $default;
     /**
@@ -68,14 +68,14 @@ class InputOption
      */
     private $description;
     /**
-     * @param string|mixed[] $shortcut The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
+     * @param string|array|null                                                             $shortcut        The shortcuts, can be null, a string of shortcuts delimited by | or an array of shortcuts
      * @param int|null                                                                      $mode            The option mode: One of the VALUE_* constants
-     * @param string|bool|int|float|mixed[] $default The default value (must be null for self::VALUE_NONE)
+     * @param string|bool|int|float|array|null                                              $default         The default value (must be null for self::VALUE_NONE)
      * @param array|\Closure(CompletionInput,CompletionSuggestions):list<string|Suggestion> $suggestedValues The values used for input completion
      *
      * @throws InvalidArgumentException If option mode is invalid or incompatible
      */
-    public function __construct(string $name, $shortcut = null, int $mode = null, string $description = '', $default = null, $suggestedValues = [])
+    public function __construct(string $name, $shortcut = null, ?int $mode = null, string $description = '', $default = null, $suggestedValues = [])
     {
         if (\strncmp($name, '--', \strlen('--')) === 0) {
             $name = \substr($name, 2);
@@ -83,7 +83,7 @@ class InputOption
         if (empty($name)) {
             throw new InvalidArgumentException('An option name cannot be empty.');
         }
-        if (empty($shortcut)) {
+        if ('' === $shortcut || [] === $shortcut || \false === $shortcut) {
             $shortcut = null;
         }
         if (null !== $shortcut) {
@@ -91,9 +91,9 @@ class InputOption
                 $shortcut = \implode('|', $shortcut);
             }
             $shortcuts = \preg_split('{(\\|)-?}', \ltrim($shortcut, '-'));
-            $shortcuts = \array_filter($shortcuts);
+            $shortcuts = \array_filter($shortcuts, 'strlen');
             $shortcut = \implode('|', $shortcuts);
-            if (empty($shortcut)) {
+            if ('' === $shortcut) {
                 throw new InvalidArgumentException('An option shortcut cannot be empty.');
             }
         }
@@ -173,12 +173,13 @@ class InputOption
         return self::VALUE_NEGATABLE === (self::VALUE_NEGATABLE & $this->mode);
     }
     /**
-     * @param string|bool|int|float|mixed[] $default
+     * @return void
+     * @param string|bool|int|float|mixed[]|null $default
      */
     public function setDefault($default = null)
     {
         if (1 > \func_num_args()) {
-            \RectorPrefix202305\trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
+            trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
         }
         if (self::VALUE_NONE === (self::VALUE_NONE & $this->mode) && null !== $default) {
             throw new LogicException('Cannot set a default value when using InputOption::VALUE_NONE mode.');
@@ -194,7 +195,7 @@ class InputOption
     }
     /**
      * Returns the default value.
-     * @return string|bool|int|float|mixed[]|null
+     * @return mixed[]|bool|float|int|string|null
      */
     public function getDefault()
     {

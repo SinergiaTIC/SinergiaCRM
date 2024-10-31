@@ -9,21 +9,18 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use RectorPrefix202305\Spatie\Enum\Enum;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://wiki.php.net/rfc/enumerations
- *
  * @see \Rector\Tests\Php81\Rector\MethodCall\MyCLabsMethodCallToEnumConstRector\MyCLabsMethodCallToEnumConstRectorTest
  */
 final class SpatieEnumMethodCallToEnumConstRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
-     * @var class-string<Enum>
+     * @var string
      */
     private const SPATIE_FQN = 'Spatie\\Enum\\Enum';
     /**
@@ -103,8 +100,8 @@ CODE_SAMPLE
             return null;
         }
         $upperCaseName = \strtoupper($enumCaseName);
-        $enumConstFetch = $this->nodeFactory->createClassConstFetch($className, $upperCaseName);
-        return new PropertyFetch($enumConstFetch, $property);
+        $classConstFetch = $this->nodeFactory->createClassConstFetch($className, $upperCaseName);
+        return new PropertyFetch($classConstFetch, $property);
     }
     private function refactorMethodCall(MethodCall $methodCall, string $methodName) : ?\PhpParser\Node\Expr\PropertyFetch
     {

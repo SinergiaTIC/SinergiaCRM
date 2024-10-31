@@ -4,40 +4,22 @@ declare (strict_types=1);
 namespace Rector\TypeDeclaration\Rector\ClassMethod;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Function_;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Type\NeverType;
-use PHPStan\Type\VoidType;
-use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger;
-use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Reflection\ReflectionResolver;
-use Rector\Core\ValueObject\PhpVersionFeature;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use PhpParser\Node\Stmt\Throw_;
+use Rector\Rector\AbstractRector;
+use Rector\Reflection\ClassModifierChecker;
 use Rector\TypeDeclaration\TypeInferer\SilentVoidResolver;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VendorLocker\NodeVendorLocker\ClassMethodReturnVendorLockResolver;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector\AddVoidReturnTypeWhereNoReturnRectorTest
  */
-final class AddVoidReturnTypeWhereNoReturnRector extends AbstractRector implements MinPhpVersionInterface, AllowEmptyConfigurableRectorInterface
+final class AddVoidReturnTypeWhereNoReturnRector extends AbstractRector implements MinPhpVersionInterface
 {
-    /**
-     * @api
-     * @var string using phpdoc instead of a native void type can ease the migration path for consumers of code being processed.
-     */
-    public const USE_PHPDOC = 'use_phpdoc';
-    /**
-     * @var bool
-     */
-    private $usePhpdoc = \false;
     /**
      * @readonly
      * @var \Rector\TypeDeclaration\TypeInferer\SilentVoidResolver
@@ -50,24 +32,18 @@ final class AddVoidReturnTypeWhereNoReturnRector extends AbstractRector implemen
     private $classMethodReturnVendorLockResolver;
     /**
      * @readonly
-     * @var \Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger
+     * @var \Rector\Reflection\ClassModifierChecker
      */
-    private $phpDocTypeChanger;
-    /**
-     * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
-     */
-    private $reflectionResolver;
-    public function __construct(SilentVoidResolver $silentVoidResolver, ClassMethodReturnVendorLockResolver $classMethodReturnVendorLockResolver, PhpDocTypeChanger $phpDocTypeChanger, ReflectionResolver $reflectionResolver)
+    private $classModifierChecker;
+    public function __construct(SilentVoidResolver $silentVoidResolver, ClassMethodReturnVendorLockResolver $classMethodReturnVendorLockResolver, ClassModifierChecker $classModifierChecker)
     {
         $this->silentVoidResolver = $silentVoidResolver;
         $this->classMethodReturnVendorLockResolver = $classMethodReturnVendorLockResolver;
-        $this->phpDocTypeChanger = $phpDocTypeChanger;
-        $this->reflectionResolver = $reflectionResolver;
+        $this->classModifierChecker = $classModifierChecker;
     }
     public function getRuleDefinition() : RuleDefinition
     {
-        return new RuleDefinition('Add return type void to function like without any return', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
+        return new RuleDefinition('Add return type void to function like without any return', [new CodeSample(<<<'CODE_SAMPLE'
 final class SomeClass
 {
     public function getValues()
@@ -87,21 +63,22 @@ final class SomeClass
     }
 }
 CODE_SAMPLE
-, [self::USE_PHPDOC => \false])]);
+)]);
     }
     /**
      * @return array<class-string<Node>>
      */
     public function getNodeTypes() : array
     {
-        return [ClassMethod::class, Function_::class, Closure::class];
+        return [ClassMethod::class];
     }
     /**
-     * @param ClassMethod|Function_|Closure $node
+     * @param ClassMethod $node
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->returnType !== null) {
+        // already has return type → skip
+        if ($node->returnType instanceof Node) {
             return null;
         }
         if ($this->shouldSkipClassMethod($node)) {
@@ -110,14 +87,7 @@ CODE_SAMPLE
         if (!$this->silentVoidResolver->hasExclusiveVoid($node)) {
             return null;
         }
-        if ($this->usePhpdoc) {
-            $hasChanged = $this->changePhpDocToVoidIfNotNever($node);
-            if ($hasChanged) {
-                return $node;
-            }
-            return null;
-        }
-        if ($node instanceof ClassMethod && $this->classMethodReturnVendorLockResolver->isVendorLocked($node)) {
+        if ($this->classMethodReturnVendorLockResolver->isVendorLocked($node)) {
             return null;
         }
         $node->returnType = new Identifier('void');
@@ -127,55 +97,40 @@ CODE_SAMPLE
     {
         return PhpVersionFeature::VOID_TYPE;
     }
-    /**
-     * @param mixed[] $configuration
-     */
-    public function configure(array $configuration) : void
+    private function shouldSkipClassMethod(ClassMethod $classMethod) : bool
     {
-        $usePhpdoc = $configuration[self::USE_PHPDOC] ?? (bool) \current($configuration);
-        Assert::boolean($usePhpdoc);
-        $this->usePhpdoc = $usePhpdoc;
-    }
-    /**
-     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node $node
-     */
-    private function changePhpDocToVoidIfNotNever($node) : bool
-    {
-        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
-        if ($phpDocInfo->getReturnType() instanceof NeverType) {
-            return \false;
-        }
-        return $this->phpDocTypeChanger->changeReturnType($phpDocInfo, new VoidType());
-    }
-    /**
-     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $functionLike
-     */
-    private function shouldSkipClassMethod($functionLike) : bool
-    {
-        if (!$functionLike instanceof ClassMethod) {
-            return \false;
-        }
-        if ($functionLike->isMagic()) {
+        if ($classMethod->isAbstract()) {
             return \true;
         }
-        if ($functionLike->isAbstract()) {
+        // is not final and has only exception? possibly implemented by child
+        if ($this->isNotFinalAndHasExceptionOnly($classMethod)) {
             return \true;
         }
-        if ($functionLike->isProtected()) {
-            return !$this->isInsideFinalClass($functionLike);
+        // possibly required by child implementation
+        if ($this->isNotFinalAndEmpty($classMethod)) {
+            return \true;
         }
-        return \false;
+        if ($classMethod->isProtected()) {
+            return !$this->classModifierChecker->isInsideFinalClass($classMethod);
+        }
+        return $this->classModifierChecker->isInsideAbstractClass($classMethod) && $classMethod->getStmts() === [];
     }
-    private function isInsideFinalClass(ClassMethod $classMethod) : bool
+    private function isNotFinalAndHasExceptionOnly(ClassMethod $classMethod) : bool
     {
-        $classReflection = $this->reflectionResolver->resolveClassReflection($classMethod);
-        if (!$classReflection instanceof ClassReflection) {
+        if ($this->classModifierChecker->isInsideFinalClass($classMethod)) {
             return \false;
         }
-        $node = $classMethod->getAttribute(AttributeKey::PARENT_NODE);
-        if (!$node instanceof Class_) {
+        if (\count((array) $classMethod->stmts) !== 1) {
             return \false;
         }
-        return $node->isFinal();
+        $onlyStmt = $classMethod->stmts[0] ?? null;
+        return $onlyStmt instanceof Throw_;
+    }
+    private function isNotFinalAndEmpty(ClassMethod $classMethod) : bool
+    {
+        if ($this->classModifierChecker->isInsideFinalClass($classMethod)) {
+            return \false;
+        }
+        return $classMethod->stmts === [];
     }
 }

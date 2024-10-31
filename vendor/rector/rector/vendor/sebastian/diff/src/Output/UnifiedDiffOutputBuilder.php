@@ -9,7 +9,7 @@ declare (strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\SebastianBergmann\Diff\Output;
+namespace RectorPrefix202407\SebastianBergmann\Diff\Output;
 
 use function array_splice;
 use function count;
@@ -20,9 +20,8 @@ use function max;
 use function min;
 use function str_ends_with;
 use function stream_get_contents;
-use function strlen;
 use function substr;
-use RectorPrefix202305\SebastianBergmann\Diff\Differ;
+use RectorPrefix202407\SebastianBergmann\Diff\Differ;
 /**
  * Builds a diff string representation in unified diff format in chunks.
  */
@@ -59,7 +58,7 @@ final class UnifiedDiffOutputBuilder extends AbstractChunkOutputBuilder
         $buffer = fopen('php://memory', 'r+b');
         if ('' !== $this->header) {
             fwrite($buffer, $this->header);
-            if (\substr_compare($this->header, "\n", -strlen("\n")) !== 0) {
+            if (\substr_compare($this->header, "\n", -\strlen("\n")) !== 0) {
                 fwrite($buffer, "\n");
             }
         }
@@ -71,7 +70,7 @@ final class UnifiedDiffOutputBuilder extends AbstractChunkOutputBuilder
         // If the diff is non-empty and last char is not a linebreak: add it.
         // This might happen when both the `from` and `to` do not have a trailing linebreak
         $last = substr($diff, -1);
-        return 0 !== strlen($diff) && "\n" !== $last && "\r" !== $last ? $diff . "\n" : $diff;
+        return '' !== $diff && "\n" !== $last && "\r" !== $last ? $diff . "\n" : $diff;
     }
     private function writeDiffHunks($output, array $diff) : void
     {

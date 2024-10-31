@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\NodeAnalyzer;
+namespace Rector\NodeAnalyzer;
 
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
@@ -11,9 +11,9 @@ use PHPStan\Reflection\Php\PhpPropertyReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
-use Rector\Core\PhpParser\AstResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\Php80\NodeAnalyzer\PromotedPropertyResolver;
+use Rector\PhpParser\AstResolver;
 use Rector\PostRector\ValueObject\PropertyMetadata;
 /**
  * Can be local property, parent property etc.
@@ -37,7 +37,7 @@ final class PropertyPresenceChecker
     private $reflectionProvider;
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\AstResolver
+     * @var \Rector\PhpParser\AstResolver
      */
     private $astResolver;
     public function __construct(PromotedPropertyResolver $promotedPropertyResolver, NodeNameResolver $nodeNameResolver, ReflectionProvider $reflectionProvider, AstResolver $astResolver)
@@ -112,8 +112,8 @@ final class PropertyPresenceChecker
         if (!$phpPropertyReflection->getWritableType() instanceof TypeWithClassName) {
             return null;
         }
-        $propertyObjectType = $propertyMetadata->getType();
-        if (!$propertyObjectType->equals($phpPropertyReflection->getWritableType())) {
+        $propertyObjectTypeWithClassName = $propertyMetadata->getType();
+        if (!$propertyObjectTypeWithClassName->equals($phpPropertyReflection->getWritableType())) {
             return null;
         }
         return $this->astResolver->resolvePropertyFromPropertyReflection($phpPropertyReflection);

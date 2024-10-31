@@ -7,8 +7,8 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\LNumber;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -71,7 +71,10 @@ final class MultiDirnameRector extends AbstractRector implements MinPhpVersionIn
         if (!$this->isName($funcCall, self::DIRNAME)) {
             return null;
         }
-        $args = $funcCall->args;
+        if ($funcCall->isFirstClassCallable()) {
+            return null;
+        }
+        $args = $funcCall->getArgs();
         if (\count($args) >= 3) {
             return null;
         }

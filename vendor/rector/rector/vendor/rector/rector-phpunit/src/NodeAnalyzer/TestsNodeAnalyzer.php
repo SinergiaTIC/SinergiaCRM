@@ -6,19 +6,15 @@ namespace Rector\PHPUnit\NodeAnalyzer;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\Reflection\ReflectionResolver;
 final class TestsNodeAnalyzer
 {
-    /**
-     * @var ObjectType[]
-     */
-    private $testCaseObjectTypes = [];
     /**
      * @readonly
      * @var \Rector\NodeTypeResolver\NodeTypeResolver
@@ -36,31 +32,39 @@ final class TestsNodeAnalyzer
     private $phpDocInfoFactory;
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\Reflection\ReflectionResolver
      */
-    private $betterNodeFinder;
-    public function __construct(NodeTypeResolver $nodeTypeResolver, NodeNameResolver $nodeNameResolver, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder)
+    private $reflectionResolver;
+    /**
+     * @var string[]
+     */
+    private const TEST_CASE_OBJECT_CLASSES = ['PHPUnit\\Framework\\TestCase', 'PHPUnit_Framework_TestCase'];
+    public function __construct(NodeTypeResolver $nodeTypeResolver, NodeNameResolver $nodeNameResolver, PhpDocInfoFactory $phpDocInfoFactory, ReflectionResolver $reflectionResolver)
     {
         $this->nodeTypeResolver = $nodeTypeResolver;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
-        $this->betterNodeFinder = $betterNodeFinder;
-        $this->testCaseObjectTypes = [new ObjectType('PHPUnit\\Framework\\TestCase'), new ObjectType('PHPUnit_Framework_TestCase')];
+        $this->reflectionResolver = $reflectionResolver;
     }
     public function isInTestClass(Node $node) : bool
     {
-        $classLike = $node instanceof ClassLike ? $node : $this->betterNodeFinder->findParentType($node, ClassLike::class);
-        if (!$classLike instanceof ClassLike) {
+        $classReflection = $this->reflectionResolver->resolveClassReflection($node);
+        if (!$classReflection instanceof ClassReflection) {
             return \false;
         }
-        return $this->nodeTypeResolver->isObjectTypes($classLike, $this->testCaseObjectTypes);
+        foreach (self::TEST_CASE_OBJECT_CLASSES as $testCaseObjectClass) {
+            if ($classReflection->isSubclassOf($testCaseObjectClass)) {
+                return \true;
+            }
+        }
+        return \false;
     }
     public function isTestClassMethod(ClassMethod $classMethod) : bool
     {
         if (!$classMethod->isPublic()) {
             return \false;
         }
-        if ($this->nodeNameResolver->isName($classMethod, 'test*')) {
+        if (\strncmp($classMethod->name->toString(), 'test', \strlen('test')) === 0) {
             return \true;
         }
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($classMethod);
@@ -77,14 +81,6 @@ final class TestsNodeAnalyzer
         }
         $assertObjectType = new ObjectType('PHPUnit\\Framework\\Assert');
         if (!$assertObjectType->isSuperTypeOf($callerType)->yes()) {
-            return \false;
-        }
-        /** @var StaticCall|MethodCall $node */
-        return $this->nodeNameResolver->isName($node->name, $name);
-    }
-    public function isInPHPUnitMethodCallName(Node $node, string $name) : bool
-    {
-        if (!$this->isPHPUnitTestCaseCall($node)) {
             return \false;
         }
         /** @var StaticCall|MethodCall $node */

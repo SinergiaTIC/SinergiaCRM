@@ -5,8 +5,9 @@ namespace Rector\DeadCode\Rector\Property;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Property;
-use Rector\Core\Rector\AbstractRector;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\DeadCode\PhpDoc\TagRemover\VarTagRemover;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -19,9 +20,15 @@ final class RemoveUselessVarTagRector extends AbstractRector
      * @var \Rector\DeadCode\PhpDoc\TagRemover\VarTagRemover
      */
     private $varTagRemover;
-    public function __construct(VarTagRemover $varTagRemover)
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+    public function __construct(VarTagRemover $varTagRemover, PhpDocInfoFactory $phpDocInfoFactory)
     {
         $this->varTagRemover = $varTagRemover;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -55,10 +62,10 @@ CODE_SAMPLE
     public function refactor(Node $node) : ?Node
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
-        $this->varTagRemover->removeVarTagIfUseless($phpDocInfo, $node);
-        if ($phpDocInfo->hasChanged()) {
-            return $node;
+        $hasChanged = $this->varTagRemover->removeVarTagIfUseless($phpDocInfo, $node);
+        if (!$hasChanged) {
+            return null;
         }
-        return null;
+        return $node;
     }
 }

@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console;
+namespace RectorPrefix202407\Symfony\Component\Console;
 
-use RectorPrefix202305\Symfony\Component\Console\Output\AnsiColorMode;
+use RectorPrefix202407\Symfony\Component\Console\Output\AnsiColorMode;
 class Terminal
 {
     public const DEFAULT_COLOR_MODE = AnsiColorMode::Ansi4;
@@ -111,14 +111,13 @@ class Terminal
         if (null !== self::$stty) {
             return self::$stty;
         }
-        // skip check if exec function is disabled
-        if (!\function_exists('exec')) {
+        // skip check if shell_exec function is disabled
+        if (!\function_exists('shell_exec')) {
             return \false;
         }
-        \exec('stty 2>&1', $output, $exitcode);
-        return self::$stty = 0 === $exitcode;
+        return self::$stty = (bool) \shell_exec('stty 2> ' . ('\\' === \DIRECTORY_SEPARATOR ? 'NUL' : '/dev/null'));
     }
-    private static function initDimensions()
+    private static function initDimensions() : void
     {
         if ('\\' === \DIRECTORY_SEPARATOR) {
             $ansicon = \getenv('ANSICON');
@@ -150,7 +149,7 @@ class Terminal
     /**
      * Initializes dimensions using the output of an stty columns line.
      */
-    private static function initDimensionsUsingStty()
+    private static function initDimensionsUsingStty() : void
     {
         if ($sttyString = self::getSttyColumns()) {
             if (\preg_match('/rows.(\\d+);.columns.(\\d+);/is', $sttyString, $matches)) {
@@ -194,10 +193,7 @@ class Terminal
         }
         $descriptorspec = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
         $cp = \function_exists('sapi_windows_cp_set') ? \sapi_windows_cp_get() : 0;
-        if (\is_array($command)) {
-            $command = \implode(' ', $command);
-        }
-        $process = \proc_open($command, $descriptorspec, $pipes, null, null, ['suppress_errors' => \true]);
+        $process = \proc_open(\is_array($command) ? \implode(' ', \array_map('escapeshellarg', $command)) : $command, $descriptorspec, $pipes, null, null, ['suppress_errors' => \true]);
         if (!\is_resource($process)) {
             return null;
         }

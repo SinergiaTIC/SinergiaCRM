@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\PhpParser\ValueObject;
+namespace Rector\PhpParser\ValueObject;
 
 use PhpParser\Node\Stmt;
 final class StmtsAndTokens
@@ -12,13 +12,13 @@ final class StmtsAndTokens
      */
     private $stmts;
     /**
-     * @var mixed[]
+     * @var array<int, (array{int, string, int} | string)>
      * @readonly
      */
     private $tokens;
     /**
      * @param Stmt[] $stmts
-     * @param mixed[] $tokens
+     * @param array<int, array{int, string, int}|string> $tokens
      */
     public function __construct(array $stmts, array $tokens)
     {
@@ -33,7 +33,7 @@ final class StmtsAndTokens
         return $this->stmts;
     }
     /**
-     * @return mixed[]
+     * @return array<int, array{int, string, int}|string>
      */
     public function getTokens() : array
     {

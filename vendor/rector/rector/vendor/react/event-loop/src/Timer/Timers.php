@@ -1,8 +1,8 @@
 <?php
 
-namespace RectorPrefix202305\React\EventLoop\Timer;
+namespace RectorPrefix202407\React\EventLoop\Timer;
 
-use RectorPrefix202305\React\EventLoop\TimerInterface;
+use RectorPrefix202407\React\EventLoop\TimerInterface;
 /**
  * A scheduler implementation that can hold multiple timer instances
  *
@@ -33,18 +33,19 @@ final class Timers
     }
     public function add(TimerInterface $timer)
     {
-        $id = \spl_object_hash($timer);
+        $id = \PHP_VERSION_ID < 70200 ? \spl_object_hash($timer) : \spl_object_id($timer);
         $this->timers[$id] = $timer;
         $this->schedule[$id] = $timer->getInterval() + $this->updateTime();
         $this->sorted = \false;
     }
     public function contains(TimerInterface $timer)
     {
-        return isset($this->timers[\spl_object_hash($timer)]);
+        $id = \PHP_VERSION_ID < 70200 ? \spl_object_hash($timer) : \spl_object_id($timer);
+        return isset($this->timers[$id]);
     }
     public function cancel(TimerInterface $timer)
     {
-        $id = \spl_object_hash($timer);
+        $id = \PHP_VERSION_ID < 70200 ? \spl_object_hash($timer) : \spl_object_id($timer);
         unset($this->timers[$id], $this->schedule[$id]);
     }
     public function getFirst()

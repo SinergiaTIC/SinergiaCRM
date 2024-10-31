@@ -9,17 +9,17 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Identifier;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
+use Rector\ValueObject\PolyfillPackage;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
+use Rector\VersionBonding\Contract\RelatedPolyfillInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://wiki.php.net/rfc/get_debug_type
- *
  * @see \Rector\Tests\Php80\Rector\Ternary\GetDebugTypeRector\GetDebugTypeRectorTest
  */
-final class GetDebugTypeRector extends AbstractRector implements MinPhpVersionInterface
+final class GetDebugTypeRector extends AbstractRector implements MinPhpVersionInterface, RelatedPolyfillInterface
 {
     public function provideMinPhpVersion() : int
     {
@@ -67,8 +67,12 @@ CODE_SAMPLE
         }
         /** @var FuncCall|ClassConstFetch $getClassFuncCallOrClassConstFetchClass */
         $getClassFuncCallOrClassConstFetchClass = $node->if;
-        $firstExpr = $getClassFuncCallOrClassConstFetchClass instanceof FuncCall ? $getClassFuncCallOrClassConstFetchClass->args[0]->value : $getClassFuncCallOrClassConstFetchClass->class;
+        $firstExpr = $getClassFuncCallOrClassConstFetchClass instanceof FuncCall ? $getClassFuncCallOrClassConstFetchClass->getArgs()[0]->value : $getClassFuncCallOrClassConstFetchClass->class;
         return $this->nodeFactory->createFuncCall('get_debug_type', [$firstExpr]);
+    }
+    public function providePolyfillPackage() : string
+    {
+        return PolyfillPackage::PHP_80;
     }
     private function shouldSkip(Ternary $ternary) : bool
     {
@@ -78,7 +82,7 @@ CODE_SAMPLE
         if ($ternary->cond->isFirstClassCallable()) {
             return \true;
         }
-        if (!isset($ternary->cond->args[0])) {
+        if (!isset($ternary->cond->getArgs()[0])) {
             return \true;
         }
         if (!$this->nodeNameResolver->isName($ternary->cond, 'is_object')) {
@@ -112,15 +116,20 @@ CODE_SAMPLE
     {
         /** @var FuncCall $isObjectFuncCall */
         $isObjectFuncCall = $ternary->cond;
-        $firstExpr = $isObjectFuncCall->args[0]->value;
+        if ($isObjectFuncCall->isFirstClassCallable()) {
+            return \false;
+        }
+        $firstExpr = $isObjectFuncCall->getArgs()[0]->value;
         /** @var FuncCall|ClassConstFetch $getClassFuncCallOrClassConstFetchClass */
         $getClassFuncCallOrClassConstFetchClass = $ternary->if;
         if ($getClassFuncCallOrClassConstFetchClass instanceof FuncCall && !$getClassFuncCallOrClassConstFetchClass->args[0] instanceof Arg) {
             return \false;
         }
-        $secondExpr = $getClassFuncCallOrClassConstFetchClass instanceof FuncCall ? $getClassFuncCallOrClassConstFetchClass->args[0]->value : $getClassFuncCallOrClassConstFetchClass->class;
-        /** @var FuncCall $gettypeFuncCall */
+        $secondExpr = $getClassFuncCallOrClassConstFetchClass instanceof FuncCall ? $getClassFuncCallOrClassConstFetchClass->getArgs()[0]->value : $getClassFuncCallOrClassConstFetchClass->class;
         $gettypeFuncCall = $ternary->else;
+        if (!$gettypeFuncCall instanceof FuncCall) {
+            return \false;
+        }
         if (!$gettypeFuncCall->args[0] instanceof Arg) {
             return \false;
         }

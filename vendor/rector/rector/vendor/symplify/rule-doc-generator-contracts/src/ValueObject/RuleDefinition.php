@@ -3,13 +3,17 @@
 declare (strict_types=1);
 namespace Symplify\RuleDocGenerator\ValueObject;
 
-use RectorPrefix202305\Nette\Utils\Strings;
 use Symplify\RuleDocGenerator\Contract\CodeSampleInterface;
 use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\Exception\ShouldNotHappenException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 final class RuleDefinition
 {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $description;
     /**
      * @var string|null
      */
@@ -22,11 +26,6 @@ final class RuleDefinition
      * @var CodeSampleInterface[]
      */
     private $codeSamples = [];
-    /**
-     * @readonly
-     * @var string
-     */
-    private $description;
     /**
      * @param CodeSampleInterface[] $codeSamples
      */
@@ -70,7 +69,8 @@ final class RuleDefinition
         if ($this->ruleClass === null) {
             throw new ShouldNotHappenException();
         }
-        return (string) Strings::after($this->ruleClass, '\\', -1);
+        // get short class name
+        return \basename(\str_replace('\\', '/', $this->ruleClass));
     }
     /**
      * @return CodeSampleInterface[]

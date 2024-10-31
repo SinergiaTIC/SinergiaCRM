@@ -5,11 +5,9 @@ namespace Rector\TypeDeclaration\TypeInferer;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\FunctionLike;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Return_;
@@ -21,17 +19,17 @@ use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
-use Rector\Core\Enum\ObjectReference;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\Php\PhpVersionProvider;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
-use Rector\Core\ValueObject\PhpVersionFeature;
-use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\Enum\ObjectReference;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\Php\PhpVersionProvider;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Reflection\ReflectionResolver;
 use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
 use Rector\TypeDeclaration\TypeAnalyzer\GenericClassStringTypeNormalizer;
 use Rector\TypeDeclaration\TypeInferer\ReturnTypeInferer\ReturnedNodesReturnTypeInfererTypeInferer;
 use Rector\TypeDeclaration\TypeNormalizer;
+use Rector\ValueObject\PhpVersionFeature;
 /**
  * @internal
  */
@@ -54,14 +52,19 @@ final class ReturnTypeInferer
     private $genericClassStringTypeNormalizer;
     /**
      * @readonly
-     * @var \Rector\Core\Php\PhpVersionProvider
+     * @var \Rector\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
     /**
      * @readonly
      * @var \PHPStan\Reflection\ReflectionProvider
@@ -72,24 +75,19 @@ final class ReturnTypeInferer
      * @var \Rector\NodeTypeResolver\NodeTypeResolver
      */
     private $nodeTypeResolver;
-    /**
-     * @readonly
-     * @var \Rector\NodeNameResolver\NodeNameResolver
-     */
-    private $nodeNameResolver;
-    public function __construct(TypeNormalizer $typeNormalizer, ReturnedNodesReturnTypeInfererTypeInferer $returnedNodesReturnTypeInfererTypeInferer, GenericClassStringTypeNormalizer $genericClassStringTypeNormalizer, PhpVersionProvider $phpVersionProvider, BetterNodeFinder $betterNodeFinder, ReflectionProvider $reflectionProvider, NodeTypeResolver $nodeTypeResolver, NodeNameResolver $nodeNameResolver)
+    public function __construct(TypeNormalizer $typeNormalizer, ReturnedNodesReturnTypeInfererTypeInferer $returnedNodesReturnTypeInfererTypeInferer, GenericClassStringTypeNormalizer $genericClassStringTypeNormalizer, PhpVersionProvider $phpVersionProvider, BetterNodeFinder $betterNodeFinder, ReflectionResolver $reflectionResolver, ReflectionProvider $reflectionProvider, NodeTypeResolver $nodeTypeResolver)
     {
         $this->typeNormalizer = $typeNormalizer;
         $this->returnedNodesReturnTypeInfererTypeInferer = $returnedNodesReturnTypeInfererTypeInferer;
         $this->genericClassStringTypeNormalizer = $genericClassStringTypeNormalizer;
         $this->phpVersionProvider = $phpVersionProvider;
         $this->betterNodeFinder = $betterNodeFinder;
+        $this->reflectionResolver = $reflectionResolver;
         $this->reflectionProvider = $reflectionProvider;
         $this->nodeTypeResolver = $nodeTypeResolver;
-        $this->nodeNameResolver = $nodeNameResolver;
     }
     /**
-     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $functionLike
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $functionLike
      */
     public function inferFunctionLike($functionLike) : Type
     {
@@ -128,26 +126,23 @@ final class ReturnTypeInferer
         if (!$type instanceof ThisType) {
             return $type;
         }
-        $class = $this->betterNodeFinder->findParentType($functionLike, Class_::class);
+        $classReflection = $this->reflectionResolver->resolveClassReflection($functionLike);
         $objectType = $type->getStaticObjectType();
         $objectTypeClassName = $objectType->getClassName();
-        if (!$class instanceof Class_) {
+        if (!$classReflection instanceof ClassReflection || !$classReflection->isClass()) {
             return $type;
         }
-        if ($this->nodeNameResolver->isName($class, $objectTypeClassName)) {
+        if ($classReflection->getName() === $objectTypeClassName) {
             return $type;
         }
         return new MixedType();
     }
     /**
-     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $functionLike
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $functionLike
      */
     private function resolveTypeWithVoidHandling($functionLike, Type $resolvedType) : Type
     {
         if ($resolvedType->isVoid()->yes()) {
-            if ($functionLike instanceof ArrowFunction) {
-                return new MixedType();
-            }
             $hasReturnValue = (bool) $this->betterNodeFinder->findFirstInFunctionLikeScoped($functionLike, static function (Node $subNode) : bool {
                 if (!$subNode instanceof Return_) {
                     // yield return is handled on speicific rule: AddReturnTypeDeclarationFromYieldsRector
@@ -168,7 +163,7 @@ final class ReturnTypeInferer
         return $resolvedType;
     }
     /**
-     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $functionLike
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $functionLike
      */
     private function resolveBenevolentUnionTypeInteger($functionLike, UnionType $unionType) : Type
     {
@@ -180,15 +175,10 @@ final class ReturnTypeInferer
         if (!($types[0]->isInteger()->yes() && $types[1]->isString()->yes())) {
             return $unionType;
         }
-        if (!$functionLike instanceof ArrowFunction) {
-            $returns = $this->betterNodeFinder->findInstancesOfInFunctionLikeScoped($functionLike, Return_::class);
-            $returnsWithExpr = \array_filter($returns, static function (Return_ $return) : bool {
-                return $return->expr instanceof Expr;
-            });
-        } else {
-            $returns = $functionLike->getStmts();
-            $returnsWithExpr = $returns;
-        }
+        $returns = $this->betterNodeFinder->findReturnsScoped($functionLike);
+        $returnsWithExpr = \array_filter($returns, static function (Return_ $return) : bool {
+            return $return->expr instanceof Expr;
+        });
         if ($returns !== $returnsWithExpr) {
             return $unionType;
         }
@@ -198,7 +188,7 @@ final class ReturnTypeInferer
         foreach ($returnsWithExpr as $returnWithExpr) {
             /** @var Expr $expr */
             $expr = $returnWithExpr->expr;
-            $type = $this->nodeTypeResolver->getType($expr);
+            $type = $this->nodeTypeResolver->getNativeType($expr);
             if (!$type instanceof BenevolentUnionType) {
                 return $unionType;
             }

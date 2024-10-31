@@ -17,12 +17,12 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
-use Rector\Core\NodeAnalyzer\ExprAnalyzer;
-use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
+use Rector\NodeAnalyzer\ExprAnalyzer;
+use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\NodeTypeResolver\PHPStan\Type\TypeFactory;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
+use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector;
 use Rector\TypeDeclaration\AlreadyAssignDetector\NullTypeAssignDetector;
 use Rector\TypeDeclaration\AlreadyAssignDetector\PropertyDefaultAssignDetector;
@@ -69,17 +69,17 @@ final class AssignToPropertyTypeInferer
     private $nodeTypeResolver;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ExprAnalyzer
+     * @var \Rector\NodeAnalyzer\ExprAnalyzer
      */
     private $exprAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
      */
     private $valueResolver;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     public function __construct(ConstructorAssignDetector $constructorAssignDetector, PropertyAssignMatcher $propertyAssignMatcher, PropertyDefaultAssignDetector $propertyDefaultAssignDetector, NullTypeAssignDetector $nullTypeAssignDetector, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, TypeFactory $typeFactory, NodeTypeResolver $nodeTypeResolver, ExprAnalyzer $exprAnalyzer, ValueResolver $valueResolver, PropertyFetchAnalyzer $propertyFetchAnalyzer)
@@ -138,7 +138,7 @@ final class AssignToPropertyTypeInferer
     }
     private function resolveExprStaticTypeIncludingDimFetch(Assign $assign) : Type
     {
-        $exprStaticType = $this->nodeTypeResolver->getType($assign->expr);
+        $exprStaticType = $this->nodeTypeResolver->getNativeType($assign->expr);
         if ($assign->var instanceof ArrayDimFetch) {
             return new ArrayType(new MixedType(), $exprStaticType);
         }
@@ -208,7 +208,8 @@ final class AssignToPropertyTypeInferer
                 return null;
             }
             if ($this->exprAnalyzer->isNonTypedFromParam($node->expr)) {
-                return null;
+                $assignedExprTypes = [];
+                return NodeTraverser::STOP_TRAVERSAL;
             }
             $assignedExprTypes[] = $this->resolveExprStaticTypeIncludingDimFetch($node);
             return null;

@@ -1,22 +1,16 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\NodeManipulator;
+namespace Rector\NodeManipulator;
 
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Reflection\ClassReflection;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
-use Rector\Core\Reflection\ReflectionResolver;
-use Rector\Core\ValueObject\MethodName;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\Reflection\ReflectionResolver;
+use Rector\ValueObject\MethodName;
 final class ClassMethodManipulator
 {
-    /**
-     * @readonly
-     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
-     */
-    private $betterNodeFinder;
     /**
      * @readonly
      * @var \Rector\NodeNameResolver\NodeNameResolver
@@ -24,12 +18,11 @@ final class ClassMethodManipulator
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
+     * @var \Rector\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    public function __construct(BetterNodeFinder $betterNodeFinder, NodeNameResolver $nodeNameResolver, ReflectionResolver $reflectionResolver)
+    public function __construct(NodeNameResolver $nodeNameResolver, ReflectionResolver $reflectionResolver)
     {
-        $this->betterNodeFinder = $betterNodeFinder;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->reflectionResolver = $reflectionResolver;
     }
@@ -38,30 +31,29 @@ final class ClassMethodManipulator
         if (!$this->nodeNameResolver->isName($classMethod, MethodName::CONSTRUCT)) {
             return \false;
         }
-        $class = $this->betterNodeFinder->findParentType($classMethod, Class_::class);
-        if (!$class instanceof Class_) {
+        $classReflection = $this->reflectionResolver->resolveClassReflection($classMethod);
+        if (!$classReflection instanceof ClassReflection) {
             return \false;
         }
         if ($classMethod->isPrivate()) {
             return \true;
         }
-        if ($class->isFinal()) {
+        if ($classReflection->isFinalByKeyword()) {
             return \false;
         }
         return $classMethod->isProtected();
     }
-    public function hasParentMethodOrInterfaceMethod(ClassMethod $classMethod, ?string $methodName = null) : bool
+    public function hasParentMethodOrInterfaceMethod(Class_ $class, string $methodName) : bool
     {
-        $methodName = $methodName ?? $this->nodeNameResolver->getName($classMethod->name);
-        if ($methodName === null) {
-            return \false;
-        }
-        $classReflection = $this->reflectionResolver->resolveClassReflection($classMethod);
+        $classReflection = $this->reflectionResolver->resolveClassReflection($class);
         if (!$classReflection instanceof ClassReflection) {
             return \false;
         }
         foreach ($classReflection->getParents() as $parentClassReflection) {
             if ($parentClassReflection->hasMethod($methodName)) {
+                return \true;
+            }
+            if ($parentClassReflection->hasMethod(MethodName::CALL)) {
                 return \true;
             }
         }

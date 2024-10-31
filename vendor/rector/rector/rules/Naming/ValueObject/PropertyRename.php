@@ -6,9 +6,8 @@ namespace Rector\Naming\ValueObject;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\PropertyProperty;
-use Rector\Core\Validation\RectorAssert;
-use Rector\Naming\Contract\RenamePropertyValueObjectInterface;
-final class PropertyRename implements RenamePropertyValueObjectInterface
+use Rector\Validation\RectorAssert;
+final class PropertyRename
 {
     /**
      * @readonly

@@ -649,6 +649,8 @@ class Php5 extends \PhpParser\ParserAbstract
             if ($this->semStack[$stackPos - (2 - 2)] !== null) {
                 $this->semStack[$stackPos - (2 - 1)][] = $this->semStack[$stackPos - (2 - 2)];
                 $this->semValue = $this->semStack[$stackPos - (2 - 1)];
+            } else {
+                $this->semValue = $this->semStack[$stackPos - (2 - 1)];
             }
         }, 260 => function ($stackPos) {
             $this->semValue = array();
@@ -1278,7 +1280,7 @@ class Php5 extends \PhpParser\ParserAbstract
         }, 551 => function ($stackPos) {
             $this->semValue = new Expr\ArrayItem($this->semStack[$stackPos - (2 - 2)], null, \true, $this->startAttributeStack[$stackPos - (2 - 1)] + $this->endAttributes);
         }, 552 => function ($stackPos) {
-            $this->semValue = new Expr\ArrayItem($this->semStack[$stackPos - (2 - 2)], null, \false, $this->startAttributeStack[$stackPos - (2 - 1)] + $this->endAttributes, \true, $this->startAttributeStack[$stackPos - (2 - 1)] + $this->endAttributes);
+            $this->semValue = new Expr\ArrayItem($this->semStack[$stackPos - (2 - 2)], null, \false, $this->startAttributeStack[$stackPos - (2 - 1)] + $this->endAttributes, \true);
         }, 553 => function ($stackPos) {
             $this->semStack[$stackPos - (2 - 1)][] = $this->semStack[$stackPos - (2 - 2)];
             $this->semValue = $this->semStack[$stackPos - (2 - 1)];

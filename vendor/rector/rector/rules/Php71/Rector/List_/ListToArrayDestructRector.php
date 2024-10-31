@@ -8,15 +8,12 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\List_;
 use PhpParser\Node\Stmt\Foreach_;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://wiki.php.net/rfc/short_list_syntax https://www.php.net/manual/en/migration71.new-features.php#migration71.new-features.symmetric-array-destructuring
- *
  * @see \Rector\Tests\Php71\Rector\List_\ListToArrayDestructRector\ListToArrayDestructRectorTest
  */
 final class ListToArrayDestructRector extends AbstractRector implements MinPhpVersionInterface
@@ -54,24 +51,27 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [List_::class];
+        return [Assign::class, Foreach_::class];
     }
     /**
-     * @param List_ $node
+     * @param Assign|Foreach_ $node
      */
     public function refactor(Node $node) : ?Node
     {
-        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
-        if ($parentNode instanceof Assign && $parentNode->var === $node) {
-            return new Array_($node->items);
+        if ($node instanceof Assign) {
+            if (!$node->var instanceof List_) {
+                return null;
+            }
+            $list = $node->var;
+            $node->var = new Array_($list->items);
+            return $node;
         }
-        if (!$parentNode instanceof Foreach_) {
+        if (!$node->valueVar instanceof List_) {
             return null;
         }
-        if ($parentNode->valueVar !== $node) {
-            return null;
-        }
-        return new Array_($node->items);
+        $list = $node->valueVar;
+        $node->valueVar = new Array_($list->items);
+        return $node;
     }
     public function provideMinPhpVersion() : int
     {

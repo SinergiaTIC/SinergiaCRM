@@ -1,17 +1,18 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\NodeDecorator;
+namespace Rector\NodeDecorator;
 
+use PhpParser\Node;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger;
-use Rector\Core\Php\PhpVersionProvider;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Php\PhpVersionProvider;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\StaticTypeMapper\StaticTypeMapper;
+use Rector\ValueObject\PhpVersionFeature;
 final class PropertyTypeDecorator
 {
     /**
@@ -21,7 +22,7 @@ final class PropertyTypeDecorator
     private $phpDocInfoFactory;
     /**
      * @readonly
-     * @var \Rector\Core\Php\PhpVersionProvider
+     * @var \Rector\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
     /**
@@ -49,14 +50,14 @@ final class PropertyTypeDecorator
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($property);
         if ($this->phpVersionProvider->isAtLeastPhpVersion(PhpVersionFeature::TYPED_PROPERTIES)) {
             $phpParserType = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($type, TypeKind::PROPERTY);
-            if ($phpParserType !== null) {
+            if ($phpParserType instanceof Node) {
                 $property->type = $phpParserType;
                 if ($type instanceof GenericObjectType) {
-                    $this->phpDocTypeChanger->changeVarType($phpDocInfo, $type);
+                    $this->phpDocTypeChanger->changeVarType($property, $phpDocInfo, $type);
                 }
                 return;
             }
         }
-        $this->phpDocTypeChanger->changeVarType($phpDocInfo, $type);
+        $this->phpDocTypeChanger->changeVarType($property, $phpDocInfo, $type);
     }
 }

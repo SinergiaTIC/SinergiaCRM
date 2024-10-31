@@ -12,61 +12,95 @@ use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\MixedType;
-use Rector\CodeQuality\NodeAnalyzer\ReturnAnalyzer;
-use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
-use Rector\Core\NodeAnalyzer\CallAnalyzer;
-use Rector\Core\NodeAnalyzer\VariableAnalyzer;
-use Rector\Core\PhpParser\Node\AssignAndBinaryMap;
-use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\NodeAnalyzer\CallAnalyzer;
+use Rector\NodeAnalyzer\VariableAnalyzer;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PhpParser\Node\AssignAndBinaryMap;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @see Based on https://github.com/slevomat/coding-standard/blob/master/SlevomatCodingStandard/Sniffs/Variables/UselessVariableSniff.php
  * @see \Rector\Tests\CodeQuality\Rector\FunctionLike\SimplifyUselessVariableRector\SimplifyUselessVariableRectorTest
  */
-final class SimplifyUselessVariableRector extends AbstractRector
+final class SimplifyUselessVariableRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\AssignAndBinaryMap
+     * @var \Rector\PhpParser\Node\AssignAndBinaryMap
      */
     private $assignAndBinaryMap;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\VariableAnalyzer
+     * @var \Rector\NodeAnalyzer\VariableAnalyzer
      */
     private $variableAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\CallAnalyzer
+     * @var \Rector\NodeAnalyzer\CallAnalyzer
      */
     private $callAnalyzer;
     /**
      * @readonly
-     * @var \Rector\CodeQuality\NodeAnalyzer\ReturnAnalyzer
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
      */
-    private $returnAnalyzer;
-    public function __construct(AssignAndBinaryMap $assignAndBinaryMap, VariableAnalyzer $variableAnalyzer, CallAnalyzer $callAnalyzer, ReturnAnalyzer $returnAnalyzer)
+    private $phpDocInfoFactory;
+    /**
+     * @api
+     * @var string
+     */
+    public const ONLY_DIRECT_ASSIGN = 'only_direct_assign';
+    /**
+     * @var bool
+     */
+    private $onlyDirectAssign = \false;
+    public function __construct(AssignAndBinaryMap $assignAndBinaryMap, VariableAnalyzer $variableAnalyzer, CallAnalyzer $callAnalyzer, PhpDocInfoFactory $phpDocInfoFactory)
     {
         $this->assignAndBinaryMap = $assignAndBinaryMap;
         $this->variableAnalyzer = $variableAnalyzer;
         $this->callAnalyzer = $callAnalyzer;
-        $this->returnAnalyzer = $returnAnalyzer;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+    }
+    public function configure(array $configuration) : void
+    {
+        $this->onlyDirectAssign = $configuration[self::ONLY_DIRECT_ASSIGN] ?? \false;
     }
     public function getRuleDefinition() : RuleDefinition
     {
-        return new RuleDefinition('Removes useless variable assigns', [new CodeSample(<<<'CODE_SAMPLE'
+        return new RuleDefinition('Removes useless variable assigns', [new ConfiguredCodeSample(
+            <<<'CODE_SAMPLE'
 function () {
     $a = true;
     return $a;
 };
 CODE_SAMPLE
-, <<<'CODE_SAMPLE'
+,
+            <<<'CODE_SAMPLE'
 function () {
     return true;
 };
 CODE_SAMPLE
-)]);
+,
+            // default
+            [self::ONLY_DIRECT_ASSIGN => \true]
+        ), new ConfiguredCodeSample(<<<'CODE_SAMPLE'
+function () {
+    $a = 'Hello, ';
+    $a .= 'World!';
+
+    return $a;
+};
+CODE_SAMPLE
+, <<<'CODE_SAMPLE'
+function () {
+    $a = 'Hello, ';
+
+    return $a . 'World!';
+};
+CODE_SAMPLE
+, [self::ONLY_DIRECT_ASSIGN => \false])]);
     }
     /**
      * @return array<class-string<Node>>
@@ -85,6 +119,7 @@ CODE_SAMPLE
             return null;
         }
         foreach ($stmts as $key => $stmt) {
+            // has previous node?
             if (!isset($stmts[$key - 1])) {
                 continue;
             }
@@ -95,13 +130,13 @@ CODE_SAMPLE
             if ($this->shouldSkipStmt($stmt, $previousStmt)) {
                 return null;
             }
+            if ($this->hasSomeComment($previousStmt)) {
+                return null;
+            }
             if ($this->isReturnWithVarAnnotation($stmt)) {
                 return null;
             }
-            /**
-             * @var Expression $previousStmt
-             * @var Assign|AssignOp $assign
-             */
+            /** @var Expression<Assign|AssignOp> $previousStmt */
             $assign = $previousStmt->expr;
             return $this->processSimplifyUselessVariable($node, $stmt, $assign, $key);
         }
@@ -126,17 +161,12 @@ CODE_SAMPLE
     }
     private function shouldSkipStmt(Return_ $return, Stmt $previousStmt) : bool
     {
-        if ($this->hasSomeComment($previousStmt)) {
-            return \true;
-        }
         if (!$return->expr instanceof Variable) {
             return \true;
         }
-        if ($this->returnAnalyzer->hasByRefReturn($return)) {
+        if ($return->getAttribute(AttributeKey::IS_BYREF_RETURN) === \true) {
             return \true;
         }
-        /** @var Variable $variable */
-        $variable = $return->expr;
         if (!$previousStmt instanceof Expression) {
             return \true;
         }
@@ -145,6 +175,10 @@ CODE_SAMPLE
         if (!$previousNode instanceof AssignOp && !$previousNode instanceof Assign) {
             return \true;
         }
+        if ($this->onlyDirectAssign && $previousNode instanceof AssignOp) {
+            return \true;
+        }
+        $variable = $return->expr;
         // is the same variable
         if (!$this->nodeComparator->areNodesEqual($previousNode->var, $variable)) {
             return \true;
@@ -152,7 +186,9 @@ CODE_SAMPLE
         if ($this->variableAnalyzer->isStaticOrGlobal($variable)) {
             return \true;
         }
-        if ($this->callAnalyzer->isNewInstance($previousNode->var)) {
+        /** @var Variable $previousVar */
+        $previousVar = $previousNode->var;
+        if ($this->callAnalyzer->isNewInstance($previousVar)) {
             return \true;
         }
         return $this->variableAnalyzer->isUsedByReference($variable);

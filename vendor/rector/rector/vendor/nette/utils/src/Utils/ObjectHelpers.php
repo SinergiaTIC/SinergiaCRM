@@ -5,12 +5,13 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202305\Nette\Utils;
+namespace RectorPrefix202407\Nette\Utils;
 
-use RectorPrefix202305\Nette;
-use RectorPrefix202305\Nette\MemberAccessException;
+use RectorPrefix202407\Nette;
+use RectorPrefix202407\Nette\MemberAccessException;
 /**
  * Nette\SmartObject helpers.
+ * @internal
  */
 final class ObjectHelpers
 {
@@ -147,12 +148,13 @@ final class ObjectHelpers
                 $traits += $trait->getTraits();
             }
         } while ($rc = $rc->getParentClass());
-        return \preg_match_all($pattern, \implode($doc), $m) ? $m[1] : [];
+        return \preg_match_all($pattern, \implode('', $doc), $m) ? $m[1] : [];
     }
     /**
      * Checks if the public non-static property exists.
-     * @return bool|string returns 'event' if the property exists and has event like name
+     * Returns 'event' if the property exists and has event like name
      * @internal
+     * @return bool|string
      */
     public static function hasProperty(string $class, string $name)
     {
@@ -162,6 +164,7 @@ final class ObjectHelpers
             $prop = \false;
             try {
                 $rp = new \ReflectionProperty($class, $name);
+                $rp->setAccessible(\true);
                 if ($rp->isPublic() && !$rp->isStatic()) {
                     $prop = $name >= 'onA' && $name < 'on_' ? 'event' : \true;
                 }

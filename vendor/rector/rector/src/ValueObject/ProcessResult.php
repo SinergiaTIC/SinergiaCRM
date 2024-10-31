@@ -1,19 +1,15 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\ValueObject;
+namespace Rector\ValueObject;
 
-use Rector\Core\ValueObject\Error\SystemError;
-use Rector\Core\ValueObject\Reporting\FileDiff;
-use RectorPrefix202305\Webmozart\Assert\Assert;
-/**
- * @see \Rector\Core\ValueObjectFactory\ProcessResultFactory
- */
+use Rector\ValueObject\Error\SystemError;
+use Rector\ValueObject\Reporting\FileDiff;
+use RectorPrefix202407\Webmozart\Assert\Assert;
 final class ProcessResult
 {
     /**
      * @var SystemError[]
-     * @readonly
      */
     private $systemErrors;
     /**
@@ -22,33 +18,22 @@ final class ProcessResult
      */
     private $fileDiffs;
     /**
-     * @readonly
-     * @var int
-     */
-    private $addedFilesCount;
-    /**
-     * @readonly
-     * @var int
-     */
-    private $removedFilesCount;
-    /**
-     * @readonly
-     * @var int
-     */
-    private $removedNodeCount;
-    /**
-     * @param FileDiff[] $fileDiffs
      * @param SystemError[] $systemErrors
+     * @param FileDiff[] $fileDiffs
      */
-    public function __construct(array $systemErrors, array $fileDiffs, int $addedFilesCount, int $removedFilesCount, int $removedNodeCount)
+    public function __construct(array $systemErrors, array $fileDiffs)
     {
         $this->systemErrors = $systemErrors;
         $this->fileDiffs = $fileDiffs;
-        $this->addedFilesCount = $addedFilesCount;
-        $this->removedFilesCount = $removedFilesCount;
-        $this->removedNodeCount = $removedNodeCount;
-        Assert::allIsAOf($fileDiffs, FileDiff::class);
-        Assert::allIsAOf($systemErrors, SystemError::class);
+        Assert::allIsInstanceOf($systemErrors, SystemError::class);
+        Assert::allIsInstanceOf($fileDiffs, FileDiff::class);
+    }
+    /**
+     * @return SystemError[]
+     */
+    public function getSystemErrors() : array
+    {
+        return $this->systemErrors;
     }
     /**
      * @return FileDiff[]
@@ -58,26 +43,11 @@ final class ProcessResult
         return $this->fileDiffs;
     }
     /**
-     * @return SystemError[]
+     * @param SystemError[] $systemErrors
      */
-    public function getErrors() : array
+    public function addSystemErrors(array $systemErrors) : void
     {
-        return $this->systemErrors;
-    }
-    public function getAddedFilesCount() : int
-    {
-        return $this->addedFilesCount;
-    }
-    public function getRemovedFilesCount() : int
-    {
-        return $this->removedFilesCount;
-    }
-    public function getRemovedAndAddedFilesCount() : int
-    {
-        return $this->removedFilesCount + $this->addedFilesCount;
-    }
-    public function getRemovedNodeCount() : int
-    {
-        return $this->removedNodeCount;
+        Assert::allIsInstanceOf($systemErrors, SystemError::class);
+        $this->systemErrors = \array_merge($this->systemErrors, $systemErrors);
     }
 }

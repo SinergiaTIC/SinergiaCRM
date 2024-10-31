@@ -6,25 +6,26 @@ namespace Rector\TypeDeclaration\AlreadyAssignDetector;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\If_;
+use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
-use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
-use Rector\Core\ValueObject\MethodName;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
-use Rector\PostRector\Collector\NodesToRemoveCollector;
+use Rector\PhpParser\Comparing\NodeComparator;
 use Rector\TypeDeclaration\Matcher\PropertyAssignMatcher;
 use Rector\TypeDeclaration\NodeAnalyzer\AutowiredClassMethodOrPropertyAnalyzer;
+use Rector\ValueObject\MethodName;
 final class ConstructorAssignDetector
 {
-    /**
-     * @var string
-     */
-    private const IS_FIRST_LEVEL_STATEMENT = 'first_level_stmt';
     /**
      * @readonly
      * @var \Rector\NodeTypeResolver\NodeTypeResolver
@@ -47,22 +48,26 @@ final class ConstructorAssignDetector
     private $autowiredClassMethodOrPropertyAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     /**
      * @readonly
-     * @var \Rector\PostRector\Collector\NodesToRemoveCollector
+     * @var \Rector\PhpParser\Comparing\NodeComparator
      */
-    private $nodesToRemoveCollector;
-    public function __construct(NodeTypeResolver $nodeTypeResolver, PropertyAssignMatcher $propertyAssignMatcher, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, AutowiredClassMethodOrPropertyAnalyzer $autowiredClassMethodOrPropertyAnalyzer, PropertyFetchAnalyzer $propertyFetchAnalyzer, NodesToRemoveCollector $nodesToRemoveCollector)
+    private $nodeComparator;
+    /**
+     * @var string
+     */
+    private const IS_FIRST_LEVEL_STATEMENT = 'first_level_stmt';
+    public function __construct(NodeTypeResolver $nodeTypeResolver, PropertyAssignMatcher $propertyAssignMatcher, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, AutowiredClassMethodOrPropertyAnalyzer $autowiredClassMethodOrPropertyAnalyzer, PropertyFetchAnalyzer $propertyFetchAnalyzer, NodeComparator $nodeComparator)
     {
         $this->nodeTypeResolver = $nodeTypeResolver;
         $this->propertyAssignMatcher = $propertyAssignMatcher;
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
         $this->autowiredClassMethodOrPropertyAnalyzer = $autowiredClassMethodOrPropertyAnalyzer;
         $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
-        $this->nodesToRemoveCollector = $nodesToRemoveCollector;
+        $this->nodeComparator = $nodeComparator;
     }
     public function isPropertyAssigned(ClassLike $classLike, string $propertyName) : bool
     {
@@ -74,29 +79,59 @@ final class ConstructorAssignDetector
         $this->decorateFirstLevelStatementAttribute($initializeClassMethods);
         foreach ($initializeClassMethods as $initializeClassMethod) {
             $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $initializeClassMethod->stmts, function (Node $node) use($propertyName, &$isAssignedInConstructor) : ?int {
+                if ($this->isIfElseAssign($node, $propertyName)) {
+                    $isAssignedInConstructor = \true;
+                    return NodeTraverser::STOP_TRAVERSAL;
+                }
                 $expr = $this->matchAssignExprToPropertyName($node, $propertyName);
                 if (!$expr instanceof Expr) {
                     return null;
                 }
                 /** @var Assign $assign */
                 $assign = $node;
+                // is merged in assign?
+                if ($this->isPropertyUsedInAssign($assign, $propertyName)) {
+                    $isAssignedInConstructor = \false;
+                    return NodeTraverser::STOP_TRAVERSAL;
+                }
                 $isFirstLevelStatement = $assign->getAttribute(self::IS_FIRST_LEVEL_STATEMENT);
                 // cannot be nested
                 if ($isFirstLevelStatement !== \true) {
                     return null;
                 }
-                $parentNode = $assign->getAttribute(AttributeKey::PARENT_NODE);
-                if ($parentNode instanceof Expression && $this->nodesToRemoveCollector->isNodeRemoved($parentNode)) {
-                    return null;
-                }
                 $isAssignedInConstructor = \true;
-                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+                return NodeTraverser::STOP_TRAVERSAL;
             });
         }
         if (!$isAssignedInConstructor) {
             return $this->propertyFetchAnalyzer->isFilledViaMethodCallInConstructStmts($classLike, $propertyName);
         }
         return $isAssignedInConstructor;
+    }
+    /**
+     * @param Stmt[] $stmts
+     */
+    private function isAssignedInStmts(array $stmts, string $propertyName) : bool
+    {
+        $isAssigned = \false;
+        foreach ($stmts as $stmt) {
+            // non Expression can be on next stmt
+            if (!$stmt instanceof Expression) {
+                $isAssigned = \false;
+                break;
+            }
+            if ($this->matchAssignExprToPropertyName($stmt->expr, $propertyName) instanceof Expr) {
+                $isAssigned = \true;
+            }
+        }
+        return $isAssigned;
+    }
+    private function isIfElseAssign(Node $node, string $propertyName) : bool
+    {
+        if (!$node instanceof If_ || $node->elseifs !== [] || !$node->else instanceof Else_) {
+            return \false;
+        }
+        return $this->isAssignedInStmts($node->stmts, $propertyName) && $this->isAssignedInStmts($node->else->stmts, $propertyName);
     }
     private function matchAssignExprToPropertyName(Node $node, string $propertyName) : ?Expr
     {
@@ -147,5 +182,22 @@ final class ConstructorAssignDetector
             $initializingClassMethods[] = $classMethod;
         }
         return $initializingClassMethods;
+    }
+    private function isPropertyUsedInAssign(Assign $assign, string $propertyName) : bool
+    {
+        $nodeFinder = new NodeFinder();
+        $var = $assign->var;
+        return (bool) $nodeFinder->findFirst($assign->expr, function (Node $node) use($propertyName, $var) : ?bool {
+            if (!$node instanceof PropertyFetch) {
+                return null;
+            }
+            if (!$node->name instanceof Identifier) {
+                return null;
+            }
+            if ($node->name->toString() !== $propertyName) {
+                return null;
+            }
+            return $this->nodeComparator->areNodesEqual($node, $var);
+        });
     }
 }

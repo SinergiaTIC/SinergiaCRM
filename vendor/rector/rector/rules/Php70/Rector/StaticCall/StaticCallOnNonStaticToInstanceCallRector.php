@@ -10,27 +10,25 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use Rector\CodingStyle\ValueObject\ObjectMagicMethods;
-use Rector\Core\Enum\ObjectReference;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Reflection\ReflectionResolver;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Enum\ObjectReference;
 use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
 use Rector\NodeCollector\StaticAnalyzer;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Reflection\ReflectionResolver;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use ReflectionMethod;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://thephp.cc/news/2017/07/dont-call-instance-methods-statically https://3v4l.org/tQ32f https://3v4l.org/jB9jn
- *
  * @see \Rector\Tests\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector\StaticCallOnNonStaticToInstanceCallRectorTest
  */
-final class StaticCallOnNonStaticToInstanceCallRector extends AbstractRector implements MinPhpVersionInterface
+final class StaticCallOnNonStaticToInstanceCallRector extends AbstractScopeAwareRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
@@ -44,7 +42,7 @@ final class StaticCallOnNonStaticToInstanceCallRector extends AbstractRector imp
     private $reflectionProvider;
     /**
      * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
+     * @var \Rector\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     /**
@@ -109,7 +107,7 @@ CODE_SAMPLE
     /**
      * @param StaticCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
         if ($node->name instanceof Expr) {
             return null;
@@ -122,10 +120,10 @@ CODE_SAMPLE
         if ($className === null) {
             return null;
         }
-        if ($this->shouldSkip($methodName, $className, $node)) {
+        if ($this->shouldSkip($methodName, $className, $node, $scope)) {
             return null;
         }
-        if ($this->isInstantiable($className)) {
+        if ($this->isInstantiable($className, $scope)) {
             $new = new New_($node->class);
             return new MethodCall($new, $node->name, $node->args);
         }
@@ -141,7 +139,7 @@ CODE_SAMPLE
         }
         return $this->getName($staticCall->class);
     }
-    private function shouldSkip(string $methodName, string $className, StaticCall $staticCall) : bool
+    private function shouldSkip(string $methodName, string $className, StaticCall $staticCall, Scope $scope) : bool
     {
         if (\in_array($methodName, ObjectMagicMethods::METHOD_NAMES, \true)) {
             return \true;
@@ -161,6 +159,10 @@ CODE_SAMPLE
         if ($isStaticMethod) {
             return \true;
         }
+        $reflection = $scope->getClassReflection();
+        if ($reflection instanceof ClassReflection && $reflection->isSubclassOf($className)) {
+            return \true;
+        }
         $className = $this->getName($staticCall->class);
         if (\in_array($className, [ObjectReference::PARENT, ObjectReference::SELF, ObjectReference::STATIC], \true)) {
             return \true;
@@ -168,19 +170,15 @@ CODE_SAMPLE
         if ($className === 'class') {
             return \true;
         }
-        $scope = $staticCall->getAttribute(AttributeKey::SCOPE);
-        if (!$scope instanceof Scope) {
-            return \true;
-        }
         $parentClassName = $this->parentClassScopeResolver->resolveParentClassName($scope);
         return $className === $parentClassName;
     }
-    private function isInstantiable(string $className) : bool
+    private function isInstantiable(string $className, Scope $scope) : bool
     {
         if (!$this->reflectionProvider->hasClass($className)) {
             return \false;
         }
-        $methodReflection = $this->reflectionResolver->resolveMethodReflection($className, '__callStatic', null);
+        $methodReflection = $this->reflectionResolver->resolveMethodReflection($className, '__callStatic', $scope);
         if ($methodReflection instanceof MethodReflection) {
             return \false;
         }

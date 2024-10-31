@@ -7,7 +7,6 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt\If_;
 use PHPStan\Analyser\Scope;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Strict\NodeFactory\ExactCompareFactory;
 use Rector\Strict\Rector\AbstractFalsyScalarRuleFixerRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
@@ -71,27 +70,29 @@ CODE_SAMPLE
     /**
      * @param If_ $node
      */
-    public function refactor(Node $node) : ?If_
+    public function refactorWithScope(Node $node, Scope $scope) : ?If_
     {
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
-        if (!$scope instanceof Scope) {
-            return null;
-        }
+        $hasChanged = \false;
         // 1. if
-        $ifCondExprType = $scope->getType($node->cond);
+        $ifCondExprType = $scope->getNativeType($node->cond);
         $notIdentical = $this->exactCompareFactory->createNotIdenticalFalsyCompare($ifCondExprType, $node->cond, $this->treatAsNonEmpty);
         if ($notIdentical !== null) {
             $node->cond = $notIdentical;
+            $hasChanged = \true;
         }
         // 2. elseifs
         foreach ($node->elseifs as $elseif) {
-            $elseifCondExprType = $scope->getType($elseif->cond);
+            $elseifCondExprType = $scope->getNativeType($elseif->cond);
             $notIdentical = $this->exactCompareFactory->createNotIdenticalFalsyCompare($elseifCondExprType, $elseif->cond, $this->treatAsNonEmpty);
             if (!$notIdentical instanceof Expr) {
                 continue;
             }
             $elseif->cond = $notIdentical;
+            $hasChanged = \true;
         }
-        return $node;
+        if ($hasChanged) {
+            return $node;
+        }
+        return null;
     }
 }

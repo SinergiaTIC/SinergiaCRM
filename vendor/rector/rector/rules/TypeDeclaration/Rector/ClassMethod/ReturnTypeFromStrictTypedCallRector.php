@@ -5,9 +5,7 @@ namespace Rector\TypeDeclaration\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\ComplexType;
-use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
-use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
@@ -16,23 +14,26 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\UnionType as PhpParserUnionType;
+use PHPStan\Analyser\Scope;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\UnionType;
-use Rector\Core\Php\PhpVersionProvider;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
-use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
+use Rector\Php\PhpVersionProvider;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractScopeAwareRector;
+use Rector\TypeDeclaration\NodeAnalyzer\ReturnAnalyzer;
 use Rector\TypeDeclaration\NodeAnalyzer\TypeNodeUnwrapper;
 use Rector\TypeDeclaration\TypeAnalyzer\ReturnStrictTypeAnalyzer;
 use Rector\TypeDeclaration\TypeInferer\ReturnTypeInferer;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VendorLocker\NodeVendorLocker\ClassMethodReturnTypeOverrideGuard;
+use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictTypedCallRector\ReturnTypeFromStrictTypedCallRectorTest
  */
-final class ReturnTypeFromStrictTypedCallRector extends AbstractRector
+final class ReturnTypeFromStrictTypedCallRector extends AbstractScopeAwareRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
@@ -51,7 +52,12 @@ final class ReturnTypeFromStrictTypedCallRector extends AbstractRector
     private $returnTypeInferer;
     /**
      * @readonly
-     * @var \Rector\Core\Php\PhpVersionProvider
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
     /**
@@ -59,13 +65,20 @@ final class ReturnTypeFromStrictTypedCallRector extends AbstractRector
      * @var \Rector\VendorLocker\NodeVendorLocker\ClassMethodReturnTypeOverrideGuard
      */
     private $classMethodReturnTypeOverrideGuard;
-    public function __construct(TypeNodeUnwrapper $typeNodeUnwrapper, ReturnStrictTypeAnalyzer $returnStrictTypeAnalyzer, ReturnTypeInferer $returnTypeInferer, PhpVersionProvider $phpVersionProvider, ClassMethodReturnTypeOverrideGuard $classMethodReturnTypeOverrideGuard)
+    /**
+     * @readonly
+     * @var \Rector\TypeDeclaration\NodeAnalyzer\ReturnAnalyzer
+     */
+    private $returnAnalyzer;
+    public function __construct(TypeNodeUnwrapper $typeNodeUnwrapper, ReturnStrictTypeAnalyzer $returnStrictTypeAnalyzer, ReturnTypeInferer $returnTypeInferer, BetterNodeFinder $betterNodeFinder, PhpVersionProvider $phpVersionProvider, ClassMethodReturnTypeOverrideGuard $classMethodReturnTypeOverrideGuard, ReturnAnalyzer $returnAnalyzer)
     {
         $this->typeNodeUnwrapper = $typeNodeUnwrapper;
         $this->returnStrictTypeAnalyzer = $returnStrictTypeAnalyzer;
         $this->returnTypeInferer = $returnTypeInferer;
+        $this->betterNodeFinder = $betterNodeFinder;
         $this->phpVersionProvider = $phpVersionProvider;
         $this->classMethodReturnTypeOverrideGuard = $classMethodReturnTypeOverrideGuard;
+        $this->returnAnalyzer = $returnAnalyzer;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -104,41 +117,37 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [ClassMethod::class, Function_::class, Closure::class, ArrowFunction::class];
+        return [ClassMethod::class, Function_::class];
+    }
+    public function provideMinPhpVersion() : int
+    {
+        return PhpVersionFeature::SCALAR_TYPES;
     }
     /**
-     * @param ClassMethod|Function_|Closure|ArrowFunction $node
+     * @param ClassMethod|Function_ $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
-        if ($this->isSkipped($node)) {
+        // already filled → skip
+        if ($node->returnType instanceof Node) {
             return null;
         }
-        if ($node instanceof ArrowFunction) {
-            return $this->processArrowFunction($node);
+        if ($node->stmts === null) {
+            return null;
         }
-        /** @var Return_[] $returns */
-        $returns = $this->betterNodeFinder->find((array) $node->stmts, function (Node $subNode) use($node) : bool {
-            $currentFunctionLike = $this->betterNodeFinder->findParentType($subNode, FunctionLike::class);
-            if ($currentFunctionLike === $node) {
-                return $subNode instanceof Return_;
-            }
-            $currentReturn = $this->betterNodeFinder->findParentType($subNode, Return_::class);
-            if (!$currentReturn instanceof Return_) {
-                return \false;
-            }
-            $currentReturnFunctionLike = $this->betterNodeFinder->findParentType($currentReturn, FunctionLike::class);
-            if ($currentReturnFunctionLike !== $currentFunctionLike) {
-                return \false;
-            }
-            return $subNode instanceof Return_;
-        });
-        $returnedStrictTypes = $this->returnStrictTypeAnalyzer->collectStrictReturnTypes($returns);
+        if ($this->shouldSkip($node, $scope)) {
+            return null;
+        }
+        $currentScopeReturns = $this->betterNodeFinder->findReturnsScoped($node);
+        $returnedStrictTypes = $this->returnStrictTypeAnalyzer->collectStrictReturnTypes($currentScopeReturns, $scope);
         if ($returnedStrictTypes === []) {
             return null;
         }
+        if (!$this->returnAnalyzer->hasOnlyReturnWithExpr($node, $currentScopeReturns)) {
+            return null;
+        }
         if (\count($returnedStrictTypes) === 1) {
-            return $this->refactorSingleReturnType($returns[0], $returnedStrictTypes[0], $node);
+            return $this->refactorSingleReturnType($currentScopeReturns[0], $returnedStrictTypes[0], $node);
         }
         if ($this->phpVersionProvider->isAtLeastPhpVersion(PhpVersionFeature::UNION_TYPES)) {
             /** @var PhpParserUnionType[] $returnedStrictTypes */
@@ -147,20 +156,6 @@ CODE_SAMPLE
             return $node;
         }
         return null;
-    }
-    private function processArrowFunction(ArrowFunction $arrowFunction) : ?ArrowFunction
-    {
-        $resolvedType = $this->nodeTypeResolver->getType($arrowFunction->expr);
-        // void type is not accepted for arrow functions - https://www.php.net/manual/en/functions.arrow.php#125673
-        if ($resolvedType->isVoid()->yes()) {
-            return null;
-        }
-        $returnType = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($resolvedType, TypeKind::RETURN);
-        if (!$returnType instanceof Node) {
-            return null;
-        }
-        $arrowFunction->returnType = $returnType;
-        return $arrowFunction;
     }
     /**
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $node
@@ -189,29 +184,17 @@ CODE_SAMPLE
         return $node;
     }
     /**
-     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $node
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $node
      */
-    private function isSkipped($node) : bool
+    private function shouldSkip($node, Scope $scope) : bool
     {
-        if (!$this->phpVersionProvider->isAtLeastPhpVersion(PhpVersionFeature::SCALAR_TYPES)) {
-            return \true;
-        }
-        if ($node instanceof ArrowFunction) {
-            return $node->returnType !== null;
-        }
         if ($node->returnType !== null) {
             return \true;
         }
-        if (!$node instanceof ClassMethod) {
-            return $this->isUnionPossibleReturnsVoid($node);
-        }
-        if ($this->classMethodReturnTypeOverrideGuard->shouldSkipClassMethod($node)) {
+        if ($node instanceof ClassMethod && $this->classMethodReturnTypeOverrideGuard->shouldSkipClassMethod($node, $scope)) {
             return \true;
         }
-        if (!$node->isMagic()) {
-            return $this->isUnionPossibleReturnsVoid($node);
-        }
-        return \true;
+        return $this->isUnionPossibleReturnsVoid($node);
     }
     /**
      * @param \PhpParser\Node\Identifier|\PhpParser\Node\Name|\PhpParser\Node\NullableType|\PhpParser\Node\ComplexType $returnedStrictTypeNode

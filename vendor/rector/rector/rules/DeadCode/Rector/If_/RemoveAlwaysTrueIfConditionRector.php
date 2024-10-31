@@ -5,18 +5,23 @@ namespace Rector\DeadCode\Rector\If_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node\Stmt\If_;
-use PHPStan\Reflection\ClassReflection;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\Constant\ConstantBooleanType;
-use Rector\Core\NodeAnalyzer\ExprAnalyzer;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\Reflection\ReflectionResolver;
+use Rector\DeadCode\NodeAnalyzer\SafeLeftTypeBooleanAndOrAnalyzer;
+use Rector\NodeAnalyzer\ExprAnalyzer;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -26,18 +31,24 @@ final class RemoveAlwaysTrueIfConditionRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\Core\Reflection\ReflectionResolver
-     */
-    private $reflectionResolver;
-    /**
-     * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ExprAnalyzer
+     * @var \Rector\NodeAnalyzer\ExprAnalyzer
      */
     private $exprAnalyzer;
-    public function __construct(ReflectionResolver $reflectionResolver, ExprAnalyzer $exprAnalyzer)
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\DeadCode\NodeAnalyzer\SafeLeftTypeBooleanAndOrAnalyzer
+     */
+    private $safeLeftTypeBooleanAndOrAnalyzer;
+    public function __construct(ExprAnalyzer $exprAnalyzer, BetterNodeFinder $betterNodeFinder, SafeLeftTypeBooleanAndOrAnalyzer $safeLeftTypeBooleanAndOrAnalyzer)
     {
-        $this->reflectionResolver = $reflectionResolver;
         $this->exprAnalyzer = $exprAnalyzer;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->safeLeftTypeBooleanAndOrAnalyzer = $safeLeftTypeBooleanAndOrAnalyzer;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -76,10 +87,13 @@ CODE_SAMPLE
     }
     /**
      * @param If_ $node
-     * @return If_|null|Stmt[]
+     * @return int|null|Stmt[]|If_
      */
     public function refactor(Node $node)
     {
+        if ($node->cond instanceof BooleanAnd) {
+            return $this->refactorIfWithBooleanAnd($node);
+        }
         if ($node->else instanceof Else_) {
             return null;
         }
@@ -94,7 +108,7 @@ CODE_SAMPLE
         if (!$conditionStaticType->getValue()) {
             return null;
         }
-        if ($this->shouldSkipPropertyFetch($node->cond)) {
+        if ($this->shouldSkipExpr($node->cond)) {
             return null;
         }
         if ($this->shouldSkipFromParam($node->cond)) {
@@ -105,8 +119,7 @@ CODE_SAMPLE
             return null;
         }
         if ($node->stmts === []) {
-            $this->removeNode($node);
-            return null;
+            return NodeTraverser::REMOVE_NODE;
         }
         return $node->stmts;
     }
@@ -121,25 +134,27 @@ CODE_SAMPLE
         }
         return \false;
     }
-    private function shouldSkipPropertyFetch(Expr $expr) : bool
+    private function shouldSkipExpr(Expr $expr) : bool
     {
-        /** @var PropertyFetch[]|StaticPropertyFetch[] $propertyFetches */
-        $propertyFetches = $this->betterNodeFinder->findInstancesOf($expr, [PropertyFetch::class, StaticPropertyFetch::class]);
-        foreach ($propertyFetches as $propertyFetch) {
-            $classReflection = $this->reflectionResolver->resolveClassReflectionSourceObject($propertyFetch);
-            if (!$classReflection instanceof ClassReflection) {
-                // cannot get parent Trait_ from Property Fetch
-                return \true;
-            }
-            $propertyName = (string) $this->nodeNameResolver->getName($propertyFetch);
-            if (!$classReflection->hasNativeProperty($propertyName)) {
-                continue;
-            }
-            $nativeProperty = $classReflection->getNativeProperty($propertyName);
-            if (!$nativeProperty->hasNativeType()) {
-                return \true;
-            }
+        return (bool) $this->betterNodeFinder->findInstancesOf($expr, [PropertyFetch::class, StaticPropertyFetch::class, ArrayDimFetch::class, MethodCall::class, StaticCall::class]);
+    }
+    private function refactorIfWithBooleanAnd(If_ $if) : ?If_
+    {
+        if (!$if->cond instanceof BooleanAnd) {
+            return null;
         }
-        return \false;
+        $booleanAnd = $if->cond;
+        $leftType = $this->getType($booleanAnd->left);
+        if (!$leftType instanceof ConstantBooleanType) {
+            return null;
+        }
+        if (!$leftType->getValue()) {
+            return null;
+        }
+        if (!$this->safeLeftTypeBooleanAndOrAnalyzer->isSafe($booleanAnd)) {
+            return null;
+        }
+        $if->cond = $booleanAnd->right;
+        return $if;
     }
 }

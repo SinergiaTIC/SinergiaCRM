@@ -6,24 +6,23 @@ namespace Rector\DeadCode\Rector\If_;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BooleanNot;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticPropertyFetch;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt;
-use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
-use PhpParser\Node\Stmt\Property;
-use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
-use Rector\Core\NodeManipulator\IfManipulator;
-use Rector\Core\Rector\AbstractRector;
-use Rector\NodeNestingScope\ContextAnalyzer;
-use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Php80\NodeAnalyzer\PromotedPropertyResolver;
-use Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector;
+use PhpParser\NodeTraverser;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\ObjectType;
+use Rector\NodeManipulator\IfManipulator;
+use Rector\Rector\AbstractRector;
+use Rector\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -33,59 +32,35 @@ final class RemoveDeadInstanceOfRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\Core\NodeManipulator\IfManipulator
+     * @var \Rector\NodeManipulator\IfManipulator
      */
     private $ifManipulator;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\Reflection\ReflectionResolver
      */
-    private $propertyFetchAnalyzer;
-    /**
-     * @readonly
-     * @var \Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector
-     */
-    private $constructorAssignDetector;
-    /**
-     * @readonly
-     * @var \Rector\Php80\NodeAnalyzer\PromotedPropertyResolver
-     */
-    private $promotedPropertyResolver;
-    /**
-     * @readonly
-     * @var \Rector\NodeNestingScope\ContextAnalyzer
-     */
-    private $contextAnalyzer;
-    public function __construct(IfManipulator $ifManipulator, PropertyFetchAnalyzer $propertyFetchAnalyzer, ConstructorAssignDetector $constructorAssignDetector, PromotedPropertyResolver $promotedPropertyResolver, ContextAnalyzer $contextAnalyzer)
+    private $reflectionResolver;
+    public function __construct(IfManipulator $ifManipulator, ReflectionResolver $reflectionResolver)
     {
         $this->ifManipulator = $ifManipulator;
-        $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
-        $this->constructorAssignDetector = $constructorAssignDetector;
-        $this->promotedPropertyResolver = $promotedPropertyResolver;
-        $this->contextAnalyzer = $contextAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
     }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Remove dead instanceof check on type hinted variable', [new CodeSample(<<<'CODE_SAMPLE'
-final class SomeClass
+function run(stdClass $stdClass)
 {
-    public function go(stdClass $stdClass)
-    {
-        if (! $stdClass instanceof stdClass) {
-            return false;
-        }
-
-        return true;
+    if (! $stdClass instanceof stdClass) {
+        return false;
     }
+
+    return true;
 }
 CODE_SAMPLE
 , <<<'CODE_SAMPLE'
-final class SomeClass
+function run(stdClass $stdClass)
 {
-    public function go(stdClass $stdClass)
-    {
-        return true;
-    }
+    return true;
 }
 CODE_SAMPLE
 )]);
@@ -99,112 +74,94 @@ CODE_SAMPLE
     }
     /**
      * @param If_ $node
-     * @return Stmt[]|null|If_
+     * @return Stmt[]|null|int|If_
      */
     public function refactor(Node $node)
     {
         if (!$this->ifManipulator->isIfWithoutElseAndElseIfs($node)) {
             return null;
         }
-        if ($this->contextAnalyzer->isInLoop($node)) {
-            return null;
-        }
-        $originalCondNode = $node->cond->getAttribute(AttributeKey::ORIGINAL_NODE);
-        if (!$originalCondNode instanceof Node) {
-            return null;
-        }
         if ($node->cond instanceof BooleanNot && $node->cond->expr instanceof Instanceof_) {
-            return $this->processMayDeadInstanceOf($node, $node->cond->expr);
+            return $this->refactorStmtAndInstanceof($node, $node->cond->expr);
+        }
+        if ($node->cond instanceof BooleanAnd) {
+            return $this->refactorIfWithBooleanAnd($node);
         }
         if ($node->cond instanceof Instanceof_) {
-            return $this->processMayDeadInstanceOf($node, $node->cond);
+            return $this->refactorStmtAndInstanceof($node, $node->cond);
         }
         return null;
     }
     /**
-     * @return null|Stmt[]|If_
+     * @return null|Stmt[]|int
      */
-    private function processMayDeadInstanceOf(If_ $if, Instanceof_ $instanceof)
+    private function refactorStmtAndInstanceof(If_ $if, Instanceof_ $instanceof)
     {
-        if (!$instanceof->class instanceof Name) {
-            return null;
-        }
-        $classType = $this->nodeTypeResolver->getType($instanceof->class);
-        $exprType = $this->nodeTypeResolver->getType($instanceof->expr);
-        $isSameStaticTypeOrSubtype = $classType->equals($exprType) || $classType->isSuperTypeOf($exprType)->yes();
-        if (!$isSameStaticTypeOrSubtype) {
-            return null;
-        }
-        if (!$instanceof->expr instanceof Variable && !$this->isInPropertyPromotedParams($instanceof->expr) && $this->isSkippedPropertyFetch($instanceof->expr)) {
+        if ($this->isInstanceofTheSameType($instanceof) !== \true) {
             return null;
         }
         if ($this->shouldSkipFromNotTypedParam($instanceof)) {
             return null;
         }
-        if ($if->cond === $instanceof && $if->stmts !== []) {
-            return $if->stmts;
+        if ($instanceof->expr instanceof Assign) {
+            $assignExpression = new Expression($instanceof->expr);
+            return \array_merge([$assignExpression], $if->stmts);
         }
-        $this->removeNode($if);
-        return $if;
+        if ($if->cond !== $instanceof) {
+            return NodeTraverser::REMOVE_NODE;
+        }
+        if ($if->stmts === []) {
+            return NodeTraverser::REMOVE_NODE;
+        }
+        // unwrap stmts
+        return $if->stmts;
     }
     private function shouldSkipFromNotTypedParam(Instanceof_ $instanceof) : bool
     {
-        $functionLike = $this->betterNodeFinder->findParentType($instanceof, FunctionLike::class);
-        if (!$functionLike instanceof FunctionLike) {
-            return \false;
-        }
-        $variable = $instanceof->expr;
-        $isReAssign = (bool) $this->betterNodeFinder->findFirstPrevious($instanceof, function (Node $subNode) use($variable) : bool {
-            return $subNode instanceof Assign && $this->nodeComparator->areNodesEqual($subNode->var, $variable);
-        });
-        if ($isReAssign) {
-            return \false;
-        }
-        $params = $functionLike->getParams();
-        foreach ($params as $param) {
-            if ($this->nodeComparator->areNodesEqual($param->var, $instanceof->expr)) {
-                return $param->type === null;
-            }
-        }
-        return \false;
+        $nativeParamType = $this->nodeTypeResolver->getNativeType($instanceof->expr);
+        return $nativeParamType instanceof MixedType;
     }
-    private function isSkippedPropertyFetch(Expr $expr) : bool
+    private function isPropertyFetch(Expr $expr) : bool
     {
-        if (!$this->propertyFetchAnalyzer->isPropertyFetch($expr)) {
+        if ($expr instanceof PropertyFetch) {
             return \true;
         }
-        /** @var PropertyFetch|StaticPropertyFetch $propertyFetch */
-        $propertyFetch = $expr;
-        $classLike = $this->betterNodeFinder->findParentType($propertyFetch, Class_::class);
-        if (!$classLike instanceof Class_) {
-            return \true;
-        }
-        /** @var string $propertyName */
-        $propertyName = $this->nodeNameResolver->getName($propertyFetch);
-        $property = $classLike->getProperty($propertyName);
-        if (!$property instanceof Property) {
-            return \true;
-        }
-        $isPropertyAssignedInConstuctor = $this->constructorAssignDetector->isPropertyAssigned($classLike, $propertyName);
-        return $property->type === null && !$isPropertyAssignedInConstuctor;
+        return $expr instanceof StaticPropertyFetch;
     }
-    private function isInPropertyPromotedParams(Expr $expr) : bool
+    private function isInstanceofTheSameType(Instanceof_ $instanceof) : ?bool
     {
-        if (!$expr instanceof PropertyFetch) {
-            return \false;
+        if (!$instanceof->class instanceof Name) {
+            return null;
         }
-        $classLike = $this->betterNodeFinder->findParentType($expr, Class_::class);
-        if (!$classLike instanceof Class_) {
-            return \false;
+        // handled in another rule
+        if ($this->isPropertyFetch($instanceof->expr) || $instanceof->expr instanceof CallLike) {
+            return null;
         }
-        /** @var string $propertyName */
-        $propertyName = $this->nodeNameResolver->getName($expr);
-        $params = $this->promotedPropertyResolver->resolveFromClass($classLike);
-        foreach ($params as $param) {
-            if ($this->nodeNameResolver->isName($param, $propertyName)) {
-                return \true;
-            }
+        $classReflection = $this->reflectionResolver->resolveClassReflection($instanceof);
+        if ($classReflection instanceof ClassReflection && $classReflection->isTrait()) {
+            return null;
         }
-        return \false;
+        $exprType = $this->nodeTypeResolver->getNativeType($instanceof->expr);
+        if (!$exprType instanceof ObjectType) {
+            return null;
+        }
+        $className = $instanceof->class->toString();
+        return $exprType->isInstanceOf($className)->yes();
+    }
+    private function refactorIfWithBooleanAnd(If_ $if) : ?\PhpParser\Node\Stmt\If_
+    {
+        if (!$if->cond instanceof BooleanAnd) {
+            return null;
+        }
+        $booleanAnd = $if->cond;
+        if (!$booleanAnd->left instanceof Instanceof_) {
+            return null;
+        }
+        $instanceof = $booleanAnd->left;
+        if ($this->isInstanceofTheSameType($instanceof) !== \true) {
+            return null;
+        }
+        $if->cond = $booleanAnd->right;
+        return $if;
     }
 }

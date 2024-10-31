@@ -1,41 +1,17 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202305;
+namespace RectorPrefix202407;
 
+use RectorPrefix202407\Illuminate\Container\Container;
 use PhpParser\Node;
 use PhpParser\PrettyPrinter\Standard;
-use RectorPrefix202305\Tracy\Dumper;
-if (!\function_exists('dump_with_depth')) {
-    /**
-     * @param mixed $value
-     */
-    function dump_with_depth($value, int $depth = 2) : void
-    {
-        Dumper::dump($value, [Dumper::DEPTH => $depth]);
-    }
-}
-if (!\function_exists('dn')) {
-    function dn(Node $node, int $depth = 2) : void
-    {
-        \RectorPrefix202305\dump_node($node, $depth);
-    }
-}
-if (!\function_exists('dump_node')) {
-    /**
-     * @param \PhpParser\Node|mixed[] $node
-     */
-    function dump_node($node, int $depth = 2) : void
-    {
-        $nodes = \is_array($node) ? $node : [$node];
-        foreach ($nodes as $node) {
-            Dumper::dump($node, [Dumper::DEPTH => $depth]);
-        }
-    }
-}
+use Rector\Console\Style\SymfonyStyleFactory;
+use Rector\Util\NodePrinter;
+use RectorPrefix202407\Symfony\Component\Console\Output\OutputInterface;
 if (!\function_exists('print_node')) {
     /**
-     * @param \PhpParser\Node|mixed[] $node
+     * @param Node|Node[] $node
      */
     function print_node($node) : void
     {
@@ -43,7 +19,22 @@ if (!\function_exists('print_node')) {
         $nodes = \is_array($node) ? $node : [$node];
         foreach ($nodes as $node) {
             $printedContent = $standard->prettyPrint([$node]);
-            Dumper::dump($printedContent);
+            \var_dump($printedContent);
         }
+    }
+}
+if (!\function_exists('dump_node')) {
+    /**
+     * @param Node|Node[] $node
+     */
+    function dump_node($node) : void
+    {
+        $symfonyStyle = Container::getInstance()->make(SymfonyStyleFactory::class)->create();
+        // we turn up the verbosity so it's visible in tests overriding the
+        // default which is to be quite during tests
+        $symfonyStyle->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
+        $symfonyStyle->newLine();
+        $nodePrinter = new NodePrinter($symfonyStyle);
+        $nodePrinter->printNodes($node);
     }
 }

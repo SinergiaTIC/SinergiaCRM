@@ -1,48 +1,38 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\Rector;
+namespace Rector\Rector;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
-use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Const_;
 use PhpParser\Node\Stmt\InlineHTML;
+use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Nop;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\PropertyProperty;
+use PhpParser\Node\Stmt\Trait_;
+use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PHPStan\Analyser\MutatingScope;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Application\ChangedNodeScopeRefresher;
+use Rector\Application\Provider\CurrentFileProvider;
 use Rector\ChangesReporting\ValueObject\RectorWithLineChange;
-use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Core\Application\ChangedNodeScopeRefresher;
-use Rector\Core\Configuration\CurrentNodeProvider;
-use Rector\Core\Console\Output\RectorOutputStyle;
-use Rector\Core\Contract\Rector\PhpRectorInterface;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\FileSystem\FilePathHelper;
-use Rector\Core\Logging\CurrentRectorProvider;
-use Rector\Core\NodeDecorator\CreatedByRuleDecorator;
-use Rector\Core\PhpParser\Comparing\NodeComparator;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
-use Rector\Core\PhpParser\Node\NodeFactory;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
-use Rector\Core\PhpParser\NodeTraverser\NodeConnectingTraverser;
-use Rector\Core\ProcessAnalyzer\RectifiedAnalyzer;
-use Rector\Core\Provider\CurrentFileProvider;
-use Rector\Core\ValueObject\Application\File;
+use Rector\Contract\Rector\RectorInterface;
+use Rector\Exception\ShouldNotHappenException;
+use Rector\NodeDecorator\CreatedByRuleDecorator;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\NodeRemoval\NodeRemover;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
-use Rector\PostRector\Collector\NodesToRemoveCollector;
+use Rector\PhpParser\Comparing\NodeComparator;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Skipper\Skipper\Skipper;
-use Rector\StaticTypeMapper\StaticTypeMapper;
-use RectorPrefix202305\Symfony\Contracts\Service\Attribute\Required;
-abstract class AbstractRector extends NodeVisitorAbstract implements PhpRectorInterface
+use Rector\ValueObject\Application\File;
+abstract class AbstractRector extends NodeVisitorAbstract implements RectorInterface
 {
     /**
      * @var string
@@ -56,8 +46,7 @@ A) Direct return null for no change:
 
 B) Remove the Node:
 
-    \$this->removeNode(\$node);
-    return null;
+    return NodeTraverser::REMOVE_NODE;
 CODE_SAMPLE;
     /**
      * @var \Rector\NodeNameResolver\NodeNameResolver
@@ -68,121 +57,56 @@ CODE_SAMPLE;
      */
     protected $nodeTypeResolver;
     /**
-     * @var \Rector\StaticTypeMapper\StaticTypeMapper
-     */
-    protected $staticTypeMapper;
-    /**
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
-     */
-    protected $phpDocInfoFactory;
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
+     * @var \Rector\PhpParser\Node\NodeFactory
      */
     protected $nodeFactory;
     /**
-     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
-     */
-    protected $valueResolver;
-    /**
-     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
-     */
-    protected $betterNodeFinder;
-    /**
-     * @deprecated Use service directly or return changes nodes
-     * @var \Rector\NodeRemoval\NodeRemover
-     */
-    protected $nodeRemover;
-    /**
-     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
+     * @var \Rector\PhpParser\Comparing\NodeComparator
      */
     protected $nodeComparator;
     /**
-     * @var \Rector\Core\ValueObject\Application\File
+     * @var \Rector\ValueObject\Application\File
      */
     protected $file;
     /**
-     * @var \Rector\Core\Application\ChangedNodeScopeRefresher
+     * @var \Rector\Skipper\Skipper\Skipper
      */
-    protected $changedNodeScopeRefresher;
+    protected $skipper;
     /**
-     * @var \Rector\PostRector\Collector\NodesToRemoveCollector
+     * @var \Rector\Application\ChangedNodeScopeRefresher
      */
-    private $nodesToRemoveCollector;
+    private $changedNodeScopeRefresher;
     /**
      * @var \Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser
      */
     private $simpleCallableNodeTraverser;
     /**
-     * @var \Rector\Core\Logging\CurrentRectorProvider
-     */
-    private $currentRectorProvider;
-    /**
-     * @var \Rector\Core\Configuration\CurrentNodeProvider
-     */
-    private $currentNodeProvider;
-    /**
-     * @var \Rector\Skipper\Skipper\Skipper
-     */
-    private $skipper;
-    /**
-     * @var \Rector\Core\Provider\CurrentFileProvider
+     * @var \Rector\Application\Provider\CurrentFileProvider
      */
     private $currentFileProvider;
     /**
-     * @var array<string, Node[]|Node>
+     * @var array<int, Node[]>
      */
     private $nodesToReturn = [];
     /**
-     * @var \Rector\Core\ProcessAnalyzer\RectifiedAnalyzer
-     */
-    private $rectifiedAnalyzer;
-    /**
-     * @var \Rector\Core\NodeDecorator\CreatedByRuleDecorator
+     * @var \Rector\NodeDecorator\CreatedByRuleDecorator
      */
     private $createdByRuleDecorator;
     /**
-     * @var \Rector\Core\Console\Output\RectorOutputStyle
+     * @var int|null
      */
-    private $rectorOutputStyle;
-    /**
-     * @var \Rector\Core\FileSystem\FilePathHelper
-     */
-    private $filePathHelper;
-    /**
-     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
-     */
-    private $docBlockUpdater;
-    /**
-     * @var \Rector\Core\PhpParser\NodeTraverser\NodeConnectingTraverser
-     */
-    private $nodeConnectingTraverser;
-    /**
-     * @required
-     */
-    public function autowire(NodesToRemoveCollector $nodesToRemoveCollector, NodeRemover $nodeRemover, NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, NodeFactory $nodeFactory, PhpDocInfoFactory $phpDocInfoFactory, StaticTypeMapper $staticTypeMapper, CurrentRectorProvider $currentRectorProvider, CurrentNodeProvider $currentNodeProvider, Skipper $skipper, ValueResolver $valueResolver, BetterNodeFinder $betterNodeFinder, NodeComparator $nodeComparator, CurrentFileProvider $currentFileProvider, RectifiedAnalyzer $rectifiedAnalyzer, CreatedByRuleDecorator $createdByRuleDecorator, ChangedNodeScopeRefresher $changedNodeScopeRefresher, RectorOutputStyle $rectorOutputStyle, FilePathHelper $filePathHelper, DocBlockUpdater $docBlockUpdater, NodeConnectingTraverser $nodeConnectingTraverser) : void
+    private $toBeRemovedNodeId;
+    public function autowire(NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, NodeFactory $nodeFactory, Skipper $skipper, NodeComparator $nodeComparator, CurrentFileProvider $currentFileProvider, CreatedByRuleDecorator $createdByRuleDecorator, ChangedNodeScopeRefresher $changedNodeScopeRefresher) : void
     {
-        $this->nodesToRemoveCollector = $nodesToRemoveCollector;
-        $this->nodeRemover = $nodeRemover;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->nodeTypeResolver = $nodeTypeResolver;
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
         $this->nodeFactory = $nodeFactory;
-        $this->phpDocInfoFactory = $phpDocInfoFactory;
-        $this->staticTypeMapper = $staticTypeMapper;
-        $this->currentRectorProvider = $currentRectorProvider;
-        $this->currentNodeProvider = $currentNodeProvider;
         $this->skipper = $skipper;
-        $this->valueResolver = $valueResolver;
-        $this->betterNodeFinder = $betterNodeFinder;
         $this->nodeComparator = $nodeComparator;
         $this->currentFileProvider = $currentFileProvider;
-        $this->rectifiedAnalyzer = $rectifiedAnalyzer;
         $this->createdByRuleDecorator = $createdByRuleDecorator;
         $this->changedNodeScopeRefresher = $changedNodeScopeRefresher;
-        $this->rectorOutputStyle = $rectorOutputStyle;
-        $this->filePathHelper = $filePathHelper;
-        $this->docBlockUpdater = $docBlockUpdater;
-        $this->nodeConnectingTraverser = $nodeConnectingTraverser;
     }
     /**
      * @return Node[]|null
@@ -198,27 +122,41 @@ CODE_SAMPLE;
         return parent::beforeTraverse($nodes);
     }
     /**
-     * @return Node|null
+     * @return int|\PhpParser\Node|null
      */
     public final function enterNode(Node $node)
     {
-        $nodeClass = \get_class($node);
-        if (!$this->isMatchingNodeType($nodeClass)) {
+        if (!$this->isMatchingNodeType($node)) {
             return null;
         }
-        if ($this->shouldSkipCurrentNode($node)) {
+        $filePath = $this->file->getFilePath();
+        if ($this->skipper->shouldSkipCurrentNode($this, $filePath, static::class, $node)) {
             return null;
         }
-        $this->currentRectorProvider->changeCurrentRector($this);
-        // for PHP doc info factory and change notifier
-        $this->currentNodeProvider->setNode($node);
-        $this->printDebugCurrentFileAndRule();
-        $originalNode = $node->getAttribute(AttributeKey::ORIGINAL_NODE);
-        if ($originalNode instanceof Node) {
-            $this->changedNodeScopeRefresher->reIndexNodeAttributes($node);
-        }
+        $this->changedNodeScopeRefresher->reIndexNodeAttributes($node);
+        // ensure origNode pulled before refactor to avoid changed during refactor, ref https://3v4l.org/YMEGN
+        $originalNode = $node->getAttribute(AttributeKey::ORIGINAL_NODE) ?? $node;
         $refactoredNode = $this->refactor($node);
-        // nothing to change or just removed via removeNode() → continue
+        // @see NodeTraverser::* codes, e.g. removal of node of stopping the traversing
+        if ($refactoredNode === NodeTraverser::REMOVE_NODE) {
+            $this->toBeRemovedNodeId = \spl_object_id($originalNode);
+            // notify this rule changing code
+            $rectorWithLineChange = new RectorWithLineChange(static::class, $originalNode->getLine());
+            $this->file->addRectorClassWithLine($rectorWithLineChange);
+            return $originalNode;
+        }
+        if (\is_int($refactoredNode)) {
+            $this->createdByRuleDecorator->decorate($node, $originalNode, static::class);
+            if (!\in_array($refactoredNode, [NodeTraverser::DONT_TRAVERSE_CHILDREN, NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN], \true)) {
+                // notify this rule changing code
+                $rectorWithLineChange = new RectorWithLineChange(static::class, $originalNode->getLine());
+                $this->file->addRectorClassWithLine($rectorWithLineChange);
+                return $refactoredNode;
+            }
+            $this->decorateCurrentAndChildren($node);
+            return null;
+        }
+        // nothing to change → continue
         if ($refactoredNode === null) {
             return null;
         }
@@ -226,43 +164,24 @@ CODE_SAMPLE;
             $errorMessage = \sprintf(self::EMPTY_NODE_ARRAY_MESSAGE, static::class);
             throw new ShouldNotHappenException($errorMessage);
         }
-        $originalNode = $originalNode ?? $node;
-        /** @var non-empty-array<Node>|Node $refactoredNode */
-        $this->createdByRuleDecorator->decorate($refactoredNode, $originalNode, static::class);
-        $rectorWithLineChange = new RectorWithLineChange(static::class, $originalNode->getLine());
-        $this->file->addRectorClassWithLine($rectorWithLineChange);
-        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
-        /** @var MutatingScope|null $currentScope */
-        $currentScope = $originalNode->getAttribute(AttributeKey::SCOPE);
-        $filePath = $this->file->getFilePath();
-        // search "infinite recursion" in https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown
-        $originalNodeHash = \spl_object_hash($originalNode);
-        if (\is_array($refactoredNode)) {
-            $firstNode = \current($refactoredNode);
-            $this->mirrorComments($firstNode, $originalNode);
-            $this->updateParentNodes($refactoredNode, $parentNode);
-            $this->connectNodes($refactoredNode, $node);
-            $this->refreshScopeNodes($refactoredNode, $filePath, $currentScope);
-            $this->nodesToReturn[$originalNodeHash] = $refactoredNode;
-            // will be replaced in leaveNode() the original node must be passed
-            return $originalNode;
-        }
-        $refactoredNode = $originalNode instanceof Stmt && $refactoredNode instanceof Expr ? new Expression($refactoredNode) : $refactoredNode;
-        $this->updateParentNodes($refactoredNode, $parentNode);
-        $this->connectNodes([$refactoredNode], $node);
-        $this->refreshScopeNodes($refactoredNode, $filePath, $currentScope);
-        $this->nodesToReturn[$originalNodeHash] = $refactoredNode;
-        return $refactoredNode;
+        return $this->postRefactorProcess($originalNode, $node, $refactoredNode, $filePath);
     }
     /**
      * Replacing nodes in leaveNode() method avoids infinite recursion
      * see"infinite recursion" in https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown
+     * @return mixed[]|int|\PhpParser\Node|null
      */
     public function leaveNode(Node $node)
     {
-        $objectHash = \spl_object_hash($node);
-        // update parents relations!!!
-        return $this->nodesToReturn[$objectHash] ?? $node;
+        if ($node->hasAttribute(AttributeKey::ORIGINAL_NODE)) {
+            return null;
+        }
+        $objectId = \spl_object_id($node);
+        if ($this->toBeRemovedNodeId === $objectId) {
+            $this->toBeRemovedNodeId = null;
+            return NodeTraverser::REMOVE_NODE;
+        }
+        return $this->nodesToReturn[$objectId] ?? $node;
     }
     protected function isName(Node $node, string $name) : bool
     {
@@ -275,6 +194,21 @@ CODE_SAMPLE;
     {
         return $this->nodeNameResolver->isNames($node, $names);
     }
+    /**
+     * Some nodes have always-known string name. This makes PHPStan smarter.
+     * @see https://phpstan.org/writing-php-code/phpdoc-types#conditional-return-types
+     *
+     * @return ($node is Node\Param ? string :
+     *  ($node is ClassMethod ? string :
+     *  ($node is Property ? string :
+     *  ($node is PropertyProperty ? string :
+     *  ($node is Trait_ ? string :
+     *  ($node is Interface_ ? string :
+     *  ($node is Const_ ? string :
+     *  ($node is Node\Const_ ? string :
+     *  ($node is Name ? string :
+     *      string|null )))))))))
+     */
     protected function getName(Node $node) : ?string
     {
         return $this->nodeNameResolver->getName($node);
@@ -291,8 +225,8 @@ CODE_SAMPLE;
         return $this->nodeTypeResolver->getType($node);
     }
     /**
-     * @param \PhpParser\Node|mixed[] $nodes
-     * @param callable(Node $node): (Node|null|int) $callable
+     * @param Node|Node[] $nodes
+     * @param callable(Node): (int|Node|null|Node[]) $callable
      */
     protected function traverseNodesWithCallable($nodes, callable $callable) : void
     {
@@ -311,103 +245,67 @@ CODE_SAMPLE;
             $newNode->setAttribute(AttributeKey::COMMENTS, $oldNode->getAttribute(AttributeKey::COMMENTS));
         }
     }
-    /**
-     * @param Arg[] $currentArgs
-     * @param Arg[] $appendingArgs
-     * @return Arg[]
-     */
-    protected function appendArgs(array $currentArgs, array $appendingArgs) : array
+    private function decorateCurrentAndChildren(Node $node) : void
     {
-        foreach ($appendingArgs as $appendingArg) {
-            $currentArgs[] = new Arg($appendingArg->value);
+        // filter only types that
+        //    1. registered in getNodesTypes() method
+        //    2. different with current node type, as already decorated above
+        //
+        $otherTypes = \array_filter($this->getNodeTypes(), static function (string $nodeType) use($node) : bool {
+            return $nodeType !== \get_class($node);
+        });
+        if ($otherTypes === []) {
+            return;
         }
-        return $currentArgs;
-    }
-    protected function removeNode(Node $node) : void
-    {
-        $this->nodeRemover->removeNode($node);
+        $this->traverseNodesWithCallable($node, static function (Node $subNode) use($otherTypes) {
+            if (\in_array(\get_class($subNode), $otherTypes, \true)) {
+                $subNode->setAttribute(AttributeKey::SKIPPED_BY_RECTOR_RULE, static::class);
+            }
+            return null;
+        });
     }
     /**
-     * @param mixed[]|\PhpParser\Node $node
+     * @param Node|Node[] $refactoredNode
+     */
+    private function postRefactorProcess(Node $originalNode, Node $node, $refactoredNode, string $filePath) : Node
+    {
+        /** @var non-empty-array<Node>|Node $refactoredNode */
+        $this->createdByRuleDecorator->decorate($refactoredNode, $originalNode, static::class);
+        $rectorWithLineChange = new RectorWithLineChange(static::class, $originalNode->getLine());
+        $this->file->addRectorClassWithLine($rectorWithLineChange);
+        /** @var MutatingScope|null $currentScope */
+        $currentScope = $node->getAttribute(AttributeKey::SCOPE);
+        if (\is_array($refactoredNode)) {
+            $firstNode = \current($refactoredNode);
+            $this->mirrorComments($firstNode, $originalNode);
+            $this->refreshScopeNodes($refactoredNode, $filePath, $currentScope);
+            // search "infinite recursion" in https://github.com/nikic/PHP-Parser/blob/master/doc/component/Walking_the_AST.markdown
+            $originalNodeId = \spl_object_id($originalNode);
+            // will be replaced in leaveNode() the original node must be passed
+            $this->nodesToReturn[$originalNodeId] = $refactoredNode;
+            return $originalNode;
+        }
+        $this->refreshScopeNodes($refactoredNode, $filePath, $currentScope);
+        return $refactoredNode;
+    }
+    /**
+     * @param Node[]|Node $node
      */
     private function refreshScopeNodes($node, string $filePath, ?MutatingScope $mutatingScope) : void
     {
         $nodes = $node instanceof Node ? [$node] : $node;
         foreach ($nodes as $node) {
-            /**
-             * Early refresh Doc Comment of Node before refresh Scope to ensure doc node is latest update
-             * to make PHPStan type can be correctly detected
-             */
-            $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
-            $this->changedNodeScopeRefresher->refresh($node, $mutatingScope, $filePath);
+            $this->changedNodeScopeRefresher->refresh($node, $filePath, $mutatingScope);
         }
     }
-    /**
-     * @param class-string<Node> $nodeClass
-     */
-    private function isMatchingNodeType(string $nodeClass) : bool
+    private function isMatchingNodeType(Node $node) : bool
     {
+        $nodeClass = \get_class($node);
         foreach ($this->getNodeTypes() as $nodeType) {
             if (\is_a($nodeClass, $nodeType, \true)) {
                 return \true;
             }
         }
         return \false;
-    }
-    private function shouldSkipCurrentNode(Node $node) : bool
-    {
-        if ($this->nodesToRemoveCollector->isNodeRemoved($node)) {
-            return \true;
-        }
-        $filePath = $this->file->getFilePath();
-        if ($this->skipper->shouldSkipElementAndFilePath($this, $filePath)) {
-            return \true;
-        }
-        return $this->rectifiedAnalyzer->hasRectified(static::class, $node);
-    }
-    /**
-     * @param mixed[]|\PhpParser\Node $node
-     */
-    private function updateParentNodes($node, ?Node $parentNode) : void
-    {
-        if (!$parentNode instanceof Node) {
-            return;
-        }
-        $nodes = $node instanceof Node ? [$node] : $node;
-        foreach ($nodes as $node) {
-            // update parents relations
-            $node->setAttribute(AttributeKey::PARENT_NODE, $parentNode);
-        }
-    }
-    /**
-     * @param non-empty-array<Node> $nodes
-     */
-    private function connectNodes(array $nodes, Node $node) : void
-    {
-        $firstNode = \current($nodes);
-        $firstNodePreviousNode = $firstNode->getAttribute(AttributeKey::PREVIOUS_NODE);
-        if (!$firstNodePreviousNode instanceof Node && $node->hasAttribute(AttributeKey::PREVIOUS_NODE)) {
-            /** @var Node $previousNode */
-            $previousNode = $node->getAttribute(AttributeKey::PREVIOUS_NODE);
-            $nodes = \array_merge([$previousNode], \is_array($nodes) ? $nodes : \iterator_to_array($nodes));
-        }
-        $lastNode = \end($nodes);
-        $lastNodeNextNode = $lastNode->getAttribute(AttributeKey::NEXT_NODE);
-        if (!$lastNodeNextNode instanceof Node && $node->hasAttribute(AttributeKey::NEXT_NODE)) {
-            /** @var Node $nextNode */
-            $nextNode = $node->getAttribute(AttributeKey::NEXT_NODE);
-            $nodes = \array_merge(\is_array($nodes) ? $nodes : \iterator_to_array($nodes), [$nextNode]);
-        }
-        $this->nodeConnectingTraverser->traverse($nodes);
-    }
-    private function printDebugCurrentFileAndRule() : void
-    {
-        if (!$this->rectorOutputStyle->isDebug()) {
-            return;
-        }
-        $relativeFilePath = $this->filePathHelper->relativePath($this->file->getFilePath());
-        $this->rectorOutputStyle->writeln('[file] ' . $relativeFilePath);
-        $this->rectorOutputStyle->writeln('[rule] ' . static::class);
-        $this->rectorOutputStyle->newLine(1);
     }
 }

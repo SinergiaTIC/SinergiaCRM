@@ -9,9 +9,15 @@ declare (strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\SebastianBergmann\Diff;
+namespace RectorPrefix202407\SebastianBergmann\Diff;
 
-final class Chunk
+use ArrayIterator;
+use IteratorAggregate;
+use Traversable;
+/**
+ * @template-implements IteratorAggregate<int, Line>
+ */
+final class Chunk implements IteratorAggregate
 {
     /**
      * @var int
@@ -41,26 +47,26 @@ final class Chunk
         $this->endRange = $endRange;
         $this->lines = $lines;
     }
-    public function getStart() : int
+    public function start() : int
     {
         return $this->start;
     }
-    public function getStartRange() : int
+    public function startRange() : int
     {
         return $this->startRange;
     }
-    public function getEnd() : int
+    public function end() : int
     {
         return $this->end;
     }
-    public function getEndRange() : int
+    public function endRange() : int
     {
         return $this->endRange;
     }
     /**
      * @psalm-return list<Line>
      */
-    public function getLines() : array
+    public function lines() : array
     {
         return $this->lines;
     }
@@ -75,5 +81,46 @@ final class Chunk
             }
         }
         $this->lines = $lines;
+    }
+    /**
+     * @deprecated Use start() instead
+     */
+    public function getStart() : int
+    {
+        return $this->start;
+    }
+    /**
+     * @deprecated Use startRange() instead
+     */
+    public function getStartRange() : int
+    {
+        return $this->startRange;
+    }
+    /**
+     * @deprecated Use end() instead
+     */
+    public function getEnd() : int
+    {
+        return $this->end;
+    }
+    /**
+     * @deprecated Use endRange() instead
+     */
+    public function getEndRange() : int
+    {
+        return $this->endRange;
+    }
+    /**
+     * @psalm-return list<Line>
+     *
+     * @deprecated Use lines() instead
+     */
+    public function getLines() : array
+    {
+        return $this->lines;
+    }
+    public function getIterator() : Traversable
+    {
+        return new ArrayIterator($this->lines);
     }
 }

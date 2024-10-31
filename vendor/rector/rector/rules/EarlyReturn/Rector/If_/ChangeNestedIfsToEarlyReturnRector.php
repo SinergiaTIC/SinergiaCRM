@@ -6,13 +6,12 @@ namespace Rector\EarlyReturn\Rector\If_;
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BooleanNot;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
-use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
-use Rector\Core\NodeManipulator\IfManipulator;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
 use Rector\EarlyReturn\NodeTransformer\ConditionInverter;
+use Rector\NodeManipulator\IfManipulator;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -27,7 +26,7 @@ final class ChangeNestedIfsToEarlyReturnRector extends AbstractRector
     private $conditionInverter;
     /**
      * @readonly
-     * @var \Rector\Core\NodeManipulator\IfManipulator
+     * @var \Rector\NodeManipulator\IfManipulator
      */
     private $ifManipulator;
     public function __construct(ConditionInverter $conditionInverter, IfManipulator $ifManipulator)
@@ -81,37 +80,33 @@ CODE_SAMPLE
     /**
      * @param StmtsAwareInterface $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node) : ?StmtsAwareInterface
     {
-        $stmts = $node->stmts;
-        if ($stmts === null) {
+        if ($node->stmts === null) {
             return null;
         }
-        /** @var Stmt[] $previousStmts[] */
-        $previousStmts = [];
-        foreach ($stmts as $key => $stmt) {
-            $nextStmt = $stmts[$key + 1] ?? null;
-            if (!$nextStmt instanceof Return_) {
-                if ($nextStmt instanceof Stmt) {
-                    $previousStmts[] = $stmt;
-                }
-                continue;
-            }
+        foreach ($node->stmts as $key => $stmt) {
             if (!$stmt instanceof If_) {
                 continue;
+            }
+            $nextStmt = $node->stmts[$key + 1] ?? null;
+            if (!$nextStmt instanceof Return_) {
+                return null;
             }
             $nestedIfsWithOnlyReturn = $this->ifManipulator->collectNestedIfsWithOnlyReturn($stmt);
             if ($nestedIfsWithOnlyReturn === []) {
                 continue;
             }
-            $node->stmts = \array_merge($previousStmts, $this->processNestedIfsWithOnlyReturn($nestedIfsWithOnlyReturn, $nextStmt));
+            $newStmts = $this->processNestedIfsWithOnlyReturn($nestedIfsWithOnlyReturn, $nextStmt);
+            // replace nested ifs with many separate ifs
+            \array_splice($node->stmts, $key, 1, $newStmts);
             return $node;
         }
         return null;
     }
     /**
      * @param If_[] $nestedIfsWithOnlyReturn
-     * @return Stmt[]
+     * @return If_[]
      */
     private function processNestedIfsWithOnlyReturn(array $nestedIfsWithOnlyReturn, Return_ $nextReturn) : array
     {
@@ -128,15 +123,15 @@ CODE_SAMPLE
                 $newStmts = \array_merge($newStmts, $standaloneIfs);
             }
         }
-        $newStmts[] = $nextReturn;
+        // $newStmts[] = $nextReturn;
         return $newStmts;
     }
     /**
-     * @return Stmt[]
+     * @return If_[]
      */
-    private function createStandaloneIfsWithReturn(If_ $nestedIfWithOnlyReturn, Return_ $return) : array
+    private function createStandaloneIfsWithReturn(If_ $onlyReturnIf, Return_ $return) : array
     {
-        $invertedCondExpr = $this->conditionInverter->createInvertedCondition($nestedIfWithOnlyReturn->cond);
+        $invertedCondExpr = $this->conditionInverter->createInvertedCondition($onlyReturnIf->cond);
         // special case
         if ($invertedCondExpr instanceof BooleanNot && $invertedCondExpr->expr instanceof BooleanAnd) {
             $booleanNotPartIf = new If_(new BooleanNot($invertedCondExpr->expr->left));
@@ -145,8 +140,8 @@ CODE_SAMPLE
             $secondBooleanNotPartIf->stmts = [clone $return];
             return [$booleanNotPartIf, $secondBooleanNotPartIf];
         }
-        $nestedIfWithOnlyReturn->cond = $invertedCondExpr;
-        $nestedIfWithOnlyReturn->stmts = [$return];
-        return [$nestedIfWithOnlyReturn];
+        $onlyReturnIf->cond = $invertedCondExpr;
+        $onlyReturnIf->stmts = [$return];
+        return [$onlyReturnIf];
     }
 }

@@ -8,14 +8,10 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://3v4l.org/aLf96
- * @changelog https://3v4l.org/2r26K
- * @changelog https://3v4l.org/anks3
- *
  * @see \Rector\Tests\CodeQuality\Rector\FuncCall\ArrayMergeOfNonArraysToSimpleArrayRector\ArrayMergeOfNonArraysToSimpleArrayRectorTest
  */
 final class ArrayMergeOfNonArraysToSimpleArrayRector extends AbstractRector
@@ -78,7 +74,7 @@ CODE_SAMPLE
                 if (!$nestedArrayItemItem instanceof ArrayItem) {
                     continue;
                 }
-                $array->items[] = new ArrayItem($nestedArrayItemItem->value, $nestedArrayItemItem->key);
+                $array->items[] = $nestedArrayItemItem->unpack ? $nestedArrayItemItem : new ArrayItem($nestedArrayItemItem->value, $nestedArrayItemItem->key);
                 $isAssigned = \true;
             }
         }

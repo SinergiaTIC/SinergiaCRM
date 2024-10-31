@@ -4,12 +4,17 @@ declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\PropertyProperty;
-use Rector\CodeQuality\NodeAnalyzer\ConstructorPropertyDefaultExprResolver;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\MethodName;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\If_;
+use PhpParser\Node\Stmt\Property;
+use Rector\NodeAnalyzer\ExprAnalyzer;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\MethodName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -19,12 +24,12 @@ final class InlineConstructorDefaultToPropertyRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\CodeQuality\NodeAnalyzer\ConstructorPropertyDefaultExprResolver
+     * @var \Rector\NodeAnalyzer\ExprAnalyzer
      */
-    private $constructorPropertyDefaultExprResolver;
-    public function __construct(ConstructorPropertyDefaultExprResolver $constructorPropertyDefaultExprResolver)
+    private $exprAnalyzer;
+    public function __construct(ExprAnalyzer $exprAnalyzer)
     {
-        $this->constructorPropertyDefaultExprResolver = $constructorPropertyDefaultExprResolver;
+        $this->exprAnalyzer = $exprAnalyzer;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -63,25 +68,37 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
+        $hasChanged = \false;
         $constructClassMethod = $node->getMethod(MethodName::CONSTRUCT);
         if (!$constructClassMethod instanceof ClassMethod) {
             return null;
         }
-        // resolve property defaults
-        $defaultPropertyExprAssigns = $this->constructorPropertyDefaultExprResolver->resolve($constructClassMethod);
-        if ($defaultPropertyExprAssigns === []) {
+        if ($constructClassMethod->stmts === null) {
             return null;
         }
-        $hasChanged = \false;
-        $propertyProperties = $this->getNonReadonlyPropertyProperty($node);
-        foreach ($defaultPropertyExprAssigns as $defaultPropertyExprAssign) {
-            foreach ($propertyProperties as $propertyProperty) {
-                if (!$this->isName($propertyProperty, $defaultPropertyExprAssign->getPropertyName())) {
-                    continue;
-                }
-                $propertyProperty->default = $defaultPropertyExprAssign->getDefaultExpr();
+        foreach ($constructClassMethod->stmts as $key => $stmt) {
+            // code that is possibly breaking flow
+            if ($stmt instanceof If_) {
+                return null;
+            }
+            if (!$stmt instanceof Expression) {
+                continue;
+            }
+            if (!$stmt->expr instanceof Assign) {
+                continue;
+            }
+            $assign = $stmt->expr;
+            $propertyName = $this->matchAssignedLocalPropertyName($assign);
+            if (!\is_string($propertyName)) {
+                continue;
+            }
+            $defaultExpr = $assign->expr;
+            if ($this->exprAnalyzer->isDynamicExpr($defaultExpr)) {
+                continue;
+            }
+            $hasPropertyChanged = $this->refactorProperty($node, $propertyName, $defaultExpr, $constructClassMethod, $key);
+            if ($hasPropertyChanged) {
                 $hasChanged = \true;
-                $this->removeNode($defaultPropertyExprAssign->getAssignExpression());
             }
         }
         if (!$hasChanged) {
@@ -89,18 +106,44 @@ CODE_SAMPLE
         }
         return $node;
     }
-    /**
-     * @return PropertyProperty[]
-     */
-    private function getNonReadonlyPropertyProperty(Class_ $class) : array
+    private function matchAssignedLocalPropertyName(Assign $assign) : ?string
     {
-        $propertyProperties = [];
-        foreach ($class->getProperties() as $property) {
-            if ($property->isReadonly()) {
+        if (!$assign->var instanceof PropertyFetch) {
+            return null;
+        }
+        $propertyFetch = $assign->var;
+        if (!$this->nodeNameResolver->isName($propertyFetch->var, 'this')) {
+            return null;
+        }
+        $propertyName = $this->nodeNameResolver->getName($propertyFetch->name);
+        if (!\is_string($propertyName)) {
+            return null;
+        }
+        return $propertyName;
+    }
+    private function refactorProperty(Class_ $class, string $propertyName, Expr $defaultExpr, ClassMethod $constructClassMethod, int $key) : bool
+    {
+        if ($class->isReadonly()) {
+            return \false;
+        }
+        foreach ($class->stmts as $classStmt) {
+            if (!$classStmt instanceof Property) {
                 continue;
             }
-            $propertyProperties = \array_merge($propertyProperties, $property->props);
+            // readonly property cannot have default value
+            if ($classStmt->isReadonly()) {
+                continue;
+            }
+            foreach ($classStmt->props as $propertyProperty) {
+                if (!$this->isName($propertyProperty, $propertyName)) {
+                    continue;
+                }
+                $propertyProperty->default = $defaultExpr;
+                // remove assign
+                unset($constructClassMethod->stmts[$key]);
+                return \true;
+            }
         }
-        return $propertyProperties;
+        return \false;
     }
 }

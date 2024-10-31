@@ -9,21 +9,19 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Switch_;
-use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use PHPStan\Type\ObjectType;
+use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
 use Rector\Php80\NodeAnalyzer\MatchSwitchAnalyzer;
 use Rector\Php80\NodeFactory\MatchFactory;
 use Rector\Php80\NodeResolver\SwitchExprsResolver;
 use Rector\Php80\ValueObject\CondAndExpr;
 use Rector\Php80\ValueObject\MatchResult;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://wiki.php.net/rfc/match_expression_v2
- * @changelog https://3v4l.org/572T5
- *
  * @see \Rector\Tests\Php80\Rector\Switch_\ChangeSwitchToMatchRector\ChangeSwitchToMatchRectorTest
  */
 final class ChangeSwitchToMatchRector extends AbstractRector implements MinPhpVersionInterface
@@ -101,6 +99,9 @@ CODE_SAMPLE
                 continue;
             }
             $isReturn = $this->matchSwitchAnalyzer->isReturnCondsAndExprs($condAndExprs);
+            if ($this->nodeTypeResolver->getType($stmt->cond) instanceof ObjectType) {
+                continue;
+            }
             $matchResult = $this->matchFactory->createFromCondAndExprs($stmt->cond, $condAndExprs, $nextStmt);
             if (!$matchResult instanceof MatchResult) {
                 continue;
@@ -117,6 +118,7 @@ CODE_SAMPLE
                 }
                 $assign = new Assign($assignVar, $match);
                 $node->stmts[$key] = new Expression($assign);
+                $this->mirrorComments($node->stmts[$key], $stmt);
                 $hasChanged = \true;
                 continue;
             }
@@ -124,6 +126,7 @@ CODE_SAMPLE
                 continue;
             }
             $node->stmts[$key] = $isReturn ? new Return_($match) : new Expression($match);
+            $this->mirrorComments($node->stmts[$key], $stmt);
             $hasChanged = \true;
         }
         if ($hasChanged) {

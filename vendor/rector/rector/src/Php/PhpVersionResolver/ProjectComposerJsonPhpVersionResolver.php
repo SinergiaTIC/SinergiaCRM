@@ -1,52 +1,46 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\Php\PhpVersionResolver;
+namespace Rector\Php\PhpVersionResolver;
 
-use RectorPrefix202305\Composer\Semver\VersionParser;
-use RectorPrefix202305\Nette\Utils\FileSystem;
-use RectorPrefix202305\Nette\Utils\Json;
-use Rector\Core\Util\PhpVersionFactory;
+use RectorPrefix202407\Composer\Semver\VersionParser;
+use Rector\FileSystem\JsonFileSystem;
+use Rector\Util\PhpVersionFactory;
 /**
- * @see \Rector\Core\Tests\Php\PhpVersionResolver\ProjectComposerJsonPhpVersionResolver\ProjectComposerJsonPhpVersionResolverTest
+ * @see \Rector\Tests\Php\PhpVersionResolver\ProjectComposerJsonPhpVersionResolver\ProjectComposerJsonPhpVersionResolverTest
  */
 final class ProjectComposerJsonPhpVersionResolver
 {
     /**
-     * @readonly
-     * @var \Composer\Semver\VersionParser
+     * @var array<string, int|null>
      */
-    private $versionParser;
-    /**
-     * @readonly
-     * @var \Rector\Core\Util\PhpVersionFactory
-     */
-    private $phpVersionFactory;
-    public function __construct(VersionParser $versionParser, PhpVersionFactory $phpVersionFactory)
+    private static $cachedPhpVersions = [];
+    public static function resolve(string $composerJson) : ?int
     {
-        $this->versionParser = $versionParser;
-        $this->phpVersionFactory = $phpVersionFactory;
-    }
-    public function resolve(string $composerJson) : ?int
-    {
-        $composerJsonContents = FileSystem::read($composerJson);
-        $projectComposerJson = Json::decode($composerJsonContents, Json::FORCE_ARRAY);
+        if (\array_key_exists($composerJson, self::$cachedPhpVersions)) {
+            return self::$cachedPhpVersions[$composerJson];
+        }
+        $projectComposerJson = JsonFileSystem::readFilePath($composerJson);
+        // give this one a priority, as more generic one
+        $requirePhpVersion = $projectComposerJson['require']['php'] ?? null;
+        if ($requirePhpVersion !== null) {
+            self::$cachedPhpVersions[$composerJson] = self::createIntVersionFromComposerVersion($requirePhpVersion);
+            return self::$cachedPhpVersions[$composerJson];
+        }
         // see https://getcomposer.org/doc/06-config.md#platform
         $platformPhp = $projectComposerJson['config']['platform']['php'] ?? null;
         if ($platformPhp !== null) {
-            return $this->phpVersionFactory->createIntVersion($platformPhp);
+            self::$cachedPhpVersions[$composerJson] = PhpVersionFactory::createIntVersion($platformPhp);
+            return self::$cachedPhpVersions[$composerJson];
         }
-        $requirePhpVersion = $projectComposerJson['require']['php'] ?? null;
-        if ($requirePhpVersion === null) {
-            return null;
-        }
-        return $this->createIntVersionFromComposerVersion($requirePhpVersion);
+        return self::$cachedPhpVersions[$composerJson] = null;
     }
-    private function createIntVersionFromComposerVersion(string $projectPhpVersion) : int
+    private static function createIntVersionFromComposerVersion(string $projectPhpVersion) : int
     {
-        $constraint = $this->versionParser->parseConstraints($projectPhpVersion);
+        $versionParser = new VersionParser();
+        $constraint = $versionParser->parseConstraints($projectPhpVersion);
         $lowerBound = $constraint->getLowerBound();
         $lowerBoundVersion = $lowerBound->getVersion();
-        return $this->phpVersionFactory->createIntVersion($lowerBoundVersion);
+        return PhpVersionFactory::createIntVersion($lowerBoundVersion);
     }
 }

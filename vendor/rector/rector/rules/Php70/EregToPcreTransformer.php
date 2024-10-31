@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Php70;
 
-use RectorPrefix202305\Nette\Utils\Strings;
+use RectorPrefix202407\Nette\Utils\Strings;
 use Rector\Php70\Exception\InvalidEregException;
 /**
  * @changelog https://gist.github.com/lifthrasiir/704754/7e486f43e62fd1c9d3669330c251f8ca4a59a3f8
@@ -12,6 +12,11 @@ use Rector\Php70\Exception\InvalidEregException;
  */
 final class EregToPcreTransformer
 {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $pcreDelimiter = '#';
     /**
      * @var array<string, string>
      */
@@ -54,11 +59,6 @@ final class EregToPcreTransformer
      * @var array<string, string>
      */
     private $cache = [];
-    /**
-     * @readonly
-     * @var string
-     */
-    private $pcreDelimiter = '#';
     /**
      * Change this via services configuratoin in rector.php if you need it
      * Single type is chosen to prevent every regular with different delimiter.

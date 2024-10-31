@@ -4,17 +4,14 @@ declare (strict_types=1);
 namespace Rector\CodingStyle\Rector\FuncCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\CodingStyle\NodeFactory\ArrayCallableToMethodCallFactory;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://stackoverflow.com/a/1596250/1348344
- *
  * @see \Rector\Tests\CodingStyle\Rector\FuncCall\CallUserFuncToMethodCallRector\CallUserFuncToMethodCallRectorTest
  */
 final class CallUserFuncToMethodCallRector extends AbstractRector
@@ -65,13 +62,13 @@ CODE_SAMPLE
         if (!$this->isName($node, 'call_user_func')) {
             return null;
         }
-        if (!isset($node->args[0])) {
+        if ($node->isFirstClassCallable()) {
             return null;
         }
-        if (!$node->args[0] instanceof Arg) {
+        if (!isset($node->getArgs()[0])) {
             return null;
         }
-        $firstArgValue = $node->args[0]->value;
+        $firstArgValue = $node->getArgs()[0]->value;
         if (!$firstArgValue instanceof Array_) {
             return null;
         }

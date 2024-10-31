@@ -13,9 +13,10 @@ use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
-use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
-use Rector\Core\NodeAnalyzer\VariableAnalyzer;
-use Rector\Core\Rector\AbstractRector;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
+use Rector\NodeAnalyzer\VariableAnalyzer;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -25,12 +26,18 @@ final class ReturnEarlyIfVariableRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\VariableAnalyzer
+     * @var \Rector\NodeAnalyzer\VariableAnalyzer
      */
     private $variableAnalyzer;
-    public function __construct(VariableAnalyzer $variableAnalyzer)
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+    public function __construct(VariableAnalyzer $variableAnalyzer, PhpDocInfoFactory $phpDocInfoFactory)
     {
         $this->variableAnalyzer = $variableAnalyzer;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     public function getRuleDefinition() : RuleDefinition
     {

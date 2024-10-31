@@ -1,12 +1,12 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\FileSystem;
+namespace Rector\FileSystem;
 
-use RectorPrefix202305\Symfony\Component\Finder\Finder;
-use RectorPrefix202305\Symfony\Component\Finder\SplFileInfo;
+use RectorPrefix202407\Symfony\Component\Finder\Finder;
+use RectorPrefix202407\Symfony\Component\Finder\SplFileInfo;
 /**
- * @see \Rector\Core\Tests\FileSystem\InitFilePathsResolver\InitFilePathsResolverTest
+ * @see \Rector\Tests\FileSystem\InitFilePathsResolver\InitFilePathsResolverTest
  */
 final class InitFilePathsResolver
 {

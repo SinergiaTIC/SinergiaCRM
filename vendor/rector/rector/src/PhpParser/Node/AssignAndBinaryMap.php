@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\PhpParser\Node;
+namespace Rector\PhpParser\Node;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -41,10 +41,14 @@ use PhpParser\Node\Expr\BinaryOp\Smaller;
 use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\Cast\Bool_;
-use PHPStan\Analyser\Scope;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\NodeTypeResolver\NodeTypeResolver;
 final class AssignAndBinaryMap
 {
+    /**
+     * @readonly
+     * @var \Rector\NodeTypeResolver\NodeTypeResolver
+     */
+    private $nodeTypeResolver;
     /**
      * @var array<class-string<BinaryOp>, class-string<BinaryOp>>
      */
@@ -54,15 +58,18 @@ final class AssignAndBinaryMap
      */
     private const ASSIGN_OP_TO_BINARY_OP_CLASSES = [AssignBitwiseOr::class => BitwiseOr::class, AssignBitwiseAnd::class => BitwiseAnd::class, AssignBitwiseXor::class => BitwiseXor::class, AssignPlus::class => Plus::class, AssignDiv::class => Div::class, AssignMul::class => Mul::class, AssignMinus::class => Minus::class, AssignConcat::class => Concat::class, AssignPow::class => Pow::class, AssignMod::class => Mod::class, AssignShiftLeft::class => ShiftLeft::class, AssignShiftRight::class => ShiftRight::class];
     /**
-     * @var array<class-string<BinaryOp>, class-string<BinaryOp>>
+     * @var array<class-string<BinaryOp>, class-string<AssignOp>>
      */
     private $binaryOpToAssignClasses = [];
-    public function __construct()
+    public function __construct(NodeTypeResolver $nodeTypeResolver)
     {
-        $this->binaryOpToAssignClasses = \array_flip(self::ASSIGN_OP_TO_BINARY_OP_CLASSES);
+        $this->nodeTypeResolver = $nodeTypeResolver;
+        /** @var array<class-string<BinaryOp>, class-string<AssignOp>> $binaryClassesToAssignOp */
+        $binaryClassesToAssignOp = \array_flip(self::ASSIGN_OP_TO_BINARY_OP_CLASSES);
+        $this->binaryOpToAssignClasses = $binaryClassesToAssignOp;
     }
     /**
-     * @return class-string<BinaryOp>|null
+     * @return class-string<BinaryOp|AssignOp>|null
      */
     public function getAlternative(Node $node) : ?string
     {
@@ -91,12 +98,9 @@ final class AssignAndBinaryMap
         if ($expr instanceof BooleanNot) {
             return $expr;
         }
-        $scope = $expr->getAttribute(AttributeKey::SCOPE);
-        if (!$scope instanceof Scope) {
-            return new Bool_($expr);
-        }
-        $type = $scope->getType($expr);
-        if ($type->isBoolean()->yes()) {
+        $exprType = $this->nodeTypeResolver->getType($expr);
+        // $type = $scope->getType($expr);
+        if ($exprType->isBoolean()->yes()) {
             return $expr;
         }
         return new Bool_($expr);

@@ -1,10 +1,10 @@
 <?php
 
-namespace RectorPrefix202305\React\Socket;
+namespace RectorPrefix202407\React\Socket;
 
-use RectorPrefix202305\React\EventLoop\Loop;
-use RectorPrefix202305\React\EventLoop\LoopInterface;
-use RectorPrefix202305\React\Promise;
+use RectorPrefix202407\React\EventLoop\Loop;
+use RectorPrefix202407\React\EventLoop\LoopInterface;
+use RectorPrefix202407\React\Promise;
 use InvalidArgumentException;
 use RuntimeException;
 final class TcpConnector implements ConnectorInterface
@@ -23,11 +23,11 @@ final class TcpConnector implements ConnectorInterface
         }
         $parts = \parse_url($uri);
         if (!$parts || !isset($parts['scheme'], $parts['host'], $parts['port']) || $parts['scheme'] !== 'tcp') {
-            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22));
+            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22)));
         }
         $ip = \trim($parts['host'], '[]');
         if (@\inet_pton($ip) === \false) {
-            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" does not contain a valid host IP (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22));
+            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" does not contain a valid host IP (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22)));
         }
         // use context given in constructor
         $context = array('socket' => $this->context);

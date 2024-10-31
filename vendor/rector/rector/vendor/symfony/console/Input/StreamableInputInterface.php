@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Input;
+namespace RectorPrefix202407\Symfony\Component\Console\Input;
 
 /**
  * StreamableInputInterface is the interface implemented by all input classes
@@ -24,6 +24,8 @@ interface StreamableInputInterface extends InputInterface
      * This is mainly useful for testing purpose.
      *
      * @param resource $stream The input stream
+     *
+     * @return void
      */
     public function setStream($stream);
     /**

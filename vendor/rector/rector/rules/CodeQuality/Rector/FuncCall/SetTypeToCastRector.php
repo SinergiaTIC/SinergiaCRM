@@ -6,6 +6,7 @@ namespace Rector\CodeQuality\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Cast;
 use PhpParser\Node\Expr\Cast\Array_;
@@ -16,30 +17,32 @@ use PhpParser\Node\Expr\Cast\Object_;
 use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
-use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use PhpParser\NodeTraverser;
+use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://stackoverflow.com/questions/5577003/using-settype-in-php-instead-of-typecasting-using-brackets-what-is-the-differen/5577068#5577068
- *
  * @see \Rector\Tests\CodeQuality\Rector\FuncCall\SetTypeToCastRector\SetTypeToCastRectorTest
  */
 final class SetTypeToCastRector extends AbstractRector
 {
     /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    /**
      * @var array<string, class-string<Cast>>
      */
     private const TYPE_TO_CAST = ['array' => Array_::class, 'bool' => Bool_::class, 'boolean' => Bool_::class, 'double' => Double::class, 'float' => Double::class, 'int' => Int_::class, 'integer' => Int_::class, 'object' => Object_::class, 'string' => String_::class];
     /**
-     * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
+     * @var string
      */
-    private $argsAnalyzer;
-    public function __construct(ArgsAnalyzer $argsAnalyzer)
+    private const IS_ARG_VALUE_ITEM_SET_TYPE = 'is_arg_value_item_set_type';
+    public function __construct(ValueResolver $valueResolver)
     {
-        $this->argsAnalyzer = $argsAnalyzer;
+        $this->valueResolver = $valueResolver;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -72,49 +75,78 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [FuncCall::class];
+        return [FuncCall::class, Expression::class, Assign::class, ArrayItem::class, Arg::class];
     }
     /**
-     * @param FuncCall $node
+     * @param FuncCall|Expression|Assign|Expr\ArrayItem|Node\Arg $node
+     * @return null|int|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Expr\Assign|\PhpParser\Node\Expr\Cast
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node)
     {
-        if (!$this->isName($node, 'settype')) {
-            return null;
-        }
-        if (!$this->argsAnalyzer->isArgInstanceInArgsPosition($node->args, 1)) {
-            return null;
-        }
-        /** @var Arg $secondArg */
-        $secondArg = $node->args[1];
-        $typeNode = $this->valueResolver->getValue($secondArg->value);
-        if (!\is_string($typeNode)) {
-            return null;
-        }
-        $typeNode = \strtolower($typeNode);
-        if (!$this->argsAnalyzer->isArgInstanceInArgsPosition($node->args, 0)) {
-            return null;
-        }
-        /** @var Arg $firstArg */
-        $firstArg = $node->args[0];
-        $varNode = $firstArg->value;
-        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
-        // result of function or probably used
-        if ($parentNode instanceof Expr || $parentNode instanceof Arg) {
-            return null;
-        }
-        if (isset(self::TYPE_TO_CAST[$typeNode])) {
-            $castClass = self::TYPE_TO_CAST[$typeNode];
-            $castNode = new $castClass($varNode);
-            if ($parentNode instanceof Expression) {
-                // bare expression? → assign
-                return new Assign($varNode, $castNode);
+        if ($node instanceof Arg || $node instanceof ArrayItem) {
+            if ($this->isSetTypeFuncCall($node->value)) {
+                $node->value->setAttribute(self::IS_ARG_VALUE_ITEM_SET_TYPE, \true);
             }
-            return $castNode;
+            return null;
         }
-        if ($typeNode === 'null') {
-            return new Assign($varNode, $this->nodeFactory->createNull());
+        if ($node instanceof Assign) {
+            if (!$this->isSetTypeFuncCall($node->expr)) {
+                return null;
+            }
+            return NodeTraverser::DONT_TRAVERSE_CHILDREN;
         }
-        return $node;
+        if ($node instanceof Expression) {
+            if (!$node->expr instanceof FuncCall) {
+                return null;
+            }
+            $assignOrCast = $this->refactorFuncCall($node->expr, \true);
+            if (!$assignOrCast instanceof Expr) {
+                return null;
+            }
+            return new Expression($assignOrCast);
+        }
+        return $this->refactorFuncCall($node, \false);
+    }
+    /**
+     * @return \PhpParser\Node\Expr\Assign|null|\PhpParser\Node\Expr\Cast
+     */
+    private function refactorFuncCall(FuncCall $funcCall, bool $isStandaloneExpression)
+    {
+        if (!$this->isSetTypeFuncCall($funcCall)) {
+            return null;
+        }
+        if ($funcCall->isFirstClassCallable()) {
+            return null;
+        }
+        if ($funcCall->getAttribute(self::IS_ARG_VALUE_ITEM_SET_TYPE) === \true) {
+            return null;
+        }
+        $typeValue = $this->valueResolver->getValue($funcCall->getArgs()[1]->value);
+        if (!\is_string($typeValue)) {
+            return null;
+        }
+        $typeValue = \strtolower($typeValue);
+        $variable = $funcCall->getArgs()[0]->value;
+        if (isset(self::TYPE_TO_CAST[$typeValue])) {
+            $castClass = self::TYPE_TO_CAST[$typeValue];
+            $castNode = new $castClass($variable);
+            if (!$isStandaloneExpression) {
+                return $castNode;
+            }
+            // bare expression? → assign
+            return new Assign($variable, $castNode);
+        }
+        if ($typeValue === 'null') {
+            return new Assign($variable, $this->nodeFactory->createNull());
+        }
+        return null;
+    }
+    private function isSetTypeFuncCall(Expr $expr) : bool
+    {
+        // skip assign of settype() calls
+        if (!$expr instanceof FuncCall) {
+            return \false;
+        }
+        return $this->isName($expr, 'settype');
     }
 }

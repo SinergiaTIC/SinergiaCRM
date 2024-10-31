@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\Class_;
 
 use PhpParser\Node;
+use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -12,18 +13,14 @@ use PHPStan\Type\Type;
 use Rector\CodeQuality\NodeAnalyzer\ClassLikeAnalyzer;
 use Rector\CodeQuality\NodeAnalyzer\LocalPropertyAnalyzer;
 use Rector\CodeQuality\NodeFactory\MissingPropertiesFactory;
-use Rector\Core\NodeAnalyzer\ClassAnalyzer;
-use Rector\Core\NodeAnalyzer\PropertyPresenceChecker;
-use Rector\Core\Rector\AbstractRector;
+use Rector\NodeAnalyzer\ClassAnalyzer;
+use Rector\NodeAnalyzer\PropertyPresenceChecker;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\PostRector\ValueObject\PropertyMetadata;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://3v4l.org/GL6II
- * @changelog https://3v4l.org/eTrhZ
- * @changelog https://3v4l.org/C554W
- *
  * @see \Rector\Tests\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector\CompleteDynamicPropertiesRectorTest
  */
 final class CompleteDynamicPropertiesRector extends AbstractRector
@@ -50,12 +47,12 @@ final class CompleteDynamicPropertiesRector extends AbstractRector
     private $reflectionProvider;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ClassAnalyzer
+     * @var \Rector\NodeAnalyzer\ClassAnalyzer
      */
     private $classAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Core\NodeAnalyzer\PropertyPresenceChecker
+     * @var \Rector\NodeAnalyzer\PropertyPresenceChecker
      */
     private $propertyPresenceChecker;
     /**
@@ -154,7 +151,10 @@ CODE_SAMPLE
         if ($classReflection->hasMethod('__set')) {
             return \true;
         }
-        return $classReflection->hasMethod('__get');
+        if ($classReflection->hasMethod('__get')) {
+            return \true;
+        }
+        return $class->extends instanceof FullyQualified && !$this->reflectionProvider->hasClass($class->extends->toString());
     }
     /**
      * @param array<string, Type> $fetchedLocalPropertyNameToTypes
@@ -180,7 +180,7 @@ CODE_SAMPLE
             if ($classReflection->hasProperty($propertyToComplete)) {
                 continue;
             }
-            $propertyMetadata = new PropertyMetadata($propertyToComplete, new ObjectType($className), Class_::MODIFIER_PRIVATE);
+            $propertyMetadata = new PropertyMetadata($propertyToComplete, new ObjectType($className));
             $hasClassContextProperty = $this->propertyPresenceChecker->hasClassContextProperty($class, $propertyMetadata);
             if ($hasClassContextProperty) {
                 continue;

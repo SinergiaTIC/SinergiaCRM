@@ -12,10 +12,6 @@ final class PHPUnitSetList implements SetListInterface
     /**
      * @var string
      */
-    public const PHPUNIT80_DMS = __DIR__ . '/../../config/sets/phpunit80-dms.php';
-    /**
-     * @var string
-     */
     public const PHPUNIT_40 = __DIR__ . '/../../config/sets/phpunit40.php';
     /**
      * @var string
@@ -40,31 +36,15 @@ final class PHPUnitSetList implements SetListInterface
     /**
      * @var string
      */
-    public const PHPUNIT_91 = __DIR__ . '/../../config/sets/phpunit91.php';
-    /**
-     * @var string
-     */
     public const PHPUNIT_100 = __DIR__ . '/../../config/sets/phpunit100.php';
     /**
      * @var string
      */
+    public const PHPUNIT_110 = __DIR__ . '/../../config/sets/phpunit110.php';
+    /**
+     * @var string
+     */
     public const PHPUNIT_CODE_QUALITY = __DIR__ . '/../../config/sets/phpunit-code-quality.php';
-    /**
-     * @var string
-     */
-    public const PHPUNIT_EXCEPTION = __DIR__ . '/../../config/sets/phpunit-exception.php';
-    /**
-     * @var string
-     */
-    public const REMOVE_MOCKS = __DIR__ . '/../../config/sets/remove-mocks.php';
-    /**
-     * @var string
-     */
-    public const PHPUNIT_SPECIFIC_METHOD = __DIR__ . '/../../config/sets/phpunit-specific-method.php';
-    /**
-     * @var string
-     */
-    public const PHPUNIT_YIELD_DATA_PROVIDER = __DIR__ . '/../../config/sets/phpunit-yield-data-provider.php';
     /**
      * @var string
      */

@@ -10,10 +10,13 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\DeadCode\NodeCollector\UnusedParameterResolver;
 use Rector\DeadCode\NodeManipulator\VariadicFunctionLikeDetector;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -36,11 +39,29 @@ final class RemoveUnusedPrivateMethodParameterRector extends AbstractRector
      * @var \Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover
      */
     private $phpDocTagRemover;
-    public function __construct(VariadicFunctionLikeDetector $variadicFunctionLikeDetector, UnusedParameterResolver $unusedParameterResolver, PhpDocTagRemover $phpDocTagRemover)
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(VariadicFunctionLikeDetector $variadicFunctionLikeDetector, UnusedParameterResolver $unusedParameterResolver, PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder)
     {
         $this->variadicFunctionLikeDetector = $variadicFunctionLikeDetector;
         $this->unusedParameterResolver = $unusedParameterResolver;
         $this->phpDocTagRemover = $phpDocTagRemover;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -179,6 +200,7 @@ CODE_SAMPLE
     private function clearPhpDocInfo(ClassMethod $classMethod, array $unusedParameters) : void
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($classMethod);
+        $hasChanged = \false;
         foreach ($unusedParameters as $unusedParameter) {
             $parameterName = $this->getName($unusedParameter->var);
             if ($parameterName === null) {
@@ -191,7 +213,13 @@ CODE_SAMPLE
             if ($paramTagValueNode->parameterName !== '$' . $parameterName) {
                 continue;
             }
-            $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $paramTagValueNode);
+            $hasTagRemoved = $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $paramTagValueNode);
+            if ($hasTagRemoved) {
+                $hasChanged = \true;
+            }
+        }
+        if ($hasChanged) {
+            $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($classMethod);
         }
     }
 }

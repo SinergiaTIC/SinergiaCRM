@@ -1,11 +1,11 @@
 <?php
 
-namespace RectorPrefix202305\React\Socket;
+namespace RectorPrefix202407\React\Socket;
 
-use RectorPrefix202305\React\Dns\Resolver\ResolverInterface;
-use RectorPrefix202305\React\EventLoop\Loop;
-use RectorPrefix202305\React\EventLoop\LoopInterface;
-use RectorPrefix202305\React\Promise;
+use RectorPrefix202407\React\Dns\Resolver\ResolverInterface;
+use RectorPrefix202407\React\EventLoop\Loop;
+use RectorPrefix202407\React\EventLoop\LoopInterface;
+use RectorPrefix202407\React\Promise;
 final class HappyEyeBallsConnector implements ConnectorInterface
 {
     private $loop;
@@ -38,7 +38,7 @@ final class HappyEyeBallsConnector implements ConnectorInterface
             $parts = \parse_url($uri);
         }
         if (!$parts || !isset($parts['host'])) {
-            return Promise\reject(new \InvalidArgumentException('Given URI "' . $original . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22));
+            return Promise\reject(new \InvalidArgumentException('Given URI "' . $original . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22)));
         }
         $host = \trim($parts['host'], '[]');
         // skip DNS lookup / URI manipulation if this URI already contains an IP

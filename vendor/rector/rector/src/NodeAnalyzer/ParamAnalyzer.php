@@ -1,13 +1,13 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\NodeAnalyzer;
+namespace Rector\NodeAnalyzer;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\Closure;
-use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\Error;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
@@ -17,25 +17,18 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\NodeTraverser;
-use Rector\Core\NodeManipulator\FuncCallManipulator;
-use Rector\Core\PhpParser\Comparing\NodeComparator;
-use Rector\Core\PhpParser\Node\BetterNodeFinder;
-use Rector\Core\PhpParser\Node\Value\ValueResolver;
+use Rector\NodeManipulator\FuncCallManipulator;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
+use Rector\PhpParser\Comparing\NodeComparator;
+use Rector\PhpParser\Node\BetterNodeFinder;
 final class ParamAnalyzer
 {
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
+     * @var \Rector\PhpParser\Comparing\NodeComparator
      */
     private $nodeComparator;
-    /**
-     * @readonly
-     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
-     */
-    private $valueResolver;
     /**
      * @readonly
      * @var \Rector\NodeNameResolver\NodeNameResolver
@@ -43,7 +36,7 @@ final class ParamAnalyzer
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\Core\NodeManipulator\FuncCallManipulator
+     * @var \Rector\NodeManipulator\FuncCallManipulator
      */
     private $funcCallManipulator;
     /**
@@ -53,13 +46,12 @@ final class ParamAnalyzer
     private $simpleCallableNodeTraverser;
     /**
      * @readonly
-     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
-    public function __construct(NodeComparator $nodeComparator, ValueResolver $valueResolver, NodeNameResolver $nodeNameResolver, FuncCallManipulator $funcCallManipulator, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, BetterNodeFinder $betterNodeFinder)
+    public function __construct(NodeComparator $nodeComparator, NodeNameResolver $nodeNameResolver, FuncCallManipulator $funcCallManipulator, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, BetterNodeFinder $betterNodeFinder)
     {
         $this->nodeComparator = $nodeComparator;
-        $this->valueResolver = $valueResolver;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->funcCallManipulator = $funcCallManipulator;
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
@@ -68,6 +60,9 @@ final class ParamAnalyzer
     public function isParamUsedInClassMethod(ClassMethod $classMethod, Param $param) : bool
     {
         $isParamUsed = \false;
+        if ($param->var instanceof Error) {
+            return \false;
+        }
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod->stmts, function (Node $node) use(&$isParamUsed, $param) : ?int {
             if ($isParamUsed) {
                 return NodeTraverser::STOP_TRAVERSAL;
@@ -114,16 +109,8 @@ final class ParamAnalyzer
         }
         return $param->type instanceof NullableType;
     }
-    public function hasDefaultNull(Param $param) : bool
+    public function isParamReassign(ClassMethod $classMethod, Param $param) : bool
     {
-        return $param->default instanceof ConstFetch && $this->valueResolver->isNull($param->default);
-    }
-    public function isParamReassign(Param $param) : bool
-    {
-        $classMethod = $param->getAttribute(AttributeKey::PARENT_NODE);
-        if (!$classMethod instanceof ClassMethod) {
-            return \false;
-        }
         $paramName = (string) $this->nodeNameResolver->getName($param->var);
         return (bool) $this->betterNodeFinder->findFirstInFunctionLikeScoped($classMethod, function (Node $node) use($paramName) : bool {
             if (!$node instanceof Assign) {

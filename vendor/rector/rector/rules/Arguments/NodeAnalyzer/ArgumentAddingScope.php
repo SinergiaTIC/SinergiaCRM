@@ -7,10 +7,16 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use Rector\Arguments\ValueObject\ArgumentAdder;
-use Rector\Core\Enum\ObjectReference;
+use Rector\Arguments\ValueObject\ArgumentAdderWithoutDefaultValue;
+use Rector\Enum\ObjectReference;
 use Rector\NodeNameResolver\NodeNameResolver;
 final class ArgumentAddingScope
 {
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
     /**
      * @api
      * @var string
@@ -26,19 +32,15 @@ final class ArgumentAddingScope
      * @var string
      */
     public const SCOPE_CLASS_METHOD = 'class_method';
-    /**
-     * @readonly
-     * @var \Rector\NodeNameResolver\NodeNameResolver
-     */
-    private $nodeNameResolver;
     public function __construct(NodeNameResolver $nodeNameResolver)
     {
         $this->nodeNameResolver = $nodeNameResolver;
     }
     /**
      * @param \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall $expr
+     * @param \Rector\Arguments\ValueObject\ArgumentAdder|\Rector\Arguments\ValueObject\ArgumentAdderWithoutDefaultValue $argumentAdder
      */
-    public function isInCorrectScope($expr, ArgumentAdder $argumentAdder) : bool
+    public function isInCorrectScope($expr, $argumentAdder) : bool
     {
         if ($argumentAdder->getScope() === null) {
             return \true;

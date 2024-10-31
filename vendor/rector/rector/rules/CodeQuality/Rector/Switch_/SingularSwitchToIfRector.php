@@ -6,9 +6,11 @@ namespace Rector\CodeQuality\Rector\Switch_;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Identical;
+use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Break_;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Switch_;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Rector\Renaming\NodeManipulator\SwitchManipulator;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -78,7 +80,10 @@ CODE_SAMPLE
         $onlyCase = $node->cases[0];
         // only default → basically unwrap
         if (!$onlyCase->cond instanceof Expr) {
-            return $onlyCase->stmts;
+            // remove default clause because it cause syntax error
+            return \array_filter($onlyCase->stmts, static function (Stmt $stmt) : bool {
+                return !$stmt instanceof Break_;
+            });
         }
         $if = new If_(new Identical($node->cond, $onlyCase->cond));
         $if->stmts = $this->switchManipulator->removeBreakNodes($onlyCase->stmts);

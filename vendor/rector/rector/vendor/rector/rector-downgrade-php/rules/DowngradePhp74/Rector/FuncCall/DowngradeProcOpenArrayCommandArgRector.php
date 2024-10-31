@@ -5,56 +5,24 @@ namespace Rector\DowngradePhp74\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\If_;
-use PHPStan\Analyser\Scope;
-use Rector\Core\Rector\AbstractScopeAwareRector;
-use Rector\Naming\Naming\VariableNaming;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\DowngradePhp74\Rector\FuncCall\DowngradeProcOpenArrayCommandArgRector\DowngradeProcOpenArrayCommandArgRectorTest
  */
-final class DowngradeProcOpenArrayCommandArgRector extends AbstractScopeAwareRector
+final class DowngradeProcOpenArrayCommandArgRector extends AbstractRector
 {
-    /**
-     * @readonly
-     * @var \Rector\PostRector\Collector\NodesToAddCollector
-     */
-    private $nodesToAddCollector;
-    /**
-     * @readonly
-     * @var \Rector\Naming\Naming\VariableNaming
-     */
-    private $variableNaming;
-    public function __construct(NodesToAddCollector $nodesToAddCollector, VariableNaming $variableNaming)
-    {
-        $this->nodesToAddCollector = $nodesToAddCollector;
-        $this->variableNaming = $variableNaming;
-    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Change array command argument on proc_open to implode spaced string', [new CodeSample(<<<'CODE_SAMPLE'
-function (array|string $command)
-{
-    $process = proc_open($command, $descriptorspec, $pipes, null, null, ['suppress_errors' => true]);
-}
+return proc_open($command, $descriptorspec, $pipes, null, null, ['suppress_errors' => true]);
 CODE_SAMPLE
 , <<<'CODE_SAMPLE'
-function (array|string $command)
-{
-    if (is_array($command)) {
-        $command = implode(" ", $command);
-    }
-
-    $process = proc_open($command, $descriptorspec, $pipes, null, null, ['suppress_errors' => true]);
-}
+return proc_open(is_array($command) ? implode(' ', array_map('escapeshellarg', $command)) : $command, $descriptorspec, $pipes, null, null, ['suppress_errors' => true]);
 CODE_SAMPLE
 )]);
     }
@@ -68,7 +36,7 @@ CODE_SAMPLE
     /**
      * @param FuncCall $node
      */
-    public function refactorWithScope(Node $node, Scope $scope) : ?FuncCall
+    public function refactor(Node $node) : ?FuncCall
     {
         if (!$this->isName($node, 'proc_open')) {
             return null;
@@ -76,26 +44,15 @@ CODE_SAMPLE
         if ($node->isFirstClassCallable()) {
             return null;
         }
-        $args = $node->getArgs();
-        if (!isset($args[0])) {
-            return null;
-        }
-        $commandType = $this->getType($args[0]->value);
+        $firstArg = $node->getArgs()[0];
+        $commandType = $this->getType($firstArg->value);
         if ($commandType->isString()->yes()) {
             return null;
         }
-        $currentStmt = $this->betterNodeFinder->resolveCurrentStatement($node);
-        if (!$currentStmt instanceof Stmt) {
-            return null;
-        }
-        $variable = $args[0]->value instanceof Variable ? $args[0]->value : new Variable($this->variableNaming->createCountedValueName('command', $scope));
-        if ($args[0]->value !== $variable) {
-            $assign = new Assign($variable, $args[0]->value);
-            $this->nodesToAddCollector->addNodeBeforeNode(new Expression($assign), $currentStmt);
-            $node->args[0] = new Arg($variable);
-        }
-        $implode = $this->nodeFactory->createFuncCall('implode', [new String_(' '), $variable]);
-        $this->nodesToAddCollector->addNodeBeforeNode(new If_($this->nodeFactory->createFuncCall('is_array', [$variable]), ['stmts' => [new Expression(new Assign($variable, $implode))]]), $currentStmt);
+        $isArrayFuncCall = $this->nodeFactory->createFuncCall('is_array', [new Arg($firstArg->value)]);
+        $value = $this->nodeFactory->createFuncCall('array_map', [new Arg(new String_('escapeshellarg')), new Arg($firstArg->value)]);
+        $implodeFuncCall = $this->nodeFactory->createFuncCall('implode', [new String_(' '), $value]);
+        $firstArg->value = new Ternary($isArrayFuncCall, $implodeFuncCall, $firstArg->value);
         return $node;
     }
 }

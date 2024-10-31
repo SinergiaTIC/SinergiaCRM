@@ -7,16 +7,25 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Cast\Int_;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Configuration\Deprecation\Contract\DeprecatedInterface;
+use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://tonyshowoff.com/articles/casting-int-faster-than-intval-in-php/
- *
- * @see \Rector\Tests\CodeQuality\Rector\FuncCall\IntvalToTypeCastRector\IntvalToTypeCastRectorTest
+ * @deprecated Since 1.1.2 as no clear performance difference and both are equivalent.
  */
-final class IntvalToTypeCastRector extends AbstractRector
+final class IntvalToTypeCastRector extends AbstractRector implements DeprecatedInterface
 {
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Change intval() to faster and readable (int) $value', [new CodeSample(<<<'CODE_SAMPLE'
@@ -61,12 +70,12 @@ CODE_SAMPLE
                 return null;
             }
         }
-        if (!isset($node->args[0])) {
+        if ($node->isFirstClassCallable()) {
             return null;
         }
-        if (!$node->args[0] instanceof Arg) {
+        if (!isset($node->getArgs()[0])) {
             return null;
         }
-        return new Int_($node->args[0]->value);
+        return new Int_($node->getArgs()[0]->value);
     }
 }

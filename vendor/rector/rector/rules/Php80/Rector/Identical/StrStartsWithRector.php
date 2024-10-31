@@ -8,34 +8,30 @@ use PhpParser\Node\Expr\BinaryOp\Equal;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotEqual;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\Php80\Contract\StrStartWithMatchAndRefactorInterface;
+use Rector\Php80\MatchAndRefactor\StrStartsWithMatchAndRefactor\StrncmpMatchAndRefactor;
+use Rector\Php80\MatchAndRefactor\StrStartsWithMatchAndRefactor\StrposMatchAndRefactor;
+use Rector\Php80\MatchAndRefactor\StrStartsWithMatchAndRefactor\SubstrMatchAndRefactor;
 use Rector\Php80\ValueObject\StrStartsWith;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
+use Rector\ValueObject\PolyfillPackage;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
+use Rector\VersionBonding\Contract\RelatedPolyfillInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @changelog https://wiki.php.net/rfc/add_str_starts_with_and_ends_with_functions
- *
- * @changelog https://3v4l.org/RQHB5 for weak compare
- * @changelog https://3v4l.org/AmLja for weak compare
- *
  * @see \Rector\Tests\Php80\Rector\Identical\StrStartsWithRector\StrStartsWithRectorTest
  */
-final class StrStartsWithRector extends AbstractRector implements MinPhpVersionInterface
+final class StrStartsWithRector extends AbstractRector implements MinPhpVersionInterface, RelatedPolyfillInterface
 {
     /**
      * @var StrStartWithMatchAndRefactorInterface[]
-     * @readonly
      */
-    private $strStartWithMatchAndRefactors;
-    /**
-     * @param StrStartWithMatchAndRefactorInterface[] $strStartWithMatchAndRefactors
-     */
-    public function __construct(array $strStartWithMatchAndRefactors)
+    private $strStartWithMatchAndRefactors = [];
+    public function __construct(StrncmpMatchAndRefactor $strncmpMatchAndRefactor, SubstrMatchAndRefactor $substrMatchAndRefactor, StrposMatchAndRefactor $strposMatchAndRefactor)
     {
-        $this->strStartWithMatchAndRefactors = $strStartWithMatchAndRefactors;
+        $this->strStartWithMatchAndRefactors = [$strncmpMatchAndRefactor, $substrMatchAndRefactor, $strposMatchAndRefactor];
     }
     public function provideMinPhpVersion() : int
     {
@@ -87,5 +83,9 @@ CODE_SAMPLE
             return $strStartWithMatchAndRefactor->refactorStrStartsWith($strStartsWithValueObject);
         }
         return null;
+    }
+    public function providePolyfillPackage() : string
+    {
+        return PolyfillPackage::PHP_80;
     }
 }

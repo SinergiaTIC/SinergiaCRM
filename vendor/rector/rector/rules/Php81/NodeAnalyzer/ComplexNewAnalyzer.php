@@ -8,29 +8,25 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name\FullyQualified;
-use Rector\Core\NodeAnalyzer\ExprAnalyzer;
-use Rector\Core\NodeManipulator\ArrayManipulator;
+use Rector\NodeAnalyzer\ExprAnalyzer;
 final class ComplexNewAnalyzer
 {
     /**
      * @readonly
-     * @var \Rector\Core\NodeManipulator\ArrayManipulator
-     */
-    private $arrayManipulator;
-    /**
-     * @readonly
-     * @var \Rector\Core\NodeAnalyzer\ExprAnalyzer
+     * @var \Rector\NodeAnalyzer\ExprAnalyzer
      */
     private $exprAnalyzer;
-    public function __construct(ArrayManipulator $arrayManipulator, ExprAnalyzer $exprAnalyzer)
+    public function __construct(ExprAnalyzer $exprAnalyzer)
     {
-        $this->arrayManipulator = $arrayManipulator;
         $this->exprAnalyzer = $exprAnalyzer;
     }
     public function isDynamic(New_ $new) : bool
     {
         if (!$new->class instanceof FullyQualified) {
             return \true;
+        }
+        if ($new->isFirstClassCallable()) {
+            return \false;
         }
         $args = $new->getArgs();
         foreach ($args as $arg) {
@@ -58,7 +54,7 @@ final class ComplexNewAnalyzer
     }
     private function isAllowedArray(Array_ $array) : bool
     {
-        if (!$this->arrayManipulator->isDynamicArray($array)) {
+        if (!$this->exprAnalyzer->isDynamicArray($array)) {
             return \true;
         }
         $arrayItems = $array->items;

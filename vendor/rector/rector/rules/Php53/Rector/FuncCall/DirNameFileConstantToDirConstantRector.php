@@ -4,12 +4,11 @@ declare (strict_types=1);
 namespace Rector\Php53\Rector\FuncCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\MagicConst\Dir;
 use PhpParser\Node\Scalar\MagicConst\File;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -55,17 +54,17 @@ CODE_SAMPLE
         if (!$this->isName($node, 'dirname')) {
             return null;
         }
+        if ($node->isFirstClassCallable()) {
+            return null;
+        }
         if (\count($node->args) !== 1) {
             return null;
         }
-        if (!isset($node->args[0])) {
+        if (!isset($node->getArgs()[0])) {
             return null;
         }
-        if (!$node->args[0] instanceof Arg) {
-            return null;
-        }
-        $firstArgValue = $node->args[0]->value;
-        if (!$firstArgValue instanceof File) {
+        $firstArg = $node->getArgs()[0];
+        if (!$firstArg->value instanceof File) {
             return null;
         }
         return new Dir();

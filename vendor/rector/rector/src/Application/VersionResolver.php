@@ -1,17 +1,17 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\Application;
+namespace Rector\Application;
 
 use DateTime;
-use Rector\Core\Exception\VersionException;
+use Rector\Exception\VersionException;
 /**
  * @api
  *
  * Inspired by https://github.com/composer/composer/blob/master/src/Composer/Composer.php
  * See https://github.com/composer/composer/blob/6587715d0f8cae0cd39073b3bc5f018d0e6b84fe/src/Composer/Compiler.php#L208
  *
- * @see \Rector\Core\Tests\Application\VersionResolverTest
+ * @see \Rector\Tests\Application\VersionResolverTest
  */
 final class VersionResolver
 {
@@ -19,12 +19,12 @@ final class VersionResolver
      * @api
      * @var string
      */
-    public const PACKAGE_VERSION = '0.16.0';
+    public const PACKAGE_VERSION = '1.2.2';
     /**
      * @api
      * @var string
      */
-    public const RELEASE_DATE = '2023-05-05 10:20:56';
+    public const RELEASE_DATE = '2024-07-24 09:48:45';
     /**
      * @var int
      */

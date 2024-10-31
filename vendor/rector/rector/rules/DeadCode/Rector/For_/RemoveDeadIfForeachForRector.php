@@ -5,14 +5,18 @@ namespace Rector\DeadCode\Rector\For_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node\Stmt\For_;
 use PhpParser\Node\Stmt\Foreach_;
 use PhpParser\Node\Stmt\If_;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
 use Rector\EarlyReturn\NodeTransformer\ConditionInverter;
+use Rector\NodeManipulator\StmtsManipulator;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -25,22 +29,34 @@ final class RemoveDeadIfForeachForRector extends AbstractRector
      * @var \Rector\EarlyReturn\NodeTransformer\ConditionInverter
      */
     private $conditionInverter;
-    public function __construct(ConditionInverter $conditionInverter)
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\NodeManipulator\StmtsManipulator
+     */
+    private $stmtsManipulator;
+    /**
+     * @var bool
+     */
+    private $hasChanged = \false;
+    public function __construct(ConditionInverter $conditionInverter, BetterNodeFinder $betterNodeFinder, StmtsManipulator $stmtsManipulator)
     {
         $this->conditionInverter = $conditionInverter;
+        $this->betterNodeFinder = $betterNodeFinder;
+        $this->stmtsManipulator = $stmtsManipulator;
     }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Remove if, foreach and for that does not do anything', [new CodeSample(<<<'CODE_SAMPLE'
 class SomeClass
 {
-    public function run($someObject)
+    public function run($value)
     {
-        $value = 5;
         if ($value) {
-        }
-
-        if ($someObject->run()) {
         }
 
         foreach ($values as $value) {
@@ -53,12 +69,8 @@ CODE_SAMPLE
 , <<<'CODE_SAMPLE'
 class SomeClass
 {
-    public function run($someObject)
+    public function run($value)
     {
-        $value = 5;
-        if ($someObject->run()) {
-        }
-
         return $value;
     }
 }
@@ -70,65 +82,84 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [For_::class, If_::class, Foreach_::class];
+        return [StmtsAwareInterface::class];
     }
     /**
-     * @param For_|If_|Foreach_ $node
+     * @param StmtsAwareInterface $node
+     * @return \PhpParser\Node|null|int
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node)
     {
-        if ($node instanceof If_) {
-            $this->processIf($node);
+        if ($node->stmts === null) {
             return null;
         }
-        if ($node instanceof Foreach_) {
-            $this->processForeach($node);
-            return null;
+        $this->hasChanged = \false;
+        foreach ($node->stmts as $key => $stmt) {
+            if (!$stmt instanceof If_ && !$stmt instanceof For_ && !$stmt instanceof Foreach_) {
+                continue;
+            }
+            if ($stmt->stmts !== []) {
+                continue;
+            }
+            if ($stmt instanceof If_) {
+                $this->processIf($stmt, $key, $node);
+                continue;
+            }
+            $this->processForForeach($stmt, $key, $node);
         }
-        // For
-        if ($node->stmts !== []) {
-            return null;
+        if ($this->hasChanged) {
+            return $node;
         }
-        $this->removeNode($node);
         return null;
     }
-    private function processIf(If_ $if) : void
+    private function processIf(If_ $if, int $key, StmtsAwareInterface $stmtsAware) : void
     {
-        if ($if->stmts !== []) {
-            return;
-        }
         if ($if->elseifs !== []) {
             return;
         }
-        if ($if->else instanceof Else_) {
-            $if->cond = $this->conditionInverter->createInvertedCondition($if->cond);
-            $if->stmts = $if->else->stmts;
-            $if->else = null;
+        // useless if ()
+        if (!$if->else instanceof Else_) {
+            if ($this->hasNodeSideEffect($if->cond)) {
+                return;
+            }
+            unset($stmtsAware->stmts[$key]);
+            $this->hasChanged = \true;
             return;
         }
-        if ($this->isNodeWithSideEffect($if->cond)) {
-            return;
-        }
-        $this->removeNode($if);
+        $if->cond = $this->conditionInverter->createInvertedCondition($if->cond);
+        $if->stmts = $if->else->stmts;
+        $if->else = null;
+        $this->hasChanged = \true;
     }
-    private function processForeach(Foreach_ $foreach) : void
+    /**
+     * @param \PhpParser\Node\Stmt\For_|\PhpParser\Node\Stmt\Foreach_ $for
+     */
+    private function processForForeach($for, int $key, StmtsAwareInterface $stmtsAware) : void
     {
-        if ($foreach->stmts !== []) {
+        $stmts = (array) $stmtsAware->stmts;
+        if ($for instanceof For_) {
+            $variables = $this->betterNodeFinder->findInstanceOf(\array_merge($for->init, $for->cond, $for->loop), Variable::class);
+            foreach ($variables as $variable) {
+                if ($this->stmtsManipulator->isVariableUsedInNextStmt($stmts, $key + 1, (string) $this->getName($variable))) {
+                    return;
+                }
+            }
+            unset($stmtsAware->stmts[$key]);
+            $this->hasChanged = \true;
             return;
         }
-        if ($this->isNodeWithSideEffect($foreach->expr)) {
-            return;
+        $exprs = \array_filter([$for->expr, $for->valueVar, $for->valueVar]);
+        $variables = $this->betterNodeFinder->findInstanceOf($exprs, Variable::class);
+        foreach ($variables as $variable) {
+            if ($this->stmtsManipulator->isVariableUsedInNextStmt($stmts, $key + 1, (string) $this->getName($variable))) {
+                return;
+            }
         }
-        $this->removeNode($foreach);
+        unset($stmtsAware->stmts[$key]);
+        $this->hasChanged = \true;
     }
-    private function isNodeWithSideEffect(Expr $expr) : bool
+    private function hasNodeSideEffect(Expr $expr) : bool
     {
-        if ($expr instanceof Variable) {
-            return \false;
-        }
-        if ($expr instanceof Scalar) {
-            return \false;
-        }
-        return !$this->valueResolver->isTrueOrFalse($expr);
+        return $this->betterNodeFinder->hasInstancesOf($expr, [CallLike::class, Assign::class]);
     }
 }

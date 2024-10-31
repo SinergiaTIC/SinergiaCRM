@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Process\Exception;
+namespace RectorPrefix202407\Symfony\Component\Process\Exception;
 
-use RectorPrefix202305\Symfony\Component\Process\Process;
+use RectorPrefix202407\Symfony\Component\Process\Process;
 /**
  * Exception that is thrown when a process times out.
  *
@@ -20,7 +20,13 @@ class ProcessTimedOutException extends RuntimeException
 {
     public const TYPE_GENERAL = 1;
     public const TYPE_IDLE = 2;
+    /**
+     * @var \Symfony\Component\Process\Process
+     */
     private $process;
+    /**
+     * @var int
+     */
     private $timeoutType;
     public function __construct(Process $process, int $timeoutType)
     {
@@ -28,19 +34,28 @@ class ProcessTimedOutException extends RuntimeException
         $this->timeoutType = $timeoutType;
         parent::__construct(\sprintf('The process "%s" exceeded the timeout of %s seconds.', $process->getCommandLine(), $this->getExceededTimeout()));
     }
+    /**
+     * @return Process
+     */
     public function getProcess()
     {
         return $this->process;
     }
+    /**
+     * @return bool
+     */
     public function isGeneralTimeout()
     {
         return self::TYPE_GENERAL === $this->timeoutType;
     }
+    /**
+     * @return bool
+     */
     public function isIdleTimeout()
     {
         return self::TYPE_IDLE === $this->timeoutType;
     }
-    public function getExceededTimeout()
+    public function getExceededTimeout() : ?float
     {
         switch ($this->timeoutType) {
             case self::TYPE_GENERAL:

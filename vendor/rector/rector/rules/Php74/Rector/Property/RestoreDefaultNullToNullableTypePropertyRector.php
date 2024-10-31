@@ -7,9 +7,10 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Rector\AbstractRector;
 use Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector;
+use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -23,9 +24,15 @@ final class RestoreDefaultNullToNullableTypePropertyRector extends AbstractRecto
      * @var \Rector\TypeDeclaration\AlreadyAssignDetector\ConstructorAssignDetector
      */
     private $constructorAssignDetector;
-    public function __construct(ConstructorAssignDetector $constructorAssignDetector)
+    /**
+     * @readonly
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    private $phpDocInfoFactory;
+    public function __construct(ConstructorAssignDetector $constructorAssignDetector, PhpDocInfoFactory $phpDocInfoFactory)
     {
         $this->constructorAssignDetector = $constructorAssignDetector;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -48,25 +55,35 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [Property::class];
+        return [Class_::class];
     }
     /**
-     * @param Property $node
+     * @param Class_ $node
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->shouldSkip($node)) {
+        if ($this->isReadonlyClass($node)) {
             return null;
         }
-        $onlyProperty = $node->props[0];
-        $onlyProperty->default = $this->nodeFactory->createNull();
-        return $node;
+        $hasChanged = \false;
+        foreach ($node->getProperties() as $property) {
+            if ($this->shouldSkip($property, $node)) {
+                continue;
+            }
+            $onlyProperty = $property->props[0];
+            $onlyProperty->default = $this->nodeFactory->createNull();
+            $hasChanged = \true;
+        }
+        if ($hasChanged) {
+            return $node;
+        }
+        return null;
     }
     public function provideMinPhpVersion() : int
     {
         return PhpVersionFeature::TYPED_PROPERTIES;
     }
-    private function shouldSkip(Property $property) : bool
+    private function shouldSkip(Property $property, Class_ $class) : bool
     {
         if ($property->type === null) {
             return \true;
@@ -78,7 +95,7 @@ CODE_SAMPLE
         if ($onlyProperty->default instanceof Expr) {
             return \true;
         }
-        if ($property->isReadonly()) {
+        if ($this->isReadonlyProperty($property)) {
             return \true;
         }
         if (!$this->nodeTypeResolver->isNullableType($property)) {
@@ -86,12 +103,26 @@ CODE_SAMPLE
         }
         // is variable assigned in constructor
         $propertyName = $this->getName($property);
-        $classLike = $this->betterNodeFinder->findParentType($property, Class_::class);
-        // a trait can be used in multiple context, we don't know whether it is assigned in __construct or not
-        // so it needs to has null default
-        if (!$classLike instanceof Class_) {
-            return \false;
+        return $this->constructorAssignDetector->isPropertyAssigned($class, $propertyName);
+    }
+    private function isReadonlyProperty(Property $property) : bool
+    {
+        // native readonly
+        if ($property->isReadonly()) {
+            return \true;
         }
-        return $this->constructorAssignDetector->isPropertyAssigned($classLike, $propertyName);
+        // @readonly annotation
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($property);
+        return $phpDocInfo->hasByName('@readonly');
+    }
+    private function isReadonlyClass(Class_ $class) : bool
+    {
+        // native readonly
+        if ($class->isReadonly()) {
+            return \true;
+        }
+        // @immutable annotation
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($class);
+        return $phpDocInfo->hasByName('@immutable');
     }
 }

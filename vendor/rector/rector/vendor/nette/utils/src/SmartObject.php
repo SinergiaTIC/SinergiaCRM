@@ -5,9 +5,9 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202305\Nette;
+namespace RectorPrefix202407\Nette;
 
-use RectorPrefix202305\Nette\Utils\ObjectHelpers;
+use RectorPrefix202407\Nette\Utils\ObjectHelpers;
 /**
  * Strict class for better experience.
  * - 'did you mean' hints
@@ -18,6 +18,7 @@ use RectorPrefix202305\Nette\Utils\ObjectHelpers;
 trait SmartObject
 {
     /**
+     * @return mixed
      * @throws MemberAccessException
      */
     public function __call(string $name, array $args)
@@ -31,11 +32,11 @@ trait SmartObject
                     $handler(...$args);
                 }
             } elseif ($handlers !== null) {
-                throw new UnexpectedValueException("Property {$class}::\${$name} must be iterable or null, " . \gettype($handlers) . ' given.');
+                throw new UnexpectedValueException("Property {$class}::\${$name} must be iterable or null, " . \get_debug_type($handlers) . ' given.');
             }
-        } else {
-            ObjectHelpers::strictCall($class, $name);
+            return null;
         }
+        ObjectHelpers::strictCall($class, $name);
     }
     /**
      * @throws MemberAccessException
@@ -75,11 +76,10 @@ trait SmartObject
         }
     }
     /**
-     * @param  mixed  $value
-     * @return void
      * @throws MemberAccessException if the property is not defined or is read-only
+     * @param mixed $value
      */
-    public function __set(string $name, $value)
+    public function __set(string $name, $value) : void
     {
         $class = static::class;
         if (ObjectHelpers::hasProperty($class, $name)) {
@@ -103,10 +103,9 @@ trait SmartObject
         }
     }
     /**
-     * @return void
      * @throws MemberAccessException
      */
-    public function __unset(string $name)
+    public function __unset(string $name) : void
     {
         $class = static::class;
         if (!ObjectHelpers::hasProperty($class, $name)) {

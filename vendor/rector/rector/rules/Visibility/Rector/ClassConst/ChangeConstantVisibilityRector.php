@@ -5,28 +5,28 @@ namespace Rector\Visibility\Rector\ClassConst;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassConst;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\Visibility;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Rector\Rector\AbstractRector;
+use Rector\ValueObject\Visibility;
 use Rector\Visibility\ValueObject\ChangeConstantVisibility;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202305\Webmozart\Assert\Assert;
+use RectorPrefix202407\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Visibility\Rector\ClassConst\ChangeConstantVisibilityRector\ChangeConstantVisibilityRectorTest
  */
 final class ChangeConstantVisibilityRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @var ChangeConstantVisibility[]
-     */
-    private $classConstantVisibilityChanges = [];
-    /**
      * @readonly
      * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
      */
     private $visibilityManipulator;
+    /**
+     * @var ChangeConstantVisibility[]
+     */
+    private $classConstantVisibilityChanges = [];
     public function __construct(VisibilityManipulator $visibilityManipulator)
     {
         $this->visibilityManipulator = $visibilityManipulator;

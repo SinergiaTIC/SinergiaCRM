@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202305\Symfony\Component\Console\Formatter;
+namespace RectorPrefix202407\Symfony\Component\Console\Formatter;
 
 /**
  * Formatter interface for console output.
@@ -19,6 +19,8 @@ interface OutputFormatterInterface
 {
     /**
      * Sets the decorated flag.
+     *
+     * @return void
      */
     public function setDecorated(bool $decorated);
     /**
@@ -27,6 +29,8 @@ interface OutputFormatterInterface
     public function isDecorated() : bool;
     /**
      * Sets a new style.
+     *
+     * @return void
      */
     public function setStyle(string $name, OutputFormatterStyleInterface $style);
     /**

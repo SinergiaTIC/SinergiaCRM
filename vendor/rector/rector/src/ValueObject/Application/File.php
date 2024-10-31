@@ -1,17 +1,24 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Core\ValueObject\Application;
+namespace Rector\ValueObject\Application;
 
+use PhpParser\Node;
 use PhpParser\Node\Stmt;
 use Rector\ChangesReporting\ValueObject\RectorWithLineChange;
-use Rector\Core\Exception\ShouldNotHappenException;
-use Rector\Core\ValueObject\Reporting\FileDiff;
-/**
- * @see \Rector\Core\ValueObjectFactory\Application\FileFactory
- */
+use Rector\Exception\ShouldNotHappenException;
+use Rector\ValueObject\Reporting\FileDiff;
 final class File
 {
+    /**
+     * @readonly
+     * @var string
+     */
+    private $filePath;
+    /**
+     * @var string
+     */
+    private $fileContent;
     /**
      * @var bool
      */
@@ -22,34 +29,25 @@ final class File
      */
     private $originalFileContent;
     /**
-     * @var \Rector\Core\ValueObject\Reporting\FileDiff|null
+     * @var \Rector\ValueObject\Reporting\FileDiff|null
      */
     private $fileDiff;
     /**
-     * @var Stmt[]
+     * @var Node[]
      */
     private $oldStmts = [];
     /**
-     * @var Stmt[]
+     * @var Node[]
      */
     private $newStmts = [];
     /**
-     * @var mixed[]
+     * @var array<int, array{int, string, int}|string>
      */
     private $oldTokens = [];
     /**
      * @var RectorWithLineChange[]
      */
     private $rectorWithLineChanges = [];
-    /**
-     * @readonly
-     * @var string
-     */
-    private $filePath;
-    /**
-     * @var string
-     */
-    private $fileContent;
     public function __construct(string $filePath, string $fileContent)
     {
         $this->filePath = $filePath;
@@ -95,7 +93,7 @@ final class File
     /**
      * @param Stmt[] $newStmts
      * @param Stmt[] $oldStmts
-     * @param mixed[] $oldTokens
+     * @param array<int, array{int, string, int}|string> $oldTokens
      */
     public function hydrateStmtsAndTokens(array $newStmts, array $oldStmts, array $oldTokens) : void
     {
@@ -121,14 +119,14 @@ final class File
         return $this->newStmts;
     }
     /**
-     * @return mixed[]
+     * @return array<int, array{int, string, int}|string>
      */
     public function getOldTokens() : array
     {
         return $this->oldTokens;
     }
     /**
-     * @param Stmt[] $newStmts
+     * @param Node[] $newStmts
      */
     public function changeNewStmts(array $newStmts) : void
     {

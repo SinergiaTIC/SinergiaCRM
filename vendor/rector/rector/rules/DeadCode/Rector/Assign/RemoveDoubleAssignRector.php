@@ -15,24 +15,32 @@ use PhpParser\Node\Stmt\Foreach_;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Namespace_;
-use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
-use Rector\Core\Rector\AbstractRector;
+use PHPStan\Analyser\Scope;
 use Rector\DeadCode\SideEffect\SideEffectNodeDetector;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
+use Rector\Rector\AbstractScopeAwareRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\DeadCode\Rector\Assign\RemoveDoubleAssignRector\RemoveDoubleAssignRectorTest
  */
-final class RemoveDoubleAssignRector extends AbstractRector
+final class RemoveDoubleAssignRector extends AbstractScopeAwareRector
 {
     /**
      * @readonly
      * @var \Rector\DeadCode\SideEffect\SideEffectNodeDetector
      */
     private $sideEffectNodeDetector;
-    public function __construct(SideEffectNodeDetector $sideEffectNodeDetector)
+    /**
+     * @readonly
+     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(SideEffectNodeDetector $sideEffectNodeDetector, BetterNodeFinder $betterNodeFinder)
     {
         $this->sideEffectNodeDetector = $sideEffectNodeDetector;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -52,13 +60,13 @@ CODE_SAMPLE
     /**
      * @param Foreach_|FileWithoutNamespace|If_|Namespace_|ClassMethod|Function_|Closure $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
         $stmts = $node->stmts;
         if ($stmts === null) {
             return null;
         }
-        $hasRemovedStmt = \false;
+        $hasChanged = \false;
         foreach ($stmts as $key => $stmt) {
             if (!isset($stmts[$key + 1])) {
                 continue;
@@ -86,17 +94,17 @@ CODE_SAMPLE
             }
             // detect call expression has side effect
             // no calls on right, could hide e.g. array_pop()|array_shift()
-            if ($this->sideEffectNodeDetector->detectCallExpr($stmt->expr->expr)) {
+            if ($this->sideEffectNodeDetector->detectCallExpr($stmt->expr->expr, $scope)) {
                 continue;
             }
             if (!$stmt->expr->var instanceof Variable && !$stmt->expr->var instanceof PropertyFetch && !$stmt->expr->var instanceof StaticPropertyFetch) {
                 continue;
             }
             // remove current Stmt if will be overriden in next stmt
-            $this->removeNode($stmt);
-            $hasRemovedStmt = \true;
+            unset($node->stmts[$key]);
+            $hasChanged = \true;
         }
-        if (!$hasRemovedStmt) {
+        if (!$hasChanged) {
             return null;
         }
         return $node;

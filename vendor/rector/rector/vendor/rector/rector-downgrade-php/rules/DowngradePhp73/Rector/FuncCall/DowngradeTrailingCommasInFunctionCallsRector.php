@@ -8,9 +8,9 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
-use Rector\Core\Rector\AbstractRector;
 use Rector\DowngradePhp73\Tokenizer\FollowedByCommaAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -67,18 +67,21 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->getArgs() !== []) {
-            \end($node->args);
-            $lastArgumentPosition = \key($node->args);
-            $last = $node->args[$lastArgumentPosition];
-            if (!$this->followedByCommaAnalyzer->isFollowed($this->file, $last)) {
-                return null;
-            }
-            // remove comma
-            $last->setAttribute(AttributeKey::FUNC_ARGS_TRAILING_COMMA, \false);
-            $node->setAttribute(AttributeKey::ORIGINAL_NODE, null);
-            return $node;
+        if ($node->isFirstClassCallable()) {
+            return null;
         }
-        return null;
+        $args = $node->getArgs();
+        if ($args === []) {
+            return null;
+        }
+        $lastArgKey = \count($args) - 1;
+        $lastArg = $args[$lastArgKey];
+        if (!$this->followedByCommaAnalyzer->isFollowed($this->file, $lastArg)) {
+            return null;
+        }
+        // remove comma
+        $lastArg->setAttribute(AttributeKey::FUNC_ARGS_TRAILING_COMMA, \false);
+        $node->setAttribute(AttributeKey::ORIGINAL_NODE, null);
+        return $node;
     }
 }

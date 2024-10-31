@@ -1,28 +1,69 @@
 <?php
 
-namespace RectorPrefix202305\React\Dns\Query;
+namespace RectorPrefix202407\React\Dns\Query;
 
-use RectorPrefix202305\React\EventLoop\Loop;
-use RectorPrefix202305\React\EventLoop\LoopInterface;
-use RectorPrefix202305\React\Promise\Timer;
+use RectorPrefix202407\React\EventLoop\Loop;
+use RectorPrefix202407\React\EventLoop\LoopInterface;
+use RectorPrefix202407\React\Promise\Promise;
 final class TimeoutExecutor implements ExecutorInterface
 {
     private $executor;
     private $loop;
     private $timeout;
-    public function __construct(ExecutorInterface $executor, $timeout, LoopInterface $loop = null)
+    /**
+     * @param ExecutorInterface $executor
+     * @param float $timeout
+     * @param ?LoopInterface $loop
+     */
+    public function __construct(ExecutorInterface $executor, $timeout, $loop = null)
     {
+        if ($loop !== null && !$loop instanceof LoopInterface) {
+            // manual type check to support legacy PHP < 7.1
+            throw new \InvalidArgumentException('Argument #3 ($loop) expected null|React\\EventLoop\\LoopInterface');
+        }
         $this->executor = $executor;
         $this->loop = $loop ?: Loop::get();
         $this->timeout = $timeout;
     }
     public function query(Query $query)
     {
-        return Timer\timeout($this->executor->query($query), $this->timeout, $this->loop)->then(null, function ($e) use($query) {
-            if ($e instanceof Timer\TimeoutException) {
-                $e = new TimeoutException(\sprintf("DNS query for %s timed out", $query->describe()), 0, $e);
+        $promise = $this->executor->query($query);
+        $loop = $this->loop;
+        $time = $this->timeout;
+        return new Promise(function ($resolve, $reject) use($loop, $time, $promise, $query) {
+            $timer = null;
+            $promise = $promise->then(function ($v) use(&$timer, $loop, $resolve) {
+                if ($timer) {
+                    $loop->cancelTimer($timer);
+                }
+                $timer = \false;
+                $resolve($v);
+            }, function ($v) use(&$timer, $loop, $reject) {
+                if ($timer) {
+                    $loop->cancelTimer($timer);
+                }
+                $timer = \false;
+                $reject($v);
+            });
+            // promise already resolved => no need to start timer
+            if ($timer === \false) {
+                return;
             }
-            throw $e;
+            // start timeout timer which will cancel the pending promise
+            $timer = $loop->addTimer($time, function () use($time, &$promise, $reject, $query) {
+                $reject(new TimeoutException('DNS query for ' . $query->describe() . ' timed out'));
+                // Cancel pending query to clean up any underlying resources and references.
+                // Avoid garbage references in call stack by passing pending promise by reference.
+                \assert(\method_exists($promise, 'cancel'));
+                $promise->cancel();
+                $promise = null;
+            });
+        }, function () use(&$promise) {
+            // Cancelling this promise will cancel the pending query, thus triggering the rejection logic above.
+            // Avoid garbage references in call stack by passing pending promise by reference.
+            \assert(\method_exists($promise, 'cancel'));
+            $promise->cancel();
+            $promise = null;
         });
     }
 }

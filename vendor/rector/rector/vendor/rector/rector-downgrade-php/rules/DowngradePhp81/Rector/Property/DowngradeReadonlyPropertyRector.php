@@ -8,8 +8,10 @@ use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
-use Rector\Core\Rector\AbstractRector;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -20,17 +22,28 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class DowngradeReadonlyPropertyRector extends AbstractRector
 {
     /**
-     * @var string
-     */
-    private const TAGNAME = 'readonly';
-    /**
      * @readonly
      * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
      */
     private $visibilityManipulator;
-    public function __construct(VisibilityManipulator $visibilityManipulator)
+    /**
+     * @readonly
+     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
+     */
+    private $docBlockUpdater;
+    /**
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
+     */
+    protected $phpDocInfoFactory;
+    /**
+     * @var string
+     */
+    private const TAGNAME = 'readonly';
+    public function __construct(VisibilityManipulator $visibilityManipulator, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory)
     {
         $this->visibilityManipulator = $visibilityManipulator;
+        $this->docBlockUpdater = $docBlockUpdater;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     /**
      * @return array<class-string<Node>>
@@ -89,5 +102,6 @@ CODE_SAMPLE
             return;
         }
         $phpDocInfo->addPhpDocTagNode(new PhpDocTagNode('@' . self::TAGNAME, new GenericTagValueNode('')));
+        $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($property);
     }
 }

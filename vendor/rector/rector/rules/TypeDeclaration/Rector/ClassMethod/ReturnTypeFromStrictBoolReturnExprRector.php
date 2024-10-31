@@ -4,37 +4,21 @@ declare (strict_types=1);
 namespace Rector\TypeDeclaration\Rector\ClassMethod;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\Closure;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
-use Rector\Core\Rector\AbstractRector;
-use Rector\Core\ValueObject\PhpVersion;
-use Rector\TypeDeclaration\NodeAnalyzer\ReturnTypeAnalyzer\StrictBoolReturnTypeAnalyzer;
-use Rector\VendorLocker\NodeVendorLocker\ClassMethodReturnTypeOverrideGuard;
+use PHPStan\Analyser\Scope;
+use Rector\Configuration\Deprecation\Contract\DeprecatedInterface;
+use Rector\Rector\AbstractScopeAwareRector;
+use Rector\ValueObject\PhpVersion;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @see \Rector\Tests\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromStrictBoolReturnExprRector\ReturnTypeFromStrictBoolReturnExprRectorTest
+ * @deprecated since 1.2.1, for duplication. Use
+ * @see BoolReturnTypeFromBooleanStrictReturnsRector instead.
  */
-final class ReturnTypeFromStrictBoolReturnExprRector extends AbstractRector implements MinPhpVersionInterface
+final class ReturnTypeFromStrictBoolReturnExprRector extends AbstractScopeAwareRector implements MinPhpVersionInterface, DeprecatedInterface
 {
-    /**
-     * @readonly
-     * @var \Rector\TypeDeclaration\NodeAnalyzer\ReturnTypeAnalyzer\StrictBoolReturnTypeAnalyzer
-     */
-    private $strictBoolReturnTypeAnalyzer;
-    /**
-     * @readonly
-     * @var \Rector\VendorLocker\NodeVendorLocker\ClassMethodReturnTypeOverrideGuard
-     */
-    private $classMethodReturnTypeOverrideGuard;
-    public function __construct(StrictBoolReturnTypeAnalyzer $strictBoolReturnTypeAnalyzer, ClassMethodReturnTypeOverrideGuard $classMethodReturnTypeOverrideGuard)
-    {
-        $this->strictBoolReturnTypeAnalyzer = $strictBoolReturnTypeAnalyzer;
-        $this->classMethodReturnTypeOverrideGuard = $classMethodReturnTypeOverrideGuard;
-    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Add strict return type based on returned strict expr type', [new CodeSample(<<<'CODE_SAMPLE'
@@ -62,24 +46,15 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [ClassMethod::class, Function_::class, Closure::class];
+        return [ClassMethod::class, Function_::class];
     }
     /**
-     * @param ClassMethod|Function_|Closure $node
+     * @param ClassMethod|Function_ $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
-        if ($node->returnType !== null) {
-            return null;
-        }
-        if ($node instanceof ClassMethod && $this->classMethodReturnTypeOverrideGuard->shouldSkipClassMethod($node)) {
-            return null;
-        }
-        if (!$this->strictBoolReturnTypeAnalyzer->hasAlwaysStrictBoolReturn($node)) {
-            return null;
-        }
-        $node->returnType = new Identifier('bool');
-        return $node;
+        // deprecated
+        return null;
     }
     public function provideMinPhpVersion() : int
     {
