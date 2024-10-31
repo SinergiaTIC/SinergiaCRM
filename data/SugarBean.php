@@ -2522,7 +2522,7 @@ class SugarBean
                 // STIC Custom - 20221213 - JCH - Trim name & varchar type values on save when the value is not null
                 // STIC#902
                 // STIC#982
-                // xxxxx
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/470
                 if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !is_null($this->$key)) {
                     $this->$key = trim($this->$key);
                 }
