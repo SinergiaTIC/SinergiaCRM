@@ -26,5 +26,5 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = [
-    'LBL_CREATEMESSAGE' => 'Crear / enviar missatge',
+    'LBL_SENDMESSAGE' => 'Enviar missatge',
 ];

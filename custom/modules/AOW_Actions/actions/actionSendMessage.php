@@ -27,7 +27,7 @@ require_once 'modules/AOW_Actions/actions/actionBase.php';
 require_once 'modules/AOW_WorkFlow/aow_utils.php';
 require_once 'modules/stic_Messages/Utils.php';
 
-class actionCreateMessage extends actionBase
+class actionSendMessage extends actionBase
 {
     public function __construct($id = '')
     {

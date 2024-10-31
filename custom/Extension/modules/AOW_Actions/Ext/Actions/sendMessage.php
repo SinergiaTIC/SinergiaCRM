@@ -21,4 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$aow_actions_list[] = 'CreateMessage';
+$aow_actions_list[] = 'SendMessage';
