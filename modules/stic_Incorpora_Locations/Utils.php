@@ -51,12 +51,12 @@ class stic_Incorpora_LocationsUtils {
             $recordBean->$inc_state = $location_bean->state;
         }
         else {
-            $recordBean->$inc_town_code = null;
-            $recordBean->$inc_town = null;
-            $recordBean->$inc_municipality_code = null;
-            $recordBean->$inc_municipality = null;
-            $recordBean->$inc_state_code = null;
-            $recordBean->$inc_state = null;
+            $recordBean->$inc_town_code = '';
+            $recordBean->$inc_town = '';
+            $recordBean->$inc_municipality_code = '';
+            $recordBean->$inc_municipality = '';
+            $recordBean->$inc_state_code = '';
+            $recordBean->$inc_state = '';
         }
     }
 }
