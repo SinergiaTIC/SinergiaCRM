@@ -2523,7 +2523,7 @@ class SugarBean
                 // STIC#902
                 // STIC#982
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/470
-                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !is_null($this->$key)) {
+                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !empty($this->$key)) {
                     $this->$key = trim($this->$key);
                 }
                 // END STIC
