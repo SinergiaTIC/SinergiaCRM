@@ -27,6 +27,9 @@
 
 
 class stic_MessagesUtils {
+    /* List of modules from which messages can be sent.
+     * If new modules must be included, this list can be modified from a custom file
+     */
     public static $messageableModules = array(
         'Contacts' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'contacts' ),
         'Accounts' => array('phoneField' => 'phone_office', 'name' => 'name', 'dbTable' => 'accounts'),
@@ -34,12 +37,22 @@ class stic_MessagesUtils {
         'Employees' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
         'Users' => array('phoneField' => 'phone_mobile', 'name' => "concat(first_name, ' ', last_name)", 'dbTable' => 'users'),
     );
+
+    /** 
+     * Returns the list of modules from which messages can be sent
+     * @return array Modules enabled
+     */
     public static function getMessageableModules() {
         $modules = array_keys(self::$messageableModules);
         asort($modules);
         return $modules;
     }
 
+    /**
+     * Generates the list of possible fields used on the sendMessage action for the module indicated
+     * @param string Module name 
+     * @return array List of fields to be shown on the action
+     */
     public static function getRelatedMessageableFields($module) {
         global $beanList, $app_list_strings;
         $relPhoneFields = array();
@@ -85,6 +98,11 @@ class stic_MessagesUtils {
         return $relPhoneFields;
     }
 
+    /**
+     * Return the default phone to be used to send messages to bean received
+     * @param object The bean
+     * @return string The phone number
+     */
     public static function getPhoneForMessage($bean) {
     
         $fieldName = self::$messageableModules[$bean->module_name]['phoneField'];
@@ -93,24 +111,48 @@ class stic_MessagesUtils {
         }
         return '';
     }
+
+    /**
+     * Return the default phone field to be used to send messages to the module indicated
+     * @param string Module name
+     * @return string The field name
+     */
     public static function getPhoneFieldNameForMessage($moduleName) {
     
         $fieldName = self::$messageableModules[$moduleName]['phoneField'];
 
         return $fieldName;
     }
+
+    /** 
+     * Gets the field to be used on a SQL query to retrieve the name, depending on the module 
+     * @param string Module name
+     * @return string The filed or function to be used in a SQL query
+     */
     public static function getNameFieldNameForMessage($moduleName) {
     
         $fieldName = self::$messageableModules[$moduleName]['name'];
 
         return $fieldName;
     }
+        /** 
+     * Gets the table name to be used on a SQL query to retrieve data from the module
+     * @param string Module name
+     * @return string The table name
+     */
     public static function getTableNameForMessage($moduleName) {
     
         $tableName = self::$messageableModules[$moduleName]['dbTable'];
 
         return $tableName;
     }
+
+    /** 
+     * Function used to retrieve the messages subpanel data related to the bean being displayed.
+     * @param array $params An array of parameters used to generate the query.
+     * @return array|string The SQL query as an array if 'return_as_array' is true, or as a string otherwise.
+     *
+     */
     public static function get_stic_messages($type) {
         $beanId = $_REQUEST['record'];
         $return_array['select'] = 'SELECT stic_messages.id ';
@@ -124,6 +166,10 @@ class stic_MessagesUtils {
         return $return_array['select'] . $return_array['from'] . $return_array['where'];
     }
     
+    /**
+     * Adds a JS function to the output which indicates if the module stic_Messages is active.
+     *
+     */
     public static function echoIsMessagesModuleActive() {
         require_once('modules/stic_Settings/Utils.php');
         require_once 'modules/MySettings/TabController.php';
