@@ -25,7 +25,7 @@ define('TBS_INSTALL', -1);
 define('TBS_ISINSTALLED', -3);
 
 // *********************************************
-
+#[\AllowDynamicProperties]
 class clsTbsLocator {
 	public $PosBeg = false;
 	public $PosEnd = false;
@@ -48,6 +48,7 @@ class clsTbsLocator {
 
 // *********************************************
 
+#[\AllowDynamicProperties]
 class clsTbsDataSource {
 
 public $Type = false;
@@ -524,6 +525,7 @@ public function DataClose() {
 
 // *********************************************
 
+#[\AllowDynamicProperties]
 class clsTinyButStrong {
 
 // Public properties

@@ -71,6 +71,7 @@ define('OPENTBS_EVEN',128);
  * Main class which is a TinyButStrong plug-in.
  * It is also a extension of clsTbsZip so it can directly manage the archive underlying the template.
  */
+#[\AllowDynamicProperties]
 class clsOpenTBS extends clsTbsZip {
 
 	function OnInstall() {
@@ -5154,6 +5155,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
  * The object represents only the opening tag until method FindEndTag() is called.
  * Then is represents the complete entity.
  */
+#[\AllowDynamicProperties]
 class clsTbsXmlLoc {
 
 	public $PosBeg;
@@ -5532,6 +5534,7 @@ define('TBSZIP_NOHEADER',4);   // option to use with DOWNLOAD: no header is sent
 define('TBSZIP_FILE',8);       // output to file  , or add from file
 define('TBSZIP_STRING',32);    // output to string, or add from string
 
+#[\AllowDynamicProperties]
 class clsTbsZip {
 
 	function __construct() {

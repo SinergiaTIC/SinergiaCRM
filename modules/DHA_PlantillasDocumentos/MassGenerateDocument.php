@@ -29,6 +29,7 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/EditView/EditView2.php');
+#[\AllowDynamicProperties]
 class MassGenerateDocument {
 
    public $sugarbean = NULL;

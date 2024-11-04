@@ -23,6 +23,7 @@
 require_once('include/SugarObjects/templates/file/File.php');
 require_once ('include/upload_file.php');
 
+#[\AllowDynamicProperties]
 class DHA_PlantillasDocumentosParent extends File {
 
    public $new_schema = true;
