@@ -794,6 +794,20 @@ class SugarView
         }
 
         if ($retModTabs) {
+            // Set vars for show Update alert
+            $sticVersionCookie = isset($_COOKIE['SticVersion']) ? $_COOKIE['SticVersion'] : null;
+            $lastSticVersion = null;
+            $showUpdateAlert = false;
+
+            if (isset($sugar_config['sinergiacrm_version']) && !empty($sticVersionCookie) && 
+                $sugar_config['sinergiacrm_version'] != $sticVersionCookie) {
+
+                $lastSticVersion = $sugar_config['sinergiacrm_version'];
+                $showUpdateAlert = $sugar_config['stic_show_update_alert'];
+            }
+            $ss->assign('lastSticVersion', $lastSticVersion);
+            $ss->assign('showUpdateAlert', $showUpdateAlert);
+
             return $ss->fetch($themeObject->getTemplate('_headerModuleList.tpl'));
         } else {
             $ss->display($headerTpl);
