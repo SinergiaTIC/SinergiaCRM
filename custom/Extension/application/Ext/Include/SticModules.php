@@ -67,6 +67,7 @@ $moduleList[] = 'stic_Custom_View_Customizations';
 $moduleList[] = 'stic_Custom_View_Conditions';
 $moduleList[] = 'stic_Custom_View_Actions';
 $moduleList[] = 'stic_Group_Opportunities';
+$moduleList[] = 'stic_Message_Marketing';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -115,6 +116,7 @@ $beanList['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations'
 $beanList['stic_Custom_View_Conditions'] = 'stic_Custom_View_Conditions';
 $beanList['stic_Custom_View_Actions'] = 'stic_Custom_View_Actions';
 $beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
+$beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -162,6 +164,7 @@ $beanFiles['stic_Custom_View_Customizations'] = 'modules/stic_Custom_View_Custom
 $beanFiles['stic_Custom_View_Conditions'] = 'modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php';
 $beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
 $beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
+$beanFiles['stic_Message_Marketing'] = 'modules/stic_Message_Marketing/stic_Message_Marketing.php';
 
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels

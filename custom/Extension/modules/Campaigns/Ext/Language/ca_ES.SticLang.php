@@ -79,3 +79,5 @@ $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Compte de correu que 
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Bústia de correu on rebre els missatges d'error que es puguin produir en l'enviament. Es pot configurar a l'apartat 'Correu electrònic entrant' de l'àrea d'Administració.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
+
+$mod_strings['LBL_STIC_MESSAGES_MARKETING_CAMPAIGNS_TITLE'] = "Marketing per missatge";
