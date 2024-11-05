@@ -23,14 +23,6 @@ var module = "stic_Bookings_Places_Calendar";
 var updatedView = false;
 loadScript("include/javascript/moment.min.js");
 
-// // Load the calendar once everything else is loaded
-// calendar = runCheckInterval();
-
-// // Inicializar el calendario después de que el DOM esté completamente cargado
-// document.addEventListener('DOMContentLoaded', function() {
-//     initializeCalendar();
-// });
-
 function initializeCalendar() {
   var calendarEl = document.getElementById("calendar");
   if (!calendarEl) {
@@ -41,7 +33,7 @@ function initializeCalendar() {
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     events: function (fetchInfo, successCallback, failureCallback) {
-      // Formatear las fechas al formato YYYY-MM-DD
+
       var start = moment(fetchInfo.start).format("YYYY-MM-DD");
       var end = moment(fetchInfo.end).format("YYYY-MM-DD");
 
@@ -58,7 +50,7 @@ function initializeCalendar() {
             var events = [];
             for (var date in data) {
               let occupiedCount = 0;
-              // Contar el número total de recursos ocupados
+
               for (var booking in data[date].occupied) {
                 for (var center in data[date].occupied[booking]) {
                   occupiedCount += data[date].occupied[booking][center].length;
@@ -101,14 +93,10 @@ function initializeCalendar() {
     },
 
     eventDidMount: function (info) {
-      // console.log("vamos a ver que tenemos"+info)
-      // console.log("vamos a ver que tenemos222"+info.event)
       console.dir(info.event.extendedProps.occupiedInfo);
 
-      // Obtén la información del evento desde info.event
-      var eventData = info.event.title; // Este contiene el texto "Disponibles: X, Ocupados: Y"
+      var eventData = info.event.title; 
 
-      // Configura el título del tooltip (opcional)
       var title =
         '<div class="qtip-title-text">' +
         SUGAR.language.translate("app_strings", "LBL_ADDITIONAL_DETAILS") +
@@ -117,7 +105,6 @@ function initializeCalendar() {
         "</div>";
       var occupiedInfo = info.event.extendedProps.occupiedInfo;
 
-      // Configura el cuerpo del tooltip con la información deseada
       var body = "";
 
       for (var booking in occupiedInfo) {
@@ -145,7 +132,6 @@ function initializeCalendar() {
           }
         }
       }
-      // Genera el tooltip usando qTip2
       $(info.el).qtip({
         content: {
           title: title,
@@ -156,11 +142,11 @@ function initializeCalendar() {
           at: "top left",
           target: "mouse",
           adjust: {
-            mouse: false, // Esto evita que el tooltip siga el mouse
+            mouse: false, 
           },
         },
         show: {
-          solo: true, // Solo se muestra un tooltip a la vez
+          solo: true, 
         },
         hide: {
           event: "mouseleave",
@@ -189,7 +175,6 @@ function initializeCalendar() {
 
     selectable: true,
     selectMirror: true,
-    // This is used for the click in an empty space of the calendar
     select: function (arg) {
       window.location.assign(
         "index.php?module=stic_Bookings&action=EditView&return_action=index&return_module=stic_Bookings_Calendar&start=" +
@@ -249,7 +234,7 @@ function initializeCalendar() {
 $("#openCenterPopup").click(function () {
   openCenterPopup();
 });
-var globalCalendar; // Declarar una variable global para el calendario
+var globalCalendar; 
 
 function runCheckInterval() {
   var checkIfSearchPaneIsLoaded = setInterval(function () {
@@ -284,17 +269,14 @@ function openSelectPopup(module, field) {
 }
 
 var fromPopupReturn = false;
-// callback function used after the Popup that select events
 function callbackSelectPopup(popupReplyData) {
   fromPopupReturn = true;
   var nameToValueArray = popupReplyData.name_to_value_array;
-  // It fills the data of the events
   Object.keys(nameToValueArray).forEach(function (key, index) {
     $("#" + key).val(nameToValueArray[key]);
   }, nameToValueArray);
 }
 
-// Clears a single filter, name and id fields
 function clearRow(form, field) {
   SUGAR.clearRelateField(form, field + "_name", field + "_id");
 }
@@ -383,20 +365,16 @@ function hasAppliedFilters() {
 }
 
 function handleCrossRemoveFilters() {
-  // Limpiar todos los selectores
   $("#stic_center_name").val("");
   $("#stic_center_id").val("");
   $("#stic_resources_places_users_list").val([]);
   $("#stic_resources_places_type_list").val([]);
   $("#stic_resources_places_gender_list").val([]);
 
-  // Guardar los filtros (que ahora están vacíos)
   saveFilters();
 
-  // Actualizar la visibilidad de la cruz
   updateCrossVisibility();
 
-  // Recargar los eventos del calendario
   if (globalCalendar) {
     globalCalendar.refetchEvents();
   }
@@ -406,5 +384,28 @@ function updateCrossVisibility() {
     $("#cross_filters").show();
   } else {
     $("#cross_filters").hide();
+  }
+}
+function closeResource(resourceId, bookingId) {
+  if (confirm(SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM"))) {
+      $.ajax({
+          url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
+          dataType: "json",
+          data: {
+              record_id: bookingId,
+              resource_id: resourceId
+          },
+          success: function(res) {
+              if (res.success) {
+                  // Recargar la vista de detalle
+                  window.location.reload();
+              } else {
+                  alert(res.message);
+              }
+          },
+          error: function() {
+              alert("Error al cerrar el recurso");
+          }
+      });
   }
 }

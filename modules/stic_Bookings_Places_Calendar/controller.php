@@ -80,7 +80,6 @@ class stic_Bookings_Places_CalendarController extends SugarController
             $filteredResources = explode(',', $_REQUEST['filteredResources']);
         }
 
-        // Get the data to be displayed in the calendar according to stic_bookings_calendar_availability_mode param
         $calendarItems = array();
         if ($availabilityMode == "true") {
             $calendarItems = $this->getResourcesAvailability($startDate, $endDate, $filteredResources);
@@ -88,19 +87,15 @@ class stic_Bookings_Places_CalendarController extends SugarController
             $calendarItems = $this->getBookedResources($startDate, $endDate, $filteredResources);
         }
 
-        // Convert calendar items into calendar printable objects.
         $calendarObjects = array();
         foreach ($calendarItems as $calendarItem) {
             $calendarObject = new CalendarObject($calendarItem, $userTimeZone);
-            // If the CalendarObject is in-bounds, add it to the output.
-            // Probably we don't need this here because we are filtering the bookings before, but we leave it just in case.
             if ($calendarObject->isWithinDayRange($range_start, $range_end)) {
                 $calendarObjects[] = $calendarObject->toArray();
             }
         }
         echo json_encode($calendarObjects);
 
-        // Stop the code here to avoid sending unnecessary headers to the request
         die();
     }
 
@@ -128,62 +123,6 @@ class stic_Bookings_Places_CalendarController extends SugarController
         die();
     }
 
-    /**
-     * Returns the booked resources and their details
-     *
-     * @param String $start_date
-     * @param String $end_date
-     * @param Array $filteredResources
-     * @return void
-     */
-    // private function getBookedResources($start_date, $end_date, $filteredResources)
-    // {
-    //     global $current_user;
-    //     $resourcesBean = BeanFactory::getBean('stic_Resources');
-    //     $resources = $resourcesBean->get_full_list('name');
-    //     $bookedResources = array();
-    //     $query = "stic_bookings.end_date >= '$start_date' AND stic_bookings.start_date <= '$end_date' AND stic_bookings.status != 'cancelled'";
-
-    //     foreach ($resources as $resource) {
-    //         if (!$filteredResources || in_array($resource->id, $filteredResources)) {
-    //             $relBeans = $resource->get_linked_beans(
-    //                 'stic_resources_stic_bookings',
-    //                 '',
-    //                 '',
-    //                 0,
-    //                 0,
-    //                 0,
-    //                 $query,
-    //             );
-    //             foreach ($relBeans as $relBean) {
-    //                 $status = $relBean->status;
-    //                 $bookedResources[] = array(
-    //                     'title' => $resource->name . ' - ' . str_pad($relBean->code, 5, "0", STR_PAD_LEFT),
-    //                     'resourceName' => $resource->name,
-    //                     'module' => $relBean->module_name,
-    //                     'id' => $relBean->id,
-    //                     'recordId' => $relBean->id,
-    //                     'resourceId' => $resource->id,
-    //                     'resourcePlaceType' => $resource->place_type,
-    //                     'resourcePlaceUserType' => $resource->user_type,
-    //                     'resourcePlaceGenderType' => $resource->gender,
-    //                     'resourceType' => $resource->type,
-    //                     'resourceCenterName' => $resource->stic_resources_stic_centers_name,
-    //                     'resourceCenterId' => $resource->stic_resources_stic_centersstic_centers_ida,
-
-    //                     // 'backgroundColor' => $resource->color,
-    //                     // 'borderColor' => $resource->color,
-    //                     'allDay' => $relBean->all_day,
-    //                     'start' => $relBean->fetched_row['start_date'],
-    //                     'end' => $relBean->fetched_row['end_date'],
-    //                     // Classname is defined this way in order to paint each calendar object using the resource's color
-    //                     'className' => 'id-' . $resource->id,
-    //                 );
-    //             }
-    //         }
-    //     }
-    //     return $bookedResources;
-    // }
     private function getBookedResources($start_date, $end_date, $filteredResources)
     {
         global $current_user, $db;
@@ -307,7 +246,7 @@ class stic_Bookings_Places_CalendarController extends SugarController
             $lastDate = $row['date_availability'];
             while ($row = $db->fetchByAssoc($res)) {
                 if (strtotime($row['date_availability']) - strtotime($lastDate) > 15 * 60) {
-                    // 15 mins has passed
+
                     $resourcesAvailability[] = array(
                         'title' => $resourceBean->name,
                         'resourceName' => $resourceBean->name,
@@ -316,7 +255,6 @@ class stic_Bookings_Places_CalendarController extends SugarController
                         'resourceId' => $resourceBean->id,
                         'start' => $startDate,
                         'end' => $lastDate,
-                        // Classname is defined this way in order to paint each calendar object using the resource's color
                         'className' => 'id-' . $resourceBean->id,
                     );
                     $startDate = $row['date_availability'];
@@ -335,7 +273,6 @@ class stic_Bookings_Places_CalendarController extends SugarController
                     'resourceId' => $resourceBean->id,
                     'start' => $startDate,
                     'end' => $lastDate,
-                    // Classname is defined this way in order to paint each calendar object using the resource's color
                     'className' => 'id-' . $resourceBean->id,
                 );
             }
@@ -438,7 +375,6 @@ class stic_Bookings_Places_CalendarController extends SugarController
             );
         }
 
-        // Obtener las reservas existentes
         $query = "SELECT stic_resources_stic_bookingsstic_resources_ida as resource_id,
                      start_date, end_date
               FROM stic_bookings

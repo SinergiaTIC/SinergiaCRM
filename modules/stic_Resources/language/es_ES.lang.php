@@ -77,8 +77,14 @@ $mod_strings = array(
     'LBL_OWNER_ACCOUNT' => 'Organización propietaria',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Reservas',
     'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE' => 'Centro',
+    'LBL_STIC_RESOURCES_PROJECT_FROM_PROJECT_TITLE' => 'Proyecto',
     'LBL_PLACE_TYPE' => 'Tipo de plaza',
-    'LBL_GENDER' => 'Género',
-    'LBL_USER_TYPE' => "Tipo de usuario",
+    'LBL_GENDER' => 'Género de la plaza',
+    'LBL_USER_TYPE' => 'Tipo de usuario del servicio',
     'LBL_BOOKING_TYPE' => 'Tipo de reserva',
+    'LBL_AMOUNT_DAY_OCCUPIED' => 'Importe diario por plaza ocupada',
+    'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Importe diario por plaza desocupada',
+    'LBL_AMOUNT_DAY_OVEROCCUPIED' => 'Importe diario por plaza sobreocupada',
+    'LBL_AMOUNT_COPAYMENT' => 'Importe diario de copago',
+
 );

@@ -93,5 +93,19 @@
 			font-size: 10px;
 			padding: 4px;
 		}
+        select[multiple] {
+            height: 32px;
+            overflow: hidden;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        select[multiple]:focus {
+            height: auto;
+            position: absolute;
+            background: white;
+            z-index: 1000;
+        }
+
 	</style>
 {/literal}

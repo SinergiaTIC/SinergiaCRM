@@ -169,7 +169,52 @@ switch (viewType()) {
         $("#end_date_time_section").parent().show();
       }
     });
+    previousPlannedStartDate = $("#planned_start_date_date").val();
+    previousPlannedStartHours = $("#planned_start_date_hours").val();
+    previousPlannedStartMinutes = $("#planned_start_date_minutes").val();
+    previousPlannedEndDate = $("#planned_end_date_date").val();
+    previousPlannedEndHours = $("#planned_end_date_hours").val();
+    previousPlannedEndMinutes = $("#planned_end_date_minutes").val();
 
+    setInterval(function() {
+        currentPlannedStartDate = $("#planned_start_date_date").val();
+        currentPlannedStartHours = $("#planned_start_date_hours").val();
+        currentPlannedStartMinutes = $("#planned_start_date_minutes").val()
+        currentPlannedEndDate = $("#planned_end_date_date").val();
+        currentPlannedEndHours = $("#planned_end_date_hours").val();
+        currentPlannedEndMinutes = $("#planned_end_date_minutes").val()
+
+        if (currentPlannedStartDate !== previousPlannedStartDate) {
+            $("#start_date_date").val(currentPlannedStartDate).trigger("change");
+            previousPlannedStartDate = currentPlannedStartDate;
+        }
+    
+        if (currentPlannedStartHours !== previousPlannedStartHours) {
+            $("#start_date_hours").val(currentPlannedStartHours).trigger("change");
+            previousPlannedStartHours = currentPlannedStartHours;
+        }
+    
+        if (currentPlannedStartMinutes !== previousPlannedStartMinutes) {
+            $("#start_date_minutes").val(currentPlannedStartMinutes).trigger("change");
+            previousPlannedStartMinutes = currentPlannedStartMinutes;
+        }
+        if (currentPlannedEndDate !== previousPlannedEndDate) {
+          $("#end_date_date").val(currentPlannedEndDate).trigger("change");
+          previousPlannedEndDate = currentPlannedEndDate;
+      }
+  
+      if (currentPlannedEndHours !== previousPlannedEndHours) {
+          $("#end_date_hours").val(currentPlannedEndHours).trigger("change");
+          previousPlannedEndHours = currentPlannedEndHours;
+      }
+  
+      if (currentPlannedEndMinutes !== previousPlannedEndMinutes) {
+          $("#end_date_minutes").val(currentPlannedEndMinutes).trigger("change");
+          previousPlannedEndMinutes = currentPlannedEndMinutes;
+      }
+
+    }, 500); 
+    
     // Set event listener for center popup
     $("#openCenterPopup").click(function () {
       openCenterPopup();
@@ -334,7 +379,6 @@ function updateResourceFields() {
     var isPlaceBooking = $("#place_booking").is(":checked");
     var fields = isPlaceBooking ? config_place_fields : config_resource_fields;
   
-    // Actualizar encabezados de la tabla
     var header = "<tr>";
     fields.forEach(function (field) {
       header +=
@@ -418,7 +462,6 @@ function callbackResourceSelectQS(ln) {
       } else if (field === "color") {
         $("#resource_" + field + ln).colorPicker({ opacity: false });
       }
-      // Puedes agregar más condiciones aquí si otros campos necesitan un tratamiento especial
     });
   }
 }
@@ -500,21 +543,18 @@ function isResourceAvailable(resourceElement = null) {
 
 // Clean a resource row
 function clearRow(form, ln) {
-  // Asumimos que 'name' es siempre el primer campo y se usa para el campo relacionado
   SUGAR.clearRelateField(form, `resource_name${ln}`, `resource_id${ln}`);
   var isPlaceBooking = $("#place_booking").is(":checked");
   var fields = isPlaceBooking ? config_place_fields : config_resource_fields;
 
   fields.forEach(function (field) {
     $(`#resource_${field}${ln}`).val("");
-    // Manejo especial para el campo de color
     if (field === "color") {
       $(`#resource_${field}${ln}`).css("background-color", "");
     }
   });
 }
 
-// Esta función abre el popup para seleccionar el centro
 function openCenterPopup() {
   var popupRequestData = {
     call_back_function: "callbackCenterSelectPopup",
@@ -531,7 +571,6 @@ function openCenterPopup() {
 function callbackCenterSelectPopup(popupReplyData) {
   var centerId = popupReplyData.name_to_value_array.center_id;
   var centerName = popupReplyData.name_to_value_array.center_name;
-  // Actualizar el contenido del elemento con el nombre del centro seleccionado
   selectedCenters.push({ centerId: centerId, centerName: centerName });
   updateSelectedCentersList();
   $("#selectedCenterName").text(centerName);
@@ -554,7 +593,6 @@ function loadResources() {
   var resourceStatus = $("#resourceStatus").val();
   var numberOfCenters = $("#numberOfCenters").val();
 
-  // Validar que start_date y end_date estén definidos
   if (startDate === "" || endDate === "") {
     add_error_style(
       "EditView",
@@ -592,7 +630,6 @@ document
   });
 
 $(document).ready(function () {
-  // Asegurarse de que los campos de búsqueda y el botón estén ocultos al inicio
   $("#resourceSearchFields").hide();
   $("#openCenterPopup").hide();
 });
@@ -614,7 +651,6 @@ function updateSelectedCentersList() {
   });
   var startDate = getFieldValue("start_date");
   var endDate = getFieldValue("end_date");
-  // Agregar manejador de eventos para los botones de eliminación
   $(".removeCenterButton")
     .off("click")
     .on("click", function () {
@@ -707,15 +743,36 @@ function loadCenterResources(
 }
 
 function updateResourceLines(resources) {
-  // Limpiar las líneas de recursos actuales
   for (var i = 0; i < resourceMaxCount; i++) {
     $("#resourceLine" + i).remove();
   }
   resourceMaxCount = 0;
 
-  // Insertar las nuevas líneas de recursos
   resources.forEach(function (resource) {
     insertResourceLine();
     populateResourceLine(resource, resourceMaxCount - 1);
   });
+}
+function closeResource(resourceId, bookingId) {
+  if (confirm(SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM"))) {
+      $.ajax({
+          url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
+          dataType: "json",
+          data: {
+              record_id: bookingId,
+              resource_id: resourceId
+          },
+          success: function(res) {
+              if (res.success) {
+                  // Recargar la vista de detalle
+                  window.location.reload();
+              } else {
+                  alert(res.message);
+              }
+          },
+          error: function() {
+              alert("Error al cerrar el recurso");
+          }
+      });
+  }
 }

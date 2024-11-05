@@ -3153,9 +3153,9 @@ $app_list_strings['stic_resources_places_users_list']['minors'] = 'Minors';
 
 // Resources: Gender
 $app_list_strings['stic_resources_places_gender_list'][''] = '';
-$app_list_strings['stic_resources_places_gender_list']['men'] = 'Men';
-$app_list_strings['stic_resources_places_gender_list']['women'] = 'Women';
-$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixed';
+$app_list_strings['stic_resources_places_gender_list']['men'] = 'Home';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Dona';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
 
 // Bookings: Status
 $app_list_strings['stic_bookings_status_list'][''] = '';

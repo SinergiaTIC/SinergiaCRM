@@ -61,6 +61,7 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'Nou Recurs',
     'LBL_PANEL_STIC_RESOURCES_INFORMATION' => 'Dades generals',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
+    'LBL_PANEL_PLACES' => 'Detalls de la plaça',
 
     'LBL_STATUS' => 'Estat',
     'LBL_CODE' => 'Codi',
@@ -72,8 +73,14 @@ $mod_strings = array(
     'LBL_OWNER_ACCOUNT' => 'Organització propietària',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Reserves',
     'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE' => 'Centre',
+    'LBL_STIC_RESOURCES_PROJECT_FROM_PROJECT_TITLE' => 'Projecte',
     'LBL_PLACE_TYPE' => 'Tipus de plaça',
-    'LBL_GENDER' => 'Gènere',
-    'LBL_USER_TYPE' => "tipus d'usuari",
+    'LBL_GENDER' => 'Gènere de la plaça',
+    'LBL_USER_TYPE' => "Tipus d’usuari del servei",
     'LBL_BOOKING_TYPE' => 'Tipus de reserve',
+    'LBL_AMOUNT_DAY_OCCUPIED' => 'Import diari per plaça ocupada',
+    'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Import diari per plaça desocupada',
+    'LBL_AMOUNT_DAY_OVEROCCUPIED' => 'Import diari per plaça sobreocupada',
+    'LBL_AMOUNT_COPAYMENT' => 'Import diari de copagament',
+
 );

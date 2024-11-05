@@ -3131,6 +3131,7 @@ $app_list_strings['stic_resources_types_list']['office_materials'] = "Material d
 $app_list_strings['stic_resources_types_list']['electronics'] = 'Electrònica';
 $app_list_strings['stic_resources_types_list']['technical_equipment'] = 'Equipament tècnic';
 $app_list_strings['stic_resources_types_list']['accessory'] = 'Accessoris';
+$app_list_strings['stic_resources_types_list']['places'] = 'Plaça';
 $app_list_strings['stic_resources_types_list']['other'] = 'Altres';
 
 // Recursos: Estats
@@ -3139,6 +3140,23 @@ $app_list_strings['stic_resources_status_list']['active'] = 'Actiu';
 $app_list_strings['stic_resources_status_list']['inactive'] = 'Inactiu';
 $app_list_strings['stic_resources_status_list']['unavailable'] = 'No disponible';
 $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'No disponible temporalment';
+
+// Resources: Plaça tipus
+$app_list_strings['stic_resources_places_type_list'][''] = '';
+$app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
+$app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocupació';
+
+// Resources: User tipus
+$app_list_strings['stic_resources_places_users_list'][''] = '';
+$app_list_strings['stic_resources_places_users_list']['adults'] = 'Adults';
+$app_list_strings['stic_resources_places_users_list']['families'] = 'Families';
+$app_list_strings['stic_resources_places_users_list']['minors'] = 'Minors';
+
+// Resources: Gender
+$app_list_strings['stic_resources_places_gender_list'][''] = '';
+$app_list_strings['stic_resources_places_gender_list']['men'] = 'Home';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Dona';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
 
 // Reserves: Estats
 $app_list_strings['stic_bookings_status_list'][''] = '';
