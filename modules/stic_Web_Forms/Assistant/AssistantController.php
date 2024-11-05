@@ -250,7 +250,7 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     	* @param Const $filter
     	* @return Array
     	*/
-    function getFilteredParams ($defaultValues = null, $filter = FILTER_SANITIZE_STRING) 
+    function getFilteredParams ($defaultValues = null, $filter = FILTER_DEFAULT) 
     {
     	$ret = parent::getFilteredParams();	// Call the parent class method
     
