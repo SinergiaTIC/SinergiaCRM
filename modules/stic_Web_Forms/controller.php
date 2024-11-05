@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
+#[\AllowDynamicProperties]
 class stic_Web_FormsController extends SugarController
 {
     public $webFormClass; // Its value is indicated in the url that is executed from the menu option

@@ -414,7 +414,7 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     		$GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  There are no values ​​to extract.");
     	} 
     	else {
-    		$searchString = ",".implode($extract,",").",";
+    		$searchString = ",".implode(",", $extract).",";
 			foreach($availableFields as $key => $field) 
 			{
     			// Field 1 contains the name of the field. SearchString contains the names of fields to search separated by commas.
