@@ -42,9 +42,12 @@ class CustomUsersViewDetail extends UsersViewDetail
 
     public function display()
     {
+        echo '<script> editACL = '. ACLController::checkAccess('stic_Work_Calendar', 'edit', true) .' </script>';            
         parent::display();
 
         SticViews::display($this);
+
         // Write here the SinergiaCRM code that must be executed for this module and view
+        echo getVersionedScript("custom/modules/Users/SticUtils.js");
     }
 }

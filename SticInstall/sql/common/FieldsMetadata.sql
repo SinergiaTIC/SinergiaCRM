@@ -74,6 +74,11 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsinc_state_c', 'Accounts', 'inc_state_c'),
 ('Accountsinc_municipality_c', 'Accounts', 'inc_municipality_c'),
 ('Accountsinc_town_c', 'Accounts', 'inc_town_c'),
+-- Campaigns
+('Campaignsparent_id', 'Campaigns', 'parent_id'),
+('Campaignsparent_name', 'Campaigns', 'parent_name'),
+('Campaignsparent_type', 'Campaigns', 'parent_type'),
+('Campaignsstic_notification_prospect_list_names_c', 'Campaigns', 'stic_notification_prospect_list_names_c'),
 -- Contacts
 ('Contactsstic_acquisition_channel_c', 'Contacts', 'stic_acquisition_channel_c'),
 ('Contactsstic_age_c', 'Contacts', 'stic_age_c'),
@@ -187,6 +192,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Opportunitiesstic_resolution_date_c', 'Opportunities', 'stic_resolution_date_c'),
 ('Opportunitiesstic_status_c', 'Opportunities', 'stic_status_c'),
 ('Opportunitiesstic_type_c', 'Opportunities', 'stic_type_c'),
+('Opportunitiesstic_opportunity_url_c', 'Opportunities', 'stic_opportunity_url_c'),
+('Opportunitiesstic_additional_information_c', 'Opportunities', 'stic_additional_information_c'),
 -- FP_Event_Locations
 ('FP_Event_Locationsstic_address_county_c','FP_Event_Locations','stic_address_county_c'),
 ('FP_Event_Locationsstic_address_region_c','FP_Event_Locations','stic_address_region_c'),
@@ -199,4 +206,6 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Usersinc_reference_group_c', 'Users', 'inc_reference_group_c'),
 ('Usersinc_reference_officer_c', 'Users', 'inc_reference_officer_c'),
 ('Usersinc_incorpora_user_c', 'Users', 'inc_incorpora_user_c'),
-('Userssda_allowed_c', 'Users', 'sda_allowed_c');
+('Userssda_allowed_c', 'Users', 'sda_allowed_c'),
+('Usersstic_work_calendar_c', 'Users', 'stic_work_calendar_c'),
+('Usersstic_clock_c', 'Users', 'stic_clock_c');

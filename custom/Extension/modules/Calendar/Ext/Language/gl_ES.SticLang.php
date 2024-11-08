@@ -39,3 +39,12 @@ $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_COLOR'] = 'Color';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_TYPE'] = 'Tipo';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_CONTACTS'] = 'Persoa en seguemento';
 $mod_strings['LBL_FILTERS_STIC_FOLLOWUPS_PROJECTS'] = 'Proxecto relacionado';
+
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TITLE'] = 'Calendario laboral';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_TYPE'] = 'Tipo';
+$mod_strings['LBL_FILTERS_STIC_WORK_CALENDAR_DEPARTMENT'] = 'Departamento';
+
+$mod_strings['LBL_SETTINGS_SHARED_CALENDAR_SEPARATE_INFO'] = 'Coa opción activada, os calendarios laborais dos diferentes usuarios poden solaparse. Para optimizar a súa visualización recoméndase amosalos por separado.';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_DISPLAY'] = 'Ver rexistros de Calendario laboral';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_WORKING'] = 'Calendario laboral - Disponible';
+$mod_strings['LBL_SETTINGS_STIC_WORK_CALENDAR_NOWORKING'] = 'Calendario laboral - Non disponible';
