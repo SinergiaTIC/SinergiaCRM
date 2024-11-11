@@ -60,7 +60,6 @@ $searchFields['EmailMan'] =
             ),        
         ),
         'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
-        // Add logic to search by other fields
         'message_name' => array( 'query_type'=>'default','db_field'=>array('email_marketing.name')),
         'send_attempts' => array( 'query_type'=>'default','db_field'=>array('emailman.send_attempts')),
         'in_queue' => array( 'query_type'=>'default','db_field'=>array('emailman.in_queue')),
@@ -108,6 +107,6 @@ $searchFields['EmailMan'] =
             'query_type' => 'default',
             'enable_range_search' => true,
             'is_date_field' => true,
-        ),                   
+        ),             
     );
 // END STIC-Custom   

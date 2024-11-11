@@ -120,18 +120,13 @@ class templateParser
                         ENT_COMPAT, 'UTF-8');
                     $repl_arr[$key . "_" . $fieldName] = html_entity_decode((string) $focus->{$fieldName},
                         ENT_COMPAT, 'UTF-8');
-                // STIC-custom 20210922 - Parse decimal symbol in templates according to configuration
-                // STIC#390
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/338
                 } elseif ($field_def['type'] == 'decimal' || $field_def['type'] == 'float') {
-                    require_once('SticInclude/Utils.php');
-                    if ($_REQUEST['entryPoint'] == 'formLetter') { // If generating a PDF...
-                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, true); // ...get user config
-                    } else { // If sending a workflow email...
-                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, false); // ...get system config
+                    if ($_REQUEST['entryPoint'] == 'formLetter') {
+                        $value = formatDecimalInConfigSettings($focus->$fieldName, true);
+                    } else {
+                        $value = formatDecimalInConfigSettings($focus->$fieldName, false);
                     }
-                    $repl_arr[$key . "_" . $fieldName] = $value; 
-                // END STIC-custom
+                    $repl_arr[$key . "_" . $fieldName] = $value;
                 // STIC-Custom 20221013 AAM - Parsing date/datetime fields when the bean is being modified
                 // STIC#883
                 } elseif ($field_def['dbType'] == 'date' || $field_def['dbType'] == 'datetime' || (!isset($field_def['dbType']) && ($field_def['type'] == 'date' || $field_def['type'] == 'datetime') )) {
