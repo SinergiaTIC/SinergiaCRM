@@ -81,6 +81,14 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
+// Missatges: accions subpanell
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nou Missatge';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou Missatge';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge, ¿vol continuar?';
+$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Sobrepassat el límit de missatges a enviar simultàniament';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
+
+
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
 $app_list_strings['moduleList']['Contacts'] = 'Persones';
@@ -128,6 +136,7 @@ $app_list_strings['moduleList']['stic_Journal'] = 'Diari';
 $app_list_strings['moduleList']['stic_Training'] = 'Formació';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['moduleList']['stic_Skills'] = 'Competències';
+$app_list_strings['moduleList']['stic_Messages'] = 'Missatges';
 $app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistes personalitzades';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions';
@@ -174,6 +183,7 @@ $app_list_strings['moduleListSingular']['stic_Journal'] = 'Diari';
 $app_list_strings['moduleListSingular']['stic_Training'] = 'Formació';
 $app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['moduleListSingular']['stic_Skills'] = 'Competència';
+$app_list_strings['moduleListSingular']['stic_Messages'] = 'Missatge';
 $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personalitzada';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acció';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalització';
@@ -216,6 +226,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competències';
+$app_list_strings['parent_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
@@ -255,6 +266,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competències';
+$app_list_strings['record_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
@@ -294,6 +306,7 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diari';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
+$app_list_strings['record_type_display_notes']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
@@ -3448,6 +3461,24 @@ $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DA
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
+// Missatges: Tipus
+$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
+
+// Missatges: Direcció
+$app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
+$app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
+
+// Missatges: Status
+$app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
+$app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
+
+// Missatges: Parent types
+$app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organitzacions';
+$app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persones';
+$app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interessats';
+$app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Empleats';
+
 // Vistes personalitzades: Tipus d'usuari
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
@@ -3595,6 +3626,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Mesos';
 $app_list_strings['aow_date_type_list']['year'] = 'Anys'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Horari laboral';
 
+// Fluxos de treball: destinataris de missatges
+$app_list_strings['aow_message_type_list']['Phone'] = 'Telèfon';
+$app_list_strings['aow_message_type_list']['Record Phone'] = 'Telèfon del registre';
+$app_list_strings['aow_message_type_list']['Related Field'] = 'Camp relacionat';
+$app_list_strings['aow_message_type_list']['Specify User'] = 'Usuari';
+$app_list_strings['aow_message_type_list']['Users'] = 'Usuaris';
+
 // Mapes: llistes adaptades
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organitzacions';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Persones';
@@ -3633,3 +3671,12 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+// Plantilles de Correu electrònic: Tipus de plantilla
+$app_list_strings['emailTemplates_type_list'][''] = '';
+$app_list_strings['emailTemplates_type_list']['campaign'] = 'Campanya';
+$app_list_strings['emailTemplates_type_list']['notification'] = 'Notificació';
+$app_list_strings['emailTemplates_type_list']['email'] = 'Correu electrònic';
+$app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
+$app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
+$app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
