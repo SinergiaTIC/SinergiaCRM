@@ -61,14 +61,14 @@ unset($layout_defs["Campaigns"]["subpanel_setup"]['history']);
 
 
 
-$layout_defs["Campaigns"]["subpanel_setup"]['campaign_stic_message_marketing'] = array (
+$layout_defs["Campaigns"]["subpanel_setup"]['campaigns_stic_message_marketing'] = array (
     'order' => 100,
     'module' => 'stic_Message_Marketing',
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_MESSAGE_MARKETING_FROM_STIC_MESSAGE_MARKETING_TITLE',
-    'get_subpanel_data' => 'campaign_stic_message_marketing',
+    'title_key' => 'LBL_MESSAGE_MARKETING_SUBPANEL_TITLE',
+    'get_subpanel_data' => 'campaigns_stic_message_marketing',
     'top_buttons' => 
     array (
       0 => 

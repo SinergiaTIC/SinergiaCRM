@@ -132,6 +132,9 @@ class CampaignsViewDetail extends ViewDetail
                 /* BEGIN - SECURITY GROUPS */
                     && $name != 'securitygroups'
                 /* END - SECURITY GROUPS */
+                // STIC-Custom EPS 20241105 MEssage Marketing
+                    && $name != 'campaigns_stic_message_marketing'
+                //END STIC-Custom
                 ) {
                     //exclude subpanels that are not prospectlists, emailmarketing, or tracked urls
                     $subpanel->subpanel_definitions->exclude_tab($name);
