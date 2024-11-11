@@ -81,6 +81,13 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
+// Mensajes: acciones subpanel
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nuevo Mensaje';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nuevo Mensaje';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Esta operación borrará o contido da mensaxe, ¿quere continuar?';
+$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Sobrepasado el límite de mensajes a enviar simultaneamente';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nuevo mensaje';
+
 // Módulos propios de SinergiaCRM e módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizacións';
 $app_list_strings['moduleList']['Contacts'] = 'Persoas';
@@ -128,11 +135,14 @@ $app_list_strings['moduleList']['stic_Journal'] = 'Diario';
 $app_list_strings['moduleList']['stic_Training'] = 'Formación';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['moduleList']['stic_Skills'] = 'Competencias';
+$app_list_strings['moduleList']['stic_Messages'] = 'Mensajes';
 $app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accións';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizacións';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicións';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['moduleList']['stic_Message_Marketing'] = 'Marketing por mensaje';
+
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -178,8 +188,11 @@ $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personaliz
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
+$app_list_strings['moduleListSingular']['stic_Messages'] = 'Mensaje';
 
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
+$app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Marketing por mensaje';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -217,7 +230,9 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
+$app_list_strings['parent_type_display']['stic_Skstic_Messagesills'] = 'Mensajes';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['parent_type_display']['stic_Message_Marketing'] = 'Marketing por mensaje';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
@@ -256,10 +271,11 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
+$app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
+$app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
-
+$app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Marketing por mensaje';
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
-$app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
 $app_list_strings['record_type_display_notes']['Opportunities'] = 'Subvencións';
 $app_list_strings['record_type_display_notes']['Meetings'] = 'Reunións';
@@ -295,7 +311,9 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
+$app_list_strings['record_type_display_notes']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Marketing por mensaje';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
@@ -3449,6 +3467,24 @@ $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DA
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
+// Mensajes: Tipo
+$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
+
+// Mensajes: Dirección
+$app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
+$app_list_strings['stic_messages_direction_list']['outbound'] = 'Salida';
+
+// Mensajes: Status
+$app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
+$app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
+
+// Mensajes: Parent types
+$app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organizacións';
+$app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persoas';
+$app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interesados';
+$app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Empleados';
+
 // Vistas personalizadas: Tipos de usuario
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuario normal';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
@@ -3596,6 +3632,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Meses';
 $app_list_strings['aow_date_type_list']['year'] = 'Anos'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Horario laboral';
 
+// Fluxos de treball: destinataris de missatges
+$app_list_strings['aow_message_type_list']['Phone'] = 'Teléfono';
+$app_list_strings['aow_message_type_list']['Record Phone'] = 'Teléfono do Rexistro';
+$app_list_strings['aow_message_type_list']['Related Field'] = 'Campo relacionado';
+$app_list_strings['aow_message_type_list']['Specify User'] = 'Usuario';
+$app_list_strings['aow_message_type_list']['Users'] = 'Usuarios';
+
 // Mapas: listas adaptadas
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organizacións';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Persoas';
@@ -3626,6 +3669,7 @@ $app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
+$app_list_strings['campaign_type_dom']['SMS'] = 'SMS';
 
 // Plantillas de email: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
@@ -3634,3 +3678,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+$app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+
+// Dynamic list
+include 'modules/stic_Message_Marketing/dynamicLPOs.php';

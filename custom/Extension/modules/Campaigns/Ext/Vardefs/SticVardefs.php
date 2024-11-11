@@ -207,3 +207,18 @@ $dictionary['Campaign']['fields']['campaign_type']['massupdate'] = 1;
 $dictionary['Campaign']['fields']['frequency']['massupdate'] = 1;
 
 $dictionary['Campaign']['unified_search_default_enabled'] = true;
+
+
+
+
+
+$dictionary['Campaign']['fields']['campaigns_stic_message_marketing'] = array (
+    'name' => 'campaigns_stic_message_marketing',
+    'type' => 'link',
+    'relationship' => 'campaigns_stic_message_marketing',
+    'source' => 'non-db',
+    'module' => 'stic_Message_Marketing',
+    'bean_name' => 'stic_Message_Marketing',
+    'side' => 'right',
+    'vname' => 'LBL_CAMPAIGNS_STIC_MESSAGE_MARKETING_FROM_CAMPAIGN_TITLE',
+  );
