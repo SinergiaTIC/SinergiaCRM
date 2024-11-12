@@ -53,7 +53,7 @@ class CustomAOS_PDF_TemplatesViewList extends ViewList
         parent::display();
 
         SticViews::display($this);
-        
+
         // Write here you custom code
     }
 }
