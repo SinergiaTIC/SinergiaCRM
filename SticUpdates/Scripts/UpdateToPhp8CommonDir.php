@@ -7,6 +7,7 @@ if (!file_exists('vendor/rector/rector/bin/rector')) {
 }
 
 $configFile = 'SticRectorConfig.php'; 
+// $command = escapeshellcmd("php vendor/rector/rector/bin/rector process --dry-run --config={$configFile}");
 $command = escapeshellcmd("php vendor/rector/rector/bin/rector process --config={$configFile}");
 
 exec($command, $output, $returnVar);
