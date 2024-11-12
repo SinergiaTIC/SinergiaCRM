@@ -411,10 +411,8 @@ eoq;
     {
         $maxColumns = 0;
         foreach ($sampleSet as $v) {
-            if (count($v) > $maxColumns) {
-                $maxColumns = count($v);
-            } else {
-                continue;
+            if ((is_countable($v) ? count($v) : 0) > $maxColumns) {
+                $maxColumns = is_countable($v) ? count($v) : 0;
             }
         }
 

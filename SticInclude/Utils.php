@@ -73,7 +73,7 @@ EOQ;
 EOQ;
                         break;
                     case 'decimal':
-                        $fieldValue = self::formatDecimalInConfigSettings($bean->$field);
+                        $fieldValue = formatDecimalInConfigSettings($bean->$field);
                         $js .= <<<EOQ
                         if ($('#$field').text() != '$fieldValue') {
                             $('#$field').text('$fieldValue').fadeOut(500).fadeIn(1000);
@@ -482,26 +482,6 @@ EOQ;
     public static function createMandate()
     {
         return mt_rand(10000000, 99999999);
-    }
-
-    /**
-     * Set the proper decimal separator according to the user/system configuration
-     *
-     * @param Decimal $decimalValue
-     * @param Boolean $userSetting. Indicates whether to choose user or system configuration
-     * @return Decimal
-     */
-    public static function formatDecimalInConfigSettings($decimalValue, $userSetting = false)
-    {
-        global $current_user, $sugar_config;
-
-        if ($userSetting) {
-            $user_dec_sep = (!empty($current_user->id) ? $current_user->getPreference('dec_sep') : null);
-        }
-
-        $dec_sep = empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep;
-
-        return str_replace('.', $dec_sep, $decimalValue);
     }
 
     /**

@@ -581,8 +581,7 @@ class Importer
             // STIC-Code MHP - Validate the int and decimal fields
             case 'int':
             case 'decimal':     
-                require_once('SticInclude/Utils.php');
-                $formatValue = SticUtils::formatDecimalInConfigSettings($rowValue, true);
+                $formatValue = formatDecimalInConfigSettings($rowValue, true);
                 if ($rowValue !== $formatValue) {
                     $this->importSource->writeRecordAndErrors($mod_strings['LBL_ERROR_INVALID_DECIMAL_SEPARATOR'], $fieldTranslated, $rowValue);
                     return false;
