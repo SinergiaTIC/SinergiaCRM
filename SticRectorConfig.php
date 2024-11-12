@@ -158,6 +158,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // Path to apply changes
     $rectorConfig->paths([
+        // __DIR__,
         __DIR__ . '/custom', 
     ]);
 
@@ -173,7 +174,7 @@ return static function (RectorConfig $rectorConfig): void {
     // php53
     $rectorConfig->rules([
         // TernaryToElvisRector::class, 
-        DirNameFileConstantToDirConstantRector::class, 
+        // DirNameFileConstantToDirConstantRector::class, 
         ReplaceHttpServerVarsByServerRector::class
     ]);
 
@@ -190,10 +191,10 @@ return static function (RectorConfig $rectorConfig): void {
     // php55
     $rectorConfig->rules([
         // StringClassNameToClassConstantRector::class, 
-        ClassConstantToSelfClassRector::class, 
+        // ClassConstantToSelfClassRector::class, 
         PregReplaceEModifierRector::class, 
-        GetCalledClassToSelfClassRector::class, 
-        GetCalledClassToStaticClassRector::class, 
+        // GetCalledClassToSelfClassRector::class, 
+        // GetCalledClassToStaticClassRector::class, 
         StaticToSelfOnFinalClassRector::class
     ]);
 
@@ -245,7 +246,7 @@ return static function (RectorConfig $rectorConfig): void {
         // TernaryToNullCoalescingRector::class,
         RandomFunctionRector::class,
         ExceptionHandlerTypehintRector::class,
-        MultiDirnameRector::class,
+        // MultiDirnameRector::class,
         ListSplitStringRector::class,
         EmptyListRector::class,
         // be careful, run this just once, since it can keep swapping order back and forth
@@ -253,9 +254,9 @@ return static function (RectorConfig $rectorConfig): void {
         CallUserMethodRector::class,
         EregToPregMatchRector::class,
         ReduceMultipleDefaultSwitchRector::class,
-        TernaryToSpaceshipRector::class,
-        WrapVariableVariableNameInCurlyBracesRector::class,
-        IfToSpaceshipRector::class,
+        // TernaryToSpaceshipRector::class,
+        // WrapVariableVariableNameInCurlyBracesRector::class,
+        // IfToSpaceshipRector::class,
         StaticCallOnNonStaticToInstanceCallRector::class,
         ThisCallOnStaticMethodToStaticCallRector::class,
         BreakNotInLoopOrSwitchToReturnRector::class,
@@ -266,12 +267,12 @@ return static function (RectorConfig $rectorConfig): void {
     // php71
     $rectorConfig->rules([
         IsIterableRector::class, 
-        MultiExceptionCatchRector::class, 
+        // MultiExceptionCatchRector::class, 
         AssignArrayToStringRector::class, 
-        RemoveExtraParametersRector::class, 
+        // RemoveExtraParametersRector::class, 
         BinaryOpBetweenNumberAndStringRector::class, 
         // ListToArrayDestructRector::class, 
-        PublicConstantVisibilityRector::class
+        // PublicConstantVisibilityRector::class
     ]);
 
     // php72
@@ -361,7 +362,7 @@ return static function (RectorConfig $rectorConfig): void {
         // RemoveUnusedVariableInCatchRector::class, 
         // ClassPropertyAssignToConstructorPromotionRector::class, 
         // ChangeSwitchToMatchRector::class, 
-        RemoveParentCallWithoutParentRector::class, 
+        // RemoveParentCallWithoutParentRector::class, 
         SetStateToStaticRector::class, 
         FinalPrivateToPrivateVisibilityRector::class, 
         AddParamBasedOnParentClassMethodRector::class, 
