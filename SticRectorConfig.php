@@ -199,7 +199,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     // php56
-    $rectorConfig->rule(PowToExpRector::class);
+    // $rectorConfig->rule(PowToExpRector::class);
     $rectorConfig->ruleWithConfiguration(
         RenameFunctionRector::class, [
             'mcrypt_generic_end' => 'mcrypt_generic_deinit', 
@@ -245,7 +245,7 @@ return static function (RectorConfig $rectorConfig): void {
         Php4ConstructorRector::class,
         // TernaryToNullCoalescingRector::class,
         RandomFunctionRector::class,
-        ExceptionHandlerTypehintRector::class,
+        // ExceptionHandlerTypehintRector::class,
         // MultiDirnameRector::class,
         ListSplitStringRector::class,
         EmptyListRector::class,
@@ -301,12 +301,12 @@ return static function (RectorConfig $rectorConfig): void {
 
     // php73
     $rectorConfig->rules([
-        StringifyStrNeedlesRector::class, 
+        // StringifyStrNeedlesRector::class, 
         RegexDashEscapeRector::class, 
         ContinueToBreakInSwitchRector::class, 
         SetCookieRector::class, 
         IsCountableRector::class, 
-        ArrayKeyFirstLastRector::class, 
+        // ArrayKeyFirstLastRector::class, 
         SensitiveDefineRector::class, 
         // SensitiveConstantNameRector::class, 
         SensitiveHereNowDocRector::class
@@ -412,7 +412,7 @@ return static function (RectorConfig $rectorConfig): void {
             'pg_setclientencoding' => 'pg_set_client_encoding'
         ]
     );
-    $rectorConfig->rule(OptionalParametersAfterRequiredRector::class);
+    // $rectorConfig->rule(OptionalParametersAfterRequiredRector::class);
     $rectorConfig->ruleWithConfiguration(
         FunctionArgumentDefaultValueReplacerRector::class, [
             new ReplaceFuncCallArgumentDefaultValue('version_compare', 2, 'gte', 'ge'), 
