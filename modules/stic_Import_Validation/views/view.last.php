@@ -31,6 +31,7 @@ require_once('modules/stic_Import_Validation/sources/ImportFile.php');
 require_once('modules/stic_Import_Validation/views/ImportListView.php');
 require_once('include/ListView/ListViewFacade.php');
 
+#[\AllowDynamicProperties]
 class stic_Import_ValidationViewLast extends stic_Import_ValidationView
 {
     protected $pageTitleKey = 'LBL_STEP_5_TITLE';

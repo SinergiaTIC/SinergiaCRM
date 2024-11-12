@@ -29,6 +29,7 @@ require_once('modules/stic_Import_Validation/ImportCacheFiles.php');
 
 
 
+#[\AllowDynamicProperties]
 abstract class ImportDataSource implements Iterator
 {
     /**
