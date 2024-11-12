@@ -377,11 +377,7 @@ var passwordToggle = function(elem, sel) {
 }
 </script>
 <div id="password_toggle" style="display:none;">
-	<!-- STIC-Custom - MHP - 20250125 - Prevent password autofill
-    https://github.com/SinergiaTIC/SinergiaCRM/pull/85
-	<input type="password" id="mail_smtppass" name="mail_smtppass" /> -->
-	<input type="password" id="mail_smtppass" name="mail_smtppass" autocomplete="new-password" />
-	<!-- END STIC-Custom -->
+	<input type="password" id="mail_smtppass" name="mail_smtppass" />
 </div>
 <a href="javascript:;" onclick="passwordToggle(this, '#password_toggle');">{$mod_strings['LBL_CHANGE_PASSWORD']}</a>
 

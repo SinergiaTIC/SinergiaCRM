@@ -48,4 +48,9 @@
        value='{{if isset($vardef.display) && $vardef.display == 'writeonly'}}{{else}}{{sugarvar key='value'}}{{/if}}'
        title='{{$vardef.help}}'
        tabindex='{{$tabindex}}'
+       {* STIC-Custom - MHP - 20241112 - Prevent automatic filling of passwords with the one stored in the browser
+          https://github.com/SinergiaTIC/SinergiaCRM/pull/315/
+          Related with https://github.com/SinergiaTIC/SinergiaCRM/pull/85 *}
+       autocomplete='new-password'
+       {* END STIC-Custom *}
        {{if !empty($displayParams.accesskey)}} accesskey='{{$displayParams.accesskey}}' {{/if}}>
