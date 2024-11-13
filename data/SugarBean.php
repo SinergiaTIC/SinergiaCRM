@@ -2294,7 +2294,10 @@ class SugarBean
             }
             if ($this->db->tableExists($this->table_name . '_cstm')) {
                 $this->db->dropTableName($this->table_name . '_cstm');
-                DynamicField::deleteCache();
+                // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                // DynamicField::deleteCache();
+                (new DynamicField())->deleteCache();
+                // END STIC Custom
             }
             if ($this->db->tableExists($this->get_audit_table_name())) {
                 $this->db->dropTableName($this->get_audit_table_name());

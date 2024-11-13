@@ -550,7 +550,10 @@ class MetaParser
 
         //Now run defined rules
         require_once("include/SugarFields/Parsers/Rules/ParseRules.php");
-        $rules = ParseRules::getRules();
+        // STIC Custom 20241113 JBL - Fix static calls to non static methods
+        // $rules = ParseRules::getRules();
+        $rules = (new ParseRules())->getRules();
+        // End STIC Custom
 
         foreach ($rules as $rule) {
             if (!file_exists($rule['file'])) {

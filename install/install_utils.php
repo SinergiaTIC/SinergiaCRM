@@ -1731,7 +1731,10 @@ function langPackFinalMove($file)
 
 function getLicenseDisplay($type, $manifest, $zipFile, $next_step, $license_file, $clean_file)
 {
-    return PackageManagerDisplay::getLicenseDisplay($license_file, 'install.php', $next_step, $zipFile, $type, $manifest, $clean_file);
+    // STIC Custom 20241113 JBL - Fix static calls to non static methods
+    // return PackageManagerDisplay::getLicenseDisplay($license_file, 'install.php', $next_step, $zipFile, $type, $manifest, $clean_file);
+    return (new PackageManagerDisplay())->getLicenseDisplay($license_file, 'install.php', $next_step, $zipFile, $type, $manifest, $clean_file);
+    // End STIC Custom
 }
 
 

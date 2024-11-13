@@ -359,7 +359,10 @@
              $document_id = nl2br($_REQUEST['document_id']);
          }
          $GLOBALS['log']->debug("Downloading Document: ".$document_id);
-         PackageManagerComm::downloadedDocumentation($document_id);
+         // STIC Custom 20241113 JBL - Fix static calls to non static methods
+         // PackageManagerComm::downloadedDocumentation($document_id);
+         (new PackageManagerComm())->downloadedDocumentation($document_id);
+         // End STIC Custom
          echo 'result = ' . $json->encode(array('result' => 'true'));
      }
 

@@ -125,8 +125,10 @@ foreach ($modules as $the_module => $fields) {
         }
     }
 }
-
-DynamicField :: deleteCache();
+// STIC Custom 20241113 JBL - Fix static calls to non static methods
+// DynamicField :: deleteCache();
+(new DynamicField())->deleteCache();
+// End STIC Custom
 echo '<br>Done<br>';
 if ($simulate) {
     echo '<a href="index.php?module=Administration&action=UpgradeFields&run=true">Execute non-simulation mode</a>';

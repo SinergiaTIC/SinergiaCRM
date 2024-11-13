@@ -369,7 +369,10 @@ $hidden_fields =  "<input type=\"hidden\" name=\"current_step\" value=\"{$next_s
 $hidden_fields .=  "<input type=\"hidden\" name=\"goto\" value=\"{$mod_strings['LBL_CHECKSYS_RECHECK']}\">";
 $hidden_fields .=  "<input type=\"hidden\" name=\"languagePackAction\" value=\"commit\">";
 //$form2 = PackageManagerDisplay::buildPackageDisplay($form, $hidden_fields, 'install.php', array('langpack'), 'form1', true);
-$form2 = PackageManagerDisplay::buildPatchDisplay($form, $hidden_fields, 'install.php', array('langpack'));
+// STIC Custom 20241113 JBL - Fix static calls to non static methods
+// $form2 = PackageManagerDisplay::buildPatchDisplay($form, $hidden_fields, 'install.php', array('langpack'));
+$form2 = (new PackageManagerDisplay())->buildPatchDisplay($form, $hidden_fields, 'install.php', array('langpack'));
+// End STIC Custom
 
 echo $out.$form2.$out1;
 

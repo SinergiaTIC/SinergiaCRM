@@ -86,8 +86,11 @@ class ViewSugarpdf extends SugarView
 
     public function preDisplay()
     {
-        $this->sugarpdfBean = SugarpdfFactory::loadSugarpdf($this->sugarpdf, $this->module, $this->bean, $this->view_object_map);
-
+        // STIC Custom 20241113 JBL - Fix static calls to non static methods
+        // $this->sugarpdfBean = SugarpdfFactory::loadSugarpdf($this->sugarpdf, $this->module, $this->bean, $this->view_object_map);
+        $this->sugarpdfBean = (new SugarpdfFactory())->loadSugarpdf($this->sugarpdf, $this->module, $this->bean, $this->view_object_map);
+        // END STIC Custom
+        
         // ACL control
         if (!empty($this->bean) && !$this->bean->ACLAccess($this->sugarpdfBean->aclAction)) {
             ACLController::displayNoAccess(true);
