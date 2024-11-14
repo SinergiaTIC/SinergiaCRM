@@ -144,8 +144,6 @@ class ExternalReporting
     public function createViews($callUpdateModel = true, $rebuildFilter = 'all')
     {
 
-        ini_set('memory_limit', '256M');
-
         $startTime = microtime(true);
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA rebuild script starts!");
 
@@ -1775,14 +1773,19 @@ class ExternalReporting
 
                     $userActions = ACLAction::getUserActions($u['id'], false, $moduleName);
 
-                    if (empty($userActions[$moduleName])) {
+                    $value = $userActions[$moduleName]['module'];
+
+                    if(empty($value)){
+                        $value=$userActions['module'];
+                    }
+
+                    if (empty($value)) {
                         continue;
                     }
 
-                    $value = $userActions[$moduleName];
 
-                    if ($u['is_admin'] == 0 && $value['module']['access']['aclaccess'] >= 0 && $value['module']['view']['aclaccess'] >= 0) {
-                        $aclSource = $aclSourcesList[$value['module']['view']['aclaccess']];
+                    if ($u['is_admin'] == 0 && $value['access']['aclaccess'] >= 0 && $value['view']['aclaccess'] >= 0) {
+                        $aclSource = $aclSourcesList[$value['view']['aclaccess']];
 
                         // Fix for special cases
                         $key = $moduleName == 'ProjectTask' ? 'Project_Task' : $moduleName;
@@ -1790,7 +1793,7 @@ class ExternalReporting
 
                         $currentTable = $this->viewPrefix . '_' . strtolower($key);
 
-                        switch ($value['module']['view']['aclaccess']) {
+                        switch ($value['view']['aclaccess']) {
                             case '80': // Security groups
                                 if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
                                     continue 2;
