@@ -78,12 +78,7 @@ final class MemoryEfficientLongestCommonSubsequenceCalculator implements Longest
                 if ($from[$i] === $to[$j]) {
                     $current[$j + 1] = $prev[$j] + 1;
                 } else {
-                    // don't use max() to avoid function call overhead
-                    if ($current[$j] > $prev[$j + 1]) {
-                        $current[$j + 1] = $current[$j];
-                    } else {
-                        $current[$j + 1] = $prev[$j + 1];
-                    }
+                    $current[$j + 1] = max($current[$j], $prev[$j + 1]);
                 }
             }
         }

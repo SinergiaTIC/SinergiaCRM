@@ -25,7 +25,7 @@ Zepto(function($) {
    * highlight the current line
    */
   var renderCurrentCodeblock = function(id) {
-    Prism.highlightAllUnder(document.querySelector('.frame-code-container .frame-code.active'));
+    Prism.highlightAll();
     highlightCurrentLine();
   }
 
@@ -153,6 +153,9 @@ Zepto(function($) {
     }
   });
 
+  // Render late enough for highlightCurrentLine to be ready
+  renderCurrentCodeblock();
+
   // Avoid to quit the page with some protocol (e.g. IntelliJ Platform REST API)
   $ajaxEditors.on('click', function(e){
     e.preventDefault();
@@ -182,7 +185,4 @@ Zepto(function($) {
     e.preventDefault();
     setActiveFramesTab($(this));
   });
-
-  // Render late enough for highlightCurrentLine to be ready
-  renderCurrentCodeblock();
 });

@@ -16,12 +16,11 @@
     "require-dev": {
         "doctrine/collections": "^1.6.8",
         "doctrine/common": "^2.13.3 || ^3.2.2",
-        "phpspec/prophecy": "^1.10",
         "phpunit/phpunit": "^7.5.20 || ^8.5.23 || ^9.5.13"
     },
     "conflict": {
         "doctrine/collections": "<1.6.8",
-        "doctrine/common": "<2.13.3 || >=3 <3.2.2"
+        "doctrine/common": "<2.13.3 || >=3,<3.2.2"
     },
     "autoload": {
         "psr-4": {
@@ -33,8 +32,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DeepCopyTest\\": "tests/DeepCopyTest/",
-            "DeepCopy\\": "fixtures/"
+            "DeepCopy\\": "fixtures/",
+            "DeepCopyTest\\": "tests/DeepCopyTest/"
         }
     },
     "config": {

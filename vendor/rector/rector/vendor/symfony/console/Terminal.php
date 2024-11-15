@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202407\Symfony\Component\Console;
+namespace RectorPrefix202411\Symfony\Component\Console;
 
-use RectorPrefix202407\Symfony\Component\Console\Output\AnsiColorMode;
+use RectorPrefix202411\Symfony\Component\Console\Output\AnsiColorMode;
 class Terminal
 {
     public const DEFAULT_COLOR_MODE = AnsiColorMode::Ansi4;
@@ -193,8 +193,7 @@ class Terminal
         }
         $descriptorspec = [1 => ['pipe', 'w'], 2 => ['pipe', 'w']];
         $cp = \function_exists('sapi_windows_cp_set') ? \sapi_windows_cp_get() : 0;
-        $process = \proc_open(\is_array($command) ? \implode(' ', \array_map('escapeshellarg', $command)) : $command, $descriptorspec, $pipes, null, null, ['suppress_errors' => \true]);
-        if (!\is_resource($process)) {
+        if (!($process = @\proc_open(\is_array($command) ? \implode(' ', \array_map('escapeshellarg', $command)) : $command, $descriptorspec, $pipes, null, null, ['suppress_errors' => \true]))) {
             return null;
         }
         $info = \stream_get_contents($pipes[1]);

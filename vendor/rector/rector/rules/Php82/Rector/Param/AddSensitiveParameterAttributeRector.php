@@ -15,16 +15,17 @@ use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Php82\Rector\Param\AddSensitiveParameterAttributeRector\AddSensitiveParameterAttributeRectorTest
  */
 final class AddSensitiveParameterAttributeRector extends AbstractRector implements ConfigurableRectorInterface, MinPhpVersionInterface
 {
     /**
+     * @readonly
      * @var \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer
      */
-    protected $phpAttributeAnalyzer;
+    private $phpAttributeAnalyzer;
     public const SENSITIVE_PARAMETERS = 'sensitive_parameters';
     /**
      * @var string[]

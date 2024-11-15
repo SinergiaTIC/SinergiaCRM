@@ -16,7 +16,6 @@ use function trim;
 use PHPUnit\Framework\ExpectationFailedException;
 use SebastianBergmann\Comparator\ComparisonFailure;
 use SebastianBergmann\Comparator\Factory as ComparatorFactory;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
@@ -59,7 +58,7 @@ final class IsEqualCanonicalizing extends Constraint
         try {
             $comparator = $comparatorFactory->getComparatorFor(
                 $this->value,
-                $other,
+                $other
             );
 
             $comparator->assertEquals(
@@ -67,7 +66,7 @@ final class IsEqualCanonicalizing extends Constraint
                 $other,
                 0.0,
                 true,
-                false,
+                false
             );
         } catch (ComparisonFailure $f) {
             if ($returnResult) {
@@ -76,7 +75,7 @@ final class IsEqualCanonicalizing extends Constraint
 
             throw new ExpectationFailedException(
                 trim($description . "\n" . $f->getMessage()),
-                $f,
+                $f
             );
         }
 
@@ -86,7 +85,7 @@ final class IsEqualCanonicalizing extends Constraint
     /**
      * Returns a string representation of the constraint.
      *
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function toString(): string
     {
@@ -97,13 +96,13 @@ final class IsEqualCanonicalizing extends Constraint
 
             return sprintf(
                 "is equal to '%s'",
-                $this->value,
+                $this->value
             );
         }
 
         return sprintf(
             'is equal to %s',
-            $this->exporter()->export($this->value),
+            $this->exporter()->export($this->value)
         );
     }
 }

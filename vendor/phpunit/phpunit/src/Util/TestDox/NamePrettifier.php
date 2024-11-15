@@ -46,7 +46,6 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionObject;
 use SebastianBergmann\Exporter\Exporter;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
@@ -119,13 +118,13 @@ final class NamePrettifier
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function prettifyTestCase(TestCase $test): string
     {
         $annotations = Test::parseTestMethodAnnotations(
             get_class($test),
-            $test->getName(false),
+            $test->getName(false)
         );
 
         $annotationWithPlaceholders = false;
@@ -233,7 +232,7 @@ final class NamePrettifier
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     private function mapTestMethodParameterNamesToProvidedDataValues(TestCase $test): array
     {
@@ -243,8 +242,8 @@ final class NamePrettifier
         } catch (ReflectionException $e) {
             throw new UtilException(
                 $e->getMessage(),
-                $e->getCode(),
-                $e,
+                (int) $e->getCode(),
+                $e
             );
         }
         // @codeCoverageIgnoreEnd
@@ -263,8 +262,8 @@ final class NamePrettifier
                 } catch (ReflectionException $e) {
                     throw new UtilException(
                         $e->getMessage(),
-                        $e->getCode(),
-                        $e,
+                        (int) $e->getCode(),
+                        $e
                     );
                 }
                 // @codeCoverageIgnoreEnd

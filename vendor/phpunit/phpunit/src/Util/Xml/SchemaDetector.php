@@ -23,12 +23,10 @@ final class SchemaDetector
             $filename,
             false,
             true,
-            true,
+            true
         );
 
-        $schemaFinder = new SchemaFinder;
-
-        foreach ($schemaFinder->available() as $candidate) {
+        foreach (['9.2', '8.5'] as $candidate) {
             $schema = (new SchemaFinder)->find($candidate);
 
             if (!(new Validator)->validate($document, $schema)->hasValidationErrors()) {

@@ -1,28 +1,33 @@
 <?php
-
 /**
- * Mockery (https://docs.mockery.io/)
+ * Mockery
  *
- * @copyright https://github.com/mockery/mockery/blob/HEAD/COPYRIGHT.md
- * @license https://github.com/mockery/mockery/blob/HEAD/LICENSE BSD 3-Clause License
- * @link https://github.com/mockery/mockery for the canonical source repository
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://github.com/padraic/mockery/blob/master/LICENSE
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to padraic@php.net so we can send you a copy immediately.
+ *
+ * @category   Mockery
+ * @package    Mockery
+ * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
+ * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
  */
 
 namespace Mockery\Matcher;
 
-use function array_replace_recursive;
-use function implode;
-use function is_array;
-
 class Subset extends MatcherAbstract
 {
     private $expected;
-
     private $strict = true;
 
     /**
      * @param array $expected Expected subset of data
-     * @param bool  $strict   Whether to run a strict or loose comparison
+     * @param bool $strict Whether to run a strict or loose comparison
      */
     public function __construct(array $expected, $strict = true)
     {
@@ -31,13 +36,13 @@ class Subset extends MatcherAbstract
     }
 
     /**
-     * Return a string representation of this Matcher
+     * @param array $expected Expected subset of data
      *
-     * @return string
+     * @return Subset
      */
-    public function __toString()
+    public static function strict(array $expected)
     {
-        return '<Subset' . $this->formatArray($this->expected) . '>';
+        return new static($expected, true);
     }
 
     /**
@@ -53,15 +58,12 @@ class Subset extends MatcherAbstract
     /**
      * Check if the actual value matches the expected.
      *
-     * @template TMixed
-     *
-     * @param TMixed $actual
-     *
+     * @param mixed $actual
      * @return bool
      */
     public function match(&$actual)
     {
-        if (! is_array($actual)) {
+        if (!is_array($actual)) {
             return false;
         }
 
@@ -73,27 +75,18 @@ class Subset extends MatcherAbstract
     }
 
     /**
-     * @param array $expected Expected subset of data
-     *
-     * @return Subset
-     */
-    public static function strict(array $expected)
-    {
-        return new static($expected, true);
-    }
-
-    /**
-     * Recursively format an array into the string representation for this matcher
+     * Return a string representation of this Matcher
      *
      * @return string
      */
-    protected function formatArray(array $array)
+    public function __toString()
     {
-        $elements = [];
-        foreach ($array as $k => $v) {
-            $elements[] = $k . '=' . (is_array($v) ? $this->formatArray($v) : (string) $v);
+        $return = '<Subset[';
+        $elements = array();
+        foreach ($this->expected as $k=>$v) {
+            $elements[] = $k . '=' . (string) $v;
         }
-
-        return '[' . implode(', ', $elements) . ']';
+        $return .= implode(', ', $elements) . ']>';
+        return $return;
     }
 }

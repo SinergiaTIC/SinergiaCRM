@@ -5,6 +5,7 @@ namespace Rector\NodeManipulator;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\Exit_;
 use PhpParser\Node\Expr\Variable;
@@ -124,6 +125,9 @@ final class IfManipulator
         if (!$onlyForeachStmt instanceof If_) {
             return [];
         }
+        if ($onlyForeachStmt->cond instanceof BooleanOr) {
+            return [];
+        }
         $ifs = [];
         $currentIf = $onlyForeachStmt;
         while ($this->isIfWithOnlyStmtIf($currentIf)) {
@@ -156,10 +160,6 @@ final class IfManipulator
             return \false;
         }
         return $this->hasOnlyStmtOfType($if, $stmtClass);
-    }
-    public function isIfWithOnlyOneStmt(If_ $if) : bool
-    {
-        return \count($if->stmts) === 1;
     }
     public function isIfWithoutElseAndElseIfs(If_ $if) : bool
     {

@@ -8,9 +8,9 @@ namespace Facebook\WebDriver;
 interface WebDriverTargetLocator
 {
     /** @var string */
-    public const WINDOW_TYPE_WINDOW = 'window';
+    const WINDOW_TYPE_WINDOW = 'window';
     /** @var string */
-    public const WINDOW_TYPE_TAB = 'tab';
+    const WINDOW_TYPE_TAB = 'tab';
 
     /**
      * Set the current browsing context to the current top-level browsing context.

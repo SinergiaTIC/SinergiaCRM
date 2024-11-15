@@ -12,20 +12,19 @@ use Faker\Extension\Helper;
  */
 final class Color implements Extension\ColorExtension
 {
-    private Extension\NumberExtension $numberExtension;
-
     /**
      * @var string[]
      */
-    private array $safeColorNames = [
+    private $safeColorNames = [
         'black', 'maroon', 'green', 'navy', 'olive',
         'purple', 'teal', 'lime', 'blue', 'silver',
         'gray', 'yellow', 'fuchsia', 'aqua', 'white',
     ];
+
     /**
      * @var string[]
      */
-    private array $allColorNames = [
+    private $allColorNames = [
         'AliceBlue', 'AntiqueWhite', 'Aqua', 'Aquamarine',
         'Azure', 'Beige', 'Bisque', 'Black', 'BlanchedAlmond',
         'Blue', 'BlueViolet', 'Brown', 'BurlyWood', 'CadetBlue',
@@ -54,17 +53,14 @@ final class Color implements Extension\ColorExtension
         'Turquoise', 'Violet', 'Wheat', 'White', 'WhiteSmoke', 'Yellow', 'YellowGreen',
     ];
 
-    public function __construct(Extension\NumberExtension $numberExtension = null)
-    {
-        $this->numberExtension = $numberExtension ?: new Number();
-    }
-
     /**
      * @example '#fa3cc2'
      */
     public function hexColor(): string
     {
-        return '#' . str_pad(dechex($this->numberExtension->numberBetween(1, 16777215)), 6, '0', STR_PAD_LEFT);
+        $number = new Number();
+
+        return '#' . str_pad(dechex($number->numberBetween(1, 16777215)), 6, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -72,7 +68,8 @@ final class Color implements Extension\ColorExtension
      */
     public function safeHexColor(): string
     {
-        $color = str_pad(dechex($this->numberExtension->numberBetween(0, 255)), 3, '0', STR_PAD_LEFT);
+        $number = new Number();
+        $color = str_pad(dechex($number->numberBetween(0, 255)), 3, '0', STR_PAD_LEFT);
 
         return sprintf(
             '#%s%s%s%s%s%s',
@@ -81,7 +78,7 @@ final class Color implements Extension\ColorExtension
             $color[1],
             $color[1],
             $color[2],
-            $color[2],
+            $color[2]
         );
     }
 
@@ -116,7 +113,7 @@ final class Color implements Extension\ColorExtension
     {
         return sprintf(
             'rgb(%s)',
-            $this->rgbColor(),
+            $this->rgbColor()
         );
     }
 
@@ -125,10 +122,12 @@ final class Color implements Extension\ColorExtension
      */
     public function rgbaCssColor(): string
     {
+        $number = new Number();
+
         return sprintf(
             'rgba(%s,%s)',
             $this->rgbColor(),
-            $this->numberExtension->randomFloat(1, 0, 1),
+            $number->randomFloat(1, 0, 1)
         );
     }
 
@@ -153,11 +152,13 @@ final class Color implements Extension\ColorExtension
      */
     public function hslColor(): string
     {
+        $number = new Number();
+
         return sprintf(
             '%s,%s,%s',
-            $this->numberExtension->numberBetween(0, 360),
-            $this->numberExtension->numberBetween(0, 100),
-            $this->numberExtension->numberBetween(0, 100),
+            $number->numberBetween(0, 360),
+            $number->numberBetween(0, 100),
+            $number->numberBetween(0, 100)
         );
     }
 
@@ -168,10 +169,12 @@ final class Color implements Extension\ColorExtension
      */
     public function hslColorAsArray(): array
     {
+        $number = new Number();
+
         return [
-            $this->numberExtension->numberBetween(0, 360),
-            $this->numberExtension->numberBetween(0, 100),
-            $this->numberExtension->numberBetween(0, 100),
+            $number->numberBetween(0, 360),
+            $number->numberBetween(0, 100),
+            $number->numberBetween(0, 100),
         ];
     }
 }

@@ -14,13 +14,14 @@ use ReturnTypeWillChange;
 class ChromeOptions implements JsonSerializable
 {
     /**
-     * The key of chromeOptions in desired capabilities
+     * The key of chromeOptions in desired capabilities (in legacy OSS JsonWire protocol)
+     * @todo Replace value with 'goog:chromeOptions' after JsonWire protocol support is removed
      */
-    public const CAPABILITY = 'goog:chromeOptions';
+    const CAPABILITY = 'chromeOptions';
     /**
-     * @deprecated Use CAPABILITY instead
+     * The key of chromeOptions in desired capabilities (in W3C compatible protocol)
      */
-    public const CAPABILITY_W3C = self::CAPABILITY;
+    const CAPABILITY_W3C = 'goog:chromeOptions';
     /**
      * @var array
      */
@@ -64,6 +65,7 @@ class ChromeOptions implements JsonSerializable
     }
 
     /**
+     * @param array $arguments
      * @return ChromeOptions
      */
     public function addArguments(array $arguments)
@@ -77,6 +79,7 @@ class ChromeOptions implements JsonSerializable
      * Add a Chrome extension to install on browser startup. Each path should be
      * a packed Chrome extension.
      *
+     * @param array $paths
      * @return ChromeOptions
      */
     public function addExtensions(array $paths)

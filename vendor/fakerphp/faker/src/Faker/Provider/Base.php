@@ -179,115 +179,67 @@ class Base
     /**
      * Returns randomly ordered subsequence of $count elements from a provided array
      *
-     * @todo update default $count to `null` (BC) for next major version
+     * @param array $array           Array to take elements from. Defaults to a-c
+     * @param int   $count           Number of elements to take.
+     * @param bool  $allowDuplicates Allow elements to be picked several times. Defaults to false
      *
-     * @param array|class-string|\Traversable $array           Array to take elements from. Defaults to a-c
-     * @param int|null                        $count           Number of elements to take. If `null` then returns random number of elements
-     * @param bool                            $allowDuplicates Allow elements to be picked several times. Defaults to false
-     *
-     * @throws \InvalidArgumentException
-     * @throws \LengthException          When requesting more elements than provided
+     * @throws \LengthException When requesting more elements than provided
      *
      * @return array New array with $count elements from $array
      */
     public static function randomElements($array = ['a', 'b', 'c'], $count = 1, $allowDuplicates = false)
     {
-        $elements = $array;
-
-        if (is_string($array) && function_exists('enum_exists') && enum_exists($array)) {
-            $elements = $array::cases();
-        }
+        $traversables = [];
 
         if ($array instanceof \Traversable) {
-            $elements = \iterator_to_array($array, false);
+            foreach ($array as $element) {
+                $traversables[] = $element;
+            }
         }
 
-        if (!is_array($elements)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Argument for parameter $array needs to be array, an instance of %s, or an instance of %s, got %s instead.',
-                \UnitEnum::class,
-                \Traversable::class,
-                is_object($array) ? get_class($array) : gettype($array),
-            ));
+        $arr = count($traversables) ? $traversables : $array;
+
+        $allKeys = array_keys($arr);
+        $numKeys = count($allKeys);
+
+        if (!$allowDuplicates && $numKeys < $count) {
+            throw new \LengthException(sprintf('Cannot get %d elements, only %d in array', $count, $numKeys));
         }
 
-        $numberOfElements = count($elements);
+        $highKey = $numKeys - 1;
+        $keys = $elements = [];
+        $numElements = 0;
 
-        if (!$allowDuplicates && null !== $count && $numberOfElements < $count) {
-            throw new \LengthException(sprintf(
-                'Cannot get %d elements, only %d in array',
-                $count,
-                $numberOfElements,
-            ));
-        }
-
-        if (null === $count) {
-            $count = mt_rand(1, $numberOfElements);
-        }
-
-        $randomElements = [];
-
-        $keys = array_keys($elements);
-        $maxIndex = $numberOfElements - 1;
-        $elementHasBeenSelectedAlready = [];
-        $numberOfRandomElements = 0;
-
-        while ($numberOfRandomElements < $count) {
-            $index = mt_rand(0, $maxIndex);
+        while ($numElements < $count) {
+            $num = mt_rand(0, $highKey);
 
             if (!$allowDuplicates) {
-                if (isset($elementHasBeenSelectedAlready[$index])) {
+                if (isset($keys[$num])) {
                     continue;
                 }
-
-                $elementHasBeenSelectedAlready[$index] = true;
+                $keys[$num] = true;
             }
 
-            $key = $keys[$index];
-
-            $randomElements[] = $elements[$key];
-
-            ++$numberOfRandomElements;
+            $elements[] = $arr[$allKeys[$num]];
+            ++$numElements;
         }
 
-        return $randomElements;
+        return $elements;
     }
 
     /**
      * Returns a random element from a passed array
      *
-     * @param array|class-string|\Traversable $array
-     *
-     * @throws \InvalidArgumentException
+     * @param array $array
      */
     public static function randomElement($array = ['a', 'b', 'c'])
     {
-        $elements = $array;
-
-        if (is_string($array) && function_exists('enum_exists') && enum_exists($array)) {
-            $elements = $array::cases();
-        }
-
-        if ($array instanceof \Traversable) {
-            $elements = iterator_to_array($array, false);
-        }
-
-        if ($elements === []) {
+        if (!$array || ($array instanceof \Traversable && !count($array))) {
             return null;
         }
+        $elements = static::randomElements($array, 1);
 
-        if (!is_array($elements)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Argument for parameter $array needs to be array, an instance of %s, or an instance of %s, got %s instead.',
-                \UnitEnum::class,
-                \Traversable::class,
-                is_object($array) ? get_class($array) : gettype($array),
-            ));
-        }
-
-        $randomElements = static::randomElements($elements, 1);
-
-        return $randomElements[0];
+        return $elements[0];
     }
 
     /**
@@ -411,7 +363,7 @@ class Base
         return implode('', static::shuffleArray($array));
     }
 
-    private static function replaceWildcard($string, $wildcard, $callback)
+    private static function replaceWildcard($string, $wildcard = '#', $callback = 'static::randomDigit')
     {
         if (($pos = strpos($string, $wildcard)) === false) {
             return $string;
@@ -463,7 +415,7 @@ class Base
                 $string[$toReplace[$i]] = $numbers[$i];
             }
         }
-        $string = self::replaceWildcard($string, '%', [static::class, 'randomDigitNotNull']);
+        $string = self::replaceWildcard($string, '%', 'static::randomDigitNotNull');
 
         return $string;
     }
@@ -477,7 +429,7 @@ class Base
      */
     public static function lexify($string = '????')
     {
-        return self::replaceWildcard($string, '?', [static::class,  'randomLetter']);
+        return self::replaceWildcard($string, '?', 'static::randomLetter');
     }
 
     /**
@@ -491,7 +443,7 @@ class Base
     public static function bothify($string = '## ??')
     {
         $string = self::replaceWildcard($string, '*', static function () {
-            return mt_rand(0, 1) === 1 ? '#' : '?';
+            return mt_rand(0, 1) ? '#' : '?';
         });
 
         return static::lexify(static::numerify($string));
@@ -508,7 +460,7 @@ class Base
      */
     public static function asciify($string = '****')
     {
-        return preg_replace_callback('/\*/u', [static::class, 'randomAscii'], $string);
+        return preg_replace_callback('/\*/u', 'static::randomAscii', $string);
     }
 
     /**
@@ -576,13 +528,12 @@ class Base
             // remove backslashes (that are not followed by another backslash) because they are escape characters
             $match = preg_replace('/\\\(?!\\\)/', '', $matches[1]);
             $randomElement = Base::randomElement(str_split($match));
-
             //[.] should not be a random character, but a literal .
             return str_replace('.', '\.', $randomElement);
         }, $regex);
         // replace \d with number and \w with letter and . with ascii
-        $regex = preg_replace_callback('/\\\w/', [static::class, 'randomLetter'], $regex);
-        $regex = preg_replace_callback('/\\\d/', [static::class, 'randomDigit'], $regex);
+        $regex = preg_replace_callback('/\\\w/', 'static::randomLetter', $regex);
+        $regex = preg_replace_callback('/\\\d/', 'static::randomDigit', $regex);
         //replace . with ascii except backslash
         $regex = preg_replace_callback('/(?<!\\\)\./', static function () {
             $chr = static::asciify('*');

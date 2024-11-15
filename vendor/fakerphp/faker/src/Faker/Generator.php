@@ -275,11 +275,11 @@ use Faker\Container\ContainerInterface;
  *
  * @property string $imageUrl
  *
- * @method string imageUrl($width = 640, $height = 480, $category = null, $randomize = true, $word = null, $gray = false, string $format = 'png')
+ * @method string imageUrl($width = 640, $height = 480, $category = null, $randomize = true, $word = null, $gray = false)
  *
  * @property string $image
  *
- * @method string image($dir = null, $width = 640, $height = 480, $category = null, $fullPath = true, $randomize = true, $word = null, $gray = false, string $format = 'png')
+ * @method string image($dir = null, $width = 640, $height = 480, $category = null, $fullPath = true, $randomize = true, $word = null, $gray = false)
  *
  * @property string $email
  *
@@ -463,7 +463,7 @@ use Faker\Container\ContainerInterface;
  *
  * @property string $lastName
  *
- * @method string lastName($gender = null)
+ * @method string lastName()
  *
  * @property string $title
  *
@@ -567,7 +567,7 @@ class Generator
 
     public function __construct(ContainerInterface $container = null)
     {
-        $this->container = $container ?: Container\ContainerBuilder::withDefaultExtensions()->build();
+        $this->container = $container ?: Container\ContainerBuilder::getDefault();
     }
 
     /**
@@ -584,7 +584,7 @@ class Generator
         if (!$this->container->has($id)) {
             throw new Extension\ExtensionNotFound(sprintf(
                 'No Faker extension with id "%s" was loaded.',
-                $id,
+                $id
             ));
         }
 
@@ -687,20 +687,8 @@ class Generator
         if ($seed === null) {
             mt_srand();
         } else {
-            mt_srand((int) $seed, self::mode());
+            mt_srand((int) $seed, MT_RAND_PHP);
         }
-    }
-
-    /**
-     * @see https://www.php.net/manual/en/migration83.deprecated.php#migration83.deprecated.random
-     */
-    private static function mode(): int
-    {
-        if (PHP_VERSION_ID < 80300) {
-            return MT_RAND_PHP;
-        }
-
-        return MT_RAND_MT19937;
     }
 
     public function format($format, $arguments = [])
@@ -905,7 +893,7 @@ class Generator
         return $this->ext(Extension\NumberExtension::class)->randomFloat(
             $nbMaxDecimals !== null ? (int) $nbMaxDecimals : null,
             (float) $min,
-            $max !== null ? (float) $max : null,
+            $max !== null ? (float) $max : null
         );
     }
 
@@ -923,7 +911,7 @@ class Generator
     {
         return $this->ext(Extension\NumberExtension::class)->randomNumber(
             $nbDigits !== null ? (int) $nbDigits : null,
-            (bool) $strict,
+            (bool) $strict
         );
     }
 

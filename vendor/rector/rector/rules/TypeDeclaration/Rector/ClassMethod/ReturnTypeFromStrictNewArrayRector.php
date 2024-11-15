@@ -8,8 +8,6 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Expr\Yield_;
-use PhpParser\Node\Expr\YieldFrom;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -19,6 +17,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
@@ -127,10 +126,6 @@ CODE_SAMPLE
         if ($variables === []) {
             return null;
         }
-        // 2. skip yields
-        if ($this->betterNodeFinder->hasInstancesOfInFunctionLikeScoped($node, [Yield_::class, YieldFrom::class])) {
-            return null;
-        }
         $returns = $this->betterNodeFinder->findReturnsScoped($node);
         if (!$this->returnAnalyzer->hasOnlyReturnWithExpr($node, $returns)) {
             return null;
@@ -179,7 +174,7 @@ CODE_SAMPLE
      */
     private function shouldSkip($node, Scope $scope) : bool
     {
-        if ($node->returnType !== null) {
+        if ($node->returnType instanceof Node) {
             return \true;
         }
         return $node instanceof ClassMethod && $this->classMethodReturnTypeOverrideGuard->shouldSkipClassMethod($node, $scope);
@@ -198,7 +193,12 @@ CODE_SAMPLE
         if ($arrayType instanceof ConstantArrayType && \count($arrayType->getValueTypes()) !== 1) {
             return;
         }
-        $narrowArrayType = new ArrayType(new MixedType(), $arrayType->getItemType());
+        $itemType = $arrayType->getItemType();
+        if ($itemType instanceof IntersectionType) {
+            $narrowArrayType = $arrayType;
+        } else {
+            $narrowArrayType = new ArrayType(new MixedType(), $itemType);
+        }
         $this->phpDocTypeChanger->changeReturnType($node, $phpDocInfo, $narrowArrayType);
     }
     /**

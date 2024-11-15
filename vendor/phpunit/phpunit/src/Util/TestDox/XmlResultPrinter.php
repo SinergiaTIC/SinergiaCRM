@@ -27,7 +27,6 @@ use PHPUnit\Util\Printer;
 use PHPUnit\Util\Test as TestUtil;
 use ReflectionClass;
 use ReflectionException;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 use Throwable;
 
 /**
@@ -152,7 +151,7 @@ final class XmlResultPrinter extends Printer implements TestListener
     /**
      * A test ended.
      *
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function endTest(Test $test, float $time): void
     {
@@ -165,7 +164,7 @@ final class XmlResultPrinter extends Printer implements TestListener
             static function ($group)
             {
                 return !($group === 'small' || $group === 'medium' || $group === 'large' || strpos($group, '__phpunit_') === 0);
-            },
+            }
         );
 
         $testNode = $this->document->createElement('test');
@@ -189,7 +188,7 @@ final class XmlResultPrinter extends Printer implements TestListener
 
         $annotations = TestUtil::parseTestMethodAnnotations(
             get_class($test),
-            $test->getName(false),
+            $test->getName(false)
         );
 
         foreach (['class', 'method'] as $type) {
@@ -216,7 +215,7 @@ final class XmlResultPrinter extends Printer implements TestListener
             $testNode->appendChild($testDoubleNode);
         }
 
-        $inlineAnnotations = TestUtil::getInlineAnnotations(get_class($test), $test->getName(false));
+        $inlineAnnotations = \PHPUnit\Util\Test::getInlineAnnotations(get_class($test), $test->getName(false));
 
         if (isset($inlineAnnotations['given'], $inlineAnnotations['when'], $inlineAnnotations['then'])) {
             $testNode->setAttribute('given', $inlineAnnotations['given']['value']);
@@ -240,8 +239,8 @@ final class XmlResultPrinter extends Printer implements TestListener
             } catch (ReflectionException $e) {
                 throw new Exception(
                     $e->getMessage(),
-                    $e->getCode(),
-                    $e,
+                    (int) $e->getCode(),
+                    $e
                 );
             }
             // @codeCoverageIgnoreEnd

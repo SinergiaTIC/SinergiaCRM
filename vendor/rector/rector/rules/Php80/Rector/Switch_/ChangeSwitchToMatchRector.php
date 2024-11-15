@@ -6,6 +6,10 @@ namespace Rector\Php80\Rector\Switch_;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\Cast;
+use PhpParser\Node\Expr\Cast\Int_;
+use PhpParser\Node\Expr\Cast\String_;
+use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Switch_;
@@ -108,10 +112,22 @@ CODE_SAMPLE
             }
             $match = $matchResult->getMatch();
             if ($matchResult->shouldRemoveNextStmt() && $isReturn) {
+                /** @var Return_ $returnStatement */
+                $returnStatement = $node->stmts[$key + 1];
+                $returnComment = $returnStatement->getComments();
+                if ($returnComment !== []) {
+                    foreach ($match->arms as $arm) {
+                        if ($arm->conds === null) {
+                            $this->mirrorComments($arm, $returnStatement);
+                            break;
+                        }
+                    }
+                }
                 unset($node->stmts[$key + 1]);
             }
             $assignVar = $this->resolveAssignVar($condAndExprs);
             $hasDefaultValue = $this->matchSwitchAnalyzer->hasDefaultValue($match);
+            $this->castMatchCond($match);
             if ($assignVar instanceof Expr) {
                 if (!$hasDefaultValue) {
                     continue;
@@ -137,6 +153,36 @@ CODE_SAMPLE
     public function provideMinPhpVersion() : int
     {
         return PhpVersionFeature::MATCH_EXPRESSION;
+    }
+    private function castMatchCond(Match_ $match) : void
+    {
+        $type = $this->nodeTypeResolver->getNativeType($match->cond);
+        $isNativeCondString = $type->isString()->yes();
+        $isNativeCondInt = $type->isInteger()->yes();
+        if (!$isNativeCondString && !$isNativeCondInt) {
+            return;
+        }
+        $armCondType = [];
+        $newMatchCond = null;
+        foreach ($match->arms as $arm) {
+            if ($arm->conds === null) {
+                continue;
+            }
+            foreach ($arm->conds as $armCond) {
+                $armCondType = $this->nodeTypeResolver->getNativeType($armCond);
+                if ($armCondType->isInteger()->yes() && $isNativeCondString) {
+                    $newMatchCond = new Int_($match->cond);
+                } elseif ($armCondType->isString()->yes() && $isNativeCondInt) {
+                    $newMatchCond = new String_($match->cond);
+                } else {
+                    $newMatchCond = null;
+                    break;
+                }
+            }
+        }
+        if ($newMatchCond instanceof Cast) {
+            $match->cond = $newMatchCond;
+        }
     }
     /**
      * @param CondAndExpr[] $condAndExprs

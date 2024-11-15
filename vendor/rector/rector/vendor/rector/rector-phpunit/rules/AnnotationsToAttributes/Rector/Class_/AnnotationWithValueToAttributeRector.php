@@ -14,13 +14,14 @@ use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
 use Rector\Comments\NodeDocBlock\DocBlockUpdater;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\PhpAttribute\NodeFactory\PhpAttributeGroupFactory;
+use Rector\PHPUnit\NodeAnalyzer\TestsNodeAnalyzer;
 use Rector\PHPUnit\ValueObject\AnnotationWithValueToAttribute;
 use Rector\Rector\AbstractRector;
 use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @see \Rector\PHPUnit\Tests\AnnotationsToAttributes\Rector\Class_\AnnotationWithValueToAttributeRector\AnnotationWithValueToAttributeRectorTest
  */
@@ -47,15 +48,21 @@ final class AnnotationWithValueToAttributeRector extends AbstractRector implemen
      */
     private $phpDocInfoFactory;
     /**
+     * @readonly
+     * @var \Rector\PHPUnit\NodeAnalyzer\TestsNodeAnalyzer
+     */
+    private $testsNodeAnalyzer;
+    /**
      * @var AnnotationWithValueToAttribute[]
      */
     private $annotationWithValueToAttributes = [];
-    public function __construct(PhpDocTagRemover $phpDocTagRemover, PhpAttributeGroupFactory $phpAttributeGroupFactory, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory)
+    public function __construct(PhpDocTagRemover $phpDocTagRemover, PhpAttributeGroupFactory $phpAttributeGroupFactory, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory, TestsNodeAnalyzer $testsNodeAnalyzer)
     {
         $this->phpDocTagRemover = $phpDocTagRemover;
         $this->phpAttributeGroupFactory = $phpAttributeGroupFactory;
         $this->docBlockUpdater = $docBlockUpdater;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->testsNodeAnalyzer = $testsNodeAnalyzer;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -96,6 +103,9 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
+        if (!$this->testsNodeAnalyzer->isInTestClass($node)) {
+            return null;
+        }
         $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
         if (!$phpDocInfo instanceof PhpDocInfo) {
             return null;

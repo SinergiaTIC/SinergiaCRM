@@ -12,6 +12,7 @@ interface WebDriverTouchScreen
     /**
      * Single tap on the touch enabled device.
      *
+     * @param WebDriverElement $element
      * @return $this
      */
     public function tap(WebDriverElement $element);
@@ -19,6 +20,7 @@ interface WebDriverTouchScreen
     /**
      * Double tap on the touch screen using finger motion events.
      *
+     * @param WebDriverElement $element
      * @return $this
      */
     public function doubleTap(WebDriverElement $element);
@@ -46,6 +48,7 @@ interface WebDriverTouchScreen
      * Flick on the touch screen using finger motion events.
      * This flickcommand starts at a particular screen location.
      *
+     * @param WebDriverElement $element
      * @param int $xoffset
      * @param int $yoffset
      * @param int $speed
@@ -61,6 +64,7 @@ interface WebDriverTouchScreen
     /**
      * Long press on the touch screen using finger motion events.
      *
+     * @param WebDriverElement $element
      * @return $this
      */
     public function longPress(WebDriverElement $element);
@@ -88,6 +92,7 @@ interface WebDriverTouchScreen
      * Scroll on the touch screen using finger based motion events. Use this
      * command to start scrolling at a particular screen location.
      *
+     * @param WebDriverElement $element
      * @param int $xoffset
      * @param int $yoffset
      * @return $this

@@ -184,15 +184,7 @@ class Lorem extends Base
             throw new \InvalidArgumentException('text() can only generate text of at least 5 characters');
         }
 
-        $type = 'paragraph';
-
-        if ($maxNbChars < 100) {
-            $type = 'sentence';
-        }
-
-        if ($maxNbChars < 25) {
-            $type = 'word';
-        }
+        $type = ($maxNbChars < 25) ? 'word' : (($maxNbChars < 100) ? 'sentence' : 'paragraph');
 
         $text = [];
 

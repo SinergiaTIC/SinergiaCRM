@@ -1,10 +1,7 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Codeception\Stub;
 
-use Closure;
 use PHPUnit\Framework\MockObject\Rule\InvokedAtLeastOnce;
 use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 
@@ -25,11 +22,13 @@ class Expected
      *      'someMethod' => function() {}
      * ]);
      * $user->someMethod();
+     * ?>
      * ```
      *
      * @param mixed $params
+     * @return StubMarshaler
      */
-    public static function never($params = null): StubMarshaler
+    public static function never($params = null)
     {
         return new StubMarshaler(
             new InvokedCount(0),
@@ -57,6 +56,7 @@ class Expected
      * );
      * $userName = $user->getName();
      * $this->assertEquals('Davert', $userName);
+     * ?>
      * ```
      * Alternatively, a function can be passed as parameter:
      *
@@ -66,8 +66,10 @@ class Expected
      * ```
      *
      * @param mixed $params
+     *
+     * @return StubMarshaler
      */
-    public static function once($params = null): StubMarshaler
+    public static function once($params = null)
     {
         return new StubMarshaler(
             new InvokedCount(1),
@@ -95,6 +97,7 @@ class Expected
      * $user->getName();
      * $userName = $user->getName();
      * $this->assertEquals('Davert', $userName);
+     * ?>
      * ```
      *
      * Alternatively, a function can be passed as parameter:
@@ -105,8 +108,10 @@ class Expected
      * ```
      *
      * @param mixed $params
+     *
+     * @return StubMarshaler
      */
-    public static function atLeastOnce($params = null): StubMarshaler
+    public static function atLeastOnce($params = null)
     {
         return new StubMarshaler(
             new InvokedAtLeastOnce(),
@@ -138,6 +143,7 @@ class Expected
      * $user->getName();
      * $userName = $user->getName();
      * $this->assertEquals('Davert', $userName);
+     * ?>
      * ```
      * Alternatively, a function can be passed as parameter:
      *
@@ -146,9 +152,12 @@ class Expected
      * Expected::exactly(function() { return Faker::name() });
      * ```
      *
+     * @param int $count
      * @param mixed $params
+     *
+     * @return StubMarshaler
      */
-    public static function exactly(int $count, $params = null): StubMarshaler
+    public static function exactly($count, $params = null)
     {
         return new StubMarshaler(
             new InvokedCount($count),
@@ -156,12 +165,14 @@ class Expected
         );
     }
 
-    private static function closureIfNull($params): Closure
+    private static function closureIfNull($params)
     {
-        if ($params instanceof Closure) {
+        if ($params instanceof \Closure) {
             return $params;
         }
-
-        return fn() => $params;
+        return function() use ($params) {
+            return $params;
+        };
     }
+
 }

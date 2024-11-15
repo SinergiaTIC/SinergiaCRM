@@ -5,12 +5,9 @@ namespace Facebook\WebDriver\Exception;
 use Exception;
 
 /**
- * Ancestor for all exceptions defined in W3C WebDriver standard.
- * (And also for deprecated JsonWire protocol exceptions.)
- *
  * @see https://w3c.github.io/webdriver/#errors
  */
-class WebDriverException extends Exception implements PhpWebDriverExceptionInterface
+class WebDriverException extends Exception
 {
     private $results;
 

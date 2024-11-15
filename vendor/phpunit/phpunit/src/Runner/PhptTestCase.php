@@ -55,9 +55,7 @@ use PHPUnit\Framework\SyntheticSkippedError;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestResult;
 use PHPUnit\Util\PHP\AbstractPhpProcess;
-use SebastianBergmann\CodeCoverage\InvalidArgumentException;
 use SebastianBergmann\CodeCoverage\RawCodeCoverageData;
-use SebastianBergmann\CodeCoverage\UnintentionallyCoveredCodeException;
 use SebastianBergmann\Template\Template;
 use SebastianBergmann\Timer\Timer;
 use Throwable;
@@ -87,14 +85,14 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
      *
      * @throws Exception
      */
-    public function __construct(string $filename, ?AbstractPhpProcess $phpUtil = null)
+    public function __construct(string $filename, AbstractPhpProcess $phpUtil = null)
     {
         if (!is_file($filename)) {
             throw new Exception(
                 sprintf(
                     'File "%s" does not exist.',
-                    $filename,
-                ),
+                    $filename
+                )
             );
         }
 
@@ -113,12 +111,12 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
     /**
      * Runs a test and collects its result in a TestResult instance.
      *
+     * @throws \SebastianBergmann\CodeCoverage\InvalidArgumentException
+     * @throws \SebastianBergmann\CodeCoverage\UnintentionallyCoveredCodeException
      * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      * @throws Exception
-     * @throws InvalidArgumentException
-     * @throws UnintentionallyCoveredCodeException
      */
-    public function run(?TestResult $result = null): TestResult
+    public function run(TestResult $result = null): TestResult
     {
         if ($result === null) {
             $result = new TestResult;
@@ -225,7 +223,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
                     $trace[0]['file'],
                     $trace[0]['line'],
                     $trace,
-                    $comparisonFailure ? $diff : '',
+                    $comparisonFailure ? $diff : ''
                 );
             }
 
@@ -345,7 +343,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
         foreach (explode("\n", trim($content)) as $e) {
             $e = explode('=', trim($e), 2);
 
-            if ($e[0] !== '' && isset($e[1])) {
+            if (!empty($e[0]) && isset($e[1])) {
                 $env[$e[0]] = $e[1];
             }
         }
@@ -410,7 +408,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
             $result->addFailure(
                 $this,
                 new SyntheticSkippedError($message, 0, $trace[0]['file'], $trace[0]['line'], $trace),
-                0,
+                0
             );
             $result->endTest($this, 0);
 
@@ -491,7 +489,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
         foreach ($unsupportedSections as $section) {
             if (isset($sections[$section])) {
                 throw new Exception(
-                    "PHPUnit does not support PHPT {$section} sections",
+                    "PHPUnit does not support PHPT {$section} sections"
                 );
             }
         }
@@ -522,8 +520,8 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
                         sprintf(
                             'Could not load --%s-- %s for PHPT file',
                             $section . '_EXTERNAL',
-                            $testDirectory . $externalFilename,
-                        ),
+                            $testDirectory . $externalFilename
+                        )
                     );
                 }
 
@@ -581,7 +579,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
                 "'" . dirname($this->filename) . "'",
                 "'" . $this->filename . "'",
             ],
-            $code,
+            $code
         );
     }
 
@@ -601,7 +599,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
         $files = $this->getCoverageFiles();
 
         $template = new Template(
-            __DIR__ . '/../Util/PHP/Template/PhptTestCase.tpl',
+            __DIR__ . '/../Util/PHP/Template/PhptTestCase.tpl'
         );
 
         $composerAutoload = '\'\'';
@@ -621,7 +619,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
         if (!empty($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
             $globals = '$GLOBALS[\'__PHPUNIT_BOOTSTRAP\'] = ' . var_export(
                 $GLOBALS['__PHPUNIT_BOOTSTRAP'],
-                true,
+                true
             ) . ";\n";
         }
 
@@ -640,7 +638,7 @@ final class PhptTestCase implements Reorderable, SelfDescribing, Test
                 'coverageFile'               => $files['coverage'],
                 'driverMethod'               => $pathCoverage ? 'forLineAndPathCoverage' : 'forLineCoverage',
                 'codeCoverageCacheDirectory' => $codeCoverageCacheDirectory,
-            ],
+            ]
         );
 
         file_put_contents($files['job'], $job);

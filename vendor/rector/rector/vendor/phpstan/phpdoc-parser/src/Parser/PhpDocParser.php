@@ -166,7 +166,7 @@ class PhpDocParser
             $tmpText = $tokens->getSkippedHorizontalWhiteSpaceIfAny() . $tokens->joinUntil(Lexer::TOKEN_PHPDOC_EOL, ...$endTokens);
             $text .= $tmpText;
             // stop if we're not at EOL - meaning it's the end of PHPDoc
-            if (!$tokens->isCurrentTokenType(Lexer::TOKEN_PHPDOC_EOL)) {
+            if (!$tokens->isCurrentTokenType(Lexer::TOKEN_PHPDOC_EOL, Lexer::TOKEN_CLOSE_PHPDOC)) {
                 break;
             }
             if ($this->textBetweenTagsBelongsToDescription) {
@@ -209,7 +209,7 @@ class PhpDocParser
             $tmpText = $tokens->getSkippedHorizontalWhiteSpaceIfAny() . $tokens->joinUntil(Lexer::TOKEN_PHPDOC_TAG, Lexer::TOKEN_DOCTRINE_TAG, Lexer::TOKEN_PHPDOC_EOL, ...$endTokens);
             $text .= $tmpText;
             // stop if we're not at EOL - meaning it's the end of PHPDoc
-            if (!$tokens->isCurrentTokenType(Lexer::TOKEN_PHPDOC_EOL)) {
+            if (!$tokens->isCurrentTokenType(Lexer::TOKEN_PHPDOC_EOL, Lexer::TOKEN_CLOSE_PHPDOC)) {
                 if (!$tokens->isPrecededByHorizontalWhitespace()) {
                     return trim($text . $this->parseText($tokens)->text, " \t");
                 }
@@ -296,6 +296,10 @@ class PhpDocParser
                 case '@param-closure-this':
                 case '@phpstan-param-closure-this':
                     $tagValue = $this->parseParamClosureThisTagValue($tokens);
+                    break;
+                case '@pure-unless-callable-is-impure':
+                case '@phpstan-pure-unless-callable-is-impure':
+                    $tagValue = $this->parsePureUnlessCallableIsImpureTagValue($tokens);
                     break;
                 case '@var':
                 case '@phpstan-var':
@@ -635,6 +639,12 @@ class PhpDocParser
         $parameterName = $this->parseRequiredVariableName($tokens);
         $description = $this->parseOptionalDescription($tokens);
         return new Ast\PhpDoc\ParamClosureThisTagValueNode($type, $parameterName, $description);
+    }
+    private function parsePureUnlessCallableIsImpureTagValue(\PHPStan\PhpDocParser\Parser\TokenIterator $tokens) : Ast\PhpDoc\PureUnlessCallableIsImpureTagValueNode
+    {
+        $parameterName = $this->parseRequiredVariableName($tokens);
+        $description = $this->parseOptionalDescription($tokens);
+        return new Ast\PhpDoc\PureUnlessCallableIsImpureTagValueNode($parameterName, $description);
     }
     private function parseVarTagValue(\PHPStan\PhpDocParser\Parser\TokenIterator $tokens) : Ast\PhpDoc\VarTagValueNode
     {

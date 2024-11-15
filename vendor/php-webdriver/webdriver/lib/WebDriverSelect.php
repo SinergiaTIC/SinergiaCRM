@@ -26,14 +26,7 @@ class WebDriverSelect implements WebDriverSelectInterface
         }
         $this->element = $element;
         $value = $element->getAttribute('multiple');
-
-        /**
-         * There is a bug in safari webdriver that returns 'multiple' instead of 'true' which does not match the spec.
-         * Apple Feedback #FB12760673
-         *
-         * @see https://www.w3.org/TR/webdriver2/#get-element-attribute
-         */
-        $this->isMulti = $value === 'true' || $value === 'multiple';
+        $this->isMulti = $value === 'true';
     }
 
     public function isMultiple()
@@ -230,6 +223,7 @@ class WebDriverSelect implements WebDriverSelectInterface
 
     /**
      * Mark option selected
+     * @param WebDriverElement $option
      */
     protected function selectOption(WebDriverElement $option)
     {
@@ -240,6 +234,7 @@ class WebDriverSelect implements WebDriverSelectInterface
 
     /**
      * Mark option not selected
+     * @param WebDriverElement $option
      */
     protected function deselectOption(WebDriverElement $option)
     {

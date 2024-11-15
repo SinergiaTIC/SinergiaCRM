@@ -11,7 +11,7 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
  */
 class ChromeDevToolsDriver
 {
-    public const SEND_COMMAND = [
+    const SEND_COMMAND = [
         'method' => 'POST',
         'url' => '/session/:sessionId/goog/cdp/execute',
     ];

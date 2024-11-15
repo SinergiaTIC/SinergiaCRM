@@ -2,7 +2,6 @@
 
 namespace Facebook\WebDriver\Interactions\Internal;
 
-use Facebook\WebDriver\Exception\Internal\LogicException;
 use Facebook\WebDriver\Internal\WebDriverLocatable;
 use Facebook\WebDriver\WebDriverAction;
 use Facebook\WebDriver\WebDriverKeyboard;
@@ -11,7 +10,7 @@ use Facebook\WebDriver\WebDriverMouse;
 
 abstract class WebDriverSingleKeyAction extends WebDriverKeysRelatedAction implements WebDriverAction
 {
-    public const MODIFIER_KEYS = [
+    const MODIFIER_KEYS = [
         WebDriverKeys::SHIFT,
         WebDriverKeys::LEFT_SHIFT,
         WebDriverKeys::RIGHT_SHIFT,
@@ -42,7 +41,7 @@ abstract class WebDriverSingleKeyAction extends WebDriverKeysRelatedAction imple
         parent::__construct($keyboard, $mouse, $location_provider);
 
         if (!in_array($key, self::MODIFIER_KEYS, true)) {
-            throw LogicException::forError(
+            throw new \InvalidArgumentException(
                 sprintf(
                     'keyDown / keyUp actions can only be used for modifier keys, but "%s" was given',
                     $key

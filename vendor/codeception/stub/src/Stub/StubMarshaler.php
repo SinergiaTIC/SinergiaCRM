@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Codeception\Stub;
 
 use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
@@ -11,7 +9,7 @@ use PHPUnit\Framework\MockObject\Rule\InvocationOrder;
  */
 class StubMarshaler
 {
-    private InvocationOrder $methodMatcher;
+    private $methodMatcher;
 
     private $methodValue;
 
@@ -21,7 +19,7 @@ class StubMarshaler
         $this->methodValue = $value;
     }
 
-    public function getMatcher(): InvocationOrder
+    public function getMatcher()
     {
         return $this->methodMatcher;
     }

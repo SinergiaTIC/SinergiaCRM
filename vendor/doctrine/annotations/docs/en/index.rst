@@ -1,12 +1,3 @@
-Deprecation notice
-==================
-
-PHP 8 introduced `attributes
-<https://www.php.net/manual/en/language.attributes.overview.php>`_,
-which are a native replacement for annotations. As such, this library is
-considered feature complete, and should receive exclusively bugfixes and
-security fixes.
-
 Introduction
 ============
 

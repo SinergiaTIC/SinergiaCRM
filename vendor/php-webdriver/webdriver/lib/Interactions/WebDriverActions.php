@@ -25,6 +25,9 @@ class WebDriverActions
     protected $mouse;
     protected $action;
 
+    /**
+     * @param WebDriverHasInputDevices $driver
+     */
     public function __construct(WebDriverHasInputDevices $driver)
     {
         $this->driver = $driver;
@@ -45,6 +48,7 @@ class WebDriverActions
      * Mouse click.
      * If $element is provided, move to the middle of the element first.
      *
+     * @param WebDriverElement $element
      * @return WebDriverActions
      */
     public function click(WebDriverElement $element = null)
@@ -60,6 +64,7 @@ class WebDriverActions
      * Mouse click and hold.
      * If $element is provided, move to the middle of the element first.
      *
+     * @param WebDriverElement $element
      * @return WebDriverActions
      */
     public function clickAndHold(WebDriverElement $element = null)
@@ -75,6 +80,7 @@ class WebDriverActions
      * Context-click (right click).
      * If $element is provided, move to the middle of the element first.
      *
+     * @param WebDriverElement $element
      * @return WebDriverActions
      */
     public function contextClick(WebDriverElement $element = null)
@@ -90,6 +96,7 @@ class WebDriverActions
      * Double click.
      * If $element is provided, move to the middle of the element first.
      *
+     * @param WebDriverElement $element
      * @return WebDriverActions
      */
     public function doubleClick(WebDriverElement $element = null)
@@ -104,6 +111,8 @@ class WebDriverActions
     /**
      * Drag and drop from $source to $target.
      *
+     * @param WebDriverElement $source
+     * @param WebDriverElement $target
      * @return WebDriverActions
      */
     public function dragAndDrop(WebDriverElement $source, WebDriverElement $target)
@@ -124,6 +133,7 @@ class WebDriverActions
     /**
      * Drag $source and drop by offset ($x_offset, $y_offset).
      *
+     * @param WebDriverElement $source
      * @param int $x_offset
      * @param int $y_offset
      * @return WebDriverActions
@@ -164,6 +174,7 @@ class WebDriverActions
      * Extra shift, calculated from the top-left corner of the element, can be set by passing $x_offset and $y_offset
      * parameters.
      *
+     * @param WebDriverElement $element
      * @param int $x_offset
      * @param int $y_offset
      * @return WebDriverActions
@@ -184,6 +195,7 @@ class WebDriverActions
      * Release the mouse button.
      * If $element is provided, move to the middle of the element first.
      *
+     * @param WebDriverElement $element
      * @return WebDriverActions
      */
     public function release(WebDriverElement $element = null)
@@ -200,6 +212,7 @@ class WebDriverActions
      * If $element is provided, focus on that element first.
      *
      * @see WebDriverKeys for special keys like CONTROL, ALT, etc.
+     * @param WebDriverElement $element
      * @param string $key
      * @return WebDriverActions
      */
@@ -217,6 +230,7 @@ class WebDriverActions
      * If $element is provided, focus on that element first.
      *
      * @see WebDriverKeys for special keys like CONTROL, ALT, etc.
+     * @param WebDriverElement $element
      * @param string $key
      * @return WebDriverActions
      */
@@ -234,6 +248,7 @@ class WebDriverActions
      * If $element is provided, focus on that element first (using single mouse click).
      *
      * @see WebDriverKeys for special keys like CONTROL, ALT, etc.
+     * @param WebDriverElement $element
      * @param string $keys
      * @return WebDriverActions
      */

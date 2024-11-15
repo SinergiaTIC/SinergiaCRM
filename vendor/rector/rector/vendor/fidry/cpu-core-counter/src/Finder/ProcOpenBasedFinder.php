@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace RectorPrefix202407\Fidry\CpuCoreCounter\Finder;
+namespace RectorPrefix202411\Fidry\CpuCoreCounter\Finder;
 
-use RectorPrefix202407\Fidry\CpuCoreCounter\Executor\ProcessExecutor;
-use RectorPrefix202407\Fidry\CpuCoreCounter\Executor\ProcOpenExecutor;
+use RectorPrefix202411\Fidry\CpuCoreCounter\Executor\ProcessExecutor;
+use RectorPrefix202411\Fidry\CpuCoreCounter\Executor\ProcOpenExecutor;
 use function filter_var;
 use function function_exists;
 use function is_int;
@@ -42,7 +42,7 @@ abstract class ProcOpenBasedFinder implements CpuCoreFinder
         }
         [$stdout, $stderr] = $output;
         $failed = '' !== trim($stderr);
-        return $failed ? sprintf('Executed the command "%s" which wrote the following output to the STDERR:%s%s', $command, PHP_EOL, $stderr) : sprintf('Executed the command "%s" and got the following (STDOUT) output:%s%s', $command, PHP_EOL, $stdout);
+        return $failed ? sprintf('Executed the command "%s" which wrote the following output to the STDERR:%s%s%sWill return "null".', $command, PHP_EOL, $stderr, PHP_EOL) : sprintf('Executed the command "%s" and got the following (STDOUT) output:%s%s%sWill return "%s".', $command, PHP_EOL, $stdout, PHP_EOL, $this->countCpuCores($stdout) ?? 'null');
     }
     /**
      * @return positive-int|null

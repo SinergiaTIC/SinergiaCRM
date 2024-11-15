@@ -16,7 +16,7 @@ class FirefoxDriver extends LocalWebDriver
      * $capabilities = DesiredCapabilities::firefox();
      * $capabilities->setCapability(FirefoxOptions::CAPABILITY, $firefoxOptions);
      */
-    public const PROFILE = 'firefox_profile';
+    const PROFILE = 'firefox_profile';
 
     /**
      * Creates a new FirefoxDriver using default configuration.

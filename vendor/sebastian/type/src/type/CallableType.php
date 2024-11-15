@@ -143,10 +143,6 @@ final class CallableType extends Type
             return false;
         }
 
-        if (!isset($type->value()[0], $type->value()[1])) {
-            return false;
-        }
-
         if (!is_object($type->value()[0]) || !is_string($type->value()[1])) {
             return false;
         }
@@ -172,10 +168,6 @@ final class CallableType extends Type
 
         if (is_array($type->value())) {
             if (count($type->value()) !== 2) {
-                return false;
-            }
-
-            if (!isset($type->value()[0], $type->value()[1])) {
                 return false;
             }
 

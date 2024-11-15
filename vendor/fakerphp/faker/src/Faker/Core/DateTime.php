@@ -8,7 +8,7 @@ use Faker\Extension\GeneratorAwareExtensionTrait;
 use Faker\Extension\Helper;
 
 /**
- * @experimental This class is experimental and does not fall under our BC promise
+ * @experimental
  *
  * @since 1.20.0
  */
@@ -19,9 +19,12 @@ final class DateTime implements DateTimeExtension, GeneratorAwareExtension
     /**
      * @var string[]
      */
-    private array $centuries = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI'];
+    private $centuries = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI'];
 
-    private ?string $defaultTimezone = null;
+    /**
+     * @var string
+     */
+    private $defaultTimezone = null;
 
     /**
      * Get the POSIX-timestamp of a DateTime, int or string.
@@ -30,7 +33,7 @@ final class DateTime implements DateTimeExtension, GeneratorAwareExtension
      *
      * @return false|int
      */
-    private function getTimestamp($until = 'now')
+    protected function getTimestamp($until = 'now')
     {
         if (is_numeric($until)) {
             return (int) $until;
@@ -48,12 +51,22 @@ final class DateTime implements DateTimeExtension, GeneratorAwareExtension
      *
      * @param int $timestamp the UNIX / POSIX-compatible timestamp
      */
-    private function getTimestampDateTime(int $timestamp): \DateTime
+    protected function getTimestampDateTime(int $timestamp): \DateTime
     {
         return new \DateTime('@' . $timestamp);
     }
 
-    private function resolveTimezone(?string $timezone): string
+    protected function setDefaultTimezone(string $timezone = null): void
+    {
+        $this->defaultTimezone = $timezone;
+    }
+
+    protected function getDefaultTimezone(): ?string
+    {
+        return $this->defaultTimezone;
+    }
+
+    protected function resolveTimezone(?string $timezone): string
     {
         if ($timezone !== null) {
             return $timezone;
@@ -65,7 +78,7 @@ final class DateTime implements DateTimeExtension, GeneratorAwareExtension
     /**
      * Internal method to set the timezone on a DateTime object.
      */
-    private function setTimezone(\DateTime $dateTime, ?string $timezone): \DateTime
+    protected function setTimezone(\DateTime $dateTime, ?string $timezone): \DateTime
     {
         $timezone = $this->resolveTimezone($timezone);
 
@@ -76,7 +89,7 @@ final class DateTime implements DateTimeExtension, GeneratorAwareExtension
     {
         return $this->setTimezone(
             $this->getTimestampDateTime($this->unixTime($until)),
-            $timezone,
+            $timezone
         );
     }
 
@@ -86,7 +99,7 @@ final class DateTime implements DateTimeExtension, GeneratorAwareExtension
 
         return $this->setTimezone(
             $this->getTimestampDateTime($this->generator->numberBetween($min, $this->getTimestamp($until))),
-            $timezone,
+            $timezone
         );
     }
 
@@ -103,7 +116,7 @@ final class DateTime implements DateTimeExtension, GeneratorAwareExtension
 
         return $this->setTimezone(
             $this->getTimestampDateTime($timestamp),
-            $timezone,
+            $timezone
         );
     }
 

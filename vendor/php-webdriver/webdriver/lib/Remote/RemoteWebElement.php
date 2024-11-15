@@ -3,11 +3,8 @@
 namespace Facebook\WebDriver\Remote;
 
 use Facebook\WebDriver\Exception\ElementNotInteractableException;
-use Facebook\WebDriver\Exception\Internal\IOException;
-use Facebook\WebDriver\Exception\Internal\LogicException;
-use Facebook\WebDriver\Exception\Internal\UnexpectedResponseException;
-use Facebook\WebDriver\Exception\PhpWebDriverExceptionInterface;
 use Facebook\WebDriver\Exception\UnsupportedOperationException;
+use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
 use Facebook\WebDriver\Internal\WebDriverLocatable;
 use Facebook\WebDriver\Support\ScreenshotHelper;
@@ -41,6 +38,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
     protected $isW3cCompliant;
 
     /**
+     * @param RemoteExecuteMethod $executor
      * @param string $id
      * @param bool $isW3cCompliant
      */
@@ -96,6 +94,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
      * search the entire document from the root, not just the children (relative context) of this current node.
      * Use ".//" to limit your search to the children of this element.
      *
+     * @param WebDriverBy $by
      * @return RemoteWebElement NoSuchElementException is thrown in HttpCommandExecutor if no element is found.
      * @see WebDriverBy
      */
@@ -119,6 +118,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
      * search the entire document from the root, not just the children (relative context) of this current node.
      * Use ".//" to limit your search to the children of this element.
      *
+     * @param WebDriverBy $by
      * @return RemoteWebElement[] A list of all WebDriverElements, or an empty
      *    array if nothing matches
      * @see WebDriverBy
@@ -131,10 +131,6 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
             DriverCommand::FIND_CHILD_ELEMENTS,
             $params
         );
-
-        if (!is_array($raw_elements)) {
-            throw UnexpectedResponseException::forError('Server response to findChildElements command is not an array');
-        }
 
         $elements = [];
         foreach ($raw_elements as $raw_element) {
@@ -245,11 +241,11 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
     {
         if ($this->isW3cCompliant) {
             $script = <<<JS
-                var e = arguments[0];
-                e.scrollIntoView({ behavior: 'instant', block: 'end', inline: 'nearest' });
-                var rect = e.getBoundingClientRect();
-                return {'x': rect.left, 'y': rect.top};
-            JS;
+var e = arguments[0];
+e.scrollIntoView({ behavior: 'instant', block: 'end', inline: 'nearest' }); 
+var rect = e.getBoundingClientRect(); 
+return {'x': rect.left, 'y': rect.top};
+JS;
 
             $result = $this->executor->execute(DriverCommand::EXECUTE_SCRIPT, [
                 'script' => $script,
@@ -412,7 +408,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
                     // This is so far non-W3C compliant method, so it may fail - if so, we just ignore the exception.
                     // @see https://github.com/w3c/webdriver/issues/1355
                     $fileName = $this->upload($local_file);
-                } catch (PhpWebDriverExceptionInterface $e) {
+                } catch (WebDriverException $e) {
                     $fileName = $local_file;
                 }
 
@@ -443,6 +439,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
      *
      *   eg. `$element->setFileDetector(new LocalFileDetector);`
      *
+     * @param FileDetector $detector
      * @return RemoteWebElement
      * @see FileDetector
      * @see LocalFileDetector
@@ -465,7 +462,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
         if ($this->isW3cCompliant) {
             // Submit method cannot be called directly in case an input of this form is named "submit".
             // We use this polyfill to trigger 'submit' event using form.dispatchEvent().
-            $submitPolyfill = <<<HTXT
+            $submitPolyfill = $script = <<<HTXT
                 var form = arguments[0];
                 while (form.nodeName !== "FORM" && form.parentNode) { // find the parent form of this element
                     form = form.parentNode;
@@ -477,7 +474,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
                 if (form.dispatchEvent(event)) {
                     HTMLFormElement.prototype.submit.call(form);
                 }
-            HTXT;
+HTXT;
             $this->executor->execute(DriverCommand::EXECUTE_SCRIPT, [
                 'script' => $submitPolyfill,
                 'args' => [[JsonWireCompat::WEB_DRIVER_ELEMENT_IDENTIFIER => $this->id]],
@@ -518,6 +515,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
     /**
      * Test if two elements IDs refer to the same DOM element.
      *
+     * @param WebDriverElement $other
      * @return bool
      */
     public function equals(WebDriverElement $other)
@@ -604,13 +602,13 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
      *
      * @param string $local_file
      *
-     * @throws LogicException
+     * @throws WebDriverException
      * @return string The remote path of the file.
      */
     protected function upload($local_file)
     {
         if (!is_file($local_file)) {
-            throw LogicException::forError('You may only upload files: ' . $local_file);
+            throw new WebDriverException('You may only upload files: ' . $local_file);
         }
 
         $temp_zip_path = $this->createTemporaryZipArchive($local_file);
@@ -637,7 +635,7 @@ class RemoteWebElement implements WebDriverElement, WebDriverLocatable
 
         $zip = new ZipArchive();
         if (($errorCode = $zip->open($tempZipPath, ZipArchive::CREATE)) !== true) {
-            throw IOException::forFileError(sprintf('Error creating zip archive: %s', $errorCode), $tempZipPath);
+            throw new WebDriverException(sprintf('Error creating zip archive: %s', $errorCode));
         }
 
         $info = pathinfo($fileToZip);

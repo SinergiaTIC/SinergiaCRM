@@ -11,11 +11,11 @@ use Facebook\WebDriver\WebDriverMouse;
 class RemoteMouse implements WebDriverMouse
 {
     /** @internal */
-    public const BUTTON_LEFT = 0;
+    const BUTTON_LEFT = 0;
     /** @internal */
-    public const BUTTON_MIDDLE = 1;
+    const BUTTON_MIDDLE = 1;
     /** @internal */
-    public const BUTTON_RIGHT = 2;
+    const BUTTON_RIGHT = 2;
 
     /**
      * @var RemoteExecuteMethod
@@ -27,6 +27,7 @@ class RemoteMouse implements WebDriverMouse
     private $isW3cCompliant;
 
     /**
+     * @param RemoteExecuteMethod $executor
      * @param bool $isW3cCompliant
      */
     public function __construct(RemoteExecuteMethod $executor, $isW3cCompliant = false)
@@ -36,6 +37,8 @@ class RemoteMouse implements WebDriverMouse
     }
 
     /**
+     * @param null|WebDriverCoordinates $where
+     *
      * @return RemoteMouse
      */
     public function click(WebDriverCoordinates $where = null)
@@ -65,6 +68,8 @@ class RemoteMouse implements WebDriverMouse
     }
 
     /**
+     * @param WebDriverCoordinates $where
+     *
      * @return RemoteMouse
      */
     public function contextClick(WebDriverCoordinates $where = null)
@@ -103,6 +108,8 @@ class RemoteMouse implements WebDriverMouse
     }
 
     /**
+     * @param WebDriverCoordinates $where
+     *
      * @return RemoteMouse
      */
     public function doubleClick(WebDriverCoordinates $where = null)
@@ -131,6 +138,8 @@ class RemoteMouse implements WebDriverMouse
     }
 
     /**
+     * @param WebDriverCoordinates $where
+     *
      * @return RemoteMouse
      */
     public function mouseDown(WebDriverCoordinates $where = null)
@@ -163,6 +172,7 @@ class RemoteMouse implements WebDriverMouse
     }
 
     /**
+     * @param WebDriverCoordinates $where
      * @param int|null $x_offset
      * @param int|null $y_offset
      *
@@ -205,6 +215,8 @@ class RemoteMouse implements WebDriverMouse
     }
 
     /**
+     * @param WebDriverCoordinates $where
+     *
      * @return RemoteMouse
      */
     public function mouseUp(WebDriverCoordinates $where = null)
@@ -237,6 +249,9 @@ class RemoteMouse implements WebDriverMouse
         return $this;
     }
 
+    /**
+     * @param WebDriverCoordinates $where
+     */
     protected function moveIfNeeded(WebDriverCoordinates $where = null)
     {
         if ($where) {
@@ -245,6 +260,7 @@ class RemoteMouse implements WebDriverMouse
     }
 
     /**
+     * @param WebDriverCoordinates $where
      * @param int|null $x_offset
      * @param int|null $y_offset
      *
@@ -258,8 +274,8 @@ class RemoteMouse implements WebDriverMouse
         $move_action = [
             'type' => 'pointerMove',
             'duration' => 100, // to simulate human delay
-            'x' => $x_offset ?? 0,
-            'y' => $y_offset ?? 0,
+            'x' => $x_offset === null ? 0 : $x_offset,
+            'y' => $y_offset === null ? 0 : $y_offset,
         ];
 
         if ($where !== null) {

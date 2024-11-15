@@ -29,6 +29,7 @@ class RemoteStatus
     }
 
     /**
+     * @param array $responseBody
      * @return RemoteStatus
      */
     public static function createFromResponse(array $responseBody)

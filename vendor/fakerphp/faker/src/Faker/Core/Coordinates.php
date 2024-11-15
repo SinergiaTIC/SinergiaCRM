@@ -4,20 +4,10 @@ declare(strict_types=1);
 
 namespace Faker\Core;
 
-use Faker\Extension;
+use Faker\Extension\Extension;
 
-/**
- * @experimental This class is experimental and does not fall under our BC promise
- */
-final class Coordinates implements Extension\Extension
+class Coordinates implements Extension
 {
-    private Extension\NumberExtension $numberExtension;
-
-    public function __construct(Extension\NumberExtension $numberExtension = null)
-    {
-        $this->numberExtension = $numberExtension ?: new Number();
-    }
-
     /**
      * @example '77.147489'
      *
@@ -62,8 +52,8 @@ final class Coordinates implements Extension\Extension
     public function localCoordinates(): array
     {
         return [
-            'latitude' => $this->latitude(),
-            'longitude' => $this->longitude(),
+            'latitude' => static::latitude(),
+            'longitude' => static::longitude(),
         ];
     }
 
@@ -73,6 +63,6 @@ final class Coordinates implements Extension\Extension
             throw new \LogicException('Invalid coordinates boundaries');
         }
 
-        return $this->numberExtension->randomFloat($nbMaxDecimals, $min, $max);
+        return round($min + mt_rand() / mt_getrandmax() * ($max - $min), $nbMaxDecimals);
     }
 }

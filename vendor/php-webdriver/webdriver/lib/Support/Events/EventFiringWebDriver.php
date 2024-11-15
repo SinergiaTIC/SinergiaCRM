@@ -26,6 +26,10 @@ class EventFiringWebDriver implements WebDriver, JavaScriptExecutor
      */
     protected $dispatcher;
 
+    /**
+     * @param WebDriver $driver
+     * @param WebDriverDispatcher $dispatcher
+     */
     public function __construct(WebDriver $driver, WebDriverDispatcher $dispatcher = null)
     {
         $this->dispatcher = $dispatcher ?: new WebDriverDispatcher();
@@ -72,6 +76,7 @@ class EventFiringWebDriver implements WebDriver, JavaScriptExecutor
     }
 
     /**
+     * @param WebDriverBy $by
      * @throws WebDriverException
      * @return array
      */
@@ -95,6 +100,7 @@ class EventFiringWebDriver implements WebDriver, JavaScriptExecutor
     }
 
     /**
+     * @param WebDriverBy $by
      * @throws WebDriverException
      * @return EventFiringWebElement
      */
@@ -116,6 +122,7 @@ class EventFiringWebDriver implements WebDriver, JavaScriptExecutor
 
     /**
      * @param string $script
+     * @param array $arguments
      * @throws WebDriverException
      * @return mixed
      */
@@ -143,6 +150,7 @@ class EventFiringWebDriver implements WebDriver, JavaScriptExecutor
 
     /**
      * @param string $script
+     * @param array $arguments
      * @throws WebDriverException
      * @return mixed
      */
@@ -367,6 +375,7 @@ class EventFiringWebDriver implements WebDriver, JavaScriptExecutor
     }
 
     /**
+     * @param WebDriverElement $element
      * @return EventFiringWebElement
      */
     protected function newElement(WebDriverElement $element)
@@ -387,6 +396,9 @@ class EventFiringWebDriver implements WebDriver, JavaScriptExecutor
         $this->dispatcher->dispatch($method, $arguments);
     }
 
+    /**
+     * @param WebDriverException $exception
+     */
     protected function dispatchOnException(WebDriverException $exception)
     {
         $this->dispatch('onException', $exception, $this);

@@ -2,7 +2,8 @@
 
 namespace JeroenDesloovere\VCard;
 
-use PHPUnit\Framework\TestCase;
+// required to load
+require_once __DIR__ . '/../vendor/autoload.php';
 
 /*
  * This file is part of the VCard PHP Class from Jeroen Desloovere.
@@ -14,11 +15,13 @@ use PHPUnit\Framework\TestCase;
 /**
  * VCard Exception Test.
  */
-final class VCardExceptionTest extends TestCase
+class VCardExceptionTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException JeroenDesloovere\VCard\VCardException
+     */
     public function testException()
     {
-        $this->expectException(\JeroenDesloovere\VCard\VCardException::class);
         throw new VCardException('Testing the VCard error.');
     }
 }

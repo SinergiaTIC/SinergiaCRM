@@ -9,6 +9,8 @@
  */
 namespace PHPUnit\TextUI\XmlConfiguration;
 
+use function array_key_exists;
+use function sprintf;
 use function version_compare;
 
 /**
@@ -26,7 +28,7 @@ final class MigrationBuilder
             IntroduceCoverageElement::class,
             MoveAttributesFromRootToCoverage::class,
             MoveAttributesFromFilterWhitelistToCoverage::class,
-            MoveWhitelistIncludesToCoverage::class,
+            MoveWhitelistDirectoriesToCoverage::class,
             MoveWhitelistExcludesToCoverage::class,
             RemoveEmptyFilter::class,
             CoverageCloverToReport::class,
@@ -45,6 +47,15 @@ final class MigrationBuilder
      */
     public function build(string $fromVersion): array
     {
+        if (!array_key_exists($fromVersion, self::AVAILABLE_MIGRATIONS)) {
+            throw new MigrationBuilderException(
+                sprintf(
+                    'Migration from schema version %s is not supported',
+                    $fromVersion
+                )
+            );
+        }
+
         $stack = [];
 
         foreach (self::AVAILABLE_MIGRATIONS as $version => $migrations) {

@@ -2,11 +2,10 @@
 /*
  * This file is part of PharIo\Manifest.
  *
- * Copyright (c) Arne Blankerts <arne@blankerts.de>, Sebastian Heuer <sebastian@phpeople.de>, Sebastian Bergmann <sebastian@phpunit.de> and contributors
+ * (c) Arne Blankerts <arne@blankerts.de>, Sebastian Heuer <sebastian@phpeople.de>, Sebastian Bergmann <sebastian@phpunit.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
  */
 namespace PharIo\Manifest;
 
@@ -14,9 +13,6 @@ use PharIo\Version\AnyVersionConstraint;
 use PharIo\Version\Version;
 use PharIo\Version\VersionConstraint;
 use XMLWriter;
-use function count;
-use function file_put_contents;
-use function str_repeat;
 
 /** @psalm-suppress MissingConstructor */
 class ManifestSerializer {
@@ -24,7 +20,7 @@ class ManifestSerializer {
     private $xmlWriter;
 
     public function serializeToFile(Manifest $manifest, string $filename): void {
-        file_put_contents(
+        \file_put_contents(
             $filename,
             $this->serializeToString($manifest)
         );
@@ -45,7 +41,7 @@ class ManifestSerializer {
         $xmlWriter = new XMLWriter();
         $xmlWriter->openMemory();
         $xmlWriter->setIndent(true);
-        $xmlWriter->setIndentString(str_repeat(' ', 4));
+        $xmlWriter->setIndentString(\str_repeat(' ', 4));
         $xmlWriter->startDocument('1.0', 'UTF-8');
         $xmlWriter->startElement('phar');
         $xmlWriter->writeAttribute('xmlns', 'https://phar.io/xml/manifest/1.0');
@@ -148,7 +144,7 @@ class ManifestSerializer {
     }
 
     private function addBundles(BundledComponentCollection $bundledComponentCollection): void {
-        if (count($bundledComponentCollection) === 0) {
+        if (\count($bundledComponentCollection) === 0) {
             return;
         }
         $this->xmlWriter->startElement('bundles');

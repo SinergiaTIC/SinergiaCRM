@@ -3,14 +3,14 @@
 declare (strict_types=1);
 namespace Rector\FileSystem;
 
-use RectorPrefix202407\Nette\Utils\FileSystem;
+use RectorPrefix202411\Nette\Utils\FileSystem;
 use Rector\Caching\Detector\ChangedFilesDetector;
 use Rector\Caching\UnchangedFilesFilter;
 use Rector\Configuration\Option;
 use Rector\Configuration\Parameter\SimpleParameterProvider;
 use Rector\Skipper\Skipper\PathSkipper;
 use Rector\ValueObject\Configuration;
-use RectorPrefix202407\Symfony\Component\Finder\Finder;
+use RectorPrefix202411\Symfony\Component\Finder\Finder;
 /**
  * @see \Rector\Tests\FileSystem\FilesFinder\FilesFinderTest
  */
@@ -65,6 +65,9 @@ final class FilesFinder
         $filesAndDirectories = $this->filesystemTweaker->resolveWithFnmatch($source);
         // filtering files in files collection
         $filteredFilePaths = $this->fileAndDirectoryFilter->filterFiles($filesAndDirectories);
+        $filteredFilePaths = \array_map(function (string $filePath) : string {
+            return \realpath($filePath);
+        }, $filteredFilePaths);
         $filteredFilePaths = \array_filter($filteredFilePaths, function (string $filePath) : bool {
             return !$this->pathSkipper->shouldSkip($filePath);
         });

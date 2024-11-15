@@ -24,7 +24,7 @@ class IsElementDisplayedAtom
      *
      * @var array
      */
-    public const BROWSERS_WITH_ENDPOINT_SUPPORT = [
+    const BROWSERS_WITH_ENDPOINT_SUPPORT = [
         WebDriverBrowserType::CHROME,
         WebDriverBrowserType::FIREFOX,
         WebDriverBrowserType::MICROSOFT_EDGE,

@@ -17,7 +17,7 @@ use PHPStan\Type\StringType;
 use Rector\PhpParser\NodeTransformer;
 use Rector\Rector\AbstractRector;
 use Rector\Util\Reflection\PrivatesAccessor;
-use RectorPrefix202407\Symfony\Component\Console\Input\StringInput;
+use RectorPrefix202411\Symfony\Component\Console\Input\StringInput;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -35,7 +35,7 @@ final class StringToArrayArgumentProcessRector extends AbstractRector
     /**
      * @var string[]
      */
-    private const EXCLUDED_PROCESS_METHOD_CALLS = ['setWorkingDirectory', 'addOutput', 'addErrorOutput'];
+    private const EXCLUDED_PROCESS_METHOD_CALLS = ['setWorkingDirectory', 'addOutput', 'addErrorOutput', 'setInput'];
     public function __construct(NodeTransformer $nodeTransformer)
     {
         $this->nodeTransformer = $nodeTransformer;

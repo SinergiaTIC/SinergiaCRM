@@ -18,6 +18,8 @@ class WebDriverMoveToOffsetAction extends WebDriverMouseAction implements WebDri
     private $yOffset;
 
     /**
+     * @param WebDriverMouse $mouse
+     * @param WebDriverLocatable|null $location_provider
      * @param int|null $x_offset
      * @param int|null $y_offset
      */

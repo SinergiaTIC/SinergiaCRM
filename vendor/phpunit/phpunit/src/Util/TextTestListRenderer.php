@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Runner\PhptTestCase;
 use RecursiveIteratorIterator;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
@@ -25,7 +24,7 @@ use SebastianBergmann\RecursionContext\InvalidArgumentException;
 final class TextTestListRenderer
 {
     /**
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function render(TestSuite $suite): string
     {
@@ -36,7 +35,7 @@ final class TextTestListRenderer
                 $name = sprintf(
                     '%s::%s',
                     get_class($test),
-                    str_replace(' with data set ', '', $test->getName()),
+                    str_replace(' with data set ', '', $test->getName())
                 );
             } elseif ($test instanceof PhptTestCase) {
                 $name = $test->getName();
@@ -46,7 +45,7 @@ final class TextTestListRenderer
 
             $buffer .= sprintf(
                 ' - %s' . PHP_EOL,
-                $name,
+                $name
             );
         }
 

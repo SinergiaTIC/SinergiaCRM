@@ -9,7 +9,6 @@ Reference
     argument_validation
     alternative_should_receive_syntax
     spies
-    instance_mocking
     partial_mocks
     protected_methods
     public_properties

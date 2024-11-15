@@ -6,10 +6,10 @@ namespace Rector\Parallel\Command;
 use Rector\ChangesReporting\Output\JsonOutputFormatter;
 use Rector\Configuration\Option;
 use Rector\FileSystem\FilePathHelper;
-use RectorPrefix202407\Symfony\Component\Console\Command\Command;
-use RectorPrefix202407\Symfony\Component\Console\Input\InputInterface;
-use RectorPrefix202407\Symplify\EasyParallel\Exception\ParallelShouldNotHappenException;
-use RectorPrefix202407\Symplify\EasyParallel\Reflection\CommandFromReflectionFactory;
+use RectorPrefix202411\Symfony\Component\Console\Command\Command;
+use RectorPrefix202411\Symfony\Component\Console\Input\InputInterface;
+use RectorPrefix202411\Symplify\EasyParallel\Exception\ParallelShouldNotHappenException;
+use RectorPrefix202411\Symplify\EasyParallel\Reflection\CommandFromReflectionFactory;
 /**
  * @see \Rector\Tests\Parallel\Command\WorkerCommandLineFactoryTest
  * @todo possibly extract to symplify/easy-parallel
@@ -146,8 +146,13 @@ final class WorkerCommandLineFactory
                 }
                 continue;
             }
-            $workerCommandOptions[] = self::OPTION_DASHES . $mainCommandOptionName;
-            $workerCommandOptions[] = \escapeshellarg($optionValue);
+            if ($mainCommandOptionName === 'memory-limit') {
+                // symfony/console does not accept -1 as value without assign
+                $workerCommandOptions[] = self::OPTION_DASHES . $mainCommandOptionName . '=' . \escapeshellarg($optionValue);
+            } else {
+                $workerCommandOptions[] = self::OPTION_DASHES . $mainCommandOptionName;
+                $workerCommandOptions[] = \escapeshellarg($optionValue);
+            }
         }
         return $workerCommandOptions;
     }

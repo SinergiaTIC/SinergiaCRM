@@ -2,6 +2,7 @@
 
 namespace Faker\Provider\lv_LV;
 
+use Faker\Calculator\Luhn;
 use Faker\Provider\DateTime;
 
 class Person extends \Faker\Provider\Person
@@ -134,6 +135,8 @@ class Person extends \Faker\Provider\Person
      *
      * @see https://en.wikipedia.org/wiki/National_identification_number#Latvia
      *
+     * @param \DateTime $birthdate
+     *
      * @return string on format XXXXXX-XXXXX
      */
     public function personalIdentityNumber(\DateTime $birthdate = null)
@@ -142,32 +145,11 @@ class Person extends \Faker\Provider\Person
             $birthdate = DateTime::dateTimeThisCentury();
         }
 
-        $year = $birthdate->format('Y');
-
-        if ($year >= 2000 && $year <= 2099) {
-            $century = 2;
-        } elseif ($year >= 1900 && $year <= 1999) {
-            $century = 1;
-        } else {
-            $century = 0;
-        }
-
         $datePart = $birthdate->format('dmy');
-        $serialNumber = static::numerify('###');
+        $randomDigits = (string) static::numerify('####');
 
-        $partialNumberSplit = str_split($datePart . $century . $serialNumber);
+        $checksum = Luhn::computeCheckDigit($datePart . $randomDigits);
 
-        $idDigitValidator = [1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
-        $total = 0;
-
-        foreach ($partialNumberSplit as $key => $digit) {
-            if (isset($idDigitValidator[$key])) {
-                $total += $idDigitValidator[$key] * (int) $digit;
-            }
-        }
-
-        $checksumDigit = (1101 - $total) % 11 % 10;
-
-        return $datePart . '-' . $century . $serialNumber . $checksumDigit;
+        return $datePart . '-' . $randomDigits . $checksum;
     }
 }

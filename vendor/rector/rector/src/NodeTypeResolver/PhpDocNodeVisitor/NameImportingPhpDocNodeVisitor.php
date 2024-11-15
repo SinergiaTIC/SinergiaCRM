@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\NodeTypeResolver\PhpDocNodeVisitor;
 
-use RectorPrefix202407\Nette\Utils\Strings;
+use RectorPrefix202411\Nette\Utils\Strings;
 use PhpParser\Node as PhpParserNode;
 use PHPStan\PhpDocParser\Ast\Node;
 use PHPStan\PhpDocParser\Ast\PhpDoc\TemplateTagValueNode;
@@ -87,6 +87,10 @@ final class NameImportingPhpDocNodeVisitor extends AbstractPhpDocNodeVisitor
         }
         if (!$this->currentPhpParserNode instanceof PhpParserNode) {
             throw new ShouldNotHappenException();
+        }
+        // no \, skip early
+        if (\strpos($node->name, '\\') === \false) {
+            return null;
         }
         $staticType = $this->identifierPhpDocTypeMapper->mapIdentifierTypeNode($node, $this->currentPhpParserNode);
         if ($staticType instanceof ShortenedObjectType) {

@@ -14,7 +14,6 @@ namespace ScssPhp\ScssPhp\Block;
 
 use ScssPhp\ScssPhp\Block;
 use ScssPhp\ScssPhp\Compiler\Environment;
-use ScssPhp\ScssPhp\Node\Number;
 
 /**
  * @internal
@@ -27,7 +26,7 @@ class CallableBlock extends Block
     public $name;
 
     /**
-     * @var list<array{string, array|Number|null, bool}>|null
+     * @var array|null
      */
     public $args;
 

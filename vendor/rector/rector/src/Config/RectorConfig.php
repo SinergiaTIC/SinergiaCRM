@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Config;
 
-use RectorPrefix202407\Illuminate\Container\Container;
+use RectorPrefix202411\Illuminate\Container\Container;
 use Rector\Caching\Contract\ValueObject\Storage\CacheStorageInterface;
 use Rector\Configuration\Option;
 use Rector\Configuration\Parameter\SimpleParameterProvider;
@@ -18,18 +18,18 @@ use Rector\Skipper\SkipCriteriaResolver\SkippedClassResolver;
 use Rector\Validation\RectorConfigValidator;
 use Rector\ValueObject\PhpVersion;
 use Rector\ValueObject\PolyfillPackage;
-use RectorPrefix202407\Symfony\Component\Console\Command\Command;
-use RectorPrefix202407\Symfony\Component\Console\Input\ArrayInput;
-use RectorPrefix202407\Symfony\Component\Console\Output\ConsoleOutput;
-use RectorPrefix202407\Symfony\Component\Console\Style\SymfonyStyle;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Symfony\Component\Console\Command\Command;
+use RectorPrefix202411\Symfony\Component\Console\Input\ArrayInput;
+use RectorPrefix202411\Symfony\Component\Console\Output\ConsoleOutput;
+use RectorPrefix202411\Symfony\Component\Console\Style\SymfonyStyle;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @api
  */
 final class RectorConfig extends Container
 {
     /**
-     * @var array<class-string<RectorInterface>, mixed[]>>
+     * @var array<class-string<ConfigurableRectorInterface>, mixed[]>>
      */
     private $ruleConfigurations = [];
     /**
@@ -331,5 +331,29 @@ final class RectorConfig extends Container
             }
             $this->tag($abstract, $autotagInterface);
         }
+    }
+    public function reportingRealPath(bool $absolute = \true) : void
+    {
+        SimpleParameterProvider::setParameter(Option::ABSOLUTE_FILE_PATH, $absolute);
+    }
+    public function editorUrl(string $editorUrl) : void
+    {
+        SimpleParameterProvider::setParameter(Option::EDITOR_URL, $editorUrl);
+    }
+    /**
+     * @internal Used only for bridge
+     * @return array<class-string<ConfigurableRectorInterface>, mixed>
+     */
+    public function getRuleConfigurations() : array
+    {
+        return $this->ruleConfigurations;
+    }
+    /**
+     * @internal Used only for bridge
+     * @return array<class-string<RectorInterface>>
+     */
+    public function getRectorClasses() : array
+    {
+        return $this->tags[RectorInterface::class] ?? [];
     }
 }

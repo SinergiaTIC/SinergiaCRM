@@ -17,6 +17,7 @@ use DOMElement;
 final class Tests
 {
     private $contextNode;
+
     private $codeMap = [
         -1 => 'UNKNOWN',    // PHPUnit_Runner_BaseTestRunner::STATUS_UNKNOWN
         0  => 'PASSED',     // PHPUnit_Runner_BaseTestRunner::STATUS_PASSED

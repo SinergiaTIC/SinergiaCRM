@@ -5,7 +5,14 @@ declare(strict_types=1);
 namespace Faker\Container;
 
 use Faker\Core;
-use Faker\Extension;
+use Faker\Extension\BarcodeExtension;
+use Faker\Extension\BloodExtension;
+use Faker\Extension\ColorExtension;
+use Faker\Extension\DateTimeExtension;
+use Faker\Extension\FileExtension;
+use Faker\Extension\NumberExtension;
+use Faker\Extension\UuidExtension;
+use Faker\Extension\VersionExtension;
 
 /**
  * @experimental This class is experimental and does not fall under our BC promise
@@ -15,23 +22,36 @@ final class ContainerBuilder
     /**
      * @var array<string, callable|object|string>
      */
-    private array $definitions = [];
+    private $definitions = [];
 
     /**
-     * @param callable|object|string $definition
+     * @param callable|object|string $value
      *
      * @throws \InvalidArgumentException
      */
-    public function add(string $id, $definition): self
+    public function add($value, string $name = null): self
     {
-        if (!is_string($definition) && !is_callable($definition) && !is_object($definition)) {
+        if (!is_string($value) && !is_callable($value) && !is_object($value)) {
             throw new \InvalidArgumentException(sprintf(
                 'First argument to "%s::add()" must be a string, callable or object.',
-                self::class,
+                self::class
             ));
         }
 
-        $this->definitions[$id] = $definition;
+        if ($name === null) {
+            if (is_string($value)) {
+                $name = $value;
+            } elseif (is_object($value)) {
+                $name = get_class($value);
+            } else {
+                throw new \InvalidArgumentException(sprintf(
+                    'Second argument to "%s::add()" is required not passing a string or object as first argument',
+                    self::class
+                ));
+            }
+        }
+
+        $this->definitions[$name] = $value;
 
         return $this;
     }
@@ -41,28 +61,32 @@ final class ContainerBuilder
         return new Container($this->definitions);
     }
 
-    private static function defaultExtensions(): array
+    /**
+     * Get an array with extension that represent the default English
+     * functionality.
+     */
+    public static function defaultExtensions(): array
     {
         return [
-            Extension\BarcodeExtension::class => Core\Barcode::class,
-            Extension\BloodExtension::class => Core\Blood::class,
-            Extension\ColorExtension::class => Core\Color::class,
-            Extension\DateTimeExtension::class => Core\DateTime::class,
-            Extension\FileExtension::class => Core\File::class,
-            Extension\NumberExtension::class => Core\Number::class,
-            Extension\UuidExtension::class => Core\Uuid::class,
-            Extension\VersionExtension::class => Core\Version::class,
+            BarcodeExtension::class => Core\Barcode::class,
+            BloodExtension::class => Core\Blood::class,
+            ColorExtension::class => Core\Color::class,
+            DateTimeExtension::class => Core\DateTime::class,
+            FileExtension::class => Core\File::class,
+            NumberExtension::class => Core\Number::class,
+            VersionExtension::class => Core\Version::class,
+            UuidExtension::class => Core\Uuid::class,
         ];
     }
 
-    public static function withDefaultExtensions(): self
+    public static function getDefault(): ContainerInterface
     {
         $instance = new self();
 
         foreach (self::defaultExtensions() as $id => $definition) {
-            $instance->add($id, $definition);
+            $instance->add($definition, $id);
         }
 
-        return $instance;
+        return $instance->build();
     }
 }

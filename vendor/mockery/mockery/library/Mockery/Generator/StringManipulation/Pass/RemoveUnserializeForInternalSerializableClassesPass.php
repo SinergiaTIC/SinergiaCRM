@@ -1,19 +1,26 @@
 <?php
-
 /**
- * Mockery (https://docs.mockery.io/)
+ * Mockery
  *
- * @copyright https://github.com/mockery/mockery/blob/HEAD/COPYRIGHT.md
- * @license https://github.com/mockery/mockery/blob/HEAD/LICENSE BSD 3-Clause License
- * @link https://github.com/mockery/mockery for the canonical source repository
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://github.com/padraic/mockery/blob/master/LICENSE
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to padraic@php.net so we can send you a copy immediately.
+ *
+ * @category   Mockery
+ * @package    Mockery
+ * @copyright  Copyright (c) 2010 Pádraic Brady (http://blog.astrumfutura.com)
+ * @license    http://github.com/padraic/mockery/blob/master/LICENSE New BSD License
  */
 
 namespace Mockery\Generator\StringManipulation\Pass;
 
 use Mockery\Generator\MockConfiguration;
-use function strrpos;
-use function substr;
-use const PHP_VERSION_ID;
 
 /**
  * Internal classes can not be instantiated with the newInstanceWithoutArgs
@@ -21,37 +28,32 @@ use const PHP_VERSION_ID;
  * implements Serializable, we need to replace the standard unserialize method
  * definition with a dummy
  */
-class RemoveUnserializeForInternalSerializableClassesPass implements Pass
+class RemoveUnserializeForInternalSerializableClassesPass
 {
-    public const DUMMY_METHOD_DEFINITION = 'public function unserialize(string $data): void {} ';
+    const DUMMY_METHOD_DEFINITION_LEGACY = 'public function unserialize($string) {} ';
+    const DUMMY_METHOD_DEFINITION = 'public function unserialize(string $data): void {} ';
 
-    public const DUMMY_METHOD_DEFINITION_LEGACY = 'public function unserialize($string) {} ';
-
-    /**
-     * @param  string $code
-     * @return string
-     */
     public function apply($code, MockConfiguration $config)
     {
         $target = $config->getTargetClass();
 
-        if (! $target) {
+        if (!$target) {
             return $code;
         }
 
-        if (! $target->hasInternalAncestor() || ! $target->implementsInterface('Serializable')) {
+        if (!$target->hasInternalAncestor() || !$target->implementsInterface("Serializable")) {
             return $code;
         }
 
-        return $this->appendToClass(
-            $code,
-            PHP_VERSION_ID < 80100 ? self::DUMMY_METHOD_DEFINITION_LEGACY : self::DUMMY_METHOD_DEFINITION
-        );
+        $code = $this->appendToClass($code, \PHP_VERSION_ID < 80100 ? self::DUMMY_METHOD_DEFINITION_LEGACY : self::DUMMY_METHOD_DEFINITION);
+
+        return $code;
     }
 
     protected function appendToClass($class, $code)
     {
-        $lastBrace = strrpos($class, '}');
-        return substr($class, 0, $lastBrace) . $code . "\n    }\n";
+        $lastBrace = strrpos($class, "}");
+        $class = substr($class, 0, $lastBrace) . $code . "\n    }\n";
+        return $class;
     }
 }

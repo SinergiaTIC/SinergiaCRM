@@ -20,7 +20,7 @@ use Rector\ValueObject\PhpVersionFeature;
 use Rector\VendorLocker\ParentClassMethodTypeOverrideGuard;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\TypeDeclaration\Rector\ClassMethod\AddReturnTypeDeclarationRector\AddReturnTypeDeclarationRectorTest
  */
@@ -118,7 +118,7 @@ CODE_SAMPLE
         if ($newType instanceof MixedType) {
             $className = (string) $this->nodeNameResolver->getName($class);
             $currentObjectType = new ObjectType($className);
-            if (!$objectType->equals($currentObjectType) && $classMethod->returnType !== null) {
+            if (!$objectType->equals($currentObjectType) && $classMethod->returnType instanceof Node) {
                 return;
             }
         }

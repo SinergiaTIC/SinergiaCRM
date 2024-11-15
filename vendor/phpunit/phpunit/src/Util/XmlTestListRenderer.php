@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Runner\PhptTestCase;
 use RecursiveIteratorIterator;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 use XMLWriter;
 
 /**
@@ -25,7 +24,7 @@ use XMLWriter;
 final class XmlTestListRenderer
 {
     /**
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function render(TestSuite $suite): string
     {
@@ -61,8 +60,8 @@ final class XmlTestListRenderer
                         str_replace(
                             ' with data set ',
                             '',
-                            $test->getDataSetAsString(false),
-                        ),
+                            $test->getDataSetAsString(false)
+                        )
                     );
                 }
 

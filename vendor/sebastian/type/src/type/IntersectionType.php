@@ -9,10 +9,10 @@
  */
 namespace SebastianBergmann\Type;
 
+use function array_unique;
 use function assert;
 use function count;
 use function implode;
-use function in_array;
 use function sort;
 
 final class IntersectionType extends Type
@@ -114,13 +114,13 @@ final class IntersectionType extends Type
         foreach ($types as $type) {
             assert($type instanceof ObjectType);
 
-            $classQualifiedName = $type->className()->qualifiedName();
+            $names[] = $type->className()->qualifiedName();
+        }
 
-            if (in_array($classQualifiedName, $names, true)) {
-                throw new RuntimeException('An intersection type must not contain duplicate types');
-            }
-
-            $names[] = $classQualifiedName;
+        if (count(array_unique($names)) < count($names)) {
+            throw new RuntimeException(
+                'An intersection type must not contain duplicate types'
+            );
         }
     }
 }

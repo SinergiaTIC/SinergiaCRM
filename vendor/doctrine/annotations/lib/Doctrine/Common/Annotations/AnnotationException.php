@@ -133,9 +133,10 @@ class AnnotationException extends Exception
      * @param string $annotationName
      * @param string $context
      * @param mixed  $given
-     * @phpstan-param list<string>        $available
      *
      * @return AnnotationException
+     *
+     * @phpstan-param list<string>        $available
      */
     public static function enumeratorError($attributeName, $annotationName, $context, $available, $given)
     {
@@ -149,7 +150,9 @@ class AnnotationException extends Exception
         ));
     }
 
-    /** @return AnnotationException */
+    /**
+     * @return AnnotationException
+     */
     public static function optimizerPlusSaveComments()
     {
         return new self(
@@ -157,7 +160,9 @@ class AnnotationException extends Exception
         );
     }
 
-    /** @return AnnotationException */
+    /**
+     * @return AnnotationException
+     */
     public static function optimizerPlusLoadComments()
     {
         return new self(

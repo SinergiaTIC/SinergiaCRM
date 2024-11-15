@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorPrefix202407\Psr\Log;
+namespace RectorPrefix202411\Psr\Log;
 
 /**
  * This Logger can be used to avoid conditional log calls.
@@ -15,13 +15,10 @@ class NullLogger extends AbstractLogger
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed  $level
-     * @param string|\Stringable $message
-     * @param array $context
-     *
-     * @return void
+     * @param mixed[] $context
      *
      * @throws \Psr\Log\InvalidArgumentException
+     * @param string|\Stringable $message
      */
     public function log($level, $message, array $context = []) : void
     {

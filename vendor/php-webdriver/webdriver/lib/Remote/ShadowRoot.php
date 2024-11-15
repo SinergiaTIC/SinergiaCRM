@@ -2,7 +2,6 @@
 
 namespace Facebook\WebDriver\Remote;
 
-use Facebook\WebDriver\Exception\Internal\UnexpectedResponseException;
 use Facebook\WebDriver\Exception\UnknownErrorException;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverElement;
@@ -15,7 +14,7 @@ class ShadowRoot implements WebDriverSearchContext
      *
      * @see https://w3c.github.io/webdriver/#shadow-root
      */
-    public const SHADOW_ROOT_IDENTIFIER = 'shadow-6066-11e4-a52e-4f735466cecf';
+    const SHADOW_ROOT_IDENTIFIER = 'shadow-6066-11e4-a52e-4f735466cecf';
 
     /**
      * @var RemoteExecuteMethod
@@ -34,6 +33,8 @@ class ShadowRoot implements WebDriverSearchContext
     }
 
     /**
+     * @param RemoteExecuteMethod $executor
+     * @param array $response
      * @return self
      */
     public static function createFromResponse(RemoteExecuteMethod $executor, array $response)
@@ -46,6 +47,7 @@ class ShadowRoot implements WebDriverSearchContext
     }
 
     /**
+     * @param WebDriverBy $locator
      * @return RemoteWebElement
      */
     public function findElement(WebDriverBy $locator)
@@ -62,6 +64,7 @@ class ShadowRoot implements WebDriverSearchContext
     }
 
     /**
+     * @param WebDriverBy $locator
      * @return WebDriverElement[]
      */
     public function findElements(WebDriverBy $locator)
@@ -73,12 +76,6 @@ class ShadowRoot implements WebDriverSearchContext
             DriverCommand::FIND_ELEMENTS_FROM_SHADOW_ROOT,
             $params
         );
-
-        if (!is_array($rawElements)) {
-            throw UnexpectedResponseException::forError(
-                'Server response to findElementsFromShadowRoot command is not an array'
-            );
-        }
 
         $elements = [];
         foreach ($rawElements as $rawElement) {

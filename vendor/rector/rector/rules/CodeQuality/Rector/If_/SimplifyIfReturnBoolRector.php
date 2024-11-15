@@ -118,9 +118,6 @@ CODE_SAMPLE
         if ($if->elseifs !== []) {
             return \true;
         }
-        if ($this->isElseSeparatedThenIf($if)) {
-            return \true;
-        }
         if (!$this->isIfWithSingleReturnExpr($if)) {
             return \true;
         }
@@ -172,26 +169,12 @@ CODE_SAMPLE
         }
         return new Return_($this->exprBoolCaster->boolCastOrNullCompareIfNeeded(new BooleanNot($if->cond)));
     }
-    /**
-     * Matches: "else if"
-     */
-    private function isElseSeparatedThenIf(If_ $if) : bool
-    {
-        if (!$if->else instanceof Else_) {
-            return \false;
-        }
-        if (\count($if->else->stmts) !== 1) {
-            return \false;
-        }
-        $onlyStmt = $if->else->stmts[0];
-        return $onlyStmt instanceof If_;
-    }
     private function isIfWithSingleReturnExpr(If_ $if) : bool
     {
         if (\count($if->stmts) !== 1) {
             return \false;
         }
-        if ($if->elseifs !== []) {
+        if ($if->else instanceof Else_ || $if->elseifs !== []) {
             return \false;
         }
         $ifInnerNode = $if->stmts[0];

@@ -3,8 +3,8 @@
 declare (strict_types=1);
 namespace Rector\PhpParser\Parser;
 
-use RectorPrefix202407\Nette\Utils\FileSystem;
-use RectorPrefix202407\Nette\Utils\Strings;
+use RectorPrefix202411\Nette\Utils\FileSystem;
+use RectorPrefix202411\Nette\Utils\Strings;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Scalar\Encapsed;
@@ -70,20 +70,6 @@ final class InlineCodeParser
         $this->betterStandardPrinter = $betterStandardPrinter;
         $this->simplePhpParser = $simplePhpParser;
         $this->valueResolver = $valueResolver;
-    }
-    /**
-     * @return Stmt[]
-     *
-     * @api
-     * @deprecated use parseFile() or parseString() instead
-     */
-    public function parse(string $content) : array
-    {
-        // to cover files too
-        if (\is_file($content)) {
-            $content = FileSystem::read($content);
-        }
-        return $this->parseCode($content);
     }
     /**
      * @api downgrade

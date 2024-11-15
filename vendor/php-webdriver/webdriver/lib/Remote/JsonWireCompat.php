@@ -2,7 +2,6 @@
 
 namespace Facebook\WebDriver\Remote;
 
-use Facebook\WebDriver\Exception\Internal\UnexpectedResponseException;
 use Facebook\WebDriver\WebDriverBy;
 
 /**
@@ -15,21 +14,12 @@ abstract class JsonWireCompat
     /**
      * Element identifier defined in the W3C's WebDriver protocol.
      *
-     * @see https://w3c.github.io/webdriver/#elements
+     * @see https://w3c.github.io/webdriver/webdriver-spec.html#elements
      */
-    public const WEB_DRIVER_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
+    const WEB_DRIVER_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
 
-    /**
-     * @param mixed $rawElement Value is validated to by an array, exception is thrown otherwise
-     * @throws UnexpectedResponseException When value of other type than array is given
-     */
-    public static function getElement($rawElement)
+    public static function getElement(array $rawElement)
     {
-        // The method intentionally accept mixed, so that assertion of the rawElement format could be done on one place
-        if (!is_array($rawElement)) {
-            throw UnexpectedResponseException::forElementNotArray($rawElement);
-        }
-
         if (array_key_exists(self::WEB_DRIVER_ELEMENT_IDENTIFIER, $rawElement)) {
             // W3C's WebDriver
             return $rawElement[self::WEB_DRIVER_ELEMENT_IDENTIFIER];
@@ -40,6 +30,7 @@ abstract class JsonWireCompat
     }
 
     /**
+     * @param WebDriverBy $by
      * @param bool $isW3cCompliant
      *
      * @return array

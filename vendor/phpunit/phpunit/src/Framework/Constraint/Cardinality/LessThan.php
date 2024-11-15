@@ -9,8 +9,6 @@
  */
 namespace PHPUnit\Framework\Constraint;
 
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
-
 /**
  * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
  */
@@ -32,7 +30,7 @@ final class LessThan extends Constraint
     /**
      * Returns a string representation of the constraint.
      *
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function toString(): string
     {

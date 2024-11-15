@@ -17,6 +17,10 @@ class EventFiringWebDriverNavigation implements WebDriverNavigationInterface
      */
     protected $dispatcher;
 
+    /**
+     * @param WebDriverNavigationInterface $navigator
+     * @param WebDriverDispatcher $dispatcher
+     */
     public function __construct(WebDriverNavigationInterface $navigator, WebDriverDispatcher $dispatcher)
     {
         $this->navigator = $navigator;
@@ -128,6 +132,9 @@ class EventFiringWebDriverNavigation implements WebDriverNavigationInterface
         $this->dispatcher->dispatch($method, $arguments);
     }
 
+    /**
+     * @param WebDriverException $exception
+     */
     protected function dispatchOnException(WebDriverException $exception)
     {
         $this->dispatch('onException', $exception);

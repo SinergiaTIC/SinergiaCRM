@@ -21,6 +21,7 @@ class Company extends \Faker\Provider\Company
     public static function vat(string $type = null): string
     {
         switch ($type) {
+
             case static::VAT_TYPE_BRANCH:
                 return static::generateBranchTraderVatNumber();
 
@@ -32,6 +33,7 @@ class Company extends \Faker\Provider\Company
 
             default:
                 return static::generateStandardVatNumber();
+
         }
     }
 
@@ -53,7 +55,7 @@ class Company extends \Faker\Provider\Company
             static::VAT_PREFIX,
             $firstBlock,
             $secondBlock,
-            static::calculateModulus97($firstBlock . $secondBlock),
+            static::calculateModulus97($firstBlock . $secondBlock)
         );
     }
 
@@ -66,7 +68,7 @@ class Company extends \Faker\Provider\Company
         return sprintf(
             '%sHA%d',
             static::VAT_PREFIX,
-            static::numberBetween(500, 999),
+            static::numberBetween(500, 999)
         );
     }
 
@@ -79,7 +81,7 @@ class Company extends \Faker\Provider\Company
         return sprintf(
             '%s %d',
             static::generateStandardVatNumber(),
-            static::randomNumber(3, true),
+            static::randomNumber(3, true)
         );
     }
 
@@ -92,7 +94,7 @@ class Company extends \Faker\Provider\Company
         return sprintf(
             '%sGD%s',
             static::VAT_PREFIX,
-            str_pad((string) static::numberBetween(0, 499), 3, '0', STR_PAD_LEFT),
+            str_pad((string) static::numberBetween(0, 499), 3, '0', STR_PAD_LEFT)
         );
     }
 

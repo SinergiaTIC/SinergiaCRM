@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace Rector\ValueObject\Error;
 
 use Rector\Parallel\ValueObject\BridgeItem;
-use RectorPrefix202407\Symplify\EasyParallel\Contract\SerializableInterface;
+use RectorPrefix202411\Symplify\EasyParallel\Contract\SerializableInterface;
 final class SystemError implements SerializableInterface
 {
     /**
@@ -50,18 +50,31 @@ final class SystemError implements SerializableInterface
     {
         return $this->relativeFilePath;
     }
+    public function getAbsoluteFilePath() : ?string
+    {
+        if ($this->relativeFilePath === null) {
+            return null;
+        }
+        return \realpath($this->relativeFilePath);
+    }
     /**
-     * @return array{message: string, relative_file_path: string|null, line: int|null, rector_class: string|null}
+     * @return array{
+     *     message: string,
+     *     relative_file_path: string|null,
+     *     absolute_file_path: string|null,
+     *     line: int|null,
+     *     rector_class: string|null
+     * }
      */
     public function jsonSerialize() : array
     {
-        return [BridgeItem::MESSAGE => $this->message, BridgeItem::RELATIVE_FILE_PATH => $this->relativeFilePath, BridgeItem::LINE => $this->line, BridgeItem::RECTOR_CLASS => $this->rectorClass];
+        return [BridgeItem::MESSAGE => $this->message, BridgeItem::RELATIVE_FILE_PATH => $this->relativeFilePath, BridgeItem::ABSOLUTE_FILE_PATH => $this->getAbsoluteFilePath(), BridgeItem::LINE => $this->line, BridgeItem::RECTOR_CLASS => $this->rectorClass];
     }
     /**
      * @param mixed[] $json
      * @return $this
      */
-    public static function decode(array $json) : \RectorPrefix202407\Symplify\EasyParallel\Contract\SerializableInterface
+    public static function decode(array $json) : \RectorPrefix202411\Symplify\EasyParallel\Contract\SerializableInterface
     {
         return new self($json[BridgeItem::MESSAGE], $json[BridgeItem::RELATIVE_FILE_PATH], $json[BridgeItem::LINE], $json[BridgeItem::RECTOR_CLASS]);
     }

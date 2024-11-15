@@ -38,12 +38,10 @@ class Factory
         if ($providerClass = self::findProviderClassname($provider, $locale)) {
             return $providerClass;
         }
-
         // fallback to default locale
         if ($providerClass = self::findProviderClassname($provider, static::DEFAULT_LOCALE)) {
             return $providerClass;
         }
-
         // fallback to no locale
         if ($providerClass = self::findProviderClassname($provider)) {
             return $providerClass;

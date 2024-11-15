@@ -38,7 +38,9 @@ final class CachedReader implements Reader
     /** @var int[] */
     private $loadedFilemtimes = [];
 
-    /** @param bool $debug */
+    /**
+     * @param bool $debug
+     */
     public function __construct(Reader $reader, Cache $cache, $debug = false)
     {
         $this->delegate = $reader;

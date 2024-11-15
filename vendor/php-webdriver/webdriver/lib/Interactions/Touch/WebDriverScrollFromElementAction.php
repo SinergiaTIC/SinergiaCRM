@@ -11,6 +11,8 @@ class WebDriverScrollFromElementAction extends WebDriverTouchAction implements W
     private $y;
 
     /**
+     * @param WebDriverTouchScreen $touch_screen
+     * @param WebDriverElement $element
      * @param int $x
      * @param int $y
      */

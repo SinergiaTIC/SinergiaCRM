@@ -10,14 +10,14 @@ class ChromeDriverService extends DriverService
      * The environment variable storing the path to the chrome driver executable.
      * @deprecated Use ChromeDriverService::CHROME_DRIVER_EXECUTABLE
      */
-    public const CHROME_DRIVER_EXE_PROPERTY = 'webdriver.chrome.driver';
+    const CHROME_DRIVER_EXE_PROPERTY = 'webdriver.chrome.driver';
     /** @var string The environment variable storing the path to the chrome driver executable */
-    public const CHROME_DRIVER_EXECUTABLE = 'WEBDRIVER_CHROME_DRIVER';
+    const CHROME_DRIVER_EXECUTABLE = 'WEBDRIVER_CHROME_DRIVER';
     /**
      * @var string Default executable used when no other is provided
      * @internal
      */
-    public const DEFAULT_EXECUTABLE = 'chromedriver';
+    const DEFAULT_EXECUTABLE = 'chromedriver';
 
     /**
      * @return static

@@ -3,7 +3,6 @@
 namespace Facebook\WebDriver;
 
 use Facebook\WebDriver\Exception\IndexOutOfBoundsException;
-use Facebook\WebDriver\Exception\Internal\LogicException;
 use Facebook\WebDriver\Exception\UnsupportedOperationException;
 use Facebook\WebDriver\Remote\DriverCommand;
 use Facebook\WebDriver\Remote\ExecuteMethod;
@@ -121,6 +120,7 @@ class WebDriverWindow
      * Set the size of the current window. This will change the outer window
      * dimension, not just the view port.
      *
+     * @param WebDriverDimension $size
      * @return WebDriverWindow The instance.
      */
     public function setSize(WebDriverDimension $size)
@@ -139,6 +139,7 @@ class WebDriverWindow
      * Set the position of the current window. This is relative to the upper left
      * corner of the screen.
      *
+     * @param WebDriverPoint $position
      * @return WebDriverWindow The instance.
      */
     public function setPosition(WebDriverPoint $position)
@@ -175,7 +176,9 @@ class WebDriverWindow
     {
         $orientation = mb_strtoupper($orientation);
         if (!in_array($orientation, ['PORTRAIT', 'LANDSCAPE'], true)) {
-            throw LogicException::forError('Orientation must be either PORTRAIT, or LANDSCAPE');
+            throw new IndexOutOfBoundsException(
+                'Orientation must be either PORTRAIT, or LANDSCAPE'
+            );
         }
 
         $this->executor->execute(

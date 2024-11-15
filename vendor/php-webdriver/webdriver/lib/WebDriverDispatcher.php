@@ -19,6 +19,7 @@ class WebDriverDispatcher
      * this is needed so that EventFiringWebElement can pass the driver to the
      * exception handling
      *
+     * @param EventFiringWebDriver $driver
      * @return $this
      */
     public function setDefaultDriver(EventFiringWebDriver $driver)
@@ -37,6 +38,7 @@ class WebDriverDispatcher
     }
 
     /**
+     * @param WebDriverEventListener $listener
      * @return $this
      */
     public function register(WebDriverEventListener $listener)
@@ -47,6 +49,7 @@ class WebDriverDispatcher
     }
 
     /**
+     * @param WebDriverEventListener $listener
      * @return $this
      */
     public function unregister(WebDriverEventListener $listener)

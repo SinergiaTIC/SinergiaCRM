@@ -17,29 +17,20 @@ namespace PHPUnit\Util\Xml;
 final class SuccessfulSchemaDetectionResult extends SchemaDetectionResult
 {
     /**
-     * @psalm-var non-empty-string
+     * @var string
      */
     private $version;
 
-    /**
-     * @psalm-param non-empty-string $version
-     */
     public function __construct(string $version)
     {
         $this->version = $version;
     }
 
-    /**
-     * @psalm-assert-if-true SuccessfulSchemaDetectionResult $this
-     */
     public function detected(): bool
     {
         return true;
     }
 
-    /**
-     * @psalm-return non-empty-string
-     */
     public function version(): string
     {
         return $this->version;

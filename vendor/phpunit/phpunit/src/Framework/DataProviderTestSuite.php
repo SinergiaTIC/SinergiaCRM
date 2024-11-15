@@ -11,7 +11,6 @@ namespace PHPUnit\Framework;
 
 use function explode;
 use PHPUnit\Util\Test as TestUtil;
-use SebastianBergmann\RecursionContext\InvalidArgumentException;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
@@ -65,7 +64,7 @@ final class DataProviderTestSuite extends TestSuite
     /**
      * Returns the size of the each test created using the data provider(s).
      *
-     * @throws InvalidArgumentException
+     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
      */
     public function getSize(): int
     {

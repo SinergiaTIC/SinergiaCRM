@@ -38,30 +38,21 @@ if (version_compare('7.3.0', PHP_VERSION, '>')) {
     die(1);
 }
 
-$requiredExtensions = ['dom', 'json', 'libxml', 'mbstring', 'tokenizer', 'xml', 'xmlwriter'];
-
-$unavailableExtensions = array_filter(
-    $requiredExtensions,
-    static function ($extension) {
-        return !extension_loaded($extension);
+foreach (['dom', 'json', 'libxml', 'mbstring', 'tokenizer', 'xml', 'xmlwriter'] as $extension) {
+    if (extension_loaded($extension)) {
+        continue;
     }
-);
 
-if ([] !== $unavailableExtensions) {
     fwrite(
         STDERR,
         sprintf(
-            'PHPUnit requires the "%s" extensions, but the "%s" %s not available.' . PHP_EOL,
-            implode('", "', $requiredExtensions),
-            implode('", "', $unavailableExtensions),
-            count($unavailableExtensions) === 1 ? 'extension is' : 'extensions are'
+            'PHPUnit requires the "%s" extension.' . PHP_EOL,
+            $extension
         )
     );
 
     die(1);
 }
-
-unset($requiredExtensions, $unavailableExtensions);
 
 if (!ini_get('date.timezone')) {
     ini_set('date.timezone', 'UTC');

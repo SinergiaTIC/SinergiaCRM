@@ -2,17 +2,15 @@
 /*
  * This file is part of PharIo\Manifest.
  *
- * Copyright (c) Arne Blankerts <arne@blankerts.de>, Sebastian Heuer <sebastian@phpeople.de>, Sebastian Bergmann <sebastian@phpunit.de> and contributors
+ * (c) Arne Blankerts <arne@blankerts.de>, Sebastian Heuer <sebastian@phpeople.de>, Sebastian Bergmann <sebastian@phpunit.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
  */
 namespace PharIo\Manifest;
 
 use DOMElement;
 use DOMNodeList;
-use function sprintf;
 
 class ManifestElement {
     public const XMLNS = 'https://phar.io/xml/manifest/1.0';
@@ -27,7 +25,7 @@ class ManifestElement {
     protected function getAttributeValue(string $name): string {
         if (!$this->element->hasAttribute($name)) {
             throw new ManifestElementException(
-                sprintf(
+                \sprintf(
                     'Attribute %s not set on element %s',
                     $name,
                     $this->element->localName
@@ -38,16 +36,12 @@ class ManifestElement {
         return $this->element->getAttribute($name);
     }
 
-    protected function hasAttribute(string $name): bool {
-        return $this->element->hasAttribute($name);
-    }
-
     protected function getChildByName(string $elementName): DOMElement {
         $element = $this->element->getElementsByTagNameNS(self::XMLNS, $elementName)->item(0);
 
         if (!$element instanceof DOMElement) {
             throw new ManifestElementException(
-                sprintf('Element %s missing', $elementName)
+                \sprintf('Element %s missing', $elementName)
             );
         }
 
@@ -59,7 +53,7 @@ class ManifestElement {
 
         if ($elementList->length === 0) {
             throw new ManifestElementException(
-                sprintf('Element(s) %s missing', $elementName)
+                \sprintf('Element(s) %s missing', $elementName)
             );
         }
 

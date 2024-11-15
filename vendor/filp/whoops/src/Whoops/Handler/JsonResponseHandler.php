@@ -60,8 +60,7 @@ class JsonResponseHandler extends Handler
                 'errors' => [
                     Formatter::formatExceptionAsDataArray(
                         $this->getInspector(),
-                        $this->addTraceToOutput(),
-                        $this->getRun()->getFrameFilters()
+                        $this->addTraceToOutput()
                     ),
                 ]
             ];
@@ -69,8 +68,7 @@ class JsonResponseHandler extends Handler
             $response = [
                 'error' => Formatter::formatExceptionAsDataArray(
                     $this->getInspector(),
-                    $this->addTraceToOutput(),
-                    $this->getRun()->getFrameFilters()
+                    $this->addTraceToOutput()
                 ),
             ];
         }

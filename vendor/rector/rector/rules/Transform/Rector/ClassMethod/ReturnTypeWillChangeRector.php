@@ -17,7 +17,7 @@ use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\ClassMethod\ReturnTypeWillChangeRector\ReturnTypeWillChangeRectorTest
  */
@@ -89,7 +89,7 @@ CODE_SAMPLE
                 continue;
             }
             // the return type is known, no need to add attribute
-            if ($classMethod->returnType !== null) {
+            if ($classMethod->returnType instanceof Node) {
                 continue;
             }
             foreach ($this->returnTypeChangedClassMethodReferences as $returnTypeChangedClassMethodReference) {

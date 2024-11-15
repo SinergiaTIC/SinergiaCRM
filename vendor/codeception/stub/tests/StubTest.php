@@ -1,18 +1,14 @@
 <?php
-
-declare(strict_types=1);
-
 require_once __DIR__ .'/ResetMocks.php';
-
 use Codeception\Stub;
-use Codeception\Stub\StubMarshaler;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-final class StubTest extends TestCase
+class StubTest extends \PHPUnit\Framework\TestCase
 {
     use ResetMocks;
-    protected DummyClass $dummy;
+    /**
+     * @var DummyClass
+     */
+    protected $dummy;
 
     public function setUp(): void
     {
@@ -31,13 +27,15 @@ final class StubTest extends TestCase
 
     public function testMakeEmptyMethodReplaced()
     {
-        $dummy = Stub::makeEmpty('DummyClass', ['helloWorld' => fn(): string => 'good bye world']);
+        $dummy = Stub::makeEmpty('DummyClass', array('helloWorld' => function () {
+            return 'good bye world';
+        }));
         $this->assertMethodReplaced($dummy);
     }
 
     public function testMakeEmptyMethodSimplyReplaced()
     {
-        $dummy = Stub::makeEmpty('DummyClass', ['helloWorld' => 'good bye world']);
+        $dummy = Stub::makeEmpty('DummyClass', array('helloWorld' => 'good bye world'));
         $this->assertMethodReplaced($dummy);
     }
 
@@ -50,13 +48,13 @@ final class StubTest extends TestCase
 
     public function testMakeEmptyExceptPropertyReplaced()
     {
-        $dummy = Stub::makeEmptyExcept('DummyClass', 'getCheckMe', ['checkMe' => 'checked!']);
+        $dummy = Stub::makeEmptyExcept('DummyClass', 'getCheckMe', array('checkMe' => 'checked!'));
         $this->assertEquals('checked!', $dummy->getCheckMe());
     }
 
     public function testMakeEmptyExceptMagicalPropertyReplaced()
     {
-        $dummy = Stub::makeEmptyExcept('DummyClass', 'getCheckMeToo', ['checkMeToo' => 'checked!']);
+        $dummy = Stub::makeEmptyExcept('DummyClass', 'getCheckMeToo', array('checkMeToo' => 'checked!'));
         $this->assertEquals('checked!', $dummy->getCheckMeToo());
     }
 
@@ -69,46 +67,52 @@ final class StubTest extends TestCase
 
     public function testMake()
     {
-        $dummy = Stub::make('DummyClass', ['goodByeWorld' => fn(): string => 'hello world']);
+        $dummy = Stub::make('DummyClass', array('goodByeWorld' => function () {
+            return 'hello world';
+        }));
         $this->assertEquals($this->dummy->helloWorld(), $dummy->helloWorld());
         $this->assertEquals("hello world", $dummy->goodByeWorld());
     }
 
     public function testMakeMethodReplaced()
     {
-        $dummy = Stub::make('DummyClass', ['helloWorld' => fn(): string => 'good bye world']);
+        $dummy = Stub::make('DummyClass', array('helloWorld' => function () {
+            return 'good bye world';
+        }));
         $this->assertMethodReplaced($dummy);
     }
 
     public function testMakeWithMagicalPropertiesReplaced()
     {
-        $dummy = Stub::make('DummyClass', ['checkMeToo' => 'checked!']);
+        $dummy = Stub::make('DummyClass', array('checkMeToo' => 'checked!'));
         $this->assertEquals('checked!', $dummy->checkMeToo);
     }
 
     public function testMakeMethodSimplyReplaced()
     {
-        $dummy = Stub::make('DummyClass', ['helloWorld' => 'good bye world']);
+        $dummy = Stub::make('DummyClass', array('helloWorld' => 'good bye world'));
         $this->assertMethodReplaced($dummy);
     }
 
     public function testCopy()
     {
-        $dummy = Stub::copy($this->dummy, ['checkMe' => 'checked!']);
+        $dummy = Stub::copy($this->dummy, array('checkMe' => 'checked!'));
         $this->assertEquals('checked!', $dummy->getCheckMe());
-        $dummy = Stub::copy($this->dummy, ['checkMeToo' => 'checked!']);
+        $dummy = Stub::copy($this->dummy, array('checkMeToo' => 'checked!'));
         $this->assertEquals('checked!', $dummy->getCheckMeToo());
     }
 
     public function testConstruct()
     {
-        $dummy = Stub::construct('DummyClass', ['checkMe' => 'checked!']);
+        $dummy = Stub::construct('DummyClass', array('checkMe' => 'checked!'));
         $this->assertEquals('constructed: checked!', $dummy->getCheckMe());
 
         $dummy = Stub::construct(
             'DummyClass',
-            ['checkMe' => 'checked!'],
-            ['targetMethod' => fn(): bool => false]
+            array('checkMe' => 'checked!'),
+            array('targetMethod' => function () {
+                return false;
+            })
         );
         $this->assertEquals('constructed: checked!', $dummy->getCheckMe());
         $this->assertEquals(false, $dummy->targetMethod());
@@ -118,27 +122,29 @@ final class StubTest extends TestCase
     {
         $dummy = Stub::construct(
             'DummyClass',
-            [],
-            ['helloWorld' => fn(): string => 'good bye world']
+            array(),
+            array('helloWorld' => function () {
+                return 'good bye world';
+            })
         );
         $this->assertMethodReplaced($dummy);
     }
 
     public function testConstructMethodSimplyReplaced()
     {
-        $dummy = Stub::make('DummyClass', ['helloWorld' => 'good bye world']);
+        $dummy = Stub::make('DummyClass', array('helloWorld' => 'good bye world'));
         $this->assertMethodReplaced($dummy);
     }
 
     public function testConstructEmpty()
     {
-        $dummy = Stub::constructEmpty('DummyClass', ['checkMe' => 'checked!']);
+        $dummy = Stub::constructEmpty('DummyClass', array('checkMe' => 'checked!'));
         $this->assertNull($dummy->getCheckMe());
     }
 
     public function testConstructEmptyExcept()
     {
-        $dummy = Stub::constructEmptyExcept('DummyClass', 'getCheckMe', ['checkMe' => 'checked!']);
+        $dummy = Stub::constructEmptyExcept('DummyClass', 'getCheckMe', array('checkMe' => 'checked!'));
         $this->assertNull($dummy->targetMethod());
         $this->assertEquals('constructed: checked!', $dummy->getCheckMe());
     }
@@ -146,56 +152,56 @@ final class StubTest extends TestCase
     public function testUpdate()
     {
         $dummy = Stub::construct('DummyClass');
-        Stub::update($dummy, ['checkMe' => 'done']);
+        Stub::update($dummy, array('checkMe' => 'done'));
         $this->assertEquals('done', $dummy->getCheckMe());
-        Stub::update($dummy, ['checkMeToo' => 'done']);
+        Stub::update($dummy, array('checkMeToo' => 'done'));
         $this->assertEquals('done', $dummy->getCheckMeToo());
     }
 
     public function testStubsFromObject()
     {
-        $dummy = Stub::make(new DummyClass());
+        $dummy = Stub::make(new \DummyClass());
         $this->assertInstanceOf(
-            MockObject::class,
+            '\PHPUnit\Framework\MockObject\MockObject',
             $dummy
         );
-        $dummy = Stub::make(new DummyOverloadableClass());
-        $this->assertObjectHasProperty('__mocked', $dummy);
-        $dummy = Stub::makeEmpty(new DummyClass());
+        $dummy = Stub::make(new \DummyOverloadableClass());
+        $this->assertObjectHasAttribute('__mocked', $dummy);
+        $dummy = Stub::makeEmpty(new \DummyClass());
         $this->assertInstanceOf(
-            MockObject::class,
+            '\PHPUnit\Framework\MockObject\MockObject',
             $dummy
         );
-        $dummy = Stub::makeEmpty(new DummyOverloadableClass());
-        $this->assertObjectHasProperty('__mocked', $dummy);
-        $dummy = Stub::makeEmptyExcept(new DummyClass(), 'helloWorld');
+        $dummy = Stub::makeEmpty(new \DummyOverloadableClass());
+        $this->assertObjectHasAttribute('__mocked', $dummy);
+        $dummy = Stub::makeEmptyExcept(new \DummyClass(), 'helloWorld');
         $this->assertInstanceOf(
-            MockObject::class,
+            '\PHPUnit\Framework\MockObject\MockObject',
             $dummy
         );
-        $dummy = Stub::makeEmptyExcept(new DummyOverloadableClass(), 'helloWorld');
-        $this->assertObjectHasProperty('__mocked', $dummy);
-        $dummy = Stub::construct(new DummyClass());
+        $dummy = Stub::makeEmptyExcept(new \DummyOverloadableClass(), 'helloWorld');
+        $this->assertObjectHasAttribute('__mocked', $dummy);
+        $dummy = Stub::construct(new \DummyClass());
         $this->assertInstanceOf(
-            MockObject::class,
+            '\PHPUnit\Framework\MockObject\MockObject',
             $dummy
         );
-        $dummy = Stub::construct(new DummyOverloadableClass());
-        $this->assertObjectHasProperty('__mocked', $dummy);
-        $dummy = Stub::constructEmpty(new DummyClass());
+        $dummy = Stub::construct(new \DummyOverloadableClass());
+        $this->assertObjectHasAttribute('__mocked', $dummy);
+        $dummy = Stub::constructEmpty(new \DummyClass());
         $this->assertInstanceOf(
-            MockObject::class,
+            '\PHPUnit\Framework\MockObject\MockObject',
             $dummy
         );
-        $dummy = Stub::constructEmpty(new DummyOverloadableClass());
-        $this->assertObjectHasProperty('__mocked', $dummy);
-        $dummy = Stub::constructEmptyExcept(new DummyClass(), 'helloWorld');
+        $dummy = Stub::constructEmpty(new \DummyOverloadableClass());
+        $this->assertObjectHasAttribute('__mocked', $dummy);
+        $dummy = Stub::constructEmptyExcept(new \DummyClass(), 'helloWorld');
         $this->assertInstanceOf(
-            MockObject::class,
+            '\PHPUnit\Framework\MockObject\MockObject',
             $dummy
         );
-        $dummy = Stub::constructEmptyExcept(new DummyOverloadableClass(), 'helloWorld');
-        $this->assertObjectHasProperty('__mocked', $dummy);
+        $dummy = Stub::constructEmptyExcept(new \DummyOverloadableClass(), 'helloWorld');
+        $this->assertObjectHasAttribute('__mocked', $dummy);
     }
 
     protected function assertMethodReplaced($dummy)
@@ -205,40 +211,37 @@ final class StubTest extends TestCase
         $this->assertEquals($dummy->helloWorld(), 'good bye world');
     }
 
-    /**
-     * @return array<int, array<string|StubMarshaler>>
-     */
-    public static function matcherAndFailMessageProvider(): array
+    public static function matcherAndFailMessageProvider()
     {
-        return [
-            [Stub\Expected::atLeastOnce(),
+        return array(
+            array(Stub\Expected::atLeastOnce(),
                 'Expected invocation at least once but it never'
-            ],
-            [Stub\Expected::once(),
+            ),
+            array(Stub\Expected::once(),
                 'Method was expected to be called 1 times, actually called 0 times.'
-            ],
-            [Stub\Expected::exactly(1),
+            ),
+            array(Stub\Expected::exactly(1),
                 'Method was expected to be called 1 times, actually called 0 times.'
-            ],
-            [Stub\Expected::exactly(3),
+            ),
+            array(Stub\Expected::exactly(3),
               'Method was expected to be called 3 times, actually called 0 times.'
-            ],
-        ];
+            ),
+        );
     }
 
     /**
      * @dataProvider matcherAndFailMessageProvider
      */
-    public function testExpectedMethodIsCalledFail(StubMarshaler $stubMarshaler, string $failMessage)
+    public function testExpectedMethodIsCalledFail($stubMarshaler, $failMessage)
     {
-        $mock = Stub::makeEmptyExcept('DummyClass', 'call', ['targetMethod' => $stubMarshaler], $this);
+        $mock = Stub::makeEmptyExcept('DummyClass', 'call', array('targetMethod' => $stubMarshaler), $this);
         $mock->goodByeWorld();
 
         try {
             $mock->__phpunit_verify();
             $this->fail('Expected exception');
-        } catch (Exception $exception) {
-            $this->assertTrue(strpos($failMessage, $exception->getMessage()) >= 0, 'String contains');
+        } catch (\Exception $e) {
+            $this->assertTrue(strpos($failMessage, $e->getMessage()) >= 0, 'String contains');
 
         }
 
@@ -247,105 +250,110 @@ final class StubTest extends TestCase
 
     public function testNeverExpectedMethodIsCalledFail()
     {
-        $mock = Stub::makeEmptyExcept('DummyClass', 'call', ['targetMethod' => Stub\Expected::never()], $this);
+        $mock = Stub::makeEmptyExcept('DummyClass', 'call', array('targetMethod' => Stub\Expected::never()), $this);
         $mock->goodByeWorld();
 
         try {
             $mock->call();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertTrue(strpos('was not expected to be called', $e->getMessage()) >= 0, 'String contains');
         }
 
         $this->resetMockObjects();
     }
 
-    /**
-     * @return array<int, array<int|bool|StubMarshaler|string|null>>
-     */
-    public static function matcherProvider(): array
+    public static function matcherProvider()
     {
-        return [
-            [0, Stub\Expected::never()],
-            [1, Stub\Expected::once()],
-            [2, Stub\Expected::atLeastOnce()],
-            [3, Stub\Expected::exactly(3)],
-            [1, Stub\Expected::once(fn(): bool => true), true],
-            [2, Stub\Expected::atLeastOnce(fn(): array => []), []],
-            [1, Stub\Expected::exactly(1, fn() => null), null],
-            [1, Stub\Expected::exactly(1, fn(): string => 'hello world!'), 'hello world!'],
-            [1, Stub\Expected::exactly(1, 'hello world!'), 'hello world!'],
-        ];
+        return array(
+            array(0, Stub\Expected::never()),
+            array(1, Stub\Expected::once()),
+            array(2, Stub\Expected::atLeastOnce()),
+            array(3, Stub\Expected::exactly(3)),
+            array(1, Stub\Expected::once(function () {
+                return true;
+            }), true),
+            array(2, Stub\Expected::atLeastOnce(function () {
+                return array();
+            }), array()),
+            array(1, Stub\Expected::exactly(1, function () {
+                return null;
+            }), null),
+            array(1, Stub\Expected::exactly(1, function () {
+                return 'hello world!';
+            }), 'hello world!'),
+            array(1, Stub\Expected::exactly(1, 'hello world!'), 'hello world!'),
+        );
     }
 
     /**
      * @dataProvider matcherProvider
      */
-    public function testMethodMatcherWithMake(int $count, StubMarshaler $matcher, $expected = false)
+    public function testMethodMatcherWithMake($count, $matcher, $expected = false)
     {
-        $dummy = Stub::make('DummyClass', ['goodByeWorld' => $matcher], $this);
+        $dummy = Stub::make('DummyClass', array('goodByeWorld' => $matcher), $this);
 
-        $this->repeatCall($count, [$dummy, 'goodByeWorld'], $expected);
+        $this->repeatCall($count, array($dummy, 'goodByeWorld'), $expected);
     }
 
     /**
      * @dataProvider matcherProvider
      */
-    public function testMethodMatcherWithMakeEmpty(int $count, StubMarshaler $matcher)
+    public function testMethodMatcherWithMakeEmpty($count, $matcher)
     {
-        $dummy = Stub::makeEmpty('DummyClass', ['goodByeWorld' => $matcher], $this);
+        $dummy = Stub::makeEmpty('DummyClass', array('goodByeWorld' => $matcher), $this);
 
-        $this->repeatCall($count, [$dummy, 'goodByeWorld']);
+        $this->repeatCall($count, array($dummy, 'goodByeWorld'));
     }
 
     /**
      * @dataProvider matcherProvider
      */
-    public function testMethodMatcherWithMakeEmptyExcept(int $count, StubMarshaler $matcher)
+    public function testMethodMatcherWithMakeEmptyExcept($count, $matcher)
     {
-        $dummy = Stub::makeEmptyExcept('DummyClass', 'getCheckMe', ['goodByeWorld' => $matcher], $this);
+        $dummy = Stub::makeEmptyExcept('DummyClass', 'getCheckMe', array('goodByeWorld' => $matcher), $this);
 
-        $this->repeatCall($count, [$dummy, 'goodByeWorld']);
+        $this->repeatCall($count, array($dummy, 'goodByeWorld'));
     }
 
     /**
      * @dataProvider matcherProvider
      */
-    public function testMethodMatcherWithConstruct(int $count, StubMarshaler $matcher)
+    public function testMethodMatcherWithConstruct($count, $matcher)
     {
-        $dummy = Stub::construct('DummyClass', [], ['goodByeWorld' => $matcher], $this);
+        $dummy = Stub::construct('DummyClass', array(), array('goodByeWorld' => $matcher), $this);
 
-        $this->repeatCall($count, [$dummy, 'goodByeWorld']);
+        $this->repeatCall($count, array($dummy, 'goodByeWorld'));
     }
 
     /**
      * @dataProvider matcherProvider
      */
-    public function testMethodMatcherWithConstructEmpty(int $count, StubMarshaler $matcher)
+    public function testMethodMatcherWithConstructEmpty($count, $matcher)
     {
-        $dummy = Stub::constructEmpty('DummyClass', [], ['goodByeWorld' => $matcher], $this);
+        $dummy = Stub::constructEmpty('DummyClass', array(), array('goodByeWorld' => $matcher), $this);
 
-        $this->repeatCall($count, [$dummy, 'goodByeWorld']);
+        $this->repeatCall($count, array($dummy, 'goodByeWorld'));
     }
 
     /**
      * @dataProvider matcherProvider
      */
-    public function testMethodMatcherWithConstructEmptyExcept(int $count, StubMarshaler $matcher)
+    public function testMethodMatcherWithConstructEmptyExcept($count, $matcher)
     {
         $dummy = Stub::constructEmptyExcept(
             'DummyClass',
             'getCheckMe',
-            [],
-            ['goodByeWorld' => $matcher],
+            array(),
+            array('goodByeWorld' => $matcher),
             $this
         );
 
-        $this->repeatCall($count, [$dummy, 'goodByeWorld']);
+        $this->repeatCall($count, array($dummy, 'goodByeWorld'));
     }
 
     private function repeatCall($count, $callable, $expected = false)
     {
-        for ($i = 0; $i < $count; ++$i) {
+        for ($i = 0; $i < $count; $i++) {
             $actual = call_user_func($callable);
             if ($expected) {
                 $this->assertEquals($expected, $actual);
@@ -355,7 +363,7 @@ final class StubTest extends TestCase
 
     public function testConsecutive()
     {
-        $dummy = Stub::make('DummyClass', ['helloWorld' => Stub::consecutive('david', 'emma', 'sam', 'amy')]);
+        $dummy = Stub::make('DummyClass', array('helloWorld' => Stub::consecutive('david', 'emma', 'sam', 'amy')));
 
         $this->assertEquals('david', $dummy->helloWorld());
         $this->assertEquals('emma', $dummy->helloWorld());
@@ -374,7 +382,9 @@ final class StubTest extends TestCase
             [
                  'randomName' => 'chicken',
                  't' => 'ticky2',
-                 'getRandomName' => fn(): string => "randomstuff"
+                 'getRandomName' => function () {
+                     return "randomstuff";
+                 }
             ]
         );
         $this->assertEquals('gamma', $tester->getName());
@@ -384,42 +394,34 @@ final class StubTest extends TestCase
 
     public function testStubMakeEmptyInterface()
     {
-        $stub = Stub::makeEmpty(Countable::class, ['count' => 5]);
+        $stub = Stub::makeEmpty('\Countable', ['count' => 5]);
         $this->assertEquals(5, $stub->count());
-    }
-
-    private function assertObjectHasProperty(string $propertyName, object $object): void
-    {
-        $hasProperty = (new ReflectionObject($object))->hasProperty($propertyName);
-        $this->assertTrue($hasProperty, sprintf("Object has no attribute %s", $propertyName));
     }
 }
 
 class MyClassWithPrivateProperties
 {
 
-    private string $name       = '';
+    private $name;
+    private $randomName = "gaia";
+    private $t          = "ticky";
 
-    private string $randomName = 'gaia';
-
-    private string $t          = 'ticky';
-
-    public function __construct(string $name)
+    public function __construct($name)
     {
         $this->name = $name;
     }
 
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
 
-    public function getRandomName(): string
+    public function getRandomName()
     {
         return $this->randomName;
     }
 
-    public function getT(): string
+    public function getT()
     {
         return $this->t;
     }

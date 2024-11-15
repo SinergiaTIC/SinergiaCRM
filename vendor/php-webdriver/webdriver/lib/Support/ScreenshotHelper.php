@@ -2,8 +2,6 @@
 
 namespace Facebook\WebDriver\Support;
 
-use Facebook\WebDriver\Exception\Internal\IOException;
-use Facebook\WebDriver\Exception\Internal\UnexpectedResponseException;
 use Facebook\WebDriver\Exception\WebDriverException;
 use Facebook\WebDriver\Remote\DriverCommand;
 use Facebook\WebDriver\Remote\RemoteExecuteMethod;
@@ -45,15 +43,13 @@ class ScreenshotHelper
         $response = $this->executor->execute(...$commandToExecute);
 
         if (!is_string($response)) {
-            throw UnexpectedResponseException::forError(
-                'Error taking screenshot, no data received from the remote end'
-            );
+            throw new WebDriverException('Error taking screenshot, no data received from the remote end');
         }
 
         $screenshot = base64_decode($response, true);
 
         if ($screenshot === false) {
-            throw UnexpectedResponseException::forError('Error decoding screenshot data');
+            throw new WebDriverException('Error decoding screenshot data');
         }
 
         if ($saveAs !== null) {
@@ -74,7 +70,7 @@ class ScreenshotHelper
     {
         if (!file_exists($directoryPath)) {
             if (!mkdir($directoryPath, 0777, true) && !is_dir($directoryPath)) {
-                throw IOException::forFileError('Directory cannot be not created', $directoryPath);
+                throw new WebDriverException(sprintf('Directory "%s" was not created', $directoryPath));
             }
         }
     }

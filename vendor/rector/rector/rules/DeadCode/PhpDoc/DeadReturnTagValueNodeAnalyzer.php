@@ -16,6 +16,7 @@ use PHPStan\Type\UnionType;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger;
 use Rector\BetterPhpDocParser\ValueObject\Type\BracketsAwareUnionTypeNode;
 use Rector\DeadCode\PhpDoc\Guard\StandaloneTypeRemovalGuard;
+use Rector\DeadCode\PhpDoc\Guard\TemplateTypeRemovalGuard;
 use Rector\DeadCode\TypeNodeAnalyzer\GenericTypeNodeAnalyzer;
 use Rector\DeadCode\TypeNodeAnalyzer\MixedArrayTypeNodeAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -53,7 +54,12 @@ final class DeadReturnTagValueNodeAnalyzer
      * @var \Rector\StaticTypeMapper\StaticTypeMapper
      */
     private $staticTypeMapper;
-    public function __construct(TypeComparator $typeComparator, GenericTypeNodeAnalyzer $genericTypeNodeAnalyzer, MixedArrayTypeNodeAnalyzer $mixedArrayTypeNodeAnalyzer, StandaloneTypeRemovalGuard $standaloneTypeRemovalGuard, PhpDocTypeChanger $phpDocTypeChanger, StaticTypeMapper $staticTypeMapper)
+    /**
+     * @readonly
+     * @var \Rector\DeadCode\PhpDoc\Guard\TemplateTypeRemovalGuard
+     */
+    private $templateTypeRemovalGuard;
+    public function __construct(TypeComparator $typeComparator, GenericTypeNodeAnalyzer $genericTypeNodeAnalyzer, MixedArrayTypeNodeAnalyzer $mixedArrayTypeNodeAnalyzer, StandaloneTypeRemovalGuard $standaloneTypeRemovalGuard, PhpDocTypeChanger $phpDocTypeChanger, StaticTypeMapper $staticTypeMapper, TemplateTypeRemovalGuard $templateTypeRemovalGuard)
     {
         $this->typeComparator = $typeComparator;
         $this->genericTypeNodeAnalyzer = $genericTypeNodeAnalyzer;
@@ -61,6 +67,7 @@ final class DeadReturnTagValueNodeAnalyzer
         $this->standaloneTypeRemovalGuard = $standaloneTypeRemovalGuard;
         $this->phpDocTypeChanger = $phpDocTypeChanger;
         $this->staticTypeMapper = $staticTypeMapper;
+        $this->templateTypeRemovalGuard = $templateTypeRemovalGuard;
     }
     /**
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $functionLike
@@ -72,6 +79,10 @@ final class DeadReturnTagValueNodeAnalyzer
             return \false;
         }
         if ($returnTagValueNode->description !== '') {
+            return \false;
+        }
+        $docType = $this->staticTypeMapper->mapPHPStanPhpDocTypeNodeToPHPStanType($returnTagValueNode->type, $functionLike);
+        if (!$this->templateTypeRemovalGuard->isLegal($docType)) {
             return \false;
         }
         $scope = $functionLike->getAttribute(AttributeKey::SCOPE);

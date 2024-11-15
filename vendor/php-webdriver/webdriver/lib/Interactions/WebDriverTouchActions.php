@@ -33,6 +33,7 @@ class WebDriverTouchActions extends WebDriverActions
     }
 
     /**
+     * @param WebDriverElement $element
      * @return WebDriverTouchActions
      */
     public function tap(WebDriverElement $element)
@@ -101,6 +102,7 @@ class WebDriverTouchActions extends WebDriverActions
     }
 
     /**
+     * @param WebDriverElement $element
      * @param int $x
      * @param int $y
      * @return WebDriverTouchActions
@@ -115,6 +117,7 @@ class WebDriverTouchActions extends WebDriverActions
     }
 
     /**
+     * @param WebDriverElement $element
      * @return WebDriverTouchActions
      */
     public function doubleTap(WebDriverElement $element)
@@ -127,6 +130,7 @@ class WebDriverTouchActions extends WebDriverActions
     }
 
     /**
+     * @param WebDriverElement $element
      * @return WebDriverTouchActions
      */
     public function longPress(WebDriverElement $element)
@@ -153,6 +157,7 @@ class WebDriverTouchActions extends WebDriverActions
     }
 
     /**
+     * @param WebDriverElement $element
      * @param int $x
      * @param int $y
      * @param int $speed

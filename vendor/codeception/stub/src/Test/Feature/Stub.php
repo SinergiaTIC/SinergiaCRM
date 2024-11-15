@@ -1,13 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Codeception\Test\Feature;
-
-use Exception;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 /**
  * ### Usage in Codeception
@@ -28,23 +21,21 @@ use RuntimeException;
  */
 trait Stub
 {
-    private ?array $mocks = null;
+    private $mocks;
 
     protected function stubStart()
     {
-        if ($this instanceof TestCase) {
+        if ($this instanceof \PHPUnit\Framework\TestCase) {
             return;
         }
-        
         $this->mocks = [];
     }
 
     protected function stubEnd($status, $time)
     {
-        if ($this instanceof TestCase) {
+        if ($this instanceof \PHPUnit\Framework\TestCase) {
             return;
         }
-        
         if ($status !== 'ok') { // Codeception status
             return;
         }
@@ -67,6 +58,7 @@ trait Stub
      * <?php
      * $this->make('User');
      * $this->make('User', ['name' => 'davert']);
+     * ?>
      * ```
      *
      * Accepts either name of class or object of that class
@@ -74,6 +66,7 @@ trait Stub
      * ``` php
      * <?php
      * $this->make(new User, ['name' => 'davert']);
+     * ?>
      * ```
      *
      * To replace method provide it's name as a key in second parameter
@@ -88,11 +81,11 @@ trait Stub
      * @param class-string<RealInstanceType>|RealInstanceType|callable(): class-string<RealInstanceType> $class - A class to be mocked
      * @param array $params - properties and methods to set
      *
-     * @return MockObject&RealInstanceType - mock
-     * @throws RuntimeException when class does not exist
-     * @throws Exception
+     * @return \PHPUnit\Framework\MockObject\MockObject&RealInstanceType - mock
+     * @throws \RuntimeException when class does not exist
+     * @throws \Exception
      */
-    public function make($class, array $params = [])
+    public function make($class, $params = [])
     {
         return $this->mocks[] = \Codeception\Stub::make($class, $params, $this);
     }
@@ -122,16 +115,18 @@ trait Stub
      * ``` php
      * <?php
      * $this->makeEmpty('User', ['save' => function () { return true; }]);
-     * $this->makeEmpty('User', ['save' => true]);
+     * $this->makeEmpty('User', ['save' => true));
      * ```
      *
      * @template RealInstanceType of object
      * @param class-string<RealInstanceType>|RealInstanceType|callable(): class-string<RealInstanceType> $class - A class to be mocked
      * @param array $params
-     * @return MockObject&RealInstanceType
-     * @throws Exception
+     * @param bool|\PHPUnit\Framework\TestCase $testCase
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject&RealInstanceType
+     * @throws \Exception
      */
-    public function makeEmpty($class, array $params = [])
+    public function makeEmpty($class, $params = [])
     {
         return $this->mocks[] = \Codeception\Stub::makeEmpty($class, $params, $this);
     }
@@ -146,6 +141,7 @@ trait Stub
      * <?php
      * $this->makeEmptyExcept('User', 'save');
      * $this->makeEmptyExcept('User', 'save', ['name' => 'davert']);
+     * ?>
      * ```
      *
      * Accepts either name of class or object of that class
@@ -153,6 +149,7 @@ trait Stub
      * ``` php
      * <?php
      * * $this->makeEmptyExcept(new User, 'save');
+     * ?>
      * ```
      *
      * To replace method provide it's name as a key in second parameter
@@ -166,11 +163,13 @@ trait Stub
      *
      * @template RealInstanceType of object
      * @param class-string<RealInstanceType>|RealInstanceType|callable(): class-string<RealInstanceType> $class - A class to be mocked
+     * @param string $method
+     * @param array $params
      *
      * @return \PHPUnit\Framework\MockObject\MockObject&RealInstanceType
-     * @throws Exception
+     * @throws \Exception
      */
-    public function makeEmptyExcept($class, string $method, array $params = [])
+    public function makeEmptyExcept($class, $method, $params = [])
     {
         return $this->mocks[] = \Codeception\Stub::makeEmptyExcept($class, $method, $params, $this);
     }
@@ -185,6 +184,7 @@ trait Stub
      * <?php
      * $this->construct('User', ['autosave' => false]);
      * $this->construct('User', ['autosave' => false], ['name' => 'davert']);
+     * ?>
      * ```
      *
      * Accepts either name of class or object of that class
@@ -192,6 +192,7 @@ trait Stub
      * ``` php
      * <?php
      * $this->construct(new User, ['autosave' => false), ['name' => 'davert']);
+     * ?>
      * ```
      *
      * To replace method provide it's name as a key in third parameter
@@ -201,14 +202,19 @@ trait Stub
      * <?php
      * $this->construct('User', [], ['save' => function () { return true; }]);
      * $this->construct('User', [], ['save' => true]);
+     * ?>
      * ```
      *
      * @template RealInstanceType of object
      * @param class-string<RealInstanceType>|RealInstanceType|callable(): class-string<RealInstanceType> $class - A class to be mocked
-     * @return MockObject&RealInstanceType
-     * @throws Exception
+     * @param array $constructorParams
+     * @param array $params
+     * @param bool|\PHPUnit\Framework\TestCase $testCase
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject&RealInstanceType
+     * @throws \Exception
      */
-    public function construct($class, array $constructorParams = [], array $params = [])
+    public function construct($class, $constructorParams = [], $params = [])
     {
         return $this->mocks[] = \Codeception\Stub::construct($class, $constructorParams, $params, $this);
     }
@@ -252,9 +258,12 @@ trait Stub
      *
      * @template RealInstanceType of object
      * @param class-string<RealInstanceType>|RealInstanceType|callable(): class-string<RealInstanceType> $class - A class to be mocked
-     * @return MockObject&RealInstanceType
+     * @param array $constructorParams
+     * @param array $params
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject&RealInstanceType
      */
-    public function constructEmpty($class, array $constructorParams = [], array $params = [])
+    public function constructEmpty($class, $constructorParams = [], $params = [])
     {
         return $this->mocks[] = \Codeception\Stub::constructEmpty($class, $constructorParams, $params, $this);
     }
@@ -269,6 +278,7 @@ trait Stub
      * <?php
      * $this->constructEmptyExcept('User', 'save');
      * $this->constructEmptyExcept('User', 'save', ['autosave' => false], ['name' => 'davert']);
+     * ?>
      * ```
      *
      * Accepts either name of class or object of that class
@@ -276,6 +286,7 @@ trait Stub
      * ``` php
      * <?php
      * $this->constructEmptyExcept(new User, 'save', ['autosave' => false], ['name' => 'davert']);
+     * ?>
      * ```
      *
      * To replace method provide it's name as a key in third parameter
@@ -285,14 +296,20 @@ trait Stub
      * <?php
      * $this->constructEmptyExcept('User', 'save', [], ['save' => function () { return true; }]);
      * $this->constructEmptyExcept('User', 'save', [], ['save' => true]);
+     * ?>
      * ```
      *
      * @template RealInstanceType of object
      * @param class-string<RealInstanceType>|RealInstanceType|callable(): class-string<RealInstanceType> $class - A class to be mocked
-     * @return MockObject&RealInstanceType
+     * @param string $method
+     * @param array $constructorParams
+     * @param array $params
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject&RealInstanceType
      */
-    public function constructEmptyExcept($class, string $method, array $constructorParams = [], array $params = [])
+    public function constructEmptyExcept($class, $method, $constructorParams = [], $params = [])
     {
         return $this->mocks[] = \Codeception\Stub::constructEmptyExcept($class, $method, $constructorParams, $params, $this);
     }
+
 }

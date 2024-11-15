@@ -10,26 +10,31 @@ use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
 interface WebDriverMouse
 {
     /**
+     * @param WebDriverCoordinates $where
      * @return WebDriverMouse
      */
     public function click(WebDriverCoordinates $where);
 
     /**
+     * @param WebDriverCoordinates $where
      * @return WebDriverMouse
      */
     public function contextClick(WebDriverCoordinates $where);
 
     /**
+     * @param WebDriverCoordinates $where
      * @return WebDriverMouse
      */
     public function doubleClick(WebDriverCoordinates $where);
 
     /**
+     * @param WebDriverCoordinates $where
      * @return WebDriverMouse
      */
     public function mouseDown(WebDriverCoordinates $where);
 
     /**
+     * @param WebDriverCoordinates $where
      * @param int $x_offset
      * @param int $y_offset
      * @return WebDriverMouse
@@ -41,6 +46,7 @@ interface WebDriverMouse
     );
 
     /**
+     * @param WebDriverCoordinates $where
      * @return WebDriverMouse
      */
     public function mouseUp(WebDriverCoordinates $where);

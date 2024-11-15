@@ -58,8 +58,8 @@ final class Registry
         } catch (ReflectionException $e) {
             throw new Exception(
                 $e->getMessage(),
-                $e->getCode(),
-                $e,
+                (int) $e->getCode(),
+                $e
             );
         }
         // @codeCoverageIgnoreEnd
@@ -84,8 +84,8 @@ final class Registry
         } catch (ReflectionException $e) {
             throw new Exception(
                 $e->getMessage(),
-                $e->getCode(),
-                $e,
+                (int) $e->getCode(),
+                $e
             );
         }
         // @codeCoverageIgnoreEnd

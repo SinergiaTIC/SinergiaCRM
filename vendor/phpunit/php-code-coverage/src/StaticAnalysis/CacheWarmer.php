@@ -20,9 +20,7 @@ final class CacheWarmer
             new ParsingFileAnalyser(
                 $useAnnotationsForIgnoringCode,
                 $ignoreDeprecatedCode
-            ),
-            $useAnnotationsForIgnoringCode,
-            $ignoreDeprecatedCode,
+            )
         );
 
         foreach ($filter->files() as $file) {
