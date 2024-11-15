@@ -71,6 +71,8 @@ final class AddNeverReturnType
      */
     private function shouldSkip($node, Scope $scope) : bool
     {
+        // already has return type, and non-void
+        // it can be "never" return itself, or other return type
         if ($node->returnType instanceof Node && !$this->nodeNameResolver->isName($node->returnType, 'void')) {
             return \true;
         }
@@ -87,20 +89,14 @@ final class AddNeverReturnType
             return \false;
         }
         // skip as most likely intentional
-        if (!$this->classModifierChecker->isInsideFinalClass($node) && $this->nodeNameResolver->isName($node->returnType, 'void')) {
-            return \true;
-        }
-        return $this->nodeNameResolver->isName($node->returnType, 'never');
+        return !$this->classModifierChecker->isInsideFinalClass($node) && $this->nodeNameResolver->isName($node->returnType, 'void');
     }
     /**
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $node
      */
     private function hasReturnOrYields($node) : bool
     {
-        if ($this->betterNodeFinder->hasInstancesOfInFunctionLikeScoped($node, Return_::class)) {
-            return \true;
-        }
-        return $this->betterNodeFinder->hasInstancesOfInFunctionLikeScoped($node, \array_merge([Yield_::class, YieldFrom::class], ControlStructure::CONDITIONAL_NODE_SCOPE_TYPES));
+        return $this->betterNodeFinder->hasInstancesOfInFunctionLikeScoped($node, \array_merge([Return_::class, Yield_::class, YieldFrom::class], ControlStructure::CONDITIONAL_NODE_SCOPE_TYPES));
     }
     /**
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $node

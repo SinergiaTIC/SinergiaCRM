@@ -23,8 +23,8 @@ final class ParametersAcceptorSelectorVariantsWrapper
             return ParametersAcceptorSelector::combineAcceptors($variants);
         }
         if ($node->isFirstClassCallable()) {
-            return ParametersAcceptorSelector::selectSingle($variants);
+            return ParametersAcceptorSelector::combineAcceptors($variants);
         }
-        return \count($variants) > 1 ? ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $variants) : ParametersAcceptorSelector::selectSingle($variants);
+        return ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $variants);
     }
 }

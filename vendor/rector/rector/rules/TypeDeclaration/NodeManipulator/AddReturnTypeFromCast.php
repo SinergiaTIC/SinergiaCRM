@@ -50,7 +50,7 @@ final class AddReturnTypeFromCast
      */
     public function add($functionLike, Scope $scope)
     {
-        if ($functionLike->returnType !== null) {
+        if ($functionLike->returnType instanceof Node) {
             return null;
         }
         if ($functionLike instanceof ClassMethod && $this->classMethodReturnTypeOverrideGuard->shouldSkipClassMethod($functionLike, $scope)) {
@@ -63,7 +63,7 @@ final class AddReturnTypeFromCast
             return null;
         }
         $returnType = $this->returnTypeInferer->inferFunctionLike($functionLike);
-        if ($returnType instanceof UnionType || $returnType->isVoid()->yes()) {
+        if ($returnType instanceof UnionType) {
             return null;
         }
         $returnTypeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($returnType, TypeKind::RETURN);

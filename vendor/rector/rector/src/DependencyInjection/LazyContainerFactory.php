@@ -3,13 +3,12 @@
 declare (strict_types=1);
 namespace Rector\DependencyInjection;
 
-use RectorPrefix202407\Doctrine\Inflector\Inflector;
-use RectorPrefix202407\Doctrine\Inflector\Rules\English\InflectorFactory;
-use RectorPrefix202407\Illuminate\Container\Container;
+use RectorPrefix202411\Doctrine\Inflector\Inflector;
+use RectorPrefix202411\Doctrine\Inflector\Rules\English\InflectorFactory;
+use RectorPrefix202411\Illuminate\Container\Container;
 use PhpParser\Lexer;
 use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\ScopeFactory;
-use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDocParser\Parser\ConstExprParser;
@@ -50,7 +49,6 @@ use Rector\Config\RectorConfig;
 use Rector\Configuration\ConfigInitializer;
 use Rector\Configuration\RenamedClassesDataCollector;
 use Rector\Console\Command\CustomRuleCommand;
-use Rector\Console\Command\DetectNodeCommand;
 use Rector\Console\Command\ListRulesCommand;
 use Rector\Console\Command\ProcessCommand;
 use Rector\Console\Command\SetupCICommand;
@@ -79,7 +77,7 @@ use Rector\NodeTypeResolver\DependencyInjection\PHPStanServicesFactory;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver\CastTypeResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver\ClassAndInterfaceTypeResolver;
-use Rector\NodeTypeResolver\NodeTypeResolver\ClassMethodOrClassConstTypeResolver;
+use Rector\NodeTypeResolver\NodeTypeResolver\ClassConstFetchTypeResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver\IdentifierTypeResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver\NameTypeResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver\NewTypeResolver;
@@ -160,9 +158,7 @@ use Rector\PHPStanStaticTypeMapper\TypeMapper\UnionTypeMapper;
 use Rector\PHPStanStaticTypeMapper\TypeMapper\VoidTypeMapper;
 use Rector\PostRector\Application\PostFileProcessor;
 use Rector\Rector\AbstractRector;
-use Rector\Skipper\Contract\SkipVoterInterface;
 use Rector\Skipper\Skipper\Skipper;
-use Rector\Skipper\SkipVoter\ClassSkipVoter;
 use Rector\StaticTypeMapper\Contract\PhpDocParser\PhpDocTypeMapperInterface;
 use Rector\StaticTypeMapper\Contract\PhpParser\PhpParserNodeMapperInterface;
 use Rector\StaticTypeMapper\Mapper\PhpParserNodeMapper;
@@ -179,10 +175,10 @@ use Rector\StaticTypeMapper\PhpParser\NameNodeMapper;
 use Rector\StaticTypeMapper\PhpParser\NullableTypeNodeMapper;
 use Rector\StaticTypeMapper\PhpParser\StringNodeMapper;
 use Rector\StaticTypeMapper\PhpParser\UnionTypeNodeMapper;
-use RectorPrefix202407\Symfony\Component\Console\Application;
-use RectorPrefix202407\Symfony\Component\Console\Command\Command;
-use RectorPrefix202407\Symfony\Component\Console\Style\SymfonyStyle;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Symfony\Component\Console\Application;
+use RectorPrefix202411\Symfony\Component\Console\Command\Command;
+use RectorPrefix202411\Symfony\Component\Console\Style\SymfonyStyle;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 final class LazyContainerFactory
 {
     /**
@@ -220,7 +216,7 @@ final class LazyContainerFactory
     /**
      * @var array<class-string>
      */
-    private const PUBLIC_PHPSTAN_SERVICE_TYPES = [ScopeFactory::class, TypeNodeResolver::class, FileHelper::class, NodeScopeResolver::class, ReflectionProvider::class, CachingVisitor::class];
+    private const PUBLIC_PHPSTAN_SERVICE_TYPES = [ScopeFactory::class, TypeNodeResolver::class, NodeScopeResolver::class, ReflectionProvider::class, CachingVisitor::class];
     /**
      * @var array<class-string<OutputFormatterInterface>>
      */
@@ -228,15 +224,11 @@ final class LazyContainerFactory
     /**
      * @var array<class-string<NodeTypeResolverInterface>>
      */
-    private const NODE_TYPE_RESOLVER_CLASSES = [CastTypeResolver::class, StaticCallMethodCallTypeResolver::class, ClassAndInterfaceTypeResolver::class, ClassMethodOrClassConstTypeResolver::class, IdentifierTypeResolver::class, NameTypeResolver::class, NewTypeResolver::class, ParamTypeResolver::class, PropertyFetchTypeResolver::class, PropertyTypeResolver::class, ScalarTypeResolver::class, TraitTypeResolver::class];
+    private const NODE_TYPE_RESOLVER_CLASSES = [CastTypeResolver::class, StaticCallMethodCallTypeResolver::class, ClassAndInterfaceTypeResolver::class, IdentifierTypeResolver::class, NameTypeResolver::class, NewTypeResolver::class, ParamTypeResolver::class, PropertyFetchTypeResolver::class, ClassConstFetchTypeResolver::class, PropertyTypeResolver::class, ScalarTypeResolver::class, TraitTypeResolver::class];
     /**
      * @var array<class-string<PhpParserNodeMapperInterface>>
      */
     private const PHP_PARSER_NODE_MAPPER_CLASSES = [FullyQualifiedNodeMapper::class, IdentifierNodeMapper::class, IntersectionTypeNodeMapper::class, NameNodeMapper::class, NullableTypeNodeMapper::class, StringNodeMapper::class, UnionTypeNodeMapper::class, ExprNodeMapper::class];
-    /**
-     * @var array<class-string<SkipVoterInterface>>
-     */
-    private const SKIP_VOTER_CLASSES = [ClassSkipVoter::class];
     /**
      * @var array<class-string<ConverterAttributeDecoratorInterface>>
      */
@@ -267,7 +259,6 @@ final class LazyContainerFactory
         $rectorConfig->singleton(SetupCICommand::class);
         $rectorConfig->singleton(ListRulesCommand::class);
         $rectorConfig->singleton(CustomRuleCommand::class);
-        $rectorConfig->singleton(DetectNodeCommand::class);
         $rectorConfig->when(ListRulesCommand::class)->needs('$rectors')->giveTagged(RectorInterface::class);
         $rectorConfig->singleton(FileProcessor::class);
         $rectorConfig->singleton(PostFileProcessor::class);
@@ -314,8 +305,6 @@ final class LazyContainerFactory
         $rectorConfig->when(NodeTypeResolver::class)->needs('$nodeTypeResolvers')->giveTagged(NodeTypeResolverInterface::class);
         // node name resolvers
         $rectorConfig->when(NodeNameResolver::class)->needs('$nodeNameResolvers')->giveTagged(NodeNameResolverInterface::class);
-        $rectorConfig->when(Skipper::class)->needs('$skipVoters')->giveTagged(SkipVoterInterface::class);
-        $this->registerTagged($rectorConfig, self::SKIP_VOTER_CLASSES, SkipVoterInterface::class);
         $rectorConfig->when(AttributeGroupNamedArgumentManipulator::class)->needs('$converterAttributeDecorators')->giveTagged(ConverterAttributeDecoratorInterface::class);
         $this->registerTagged($rectorConfig, self::CONVERTER_ATTRIBUTE_DECORATOR_CLASSES, ConverterAttributeDecoratorInterface::class);
         $rectorConfig->afterResolving(AbstractRector::class, static function (AbstractRector $rector, Container $container) : void {

@@ -12,18 +12,17 @@ use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\UnionType as PhpParserUnionType;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
-use PHPStan\Type\MixedType;
+use PHPStan\Type\CallableType;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\VoidType;
 use Rector\BetterPhpDocParser\ValueObject\Type\BracketsAwareUnionTypeNode;
 use Rector\Php\PhpVersionProvider;
 use Rector\PHPStanStaticTypeMapper\Contract\TypeMapperInterface;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\PHPStanStaticTypeMapper\PHPStanStaticTypeMapper;
 use Rector\ValueObject\PhpVersionFeature;
-use RectorPrefix202407\Webmozart\Assert\Assert;
-use RectorPrefix202407\Webmozart\Assert\InvalidArgumentException;
+use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202411\Webmozart\Assert\InvalidArgumentException;
 /**
  * @implements TypeMapperInterface<UnionType>
  */
@@ -66,7 +65,7 @@ final class UnionTypeMapper implements TypeMapperInterface
      */
     public function mapToPhpParserNode(Type $type, string $typeKind) : ?Node
     {
-        $phpParserUnionType = $this->matchPhpParserUnionType($type);
+        $phpParserUnionType = $this->matchPhpParserUnionType($type, $typeKind);
         if ($phpParserUnionType instanceof PhpParserUnionType) {
             return $this->resolveUnionTypeNode($phpParserUnionType);
         }
@@ -154,23 +153,24 @@ final class UnionTypeMapper implements TypeMapperInterface
     /**
      * @return Name|FullyQualified|ComplexType|Identifier|null
      */
-    private function matchPhpParserUnionType(UnionType $unionType) : ?Node
+    private function matchPhpParserUnionType(UnionType $unionType, string $typeKind) : ?Node
     {
         $phpParserUnionedTypes = [];
         foreach ($unionType->getTypes() as $unionedType) {
-            // void type and mixed type are not allowed in union
-            if (\in_array(\get_class($unionedType), [MixedType::class, VoidType::class], \true)) {
-                return null;
-            }
             // NullType or ConstantBooleanType with false value inside UnionType is allowed
+            // void type and mixed type are not allowed in union
             $phpParserNode = $this->phpStanStaticTypeMapper->mapToPhpParserNode($unionedType, TypeKind::UNION);
             if ($phpParserNode === null) {
+                return null;
+            }
+            // special callable type only not allowed on property
+            if ($typeKind === TypeKind::PROPERTY && $unionedType instanceof CallableType) {
                 return null;
             }
             $phpParserUnionedTypes[] = $phpParserNode;
         }
         /** @var Identifier[]|Name[] $phpParserUnionedTypes */
-        $phpParserUnionedTypes = \array_unique($phpParserUnionedTypes);
+        $phpParserUnionedTypes = \array_unique($phpParserUnionedTypes, \SORT_REGULAR);
         $countPhpParserUnionedTypes = \count($phpParserUnionedTypes);
         if ($countPhpParserUnionedTypes === 1) {
             return $phpParserUnionedTypes[0];

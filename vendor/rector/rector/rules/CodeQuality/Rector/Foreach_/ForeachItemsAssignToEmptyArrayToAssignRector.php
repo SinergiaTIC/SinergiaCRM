@@ -119,6 +119,10 @@ CODE_SAMPLE
                     return NodeTraverser::STOP_TRAVERSAL;
                 }
             }
+            if ($subNode instanceof Assign && $subNode->var instanceof Variable && $this->isNames($subNode->var, $emptyArrayVariables) && !$this->valueResolver->isValue($subNode->expr, [])) {
+                $isAppend = \true;
+                return NodeTraverser::STOP_TRAVERSAL;
+            }
             return null;
         });
         return $isAppend;
@@ -132,7 +136,7 @@ CODE_SAMPLE
         if (!$assignVariableExpr instanceof Expr) {
             return \true;
         }
-        $foreachedExprType = $this->getType($foreach->expr);
+        $foreachedExprType = $this->nodeTypeResolver->getNativeType($foreach->expr);
         // only arrays, not traversable/iterable
         if (!$foreachedExprType->isArray()->yes()) {
             return \true;

@@ -10,6 +10,7 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\ConstantScalarType;
+use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
@@ -64,6 +65,8 @@ final class TypeComparator
     }
     public function areTypesEqual(Type $firstType, Type $secondType) : bool
     {
+        $firstType = $this->normalizeTemplateType($firstType);
+        $secondType = $this->normalizeTemplateType($secondType);
         $firstTypeHash = $this->typeHasher->createTypeHash($firstType);
         $secondTypeHash = $this->typeHasher->createTypeHash($secondType);
         if ($firstTypeHash === $secondTypeHash) {
@@ -106,6 +109,8 @@ final class TypeComparator
     }
     public function isSubtype(Type $checkedType, Type $mainType) : bool
     {
+        $checkedType = $this->normalizeTemplateType($checkedType);
+        $mainType = $this->normalizeTemplateType($mainType);
         if ($mainType instanceof MixedType) {
             return \false;
         }
@@ -116,6 +121,14 @@ final class TypeComparator
             return $mainType->isSuperTypeOf($checkedType)->yes();
         }
         return $this->arrayTypeComparator->isSubtype($checkedType, $mainType);
+    }
+    /**
+     * unless it by ref, object param has its own life vs redefined variable
+     * see https://3v4l.org/dI5Pe vs https://3v4l.org/S8i71
+     */
+    private function normalizeTemplateType(Type $type) : Type
+    {
+        return $type instanceof TemplateType ? $type->getBound() : $type;
     }
     private function areAliasedObjectMatchingFqnObject(Type $firstType, Type $secondType) : bool
     {

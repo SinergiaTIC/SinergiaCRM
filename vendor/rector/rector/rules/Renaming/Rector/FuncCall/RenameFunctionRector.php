@@ -8,11 +8,10 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Renaming\Rector\FuncCall\RenameFunctionRector\RenameFunctionRectorTest
  */
@@ -38,11 +37,6 @@ final class RenameFunctionRector extends AbstractRector implements ConfigurableR
      */
     public function refactor(Node $node) : ?Node
     {
-        // not to refactor here
-        $isVirtual = (bool) $node->name->getAttribute(AttributeKey::VIRTUAL_NODE);
-        if ($isVirtual) {
-            return null;
-        }
         $nodeName = $this->getName($node);
         if ($nodeName === null) {
             return null;

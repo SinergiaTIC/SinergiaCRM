@@ -3,13 +3,16 @@
 declare (strict_types=1);
 namespace Rector\ChangesReporting\Output;
 
-use RectorPrefix202407\Nette\Utils\Strings;
+use RectorPrefix202411\Nette\Utils\Strings;
 use Rector\ChangesReporting\Contract\Output\OutputFormatterInterface;
+use Rector\Configuration\Option;
+use Rector\Configuration\Parameter\SimpleParameterProvider;
 use Rector\ValueObject\Configuration;
 use Rector\ValueObject\Error\SystemError;
 use Rector\ValueObject\ProcessResult;
 use Rector\ValueObject\Reporting\FileDiff;
-use RectorPrefix202407\Symfony\Component\Console\Style\SymfonyStyle;
+use RectorPrefix202411\Symfony\Component\Console\Formatter\OutputFormatter;
+use RectorPrefix202411\Symfony\Component\Console\Style\SymfonyStyle;
 final class ConsoleOutputFormatter implements OutputFormatterInterface
 {
     /**
@@ -33,9 +36,9 @@ final class ConsoleOutputFormatter implements OutputFormatterInterface
     public function report(ProcessResult $processResult, Configuration $configuration) : void
     {
         if ($configuration->shouldShowDiffs()) {
-            $this->reportFileDiffs($processResult->getFileDiffs());
+            $this->reportFileDiffs($processResult->getFileDiffs(), $configuration->isReportingWithRealPath());
         }
-        $this->reportErrors($processResult->getSystemErrors());
+        $this->reportErrors($processResult->getSystemErrors(), $configuration->isReportingWithRealPath());
         if ($processResult->getSystemErrors() !== []) {
             return;
         }
@@ -53,7 +56,7 @@ final class ConsoleOutputFormatter implements OutputFormatterInterface
     /**
      * @param FileDiff[] $fileDiffs
      */
-    private function reportFileDiffs(array $fileDiffs) : void
+    private function reportFileDiffs(array $fileDiffs, bool $absoluteFilePath) : void
     {
         if (\count($fileDiffs) <= 0) {
             return;
@@ -64,13 +67,14 @@ final class ConsoleOutputFormatter implements OutputFormatterInterface
         $this->symfonyStyle->title($message);
         $i = 0;
         foreach ($fileDiffs as $fileDiff) {
-            $relativeFilePath = $fileDiff->getRelativeFilePath();
+            $filePath = $absoluteFilePath ? $fileDiff->getAbsoluteFilePath() ?? '' : $fileDiff->getRelativeFilePath();
             // append line number for faster file jump in diff
             $firstLineNumber = $fileDiff->getFirstLineNumber();
             if ($firstLineNumber !== null) {
-                $relativeFilePath .= ':' . $firstLineNumber;
+                $filePath .= ':' . $firstLineNumber;
             }
-            $message = \sprintf('<options=bold>%d) %s</>', ++$i, $relativeFilePath);
+            $filePathWithUrl = $this->addEditorUrl($filePath, $fileDiff->getAbsoluteFilePath(), $fileDiff->getRelativeFilePath(), (string) $fileDiff->getFirstLineNumber());
+            $message = \sprintf('<options=bold>%d) %s</>', ++$i, $filePathWithUrl);
             $this->symfonyStyle->writeln($message);
             $this->symfonyStyle->newLine();
             $this->symfonyStyle->writeln($fileDiff->getDiffConsoleFormatted());
@@ -84,12 +88,13 @@ final class ConsoleOutputFormatter implements OutputFormatterInterface
     /**
      * @param SystemError[] $errors
      */
-    private function reportErrors(array $errors) : void
+    private function reportErrors(array $errors, bool $absoluteFilePath) : void
     {
         foreach ($errors as $error) {
             $errorMessage = $error->getMessage();
             $errorMessage = $this->normalizePathsToRelativeWithLine($errorMessage);
-            $message = \sprintf('Could not process %s%s, due to: %s"%s".', $error->getFile() !== null ? '"' . $error->getFile() . '" file' : 'some files', $error->getRectorClass() !== null ? ' by "' . $error->getRectorClass() . '"' : '', \PHP_EOL, $errorMessage);
+            $filePath = $absoluteFilePath ? $error->getAbsoluteFilePath() : $error->getRelativeFilePath();
+            $message = \sprintf('Could not process %s%s, due to: %s"%s".', $filePath !== null ? '"' . $filePath . '" file' : 'some files', $error->getRectorClass() !== null ? ' by "' . $error->getRectorClass() . '"' : '', \PHP_EOL, $errorMessage);
             if ($error->getLine() !== null) {
                 $message .= ' On line: ' . $error->getLine();
             }
@@ -109,5 +114,14 @@ final class ConsoleOutputFormatter implements OutputFormatterInterface
             return 'Rector is done!';
         }
         return \sprintf('%d file%s %s by Rector', $changeCount, $changeCount > 1 ? 's' : '', $configuration->isDryRun() ? 'would have been changed (dry-run)' : ($changeCount === 1 ? 'has' : 'have') . ' been changed');
+    }
+    private function addEditorUrl(string $filePath, ?string $absoluteFilePath, ?string $relativeFilePath, ?string $lineNumber) : string
+    {
+        $editorUrl = SimpleParameterProvider::provideStringParameter(Option::EDITOR_URL, '');
+        if ($editorUrl !== '') {
+            $editorUrl = \str_replace(['%file%', '%relFile%', '%line%'], [$absoluteFilePath, $relativeFilePath, $lineNumber], $editorUrl);
+            $filePath = '<href=' . OutputFormatter::escape($editorUrl) . '>' . $filePath . '</>';
+        }
+        return $filePath;
     }
 }

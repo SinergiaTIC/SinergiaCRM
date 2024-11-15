@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202407\Symfony\Component\Finder\Iterator;
+namespace RectorPrefix202411\Symfony\Component\Finder\Iterator;
 
-use RectorPrefix202407\Symfony\Component\Finder\Exception\AccessDeniedException;
-use RectorPrefix202407\Symfony\Component\Finder\SplFileInfo;
+use RectorPrefix202411\Symfony\Component\Finder\Exception\AccessDeniedException;
+use RectorPrefix202411\Symfony\Component\Finder\SplFileInfo;
 /**
  * Extends the \RecursiveDirectoryIterator to support relative paths.
  *
@@ -71,7 +71,8 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
             $subPathname .= $this->directorySeparator;
         }
         $subPathname .= $this->getFilename();
-        if ('/' !== ($basePath = $this->rootPath)) {
+        $basePath = $this->rootPath;
+        if ('/' !== $basePath && \substr_compare($basePath, $this->directorySeparator, -\strlen($this->directorySeparator)) !== 0 && \substr_compare($basePath, '/', -\strlen('/')) !== 0) {
             $basePath .= $this->directorySeparator;
         }
         return new SplFileInfo($basePath . $subPathname, $this->subPath, $subPathname);

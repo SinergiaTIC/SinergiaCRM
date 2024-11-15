@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\NodeManipulator;
 
-use RectorPrefix202407\Doctrine\ORM\Mapping\Table;
+use RectorPrefix202411\Doctrine\ORM\Mapping\Table;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticPropertyFetch;
@@ -92,7 +92,7 @@ final class PropertyManipulator
     /**
      * @var string[]|class-string<Table>[]
      */
-    private const DOCTRINE_PROPERTY_ANNOTATIONS = ['Doctrine\\ORM\\Mapping\\Entity', 'Doctrine\\ORM\\Mapping\\Table', 'Doctrine\\ORM\\Mapping\\MappedSuperclass'];
+    private const DOCTRINE_PROPERTY_ANNOTATIONS = ['Doctrine\\ORM\\Mapping\\Entity', 'Doctrine\\ORM\\Mapping\\Table', 'Doctrine\\ORM\\Mapping\\MappedSuperclass', 'Doctrine\\ORM\\Mapping\\Embeddable'];
     public function __construct(\Rector\NodeManipulator\AssignManipulator $assignManipulator, BetterNodeFinder $betterNodeFinder, PhpDocInfoFactory $phpDocInfoFactory, PropertyFetchFinder $propertyFetchFinder, NodeNameResolver $nodeNameResolver, PhpAttributeAnalyzer $phpAttributeAnalyzer, NodeTypeResolver $nodeTypeResolver, PromotedPropertyResolver $promotedPropertyResolver, ConstructorAssignDetector $constructorAssignDetector, AstResolver $astResolver, PropertyFetchAnalyzer $propertyFetchAnalyzer)
     {
         $this->assignManipulator = $assignManipulator;

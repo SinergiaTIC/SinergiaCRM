@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorPrefix202407\Illuminate\Contracts\Queue;
+namespace RectorPrefix202411\Illuminate\Contracts\Queue;
 
 interface Factory
 {

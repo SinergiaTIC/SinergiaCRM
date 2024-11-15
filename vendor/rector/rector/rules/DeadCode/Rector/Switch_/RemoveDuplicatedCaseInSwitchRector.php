@@ -84,6 +84,7 @@ CODE_SAMPLE
     private function removeDuplicatedCases(Switch_ $switch) : void
     {
         $totalKeys = \count($switch->cases);
+        $conds = [];
         foreach (\array_keys($switch->cases) as $key) {
             if (isset($switch->cases[$key - 1]) && $switch->cases[$key - 1]->stmts === []) {
                 continue;
@@ -97,6 +98,10 @@ CODE_SAMPLE
                     continue;
                 }
                 $nextCase = $switch->cases[$jumpToKey];
+                if (isset($switch->cases[$jumpToKey - 1]) && $switch->cases[$jumpToKey - 1]->stmts === []) {
+                    $nextCases[] = $switch->cases[$jumpToKey - 1];
+                    $conds[] = $switch->cases[$jumpToKey - 1]->cond;
+                }
                 unset($switch->cases[$jumpToKey]);
                 $nextCases[] = $nextCase;
                 $this->hasChanged = \true;
@@ -109,6 +114,15 @@ CODE_SAMPLE
                 $switch->cases[$jumpToKey]->stmts = [];
             }
             $key += \count($nextCases);
+        }
+        foreach ($conds as $keyCond => $cond) {
+            foreach (\array_reverse($switch->cases, \true) as $keyCase => $case) {
+                if ($this->nodeComparator->areNodesEqual($cond, $case->cond)) {
+                    unset($switch->cases[$keyCase]);
+                    unset($conds[$keyCond]);
+                    continue 2;
+                }
+            }
         }
     }
     private function areSwitchStmtsEqualsAndWithBreak(Case_ $currentCase, Case_ $nextCase) : bool

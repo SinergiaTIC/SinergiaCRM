@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\PostRector\Rector;
 
-use RectorPrefix202407\Nette\Utils\Strings;
+use RectorPrefix202411\Nette\Utils\Strings;
 use PhpParser\Comment;
 use PhpParser\Comment\Doc;
 use PhpParser\Node;
@@ -15,8 +15,6 @@ use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\Stmt\UseUse;
 use PhpParser\NodeTraverser;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\Configuration\Option;
-use Rector\Configuration\Parameter\SimpleParameterProvider;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
@@ -42,27 +40,32 @@ final class UnusedImportRemovingPostRector extends \Rector\PostRector\Rector\Abs
         if (!$node instanceof Namespace_ && !$node instanceof FileWithoutNamespace) {
             return null;
         }
-        if (!SimpleParameterProvider::provideBoolParameter(Option::REMOVE_UNUSED_IMPORTS)) {
-            return null;
-        }
         $hasChanged = \false;
-        $namespaceName = $node instanceof Namespace_ && $node->name instanceof Name ? $node->name : null;
-        $names = $this->resolveUsedPhpAndDocNames($node);
-        foreach ($node->stmts as $key => $namespaceStmt) {
-            if (!$namespaceStmt instanceof Use_) {
+        $namespaceOriginalCase = $node instanceof Namespace_ && $node->name instanceof Name ? $node->name->toString() : null;
+        $namesInOriginalCase = $this->resolveUsedPhpAndDocNames($node);
+        $namesInLowerCase = \array_map(\Closure::fromCallable('strtolower'), $namesInOriginalCase);
+        foreach ($node->stmts as $key => $stmt) {
+            if (!$stmt instanceof Use_) {
                 continue;
             }
-            if ($namespaceStmt->uses === []) {
+            if ($stmt->uses === [] || $namesInOriginalCase === []) {
                 unset($node->stmts[$key]);
                 $hasChanged = \true;
                 continue;
             }
-            $useUse = $namespaceStmt->uses[0];
-            if ($this->isUseImportUsed($useUse, $names, $namespaceName)) {
-                continue;
+            $isCaseSensitive = $stmt->type === Use_::TYPE_CONSTANT;
+            $names = $isCaseSensitive ? $namesInOriginalCase : $namesInLowerCase;
+            $namespaceName = $namespaceOriginalCase === null ? null : ($isCaseSensitive ? $namespaceOriginalCase : \strtolower($namespaceOriginalCase));
+            foreach ($stmt->uses as $useUseKey => $useUse) {
+                if ($this->isUseImportUsed($useUse, $isCaseSensitive, $names, $namespaceName)) {
+                    continue;
+                }
+                unset($stmt->uses[$useUseKey]);
+                $hasChanged = \true;
             }
-            unset($node->stmts[$key]);
-            $hasChanged = \true;
+            if ($stmt->uses === []) {
+                unset($node->stmts[$key]);
+            }
         }
         if ($hasChanged === \false) {
             return null;
@@ -84,14 +87,15 @@ final class UnusedImportRemovingPostRector extends \Rector\PostRector\Rector\Abs
             if (!$node instanceof Name) {
                 return null;
             }
-            $names[] = $node->toString();
             if ($node instanceof FullyQualified) {
                 $originalName = $node->getAttribute(AttributeKey::ORIGINAL_NAME);
                 if ($originalName instanceof Name) {
-                    // collect original Name as well to cover namespaced used
+                    // collect original Name as cover namespaced used
                     $names[] = $originalName->toString();
+                    return $node;
                 }
             }
+            $names[] = $node->toString();
             return $node;
         });
         return $names;
@@ -143,32 +147,26 @@ final class UnusedImportRemovingPostRector extends \Rector\PostRector\Rector\Abs
         $names = \array_merge($phpNames, $docBlockNames);
         return \array_unique($names);
     }
-    private function resolveAliasName(UseUse $useUse) : ?string
-    {
-        return $useUse->alias instanceof Identifier ? $useUse->alias->toString() : null;
-    }
     /**
-     * @param string[]  $names
+     * @param string[] $names
      */
-    private function isUseImportUsed(UseUse $useUse, array $names, ?Name $namespaceName) : bool
+    private function isUseImportUsed(UseUse $useUse, bool $isCaseSensitive, array $names, ?string $namespaceName) : bool
     {
-        $comparedName = $useUse->name->toString();
+        $comparedName = $useUse->alias instanceof Identifier ? $useUse->alias->toString() : $useUse->name->toString();
+        if (!$isCaseSensitive) {
+            $comparedName = \strtolower($comparedName);
+        }
         if (\in_array($comparedName, $names, \true)) {
             return \true;
         }
-        $namespacedPrefix = Strings::after($comparedName, '\\', -1) . '\\';
+        $lastName = Strings::after($comparedName, '\\', -1);
+        $namespacedPrefix = $lastName . '\\';
         if ($namespacedPrefix === '\\') {
             $namespacedPrefix = $comparedName . '\\';
         }
-        $alias = $this->resolveAliasName($useUse);
-        $lastName = $useUse->name->getLast();
-        $namespaceName = $namespaceName instanceof Name ? $namespaceName->toString() : null;
         // match partial import
         foreach ($names as $name) {
             if ($this->isSubNamespace($name, $comparedName, $namespacedPrefix)) {
-                return \true;
-            }
-            if (\is_string($alias) && $this->isUsedAlias($alias, $name)) {
                 return \true;
             }
             if (\strncmp($name, $lastName . '\\', \strlen($lastName . '\\')) !== 0) {
@@ -182,17 +180,6 @@ final class UnusedImportRemovingPostRector extends \Rector\PostRector\Rector\Abs
             }
         }
         return \false;
-    }
-    private function isUsedAlias(string $alias, string $name) : bool
-    {
-        if ($alias === $name) {
-            return \true;
-        }
-        if (\strpos($name, '\\') === \false) {
-            return \false;
-        }
-        $namePrefix = Strings::before($name, '\\', 1);
-        return $alias === $namePrefix;
     }
     private function isSubNamespace(string $name, string $comparedName, string $namespacedPrefix) : bool
     {

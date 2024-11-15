@@ -28,6 +28,8 @@ use Rector\Rector\AbstractScopeAwareRector;
 use Rector\Reflection\ReflectionResolver;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use Rector\StaticTypeMapper\ValueObject\Type\SelfStaticType;
+use Rector\Symfony\CodeQuality\Enum\ResponseClass;
+use Rector\Symfony\TypeAnalyzer\ControllerAnalyzer;
 use Rector\TypeDeclaration\NodeAnalyzer\ReturnAnalyzer;
 use Rector\TypeDeclaration\NodeAnalyzer\ReturnTypeAnalyzer\StrictReturnNewAnalyzer;
 use Rector\ValueObject\PhpVersionFeature;
@@ -90,7 +92,12 @@ final class ReturnTypeFromReturnNewRector extends AbstractScopeAwareRector imple
      * @var \Rector\TypeDeclaration\NodeAnalyzer\ReturnAnalyzer
      */
     private $returnAnalyzer;
-    public function __construct(TypeFactory $typeFactory, ReflectionProvider $reflectionProvider, ReflectionResolver $reflectionResolver, StrictReturnNewAnalyzer $strictReturnNewAnalyzer, ClassMethodReturnTypeOverrideGuard $classMethodReturnTypeOverrideGuard, ClassAnalyzer $classAnalyzer, NewTypeResolver $newTypeResolver, BetterNodeFinder $betterNodeFinder, StaticTypeMapper $staticTypeMapper, ReturnAnalyzer $returnAnalyzer)
+    /**
+     * @readonly
+     * @var \Rector\Symfony\TypeAnalyzer\ControllerAnalyzer
+     */
+    private $controllerAnalyzer;
+    public function __construct(TypeFactory $typeFactory, ReflectionProvider $reflectionProvider, ReflectionResolver $reflectionResolver, StrictReturnNewAnalyzer $strictReturnNewAnalyzer, ClassMethodReturnTypeOverrideGuard $classMethodReturnTypeOverrideGuard, ClassAnalyzer $classAnalyzer, NewTypeResolver $newTypeResolver, BetterNodeFinder $betterNodeFinder, StaticTypeMapper $staticTypeMapper, ReturnAnalyzer $returnAnalyzer, ControllerAnalyzer $controllerAnalyzer)
     {
         $this->typeFactory = $typeFactory;
         $this->reflectionProvider = $reflectionProvider;
@@ -102,24 +109,25 @@ final class ReturnTypeFromReturnNewRector extends AbstractScopeAwareRector imple
         $this->betterNodeFinder = $betterNodeFinder;
         $this->staticTypeMapper = $staticTypeMapper;
         $this->returnAnalyzer = $returnAnalyzer;
+        $this->controllerAnalyzer = $controllerAnalyzer;
     }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Add return type to function like with return new', [new CodeSample(<<<'CODE_SAMPLE'
 final class SomeClass
 {
-    public function action()
+    public function create()
     {
-        return new Response();
+        return new Project();
     }
 }
 CODE_SAMPLE
 , <<<'CODE_SAMPLE'
 final class SomeClass
 {
-    public function action(): Response
+    public function create(): Project
     {
-        return new Response();
+        return new Project();
     }
 }
 CODE_SAMPLE
@@ -138,7 +146,7 @@ CODE_SAMPLE
     public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
         // already filled
-        if ($node->returnType !== null) {
+        if ($node->returnType instanceof Node) {
             return null;
         }
         if ($node instanceof ClassMethod && $this->classMethodReturnTypeOverrideGuard->shouldSkipClassMethod($node, $scope)) {
@@ -205,6 +213,10 @@ CODE_SAMPLE
             return null;
         }
         $returnType = $this->typeFactory->createMixedPassedOrUnionType($newTypes);
+        /** handled by @see \Rector\Symfony\CodeQuality\Rector\ClassMethod\ResponseReturnTypeControllerActionRector earlier */
+        if ($this->isResponseInsideController($returnType, $functionLike)) {
+            return null;
+        }
         $returnTypeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($returnType, TypeKind::RETURN);
         if (!$returnTypeNode instanceof Node) {
             return null;
@@ -230,5 +242,21 @@ CODE_SAMPLE
             $newTypes[] = $newType;
         }
         return $newTypes;
+    }
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $functionLike
+     */
+    private function isResponseInsideController(Type $returnType, $functionLike) : bool
+    {
+        if (!$functionLike instanceof ClassMethod) {
+            return \false;
+        }
+        if (!$returnType instanceof ObjectType) {
+            return \false;
+        }
+        if (!$returnType->isInstanceOf(ResponseClass::BASIC)->yes()) {
+            return \false;
+        }
+        return $this->controllerAnalyzer->isInsideController($functionLike);
     }
 }

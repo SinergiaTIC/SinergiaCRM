@@ -3,8 +3,9 @@
 declare (strict_types=1);
 namespace Rector\Configuration;
 
-use RectorPrefix202407\Nette\Utils\FileSystem;
+use RectorPrefix202411\Nette\Utils\FileSystem;
 use Rector\Bridge\SetProviderCollector;
+use Rector\Bridge\SetRectorsResolver;
 use Rector\Caching\Contract\ValueObject\Storage\CacheStorageInterface;
 use Rector\Config\Level\CodeQualityLevel;
 use Rector\Config\Level\DeadCodeLevel;
@@ -17,20 +18,19 @@ use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Contract\Rector\RectorInterface;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Exception\Configuration\InvalidConfigurationException;
-use Rector\Php\PhpVersionResolver\ProjectComposerJsonPhpVersionResolver;
+use Rector\Php\PhpVersionResolver\ComposerJsonPhpVersionResolver;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Set\Enum\SetGroup;
 use Rector\Set\SetManager;
 use Rector\Set\ValueObject\DowngradeLevelSetList;
-use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
 use Rector\Symfony\Set\FOSRestSetList;
 use Rector\Symfony\Set\JMSSetList;
 use Rector\Symfony\Set\SensiolabsSetList;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\ValueObject\PhpVersion;
-use RectorPrefix202407\Symfony\Component\Finder\Finder;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Symfony\Component\Finder\Finder;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @api
  */
@@ -171,9 +171,26 @@ final class RectorConfigBuilder
      */
     private $setGroups = [];
     /**
+     * @var bool|null
+     */
+    private $reportingRealPath;
+    /**
      * @var string[]
      */
     private $groupLoadedSets = [];
+    /**
+     * @var string|null
+     */
+    private $editorUrl;
+    /**
+     * @api soon to be used
+     * @var bool|null
+     */
+    private $isWithPhpSetsUsed;
+    /**
+     * @var bool|null
+     */
+    private $isWithPhpLevelUsed;
     public function __invoke(RectorConfig $rectorConfig) : void
     {
         // @experimental 2024-06
@@ -185,6 +202,9 @@ final class RectorConfigBuilder
         // merge sets together
         $this->sets = \array_merge($this->sets, $this->groupLoadedSets);
         $uniqueSets = \array_unique($this->sets);
+        if ($this->isWithPhpLevelUsed && $this->isWithPhpSetsUsed) {
+            throw new InvalidConfigurationException(\sprintf('Your config uses "withPhp*()" and "withPhpLevel()" methods at the same time.%sPick one of them to avoid rule conflicts.', \PHP_EOL));
+        }
         if (\in_array(SetList::TYPE_DECLARATION, $uniqueSets, \true) && $this->isTypeCoverageLevelUsed === \true) {
             throw new InvalidConfigurationException(\sprintf('Your config already enables type declarations set.%sRemove "->withTypeCoverageLevel()" as it only duplicates it, or remove type declaration set.', \PHP_EOL));
         }
@@ -276,6 +296,12 @@ final class RectorConfigBuilder
         }
         if ($this->isFluentNewLine !== null) {
             $rectorConfig->newLineOnFluentCall($this->isFluentNewLine);
+        }
+        if ($this->reportingRealPath !== null) {
+            $rectorConfig->reportingRealPath($this->reportingRealPath);
+        }
+        if ($this->editorUrl !== null) {
+            $rectorConfig->editorUrl($this->editorUrl);
         }
     }
     /**
@@ -398,6 +424,7 @@ final class RectorConfigBuilder
      */
     public function withPhpSets(bool $php83 = \false, bool $php82 = \false, bool $php81 = \false, bool $php80 = \false, bool $php74 = \false, bool $php73 = \false, bool $php72 = \false, bool $php71 = \false, bool $php70 = \false, bool $php56 = \false, bool $php55 = \false, bool $php54 = \false, bool $php53 = \false, bool $php84 = \false) : self
     {
+        $this->isWithPhpSetsUsed = \true;
         $pickedArguments = \array_filter(\func_get_args());
         if ($pickedArguments !== []) {
             Notifier::notifyWithPhpSetsNotSuitableForPHP80();
@@ -406,46 +433,62 @@ final class RectorConfigBuilder
             throw new InvalidConfigurationException(\sprintf('Pick only one version target in "withPhpSets()". All rules up to this version will be used.%sTo use your composer.json PHP version, keep arguments empty.', \PHP_EOL));
         }
         if ($pickedArguments === []) {
-            // use composer.json PHP version
-            $projectComposerJsonFilePath = \getcwd() . '/composer.json';
-            if (\file_exists($projectComposerJsonFilePath)) {
-                $projectPhpVersion = ProjectComposerJsonPhpVersionResolver::resolve($projectComposerJsonFilePath);
-                if (\is_int($projectPhpVersion)) {
-                    $this->sets[] = \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion($projectPhpVersion);
-                    return $this;
-                }
-            }
-            throw new InvalidConfigurationException(\sprintf('We could not find local "composer.json" to determine your PHP version.%sPlease, fill the PHP version set in withPhpSets() manually.', \PHP_EOL));
+            $projectPhpVersion = ComposerJsonPhpVersionResolver::resolveFromCwdOrFail();
+            $phpLevelSets = \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion($projectPhpVersion);
+            $this->sets = \array_merge($this->sets, $phpLevelSets);
+            return $this;
         }
         if ($php53) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_53;
-        } elseif ($php54) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_54;
-        } elseif ($php55) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_55;
-        } elseif ($php56) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_56;
-        } elseif ($php70) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_70;
-        } elseif ($php71) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_71;
-        } elseif ($php72) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_72;
-        } elseif ($php73) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_73;
-        } elseif ($php74) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_74;
-        } elseif ($php80) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_80;
-        } elseif ($php81) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_81;
-        } elseif ($php82) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_82;
-        } elseif ($php83) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_83;
-        } elseif ($php84) {
-            $this->sets[] = LevelSetList::UP_TO_PHP_84;
+            $this->withPhp53Sets();
+            return $this;
         }
+        if ($php54) {
+            $this->withPhp54Sets();
+            return $this;
+        }
+        if ($php55) {
+            $this->withPhp55Sets();
+            return $this;
+        }
+        if ($php56) {
+            $this->withPhp56Sets();
+            return $this;
+        }
+        if ($php70) {
+            $this->withPhp70Sets();
+            return $this;
+        }
+        if ($php71) {
+            $this->withPhp71Sets();
+            return $this;
+        }
+        if ($php72) {
+            $this->withPhp72Sets();
+            return $this;
+        }
+        if ($php73) {
+            $this->withPhp73Sets();
+            return $this;
+        }
+        if ($php74) {
+            $this->withPhp74Sets();
+            return $this;
+        }
+        if ($php80) {
+            $targetPhpVersion = PhpVersion::PHP_80;
+        } elseif ($php81) {
+            $targetPhpVersion = PhpVersion::PHP_81;
+        } elseif ($php82) {
+            $targetPhpVersion = PhpVersion::PHP_82;
+        } elseif ($php83) {
+            $targetPhpVersion = PhpVersion::PHP_83;
+        } elseif ($php84) {
+            $targetPhpVersion = PhpVersion::PHP_84;
+        } else {
+            throw new InvalidConfigurationException('Invalid PHP version set');
+        }
+        $phpLevelSets = \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion($targetPhpVersion);
+        $this->sets = \array_merge($this->sets, $phpLevelSets);
         return $this;
     }
     /**
@@ -454,47 +497,56 @@ final class RectorConfigBuilder
      */
     public function withPhp53Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_53;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_53));
         return $this;
     }
     public function withPhp54Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_54;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_54));
         return $this;
     }
     public function withPhp55Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_55;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_55));
         return $this;
     }
     public function withPhp56Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_56;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_56));
         return $this;
     }
     public function withPhp70Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_70;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_70));
         return $this;
     }
     public function withPhp71Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_71;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_71));
         return $this;
     }
     public function withPhp72Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_72;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_72));
         return $this;
     }
     public function withPhp73Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_73;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_73));
         return $this;
     }
     public function withPhp74Sets() : self
     {
-        $this->sets[] = LevelSetList::UP_TO_PHP_74;
+        $this->isWithPhpSetsUsed = \true;
+        $this->sets = \array_merge($this->sets, \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion(PhpVersion::PHP_74));
         return $this;
     }
     // there is no withPhp80Sets() and above,
@@ -701,8 +753,9 @@ final class RectorConfigBuilder
      */
     public function withDeadCodeLevel(int $level) : self
     {
+        Assert::natural($level);
         $this->isDeadCodeLevelUsed = \true;
-        $levelRules = LevelRulesResolver::resolve($level, DeadCodeLevel::RULES, 'RectorConfig::withDeadCodeLevel()');
+        $levelRules = LevelRulesResolver::resolve($level, DeadCodeLevel::RULES, __METHOD__);
         $this->rules = \array_merge($this->rules, $levelRules);
         return $this;
     }
@@ -712,9 +765,37 @@ final class RectorConfigBuilder
      */
     public function withTypeCoverageLevel(int $level) : self
     {
+        Assert::natural($level);
         $this->isTypeCoverageLevelUsed = \true;
-        $levelRules = LevelRulesResolver::resolve($level, TypeDeclarationLevel::RULES, 'RectorConfig::withTypeCoverageLevel()');
+        $levelRules = LevelRulesResolver::resolve($level, TypeDeclarationLevel::RULES, __METHOD__);
         $this->rules = \array_merge($this->rules, $levelRules);
+        return $this;
+    }
+    /**
+     * @experimental Since 1.2.5 Raise your PHP level from, one level at a time
+     */
+    public function withPhpLevel(int $level) : self
+    {
+        Assert::natural($level);
+        $this->isWithPhpLevelUsed = \true;
+        $phpVersion = ComposerJsonPhpVersionResolver::resolveFromCwdOrFail();
+        $setRectorsResolver = new SetRectorsResolver();
+        $setFilePaths = \Rector\Configuration\PhpLevelSetResolver::resolveFromPhpVersion($phpVersion);
+        $rectorRulesWithConfiguration = $setRectorsResolver->resolveFromFilePathsIncludingConfiguration($setFilePaths);
+        foreach ($rectorRulesWithConfiguration as $position => $rectorRuleWithConfiguration) {
+            // add rules untill level is reached
+            if ($position > $level) {
+                continue;
+            }
+            if (\is_string($rectorRuleWithConfiguration)) {
+                $this->rules[] = $rectorRuleWithConfiguration;
+            } elseif (\is_array($rectorRuleWithConfiguration)) {
+                foreach ($rectorRuleWithConfiguration as $rectorRule => $rectorRuleConfiguration) {
+                    /** @var class-string<ConfigurableRectorInterface> $rectorRule */
+                    $this->withConfiguredRule($rectorRule, $rectorRuleConfiguration);
+                }
+            }
+        }
         return $this;
     }
     /**
@@ -723,8 +804,9 @@ final class RectorConfigBuilder
      */
     public function withCodeQualityLevel(int $level) : self
     {
+        Assert::natural($level);
         $this->isCodeQualityLevelUsed = \true;
-        $levelRules = LevelRulesResolver::resolve($level, CodeQualityLevel::RULES, 'RectorConfig::withCodeQualityLevel()');
+        $levelRules = LevelRulesResolver::resolve($level, CodeQualityLevel::RULES, __METHOD__);
         $this->rules = \array_merge($this->rules, $levelRules);
         foreach (CodeQualityLevel::RULES_WITH_CONFIGURATION as $rectorClass => $configuration) {
             $this->rulesWithConfigurations[$rectorClass][] = $configuration;
@@ -768,6 +850,16 @@ final class RectorConfigBuilder
         if ($php71) {
             $this->sets[] = DowngradeLevelSetList::DOWN_TO_PHP_71;
         }
+        return $this;
+    }
+    public function withRealPathReporting(bool $absolutePath = \true) : self
+    {
+        $this->reportingRealPath = $absolutePath;
+        return $this;
+    }
+    public function withEditorUrl(string $editorUrl) : self
+    {
+        $this->editorUrl = $editorUrl;
         return $this;
     }
 }

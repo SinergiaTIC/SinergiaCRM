@@ -132,7 +132,7 @@ return array (
     'given' => 'Дадено|*',
     'name' => 'Bulgarian',
     'native' => 'български',
-    'rule' => 'Rule',
+    'rule' => 'Правило',
     'scenario' => 'Сценарий|Пример',
     'scenario_outline' => 'Рамка на сценарий',
     'then' => 'То|*',
@@ -344,7 +344,7 @@ return array (
     'scenario' => 'Swa',
     'scenario_outline' => 'Swa hwaer swa|Swa hwær swa',
     'then' => 'Tha the|Ða ðe|Þa þe|Tha|Ða|Þa|*',
-    'when' => 'Tha|Ða|Þa|*',
+    'when' => 'Bæþsealfa|Bæþsealfe|Bæþsealf|Ciricæwa|Ciricæwe|Ciricæw|*',
   ),
   'en-pirate' => 
   array (
@@ -844,7 +844,7 @@ return array (
   ),
   'ne' => 
   array (
-    'and' => 'अनी|*|र',
+    'and' => 'अनि|*|र',
     'background' => 'पृष्ठभूमी',
     'but' => 'तर|*',
     'examples' => 'उदाहरणहरु|उदाहरण',
@@ -1185,7 +1185,7 @@ return array (
     'but' => 'Бирок|Лекин|Аммо|*',
     'examples' => 'Мисоллар',
     'feature' => 'Функционал',
-    'given' => 'Агар|*',
+    'given' => 'Belgilangan|*',
     'name' => 'Uzbek',
     'native' => 'Узбекча',
     'rule' => 'Rule',
@@ -1220,7 +1220,7 @@ return array (
     'given' => '假如<|假定<|假设<|*',
     'name' => 'Chinese simplified',
     'native' => '简体中文',
-    'rule' => 'Rule',
+    'rule' => 'Rule|规则',
     'scenario' => '剧本|场景',
     'scenario_outline' => '剧本大纲|场景大纲',
     'then' => '那么<|*',

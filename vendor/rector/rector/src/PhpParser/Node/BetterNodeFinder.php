@@ -8,6 +8,7 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\Expr\YieldFrom;
+use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -18,7 +19,7 @@ use PhpParser\NodeTraverser;
 use Rector\NodeAnalyzer\ClassAnalyzer;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
-use RectorPrefix202407\Webmozart\Assert\Assert;
+use RectorPrefix202411\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\PhpParser\Node\BetterNodeFinder\BetterNodeFinderTest
  */
@@ -170,7 +171,7 @@ final class BetterNodeFinder
         }
         $isFoundNode = \false;
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $functionLike->stmts, static function (Node $subNode) use($types, &$isFoundNode) : ?int {
-            if ($subNode instanceof Class_ || $subNode instanceof Function_ || $subNode instanceof Closure) {
+            if ($subNode instanceof Class_ || $subNode instanceof FunctionLike) {
                 return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
             }
             foreach ($types as $type) {
@@ -191,7 +192,7 @@ final class BetterNodeFinder
     {
         $returns = [];
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $functionLike->stmts, function (Node $subNode) use(&$returns) : ?int {
-            if ($subNode instanceof Class_ || $subNode instanceof Function_ || $subNode instanceof Closure) {
+            if ($subNode instanceof Class_ || $subNode instanceof FunctionLike) {
                 return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
             }
             if ($subNode instanceof Yield_ || $subNode instanceof YieldFrom) {
@@ -207,20 +208,26 @@ final class BetterNodeFinder
         return $returns;
     }
     /**
+     * @api to be used
+     *
      * @template T of Node
-     * @param array<class-string<T>>|class-string<T> $types
-     * @return array<T>
-     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $functionLike
+     * @param Node[] $nodes
+     * @param class-string<T>|array<class-string<T>> $types
+     * @return T[]
      */
-    public function findInstancesOfInFunctionLikeScoped($functionLike, $types) : array
+    public function findInstancesOfScoped(array $nodes, $types) : array
     {
+        // here verify only pass single nodes as FunctionLike
+        if (\count($nodes) === 1 && $nodes[0] instanceof FunctionLike) {
+            $nodes = (array) $nodes[0]->getStmts();
+        }
         if (\is_string($types)) {
             $types = [$types];
         }
         /** @var T[] $foundNodes */
         $foundNodes = [];
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $functionLike->stmts, static function (Node $subNode) use($types, &$foundNodes) : ?int {
-            if ($subNode instanceof Class_ || $subNode instanceof Function_ || $subNode instanceof Closure) {
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($nodes, static function (Node $subNode) use($types, &$foundNodes) : ?int {
+            if ($subNode instanceof Class_ || $subNode instanceof FunctionLike) {
                 return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
             }
             foreach ($types as $type) {
@@ -232,6 +239,16 @@ final class BetterNodeFinder
             return null;
         });
         return $foundNodes;
+    }
+    /**
+     * @template T of Node
+     * @param array<class-string<T>>|class-string<T> $types
+     * @return array<T>
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $functionLike
+     */
+    public function findInstancesOfInFunctionLikeScoped($functionLike, $types) : array
+    {
+        return $this->findInstancesOfScoped([$functionLike], $types);
     }
     /**
      * @param callable(Node $node): bool $filter
@@ -246,12 +263,12 @@ final class BetterNodeFinder
         if (!$foundNode instanceof Node) {
             return null;
         }
-        if (!$this->hasInstancesOf($functionLike->stmts, [Class_::class, Function_::class, Closure::class])) {
+        if (!$this->hasInstancesOf($functionLike->stmts, [Class_::class, FunctionLike::class])) {
             return $foundNode;
         }
         $scopedNode = null;
         $this->simpleCallableNodeTraverser->traverseNodesWithCallable($functionLike->stmts, function (Node $subNode) use(&$scopedNode, $foundNode, $filter) : ?int {
-            if ($subNode instanceof Class_ || $subNode instanceof Function_ || $subNode instanceof Closure) {
+            if ($subNode instanceof Class_ || $subNode instanceof FunctionLike) {
                 if ($foundNode instanceof $subNode && $subNode === $foundNode) {
                     $scopedNode = $subNode;
                     return NodeTraverser::STOP_TRAVERSAL;

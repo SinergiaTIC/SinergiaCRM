@@ -20,11 +20,11 @@ use Rector\StaticReflection\DynamicSourceLocatorDecorator;
 use Rector\Util\MemoryLimiter;
 use Rector\ValueObject\Configuration;
 use Rector\ValueObject\ProcessResult;
-use RectorPrefix202407\Symfony\Component\Console\Application;
-use RectorPrefix202407\Symfony\Component\Console\Command\Command;
-use RectorPrefix202407\Symfony\Component\Console\Input\InputInterface;
-use RectorPrefix202407\Symfony\Component\Console\Output\OutputInterface;
-use RectorPrefix202407\Symfony\Component\Console\Style\SymfonyStyle;
+use RectorPrefix202411\Symfony\Component\Console\Application;
+use RectorPrefix202411\Symfony\Component\Console\Command\Command;
+use RectorPrefix202411\Symfony\Component\Console\Input\InputInterface;
+use RectorPrefix202411\Symfony\Component\Console\Output\OutputInterface;
+use RectorPrefix202411\Symfony\Component\Console\Style\SymfonyStyle;
 final class ProcessCommand extends Command
 {
     /**
@@ -101,6 +101,24 @@ final class ProcessCommand extends Command
     {
         $this->setName('process');
         $this->setDescription('Upgrades or refactors source code with provided rectors');
+        $this->setHelp(<<<'EOF'
+The <info>%command.name%</info> command will run Rector main feature:
+
+  <info>%command.full_name%</info>
+
+To specify a folder or a file, you can run:
+
+  <info>%command.full_name% src/Controller</info>
+
+You can also dry run to see the changes that Rector will make with the <comment>--dry-run</comment> option:
+
+  <info>%command.full_name% src/Controller --dry-run</info>
+
+It's also possible to get debug via the <comment>--debug</comment> option:
+
+  <info>%command.full_name% src/Controller --dry-run --debug</info>
+EOF
+);
         ProcessConfigureDecorator::decorate($this);
         parent::configure();
     }
@@ -123,7 +141,14 @@ final class ProcessCommand extends Command
         // 1. add files and directories to static locator
         $this->dynamicSourceLocatorDecorator->addPaths($paths);
         if ($this->dynamicSourceLocatorDecorator->isPathsEmpty()) {
-            $this->symfonyStyle->error('The given paths do not match any files');
+            // read from rector.php, no paths definition needs withPaths() config
+            if ($paths === []) {
+                $this->symfonyStyle->error('No paths definition in rector configuration, define paths: https://getrector.com/documentation/define-paths');
+                return ExitCode::FAILURE;
+            }
+            // read from cli paths arguments, eg: vendor/bin/rector process A B C which A, B, and C not exists
+            $isSingular = \count($paths) === 1;
+            $this->symfonyStyle->error(\sprintf('The following given path%s do%s not match any file%s or director%s: %s%s', $isSingular ? '' : 's', $isSingular ? 'es' : '', $isSingular ? '' : 's', $isSingular ? 'y' : 'ies', \PHP_EOL . \PHP_EOL . ' - ', \implode(\PHP_EOL . ' - ', $paths)));
             return ExitCode::FAILURE;
         }
         // MAIN PHASE

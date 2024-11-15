@@ -7,6 +7,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
+use Rector\Doctrine\Enum\MappingClass;
+use Rector\Doctrine\Enum\OdmMappingClass;
 use Rector\Doctrine\NodeAnalyzer\AttrinationFinder;
 use Rector\Doctrine\NodeFactory\ArrayCollectionAssignFactory;
 use Rector\NodeManipulator\ClassDependencyManipulator;
@@ -52,7 +54,7 @@ final class ExplicitRelationCollectionRector extends AbstractRector implements M
     }
     public function getRuleDefinition() : RuleDefinition
     {
-        return new RuleDefinition('Use explicit collection in one-to-many relations of Doctrine entity', [new CodeSample(<<<'CODE_SAMPLE'
+        return new RuleDefinition('Use Collection object type for one-to-many relations of Doctrine entity/ODM document', [new CodeSample(<<<'CODE_SAMPLE'
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Entity;
 
@@ -95,12 +97,12 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        if (!$this->attrinationFinder->hasByOne($node, 'Doctrine\\ORM\\Mapping\\Entity')) {
+        if (!$this->attrinationFinder->hasByMany($node, [MappingClass::ENTITY, MappingClass::EMBEDDABLE, OdmMappingClass::DOCUMENT])) {
             return null;
         }
         $arrayCollectionAssigns = [];
         foreach ($node->getProperties() as $property) {
-            if (!$this->attrinationFinder->hasByMany($property, ['Doctrine\\ORM\\Mapping\\OneToMany', 'Doctrine\\ORM\\Mapping\\ManyToMany'])) {
+            if (!$this->attrinationFinder->hasByMany($property, [MappingClass::ONE_TO_MANY, MappingClass::MANY_TO_MANY, OdmMappingClass::REFERENCE_MANY])) {
                 continue;
             }
             // make sure has collection

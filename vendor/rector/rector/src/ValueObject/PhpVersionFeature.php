@@ -480,6 +480,11 @@ final class PhpVersionFeature
      */
     public const INTERSECTION_TYPES = \Rector\ValueObject\PhpVersion::PHP_81;
     /**
+     * @see https://php.watch/versions/8.2/dnf-types
+     * @var int
+     */
+    public const UNION_INTERSECTION_TYPES = \Rector\ValueObject\PhpVersion::PHP_82;
+    /**
      * @see https://wiki.php.net/rfc/array_unpacking_string_keys
      * @var int
      */
@@ -555,4 +560,10 @@ final class PhpVersionFeature
      * @var int
      */
     public const DEPRECATE_HOST_PORT_SEPARATE_ARGS = \Rector\ValueObject\PhpVersion::PHP_83;
+    /**
+     * @see https://www.php.net/manual/en/migration83.deprecated.php#migration83.deprecated.core.get-class
+     * @see https://php.watch/versions/8.3/get_class-get_parent_class-parameterless-deprecated
+     * @var int
+     */
+    public const DEPRECATE_GET_CLASS_WITHOUT_ARGS = \Rector\ValueObject\PhpVersion::PHP_83;
 }

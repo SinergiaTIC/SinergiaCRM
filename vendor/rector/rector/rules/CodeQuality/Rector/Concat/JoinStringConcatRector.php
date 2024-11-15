@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\Concat;
 
-use RectorPrefix202407\Nette\Utils\Strings;
+use RectorPrefix202411\Nette\Utils\Strings;
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Scalar\String_;
@@ -64,6 +64,11 @@ CODE_SAMPLE
             return null;
         }
         if (!$node->right instanceof String_) {
+            return null;
+        }
+        $leftStartLine = $node->left->getStartLine();
+        $rightStartLine = $node->right->getStartLine();
+        if ($leftStartLine > 0 && $rightStartLine > 0 && $rightStartLine > $leftStartLine) {
             return null;
         }
         return $this->joinConcatIfStrings($node->left, $node->right);

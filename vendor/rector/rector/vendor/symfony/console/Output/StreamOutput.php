@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202407\Symfony\Component\Console\Output;
+namespace RectorPrefix202411\Symfony\Component\Console\Output;
 
-use RectorPrefix202407\Symfony\Component\Console\Exception\InvalidArgumentException;
-use RectorPrefix202407\Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use RectorPrefix202411\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202411\Symfony\Component\Console\Formatter\OutputFormatterInterface;
 /**
  * StreamOutput writes the output to a given stream.
  *
@@ -82,7 +82,7 @@ class StreamOutput extends Output
     protected function hasColorSupport() : bool
     {
         // Follow https://no-color.org/
-        if (isset($_SERVER['NO_COLOR']) || \false !== \getenv('NO_COLOR')) {
+        if ('' !== (($_SERVER['NO_COLOR'] ?? \getenv('NO_COLOR'))[0] ?? '')) {
             return \false;
         }
         // Detect msysgit/mingw and assume this is a tty because detection

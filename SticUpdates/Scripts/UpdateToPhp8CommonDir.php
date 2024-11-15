@@ -1,14 +1,16 @@
 <?php
 // Execute Rector in custom folder to migrate to PHP 8.2
 
-if (!file_exists('vendor/rector/rector/bin/rector')) {
+$rectorDir = __DIR__.'/../../vendor/rector/rector/bin/rector';
+
+if (!file_exists($rectorDir)) {
     echo "Rector is not installed. Can not run script<br />";
     exit(1);
 }
 
-$configFile = 'SticRectorConfig.php'; 
-// $command = escapeshellcmd("php vendor/rector/rector/bin/rector process --dry-run --config={$configFile}");
-$command = escapeshellcmd("php vendor/rector/rector/bin/rector process --config={$configFile}");
+$configFile = __DIR__.'/../../SticRectorConfig.php'; 
+// $command = escapeshellcmd("php $rectorDir process --dry-run --config={$configFile}")
+$command = escapeshellcmd("php $rectorDir process --config={$configFile}");
 
 exec($command, $output, $returnVar);
 

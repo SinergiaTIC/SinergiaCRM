@@ -17,6 +17,9 @@ use PHPStan\Type\UnionType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\DeadCode\PhpDoc\TagRemover\VarTagRemover;
+use Rector\Doctrine\CodeQuality\Enum\CollectionMapping;
+use Rector\Doctrine\Enum\MappingClass;
+use Rector\Doctrine\NodeAnalyzer\AttrinationFinder;
 use Rector\Php74\Guard\MakePropertyTypedGuard;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
@@ -75,6 +78,11 @@ final class TypedPropertyFromAssignsRector extends AbstractRector implements Min
      */
     private $staticTypeMapper;
     /**
+     * @readonly
+     * @var \Rector\Doctrine\NodeAnalyzer\AttrinationFinder
+     */
+    private $attrinationFinder;
+    /**
      * @api
      * @var string
      */
@@ -89,7 +97,7 @@ final class TypedPropertyFromAssignsRector extends AbstractRector implements Min
      * @var bool
      */
     private $inlinePublic = \false;
-    public function __construct(AllAssignNodePropertyTypeInferer $allAssignNodePropertyTypeInferer, PropertyTypeDecorator $propertyTypeDecorator, VarTagRemover $varTagRemover, MakePropertyTypedGuard $makePropertyTypedGuard, ReflectionResolver $reflectionResolver, PhpDocInfoFactory $phpDocInfoFactory, ValueResolver $valueResolver, StaticTypeMapper $staticTypeMapper)
+    public function __construct(AllAssignNodePropertyTypeInferer $allAssignNodePropertyTypeInferer, PropertyTypeDecorator $propertyTypeDecorator, VarTagRemover $varTagRemover, MakePropertyTypedGuard $makePropertyTypedGuard, ReflectionResolver $reflectionResolver, PhpDocInfoFactory $phpDocInfoFactory, ValueResolver $valueResolver, StaticTypeMapper $staticTypeMapper, AttrinationFinder $attrinationFinder)
     {
         $this->allAssignNodePropertyTypeInferer = $allAssignNodePropertyTypeInferer;
         $this->propertyTypeDecorator = $propertyTypeDecorator;
@@ -99,6 +107,7 @@ final class TypedPropertyFromAssignsRector extends AbstractRector implements Min
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->valueResolver = $valueResolver;
         $this->staticTypeMapper = $staticTypeMapper;
+        $this->attrinationFinder = $attrinationFinder;
     }
     public function configure(array $configuration) : void
     {
@@ -153,6 +162,9 @@ CODE_SAMPLE
             if (!$property->isPrivate() && !$this->inlinePublic) {
                 continue;
             }
+            if ($this->isDoctrineMappedProperty($property)) {
+                continue;
+            }
             if (!$classReflection instanceof ClassReflection) {
                 $classReflection = $this->reflectionResolver->resolveClassReflection($node);
             }
@@ -204,5 +216,13 @@ CODE_SAMPLE
             return $inferredType;
         }
         return TypeCombinator::addNull($inferredType);
+    }
+    /**
+     * Doctrine properties are handled in doctrine rules
+     */
+    private function isDoctrineMappedProperty(Property $property) : bool
+    {
+        $mappingClasses = \array_merge(CollectionMapping::TO_MANY_CLASSES, CollectionMapping::TO_ONE_CLASSES, [MappingClass::COLUMN]);
+        return $this->attrinationFinder->hasByMany($property, $mappingClasses);
     }
 }

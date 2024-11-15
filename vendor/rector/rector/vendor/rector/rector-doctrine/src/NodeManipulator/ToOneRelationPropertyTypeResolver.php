@@ -3,8 +3,9 @@
 declare (strict_types=1);
 namespace Rector\Doctrine\NodeManipulator;
 
-use RectorPrefix202407\Nette\Utils\Strings;
+use RectorPrefix202411\Nette\Utils\Strings;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\PhpDocParser\Ast\ConstExpr\ConstExprTrueNode;
 use PHPStan\Type\MixedType;
@@ -16,6 +17,8 @@ use Rector\BetterPhpDocParser\PhpDoc\StringNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocParser\ClassAnnotationMatcher;
+use Rector\Doctrine\CodeQuality\Enum\CollectionMapping;
+use Rector\Doctrine\CodeQuality\Enum\EntityMappingKey;
 use Rector\Doctrine\NodeAnalyzer\AttributeFinder;
 use Rector\Doctrine\NodeAnalyzer\TargetEntityResolver;
 use Rector\NodeTypeResolver\PHPStan\Type\TypeFactory;
@@ -47,10 +50,6 @@ final class ToOneRelationPropertyTypeResolver
      * @var \Rector\Doctrine\NodeAnalyzer\TargetEntityResolver
      */
     private $targetEntityResolver;
-    /**
-     * @var class-string[]
-     */
-    private const TO_ONE_ANNOTATION_CLASSES = ['Doctrine\\ORM\\Mapping\\ManyToOne', 'Doctrine\\ORM\\Mapping\\OneToOne'];
     private const JOIN_COLUMN = ['Doctrine\\ORM\\Mapping\\JoinColumn', 'Doctrine\\ORM\\Mapping\\Column'];
     public function __construct(TypeFactory $typeFactory, PhpDocInfoFactory $phpDocInfoFactory, ClassAnnotationMatcher $classAnnotationMatcher, AttributeFinder $attributeFinder, TargetEntityResolver $targetEntityResolver)
     {
@@ -63,11 +62,11 @@ final class ToOneRelationPropertyTypeResolver
     public function resolve(Property $property, bool $forceNullable) : ?Type
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($property);
-        $doctrineAnnotationTagValueNode = $phpDocInfo->getByAnnotationClasses(self::TO_ONE_ANNOTATION_CLASSES);
+        $doctrineAnnotationTagValueNode = $phpDocInfo->getByAnnotationClasses(CollectionMapping::TO_ONE_CLASSES);
         if ($doctrineAnnotationTagValueNode instanceof DoctrineAnnotationTagValueNode) {
             return $this->resolveFromDocBlock($phpDocInfo, $property, $doctrineAnnotationTagValueNode, $forceNullable);
         }
-        $expr = $this->attributeFinder->findAttributeByClassesArgByName($property, self::TO_ONE_ANNOTATION_CLASSES, 'targetEntity');
+        $expr = $this->attributeFinder->findAttributeByClassesArgByName($property, CollectionMapping::TO_ONE_CLASSES, EntityMappingKey::TARGET_ENTITY);
         if (!$expr instanceof Expr) {
             return null;
         }
@@ -81,7 +80,7 @@ final class ToOneRelationPropertyTypeResolver
     }
     private function processToOneRelation(Property $property, DoctrineAnnotationTagValueNode $toOneDoctrineAnnotationTagValueNode, ?DoctrineAnnotationTagValueNode $joinDoctrineAnnotationTagValueNode, bool $forceNullable) : Type
     {
-        $targetEntityArrayItemNode = $toOneDoctrineAnnotationTagValueNode->getValue('targetEntity');
+        $targetEntityArrayItemNode = $toOneDoctrineAnnotationTagValueNode->getValue(EntityMappingKey::TARGET_ENTITY);
         if (!$targetEntityArrayItemNode instanceof ArrayItemNode) {
             return new MixedType();
         }
@@ -133,6 +132,6 @@ final class ToOneRelationPropertyTypeResolver
     private function isNullableJoinColumn(Property $property) : bool
     {
         $joinExpr = $this->attributeFinder->findAttributeByClassesArgByName($property, self::JOIN_COLUMN, 'nullable');
-        return $joinExpr instanceof Expr\ConstFetch && !\in_array('false', $joinExpr->name->getParts(), \true);
+        return $joinExpr instanceof ConstFetch && !\in_array('false', $joinExpr->name->getParts(), \true);
     }
 }

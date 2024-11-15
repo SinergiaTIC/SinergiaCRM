@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\StaticTypeMapper\ValueObject\Type;
 
-use RectorPrefix202407\Nette\Utils\Strings;
+use RectorPrefix202411\Nette\Utils\Strings;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\Stmt\UseUse;
@@ -36,8 +36,6 @@ final class FullyQualifiedObjectType extends ObjectType
     public function getShortNameNode() : Name
     {
         $name = new Name($this->getShortName());
-        // to avoid processing short name twice
-        $name->setAttribute(AttributeKey::VIRTUAL_NODE, \true);
         // keep original to avoid loss on while importing
         $name->setAttribute(AttributeKey::NAMESPACED_NAME, $this->getClassName());
         return $name;

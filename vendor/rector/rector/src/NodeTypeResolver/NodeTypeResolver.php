@@ -15,6 +15,9 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\ClassConst;
+use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\UnionType as NodeUnionType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\ClassAutoloadingException;
@@ -35,6 +38,7 @@ use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 use Rector\Configuration\RenamedClassesDataCollector;
+use Rector\Exception\ShouldNotHappenException;
 use Rector\NodeAnalyzer\ClassAnalyzer;
 use Rector\NodeTypeResolver\Contract\NodeTypeResolverAwareInterface;
 use Rector\NodeTypeResolver\Contract\NodeTypeResolverInterface;
@@ -78,6 +82,10 @@ final class NodeTypeResolver
      */
     private $renamedClassesDataCollector;
     /**
+     * @var string
+     */
+    private const ERROR_MESSAGE = '%s itself does not have any type. Check the %s node instead';
+    /**
      * @var array<class-string<Node>, NodeTypeResolverInterface>
      */
     private $nodeTypeResolvers = [];
@@ -118,6 +126,10 @@ final class NodeTypeResolver
     {
         if ($node instanceof ClassConstFetch) {
             return \false;
+        }
+        // warn about invalid use of this method
+        if ($node instanceof ClassMethod || $node instanceof ClassConst) {
+            throw new ShouldNotHappenException(\sprintf(self::ERROR_MESSAGE, \get_class($node), ClassLike::class));
         }
         $resolvedType = $this->getType($node);
         if ($resolvedType instanceof MixedType) {
@@ -358,7 +370,14 @@ final class NodeTypeResolver
     }
     private function isAnonymousObjectType(Type $type) : bool
     {
-        return $type instanceof ObjectType && $this->classAnalyzer->isAnonymousClassName($type->getClassName());
+        if (!$type instanceof ObjectType) {
+            return \false;
+        }
+        $classReflection = $type->getClassReflection();
+        if (!$classReflection instanceof ClassReflection) {
+            return \false;
+        }
+        return $classReflection->isAnonymous();
     }
     private function isUnionTypeable(Type $first, Type $second) : bool
     {
