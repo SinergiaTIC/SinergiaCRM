@@ -50,7 +50,7 @@ abstract class AbstractBrowser
     /**
      * @param array $server The server parameters (equivalent of $_SERVER)
      */
-    public function __construct(array $server = [], History $history = null, CookieJar $cookieJar = null)
+    public function __construct(array $server = [], ?History $history = null, ?CookieJar $cookieJar = null)
     {
         $this->setServerParameters($server);
         $this->history = $history ?? new History();
@@ -146,7 +146,7 @@ abstract class AbstractBrowser
         return $this->server[$key] ?? $default;
     }
 
-    public function xmlHttpRequest(string $method, string $uri, array $parameters = [], array $files = [], array $server = [], string $content = null, bool $changeHistory = true): Crawler
+    public function xmlHttpRequest(string $method, string $uri, array $parameters = [], array $files = [], array $server = [], ?string $content = null, bool $changeHistory = true): Crawler
     {
         $this->setServerParameter('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
 
@@ -352,7 +352,7 @@ abstract class AbstractBrowser
      *
      * @return Crawler
      */
-    public function request(string $method, string $uri, array $parameters = [], array $files = [], array $server = [], string $content = null, bool $changeHistory = true)
+    public function request(string $method, string $uri, array $parameters = [], array $files = [], array $server = [], ?string $content = null, bool $changeHistory = true)
     {
         if ($this->isMainRequest) {
             $this->redirectCount = 0;
@@ -366,11 +366,11 @@ abstract class AbstractBrowser
 
         $server = array_merge($this->server, $server);
 
-        if (!empty($server['HTTP_HOST']) && null === parse_url($originalUri, \PHP_URL_HOST)) {
+        if (!empty($server['HTTP_HOST']) && !parse_url($originalUri, \PHP_URL_HOST)) {
             $uri = preg_replace('{^(https?\://)'.preg_quote($this->extractHost($uri)).'}', '${1}'.$server['HTTP_HOST'], $uri);
         }
 
-        if (isset($server['HTTPS']) && null === parse_url($originalUri, \PHP_URL_SCHEME)) {
+        if (isset($server['HTTPS']) && !parse_url($originalUri, \PHP_URL_SCHEME)) {
             $uri = preg_replace('{^'.parse_url($uri, \PHP_URL_SCHEME).'}', $server['HTTPS'] ? 'https' : 'http', $uri);
         }
 
@@ -382,7 +382,7 @@ abstract class AbstractBrowser
             $server['HTTP_HOST'] = $this->extractHost($uri);
         }
 
-        $server['HTTPS'] = 'https' == parse_url($uri, \PHP_URL_SCHEME);
+        $server['HTTPS'] = 'https' === parse_url($uri, \PHP_URL_SCHEME);
 
         $this->internalRequest = new Request($uri, $method, $parameters, $files, $this->cookieJar->allValues($uri), $server, $content);
 

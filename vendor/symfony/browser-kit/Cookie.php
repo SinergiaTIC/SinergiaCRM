@@ -55,7 +55,7 @@ class Cookie
      * @param bool        $encodedValue Whether the value is encoded or not
      * @param string|null $samesite     The cookie samesite attribute
      */
-    public function __construct(string $name, ?string $value, string $expires = null, string $path = null, string $domain = '', bool $secure = false, bool $httponly = true, bool $encodedValue = false, string $samesite = null)
+    public function __construct(string $name, ?string $value, ?string $expires = null, ?string $path = null, string $domain = '', bool $secure = false, bool $httponly = true, bool $encodedValue = false, ?string $samesite = null)
     {
         if ($encodedValue) {
             $this->value = urldecode($value);
@@ -125,7 +125,7 @@ class Cookie
      *
      * @throws \InvalidArgumentException
      */
-    public static function fromString(string $cookie, string $url = null)
+    public static function fromString(string $cookie, ?string $url = null)
     {
         $parts = explode(';', $cookie);
 
@@ -148,7 +148,7 @@ class Cookie
         ];
 
         if (null !== $url) {
-            if ((false === $urlParts = parse_url($url)) || !isset($urlParts['host'])) {
+            if (false === ($urlParts = parse_url($url)) || !isset($urlParts['host'])) {
                 throw new \InvalidArgumentException(sprintf('The URL "%s" is not valid.', $url));
             }
 
@@ -161,7 +161,7 @@ class Cookie
 
             if ('secure' === strtolower($part)) {
                 // Ignore the secure flag if the original URI is not given or is not HTTPS
-                if (!$url || !isset($urlParts['scheme']) || 'https' != $urlParts['scheme']) {
+                if (null === $url || !isset($urlParts['scheme']) || 'https' != $urlParts['scheme']) {
                     continue;
                 }
 

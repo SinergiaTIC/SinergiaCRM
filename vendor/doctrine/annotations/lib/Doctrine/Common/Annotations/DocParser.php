@@ -49,6 +49,8 @@ use const PHP_VERSION_ID;
  * A parser for docblock annotations.
  *
  * It is strongly discouraged to change the default annotation parsing process.
+ *
+ * @psalm-type Arguments = array{positional_arguments?: array<int, mixed>, named_arguments?: array<string, mixed>}
  */
 final class DocParser
 {
@@ -357,10 +359,10 @@ final class DocParser
      * @param string $input   The docblock string to parse.
      * @param string $context The parsing context.
      *
+     * @phpstan-return list<object> Array of annotations. If no annotations are found, an empty array is returned.
+     *
      * @throws AnnotationException
      * @throws ReflectionException
-     *
-     * @phpstan-return list<object> Array of annotations. If no annotations are found, an empty array is returned.
      */
     public function parse($input, $context = '')
     {
@@ -426,9 +428,9 @@ final class DocParser
      * If any of them matches, this method updates the lookahead token; otherwise
      * a syntax error is raised.
      *
-     * @throws AnnotationException
-     *
      * @phpstan-param list<mixed[]> $tokens
+     *
+     * @throws AnnotationException
      */
     private function matchAny(array $tokens): bool
     {
@@ -613,6 +615,10 @@ final class DocParser
                 $metadata['default_property'] = reset($metadata['properties']);
             } elseif ($metadata['has_named_argument_constructor']) {
                 foreach ($constructor->getParameters() as $parameter) {
+                    if ($parameter->isVariadic()) {
+                        break;
+                    }
+
                     $metadata['constructor_args'][$parameter->getName()] = [
                         'position' => $parameter->getPosition(),
                         'default' => $parameter->isOptional() ? $parameter->getDefaultValue() : null,
@@ -674,10 +680,10 @@ final class DocParser
     /**
      * Annotations ::= Annotation {[ "*" ]* [Annotation]}*
      *
+     * @phpstan-return list<object>
+     *
      * @throws AnnotationException
      * @throws ReflectionException
-     *
-     * @phpstan-return list<object>
      */
     private function Annotations(): array
     {
@@ -942,6 +948,23 @@ EXCEPTION
 
         if (self::$annotationMetadata[$name]['has_named_argument_constructor']) {
             if (PHP_VERSION_ID >= 80000) {
+                foreach ($values as $property => $value) {
+                    if (! isset(self::$annotationMetadata[$name]['constructor_args'][$property])) {
+                        throw AnnotationException::creationError(sprintf(
+                            <<<'EXCEPTION'
+The annotation @%s declared on %s does not have a property named "%s"
+that can be set through its named arguments constructor.
+Available named arguments: %s
+EXCEPTION
+                            ,
+                            $originalName,
+                            $this->context,
+                            $property,
+                            implode(', ', array_keys(self::$annotationMetadata[$name]['constructor_args']))
+                        ));
+                    }
+                }
+
                 return $this->instantiateAnnotiation($originalName, $this->context, $name, $values);
             }
 
@@ -1017,7 +1040,7 @@ EXCEPTION
     /**
      * MethodCall ::= ["(" [Values] ")"]
      *
-     * @return mixed[]
+     * @psalm-return Arguments
      *
      * @throws AnnotationException
      * @throws ReflectionException
@@ -1044,7 +1067,7 @@ EXCEPTION
     /**
      * Values ::= Array | Value {"," Value}* [","]
      *
-     * @return mixed[]
+     * @psalm-return Arguments
      *
      * @throws AnnotationException
      * @throws ReflectionException
@@ -1166,9 +1189,7 @@ EXCEPTION
         return $this->getClassConstantPositionInIdentifier($identifier) === strlen($identifier) - strlen('::class');
     }
 
-    /**
-     * @return int|false
-     */
+    /** @return int|false */
     private function getClassConstantPositionInIdentifier(string $identifier)
     {
         return stripos($identifier, '::class');
@@ -1357,10 +1378,10 @@ EXCEPTION
      * KeyValuePair ::= Key ("=" | ":") PlainValue | Constant
      * Key ::= string | integer | Constant
      *
+     * @phpstan-return array{mixed, mixed}
+     *
      * @throws AnnotationException
      * @throws ReflectionException
-     *
-     * @phpstan-return array{mixed, mixed}
      */
     private function ArrayEntry(): array
     {
@@ -1408,7 +1429,7 @@ EXCEPTION
     /**
      * Resolve positional arguments (without name) to named ones
      *
-     * @param array<string,mixed> $arguments
+     * @psalm-param Arguments $arguments
      *
      * @return array<string,mixed>
      */

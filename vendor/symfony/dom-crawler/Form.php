@@ -44,7 +44,7 @@ class Form extends Link implements \ArrayAccess
      *
      * @throws \LogicException if the node is not a button inside a form tag
      */
-    public function __construct(\DOMElement $node, string $currentUri = null, string $method = null, string $baseHref = null)
+    public function __construct(\DOMElement $node, ?string $currentUri = null, ?string $method = null, ?string $baseHref = null)
     {
         parent::__construct($node, $currentUri, $method);
         $this->baseHref = $baseHref;
@@ -203,9 +203,8 @@ class Form extends Link implements \ArrayAccess
         $uri = parent::getUri();
 
         if (!\in_array($this->getMethod(), ['POST', 'PUT', 'DELETE', 'PATCH'])) {
-            $query = parse_url($uri, \PHP_URL_QUERY);
             $currentParameters = [];
-            if ($query) {
+            if ($query = parse_url($uri, \PHP_URL_QUERY)) {
                 parse_str($query, $currentParameters);
             }
 

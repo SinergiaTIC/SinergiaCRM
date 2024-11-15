@@ -55,7 +55,7 @@ class Image extends Base
         trigger_deprecation(
             'fakerphp/faker',
             '1.20',
-            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead'
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
         );
 
         // Validate image format
@@ -65,7 +65,7 @@ class Image extends Base
             throw new \InvalidArgumentException(sprintf(
                 'Invalid image format "%s". Allowable formats are: %s',
                 $format,
-                implode(', ', $imageFormats)
+                implode(', ', $imageFormats),
             ));
         }
 
@@ -92,7 +92,7 @@ class Image extends Base
             self::BASE_URL,
             $size,
             $backgroundColor,
-            count($imageParts) > 0 ? '?text=' . urlencode(implode(' ', $imageParts)) : ''
+            count($imageParts) > 0 ? '?text=' . urlencode(implode(' ', $imageParts)) : '',
         );
     }
 
@@ -119,10 +119,11 @@ class Image extends Base
         trigger_deprecation(
             'fakerphp/faker',
             '1.20',
-            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead'
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
         );
 
         $dir = null === $dir ? sys_get_temp_dir() : $dir; // GNU/Linux / OS X / Windows compatible
+
         // Validate directory path
         if (!is_dir($dir) || !is_writable($dir)) {
             throw new \InvalidArgumentException(sprintf('Cannot write to directory "%s"', $dir));
@@ -172,7 +173,7 @@ class Image extends Base
         trigger_deprecation(
             'fakerphp/faker',
             '1.20',
-            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead'
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
         );
 
         return array_keys(static::getFormatConstants());
@@ -183,7 +184,7 @@ class Image extends Base
         trigger_deprecation(
             'fakerphp/faker',
             '1.20',
-            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead'
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
         );
 
         return [

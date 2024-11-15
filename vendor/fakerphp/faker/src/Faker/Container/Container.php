@@ -16,9 +16,9 @@ final class Container implements ContainerInterface
     /**
      * @var array<string, callable|object|string>
      */
-    private $definitions;
+    private array $definitions;
 
-    private $services = [];
+    private array $services = [];
 
     /**
      * Create a container object with a set of definitions. The array value MUST
@@ -46,7 +46,7 @@ final class Container implements ContainerInterface
         if (!is_string($id)) {
             throw new \InvalidArgumentException(sprintf(
                 'First argument of %s::get() must be string',
-                self::class
+                self::class,
             ));
         }
 
@@ -57,21 +57,23 @@ final class Container implements ContainerInterface
         if (!$this->has($id)) {
             throw new NotInContainerException(sprintf(
                 'There is not service with id "%s" in the container.',
-                $id
+                $id,
             ));
         }
 
         $definition = $this->definitions[$id];
 
-        $service = $this->services[$id] = $this->getService($id, $definition);
+        $service = $this->getService($id, $definition);
 
         if (!$service instanceof Extension) {
             throw new \RuntimeException(sprintf(
                 'Service resolved for identifier "%s" does not implement the %s" interface.',
                 $id,
-                Extension::class
+                Extension::class,
             ));
         }
+
+        $this->services[$id] = $service;
 
         return $service;
     }
@@ -81,7 +83,7 @@ final class Container implements ContainerInterface
      *
      * @param callable|object|string $definition
      */
-    private function getService($id, $definition)
+    private function getService(string $id, $definition)
     {
         if (is_callable($definition)) {
             try {
@@ -90,7 +92,7 @@ final class Container implements ContainerInterface
                 throw new ContainerException(
                     sprintf('Error while invoking callable for "%s"', $id),
                     0,
-                    $e
+                    $e,
                 );
             }
         } elseif (is_object($definition)) {
@@ -106,12 +108,12 @@ final class Container implements ContainerInterface
 
             throw new ContainerException(sprintf(
                 'Could not instantiate class "%s". Class was not found.',
-                $id
+                $id,
             ));
         } else {
             throw new ContainerException(sprintf(
                 'Invalid type for definition with id "%s"',
-                $id
+                $id,
             ));
         }
     }
@@ -128,18 +130,10 @@ final class Container implements ContainerInterface
         if (!is_string($id)) {
             throw new \InvalidArgumentException(sprintf(
                 'First argument of %s::get() must be string',
-                self::class
+                self::class,
             ));
         }
 
         return array_key_exists($id, $this->definitions);
-    }
-
-    /**
-     * Get the bindings between Extension interfaces and implementations.
-     */
-    public function getDefinitions(): array
-    {
-        return $this->definitions;
     }
 }
