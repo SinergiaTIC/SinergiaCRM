@@ -55,6 +55,8 @@ $moduleList[] = 'stic_Prescription';
 $moduleList[] = 'stic_Security_Groups_Rules';
 $moduleList[] = 'stic_Grants';
 $moduleList[] = 'stic_Centers';
+$moduleList[] = 'stic_Time_Tracker';
+$moduleList[] = 'stic_Work_Calendar';
 $moduleList[] = 'stic_Journal';
 $moduleList[] = 'stic_Training';
 $moduleList[] = 'stic_Work_Experience';
@@ -63,6 +65,7 @@ $moduleList[] = 'stic_Custom_Views';
 $moduleList[] = 'stic_Custom_View_Customizations';
 $moduleList[] = 'stic_Custom_View_Conditions';
 $moduleList[] = 'stic_Custom_View_Actions';
+$moduleList[] = 'stic_Group_Opportunities';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -99,6 +102,8 @@ $beanList['stic_Prescription'] = 'stic_Prescription';
 $beanList['stic_Security_Groups_Rules'] = 'stic_Security_Groups_Rules';
 $beanList['stic_Grants'] = 'stic_Grants';
 $beanList['stic_Centers'] = 'stic_Centers';
+$beanList['stic_Time_Tracker'] = 'stic_Time_Tracker';
+$beanList['stic_Work_Calendar'] = 'stic_Work_Calendar';
 $beanList['stic_Journal'] = 'stic_Journal';
 $beanList['stic_Training'] = 'stic_Training';
 $beanList['stic_Work_Experience'] = 'stic_Work_Experience';
@@ -107,6 +112,7 @@ $beanList['stic_Custom_Views'] = 'stic_Custom_Views';
 $beanList['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations';
 $beanList['stic_Custom_View_Conditions'] = 'stic_Custom_View_Conditions';
 $beanList['stic_Custom_View_Actions'] = 'stic_Custom_View_Actions';
+$beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -142,6 +148,8 @@ $beanFiles['stic_Prescription'] = 'modules/stic_Prescription/stic_Prescription.p
 $beanFiles['stic_Security_Groups_Rules'] = 'modules/stic_Security_Groups_Rules/stic_Security_Groups_Rules.php';
 $beanFiles['stic_Grants'] = 'modules/stic_Grants/stic_Grants.php';
 $beanFiles['stic_Centers'] = 'modules/stic_Centers/stic_Centers.php';
+$beanFiles['stic_Time_Tracker'] = 'modules/stic_Time_Tracker/stic_Time_Tracker.php';
+$beanFiles['stic_Work_Calendar'] = 'modules/stic_Work_Calendar/stic_Work_Calendar.php';
 $beanFiles['stic_Journal'] = 'modules/stic_Journal/stic_Journal.php';
 $beanFiles['stic_Training'] = 'modules/stic_Training/stic_Training.php';
 $beanFiles['stic_Work_Experience'] = 'modules/stic_Work_Experience/stic_Work_Experience.php';
@@ -150,6 +158,8 @@ $beanFiles['stic_Custom_Views'] = 'modules/stic_Custom_Views/stic_Custom_Views.p
 $beanFiles['stic_Custom_View_Customizations'] = 'modules/stic_Custom_View_Customizations/stic_Custom_View_Customizations.php';
 $beanFiles['stic_Custom_View_Conditions'] = 'modules/stic_Custom_View_Conditions/stic_Custom_View_Conditions.php';
 $beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
+$beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
+
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';

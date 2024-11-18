@@ -34,7 +34,10 @@ class stic_Custom_Views_ProcessorLogicHooks
         if ($action == "subpanelcreates") {
             $view = "quickcreate";
             $module = $_POST["target_module"];
+        } else if ($action == "popup") {
+            $view = "quickcreate";
         }
+        
         $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'];
         if (!array_key_exists($view, $availableViews)) {
             return "";
@@ -254,7 +257,7 @@ class stic_Custom_Views_ProcessorLogicHooks
             case "date":
             case "datetime":
             case "datetimecombo":
-                return $timedate->to_display_date_time($value, true, false, $current_user);
+                return $timedate->asUser($timedate->fromDbFormat($value, TimeDate::DB_DATETIME_FORMAT), $current_user);
         }
         return $value;
     }

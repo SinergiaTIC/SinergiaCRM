@@ -218,7 +218,6 @@ class DonationController extends stic_Web_FormsAssistantController {
             'email_template_id' => $this->persistentData['EMAIL_TEMPLATE_ID'],
             'relation_type' => $this->persistentData['RELATION_TYPE'],
             'include_recaptcha' => ($this->persistentData['include_recaptcha'] ? 1 : 0),
-            'recaptcha_configs' => ($this->persistentData['recaptcha_configs']),
             'recaptcha_configKeys' => ($this->persistentData['recaptcha_configKeys']),
             'recaptcha_selected' => ($this->persistentData['recaptcha_selected']),
         ));
@@ -255,7 +254,7 @@ class DonationController extends stic_Web_FormsAssistantController {
             ),
             array(
                 'NAME' => 'stripe_payment_method_types',
-                'VALUE' => 'card,paypal,sepa_debit,sofort',
+                'VALUE' => 'card,sepa_debit',
             ),
             array(
                 'NAME' => 'assigned_user_id',

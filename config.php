@@ -576,13 +576,18 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '1.4.0',
-    'js_custom_version' => 5,
-    'stic_show_update_alert' => 1,
+    'sinergiacrm_version' => '1.7.2', 
+    'js_custom_version' => 10,
+    'stic_show_update_alert' => 0,
     // END STIC
 
     // STIC-Custom 20240117 JCH - Security Groups Module Rules activation config
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
     'stic_security_groups_rules_enabled' => false,
+    // END STIC
+
+    // STIC-Custom 20240528 JBL - Disable AjaxUI calls
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/253
+    'disableAjaxUI' => true,
     // END STIC
 );
