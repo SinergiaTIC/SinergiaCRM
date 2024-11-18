@@ -156,11 +156,65 @@ use Rector\Php82\Rector\New_\FilesystemIteratorSkipDotsRector;
 
 return static function (RectorConfig $rectorConfig): void {
 
+    $path = __DIR__ . '/modules';
+    $excludedDirs = [
+        'ACL', 'ACLActions', 'ACLRoles',
+        'AM_ProjectTemplates', 'AM_TaskTemplates',
+        'AOBH_BusinessHours',
+        'AOD_Index', 'AOD_IndexEvent',
+        'AOK_KnowledgeBase', 'AOK_Knowledge_Base_Categories',
+        'AOP_Case_Events', 'AOP_Case_Updates',
+        'AOR_Charts', 'AOR_Conditions', 'AOR_Fields', 'AOR_Reports', 'AOR_Scheduled_Reports',
+        'AOS_Contracts', 'AOS_Invoices', 'AOS_Line_Item_Groups', 'AOS_PDF_Templates', 'AOS_Product_Categories', 'AOS_Products', 'AOS_Products_Quotes', 'AOS_Quotes',
+        'AOW_Actions', 'AOW_Conditions', 'AOW_Processed', 'AOW_WorkFlow',
+        'Accounts', 'Activities', 'Administration', 'Alerts', 'Audit', 'Bugs',
+        'Calendar', 'Calls', 'Calls_Reschedule',
+        'CampaignLog', 'CampaignTrackers', 'Campaigns',
+        'Cases', 'Charts', 'Configurator', 'Connectors', 'Contacts', 'Currencies',
+        'DHA_PlantillasDocumentos', 'Delegates', 'DocumentRevisions', 'Documents',
+        'DynamicFields', 'EAPM',
+        'EmailAddresses', 'EmailMan', 'EmailMarketing', 'EmailTemplates', 'EmailText', 'Emails',
+        'Employees', 'ExternalOAuthConnection', 'ExternalOAuthProvider',
+        'FP_Event_Locations', 'FP_events',
+        'Favorites', 'Groups', 'Help', 'History', 'Home', 'Import',
+        'InboundEmail', 'JAccount', 'KReports', 'LabelEditor', 'Leads',
+        'LoginAttempts', 'MailMerge', 'Meetings', 'MergeRecords', 'ModuleBuilder',
+        'MySettings', 'Notes',
+        'OAuth2Clients', 'OAuth2Tokens', 'OAuthKeys', 'OAuthTokens',
+        'Opportunities', 'OptimisticLock', 'OutboundEmailAccounts',
+        'Project', 'ProjectTask', 'ProspectLists',
+        'Prospects', 'Relationships', 'Releases',
+        'Reminders', 'Reminders_Invitees',
+        'ResourceCalendar', 'Roles', 'SavedSearch',
+        'Schedulers', 'SchedulersJobs', 'SecurityGroups',
+        'SharedSecurityRules', 'SharedSecurityRulesActions', 'SharedSecurityRulesConditions',
+        'Spots', 'Studio', 'SugarFeed',
+        'SurveyQuestionOptions', 'SurveyQuestionResponses', 'SurveyQuestions', 'SurveyResponses', 'Surveys',
+        'Tasks', 'TemplateSectionLine', 'Trackers', 'UpgradeWizard', 'UserPreferences', 'Users', 'iCals',
+        'jjwg_Address_Cache', 'jjwg_Areas', 'jjwg_Maps', 'jjwg_Markers', 'vCals',
+    ];
+
+    // Get all dirs in 'modules' except $excludedDirs and "stic_*" dirs
+    $directories = array_filter(scandir($path), function ($item) use ($path, $excludedDirs) {
+        return $item !== '.' && $item !== '..' 
+               && is_dir($path . '/' . $item)
+               && !in_array($item, $excludedDirs)
+               && strpos($item, 'stic_') !== 0;
+    });
+
+    // Get all path for dirs in 'modules'
+    $directories = array_map(function ($item) use ($path) {
+        return $path . '/' . $item;
+    }, $directories);
+
+    // Add other directories
+    $directories[] = __DIR__ . '/custom';
+  
     // Path to apply changes
-    $rectorConfig->paths([
-        // __DIR__,
-        __DIR__ . '/custom', 
-    ]);
+    $rectorConfig->paths($directories);
+    // $rectorConfig->paths([ __DIR__]);
+
+    $rectorConfig->cacheDirectory(__DIR__ . '/tmp/rector_cached_files');
 
     // php52
     $rectorConfig->rules([
@@ -304,8 +358,8 @@ return static function (RectorConfig $rectorConfig): void {
         // StringifyStrNeedlesRector::class, 
         RegexDashEscapeRector::class, 
         ContinueToBreakInSwitchRector::class, 
-        SetCookieRector::class, 
-        IsCountableRector::class, 
+        // SetCookieRector::class, 
+        // IsCountableRector::class, 
         // ArrayKeyFirstLastRector::class, 
         SensitiveDefineRector::class, 
         // SensitiveConstantNameRector::class, 
