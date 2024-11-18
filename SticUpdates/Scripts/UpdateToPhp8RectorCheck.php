@@ -9,8 +9,8 @@ if (!file_exists($rectorDir)) {
 }
 
 $configFile = __DIR__.'/../../SticRectorConfig.php'; 
-// $command = escapeshellcmd("php $rectorDir process --dry-run --config={$configFile}");
-$command = escapeshellcmd("php $rectorDir process --config={$configFile}");
+$command = escapeshellcmd("php $rectorDir process --dry-run --config={$configFile}");
+// $command = escapeshellcmd("php $rectorDir process --config={$configFile}");
 
 exec($command, $output, $returnVar);
 
