@@ -15,8 +15,11 @@ $command = escapeshellcmd("php $rectorDir process --dry-run --config={$configFil
 exec($command, $output, $returnVar);
 
 if ($returnVar !== 0) {
-    echo "Error running Rector:<br />" . implode("<br />", $output);
+    echo "Error running Rector: $returnVar<br />";
+    if (is_array($output)) {
+        echo implode("<br />", $output);
+    }
     exit($returnVar);
 }
 
-echo "Rector executed withot errors in custom folder.<br />";
+echo "Rector executed withot errors.<br />";
