@@ -26,9 +26,6 @@
  * This Rector configuration applies the rules to migrate to PHP 8 all files in custom folder and non standard modules 
  */
 declare(strict_types=1);
-// require_once __DIR__ . '/SticInclude/vendor/rector-standalone/vendor/rector/rector/vendor/autoload.php';
-// require_once __DIR__ . '/SticInclude/vendor/rector-standalone/vendor/rector/rector/vendor/scoper-autoload.php';
-// require_once __DIR__ . '/SticInclude/vendor/rector-standalone/vendor/autoload.php';
 
 use Rector\Config\RectorConfig;
 
@@ -159,7 +156,7 @@ use Rector\Php82\Rector\New_\FilesystemIteratorSkipDotsRector;
 
 return static function (RectorConfig $rectorConfig): void {
 
-    $path = __DIR__ . '/modules';
+    $path = __DIR__ . '/../../modules';
     $excludedDirs = [
         'ACL', 'ACLActions', 'ACLRoles',
         'AM_ProjectTemplates', 'AM_TaskTemplates',
@@ -195,14 +192,21 @@ return static function (RectorConfig $rectorConfig): void {
         'SurveyQuestionOptions', 'SurveyQuestionResponses', 'SurveyQuestions', 'SurveyResponses', 'Surveys',
         'Tasks', 'TemplateSectionLine', 'Trackers', 'UpgradeWizard', 'UserPreferences', 'Users', 'iCals',
         'jjwg_Address_Cache', 'jjwg_Areas', 'jjwg_Maps', 'jjwg_Markers', 'vCals',
+        'stic_Accounts_Relationships','stic_Assessments','stic_Attendances','stic_Bookings',
+        'stic_Bookings_Calendar','stic_Centers','stic_Contacts_Relationships','stic_Custom_View_Actions','stic_Custom_View_Conditions',
+        'stic_Custom_View_Customizations','stic_Custom_Views','stic_Events','stic_Families','stic_FollowUps','stic_Goals',
+        'stic_Grants','stic_Group_Opportunities','stic_Import_Validation','stic_Incorpora','stic_Incorpora_Locations','stic_Job_Applications',
+        'stic_Job_Offers','stic_Journal','stic_Medication','stic_Medication_Log','stic_Payment_Commitments','stic_Payments',
+        'stic_Personal_Environment','stic_Prescription','stic_Registrations','stic_Remittances','stic_Resources','stic_Security_Groups_Rules',
+        'stic_Sepe_Actions','stic_Sepe_Files','stic_Sepe_Incidents','stic_Sessions','stic_Settings','stic_Skills','stic_Time_Tracker',
+        'stic_Training','stic_Validation_Actions','stic_Validation_Results','stic_Web_Forms','stic_Work_Calendar','stic_Work_Experience',
     ];
 
     // Get all dirs in 'modules' except $excludedDirs and "stic_*" dirs
     $directories = array_filter(scandir($path), function ($item) use ($path, $excludedDirs) {
         return $item !== '.' && $item !== '..' 
                && is_dir($path . '/' . $item)
-               && !in_array($item, $excludedDirs)
-               && strpos($item, 'stic_') !== 0;
+               && !in_array($item, $excludedDirs);
     });
 
     // Get all path for dirs in 'modules'
@@ -211,13 +215,12 @@ return static function (RectorConfig $rectorConfig): void {
     }, $directories);
 
     // Add other directories
-    $directories[] = __DIR__ . '/custom';
+    $directories[] = __DIR__ . '/../../custom';
   
     // Path to apply changes
     $rectorConfig->paths($directories);
-    // $rectorConfig->paths([ __DIR__]);
 
-    $rectorConfig->cacheDirectory(__DIR__ . '/cache/rector_cached_files');
+    $rectorConfig->cacheDirectory(__DIR__ . '/../../cache/rector_cached_files');
 
     // php52
     $rectorConfig->rules([

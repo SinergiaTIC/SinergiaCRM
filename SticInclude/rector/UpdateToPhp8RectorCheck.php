@@ -32,8 +32,8 @@
 
 $output = new RectorCheckResultHelper(__DIR__."/../../rectorOutput.html");
 
-$rectorFile = __DIR__."/../../SticInclude/vendor/rector-standalone/vendor/rector/rector/bin/rector.php";
-$rectorConfigFile = __DIR__."/../../SticRectorConfig.php";
+$rectorFile = __DIR__."/../vendor/rector-standalone/vendor/rector/rector/bin/rector.php";
+$rectorConfigFile = __DIR__."/SticRectorConfig.php";
 
 $output->addInfo($rectorFile, "Rector");
 $output->addInfo($rectorConfigFile, "Rector config");
