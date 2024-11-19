@@ -23,9 +23,12 @@
 
  /**
  * This script contains Rector config in order to run Rector during the update of SinergiaCRM instances. 
- * This Rector configuration applies the rules to migrate to PHP 8 all files in custom folder
+ * This Rector configuration applies the rules to migrate to PHP 8 all files in custom folder and non standard modules 
  */
 declare(strict_types=1);
+// require_once __DIR__ . '/SticInclude/vendor/rector-standalone/vendor/rector/rector/vendor/autoload.php';
+// require_once __DIR__ . '/SticInclude/vendor/rector-standalone/vendor/rector/rector/vendor/scoper-autoload.php';
+// require_once __DIR__ . '/SticInclude/vendor/rector-standalone/vendor/autoload.php';
 
 use Rector\Config\RectorConfig;
 
@@ -198,8 +201,8 @@ return static function (RectorConfig $rectorConfig): void {
     $directories = array_filter(scandir($path), function ($item) use ($path, $excludedDirs) {
         return $item !== '.' && $item !== '..' 
                && is_dir($path . '/' . $item)
-               && !in_array($item, $excludedDirs)
-               && strpos($item, 'stic_') !== 0;
+               && !in_array($item, $excludedDirs);
+               //&& strpos($item, 'stic_') !== 0;
     });
 
     // Get all path for dirs in 'modules'
@@ -214,7 +217,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths($directories);
     // $rectorConfig->paths([ __DIR__]);
 
-    $rectorConfig->cacheDirectory(__DIR__ . '/tmp/rector_cached_files');
+    $rectorConfig->cacheDirectory(__DIR__ . '/cache/rector_cached_files');
 
     // php52
     $rectorConfig->rules([
@@ -227,7 +230,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // php53
     $rectorConfig->rules([
-        // TernaryToElvisRector::class, 
+        // TernaryToElvisRector::class,
         // DirNameFileConstantToDirConstantRector::class, 
         ReplaceHttpServerVarsByServerRector::class
     ]);
