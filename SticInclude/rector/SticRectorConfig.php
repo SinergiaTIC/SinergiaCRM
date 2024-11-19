@@ -220,7 +220,9 @@ return static function (RectorConfig $rectorConfig): void {
     // Path to apply changes
     $rectorConfig->paths($directories);
 
-    $rectorConfig->cacheDirectory(__DIR__ . '/../../cache/rector_cached_files');
+    // Cache for rector
+    $cacheDirectory = __DIR__ . '/../../cache/rector_cached_files';
+    $rectorConfig->cacheDirectory($cacheDirectory);
 
     // php52
     $rectorConfig->rules([
