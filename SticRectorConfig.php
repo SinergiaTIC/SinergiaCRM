@@ -201,8 +201,8 @@ return static function (RectorConfig $rectorConfig): void {
     $directories = array_filter(scandir($path), function ($item) use ($path, $excludedDirs) {
         return $item !== '.' && $item !== '..' 
                && is_dir($path . '/' . $item)
-               && !in_array($item, $excludedDirs);
-               //&& strpos($item, 'stic_') !== 0;
+               && !in_array($item, $excludedDirs)
+               && strpos($item, 'stic_') !== 0;
     });
 
     // Get all path for dirs in 'modules'
