@@ -485,6 +485,37 @@ EOQ;
     }
 
     /**
+     * Set value with appropriate separators according to user/system configuration
+     *
+     * @param Decimal $decimalValue
+     * @param Boolean $userSetting. Indicates whether to choose user or system configuration
+     * @return Decimal
+     */
+    public static function formatDecimalInConfigSettings($decimalValue, $userSetting = false)
+    {
+        global $current_user, $sugar_config;
+
+        // Get the user preferences for the thousands and decimal separator and the number of decimal places 
+        if ($userSetting) {
+            // User decimal separator
+            $user_dec_sep = (!empty($current_user->id) ? $current_user->getPreference('dec_sep') : null);
+            // User thousands separator
+            $user_grp_sep = (!empty($current_user->id) ? $current_user->getPreference('num_grp_sep') : null);
+            // User number of decimal places
+            $user_sig_digits = (!empty($current_user->id) ? $current_user->getPreference('default_currency_significant_digits') : null);
+        }
+
+        // Set the user preferences or the default preferences
+        $dec_sep = empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep;
+        $grp_sep = empty($user_grp_sep) ? $sugar_config['default_number_grouping_seperator'] : $user_grp_sep;
+        $sig_digits = empty($user_sig_digits) ? $sugar_config['default_currency_significant_digits'] : $user_sig_digits;
+
+        // Format the number
+        $value = number_format($decimalValue, $sig_digits, $dec_sep, $grp_sep);
+        return $value;
+    }
+
+    /**
      * Displays an error on the screen when refreshing the page and interrupts the execution
      * @param Object $obj The object that contains the BEAN
      * @param String $msg The message to show

@@ -231,10 +231,18 @@ class iCal extends vCal
             $hide_calls = true;
         }
 
-        $taskAsVTODO = true;
-        if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true")) {
-            $taskAsVTODO = false;
+        // STIC-Custom 20240920 MHP - Change behavior so that tasks are synchronized by default
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/394
+        // $taskAsVTODO = true;
+        // if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true")) {
+        //     $taskAsVTODO = false;
+        // }        
+        $taskAsVTODO = false;
+        if ((isset($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "0"  || $_REQUEST['show_tasks_as_events'] == "false")) 
+         || (isset($sugar_config['show_tasks_as_events']) && $sugar_config['show_tasks_as_events'] == false)) {
+            $taskAsVTODO = true;
         }
+        // END STIC-Custom
 
         $activityList = array(
             "Meetings" => array(
@@ -290,6 +298,12 @@ class iCal extends vCal
         foreach ($acts_arr as $act) {
             $event = $act->sugar_bean;
             if (!$hide_calls || ($hide_calls && $event->object_name != "Call")) {
+                // STIC-Custom 20241004 MHP - Exclude canceled work calendar records from synchronization
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/425
+                if ($event->module_dir == "stic_Work_Calendar" && $event->type == 'canceled'){
+                    continue;
+                }
+                // END STIC-Custom
                 $ical_array[] = array("BEGIN", "VEVENT");
                 // STIC-Custom 20220315 AAM - Encoding the activity name to UTF8 in order to display special characters
                 // $ical_array[] = array("SUMMARY", $event->name);
