@@ -129,7 +129,6 @@ class LanguageManager
 
         // put the item in the sugar cache.
         $key = self::getLanguageCacheKey($module, $lang);
-        $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ , $module, $key);
         sugar_cache_put($key, $loaded_mod_strings);
     }
 
