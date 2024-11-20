@@ -3,7 +3,7 @@
         'name' => 'salesagility/suitecrm',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '5b9d1869c5f8a0642a395b2ab7e9e1af0c7f2b62',
+        'reference' => '86fc4fe4011bb84320f730d974ea5e624b930d5b',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -1012,8 +1012,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0|2.0',
-                1 => '1.0.0',
+                0 => '1.0.0',
+                1 => '1.0|2.0',
             ),
         ),
         'psr/simple-cache' => array(
@@ -1064,7 +1064,7 @@
         'salesagility/suitecrm' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '5b9d1869c5f8a0642a395b2ab7e9e1af0c7f2b62',
+            'reference' => '86fc4fe4011bb84320f730d974ea5e624b930d5b',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
