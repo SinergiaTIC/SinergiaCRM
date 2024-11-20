@@ -98,6 +98,7 @@ final class RectorCheckResultHelper {
     private $results = [];
     private $errorResults = [];
     private $isAllOk = false;
+    private $numFilesWithChanges = -1;
 
     public function __construct($fileName, $cacheDirectory)
     {
@@ -169,6 +170,9 @@ final class RectorCheckResultHelper {
         $endingFile = false;
         $fileWithChanges = false;
         $isInDiff = false;
+        if (count($textArray) > 0) {
+            $this->numFilesWithChanges = 0;
+        }
         for ($i = 0; $i < count($textArray); $i++) {
 
             if ($textArray[$i] == "=====================") {
@@ -216,6 +220,7 @@ final class RectorCheckResultHelper {
                             $this->results = [...$this->results, ...$fileChanges];
                             $this->results[] = "";
                             $this->results[] = "";
+                            $this->numFilesWithChanges++;
                         }
                         $endingFile = false;
                         $fileChanges = [];
@@ -234,13 +239,17 @@ final class RectorCheckResultHelper {
         $this->errorResults = explode("\n", $text);
     }
 
+    private function getIsAllOk($resultCode) {
+        $this->isAllOk = ($this->isAllOk && $resultCode == 0) || 
+                         ($this->numFilesWithChanges == 0 && ($resultCode == 2 || $resultCode == 0) && count($this->fatalErrors) == 0);
+        return $this->isAllOk;
+    }
+
     public function closeAndExit($resultCode)
     {
         $this->cleanCache();
 
-        $this->isAllOk = $this->isAllOk && $resultCode==0;
-
-        if (!$this->isAllOk) {
+        if (!$this->getIsAllOk($resultCode)) {
             $content = "Result: {$resultCode} <br />\n";
 
             $this->addInfo($resultCode, "Result");
