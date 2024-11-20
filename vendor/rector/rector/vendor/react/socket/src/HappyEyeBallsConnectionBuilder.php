@@ -1,13 +1,13 @@
 <?php
 
-namespace RectorPrefix202411\React\Socket;
+namespace RectorPrefix202305\React\Socket;
 
-use RectorPrefix202411\React\Dns\Model\Message;
-use RectorPrefix202411\React\Dns\Resolver\ResolverInterface;
-use RectorPrefix202411\React\EventLoop\LoopInterface;
-use RectorPrefix202411\React\EventLoop\TimerInterface;
-use RectorPrefix202411\React\Promise;
-use RectorPrefix202411\React\Promise\PromiseInterface;
+use RectorPrefix202305\React\Dns\Model\Message;
+use RectorPrefix202305\React\Dns\Resolver\ResolverInterface;
+use RectorPrefix202305\React\EventLoop\LoopInterface;
+use RectorPrefix202305\React\EventLoop\TimerInterface;
+use RectorPrefix202305\React\Promise;
+use RectorPrefix202305\React\Promise\PromiseInterface;
 /**
  * @internal
  */
@@ -56,8 +56,9 @@ final class HappyEyeBallsConnectionBuilder
     }
     public function connect()
     {
+        $timer = null;
         $that = $this;
-        return new Promise\Promise(function ($resolve, $reject) use($that) {
+        return new Promise\Promise(function ($resolve, $reject) use($that, &$timer) {
             $lookupResolve = function ($type) use($that, $resolve, $reject) {
                 return function (array $ips) use($that, $type, $resolve, $reject) {
                     unset($that->resolverPromises[$type]);
@@ -70,29 +71,29 @@ final class HappyEyeBallsConnectionBuilder
                 };
             };
             $that->resolverPromises[Message::TYPE_AAAA] = $that->resolve(Message::TYPE_AAAA, $reject)->then($lookupResolve(Message::TYPE_AAAA));
-            $that->resolverPromises[Message::TYPE_A] = $that->resolve(Message::TYPE_A, $reject)->then(function (array $ips) use($that) {
+            $that->resolverPromises[Message::TYPE_A] = $that->resolve(Message::TYPE_A, $reject)->then(function (array $ips) use($that, &$timer) {
                 // happy path: IPv6 has resolved already (or could not resolve), continue with IPv4 addresses
                 if ($that->resolved[Message::TYPE_AAAA] === \true || !$ips) {
                     return $ips;
                 }
                 // Otherwise delay processing IPv4 lookup until short timer passes or IPv6 resolves in the meantime
-                $deferred = new Promise\Deferred(function () use(&$ips) {
-                    // discard all IPv4 addresses if cancelled
-                    $ips = array();
-                });
+                $deferred = new Promise\Deferred();
                 $timer = $that->loop->addTimer($that::RESOLUTION_DELAY, function () use($deferred, $ips) {
                     $deferred->resolve($ips);
                 });
-                $that->resolverPromises[Message::TYPE_AAAA]->then(function () use($that, $timer, $deferred, &$ips) {
+                $that->resolverPromises[Message::TYPE_AAAA]->then(function () use($that, $timer, $deferred, $ips) {
                     $that->loop->cancelTimer($timer);
                     $deferred->resolve($ips);
                 });
                 return $deferred->promise();
             })->then($lookupResolve(Message::TYPE_A));
-        }, function ($_, $reject) use($that) {
+        }, function ($_, $reject) use($that, &$timer) {
             $reject(new \RuntimeException('Connection to ' . $that->uri . ' cancelled' . (!$that->connectionPromises ? ' during DNS lookup' : '') . ' (ECONNABORTED)', \defined('SOCKET_ECONNABORTED') ? \SOCKET_ECONNABORTED : 103));
             $_ = $reject = null;
             $that->cleanUp();
+            if ($timer instanceof TimerInterface) {
+                $that->loop->cancelTimer($timer);
+            }
         });
     }
     /**
@@ -196,14 +197,12 @@ final class HappyEyeBallsConnectionBuilder
     {
         // clear list of outstanding IPs to avoid creating new connections
         $this->connectQueue = array();
-        // cancel pending connection attempts
         foreach ($this->connectionPromises as $connectionPromise) {
             if ($connectionPromise instanceof PromiseInterface && \method_exists($connectionPromise, 'cancel')) {
                 $connectionPromise->cancel();
             }
         }
-        // cancel pending DNS resolution (cancel IPv4 first in case it is awaiting IPv6 resolution delay)
-        foreach (\array_reverse($this->resolverPromises) as $resolverPromise) {
+        foreach ($this->resolverPromises as $resolverPromise) {
             if ($resolverPromise instanceof PromiseInterface && \method_exists($resolverPromise, 'cancel')) {
                 $resolverPromise->cancel();
             }

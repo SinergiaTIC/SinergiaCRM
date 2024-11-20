@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Php;
+namespace Rector\Core\Php;
 
 final class ReservedKeywordAnalyzer
 {

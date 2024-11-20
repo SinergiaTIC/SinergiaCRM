@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\NodeManipulator;
+namespace Rector\Core\NodeManipulator;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -11,9 +11,9 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeTraverser;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 final class ClassMethodPropertyFetchManipulator
@@ -30,13 +30,19 @@ final class ClassMethodPropertyFetchManipulator
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\FunctionLikeManipulator
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeManipulator\FunctionLikeManipulator
      */
     private $functionLikeManipulator;
-    public function __construct(SimpleCallableNodeTraverser $simpleCallableNodeTraverser, NodeNameResolver $nodeNameResolver, \Rector\NodeManipulator\FunctionLikeManipulator $functionLikeManipulator)
+    public function __construct(SimpleCallableNodeTraverser $simpleCallableNodeTraverser, NodeNameResolver $nodeNameResolver, BetterNodeFinder $betterNodeFinder, \Rector\Core\NodeManipulator\FunctionLikeManipulator $functionLikeManipulator)
     {
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
         $this->nodeNameResolver = $nodeNameResolver;
+        $this->betterNodeFinder = $betterNodeFinder;
         $this->functionLikeManipulator = $functionLikeManipulator;
     }
     /**
@@ -51,10 +57,7 @@ final class ClassMethodPropertyFetchManipulator
     public function findParamAssignToPropertyName(ClassMethod $classMethod, string $propertyName) : ?Param
     {
         $assignedParamName = null;
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use($propertyName, &$assignedParamName) : ?int {
-            if ($node instanceof Class_) {
-                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
-            }
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use($propertyName, &$assignedParamName, $classMethod) : ?int {
             if (!$node instanceof Assign) {
                 return null;
             }
@@ -65,6 +68,10 @@ final class ClassMethodPropertyFetchManipulator
                 return null;
             }
             if ($node->expr instanceof MethodCall || $node->expr instanceof StaticCall) {
+                return null;
+            }
+            $parentClassMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
+            if ($parentClassMethod !== $classMethod) {
                 return null;
             }
             $assignedParamName = $this->nodeNameResolver->getName($node->expr);
@@ -95,10 +102,7 @@ final class ClassMethodPropertyFetchManipulator
     {
         $assignExprs = [];
         $paramNames = $this->functionLikeManipulator->resolveParamNames($classMethod);
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use($propertyName, &$assignExprs, $paramNames) : ?int {
-            if ($node instanceof Class_) {
-                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
-            }
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $classMethod->stmts, function (Node $node) use($propertyName, &$assignExprs, $paramNames, $classMethod) : ?int {
             if (!$node instanceof Assign) {
                 return null;
             }
@@ -110,6 +114,10 @@ final class ClassMethodPropertyFetchManipulator
             }
             // skip param assigns
             if ($this->nodeNameResolver->isNames($node->expr, $paramNames)) {
+                return null;
+            }
+            $parentClassMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
+            if ($parentClassMethod !== $classMethod) {
                 return null;
             }
             $assignExprs[] = $node->expr;

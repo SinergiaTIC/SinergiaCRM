@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Helper;
+namespace RectorPrefix202305\Symfony\Component\Console\Helper;
 
-use RectorPrefix202411\Symfony\Component\Console\Formatter\OutputFormatterInterface;
-use RectorPrefix202411\Symfony\Component\String\UnicodeString;
+use RectorPrefix202305\Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use RectorPrefix202305\Symfony\Component\String\UnicodeString;
 /**
  * Helper is the base class for all helper classes.
  *
@@ -19,14 +19,11 @@ use RectorPrefix202411\Symfony\Component\String\UnicodeString;
  */
 abstract class Helper implements HelperInterface
 {
-    protected $helperSet;
-    /**
-     * @return void
-     */
-    public function setHelperSet(?HelperSet $helperSet = null)
+    protected $helperSet = null;
+    public function setHelperSet(HelperSet $helperSet = null)
     {
         if (1 > \func_num_args()) {
-            trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
+            \RectorPrefix202305\trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
         }
         $this->helperSet = $helperSet;
     }
@@ -41,7 +38,6 @@ abstract class Helper implements HelperInterface
     public static function width(?string $string) : int
     {
         $string = $string ?? '';
-        return \mb_strlen($string);
         if (\preg_match('//u', $string)) {
             return (new UnicodeString($string))->width(\false);
         }
@@ -57,7 +53,6 @@ abstract class Helper implements HelperInterface
     public static function length(?string $string) : int
     {
         $string = $string ?? '';
-        return \mb_strlen($string);
         if (\preg_match('//u', $string)) {
             return (new UnicodeString($string))->length();
         }
@@ -69,7 +64,7 @@ abstract class Helper implements HelperInterface
     /**
      * Returns the subset of a string, using mb_substr if it is available.
      */
-    public static function substr(?string $string, int $from, ?int $length = null) : string
+    public static function substr(?string $string, int $from, int $length = null) : string
     {
         $string = $string ?? '';
         if (\false === ($encoding = \mb_detect_encoding($string, null, \true))) {
@@ -78,37 +73,22 @@ abstract class Helper implements HelperInterface
         return \mb_substr($string, $from, $length, $encoding);
     }
     /**
-     * @return string
      * @param int|float $secs
      */
-    public static function formatTime($secs, int $precision = 1)
+    public static function formatTime($secs)
     {
-        $secs = (int) \floor($secs);
-        if (0 === $secs) {
-            return '< 1 sec';
-        }
-        static $timeFormats = [[1, '1 sec', 'secs'], [60, '1 min', 'mins'], [3600, '1 hr', 'hrs'], [86400, '1 day', 'days']];
-        $times = [];
+        static $timeFormats = [[0, '< 1 sec'], [1, '1 sec'], [2, 'secs', 1], [60, '1 min'], [120, 'mins', 60], [3600, '1 hr'], [7200, 'hrs', 3600], [86400, '1 day'], [172800, 'days', 86400]];
         foreach ($timeFormats as $index => $format) {
-            $seconds = isset($timeFormats[$index + 1]) ? $secs % $timeFormats[$index + 1][0] : $secs;
-            if (isset($times[$index - $precision])) {
-                unset($times[$index - $precision]);
+            if ($secs >= $format[0]) {
+                if (isset($timeFormats[$index + 1]) && $secs < $timeFormats[$index + 1][0] || $index == \count($timeFormats) - 1) {
+                    if (2 == \count($format)) {
+                        return $format[1];
+                    }
+                    return \floor($secs / $format[2]) . ' ' . $format[1];
+                }
             }
-            if (0 === $seconds) {
-                continue;
-            }
-            $unitCount = $seconds / $format[0];
-            $times[$index] = 1 === $unitCount ? $format[1] : $unitCount . ' ' . $format[2];
-            if ($secs === $seconds) {
-                break;
-            }
-            $secs -= $seconds;
         }
-        return \implode(', ', \array_reverse($times));
     }
-    /**
-     * @return string
-     */
     public static function formatMemory(int $memory)
     {
         if ($memory >= 1024 * 1024 * 1024) {
@@ -122,9 +102,6 @@ abstract class Helper implements HelperInterface
         }
         return \sprintf('%d B', $memory);
     }
-    /**
-     * @return string
-     */
     public static function removeDecoration(OutputFormatterInterface $formatter, ?string $string)
     {
         $isDecorated = $formatter->isDecorated();

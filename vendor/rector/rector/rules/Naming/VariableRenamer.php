@@ -4,15 +4,16 @@ declare (strict_types=1);
 namespace Rector\Naming;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt;
-use PhpParser\NodeTraverser;
-use PHPStan\Analyser\MutatingScope;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Function_;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Naming\PhpDoc\VarTagValueNodeRenamer;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -39,48 +40,51 @@ final class VariableRenamer
      * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
      */
     private $phpDocInfoFactory;
-    public function __construct(SimpleCallableNodeTraverser $simpleCallableNodeTraverser, NodeNameResolver $nodeNameResolver, VarTagValueNodeRenamer $varTagValueNodeRenamer, PhpDocInfoFactory $phpDocInfoFactory)
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(SimpleCallableNodeTraverser $simpleCallableNodeTraverser, NodeNameResolver $nodeNameResolver, VarTagValueNodeRenamer $varTagValueNodeRenamer, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder)
     {
         $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->varTagValueNodeRenamer = $varTagValueNodeRenamer;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
-    public function renameVariableInFunctionLike(FunctionLike $functionLike, string $oldName, string $expectedName, ?Assign $assign = null) : bool
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $functionLike
+     */
+    public function renameVariableInFunctionLike($functionLike, string $oldName, string $expectedName, ?Assign $assign = null) : bool
     {
         $isRenamingActive = \false;
         if (!$assign instanceof Assign) {
             $isRenamingActive = \true;
         }
         $hasRenamed = \false;
-        $currentStmt = null;
-        $currentFunctionLike = null;
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $functionLike->getStmts(), function (Node $node) use($oldName, $expectedName, $assign, &$isRenamingActive, &$hasRenamed, &$currentStmt, &$currentFunctionLike) {
-            // skip param names
-            if ($node instanceof Param) {
-                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
-            }
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable((array) $functionLike->getStmts(), function (Node $node) use($oldName, $expectedName, $assign, &$isRenamingActive, &$hasRenamed) : ?Variable {
             if ($assign instanceof Assign && $node === $assign) {
                 $isRenamingActive = \true;
                 return null;
             }
-            if ($node instanceof Stmt) {
-                $currentStmt = $node;
-            }
-            if ($node instanceof FunctionLike) {
-                $currentFunctionLike = $node;
-            }
             if (!$node instanceof Variable) {
                 return null;
             }
+            // skip param names
+            $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
+            if ($parentNode instanceof Param) {
+                return null;
+            }
+            // TODO: Remove in next PR (with above param check?),
             // TODO: Should be implemented in BreakingVariableRenameGuard::shouldSkipParam()
-            if ($this->isParamInParentFunction($node, $currentFunctionLike)) {
+            if ($this->isParamInParentFunction($node)) {
                 return null;
             }
             if (!$isRenamingActive) {
                 return null;
             }
-            $variable = $this->renameVariableIfMatchesName($node, $oldName, $expectedName, $currentStmt);
+            $variable = $this->renameVariableIfMatchesName($node, $oldName, $expectedName);
             if ($variable instanceof Variable) {
                 $hasRenamed = \true;
             }
@@ -88,43 +92,40 @@ final class VariableRenamer
         });
         return $hasRenamed;
     }
-    private function isParamInParentFunction(Variable $variable, ?FunctionLike $functionLike) : bool
+    private function isParamInParentFunction(Variable $variable) : bool
     {
-        if (!$functionLike instanceof FunctionLike) {
+        $closure = $this->betterNodeFinder->findParentType($variable, Closure::class);
+        if (!$closure instanceof Closure) {
             return \false;
         }
         $variableName = $this->nodeNameResolver->getName($variable);
         if ($variableName === null) {
             return \false;
         }
-        $scope = $variable->getAttribute(AttributeKey::SCOPE);
-        $functionLikeScope = $functionLike->getAttribute(AttributeKey::SCOPE);
-        if ($scope instanceof MutatingScope && $functionLikeScope instanceof MutatingScope && $scope->equals($functionLikeScope)) {
-            return \false;
-        }
-        foreach ($functionLike->getParams() as $param) {
+        foreach ($closure->params as $param) {
             if ($this->nodeNameResolver->isName($param, $variableName)) {
                 return \true;
             }
         }
         return \false;
     }
-    private function renameVariableIfMatchesName(Variable $variable, string $oldName, string $expectedName, ?Stmt $currentStmt) : ?Variable
+    private function renameVariableIfMatchesName(Variable $variable, string $oldName, string $expectedName) : ?Variable
     {
         if (!$this->nodeNameResolver->isName($variable, $oldName)) {
             return null;
         }
         $variable->name = $expectedName;
-        $variablePhpDocInfo = $this->resolvePhpDocInfo($variable, $currentStmt);
+        $variablePhpDocInfo = $this->resolvePhpDocInfo($variable);
         $this->varTagValueNodeRenamer->renameAssignVarTagVariableName($variablePhpDocInfo, $oldName, $expectedName);
         return $variable;
     }
     /**
      * Expression doc block has higher priority
      */
-    private function resolvePhpDocInfo(Variable $variable, ?Stmt $currentStmt) : PhpDocInfo
+    private function resolvePhpDocInfo(Variable $variable) : PhpDocInfo
     {
-        if ($currentStmt instanceof Stmt) {
+        $currentStmt = $this->betterNodeFinder->resolveCurrentStatement($variable);
+        if ($currentStmt instanceof Node) {
             return $this->phpDocInfoFactory->createFromNodeOrEmpty($currentStmt);
         }
         return $this->phpDocInfoFactory->createFromNodeOrEmpty($variable);

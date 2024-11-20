@@ -13,13 +13,12 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\MixedType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\DeadCode\PhpDoc\TagRemover\ParamTagRemover;
 use Rector\FamilyTree\NodeAnalyzer\ClassChildAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Rector\AbstractRector;
-use Rector\Reflection\ReflectionResolver;
-use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -29,8 +28,12 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class MixedTypeRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
+     * @var bool
+     */
+    private $hasChanged = \false;
+    /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     /**
@@ -43,21 +46,11 @@ final class MixedTypeRector extends AbstractRector implements MinPhpVersionInter
      * @var \Rector\DeadCode\PhpDoc\TagRemover\ParamTagRemover
      */
     private $paramTagRemover;
-    /**
-     * @readonly
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
-     */
-    private $phpDocInfoFactory;
-    /**
-     * @var bool
-     */
-    private $hasChanged = \false;
-    public function __construct(ReflectionResolver $reflectionResolver, ClassChildAnalyzer $classChildAnalyzer, ParamTagRemover $paramTagRemover, PhpDocInfoFactory $phpDocInfoFactory)
+    public function __construct(ReflectionResolver $reflectionResolver, ClassChildAnalyzer $classChildAnalyzer, ParamTagRemover $paramTagRemover)
     {
         $this->reflectionResolver = $reflectionResolver;
         $this->classChildAnalyzer = $classChildAnalyzer;
         $this->paramTagRemover = $paramTagRemover;
-        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -97,10 +90,9 @@ CODE_SAMPLE
         if ($node instanceof ClassMethod && $this->shouldSkipClassMethod($node)) {
             return null;
         }
-        $this->hasChanged = \false;
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($node);
         $this->refactorParamTypes($node, $phpDocInfo);
-        $hasChanged = $this->paramTagRemover->removeParamTagsIfUseless($phpDocInfo, $node, new MixedType());
+        $hasChanged = $this->paramTagRemover->removeParamTagsIfUseless($phpDocInfo, $node);
         if ($this->hasChanged) {
             return $node;
         }
@@ -120,6 +112,9 @@ CODE_SAMPLE
             return \false;
         }
         $methodName = $this->nodeNameResolver->getName($classMethod);
+        if ($this->classChildAnalyzer->hasChildClassMethod($classReflection, $methodName)) {
+            return \true;
+        }
         return $this->classChildAnalyzer->hasParentClassMethod($classReflection, $methodName);
     }
     /**

@@ -1,9 +1,9 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Util;
+namespace Rector\Core\Util;
 
-use RectorPrefix202411\Nette\Utils\Strings;
+use RectorPrefix202305\Nette\Utils\Strings;
 final class StringUtils
 {
     public static function isMatch(string $value, string $regex) : bool

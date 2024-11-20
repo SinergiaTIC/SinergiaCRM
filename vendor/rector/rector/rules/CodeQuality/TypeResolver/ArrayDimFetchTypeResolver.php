@@ -9,6 +9,7 @@ use PhpParser\Node\Expr\Assign;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 final class ArrayDimFetchTypeResolver
 {
@@ -21,16 +22,24 @@ final class ArrayDimFetchTypeResolver
     {
         $this->nodeTypeResolver = $nodeTypeResolver;
     }
-    public function resolve(ArrayDimFetch $arrayDimFetch, Assign $assign) : ArrayType
+    public function resolve(ArrayDimFetch $arrayDimFetch) : ArrayType
     {
         $keyStaticType = $this->resolveDimType($arrayDimFetch);
-        $valueStaticType = $this->nodeTypeResolver->getType($assign->expr);
+        $valueStaticType = $this->resolveValueStaticType($arrayDimFetch);
         return new ArrayType($keyStaticType, $valueStaticType);
     }
     private function resolveDimType(ArrayDimFetch $arrayDimFetch) : Type
     {
         if ($arrayDimFetch->dim instanceof Expr) {
             return $this->nodeTypeResolver->getType($arrayDimFetch->dim);
+        }
+        return new MixedType();
+    }
+    private function resolveValueStaticType(ArrayDimFetch $arrayDimFetch) : Type
+    {
+        $parentNode = $arrayDimFetch->getAttribute(AttributeKey::PARENT_NODE);
+        if ($parentNode instanceof Assign) {
+            return $this->nodeTypeResolver->getType($parentNode->expr);
         }
         return new MixedType();
     }

@@ -6,9 +6,9 @@ namespace Rector\DowngradePhp80\Rector\ClassMethod;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PHPStan\Reflection\ClassReflection;
-use Rector\Rector\AbstractRector;
-use Rector\Reflection\ReflectionResolver;
+use PhpParser\Node\Stmt\Trait_;
+use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -16,15 +16,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DowngradeAbstractPrivateMethodInTraitRector extends AbstractRector
 {
-    /**
-     * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
-     */
-    private $reflectionResolver;
-    public function __construct(ReflectionResolver $reflectionResolver)
-    {
-        $this->reflectionResolver = $reflectionResolver;
-    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Remove "abstract" from private methods in traits and adds an empty function body', [new CodeSample(<<<'CODE_SAMPLE'
@@ -70,10 +61,7 @@ CODE_SAMPLE
         if (!$classMethod->isPrivate()) {
             return \true;
         }
-        $classReflection = $this->reflectionResolver->resolveClassReflection($classMethod);
-        if (!$classReflection instanceof ClassReflection) {
-            return \true;
-        }
-        return !$classReflection->isTrait();
+        $parentNode = $classMethod->getAttribute(AttributeKey::PARENT_NODE);
+        return !$parentNode instanceof Trait_;
     }
 }

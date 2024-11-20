@@ -1,10 +1,10 @@
 <?php
 
-namespace RectorPrefix202411\React\Stream;
+namespace RectorPrefix202305\React\Stream;
 
-use RectorPrefix202411\Evenement\EventEmitter;
-use RectorPrefix202411\React\EventLoop\Loop;
-use RectorPrefix202411\React\EventLoop\LoopInterface;
+use RectorPrefix202305\Evenement\EventEmitter;
+use RectorPrefix202305\React\EventLoop\Loop;
+use RectorPrefix202305\React\EventLoop\LoopInterface;
 use InvalidArgumentException;
 final class DuplexResourceStream extends EventEmitter implements DuplexStreamInterface
 {
@@ -33,13 +33,7 @@ final class DuplexResourceStream extends EventEmitter implements DuplexStreamInt
     private $writable = \true;
     private $closing = \false;
     private $listening = \false;
-    /**
-     * @param resource $stream
-     * @param ?LoopInterface $loop
-     * @param ?int $readChunkSize
-     * @param ?WritableStreamInterface $buffer
-     */
-    public function __construct($stream, $loop = null, $readChunkSize = null, $buffer = null)
+    public function __construct($stream, LoopInterface $loop = null, $readChunkSize = null, WritableStreamInterface $buffer = null)
     {
         if (!\is_resource($stream) || \get_resource_type($stream) !== "stream") {
             throw new InvalidArgumentException('First parameter must be a valid stream resource');
@@ -51,16 +45,8 @@ final class DuplexResourceStream extends EventEmitter implements DuplexStreamInt
         }
         // this class relies on non-blocking I/O in order to not interrupt the event loop
         // e.g. pipes on Windows do not support this: https://bugs.php.net/bug.php?id=47918
-        if ($buffer !== null && !$buffer instanceof WritableResourceStream && \stream_set_blocking($stream, \false) !== \true) {
+        if (\stream_set_blocking($stream, \false) !== \true) {
             throw new \RuntimeException('Unable to set stream resource to non-blocking mode');
-        }
-        if ($loop !== null && !$loop instanceof LoopInterface) {
-            // manual type check to support legacy PHP < 7.1
-            throw new \InvalidArgumentException('Argument #2 ($loop) expected null|React\\EventLoop\\LoopInterface');
-        }
-        if ($buffer !== null && !$buffer instanceof WritableStreamInterface) {
-            // manual type check to support legacy PHP < 7.1
-            throw new \InvalidArgumentException('Argument #4 ($buffer) expected null|React\\Stream\\WritableStreamInterface');
         }
         // Use unbuffered read operations on the underlying stream resource.
         // Reading chunks from the stream may otherwise leave unread bytes in

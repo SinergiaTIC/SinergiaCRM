@@ -3,8 +3,8 @@
 declare (strict_types=1);
 namespace Rector\Transform\ValueObject;
 
-use Rector\Validation\RectorAssert;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use Rector\Core\Validation\RectorAssert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 final class ParentClassToTraits
 {
     /**

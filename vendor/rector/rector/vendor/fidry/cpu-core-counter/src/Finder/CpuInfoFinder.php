@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace RectorPrefix202411\Fidry\CpuCoreCounter\Finder;
+namespace RectorPrefix202305\Fidry\CpuCoreCounter\Finder;
 
 use function file_get_contents;
 use function is_file;
@@ -35,7 +35,7 @@ final class CpuInfoFinder implements CpuCoreFinder
         if (\false === $cpuInfo) {
             return sprintf('Could not get the content of the file "%s".', self::CPU_INFO_PATH);
         }
-        return sprintf('Found the file "%s" with the content:%s%s%sWill return "%s".', self::CPU_INFO_PATH, PHP_EOL, $cpuInfo, PHP_EOL, self::countCpuCores($cpuInfo));
+        return sprintf('Found the file "%s" with the content:%s%s', self::CPU_INFO_PATH, PHP_EOL, $cpuInfo);
     }
     /**
      * @return positive-int|null

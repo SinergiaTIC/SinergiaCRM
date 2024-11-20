@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Process\Pipes;
+namespace RectorPrefix202305\Symfony\Component\Process\Pipes;
 
-use RectorPrefix202411\Symfony\Component\Process\Exception\RuntimeException;
-use RectorPrefix202411\Symfony\Component\Process\Process;
+use RectorPrefix202305\Symfony\Component\Process\Exception\RuntimeException;
+use RectorPrefix202305\Symfony\Component\Process\Process;
 /**
  * WindowsPipes implementation uses temporary files as handles.
  *
@@ -24,25 +24,10 @@ use RectorPrefix202411\Symfony\Component\Process\Process;
  */
 class WindowsPipes extends AbstractPipes
 {
-    /**
-     * @var mixed[]
-     */
     private $files = [];
-    /**
-     * @var mixed[]
-     */
     private $fileHandles = [];
-    /**
-     * @var mixed[]
-     */
     private $lockHandles = [];
-    /**
-     * @var mixed[]
-     */
     private $readBytes = [Process::STDOUT => 0, Process::STDERR => 0];
-    /**
-     * @var bool
-     */
     private $haveReadSupport;
     /**
      * @param mixed $input
@@ -98,7 +83,7 @@ class WindowsPipes extends AbstractPipes
     {
         throw new \BadMethodCallException('Cannot serialize ' . __CLASS__);
     }
-    public function __wakeup() : void
+    public function __wakeup()
     {
         throw new \BadMethodCallException('Cannot unserialize ' . __CLASS__);
     }
@@ -130,7 +115,7 @@ class WindowsPipes extends AbstractPipes
             if ($w) {
                 @\stream_select($r, $w, $e, 0, Process::TIMEOUT_PRECISION * 1000000.0);
             } elseif ($this->fileHandles) {
-                \usleep((int) (Process::TIMEOUT_PRECISION * 1000000.0));
+                \usleep(Process::TIMEOUT_PRECISION * 1000000.0);
             }
         }
         foreach ($this->fileHandles as $type => $fileHandle) {
@@ -157,7 +142,7 @@ class WindowsPipes extends AbstractPipes
     {
         return $this->pipes && $this->fileHandles;
     }
-    public function close() : void
+    public function close()
     {
         parent::close();
         foreach ($this->fileHandles as $type => $handle) {

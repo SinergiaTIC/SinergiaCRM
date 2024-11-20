@@ -7,15 +7,15 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Property;
-use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\NodeManipulator\PropertyManipulator;
+use Rector\Core\Reflection\ReflectionResolver;
 use Rector\Naming\Naming\PropertyNaming;
 use Rector\Naming\ValueObject\ExpectedName;
-use Rector\NodeManipulator\PropertyManipulator;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\Reflection\ReflectionResolver;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 final class MatchPropertyTypeExpectedNameResolver
 {
@@ -36,12 +36,12 @@ final class MatchPropertyTypeExpectedNameResolver
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\PropertyManipulator
+     * @var \Rector\Core\NodeManipulator\PropertyManipulator
      */
     private $propertyManipulator;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     /**
@@ -76,22 +76,31 @@ final class MatchPropertyTypeExpectedNameResolver
             return null;
         }
         // skip if already has suffix
-        if (\substr_compare($propertyName, $expectedName->getName(), -\strlen($expectedName->getName())) === 0 || \substr_compare($propertyName, \ucfirst($expectedName->getName()), -\strlen(\ucfirst($expectedName->getName()))) === 0) {
+        $currentName = $this->nodeNameResolver->getName($property);
+        if ($this->nodeNameResolver->endsWith($currentName, $expectedName->getName())) {
             return null;
         }
         return $expectedName->getName();
     }
     private function resolveExpectedName(Property $property) : ?ExpectedName
     {
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNode($property);
+        $isPhpDocInfo = $phpDocInfo instanceof PhpDocInfo;
         // property type first
         if ($property->type instanceof Node) {
             $propertyType = $this->staticTypeMapper->mapPhpParserNodePHPStanType($property->type);
-            return $this->propertyNaming->getExpectedNameFromType($propertyType);
+            // not has docblock, use property type
+            if (!$isPhpDocInfo) {
+                return $this->propertyNaming->getExpectedNameFromType($propertyType);
+            }
+            // @var type is ObjectType, use property type
+            $varType = $phpDocInfo->getVarType();
+            if ($varType instanceof ObjectType) {
+                return $this->propertyNaming->getExpectedNameFromType($propertyType);
+            }
         }
         // fallback to docblock
-        $phpDocInfo = $this->phpDocInfoFactory->createFromNode($property);
-        $hasVarTag = $phpDocInfo instanceof PhpDocInfo && $phpDocInfo->getVarTagValueNode() instanceof VarTagValueNode;
-        if ($hasVarTag) {
+        if ($isPhpDocInfo) {
             return $this->propertyNaming->getExpectedNameFromType($phpDocInfo->getVarType());
         }
         return null;

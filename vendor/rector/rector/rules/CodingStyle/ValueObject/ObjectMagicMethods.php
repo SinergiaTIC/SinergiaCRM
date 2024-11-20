@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\CodingStyle\ValueObject;
 
-use Rector\ValueObject\MethodName;
+use Rector\Core\ValueObject\MethodName;
 final class ObjectMagicMethods
 {
     /**

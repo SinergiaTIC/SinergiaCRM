@@ -6,27 +6,25 @@ namespace Rector\CodeQuality\Rector\Expression;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Ternary;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
-use PHPStan\Analyser\Scope;
-use Rector\NodeAnalyzer\ExprAnalyzer;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Core\Rector\AbstractRector;
+use Rector\DeadCode\SideEffect\SideEffectNodeDetector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\CodeQuality\Rector\Expression\TernaryFalseExpressionToIfRector\TernaryFalseExpressionToIfRectorTest
  */
-final class TernaryFalseExpressionToIfRector extends AbstractScopeAwareRector
+final class TernaryFalseExpressionToIfRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\ExprAnalyzer
+     * @var \Rector\DeadCode\SideEffect\SideEffectNodeDetector
      */
-    private $exprAnalyzer;
-    public function __construct(ExprAnalyzer $exprAnalyzer)
+    private $sideEffectNodeDetector;
+    public function __construct(SideEffectNodeDetector $sideEffectNodeDetector)
     {
-        $this->exprAnalyzer = $exprAnalyzer;
+        $this->sideEffectNodeDetector = $sideEffectNodeDetector;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -62,7 +60,7 @@ CODE_SAMPLE
     /**
      * @param Expression $node
      */
-    public function refactorWithScope(Node $node, Scope $scope) : ?Node
+    public function refactor(Node $node) : ?Node
     {
         if (!$node->expr instanceof Ternary) {
             return null;
@@ -71,7 +69,7 @@ CODE_SAMPLE
         if (!$ternary->if instanceof Expr) {
             return null;
         }
-        if (!$ternary->else instanceof Variable && $this->exprAnalyzer->isDynamicExpr($ternary->else)) {
+        if ($this->sideEffectNodeDetector->detect($ternary->else)) {
             return null;
         }
         return new If_($ternary->cond, ['stmts' => [new Expression($ternary->if)]]);

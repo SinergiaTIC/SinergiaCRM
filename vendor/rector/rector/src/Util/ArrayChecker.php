@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Util;
+namespace Rector\Core\Util;
 
 final class ArrayChecker
 {

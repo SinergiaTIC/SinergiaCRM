@@ -3,10 +3,14 @@
 declare (strict_types=1);
 namespace Rector\Php80\ValueObject;
 
+use Rector\Core\Validation\RectorAssert;
 use Rector\Php80\Contract\ValueObject\AnnotationToAttributeInterface;
-use Rector\Validation\RectorAssert;
 final class NestedAnnotationToAttribute implements AnnotationToAttributeInterface
 {
+    /**
+     * @var AnnotationPropertyToAttributeClass[]
+     */
+    private $annotationPropertiesToAttributeClasses = [];
     /**
      * @readonly
      * @var string
@@ -17,10 +21,6 @@ final class NestedAnnotationToAttribute implements AnnotationToAttributeInterfac
      * @var bool
      */
     private $removeOriginal = \false;
-    /**
-     * @var AnnotationPropertyToAttributeClass[]
-     */
-    private $annotationPropertiesToAttributeClasses = [];
     /**
      * @param array<string, string>|string[]|AnnotationPropertyToAttributeClass[] $annotationPropertiesToAttributeClasses
      */

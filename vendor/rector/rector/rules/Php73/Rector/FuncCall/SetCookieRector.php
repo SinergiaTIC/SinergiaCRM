@@ -10,8 +10,9 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use PhpParser\Node\VariadicPlaceholder;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -19,6 +20,8 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  * Convert legacy setcookie arguments to new array options
  *
  * @see \Rector\Tests\Php73\Rector\FuncCall\SetcookieRector\SetCookieRectorTest
+ *
+ * @changelog https://www.php.net/setcookie https://wiki.php.net/rfc/same-site-cookie
  */
 final class SetCookieRector extends AbstractRector implements MinPhpVersionInterface
 {
@@ -70,9 +73,6 @@ CODE_SAMPLE
         if (!$this->isNames($funcCall, ['setcookie', 'setrawcookie'])) {
             return \true;
         }
-        if ($funcCall->isFirstClassCallable()) {
-            return \true;
-        }
         $argsCount = \count($funcCall->args);
         if ($argsCount <= 2) {
             return \true;
@@ -86,15 +86,17 @@ CODE_SAMPLE
         return \false;
     }
     /**
-     * @return Arg[]
+     * @return Arg[]|VariadicPlaceholder[]
      */
     private function composeNewArgs(FuncCall $funcCall) : array
     {
-        $args = $funcCall->getArgs();
-        $newArgs = [$args[0], $args[1]];
+        $items = [];
+        $args = $funcCall->args;
+        $newArgs = [];
+        $newArgs[] = $args[0];
+        $newArgs[] = $args[1];
         unset($args[0]);
         unset($args[1]);
-        $items = [];
         foreach ($args as $idx => $arg) {
             $newKey = new String_(self::KNOWN_OPTIONS[$idx]);
             $items[] = new ArrayItem($arg->value, $newKey);

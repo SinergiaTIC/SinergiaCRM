@@ -5,18 +5,20 @@ namespace Rector\Php55\Rector\FuncCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\Php55\RegexMatcher;
 use Rector\Php72\NodeFactory\AnonymousFunctionFactory;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://wiki.php.net/rfc/remove_preg_replace_eval_modifier https://stackoverflow.com/q/19245205/1348344
+ *
  * @see \Rector\Tests\Php55\Rector\FuncCall\PregReplaceEModifierRector\PregReplaceEModifierRectorTest
  */
 final class PregReplaceEModifierRector extends AbstractRector implements MinPhpVersionInterface
@@ -31,10 +33,16 @@ final class PregReplaceEModifierRector extends AbstractRector implements MinPhpV
      * @var \Rector\Php55\RegexMatcher
      */
     private $regexMatcher;
-    public function __construct(AnonymousFunctionFactory $anonymousFunctionFactory, RegexMatcher $regexMatcher)
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
+     */
+    private $argsAnalyzer;
+    public function __construct(AnonymousFunctionFactory $anonymousFunctionFactory, RegexMatcher $regexMatcher, ArgsAnalyzer $argsAnalyzer)
     {
         $this->anonymousFunctionFactory = $anonymousFunctionFactory;
         $this->regexMatcher = $regexMatcher;
+        $this->argsAnalyzer = $argsAnalyzer;
     }
     public function provideMinPhpVersion() : int
     {
@@ -79,20 +87,20 @@ CODE_SAMPLE
         if (!$this->isName($node, 'preg_replace')) {
             return null;
         }
-        if ($node->isFirstClassCallable()) {
+        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($node->args, [0, 1])) {
             return null;
         }
-        if (\count($node->getArgs()) < 2) {
-            return null;
-        }
-        $firstArgument = $node->getArgs()[0];
+        /** @var Arg $firstArgument */
+        $firstArgument = $node->args[0];
         $firstArgumentValue = $firstArgument->value;
         $patternWithoutEExpr = $this->regexMatcher->resolvePatternExpressionWithoutEIfFound($firstArgumentValue);
-        if (!$patternWithoutEExpr instanceof Expr) {
+        if ($patternWithoutEExpr === null) {
             return null;
         }
-        $secondArgument = $node->getArgs()[1];
-        $anonymousFunction = $this->createAnonymousFunction($secondArgument);
+        /** @var Arg $secondArgument */
+        $secondArgument = $node->args[1];
+        $secondArgumentValue = $secondArgument->value;
+        $anonymousFunction = $this->anonymousFunctionFactory->createAnonymousFunctionFromExpr($secondArgumentValue);
         if (!$anonymousFunction instanceof Closure) {
             return null;
         }
@@ -100,9 +108,5 @@ CODE_SAMPLE
         $firstArgument->value = $patternWithoutEExpr;
         $secondArgument->value = $anonymousFunction;
         return $node;
-    }
-    private function createAnonymousFunction(Arg $arg) : ?Closure
-    {
-        return $this->anonymousFunctionFactory->createAnonymousFunctionFromExpr($arg->value);
     }
 }

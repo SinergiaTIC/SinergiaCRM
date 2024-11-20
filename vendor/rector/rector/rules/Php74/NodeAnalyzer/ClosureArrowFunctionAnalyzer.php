@@ -9,24 +9,24 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\ClosureUse;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Return_;
-use Rector\PhpParser\Comparing\NodeComparator;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Util\ArrayChecker;
+use Rector\Core\PhpParser\Comparing\NodeComparator;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\Core\Util\ArrayChecker;
 final class ClosureArrowFunctionAnalyzer
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Comparing\NodeComparator
+     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
      */
     private $nodeComparator;
     /**
      * @readonly
-     * @var \Rector\Util\ArrayChecker
+     * @var \Rector\Core\Util\ArrayChecker
      */
     private $arrayChecker;
     public function __construct(BetterNodeFinder $betterNodeFinder, NodeComparator $nodeComparator, ArrayChecker $arrayChecker)

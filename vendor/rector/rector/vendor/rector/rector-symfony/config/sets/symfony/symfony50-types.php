@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202411;
+namespace RectorPrefix202305;
 
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
@@ -9,10 +9,8 @@ use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\StringType;
-use PHPStan\Type\UnionType;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddParamTypeDeclarationRector;
 use Rector\TypeDeclaration\ValueObject\AddParamTypeDeclaration;
@@ -83,8 +81,8 @@ return static function (RectorConfig $rectorConfig) : void {
         new AddParamTypeDeclaration('Symfony\\Component\\EventDispatcher\\EventDispatcher', 'dispatch', 0, new ObjectWithoutClassType()),
         new AddParamTypeDeclaration('Symfony\\Contracts\\Translation\\TranslatorInterface', 'setLocale', 0, new StringType()),
         new AddParamTypeDeclaration('Symfony\\Contracts\\Translation\\TranslatorInterface', 'trans', 0, new StringType()),
-        new AddParamTypeDeclaration('Symfony\\Contracts\\Translation\\TranslatorInterface', 'trans', 2, new UnionType([new NullType(), new StringType()])),
-        new AddParamTypeDeclaration('Symfony\\Contracts\\Translation\\TranslatorInterface', 'trans', 3, new UnionType([new NullType(), new StringType()])),
+        new AddParamTypeDeclaration('Symfony\\Contracts\\Translation\\TranslatorInterface', 'trans', 2, new StringType()),
+        new AddParamTypeDeclaration('Symfony\\Contracts\\Translation\\TranslatorInterface', 'trans', 3, new StringType()),
         new AddParamTypeDeclaration('Symfony\\Component\\Form\\AbstractExtension', 'getType', 0, new StringType()),
         new AddParamTypeDeclaration('Symfony\\Component\\Form\\AbstractExtension', 'hasType', 0, new StringType()),
         new AddParamTypeDeclaration('Symfony\\Component\\Form\\AbstractExtension', 'getTypeExtensions', 0, new StringType()),

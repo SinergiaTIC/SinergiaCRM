@@ -3,6 +3,7 @@
 declare (strict_types=1);
 namespace Rector\DeadCode\NodeManipulator;
 
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Greater;
 use PhpParser\Node\Expr\BinaryOp\GreaterOrEqual;
@@ -10,10 +11,8 @@ use PhpParser\Node\Expr\BinaryOp\Smaller;
 use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\LNumber;
-use PHPStan\Type\NeverType;
+use Rector\Core\PhpParser\Comparing\NodeComparator;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\NodeTypeResolver\NodeTypeResolver;
-use Rector\PhpParser\Comparing\NodeComparator;
 final class CountManipulator
 {
     /**
@@ -23,19 +22,13 @@ final class CountManipulator
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Comparing\NodeComparator
+     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
      */
     private $nodeComparator;
-    /**
-     * @readonly
-     * @var \Rector\NodeTypeResolver\NodeTypeResolver
-     */
-    private $nodeTypeResolver;
-    public function __construct(NodeNameResolver $nodeNameResolver, NodeComparator $nodeComparator, NodeTypeResolver $nodeTypeResolver)
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeComparator $nodeComparator)
     {
         $this->nodeNameResolver = $nodeNameResolver;
         $this->nodeComparator = $nodeComparator;
-        $this->nodeTypeResolver = $nodeTypeResolver;
     }
     public function isCounterHigherThanOne(Expr $firstExpr, Expr $secondExpr) : bool
     {
@@ -100,20 +93,13 @@ final class CountManipulator
         if (!$this->nodeNameResolver->isName($node, 'count')) {
             return \false;
         }
-        if ($node->isFirstClassCallable()) {
+        if (!isset($node->args[0])) {
             return \false;
         }
-        if (!isset($node->getArgs()[0])) {
+        if (!$node->args[0] instanceof Arg) {
             return \false;
         }
-        $countedExpr = $node->getArgs()[0]->value;
-        if ($this->nodeComparator->areNodesEqual($countedExpr, $expr)) {
-            $exprType = $this->nodeTypeResolver->getNativeType($expr);
-            if (!$exprType->isArray()->yes()) {
-                return $exprType instanceof NeverType;
-            }
-            return \true;
-        }
-        return \false;
+        $countedExpr = $node->args[0]->value;
+        return $this->nodeComparator->areNodesEqual($countedExpr, $expr);
     }
 }

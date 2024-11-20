@@ -4,17 +4,15 @@ declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\For_;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\BinaryOp\Smaller;
-use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\For_;
 use PHPStan\Analyser\Scope;
-use Rector\Rector\AbstractScopeAwareRector;
+use Rector\Core\Rector\AbstractScopeAwareRector;
+use Rector\Naming\Naming\VariableNaming;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -23,9 +21,14 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class ForRepeatedCountToOwnVariableRector extends AbstractScopeAwareRector
 {
     /**
-     * @var string
+     * @readonly
+     * @var \Rector\Naming\Naming\VariableNaming
      */
-    private const COUNTER_NAME = 'counter';
+    private $variableNaming;
+    public function __construct(VariableNaming $variableNaming)
+    {
+        $this->variableNaming = $variableNaming;
+    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Change count() in for function to own variable', [new CodeSample(<<<'CODE_SAMPLE'
@@ -66,29 +69,26 @@ CODE_SAMPLE
      */
     public function refactorWithScope(Node $node, Scope $scope) : ?array
     {
-        if ($scope->hasVariableType(self::COUNTER_NAME)->yes()) {
-            return null;
-        }
         $countInCond = null;
-        $counterVariable = new Variable(self::COUNTER_NAME);
-        foreach ($node->cond as $condExpr) {
-            if (!$condExpr instanceof Smaller && !$condExpr instanceof SmallerOrEqual) {
-                continue;
+        $variableName = null;
+        $this->traverseNodesWithCallable($node->cond, function (Node $node) use(&$countInCond, &$variableName, $scope) : ?Variable {
+            if (!$node instanceof FuncCall) {
+                return null;
             }
-            if (!$condExpr->right instanceof FuncCall) {
-                continue;
+            if (!$this->isName($node, 'count')) {
+                return null;
             }
-            $funcCall = $condExpr->right;
-            if (!$this->isName($funcCall, 'count')) {
-                continue;
-            }
-            $countInCond = $condExpr->right;
-            $condExpr->right = $counterVariable;
-        }
-        if (!$countInCond instanceof Expr) {
+            $countInCond = $node;
+            $variableName = $this->variableNaming->resolveFromFuncCallFirstArgumentWithSuffix($node, 'Count', 'itemsCount', $scope);
+            return new Variable($variableName);
+        });
+        if (!$countInCond instanceof FuncCall) {
             return null;
         }
-        $countAssign = new Assign($counterVariable, $countInCond);
+        if ($variableName === null) {
+            return null;
+        }
+        $countAssign = new Assign(new Variable($variableName), $countInCond);
         return [new Expression($countAssign), $node];
     }
 }

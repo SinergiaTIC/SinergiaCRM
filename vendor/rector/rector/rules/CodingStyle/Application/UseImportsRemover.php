@@ -5,52 +5,45 @@ namespace Rector\CodingStyle\Application;
 
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Use_;
-use Rector\Renaming\Collector\RenamedNameCollector;
+use Rector\NodeRemoval\NodeRemover;
 final class UseImportsRemover
 {
     /**
      * @readonly
-     * @var \Rector\Renaming\Collector\RenamedNameCollector
+     * @var \Rector\NodeRemoval\NodeRemover
      */
-    private $renamedNameCollector;
-    public function __construct(RenamedNameCollector $renamedNameCollector)
+    private $nodeRemover;
+    public function __construct(NodeRemover $nodeRemover)
     {
-        $this->renamedNameCollector = $renamedNameCollector;
+        $this->nodeRemover = $nodeRemover;
     }
     /**
      * @param Stmt[] $stmts
      * @param string[] $removedUses
-     * @return Stmt[]
      */
-    public function removeImportsFromStmts(array $stmts, array $removedUses) : array
+    public function removeImportsFromStmts(array $stmts, array $removedUses) : void
     {
-        foreach ($stmts as $key => $stmt) {
+        foreach ($stmts as $stmt) {
             if (!$stmt instanceof Use_) {
                 continue;
             }
-            $stmt = $this->removeUseFromUse($removedUses, $stmt);
-            // remove empty uses
-            if ($stmt->uses === []) {
-                unset($stmts[$key]);
-            }
+            $this->removeUseFromUse($removedUses, $stmt);
         }
-        return $stmts;
     }
     /**
      * @param string[] $removedUses
      */
-    private function removeUseFromUse(array $removedUses, Use_ $use) : Use_
+    private function removeUseFromUse(array $removedUses, Use_ $use) : void
     {
         foreach ($use->uses as $usesKey => $useUse) {
-            $useName = $useUse->name->toString();
-            if (!\in_array($useName, $removedUses, \true)) {
-                continue;
+            foreach ($removedUses as $removedUse) {
+                if ($useUse->name->toString() === $removedUse) {
+                    unset($use->uses[$usesKey]);
+                }
             }
-            if (!$this->renamedNameCollector->has($useName)) {
-                continue;
-            }
-            unset($use->uses[$usesKey]);
         }
-        return $use;
+        if ($use->uses === []) {
+            $this->nodeRemover->removeNode($use);
+        }
     }
 }

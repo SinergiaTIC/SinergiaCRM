@@ -12,27 +12,30 @@ use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflection;
 use PHPStan\Reflection\Type\UnionTypeMethodReflection;
-use Rector\Enum\ObjectReference;
-use Rector\NodeAnalyzer\VariadicAnalyzer;
-use Rector\Rector\AbstractRector;
-use Rector\Reflection\ReflectionResolver;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Core\Enum\ObjectReference;
+use Rector\Core\NodeAnalyzer\VariadicAnalyzer;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://www.reddit.com/r/PHP/comments/a1ie7g/is_there_a_linter_for_argumentcounterror_for_php/
+ * @changelog http://php.net/manual/en/class.argumentcounterror.php
+ *
  * @see \Rector\Tests\Php71\Rector\FuncCall\RemoveExtraParametersRector\RemoveExtraParametersRectorTest
  */
 final class RemoveExtraParametersRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\VariadicAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\VariadicAnalyzer
      */
     private $variadicAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     public function __construct(VariadicAnalyzer $variadicAnalyzer, ReflectionResolver $reflectionResolver)
@@ -72,9 +75,6 @@ final class RemoveExtraParametersRector extends AbstractRector implements MinPhp
             return null;
         }
         if ($functionLikeReflection instanceof PhpMethodReflection) {
-            if ($functionLikeReflection->isAbstract()) {
-                return null;
-            }
             $classReflection = $functionLikeReflection->getDeclaringClass();
             if ($classReflection->isInterface()) {
                 return null;
@@ -103,13 +103,6 @@ final class RemoveExtraParametersRector extends AbstractRector implements MinPhp
     {
         if ($reflection instanceof FunctionReflection) {
             $fileName = (string) $reflection->getFileName();
-            if (\strpos($fileName, 'phpstan.phar') !== \false) {
-                return \true;
-            }
-        }
-        if ($reflection instanceof MethodReflection) {
-            $classReflection = $reflection->getDeclaringClass();
-            $fileName = (string) $classReflection->getFileName();
             if (\strpos($fileName, 'phpstan.phar') !== \false) {
                 return \true;
             }

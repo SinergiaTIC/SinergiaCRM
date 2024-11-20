@@ -1,15 +1,15 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\NodeDecorator;
+namespace Rector\Core\NodeDecorator;
 
 use PhpParser\Node;
-use Rector\Contract\Rector\RectorInterface;
+use Rector\Core\Contract\Rector\RectorInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 final class CreatedByRuleDecorator
 {
     /**
-     * @param array<Node>|Node $node
+     * @param mixed[]|\PhpParser\Node $node
      * @param class-string<RectorInterface> $rectorClass
      */
     public function decorate($node, Node $originalNode, string $rectorClass) : void

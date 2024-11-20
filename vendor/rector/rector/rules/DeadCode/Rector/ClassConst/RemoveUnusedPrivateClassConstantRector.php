@@ -5,32 +5,37 @@ namespace Rector\DeadCode\Rector\ClassConst;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassConst;
-use PhpParser\NodeTraverser;
-use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
-use Rector\NodeManipulator\ClassConstManipulator;
-use Rector\Rector\AbstractScopeAwareRector;
-use Rector\Reflection\ReflectionResolver;
+use Rector\Core\NodeAnalyzer\EnumAnalyzer;
+use Rector\Core\NodeManipulator\ClassConstManipulator;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\DeadCode\Rector\ClassConst\RemoveUnusedPrivateClassConstantRector\RemoveUnusedPrivateClassConstantRectorTest
  */
-final class RemoveUnusedPrivateClassConstantRector extends AbstractScopeAwareRector
+final class RemoveUnusedPrivateClassConstantRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\ClassConstManipulator
+     * @var \Rector\Core\NodeManipulator\ClassConstManipulator
      */
     private $classConstManipulator;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\NodeAnalyzer\EnumAnalyzer
+     */
+    private $enumAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    public function __construct(ClassConstManipulator $classConstManipulator, ReflectionResolver $reflectionResolver)
+    public function __construct(ClassConstManipulator $classConstManipulator, EnumAnalyzer $enumAnalyzer, ReflectionResolver $reflectionResolver)
     {
         $this->classConstManipulator = $classConstManipulator;
+        $this->enumAnalyzer = $enumAnalyzer;
         $this->reflectionResolver = $reflectionResolver;
     }
     public function getRuleDefinition() : RuleDefinition
@@ -65,9 +70,9 @@ CODE_SAMPLE
     /**
      * @param ClassConst $node
      */
-    public function refactorWithScope(Node $node, Scope $scope) : ?int
+    public function refactor(Node $node) : ?Node
     {
-        if ($this->shouldSkipClassConst($node, $scope)) {
+        if ($this->shouldSkipClassConst($node)) {
             return null;
         }
         $classReflection = $this->reflectionResolver->resolveClassReflection($node);
@@ -77,9 +82,10 @@ CODE_SAMPLE
         if ($this->classConstManipulator->hasClassConstFetch($node, $classReflection)) {
             return null;
         }
-        return NodeTraverser::REMOVE_NODE;
+        $this->removeNode($node);
+        return null;
     }
-    private function shouldSkipClassConst(ClassConst $classConst, Scope $scope) : bool
+    private function shouldSkipClassConst(ClassConst $classConst) : bool
     {
         if (!$classConst->isPrivate()) {
             return \true;
@@ -87,19 +93,6 @@ CODE_SAMPLE
         if (\count($classConst->consts) !== 1) {
             return \true;
         }
-        $classReflection = $scope->getClassReflection();
-        if (!$classReflection instanceof ClassReflection) {
-            return \false;
-        }
-        return $this->hasParentClassOfEnumSuffix($classReflection);
-    }
-    private function hasParentClassOfEnumSuffix(ClassReflection $classReflection) : bool
-    {
-        foreach ($classReflection->getParentClassesNames() as $parentClassesName) {
-            if (\substr_compare($parentClassesName, 'Enum', -\strlen('Enum')) === 0) {
-                return \true;
-            }
-        }
-        return \false;
+        return $this->enumAnalyzer->isEnumClassConst($classConst);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Enum;
+namespace Rector\Core\Enum;
 
 final class ObjectReference
 {

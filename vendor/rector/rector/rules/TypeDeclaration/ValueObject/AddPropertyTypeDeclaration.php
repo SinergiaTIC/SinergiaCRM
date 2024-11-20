@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace Rector\TypeDeclaration\ValueObject;
 
 use PHPStan\Type\Type;
-use Rector\Validation\RectorAssert;
+use Rector\Core\Validation\RectorAssert;
 final class AddPropertyTypeDeclaration
 {
     /**

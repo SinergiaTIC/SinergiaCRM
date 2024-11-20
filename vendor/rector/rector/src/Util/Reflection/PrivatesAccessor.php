@@ -1,27 +1,18 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Util\Reflection;
+namespace Rector\Core\Util\Reflection;
 
-use Rector\Exception\Reflection\MissingPrivatePropertyException;
+use Rector\Core\Exception\Reflection\InvalidPrivatePropertyTypeException;
+use Rector\Core\Exception\Reflection\MissingPrivatePropertyException;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 /**
- * @see \Rector\Tests\Util\Reflection\PrivatesAccessorTest
+ * @see \Rector\Core\Tests\Util\Reflection\PrivatesAccessorTest
  */
 final class PrivatesAccessor
 {
-    /**
-     * @param callable(mixed $value): mixed $closure
-     */
-    public function propertyClosure(object $object, string $propertyName, callable $closure) : void
-    {
-        $property = $this->getPrivateProperty($object, $propertyName);
-        // modify value
-        $property = $closure($property);
-        $this->setPrivateProperty($object, $propertyName, $property);
-    }
     /**
      * @param object|class-string $object
      * @param mixed[] $arguments
@@ -38,26 +29,56 @@ final class PrivatesAccessor
         return $reflectionMethod->invokeArgs($object, $arguments);
     }
     /**
+     * @template T of object
+     *
+     * @param class-string<T> $valueClassName
+     * @return T
+     */
+    public function getPrivatePropertyOfClass(object $object, string $propertyName, string $valueClassName) : object
+    {
+        $value = $this->getPrivateProperty($object, $propertyName);
+        if ($value instanceof $valueClassName) {
+            return $value;
+        }
+        $errorMessage = \sprintf('The type "%s" is required, but "%s" type given', $valueClassName, \get_class($value));
+        throw new InvalidPrivatePropertyTypeException($errorMessage);
+    }
+    /**
      * @return mixed
      */
     public function getPrivateProperty(object $object, string $propertyName)
     {
-        $reflectionProperty = $this->resolvePropertyReflection($object, $propertyName);
-        $reflectionProperty->setAccessible(\true);
-        return $reflectionProperty->getValue($object);
+        $propertyReflection = $this->resolvePropertyReflection($object, $propertyName);
+        $propertyReflection->setAccessible(\true);
+        return $propertyReflection->getValue($object);
+    }
+    /**
+     * @template T of object
+     *
+     * @param class-string<T> $valueClassName
+     * @param mixed $value
+     */
+    public function setPrivatePropertyOfClass(object $object, string $propertyName, $value, string $valueClassName) : void
+    {
+        if ($value instanceof $valueClassName) {
+            $this->setPrivateProperty($object, $propertyName, $value);
+            return;
+        }
+        $errorMessage = \sprintf('The type "%s" is required, but "%s" type given', $valueClassName, \get_class($value));
+        throw new InvalidPrivatePropertyTypeException($errorMessage);
     }
     /**
      * @param mixed $value
      */
     public function setPrivateProperty(object $object, string $propertyName, $value) : void
     {
-        $reflectionProperty = $this->resolvePropertyReflection($object, $propertyName);
-        $reflectionProperty->setAccessible(\true);
-        $reflectionProperty->setValue($object, $value);
+        $propertyReflection = $this->resolvePropertyReflection($object, $propertyName);
+        $propertyReflection->setAccessible(\true);
+        $propertyReflection->setValue($object, $value);
     }
     private function createAccessibleMethodReflection(object $object, string $methodName) : ReflectionMethod
     {
-        $reflectionMethod = new ReflectionMethod($object, $methodName);
+        $reflectionMethod = new ReflectionMethod(\get_class($object), $methodName);
         $reflectionMethod->setAccessible(\true);
         return $reflectionMethod;
     }

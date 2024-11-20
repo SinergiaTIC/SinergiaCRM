@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Symfony\ValueObject;
 
-final class ClassNameAndFilePath
+class ClassNameAndFilePath
 {
     /**
      * @readonly

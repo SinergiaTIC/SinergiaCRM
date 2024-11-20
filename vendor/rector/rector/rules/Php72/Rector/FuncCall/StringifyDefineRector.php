@@ -4,16 +4,18 @@ declare (strict_types=1);
 namespace Rector\Php72\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\String_;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\NodeTypeResolver\TypeAnalyzer\StringTypeAnalyzer;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://3v4l.org/YiTeP
  * @see \Rector\Tests\Php72\Rector\FuncCall\StringifyDefineRector\StringifyDefineRectorTest
  */
 final class StringifyDefineRector extends AbstractRector implements MinPhpVersionInterface
@@ -70,22 +72,21 @@ CODE_SAMPLE
         if (!$this->isName($node, 'define')) {
             return null;
         }
-        if ($node->isFirstClassCallable()) {
+        if (!isset($node->args[0])) {
             return null;
         }
-        if (!isset($node->getArgs()[0])) {
+        if (!$node->args[0] instanceof Arg) {
             return null;
         }
-        $firstArg = $node->getArgs()[0];
-        if ($this->stringTypeAnalyzer->isStringOrUnionStringOnlyType($firstArg->value)) {
+        if ($this->stringTypeAnalyzer->isStringOrUnionStringOnlyType($node->args[0]->value)) {
             return null;
         }
-        if ($firstArg->value instanceof ConstFetch) {
-            $nodeName = $this->getName($firstArg->value);
+        if ($node->args[0]->value instanceof ConstFetch) {
+            $nodeName = $this->getName($node->args[0]->value);
             if ($nodeName === null) {
                 return null;
             }
-            $firstArg->value = new String_($nodeName);
+            $node->args[0]->value = new String_($nodeName);
         }
         return $node;
     }

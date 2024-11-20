@@ -1,16 +1,16 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\NodeManipulator;
+namespace Rector\Core\NodeManipulator;
 
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\PhpParser\Node\Value\ValueResolver;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 final class FuncCallManipulator
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
      */
     private $valueResolver;
     public function __construct(ValueResolver $valueResolver)

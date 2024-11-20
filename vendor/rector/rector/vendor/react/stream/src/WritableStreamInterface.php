@@ -1,8 +1,8 @@
 <?php
 
-namespace RectorPrefix202411\React\Stream;
+namespace RectorPrefix202305\React\Stream;
 
-use RectorPrefix202411\Evenement\EventEmitterInterface;
+use RectorPrefix202305\Evenement\EventEmitterInterface;
 /**
  * The `WritableStreamInterface` is responsible for providing an interface for
  * write-only streams and the writable side of duplex streams.
@@ -194,7 +194,7 @@ interface WritableStreamInterface extends EventEmitterInterface
      * The stream SHOULD send a `drain` event once the buffer is ready to accept
      * more data.
      *
-     * Similarly, if the stream is not writable (already in a closed state)
+     * Similarly, if the the stream is not writable (already in a closed state)
      * it MUST NOT process the given `$data` and SHOULD return `false`,
      * indicating that the caller should stop sending data.
      *

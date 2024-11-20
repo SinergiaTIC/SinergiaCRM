@@ -7,23 +7,29 @@ use PhpParser\Node;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Reflection\ReflectionProvider;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\MethodName;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\FamilyTree\Reflection\FamilyRelationsAnalyzer;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\Php81\Enum\AttributeName;
 use Rector\PhpAttribute\NodeFactory\PhpAttributeGroupFactory;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\MethodName;
-use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
+ * @changelog https://wiki.php.net/rfc/deprecate_dynamic_properties
+ *
  * @see \Rector\Tests\Transform\Rector\Class_\AddAllowDynamicPropertiesAttributeRector\AddAllowDynamicPropertiesAttributeRectorTest
  */
-final class AddAllowDynamicPropertiesAttributeRector extends AbstractRector implements MinPhpVersionInterface, ConfigurableRectorInterface
+final class AddAllowDynamicPropertiesAttributeRector extends AbstractRector implements AllowEmptyConfigurableRectorInterface, MinPhpVersionInterface
 {
+    /**
+     * @var array<array-key, string>
+     */
+    private $transformOnNamespaces = [];
     /**
      * @readonly
      * @var \Rector\FamilyTree\Reflection\FamilyRelationsAnalyzer
@@ -44,10 +50,6 @@ final class AddAllowDynamicPropertiesAttributeRector extends AbstractRector impl
      * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
-    /**
-     * @var array<array-key, string>
-     */
-    private $transformOnNamespaces = [];
     public function __construct(FamilyRelationsAnalyzer $familyRelationsAnalyzer, PhpAttributeAnalyzer $phpAttributeAnalyzer, PhpAttributeGroupFactory $phpAttributeGroupFactory, ReflectionProvider $reflectionProvider)
     {
         $this->familyRelationsAnalyzer = $familyRelationsAnalyzer;
@@ -127,46 +129,21 @@ CODE_SAMPLE
     }
     private function shouldSkip(Class_ $class) : bool
     {
+        if ($this->transformOnNamespaces !== []) {
+            $className = (string) $this->nodeNameResolver->getName($class);
+            foreach ($this->transformOnNamespaces as $transformOnNamespace) {
+                if (!$this->nodeNameResolver->isStringName($className, $transformOnNamespace)) {
+                    return \true;
+                }
+            }
+        }
         if ($this->isDescendantOfStdclass($class)) {
             return \true;
         }
         if ($this->hasNeededAttributeAlready($class)) {
             return \true;
         }
-        if ($this->hasMagicSetMethod($class)) {
-            return \true;
-        }
-        if ($this->transformOnNamespaces !== []) {
-            $className = (string) $this->getName($class);
-            return !$this->isExistsWithWildCards($className) && !$this->isExistsWithClassName($className);
-        }
-        return \false;
-    }
-    private function isExistsWithWildCards(string $className) : bool
-    {
-        $wildcardTransformOnNamespaces = \array_filter($this->transformOnNamespaces, static function (string $transformOnNamespace) : bool {
-            return \strpos($transformOnNamespace, '*') !== \false;
-        });
-        foreach ($wildcardTransformOnNamespaces as $wildcardTransformOnNamespace) {
-            if (!\fnmatch($wildcardTransformOnNamespace, $className, \FNM_NOESCAPE)) {
-                continue;
-            }
-            return \true;
-        }
-        return \false;
-    }
-    private function isExistsWithClassName(string $className) : bool
-    {
-        $transformedClassNames = \array_filter($this->transformOnNamespaces, static function (string $transformOnNamespace) : bool {
-            return \strpos($transformOnNamespace, '*') === \false;
-        });
-        foreach ($transformedClassNames as $transformedClassName) {
-            if (!$this->nodeNameResolver->isStringName($className, $transformedClassName)) {
-                continue;
-            }
-            return \true;
-        }
-        return \false;
+        return $this->hasMagicSetMethod($class);
     }
     private function hasMagicSetMethod(Class_ $class) : bool
     {

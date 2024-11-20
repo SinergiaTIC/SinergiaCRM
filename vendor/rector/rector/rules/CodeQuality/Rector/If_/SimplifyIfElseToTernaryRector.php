@@ -3,6 +3,7 @@
 declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\If_;
 
+use RectorPrefix202305\Nette\Utils\Strings;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
@@ -11,9 +12,8 @@ use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\PhpParser\Printer\BetterStandardPrinter;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Contract\PhpParser\NodePrinterInterface;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -22,23 +22,17 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class SimplifyIfElseToTernaryRector extends AbstractRector
 {
     /**
-     * @readonly
-     * @var \Rector\PhpParser\Printer\BetterStandardPrinter
-     */
-    private $betterStandardPrinter;
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
-     */
-    private $betterNodeFinder;
-    /**
      * @var int
      */
     private const LINE_LENGTH_LIMIT = 120;
-    public function __construct(BetterStandardPrinter $betterStandardPrinter, BetterNodeFinder $betterNodeFinder)
+    /**
+     * @readonly
+     * @var \Rector\Core\Contract\PhpParser\NodePrinterInterface
+     */
+    private $nodePrinter;
+    public function __construct(NodePrinterInterface $nodePrinter)
     {
-        $this->betterStandardPrinter = $betterStandardPrinter;
-        $this->betterNodeFinder = $betterNodeFinder;
+        $this->nodePrinter = $nodePrinter;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -84,31 +78,31 @@ CODE_SAMPLE
         if ($node->elseifs !== []) {
             return null;
         }
-        $ifAssignVarExpr = $this->resolveOnlyStmtAssignVar($node->stmts);
-        if (!$ifAssignVarExpr instanceof Expr) {
+        $ifAssignVar = $this->resolveOnlyStmtAssignVar($node->stmts);
+        if (!$ifAssignVar instanceof Expr) {
             return null;
         }
-        $elseAssignExpr = $this->resolveOnlyStmtAssignVar($node->else->stmts);
-        if (!$elseAssignExpr instanceof Expr) {
+        $elseAssignVar = $this->resolveOnlyStmtAssignVar($node->else->stmts);
+        if (!$elseAssignVar instanceof Expr) {
             return null;
         }
-        if (!$this->nodeComparator->areNodesEqual($ifAssignVarExpr, $elseAssignExpr)) {
+        if (!$this->nodeComparator->areNodesEqual($ifAssignVar, $elseAssignVar)) {
             return null;
         }
-        $ternaryIfExpr = $this->resolveOnlyStmtAssignExpr($node->stmts);
-        $expr = $this->resolveOnlyStmtAssignExpr($node->else->stmts);
-        if (!$ternaryIfExpr instanceof Expr) {
+        $ternaryIf = $this->resolveOnlyStmtAssignExpr($node->stmts);
+        $ternaryElse = $this->resolveOnlyStmtAssignExpr($node->else->stmts);
+        if (!$ternaryIf instanceof Expr) {
             return null;
         }
-        if (!$expr instanceof Expr) {
+        if (!$ternaryElse instanceof Expr) {
             return null;
         }
         // has nested ternary → skip, it's super hard to read
-        if ($this->haveNestedTernary([$node->cond, $ternaryIfExpr, $expr])) {
+        if ($this->haveNestedTernary([$node->cond, $ternaryIf, $ternaryElse])) {
             return null;
         }
-        $ternary = new Ternary($node->cond, $ternaryIfExpr, $expr);
-        $assign = new Assign($ifAssignVarExpr, $ternary);
+        $ternary = new Ternary($node->cond, $ternaryIf, $ternaryElse);
+        $assign = new Assign($ifAssignVar, $ternary);
         // do not create super long lines
         if ($this->isNodeTooLong($assign)) {
             return null;
@@ -168,7 +162,7 @@ CODE_SAMPLE
     }
     private function isNodeTooLong(Assign $assign) : bool
     {
-        $assignContent = $this->betterStandardPrinter->print($assign);
-        return \strlen($assignContent) > self::LINE_LENGTH_LIMIT;
+        $assignContent = $this->nodePrinter->print($assign);
+        return Strings::length($assignContent) > self::LINE_LENGTH_LIMIT;
     }
 }

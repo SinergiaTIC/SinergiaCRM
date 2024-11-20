@@ -8,6 +8,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
+use RectorPrefix202305\Symfony\Contracts\Service\Attribute\Required;
 final class AutowiredClassMethodOrPropertyAnalyzer
 {
     /**
@@ -34,6 +35,6 @@ final class AutowiredClassMethodOrPropertyAnalyzer
         if ($nodePhpDocInfo->hasByNames(['required', 'inject'])) {
             return \true;
         }
-        return $this->phpAttributeAnalyzer->hasPhpAttributes($node, ['Symfony\\Contracts\\Service\\Attribute\\Required', 'Nette\\DI\\Attributes\\Inject']);
+        return $this->phpAttributeAnalyzer->hasPhpAttributes($node, [Required::class, 'Nette\\DI\\Attributes\\Inject']);
     }
 }

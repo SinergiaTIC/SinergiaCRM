@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Question;
+namespace RectorPrefix202305\Symfony\Component\Console\Question;
 
-use RectorPrefix202411\Symfony\Component\Console\Exception\InvalidArgumentException;
-use RectorPrefix202411\Symfony\Component\Console\Exception\LogicException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\LogicException;
 /**
  * Represents a Question.
  *
@@ -44,7 +44,7 @@ class Question
      */
     private $validator;
     /**
-     * @var bool|float|int|string|null
+     * @var string|int|bool|null|float
      */
     private $default;
     /**
@@ -61,7 +61,7 @@ class Question
     private $multiline = \false;
     /**
      * @param string                     $question The question to ask to the user
-     * @param string|bool|int|float|null $default  The default answer to return if the user enters nothing
+     * @param string|bool|int|float $default The default answer to return if the user enters nothing
      */
     public function __construct(string $question, $default = null)
     {
@@ -77,7 +77,7 @@ class Question
     }
     /**
      * Returns the default answer.
-     * @return bool|float|int|string|null
+     * @return string|bool|int|float|null
      */
     public function getDefault()
     {
@@ -162,8 +162,8 @@ class Question
                 return $values;
             };
         } elseif ($values instanceof \Traversable) {
-            $callback = static function () use($values) {
-                static $valueCache;
+            $valueCache = null;
+            $callback = static function () use($values, &$valueCache) {
                 return $valueCache = $valueCache ?? \iterator_to_array($values, \false);
             };
         } else {
@@ -185,10 +185,10 @@ class Question
      *
      * @return $this
      */
-    public function setAutocompleterCallback(?callable $callback = null)
+    public function setAutocompleterCallback(callable $callback = null)
     {
         if (1 > \func_num_args()) {
-            trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
+            \RectorPrefix202305\trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
         }
         if ($this->hidden && null !== $callback) {
             throw new LogicException('A hidden question cannot use the autocompleter.');
@@ -201,10 +201,10 @@ class Question
      *
      * @return $this
      */
-    public function setValidator(?callable $validator = null)
+    public function setValidator(callable $validator = null)
     {
         if (1 > \func_num_args()) {
-            trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
+            \RectorPrefix202305\trigger_deprecation('symfony/console', '6.2', 'Calling "%s()" without any arguments is deprecated, pass null explicitly instead.', __METHOD__);
         }
         $this->validator = null === $validator ? null : \Closure::fromCallable($validator);
         return $this;
@@ -263,9 +263,6 @@ class Question
     {
         return $this->normalizer;
     }
-    /**
-     * @return bool
-     */
     protected function isAssoc(array $array)
     {
         return (bool) \count(\array_filter(\array_keys($array), 'is_string'));

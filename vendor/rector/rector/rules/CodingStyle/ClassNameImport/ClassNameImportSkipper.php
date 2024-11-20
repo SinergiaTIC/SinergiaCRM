@@ -4,19 +4,15 @@ declare (strict_types=1);
 namespace Rector\CodingStyle\ClassNameImport;
 
 use PhpParser\Node;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\GroupUse;
 use PhpParser\Node\Stmt\Use_;
 use PhpParser\Node\Stmt\UseUse;
 use Rector\CodingStyle\Contract\ClassNameImport\ClassNameImportSkipVoterInterface;
-use Rector\Configuration\Option;
-use Rector\Configuration\Parameter\SimpleParameterProvider;
+use Rector\Core\Configuration\RenamedClassesDataCollector;
+use Rector\Core\ValueObject\Application\File;
 use Rector\Naming\Naming\UseImportsResolver;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
-use Rector\ValueObject\Application\File;
 final class ClassNameImportSkipper
 {
     /**
@@ -26,15 +22,21 @@ final class ClassNameImportSkipper
     private $classNameImportSkipVoters;
     /**
      * @readonly
+     * @var \Rector\Core\Configuration\RenamedClassesDataCollector
+     */
+    private $renamedClassesDataCollector;
+    /**
+     * @readonly
      * @var \Rector\Naming\Naming\UseImportsResolver
      */
     private $useImportsResolver;
     /**
      * @param ClassNameImportSkipVoterInterface[] $classNameImportSkipVoters
      */
-    public function __construct(iterable $classNameImportSkipVoters, UseImportsResolver $useImportsResolver)
+    public function __construct(array $classNameImportSkipVoters, RenamedClassesDataCollector $renamedClassesDataCollector, UseImportsResolver $useImportsResolver)
     {
         $this->classNameImportSkipVoters = $classNameImportSkipVoters;
+        $this->renamedClassesDataCollector = $renamedClassesDataCollector;
         $this->useImportsResolver = $useImportsResolver;
     }
     public function shouldSkipNameForFullyQualifiedObjectType(File $file, Node $node, FullyQualifiedObjectType $fullyQualifiedObjectType) : bool
@@ -47,66 +49,57 @@ final class ClassNameImportSkipper
         return \false;
     }
     /**
-     * @param array<Use_|GroupUse> $uses
+     * @param Use_[]|GroupUse[] $uses
      */
-    public function shouldSkipName(FullyQualified $fullyQualified, array $uses) : bool
+    public function isAlreadyImported(Name $name, array $uses) : bool
     {
-        if (\substr_count($fullyQualified->toCodeString(), '\\') === 1) {
-            return $this->shouldSkipShortName($fullyQualified);
-        }
-        // verify long name, as short name verify may conflict
-        // see test PR: https://github.com/rectorphp/rector-src/pull/6208
-        // ref https://3v4l.org/21H5j vs https://3v4l.org/GIHSB
-        $originalName = $fullyQualified->getAttribute(AttributeKey::ORIGINAL_NAME);
-        if ($originalName instanceof Name && $originalName->getLast() === $originalName->toString()) {
-            return \true;
-        }
-        $stringName = $fullyQualified->toString();
-        $lastUseName = $fullyQualified->getLast();
-        $nameLastName = \strtolower($lastUseName);
+        $stringName = $name->toString();
         foreach ($uses as $use) {
             $prefix = $this->useImportsResolver->resolvePrefix($use);
-            $useName = $prefix . $stringName;
+            foreach ($use->uses as $useUse) {
+                if ($prefix . $useUse->name->toString() === $stringName) {
+                    return \true;
+                }
+            }
+        }
+        return \false;
+    }
+    /**
+     * @param Use_[]|GroupUse[] $uses
+     */
+    public function isFoundInUse(Name $name, array $uses) : bool
+    {
+        $stringName = $name->toString();
+        $nameLastName = \strtolower($name->getLast());
+        foreach ($uses as $use) {
+            $prefix = $this->useImportsResolver->resolvePrefix($use);
             foreach ($use->uses as $useUse) {
                 $useUseLastName = \strtolower($useUse->name->getLast());
                 if ($useUseLastName !== $nameLastName) {
                     continue;
                 }
-                if ($this->isConflictedShortNameInUse($useUse, $useName, $lastUseName, $stringName)) {
-                    return \true;
+                if ($this->isJustRenamedClass($stringName, $prefix, $useUse)) {
+                    continue;
                 }
-                return $prefix . $useUse->name->toString() !== $stringName;
+                return \true;
             }
         }
         return \false;
     }
-    private function shouldSkipShortName(FullyQualified $fullyQualified) : bool
+    private function isJustRenamedClass(string $stringName, string $prefix, UseUse $useUse) : bool
     {
-        // is scalar name?
-        if (\in_array($fullyQualified->toLowerString(), ['true', 'false', 'bool'], \true)) {
+        $useUseNameString = $prefix . $useUse->name->toString();
+        // is in renamed classes? skip it
+        foreach ($this->renamedClassesDataCollector->getOldToNewClasses() as $oldClass => $newClass) {
+            // is class being renamed in use imports?
+            if ($stringName !== $newClass) {
+                continue;
+            }
+            if ($useUseNameString !== $oldClass) {
+                continue;
+            }
             return \true;
         }
-        if ($fullyQualified->isSpecialClassName()) {
-            return \true;
-        }
-        if ($this->isFunctionOrConstantImport($fullyQualified)) {
-            return \true;
-        }
-        // Importing root namespace classes (like \DateTime) is optional
-        return !SimpleParameterProvider::provideBoolParameter(Option::IMPORT_SHORT_CLASSES);
-    }
-    private function isFunctionOrConstantImport(FullyQualified $fullyQualified) : bool
-    {
-        if ($fullyQualified->getAttribute(AttributeKey::IS_CONSTFETCH_NAME) === \true) {
-            return \true;
-        }
-        return $fullyQualified->getAttribute(AttributeKey::IS_FUNCCALL_NAME) === \true;
-    }
-    private function isConflictedShortNameInUse(UseUse $useUse, string $useName, string $lastUseName, string $stringName) : bool
-    {
-        if (!$useUse->alias instanceof Identifier && $useName !== $stringName && $lastUseName === $stringName) {
-            return \true;
-        }
-        return $useUse->alias instanceof Identifier && $useUse->alias->toString() === $stringName;
+        return \false;
     }
 }

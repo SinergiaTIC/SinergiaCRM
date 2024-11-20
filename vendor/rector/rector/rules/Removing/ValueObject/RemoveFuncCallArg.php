@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Removing\ValueObject;
 
-use Rector\Validation\RectorAssert;
+use Rector\Core\Validation\RectorAssert;
 final class RemoveFuncCallArg
 {
     /**

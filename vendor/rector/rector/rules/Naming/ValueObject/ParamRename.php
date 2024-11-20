@@ -3,9 +3,14 @@
 declare (strict_types=1);
 namespace Rector\Naming\ValueObject;
 
+use PhpParser\Node\Expr\ArrowFunction;
+use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\FunctionLike;
-final class ParamRename
+use PhpParser\Node\Param;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Function_;
+use Rector\Naming\Contract\RenameParamValueObjectInterface;
+final class ParamRename implements RenameParamValueObjectInterface
 {
     /**
      * @readonly
@@ -19,18 +24,27 @@ final class ParamRename
     private $expectedName;
     /**
      * @readonly
+     * @var \PhpParser\Node\Param
+     */
+    private $param;
+    /**
+     * @readonly
      * @var \PhpParser\Node\Expr\Variable
      */
     private $variable;
     /**
      * @readonly
-     * @var \PhpParser\Node\FunctionLike
+     * @var \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction
      */
     private $functionLike;
-    public function __construct(string $currentName, string $expectedName, Variable $variable, FunctionLike $functionLike)
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction $functionLike
+     */
+    public function __construct(string $currentName, string $expectedName, Param $param, Variable $variable, $functionLike)
     {
         $this->currentName = $currentName;
         $this->expectedName = $expectedName;
+        $this->param = $param;
         $this->variable = $variable;
         $this->functionLike = $functionLike;
     }
@@ -42,9 +56,16 @@ final class ParamRename
     {
         return $this->expectedName;
     }
-    public function getFunctionLike() : FunctionLike
+    /**
+     * @return \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|\PhpParser\Node\Expr\ArrowFunction
+     */
+    public function getFunctionLike()
     {
         return $this->functionLike;
+    }
+    public function getParam() : Param
+    {
+        return $this->param;
     }
     public function getVariable() : Variable
     {

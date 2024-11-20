@@ -9,15 +9,9 @@ declare (strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\SebastianBergmann\Diff;
+namespace RectorPrefix202305\SebastianBergmann\Diff;
 
-use ArrayIterator;
-use IteratorAggregate;
-use Traversable;
-/**
- * @template-implements IteratorAggregate<int, Line>
- */
-final class Chunk implements IteratorAggregate
+final class Chunk
 {
     /**
      * @var int
@@ -47,26 +41,26 @@ final class Chunk implements IteratorAggregate
         $this->endRange = $endRange;
         $this->lines = $lines;
     }
-    public function start() : int
+    public function getStart() : int
     {
         return $this->start;
     }
-    public function startRange() : int
+    public function getStartRange() : int
     {
         return $this->startRange;
     }
-    public function end() : int
+    public function getEnd() : int
     {
         return $this->end;
     }
-    public function endRange() : int
+    public function getEndRange() : int
     {
         return $this->endRange;
     }
     /**
      * @psalm-return list<Line>
      */
-    public function lines() : array
+    public function getLines() : array
     {
         return $this->lines;
     }
@@ -81,46 +75,5 @@ final class Chunk implements IteratorAggregate
             }
         }
         $this->lines = $lines;
-    }
-    /**
-     * @deprecated Use start() instead
-     */
-    public function getStart() : int
-    {
-        return $this->start;
-    }
-    /**
-     * @deprecated Use startRange() instead
-     */
-    public function getStartRange() : int
-    {
-        return $this->startRange;
-    }
-    /**
-     * @deprecated Use end() instead
-     */
-    public function getEnd() : int
-    {
-        return $this->end;
-    }
-    /**
-     * @deprecated Use endRange() instead
-     */
-    public function getEndRange() : int
-    {
-        return $this->endRange;
-    }
-    /**
-     * @psalm-return list<Line>
-     *
-     * @deprecated Use lines() instead
-     */
-    public function getLines() : array
-    {
-        return $this->lines;
-    }
-    public function getIterator() : Traversable
-    {
-        return new ArrayIterator($this->lines);
     }
 }

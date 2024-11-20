@@ -1,6 +1,6 @@
 # Rector Rules for Symfony
 
-See available [Symfony rules](https://getrector.com/find-rule?activeRectorSetGroup=symfony)
+See available [Symfony rules](/docs/rector_rules_overview.md)
 
 ## Install
 
@@ -17,17 +17,18 @@ composer require rector/rector --dev
 To add a set to your config, use `Rector\Symfony\Set\SymfonySetList` class and pick one of constants:
 
 ```php
-
-use Rector\Config\RectorConfig;
 use Rector\Symfony\Set\SymfonySetList;
+use Rector\Config\RectorConfig;
 
-return RectorConfig::configure()
-    ->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml')
-    ->withSets([
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->symfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml');
+
+    $rectorConfig->sets([
         SymfonySetList::SYMFONY_62,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
     ]);
+};
 ```
 
 <br>
@@ -43,8 +44,9 @@ How to add it? Check your `var/cache/` directory and find the XML file for your 
 ```php
 use Rector\Config\RectorConfig;
 
-return RectorConfig::configure()
-    ->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml');
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->symfonyContainerXml(__DIR__ . '/var/cache/test/App_KernelTestDebugContainer.xml');
+};
 ```
 
 That's it! Now you can run the `StringFormTypeToClassRector` and get your form classes converted safely.
@@ -57,13 +59,10 @@ Some rules like `AddRouteAnnotationRector` require additional access to your Sym
 
 ```php
 use Rector\Config\RectorConfig;
-use Rector\Symfony\Bridge\Symfony\Routing\SymfonyRoutesProvider;
-use Rector\Symfony\Configs\Rector\ClassMethod\AddRouteAnnotationRector;
-use Rector\Symfony\Contract\Bridge\Symfony\Routing\SymfonyRoutesProviderInterface;
 
-return RectorConfig::configure()
-    ->withSymfonyContainerPhp(__DIR__ . '/tests/symfony-container.php')
-    ->registerService(SymfonyRoutesProvider::class, SymfonyRoutesProviderInterface::class);
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->symfonyContainerPhp(__DIR__ . '/tests/symfony-container.php');
+};
 ```
 
 The `tests/symfony-container.php` should provide your dependency injection container. The way you create the container is up to you. It can be as simple as:
@@ -85,8 +84,7 @@ The version of your Symfony can be quite old. Public methods are stable from Sym
 
 ---
 
-> [!NOTE]
-> In this case, container cache PHP file located in `/var/cache/<env>/appProjectContainer.php` is not enough. Why? Few services require Kernel to be set, e.g. routes that are resolved in lazy way. This container file is only dumped without Kernel and [would crash with missing "kernel" error](https://github.com/symfony/symfony/issues/19840). That's why the rule needs full blown container.
+Note: in this case, container cache PHP file located in `/var/cache/<env>/appProjectContainer.php` is not enough. Why? Few services require Kernel to be set, e.g. routes that are resolved in lazy way. This container file is only dumped without Kernel and [would crash with missing "kernel" error](https://github.com/symfony/symfony/issues/19840). That's why the rule needs full blown container.
 
 <br>
 

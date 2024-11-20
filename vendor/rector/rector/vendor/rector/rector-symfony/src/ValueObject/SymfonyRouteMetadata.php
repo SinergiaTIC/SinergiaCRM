@@ -6,6 +6,12 @@ namespace Rector\Symfony\ValueObject;
 final class SymfonyRouteMetadata
 {
     /**
+     * Format <class>::<method>
+     * @readonly
+     * @var string|null
+     */
+    private $controllerReference;
+    /**
      * @readonly
      * @var string
      */
@@ -50,12 +56,6 @@ final class SymfonyRouteMetadata
      * @readonly
      */
     private $options;
-    /**
-     * Format <class>::<method>
-     * @readonly
-     * @var string|null
-     */
-    private $controllerReference;
     /**
      * @param array<string, mixed> $defaults
      * @param array<string, mixed> $requirements

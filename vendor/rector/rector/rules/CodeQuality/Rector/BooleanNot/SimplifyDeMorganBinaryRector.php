@@ -7,18 +7,19 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\BooleanNot;
-use Rector\NodeManipulator\BinaryOpManipulator;
-use Rector\Rector\AbstractRector;
+use Rector\Core\NodeManipulator\BinaryOpManipulator;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://stackoverflow.com/questions/20043664/de-morgans-law
  * @see \Rector\Tests\CodeQuality\Rector\BooleanNot\SimplifyDeMorganBinaryRector\SimplifyDeMorganBinaryRectorTest
  */
 final class SimplifyDeMorganBinaryRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\BinaryOpManipulator
+     * @var \Rector\Core\NodeManipulator\BinaryOpManipulator
      */
     private $binaryOpManipulator;
     public function __construct(BinaryOpManipulator $binaryOpManipulator)

@@ -4,31 +4,41 @@ declare (strict_types=1);
 namespace Rector\Php81\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\New_;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Reflection\ClassReflection;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\MethodName;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\FamilyTree\NodeAnalyzer\ClassChildAnalyzer;
-use Rector\NodeManipulator\StmtsManipulator;
-use Rector\Php81\NodeAnalyzer\CoalesePropertyAssignMatcher;
-use Rector\Rector\AbstractRector;
-use Rector\Reflection\ReflectionResolver;
-use Rector\ValueObject\MethodName;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Php81\NodeAnalyzer\ComplexNewAnalyzer;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://wiki.php.net/rfc/new_in_initializers
+ *
  * @see \Rector\Tests\Php81\Rector\ClassMethod\NewInInitializerRector\NewInInitializerRectorTest
  */
 final class NewInInitializerRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Php81\NodeAnalyzer\ComplexNewAnalyzer
+     */
+    private $complexNewAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     /**
@@ -36,22 +46,11 @@ final class NewInInitializerRector extends AbstractRector implements MinPhpVersi
      * @var \Rector\FamilyTree\NodeAnalyzer\ClassChildAnalyzer
      */
     private $classChildAnalyzer;
-    /**
-     * @readonly
-     * @var \Rector\Php81\NodeAnalyzer\CoalesePropertyAssignMatcher
-     */
-    private $coalesePropertyAssignMatcher;
-    /**
-     * @readonly
-     * @var \Rector\NodeManipulator\StmtsManipulator
-     */
-    private $stmtsManipulator;
-    public function __construct(ReflectionResolver $reflectionResolver, ClassChildAnalyzer $classChildAnalyzer, CoalesePropertyAssignMatcher $coalesePropertyAssignMatcher, StmtsManipulator $stmtsManipulator)
+    public function __construct(ComplexNewAnalyzer $complexNewAnalyzer, ReflectionResolver $reflectionResolver, ClassChildAnalyzer $classChildAnalyzer)
     {
+        $this->complexNewAnalyzer = $complexNewAnalyzer;
         $this->reflectionResolver = $reflectionResolver;
         $this->classChildAnalyzer = $classChildAnalyzer;
-        $this->coalesePropertyAssignMatcher = $coalesePropertyAssignMatcher;
-        $this->stmtsManipulator = $stmtsManipulator;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -83,74 +82,52 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [Class_::class];
+        return [ClassMethod::class];
     }
     /**
-     * @param Class_ $node
+     * @param ClassMethod $node
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->stmts === null || $node->stmts === []) {
+        if (!$this->isLegalClass($node)) {
             return null;
         }
-        if ($node->isAbstract() || $node->isAnonymous()) {
-            return null;
-        }
-        $constructClassMethod = $node->getMethod(MethodName::CONSTRUCT);
-        if (!$constructClassMethod instanceof ClassMethod) {
-            return null;
-        }
-        $params = $this->resolveParams($constructClassMethod);
+        $params = $this->matchConstructorParams($node);
         if ($params === []) {
             return null;
         }
-        $hasChanged = \false;
-        // stmts variable defined to avoid unset overlap when used via array_slice() on
-        // StmtsManipulator::isVariableUsedInNextStmt()
-        // @see https://github.com/rectorphp/rector-src/pull/5968
-        // @see https://3v4l.org/eojhk
-        $stmts = (array) $constructClassMethod->stmts;
-        foreach ((array) $constructClassMethod->stmts as $key => $stmt) {
-            foreach ($params as $param) {
-                $paramName = $this->getName($param);
-                $coalesce = $this->coalesePropertyAssignMatcher->matchCoalesceAssignsToLocalPropertyNamed($stmt, $paramName);
-                if (!$coalesce instanceof Coalesce) {
+        if ($this->isOverrideAbstractMethod($node)) {
+            return null;
+        }
+        foreach ($params as $param) {
+            /** @var string $paramName */
+            $paramName = $this->getName($param->var);
+            $toPropertyAssigns = $this->betterNodeFinder->findClassMethodAssignsToLocalProperty($node, $paramName);
+            $toPropertyAssigns = \array_filter($toPropertyAssigns, static function (Assign $assign) : bool {
+                return $assign->expr instanceof Coalesce;
+            });
+            foreach ($toPropertyAssigns as $toPropertyAssign) {
+                /** @var Coalesce $coalesce */
+                $coalesce = $toPropertyAssign->expr;
+                if (!$coalesce->right instanceof New_) {
                     continue;
                 }
-                if ($this->stmtsManipulator->isVariableUsedInNextStmt($stmts, $key + 1, $paramName)) {
+                if ($this->complexNewAnalyzer->isDynamic($coalesce->right)) {
                     continue;
                 }
                 /** @var NullableType $currentParamType */
                 $currentParamType = $param->type;
                 $param->type = $currentParamType->type;
                 $param->default = $coalesce->right;
-                unset($constructClassMethod->stmts[$key]);
+                $this->removeNode($toPropertyAssign);
                 $this->processPropertyPromotion($node, $param, $paramName);
-                $hasChanged = \true;
             }
         }
-        if ($hasChanged) {
-            return $node;
-        }
-        return null;
+        return $node;
     }
     public function provideMinPhpVersion() : int
     {
         return PhpVersionFeature::NEW_INITIALIZERS;
-    }
-    /**
-     * @return Param[]
-     */
-    private function resolveParams(ClassMethod $classMethod) : array
-    {
-        $params = $this->matchConstructorParams($classMethod);
-        if ($params === []) {
-            return [];
-        }
-        if ($this->isOverrideAbstractMethod($classMethod)) {
-            return [];
-        }
-        return $params;
     }
     private function isOverrideAbstractMethod(ClassMethod $classMethod) : bool
     {
@@ -158,28 +135,43 @@ CODE_SAMPLE
         $methodName = $this->nodeNameResolver->getName($classMethod);
         return $classReflection instanceof ClassReflection && $this->classChildAnalyzer->hasAbstractParentClassMethod($classReflection, $methodName);
     }
-    private function processPropertyPromotion(Class_ $class, Param $param, string $paramName) : void
+    private function processPropertyPromotion(ClassMethod $classMethod, Param $param, string $paramName) : void
     {
-        foreach ($class->stmts as $key => $stmt) {
-            if (!$stmt instanceof Property) {
-                continue;
-            }
-            $property = $stmt;
-            if (!$this->isName($stmt, $paramName)) {
-                continue;
-            }
-            $param->flags = $property->flags;
-            $param->attrGroups = \array_merge($property->attrGroups, $param->attrGroups);
-            unset($class->stmts[$key]);
+        $classLike = $this->betterNodeFinder->findParentType($classMethod, ClassLike::class);
+        if (!$classLike instanceof ClassLike) {
+            return;
         }
+        $property = $classLike->getProperty($paramName);
+        if (!$property instanceof Property) {
+            return;
+        }
+        $param->flags = $property->flags;
+        $param->attrGroups = \array_merge($property->attrGroups, $param->attrGroups);
+        $this->removeNode($property);
+    }
+    private function isLegalClass(ClassMethod $classMethod) : bool
+    {
+        $classLike = $this->betterNodeFinder->findParentType($classMethod, ClassLike::class);
+        if ($classLike instanceof Interface_) {
+            return \false;
+        }
+        if ($classLike instanceof Class_) {
+            return !$classLike->isAbstract();
+        }
+        return \true;
     }
     /**
      * @return Param[]
      */
     private function matchConstructorParams(ClassMethod $classMethod) : array
     {
-        // skip empty constructor assigns, as we need those here
-        if ($classMethod->stmts === null || $classMethod->stmts === []) {
+        if (!$this->isName($classMethod, MethodName::CONSTRUCT)) {
+            return [];
+        }
+        if ($classMethod->params === []) {
+            return [];
+        }
+        if ((array) $classMethod->stmts === []) {
             return [];
         }
         return \array_filter($classMethod->params, static function (Param $param) : bool {

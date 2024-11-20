@@ -5,9 +5,9 @@ namespace Rector\CodingStyle\Rector\String_;
 
 use PhpParser\Node;
 use PhpParser\Node\Scalar\String_;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Util\StringUtils;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Rector\AbstractRector;
-use Rector\Util\StringUtils;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -66,7 +66,6 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?String_
     {
-        $this->hasChanged = \false;
         if (StringUtils::isMatch($node->value, self::HAS_NON_PRINTABLE_CHARS)) {
             return null;
         }

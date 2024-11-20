@@ -14,7 +14,7 @@
         }
     ],
     "support": {
-        "irc": "ircs:\/\/irc.libera.chat:6697\/composer",
+        "irc": "irc:\/\/irc.freenode.org\/composer",
         "issues": "https:\/\/github.com\/composer\/xdebug-handler\/issues"
     },
     "require": {
@@ -23,22 +23,22 @@
         "composer\/pcre": "^1 || ^2 || ^3"
     },
     "require-dev": {
+        "symfony\/phpunit-bridge": "^6.0",
         "phpstan\/phpstan": "^1.0",
-        "phpstan\/phpstan-strict-rules": "^1.1",
-        "phpunit\/phpunit": "^8.5 || ^9.6 || ^10.5"
+        "phpstan\/phpstan-strict-rules": "^1.1"
     },
     "autoload": {
         "psr-4": {
-            "RectorPrefix202411\\Composer\\XdebugHandler\\": "src"
+            "RectorPrefix202305\\Composer\\XdebugHandler\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "RectorPrefix202411\\Composer\\XdebugHandler\\Tests\\": "tests"
+            "RectorPrefix202305\\Composer\\XdebugHandler\\Tests\\": "tests"
         }
     },
     "scripts": {
-        "test": "@php vendor\/bin\/phpunit",
+        "test": "@php vendor\/bin\/simple-phpunit",
         "phpstan": "@php vendor\/bin\/phpstan analyse"
     }
 }

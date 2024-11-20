@@ -6,12 +6,11 @@ namespace Rector\Removing\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\NodeTraverser;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Removing\Rector\FuncCall\RemoveFuncCallRector\RemoveFuncCallRectorTest
  */
@@ -42,18 +41,13 @@ CODE_SAMPLE
     /**
      * @param Expression $node
      */
-    public function refactor(Node $node) : ?int
+    public function refactor(Node $node) : ?Node
     {
         $expr = $node->expr;
         if (!$expr instanceof FuncCall) {
             return null;
         }
-        foreach ($this->removedFunctions as $removedFunction) {
-            if (!$this->isName($expr->name, $removedFunction)) {
-                continue;
-            }
-            return NodeTraverser::REMOVE_NODE;
-        }
+        $this->removeNodeIfNeeded($node, $expr);
         return null;
     }
     /**
@@ -63,5 +57,15 @@ CODE_SAMPLE
     {
         Assert::allString($configuration);
         $this->removedFunctions = $configuration;
+    }
+    private function removeNodeIfNeeded(Expression $expression, FuncCall $funcCall) : void
+    {
+        foreach ($this->removedFunctions as $removedFunction) {
+            if (!$this->isName($funcCall->name, $removedFunction)) {
+                continue;
+            }
+            $this->removeNode($expression);
+            break;
+        }
     }
 }

@@ -7,7 +7,7 @@ use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\PassedByReference;
 use PHPStan\Type\ConstantTypeHelper;
 use PHPStan\Type\Type;
-use Rector\Exception\NotImplementedYetException;
+use Rector\Core\Exception\NotImplementedYetException;
 use ReflectionFunction;
 use ReflectionParameter;
 use Throwable;

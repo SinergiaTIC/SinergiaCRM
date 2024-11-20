@@ -1,20 +1,30 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\NodeAnalyzer;
+namespace Rector\Core\NodeAnalyzer;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Stmt\Class_;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 final class ClassAnalyzer
 {
     public function isAnonymousClass(Node $node) : bool
     {
-        if ($node instanceof New_) {
-            return $this->isAnonymousClass($node->class);
+        if (!$node instanceof Class_) {
+            return \false;
         }
-        if ($node instanceof Class_) {
-            return $node->isAnonymous();
+        if ($node->isAnonymous()) {
+            return \true;
+        }
+        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        if (!$scope instanceof Scope) {
+            return \false;
+        }
+        $classReflection = $scope->getClassReflection();
+        if ($classReflection instanceof ClassReflection) {
+            return $classReflection->isAnonymous();
         }
         return \false;
     }

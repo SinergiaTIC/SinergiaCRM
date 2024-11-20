@@ -50,11 +50,9 @@ final class BitwiseFlagCleaner
         } elseif ($bitwiseOr->left instanceof ConstFetch && $this->nodeNameResolver->isName($bitwiseOr->left, $flag)) {
             $bitwiseOr = $bitwiseOr->right;
         }
-        $args = $funcCall->getArgs();
-        $fourthArg = $args[3] ?? null;
-        if (!$fourthArg instanceof Arg) {
+        if (!$funcCall->args[3] instanceof Arg) {
             return;
         }
-        $fourthArg->value = $bitwiseOr;
+        $funcCall->args[3]->value = $bitwiseOr;
     }
 }

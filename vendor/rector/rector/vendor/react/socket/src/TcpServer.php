@@ -1,10 +1,10 @@
 <?php
 
-namespace RectorPrefix202411\React\Socket;
+namespace RectorPrefix202305\React\Socket;
 
-use RectorPrefix202411\Evenement\EventEmitter;
-use RectorPrefix202411\React\EventLoop\Loop;
-use RectorPrefix202411\React\EventLoop\LoopInterface;
+use RectorPrefix202305\Evenement\EventEmitter;
+use RectorPrefix202305\React\EventLoop\Loop;
+use RectorPrefix202305\React\EventLoop\LoopInterface;
 use InvalidArgumentException;
 use RuntimeException;
 /**
@@ -126,12 +126,8 @@ final class TcpServer extends EventEmitter implements ServerInterface
      * @throws InvalidArgumentException if the listening address is invalid
      * @throws RuntimeException if listening on this address fails (already in use etc.)
      */
-    public function __construct($uri, $loop = null, array $context = array())
+    public function __construct($uri, LoopInterface $loop = null, array $context = array())
     {
-        if ($loop !== null && !$loop instanceof LoopInterface) {
-            // manual type check to support legacy PHP < 7.1
-            throw new \InvalidArgumentException('Argument #2 ($loop) expected null|React\\EventLoop\\LoopInterface');
-        }
         $this->loop = $loop ?: Loop::get();
         // a single port has been given => assume localhost
         if ((string) (int) $uri === (string) $uri) {
@@ -152,10 +148,10 @@ final class TcpServer extends EventEmitter implements ServerInterface
         }
         // ensure URI contains TCP scheme, host and port
         if (!$parts || !isset($parts['scheme'], $parts['host'], $parts['port']) || $parts['scheme'] !== 'tcp') {
-            throw new \InvalidArgumentException('Invalid URI "' . $uri . '" given (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22));
+            throw new \InvalidArgumentException('Invalid URI "' . $uri . '" given (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22);
         }
         if (@\inet_pton(\trim($parts['host'], '[]')) === \false) {
-            throw new \InvalidArgumentException('Given URI "' . $uri . '" does not contain a valid host IP (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22));
+            throw new \InvalidArgumentException('Given URI "' . $uri . '" does not contain a valid host IP (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22);
         }
         $this->master = @\stream_socket_server($uri, $errno, $errstr, \STREAM_SERVER_BIND | \STREAM_SERVER_LISTEN, \stream_context_create(array('socket' => $context + array('backlog' => 511))));
         if (\false === $this->master) {

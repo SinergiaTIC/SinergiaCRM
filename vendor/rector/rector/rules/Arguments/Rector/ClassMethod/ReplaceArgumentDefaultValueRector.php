@@ -5,32 +5,29 @@ namespace Rector\Arguments\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Stmt\ClassMethod;
 use Rector\Arguments\ArgumentDefaultValueReplacer;
 use Rector\Arguments\ValueObject\ReplaceArgumentDefaultValue;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\MethodName;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
- * @api used in rector-symfony
  * @see \Rector\Tests\Arguments\Rector\ClassMethod\ReplaceArgumentDefaultValueRector\ReplaceArgumentDefaultValueRectorTest
  */
 final class ReplaceArgumentDefaultValueRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
+     * @var ReplaceArgumentDefaultValue[]
+     */
+    private $replacedArguments = [];
+    /**
      * @readonly
      * @var \Rector\Arguments\ArgumentDefaultValueReplacer
      */
     private $argumentDefaultValueReplacer;
-    /**
-     * @var ReplaceArgumentDefaultValue[]
-     */
-    private $replaceArgumentDefaultValues = [];
     public function __construct(ArgumentDefaultValueReplacer $argumentDefaultValueReplacer)
     {
         $this->argumentDefaultValueReplacer = $argumentDefaultValueReplacer;
@@ -52,30 +49,23 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [MethodCall::class, StaticCall::class, ClassMethod::class, New_::class];
+        return [MethodCall::class, StaticCall::class, ClassMethod::class];
     }
     /**
-     * @param MethodCall|StaticCall|ClassMethod|New_ $node
-     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Expr\New_|null
+     * @param MethodCall|StaticCall|ClassMethod $node
+     * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\StaticCall|\PhpParser\Node\Stmt\ClassMethod|null
      */
     public function refactor(Node $node)
     {
         $hasChanged = \false;
-        if ($node instanceof New_) {
-            return $this->refactorNew($node);
-        }
-        $nodeName = $this->getName($node->name);
-        if ($nodeName === null) {
-            return null;
-        }
-        foreach ($this->replaceArgumentDefaultValues as $replaceArgumentDefaultValue) {
-            if (!$this->nodeNameResolver->isStringName($nodeName, $replaceArgumentDefaultValue->getMethod())) {
+        foreach ($this->replacedArguments as $replacedArgument) {
+            if (!$this->isName($node->name, $replacedArgument->getMethod())) {
                 continue;
             }
-            if (!$this->nodeTypeResolver->isMethodStaticCallOrClassMethodObjectType($node, $replaceArgumentDefaultValue->getObjectType())) {
+            if (!$this->nodeTypeResolver->isMethodStaticCallOrClassMethodObjectType($node, $replacedArgument->getObjectType())) {
                 continue;
             }
-            $replacedNode = $this->argumentDefaultValueReplacer->processReplaces($node, $replaceArgumentDefaultValue);
+            $replacedNode = $this->argumentDefaultValueReplacer->processReplaces($node, $replacedArgument);
             if ($replacedNode instanceof Node) {
                 $hasChanged = \true;
             }
@@ -91,19 +81,6 @@ CODE_SAMPLE
     public function configure(array $configuration) : void
     {
         Assert::allIsAOf($configuration, ReplaceArgumentDefaultValue::class);
-        $this->replaceArgumentDefaultValues = $configuration;
-    }
-    private function refactorNew(New_ $new) : ?New_
-    {
-        foreach ($this->replaceArgumentDefaultValues as $replaceArgumentDefaultValue) {
-            if ($replaceArgumentDefaultValue->getMethod() !== MethodName::CONSTRUCT) {
-                continue;
-            }
-            if (!$this->isObjectType($new, $replaceArgumentDefaultValue->getObjectType())) {
-                continue;
-            }
-            return $this->argumentDefaultValueReplacer->processReplaces($new, $replaceArgumentDefaultValue);
-        }
-        return null;
+        $this->replacedArguments = $configuration;
     }
 }

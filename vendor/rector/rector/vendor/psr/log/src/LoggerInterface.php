@@ -1,6 +1,6 @@
 <?php
 
-namespace RectorPrefix202411\Psr\Log;
+namespace RectorPrefix202305\Psr\Log;
 
 /**
  * Describes a logger instance.
@@ -22,8 +22,10 @@ interface LoggerInterface
     /**
      * System is unusable.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function emergency($message, array $context = []) : void;
     /**
@@ -32,8 +34,10 @@ interface LoggerInterface
      * Example: Entire website down, database unavailable, etc. This should
      * trigger the SMS alerts and wake you up.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function alert($message, array $context = []) : void;
     /**
@@ -41,16 +45,20 @@ interface LoggerInterface
      *
      * Example: Application component unavailable, unexpected exception.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function critical($message, array $context = []) : void;
     /**
      * Runtime errors that do not require immediate action but should typically
      * be logged and monitored.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function error($message, array $context = []) : void;
     /**
@@ -59,15 +67,19 @@ interface LoggerInterface
      * Example: Use of deprecated APIs, poor use of an API, undesirable things
      * that are not necessarily wrong.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function warning($message, array $context = []) : void;
     /**
      * Normal but significant events.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function notice($message, array $context = []) : void;
     /**
@@ -75,25 +87,31 @@ interface LoggerInterface
      *
      * Example: User logs in, SQL logs.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function info($message, array $context = []) : void;
     /**
      * Detailed debug information.
      *
-     * @param mixed[] $context
      * @param string|\Stringable $message
+     * @param mixed[] $context
+     *
+     * @return void
      */
     public function debug($message, array $context = []) : void;
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed $level
+     * @param mixed   $level
+     * @param string|\Stringable $message
      * @param mixed[] $context
      *
+     * @return void
+     *
      * @throws \Psr\Log\InvalidArgumentException
-     * @param string|\Stringable $message
      */
     public function log($level, $message, array $context = []) : void;
 }

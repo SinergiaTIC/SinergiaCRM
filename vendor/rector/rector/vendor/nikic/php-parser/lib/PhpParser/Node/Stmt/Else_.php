@@ -4,7 +4,8 @@ declare (strict_types=1);
 namespace PhpParser\Node\Stmt;
 
 use PhpParser\Node;
-class Else_ extends Node\Stmt implements \Rector\Contract\PhpParser\Node\StmtsAwareInterface
+use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
+class Else_ extends Node\Stmt implements StmtsAwareInterface
 {
     /** @var Node\Stmt[] Statements */
     public $stmts;

@@ -12,11 +12,12 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
-use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Core\PhpParser\Comparing\NodeComparator;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\Core\ValueObject\MethodName;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\Php80\ValueObject\PropertyPromotionCandidate;
-use Rector\PhpParser\Comparing\NodeComparator;
-use Rector\PhpParser\Node\BetterNodeFinder;
 final class PromotedPropertyCandidateResolver
 {
     /**
@@ -26,17 +27,17 @@ final class PromotedPropertyCandidateResolver
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Comparing\NodeComparator
+     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
      */
     private $nodeComparator;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     public function __construct(NodeNameResolver $nodeNameResolver, BetterNodeFinder $betterNodeFinder, NodeComparator $nodeComparator, PropertyFetchAnalyzer $propertyFetchAnalyzer)
@@ -49,8 +50,12 @@ final class PromotedPropertyCandidateResolver
     /**
      * @return PropertyPromotionCandidate[]
      */
-    public function resolveFromClass(Class_ $class, ClassMethod $constructClassMethod) : array
+    public function resolveFromClass(Class_ $class) : array
     {
+        $constructClassMethod = $class->getMethod(MethodName::CONSTRUCT);
+        if (!$constructClassMethod instanceof ClassMethod) {
+            return [];
+        }
         $propertyPromotionCandidates = [];
         foreach ($class->getProperties() as $property) {
             $propertyCount = \count($property->props);
@@ -67,21 +72,18 @@ final class PromotedPropertyCandidateResolver
     }
     private function matchPropertyPromotionCandidate(Property $property, ClassMethod $constructClassMethod) : ?PropertyPromotionCandidate
     {
-        if ($property->flags === 0) {
-            return null;
-        }
         $onlyProperty = $property->props[0];
         $propertyName = $this->nodeNameResolver->getName($onlyProperty);
         $firstParamAsVariable = $this->resolveFirstParamUses($constructClassMethod);
         // match property name to assign in constructor
         foreach ((array) $constructClassMethod->stmts as $stmt) {
-            if (!$stmt instanceof Expression) {
+            if ($stmt instanceof Expression) {
+                $stmt = $stmt->expr;
+            }
+            if (!$stmt instanceof Assign) {
                 continue;
             }
-            if (!$stmt->expr instanceof Assign) {
-                continue;
-            }
-            $assign = $stmt->expr;
+            $assign = $stmt;
             // promoted property must use non-static property only
             if (!$assign->var instanceof PropertyFetch) {
                 continue;
@@ -101,7 +103,7 @@ final class PromotedPropertyCandidateResolver
             if ($this->shouldSkipParam($matchedParam, $assignedExpr, $firstParamAsVariable)) {
                 continue;
             }
-            return new PropertyPromotionCandidate($property, $matchedParam, $stmt);
+            return new PropertyPromotionCandidate($property, $assign, $matchedParam);
         }
         return null;
     }

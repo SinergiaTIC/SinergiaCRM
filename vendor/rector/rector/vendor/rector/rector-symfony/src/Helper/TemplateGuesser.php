@@ -3,11 +3,11 @@
 declare (strict_types=1);
 namespace Rector\Symfony\Helper;
 
-use RectorPrefix202411\Nette\Utils\Strings;
+use RectorPrefix202305\Nette\Utils\Strings;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
-use Rector\Exception\ShouldNotHappenException;
+use Rector\Core\Exception\ShouldNotHappenException;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Symfony\BundleClassResolver;
@@ -16,16 +16,6 @@ use Rector\Symfony\BundleClassResolver;
  */
 final class TemplateGuesser
 {
-    /**
-     * @readonly
-     * @var \Rector\Symfony\BundleClassResolver
-     */
-    private $bundleClassResolver;
-    /**
-     * @readonly
-     * @var \Rector\NodeNameResolver\NodeNameResolver
-     */
-    private $nodeNameResolver;
     /**
      * @var string
      * @see https://regex101.com/r/yZAUAC/1
@@ -51,6 +41,16 @@ final class TemplateGuesser
      * @see https://regex101.com/r/nj8Ojf/1
      */
     private const ACTION_MATCH_REGEX = '#Action$#';
+    /**
+     * @readonly
+     * @var \Rector\Symfony\BundleClassResolver
+     */
+    private $bundleClassResolver;
+    /**
+     * @readonly
+     * @var \Rector\NodeNameResolver\NodeNameResolver
+     */
+    private $nodeNameResolver;
     public function __construct(BundleClassResolver $bundleClassResolver, NodeNameResolver $nodeNameResolver)
     {
         $this->bundleClassResolver = $bundleClassResolver;
@@ -83,15 +83,14 @@ final class TemplateGuesser
         $bundle = $this->resolveBundle($class, $namespace);
         $controller = $this->resolveController($class);
         $action = Strings::replace($method, self::ACTION_MATCH_REGEX, '');
-        $action = Strings::replace($action, self::SMALL_LETTER_BIG_LETTER_REGEX, '$1_$2');
         $fullPath = '';
         if ($bundle !== '') {
             $fullPath .= $bundle . '/';
         }
         if ($controller !== '') {
-            $fullPath .= \strtolower($controller) . '/';
+            $fullPath .= $controller . '/';
         }
-        return $fullPath . \strtolower($action) . '.html.twig';
+        return $fullPath . $action . '.html.twig';
     }
     private function resolveBundle(string $class, string $namespace) : string
     {
@@ -109,7 +108,7 @@ final class TemplateGuesser
         if ($match === null) {
             return '';
         }
-        $controller = Strings::replace($match['class_name_without_suffix'], self::SMALL_LETTER_BIG_LETTER_REGEX, '$1_$2');
+        $controller = Strings::replace($match['class_name_without_suffix'], self::SMALL_LETTER_BIG_LETTER_REGEX, '1_\\2');
         return \str_replace('\\', '/', $controller);
     }
 }

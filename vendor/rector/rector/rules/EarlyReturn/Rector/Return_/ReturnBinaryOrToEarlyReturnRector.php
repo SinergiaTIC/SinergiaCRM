@@ -9,10 +9,10 @@ use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
-use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
-use Rector\NodeAnalyzer\CallAnalyzer;
-use Rector\PhpParser\Node\AssignAndBinaryMap;
-use Rector\Rector\AbstractRector;
+use Rector\Core\NodeAnalyzer\CallAnalyzer;
+use Rector\Core\NodeManipulator\IfManipulator;
+use Rector\Core\PhpParser\Node\AssignAndBinaryMap;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -22,16 +22,22 @@ final class ReturnBinaryOrToEarlyReturnRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\AssignAndBinaryMap
+     * @var \Rector\Core\NodeManipulator\IfManipulator
+     */
+    private $ifManipulator;
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\AssignAndBinaryMap
      */
     private $assignAndBinaryMap;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\CallAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\CallAnalyzer
      */
     private $callAnalyzer;
-    public function __construct(AssignAndBinaryMap $assignAndBinaryMap, CallAnalyzer $callAnalyzer)
+    public function __construct(IfManipulator $ifManipulator, AssignAndBinaryMap $assignAndBinaryMap, CallAnalyzer $callAnalyzer)
     {
+        $this->ifManipulator = $ifManipulator;
         $this->assignAndBinaryMap = $assignAndBinaryMap;
         $this->callAnalyzer = $callAnalyzer;
     }
@@ -65,45 +71,31 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [StmtsAwareInterface::class];
+        return [Return_::class];
     }
     /**
-     * @param StmtsAwareInterface $node
+     * @param Return_ $node
+     * @return null|Node[]
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node) : ?array
     {
-        if ($node->stmts === null) {
+        if (!$node->expr instanceof BooleanOr) {
             return null;
         }
-        $hasChanged = \false;
-        foreach ($node->stmts as $key => $stmt) {
-            if (!$stmt instanceof Return_) {
-                continue;
-            }
-            if (!$stmt->expr instanceof BooleanOr) {
-                continue;
-            }
-            /** @var BooleanOr $booleanOr */
-            $booleanOr = $stmt->expr;
-            $left = $booleanOr->left;
-            $ifs = $this->createMultipleIfs($left, $stmt, []);
-            // ensure ifs not removed by other rules
-            if ($ifs === []) {
-                continue;
-            }
-            if (!$this->callAnalyzer->doesIfHasObjectCall($ifs)) {
-                continue;
-            }
-            $this->mirrorComments($ifs[0], $stmt);
-            $lastReturnExpr = $this->assignAndBinaryMap->getTruthyExpr($booleanOr->right);
-            $ifsWithLastIf = \array_merge($ifs, [new Return_($lastReturnExpr)]);
-            \array_splice($node->stmts, $key, 1, $ifsWithLastIf);
-            $hasChanged = \true;
+        /** @var BooleanOr $booleanOr */
+        $booleanOr = $node->expr;
+        $left = $booleanOr->left;
+        $ifs = $this->createMultipleIfs($left, $node, []);
+        // ensure ifs not removed by other rules
+        if ($ifs === []) {
+            return null;
         }
-        if ($hasChanged) {
-            return $node;
+        if (!$this->callAnalyzer->doesIfHasObjectCall($ifs)) {
+            return null;
         }
-        return null;
+        $this->mirrorComments($ifs[0], $node);
+        $lastReturnExpr = $this->assignAndBinaryMap->getTruthyExpr($booleanOr->right);
+        return \array_merge($ifs, [new Return_($lastReturnExpr)]);
     }
     /**
      * @param If_[] $ifs
@@ -113,7 +105,7 @@ CODE_SAMPLE
     {
         while ($expr instanceof BooleanOr) {
             $ifs = \array_merge($ifs, $this->collectLeftBooleanOrToIfs($expr, $return, $ifs));
-            $ifs[] = new If_($expr->right, ['stmts' => [new Return_($this->nodeFactory->createTrue())]]);
+            $ifs[] = $this->ifManipulator->createIfStmt($expr->right, new Return_($this->nodeFactory->createTrue()));
             $expr = $expr->right;
             if ($expr instanceof BooleanAnd) {
                 return [];
@@ -123,12 +115,7 @@ CODE_SAMPLE
             }
             return [];
         }
-        $lastIf = new If_($expr, ['stmts' => [new Return_($this->nodeFactory->createTrue())]]);
-        // if empty, fallback to last if
-        if ($ifs === []) {
-            return [$lastIf];
-        }
-        return $ifs;
+        return $ifs + [$this->ifManipulator->createIfStmt($expr, new Return_($this->nodeFactory->createTrue()))];
     }
     /**
      * @param If_[] $ifs
@@ -138,8 +125,7 @@ CODE_SAMPLE
     {
         $left = $booleanOr->left;
         if (!$left instanceof BooleanOr) {
-            $returnTrueIf = new If_($left, ['stmts' => [new Return_($this->nodeFactory->createTrue())]]);
-            return [$returnTrueIf];
+            return [$this->ifManipulator->createIfStmt($left, new Return_($this->nodeFactory->createTrue()))];
         }
         return $this->createMultipleIfs($left, $return, $ifs);
     }

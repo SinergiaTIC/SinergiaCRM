@@ -1,17 +1,16 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202411;
+namespace RectorPrefix202305;
 
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
-use Rector\Symfony\Symfony61\Rector\Class_\CommandConfigureToAttributeRector;
-use Rector\Symfony\Symfony61\Rector\Class_\CommandPropertyToAttributeRector;
-use Rector\Symfony\Symfony61\Rector\Class_\MagicClosureTwigExtensionToNativeMethodsRector;
-use Rector\Symfony\Symfony61\Rector\StaticPropertyFetch\ErrorNamesPropertyToConstantRector;
+use Rector\Symfony\Rector\Class_\CommandPropertyToAttributeRector;
+use Rector\Symfony\Rector\StaticPropertyFetch\ErrorNamesPropertyToConstantRector;
 # https://github.com/symfony/symfony/blob/6.1/UPGRADE-6.1.md
 return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->rules([CommandConfigureToAttributeRector::class, CommandPropertyToAttributeRector::class, ErrorNamesPropertyToConstantRector::class, MagicClosureTwigExtensionToNativeMethodsRector::class]);
+    $rectorConfig->rule(CommandPropertyToAttributeRector::class);
+    $rectorConfig->rule(ErrorNamesPropertyToConstantRector::class);
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         // @see https://github.com/symfony/symfony/pull/43982
         'Symfony\\Component\\Serializer\\Normalizer\\ContextAwareDenormalizerInterface' => 'Symfony\\Component\\Serializer\\Normalizer\\DenormalizerInterface',

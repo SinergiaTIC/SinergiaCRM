@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Output;
+namespace RectorPrefix202305\Symfony\Component\Console\Output;
 
-use RectorPrefix202411\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
 class AnsiColorMode
 {
     public const Ansi4 = 'ansi4';
@@ -54,7 +54,21 @@ class AnsiColorMode
     }
     private function degradeHexColorToAnsi4(int $r, int $g, int $b) : int
     {
-        return \round($b / 255) << 2 | \round($g / 255) << 1 | \round($r / 255);
+        if (0 === \round($this->getSaturation($r, $g, $b) / 50)) {
+            return 0;
+        }
+        return (int) (\round($b / 255) << 2 | \round($g / 255) << 1 | \round($r / 255));
+    }
+    private function getSaturation(int $r, int $g, int $b) : int
+    {
+        $r = $r / 255;
+        $g = $g / 255;
+        $b = $b / 255;
+        $v = \max($r, $g, $b);
+        if (0 === ($diff = $v - \min($r, $g, $b))) {
+            return 0;
+        }
+        return (int) ((int) $diff * 100 / $v);
     }
     /**
      * Inspired from https://github.com/ajalt/colormath/blob/e464e0da1b014976736cf97250063248fc77b8e7/colormath/src/commonMain/kotlin/com/github/ajalt/colormath/model/Ansi256.kt code (MIT license).

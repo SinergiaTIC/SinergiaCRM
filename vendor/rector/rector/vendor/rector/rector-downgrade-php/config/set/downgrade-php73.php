@@ -1,10 +1,10 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202411;
+namespace RectorPrefix202305;
 
 use Rector\Config\RectorConfig;
-use Rector\ValueObject\PhpVersion;
+use Rector\Core\ValueObject\PhpVersion;
 use Rector\DowngradePhp73\Rector\ConstFetch\DowngradePhp73JsonConstRector;
 use Rector\DowngradePhp73\Rector\FuncCall\DowngradeArrayKeyFirstLastRector;
 use Rector\DowngradePhp73\Rector\FuncCall\DowngradeIsCountableRector;
@@ -15,5 +15,12 @@ use Rector\DowngradePhp73\Rector\String_\DowngradeFlexibleHeredocSyntaxRector;
 use Rector\DowngradePhp73\Rector\Unset_\DowngradeTrailingCommasInUnsetRector;
 return static function (RectorConfig $rectorConfig) : void {
     $rectorConfig->phpVersion(PhpVersion::PHP_72);
-    $rectorConfig->rules([DowngradeFlexibleHeredocSyntaxRector::class, DowngradeListReferenceAssignmentRector::class, DowngradeTrailingCommasInFunctionCallsRector::class, DowngradeArrayKeyFirstLastRector::class, SetCookieOptionsArrayToArgumentsRector::class, DowngradeIsCountableRector::class, DowngradePhp73JsonConstRector::class, DowngradeTrailingCommasInUnsetRector::class]);
+    $rectorConfig->rule(DowngradeFlexibleHeredocSyntaxRector::class);
+    $rectorConfig->rule(DowngradeListReferenceAssignmentRector::class);
+    $rectorConfig->rule(DowngradeTrailingCommasInFunctionCallsRector::class);
+    $rectorConfig->rule(DowngradeArrayKeyFirstLastRector::class);
+    $rectorConfig->rule(SetCookieOptionsArrayToArgumentsRector::class);
+    $rectorConfig->rule(DowngradeIsCountableRector::class);
+    $rectorConfig->rule(DowngradePhp73JsonConstRector::class);
+    $rectorConfig->rule(DowngradeTrailingCommasInUnsetRector::class);
 };

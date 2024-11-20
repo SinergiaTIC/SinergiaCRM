@@ -7,7 +7,6 @@ use PhpParser\Node\ComplexType;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Scalar;
 use PhpParser\Node\Stmt;
@@ -70,7 +69,7 @@ final class BuilderHelpers
         if (\is_string($name)) {
             return new Identifier($name);
         }
-        throw new \LogicException('Expected string or instance of Node\\Identifier');
+        throw new \LogicException('RectorPrefix202305\\Expected string or instance of Node\\Identifier');
     }
     /**
      * Normalizes strings to Identifier, also allowing expressions.
@@ -87,7 +86,7 @@ final class BuilderHelpers
         if (\is_string($name)) {
             return new Identifier($name);
         }
-        throw new \LogicException('Expected string or instance of Node\\Identifier or Node\\Expr');
+        throw new \LogicException('RectorPrefix202305\\Expected string or instance of Node\\Identifier or Node\\Expr');
     }
     /**
      * Normalizes a name: Converts string names to Name nodes.
@@ -113,7 +112,7 @@ final class BuilderHelpers
             }
             return new Name($name);
         }
-        throw new \LogicException('Name must be a string or an instance of Node\\Name');
+        throw new \LogicException('RectorPrefix202305\\Name must be a string or an instance of Node\\Name');
     }
     /**
      * Normalizes a name: Converts string names to Name nodes, while also allowing expressions.
@@ -128,7 +127,7 @@ final class BuilderHelpers
             return $name;
         }
         if (!\is_string($name) && !$name instanceof Name) {
-            throw new \LogicException('Name must be a string or an instance of Node\\Name or Node\\Expr');
+            throw new \LogicException('RectorPrefix202305\\Name must be a string or an instance of Node\\Name or Node\\Expr');
         }
         return self::normalizeName($name);
     }
@@ -172,7 +171,7 @@ final class BuilderHelpers
      * Normalizes a value: Converts nulls, booleans, integers,
      * floats, strings and arrays into their respective nodes
      *
-     * @param Node\Expr|bool|null|int|float|string|array|\UnitEnum $value The value to normalize
+     * @param Node\Expr|bool|null|int|float|string|array $value The value to normalize
      *
      * @return Expr The normalized value
      */
@@ -210,9 +209,6 @@ final class BuilderHelpers
             }
             return new Expr\Array_($items);
         }
-        if ($value instanceof \UnitEnum) {
-            return new Expr\ClassConstFetch(new FullyQualified(\get_class($value)), new Identifier($value->name));
-        }
         throw new \LogicException('Invalid value');
     }
     /**
@@ -230,7 +226,7 @@ final class BuilderHelpers
         if (\is_string($docComment)) {
             return new \PhpParser\Comment\Doc($docComment);
         }
-        throw new \LogicException('Doc comment must be a string or an instance of PhpParser\\Comment\\Doc');
+        throw new \LogicException('RectorPrefix202305\\Doc comment must be a string or an instance of PhpParser\\Comment\\Doc');
     }
     /**
      * Normalizes a attribute: Converts attribute to the Attribute Group if needed.
@@ -245,7 +241,7 @@ final class BuilderHelpers
             return $attribute;
         }
         if (!$attribute instanceof \PhpParser\Node\Attribute) {
-            throw new \LogicException('Attribute must be an instance of PhpParser\\Node\\Attribute or PhpParser\\Node\\AttributeGroup');
+            throw new \LogicException('RectorPrefix202305\\Attribute must be an instance of PhpParser\\Node\\Attribute or PhpParser\\Node\\AttributeGroup');
         }
         return new \PhpParser\Node\AttributeGroup([$attribute]);
     }

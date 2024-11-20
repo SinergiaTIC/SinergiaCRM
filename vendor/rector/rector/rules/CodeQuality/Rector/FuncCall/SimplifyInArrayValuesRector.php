@@ -6,7 +6,7 @@ namespace Rector\CodeQuality\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -33,9 +33,6 @@ final class SimplifyInArrayValuesRector extends AbstractRector
         if (!$this->isName($node, 'in_array')) {
             return null;
         }
-        if ($node->isFirstClassCallable()) {
-            return null;
-        }
         if (!isset($node->args[1])) {
             return null;
         }
@@ -50,10 +47,13 @@ final class SimplifyInArrayValuesRector extends AbstractRector
         if (!$this->isName($innerFunCall, 'array_values')) {
             return null;
         }
-        if (!isset($node->getArgs()[0])) {
+        if (!isset($node->args[0])) {
             return null;
         }
-        $node->args[1] = $innerFunCall->getArgs()[0];
+        if (!$node->args[0] instanceof Arg) {
+            return null;
+        }
+        $node->args[1] = $innerFunCall->args[0];
         return $node;
     }
 }

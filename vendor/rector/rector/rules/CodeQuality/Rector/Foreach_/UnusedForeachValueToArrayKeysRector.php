@@ -9,11 +9,9 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Foreach_;
-use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
+use PHPStan\Type\ObjectType;
+use Rector\Core\Rector\AbstractRector;
 use Rector\DeadCode\NodeAnalyzer\ExprUsedInNodeAnalyzer;
-use Rector\NodeManipulator\StmtsManipulator;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -26,21 +24,9 @@ final class UnusedForeachValueToArrayKeysRector extends AbstractRector
      * @var \Rector\DeadCode\NodeAnalyzer\ExprUsedInNodeAnalyzer
      */
     private $exprUsedInNodeAnalyzer;
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
-     */
-    private $betterNodeFinder;
-    /**
-     * @readonly
-     * @var \Rector\NodeManipulator\StmtsManipulator
-     */
-    private $stmtsManipulator;
-    public function __construct(ExprUsedInNodeAnalyzer $exprUsedInNodeAnalyzer, BetterNodeFinder $betterNodeFinder, StmtsManipulator $stmtsManipulator)
+    public function __construct(ExprUsedInNodeAnalyzer $exprUsedInNodeAnalyzer)
     {
         $this->exprUsedInNodeAnalyzer = $exprUsedInNodeAnalyzer;
-        $this->betterNodeFinder = $betterNodeFinder;
-        $this->stmtsManipulator = $stmtsManipulator;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -75,57 +61,37 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [StmtsAwareInterface::class];
+        return [Foreach_::class];
     }
     /**
-     * @param StmtsAwareInterface $node
+     * @param Foreach_ $node
      */
     public function refactor(Node $node) : ?Node
     {
-        $stmts = $node->stmts;
-        if ($stmts === null) {
+        if (!$node->keyVar instanceof Expr) {
             return null;
         }
-        $hasChanged = \false;
-        foreach ($stmts as $key => $stmt) {
-            if (!$stmt instanceof Foreach_) {
-                continue;
+        // special case of nested array items
+        if ($node->valueVar instanceof Array_) {
+            $valueArray = $this->refactorArrayForeachValue($node->valueVar, $node);
+            if ($valueArray instanceof Array_) {
+                $node->valueVar = $valueArray;
             }
-            if (!$stmt->keyVar instanceof Expr) {
-                continue;
+            // not sure what does this mean :)
+            if ($node->valueVar->items !== []) {
+                return null;
             }
-            if (!$this->nodeTypeResolver->getNativeType($stmt->expr)->isArray()->yes()) {
-                continue;
+        } elseif ($node->valueVar instanceof Variable) {
+            if ($this->isVariableUsedInForeach($node->valueVar, $node)) {
+                return null;
             }
-            // special case of nested array items
-            if ($stmt->valueVar instanceof Array_) {
-                $valueArray = $this->refactorArrayForeachValue($stmt->valueVar, $stmt);
-                if ($valueArray instanceof Array_) {
-                    $stmt->valueVar = $valueArray;
-                }
-                // not sure what does this mean :)
-                if ($stmt->valueVar->items !== []) {
-                    continue;
-                }
-                $hasChanged = \true;
-                $this->removeForeachValueAndUseArrayKeys($stmt, $stmt->keyVar);
-                continue;
-            }
-            if (!$stmt->valueVar instanceof Variable) {
-                continue;
-            }
-            if ($this->isVariableUsedInForeach($stmt->valueVar, $stmt)) {
-                continue;
-            }
-            if ($this->stmtsManipulator->isVariableUsedInNextStmt($stmts, $key + 1, (string) $this->getName($stmt->valueVar))) {
-                continue;
-            }
-            $hasChanged = \true;
-            $this->removeForeachValueAndUseArrayKeys($stmt, $stmt->keyVar);
-        }
-        if (!$hasChanged) {
+        } else {
             return null;
         }
+        if (!$this->isArrayType($node->expr)) {
+            return null;
+        }
+        $this->removeForeachValueAndUseArrayKeys($node);
         return $node;
     }
     /**
@@ -178,11 +144,19 @@ CODE_SAMPLE
             return $this->exprUsedInNodeAnalyzer->isUsed($node, $variable);
         });
     }
-    private function removeForeachValueAndUseArrayKeys(Foreach_ $foreach, Expr $keyVarExpr) : void
+    private function removeForeachValueAndUseArrayKeys(Foreach_ $foreach) : void
     {
         // remove key value
-        $foreach->valueVar = $keyVarExpr;
+        $foreach->valueVar = $foreach->keyVar;
         $foreach->keyVar = null;
         $foreach->expr = $this->nodeFactory->createFuncCall('array_keys', [$foreach->expr]);
+    }
+    private function isArrayType(Expr $expr) : bool
+    {
+        $exprType = $this->getType($expr);
+        if ($exprType instanceof ObjectType) {
+            return \false;
+        }
+        return $exprType->isArray()->yes();
     }
 }

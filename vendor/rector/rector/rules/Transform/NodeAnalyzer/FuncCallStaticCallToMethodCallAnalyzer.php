@@ -11,10 +11,10 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PHPStan\Type\ObjectType;
+use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\Naming\Naming\PropertyNaming;
-use Rector\NodeManipulator\ClassDependencyManipulator;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\PhpParser\Node\NodeFactory;
+use Rector\PostRector\Collector\PropertyToAddCollector;
 use Rector\PostRector\ValueObject\PropertyMetadata;
 use Rector\Transform\NodeFactory\PropertyFetchFactory;
 use Rector\Transform\NodeTypeAnalyzer\TypeProvidingExprFromClassResolver;
@@ -37,7 +37,7 @@ final class FuncCallStaticCallToMethodCallAnalyzer
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\NodeFactory
+     * @var \Rector\Core\PhpParser\Node\NodeFactory
      */
     private $nodeFactory;
     /**
@@ -47,17 +47,17 @@ final class FuncCallStaticCallToMethodCallAnalyzer
     private $propertyFetchFactory;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\ClassDependencyManipulator
+     * @var \Rector\PostRector\Collector\PropertyToAddCollector
      */
-    private $classDependencyManipulator;
-    public function __construct(TypeProvidingExprFromClassResolver $typeProvidingExprFromClassResolver, PropertyNaming $propertyNaming, NodeNameResolver $nodeNameResolver, NodeFactory $nodeFactory, PropertyFetchFactory $propertyFetchFactory, ClassDependencyManipulator $classDependencyManipulator)
+    private $propertyToAddCollector;
+    public function __construct(TypeProvidingExprFromClassResolver $typeProvidingExprFromClassResolver, PropertyNaming $propertyNaming, NodeNameResolver $nodeNameResolver, NodeFactory $nodeFactory, PropertyFetchFactory $propertyFetchFactory, PropertyToAddCollector $propertyToAddCollector)
     {
         $this->typeProvidingExprFromClassResolver = $typeProvidingExprFromClassResolver;
         $this->propertyNaming = $propertyNaming;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->nodeFactory = $nodeFactory;
         $this->propertyFetchFactory = $propertyFetchFactory;
-        $this->classDependencyManipulator = $classDependencyManipulator;
+        $this->propertyToAddCollector = $propertyToAddCollector;
     }
     /**
      * @return \PhpParser\Node\Expr\MethodCall|\PhpParser\Node\Expr\PropertyFetch|\PhpParser\Node\Expr\Variable
@@ -72,7 +72,8 @@ final class FuncCallStaticCallToMethodCallAnalyzer
             return $expr;
         }
         $propertyName = $this->propertyNaming->fqnToVariableName($objectType);
-        $this->classDependencyManipulator->addConstructorDependency($class, new PropertyMetadata($propertyName, $objectType));
+        $propertyMetadata = new PropertyMetadata($propertyName, $objectType, Class_::MODIFIER_PRIVATE);
+        $this->propertyToAddCollector->addPropertyToClass($class, $propertyMetadata);
         return $this->propertyFetchFactory->createFromType($objectType);
     }
     /**

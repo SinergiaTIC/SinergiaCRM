@@ -4,16 +4,16 @@ declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\Configuration\Deprecation\Contract\DeprecatedInterface;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @deprecated Since 1.1.2 as no clear performance difference and both are equivalent.
+ * @see \Rector\Tests\CodeQuality\Rector\FuncCall\StrvalToTypeCastRector\StrvalToTypeCastRectorTest
  */
-final class StrvalToTypeCastRector extends AbstractRector implements DeprecatedInterface
+final class StrvalToTypeCastRector extends AbstractRector
 {
     public function getRuleDefinition() : RuleDefinition
     {
@@ -52,12 +52,12 @@ CODE_SAMPLE
         if (!$this->isName($node, 'strval')) {
             return null;
         }
-        if ($node->isFirstClassCallable()) {
+        if (!isset($node->args[0])) {
             return null;
         }
-        if (!isset($node->getArgs()[0])) {
+        if (!$node->args[0] instanceof Arg) {
             return null;
         }
-        return new String_($node->getArgs()[0]->value);
+        return new String_($node->args[0]->value);
     }
 }

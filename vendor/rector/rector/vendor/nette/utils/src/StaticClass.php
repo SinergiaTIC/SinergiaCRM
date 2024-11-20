@@ -5,7 +5,7 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202411\Nette;
+namespace RectorPrefix202305\Nette;
 
 /**
  * Static class.
@@ -13,15 +13,17 @@ namespace RectorPrefix202411\Nette;
 trait StaticClass
 {
     /**
-     * Class is static and cannot be instantiated.
+     * @return never
+     * @throws \Error
      */
-    private function __construct()
+    public final function __construct()
     {
+        throw new \Error('Class ' . static::class . ' is static and cannot be instantiated.');
     }
     /**
      * Call to undefined static method.
+     * @return void
      * @throws MemberAccessException
-     * @return mixed
      */
     public static function __callStatic(string $name, array $args)
     {

@@ -3,15 +3,13 @@
 declare (strict_types=1);
 namespace Rector\Strict\Rector;
 
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractScopeAwareRector;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Strict\Rector\BooleanNot\BooleanInBooleanNotRuleFixerRector\BooleanInBooleanNotRuleFixerRectorTest
- *
- * @internal
  */
-abstract class AbstractFalsyScalarRuleFixerRector extends AbstractScopeAwareRector implements ConfigurableRectorInterface
+abstract class AbstractFalsyScalarRuleFixerRector extends AbstractRector implements AllowEmptyConfigurableRectorInterface
 {
     /**
      * @api

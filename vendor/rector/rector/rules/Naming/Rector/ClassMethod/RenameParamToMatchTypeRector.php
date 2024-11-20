@@ -9,14 +9,14 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\MethodName;
 use Rector\Naming\ExpectedNameResolver\MatchParamTypeExpectedNameResolver;
 use Rector\Naming\Guard\BreakingVariableRenameGuard;
 use Rector\Naming\Naming\ExpectedNameResolver;
 use Rector\Naming\ParamRenamer\ParamRenamer;
 use Rector\Naming\ValueObject\ParamRename;
 use Rector\Naming\ValueObjectFactory\ParamRenameFactory;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\MethodName;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -24,6 +24,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RenameParamToMatchTypeRector extends AbstractRector
 {
+    /**
+     * @var bool
+     */
+    private $hasChanged = \false;
     /**
      * @readonly
      * @var \Rector\Naming\Guard\BreakingVariableRenameGuard
@@ -49,10 +53,6 @@ final class RenameParamToMatchTypeRector extends AbstractRector
      * @var \Rector\Naming\ParamRenamer\ParamRenamer
      */
     private $paramRenamer;
-    /**
-     * @var bool
-     */
-    private $hasChanged = \false;
     public function __construct(BreakingVariableRenameGuard $breakingVariableRenameGuard, ExpectedNameResolver $expectedNameResolver, MatchParamTypeExpectedNameResolver $matchParamTypeExpectedNameResolver, ParamRenameFactory $paramRenameFactory, ParamRenamer $paramRenamer)
     {
         $this->breakingVariableRenameGuard = $breakingVariableRenameGuard;
@@ -108,7 +108,7 @@ CODE_SAMPLE
             if ($expectedName === null) {
                 continue;
             }
-            $paramRename = $this->paramRenameFactory->createFromResolvedExpectedName($node, $param, $expectedName);
+            $paramRename = $this->paramRenameFactory->createFromResolvedExpectedName($param, $expectedName);
             if (!$paramRename instanceof ParamRename) {
                 continue;
             }

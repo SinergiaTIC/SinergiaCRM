@@ -19,11 +19,10 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
-use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Exception\Configuration\InvalidConfigurationException;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\Naming\Naming\UseImportsResolver;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\Php80\NodeFactory\AttrGroupsFactory;
@@ -32,18 +31,21 @@ use Rector\Php80\ValueObject\AnnotationToAttribute;
 use Rector\Php80\ValueObject\DoctrineTagAndAnnotationToAttribute;
 use Rector\PhpAttribute\NodeFactory\PhpAttributeGroupFactory;
 use Rector\PhpDocParser\PhpDocParser\PhpDocNodeTraverser;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
+ * @changelog https://wiki.php.net/rfc/attributes_v2
+ *
  * @see \Rector\Tests\Php80\Rector\Class_\AnnotationToAttributeRector\AnnotationToAttributeRectorTest
- * @see \Rector\Tests\Php80\Rector\Class_\AnnotationToAttributeRector\Php81NestedAttributesRectorTest
  */
 final class AnnotationToAttributeRector extends AbstractRector implements ConfigurableRectorInterface, MinPhpVersionInterface
 {
+    /**
+     * @var AnnotationToAttribute[]
+     */
+    private $annotationsToAttributes = [];
     /**
      * @readonly
      * @var \Rector\PhpAttribute\NodeFactory\PhpAttributeGroupFactory
@@ -74,21 +76,7 @@ final class AnnotationToAttributeRector extends AbstractRector implements Config
      * @var \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer
      */
     private $phpAttributeAnalyzer;
-    /**
-     * @readonly
-     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
-     */
-    private $docBlockUpdater;
-    /**
-     * @readonly
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
-     */
-    private $phpDocInfoFactory;
-    /**
-     * @var AnnotationToAttribute[]
-     */
-    private $annotationsToAttributes = [];
-    public function __construct(PhpAttributeGroupFactory $phpAttributeGroupFactory, AttrGroupsFactory $attrGroupsFactory, PhpDocTagRemover $phpDocTagRemover, AttributeGroupNamedArgumentManipulator $attributeGroupNamedArgumentManipulator, UseImportsResolver $useImportsResolver, PhpAttributeAnalyzer $phpAttributeAnalyzer, DocBlockUpdater $docBlockUpdater, PhpDocInfoFactory $phpDocInfoFactory)
+    public function __construct(PhpAttributeGroupFactory $phpAttributeGroupFactory, AttrGroupsFactory $attrGroupsFactory, PhpDocTagRemover $phpDocTagRemover, AttributeGroupNamedArgumentManipulator $attributeGroupNamedArgumentManipulator, UseImportsResolver $useImportsResolver, PhpAttributeAnalyzer $phpAttributeAnalyzer)
     {
         $this->phpAttributeGroupFactory = $phpAttributeGroupFactory;
         $this->attrGroupsFactory = $attrGroupsFactory;
@@ -96,8 +84,6 @@ final class AnnotationToAttributeRector extends AbstractRector implements Config
         $this->attributeGroupNamedArgumentManipulator = $attributeGroupNamedArgumentManipulator;
         $this->useImportsResolver = $useImportsResolver;
         $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
-        $this->docBlockUpdater = $docBlockUpdater;
-        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -107,7 +93,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SymfonyRoute
 {
     /**
-     * @Route("/path", name="action") api route
+     * @Route("/path", name="action")
      */
     public function action()
     {
@@ -119,7 +105,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SymfonyRoute
 {
-    #[Route(path: '/path', name: 'action')] // api route
+    #[Route(path: '/path', name: 'action')]
     public function action()
     {
     }
@@ -139,15 +125,12 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($this->annotationsToAttributes === []) {
-            throw new InvalidConfigurationException(\sprintf('The "%s" rule requires configuration.', self::class));
-        }
         $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
         if (!$phpDocInfo instanceof PhpDocInfo) {
             return null;
         }
-        $uses = $this->useImportsResolver->resolveBareUses();
-        // 1. bare tags without annotation class, e.g. "@require"
+        $uses = $this->useImportsResolver->resolveBareUsesForNode($node);
+        // 1. bare tags without annotation class, e.g. "@inject"
         $genericAttributeGroups = $this->processGenericTags($phpDocInfo);
         // 2. Doctrine annotation classes
         $annotationAttributeGroups = $this->processDoctrineAnnotationClasses($phpDocInfo, $uses);
@@ -155,8 +138,6 @@ CODE_SAMPLE
         if ($attributeGroups === []) {
             return null;
         }
-        // 3. Reprint docblock
-        $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($node);
         $this->attributeGroupNamedArgumentManipulator->decorate($attributeGroups);
         $node->attrGroups = \array_merge($node->attrGroups, $attributeGroups);
         return $node;
@@ -180,7 +161,7 @@ CODE_SAMPLE
     {
         $attributeGroups = [];
         $phpDocNodeTraverser = new PhpDocNodeTraverser();
-        $phpDocNodeTraverser->traverseWithCallable($phpDocInfo->getPhpDocNode(), '', function (DocNode $docNode) use(&$attributeGroups) : ?int {
+        $phpDocNodeTraverser->traverseWithCallable($phpDocInfo->getPhpDocNode(), '', function (DocNode $docNode) use(&$attributeGroups, $phpDocInfo) : ?int {
             if (!$docNode instanceof PhpDocTagNode) {
                 return null;
             }
@@ -198,6 +179,7 @@ CODE_SAMPLE
                     continue;
                 }
                 $attributeGroups[] = $this->phpAttributeGroupFactory->createFromSimpleTag($annotationToAttribute);
+                $phpDocInfo->markAsChanged();
                 return PhpDocNodeTraverser::NODE_REMOVE;
             }
             return null;

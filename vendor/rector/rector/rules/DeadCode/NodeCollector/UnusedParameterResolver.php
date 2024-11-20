@@ -5,12 +5,12 @@ namespace Rector\DeadCode\NodeCollector;
 
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\NodeAnalyzer\ParamAnalyzer;
+use Rector\Core\NodeAnalyzer\ParamAnalyzer;
 final class UnusedParameterResolver
 {
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\ParamAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\ParamAnalyzer
      */
     private $paramAnalyzer;
     public function __construct(ParamAnalyzer $paramAnalyzer)

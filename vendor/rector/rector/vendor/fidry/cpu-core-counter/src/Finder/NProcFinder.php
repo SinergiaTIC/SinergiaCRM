@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace RectorPrefix202411\Fidry\CpuCoreCounter\Finder;
+namespace RectorPrefix202305\Fidry\CpuCoreCounter\Finder;
 
-use RectorPrefix202411\Fidry\CpuCoreCounter\Executor\ProcessExecutor;
+use RectorPrefix202305\Fidry\CpuCoreCounter\Executor\ProcessExecutor;
 use function sprintf;
 /**
  * The number of (logical) cores.
@@ -26,12 +26,9 @@ final class NProcFinder extends ProcOpenBasedFinder
      */
     private $all;
     /**
-     * @param bool $all If disabled will give the number of cores available for the current process
-     *                  only. This is disabled by default as it is known to be "buggy" on virtual
-     *                  environments as the virtualization tool, e.g. VMWare, might over-commit
-     *                  resources by default.
+     * @param bool $all If disabled will give the number of cores available for the current process only.
      */
-    public function __construct(bool $all = \false, ?ProcessExecutor $executor = null)
+    public function __construct(bool $all = \true, ?ProcessExecutor $executor = null)
     {
         parent::__construct($executor);
         $this->all = $all;

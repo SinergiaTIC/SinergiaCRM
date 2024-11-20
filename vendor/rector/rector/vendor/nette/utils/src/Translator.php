@@ -5,7 +5,7 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202411\Nette\Localization;
+namespace RectorPrefix202305\Nette\Localization;
 
 /**
  * Translator adapter.
@@ -14,10 +14,9 @@ interface Translator
 {
     /**
      * Translates the given string.
-     * @param string|\Stringable $message
-     * @return string|\Stringable
-     * @param mixed ...$parameters
+     * @param  mixed  $message
+     * @param  mixed  ...$parameters
      */
-    function translate($message, ...$parameters);
+    function translate($message, ...$parameters) : string;
 }
 \interface_exists(ITranslator::class);

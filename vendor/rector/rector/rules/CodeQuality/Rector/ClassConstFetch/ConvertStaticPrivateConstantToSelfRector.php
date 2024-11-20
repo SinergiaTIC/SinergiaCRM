@@ -8,24 +8,50 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
-use Rector\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use PhpParser\Node\Stmt\ClassMethod;
+use PHPStan\Reflection\ClassReflection;
+use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\FamilyTree\Reflection\FamilyRelationsAnalyzer;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\CodeQuality\Rector\ClassConstFetch\ConvertStaticPrivateConstantToSelfRector\ConvertStaticPrivateConstantToSelfRectorTest
- *
  * @see https://3v4l.org/8Y0ba
  * @see https://phpstan.org/r/11d4c850-1a40-4fae-b665-291f96104d11
  */
-final class ConvertStaticPrivateConstantToSelfRector extends AbstractRector
+final class ConvertStaticPrivateConstantToSelfRector extends AbstractRector implements AllowEmptyConfigurableRectorInterface
 {
+    /**
+     * @api
+     * @var string
+     */
+    public const ENABLE_FOR_NON_FINAL_CLASSES = 'enable_for_non_final_classes';
+    /**
+     * @var bool
+     */
+    private $enableForNonFinalClasses = \false;
+    /**
+     * @readonly
+     * @var \Rector\FamilyTree\Reflection\FamilyRelationsAnalyzer
+     */
+    private $familyRelationsAnalyzer;
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+    public function __construct(FamilyRelationsAnalyzer $familyRelationsAnalyzer, ReflectionResolver $reflectionResolver)
+    {
+        $this->familyRelationsAnalyzer = $familyRelationsAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
+    }
     public function getRuleDefinition() : RuleDefinition
     {
-        return new RuleDefinition('Replaces static::* access to private constants with self::*', [new CodeSample(<<<'CODE_SAMPLE'
-final class Foo
-{
+        return new RuleDefinition('Replaces static::* access to private constants with self::*', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
+final class Foo {
     private const BAR = 'bar';
-
     public function run()
     {
         $bar = static::BAR;
@@ -33,57 +59,45 @@ final class Foo
 }
 CODE_SAMPLE
 , <<<'CODE_SAMPLE'
-final class Foo
-{
+final class Foo {
     private const BAR = 'bar';
-
     public function run()
     {
         $bar = self::BAR;
     }
 }
 CODE_SAMPLE
-)]);
+, [self::ENABLE_FOR_NON_FINAL_CLASSES => \false])]);
     }
-    /**
-     * @return array<class-string<Node>>
-     */
     public function getNodeTypes() : array
     {
-        return [Class_::class];
+        return [ClassConstFetch::class];
+    }
+    public function configure(array $configuration) : void
+    {
+        $this->enableForNonFinalClasses = $configuration[self::ENABLE_FOR_NON_FINAL_CLASSES] ?? (bool) \current($configuration);
     }
     /**
-     * @param Class_ $node
+     * @param ClassConstFetch $node
      */
-    public function refactor(Node $node) : ?Class_
+    public function refactor(Node $node) : ?ClassConstFetch
     {
-        if ($node->getConstants() === []) {
+        $class = $this->betterNodeFinder->findParentType($node, Class_::class);
+        if (!$class instanceof Class_) {
             return null;
         }
-        $class = $node;
-        $hasChanged = \false;
-        $this->traverseNodesWithCallable($class, function (Node $node) use($class, &$hasChanged) : ?Node {
-            if (!$node instanceof ClassConstFetch) {
-                return null;
-            }
-            if (!$this->isUsingStatic($node)) {
-                return null;
-            }
-            if (!$class->isFinal() && !$this->isPrivateConstant($node, $class)) {
-                return null;
-            }
-            $hasChanged = \true;
-            $node->class = new Name('self');
-            return $node;
-        });
-        if ($hasChanged) {
-            return $node;
+        if ($this->shouldBeSkipped($class, $node)) {
+            return null;
         }
-        return null;
+        $node->class = new Name('self');
+        return $node;
     }
     private function isUsingStatic(ClassConstFetch $classConstFetch) : bool
     {
-        return $this->isName($classConstFetch->class, 'static');
+        if (!$classConstFetch->class instanceof Name) {
+            return \false;
+        }
+        return $classConstFetch->class->toString() === 'static';
     }
     private function isPrivateConstant(ClassConstFetch $classConstFetch, Class_ $class) : bool
     {
@@ -96,6 +110,48 @@ CODE_SAMPLE
                 continue;
             }
             return $classConst->isPrivate();
+        }
+        return \false;
+    }
+    private function isUsedInPrivateMethod(ClassConstFetch $classConstFetch) : bool
+    {
+        $method = $this->betterNodeFinder->findParentType($classConstFetch, ClassMethod::class);
+        if (!$method instanceof ClassMethod) {
+            return \false;
+        }
+        return $method->flags === Class_::MODIFIER_PRIVATE;
+    }
+    private function shouldBeSkipped(Class_ $class, ClassConstFetch $classConstFetch) : bool
+    {
+        if (!$this->isUsingStatic($classConstFetch)) {
+            return \true;
+        }
+        if (!$this->isPrivateConstant($classConstFetch, $class)) {
+            return \true;
+        }
+        if ($this->isUsedInPrivateMethod($classConstFetch)) {
+            return \false;
+        }
+        if ($this->enableForNonFinalClasses) {
+            return $this->isOverwrittenInChildClass($classConstFetch);
+        }
+        return !$class->isFinal();
+    }
+    private function isOverwrittenInChildClass(ClassConstFetch $classConstFetch) : bool
+    {
+        $constantName = $this->getConstantName($classConstFetch);
+        if ($constantName === null) {
+            return \false;
+        }
+        $classReflection = $this->reflectionResolver->resolveClassReflection($classConstFetch);
+        if (!$classReflection instanceof ClassReflection) {
+            return \false;
+        }
+        $childrenClassReflections = $this->familyRelationsAnalyzer->getChildrenOfClassReflection($classReflection);
+        foreach ($childrenClassReflections as $childClassReflection) {
+            if ($childClassReflection->hasConstant($constantName)) {
+                return \true;
+            }
         }
         return \false;
     }

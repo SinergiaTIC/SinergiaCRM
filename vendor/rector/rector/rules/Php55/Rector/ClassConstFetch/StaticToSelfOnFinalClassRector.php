@@ -5,14 +5,18 @@ namespace Rector\Php55\Rector\ClassConstFetch;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
-use Rector\Enum\ObjectReference;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Core\Enum\ObjectReference;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://wiki.php.net/rfc/class_name_scalars
+ * @changelog https://3v4l.org/AHr9C#v5.5.0
  * @see \Rector\Tests\Php55\Rector\ClassConstFetch\StaticToSelfOnFinalClassRector\StaticToSelfOnFinalClassRectorTest
  */
 final class StaticToSelfOnFinalClassRector extends AbstractRector implements MinPhpVersionInterface
@@ -44,34 +48,33 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [Class_::class];
+        return [ClassConstFetch::class];
     }
     /**
-     * @param Class_ $node
+     * @param ClassConstFetch $node
      */
-    public function refactor(Node $node) : ?Class_
+    public function refactor(Node $node) : ?ClassConstFetch
     {
-        if (!$node->isFinal()) {
+        if (!$node->class instanceof Name) {
             return null;
         }
-        $hasChanged = \false;
-        $this->traverseNodesWithCallable($node, function (Node $node) use(&$hasChanged) : ?ClassConstFetch {
-            if (!$node instanceof ClassConstFetch) {
-                return null;
-            }
-            if (!$this->isName($node->class, ObjectReference::STATIC)) {
-                return null;
-            }
-            if (!$this->isName($node->name, 'class')) {
-                return null;
-            }
-            $hasChanged = \true;
-            return $this->nodeFactory->createSelfFetchConstant('class');
-        });
-        if ($hasChanged) {
-            return $node;
+        if (!$node->name instanceof Identifier) {
+            return null;
         }
-        return null;
+        if ($node->class->toString() !== ObjectReference::STATIC) {
+            return null;
+        }
+        if ($node->name->toString() !== 'class') {
+            return null;
+        }
+        $class = $this->betterNodeFinder->findParentType($node, Class_::class);
+        if (!$class instanceof Class_) {
+            return null;
+        }
+        if (!$class->isFinal()) {
+            return null;
+        }
+        return $this->nodeFactory->createSelfFetchConstant('class');
     }
     public function provideMinPhpVersion() : int
     {

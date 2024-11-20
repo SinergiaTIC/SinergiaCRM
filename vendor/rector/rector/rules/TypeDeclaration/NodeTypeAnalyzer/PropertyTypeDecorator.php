@@ -12,10 +12,10 @@ use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger;
-use Rector\Php\PhpVersionProvider;
-use Rector\PhpParser\Node\NodeFactory;
+use Rector\Core\Php\PhpVersionProvider;
+use Rector\Core\PhpParser\Node\NodeFactory;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\PHPStanStaticTypeMapper\TypeAnalyzer\UnionTypeAnalyzer;
-use Rector\ValueObject\PhpVersionFeature;
 final class PropertyTypeDecorator
 {
     /**
@@ -30,12 +30,12 @@ final class PropertyTypeDecorator
     private $phpDocTypeChanger;
     /**
      * @readonly
-     * @var \Rector\Php\PhpVersionProvider
+     * @var \Rector\Core\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\NodeFactory
+     * @var \Rector\Core\PhpParser\Node\NodeFactory
      */
     private $nodeFactory;
     public function __construct(UnionTypeAnalyzer $unionTypeAnalyzer, PhpDocTypeChanger $phpDocTypeChanger, PhpVersionProvider $phpVersionProvider, NodeFactory $nodeFactory)
@@ -56,7 +56,7 @@ final class PropertyTypeDecorator
                 return;
             }
             if ($changeVarTypeFallback) {
-                $this->phpDocTypeChanger->changeVarType($property, $phpDocInfo, $unionType);
+                $this->phpDocTypeChanger->changeVarType($phpDocInfo, $unionType);
             }
             return;
         }
@@ -73,7 +73,7 @@ final class PropertyTypeDecorator
         if (!$changeVarTypeFallback) {
             return;
         }
-        $this->phpDocTypeChanger->changeVarType($property, $phpDocInfo, $unionType);
+        $this->phpDocTypeChanger->changeVarType($phpDocInfo, $unionType);
     }
     private function isDocBlockRequired(UnionType $unionType) : bool
     {

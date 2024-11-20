@@ -14,32 +14,22 @@ use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\LNumber;
-use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
-use Rector\ValueObject\PolyfillPackage;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use Rector\VersionBonding\Contract\RelatedPolyfillInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://externals.io/message/108562 https://github.com/php/php-src/pull/5179
+ *
  * @see \Rector\Tests\Php80\Rector\NotIdentical\StrContainsRector\StrContainsRectorTest
  */
-final class StrContainsRector extends AbstractRector implements MinPhpVersionInterface, RelatedPolyfillInterface
+final class StrContainsRector extends AbstractRector implements MinPhpVersionInterface
 {
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
-     */
-    private $valueResolver;
     /**
      * @var string[]
      */
     private const OLD_STR_NAMES = ['strpos', 'strstr'];
-    public function __construct(ValueResolver $valueResolver)
-    {
-        $this->valueResolver = $valueResolver;
-    }
     public function provideMinPhpVersion() : int
     {
         return PhpVersionFeature::STR_CONTAINS;
@@ -82,13 +72,9 @@ CODE_SAMPLE
         if (!$funcCall instanceof FuncCall) {
             return null;
         }
-        if ($funcCall->isFirstClassCallable()) {
-            return null;
-        }
-        if (isset($funcCall->getArgs()[2])) {
-            $secondArg = $funcCall->getArgs()[2];
-            if ($this->isName($funcCall->name, 'strpos') && !$this->isIntegerZero($secondArg->value)) {
-                $funcCall->args[0] = new Arg($this->nodeFactory->createFuncCall('substr', [$funcCall->args[0], $secondArg]));
+        if (isset($funcCall->args[2])) {
+            if ($this->isName($funcCall->name, 'strpos') && $this->isPositiveInteger($funcCall->args[2]->value)) {
+                $funcCall->args[0] = new Arg($this->nodeFactory->createFuncCall('substr', [$funcCall->args[0], $funcCall->args[2]]));
             }
             unset($funcCall->args[2]);
         }
@@ -97,10 +83,6 @@ CODE_SAMPLE
             return new BooleanNot($funcCall);
         }
         return $funcCall;
-    }
-    public function providePolyfillPackage() : string
-    {
-        return PolyfillPackage::PHP_80;
     }
     /**
      * @param \PhpParser\Node\Expr\BinaryOp\Identical|\PhpParser\Node\Expr\BinaryOp\NotIdentical|\PhpParser\Node\Expr\BinaryOp\Equal|\PhpParser\Node\Expr\BinaryOp\NotEqual $expr
@@ -131,11 +113,11 @@ CODE_SAMPLE
         }
         return null;
     }
-    private function isIntegerZero(Expr $expr) : bool
+    private function isPositiveInteger(Expr $expr) : bool
     {
         if (!$expr instanceof LNumber) {
             return \false;
         }
-        return $expr->value === 0;
+        return $expr->value > 0;
     }
 }

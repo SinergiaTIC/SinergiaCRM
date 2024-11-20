@@ -5,10 +5,9 @@ namespace Rector\DowngradePhp81\Rector\Instanceof_;
 
 use finfo;
 use PhpParser\Node;
-use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Instanceof_;
+use Rector\Core\Rector\AbstractRector;
 use Rector\DowngradePhp81\NodeManipulator\ObjectToResourceReturn;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -18,11 +17,6 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class DowngradePhp81ResourceReturnToObjectRector extends AbstractRector
 {
-    /**
-     * @readonly
-     * @var \Rector\DowngradePhp81\NodeManipulator\ObjectToResourceReturn
-     */
-    private $objectToResourceReturn;
     /**
      * @var string[]|class-string<finfo>[]
      */
@@ -45,6 +39,11 @@ final class DowngradePhp81ResourceReturnToObjectRector extends AbstractRector
         'PgSql\\Result',
         'PgSql\\Lob',
     ];
+    /**
+     * @readonly
+     * @var \Rector\DowngradePhp81\NodeManipulator\ObjectToResourceReturn
+     */
+    private $objectToResourceReturn;
     public function __construct(ObjectToResourceReturn $objectToResourceReturn)
     {
         $this->objectToResourceReturn = $objectToResourceReturn;
@@ -76,10 +75,10 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [BinaryOp::class, Instanceof_::class];
+        return [Instanceof_::class];
     }
     /**
-     * @param BinaryOp|Instanceof_ $node
+     * @param Instanceof_ $node
      */
     public function refactor(Node $node) : ?Node
     {

@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace RectorPrefix202411;
+namespace RectorPrefix202305;
 
 use Rector\Config\RectorConfig;
 use Rector\Php70\Rector\Assign\ListSplitStringRector;
@@ -18,7 +18,6 @@ use Rector\Php70\Rector\If_\IfToSpaceshipRector;
 use Rector\Php70\Rector\List_\EmptyListRector;
 use Rector\Php70\Rector\MethodCall\ThisCallOnStaticMethodToStaticCallRector;
 use Rector\Php70\Rector\StaticCall\StaticCallOnNonStaticToInstanceCallRector;
-use Rector\Php70\Rector\StmtsAwareInterface\IfIssetToCoalescingRector;
 use Rector\Php70\Rector\Switch_\ReduceMultipleDefaultSwitchRector;
 use Rector\Php70\Rector\Ternary\TernaryToNullCoalescingRector;
 use Rector\Php70\Rector\Ternary\TernaryToSpaceshipRector;
@@ -44,6 +43,5 @@ return static function (RectorConfig $rectorConfig) : void {
         ThisCallOnStaticMethodToStaticCallRector::class,
         BreakNotInLoopOrSwitchToReturnRector::class,
         RenameMktimeWithoutArgsToTimeRector::class,
-        IfIssetToCoalescingRector::class,
     ]);
 };

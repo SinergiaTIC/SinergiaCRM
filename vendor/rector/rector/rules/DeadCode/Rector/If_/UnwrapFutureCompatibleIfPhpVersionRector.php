@@ -7,14 +7,15 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Else_;
 use PhpParser\Node\Stmt\If_;
-use PhpParser\NodeTraverser;
+use Rector\Core\Rector\AbstractRector;
 use Rector\DeadCode\ConditionEvaluator;
 use Rector\DeadCode\ConditionResolver;
 use Rector\DeadCode\Contract\ConditionInterface;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://www.php.net/manual/en/function.version-compare.php
+ *
  * @see \Rector\Tests\DeadCode\Rector\If_\UnwrapFutureCompatibleIfPhpVersionRector\UnwrapFutureCompatibleIfPhpVersionRectorTest
  */
 final class UnwrapFutureCompatibleIfPhpVersionRector extends AbstractRector
@@ -59,9 +60,9 @@ CODE_SAMPLE
     }
     /**
      * @param If_ $node
-     * @return Stmt[]|null|int
+     * @return Stmt[]|null
      */
-    public function refactor(Node $node)
+    public function refactor(Node $node) : ?array
     {
         if ($node->elseifs !== []) {
             return null;
@@ -94,13 +95,14 @@ CODE_SAMPLE
         return $if->stmts;
     }
     /**
-     * @return Stmt[]|int
+     * @return Stmt[]|null
      */
-    private function refactorIsNotMatch(If_ $if)
+    private function refactorIsNotMatch(If_ $if) : ?array
     {
         // no else → just remove the node
         if (!$if->else instanceof Else_) {
-            return NodeTraverser::REMOVE_NODE;
+            $this->removeNode($if);
+            return null;
         }
         // else is always used
         return $if->else->stmts;

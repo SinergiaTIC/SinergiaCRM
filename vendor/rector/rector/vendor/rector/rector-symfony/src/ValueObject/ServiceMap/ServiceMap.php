@@ -20,9 +20,6 @@ final class ServiceMap
     {
         $this->services = $services;
     }
-    /**
-     * @api
-     */
     public function hasService(string $id) : bool
     {
         return isset($this->services[$id]);

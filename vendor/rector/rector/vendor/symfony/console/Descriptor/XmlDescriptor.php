@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Descriptor;
+namespace RectorPrefix202305\Symfony\Component\Console\Descriptor;
 
-use RectorPrefix202411\Symfony\Component\Console\Application;
-use RectorPrefix202411\Symfony\Component\Console\Command\Command;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputArgument;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputDefinition;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputOption;
+use RectorPrefix202305\Symfony\Component\Console\Application;
+use RectorPrefix202305\Symfony\Component\Console\Command\Command;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputArgument;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputDefinition;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputOption;
 /**
  * XML descriptor.
  *
@@ -64,7 +64,7 @@ class XmlDescriptor extends Descriptor
         }
         return $dom;
     }
-    public function getApplicationDocument(Application $application, ?string $namespace = null, bool $short = \false) : \DOMDocument
+    public function getApplicationDocument(Application $application, string $namespace = null, bool $short = \false) : \DOMDocument
     {
         $dom = new \DOMDocument('1.0', 'UTF-8');
         $dom->appendChild($rootXml = $dom->createElement('symfony'));
@@ -95,30 +95,30 @@ class XmlDescriptor extends Descriptor
         }
         return $dom;
     }
-    protected function describeInputArgument(InputArgument $argument, array $options = []) : void
+    protected function describeInputArgument(InputArgument $argument, array $options = [])
     {
         $this->writeDocument($this->getInputArgumentDocument($argument));
     }
-    protected function describeInputOption(InputOption $option, array $options = []) : void
+    protected function describeInputOption(InputOption $option, array $options = [])
     {
         $this->writeDocument($this->getInputOptionDocument($option));
     }
-    protected function describeInputDefinition(InputDefinition $definition, array $options = []) : void
+    protected function describeInputDefinition(InputDefinition $definition, array $options = [])
     {
         $this->writeDocument($this->getInputDefinitionDocument($definition));
     }
-    protected function describeCommand(Command $command, array $options = []) : void
+    protected function describeCommand(Command $command, array $options = [])
     {
         $this->writeDocument($this->getCommandDocument($command, $options['short'] ?? \false));
     }
-    protected function describeApplication(Application $application, array $options = []) : void
+    protected function describeApplication(Application $application, array $options = [])
     {
         $this->writeDocument($this->getApplicationDocument($application, $options['namespace'] ?? null, $options['short'] ?? \false));
     }
     /**
      * Appends document children to parent node.
      */
-    private function appendDocument(\DOMNode $parentNode, \DOMNode $importedParent) : void
+    private function appendDocument(\DOMNode $parentNode, \DOMNode $importedParent)
     {
         foreach ($importedParent->childNodes as $childNode) {
             $parentNode->appendChild($parentNode->ownerDocument->importNode($childNode, \true));
@@ -127,7 +127,7 @@ class XmlDescriptor extends Descriptor
     /**
      * Writes DOM document.
      */
-    private function writeDocument(\DOMDocument $dom) : void
+    private function writeDocument(\DOMDocument $dom)
     {
         $dom->formatOutput = \true;
         $this->write($dom->saveXML());

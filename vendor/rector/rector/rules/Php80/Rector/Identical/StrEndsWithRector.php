@@ -16,35 +16,35 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\UnaryMinus;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
-use Rector\NodeAnalyzer\BinaryOpAnalyzer;
-use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\FuncCallAndExpr;
-use Rector\ValueObject\PhpVersionFeature;
-use Rector\ValueObject\PolyfillPackage;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\NodeAnalyzer\BinaryOpAnalyzer;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\FuncCallAndExpr;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
-use Rector\VersionBonding\Contract\RelatedPolyfillInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://wiki.php.net/rfc/add_str_starts_with_and_ends_with_functions
+ *
  * @see \Rector\Tests\Php80\Rector\Identical\StrEndsWithRector\StrEndsWithRectorTest
  */
-final class StrEndsWithRector extends AbstractRector implements MinPhpVersionInterface, RelatedPolyfillInterface
+final class StrEndsWithRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\BinaryOpAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\BinaryOpAnalyzer
      */
     private $binaryOpAnalyzer;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
      */
-    private $valueResolver;
-    public function __construct(BinaryOpAnalyzer $binaryOpAnalyzer, ValueResolver $valueResolver)
+    private $argsAnalyzer;
+    public function __construct(BinaryOpAnalyzer $binaryOpAnalyzer, ArgsAnalyzer $argsAnalyzer)
     {
         $this->binaryOpAnalyzer = $binaryOpAnalyzer;
-        $this->valueResolver = $valueResolver;
+        $this->argsAnalyzer = $argsAnalyzer;
     }
     public function provideMinPhpVersion() : int
     {
@@ -112,10 +112,6 @@ CODE_SAMPLE
     {
         return $this->refactorSubstr($node) ?? $this->refactorSubstrCompare($node);
     }
-    public function providePolyfillPackage() : string
-    {
-        return PolyfillPackage::PHP_80;
-    }
     /**
      * Covers:
      * $isMatch = substr($haystack, -strlen($needle)) === $needle;
@@ -133,17 +129,17 @@ CODE_SAMPLE
         } else {
             return null;
         }
-        if ($substrFuncCall->isFirstClassCallable()) {
+        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($substrFuncCall->args, [0, 1])) {
             return null;
         }
-        if (\count($substrFuncCall->getArgs()) < 2) {
+        /** @var Arg $secondArg */
+        $secondArg = $substrFuncCall->args[1];
+        if (!$this->isUnaryMinusStrlenFuncCallArgValue($secondArg->value, $comparedNeedleExpr) && !$this->isHardCodedLNumberAndString($secondArg->value, $comparedNeedleExpr)) {
             return null;
         }
-        $needle = $substrFuncCall->getArgs()[1]->value;
-        if (!$this->isUnaryMinusStrlenFuncCallArgValue($needle, $comparedNeedleExpr) && !$this->isHardCodedLNumberAndString($needle, $comparedNeedleExpr)) {
-            return null;
-        }
-        $haystack = $substrFuncCall->getArgs()[0]->value;
+        /** @var Arg $firstArg */
+        $firstArg = $substrFuncCall->args[0];
+        $haystack = $firstArg->value;
         $isPositive = $binaryOp instanceof Identical || $binaryOp instanceof Equal;
         return $this->buildReturnNode($haystack, $comparedNeedleExpr, $isPositive);
     }
@@ -161,18 +157,18 @@ CODE_SAMPLE
             return null;
         }
         $substrCompareFuncCall = $funcCallAndExpr->getFuncCall();
-        $args = $substrCompareFuncCall->getArgs();
-        if (\count($args) < 2) {
+        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($substrCompareFuncCall->args, [0, 1, 2])) {
             return null;
         }
-        $haystack = $args[0]->value;
-        $needle = $args[1]->value;
-        $thirdArgValue = $args[2]->value;
-        $isCaseInsensitiveValue = isset($args[4]) ? $this->valueResolver->getValue($args[4]->value) : null;
-        // is case insensitive → not valid replacement
-        if ($isCaseInsensitiveValue === \true) {
-            return null;
-        }
+        /** @var Arg $firstArg */
+        $firstArg = $substrCompareFuncCall->args[0];
+        $haystack = $firstArg->value;
+        /** @var Arg $secondArg */
+        $secondArg = $substrCompareFuncCall->args[1];
+        $needle = $secondArg->value;
+        /** @var Arg $thirdArg */
+        $thirdArg = $substrCompareFuncCall->args[2];
+        $thirdArgValue = $thirdArg->value;
         if (!$this->isUnaryMinusStrlenFuncCallArgValue($thirdArgValue, $needle) && !$this->isHardCodedLNumberAndString($thirdArgValue, $needle)) {
             return null;
         }
@@ -191,7 +187,7 @@ CODE_SAMPLE
         if (!$this->nodeNameResolver->isName($funcCall, 'strlen')) {
             return \false;
         }
-        if (!isset($funcCall->getArgs()[0])) {
+        if (!isset($funcCall->args[0])) {
             return \false;
         }
         if (!$funcCall->args[0] instanceof Arg) {

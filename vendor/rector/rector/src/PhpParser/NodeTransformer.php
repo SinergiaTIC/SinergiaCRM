@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\PhpParser;
+namespace Rector\Core\PhpParser;
 
 use PhpParser\BuilderHelpers;
 use PhpParser\Node\Arg;
@@ -13,13 +13,10 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Exception\ShouldNotHappenException;
+use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\Util\StringUtils;
+use Rector\Core\ValueObject\SprintfStringAndArgs;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Util\StringUtils;
-use Rector\ValueObject\SprintfStringAndArgs;
-/**
- * @api used in phpunit
- */
 final class NodeTransformer
 {
     /**
@@ -28,7 +25,7 @@ final class NodeTransformer
      */
     private const PERCENT_TEXT_REGEX = '#^%\\w$#';
     /**
-     * @api used in phpunit symfony
+     * @api symfony
      *
      * From:
      * - sprintf("Hi %s", $name);
@@ -62,20 +59,19 @@ final class NodeTransformer
      */
     public function transformArrayToYields(Array_ $array) : array
     {
-        $yields = [];
+        $yieldNodes = [];
         foreach ($array->items as $arrayItem) {
             if (!$arrayItem instanceof ArrayItem) {
                 continue;
             }
-            $yield = new Yield_($arrayItem->value, $arrayItem->key);
-            $expression = new Expression($yield);
+            $expressionNode = new Expression(new Yield_($arrayItem->value, $arrayItem->key));
             $arrayItemComments = $arrayItem->getComments();
             if ($arrayItemComments !== []) {
-                $expression->setAttribute(AttributeKey::COMMENTS, $arrayItemComments);
+                $expressionNode->setAttribute(AttributeKey::COMMENTS, $arrayItemComments);
             }
-            $yields[] = $expression;
+            $yieldNodes[] = $expressionNode;
         }
-        return $yields;
+        return $yieldNodes;
     }
     /**
      * @api symfony

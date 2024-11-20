@@ -4,9 +4,7 @@ declare (strict_types=1);
 namespace Rector\Naming\Naming;
 
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Stmt\GroupUse;
-use PhpParser\Node\Stmt\Use_;
+use PhpParser\Node\Name;
 final class AliasNameResolver
 {
     /**
@@ -18,20 +16,18 @@ final class AliasNameResolver
     {
         $this->useImportsResolver = $useImportsResolver;
     }
-    /**
-     * @param array<Use_|GroupUse> $uses
-     */
-    public function resolveByName(FullyQualified $fullyQualified, array $uses) : ?string
+    public function resolveByName(Name $name) : ?string
     {
-        $nameString = $fullyQualified->toString();
+        $uses = $this->useImportsResolver->resolveForNode($name);
+        $nameString = $name->toString();
         foreach ($uses as $use) {
             $prefix = $this->useImportsResolver->resolvePrefix($use);
             foreach ($use->uses as $useUse) {
                 if (!$useUse->alias instanceof Identifier) {
                     continue;
                 }
-                $fullyQualified = $prefix . $useUse->name->toString();
-                if ($fullyQualified !== $nameString) {
+                $name = $prefix . $useUse->name->toString();
+                if ($name !== $nameString) {
                     continue;
                 }
                 return (string) $useUse->getAlias();

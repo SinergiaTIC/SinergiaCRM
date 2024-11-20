@@ -1,26 +1,18 @@
 <?php
 
-namespace RectorPrefix202411\React\Socket;
+namespace RectorPrefix202305\React\Socket;
 
-use RectorPrefix202411\React\EventLoop\Loop;
-use RectorPrefix202411\React\EventLoop\LoopInterface;
-use RectorPrefix202411\React\Promise;
+use RectorPrefix202305\React\EventLoop\Loop;
+use RectorPrefix202305\React\EventLoop\LoopInterface;
+use RectorPrefix202305\React\Promise;
 use InvalidArgumentException;
 use RuntimeException;
 final class TcpConnector implements ConnectorInterface
 {
     private $loop;
     private $context;
-    /**
-     * @param ?LoopInterface $loop
-     * @param array $context
-     */
-    public function __construct($loop = null, array $context = array())
+    public function __construct(LoopInterface $loop = null, array $context = array())
     {
-        if ($loop !== null && !$loop instanceof LoopInterface) {
-            // manual type check to support legacy PHP < 7.1
-            throw new \InvalidArgumentException('Argument #1 ($loop) expected null|React\\EventLoop\\LoopInterface');
-        }
         $this->loop = $loop ?: Loop::get();
         $this->context = $context;
     }
@@ -31,11 +23,11 @@ final class TcpConnector implements ConnectorInterface
         }
         $parts = \parse_url($uri);
         if (!$parts || !isset($parts['scheme'], $parts['host'], $parts['port']) || $parts['scheme'] !== 'tcp') {
-            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22)));
+            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" is invalid (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22));
         }
         $ip = \trim($parts['host'], '[]');
         if (@\inet_pton($ip) === \false) {
-            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" does not contain a valid host IP (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : (\defined('PCNTL_EINVAL') ? \PCNTL_EINVAL : 22)));
+            return Promise\reject(new \InvalidArgumentException('Given URI "' . $uri . '" does not contain a valid host IP (EINVAL)', \defined('SOCKET_EINVAL') ? \SOCKET_EINVAL : 22));
         }
         // use context given in constructor
         $context = array('socket' => $this->context);

@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\ValueObject;
+namespace Rector\Core\ValueObject;
 
 /**
  * @api
@@ -60,14 +60,6 @@ final class PhpVersion
      * @var int
      */
     public const PHP_82 = 80200;
-    /**
-     * @var int
-     */
-    public const PHP_83 = 80300;
-    /**
-     * @var int
-     */
-    public const PHP_84 = 80400;
     /**
      * @var int
      */

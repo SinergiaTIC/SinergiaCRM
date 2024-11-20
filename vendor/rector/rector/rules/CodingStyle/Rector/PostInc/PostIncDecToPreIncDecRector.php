@@ -10,7 +10,8 @@ use PhpParser\Node\Expr\PreDec;
 use PhpParser\Node\Expr\PreInc;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\For_;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -47,29 +48,34 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [For_::class, Expression::class];
+        return [PostInc::class, PostDec::class];
     }
     /**
-     * @param For_|Expression $node
+     * @param PostInc|PostDec $node
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node instanceof Expression) {
-            return $this->refactorExpression($node);
+        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
+        if ($this->isAnExpression($parentNode)) {
+            return $this->processPrePost($node);
         }
-        return $this->refactorFor($node);
+        if (!$parentNode instanceof For_) {
+            return null;
+        }
+        if (\count($parentNode->loop) !== 1) {
+            return null;
+        }
+        if (!$this->nodeComparator->areNodesEqual($parentNode->loop[0], $node)) {
+            return null;
+        }
+        return $this->processPreFor($node, $parentNode);
     }
-    private function refactorFor(For_ $for) : ?\PhpParser\Node\Stmt\For_
+    private function isAnExpression(?Node $node = null) : bool
     {
-        if (\count($for->loop) !== 1) {
-            return null;
+        if (!$node instanceof Node) {
+            return \false;
         }
-        $singleLoopExpr = $for->loop[0];
-        if (!$singleLoopExpr instanceof PostInc && !$singleLoopExpr instanceof PostDec) {
-            return null;
-        }
-        $for->loop = [$this->processPrePost($singleLoopExpr)];
-        return $for;
+        return $node instanceof Expression;
     }
     /**
      * @param \PhpParser\Node\Expr\PostInc|\PhpParser\Node\Expr\PostDec $node
@@ -82,12 +88,13 @@ CODE_SAMPLE
         }
         return new PreDec($node->var);
     }
-    private function refactorExpression(Expression $expression) : ?Expression
+    /**
+     * @param \PhpParser\Node\Expr\PostInc|\PhpParser\Node\Expr\PostDec $node
+     * @return \PhpParser\Node\Expr\PreDec|\PhpParser\Node\Expr\PreInc
+     */
+    private function processPreFor($node, For_ $for)
     {
-        if ($expression->expr instanceof PostInc || $expression->expr instanceof PostDec) {
-            $expression->expr = $this->processPrePost($expression->expr);
-            return $expression;
-        }
-        return null;
+        $for->loop = [$this->processPrePost($node)];
+        return $for->loop[0];
     }
 }

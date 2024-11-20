@@ -4,35 +4,31 @@ declare (strict_types=1);
 namespace Rector\CodingStyle\Rector\ClassMethod;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Param;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Function_;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://3v4l.org/d4tBd
+ *
  * @see \Rector\Tests\CodingStyle\Rector\ClassMethod\FuncGetArgsToVariadicParamRector\FuncGetArgsToVariadicParamRectorTest
  */
 final class FuncGetArgsToVariadicParamRector extends AbstractRector implements MinPhpVersionInterface
 {
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
-     */
-    private $betterNodeFinder;
-    public function __construct(BetterNodeFinder $betterNodeFinder)
-    {
-        $this->betterNodeFinder = $betterNodeFinder;
-    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Refactor func_get_args() in to a variadic param', [new CodeSample(<<<'CODE_SAMPLE'
@@ -60,35 +56,23 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->params !== [] || $node->stmts === null) {
+        if ($node->params !== []) {
             return null;
         }
-        /** @var Expression<Assign>|null $expression */
-        $expression = $this->matchFuncGetArgsVariableAssign($node);
-        if (!$expression instanceof Expression) {
+        $assign = $this->matchFuncGetArgsVariableAssign($node);
+        if (!$assign instanceof Assign) {
             return null;
         }
-        foreach ($node->stmts as $key => $stmt) {
-            if (!$stmt instanceof Expression) {
-                continue;
+        if ($assign->var instanceof Variable) {
+            $variableName = $this->getName($assign->var);
+            if ($variableName === null) {
+                return null;
             }
-            if (!$stmt->expr instanceof Assign) {
-                continue;
-            }
-            $assign = $stmt->expr;
-            if (!$this->isFuncGetArgsFuncCall($assign->expr)) {
-                continue;
-            }
-            if ($assign->var instanceof Variable) {
-                /** @var string $variableName */
-                $variableName = $this->getName($assign->var);
-                unset($node->stmts[$key]);
-                return $this->applyVariadicParams($node, $variableName);
-            }
-            $assign->expr = new Variable('args');
-            return $this->applyVariadicParams($node, 'args');
+            return $this->removeOrChangeAssignToVariable($node, $assign, $variableName);
         }
-        return null;
+        $variableName = 'args';
+        $assign->expr = new Variable('args');
+        return $this->applyVariadicParams($node, $variableName);
     }
     public function provideMinPhpVersion() : int
     {
@@ -101,10 +85,39 @@ CODE_SAMPLE
     private function applyVariadicParams($node, string $variableName)
     {
         $param = $this->createVariadicParam($variableName);
-        if ($param->var instanceof Variable && $this->hasFunctionOrClosureInside($node, $param->var)) {
+        $variableParam = $param->var;
+        if ($variableParam instanceof Variable && $this->hasFunctionOrClosureInside($node, $variableParam)) {
             return null;
         }
         $node->params[] = $param;
+        return $node;
+    }
+    /**
+     * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $node
+     * @return \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure|null
+     */
+    private function removeOrChangeAssignToVariable($node, Assign $assign, string $variableName)
+    {
+        $parentNode = $assign->getAttribute(AttributeKey::PARENT_NODE);
+        if ($parentNode instanceof Expression) {
+            $this->removeNode($assign);
+            return $this->applyVariadicParams($node, $variableName);
+        }
+        $variable = $assign->var;
+        /** @var ClassMethod|Function_|Closure $functionLike */
+        $functionLike = $this->betterNodeFinder->findParentType($parentNode, FunctionLike::class);
+        /** @var Stmt[] $stmts */
+        $stmts = $functionLike->getStmts();
+        $this->traverseNodesWithCallable($stmts, function (Node $node) use($assign, $variable) : ?Expr {
+            if (!$this->nodeComparator->areNodesEqual($node, $assign)) {
+                return null;
+            }
+            if ($node instanceof Arg) {
+                return null;
+            }
+            return $variable;
+        });
+        $this->applyVariadicParams($functionLike, $variableName);
         return $node;
     }
     /**
@@ -122,35 +135,28 @@ CODE_SAMPLE
             if ($node->params !== []) {
                 return \false;
             }
-            $expression = $this->matchFuncGetArgsVariableAssign($node);
-            if (!$expression instanceof Expression) {
+            $assign = $this->matchFuncGetArgsVariableAssign($node);
+            if (!$assign instanceof Assign) {
                 return \false;
             }
-            /** @var Assign $assign */
-            $assign = $expression->expr;
             return $this->nodeComparator->areNodesEqual($assign->var, $variable);
         });
     }
     /**
-     * @return Expression<Assign>|null
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_|\PhpParser\Node\Expr\Closure $functionLike
      */
-    private function matchFuncGetArgsVariableAssign($functionLike) : ?Expression
+    private function matchFuncGetArgsVariableAssign($functionLike) : ?Assign
     {
-        /** @var Expression[] $expressions */
-        $expressions = $this->betterNodeFinder->findInstancesOfInFunctionLikeScoped($functionLike, Expression::class);
-        foreach ($expressions as $expression) {
-            if (!$expression->expr instanceof Assign) {
-                continue;
-            }
-            $assign = $expression->expr;
+        /** @var Assign[] $assigns */
+        $assigns = $this->betterNodeFinder->findInstancesOfInFunctionLikeScoped($functionLike, Assign::class);
+        foreach ($assigns as $assign) {
             if (!$assign->expr instanceof FuncCall) {
                 continue;
             }
             if (!$this->isName($assign->expr, 'func_get_args')) {
                 continue;
             }
-            return $expression;
+            return $assign;
         }
         return null;
     }
@@ -158,12 +164,5 @@ CODE_SAMPLE
     {
         $variable = new Variable($variableName);
         return new Param($variable, null, null, \false, \true);
-    }
-    private function isFuncGetArgsFuncCall(Expr $expr) : bool
-    {
-        if (!$expr instanceof FuncCall) {
-            return \false;
-        }
-        return $this->isName($expr, 'func_get_args');
     }
 }

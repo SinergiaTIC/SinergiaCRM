@@ -15,14 +15,20 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
-use Rector\BetterPhpDocParser\PhpDoc\StringNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\Doctrine\Enum\MappingClass;
 use Rector\Doctrine\NodeAnalyzer\AttributeFinder;
 use Rector\NodeTypeResolver\PHPStan\Type\TypeFactory;
 final class ColumnPropertyTypeResolver
 {
+    /**
+     * @var string
+     */
+    private const DATE_TIME_INTERFACE = 'DateTimeInterface';
+    /**
+     * @var string
+     */
+    private const COLUMN_CLASS = 'Doctrine\\ORM\\Mapping\\Column';
     /**
      * @readonly
      * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
@@ -43,10 +49,6 @@ final class ColumnPropertyTypeResolver
      * @readonly
      */
     private $doctrineTypeToScalarType;
-    /**
-     * @var string
-     */
-    private const DATE_TIME_INTERFACE = 'DateTimeInterface';
     /**
      * @param array<string, Type> $doctrineTypeToScalarType
      * @see https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/basic-mapping.html#doctrine-mapping-types
@@ -76,10 +78,10 @@ final class ColumnPropertyTypeResolver
             'varchar' => new StringType(),
             'string' => new StringType(),
             'char' => new StringType(),
-            'longblob' => new MixedType(),
-            'blob' => new MixedType(),
-            'mediumblob' => new MixedType(),
-            'tinyblob' => new MixedType(),
+            'longblob' => new StringType(),
+            'blob' => new StringType(),
+            'mediumblob' => new StringType(),
+            'tinyblob' => new StringType(),
             'binary' => new StringType(),
             'varbinary' => new StringType(),
             'set' => new StringType(),
@@ -97,7 +99,7 @@ final class ColumnPropertyTypeResolver
     }
     public function resolve(Property $property, bool $isNullable) : ?Type
     {
-        $expr = $this->attributeFinder->findAttributeByClassArgByName($property, MappingClass::COLUMN, 'type');
+        $expr = $this->attributeFinder->findAttributeByClassArgByName($property, self::COLUMN_CLASS, 'type');
         if ($expr instanceof String_) {
             return $this->createPHPStanTypeFromDoctrineStringType($expr->value, $isNullable);
         }
@@ -106,7 +108,7 @@ final class ColumnPropertyTypeResolver
     }
     private function resolveFromPhpDocInfo(PhpDocInfo $phpDocInfo, bool $isNullable) : ?\PHPStan\Type\Type
     {
-        $doctrineAnnotationTagValueNode = $phpDocInfo->findOneByAnnotationClass(MappingClass::COLUMN);
+        $doctrineAnnotationTagValueNode = $phpDocInfo->findOneByAnnotationClass(self::COLUMN_CLASS);
         if (!$doctrineAnnotationTagValueNode instanceof DoctrineAnnotationTagValueNode) {
             return null;
         }
@@ -114,14 +116,10 @@ final class ColumnPropertyTypeResolver
         if (!$typeArrayItemNode instanceof ArrayItemNode) {
             return new MixedType();
         }
-        $typeValue = $typeArrayItemNode->value;
-        if ($typeValue instanceof StringNode) {
-            $typeValue = $typeValue->value;
-        }
-        if (!\is_string($typeValue)) {
+        if (!\is_string($typeArrayItemNode->value)) {
             return null;
         }
-        return $this->createPHPStanTypeFromDoctrineStringType($typeValue, $isNullable);
+        return $this->createPHPStanTypeFromDoctrineStringType($typeArrayItemNode->value, $isNullable);
     }
     private function createPHPStanTypeFromDoctrineStringType(string $type, bool $isNullable) : Type
     {

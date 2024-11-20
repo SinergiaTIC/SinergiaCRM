@@ -8,12 +8,12 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Property;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\ExpectedNameResolver\MatchPropertyTypeExpectedNameResolver;
 use Rector\Naming\PropertyRenamer\MatchTypePropertyRenamer;
 use Rector\Naming\PropertyRenamer\PropertyPromotionRenamer;
 use Rector\Naming\ValueObject\PropertyRename;
 use Rector\Naming\ValueObjectFactory\PropertyRenameFactory;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -21,6 +21,10 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
  */
 final class RenamePropertyToMatchTypeRector extends AbstractRector
 {
+    /**
+     * @var bool
+     */
+    private $hasChanged = \false;
     /**
      * @readonly
      * @var \Rector\Naming\PropertyRenamer\MatchTypePropertyRenamer
@@ -41,10 +45,6 @@ final class RenamePropertyToMatchTypeRector extends AbstractRector
      * @var \Rector\Naming\PropertyRenamer\PropertyPromotionRenamer
      */
     private $propertyPromotionRenamer;
-    /**
-     * @var bool
-     */
-    private $hasChanged = \false;
     public function __construct(MatchTypePropertyRenamer $matchTypePropertyRenamer, PropertyRenameFactory $propertyRenameFactory, MatchPropertyTypeExpectedNameResolver $matchPropertyTypeExpectedNameResolver, PropertyPromotionRenamer $propertyPromotionRenamer)
     {
         $this->matchTypePropertyRenamer = $matchTypePropertyRenamer;
@@ -96,7 +96,6 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        $this->hasChanged = \false;
         $this->refactorClassProperties($node);
         $hasPromotedPropertyChanged = $this->propertyPromotionRenamer->renamePropertyPromotion($node);
         if ($this->hasChanged) {
@@ -114,7 +113,7 @@ CODE_SAMPLE
             if ($expectedPropertyName === null) {
                 continue;
             }
-            $propertyRename = $this->propertyRenameFactory->createFromExpectedName($classLike, $property, $expectedPropertyName);
+            $propertyRename = $this->propertyRenameFactory->createFromExpectedName($property, $expectedPropertyName);
             if (!$propertyRename instanceof PropertyRename) {
                 continue;
             }

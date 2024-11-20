@@ -7,7 +7,6 @@ use PhpParser\Node;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
-use PHPStan\Reflection\ClassReflection;
 use Rector\Php74\Guard\PropertyTypeChangeGuard;
 final class MakePropertyPromotionGuard
 {
@@ -20,9 +19,9 @@ final class MakePropertyPromotionGuard
     {
         $this->propertyTypeChangeGuard = $propertyTypeChangeGuard;
     }
-    public function isLegal(Class_ $class, ClassReflection $classReflection, Property $property, Param $param, bool $inlinePublic = \true) : bool
+    public function isLegal(Class_ $class, Property $property, Param $param, bool $inlinePublic = \true) : bool
     {
-        if (!$this->propertyTypeChangeGuard->isLegal($property, $classReflection, $inlinePublic, \true)) {
+        if (!$this->propertyTypeChangeGuard->isLegal($property, $inlinePublic, \true)) {
             return \false;
         }
         if ($class->isFinal()) {

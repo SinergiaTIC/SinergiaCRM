@@ -1,34 +1,47 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\NodeAnalyzer;
+namespace Rector\Core\NodeAnalyzer;
 
+use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BooleanNot;
+use PhpParser\Node\Expr\Clone_;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\If_;
-use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\Type\ObjectType;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Core\PhpParser\Comparing\NodeComparator;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use RectorPrefix202305\Symfony\Contracts\Service\Attribute\Required;
 final class CallAnalyzer
 {
-    /**
-     * @readonly
-     * @var \PHPStan\Reflection\ReflectionProvider
-     */
-    private $reflectionProvider;
     /**
      * @var array<class-string<Expr>>
      */
     private const OBJECT_CALL_TYPES = [MethodCall::class, NullsafeMethodCall::class, StaticCall::class];
-    public function __construct(ReflectionProvider $reflectionProvider)
+    /**
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
+     */
+    private $nodeComparator;
+    public function __construct(NodeComparator $nodeComparator)
     {
-        $this->reflectionProvider = $reflectionProvider;
+        $this->nodeComparator = $nodeComparator;
+    }
+    /**
+     * @required
+     */
+    public function autowire(BetterNodeFinder $betterNodeFinder) : void
+    {
+        $this->betterNodeFinder = $betterNodeFinder;
     }
     public function isObjectCall(Expr $expr) : bool
     {
@@ -59,21 +72,19 @@ final class CallAnalyzer
         }
         return \false;
     }
-    public function isNewInstance(Variable $variable) : bool
+    public function isNewInstance(Expr $expr) : bool
     {
-        $scope = $variable->getAttribute(AttributeKey::SCOPE);
-        if (!$scope instanceof Scope) {
-            return \false;
+        if ($expr instanceof Clone_ || $expr instanceof New_) {
+            return \true;
         }
-        $type = $scope->getNativeType($variable);
-        if (!$type instanceof ObjectType) {
-            return \false;
-        }
-        $className = $type->getClassName();
-        if (!$this->reflectionProvider->hasClass($className)) {
-            return \false;
-        }
-        $classReflection = $this->reflectionProvider->getClass($className);
-        return $classReflection->getNativeReflection()->isInstantiable();
+        return (bool) $this->betterNodeFinder->findFirstPrevious($expr, function (Node $node) use($expr) : bool {
+            if (!$node instanceof Assign) {
+                return \false;
+            }
+            if (!$this->nodeComparator->areNodesEqual($node->var, $expr)) {
+                return \false;
+            }
+            return $node->expr instanceof Clone_ || $node->expr instanceof New_;
+        });
     }
 }

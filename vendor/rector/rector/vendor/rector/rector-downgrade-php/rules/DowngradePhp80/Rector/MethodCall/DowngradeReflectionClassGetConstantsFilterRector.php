@@ -16,14 +16,14 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\If_;
 use PHPStan\Type\ObjectType;
+use Rector\Core\NodeManipulator\IfManipulator;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\Naming\VariableNaming;
 use Rector\NodeCollector\BinaryOpConditionsCollector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Rector\AbstractRector;
+use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -32,30 +32,42 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 final class DowngradeReflectionClassGetConstantsFilterRector extends AbstractRector
 {
     /**
+     * @var array<string, string>
+     */
+    private const MAP_CONSTANT_TO_METHOD = ['IS_PUBLIC' => 'isPublic', 'IS_PROTECTED' => 'isProtected', 'IS_PRIVATE' => 'isPrivate'];
+    /**
      * @readonly
      * @var \Rector\Naming\Naming\VariableNaming
      */
     private $variableNaming;
     /**
      * @readonly
+     * @var \Rector\Core\NodeManipulator\IfManipulator
+     */
+    private $ifManipulator;
+    /**
+     * @readonly
      * @var \Rector\NodeCollector\BinaryOpConditionsCollector
      */
     private $binaryOpConditionsCollector;
     /**
-     * @var array<string, string>
+     * @readonly
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
      */
-    private const MAP_CONSTANT_TO_METHOD = ['IS_PUBLIC' => 'isPublic', 'IS_PROTECTED' => 'isProtected', 'IS_PRIVATE' => 'isPrivate'];
-    public function __construct(VariableNaming $variableNaming, BinaryOpConditionsCollector $binaryOpConditionsCollector)
+    private $nodesToAddCollector;
+    public function __construct(VariableNaming $variableNaming, IfManipulator $ifManipulator, BinaryOpConditionsCollector $binaryOpConditionsCollector, NodesToAddCollector $nodesToAddCollector)
     {
         $this->variableNaming = $variableNaming;
+        $this->ifManipulator = $ifManipulator;
         $this->binaryOpConditionsCollector = $binaryOpConditionsCollector;
+        $this->nodesToAddCollector = $nodesToAddCollector;
     }
     /**
      * @return array<class-string<Node>>
      */
     public function getNodeTypes() : array
     {
-        return [Expression::class];
+        return [MethodCall::class];
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -77,56 +89,64 @@ CODE_SAMPLE
 )]);
     }
     /**
-     * @param Expression $node
-     * @return Stmt[]
+     * @param MethodCall $node
      */
-    public function refactor(Node $node) : ?array
+    public function refactor(Node $node) : ?Node
     {
-        if (!$node->expr instanceof Assign) {
+        if ($this->shouldSkip($node)) {
             return null;
         }
-        $assign = $node->expr;
-        if (!$assign->expr instanceof MethodCall) {
-            return null;
-        }
-        $methodCall = $assign->expr;
-        if ($this->shouldSkipMethodCall($methodCall)) {
-            return null;
-        }
-        $args = $methodCall->getArgs();
+        $args = $node->getArgs();
         $value = $args[0]->value;
-        if (!$value instanceof ClassConstFetch && !$value instanceof BitwiseOr) {
+        if (!\in_array(\get_class($value), [ClassConstFetch::class, BitwiseOr::class], \true)) {
             return null;
         }
-        $classConstFetchNames = $this->resolveClassConstFetchNames($value);
-        if ($classConstFetchNames === []) {
-            return null;
+        $classConstFetchNames = [];
+        if ($value instanceof ClassConstFetch) {
+            $classConstFetchName = $this->resolveClassConstFetchName($value);
+            if (\is_string($classConstFetchName)) {
+                $classConstFetchNames = [$classConstFetchName];
+            }
         }
-        return $this->refactorClassConstFetches($methodCall, $classConstFetchNames, $node, $assign);
+        if ($value instanceof BitwiseOr) {
+            $classConstFetchNames = $this->resolveClassConstFetchNames($value);
+        }
+        if ($classConstFetchNames !== []) {
+            return $this->processClassConstFetches($node, $classConstFetchNames);
+        }
+        return null;
     }
     /**
      * @param string[] $classConstFetchNames
-     * @return Stmt[]
      */
-    private function refactorClassConstFetches(MethodCall $methodCall, array $classConstFetchNames, Stmt $stmt, Assign $assign) : array
+    private function processClassConstFetches(MethodCall $methodCall, array $classConstFetchNames) : Variable
     {
         $scope = $methodCall->getAttribute(AttributeKey::SCOPE);
         $reflectionClassConstants = $this->variableNaming->createCountedValueName('reflectionClassConstants', $scope);
         $variableReflectionClassConstants = new Variable($this->variableNaming->createCountedValueName($reflectionClassConstants, $scope));
-        $getReflectionConstantsAssign = new Assign($variableReflectionClassConstants, new MethodCall($methodCall->var, 'getReflectionConstants'));
+        $assign = new Assign($variableReflectionClassConstants, new MethodCall($methodCall->var, 'getReflectionConstants'));
+        $this->nodesToAddCollector->addNodeBeforeNode(new Expression($assign), $methodCall);
         $result = $this->variableNaming->createCountedValueName('result', $scope);
-        $resultVariable = new Variable($result);
-        $resultVariableAssign = new Assign($resultVariable, new Array_());
+        $variableResult = new Variable($result);
+        $assignVariableResult = new Assign($variableResult, new Array_());
+        $this->nodesToAddCollector->addNodeBeforeNode(new Expression($assignVariableResult), $methodCall);
+        $ifs = [];
         $valueVariable = new Variable('value');
         $key = new MethodCall($valueVariable, 'getName');
         $value = new MethodCall($valueVariable, 'getValue');
-        $arrayDimFetch = new ArrayDimFetch($resultVariable, $key);
+        $arrayDimFetch = new ArrayDimFetch($variableResult, $key);
         $assignValue = $value;
-        $ifs = $this->createIfs($classConstFetchNames, $valueVariable, $arrayDimFetch, $assignValue);
-        $closure = $this->createClosure($resultVariable, $ifs);
-        $arrayWalkFuncCall = $this->nodeFactory->createFuncCall('array_walk', [$variableReflectionClassConstants, $closure]);
-        $assign->expr = $resultVariable;
-        return [new Expression($getReflectionConstantsAssign), new Expression($resultVariableAssign), new Expression($arrayWalkFuncCall), $stmt];
+        foreach ($classConstFetchNames as $classConstFetchName) {
+            $methodCallName = self::MAP_CONSTANT_TO_METHOD[$classConstFetchName];
+            $ifs[] = $this->ifManipulator->createIfStmt(new MethodCall($valueVariable, $methodCallName), new Expression(new Assign($arrayDimFetch, $assignValue)));
+        }
+        $closure = new Closure();
+        $closure->params = [new Param(new Variable('value'))];
+        $closure->uses = [new ClosureUse($variableResult, \true)];
+        $closure->stmts = $ifs;
+        $funcCall = $this->nodeFactory->createFuncCall('array_walk', [$variableReflectionClassConstants, $closure]);
+        $this->nodesToAddCollector->addNodeBeforeNode(new Expression($funcCall), $methodCall);
+        return $variableResult;
     }
     private function resolveClassConstFetchName(ClassConstFetch $classConstFetch) : ?string
     {
@@ -140,7 +160,7 @@ CODE_SAMPLE
     /**
      * @return string[]
      */
-    private function resolveClassConstFetchNamesFromBitwiseOr(BitwiseOr $bitwiseOr) : array
+    private function resolveClassConstFetchNames(BitwiseOr $bitwiseOr) : array
     {
         $values = $this->binaryOpConditionsCollector->findConditions($bitwiseOr, BitwiseOr::class);
         if ($this->shouldSkipBitwiseOrValues($values)) {
@@ -184,7 +204,7 @@ CODE_SAMPLE
         $constants = \array_keys(self::MAP_CONSTANT_TO_METHOD);
         return !$this->nodeNameResolver->isNames($classConstFetch->name, $constants);
     }
-    private function shouldSkipMethodCall(MethodCall $methodCall) : bool
+    private function shouldSkip(MethodCall $methodCall) : bool
     {
         if (!$this->nodeNameResolver->isName($methodCall->name, 'getConstants')) {
             return \true;
@@ -197,46 +217,5 @@ CODE_SAMPLE
             return \true;
         }
         return $methodCall->getArgs() === [];
-    }
-    /**
-     * @param Stmt[] $stmts
-     */
-    private function createClosure(Variable $variable, array $stmts) : Closure
-    {
-        $closure = new Closure();
-        $closure->params = [new Param(new Variable('value'))];
-        $closure->uses = [new ClosureUse($variable, \true)];
-        $closure->stmts = $stmts;
-        return $closure;
-    }
-    /**
-     * @param string[] $classConstFetchNames
-     * @return If_[]
-     */
-    private function createIfs(array $classConstFetchNames, Variable $valueVariable, ArrayDimFetch $arrayDimFetch, MethodCall $methodCall) : array
-    {
-        $ifs = [];
-        foreach ($classConstFetchNames as $classConstFetchName) {
-            $methodCallName = self::MAP_CONSTANT_TO_METHOD[$classConstFetchName];
-            $if = new If_(new MethodCall($valueVariable, $methodCallName), ['stmts' => [new Expression(new Assign($arrayDimFetch, $methodCall))]]);
-            $ifs[] = $if;
-        }
-        return $ifs;
-    }
-    /**
-     * @return string[]
-     * @param \PhpParser\Node\Expr\ClassConstFetch|\PhpParser\Node\Expr\BinaryOp\BitwiseOr $value
-     */
-    private function resolveClassConstFetchNames($value) : array
-    {
-        if ($value instanceof ClassConstFetch) {
-            $classConstFetchNames = [];
-            $classConstFetchName = $this->resolveClassConstFetchName($value);
-            if (\is_string($classConstFetchName)) {
-                return [$classConstFetchName];
-            }
-            return $classConstFetchNames;
-        }
-        return $this->resolveClassConstFetchNamesFromBitwiseOr($value);
     }
 }

@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Finder\Iterator;
+namespace RectorPrefix202305\Symfony\Component\Finder\Iterator;
 
-use RectorPrefix202411\Symfony\Component\Finder\Exception\AccessDeniedException;
-use RectorPrefix202411\Symfony\Component\Finder\SplFileInfo;
+use RectorPrefix202305\Symfony\Component\Finder\Exception\AccessDeniedException;
+use RectorPrefix202305\Symfony\Component\Finder\SplFileInfo;
 /**
  * Extends the \RecursiveDirectoryIterator to support relative paths.
  *
@@ -26,9 +26,9 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
      */
     private $ignoreUnreadableDirs;
     /**
-     * @var bool
+     * @var bool|null
      */
-    private $ignoreFirstRewind = \true;
+    private $rewindable;
     // these 3 properties take part of the performance optimization to avoid redoing the same work in all iterations
     /**
      * @var string
@@ -71,8 +71,7 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
             $subPathname .= $this->directorySeparator;
         }
         $subPathname .= $this->getFilename();
-        $basePath = $this->rootPath;
-        if ('/' !== $basePath && \substr_compare($basePath, $this->directorySeparator, -\strlen($this->directorySeparator)) !== 0 && \substr_compare($basePath, '/', -\strlen('/')) !== 0) {
+        if ('/' !== ($basePath = $this->rootPath)) {
             $basePath .= $this->directorySeparator;
         }
         return new SplFileInfo($basePath . $subPathname, $this->subPath, $subPathname);
@@ -102,6 +101,7 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
                 // parent method will call the constructor with default arguments, so unreadable dirs won't be ignored anymore
                 $children->ignoreUnreadableDirs = $this->ignoreUnreadableDirs;
                 // performance optimization to avoid redoing the same work in all children
+                $children->rewindable =& $this->rewindable;
                 $children->rootPath = $this->rootPath;
             }
             return $children;
@@ -109,19 +109,31 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
             throw new AccessDeniedException($e->getMessage(), $e->getCode(), $e);
         }
     }
-    public function next() : void
-    {
-        $this->ignoreFirstRewind = \false;
-        parent::next();
-    }
+    /**
+     * Do nothing for non rewindable stream.
+     */
     public function rewind() : void
     {
-        // some streams like FTP are not rewindable, ignore the first rewind after creation,
-        // as newly created DirectoryIterator does not need to be rewound
-        if ($this->ignoreFirstRewind) {
-            $this->ignoreFirstRewind = \false;
+        if (\false === $this->isRewindable()) {
             return;
         }
         parent::rewind();
+    }
+    /**
+     * Checks if the stream is rewindable.
+     */
+    public function isRewindable() : bool
+    {
+        if (null !== $this->rewindable) {
+            return $this->rewindable;
+        }
+        if (\false !== ($stream = @\opendir($this->getPath()))) {
+            $infos = \stream_get_meta_data($stream);
+            \closedir($stream);
+            if ($infos['seekable']) {
+                return $this->rewindable = \true;
+            }
+        }
+        return $this->rewindable = \false;
     }
 }

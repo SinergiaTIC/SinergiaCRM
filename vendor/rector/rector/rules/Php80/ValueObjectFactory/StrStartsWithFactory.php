@@ -3,20 +3,32 @@
 declare (strict_types=1);
 namespace Rector\Php80\ValueObjectFactory;
 
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
 use Rector\Php80\ValueObject\StrStartsWith;
 final class StrStartsWithFactory
 {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
+     */
+    private $argsAnalyzer;
+    public function __construct(ArgsAnalyzer $argsAnalyzer)
+    {
+        $this->argsAnalyzer = $argsAnalyzer;
+    }
     public function createFromFuncCall(FuncCall $funcCall, bool $isPositive) : ?StrStartsWith
     {
-        if ($funcCall->isFirstClassCallable()) {
+        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($funcCall->args, [0, 1])) {
             return null;
         }
-        if (\count($funcCall->getArgs()) < 2) {
-            return null;
-        }
-        $haystack = $funcCall->getArgs()[0]->value;
-        $needle = $funcCall->getArgs()[1]->value;
+        /** @var Arg $firstArg */
+        $firstArg = $funcCall->args[0];
+        $haystack = $firstArg->value;
+        /** @var Arg $secondArg */
+        $secondArg = $funcCall->args[1];
+        $needle = $secondArg->value;
         return new StrStartsWith($funcCall, $haystack, $needle, $isPositive);
     }
 }

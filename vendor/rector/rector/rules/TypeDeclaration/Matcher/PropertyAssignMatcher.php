@@ -6,12 +6,12 @@ namespace Rector\TypeDeclaration\Matcher;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
-use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
 final class PropertyAssignMatcher
 {
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     public function __construct(PropertyFetchAnalyzer $propertyFetchAnalyzer)

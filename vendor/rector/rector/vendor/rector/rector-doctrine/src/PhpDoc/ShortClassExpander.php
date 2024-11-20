@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Doctrine\PhpDoc;
 
-use RectorPrefix202411\Nette\Utils\Strings;
+use RectorPrefix202305\Nette\Utils\Strings;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
@@ -14,6 +14,11 @@ use Rector\TypeDeclaration\PHPStan\ObjectTypeSpecifier;
 final class ShortClassExpander
 {
     /**
+     * @var string
+     * @see https://regex101.com/r/548EJJ/1
+     */
+    private const CLASS_CONST_REGEX = '#::class#';
+    /**
      * @readonly
      * @var \PHPStan\Reflection\ReflectionProvider
      */
@@ -23,11 +28,6 @@ final class ShortClassExpander
      * @var \Rector\TypeDeclaration\PHPStan\ObjectTypeSpecifier
      */
     private $objectTypeSpecifier;
-    /**
-     * @var string
-     * @see https://regex101.com/r/548EJJ/1
-     */
-    private const CLASS_CONST_REGEX = '#::class#';
     public function __construct(ReflectionProvider $reflectionProvider, ObjectTypeSpecifier $objectTypeSpecifier)
     {
         $this->reflectionProvider = $reflectionProvider;
