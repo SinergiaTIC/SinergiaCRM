@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\ValueObject;
+namespace Rector\Core\ValueObject;
 
 use PhpParser\Node\Stmt\Class_;
 final class Visibility

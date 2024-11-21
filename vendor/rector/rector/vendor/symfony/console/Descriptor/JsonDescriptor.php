@@ -8,13 +8,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Descriptor;
+namespace RectorPrefix202305\Symfony\Component\Console\Descriptor;
 
-use RectorPrefix202411\Symfony\Component\Console\Application;
-use RectorPrefix202411\Symfony\Component\Console\Command\Command;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputArgument;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputDefinition;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputOption;
+use RectorPrefix202305\Symfony\Component\Console\Application;
+use RectorPrefix202305\Symfony\Component\Console\Command\Command;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputArgument;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputDefinition;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputOption;
 /**
  * JSON descriptor.
  *
@@ -24,26 +24,26 @@ use RectorPrefix202411\Symfony\Component\Console\Input\InputOption;
  */
 class JsonDescriptor extends Descriptor
 {
-    protected function describeInputArgument(InputArgument $argument, array $options = []) : void
+    protected function describeInputArgument(InputArgument $argument, array $options = [])
     {
         $this->writeData($this->getInputArgumentData($argument), $options);
     }
-    protected function describeInputOption(InputOption $option, array $options = []) : void
+    protected function describeInputOption(InputOption $option, array $options = [])
     {
         $this->writeData($this->getInputOptionData($option), $options);
         if ($option->isNegatable()) {
             $this->writeData($this->getInputOptionData($option, \true), $options);
         }
     }
-    protected function describeInputDefinition(InputDefinition $definition, array $options = []) : void
+    protected function describeInputDefinition(InputDefinition $definition, array $options = [])
     {
         $this->writeData($this->getInputDefinitionData($definition), $options);
     }
-    protected function describeCommand(Command $command, array $options = []) : void
+    protected function describeCommand(Command $command, array $options = [])
     {
         $this->writeData($this->getCommandData($command, $options['short'] ?? \false), $options);
     }
-    protected function describeApplication(Application $application, array $options = []) : void
+    protected function describeApplication(Application $application, array $options = [])
     {
         $describedNamespace = $options['namespace'] ?? null;
         $description = new ApplicationDescription($application, $describedNamespace, \true);
@@ -69,7 +69,7 @@ class JsonDescriptor extends Descriptor
     /**
      * Writes data as json.
      */
-    private function writeData(array $data, array $options) : void
+    private function writeData(array $data, array $options)
     {
         $flags = $options['json_encoding'] ?? 0;
         $this->write(\json_encode($data, $flags));

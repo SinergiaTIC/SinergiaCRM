@@ -8,26 +8,25 @@ use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\GroupUse;
 use PhpParser\Node\Stmt\Namespace_;
 use PhpParser\Node\Stmt\Use_;
-use Rector\Application\Provider\CurrentFileProvider;
-use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
-use Rector\ValueObject\Application\File;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
 final class UseImportsResolver
 {
     /**
      * @readonly
-     * @var \Rector\Application\Provider\CurrentFileProvider
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
      */
-    private $currentFileProvider;
-    public function __construct(CurrentFileProvider $currentFileProvider)
+    private $betterNodeFinder;
+    public function __construct(BetterNodeFinder $betterNodeFinder)
     {
-        $this->currentFileProvider = $currentFileProvider;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
     /**
-     * @return array<Use_|GroupUse>
+     * @return Use_[]|GroupUse[]
      */
-    public function resolve() : array
+    public function resolveForNode(Node $node) : array
     {
-        $namespace = $this->resolveNamespace();
+        $namespace = $this->betterNodeFinder->findParentByTypes($node, [Namespace_::class, FileWithoutNamespace::class]);
         if (!$namespace instanceof Node) {
             return [];
         }
@@ -39,9 +38,9 @@ final class UseImportsResolver
      * @api
      * @return Use_[]
      */
-    public function resolveBareUses() : array
+    public function resolveBareUsesForNode(Node $node) : array
     {
-        $namespace = $this->resolveNamespace();
+        $namespace = $this->betterNodeFinder->findParentByTypes($node, [Namespace_::class, FileWithoutNamespace::class]);
         if (!$namespace instanceof Node) {
             return [];
         }
@@ -55,29 +54,5 @@ final class UseImportsResolver
     public function resolvePrefix($use) : string
     {
         return $use instanceof GroupUse ? $use->prefix . '\\' : '';
-    }
-    /**
-     * @return \PhpParser\Node\Stmt\Namespace_|\Rector\PhpParser\Node\CustomNode\FileWithoutNamespace|null
-     */
-    private function resolveNamespace()
-    {
-        /** @var File|null $file */
-        $file = $this->currentFileProvider->getFile();
-        if (!$file instanceof File) {
-            return null;
-        }
-        $newStmts = $file->getNewStmts();
-        if ($newStmts === []) {
-            return null;
-        }
-        /** @var Namespace_[]|FileWithoutNamespace[] $namespaces */
-        $namespaces = \array_filter($newStmts, static function (Stmt $stmt) : bool {
-            return $stmt instanceof Namespace_ || $stmt instanceof FileWithoutNamespace;
-        });
-        // multiple namespaces is not supported
-        if (\count($namespaces) !== 1) {
-            return null;
-        }
-        return \current($namespaces);
     }
 }

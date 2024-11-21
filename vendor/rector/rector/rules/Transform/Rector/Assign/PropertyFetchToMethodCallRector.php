@@ -7,13 +7,13 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Exception\ShouldNotHappenException;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Transform\ValueObject\PropertyFetchToMethodCall;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\Assign\PropertyFetchToMethodCallRector\PropertyFetchToMethodCallRectorTest
  */
@@ -85,15 +85,15 @@ CODE_SAMPLE
     }
     private function processGetter(PropertyFetch $propertyFetch) : ?Node
     {
-        $propertyFetchToMethodCall = $this->matchPropertyFetchCandidate($propertyFetch);
-        if (!$propertyFetchToMethodCall instanceof PropertyFetchToMethodCall) {
+        $propertyToMethodCall = $this->matchPropertyFetchCandidate($propertyFetch);
+        if (!$propertyToMethodCall instanceof PropertyFetchToMethodCall) {
             return null;
         }
         // simple method name
-        if ($propertyFetchToMethodCall->getNewGetMethod() !== '') {
-            $methodCall = $this->nodeFactory->createMethodCall($propertyFetch->var, $propertyFetchToMethodCall->getNewGetMethod());
-            if ($propertyFetchToMethodCall->getNewGetArguments() !== []) {
-                $methodCall->args = $this->nodeFactory->createArgs($propertyFetchToMethodCall->getNewGetArguments());
+        if ($propertyToMethodCall->getNewGetMethod() !== '') {
+            $methodCall = $this->nodeFactory->createMethodCall($propertyFetch->var, $propertyToMethodCall->getNewGetMethod());
+            if ($propertyToMethodCall->getNewGetArguments() !== []) {
+                $methodCall->args = $this->nodeFactory->createArgs($propertyToMethodCall->getNewGetArguments());
             }
             return $methodCall;
         }

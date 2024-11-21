@@ -5,7 +5,7 @@ namespace Rector\DowngradePhp80\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -47,10 +47,10 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        if (!$node->returnType instanceof Node) {
+        if (!$this->isName($node, '__clone')) {
             return null;
         }
-        if (!$this->isName($node, '__clone')) {
+        if (!$node->returnType instanceof Node) {
             return null;
         }
         $node->returnType = null;

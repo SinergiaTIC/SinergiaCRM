@@ -1,39 +1,41 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\DependencyInjection;
+namespace Rector\Core\DependencyInjection;
 
-use RectorPrefix202411\Illuminate\Container\Container;
-use Rector\Autoloading\BootstrapFilesIncluder;
+use RectorPrefix202305\Psr\Container\ContainerInterface;
 use Rector\Caching\Detector\ChangedFilesDetector;
-use Rector\ValueObject\Bootstrap\BootstrapConfigs;
+use Rector\Core\Autoloading\BootstrapFilesIncluder;
+use Rector\Core\Kernel\RectorKernel;
+use Rector\Core\ValueObject\Bootstrap\BootstrapConfigs;
+use Rector\NodeTypeResolver\DependencyInjection\PHPStanServicesFactory;
 final class RectorContainerFactory
 {
-    public function createFromBootstrapConfigs(BootstrapConfigs $bootstrapConfigs) : Container
+    public function createFromBootstrapConfigs(BootstrapConfigs $bootstrapConfigs) : ContainerInterface
     {
         $container = $this->createFromConfigs($bootstrapConfigs->getConfigFiles());
         $mainConfigFile = $bootstrapConfigs->getMainConfigFile();
         if ($mainConfigFile !== null) {
             /** @var ChangedFilesDetector $changedFilesDetector */
-            $changedFilesDetector = $container->make(ChangedFilesDetector::class);
+            $changedFilesDetector = $container->get(ChangedFilesDetector::class);
             $changedFilesDetector->setFirstResolvedConfigFileInfo($mainConfigFile);
         }
         /** @var BootstrapFilesIncluder $bootstrapFilesIncluder */
         $bootstrapFilesIncluder = $container->get(BootstrapFilesIncluder::class);
         $bootstrapFilesIncluder->includeBootstrapFiles();
+        $phpStanServicesFactory = $container->get(PHPStanServicesFactory::class);
+        /** @var PHPStanServicesFactory $phpStanServicesFactory */
+        $phpStanContainer = $phpStanServicesFactory->provideContainer();
+        $bootstrapFilesIncluder->includePHPStanExtensionsBoostrapFiles($phpStanContainer);
         return $container;
     }
     /**
      * @param string[] $configFiles
+     * @api
      */
-    private function createFromConfigs(array $configFiles) : Container
+    private function createFromConfigs(array $configFiles) : ContainerInterface
     {
-        $lazyContainerFactory = new \Rector\DependencyInjection\LazyContainerFactory();
-        $rectorConfig = $lazyContainerFactory->create();
-        foreach ($configFiles as $configFile) {
-            $rectorConfig->import($configFile);
-        }
-        $rectorConfig->boot();
-        return $rectorConfig;
+        $rectorKernel = new RectorKernel();
+        return $rectorKernel->createFromConfigs($configFiles);
     }
 }

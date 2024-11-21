@@ -34,21 +34,21 @@
         "php": ">=5.3.0",
         "react\/cache": "^1.0 || ^0.6 || ^0.5",
         "react\/event-loop": "^1.2",
-        "react\/promise": "^3.2 || ^2.7 || ^1.2.1"
+        "react\/promise": "^3.0 || ^2.7 || ^1.2.1",
+        "react\/promise-timer": "^1.9"
     },
     "require-dev": {
-        "phpunit\/phpunit": "^9.6 || ^5.7 || ^4.8.36",
-        "react\/async": "^4.3 || ^3 || ^2",
-        "react\/promise-timer": "^1.11"
+        "phpunit\/phpunit": "^9.3 || ^4.8.35",
+        "react\/async": "^4 || ^3 || ^2"
     },
     "autoload": {
         "psr-4": {
-            "RectorPrefix202411\\React\\Dns\\": "src\/"
+            "RectorPrefix202305\\React\\Dns\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "RectorPrefix202411\\React\\Tests\\Dns\\": "tests\/"
+            "RectorPrefix202305\\React\\Tests\\Dns\\": "tests"
         }
     }
 }

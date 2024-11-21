@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Helper;
+namespace RectorPrefix202305\Symfony\Component\Console\Helper;
 
-use RectorPrefix202411\Symfony\Component\Console\Exception\InvalidArgumentException;
-use RectorPrefix202411\Symfony\Component\Console\Exception\LogicException;
-use RectorPrefix202411\Symfony\Component\Console\Output\OutputInterface;
+use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\LogicException;
+use RectorPrefix202305\Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
@@ -63,7 +63,7 @@ class ProgressIndicator
      * @param int        $indicatorChangeInterval Change interval in milliseconds
      * @param array|null $indicatorValues         Animated indicator characters
      */
-    public function __construct(OutputInterface $output, ?string $format = null, int $indicatorChangeInterval = 100, ?array $indicatorValues = null)
+    public function __construct(OutputInterface $output, string $format = null, int $indicatorChangeInterval = 100, array $indicatorValues = null)
     {
         $this->output = $output;
         $format = $format ?? $this->determineBestFormat();
@@ -79,8 +79,6 @@ class ProgressIndicator
     }
     /**
      * Sets the current indicator message.
-     *
-     * @return void
      */
     public function setMessage(?string $message)
     {
@@ -89,8 +87,6 @@ class ProgressIndicator
     }
     /**
      * Starts the indicator output.
-     *
-     * @return void
      */
     public function start(string $message)
     {
@@ -106,8 +102,6 @@ class ProgressIndicator
     }
     /**
      * Advances the indicator.
-     *
-     * @return void
      */
     public function advance()
     {
@@ -127,8 +121,6 @@ class ProgressIndicator
     }
     /**
      * Finish the indicator with message.
-     *
-     * @return void
      */
     public function finish(string $message)
     {
@@ -151,8 +143,6 @@ class ProgressIndicator
      * Sets a placeholder formatter for a given name.
      *
      * This method also allow you to override an existing placeholder.
-     *
-     * @return void
      */
     public static function setPlaceholderFormatterDefinition(string $name, callable $callable)
     {
@@ -167,7 +157,7 @@ class ProgressIndicator
         self::$formatters = self::$formatters ?? self::initPlaceholderFormatters();
         return self::$formatters[$name] ?? null;
     }
-    private function display() : void
+    private function display()
     {
         if (OutputInterface::VERBOSITY_QUIET === $this->output->getVerbosity()) {
             return;
@@ -194,7 +184,7 @@ class ProgressIndicator
     /**
      * Overwrites a previous message to the output.
      */
-    private function overwrite(string $message) : void
+    private function overwrite(string $message)
     {
         if ($this->output->isDecorated()) {
             $this->output->write("\r\x1b[2K");
@@ -217,7 +207,7 @@ class ProgressIndicator
         }, 'message' => function (self $indicator) {
             return $indicator->message;
         }, 'elapsed' => function (self $indicator) {
-            return Helper::formatTime(\time() - $indicator->startTime, 2);
+            return Helper::formatTime(\time() - $indicator->startTime);
         }, 'memory' => function () {
             return Helper::formatMemory(\memory_get_usage(\true));
         }];

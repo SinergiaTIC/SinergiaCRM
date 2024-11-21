@@ -4,50 +4,49 @@ declare (strict_types=1);
 namespace Rector\Php55\Rector\String_;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassConst;
-use PhpParser\NodeTraverser;
 use PHPStan\Reflection\ReflectionProvider;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Naming\Naming\AliasNameResolver;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
+ * @changelog https://wiki.php.net/rfc/class_name_scalars https://github.com/symfony/symfony/blob/2.8/UPGRADE-2.8.md#form
+ *
  * @see \Rector\Tests\Php55\Rector\String_\StringClassNameToClassConstantRector\StringClassNameToClassConstantRectorTest
  */
-final class StringClassNameToClassConstantRector extends AbstractRector implements MinPhpVersionInterface, ConfigurableRectorInterface
+final class StringClassNameToClassConstantRector extends AbstractRector implements AllowEmptyConfigurableRectorInterface, MinPhpVersionInterface
 {
+    /**
+     * @var string[]
+     */
+    private $classesToSkip = [];
     /**
      * @readonly
      * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
     /**
-     * @var string
+     * @readonly
+     * @var \Rector\Naming\Naming\AliasNameResolver
      */
-    public const SHOULD_KEEP_PRE_SLASH = 'should_keep_pre_slash';
-    /**
-     * @var string
-     */
-    private const IS_UNDER_CLASS_CONST = 'is_under_class_const';
-    /**
-     * @var string[]
-     */
-    private $classesToSkip = [];
-    /**
-     * @var bool
-     */
-    private $shouldKeepPreslash = \false;
-    public function __construct(ReflectionProvider $reflectionProvider)
+    private $aliasNameResolver;
+    public function __construct(ReflectionProvider $reflectionProvider, AliasNameResolver $aliasNameResolver)
     {
         $this->reflectionProvider = $reflectionProvider;
+        $this->aliasNameResolver = $aliasNameResolver;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -77,63 +76,47 @@ class SomeClass
     }
 }
 CODE_SAMPLE
-, ['ClassName', 'AnotherClassName', self::SHOULD_KEEP_PRE_SLASH => \false])]);
+, ['ClassName', 'AnotherClassName'])]);
     }
     /**
      * @return array<class-string<Node>>
      */
     public function getNodeTypes() : array
     {
-        return [String_::class, FuncCall::class, ClassConst::class];
+        return [String_::class];
     }
     /**
-     * @param String_|FuncCall|ClassConst $node
-     * @return \PhpParser\Node\Expr\BinaryOp\Concat|\PhpParser\Node\Expr\ClassConstFetch|null|int
+     * @param String_ $node
      */
-    public function refactor(Node $node)
+    public function refactor(Node $node) : ?Node
     {
-        // allow class strings to be part of class const arrays, as probably on purpose
-        if ($node instanceof ClassConst) {
-            $this->decorateClassConst($node);
-            return null;
-        }
-        // keep allowed string as condition
-        if ($node instanceof FuncCall) {
-            if ($this->isName($node, 'is_a')) {
-                return NodeTraverser::DONT_TRAVERSE_CHILDREN;
-            }
-            return null;
-        }
-        if ($node->getAttribute(self::IS_UNDER_CLASS_CONST) === \true) {
-            return null;
-        }
         $classLikeName = $node->value;
         // remove leading slash
         $classLikeName = \ltrim($classLikeName, '\\');
         if ($classLikeName === '') {
             return null;
         }
-        if ($this->shouldSkip($classLikeName)) {
+        if ($this->shouldSkip($classLikeName, $node)) {
             return null;
         }
         $fullyQualified = new FullyQualified($classLikeName);
-        if ($this->shouldKeepPreslash && $classLikeName !== $node->value) {
+        $name = clone $fullyQualified;
+        $name->setAttribute(AttributeKey::PARENT_NODE, $node->getAttribute(AttributeKey::PARENT_NODE));
+        $aliasName = $this->aliasNameResolver->resolveByName($name);
+        $fullyQualifiedOrAliasName = \is_string($aliasName) ? new Name($aliasName) : $fullyQualified;
+        if ($classLikeName !== $node->value) {
             $preSlashCount = \strlen($node->value) - \strlen($classLikeName);
             $preSlash = \str_repeat('\\', $preSlashCount);
             $string = new String_($preSlash);
-            return new Concat($string, new ClassConstFetch($fullyQualified, 'class'));
+            return new Concat($string, new ClassConstFetch($fullyQualifiedOrAliasName, 'class'));
         }
-        return new ClassConstFetch($fullyQualified, 'class');
+        return new ClassConstFetch($fullyQualifiedOrAliasName, 'class');
     }
     /**
      * @param mixed[] $configuration
      */
     public function configure(array $configuration) : void
     {
-        if (isset($configuration[self::SHOULD_KEEP_PRE_SLASH]) && \is_bool($configuration[self::SHOULD_KEEP_PRE_SLASH])) {
-            $this->shouldKeepPreslash = $configuration[self::SHOULD_KEEP_PRE_SLASH];
-            unset($configuration[self::SHOULD_KEEP_PRE_SLASH]);
-        }
         Assert::allString($configuration);
         $this->classesToSkip = $configuration;
     }
@@ -141,8 +124,27 @@ CODE_SAMPLE
     {
         return PhpVersionFeature::CLASSNAME_CONSTANT;
     }
-    private function shouldSkip(string $classLikeName) : bool
+    private function isPartOfIsAFuncCall(String_ $string) : bool
     {
+        $parentNode = $string->getAttribute(AttributeKey::PARENT_NODE);
+        if (!$parentNode instanceof Arg) {
+            return \false;
+        }
+        $parentParentNode = $parentNode->getAttribute(AttributeKey::PARENT_NODE);
+        if (!$parentParentNode instanceof FuncCall) {
+            return \false;
+        }
+        return $this->nodeNameResolver->isName($parentParentNode, 'is_a');
+    }
+    private function shouldSkip(string $classLikeName, String_ $string) : bool
+    {
+        if (!$this->reflectionProvider->hasClass($classLikeName)) {
+            return \true;
+        }
+        $classReflection = $this->reflectionProvider->getClass($classLikeName);
+        if ($classReflection->getName() !== $classLikeName) {
+            return \true;
+        }
         // skip short class names, mostly invalid use of strings
         if (\strpos($classLikeName, '\\') === \false) {
             return \true;
@@ -151,29 +153,16 @@ CODE_SAMPLE
         if (\ctype_lower($classLikeName[0])) {
             return \true;
         }
-        if (!$this->reflectionProvider->hasClass($classLikeName)) {
-            return \true;
-        }
         foreach ($this->classesToSkip as $classToSkip) {
-            if (\strpos($classToSkip, '*') !== \false) {
-                if (\fnmatch($classToSkip, $classLikeName, \FNM_NOESCAPE)) {
-                    return \true;
-                }
-                continue;
-            }
             if ($this->nodeNameResolver->isStringName($classLikeName, $classToSkip)) {
                 return \true;
             }
         }
-        return \false;
-    }
-    private function decorateClassConst(ClassConst $classConst) : void
-    {
-        $this->traverseNodesWithCallable($classConst->consts, static function (Node $subNode) {
-            if ($subNode instanceof String_) {
-                $subNode->setAttribute(self::IS_UNDER_CLASS_CONST, \true);
-            }
-            return null;
-        });
+        if ($this->isPartOfIsAFuncCall($string)) {
+            return \true;
+        }
+        // allow class strings to be part of class const arrays, as probably on purpose
+        $parentClassConst = $this->betterNodeFinder->findParentType($string, ClassConst::class);
+        return $parentClassConst instanceof ClassConst;
     }
 }

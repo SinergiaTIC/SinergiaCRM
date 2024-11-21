@@ -36,25 +36,26 @@ There are 2 main ways to use Rector:
 To use them, create a `rector.php` in your root directory:
 
 ```bash
-vendor/bin/rector
+vendor/bin/rector init
 ```
 
 And modify it:
 
 ```php
 use Rector\Config\RectorConfig;
+use Rector\Set\ValueObject\SetList;
 use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromStrictConstructorRector;
 
-return RectorConfig::configure()
+return static function (RectorConfig $rectorConfig): void {
     // register single rule
-    ->withRules([
-        TypedPropertyFromStrictConstructorRector::class
-    ])
-    // here we can define, what prepared sets of rules will be applied
-    ->withPreparedSets(
-        deadCode: true,
-        codeQuality: true
-    );
+    $rectorConfig->rule(TypedPropertyFromStrictConstructorRector::class);
+
+    // here we can define, what sets of rules will be applied
+    // tip: use "SetList" class to autocomplete sets with your IDE
+    $rectorConfig->sets([
+        SetList::CODE_QUALITY
+    ]);
+};
 ```
 
 Then dry run Rector:
@@ -71,8 +72,8 @@ vendor/bin/rector process src
 
 ## Documentation
 
-* Find [full documentation here](https://getrector.com/documentation/).
-* [Explore Rector Rules](https://getrector.com/find-rule)
+* Find [full documentation here](https://getrector.org/documentation/).
+* [Explore Rector Rules](/docs/rector_rules_overview.md)
 
 <br>
 
@@ -100,16 +101,14 @@ Among there projects belong:
 * [laminas/laminas-servicemanager-migration](https://github.com/laminas/laminas-servicemanager-migration)
 * [cakephp/upgrade](https://github.com/cakephp/upgrade)
 * [driftingly/rector-laravel](https://github.com/driftingly/rector-laravel)
-* [contao/contao-rector](https://github.com/contao/contao-rector)
-* [php-static-analysis/rector-rule](https://github.com/php-static-analysis/rector-rule)
 
 <br>
 
 ## Hire us to get Job Done :muscle:
 
-Rector is a tool that [we develop](https://getrector.com/) and share for free, so anyone can automate their refactoring. But not everyone has dozens of hours to understand complexity of abstract-syntax-tree in their own time. **That's why we provide commercial support - to save your time**.
+Rector is a tool that [we develop](https://getrector.org/) and share for free, so anyone can automate their refactoring. But not everyone has dozens of hours to understand complexity of abstract-syntax-tree in their own time. **That's why we provide commercial support - to save your time**.
 
-Would you like to apply Rector on your code base but don't have time for the struggle with your project? [Hire us](https://getrector.com/contact) to get there faster.
+Would you like to apply Rector on your code base but don't have time for the struggle with your project? [Hire us](https://getrector.org/contact) to get there faster.
 
 <br>
 
@@ -144,22 +143,20 @@ $node = new String_('hello world!');
 
 // prints node to string, as PHP code displays it
 print_node($node);
+
+// dump nested node object with nested properties
+dump_node($node);
+
+// 2nd argument is how deep the nesting is - this makes sure the dump is short and useful
+dump_node($node, 1);
 ```
 
 <br>
 
 ## Known Drawbacks
 
-* Rector uses [nikic/php-parser](https://github.com/nikic/PHP-Parser/), built on technology called an *abstract syntax tree* (AST). An AST doesn't know about spaces and when written to a file it produces poorly formatted code in both PHP and docblock annotations.
-
-* Rector in parallel mode will work most of the times for most OS. On Windows, you may encounter issues unresolvable despite of following the [Troubleshooting Parallel](https://getrector.com/documentation/troubleshooting-parallel) guide. In such case, check if you are using Powershell 7 (pwsh). Change your terminal to command prompt (cmd) or bash for Windows.
-
 ### How to Apply Coding Standards?
 
-**Your project needs to have a coding standard tool** and a set of formatting rules, so it can make Rector's output code nice and shiny again.
+Rector uses [nikic/php-parser](https://github.com/nikic/PHP-Parser/), built on technology called an *abstract syntax tree* (AST). An AST doesn't know about spaces and when written to a file it produces poorly formatted code in both PHP and docblock annotations. **That's why your project needs to have a coding standard tool** and a set of formatting rules, so it can make Rector's output code nice and shiny again.
 
 We're using [ECS](https://github.com/symplify/easy-coding-standard) with [this setup](https://github.com/rectorphp/rector-src/blob/main/ecs.php).
-
-### May cause unexpected output on File with mixed PHP+HTML content
-
-When you apply changes to File(s) thas has mixed PHP+HTML content, you may need to manually verify the changed file after apply the changes.

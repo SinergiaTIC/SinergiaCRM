@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Command;
+namespace RectorPrefix202305\Symfony\Component\Console\Command;
 
 /**
  * Interface for command reacting to signal.
@@ -23,10 +23,6 @@ interface SignalableCommandInterface
     public function getSubscribedSignals() : array;
     /**
      * The method will be called when the application is signaled.
-     *
-     * @param int|false $previousExitCode
-     *
-     * @return int|false The exit code to return or false to continue the normal execution
      */
-    public function handleSignal(int $signal);
+    public function handleSignal(int $signal) : void;
 }

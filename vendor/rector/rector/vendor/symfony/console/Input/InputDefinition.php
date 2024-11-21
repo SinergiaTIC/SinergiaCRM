@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Input;
+namespace RectorPrefix202305\Symfony\Component\Console\Input;
 
-use RectorPrefix202411\Symfony\Component\Console\Exception\InvalidArgumentException;
-use RectorPrefix202411\Symfony\Component\Console\Exception\LogicException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\LogicException;
 /**
  * A InputDefinition represents a set of valid command line arguments and options.
  *
@@ -63,8 +63,6 @@ class InputDefinition
     }
     /**
      * Sets the definition of the input.
-     *
-     * @return void
      */
     public function setDefinition(array $definition)
     {
@@ -84,8 +82,6 @@ class InputDefinition
      * Sets the InputArgument objects.
      *
      * @param InputArgument[] $arguments An array of InputArgument objects
-     *
-     * @return void
      */
     public function setArguments(array $arguments = [])
     {
@@ -99,8 +95,6 @@ class InputDefinition
      * Adds an array of InputArgument objects.
      *
      * @param InputArgument[] $arguments An array of InputArgument objects
-     *
-     * @return void
      */
     public function addArguments(?array $arguments = [])
     {
@@ -111,8 +105,6 @@ class InputDefinition
         }
     }
     /**
-     * @return void
-     *
      * @throws LogicException When incorrect argument is given
      */
     public function addArgument(InputArgument $argument)
@@ -197,8 +189,6 @@ class InputDefinition
      * Sets the InputOption objects.
      *
      * @param InputOption[] $options An array of InputOption objects
-     *
-     * @return void
      */
     public function setOptions(array $options = [])
     {
@@ -211,8 +201,6 @@ class InputDefinition
      * Adds an array of InputOption objects.
      *
      * @param InputOption[] $options An array of InputOption objects
-     *
-     * @return void
      */
     public function addOptions(array $options = [])
     {
@@ -221,8 +209,6 @@ class InputDefinition
         }
     }
     /**
-     * @return void
-     *
      * @throws LogicException When option given already exist
      */
     public function addOption(InputOption $option)

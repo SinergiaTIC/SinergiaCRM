@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Question;
+namespace RectorPrefix202305\Symfony\Component\Console\Question;
 
-use RectorPrefix202411\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
 /**
  * Represents a choice question.
  *
@@ -35,9 +35,9 @@ class ChoiceQuestion extends Question
      */
     private $errorMessage = 'Value "%s" is invalid';
     /**
-     * @param string                     $question The question to ask to the user
-     * @param array                      $choices  The list of available choices
-     * @param string|bool|int|float|null $default  The default answer to return
+     * @param string $question The question to ask to the user
+     * @param array  $choices  The list of available choices
+     * @param mixed  $default  The default answer to return
      */
     public function __construct(string $question, array $choices, $default = null)
     {

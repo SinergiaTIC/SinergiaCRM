@@ -8,11 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Descriptor;
+namespace RectorPrefix202305\Symfony\Component\Console\Descriptor;
 
-use RectorPrefix202411\Symfony\Component\Console\Application;
-use RectorPrefix202411\Symfony\Component\Console\Command\Command;
-use RectorPrefix202411\Symfony\Component\Console\Exception\CommandNotFoundException;
+use RectorPrefix202305\Symfony\Component\Console\Application;
+use RectorPrefix202305\Symfony\Component\Console\Command\Command;
+use RectorPrefix202305\Symfony\Component\Console\Exception\CommandNotFoundException;
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  *
@@ -45,7 +45,7 @@ class ApplicationDescription
      * @var array<string, Command>
      */
     private $aliases = [];
-    public function __construct(Application $application, ?string $namespace = null, bool $showHidden = \false)
+    public function __construct(Application $application, string $namespace = null, bool $showHidden = \false)
     {
         $this->application = $application;
         $this->namespace = $namespace;
@@ -78,7 +78,7 @@ class ApplicationDescription
         }
         return $this->commands[$name] ?? $this->aliases[$name];
     }
-    private function inspectApplication() : void
+    private function inspectApplication()
     {
         $this->commands = [];
         $this->namespaces = [];

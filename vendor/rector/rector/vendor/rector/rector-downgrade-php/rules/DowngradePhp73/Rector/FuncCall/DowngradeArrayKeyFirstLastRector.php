@@ -7,28 +7,15 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\BinaryOp\BooleanOr;
-use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\Cast\Array_;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Expr\NullsafeMethodCall;
-use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
-use PhpParser\Node\Stmt;
-use PhpParser\Node\Stmt\Echo_;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\If_;
-use PhpParser\Node\Stmt\Return_;
-use PhpParser\Node\Stmt\Switch_;
-use PHPStan\Analyser\Scope;
-use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\Naming\VariableNaming;
-use Rector\NodeAnalyzer\ExprInTopStmtMatcher;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Rector\AbstractRector;
+use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -45,13 +32,13 @@ final class DowngradeArrayKeyFirstLastRector extends AbstractRector
     private $variableNaming;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\ExprInTopStmtMatcher
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
      */
-    private $exprInTopStmtMatcher;
-    public function __construct(VariableNaming $variableNaming, ExprInTopStmtMatcher $exprInTopStmtMatcher)
+    private $nodesToAddCollector;
+    public function __construct(VariableNaming $variableNaming, NodesToAddCollector $nodesToAddCollector)
     {
         $this->variableNaming = $variableNaming;
-        $this->exprInTopStmtMatcher = $exprInTopStmtMatcher;
+        $this->nodesToAddCollector = $nodesToAddCollector;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -81,126 +68,71 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [StmtsAwareInterface::class, Switch_::class, Return_::class, Expression::class, Echo_::class];
+        return [FuncCall::class];
     }
     /**
-     * @param StmtsAwareInterface|Switch_|Return_|Expression|Echo_ $node
-     * @return Node[]|null
+     * @param FuncCall $node
      */
-    public function refactor(Node $node) : ?array
+    public function refactor(Node $node) : ?Node
     {
-        $exprArrayKeyFirst = $this->exprInTopStmtMatcher->match($node, function (Node $subNode) : bool {
-            if (!$subNode instanceof FuncCall) {
-                return \false;
-            }
-            return $this->isName($subNode, 'array_key_first');
-        });
-        if ($exprArrayKeyFirst instanceof FuncCall) {
-            return $this->refactorArrayKeyFirst($exprArrayKeyFirst, $node);
+        if ($this->isName($node, 'array_key_first')) {
+            return $this->refactorArrayKeyFirst($node);
         }
-        $exprArrayKeyLast = $this->exprInTopStmtMatcher->match($node, function (Node $subNode) : bool {
-            if (!$subNode instanceof FuncCall) {
-                return \false;
-            }
-            return $this->isName($subNode, 'array_key_last');
-        });
-        if ($exprArrayKeyLast instanceof FuncCall) {
-            return $this->refactorArrayKeyLast($exprArrayKeyLast, $node);
+        if ($this->isName($node, 'array_key_last')) {
+            return $this->refactorArrayKeyLast($node);
         }
         return null;
     }
-    private function resolveVariableFromCallLikeScope(CallLike $callLike, ?Scope $scope) : Variable
+    private function refactorArrayKeyFirst(FuncCall $funcCall) : ?FuncCall
     {
-        /** @var MethodCall|FuncCall|StaticCall|New_|NullsafeMethodCall $callLike */
-        if ($callLike instanceof New_) {
-            $variableName = (string) $this->nodeNameResolver->getName($callLike->class);
-        } else {
-            $variableName = (string) $this->nodeNameResolver->getName($callLike->name);
-        }
-        if ($variableName === '') {
-            $variableName = 'array';
-        }
-        return new Variable($this->variableNaming->createCountedValueName($variableName, $scope));
-    }
-    /**
-     * @return Node[]|null
-     * @param \Rector\Contract\PhpParser\Node\StmtsAwareInterface|\PhpParser\Node\Stmt\Switch_|\PhpParser\Node\Stmt\Return_|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Echo_ $stmt
-     */
-    private function refactorArrayKeyFirst(FuncCall $funcCall, $stmt) : ?array
-    {
-        $args = $funcCall->getArgs();
-        if (!isset($args[0])) {
+        if (!isset($funcCall->args[0])) {
             return null;
         }
-        $originalArray = $args[0]->value;
-        $array = $this->resolveCastedArray($originalArray);
-        $newStmts = [];
-        if ($originalArray instanceof CallLike) {
-            $scope = $originalArray->getAttribute(AttributeKey::SCOPE);
-            $array = $this->resolveVariableFromCallLikeScope($originalArray, $scope);
+        if (!$funcCall->args[0] instanceof Arg) {
+            return null;
         }
+        $originalArray = $funcCall->args[0]->value;
+        $array = $this->resolveCastedArray($originalArray);
         if ($originalArray !== $array) {
-            $newStmts[] = new Expression(new Assign($array, $originalArray));
+            $this->addAssignNewVariable($funcCall, $originalArray, $array);
         }
         $resetFuncCall = $this->nodeFactory->createFuncCall('reset', [$array]);
-        $newStmts[] = $this->resolvePrependNewStmt($array, $resetFuncCall, $stmt);
+        $this->nodesToAddCollector->addNodeBeforeNode($resetFuncCall, $funcCall);
         $funcCall->name = new Name('key');
         if ($originalArray !== $array) {
-            $firstArg = $args[0];
+            $firstArg = $funcCall->getArgs()[0];
             $firstArg->value = $array;
         }
-        $newStmts[] = $stmt;
-        return $newStmts;
+        return $funcCall;
     }
-    /**
-     * @return Node[]|null
-     * @param \Rector\Contract\PhpParser\Node\StmtsAwareInterface|\PhpParser\Node\Stmt\Switch_|\PhpParser\Node\Stmt\Return_|\PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\Echo_ $stmt
-     */
-    private function refactorArrayKeyLast(FuncCall $funcCall, $stmt) : ?array
+    private function refactorArrayKeyLast(FuncCall $funcCall) : ?FuncCall
     {
-        $args = $funcCall->getArgs();
-        $firstArg = $args[0] ?? null;
-        if (!$firstArg instanceof Arg) {
+        if (!isset($funcCall->args[0])) {
             return null;
         }
-        $originalArray = $firstArg->value;
+        if (!$funcCall->args[0] instanceof Arg) {
+            return null;
+        }
+        $originalArray = $funcCall->args[0]->value;
         $array = $this->resolveCastedArray($originalArray);
-        $newStmts = [];
-        if ($originalArray instanceof CallLike) {
-            $scope = $originalArray->getAttribute(AttributeKey::SCOPE);
-            $array = $this->resolveVariableFromCallLikeScope($originalArray, $scope);
-        }
         if ($originalArray !== $array) {
-            $newStmts[] = new Expression(new Assign($array, $originalArray));
+            $this->addAssignNewVariable($funcCall, $originalArray, $array);
         }
-        $endFuncCall = $this->nodeFactory->createFuncCall('end', [$array]);
-        $newStmts[] = $this->resolvePrependNewStmt($array, $endFuncCall, $stmt);
+        $resetFuncCall = $this->nodeFactory->createFuncCall('end', [$array]);
+        $this->nodesToAddCollector->addNodeBeforeNode($resetFuncCall, $funcCall);
         $funcCall->name = new Name('key');
         if ($originalArray !== $array) {
+            $firstArg = $funcCall->getArgs()[0];
             $firstArg->value = $array;
         }
-        $newStmts[] = $stmt;
-        $resetExpression = new Expression($this->nodeFactory->createFuncCall('reset', [$array]));
-        if ($stmt instanceof StmtsAwareInterface) {
-            $stmt->stmts = \array_merge([$resetExpression], $stmt->stmts);
-        } elseif (!$stmt instanceof Return_) {
-            $newStmts[] = $resetExpression;
-        }
-        return $newStmts;
+        return $funcCall;
     }
     /**
-     * @param \PhpParser\Node\Expr|\PhpParser\Node\Expr\Variable $array
-     * @param \PhpParser\Node\Stmt|\Rector\Contract\PhpParser\Node\StmtsAwareInterface $stmt
-     * @return \PhpParser\Node\Stmt\Expression|\PhpParser\Node\Stmt\If_
+     * @param \PhpParser\Node\Expr|\PhpParser\Node\Expr\Variable $variable
      */
-    private function resolvePrependNewStmt($array, FuncCall $funcCall, $stmt)
+    private function addAssignNewVariable(FuncCall $funcCall, Expr $expr, $variable) : void
     {
-        if (!$stmt instanceof If_ || $stmt->cond instanceof FuncCall || !$stmt->cond instanceof BooleanOr) {
-            return new Expression($funcCall);
-        }
-        $if = new If_($this->nodeFactory->createFuncCall('is_array', [$array]));
-        $if->stmts[] = new Expression($funcCall);
-        return $if;
+        $this->nodesToAddCollector->addNodeBeforeNode(new Expression(new Assign($variable, $expr)), $funcCall);
     }
     /**
      * @return \PhpParser\Node\Expr|\PhpParser\Node\Expr\Variable

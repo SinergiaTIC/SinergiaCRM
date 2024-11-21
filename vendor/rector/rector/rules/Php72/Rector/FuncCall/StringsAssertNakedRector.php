@@ -8,20 +8,22 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Expression;
-use Rector\PhpParser\Parser\SimplePhpParser;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Core\PhpParser\Parser\SimplePhpParser;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://github.com/simplesamlphp/simplesamlphp/pull/708/files
+ *
  * @see \Rector\Tests\Php72\Rector\FuncCall\StringsAssertNakedRector\StringsAssertNakedRectorTest
  */
 final class StringsAssertNakedRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Parser\SimplePhpParser
+     * @var \Rector\Core\PhpParser\Parser\SimplePhpParser
      */
     private $simplePhpParser;
     public function __construct(SimplePhpParser $simplePhpParser)
@@ -65,11 +67,10 @@ CODE_SAMPLE
         if (!$this->isName($node, 'assert')) {
             return null;
         }
-        if ($node->isFirstClassCallable()) {
+        if (!$node->args[0] instanceof Arg) {
             return null;
         }
-        $firstArg = $node->getArgs()[0];
-        $firstArgValue = $firstArg->value;
+        $firstArgValue = $node->args[0]->value;
         if (!$firstArgValue instanceof String_) {
             return null;
         }

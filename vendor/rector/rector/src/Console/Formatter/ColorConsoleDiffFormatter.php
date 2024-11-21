@@ -1,16 +1,15 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Console\Formatter;
+namespace Rector\Core\Console\Formatter;
 
-use RectorPrefix202411\Nette\Utils\Strings;
-use Rector\Util\NewLineSplitter;
-use RectorPrefix202411\Symfony\Component\Console\Formatter\OutputFormatter;
+use RectorPrefix202305\Nette\Utils\Strings;
+use RectorPrefix202305\Symfony\Component\Console\Formatter\OutputFormatter;
 /**
  * Inspired by @see https://github.com/FriendsOfPHP/PHP-CS-Fixer/blob/master/src/Differ/DiffConsoleFormatter.php to be
  * used as standalone class, without need to require whole package by Dariusz Rumiński <dariusz.ruminski@gmail.com>
  *
- * @see \Rector\Tests\Console\Formatter\ColorConsoleDiffFormatterTest
+ * @see \Rector\Core\Tests\Console\Formatter\ColorConsoleDiffFormatterTest
  */
 final class ColorConsoleDiffFormatter
 {
@@ -30,6 +29,11 @@ final class ColorConsoleDiffFormatter
      */
     private const AT_START_REGEX = '#^(@.*)#';
     /**
+     * @var string
+     * @see https://regex101.com/r/qduj2O/1
+     */
+    private const NEWLINES_REGEX = "#\n\r|\n#";
+    /**
      * @readonly
      * @var string
      */
@@ -45,7 +49,7 @@ final class ColorConsoleDiffFormatter
     private function formatWithTemplate(string $diff, string $template) : string
     {
         $escapedDiff = OutputFormatter::escape(\rtrim($diff));
-        $escapedDiffLines = NewLineSplitter::split($escapedDiff);
+        $escapedDiffLines = Strings::split($escapedDiff, self::NEWLINES_REGEX);
         // remove description of added + remove; obvious on diffs
         foreach ($escapedDiffLines as $key => $escapedDiffLine) {
             if ($escapedDiffLine === '--- Original') {

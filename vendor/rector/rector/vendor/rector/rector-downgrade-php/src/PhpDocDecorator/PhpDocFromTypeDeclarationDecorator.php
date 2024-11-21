@@ -9,11 +9,12 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Param;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
+use PhpParser\Node\Stmt\Interface_;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
@@ -21,21 +22,26 @@ use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger;
+use Rector\Core\Php\PhpVersionProvider;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\Php\PhpVersionProvider;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\PhpAttribute\NodeFactory\PhpAttributeGroupFactory;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
-use Rector\Reflection\ReflectionResolver;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 use Rector\StaticTypeMapper\ValueObject\Type\SelfStaticType;
 use Rector\ValueObject\ClassMethodWillChangeReturnType;
-use Rector\ValueObject\PhpVersionFeature;
 /**
  * @see https://wiki.php.net/rfc/internal_method_return_types#proposal
  */
 final class PhpDocFromTypeDeclarationDecorator
 {
+    /**
+     * @var ClassMethodWillChangeReturnType[]
+     */
+    private $classMethodWillChangeReturnTypes = [];
     /**
      * @readonly
      * @var \Rector\StaticTypeMapper\StaticTypeMapper
@@ -58,12 +64,17 @@ final class PhpDocFromTypeDeclarationDecorator
     private $phpDocTypeChanger;
     /**
      * @readonly
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    /**
+     * @readonly
      * @var \Rector\PhpAttribute\NodeFactory\PhpAttributeGroupFactory
      */
     private $phpAttributeGroupFactory;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     /**
@@ -73,19 +84,16 @@ final class PhpDocFromTypeDeclarationDecorator
     private $phpAttributeAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Php\PhpVersionProvider
+     * @var \Rector\Core\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
-    /**
-     * @var ClassMethodWillChangeReturnType[]
-     */
-    private $classMethodWillChangeReturnTypes = [];
-    public function __construct(StaticTypeMapper $staticTypeMapper, PhpDocInfoFactory $phpDocInfoFactory, NodeNameResolver $nodeNameResolver, PhpDocTypeChanger $phpDocTypeChanger, PhpAttributeGroupFactory $phpAttributeGroupFactory, ReflectionResolver $reflectionResolver, PhpAttributeAnalyzer $phpAttributeAnalyzer, PhpVersionProvider $phpVersionProvider)
+    public function __construct(StaticTypeMapper $staticTypeMapper, PhpDocInfoFactory $phpDocInfoFactory, NodeNameResolver $nodeNameResolver, PhpDocTypeChanger $phpDocTypeChanger, BetterNodeFinder $betterNodeFinder, PhpAttributeGroupFactory $phpAttributeGroupFactory, ReflectionResolver $reflectionResolver, PhpAttributeAnalyzer $phpAttributeAnalyzer, PhpVersionProvider $phpVersionProvider)
     {
         $this->staticTypeMapper = $staticTypeMapper;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->phpDocTypeChanger = $phpDocTypeChanger;
+        $this->betterNodeFinder = $betterNodeFinder;
         $this->phpAttributeGroupFactory = $phpAttributeGroupFactory;
         $this->reflectionResolver = $reflectionResolver;
         $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
@@ -112,16 +120,16 @@ final class PhpDocFromTypeDeclarationDecorator
             $functionLike->returnType = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($returnType, TypeKind::RETURN);
             return;
         }
-        $this->phpDocTypeChanger->changeReturnType($functionLike, $phpDocInfo, $returnType);
+        $this->phpDocTypeChanger->changeReturnType($phpDocInfo, $returnType);
         $functionLike->returnType = null;
         if (!$functionLike instanceof ClassMethod) {
             return;
         }
-        $classReflection = $this->reflectionResolver->resolveClassReflection($functionLike);
-        if (!$classReflection instanceof ClassReflection || !$classReflection->isInterface() && !$classReflection->isClass()) {
+        $classLike = $this->betterNodeFinder->findParentByTypes($functionLike, [Class_::class, Interface_::class]);
+        if (!$classLike instanceof ClassLike) {
             return;
         }
-        if (!$this->isRequireReturnTypeWillChange($classReflection, $functionLike)) {
+        if (!$this->isRequireReturnTypeWillChange($classLike, $functionLike)) {
             return;
         }
         $functionLike->attrGroups[] = $this->phpAttributeGroupFactory->createFromClass('ReturnTypeWillChange');
@@ -179,12 +187,17 @@ final class PhpDocFromTypeDeclarationDecorator
         $this->decorateReturn($functionLike);
         return \true;
     }
-    private function isRequireReturnTypeWillChange(ClassReflection $classReflection, ClassMethod $classMethod) : bool
+    private function isRequireReturnTypeWillChange(ClassLike $classLike, ClassMethod $classMethod) : bool
     {
-        if ($classReflection->isAnonymous()) {
+        $className = $this->nodeNameResolver->getName($classLike);
+        if (!\is_string($className)) {
             return \false;
         }
         $methodName = $classMethod->name->toString();
+        $classReflection = $this->reflectionResolver->resolveClassAndAnonymousClass($classLike);
+        if ($classReflection->isAnonymous()) {
+            return \false;
+        }
         // support for will return change type in case of removed return doc type
         // @see https://php.watch/versions/8.1/ReturnTypeWillChange
         foreach ($this->classMethodWillChangeReturnTypes as $classMethodWillChangeReturnType) {
@@ -224,14 +237,10 @@ final class PhpDocFromTypeDeclarationDecorator
      */
     private function moveParamTypeToParamDoc($functionLike, Param $param, Type $type) : void
     {
-        $param->type = null;
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($functionLike);
         $paramName = $this->nodeNameResolver->getName($param);
-        $phpDocParamType = $phpDocInfo->getParamType($paramName);
-        if (!$type instanceof MixedType && \get_class($type) === \get_class($phpDocParamType)) {
-            return;
-        }
-        $this->phpDocTypeChanger->changeParamType($functionLike, $phpDocInfo, $type, $param, $paramName);
+        $this->phpDocTypeChanger->changeParamType($phpDocInfo, $type, $param, $paramName);
+        $param->type = null;
     }
     /**
      * @param array<class-string<Type>> $requiredTypes

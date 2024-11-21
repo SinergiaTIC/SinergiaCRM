@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console;
+namespace RectorPrefix202305\Symfony\Component\Console;
 
-use RectorPrefix202411\Symfony\Component\Console\Output\OutputInterface;
+use RectorPrefix202305\Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Pierre du Plessis <pdples@gmail.com>
  */
@@ -20,7 +20,6 @@ final class Cursor
      * @var \Symfony\Component\Console\Output\OutputInterface
      */
     private $output;
-    /** @var resource */
     private $input;
     /**
      * @param resource|null $input

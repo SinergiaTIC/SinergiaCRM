@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Input;
+namespace RectorPrefix202305\Symfony\Component\Console\Input;
 
-use RectorPrefix202411\Symfony\Component\Console\Exception\RuntimeException;
+use RectorPrefix202305\Symfony\Component\Console\Exception\RuntimeException;
 /**
  * ArgvInput represents an input coming from the CLI arguments.
  *
@@ -46,7 +46,7 @@ class ArgvInput extends Input
      * @var mixed[]
      */
     private $parsed;
-    public function __construct(?array $argv = null, ?InputDefinition $definition = null)
+    public function __construct(array $argv = null, InputDefinition $definition = null)
     {
         $argv = $argv ?? $_SERVER['argv'] ?? [];
         // strip the application name
@@ -54,16 +54,10 @@ class ArgvInput extends Input
         $this->tokens = $argv;
         parent::__construct($definition);
     }
-    /**
-     * @return void
-     */
     protected function setTokens(array $tokens)
     {
         $this->tokens = $tokens;
     }
-    /**
-     * @return void
-     */
     protected function parse()
     {
         $parseOptions = \true;
@@ -90,7 +84,7 @@ class ArgvInput extends Input
     /**
      * Parses a short option.
      */
-    private function parseShortOption(string $token) : void
+    private function parseShortOption(string $token)
     {
         $name = \substr($token, 1);
         if (\strlen($name) > 1) {
@@ -109,7 +103,7 @@ class ArgvInput extends Input
      *
      * @throws RuntimeException When option given doesn't exist
      */
-    private function parseShortOptionSet(string $name) : void
+    private function parseShortOptionSet(string $name)
     {
         $len = \strlen($name);
         for ($i = 0; $i < $len; ++$i) {
@@ -129,7 +123,7 @@ class ArgvInput extends Input
     /**
      * Parses a long option.
      */
-    private function parseLongOption(string $token) : void
+    private function parseLongOption(string $token)
     {
         $name = \substr($token, 2);
         if (\false !== ($pos = \strpos($name, '='))) {
@@ -146,7 +140,7 @@ class ArgvInput extends Input
      *
      * @throws RuntimeException When too many arguments are given
      */
-    private function parseArgument(string $token) : void
+    private function parseArgument(string $token)
     {
         $c = \count($this->arguments);
         // if input is expecting another argument, add it
@@ -186,7 +180,7 @@ class ArgvInput extends Input
      * @throws RuntimeException When option given doesn't exist
      * @param mixed $value
      */
-    private function addShortOption(string $shortcut, $value) : void
+    private function addShortOption(string $shortcut, $value)
     {
         if (!$this->definition->hasShortcut($shortcut)) {
             throw new RuntimeException(\sprintf('The "-%s" option does not exist.', $shortcut));
@@ -199,7 +193,7 @@ class ArgvInput extends Input
      * @throws RuntimeException When option given doesn't exist
      * @param mixed $value
      */
-    private function addLongOption(string $name, $value) : void
+    private function addLongOption(string $name, $value)
     {
         if (!$this->definition->hasOption($name)) {
             if (!$this->definition->hasNegation($name)) {

@@ -1,84 +1,45 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\PhpParser\NodeTraverser;
+namespace Rector\Core\PhpParser\NodeTraverser;
 
 use PhpParser\Node;
-use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser;
-use PhpParser\NodeVisitor;
-use Rector\Contract\Rector\RectorInterface;
+use Rector\Core\Contract\Rector\PhpRectorInterface;
 use Rector\VersionBonding\PhpVersionedFilter;
 final class RectorNodeTraverser extends NodeTraverser
 {
     /**
-     * @var RectorInterface[]
+     * @var bool
      */
-    private $rectors;
+    private $areNodeVisitorsPrepared = \false;
+    /**
+     * @var PhpRectorInterface[]
+     * @readonly
+     */
+    private $phpRectors;
     /**
      * @readonly
      * @var \Rector\VersionBonding\PhpVersionedFilter
      */
     private $phpVersionedFilter;
     /**
-     * @var bool
+     * @param PhpRectorInterface[] $phpRectors
      */
-    private $areNodeVisitorsPrepared = \false;
-    /**
-     * @var array<class-string<Node>,RectorInterface[]>
-     */
-    private $visitorsPerNodeClass = [];
-    /**
-     * @param RectorInterface[] $rectors
-     */
-    public function __construct(array $rectors, PhpVersionedFilter $phpVersionedFilter)
+    public function __construct(array $phpRectors, PhpVersionedFilter $phpVersionedFilter)
     {
-        $this->rectors = $rectors;
+        $this->phpRectors = $phpRectors;
         $this->phpVersionedFilter = $phpVersionedFilter;
-        parent::__construct();
     }
     /**
-     * @param Stmt[] $nodes
-     * @return Stmt[]
+     * @template TNode as Node
+     * @param TNode[] $nodes
+     * @return TNode[]
      */
     public function traverse(array $nodes) : array
     {
         $this->prepareNodeVisitors();
         return parent::traverse($nodes);
-    }
-    /**
-     * @param RectorInterface[] $rectors
-     * @api used in tests to update the active rules
-     */
-    public function refreshPhpRectors(array $rectors) : void
-    {
-        $this->rectors = $rectors;
-        $this->visitors = [];
-        $this->visitorsPerNodeClass = [];
-        $this->areNodeVisitorsPrepared = \false;
-    }
-    /**
-     * We return the list of visitors (rector rules) that can be applied to each node class
-     * This list is cached so that we don't need to continually check if a rule can be applied to a node
-     *
-     * @return NodeVisitor[]
-     */
-    public function getVisitorsForNode(Node $node) : array
-    {
-        $nodeClass = \get_class($node);
-        if (!isset($this->visitorsPerNodeClass[$nodeClass])) {
-            $this->visitorsPerNodeClass[$nodeClass] = [];
-            foreach ($this->visitors as $visitor) {
-                \assert($visitor instanceof RectorInterface);
-                foreach ($visitor->getNodeTypes() as $nodeType) {
-                    if (\is_a($nodeClass, $nodeType, \true)) {
-                        $this->visitorsPerNodeClass[$nodeClass][] = $visitor;
-                        continue 2;
-                    }
-                }
-            }
-        }
-        return $this->visitorsPerNodeClass[$nodeClass];
     }
     /**
      * This must happen after $this->configuration is set after ProcessCommand::execute() is run,
@@ -92,7 +53,8 @@ final class RectorNodeTraverser extends NodeTraverser
             return;
         }
         // filer out by version
-        $this->visitors = $this->phpVersionedFilter->filter($this->rectors);
+        $activePhpRectors = $this->phpVersionedFilter->filter($this->phpRectors);
+        $this->visitors = $this->visitors === [] ? $activePhpRectors : \array_merge($this->visitors, $activePhpRectors);
         $this->areNodeVisitorsPrepared = \true;
     }
 }

@@ -1,18 +1,18 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Php;
+namespace Rector\Core\Php;
 
-use Rector\Configuration\Option;
-use Rector\Configuration\Parameter\SimpleParameterProvider;
-use Rector\Exception\Configuration\InvalidConfigurationException;
-use Rector\Php\PhpVersionResolver\ComposerJsonPhpVersionResolver;
+use Rector\Core\Configuration\Option;
+use Rector\Core\Configuration\Parameter\ParameterProvider;
+use Rector\Core\Exception\Configuration\InvalidConfigurationException;
+use Rector\Core\Php\PhpVersionResolver\ProjectComposerJsonPhpVersionResolver;
+use Rector\Core\Util\StringUtils;
+use Rector\Core\ValueObject\PhpVersion;
 use Rector\Testing\PHPUnit\StaticPHPUnitEnvironment;
-use Rector\Util\StringUtils;
-use Rector\ValueObject\PhpVersion;
 use ReflectionClass;
 /**
- * @see \Rector\Tests\Php\PhpVersionProviderTest
+ * @see \Rector\Core\Tests\Php\PhpVersionProviderTest
  */
 final class PhpVersionProvider
 {
@@ -22,20 +22,29 @@ final class PhpVersionProvider
      */
     private const VALID_PHP_VERSION_REGEX = '#^\\d{5,6}$#';
     /**
-     * @var int|null
+     * @readonly
+     * @var \Rector\Core\Configuration\Parameter\ParameterProvider
      */
-    private $phpVersionFeatures = null;
+    private $parameterProvider;
+    /**
+     * @readonly
+     * @var \Rector\Core\Php\PhpVersionResolver\ProjectComposerJsonPhpVersionResolver
+     */
+    private $projectComposerJsonPhpVersionResolver;
+    public function __construct(ParameterProvider $parameterProvider, ProjectComposerJsonPhpVersionResolver $projectComposerJsonPhpVersionResolver)
+    {
+        $this->parameterProvider = $parameterProvider;
+        $this->projectComposerJsonPhpVersionResolver = $projectComposerJsonPhpVersionResolver;
+    }
     /**
      * @return PhpVersion::*
      */
     public function provide() : int
     {
-        if (SimpleParameterProvider::hasParameter(Option::PHP_VERSION_FEATURES)) {
-            $this->phpVersionFeatures = SimpleParameterProvider::provideIntParameter(Option::PHP_VERSION_FEATURES);
-            $this->validatePhpVersionFeaturesParameter($this->phpVersionFeatures);
-        }
-        if ($this->phpVersionFeatures > 0) {
-            return $this->phpVersionFeatures;
+        $phpVersionFeatures = $this->parameterProvider->provideParameter(Option::PHP_VERSION_FEATURES);
+        $this->validatePhpVersionFeaturesParameter($phpVersionFeatures);
+        if ($phpVersionFeatures > 0) {
+            return $phpVersionFeatures;
         }
         // for tests
         if (StaticPHPUnitEnvironment::isPHPUnitRun()) {
@@ -44,13 +53,12 @@ final class PhpVersionProvider
         }
         $projectComposerJson = \getcwd() . '/composer.json';
         if (\file_exists($projectComposerJson)) {
-            $phpVersion = ComposerJsonPhpVersionResolver::resolve($projectComposerJson);
+            $phpVersion = $this->projectComposerJsonPhpVersionResolver->resolve($projectComposerJson);
             if ($phpVersion !== null) {
-                return $this->phpVersionFeatures = $phpVersion;
+                return $phpVersion;
             }
         }
-        // fallback to current PHP runtime version
-        return $this->phpVersionFeatures = \PHP_VERSION_ID;
+        return \PHP_VERSION_ID;
     }
     public function isAtLeastPhpVersion(int $phpVersion) : bool
     {

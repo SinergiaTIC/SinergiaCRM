@@ -5,22 +5,20 @@ namespace Rector\DeadCode\Rector\If_;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
-use PhpParser\Node\Expr\Empty_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Foreach_;
 use PhpParser\Node\Stmt\If_;
 use PHPStan\Analyser\Scope;
-use Rector\Contract\PhpParser\Node\StmtsAwareInterface;
+use Rector\Core\Contract\PhpParser\Node\StmtsAwareInterface;
+use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Core\NodeManipulator\IfManipulator;
+use Rector\Core\Php\ReservedKeywordAnalyzer;
+use Rector\Core\Rector\AbstractScopeAwareRector;
 use Rector\DeadCode\NodeManipulator\CountManipulator;
 use Rector\DeadCode\UselessIfCondBeforeForeachDetector;
-use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
-use Rector\NodeManipulator\IfManipulator;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Php\ReservedKeywordAnalyzer;
-use Rector\Rector\AbstractScopeAwareRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -35,7 +33,7 @@ final class RemoveUnusedNonEmptyArrayBeforeForeachRector extends AbstractScopeAw
     private $countManipulator;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\IfManipulator
+     * @var \Rector\Core\NodeManipulator\IfManipulator
      */
     private $ifManipulator;
     /**
@@ -45,12 +43,12 @@ final class RemoveUnusedNonEmptyArrayBeforeForeachRector extends AbstractScopeAw
     private $uselessIfCondBeforeForeachDetector;
     /**
      * @readonly
-     * @var \Rector\Php\ReservedKeywordAnalyzer
+     * @var \Rector\Core\Php\ReservedKeywordAnalyzer
      */
     private $reservedKeywordAnalyzer;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     public function __construct(CountManipulator $countManipulator, IfManipulator $ifManipulator, UselessIfCondBeforeForeachDetector $uselessIfCondBeforeForeachDetector, ReservedKeywordAnalyzer $reservedKeywordAnalyzer, PropertyFetchAnalyzer $propertyFetchAnalyzer)
@@ -105,7 +103,16 @@ CODE_SAMPLE
     public function refactorWithScope(Node $node, Scope $scope)
     {
         if ($node instanceof If_) {
-            return $this->refactorIf($node, $scope);
+            if (!$this->isUselessBeforeForeachCheck($node, $scope)) {
+                return null;
+            }
+            /** @var Foreach_ $stmt */
+            $stmt = $node->stmts[0];
+            $ifComments = $node->getAttribute(AttributeKey::COMMENTS) ?? [];
+            $stmtComments = $stmt->getAttribute(AttributeKey::COMMENTS) ?? [];
+            $comments = \array_merge($ifComments, $stmtComments);
+            $stmt->setAttribute(AttributeKey::COMMENTS, $comments);
+            return $stmt;
         }
         return $this->refactorStmtsAware($node);
     }
@@ -117,15 +124,18 @@ CODE_SAMPLE
         /** @var Foreach_ $foreach */
         $foreach = $if->stmts[0];
         $foreachExpr = $foreach->expr;
-        if ($this->shouldSkipForeachExpr($foreachExpr, $scope)) {
-            return \false;
+        if ($foreachExpr instanceof Variable) {
+            $variableName = $this->nodeNameResolver->getName($foreachExpr);
+            if (\is_string($variableName) && $this->reservedKeywordAnalyzer->isNativeVariable($variableName)) {
+                return \false;
+            }
         }
         $ifCond = $if->cond;
         if ($ifCond instanceof BooleanAnd) {
             return $this->isUselessBooleanAnd($ifCond, $foreachExpr);
         }
         if (($ifCond instanceof Variable || $this->propertyFetchAnalyzer->isPropertyFetch($ifCond)) && $this->nodeComparator->areNodesEqual($ifCond, $foreachExpr)) {
-            $ifType = $scope->getNativeType($ifCond);
+            $ifType = $scope->getType($ifCond);
             return $ifType->isArray()->yes();
         }
         if ($this->uselessIfCondBeforeForeachDetector->isMatchingNotIdenticalEmptyArray($if, $foreachExpr)) {
@@ -151,70 +161,24 @@ CODE_SAMPLE
         if ($stmtsAware->stmts === null) {
             return null;
         }
-        foreach ($stmtsAware->stmts as $key => $stmt) {
-            if (!$stmt instanceof Foreach_) {
-                continue;
-            }
-            $previousStmt = $stmtsAware->stmts[$key - 1] ?? null;
-            if (!$previousStmt instanceof If_) {
-                continue;
-            }
-            // not followed by any stmts
-            $nextStmt = $stmtsAware->stmts[$key + 1] ?? null;
-            if ($nextStmt instanceof Stmt) {
-                continue;
-            }
-            if (!$this->uselessIfCondBeforeForeachDetector->isMatchingEmptyAndForeachedExpr($previousStmt, $stmt->expr)) {
-                continue;
-            }
-            /** @var Empty_ $empty */
-            $empty = $previousStmt->cond;
-            // scope need to be pulled from Empty_ node to ensure it get correct type
-            $scope = $empty->getAttribute(AttributeKey::SCOPE);
-            if (!$scope instanceof Scope) {
-                continue;
-            }
-            $ifType = $scope->getNativeType($empty->expr);
-            if (!$ifType->isArray()->yes()) {
-                continue;
-            }
-            unset($stmtsAware->stmts[$key - 1]);
-            return $stmtsAware;
-        }
-        return null;
-    }
-    private function refactorIf(If_ $if, Scope $scope) : ?Foreach_
-    {
-        if (!$this->isUselessBeforeForeachCheck($if, $scope)) {
+        \end($stmtsAware->stmts);
+        /** @var int $lastKey */
+        $lastKey = \key($stmtsAware->stmts);
+        if (!isset($stmtsAware->stmts[$lastKey], $stmtsAware->stmts[$lastKey - 1])) {
             return null;
         }
-        /** @var Foreach_ $stmt */
-        $stmt = $if->stmts[0];
-        $ifComments = $if->getAttribute(AttributeKey::COMMENTS) ?? [];
-        $stmtComments = $stmt->getAttribute(AttributeKey::COMMENTS) ?? [];
-        $comments = \array_merge($ifComments, $stmtComments);
-        $stmt->setAttribute(AttributeKey::COMMENTS, $comments);
-        return $stmt;
-    }
-    private function shouldSkipForeachExpr(Expr $foreachExpr, Scope $scope) : bool
-    {
-        if ($foreachExpr instanceof ArrayDimFetch && $foreachExpr->dim !== null) {
-            $exprType = $this->nodeTypeResolver->getNativeType($foreachExpr->var);
-            $dimType = $this->nodeTypeResolver->getNativeType($foreachExpr->dim);
-            if (!$exprType->hasOffsetValueType($dimType)->yes()) {
-                return \true;
-            }
+        $stmt = $stmtsAware->stmts[$lastKey - 1];
+        if (!$stmt instanceof If_) {
+            return null;
         }
-        if ($foreachExpr instanceof Variable) {
-            $variableName = $this->nodeNameResolver->getName($foreachExpr);
-            if (\is_string($variableName) && $this->reservedKeywordAnalyzer->isNativeVariable($variableName)) {
-                return \true;
-            }
-            $ifType = $scope->getNativeType($foreachExpr);
-            if (!$ifType->isArray()->yes()) {
-                return \true;
-            }
+        $nextStmt = $stmtsAware->stmts[$lastKey];
+        if (!$nextStmt instanceof Foreach_) {
+            return null;
         }
-        return \false;
+        if (!$this->uselessIfCondBeforeForeachDetector->isMatchingEmptyAndForeachedExpr($stmt, $nextStmt->expr)) {
+            return null;
+        }
+        unset($stmtsAware->stmts[$lastKey - 1]);
+        return $stmtsAware;
     }
 }

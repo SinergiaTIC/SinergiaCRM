@@ -1,28 +1,40 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\PhpParser\NodeTraverser;
+namespace Rector\Core\PhpParser\NodeTraverser;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
-use Rector\PhpParser\Node\CustomNode\FileWithoutNamespace;
+use Rector\Core\PhpParser\Node\CustomNode\FileWithoutNamespace;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 final class FileWithoutNamespaceNodeTraverser extends NodeTraverser
 {
     /**
-     * @template TNode as Node\Stmt
-     *
+     * @readonly
+     * @var \PhpParser\NodeFinder
+     */
+    private $nodeFinder;
+    public function __construct(NodeFinder $nodeFinder)
+    {
+        $this->nodeFinder = $nodeFinder;
+    }
+    /**
+     * @template TNode as Node
      * @param TNode[] $nodes
      * @return TNode[]|FileWithoutNamespace[]
      */
     public function traverse(array $nodes) : array
     {
-        foreach ($nodes as $node) {
-            if ($node instanceof Namespace_) {
-                return $nodes;
+        $hasNamespace = (bool) $this->nodeFinder->findFirstInstanceOf($nodes, Namespace_::class);
+        if (!$hasNamespace && $nodes !== []) {
+            $fileWithoutNamespace = new FileWithoutNamespace($nodes);
+            foreach ($nodes as $node) {
+                $node->setAttribute(AttributeKey::PARENT_NODE, $fileWithoutNamespace);
             }
+            return [$fileWithoutNamespace];
         }
-        $fileWithoutNamespace = new FileWithoutNamespace($nodes);
-        return [$fileWithoutNamespace];
+        return $nodes;
     }
 }

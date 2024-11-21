@@ -4,12 +4,13 @@ declare (strict_types=1);
 namespace Rector\CodeQuality\Rector\Identical;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\String_;
-use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -19,12 +20,12 @@ final class StrlenZeroToIdenticalEmptyStringRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
      */
-    private $valueResolver;
-    public function __construct(ValueResolver $valueResolver)
+    private $argsAnalyzer;
+    public function __construct(ArgsAnalyzer $argsAnalyzer)
     {
-        $this->valueResolver = $valueResolver;
+        $this->argsAnalyzer = $argsAnalyzer;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -73,13 +74,16 @@ CODE_SAMPLE
         if (!$this->isName($funcCall, 'strlen')) {
             return null;
         }
-        if ($funcCall->isFirstClassCallable()) {
-            return null;
-        }
         if (!$this->valueResolver->isValue($expr, 0)) {
             return null;
         }
-        $variable = $funcCall->getArgs()[0]->value;
+        if (!$this->argsAnalyzer->isArgInstanceInArgsPosition($funcCall->args, 0)) {
+            return null;
+        }
+        /** @var Arg $firstArg */
+        $firstArg = $funcCall->args[0];
+        /** @var Expr $variable */
+        $variable = $firstArg->value;
         // Needs string cast if variable type is not string
         // see https://github.com/rectorphp/rector/issues/6700
         $isStringType = $this->nodeTypeResolver->getNativeType($variable)->isString()->yes();

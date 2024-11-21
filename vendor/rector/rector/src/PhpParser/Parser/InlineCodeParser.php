@@ -1,35 +1,22 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\PhpParser\Parser;
+namespace Rector\Core\PhpParser\Parser;
 
-use RectorPrefix202411\Nette\Utils\FileSystem;
-use RectorPrefix202411\Nette\Utils\Strings;
+use RectorPrefix202305\Nette\Utils\FileSystem;
+use RectorPrefix202305\Nette\Utils\Strings;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Scalar\Encapsed;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt;
-use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\PhpParser\Printer\BetterStandardPrinter;
-use Rector\Util\StringUtils;
+use Rector\Core\Contract\PhpParser\NodePrinterInterface;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
+use Rector\Core\Util\StringUtils;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 final class InlineCodeParser
 {
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Printer\BetterStandardPrinter
-     */
-    private $betterStandardPrinter;
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Parser\SimplePhpParser
-     */
-    private $simplePhpParser;
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
-     */
-    private $valueResolver;
     /**
      * @var string
      * @see https://regex101.com/r/dwe4OW/1
@@ -65,28 +52,40 @@ final class InlineCodeParser
      * @see https://regex101.com/r/nSO3Eq/1
      */
     private const BACKREFERENCE_NO_DOUBLE_QUOTE_START_REGEX = '#(?<!")(?<backreference>\\$\\d+)#';
-    public function __construct(BetterStandardPrinter $betterStandardPrinter, \Rector\PhpParser\Parser\SimplePhpParser $simplePhpParser, ValueResolver $valueResolver)
+    /**
+     * @readonly
+     * @var \Rector\Core\Contract\PhpParser\NodePrinterInterface
+     */
+    private $nodePrinter;
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Parser\SimplePhpParser
+     */
+    private $simplePhpParser;
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(NodePrinterInterface $nodePrinter, \Rector\Core\PhpParser\Parser\SimplePhpParser $simplePhpParser, ValueResolver $valueResolver)
     {
-        $this->betterStandardPrinter = $betterStandardPrinter;
+        $this->nodePrinter = $nodePrinter;
         $this->simplePhpParser = $simplePhpParser;
         $this->valueResolver = $valueResolver;
     }
     /**
-     * @api downgrade
-     *
      * @return Stmt[]
      */
-    public function parseFile(string $fileName) : array
+    public function parse(string $content) : array
     {
-        $fileContent = FileSystem::read($fileName);
-        return $this->parseCode($fileContent);
-    }
-    /**
-     * @return Stmt[]
-     */
-    public function parseString(string $fileContent) : array
-    {
-        return $this->parseCode($fileContent);
+        // to cover files too
+        if (\is_file($content)) {
+            $content = FileSystem::read($content);
+        }
+        // wrap code so php-parser can interpret it
+        $content = StringUtils::isMatch($content, self::OPEN_PHP_TAG_REGEX) ? $content : '<?php ' . $content;
+        $content = StringUtils::isMatch($content, self::ENDING_SEMI_COLON_REGEX) ? $content : $content . ';';
+        return $this->simplePhpParser->parseString($content);
     }
     public function stringify(Expr $expr) : string
     {
@@ -106,17 +105,7 @@ final class InlineCodeParser
         if ($expr instanceof Concat) {
             return $this->resolveConcatValue($expr);
         }
-        return $this->betterStandardPrinter->print($expr);
-    }
-    /**
-     * @return Stmt[]
-     */
-    private function parseCode(string $code) : array
-    {
-        // wrap code so php-parser can interpret it
-        $code = StringUtils::isMatch($code, self::OPEN_PHP_TAG_REGEX) ? $code : '<?php ' . $code;
-        $code = StringUtils::isMatch($code, self::ENDING_SEMI_COLON_REGEX) ? $code : $code . ';';
-        return $this->simplePhpParser->parseString($code);
+        return $this->nodePrinter->print($expr);
     }
     private function resolveEncapsedValue(Encapsed $encapsed) : string
     {
@@ -130,7 +119,7 @@ final class InlineCodeParser
             }
             $value .= $partValue;
         }
-        $printedExpr = $isRequirePrint ? $this->betterStandardPrinter->print($encapsed) : $value;
+        $printedExpr = $isRequirePrint ? $this->nodePrinter->print($encapsed) : $value;
         // remove "
         $printedExpr = \trim($printedExpr, '""');
         // use \$ → $
@@ -144,7 +133,10 @@ final class InlineCodeParser
             $concat->right->value = '.' . $concat->right->value;
         }
         if ($concat->right instanceof String_ && \strncmp($concat->right->value, '($', \strlen('($')) === 0) {
-            $concat->right->value .= '.';
+            $node = $concat->getAttribute(AttributeKey::NEXT_NODE);
+            if ($node instanceof Variable) {
+                $concat->right->value .= '.';
+            }
         }
         $string = $this->stringify($concat->left) . $this->stringify($concat->right);
         return Strings::replace($string, self::VARIABLE_IN_SINGLE_QUOTED_REGEX, static function (array $match) {

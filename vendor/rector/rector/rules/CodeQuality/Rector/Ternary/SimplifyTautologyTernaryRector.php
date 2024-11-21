@@ -7,9 +7,9 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\Ternary;
-use Rector\NodeManipulator\BinaryOpManipulator;
+use Rector\Core\NodeManipulator\BinaryOpManipulator;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Php71\ValueObject\TwoNodeMatch;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -19,7 +19,7 @@ final class SimplifyTautologyTernaryRector extends AbstractRector
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\BinaryOpManipulator
+     * @var \Rector\Core\NodeManipulator\BinaryOpManipulator
      */
     private $binaryOpManipulator;
     public function __construct(BinaryOpManipulator $binaryOpManipulator)
@@ -53,6 +53,6 @@ final class SimplifyTautologyTernaryRector extends AbstractRector
         if (!$twoNodeMatch instanceof TwoNodeMatch) {
             return null;
         }
-        return $node->cond instanceof NotIdentical ? $node->if : $node->else;
+        return $node->if;
     }
 }

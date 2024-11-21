@@ -4,35 +4,35 @@ declare (strict_types=1);
 namespace Rector\Php82\Rector\Class_;
 
 use PhpParser\Node;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
-use PHPStan\Analyser\Scope;
 use PHPStan\BetterReflection\Reflection\Adapter\ReflectionProperty;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
-use Rector\NodeAnalyzer\ClassAnalyzer;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Core\NodeAnalyzer\ClassAnalyzer;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\MethodName;
+use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Core\ValueObject\Visibility;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\Php81\Enum\AttributeName;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
-use Rector\Rector\AbstractScopeAwareRector;
-use Rector\ValueObject\MethodName;
-use Rector\ValueObject\PhpVersionFeature;
-use Rector\ValueObject\Visibility;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://wiki.php.net/rfc/readonly_classes
+ *
  * @see \Rector\Tests\Php82\Rector\Class_\ReadOnlyClassRector\ReadOnlyClassRectorTest
  */
-final class ReadOnlyClassRector extends AbstractScopeAwareRector implements MinPhpVersionInterface
+final class ReadOnlyClassRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\ClassAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\ClassAnalyzer
      */
     private $classAnalyzer;
     /**
@@ -47,14 +47,20 @@ final class ReadOnlyClassRector extends AbstractScopeAwareRector implements MinP
     private $phpAttributeAnalyzer;
     /**
      * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+    /**
+     * @readonly
      * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
-    public function __construct(ClassAnalyzer $classAnalyzer, VisibilityManipulator $visibilityManipulator, PhpAttributeAnalyzer $phpAttributeAnalyzer, ReflectionProvider $reflectionProvider)
+    public function __construct(ClassAnalyzer $classAnalyzer, VisibilityManipulator $visibilityManipulator, PhpAttributeAnalyzer $phpAttributeAnalyzer, ReflectionResolver $reflectionResolver, ReflectionProvider $reflectionProvider)
     {
         $this->classAnalyzer = $classAnalyzer;
         $this->visibilityManipulator = $visibilityManipulator;
         $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
+        $this->reflectionResolver = $reflectionResolver;
         $this->reflectionProvider = $reflectionProvider;
     }
     public function getRuleDefinition() : RuleDefinition
@@ -89,9 +95,9 @@ CODE_SAMPLE
     /**
      * @param Class_ $node
      */
-    public function refactorWithScope(Node $node, Scope $scope) : ?Node
+    public function refactor(Node $node) : ?Node
     {
-        if ($this->shouldSkip($node, $scope)) {
+        if ($this->shouldSkip($node)) {
             return null;
         }
         $this->visibilityManipulator->makeReadonly($node);
@@ -99,22 +105,10 @@ CODE_SAMPLE
         if ($constructClassMethod instanceof ClassMethod) {
             foreach ($constructClassMethod->getParams() as $param) {
                 $this->visibilityManipulator->removeReadonly($param);
-                if ($param->attrGroups !== []) {
-                    // invoke reprint with correct newline
-                    $param->setAttribute(AttributeKey::ORIGINAL_NODE, null);
-                }
             }
         }
         foreach ($node->getProperties() as $property) {
             $this->visibilityManipulator->removeReadonly($property);
-            if ($property->attrGroups !== []) {
-                // invoke reprint with correct newline
-                $property->setAttribute(AttributeKey::ORIGINAL_NODE, null);
-            }
-        }
-        if ($node->attrGroups !== []) {
-            // invoke reprint with correct readonly newline
-            $node->setAttribute(AttributeKey::ORIGINAL_NODE, null);
         }
         return $node;
     }
@@ -125,9 +119,9 @@ CODE_SAMPLE
     /**
      * @return ClassReflection[]
      */
-    private function resolveParentClassReflections(Scope $scope) : array
+    private function resolveParentClassReflections(Class_ $class) : array
     {
-        $classReflection = $scope->getClassReflection();
+        $classReflection = $this->reflectionResolver->resolveClassReflection($class);
         if (!$classReflection instanceof ClassReflection) {
             return [];
         }
@@ -146,16 +140,12 @@ CODE_SAMPLE
         }
         return \false;
     }
-    private function shouldSkip(Class_ $class, Scope $scope) : bool
+    private function shouldSkip(Class_ $class) : bool
     {
-        $classReflection = $scope->getClassReflection();
-        if (!$classReflection instanceof ClassReflection) {
-            return \true;
-        }
         if ($this->shouldSkipClass($class)) {
             return \true;
         }
-        $parents = $this->resolveParentClassReflections($scope);
+        $parents = $this->resolveParentClassReflections($class);
         if (!$class->isFinal()) {
             return !$this->isExtendsReadonlyClass($parents);
         }
@@ -250,10 +240,7 @@ CODE_SAMPLE
         if ($this->classAnalyzer->isAnonymousClass($class)) {
             return \true;
         }
-        if ($this->phpAttributeAnalyzer->hasPhpAttribute($class, AttributeName::ALLOW_DYNAMIC_PROPERTIES)) {
-            return \true;
-        }
-        return $class->extends instanceof FullyQualified && !$this->reflectionProvider->hasClass($class->extends->toString());
+        return $this->phpAttributeAnalyzer->hasPhpAttribute($class, AttributeName::ALLOW_DYNAMIC_PROPERTIES);
     }
     /**
      * @param Param[] $params
@@ -261,8 +248,8 @@ CODE_SAMPLE
     private function shouldSkipParams(array $params) : bool
     {
         foreach ($params as $param) {
-            // has non-readonly property promotion
-            if (!$this->visibilityManipulator->hasVisibility($param, Visibility::READONLY) && $param->flags !== 0) {
+            // has non-property promotion, skip
+            if (!$this->visibilityManipulator->hasVisibility($param, Visibility::READONLY)) {
                 return \true;
             }
             // type is missing, invalid syntax

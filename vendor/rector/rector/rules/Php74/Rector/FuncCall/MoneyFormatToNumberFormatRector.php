@@ -6,37 +6,55 @@ namespace Rector\Php74\Rector\FuncCall;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
-use Rector\NodeAnalyzer\ArgsAnalyzer;
-use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Expression;
+use PHPStan\Analyser\Scope;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\Rector\AbstractScopeAwareRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Naming\Naming\VariableNaming;
+use Rector\PostRector\Collector\NodesToAddCollector;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://www.php.net/manual/en/function.money-format.php#warning
+ *
  * @see \Rector\Tests\Php74\Rector\FuncCall\MoneyFormatToNumberFormatRector\MoneyFormatToNumberFormatRectorTest
  */
-final class MoneyFormatToNumberFormatRector extends AbstractRector implements MinPhpVersionInterface
+final class MoneyFormatToNumberFormatRector extends AbstractScopeAwareRector implements MinPhpVersionInterface
 {
     /**
+     * @var string[]
+     */
+    private const FORMATS = ['%i'];
+    /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\ArgsAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
      */
     private $argsAnalyzer;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     * @var \Rector\PostRector\Collector\NodesToAddCollector
      */
-    private $valueResolver;
-    public function __construct(ArgsAnalyzer $argsAnalyzer, ValueResolver $valueResolver)
+    private $nodesToAddCollector;
+    /**
+     * @readonly
+     * @var \Rector\Naming\Naming\VariableNaming
+     */
+    private $variableNaming;
+    public function __construct(ArgsAnalyzer $argsAnalyzer, NodesToAddCollector $nodesToAddCollector, VariableNaming $variableNaming)
     {
         $this->argsAnalyzer = $argsAnalyzer;
-        $this->valueResolver = $valueResolver;
+        $this->nodesToAddCollector = $nodesToAddCollector;
+        $this->variableNaming = $variableNaming;
     }
     public function provideMinPhpVersion() : int
     {
@@ -48,7 +66,8 @@ final class MoneyFormatToNumberFormatRector extends AbstractRector implements Mi
 $value = money_format('%i', $value);
 CODE_SAMPLE
 , <<<'CODE_SAMPLE'
-$value = number_format(round($value, 2, PHP_ROUND_HALF_ODD), 2, '.', '');
+$roundedValue = round($value, 2, PHP_ROUND_HALF_ODD);
+$value = number_format($roundedValue, 2, '.', '');
 CODE_SAMPLE
 )]);
     }
@@ -62,12 +81,9 @@ CODE_SAMPLE
     /**
      * @param FuncCall $node
      */
-    public function refactor(Node $node) : ?FuncCall
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
         if (!$this->isName($node, 'money_format')) {
-            return null;
-        }
-        if ($node->isFirstClassCallable()) {
             return null;
         }
         $args = $node->getArgs();
@@ -75,16 +91,27 @@ CODE_SAMPLE
             return null;
         }
         $formatValue = $args[0]->value;
-        if (!$this->valueResolver->isValue($formatValue, '%i')) {
+        foreach (self::FORMATS as $format) {
+            if ($this->valueResolver->isValue($formatValue, $format)) {
+                return $this->resolveNumberFormat($node, $args[1]->value, $scope);
+            }
+        }
+        return null;
+    }
+    private function resolveNumberFormat(FuncCall $funcCall, Expr $expr, Scope $scope) : ?FuncCall
+    {
+        $currentStmt = $this->betterNodeFinder->resolveCurrentStatement($funcCall);
+        if (!$currentStmt instanceof Stmt) {
             return null;
         }
-        return $this->warpInNumberFormatFuncCall($node, $args[1]->value);
-    }
-    private function warpInNumberFormatFuncCall(FuncCall $funcCall, Expr $expr) : FuncCall
-    {
-        $roundFuncCall = $this->nodeFactory->createFuncCall('round', [$expr, new LNumber(2), new ConstFetch(new Name('PHP_ROUND_HALF_ODD'))]);
+        $newValue = $this->nodeFactory->createFuncCall('round', [$expr, new LNumber(2), new ConstFetch(new Name('PHP_ROUND_HALF_ODD'))]);
+        $variable = new Variable($this->variableNaming->createCountedValueName('roundedValue', $scope));
+        $this->nodesToAddCollector->addNodeBeforeNode(new Expression(new Assign($variable, $newValue)), $currentStmt);
         $funcCall->name = new Name('number_format');
-        $funcCall->args = [new Arg($roundFuncCall), new Arg(new LNumber(2)), new Arg(new String_('.')), new Arg(new String_(''))];
+        $funcCall->args[0] = new Arg($variable);
+        $funcCall->args[1] = new Arg(new LNumber(2));
+        $funcCall->args[2] = new Arg(new String_('.'));
+        $funcCall->args[3] = new Arg(new String_(''));
         return $funcCall;
     }
 }

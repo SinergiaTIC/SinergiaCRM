@@ -9,14 +9,13 @@ use PhpParser\Node\Expr\AssignOp\Plus;
 use PhpParser\Node\Expr\PreDec;
 use PhpParser\Node\Expr\PreInc;
 use PhpParser\Node\Scalar\LNumber;
-use Rector\Configuration\Deprecation\Contract\DeprecatedInterface;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @deprecated Since 1.1.2 as often used intentionally and depends on context. Cannot be changed in one way.
+ * @see \Rector\Tests\CodingStyle\Rector\Plus\UseIncrementAssignRector\UseIncrementAssignRectorTest
  */
-final class UseIncrementAssignRector extends AbstractRector implements DeprecatedInterface
+final class UseIncrementAssignRector extends AbstractRector
 {
     public function getRuleDefinition() : RuleDefinition
     {

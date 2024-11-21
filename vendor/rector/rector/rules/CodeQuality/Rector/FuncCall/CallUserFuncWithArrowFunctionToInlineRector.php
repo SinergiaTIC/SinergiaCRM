@@ -8,11 +8,13 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Php74\NodeAnalyzer\ClosureArrowFunctionAnalyzer;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://3v4l.org/fuuEF
+ *
  * @see \Rector\Tests\CodeQuality\Rector\FuncCall\CallUserFuncWithArrowFunctionToInlineRector\CallUserFuncWithArrowFunctionToInlineRectorTest
  */
 final class CallUserFuncWithArrowFunctionToInlineRector extends AbstractRector
@@ -60,9 +62,6 @@ CODE_SAMPLE
      */
     public function refactor(Node $node) : ?Node
     {
-        if ($node->isFirstClassCallable()) {
-            return null;
-        }
         if (!$this->isName($node, 'call_user_func')) {
             return null;
         }
@@ -70,7 +69,7 @@ CODE_SAMPLE
             return null;
         }
         // change the node
-        if (!isset($node->getArgs()[0])) {
+        if (!isset($node->args[0])) {
             return null;
         }
         $firstArg = $node->args[0];

@@ -9,18 +9,18 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
+use Rector\Core\Contract\PhpParser\NodePrinterInterface;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\PhpParser\Printer\BetterStandardPrinter;
 final class DoctrineAnnotationFactory
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Printer\BetterStandardPrinter
+     * @var \Rector\Core\Contract\PhpParser\NodePrinterInterface
      */
-    private $betterStandardPrinter;
-    public function __construct(BetterStandardPrinter $betterStandardPrinter)
+    private $nodePrinter;
+    public function __construct(NodePrinterInterface $nodePrinter)
     {
-        $this->betterStandardPrinter = $betterStandardPrinter;
+        $this->nodePrinter = $nodePrinter;
     }
     /**
      * @api downgrade
@@ -43,9 +43,9 @@ final class DoctrineAnnotationFactory
                 // standardize double quotes for annotations
                 $arg->value->setAttribute(AttributeKey::KIND, String_::KIND_DOUBLE_QUOTED);
             }
-            $itemValue = $this->betterStandardPrinter->print($arg->value);
+            $itemValue = $this->nodePrinter->print($arg->value);
             if ($arg->name instanceof Identifier) {
-                $name = $this->betterStandardPrinter->print($arg->name);
+                $name = $this->nodePrinter->print($arg->name);
                 $items[$name] = $itemValue;
             } else {
                 $items[] = $itemValue;

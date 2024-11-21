@@ -5,39 +5,32 @@ namespace Rector\Symfony\TypeAnalyzer;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\TypeWithClassName;
+use Rector\Core\Reflection\ReflectionResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Reflection\ReflectionResolver;
 final class ControllerAnalyzer
 {
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
     public function __construct(ReflectionResolver $reflectionResolver)
     {
         $this->reflectionResolver = $reflectionResolver;
     }
-    /**
-     * @param \PhpParser\Node\Expr|\PhpParser\Node\Stmt\Class_ $node
-     */
-    public function isController($node) : bool
+    public function isController(Expr $expr) : bool
     {
-        if ($node instanceof Class_) {
-            return $this->isControllerClass($node);
-        }
-        $scope = $node->getAttribute(AttributeKey::SCOPE);
+        $scope = $expr->getAttribute(AttributeKey::SCOPE);
         // might be missing in a trait
         if (!$scope instanceof Scope) {
             return \false;
         }
-        $nodeType = $scope->getType($node);
+        $nodeType = $scope->getType($expr);
         if (!$nodeType instanceof TypeWithClassName) {
             return \false;
         }
@@ -67,13 +60,5 @@ final class ControllerAnalyzer
             return \true;
         }
         return $classReflection->isSubclassOf('Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController');
-    }
-    private function isControllerClass(Class_ $class) : bool
-    {
-        $classReflection = $this->reflectionResolver->resolveClassReflection($class);
-        if (!$classReflection instanceof ClassReflection) {
-            return \false;
-        }
-        return $this->isControllerClassReflection($classReflection);
     }
 }

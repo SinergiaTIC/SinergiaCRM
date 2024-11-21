@@ -8,14 +8,12 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Nop;
-use PhpParser\NodeTraverser;
 use PHPStan\Reflection\Php\PhpPropertyReflection;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
 use Rector\DeadCode\NodeManipulator\LivingCodeManipulator;
-use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Rector\AbstractRector;
-use Rector\Reflection\ReflectionResolver;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -30,25 +28,19 @@ final class RemoveDeadStmtRector extends AbstractRector
     private $livingCodeManipulator;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\PropertyFetchAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\PropertyFetchAnalyzer
      */
     private $propertyFetchAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    /**
-     * @readonly
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
-     */
-    private $phpDocInfoFactory;
-    public function __construct(LivingCodeManipulator $livingCodeManipulator, PropertyFetchAnalyzer $propertyFetchAnalyzer, ReflectionResolver $reflectionResolver, PhpDocInfoFactory $phpDocInfoFactory)
+    public function __construct(LivingCodeManipulator $livingCodeManipulator, PropertyFetchAnalyzer $propertyFetchAnalyzer, ReflectionResolver $reflectionResolver)
     {
         $this->livingCodeManipulator = $livingCodeManipulator;
         $this->propertyFetchAnalyzer = $propertyFetchAnalyzer;
         $this->reflectionResolver = $reflectionResolver;
-        $this->phpDocInfoFactory = $phpDocInfoFactory;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -70,7 +62,7 @@ CODE_SAMPLE
     }
     /**
      * @param Expression $node
-     * @return Node[]|Node|null|int
+     * @return Node[]|Node|null
      */
     public function refactor(Node $node)
     {
@@ -84,13 +76,12 @@ CODE_SAMPLE
         if ($livingCode === [$node->expr]) {
             return null;
         }
-        $newNode = clone $node;
-        $newNode->expr = \array_shift($livingCode);
+        $node->expr = \array_shift($livingCode);
         $newNodes = [];
         foreach ($livingCode as $singleLivingCode) {
             $newNodes[] = new Expression($singleLivingCode);
         }
-        $newNodes[] = $newNode;
+        $newNodes[] = $node;
         return $newNodes;
     }
     private function hasGetMagic(Expression $expression) : bool
@@ -107,10 +98,7 @@ CODE_SAMPLE
          */
         return !$phpPropertyReflection instanceof PhpPropertyReflection;
     }
-    /**
-     * @return int|\PhpParser\Node
-     */
-    private function removeNodeAndKeepComments(Expression $expression)
+    private function removeNodeAndKeepComments(Expression $expression) : ?Node
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($expression);
         if ($expression->getComments() !== []) {
@@ -118,6 +106,7 @@ CODE_SAMPLE
             $nop->setAttribute(AttributeKey::PHP_DOC_INFO, $phpDocInfo);
             return $nop;
         }
-        return NodeTraverser::REMOVE_NODE;
+        $this->removeNode($expression);
+        return null;
     }
 }

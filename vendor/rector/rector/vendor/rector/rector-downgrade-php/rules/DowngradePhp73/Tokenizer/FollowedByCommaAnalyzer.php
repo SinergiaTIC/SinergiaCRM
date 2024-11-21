@@ -4,8 +4,8 @@ declare (strict_types=1);
 namespace Rector\DowngradePhp73\Tokenizer;
 
 use PhpParser\Node;
-use Rector\Util\StringUtils;
-use Rector\ValueObject\Application\File;
+use Rector\Core\Util\StringUtils;
+use Rector\Core\ValueObject\Application\File;
 final class FollowedByCommaAnalyzer
 {
     public function isFollowed(File $file, Node $node) : bool

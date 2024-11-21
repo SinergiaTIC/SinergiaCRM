@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Php70;
 
-use RectorPrefix202411\Nette\Utils\Strings;
+use RectorPrefix202305\Nette\Utils\Strings;
 use Rector\Php70\Exception\InvalidEregException;
 /**
  * @changelog https://gist.github.com/lifthrasiir/704754/7e486f43e62fd1c9d3669330c251f8ca4a59a3f8
@@ -12,11 +12,6 @@ use Rector\Php70\Exception\InvalidEregException;
  */
 final class EregToPcreTransformer
 {
-    /**
-     * @readonly
-     * @var string
-     */
-    private $pcreDelimiter = '#';
     /**
      * @var array<string, string>
      */
@@ -60,6 +55,11 @@ final class EregToPcreTransformer
      */
     private $cache = [];
     /**
+     * @readonly
+     * @var string
+     */
+    private $pcreDelimiter = '#';
+    /**
      * Change this via services configuratoin in rector.php if you need it
      * Single type is chosen to prevent every regular with different delimiter.
      */
@@ -67,8 +67,17 @@ final class EregToPcreTransformer
     {
         $this->pcreDelimiter = $pcreDelimiter;
     }
+    public function transform(string $ereg, bool $isCaseInsensitive) : string
+    {
+        if (\strpos($ereg, $this->pcreDelimiter) === \false) {
+            return $this->ere2pcre($ereg, $isCaseInsensitive);
+        }
+        // fallback
+        $quotedEreg = \preg_quote($ereg, '#');
+        return $this->ere2pcre($quotedEreg, $isCaseInsensitive);
+    }
     // converts the ERE $s into the PCRE $r. triggers error on any invalid input.
-    public function transform(string $content, bool $ignorecase) : string
+    private function ere2pcre(string $content, bool $ignorecase) : string
     {
         if ($ignorecase) {
             if (isset($this->icache[$content])) {
@@ -82,9 +91,9 @@ final class EregToPcreTransformer
             throw new InvalidEregException('unescaped metacharacter ")"');
         }
         if ($ignorecase) {
-            return $this->icache[$content] = $this->pcreDelimiter . $r . $this->pcreDelimiter . 'mi';
+            return $this->icache[$content] = '#' . $r . '#mi';
         }
-        return $this->cache[$content] = $this->pcreDelimiter . $r . $this->pcreDelimiter . 'm';
+        return $this->cache[$content] = '#' . $r . '#m';
     }
     /**
      * Recursively converts ERE into PCRE, starting at the position $i.
@@ -96,7 +105,6 @@ final class EregToPcreTransformer
         $r = [''];
         $rr = 0;
         $l = \strlen($content);
-        $normalizeUnprintableChar = \false;
         while ($i < $l) {
             // atom
             $char = $content[$i];
@@ -138,7 +146,7 @@ final class EregToPcreTransformer
                 continue;
             } elseif ($char === '|') {
                 if ($r[$rr] === '') {
-                    $normalizeUnprintableChar = \true;
+                    throw new InvalidEregException('empty branch');
                 }
                 $r[] = '';
                 ++$rr;
@@ -170,14 +178,7 @@ final class EregToPcreTransformer
         if ($r[$rr] === '') {
             throw new InvalidEregException('empty regular expression or branch');
         }
-        return [$this->normalize(\implode('|', $r), $normalizeUnprintableChar), $i];
-    }
-    private function normalize(string $content, bool $normalizeUnprintableChar) : string
-    {
-        if ($normalizeUnprintableChar) {
-            $content = \str_replace("\f", '\\\\f', $content);
-        }
-        return \str_replace($this->pcreDelimiter, '\\' . $this->pcreDelimiter, $content);
+        return [\implode('|', $r), $i];
     }
     /**
      * @param mixed[] $r

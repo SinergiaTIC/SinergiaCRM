@@ -4,20 +4,31 @@ declare (strict_types=1);
 namespace Rector\DowngradePhp80\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Expr\FuncCall;
-use Rector\Rector\AbstractRector;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @changelog https://wiki.php.net/rfc/str_contains
  *
- * @see \Rector\Tests\DowngradePhp80\Rector\FuncCall\DowngradeStrContainsRector\DowngradeStrContainsRectorTest
+ * @see Rector\Tests\DowngradePhp80\Rector\FuncCall\DowngradeStrContainsRector\DowngradeStrContainsRectorTest
  */
 final class DowngradeStrContainsRector extends AbstractRector
 {
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
+     */
+    private $argsAnalyzer;
+    public function __construct(ArgsAnalyzer $argsAnalyzer)
+    {
+        $this->argsAnalyzer = $argsAnalyzer;
+    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Replace str_contains() with strpos() !== false', [new CodeSample(<<<'CODE_SAMPLE'
@@ -57,12 +68,15 @@ CODE_SAMPLE
         if (!$funcCall instanceof FuncCall) {
             return null;
         }
-        $args = $funcCall->getArgs();
-        if (\count($args) < 2) {
+        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($funcCall->args, [0, 1])) {
             return null;
         }
-        $haystack = $args[0]->value;
-        $needle = $args[1]->value;
+        /** @var Arg $firstArg */
+        $firstArg = $funcCall->args[0];
+        $haystack = $firstArg->value;
+        /** @var Arg $secondArg */
+        $secondArg = $funcCall->args[1];
+        $needle = $secondArg->value;
         $funcCall = $this->nodeFactory->createFuncCall('strpos', [$haystack, $needle]);
         if ($node instanceof BooleanNot) {
             return new Identical($funcCall, $this->nodeFactory->createFalse());

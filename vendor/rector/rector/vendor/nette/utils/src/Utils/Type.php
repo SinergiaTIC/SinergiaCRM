@@ -5,9 +5,9 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202411\Nette\Utils;
+namespace RectorPrefix202305\Nette\Utils;
 
-use RectorPrefix202411\Nette;
+use RectorPrefix202305\Nette;
 /**
  * PHP type reflection.
  */
@@ -15,28 +15,26 @@ final class Type
 {
     /** @var array<int, string|self> */
     private $types;
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $simple;
-    /**
-     * @var string
-     */
+    /** @var string  |, & */
     private $kind;
-    // | &
     /**
      * Creates a Type object based on reflection. Resolves self, static and parent to the actual class name.
      * If the subject has no type, it returns null.
-     * @param \ReflectionFunctionAbstract|\ReflectionParameter|\ReflectionProperty $reflection
+     * @param  \ReflectionFunctionAbstract|\ReflectionParameter|\ReflectionProperty  $reflection
      */
     public static function fromReflection($reflection) : ?self
     {
-        $type = $reflection instanceof \ReflectionFunctionAbstract ? $reflection->getReturnType() ?? (\PHP_VERSION_ID >= 80100 && $reflection instanceof \ReflectionMethod ? $reflection->getTentativeReturnType() : null) : $reflection->getType();
+        if ($reflection instanceof \ReflectionProperty && \PHP_VERSION_ID < 70400) {
+            return null;
+        } elseif ($reflection instanceof \ReflectionMethod) {
+            $type = $reflection->getReturnType() ?? (\PHP_VERSION_ID >= 80100 ? $reflection->getTentativeReturnType() : null);
+        } else {
+            $type = $reflection instanceof \ReflectionFunctionAbstract ? $reflection->getReturnType() : $reflection->getType();
+        }
         return $type ? self::fromReflectionType($type, $reflection, \true) : null;
     }
-    /**
-     * @return $this|string
-     */
     private static function fromReflectionType(\ReflectionType $type, $of, bool $asObject)
     {
         if ($type instanceof \ReflectionNamedType) {
@@ -70,17 +68,15 @@ final class Type
     }
     /**
      * Resolves 'self', 'static' and 'parent' to the actual class name.
-     * @param \ReflectionFunctionAbstract|\ReflectionParameter|\ReflectionProperty $of
+     * @param  \ReflectionFunctionAbstract|\ReflectionParameter|\ReflectionProperty  $of
      */
     public static function resolve(string $type, $of) : string
     {
         $lower = \strtolower($type);
         if ($of instanceof \ReflectionFunction) {
             return $type;
-        } elseif ($lower === 'self') {
+        } elseif ($lower === 'self' || $lower === 'static') {
             return $of->getDeclaringClass()->name;
-        } elseif ($lower === 'static') {
-            return ($of instanceof ReflectionMethod ? $of->getOriginalClass() : $of->getDeclaringClass())->name;
         } elseif ($lower === 'parent' && $of->getDeclaringClass()->getParentClass()) {
             return $of->getDeclaringClass()->getParentClass()->name;
         } else {
@@ -207,8 +203,9 @@ final class Type
     private function allows3(array $types, array $subtypes) : bool
     {
         return Arrays::every($types, function ($type) use($subtypes) {
-            return Arrays::some($subtypes, function ($subtype) use($type) {
-                return Validators::isBuiltinType($type) ? \strcasecmp($type, $subtype) === 0 : \is_a($subtype, $type, \true);
+            $builtin = Validators::isBuiltinType($type);
+            return Arrays::some($subtypes, function ($subtype) use($type, $builtin) {
+                return $builtin ? \strcasecmp($type, $subtype) === 0 : \is_a($subtype, $type, \true);
             });
         });
     }

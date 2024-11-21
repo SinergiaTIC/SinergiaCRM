@@ -3,17 +3,12 @@
 declare (strict_types=1);
 namespace Rector\Symfony\ApplicationMetadata;
 
+use Rector\Core\Util\StringUtils;
 use Rector\Symfony\DataProvider\ServiceMapProvider;
 use Rector\Symfony\ValueObject\ServiceDefinition;
 use Rector\Symfony\ValueObject\Tag\EventListenerTag;
-use Rector\Util\StringUtils;
 final class ListenerServiceDefinitionProvider
 {
-    /**
-     * @readonly
-     * @var \Rector\Symfony\DataProvider\ServiceMapProvider
-     */
-    private $serviceMapProvider;
     /**
      * @var string
      * @see https://regex101.com/r/j6SAga/1
@@ -27,6 +22,11 @@ final class ListenerServiceDefinitionProvider
      * @var ServiceDefinition[][][]
      */
     private $listenerClassesToEvents = [];
+    /**
+     * @readonly
+     * @var \Rector\Symfony\DataProvider\ServiceMapProvider
+     */
+    private $serviceMapProvider;
     public function __construct(ServiceMapProvider $serviceMapProvider)
     {
         $this->serviceMapProvider = $serviceMapProvider;

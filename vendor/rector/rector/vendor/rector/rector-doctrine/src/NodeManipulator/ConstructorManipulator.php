@@ -6,20 +6,20 @@ namespace Rector\Doctrine\NodeManipulator;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
-use Rector\NodeManipulator\ClassInsertManipulator;
+use Rector\Core\NodeManipulator\ClassInsertManipulator;
+use Rector\Core\PhpParser\Node\NodeFactory;
+use Rector\Core\ValueObject\MethodName;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\PhpParser\Node\NodeFactory;
-use Rector\ValueObject\MethodName;
 final class ConstructorManipulator
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\NodeFactory
+     * @var \Rector\Core\PhpParser\Node\NodeFactory
      */
     private $nodeFactory;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\ClassInsertManipulator
+     * @var \Rector\Core\NodeManipulator\ClassInsertManipulator
      */
     private $classInsertManipulator;
     public function __construct(NodeFactory $nodeFactory, ClassInsertManipulator $classInsertManipulator)

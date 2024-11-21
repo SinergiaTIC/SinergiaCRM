@@ -7,12 +7,12 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BooleanNot;
-use Rector\NodeManipulator\BinaryOpManipulator;
+use Rector\Core\NodeManipulator\BinaryOpManipulator;
 final class ConditionInverter
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\BinaryOpManipulator
+     * @var \Rector\Core\NodeManipulator\BinaryOpManipulator
      */
     private $binaryOpManipulator;
     public function __construct(BinaryOpManipulator $binaryOpManipulator)

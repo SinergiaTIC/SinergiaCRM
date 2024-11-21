@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Configuration;
+namespace Rector\Core\Configuration;
 
 use Rector\Caching\Contract\ValueObject\Storage\CacheStorageInterface;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
@@ -47,11 +47,6 @@ final class Option
      */
     public const AUTO_IMPORT_NAMES = 'auto_import_names';
     /**
-     * @internal Use @see \Rector\Config\RectorConfig::polyfillPackages() instead
-     * @var string
-     */
-    public const POLYFILL_PACKAGES = 'polyfill_packages';
-    /**
      * @internal Use @see \Rector\Config\RectorConfig::importNames() instead
      * @var string
      */
@@ -71,11 +66,6 @@ final class Option
      * @var string
      */
     public const SYMFONY_CONTAINER_PHP_PATH_PARAMETER = 'symfony_container_php_path';
-    /**
-     * @internal Use @see \Rector\Config\RectorConfig::newLineOnFluentCall()
-     * @var string
-     */
-    public const NEW_LINE_ON_FLUENT_CALL = 'new_line_on_fluent_call';
     /**
      * @var string
      */
@@ -106,6 +96,11 @@ final class Option
      */
     public const FILE_EXTENSIONS = 'file_extensions';
     /**
+     * @internal Use RectorConfig::nestedChainMethodCallLimit() instead
+     * @var string
+     */
+    public const NESTED_CHAIN_METHOD_CALL_LIMIT = 'nested_chain_method_call_limit';
+    /**
      * @internal Use RectorConfig::cacheDirectory() instead
      * @var string
      */
@@ -134,7 +129,7 @@ final class Option
      * @internal Use @see \Rector\Config\RectorConfig::phpstanConfig() instead
      * @var string
      */
-    public const PHPSTAN_FOR_RECTOR_PATHS = 'phpstan_for_rector_paths';
+    public const PHPSTAN_FOR_RECTOR_PATH = 'phpstan_for_rector_path';
     /**
      * @var string
      */
@@ -190,36 +185,4 @@ final class Option
      * @var string
      */
     public const CONTAINER_CACHE_DIRECTORY = 'container-cache-directory';
-    /**
-     * @internal For cache invalidation in case of change
-     * @var string
-     */
-    public const REGISTERED_RECTOR_RULES = 'registered_rector_rules';
-    /**
-     * @internal For cache invalidation in case of change
-     * @var string
-     */
-    public const REGISTERED_RECTOR_SETS = 'registered_rector_sets';
-    /**
-     * @internal For verify skipped rules exists in registered rules
-     * @var string
-     */
-    public const SKIPPED_RECTOR_RULES = 'skipped_rector_rules';
-    /**
-     * @internal For collect skipped start with short open tag files to be reported
-     * @var string
-     */
-    public const SKIPPED_START_WITH_SHORT_OPEN_TAG_FILES = 'skipped_start_with_short_open_tag_files';
-    /**
-     * @internal For reporting with absolute paths instead of relative paths (default behaviour)
-     * @see \Rector\Config\RectorConfig::reportingRealPath()
-     * @var string
-     */
-    public const ABSOLUTE_FILE_PATH = 'absolute_file_path';
-    /**
-     * @internal To add editor links to console output
-     * @see \Rector\Config\RectorConfig::editorUrl()
-     * @var string
-     */
-    public const EDITOR_URL = 'editor_url';
 }

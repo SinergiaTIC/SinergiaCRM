@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Exception\Reflection;
+namespace Rector\Core\Exception\Reflection;
 
 use Exception;
 final class MissingPrivatePropertyException extends Exception

@@ -5,16 +5,15 @@ namespace Rector\Transform\Rector\Class_;
 
 use PhpParser\Node;
 use PhpParser\Node\Name;
-use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\TraitUse;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\NodeAnalyzer\ClassAnalyzer;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\NodeAnalyzer\ClassAnalyzer;
+use Rector\Core\NodeManipulator\ClassInsertManipulator;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Transform\ValueObject\ParentClassToTraits;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * Can handle cases like:
  * - https://doc.nette.org/en/2.4/migration-2-4#toc-nette-smartobject
@@ -25,16 +24,22 @@ use RectorPrefix202411\Webmozart\Assert\Assert;
 final class ParentClassToTraitsRector extends AbstractRector implements ConfigurableRectorInterface
 {
     /**
-     * @readonly
-     * @var \Rector\NodeAnalyzer\ClassAnalyzer
-     */
-    private $classAnalyzer;
-    /**
      * @var ParentClassToTraits[]
      */
     private $parentClassToTraits = [];
-    public function __construct(ClassAnalyzer $classAnalyzer)
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeManipulator\ClassInsertManipulator
+     */
+    private $classInsertManipulator;
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ClassAnalyzer
+     */
+    private $classAnalyzer;
+    public function __construct(ClassInsertManipulator $classInsertManipulator, ClassAnalyzer $classAnalyzer)
     {
+        $this->classInsertManipulator = $classInsertManipulator;
         $this->classAnalyzer = $classAnalyzer;
     }
     public function getRuleDefinition() : RuleDefinition
@@ -71,21 +76,17 @@ CODE_SAMPLE
         if ($this->classAnalyzer->isAnonymousClass($node)) {
             return null;
         }
-        $traitUses = [];
         foreach ($this->parentClassToTraits as $parentClassToTrait) {
             if (!$this->isName($parentExtends, $parentClassToTrait->getParentType())) {
                 continue;
             }
             foreach ($parentClassToTrait->getTraitNames() as $traitName) {
-                $traitUses[] = new TraitUse([new FullyQualified($traitName)]);
+                $this->classInsertManipulator->addAsFirstTrait($node, $traitName);
             }
             $this->removeParentClass($node);
+            return $node;
         }
-        if ($traitUses === []) {
-            return null;
-        }
-        $node->stmts = \array_merge($traitUses, $node->stmts);
-        return $node;
+        return null;
     }
     /**
      * @param mixed[] $configuration

@@ -4,25 +4,29 @@ declare (strict_types=1);
 namespace Rector\Php72\Rector\While_;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\List_;
 use PhpParser\Node\Stmt\Foreach_;
 use PhpParser\Node\Stmt\While_;
-use Rector\NodeManipulator\AssignManipulator;
-use Rector\Php72\ValueObject\ListAndEach;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Core\NodeManipulator\AssignManipulator;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
+ * @changelog https://wiki.php.net/rfc/deprecations_php_7_2#each
+ *
  * @see \Rector\Tests\Php72\Rector\While_\WhileEachToForeachRector\WhileEachToForeachRectorTest
  */
 final class WhileEachToForeachRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\AssignManipulator
+     * @var \Rector\Core\NodeManipulator\AssignManipulator
      */
     private $assignManipulator;
     public function __construct(AssignManipulator $assignManipulator)
@@ -72,31 +76,36 @@ CODE_SAMPLE
         if (!$node->cond instanceof Assign) {
             return null;
         }
-        $listAndEach = $this->assignManipulator->matchListAndEach($node->cond);
-        if (!$listAndEach instanceof ListAndEach) {
+        /** @var Assign $assignNode */
+        $assignNode = $node->cond;
+        if (!$this->assignManipulator->isListToEachAssign($assignNode)) {
             return null;
         }
-        $eachFuncCall = $listAndEach->getEachFuncCall();
-        $list = $listAndEach->getList();
-        if (!isset($eachFuncCall->getArgs()[0])) {
+        /** @var FuncCall $eachFuncCall */
+        $eachFuncCall = $assignNode->expr;
+        /** @var List_ $listNode */
+        $listNode = $assignNode->var;
+        if (!isset($eachFuncCall->args[0])) {
             return null;
         }
-        $firstArg = $eachFuncCall->getArgs()[0];
-        $foreachedExpr = \count($list->items) === 1 ? $this->nodeFactory->createFuncCall('array_keys', [$firstArg]) : $firstArg->value;
-        $arrayItem = \array_pop($list->items);
+        if (!$eachFuncCall->args[0] instanceof Arg) {
+            return null;
+        }
+        $foreachedExpr = \count($listNode->items) === 1 ? $this->nodeFactory->createFuncCall('array_keys', [$eachFuncCall->args[0]]) : $eachFuncCall->args[0]->value;
+        $arrayItem = \array_pop($listNode->items);
         $isTrailingCommaLast = \false;
         if (!$arrayItem instanceof ArrayItem) {
             $foreachedExpr = $this->nodeFactory->createFuncCall('array_keys', [$eachFuncCall->args[0]]);
             /** @var ArrayItem $arrayItem */
-            $arrayItem = \current($list->items);
+            $arrayItem = \current($listNode->items);
             $isTrailingCommaLast = \true;
         }
         $foreach = new Foreach_($foreachedExpr, $arrayItem, ['stmts' => $node->stmts]);
         $this->mirrorComments($foreach, $node);
         // is key included? add it to foreach
-        if ($list->items !== []) {
+        if ($listNode->items !== []) {
             /** @var ArrayItem|null $keyItem */
-            $keyItem = \array_pop($list->items);
+            $keyItem = \array_pop($listNode->items);
             if ($keyItem instanceof ArrayItem && !$isTrailingCommaLast) {
                 $foreach->keyVar = $keyItem->value;
             }

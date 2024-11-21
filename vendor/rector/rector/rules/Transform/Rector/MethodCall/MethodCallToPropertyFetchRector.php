@@ -5,12 +5,12 @@ namespace Rector\Transform\Rector\MethodCall;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector\MethodCallToPropertyFetchRectorTest
  */
@@ -22,12 +22,12 @@ final class MethodCallToPropertyFetchRector extends AbstractRector implements Co
     private $methodCallsToPropertyFetches = [];
     public function getRuleDefinition() : RuleDefinition
     {
-        return new RuleDefinition('Turns method call "$this->getFirstname()" to property fetch "$this->firstname"', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
+        return new RuleDefinition('Turns method call "$this->something()" to property fetch "$this->something"', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
 class SomeClass
 {
     public function run()
     {
-        $this->getFirstname();
+        $this->someMethod();
     }
 }
 CODE_SAMPLE
@@ -36,11 +36,11 @@ class SomeClass
 {
     public function run()
     {
-        $this->firstname;
+        $this->someProperty;
     }
 }
 CODE_SAMPLE
-, [new MethodCallToPropertyFetch('ExamplePersonClass', 'getFirstname', 'firstname')])]);
+, ['someMethod' => 'someProperty'])]);
     }
     /**
      * @return array<class-string<Node>>

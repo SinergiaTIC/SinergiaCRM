@@ -9,11 +9,9 @@ use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
-use Rector\BetterPhpDocParser\PhpDoc\StringNode;
 use Rector\BetterPhpDocParser\ValueObject\PhpDoc\DoctrineAnnotation\CurlyListNode;
 use Rector\Doctrine\NodeAnalyzer\AttrinationFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
@@ -50,16 +48,10 @@ final class RouteRequiredParamNameToTypesResolver
         }
         $paramsToTypes = [];
         foreach ($paramsToRegexes as $paramName => $paramRegex) {
-            if (\in_array($paramRegex, ['\\d+', '\\d'], \true)) {
+            if ($paramRegex === '\\d+') {
                 $paramsToTypes[$paramName] = new IntegerType();
-                continue;
             }
-            if ($paramRegex === '\\w+') {
-                $paramsToTypes[$paramName] = new StringType();
-                continue;
-            }
-            // fallback to string or improve later
-            $paramsToTypes[$paramName] = new StringType();
+            // @todo add for string/bool as well
         }
         return $paramsToTypes;
     }
@@ -91,20 +83,14 @@ final class RouteRequiredParamNameToTypesResolver
             return [];
         }
         foreach ($requirementsArrayItemNode->value->getValuesWithSilentKey() as $nestedArrayItemNode) {
-            $paramRegex = $nestedArrayItemNode->value;
-            if ($paramRegex instanceof StringNode) {
-                $paramRegex = $paramRegex->value;
+            if (!\is_string($nestedArrayItemNode->value)) {
+                continue;
             }
-            if (!\is_string($paramRegex)) {
+            if (!\is_string($nestedArrayItemNode->key)) {
                 continue;
             }
             $paramName = $nestedArrayItemNode->key;
-            if ($paramName instanceof StringNode) {
-                $paramName = $paramName->value;
-            }
-            if (!\is_string($paramName)) {
-                continue;
-            }
+            $paramRegex = $nestedArrayItemNode->value;
             $paramsToRegexes[$paramName] = $paramRegex;
         }
         return $paramsToRegexes;

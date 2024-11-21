@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Process\Pipes;
+namespace RectorPrefix202305\Symfony\Component\Process\Pipes;
 
-use RectorPrefix202411\Symfony\Component\Process\Exception\InvalidArgumentException;
+use RectorPrefix202305\Symfony\Component\Process\Exception\InvalidArgumentException;
 /**
  * @author Romain Neutron <imprec@gmail.com>
  *
@@ -22,32 +22,24 @@ abstract class AbstractPipes implements PipesInterface
      * @var mixed[]
      */
     public $pipes = [];
-    /**
-     * @var string
-     */
     private $inputBuffer = '';
-    /** @var resource|string|\Iterator */
     private $input;
-    /**
-     * @var bool
-     */
     private $blocked = \true;
-    /**
-     * @var string|null
-     */
     private $lastError;
     /**
-     * @param resource|string|\Iterator $input
+     * @param mixed $input
      */
     public function __construct($input)
     {
         if (\is_resource($input) || $input instanceof \Iterator) {
             $this->input = $input;
+        } elseif (\is_string($input)) {
+            $this->inputBuffer = $input;
         } else {
             $this->inputBuffer = (string) $input;
         }
     }
-    public function close() : void
+    public function close()
     {
         foreach ($this->pipes as $pipe) {
             if (\is_resource($pipe)) {
@@ -69,7 +61,7 @@ abstract class AbstractPipes implements PipesInterface
     /**
      * Unblocks streams.
      */
-    protected function unblock() : void
+    protected function unblock()
     {
         if (!$this->blocked) {
             return;
@@ -161,7 +153,7 @@ abstract class AbstractPipes implements PipesInterface
     /**
      * @internal
      */
-    public function handleError(int $type, string $msg) : void
+    public function handleError(int $type, string $msg)
     {
         $this->lastError = $msg;
     }

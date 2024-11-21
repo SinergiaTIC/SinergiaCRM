@@ -1,19 +1,18 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Console;
+namespace Rector\Core\Console;
 
-use RectorPrefix202411\Composer\XdebugHandler\XdebugHandler;
-use Rector\Application\VersionResolver;
+use RectorPrefix202305\Composer\XdebugHandler\XdebugHandler;
 use Rector\ChangesReporting\Output\ConsoleOutputFormatter;
-use Rector\Configuration\Option;
-use RectorPrefix202411\Symfony\Component\Console\Application;
-use RectorPrefix202411\Symfony\Component\Console\Command\Command;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputDefinition;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputInterface;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputOption;
-use RectorPrefix202411\Symfony\Component\Console\Output\OutputInterface;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use Rector\Core\Application\VersionResolver;
+use Rector\Core\Configuration\Option;
+use RectorPrefix202305\Symfony\Component\Console\Application;
+use RectorPrefix202305\Symfony\Component\Console\Command\Command;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputDefinition;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputInterface;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputOption;
+use RectorPrefix202305\Symfony\Component\Console\Output\OutputInterface;
 final class ConsoleApplication extends Application
 {
     /**
@@ -23,21 +22,18 @@ final class ConsoleApplication extends Application
     /**
      * @param Command[] $commands
      */
-    public function __construct(array $commands)
+    public function __construct(array $commands = [])
     {
         parent::__construct(self::NAME, VersionResolver::PACKAGE_VERSION);
-        Assert::notEmpty($commands);
-        Assert::allIsInstanceOf($commands, Command::class);
         $this->addCommands($commands);
-        // run this command, if no command name is provided
         $this->setDefaultCommand('process');
     }
     public function doRun(InputInterface $input, OutputInterface $output) : int
     {
+        // @fixes https://github.com/rectorphp/rector/issues/2205
         $isXdebugAllowed = $input->hasParameterOption('--xdebug');
         if (!$isXdebugAllowed) {
             $xdebugHandler = new XdebugHandler('rector');
-            $xdebugHandler->setPersistent();
             $xdebugHandler->check();
             unset($xdebugHandler);
         }

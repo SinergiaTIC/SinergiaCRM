@@ -13,15 +13,19 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\NodeTraverser;
+use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
-use Rector\PhpParser\Node\NodeFactory;
 final class OnSuccessLogoutClassMethodFactory
 {
     /**
+     * @var string
+     */
+    private const LOGOUT_EVENT = 'logoutEvent';
+    /**
      * @readonly
-     * @var \Rector\PhpParser\Node\NodeFactory
+     * @var \Rector\Core\PhpParser\Node\NodeFactory
      */
     private $nodeFactory;
     /**
@@ -39,10 +43,6 @@ final class OnSuccessLogoutClassMethodFactory
      * @var \Rector\Symfony\NodeFactory\BareLogoutClassMethodFactory
      */
     private $bareLogoutClassMethodFactory;
-    /**
-     * @var string
-     */
-    private const LOGOUT_EVENT = 'logoutEvent';
     public function __construct(NodeFactory $nodeFactory, NodeNameResolver $nodeNameResolver, SimpleCallableNodeTraverser $simpleCallableNodeTraverser, \Rector\Symfony\NodeFactory\BareLogoutClassMethodFactory $bareLogoutClassMethodFactory)
     {
         $this->nodeFactory = $nodeFactory;
@@ -80,14 +80,15 @@ final class OnSuccessLogoutClassMethodFactory
     }
     private function replaceRequestWithGetRequest(ClassMethod $classMethod) : void
     {
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod, function (Node $node) {
-            if ($node instanceof Param) {
-                return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
-            }
+        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($classMethod, function (Node $node) : ?MethodCall {
             if (!$node instanceof Variable) {
                 return null;
             }
             if (!$this->nodeNameResolver->isName($node, 'request')) {
+                return null;
+            }
+            $parent = $node->getAttribute(AttributeKey::PARENT_NODE);
+            if ($parent instanceof Param) {
                 return null;
             }
             return new MethodCall(new Variable(self::LOGOUT_EVENT), 'getRequest');

@@ -3,10 +3,11 @@
 declare (strict_types=1);
 namespace Rector\Php55;
 
-use RectorPrefix202411\Nette\Utils\Strings;
+use RectorPrefix202305\Nette\Utils\Strings;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Scalar\String_;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 final class RegexMatcher
 {
     /**
@@ -25,12 +26,24 @@ final class RegexMatcher
      */
     private const ALL_MODIFIERS_VALUES = ['i', 'm', 's', 'x', 'e', 'A', 'D', 'S', 'U', 'X', 'J', 'u'];
     /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
+     */
+    private $valueResolver;
+    public function __construct(ValueResolver $valueResolver)
+    {
+        $this->valueResolver = $valueResolver;
+    }
+    /**
      * @return \PhpParser\Node\Expr\BinaryOp\Concat|\PhpParser\Node\Scalar\String_|null
      */
     public function resolvePatternExpressionWithoutEIfFound(Expr $expr)
     {
         if ($expr instanceof String_) {
-            $pattern = $expr->value;
+            $pattern = $this->valueResolver->getValue($expr);
+            if (!\is_string($pattern)) {
+                return null;
+            }
             $delimiter = $pattern[0];
             switch ($delimiter) {
                 case '(':
@@ -54,8 +67,8 @@ final class RegexMatcher
             if (\strpos($modifiers, 'e') === \false) {
                 return null;
             }
-            $expr->value = $this->createPatternWithoutE($pattern, $delimiter, $modifiers);
-            return $expr;
+            $patternWithoutE = $this->createPatternWithoutE($pattern, $delimiter, $modifiers);
+            return new String_($patternWithoutE);
         }
         if ($expr instanceof Concat) {
             return $this->matchConcat($expr);
@@ -76,15 +89,11 @@ final class RegexMatcher
     }
     private function createPatternWithoutE(string $pattern, string $delimiter, string $modifiers) : string
     {
-        $modifiersWithoutE = \str_replace('e', '', $modifiers);
+        $modifiersWithoutE = Strings::replace($modifiers, '#e#');
         return Strings::before($pattern, $delimiter, -1) . $delimiter . $modifiersWithoutE;
     }
     private function matchConcat(Concat $concat) : ?Concat
     {
-        // cause parse error
-        if (!$concat->left instanceof Concat) {
-            return null;
-        }
         $lastItem = $concat->right;
         if (!$lastItem instanceof String_) {
             return null;

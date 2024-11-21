@@ -176,6 +176,15 @@ class Call extends SugarBean
 
         if (!empty($this->date_start)) {
             if (!empty($this->duration_hours) || !empty($this->duration_minutes)) {
+                // STIC-Custom 20241002 AAM - Setting duration to 0 in case a call is created without these values
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/445 
+                if (empty($this->duration_hours)) {
+                    $this->duration_hours = 0;
+                }
+                if (empty($this->duration_minutes)) {
+                    $this->duration_minutes = 0;
+                }
+                // END STIC
                 $td = $timedate->fromDb($this->date_start);
                 if ($td) {
                     $this->date_end = $td->modify(

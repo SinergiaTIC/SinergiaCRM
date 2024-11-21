@@ -3,25 +3,29 @@
 declare (strict_types=1);
 namespace Rector\Php74\Rector\LNumber;
 
+use RectorPrefix202305\Nette\Utils\Strings;
 use PhpParser\Node;
 use PhpParser\Node\Scalar\DNumber;
 use PhpParser\Node\Scalar\LNumber;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Util\StringUtils;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Rector\AbstractRector;
-use Rector\Util\StringUtils;
-use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
+ * @changelog https://wiki.php.net/rfc/numeric_literal_separator
+ * @changelog https://github.com/nikic/PHP-Parser/pull/615
  * @see \Rector\Tests\Php74\Rector\LNumber\AddLiteralSeparatorToNumberRector\AddLiteralSeparatorToNumberRectorTest
+ * @changelog https://twitter.com/seldaek/status/1329064983120982022
  *
  * Taking the most generic use case to the account: https://wiki.php.net/rfc/numeric_literal_separator#should_it_be_the_role_of_an_ide_to_group_digits
  * The final check should be done manually
  */
-final class AddLiteralSeparatorToNumberRector extends AbstractRector implements MinPhpVersionInterface, ConfigurableRectorInterface
+final class AddLiteralSeparatorToNumberRector extends AbstractRector implements AllowEmptyConfigurableRectorInterface, MinPhpVersionInterface
 {
     /**
      * @api
@@ -137,7 +141,7 @@ CODE_SAMPLE
             return \true;
         }
         // too short
-        return \strlen($rawValue) <= self::GROUP_SIZE;
+        return Strings::length($rawValue) <= self::GROUP_SIZE;
     }
     /**
      * @return string[]

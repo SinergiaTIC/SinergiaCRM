@@ -3,7 +3,6 @@
 declare (strict_types=1);
 namespace PHPStan\PhpDocParser\Parser;
 
-use PHPStan\ShouldNotHappenException;
 use function chr;
 use function hexdec;
 use function octdec;
@@ -36,9 +35,6 @@ class StringUnescaper
                 return chr((int) hexdec(substr($str, 1)));
             }
             if ($str[0] === 'u') {
-                if (!isset($matches[2])) {
-                    throw new ShouldNotHappenException();
-                }
                 return self::codePointToUtf8((int) hexdec($matches[2]));
             }
             return chr((int) octdec($str));

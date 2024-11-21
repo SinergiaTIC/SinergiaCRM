@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace Rector\CodingStyle\Rector\FuncCall;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\Greater;
@@ -17,8 +18,9 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
-use Rector\Rector\AbstractRector;
-use Rector\Util\PhpVersionFactory;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Util\PhpVersionFactory;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -30,6 +32,21 @@ final class VersionCompareFuncCallToConstantRector extends AbstractRector
      * @var array<string, class-string<BinaryOp>>
      */
     private const OPERATOR_TO_COMPARISON = ['=' => Identical::class, '==' => Identical::class, 'eq' => Identical::class, '!=' => NotIdentical::class, '<>' => NotIdentical::class, 'ne' => NotIdentical::class, '>' => Greater::class, 'gt' => Greater::class, '<' => Smaller::class, 'lt' => Smaller::class, '>=' => GreaterOrEqual::class, 'ge' => GreaterOrEqual::class, '<=' => SmallerOrEqual::class, 'le' => SmallerOrEqual::class];
+    /**
+     * @readonly
+     * @var \Rector\Core\Util\PhpVersionFactory
+     */
+    private $phpVersionFactory;
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
+     */
+    private $argsAnalyzer;
+    public function __construct(PhpVersionFactory $phpVersionFactory, ArgsAnalyzer $argsAnalyzer)
+    {
+        $this->phpVersionFactory = $phpVersionFactory;
+        $this->argsAnalyzer = $argsAnalyzer;
+    }
     public function getRuleDefinition() : RuleDefinition
     {
         return new RuleDefinition('Changes use of call to version compare function to use of PHP version constant', [new CodeSample(<<<'CODE_SAMPLE'
@@ -67,22 +84,23 @@ CODE_SAMPLE
         if (!$this->isName($node, 'version_compare')) {
             return null;
         }
-        if ($node->isFirstClassCallable()) {
+        if (\count($node->args) !== 3) {
             return null;
         }
-        if (\count($node->getArgs()) !== 3) {
+        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($node->args, [0, 1, 2])) {
             return null;
         }
-        $args = $node->getArgs();
+        /** @var Arg[] $args */
+        $args = $node->args;
         if (!$this->isPhpVersionConstant($args[0]->value) && !$this->isPhpVersionConstant($args[1]->value)) {
             return null;
         }
         $left = $this->getNewNodeForArg($args[0]->value);
         $right = $this->getNewNodeForArg($args[1]->value);
-        if (!$left instanceof Expr) {
+        if ($left === null) {
             return null;
         }
-        if (!$right instanceof Expr) {
+        if ($right === null) {
             return null;
         }
         /** @var String_ $operator */
@@ -112,7 +130,7 @@ CODE_SAMPLE
         if (!$expr instanceof String_) {
             return null;
         }
-        $value = PhpVersionFactory::createIntVersion($expr->value);
+        $value = $this->phpVersionFactory->createIntVersion($expr->value);
         return new LNumber($value);
     }
 }

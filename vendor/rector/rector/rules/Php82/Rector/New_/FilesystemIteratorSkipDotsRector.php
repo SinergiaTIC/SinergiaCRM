@@ -3,6 +3,7 @@
 declare (strict_types=1);
 namespace Rector\Php82\Rector\New_;
 
+use FilesystemIterator;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
@@ -11,29 +12,29 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Type\ObjectType;
-use Rector\PhpParser\Node\Value\ValueResolver;
-use Rector\Rector\AbstractRector;
-use Rector\ValueObject\PhpVersionFeature;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\NodeNameResolver\NodeNameResolver\ClassConstFetchNameResolver;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
- * @see \Rector\Tests\Php82\Rector\New_\FilesystemIteratorSkipDotsRector\FilesystemIteratorSkipDotsRectorTest
+ * @see \Rector\Tests\Php82\Rector\New_\FilesystemIteratorSkipDots\FilesystemIteratorSkipDotsRectorTest
  */
 final class FilesystemIteratorSkipDotsRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     * @var \Rector\NodeNameResolver\NodeNameResolver\ClassConstFetchNameResolver
      */
-    private $valueResolver;
-    public function __construct(ValueResolver $valueResolver)
+    private $classConstFetchNameResolver;
+    public function __construct(ClassConstFetchNameResolver $classConstFetchNameResolver)
     {
-        $this->valueResolver = $valueResolver;
+        $this->classConstFetchNameResolver = $classConstFetchNameResolver;
     }
     public function getRuleDefinition() : RuleDefinition
     {
-        return new RuleDefinition('Prior PHP 8.2 FilesystemIterator::SKIP_DOTS was always set and could not be removed, therefore FilesystemIterator::SKIP_DOTS is added in order to keep this behaviour.', [new CodeSample('new FilesystemIterator(__DIR__, FilesystemIterator::KEY_AS_FILENAME);', 'new FilesystemIterator(__DIR__, FilesystemIterator::KEY_AS_FILENAME | FilesystemIterator::SKIP_DOTS);')]);
+        return new RuleDefinition('Prior PHP 8.2 FilesystemIterator::SKIP_DOTS was always set and could not be removed, therefore FilesystemIterator::SKIP_DOTS is added in order to keep this behaviour.', [new CodeSample('new ' . FilesystemIterator::class . '(__DIR__, ' . FilesystemIterator::class . '::KEY_AS_FILENAME);', 'new ' . FilesystemIterator::class . '(__DIR__, ' . FilesystemIterator::class . '::KEY_AS_FILENAME | ' . FilesystemIterator::class . '::SKIP_DOTS);')]);
     }
     public function getNodeTypes() : array
     {
@@ -52,10 +53,10 @@ final class FilesystemIteratorSkipDotsRector extends AbstractRector implements M
         if (!$this->isObjectType($node->class, new ObjectType('FilesystemIterator'))) {
             return null;
         }
-        if (!isset($node->args[1])) {
+        if (!\array_key_exists(1, $node->args)) {
             return null;
         }
-        $flags = $node->getArgs()[1]->value;
+        $flags = $node->args[1]->value;
         if ($this->isSkipDotsPresent($flags)) {
             return null;
         }
@@ -89,10 +90,6 @@ final class FilesystemIteratorSkipDotsRector extends AbstractRector implements M
             // can be anything
             return \true;
         }
-        if (!\defined('FilesystemIterator::SKIP_DOTS')) {
-            return \true;
-        }
-        $value = \constant('FilesystemIterator::SKIP_DOTS');
-        return $this->valueResolver->isValue($expr, $value);
+        return $this->classConstFetchNameResolver->resolve($expr) === 'FilesystemIterator::SKIP_DOTS';
     }
 }

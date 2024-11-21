@@ -7,15 +7,14 @@ use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Return_;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Transform\ValueObject\WrapReturn;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\ClassMethod\WrapReturnRector\WrapReturnRectorTest
  */
@@ -52,31 +51,24 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [Class_::class];
+        return [ClassMethod::class];
     }
     /**
-     * @param Class_ $node
+     * @param ClassMethod $node
      */
     public function refactor(Node $node) : ?Node
     {
-        $hasChanged = \false;
         foreach ($this->typeMethodWraps as $typeMethodWrap) {
+            if (!$this->isName($node, $typeMethodWrap->getMethod())) {
+                continue;
+            }
             if (!$this->isObjectType($node, $typeMethodWrap->getObjectType())) {
                 continue;
             }
-            foreach ($node->getMethods() as $classMethod) {
-                if (!$this->isName($classMethod, $typeMethodWrap->getMethod())) {
-                    continue;
-                }
-                if ($node->stmts === null) {
-                    continue;
-                }
-                $this->wrap($classMethod, $typeMethodWrap->isArrayWrap());
-                $hasChanged = \true;
+            if ($node->stmts === null) {
+                continue;
             }
-        }
-        if ($hasChanged) {
-            return $node;
+            return $this->wrap($node, $typeMethodWrap->isArrayWrap());
         }
         return null;
     }

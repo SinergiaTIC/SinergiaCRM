@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace Rector\Php80\MatchAndRefactor\StrStartsWithMatchAndRefactor;
 
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\BinaryOp\Equal;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotEqual;
@@ -11,14 +12,19 @@ use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Scalar\String_;
+use Rector\Core\NodeAnalyzer\ArgsAnalyzer;
+use Rector\Core\PhpParser\Comparing\NodeComparator;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\Php80\Contract\StrStartWithMatchAndRefactorInterface;
 use Rector\Php80\NodeFactory\StrStartsWithFuncCallFactory;
 use Rector\Php80\ValueObject\StrStartsWith;
 use Rector\Php80\ValueObjectFactory\StrStartsWithFactory;
-use Rector\PhpParser\Comparing\NodeComparator;
 final class StrncmpMatchAndRefactor implements StrStartWithMatchAndRefactorInterface
 {
+    /**
+     * @var string
+     */
+    private const FUNCTION_NAME = 'strncmp';
     /**
      * @readonly
      * @var \Rector\NodeNameResolver\NodeNameResolver
@@ -31,7 +37,7 @@ final class StrncmpMatchAndRefactor implements StrStartWithMatchAndRefactorInter
     private $strStartsWithFactory;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Comparing\NodeComparator
+     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
      */
     private $nodeComparator;
     /**
@@ -40,15 +46,17 @@ final class StrncmpMatchAndRefactor implements StrStartWithMatchAndRefactorInter
      */
     private $strStartsWithFuncCallFactory;
     /**
-     * @var string
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ArgsAnalyzer
      */
-    private const FUNCTION_NAME = 'strncmp';
-    public function __construct(NodeNameResolver $nodeNameResolver, StrStartsWithFactory $strStartsWithFactory, NodeComparator $nodeComparator, StrStartsWithFuncCallFactory $strStartsWithFuncCallFactory)
+    private $argsAnalyzer;
+    public function __construct(NodeNameResolver $nodeNameResolver, StrStartsWithFactory $strStartsWithFactory, NodeComparator $nodeComparator, StrStartsWithFuncCallFactory $strStartsWithFuncCallFactory, ArgsAnalyzer $argsAnalyzer)
     {
         $this->nodeNameResolver = $nodeNameResolver;
         $this->strStartsWithFactory = $strStartsWithFactory;
         $this->nodeComparator = $nodeComparator;
         $this->strStartsWithFuncCallFactory = $strStartsWithFuncCallFactory;
+        $this->argsAnalyzer = $argsAnalyzer;
     }
     /**
      * @param \PhpParser\Node\Expr\BinaryOp\Identical|\PhpParser\Node\Expr\BinaryOp\NotIdentical|\PhpParser\Node\Expr\BinaryOp\Equal|\PhpParser\Node\Expr\BinaryOp\NotEqual $binaryOp
@@ -81,35 +89,43 @@ final class StrncmpMatchAndRefactor implements StrStartWithMatchAndRefactorInter
     {
         $strncmpFuncCall = $strStartsWith->getFuncCall();
         $needleExpr = $strStartsWith->getNeedleExpr();
-        if ($strncmpFuncCall->isFirstClassCallable()) {
+        if (!$this->argsAnalyzer->isArgInstanceInArgsPosition($strncmpFuncCall->args, 2)) {
             return \false;
         }
-        if (\count($strncmpFuncCall->getArgs()) < 2) {
+        /** @var Arg $thirdArg */
+        $thirdArg = $strncmpFuncCall->args[2];
+        $secondArgumentValue = $thirdArg->value;
+        if (!$secondArgumentValue instanceof FuncCall) {
             return \false;
         }
-        $thirdArg = $strncmpFuncCall->getArgs()[2];
-        $thirdArgExpr = $thirdArg->value;
-        if (!$thirdArgExpr instanceof FuncCall) {
+        if (!$this->nodeNameResolver->isName($secondArgumentValue, 'strlen')) {
             return \false;
         }
-        if (!$this->nodeNameResolver->isName($thirdArgExpr, 'strlen')) {
+        /** @var FuncCall $strlenFuncCall */
+        $strlenFuncCall = $thirdArg->value;
+        if (!$this->argsAnalyzer->isArgInstanceInArgsPosition($strlenFuncCall->args, 0)) {
             return \false;
         }
-        $strlenFuncCall = $thirdArgExpr;
-        $strlenExpr = $strlenFuncCall->getArgs()[0]->value;
-        return $this->nodeComparator->areNodesEqual($needleExpr, $strlenExpr);
+        /** @var Arg $firstArg */
+        $firstArg = $strlenFuncCall->args[0];
+        $strlenArgumentValue = $firstArg->value;
+        return $this->nodeComparator->areNodesEqual($needleExpr, $strlenArgumentValue);
     }
     private function isHardcodedStringWithLNumberLength(StrStartsWith $strStartsWith) : bool
     {
         $strncmpFuncCall = $strStartsWith->getFuncCall();
-        if (\count($strncmpFuncCall->getArgs()) < 2) {
+        if (!$this->argsAnalyzer->isArgsInstanceInArgsPositions($strncmpFuncCall->args, [1, 2])) {
             return \false;
         }
-        $hardcodedStringNeedle = $strncmpFuncCall->getArgs()[1]->value;
+        /** @var Arg $secondArg */
+        $secondArg = $strncmpFuncCall->args[1];
+        $hardcodedStringNeedle = $secondArg->value;
         if (!$hardcodedStringNeedle instanceof String_) {
             return \false;
         }
-        $lNumberLength = $strncmpFuncCall->getArgs()[2]->value;
+        /** @var Arg $thirdArg */
+        $thirdArg = $strncmpFuncCall->args[2];
+        $lNumberLength = $thirdArg->value;
         if (!$lNumberLength instanceof LNumber) {
             return \false;
         }

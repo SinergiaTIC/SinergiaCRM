@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Formatter;
+namespace RectorPrefix202305\Symfony\Component\Console\Formatter;
 
-use RectorPrefix202411\Symfony\Component\Console\Exception\InvalidArgumentException;
-use RectorPrefix202411\Symfony\Contracts\Service\ResetInterface;
+use RectorPrefix202305\Symfony\Component\Console\Exception\InvalidArgumentException;
+use RectorPrefix202305\Symfony\Contracts\Service\ResetInterface;
 /**
  * @author Jean-François Simon <contact@jfsimon.fr>
  */
@@ -25,15 +25,13 @@ class OutputFormatterStyleStack implements ResetInterface
      * @var \Symfony\Component\Console\Formatter\OutputFormatterStyleInterface
      */
     private $emptyStyle;
-    public function __construct(?OutputFormatterStyleInterface $emptyStyle = null)
+    public function __construct(OutputFormatterStyleInterface $emptyStyle = null)
     {
         $this->emptyStyle = $emptyStyle ?? new OutputFormatterStyle();
         $this->reset();
     }
     /**
      * Resets stack (ie. empty internal arrays).
-     *
-     * @return void
      */
     public function reset()
     {
@@ -41,8 +39,6 @@ class OutputFormatterStyleStack implements ResetInterface
     }
     /**
      * Pushes a style in the stack.
-     *
-     * @return void
      */
     public function push(OutputFormatterStyleInterface $style)
     {
@@ -53,7 +49,7 @@ class OutputFormatterStyleStack implements ResetInterface
      *
      * @throws InvalidArgumentException When style tags incorrectly nested
      */
-    public function pop(?OutputFormatterStyleInterface $style = null) : OutputFormatterStyleInterface
+    public function pop(OutputFormatterStyleInterface $style = null) : OutputFormatterStyleInterface
     {
         if (!$this->styles) {
             return $this->emptyStyle;

@@ -5,8 +5,9 @@ namespace Rector\DowngradePhp80\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
+use Rector\Core\Rector\AbstractRector;
 use Rector\FamilyTree\Reflection\FamilyRelationsAnalyzer;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -28,7 +29,7 @@ final class DowngradeRecursiveDirectoryIteratorHasChildrenRector extends Abstrac
      */
     public function getNodeTypes() : array
     {
-        return [Class_::class];
+        return [ClassMethod::class];
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -53,27 +54,28 @@ CODE_SAMPLE
 )]);
     }
     /**
-     * @param Class_ $node
+     * @param ClassMethod $node
      */
     public function refactor(Node $node) : ?Node
     {
-        foreach ($node->getMethods() as $classMethod) {
-            if (!isset($classMethod->params[0])) {
-                continue;
-            }
-            if ($classMethod->params[0]->type === null) {
-                continue;
-            }
-            if (!$this->nodeNameResolver->isName($classMethod, 'hasChildren')) {
-                continue;
-            }
-            $ancestorClassNames = $this->familyRelationsAnalyzer->getClassLikeAncestorNames($node);
-            if (!\in_array('RecursiveDirectoryIterator', $ancestorClassNames, \true)) {
-                continue;
-            }
-            $classMethod->params[0]->type = null;
-            return $node;
+        if (!$this->nodeNameResolver->isName($node, 'hasChildren')) {
+            return null;
         }
-        return null;
+        if (!isset($node->params[0])) {
+            return null;
+        }
+        $classLike = $this->betterNodeFinder->findParentType($node, Class_::class);
+        if (!$classLike instanceof Class_) {
+            return null;
+        }
+        $ancestorClassNames = $this->familyRelationsAnalyzer->getClassLikeAncestorNames($classLike);
+        if (!\in_array('RecursiveDirectoryIterator', $ancestorClassNames, \true)) {
+            return null;
+        }
+        if ($node->params[0]->type === null) {
+            return null;
+        }
+        $node->params[0]->type = null;
+        return $node;
     }
 }

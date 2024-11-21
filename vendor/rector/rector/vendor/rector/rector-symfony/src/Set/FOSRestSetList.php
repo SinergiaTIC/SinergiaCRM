@@ -4,9 +4,6 @@ declare (strict_types=1);
 namespace Rector\Symfony\Set;
 
 use Rector\Set\Contract\SetListInterface;
-/**
- * @api used in public
- */
 final class FOSRestSetList implements SetListInterface
 {
     /**

@@ -5,20 +5,20 @@ namespace Rector\Php80\NodeManipulator;
 
 use PhpParser\Node\AttributeGroup;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\Php80\Contract\ConverterAttributeDecoratorInterface;
+use Rector\Php80\Contract\AttributeDecoratorInterface;
 final class AttributeGroupNamedArgumentManipulator
 {
     /**
-     * @var ConverterAttributeDecoratorInterface[]
+     * @var AttributeDecoratorInterface[]
      * @readonly
      */
-    private $converterAttributeDecorators;
+    private $attributeDecorators;
     /**
-     * @param ConverterAttributeDecoratorInterface[] $converterAttributeDecorators
+     * @param AttributeDecoratorInterface[] $attributeDecorators
      */
-    public function __construct(array $converterAttributeDecorators)
+    public function __construct(array $attributeDecorators)
     {
-        $this->converterAttributeDecorators = $converterAttributeDecorators;
+        $this->attributeDecorators = $attributeDecorators;
     }
     /**
      * @param AttributeGroup[] $attributeGroups
@@ -28,11 +28,11 @@ final class AttributeGroupNamedArgumentManipulator
         foreach ($attributeGroups as $attributeGroup) {
             foreach ($attributeGroup->attrs as $attr) {
                 $phpAttributeName = $attr->name->getAttribute(AttributeKey::PHP_ATTRIBUTE_NAME);
-                foreach ($this->converterAttributeDecorators as $converterAttributeDecorator) {
-                    if ($converterAttributeDecorator->getAttributeName() !== $phpAttributeName) {
+                foreach ($this->attributeDecorators as $attributeDecorator) {
+                    if ($attributeDecorator->getAttributeName() !== $phpAttributeName) {
                         continue;
                     }
-                    $converterAttributeDecorator->decorate($attr);
+                    $attributeDecorator->decorate($attr);
                 }
             }
         }

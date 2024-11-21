@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\NodeManipulator;
+namespace Rector\Core\NodeManipulator;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -9,14 +9,14 @@ use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\BooleanNot;
-use Rector\Exception\ShouldNotHappenException;
+use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\PhpParser\Node\AssignAndBinaryMap;
 use Rector\Php71\ValueObject\TwoNodeMatch;
-use Rector\PhpParser\Node\AssignAndBinaryMap;
 final class BinaryOpManipulator
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\AssignAndBinaryMap
+     * @var \Rector\Core\PhpParser\Node\AssignAndBinaryMap
      */
     private $assignAndBinaryMap;
     public function __construct(AssignAndBinaryMap $assignAndBinaryMap)
@@ -60,9 +60,9 @@ final class BinaryOpManipulator
         if ($inversedNodeClass === null) {
             return null;
         }
-        $firstInversedExpr = $this->inverseNode($booleanOr->left);
-        $secondInversedExpr = $this->inverseNode($booleanOr->right);
-        return new $inversedNodeClass($firstInversedExpr, $secondInversedExpr);
+        $firstInversedNode = $this->inverseNode($booleanOr->left);
+        $secondInversedNode = $this->inverseNode($booleanOr->right);
+        return new $inversedNodeClass($firstInversedNode, $secondInversedNode);
     }
     public function invertCondition(BinaryOp $binaryOp) : ?BinaryOp
     {

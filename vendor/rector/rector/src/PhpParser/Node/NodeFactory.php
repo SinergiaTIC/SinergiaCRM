@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\PhpParser\Node;
+namespace Rector\Core\PhpParser\Node;
 
 use PhpParser\Builder\Method;
 use PhpParser\Builder\Param as ParamBuilder;
@@ -15,9 +15,7 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\BooleanAnd;
-use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\BinaryOp\Concat;
-use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\Cast;
 use PhpParser\Node\Expr\ClassConstFetch;
@@ -37,22 +35,29 @@ use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
+use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\Type\Type;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\Enum\ObjectReference;
-use Rector\Exception\NotImplementedYetException;
-use Rector\Exception\ShouldNotHappenException;
-use Rector\NodeDecorator\PropertyTypeDecorator;
+use Rector\Core\Configuration\CurrentNodeProvider;
+use Rector\Core\Enum\ObjectReference;
+use Rector\Core\Exception\NotImplementedYetException;
+use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\NodeDecorator\PropertyTypeDecorator;
+use Rector\Core\ValueObject\MethodName;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser;
 use Rector\PHPStanStaticTypeMapper\Enum\TypeKind;
 use Rector\PostRector\ValueObject\PropertyMetadata;
 use Rector\StaticTypeMapper\StaticTypeMapper;
 /**
- * @see \Rector\Tests\PhpParser\Node\NodeFactoryTest
+ * @see \Rector\Core\Tests\PhpParser\Node\NodeFactoryTest
  */
 final class NodeFactory
 {
+    /**
+     * @var string
+     */
+    private const THIS = 'this';
     /**
      * @readonly
      * @var \PhpParser\BuilderFactory
@@ -70,25 +75,21 @@ final class NodeFactory
     private $staticTypeMapper;
     /**
      * @readonly
-     * @var \Rector\NodeDecorator\PropertyTypeDecorator
+     * @var \Rector\Core\Configuration\CurrentNodeProvider
      */
-    private $propertyTypeDecorator;
+    private $currentNodeProvider;
     /**
      * @readonly
-     * @var \Rector\PhpDocParser\NodeTraverser\SimpleCallableNodeTraverser
+     * @var \Rector\Core\NodeDecorator\PropertyTypeDecorator
      */
-    private $simpleCallableNodeTraverser;
-    /**
-     * @var string
-     */
-    private const THIS = 'this';
-    public function __construct(BuilderFactory $builderFactory, PhpDocInfoFactory $phpDocInfoFactory, StaticTypeMapper $staticTypeMapper, PropertyTypeDecorator $propertyTypeDecorator, SimpleCallableNodeTraverser $simpleCallableNodeTraverser)
+    private $propertyTypeDecorator;
+    public function __construct(BuilderFactory $builderFactory, PhpDocInfoFactory $phpDocInfoFactory, StaticTypeMapper $staticTypeMapper, CurrentNodeProvider $currentNodeProvider, PropertyTypeDecorator $propertyTypeDecorator)
     {
         $this->builderFactory = $builderFactory;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
         $this->staticTypeMapper = $staticTypeMapper;
+        $this->currentNodeProvider = $currentNodeProvider;
         $this->propertyTypeDecorator = $propertyTypeDecorator;
-        $this->simpleCallableNodeTraverser = $simpleCallableNodeTraverser;
     }
     /**
      * @param string|ObjectReference::* $className
@@ -167,11 +168,22 @@ final class NodeFactory
         $param = new ParamBuilder($name);
         if ($type instanceof Type) {
             $typeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($type, TypeKind::PARAM);
-            if ($typeNode instanceof Node) {
+            if ($typeNode !== null) {
                 $param->setType($typeNode);
             }
         }
         return $param->getNode();
+    }
+    public function createPublicInjectPropertyFromNameAndType(string $name, ?Type $type) : Property
+    {
+        $propertyBuilder = new PropertyBuilder($name);
+        $propertyBuilder->makePublic();
+        $property = $propertyBuilder->getNode();
+        $this->propertyTypeDecorator->decorate($property, $type);
+        // add @inject
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($property);
+        $phpDocInfo->addPhpDocTagNode(new PhpDocTagNode('@inject', new GenericTagValueNode('')));
+        return $property;
     }
     public function createPrivatePropertyFromNameAndType(string $name, ?Type $type) : Property
     {
@@ -206,6 +218,13 @@ final class NodeFactory
     {
         $fetcherExpr = \is_string($variableNameOrExpr) ? new Variable($variableNameOrExpr) : $variableNameOrExpr;
         return $this->builderFactory->propertyFetch($fetcherExpr, $property);
+    }
+    /**
+     * @param Param[] $params
+     */
+    public function createParentConstructWithParams(array $params) : StaticCall
+    {
+        return new StaticCall(new Name(ObjectReference::PARENT), new Identifier(MethodName::CONSTRUCT), $this->createArgsFromParams($params));
     }
     /**
      * @api doctrine
@@ -258,6 +277,18 @@ final class NodeFactory
         $name = new Name(ObjectReference::SELF);
         return new ClassConstFetch($name, $constantName);
     }
+    /**
+     * @param Param[] $params
+     * @return Arg[]
+     */
+    public function createArgsFromParams(array $params) : array
+    {
+        $args = [];
+        foreach ($params as $param) {
+            $args[] = new Arg($param->var);
+        }
+        return $args;
+    }
     public function createNull() : ConstFetch
     {
         return new ConstFetch(new Name('null'));
@@ -268,7 +299,7 @@ final class NodeFactory
         $propertyType = $propertyMetadata->getType();
         if ($propertyType instanceof Type) {
             $typeNode = $this->staticTypeMapper->mapPHPStanTypeToPhpParserNode($propertyType, TypeKind::PROPERTY);
-            if ($typeNode instanceof Node) {
+            if ($typeNode !== null) {
                 $paramBuilder->setType($typeNode);
             }
         }
@@ -291,10 +322,20 @@ final class NodeFactory
      */
     public function createClassConstFetchFromName(Name $className, string $constantName) : ClassConstFetch
     {
-        return $this->builderFactory->classConstFetch($className, $constantName);
+        $classConstFetch = $this->builderFactory->classConstFetch($className, $constantName);
+        $classNameString = $className->toString();
+        if (\in_array($classNameString, [ObjectReference::SELF, ObjectReference::STATIC], \true)) {
+            $currentNode = $this->currentNodeProvider->getNode();
+            if ($currentNode instanceof Node) {
+                $classConstFetch->class->setAttribute(AttributeKey::RESOLVED_NAME, $className);
+            }
+        } else {
+            $classConstFetch->class->setAttribute(AttributeKey::RESOLVED_NAME, $classNameString);
+        }
+        return $classConstFetch;
     }
     /**
-     * @param array<NotIdentical|BooleanAnd|BooleanOr|Identical> $newNodes
+     * @param array<NotIdentical|BooleanAnd> $newNodes
      */
     public function createReturnBooleanAnd(array $newNodes) : ?Expr
     {
@@ -305,25 +346,6 @@ final class NodeFactory
             return $newNodes[0];
         }
         return $this->createBooleanAndFromNodes($newNodes);
-    }
-    /**
-     * Setting all child nodes to null is needed to avoid reprint of invalid tokens
-     * @see https://github.com/rectorphp/rector/issues/8712
-     *
-     * @template TNode as Node
-     *
-     * @param TNode $node
-     * @return TNode
-     */
-    public function createReprintedNode(Node $node) : Node
-    {
-        // reset original node, to allow the printer to re-use the node
-        $node->setAttribute(AttributeKey::ORIGINAL_NODE, null);
-        $this->simpleCallableNodeTraverser->traverseNodesWithCallable($node, static function (Node $subNode) : Node {
-            $subNode->setAttribute(AttributeKey::ORIGINAL_NODE, null);
-            return $subNode;
-        });
-        return $node;
     }
     /**
      * @param string|int|null $key
@@ -342,10 +364,12 @@ final class NodeFactory
             $arrayItem = new ArrayItem($itemValue);
         } elseif (\is_array($item)) {
             $arrayItem = new ArrayItem($this->createArray($item));
-        } elseif ($item === null || $item instanceof ClassConstFetch) {
+        }
+        if ($item === null || $item instanceof ClassConstFetch) {
             $itemValue = BuilderHelpers::normalizeValue($item);
             $arrayItem = new ArrayItem($itemValue);
-        } elseif ($item instanceof Arg) {
+        }
+        if ($item instanceof Arg) {
             $arrayItem = new ArrayItem($item->value);
         }
         if ($arrayItem instanceof ArrayItem) {
@@ -366,17 +390,17 @@ final class NodeFactory
         $arrayItem->key = BuilderHelpers::normalizeValue($key);
     }
     /**
-     * @param Expr\BinaryOp[] $binaryOps
+     * @param NotIdentical[]|BooleanAnd[] $exprs
      */
-    private function createBooleanAndFromNodes(array $binaryOps) : BooleanAnd
+    private function createBooleanAndFromNodes(array $exprs) : BooleanAnd
     {
-        /** @var NotIdentical|BooleanAnd $mainBooleanAnd */
-        $mainBooleanAnd = \array_shift($binaryOps);
-        foreach ($binaryOps as $binaryOp) {
-            $mainBooleanAnd = new BooleanAnd($mainBooleanAnd, $binaryOp);
+        /** @var NotIdentical|BooleanAnd $booleanAnd */
+        $booleanAnd = \array_shift($exprs);
+        foreach ($exprs as $expr) {
+            $booleanAnd = new BooleanAnd($booleanAnd, $expr);
         }
-        /** @var BooleanAnd $mainBooleanAnd */
-        return $mainBooleanAnd;
+        /** @var BooleanAnd $booleanAnd */
+        return $booleanAnd;
     }
     /**
      * @param string|ObjectReference::* $className

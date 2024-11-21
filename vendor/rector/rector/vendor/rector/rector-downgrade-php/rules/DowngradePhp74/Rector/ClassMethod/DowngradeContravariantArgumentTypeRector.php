@@ -10,13 +10,11 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\UnionType;
 use PHPStan\Reflection\ClassReflection;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTypeChanger;
-use Rector\NodeAnalyzer\ParamAnalyzer;
-use Rector\Rector\AbstractRector;
-use Rector\Reflection\ReflectionResolver;
-use Rector\StaticTypeMapper\StaticTypeMapper;
-use Rector\ValueObject\MethodName;
+use Rector\Core\NodeAnalyzer\ParamAnalyzer;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\MethodName;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
@@ -36,35 +34,19 @@ final class DowngradeContravariantArgumentTypeRector extends AbstractRector
     private $phpDocTypeChanger;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\ParamAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\ParamAnalyzer
      */
     private $paramAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    /**
-     * @readonly
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
-     */
-    private $phpDocInfoFactory;
-    /**
-     * @readonly
-     * @var \Rector\StaticTypeMapper\StaticTypeMapper
-     */
-    private $staticTypeMapper;
-    /**
-     * @var bool
-     */
-    private $hasChanged = \false;
-    public function __construct(PhpDocTypeChanger $phpDocTypeChanger, ParamAnalyzer $paramAnalyzer, ReflectionResolver $reflectionResolver, PhpDocInfoFactory $phpDocInfoFactory, StaticTypeMapper $staticTypeMapper)
+    public function __construct(PhpDocTypeChanger $phpDocTypeChanger, ParamAnalyzer $paramAnalyzer, ReflectionResolver $reflectionResolver)
     {
         $this->phpDocTypeChanger = $phpDocTypeChanger;
         $this->paramAnalyzer = $paramAnalyzer;
         $this->reflectionResolver = $reflectionResolver;
-        $this->phpDocInfoFactory = $phpDocInfoFactory;
-        $this->staticTypeMapper = $staticTypeMapper;
     }
     /**
      * @return array<class-string<Node>>
@@ -124,12 +106,8 @@ CODE_SAMPLE
         if ($node->params === []) {
             return null;
         }
-        $this->hasChanged = \false;
         foreach ($node->params as $param) {
             $this->refactorParam($param, $node);
-        }
-        if ($this->hasChanged) {
-            return $node;
         }
         return null;
     }
@@ -243,7 +221,6 @@ CODE_SAMPLE
         }
         $this->decorateWithDocBlock($functionLike, $param);
         $param->type = null;
-        $this->hasChanged = \true;
     }
     /**
      * @param \PhpParser\Node\Stmt\ClassMethod|\PhpParser\Node\Stmt\Function_ $functionLike
@@ -256,6 +233,6 @@ CODE_SAMPLE
         $type = $this->staticTypeMapper->mapPhpParserNodePHPStanType($param->type);
         $paramName = $this->getName($param->var) ?? '';
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($functionLike);
-        $this->phpDocTypeChanger->changeParamType($functionLike, $phpDocInfo, $type, $param, $paramName);
+        $this->phpDocTypeChanger->changeParamType($phpDocInfo, $type, $param, $paramName);
     }
 }

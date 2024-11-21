@@ -3,11 +3,15 @@
 declare (strict_types=1);
 namespace Rector\Php74\Guard;
 
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Reflection\ClassReflection;
-use Rector\NodeAnalyzer\PropertyAnalyzer;
-use Rector\NodeManipulator\PropertyManipulator;
+use Rector\Core\Exception\ShouldNotHappenException;
+use Rector\Core\NodeAnalyzer\PropertyAnalyzer;
+use Rector\Core\NodeManipulator\PropertyManipulator;
+use Rector\Core\Reflection\ReflectionResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Privatization\Guard\ParentPropertyLookupGuard;
 final class PropertyTypeChangeGuard
 {
@@ -18,12 +22,12 @@ final class PropertyTypeChangeGuard
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\PropertyAnalyzer
+     * @var \Rector\Core\NodeAnalyzer\PropertyAnalyzer
      */
     private $propertyAnalyzer;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\PropertyManipulator
+     * @var \Rector\Core\NodeManipulator\PropertyManipulator
      */
     private $propertyManipulator;
     /**
@@ -31,16 +35,26 @@ final class PropertyTypeChangeGuard
      * @var \Rector\Privatization\Guard\ParentPropertyLookupGuard
      */
     private $parentPropertyLookupGuard;
-    public function __construct(NodeNameResolver $nodeNameResolver, PropertyAnalyzer $propertyAnalyzer, PropertyManipulator $propertyManipulator, ParentPropertyLookupGuard $parentPropertyLookupGuard)
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
+     */
+    private $reflectionResolver;
+    public function __construct(NodeNameResolver $nodeNameResolver, PropertyAnalyzer $propertyAnalyzer, PropertyManipulator $propertyManipulator, ParentPropertyLookupGuard $parentPropertyLookupGuard, ReflectionResolver $reflectionResolver)
     {
         $this->nodeNameResolver = $nodeNameResolver;
         $this->propertyAnalyzer = $propertyAnalyzer;
         $this->propertyManipulator = $propertyManipulator;
         $this->parentPropertyLookupGuard = $parentPropertyLookupGuard;
+        $this->reflectionResolver = $reflectionResolver;
     }
-    public function isLegal(Property $property, ClassReflection $classReflection, bool $inlinePublic = \true, bool $isConstructorPromotion = \false) : bool
+    public function isLegal(Property $property, bool $inlinePublic = \true, bool $isConstructorPromotion = \false) : bool
     {
         if (\count($property->props) > 1) {
+            return \false;
+        }
+        $classReflection = $this->reflectionResolver->resolveClassReflection($property);
+        if (!$classReflection instanceof ClassReflection) {
             return \false;
         }
         /**
@@ -66,16 +80,20 @@ final class PropertyTypeChangeGuard
         if ($isConstructorPromotion) {
             return \true;
         }
-        return $this->isSafeProtectedProperty($classReflection, $property);
+        return $this->isSafeProtectedProperty($property);
     }
-    private function isSafeProtectedProperty(ClassReflection $classReflection, Property $property) : bool
+    private function isSafeProtectedProperty(Property $property) : bool
     {
         if (!$property->isProtected()) {
             return \false;
         }
-        if (!$classReflection->isFinalByKeyword()) {
+        $parentNode = $property->getAttribute(AttributeKey::PARENT_NODE);
+        if (!$parentNode instanceof Class_) {
+            throw new ShouldNotHappenException();
+        }
+        if (!$parentNode->isFinal()) {
             return \false;
         }
-        return $this->parentPropertyLookupGuard->isLegal($property, $classReflection);
+        return $this->parentPropertyLookupGuard->isLegal($property, $parentNode);
     }
 }

@@ -14,11 +14,10 @@ use PhpParser\Node\Stmt\ClassLike;
 use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\Type;
+use Rector\Core\PhpParser\AstResolver;
+use Rector\Core\Rector\AbstractScopeAwareRector;
 use Rector\DowngradePhp81\NodeAnalyzer\ArraySpreadAnalyzer;
 use Rector\DowngradePhp81\NodeFactory\ArrayMergeFromArraySpreadFactory;
-use Rector\PhpParser\AstResolver;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractScopeAwareRector;
 use Rector\StaticTypeMapper\ValueObject\Type\FullyQualifiedObjectType;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -41,20 +40,14 @@ final class DowngradeArraySpreadRector extends AbstractScopeAwareRector
     private $arraySpreadAnalyzer;
     /**
      * @readonly
-     * @var \Rector\PhpParser\AstResolver
+     * @var \Rector\Core\PhpParser\AstResolver
      */
     private $astResolver;
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
-     */
-    private $betterNodeFinder;
-    public function __construct(ArrayMergeFromArraySpreadFactory $arrayMergeFromArraySpreadFactory, ArraySpreadAnalyzer $arraySpreadAnalyzer, AstResolver $astResolver, BetterNodeFinder $betterNodeFinder)
+    public function __construct(ArrayMergeFromArraySpreadFactory $arrayMergeFromArraySpreadFactory, ArraySpreadAnalyzer $arraySpreadAnalyzer, AstResolver $astResolver)
     {
         $this->arrayMergeFromArraySpreadFactory = $arrayMergeFromArraySpreadFactory;
         $this->arraySpreadAnalyzer = $arraySpreadAnalyzer;
         $this->astResolver = $astResolver;
-        $this->betterNodeFinder = $betterNodeFinder;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -84,13 +77,8 @@ class SomeClass
 
     public function runWithIterable()
     {
-        $fruits = array_merge(
-            ['banana', 'orange'],
-            is_array(new ArrayIterator(['durian', 'kiwi'])) ?
-                new ArrayIterator(['durian', 'kiwi']) :
-                iterator_to_array(new ArrayIterator(['durian', 'kiwi'])),
-            ['watermelon']
-        );
+        $item0Unpacked = new ArrayIterator(['durian', 'kiwi']);
+        $fruits = array_merge(['banana', 'orange'], is_array($item0Unpacked) ? $item0Unpacked : iterator_to_array($item0Unpacked), ['watermelon']);
     }
 }
 CODE_SAMPLE
@@ -114,8 +102,14 @@ CODE_SAMPLE
         if (!$this->arraySpreadAnalyzer->isArrayWithUnpack($node)) {
             return null;
         }
+        $shouldIncrement = (bool) $this->betterNodeFinder->findFirstNext($node, function (Node $subNode) : bool {
+            if (!$subNode instanceof Array_) {
+                return \false;
+            }
+            return $this->arraySpreadAnalyzer->isArrayWithUnpack($subNode);
+        });
         /** @var MutatingScope $scope */
-        return $this->arrayMergeFromArraySpreadFactory->createFromArray($node, $scope);
+        return $this->arrayMergeFromArraySpreadFactory->createFromArray($node, $scope, $this->file, $shouldIncrement);
     }
     private function refactorUnderClassConst(ClassConst $classConst) : ?ClassConst
     {

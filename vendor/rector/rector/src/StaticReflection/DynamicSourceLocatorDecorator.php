@@ -1,10 +1,10 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\StaticReflection;
+namespace Rector\Core\StaticReflection;
 
-use Rector\FileSystem\FileAndDirectoryFilter;
-use Rector\FileSystem\FilesystemTweaker;
+use Rector\Core\FileSystem\FileAndDirectoryFilter;
+use Rector\Core\FileSystem\PhpFilesFinder;
 use Rector\NodeTypeResolver\Reflection\BetterReflection\SourceLocatorProvider\DynamicSourceLocatorProvider;
 /**
  * @see https://phpstan.org/blog/zero-config-analysis-with-static-reflection
@@ -19,19 +19,19 @@ final class DynamicSourceLocatorDecorator
     private $dynamicSourceLocatorProvider;
     /**
      * @readonly
-     * @var \Rector\FileSystem\FileAndDirectoryFilter
+     * @var \Rector\Core\FileSystem\PhpFilesFinder
      */
-    private $fileAndDirectoryFilter;
+    private $phpFilesFinder;
     /**
      * @readonly
-     * @var \Rector\FileSystem\FilesystemTweaker
+     * @var \Rector\Core\FileSystem\FileAndDirectoryFilter
      */
-    private $filesystemTweaker;
-    public function __construct(DynamicSourceLocatorProvider $dynamicSourceLocatorProvider, FileAndDirectoryFilter $fileAndDirectoryFilter, FilesystemTweaker $filesystemTweaker)
+    private $fileAndDirectoryFilter;
+    public function __construct(DynamicSourceLocatorProvider $dynamicSourceLocatorProvider, PhpFilesFinder $phpFilesFinder, FileAndDirectoryFilter $fileAndDirectoryFilter)
     {
         $this->dynamicSourceLocatorProvider = $dynamicSourceLocatorProvider;
+        $this->phpFilesFinder = $phpFilesFinder;
         $this->fileAndDirectoryFilter = $fileAndDirectoryFilter;
-        $this->filesystemTweaker = $filesystemTweaker;
     }
     /**
      * @param string[] $paths
@@ -41,14 +41,12 @@ final class DynamicSourceLocatorDecorator
         if ($paths === []) {
             return;
         }
-        $paths = $this->filesystemTweaker->resolveWithFnmatch($paths);
         $files = $this->fileAndDirectoryFilter->filterFiles($paths);
         $this->dynamicSourceLocatorProvider->addFiles($files);
         $directories = $this->fileAndDirectoryFilter->filterDirectories($paths);
-        $this->dynamicSourceLocatorProvider->addDirectories($directories);
-    }
-    public function isPathsEmpty() : bool
-    {
-        return $this->dynamicSourceLocatorProvider->isPathsEmpty();
+        foreach ($directories as $directory) {
+            $filesInDirectory = $this->phpFilesFinder->findInPaths([$directory]);
+            $this->dynamicSourceLocatorProvider->addFilesByDirectory($directory, $filesInDirectory);
+        }
     }
 }

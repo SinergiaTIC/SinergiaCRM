@@ -9,15 +9,15 @@ use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\Instanceof_;
 use PhpParser\Node\Name;
-use Rector\NodeManipulator\BinaryOpManipulator;
+use Rector\Core\NodeManipulator\BinaryOpManipulator;
+use Rector\Core\PhpParser\Comparing\NodeComparator;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\Php71\ValueObject\TwoNodeMatch;
-use Rector\PhpParser\Comparing\NodeComparator;
 final class IsArrayAndDualCheckToAble
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\BinaryOpManipulator
+     * @var \Rector\Core\NodeManipulator\BinaryOpManipulator
      */
     private $binaryOpManipulator;
     /**
@@ -27,7 +27,7 @@ final class IsArrayAndDualCheckToAble
     private $nodeNameResolver;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Comparing\NodeComparator
+     * @var \Rector\Core\PhpParser\Comparing\NodeComparator
      */
     private $nodeComparator;
     public function __construct(BinaryOpManipulator $binaryOpManipulator, NodeNameResolver $nodeNameResolver, NodeComparator $nodeComparator)
@@ -56,14 +56,13 @@ final class IsArrayAndDualCheckToAble
         if (!$this->nodeNameResolver->isName($funcCallExpr, 'is_array')) {
             return null;
         }
-        if ($funcCallExpr->isFirstClassCallable()) {
+        if (!isset($funcCallExpr->args[0])) {
             return null;
         }
-        if (!isset($funcCallExpr->getArgs()[0])) {
+        if (!$funcCallExpr->args[0] instanceof Arg) {
             return null;
         }
-        $firstArg = $funcCallExpr->getArgs()[0];
-        $firstExprNode = $firstArg->value;
+        $firstExprNode = $funcCallExpr->args[0]->value;
         if (!$this->nodeComparator->areNodesEqual($instanceofExpr->expr, $firstExprNode)) {
             return null;
         }

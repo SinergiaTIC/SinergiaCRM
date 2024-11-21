@@ -1,18 +1,35 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Bootstrap;
+namespace Rector\Core\Bootstrap;
 
-use Rector\ValueObject\Bootstrap\BootstrapConfigs;
-use RectorPrefix202411\Symfony\Component\Console\Input\ArgvInput;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use Rector\Core\ValueObject\Bootstrap\BootstrapConfigs;
+use RectorPrefix202305\Symfony\Component\Console\Input\ArgvInput;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 final class RectorConfigsResolver
 {
     public function provide() : BootstrapConfigs
     {
         $argvInput = new ArgvInput();
         $mainConfigFile = $this->resolveFromInputWithFallback($argvInput, 'rector.php');
-        return new BootstrapConfigs($mainConfigFile, []);
+        $rectorRecipeConfigFile = $this->resolveRectorRecipeConfig($argvInput);
+        $configFiles = [];
+        if ($rectorRecipeConfigFile !== null) {
+            $configFiles[] = $rectorRecipeConfigFile;
+        }
+        return new BootstrapConfigs($mainConfigFile, $configFiles);
+    }
+    private function resolveRectorRecipeConfig(ArgvInput $argvInput) : ?string
+    {
+        if ($argvInput->getFirstArgument() !== 'generate') {
+            return null;
+        }
+        // autoload rector recipe file if present, just for \Rector\RectorGenerator\Command\GenerateCommand
+        $rectorRecipeFilePath = \getcwd() . '/rector-recipe.php';
+        if (!\file_exists($rectorRecipeFilePath)) {
+            return null;
+        }
+        return $rectorRecipeFilePath;
     }
     private function resolveFromInput(ArgvInput $argvInput) : ?string
     {

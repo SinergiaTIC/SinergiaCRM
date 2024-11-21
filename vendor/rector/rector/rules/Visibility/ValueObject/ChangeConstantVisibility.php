@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace Rector\Visibility\ValueObject;
 
 use PHPStan\Type\ObjectType;
-use Rector\Validation\RectorAssert;
+use Rector\Core\Validation\RectorAssert;
 final class ChangeConstantVisibility
 {
     /**

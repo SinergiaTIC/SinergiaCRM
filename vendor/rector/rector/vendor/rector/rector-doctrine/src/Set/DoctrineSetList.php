@@ -3,15 +3,20 @@
 declare (strict_types=1);
 namespace Rector\Doctrine\Set;
 
+use Rector\Set\Contract\SetListInterface;
 /**
  * @api
  */
-final class DoctrineSetList
+final class DoctrineSetList implements SetListInterface
 {
     /**
      * @var string
      */
-    public const TYPED_COLLECTIONS = __DIR__ . '/../../config/sets/typed-collections.php';
+    public const DOCTRINE_25 = __DIR__ . '/../../config/sets/doctrine25.php';
+    /**
+     * @var string
+     */
+    public const DOCTRINE_BEHAVIORS_20 = __DIR__ . '/../../config/sets/doctrine-behaviors-20.php';
     /**
      * @var string
      */
@@ -19,15 +24,11 @@ final class DoctrineSetList
     /**
      * @var string
      */
-    public const YAML_TO_ANNOTATIONS = __DIR__ . '/../../config/yaml-to-annotations.php';
-    /**
-     * @var string
-     */
     public const DOCTRINE_COMMON_20 = __DIR__ . '/../../config/sets/doctrine-common-20.php';
     /**
      * @var string
      */
-    public const DOCTRINE_COLLECTION_22 = __DIR__ . '/../../config/sets/doctrine-collection-22.php';
+    public const DOCTRINE_DBAL_210 = __DIR__ . '/../../config/sets/doctrine-dbal-210.php';
     /**
      * @var string
      */
@@ -43,7 +44,7 @@ final class DoctrineSetList
     /**
      * @var string
      */
-    public const DOCTRINE_ORM_25 = __DIR__ . '/../../config/sets/doctrine-orm-25.php';
+    public const DOCTRINE_REPOSITORY_AS_SERVICE = __DIR__ . '/../../config/sets/doctrine-repository-as-service.php';
     /**
      * @var string
      */
@@ -59,17 +60,13 @@ final class DoctrineSetList
     /**
      * @var string
      */
-    public const DOCTRINE_BUNDLE_210 = __DIR__ . '/../../config/sets/doctrine-bundle-210.php';
+    public const ANNOTATIONS_TO_ATTRIBUTES = __DIR__ . '/../../config/sets/doctrine-annotations-to-attributes.php';
     /**
      * @var string
      */
-    public const ANNOTATIONS_TO_ATTRIBUTES = __DIR__ . '/../../config/sets/attributes/doctrine.php';
+    public const GEDMO_ANNOTATIONS_TO_ATTRIBUTES = __DIR__ . '/../../config/sets/doctrine-gedmo-annotations-to-attributes.php';
     /**
      * @var string
      */
-    public const GEDMO_ANNOTATIONS_TO_ATTRIBUTES = __DIR__ . '/../../config/sets/attributes/gedmo.php';
-    /**
-     * @var string
-     */
-    public const MONGODB__ANNOTATIONS_TO_ATTRIBUTES = __DIR__ . '/../../config/sets/attributes/mongodb.php';
+    public const DOCTRINE_ODM_23 = __DIR__ . '/../../config/sets/doctrine-odm-23.php';
 }

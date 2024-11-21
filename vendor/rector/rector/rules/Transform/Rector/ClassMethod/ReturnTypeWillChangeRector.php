@@ -5,24 +5,30 @@ namespace Rector\Transform\Rector\ClassMethod;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Interface_;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Core\Contract\Rector\AllowEmptyConfigurableRectorInterface;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer;
 use Rector\Php81\Enum\AttributeName;
 use Rector\PhpAttribute\NodeFactory\PhpAttributeGroupFactory;
-use Rector\Rector\AbstractRector;
-use Rector\Reflection\ReflectionResolver;
 use Rector\Transform\ValueObject\ClassMethodReference;
-use Rector\ValueObject\PhpVersionFeature;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202411\Webmozart\Assert\Assert;
+use RectorPrefix202305\Webmozart\Assert\Assert;
 /**
  * @see \Rector\Tests\Transform\Rector\ClassMethod\ReturnTypeWillChangeRector\ReturnTypeWillChangeRectorTest
  */
-final class ReturnTypeWillChangeRector extends AbstractRector implements MinPhpVersionInterface, ConfigurableRectorInterface
+final class ReturnTypeWillChangeRector extends AbstractRector implements AllowEmptyConfigurableRectorInterface, MinPhpVersionInterface
 {
+    /**
+     * @var ClassMethodReference[]
+     */
+    private $returnTypeChangedClassMethodReferences = [];
     /**
      * @readonly
      * @var \Rector\Php80\NodeAnalyzer\PhpAttributeAnalyzer
@@ -35,19 +41,16 @@ final class ReturnTypeWillChangeRector extends AbstractRector implements MinPhpV
     private $phpAttributeGroupFactory;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    /**
-     * @var ClassMethodReference[]
-     */
-    private $returnTypeChangedClassMethodReferences = [];
     public function __construct(PhpAttributeAnalyzer $phpAttributeAnalyzer, PhpAttributeGroupFactory $phpAttributeGroupFactory, ReflectionResolver $reflectionResolver)
     {
         $this->phpAttributeAnalyzer = $phpAttributeAnalyzer;
         $this->phpAttributeGroupFactory = $phpAttributeGroupFactory;
         $this->reflectionResolver = $reflectionResolver;
-        $this->returnTypeChangedClassMethodReferences = [new ClassMethodReference('ArrayAccess', 'getIterator'), new ClassMethodReference('ArrayAccess', 'offsetGet')];
+        $this->returnTypeChangedClassMethodReferences[] = new ClassMethodReference('ArrayAccess', 'getIterator');
+        $this->returnTypeChangedClassMethodReferences[] = new ClassMethodReference('ArrayAccess', 'offsetGet');
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -75,39 +78,42 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [Class_::class, Interface_::class];
+        return [ClassMethod::class];
     }
     /**
-     * @param Class_|Interface_ $node
+     * @param ClassMethod $node
      */
     public function refactor(Node $node) : ?Node
     {
+        if ($this->phpAttributeAnalyzer->hasPhpAttribute($node, AttributeName::RETURN_TYPE_WILL_CHANGE)) {
+            return null;
+        }
+        // the return type is known, no need to add attribute
+        if ($node->returnType !== null) {
+            return null;
+        }
+        $classLike = $this->betterNodeFinder->findParentByTypes($node, [Class_::class, Interface_::class]);
+        if (!$classLike instanceof ClassLike) {
+            return null;
+        }
+        $classReflection = $this->reflectionResolver->resolveClassAndAnonymousClass($classLike);
+        $methodName = $node->name->toString();
         $hasChanged = \false;
-        $classReflection = $this->reflectionResolver->resolveClassAndAnonymousClass($node);
-        foreach ($node->getMethods() as $classMethod) {
-            if ($this->phpAttributeAnalyzer->hasPhpAttribute($classMethod, AttributeName::RETURN_TYPE_WILL_CHANGE)) {
+        foreach ($this->returnTypeChangedClassMethodReferences as $returnTypeChangedClassMethodReference) {
+            if (!$classReflection->isSubclassOf($returnTypeChangedClassMethodReference->getClass())) {
                 continue;
             }
-            // the return type is known, no need to add attribute
-            if ($classMethod->returnType instanceof Node) {
+            if ($returnTypeChangedClassMethodReference->getMethod() !== $methodName) {
                 continue;
             }
-            foreach ($this->returnTypeChangedClassMethodReferences as $returnTypeChangedClassMethodReference) {
-                if (!$classReflection->isSubclassOf($returnTypeChangedClassMethodReference->getClass())) {
-                    continue;
-                }
-                if (!$this->isName($classMethod, $returnTypeChangedClassMethodReference->getMethod())) {
-                    continue;
-                }
-                $classMethod->attrGroups[] = $this->phpAttributeGroupFactory->createFromClass(AttributeName::RETURN_TYPE_WILL_CHANGE);
-                $hasChanged = \true;
-                break;
-            }
+            $node->attrGroups[] = $this->phpAttributeGroupFactory->createFromClass(AttributeName::RETURN_TYPE_WILL_CHANGE);
+            $hasChanged = \true;
+            break;
         }
-        if ($hasChanged) {
-            return $node;
+        if (!$hasChanged) {
+            return null;
         }
-        return null;
+        return $node;
     }
     /**
      * @param mixed[] $configuration

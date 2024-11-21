@@ -8,11 +8,10 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\ClassMethod;
+use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\Guard\BreakingVariableRenameGuard;
 use Rector\Naming\Naming\ExpectedNameResolver;
 use Rector\Naming\VariableRenamer;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -35,17 +34,11 @@ final class RenameVariableToMatchNewTypeRector extends AbstractRector
      * @var \Rector\Naming\VariableRenamer
      */
     private $variableRenamer;
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
-     */
-    private $betterNodeFinder;
-    public function __construct(BreakingVariableRenameGuard $breakingVariableRenameGuard, ExpectedNameResolver $expectedNameResolver, VariableRenamer $variableRenamer, BetterNodeFinder $betterNodeFinder)
+    public function __construct(BreakingVariableRenameGuard $breakingVariableRenameGuard, ExpectedNameResolver $expectedNameResolver, VariableRenamer $variableRenamer)
     {
         $this->breakingVariableRenameGuard = $breakingVariableRenameGuard;
         $this->expectedNameResolver = $expectedNameResolver;
         $this->variableRenamer = $variableRenamer;
-        $this->betterNodeFinder = $betterNodeFinder;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -87,10 +80,6 @@ CODE_SAMPLE
         $assignsOfNew = $this->getAssignsOfNew($node);
         foreach ($assignsOfNew as $assignOfNew) {
             $expectedName = $this->expectedNameResolver->resolveForAssignNew($assignOfNew);
-            // skip self name as not useful
-            if ($expectedName === 'self') {
-                continue;
-            }
             /** @var Variable $variable */
             $variable = $assignOfNew->var;
             if ($expectedName === null) {

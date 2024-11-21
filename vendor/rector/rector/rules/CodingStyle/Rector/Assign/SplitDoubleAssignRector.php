@@ -9,7 +9,7 @@ use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Stmt\Expression;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
@@ -60,8 +60,8 @@ CODE_SAMPLE
         if (!$firstAssign->expr instanceof Assign) {
             return null;
         }
-        $expr = $this->resolveLastAssignExpr($firstAssign);
-        $collectExpressions = $this->collectExpressions($firstAssign, $expr);
+        $lastAssignValue = $this->resolveLastAssignExpr($firstAssign);
+        $collectExpressions = $this->collectExpressions($firstAssign, $lastAssignValue);
         if ($collectExpressions === []) {
             return null;
         }

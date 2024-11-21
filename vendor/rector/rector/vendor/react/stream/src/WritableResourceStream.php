@@ -1,10 +1,10 @@
 <?php
 
-namespace RectorPrefix202411\React\Stream;
+namespace RectorPrefix202305\React\Stream;
 
-use RectorPrefix202411\Evenement\EventEmitter;
-use RectorPrefix202411\React\EventLoop\Loop;
-use RectorPrefix202411\React\EventLoop\LoopInterface;
+use RectorPrefix202305\Evenement\EventEmitter;
+use RectorPrefix202305\React\EventLoop\Loop;
+use RectorPrefix202305\React\EventLoop\LoopInterface;
 final class WritableResourceStream extends EventEmitter implements WritableStreamInterface
 {
     private $stream;
@@ -22,13 +22,7 @@ final class WritableResourceStream extends EventEmitter implements WritableStrea
     private $writable = \true;
     private $closed = \false;
     private $data = '';
-    /**
-     * @param resource $stream
-     * @param ?LoopInterface $loop
-     * @param ?int $writeBufferSoftLimit
-     * @param ?int $writeChunkSize
-     */
-    public function __construct($stream, $loop = null, $writeBufferSoftLimit = null, $writeChunkSize = null)
+    public function __construct($stream, LoopInterface $loop = null, $writeBufferSoftLimit = null, $writeChunkSize = null)
     {
         if (!\is_resource($stream) || \get_resource_type($stream) !== "stream") {
             throw new \InvalidArgumentException('First parameter must be a valid stream resource');
@@ -42,10 +36,6 @@ final class WritableResourceStream extends EventEmitter implements WritableStrea
         // e.g. pipes on Windows do not support this: https://bugs.php.net/bug.php?id=47918
         if (\stream_set_blocking($stream, \false) !== \true) {
             throw new \RuntimeException('Unable to set stream resource to non-blocking mode');
-        }
-        if ($loop !== null && !$loop instanceof LoopInterface) {
-            // manual type check to support legacy PHP < 7.1
-            throw new \InvalidArgumentException('Argument #2 ($loop) expected null|React\\EventLoop\\LoopInterface');
         }
         $this->stream = $stream;
         $this->loop = $loop ?: Loop::get();

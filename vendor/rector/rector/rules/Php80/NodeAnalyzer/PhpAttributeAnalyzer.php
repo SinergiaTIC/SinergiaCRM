@@ -14,11 +14,16 @@ use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Reflection\ReflectionProvider;
+use Rector\Core\PhpParser\AstResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\Php81\Enum\AttributeName;
 use Rector\PhpAttribute\Enum\DocTagNodeState;
 final class PhpAttributeAnalyzer
 {
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\AstResolver
+     */
+    private $astResolver;
     /**
      * @readonly
      * @var \Rector\NodeNameResolver\NodeNameResolver
@@ -29,8 +34,9 @@ final class PhpAttributeAnalyzer
      * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
-    public function __construct(NodeNameResolver $nodeNameResolver, ReflectionProvider $reflectionProvider)
+    public function __construct(AstResolver $astResolver, NodeNameResolver $nodeNameResolver, ReflectionProvider $reflectionProvider)
     {
+        $this->astResolver = $astResolver;
         $this->nodeNameResolver = $nodeNameResolver;
         $this->reflectionProvider = $reflectionProvider;
     }
@@ -49,9 +55,6 @@ final class PhpAttributeAnalyzer
         }
         return \false;
     }
-    /**
-     * @param AttributeName::* $attributeClass
-     */
     public function hasInheritedPhpAttribute(Class_ $class, string $attributeClass) : bool
     {
         $className = (string) $this->nodeNameResolver->getName($class);
@@ -61,8 +64,12 @@ final class PhpAttributeAnalyzer
         $classReflection = $this->reflectionProvider->getClass($className);
         $ancestorClassReflections = \array_merge($classReflection->getParents(), $classReflection->getInterfaces());
         foreach ($ancestorClassReflections as $ancestorClassReflection) {
-            $nativeReflection = $ancestorClassReflection->getNativeReflection();
-            if ((\method_exists($nativeReflection, 'getAttributes') ? $nativeReflection->getAttributes($attributeClass) : []) !== []) {
+            $ancestorClassName = $ancestorClassReflection->getName();
+            $resolvedClass = $this->astResolver->resolveClassFromName($ancestorClassName);
+            if (!$resolvedClass instanceof Class_) {
+                continue;
+            }
+            if ($this->hasPhpAttribute($resolvedClass, $attributeClass)) {
                 return \true;
             }
         }

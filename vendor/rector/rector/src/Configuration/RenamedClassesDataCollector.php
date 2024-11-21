@@ -1,24 +1,19 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\Configuration;
+namespace Rector\Core\Configuration;
 
 use PHPStan\Type\ObjectType;
-use Rector\Contract\DependencyInjection\ResetableInterface;
-final class RenamedClassesDataCollector implements ResetableInterface
+final class RenamedClassesDataCollector
 {
     /**
      * @var array<string, string>
      */
     private $oldToNewClasses = [];
-    public function reset() : void
+    public function addOldToNewClass(string $oldClass, string $newClass) : void
     {
-        $this->oldToNewClasses = [];
+        $this->oldToNewClasses[$oldClass] = $newClass;
     }
-    /**
-     * keep public modifier and use internally on matchClassName() method
-     * to keep API as on Configuration level
-     */
     public function hasOldClass(string $oldClass) : bool
     {
         return isset($this->oldToNewClasses[$oldClass]);
@@ -28,8 +23,9 @@ final class RenamedClassesDataCollector implements ResetableInterface
      */
     public function addOldToNewClasses(array $oldToNewClasses) : void
     {
+        $item0Unpacked = $this->oldToNewClasses;
         /** @var array<string, string> $oldToNewClasses */
-        $oldToNewClasses = \array_merge($this->oldToNewClasses, $oldToNewClasses);
+        $oldToNewClasses = \array_merge($item0Unpacked, $oldToNewClasses);
         $this->oldToNewClasses = $oldToNewClasses;
     }
     /**
@@ -42,10 +38,11 @@ final class RenamedClassesDataCollector implements ResetableInterface
     public function matchClassName(ObjectType $objectType) : ?ObjectType
     {
         $className = $objectType->getClassName();
-        if (!$this->hasOldClass($className)) {
+        $renamedClassName = $this->oldToNewClasses[$className] ?? null;
+        if ($renamedClassName === null) {
             return null;
         }
-        return new ObjectType($this->oldToNewClasses[$className]);
+        return new ObjectType($renamedClassName);
     }
     /**
      * @return string[]

@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Input;
+namespace RectorPrefix202305\Symfony\Component\Console\Input;
 
 /**
  * InputAwareInterface should be implemented by classes that depends on the
@@ -20,8 +20,6 @@ interface InputAwareInterface
 {
     /**
      * Sets the Console Input.
-     *
-     * @return void
      */
     public function setInput(InputInterface $input);
 }

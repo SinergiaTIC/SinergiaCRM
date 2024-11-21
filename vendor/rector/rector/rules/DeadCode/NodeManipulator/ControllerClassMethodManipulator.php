@@ -8,6 +8,7 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\PhpDocParser\Ast\PhpDoc\GenericTagValueNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\NodeNameResolver\NodeNameResolver;
 final class ControllerClassMethodManipulator
 {
@@ -21,31 +22,41 @@ final class ControllerClassMethodManipulator
      * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
      */
     private $phpDocInfoFactory;
-    public function __construct(NodeNameResolver $nodeNameResolver, PhpDocInfoFactory $phpDocInfoFactory)
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(NodeNameResolver $nodeNameResolver, PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder)
     {
         $this->nodeNameResolver = $nodeNameResolver;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
-    public function isControllerClassMethod(Class_ $class, ClassMethod $classMethod) : bool
+    public function isControllerClassMethodWithBehaviorAnnotation(ClassMethod $classMethod) : bool
     {
-        if (!$classMethod->isPublic()) {
-            return \false;
-        }
-        if (!$this->hasParentClassController($class)) {
+        if (!$this->isControllerClassMethod($classMethod)) {
             return \false;
         }
         $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($classMethod);
         return $phpDocInfo->hasByType(GenericTagValueNode::class);
+    }
+    private function isControllerClassMethod(ClassMethod $classMethod) : bool
+    {
+        if (!$classMethod->isPublic()) {
+            return \false;
+        }
+        $class = $this->betterNodeFinder->findParentType($classMethod, Class_::class);
+        if (!$class instanceof Class_) {
+            return \false;
+        }
+        return $this->hasParentClassController($class);
     }
     private function hasParentClassController(Class_ $class) : bool
     {
         if (!$class->extends instanceof Name) {
             return \false;
         }
-        $parentClassName = $this->nodeNameResolver->getName($class->extends);
-        if (\substr_compare($parentClassName, 'Controller', -\strlen('Controller')) === 0) {
-            return \true;
-        }
-        return \substr_compare($parentClassName, 'Presenter', -\strlen('Presenter')) === 0;
+        return $this->nodeNameResolver->isName($class->extends, '#(Controller|Presenter)$#');
     }
 }

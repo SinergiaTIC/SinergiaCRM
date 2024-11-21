@@ -16,11 +16,10 @@ use PhpParser\Node\Stmt\Return_;
 use PHPStan\Type\ArrayType;
 use Rector\BetterPhpDocParser\PhpDoc\ArrayItemNode;
 use Rector\BetterPhpDocParser\PhpDoc\DoctrineAnnotationTagValueNode;
-use Rector\BetterPhpDocParser\PhpDoc\StringNode;
 use Rector\BetterPhpDocParser\ValueObject\PhpDoc\DoctrineAnnotation\CurlyListNode;
+use Rector\Core\PhpParser\Node\NodeFactory;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
-use Rector\PhpParser\Node\NodeFactory;
 use Rector\Symfony\Helper\TemplateGuesser;
 final class ThisRenderFactory
 {
@@ -31,7 +30,7 @@ final class ThisRenderFactory
     private $arrayFromCompactFactory;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\NodeFactory
+     * @var \Rector\Core\PhpParser\Node\NodeFactory
      */
     private $nodeFactory;
     /**
@@ -115,11 +114,7 @@ final class ThisRenderFactory
     {
         $arrayItems = [];
         foreach ($arrayItemNodes as $arrayItemNode) {
-            $arrayItemNodeValue = $arrayItemNode->value;
-            if ($arrayItemNodeValue instanceof StringNode) {
-                $arrayItemNodeValue = $arrayItemNodeValue->value;
-            }
-            $arrayItems[] = new ArrayItem(new Variable($arrayItemNodeValue), new String_($arrayItemNodeValue));
+            $arrayItems[] = new ArrayItem(new Variable($arrayItemNode->value), new String_($arrayItemNode->value));
         }
         return new Array_($arrayItems);
     }
@@ -134,24 +129,12 @@ final class ThisRenderFactory
     private function resolveTemplate(DoctrineAnnotationTagValueNode $doctrineAnnotationTagValueNode) : ?string
     {
         $templateParameter = $doctrineAnnotationTagValueNode->getValue('template');
-        if ($templateParameter instanceof ArrayItemNode) {
-            $templateParameterValue = $templateParameter->value;
-            if ($templateParameterValue instanceof StringNode) {
-                $templateParameterValue = $templateParameterValue->value;
-            }
-            if (\is_string($templateParameterValue)) {
-                return $templateParameterValue;
-            }
+        if ($templateParameter instanceof ArrayItemNode && \is_string($templateParameter->value)) {
+            return $templateParameter->value;
         }
         $arrayItemNode = $doctrineAnnotationTagValueNode->getSilentValue();
-        if ($arrayItemNode instanceof ArrayItemNode) {
-            $arrayItemNodeValue = $arrayItemNode->value;
-            if ($arrayItemNodeValue instanceof StringNode) {
-                $arrayItemNodeValue = $arrayItemNodeValue->value;
-            }
-            if (\is_string($arrayItemNodeValue)) {
-                return $arrayItemNodeValue;
-            }
+        if ($arrayItemNode instanceof ArrayItemNode && \is_string($arrayItemNode->value)) {
+            return $arrayItemNode->value;
         }
         return null;
     }

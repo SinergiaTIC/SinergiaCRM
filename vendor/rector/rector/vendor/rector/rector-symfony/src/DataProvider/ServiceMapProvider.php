@@ -3,8 +3,8 @@
 declare (strict_types=1);
 namespace Rector\Symfony\DataProvider;
 
-use Rector\Configuration\Option;
-use Rector\Configuration\Parameter\SimpleParameterProvider;
+use Rector\Core\Configuration\Option;
+use Rector\Core\Configuration\Parameter\ParameterProvider;
 use Rector\Symfony\ValueObject\ServiceMap\ServiceMap;
 use Rector\Symfony\ValueObjectFactory\ServiceMapFactory;
 /**
@@ -14,6 +14,11 @@ final class ServiceMapProvider
 {
     /**
      * @readonly
+     * @var \Rector\Core\Configuration\Parameter\ParameterProvider
+     */
+    private $parameterProvider;
+    /**
+     * @readonly
      * @var \Rector\Symfony\ValueObjectFactory\ServiceMapFactory
      */
     private $serviceMapFactory;
@@ -21,25 +26,22 @@ final class ServiceMapProvider
      * @var \Rector\Symfony\ValueObject\ServiceMap\ServiceMap|null
      */
     private $serviceMap;
-    public function __construct(ServiceMapFactory $serviceMapFactory, ?ServiceMap $serviceMap = null)
+    public function __construct(ParameterProvider $parameterProvider, ServiceMapFactory $serviceMapFactory, ?ServiceMap $serviceMap = null)
     {
+        $this->parameterProvider = $parameterProvider;
         $this->serviceMapFactory = $serviceMapFactory;
         $this->serviceMap = $serviceMap;
     }
     public function provide() : ServiceMap
     {
-        // avoid caching in tests
-        if (\defined('PHPUNIT_COMPOSER_INSTALL')) {
-            $this->serviceMap = null;
-        }
         if ($this->serviceMap instanceof ServiceMap) {
             return $this->serviceMap;
         }
-        if (SimpleParameterProvider::hasParameter(Option::SYMFONY_CONTAINER_XML_PATH_PARAMETER)) {
-            $symfonyContainerXmlPath = SimpleParameterProvider::provideStringParameter(Option::SYMFONY_CONTAINER_XML_PATH_PARAMETER);
-            $this->serviceMap = $this->serviceMapFactory->createFromFileContent($symfonyContainerXmlPath);
-        } else {
+        $symfonyContainerXmlPath = (string) $this->parameterProvider->provideParameter(Option::SYMFONY_CONTAINER_XML_PATH_PARAMETER);
+        if ($symfonyContainerXmlPath === '') {
             $this->serviceMap = $this->serviceMapFactory->createEmpty();
+        } else {
+            $this->serviceMap = $this->serviceMapFactory->createFromFileContent($symfonyContainerXmlPath);
         }
         return $this->serviceMap;
     }

@@ -1,6 +1,6 @@
 # Rector Rules for PHPUnit
 
-See available [PHPUnit rules](https://getrector.com/find-rule?activeRectorSetGroup=phpunit)
+See available [PHPUnit rules](/docs/rector_rules_overview.md)
 
 ## Install
 
@@ -17,13 +17,14 @@ composer require rector/rector --dev
 To add a set to your config, use `Rector\PHPUnit\Set\PHPUnitSetList` class and pick one of constants:
 
 ```php
-use Rector\Config\RectorConfig;
 use Rector\PHPUnit\Set\PHPUnitSetList;
+use Rector\Config\RectorConfig;
 
-return RectorConfig::configure()
-    ->withSets([
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->sets([
         PHPUnitSetList::PHPUNIT_90,
     ]);
+};
 ```
 
 <br>

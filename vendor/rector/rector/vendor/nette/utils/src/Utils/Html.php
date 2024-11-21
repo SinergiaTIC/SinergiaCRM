@@ -5,10 +5,10 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 declare (strict_types=1);
-namespace RectorPrefix202411\Nette\Utils;
+namespace RectorPrefix202305\Nette\Utils;
 
-use RectorPrefix202411\Nette;
-use RectorPrefix202411\Nette\HtmlStringable;
+use RectorPrefix202305\Nette;
+use RectorPrefix202305\Nette\HtmlStringable;
 use function is_array, is_float, is_object, is_string;
 /**
  * HTML helper.
@@ -232,17 +232,16 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     use Nette\SmartObject;
     /** @var array<string, mixed>  element's attributes */
     public $attrs = [];
-    /** void elements */
+    /** @var bool  use XHTML syntax? */
+    public static $xhtml = \false;
+    /** @var array<string, int>  void elements */
     public static $emptyElements = ['img' => 1, 'hr' => 1, 'br' => 1, 'input' => 1, 'meta' => 1, 'area' => 1, 'embed' => 1, 'keygen' => 1, 'source' => 1, 'base' => 1, 'col' => 1, 'link' => 1, 'param' => 1, 'basefont' => 1, 'frame' => 1, 'isindex' => 1, 'wbr' => 1, 'command' => 1, 'track' => 1];
     /** @var array<int, HtmlStringable|string> nodes */
     protected $children = [];
-    /** element's name
-     * @var string */
-    private $name = '';
-    /**
-     * @var bool
-     */
-    private $isEmpty = \false;
+    /** @var string  element's name */
+    private $name;
+    /** @var bool  is element empty? */
+    private $isEmpty;
     /**
      * Constructs new HTML element.
      * @param  array|string $attrs element's attributes or plain text content
@@ -267,17 +266,15 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Returns an object representing HTML text.
-     * @return static
      */
-    public static function fromHtml(string $html)
+    public static function fromHtml(string $html) : self
     {
         return (new static())->setHtml($html);
     }
     /**
      * Returns an object representing plain text.
-     * @return static
      */
-    public static function fromText(string $text)
+    public static function fromText(string $text) : self
     {
         return (new static())->setText($text);
     }
@@ -337,8 +334,8 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Appends value to element's attribute.
-     * @param mixed $value
-     * @param mixed $option
+     * @param  mixed  $value
+     * @param  mixed  $option
      * @return static
      */
     public function appendAttribute(string $name, $value, $option = \true)
@@ -359,7 +356,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Sets element's attribute.
-     * @param mixed $value
+     * @param  mixed  $value
      * @return static
      */
     public function setAttribute(string $name, $value)
@@ -397,7 +394,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Overloaded setter for element's attribute.
-     * @param mixed $value
+     * @param  mixed  $value
      */
     public final function __set(string $name, $value) : void
     {
@@ -456,7 +453,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
      * Special setter for element's attribute.
      * @return static
      */
-    public final function href(string $path, array $query = [])
+    public final function href(string $path, ?array $query = null)
     {
         if ($query) {
             $query = \http_build_query($query, '', '&');
@@ -469,7 +466,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Setter for data-* attributes. Booleans are converted to 'true' resp. 'false'.
-     * @param mixed $value
+     * @param  mixed  $value
      * @return static
      */
     public function data(string $name, $value = null)
@@ -483,7 +480,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Sets element's HTML content.
-     * @param mixed $html
+     * @param  HtmlStringable|string  $html
      * @return static
      */
     public final function setHtml($html)
@@ -500,7 +497,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Sets element's textual content.
-     * @param mixed $text
+     * @param  HtmlStringable|string|int|float  $text
      * @return static
      */
     public final function setText($text)
@@ -520,7 +517,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Adds new element's child.
-     * @param mixed $child
+     * @param  HtmlStringable|string  $child  Html node or raw HTML string
      * @return static
      */
     public final function addHtml($child)
@@ -529,7 +526,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Appends plain-text string to element content.
-     * @param mixed $text
+     * @param  HtmlStringable|string|int|float  $text
      * @return static
      */
     public function addText($text)
@@ -541,8 +538,8 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Creates and adds a new Html child.
-     * @param mixed[]|string|null $attrs
-     * @return static
+     * @param  array|string $attrs  element's attributes or raw HTML string
+     * @return static  created element
      */
     public final function create(string $name, $attrs = null)
     {
@@ -551,7 +548,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     /**
      * Inserts child node.
-     * @param \Nette\HtmlStringable|string $child
+     * @param  HtmlStringable|string $child Html node or raw HTML string
      * @return static
      */
     public function insert(?int $index, $child, bool $replace = \false)
@@ -578,7 +575,7 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     /**
      * Returns child node (\ArrayAccess implementation).
      * @param  int  $index
-     * @return \Nette\HtmlStringable|string
+     * @return HtmlStringable|string
      */
     #[\ReturnTypeWillChange]
     public final function offsetGet($index)
@@ -660,14 +657,22 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
     }
     public final function __toString() : string
     {
-        return $this->render();
+        try {
+            return $this->render();
+        } catch (\Throwable $e) {
+            if (\PHP_VERSION_ID >= 70400) {
+                throw $e;
+            }
+            \trigger_error('Exception in ' . __METHOD__ . "(): {$e->getMessage()} in {$e->getFile()}:{$e->getLine()}", \E_USER_ERROR);
+            return '';
+        }
     }
     /**
      * Returns element's start tag.
      */
     public final function startTag() : string
     {
-        return $this->name ? '<' . $this->name . $this->attributes() . '>' : '';
+        return $this->name ? '<' . $this->name . $this->attributes() . (static::$xhtml && $this->isEmpty ? ' />' : '>') : '';
     }
     /**
      * Returns element's end tag.
@@ -691,7 +696,11 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
             if ($value === null || $value === \false) {
                 continue;
             } elseif ($value === \true) {
-                $s .= ' ' . $key;
+                if (static::$xhtml) {
+                    $s .= ' ' . $key . '="' . $key . '"';
+                } else {
+                    $s .= ' ' . $key;
+                }
                 continue;
             } elseif (is_array($value)) {
                 if (\strncmp($key, 'data-', 5) === 0) {
@@ -715,8 +724,8 @@ class Html implements \ArrayAccess, \Countable, \IteratorAggregate, HtmlStringab
             } else {
                 $value = (string) $value;
             }
-            $q = \strpos($value, '"') !== \false ? "'" : '"';
-            $s .= ' ' . $key . '=' . $q . \str_replace(['&', $q, '<'], ['&amp;', $q === '"' ? '&quot;' : '&#39;', '<'], $value) . (\strpos($value, '`') !== \false && \strpbrk($value, ' <>"\'') === \false ? ' ' : '') . $q;
+            $q = \strpos($value, '"') === \false ? '"' : "'";
+            $s .= ' ' . $key . '=' . $q . \str_replace(['&', $q, '<'], ['&amp;', $q === '"' ? '&quot;' : '&#39;', self::$xhtml ? '&lt;' : '<'], $value) . (\strpos($value, '`') !== \false && \strpbrk($value, ' <>"\'') === \false ? ' ' : '') . $q;
         }
         $s = \str_replace('@', '&#64;', $s);
         return $s;

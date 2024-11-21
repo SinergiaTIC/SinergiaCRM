@@ -8,14 +8,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace RectorPrefix202411\Symfony\Component\Console\Command;
+namespace RectorPrefix202305\Symfony\Component\Console\Command;
 
-use RectorPrefix202411\Symfony\Component\Console\Descriptor\ApplicationDescription;
-use RectorPrefix202411\Symfony\Component\Console\Helper\DescriptorHelper;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputArgument;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputInterface;
-use RectorPrefix202411\Symfony\Component\Console\Input\InputOption;
-use RectorPrefix202411\Symfony\Component\Console\Output\OutputInterface;
+use RectorPrefix202305\Symfony\Component\Console\Descriptor\ApplicationDescription;
+use RectorPrefix202305\Symfony\Component\Console\Helper\DescriptorHelper;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputArgument;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputInterface;
+use RectorPrefix202305\Symfony\Component\Console\Input\InputOption;
+use RectorPrefix202305\Symfony\Component\Console\Output\OutputInterface;
 /**
  * HelpCommand displays the help for a given command.
  *
@@ -27,9 +27,6 @@ class HelpCommand extends Command
      * @var \Symfony\Component\Console\Command\Command
      */
     private $command;
-    /**
-     * @return void
-     */
     protected function configure()
     {
         $this->ignoreValidationErrors();
@@ -50,9 +47,6 @@ To display the list of available commands, please use the <info>list</info> comm
 EOF
 );
     }
-    /**
-     * @return void
-     */
     public function setCommand(Command $command)
     {
         $this->command = $command;

@@ -7,81 +7,41 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\TraitUse;
-use PHPStan\Analyser\Scope;
-use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
-use PHPStan\Reflection\ClassReflection;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfo;
-use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
-use Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover;
-use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\DeadCode\NodeAnalyzer\PropertyWriteonlyAnalyzer;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\PhpParser\NodeFinder\PropertyFetchFinder;
+use Rector\Core\NodeManipulator\PropertyManipulator;
+use Rector\Core\PhpParser\NodeFinder\PropertyFetchFinder;
+use Rector\Core\Rector\AbstractRector;
+use Rector\Core\ValueObject\MethodName;
+use Rector\Core\ValueObject\PhpVersionFeature;
+use Rector\Core\ValueObject\Visibility;
 use Rector\Privatization\NodeManipulator\VisibilityManipulator;
-use Rector\Rector\AbstractScopeAwareRector;
-use Rector\Reflection\ReflectionResolver;
-use Rector\ValueObject\MethodName;
-use Rector\ValueObject\PhpVersionFeature;
-use Rector\ValueObject\Visibility;
 use Rector\VersionBonding\Contract\MinPhpVersionInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\DeadCode\Rector\ClassMethod\RemoveUnusedPromotedPropertyRector\RemoveUnusedPromotedPropertyRectorTest
  */
-final class RemoveUnusedPromotedPropertyRector extends AbstractScopeAwareRector implements MinPhpVersionInterface
+final class RemoveUnusedPromotedPropertyRector extends AbstractRector implements MinPhpVersionInterface
 {
     /**
      * @readonly
-     * @var \Rector\PhpParser\NodeFinder\PropertyFetchFinder
+     * @var \Rector\Core\PhpParser\NodeFinder\PropertyFetchFinder
      */
     private $propertyFetchFinder;
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeManipulator\PropertyManipulator
+     */
+    private $propertyManipulator;
     /**
      * @readonly
      * @var \Rector\Privatization\NodeManipulator\VisibilityManipulator
      */
     private $visibilityManipulator;
-    /**
-     * @readonly
-     * @var \Rector\DeadCode\NodeAnalyzer\PropertyWriteonlyAnalyzer
-     */
-    private $propertyWriteonlyAnalyzer;
-    /**
-     * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
-     */
-    private $betterNodeFinder;
-    /**
-     * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
-     */
-    private $reflectionResolver;
-    /**
-     * @readonly
-     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
-     */
-    private $phpDocInfoFactory;
-    /**
-     * @readonly
-     * @var \Rector\BetterPhpDocParser\PhpDocManipulator\PhpDocTagRemover
-     */
-    private $phpDocTagRemover;
-    /**
-     * @readonly
-     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
-     */
-    private $docBlockUpdater;
-    public function __construct(PropertyFetchFinder $propertyFetchFinder, VisibilityManipulator $visibilityManipulator, PropertyWriteonlyAnalyzer $propertyWriteonlyAnalyzer, BetterNodeFinder $betterNodeFinder, ReflectionResolver $reflectionResolver, PhpDocInfoFactory $phpDocInfoFactory, PhpDocTagRemover $phpDocTagRemover, DocBlockUpdater $docBlockUpdater)
+    public function __construct(PropertyFetchFinder $propertyFetchFinder, PropertyManipulator $propertyManipulator, VisibilityManipulator $visibilityManipulator)
     {
         $this->propertyFetchFinder = $propertyFetchFinder;
+        $this->propertyManipulator = $propertyManipulator;
         $this->visibilityManipulator = $visibilityManipulator;
-        $this->propertyWriteonlyAnalyzer = $propertyWriteonlyAnalyzer;
-        $this->betterNodeFinder = $betterNodeFinder;
-        $this->reflectionResolver = $reflectionResolver;
-        $this->phpDocInfoFactory = $phpDocInfoFactory;
-        $this->phpDocTagRemover = $phpDocTagRemover;
-        $this->docBlockUpdater = $docBlockUpdater;
     }
     public function getRuleDefinition() : RuleDefinition
     {
@@ -126,23 +86,23 @@ CODE_SAMPLE
     /**
      * @param Class_ $node
      */
-    public function refactorWithScope(Node $node, Scope $scope) : ?Node
+    public function refactor(Node $node) : ?Node
     {
         $constructClassMethod = $node->getMethod(MethodName::CONSTRUCT);
         if (!$constructClassMethod instanceof ClassMethod) {
             return null;
         }
-        if ($constructClassMethod->params === []) {
+        // is attribute? skip it
+        if ($node->attrGroups !== []) {
             return null;
         }
-        if ($this->shouldSkipClass($node)) {
-            return null;
-        }
-        $hasChanged = \false;
-        $phpDocInfo = $this->phpDocInfoFactory->createFromNode($constructClassMethod);
-        foreach ($constructClassMethod->params as $key => $param) {
+        $hasRemovedProperty = \false;
+        foreach ($constructClassMethod->getParams() as $param) {
             // only private local scope; removing public property might be dangerous
             if (!$this->visibilityManipulator->hasVisibility($param, Visibility::PRIVATE)) {
+                continue;
+            }
+            if ($this->propertyManipulator->isPropertyUsedInReadContext($node, $param)) {
                 continue;
             }
             $paramName = $this->getName($param);
@@ -150,28 +110,17 @@ CODE_SAMPLE
             if ($propertyFetches !== []) {
                 continue;
             }
-            if (!$this->propertyWriteonlyAnalyzer->arePropertyFetchesExclusivelyBeingAssignedTo($propertyFetches)) {
-                continue;
-            }
-            // always changed on below code
-            $hasChanged = \true;
             // is variable used? only remove property, keep param
             $variable = $this->betterNodeFinder->findVariableOfName((array) $constructClassMethod->stmts, $paramName);
             if ($variable instanceof Variable) {
                 $param->flags = 0;
                 continue;
             }
-            if ($phpDocInfo instanceof PhpDocInfo) {
-                $paramTagValueNode = $phpDocInfo->getParamTagValueByName($paramName);
-                if ($paramTagValueNode instanceof ParamTagValueNode) {
-                    $this->phpDocTagRemover->removeTagValueFromNode($phpDocInfo, $paramTagValueNode);
-                    $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($constructClassMethod);
-                }
-            }
             // remove param
-            unset($constructClassMethod->params[$key]);
+            $this->removeNode($param);
+            $hasRemovedProperty = \true;
         }
-        if ($hasChanged) {
+        if ($hasRemovedProperty) {
             return $node;
         }
         return null;
@@ -179,30 +128,5 @@ CODE_SAMPLE
     public function provideMinPhpVersion() : int
     {
         return PhpVersionFeature::PROPERTY_PROMOTION;
-    }
-    private function shouldSkipClass(Class_ $class) : bool
-    {
-        if ($class->attrGroups !== []) {
-            return \true;
-        }
-        $magicGetMethod = $class->getMethod(MethodName::__GET);
-        if ($magicGetMethod instanceof ClassMethod) {
-            return \true;
-        }
-        foreach ($class->stmts as $stmt) {
-            if ($stmt instanceof TraitUse) {
-                return \true;
-            }
-        }
-        $classReflection = $this->reflectionResolver->resolveClassReflection($class);
-        if ($classReflection instanceof ClassReflection) {
-            $interfaces = $classReflection->getInterfaces();
-            foreach ($interfaces as $interface) {
-                if ($interface->hasNativeMethod(MethodName::CONSTRUCT)) {
-                    return \true;
-                }
-            }
-        }
-        return \false;
     }
 }

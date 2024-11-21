@@ -11,15 +11,14 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\UnionType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\BetterPhpDocParser\ValueObject\Type\FullyQualifiedIdentifierTypeNode;
-use Rector\Comments\NodeDocBlock\DocBlockUpdater;
-use Rector\Php\PhpVersionProvider;
+use Rector\Core\Php\PhpVersionProvider;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\StaticTypeMapper\StaticTypeMapper;
-use Rector\ValueObject\PhpVersionFeature;
 final class ReturnTypeDeclarationUpdater
 {
     /**
      * @readonly
-     * @var \Rector\Php\PhpVersionProvider
+     * @var \Rector\Core\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
     /**
@@ -32,17 +31,11 @@ final class ReturnTypeDeclarationUpdater
      * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
      */
     private $phpDocInfoFactory;
-    /**
-     * @readonly
-     * @var \Rector\Comments\NodeDocBlock\DocBlockUpdater
-     */
-    private $docBlockUpdater;
-    public function __construct(PhpVersionProvider $phpVersionProvider, StaticTypeMapper $staticTypeMapper, PhpDocInfoFactory $phpDocInfoFactory, DocBlockUpdater $docBlockUpdater)
+    public function __construct(PhpVersionProvider $phpVersionProvider, StaticTypeMapper $staticTypeMapper, PhpDocInfoFactory $phpDocInfoFactory)
     {
         $this->phpVersionProvider = $phpVersionProvider;
         $this->staticTypeMapper = $staticTypeMapper;
         $this->phpDocInfoFactory = $phpDocInfoFactory;
-        $this->docBlockUpdater = $docBlockUpdater;
     }
     /**
      * @param class-string $className
@@ -66,7 +59,6 @@ final class ReturnTypeDeclarationUpdater
         if ($returnStaticType instanceof ArrayType || $returnStaticType instanceof UnionType) {
             $returnTagValueNode->type = new FullyQualifiedIdentifierTypeNode($className);
         }
-        $this->docBlockUpdater->updateRefactoredNodeWithPhpDocInfo($classMethod);
     }
     /**
      * @param class-string $className

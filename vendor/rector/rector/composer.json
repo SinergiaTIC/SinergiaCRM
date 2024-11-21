@@ -8,12 +8,17 @@
     ],
     "require": {
         "php": "^7.2|^8.0",
-        "phpstan/phpstan": "^1.12.5"
+        "phpstan/phpstan": "^1.10.14"
     },
     "autoload": {
         "files": [
             "bootstrap.php"
         ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.15-dev"
+        }
     },
     "conflict": {
         "rector/rector-phpunit": "*",
@@ -22,8 +27,5 @@
         "rector/rector-downgrade-php": "*"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "suggest": {
-        "ext-dom": "To manipulate phpunit.xml via the custom-rule command"
-    }
+    "prefer-stable": true
 }

@@ -4,22 +4,37 @@ declare (strict_types=1);
 namespace Rector\Doctrine\PhpDocParser;
 
 use PhpParser\Node\Stmt\Class_;
-use Rector\Doctrine\Enum\MappingClass;
-use Rector\Doctrine\Enum\OdmMappingClass;
-use Rector\Doctrine\NodeAnalyzer\AttrinationFinder;
+use PhpParser\Node\Stmt\ClassMethod;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 final class DoctrineDocBlockResolver
 {
     /**
      * @readonly
-     * @var \Rector\Doctrine\NodeAnalyzer\AttrinationFinder
+     * @var \Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory
      */
-    private $attrinationFinder;
-    public function __construct(AttrinationFinder $attrinationFinder)
+    private $phpDocInfoFactory;
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(PhpDocInfoFactory $phpDocInfoFactory, BetterNodeFinder $betterNodeFinder)
     {
-        $this->attrinationFinder = $attrinationFinder;
+        $this->phpDocInfoFactory = $phpDocInfoFactory;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
-    public function isDoctrineEntityClass(Class_ $class) : bool
+    public function isInDoctrineEntityClass(ClassMethod $classMethod) : bool
     {
-        return $this->attrinationFinder->hasByMany($class, [MappingClass::ENTITY, MappingClass::EMBEDDABLE, OdmMappingClass::DOCUMENT]);
+        $class = $this->betterNodeFinder->findParentType($classMethod, Class_::class);
+        if (!$class instanceof Class_) {
+            return \false;
+        }
+        return $this->isDoctrineEntityClass($class);
+    }
+    private function isDoctrineEntityClass(Class_ $class) : bool
+    {
+        $phpDocInfo = $this->phpDocInfoFactory->createFromNodeOrEmpty($class);
+        return $phpDocInfo->hasByAnnotationClasses(['Doctrine\\ORM\\Mapping\\Entity', 'Doctrine\\ORM\\Mapping\\Embeddable']);
     }
 }

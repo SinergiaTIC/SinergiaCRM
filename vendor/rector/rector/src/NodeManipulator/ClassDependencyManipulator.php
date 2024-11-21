@@ -1,7 +1,7 @@
 <?php
 
 declare (strict_types=1);
-namespace Rector\NodeManipulator;
+namespace Rector\Core\NodeManipulator;
 
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\StaticCall;
@@ -11,51 +11,52 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Property;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Type;
-use Rector\Enum\ObjectReference;
-use Rector\NodeAnalyzer\PropertyPresenceChecker;
+use Rector\Core\Enum\ObjectReference;
+use Rector\Core\NodeAnalyzer\PropertyPresenceChecker;
+use Rector\Core\NodeManipulator\Dependency\DependencyClassMethodDecorator;
+use Rector\Core\Php\PhpVersionProvider;
+use Rector\Core\PhpParser\Node\NodeFactory;
+use Rector\Core\Reflection\ReflectionResolver;
+use Rector\Core\ValueObject\MethodName;
+use Rector\Core\ValueObject\PhpVersionFeature;
 use Rector\NodeNameResolver\NodeNameResolver;
-use Rector\Php\PhpVersionProvider;
-use Rector\PhpParser\Node\NodeFactory;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\PostRector\Collector\NodesToRemoveCollector;
 use Rector\PostRector\ValueObject\PropertyMetadata;
-use Rector\Reflection\ReflectionResolver;
 use Rector\TypeDeclaration\NodeAnalyzer\AutowiredClassMethodOrPropertyAnalyzer;
-use Rector\ValueObject\MethodName;
-use Rector\ValueObject\PhpVersionFeature;
-/**
- * @see \Rector\Tests\NodeManipulator\ClassDependencyManipulatorTest
- */
 final class ClassDependencyManipulator
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\ClassInsertManipulator
+     * @var \Rector\Core\NodeManipulator\ClassInsertManipulator
      */
     private $classInsertManipulator;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\ClassMethodAssignManipulator
+     * @var \Rector\Core\NodeManipulator\ClassMethodAssignManipulator
      */
     private $classMethodAssignManipulator;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\NodeFactory
+     * @var \Rector\Core\PhpParser\Node\NodeFactory
      */
     private $nodeFactory;
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\StmtsManipulator
+     * @var \Rector\Core\NodeManipulator\StmtsManipulator
      */
     private $stmtsManipulator;
     /**
      * @readonly
-     * @var \Rector\Php\PhpVersionProvider
+     * @var \Rector\Core\Php\PhpVersionProvider
      */
     private $phpVersionProvider;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\PropertyPresenceChecker
+     * @var \Rector\Core\NodeAnalyzer\PropertyPresenceChecker
      */
     private $propertyPresenceChecker;
     /**
@@ -65,15 +66,25 @@ final class ClassDependencyManipulator
     private $nodeNameResolver;
     /**
      * @readonly
+     * @var \Rector\PostRector\Collector\NodesToRemoveCollector
+     */
+    private $nodesToRemoveCollector;
+    /**
+     * @readonly
      * @var \Rector\TypeDeclaration\NodeAnalyzer\AutowiredClassMethodOrPropertyAnalyzer
      */
     private $autowiredClassMethodOrPropertyAnalyzer;
     /**
      * @readonly
-     * @var \Rector\Reflection\ReflectionResolver
+     * @var \Rector\Core\NodeManipulator\Dependency\DependencyClassMethodDecorator
+     */
+    private $dependencyClassMethodDecorator;
+    /**
+     * @readonly
+     * @var \Rector\Core\Reflection\ReflectionResolver
      */
     private $reflectionResolver;
-    public function __construct(\Rector\NodeManipulator\ClassInsertManipulator $classInsertManipulator, \Rector\NodeManipulator\ClassMethodAssignManipulator $classMethodAssignManipulator, NodeFactory $nodeFactory, \Rector\NodeManipulator\StmtsManipulator $stmtsManipulator, PhpVersionProvider $phpVersionProvider, PropertyPresenceChecker $propertyPresenceChecker, NodeNameResolver $nodeNameResolver, AutowiredClassMethodOrPropertyAnalyzer $autowiredClassMethodOrPropertyAnalyzer, ReflectionResolver $reflectionResolver)
+    public function __construct(\Rector\Core\NodeManipulator\ClassInsertManipulator $classInsertManipulator, \Rector\Core\NodeManipulator\ClassMethodAssignManipulator $classMethodAssignManipulator, NodeFactory $nodeFactory, \Rector\Core\NodeManipulator\StmtsManipulator $stmtsManipulator, PhpVersionProvider $phpVersionProvider, PropertyPresenceChecker $propertyPresenceChecker, NodeNameResolver $nodeNameResolver, NodesToRemoveCollector $nodesToRemoveCollector, AutowiredClassMethodOrPropertyAnalyzer $autowiredClassMethodOrPropertyAnalyzer, DependencyClassMethodDecorator $dependencyClassMethodDecorator, ReflectionResolver $reflectionResolver)
     {
         $this->classInsertManipulator = $classInsertManipulator;
         $this->classMethodAssignManipulator = $classMethodAssignManipulator;
@@ -82,7 +93,9 @@ final class ClassDependencyManipulator
         $this->phpVersionProvider = $phpVersionProvider;
         $this->propertyPresenceChecker = $propertyPresenceChecker;
         $this->nodeNameResolver = $nodeNameResolver;
+        $this->nodesToRemoveCollector = $nodesToRemoveCollector;
         $this->autowiredClassMethodOrPropertyAnalyzer = $autowiredClassMethodOrPropertyAnalyzer;
+        $this->dependencyClassMethodDecorator = $dependencyClassMethodDecorator;
         $this->reflectionResolver = $reflectionResolver;
     }
     public function addConstructorDependency(Class_ $class, PropertyMetadata $propertyMetadata) : void
@@ -114,6 +127,9 @@ final class ClassDependencyManipulator
         $constructorMethod = $this->nodeFactory->createPublicMethod(MethodName::CONSTRUCT);
         $this->classMethodAssignManipulator->addParameterAndAssignToMethod($constructorMethod, $name, $type, $assign);
         $this->classInsertManipulator->addAsFirstMethod($class, $constructorMethod);
+        /** @var Scope $scope */
+        $scope = $class->getAttribute(AttributeKey::SCOPE);
+        $this->dependencyClassMethodDecorator->decorateConstructorWithParentDependencies($class, $constructorMethod, $scope);
     }
     /**
      * @api doctrine
@@ -139,6 +155,13 @@ final class ClassDependencyManipulator
         }
         $classMethod->stmts = \array_merge($stmts, (array) $classMethod->stmts);
     }
+    public function addInjectProperty(Class_ $class, PropertyMetadata $propertyMetadata) : void
+    {
+        if ($this->propertyPresenceChecker->hasClassContextProperty($class, $propertyMetadata)) {
+            return;
+        }
+        $this->classInsertManipulator->addInjectPropertyToClass($class, $propertyMetadata);
+    }
     private function addPromotedProperty(Class_ $class, PropertyMetadata $propertyMetadata) : void
     {
         $constructClassMethod = $class->getMethod(MethodName::CONSTRUCT);
@@ -153,6 +176,9 @@ final class ClassDependencyManipulator
             $constructClassMethod = $this->nodeFactory->createPublicMethod(MethodName::CONSTRUCT);
             $constructClassMethod->params[] = $param;
             $this->classInsertManipulator->addAsFirstMethod($class, $constructClassMethod);
+            /** @var Scope $scope */
+            $scope = $class->getAttribute(AttributeKey::SCOPE);
+            $this->dependencyClassMethodDecorator->decorateConstructorWithParentDependencies($class, $constructClassMethod, $scope);
         }
     }
     private function hasClassParentClassMethod(Class_ $class, string $methodName) : bool
@@ -214,6 +240,9 @@ final class ClassDependencyManipulator
         }
         // only if the property does not exist yet
         $existingProperty = $class->getProperty($propertyMetadata->getName());
-        return !$existingProperty instanceof Property;
+        if (!$existingProperty instanceof Property) {
+            return \true;
+        }
+        return $this->nodesToRemoveCollector->isNodeRemoved($existingProperty);
     }
 }

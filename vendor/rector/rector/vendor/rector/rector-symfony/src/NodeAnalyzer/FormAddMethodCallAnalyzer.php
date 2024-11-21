@@ -11,6 +11,10 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 final class FormAddMethodCallAnalyzer
 {
     /**
+     * @var ObjectType[]
+     */
+    private $formObjectTypes = [];
+    /**
      * @readonly
      * @var \Rector\NodeTypeResolver\NodeTypeResolver
      */
@@ -20,10 +24,6 @@ final class FormAddMethodCallAnalyzer
      * @var \Rector\NodeNameResolver\NodeNameResolver
      */
     private $nodeNameResolver;
-    /**
-     * @var ObjectType[]
-     */
-    private $formObjectTypes = [];
     public function __construct(NodeTypeResolver $nodeTypeResolver, NodeNameResolver $nodeNameResolver)
     {
         $this->nodeTypeResolver = $nodeTypeResolver;

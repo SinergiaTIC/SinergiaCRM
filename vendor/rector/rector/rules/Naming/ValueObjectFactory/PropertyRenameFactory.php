@@ -5,9 +5,9 @@ namespace Rector\Naming\ValueObjectFactory;
 
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Property;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
 use Rector\Naming\ValueObject\PropertyRename;
 use Rector\NodeNameResolver\NodeNameResolver;
-use RectorPrefix202411\Webmozart\Assert\InvalidArgumentException;
 final class PropertyRenameFactory
 {
     /**
@@ -15,18 +15,24 @@ final class PropertyRenameFactory
      * @var \Rector\NodeNameResolver\NodeNameResolver
      */
     private $nodeNameResolver;
-    public function __construct(NodeNameResolver $nodeNameResolver)
+    /**
+     * @readonly
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
+     */
+    private $betterNodeFinder;
+    public function __construct(NodeNameResolver $nodeNameResolver, BetterNodeFinder $betterNodeFinder)
     {
         $this->nodeNameResolver = $nodeNameResolver;
+        $this->betterNodeFinder = $betterNodeFinder;
     }
-    public function createFromExpectedName(ClassLike $classLike, Property $property, string $expectedName) : ?PropertyRename
+    public function createFromExpectedName(Property $property, string $expectedName) : ?PropertyRename
     {
         $currentName = $this->nodeNameResolver->getName($property);
-        $className = (string) $this->nodeNameResolver->getName($classLike);
-        try {
-            return new PropertyRename($property, $expectedName, $currentName, $classLike, $className, $property->props[0]);
-        } catch (InvalidArgumentException $exception) {
+        $classLike = $this->betterNodeFinder->findParentType($property, ClassLike::class);
+        if (!$classLike instanceof ClassLike) {
+            return null;
         }
-        return null;
+        $className = (string) $this->nodeNameResolver->getName($classLike);
+        return new PropertyRename($property, $expectedName, $currentName, $classLike, $className, $property->props[0]);
     }
 }

@@ -3,26 +3,26 @@
 declare (strict_types=1);
 namespace Rector\Naming\Naming;
 
+use RectorPrefix202305\Nette\Utils\Strings;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Cast;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
+use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
+use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
-use Rector\Naming\AssignVariableNameResolver\NewAssignVariableNameResolver;
-use Rector\Naming\AssignVariableNameResolver\PropertyFetchAssignVariableNameResolver;
 use Rector\Naming\Contract\AssignVariableNameResolverInterface;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\NodeTypeResolver;
-/**
- * @api used in downgrade
- */
+use RectorPrefix202305\Symfony\Component\String\UnicodeString;
 final class VariableNaming
 {
     /**
@@ -37,17 +37,33 @@ final class VariableNaming
     private $nodeTypeResolver;
     /**
      * @var AssignVariableNameResolverInterface[]
+     * @readonly
      */
-    private $assignVariableNameResolvers = [];
-    public function __construct(NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver, PropertyFetchAssignVariableNameResolver $propertyFetchAssignVariableNameResolver, NewAssignVariableNameResolver $newAssignVariableNameResolver)
+    private $assignVariableNameResolvers;
+    /**
+     * @param AssignVariableNameResolverInterface[] $assignVariableNameResolvers
+     */
+    public function __construct(NodeNameResolver $nodeNameResolver, NodeTypeResolver $nodeTypeResolver, array $assignVariableNameResolvers)
     {
         $this->nodeNameResolver = $nodeNameResolver;
         $this->nodeTypeResolver = $nodeTypeResolver;
-        $this->assignVariableNameResolvers = [$propertyFetchAssignVariableNameResolver, $newAssignVariableNameResolver];
+        $this->assignVariableNameResolvers = $assignVariableNameResolvers;
     }
     /**
-     * @api used in downgrade
+     * @api
      */
+    public function resolveFromNodeWithScopeCountAndFallbackName(Expr $expr, MutatingScope $mutatingScope, string $fallbackName) : string
+    {
+        $name = $this->resolveFromNode($expr);
+        if ($name === null) {
+            $name = $fallbackName;
+        }
+        if (\strpos($name, '\\') !== \false) {
+            $name = (string) Strings::after($name, '\\', -1);
+        }
+        $countedValueName = $this->createCountedValueName($name, $mutatingScope);
+        return \lcfirst($countedValueName);
+    }
     public function createCountedValueName(string $valueName, ?Scope $scope) : string
     {
         if (!$scope instanceof Scope) {
@@ -66,6 +82,11 @@ final class VariableNaming
         }
         return $valueName;
     }
+    public function resolveFromFuncCallFirstArgumentWithSuffix(FuncCall $funcCall, string $suffix, string $fallbackName, ?Scope $scope) : string
+    {
+        $bareName = $this->resolveBareFuncCallArgumentName($funcCall, $fallbackName, $suffix);
+        return $this->createCountedValueName($bareName, $scope);
+    }
     private function resolveFromNodeAndType(Node $node, Type $type) : ?string
     {
         $variableName = $this->resolveBareFromNode($node);
@@ -75,9 +96,12 @@ final class VariableNaming
         // adjust static to specific class
         if ($variableName === 'this' && $type instanceof ThisType) {
             $shortClassName = $this->nodeNameResolver->getShortName($type->getClassName());
-            return \lcfirst($shortClassName);
+            $variableName = \lcfirst($shortClassName);
+        } else {
+            $variableName = $this->nodeNameResolver->getShortName($variableName);
         }
-        return $this->nodeNameResolver->getShortName($variableName);
+        $variableNameUnicodeString = new UnicodeString($variableName);
+        return $variableNameUnicodeString->camel()->toString();
     }
     private function resolveFromNode(Node $node) : ?string
     {
@@ -136,5 +160,24 @@ final class VariableNaming
             return $node->if;
         }
         return $node;
+    }
+    private function resolveBareFuncCallArgumentName(FuncCall $funcCall, string $fallbackName, string $suffix) : string
+    {
+        if (!isset($funcCall->args[0])) {
+            return '';
+        }
+        if (!$funcCall->args[0] instanceof Arg) {
+            return '';
+        }
+        $argumentValue = $funcCall->args[0]->value;
+        if ($argumentValue instanceof MethodCall || $argumentValue instanceof StaticCall) {
+            $name = $this->nodeNameResolver->getName($argumentValue->name);
+        } else {
+            $name = $this->nodeNameResolver->getName($argumentValue);
+        }
+        if ($name === null) {
+            return $fallbackName;
+        }
+        return $name . $suffix;
     }
 }

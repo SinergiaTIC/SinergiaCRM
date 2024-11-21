@@ -4,33 +4,42 @@ declare (strict_types=1);
 namespace Rector\DeadCode\Rector\StaticCall;
 
 use PhpParser\Node;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Expression;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
-use Rector\Enum\ObjectReference;
-use Rector\NodeAnalyzer\ClassAnalyzer;
-use Rector\NodeManipulator\ClassMethodManipulator;
-use Rector\Rector\AbstractRector;
+use Rector\Core\Enum\ObjectReference;
+use Rector\Core\NodeAnalyzer\ClassAnalyzer;
+use Rector\Core\NodeManipulator\ClassMethodManipulator;
+use Rector\Core\Rector\AbstractScopeAwareRector;
+use Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 /**
  * @see \Rector\Tests\DeadCode\Rector\StaticCall\RemoveParentCallWithoutParentRector\RemoveParentCallWithoutParentRectorTest
  */
-final class RemoveParentCallWithoutParentRector extends AbstractRector
+final class RemoveParentCallWithoutParentRector extends AbstractScopeAwareRector
 {
     /**
      * @readonly
-     * @var \Rector\NodeManipulator\ClassMethodManipulator
+     * @var \Rector\Core\NodeManipulator\ClassMethodManipulator
      */
     private $classMethodManipulator;
     /**
      * @readonly
-     * @var \Rector\NodeAnalyzer\ClassAnalyzer
+     * @var \Rector\NodeCollector\ScopeResolver\ParentClassScopeResolver
+     */
+    private $parentClassScopeResolver;
+    /**
+     * @readonly
+     * @var \Rector\Core\NodeAnalyzer\ClassAnalyzer
      */
     private $classAnalyzer;
     /**
@@ -38,9 +47,10 @@ final class RemoveParentCallWithoutParentRector extends AbstractRector
      * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
-    public function __construct(ClassMethodManipulator $classMethodManipulator, ClassAnalyzer $classAnalyzer, ReflectionProvider $reflectionProvider)
+    public function __construct(ClassMethodManipulator $classMethodManipulator, ParentClassScopeResolver $parentClassScopeResolver, ClassAnalyzer $classAnalyzer, ReflectionProvider $reflectionProvider)
     {
         $this->classMethodManipulator = $classMethodManipulator;
+        $this->parentClassScopeResolver = $parentClassScopeResolver;
         $this->classAnalyzer = $classAnalyzer;
         $this->reflectionProvider = $reflectionProvider;
     }
@@ -70,76 +80,60 @@ CODE_SAMPLE
      */
     public function getNodeTypes() : array
     {
-        return [Class_::class];
+        return [StaticCall::class];
     }
     /**
-     * @param Class_ $node
+     * @param StaticCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactorWithScope(Node $node, Scope $scope) : ?Node
     {
-        if ($this->shouldSkipClass($node)) {
+        $classLike = $this->betterNodeFinder->findParentType($node, Class_::class);
+        if (!$classLike instanceof Class_) {
             return null;
         }
-        $hasChanged = \false;
-        foreach ($node->getMethods() as $classMethod) {
-            if ($classMethod->stmts === null) {
-                continue;
-            }
-            foreach ($classMethod->stmts as $key => $stmt) {
-                if (!$stmt instanceof Expression) {
-                    continue;
-                }
-                if ($stmt->expr instanceof StaticCall && $this->isParentStaticCall($stmt->expr)) {
-                    if ($this->doesCalledMethodExistInParent($stmt->expr, $node)) {
-                        continue;
-                    }
-                    unset($classMethod->stmts[$key]);
-                    $hasChanged = \true;
-                }
-                if ($stmt->expr instanceof Assign) {
-                    $assign = $stmt->expr;
-                    if ($assign->expr instanceof StaticCall && $this->isParentStaticCall($assign->expr)) {
-                        $staticCall = $assign->expr;
-                        // is valid call
-                        if ($this->doesCalledMethodExistInParent($staticCall, $node)) {
-                            continue;
-                        }
-                        $assign->expr = $this->nodeFactory->createNull();
-                        $hasChanged = \true;
-                    }
-                }
-            }
+        if ($this->shouldSkip($node, $classLike)) {
+            return null;
         }
-        if ($hasChanged) {
-            return $node;
+        $parentClassReflection = $this->parentClassScopeResolver->resolveParentClassReflection($scope);
+        if (!$parentClassReflection instanceof ClassReflection) {
+            return $this->processNoParentReflection($node);
         }
+        $classMethod = $this->betterNodeFinder->findParentType($node, ClassMethod::class);
+        if (!$classMethod instanceof ClassMethod) {
+            return null;
+        }
+        if ($this->classAnalyzer->isAnonymousClass($classLike)) {
+            // currently the classMethodManipulator isn't able to find usages of anonymous classes
+            return null;
+        }
+        $calledMethodName = $this->getName($node->name);
+        if ($this->classMethodManipulator->hasParentMethodOrInterfaceMethod($classMethod, $calledMethodName)) {
+            return null;
+        }
+        $parentNode = $node->getAttribute(AttributeKey::PARENT_NODE);
+        if (!$parentNode instanceof Expression) {
+            return null;
+        }
+        $this->removeNode($node);
         return null;
     }
-    private function isParentStaticCall(Expr $expr) : bool
+    private function shouldSkip(StaticCall $staticCall, Class_ $class) : bool
     {
-        if (!$expr instanceof StaticCall) {
-            return \false;
-        }
-        return $this->isName($expr->class, ObjectReference::PARENT);
-    }
-    private function shouldSkipClass(Class_ $class) : bool
-    {
-        // skip cases when parent class reflection is not found
-        if ($class->extends instanceof FullyQualified && !$this->reflectionProvider->hasClass($class->extends->toString())) {
+        if (!$staticCall->class instanceof Name) {
             return \true;
         }
-        // currently the classMethodManipulator isn't able to find usages of anonymous classes
-        return $this->classAnalyzer->isAnonymousClass($class);
+        if (!$this->isName($staticCall->class, ObjectReference::PARENT)) {
+            return \true;
+        }
+        return $class->extends instanceof FullyQualified && !$this->reflectionProvider->hasClass($class->extends->toString());
     }
-    private function doesCalledMethodExistInParent(StaticCall $staticCall, Class_ $class) : bool
+    private function processNoParentReflection(StaticCall $staticCall) : ?ConstFetch
     {
-        if (!$class->extends instanceof Name) {
-            return \false;
+        $parentNode = $staticCall->getAttribute(AttributeKey::PARENT_NODE);
+        if (!$parentNode instanceof Expression) {
+            return $this->nodeFactory->createNull();
         }
-        $calledMethodName = $this->getName($staticCall->name);
-        if (!\is_string($calledMethodName)) {
-            return \false;
-        }
-        return $this->classMethodManipulator->hasParentMethodOrInterfaceMethod($class, $calledMethodName);
+        $this->removeNode($staticCall);
+        return null;
     }
 }

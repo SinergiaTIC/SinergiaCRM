@@ -3,7 +3,6 @@
 declare (strict_types=1);
 namespace Rector\Php81\NodeFactory;
 
-use RectorPrefix202411\Nette\Utils\Strings;
 use PhpParser\BuilderFactory;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\ArrayItem;
@@ -15,13 +14,14 @@ use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\Node\Stmt\EnumCase;
+use PhpParser\Node\Stmt\Return_;
 use PHPStan\PhpDocParser\Ast\PhpDoc\MethodTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Core\PhpParser\Node\BetterNodeFinder;
+use Rector\Core\PhpParser\Node\Value\ValueResolver;
 use Rector\NodeNameResolver\NodeNameResolver;
 use Rector\NodeTypeResolver\Node\AttributeKey;
-use Rector\PhpParser\Node\BetterNodeFinder;
-use Rector\PhpParser\Node\Value\ValueResolver;
 final class EnumFactory
 {
     /**
@@ -41,27 +41,14 @@ final class EnumFactory
     private $builderFactory;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\Value\ValueResolver
+     * @var \Rector\Core\PhpParser\Node\Value\ValueResolver
      */
     private $valueResolver;
     /**
      * @readonly
-     * @var \Rector\PhpParser\Node\BetterNodeFinder
+     * @var \Rector\Core\PhpParser\Node\BetterNodeFinder
      */
     private $betterNodeFinder;
-    /**
-     * @var string
-     * @see https://stackoverflow.com/a/2560017
-     * @see https://regex101.com/r/2xEQVj/1 for changing iso9001 to iso_9001
-     * @see https://regex101.com/r/Ykm6ub/1 for changing XMLParser to XML_Parser
-     * @see https://regex101.com/r/Zv4JhD/1 for changing needsReview to needs_Review
-     */
-    private const PASCAL_CASE_TO_UNDERSCORE_REGEX = '/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[^A-Z])(?=[A-Z])|(?<=[A-Za-z])(?=[^A-Za-z])/';
-    /**
-     * @var string
-     * @see https://regex101.com/r/FneU33/1
-     */
-    private const MULTI_UNDERSCORES_REGEX = '#_{2,}#';
     public function __construct(NodeNameResolver $nodeNameResolver, PhpDocInfoFactory $phpDocInfoFactory, BuilderFactory $builderFactory, ValueResolver $valueResolver, BetterNodeFinder $betterNodeFinder)
     {
         $this->nodeNameResolver = $nodeNameResolver;
@@ -85,10 +72,9 @@ final class EnumFactory
                 $enum->stmts[] = $this->createEnumCaseFromConst($constant);
             }
         }
-        $enum->stmts = \array_merge($enum->stmts, $class->getMethods());
         return $enum;
     }
-    public function createFromSpatieClass(Class_ $class, bool $enumNameInSnakeCase = \false) : Enum_
+    public function createFromSpatieClass(Class_ $class) : Enum_
     {
         $shortClassName = $this->nodeNameResolver->getShortName($class);
         $enum = new Enum_($shortClassName, [], ['startLine' => $class->getStartLine(), 'endLine' => $class->getEndLine()]);
@@ -101,7 +87,7 @@ final class EnumFactory
             $identifierType = $this->getIdentifierTypeFromMappings($mapping);
             $enum->scalarType = new Identifier($identifierType);
             foreach ($docBlockMethods as $docBlockMethod) {
-                $enum->stmts[] = $this->createEnumCaseFromDocComment($docBlockMethod, $class, $mapping, $enumNameInSnakeCase);
+                $enum->stmts[] = $this->createEnumCaseFromDocComment($docBlockMethod, $class, $mapping);
             }
         }
         return $enum;
@@ -118,17 +104,12 @@ final class EnumFactory
     /**
      * @param array<int|string, mixed> $mapping
      */
-    private function createEnumCaseFromDocComment(PhpDocTagNode $phpDocTagNode, Class_ $class, array $mapping = [], bool $enumNameInSnakeCase = \false) : EnumCase
+    private function createEnumCaseFromDocComment(PhpDocTagNode $phpDocTagNode, Class_ $class, array $mapping = []) : EnumCase
     {
         /** @var MethodTagValueNode $nodeValue */
         $nodeValue = $phpDocTagNode->value;
         $enumValue = $mapping[$nodeValue->methodName] ?? $nodeValue->methodName;
-        if ($enumNameInSnakeCase) {
-            $enumName = \strtoupper(Strings::replace($nodeValue->methodName, self::PASCAL_CASE_TO_UNDERSCORE_REGEX, '_$0'));
-            $enumName = Strings::replace($enumName, self::MULTI_UNDERSCORES_REGEX, '_');
-        } else {
-            $enumName = \strtoupper($nodeValue->methodName);
-        }
+        $enumName = \strtoupper($nodeValue->methodName);
         $enumExpr = $this->builderFactory->val($enumValue);
         return new EnumCase($enumName, $enumExpr, [], ['startLine' => $class->getStartLine(), 'endLine' => $class->getEndLine()]);
     }
@@ -141,7 +122,8 @@ final class EnumFactory
         if (!$classMethod instanceof ClassMethod) {
             return [];
         }
-        $returns = $this->betterNodeFinder->findReturnsScoped($classMethod);
+        /** @var Return_[] $returns */
+        $returns = $this->betterNodeFinder->findInstancesOfInFunctionLikeScoped($classMethod, Return_::class);
         /** @var array<int|string, mixed> $mapping */
         $mapping = [];
         foreach ($returns as $return) {
