@@ -155,10 +155,15 @@ class Surveys extends Basic
             unset($_REQUEST['survey_questions_ids']);
         }
         // STIC End
-        $res = parent::save($check_notify);
-        if (empty($_REQUEST['survey_questions_supplied'])) {
-            return $res;
-        }
+
+        // STIC-Custom 20241121 ART - Duplication of questions by having a workflow
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // First the survey was saved (with parent::save()), and then the questions were processed
+        // $res = parent::save($check_notify);
+        // if (empty($_REQUEST['survey_questions_supplied'])) {
+        //     return $res;
+        // }
+        // END STIC-Custom
 
         foreach ($_REQUEST['survey_questions_names'] as $key => $val) {
             if (!empty($_REQUEST['survey_questions_ids'][$key])) {
@@ -196,6 +201,14 @@ class Surveys extends Basic
             }
         }
 
+        // STIC-Custom 20241121 ART - Duplication of questions by having a workflow
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // The survey is saved after the questions are processed, allowing for more precise control of how many questions are created
+        $res = parent::save($check_notify);
+        if (empty($_REQUEST['survey_questions_supplied'])) {
+            return $res;
+        }
+        // END STIC-Custom
         return $res;
     }
 
