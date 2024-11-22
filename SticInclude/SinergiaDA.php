@@ -1434,11 +1434,11 @@ class ExternalReporting
                         ) ENGINE = MyISAM;';
 
         // 5) eda_def_permissions
-        
+
         // remove old objects if exists
         $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions_actions`';
         $sqlMetadata[] = 'DROP VIEW IF EXISTS `sda_def_permissions`';
-        
+
         $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions`';
         $sqlMetadata[] = 'CREATE TABLE `sda_def_permissions` (
                             `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -1730,12 +1730,14 @@ class ExternalReporting
      */
     public function getAndSaveUserACL($modules)
     {
-        global $sugar_config;
+        $startTime = microtime(true);
+        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Starting ACL processing');
 
+        global $sugar_config;
         $db = DBManagerFactory::getInstance();
         include_once 'modules/ACLActions/ACLAction.php';
 
-        // List of ACL sources
+        // Lista de fuentes ACL
         $aclSourcesList = [
             100 => 'ACL_ALLOW_ADMIN_DEV',
             99 => 'ACL_ALLOW_ADMIN',
@@ -1747,47 +1749,57 @@ class ExternalReporting
             0 => 'ACL_ALLOW_DEFAULT',
         ];
 
-        // Tamaño del lote
-        $batchSize = 100; // Reducido el tamaño del lote
+        // Configuración de lotes
+        $batchSize = 100;
         $offset = 0;
+        $totalUsers = $db->getOne("SELECT COUNT(*) FROM users u
+                                  JOIN users_cstm uc ON u.id = uc.id_c
+                                  WHERE status='Active' AND deleted=0 AND sda_allowed_c=1");
+        $processedUsers = 0;
+
+        // Precarga de grupos si están habilitados
+        $userGroups = [];
+        if ($sugar_config['stic_sinergiada']['group_permissions_enabled']) {
+            $groupsQuery = "SELECT user_name, name as 'group'
+                           FROM sda_def_user_groups";
+            $groupsResult = $db->query($groupsQuery);
+            while ($group = $db->fetchByAssoc($groupsResult)) {
+                $userGroups[$group['user_name']][] = $group['group'];
+            }
+        }
+
+        // Preparar batch de inserciones
+        $permissionsBatch = [];
+        $batchInsertSize = 1000; // Número de registros por inserción
 
         do {
-            // Obtener usuarios en lotes
             $query = "SELECT id, user_name, is_admin
-                 FROM users
-                 JOIN users_cstm ON users.id = users_cstm.id_c
-                 WHERE status='Active' AND deleted=0 AND sda_allowed_c=1
-                 LIMIT {$batchSize} OFFSET {$offset}";
+                     FROM users
+                     JOIN users_cstm ON users.id = users_cstm.id_c
+                     WHERE status='Active' AND deleted=0 AND sda_allowed_c=1
+                     LIMIT {$batchSize} OFFSET {$offset}";
 
-            $res = $db->query($query);
-            $processedUsers = 0;
+            $users = $db->query($query);
 
-            while ($u = $db->fetchByAssoc($res, false)) {
+            while ($user = $db->fetchByAssoc($users, false)) {
+                $userStartTime = microtime(true);
                 $processedUsers++;
 
-                // Procesar módulos uno por uno para cada usuario
                 foreach ($modules as $moduleName => $moduleData) {
-                    if ($u['is_admin'] == 0 && $moduleName == 'Users') {
+                    if ($user['is_admin'] == 0 && $moduleName == 'Users') {
                         continue;
                     }
 
-                    $userActions = ACLAction::getUserActions($u['id'], false, $moduleName);
+                    $userActions = ACLAction::getUserActions($user['id'], false, $moduleName);
+                    $value = $userActions[$moduleName]['module'] ?? $userActions['module'] ?? null;
 
-                    $value = $userActions[$moduleName]['module'];
+                    if (!empty($value) && $user['is_admin'] == 0 &&
+                        $value['access']['aclaccess'] >= 0 &&
+                        $value['view']['aclaccess'] >= 0) {
 
-                    if(empty($value)){
-                        $value=$userActions['module'];
-                    }
-
-                    if (empty($value)) {
-                        continue;
-                    }
-
-
-                    if ($u['is_admin'] == 0 && $value['access']['aclaccess'] >= 0 && $value['view']['aclaccess'] >= 0) {
                         $aclSource = $aclSourcesList[$value['view']['aclaccess']];
 
-                        // Fix for special cases
+                        // Fix para casos especiales
                         $key = $moduleName == 'ProjectTask' ? 'Project_Task' : $moduleName;
                         $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
 
@@ -1795,78 +1807,106 @@ class ExternalReporting
 
                         switch ($value['view']['aclaccess']) {
                             case '80': // Security groups
-                                if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
-                                    continue 2;
-                                }
-
-                                $userGroupsQuery = "SELECT distinct(name) as 'group'
-                                              FROM sda_def_user_groups ug
-                                              WHERE user_name='{$u['user_name']}';";
-                                $userGroupsRes = $db->query($userGroupsQuery);
-
-                                while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
-                                    $crmGroupName = explode('SCRM_', $userGroups['group'])[1];
-
-                                    if (groupHasAccess($crmGroupName, $u['id'], $key, 'view')) {
-                                        // Guardar registro inmediatamente para el grupo
-                                        $this->addMetadataRecord(
-                                            'sda_def_permissions',
-                                            [
-                                                'user_name' => $u['user_name'],
-                                                'group' => $userGroups['group'],
-                                                'table' => $currentTable,
-                                                'column' => 'id',
-                                                'stic_permission_source' => $aclSource,
-                                                'global' => 0,
-                                            ]
-                                        );
-
-                                        
+                                if (!empty($userGroups[$user['user_name']])) {
+                                    foreach ($userGroups[$user['user_name']] as $group) {
+                                        $permissionsBatch[] = [
+                                            'user_name' => $user['user_name'],
+                                            'group' => $group,
+                                            'table' => $currentTable,
+                                            'column' => 'id',
+                                            'stic_permission_source' => $aclSource,
+                                            'global' => 0,
+                                        ];
                                     }
                                 }
                                 break;
 
                             case '75': // Owner case
-                                $this->addMetadataRecord(
-                                    'sda_def_permissions',
-                                    [
-                                        'user_name' => $u['user_name'],
-                                        'table' => $currentTable,
-                                        'column' => 'assigned_user_name',
-                                        'stic_permission_source' => $aclSource,
-                                        'global' => 0,
-                                    ]
-                                );
+                                $permissionsBatch[] = [
+                                    'user_name' => $user['user_name'],
+                                    'table' => $currentTable,
+                                    'column' => 'assigned_user_name',
+                                    'stic_permission_source' => $aclSource,
+                                    'global' => 0,
+                                ];
                                 break;
 
                             default: // Other cases
-                                $this->addMetadataRecord(
-                                    'sda_def_permissions',
-                                    [
-                                        'user_name' => $u['user_name'],
-                                        'table' => $currentTable,
-                                        'column' => 'users_id',
-                                        'stic_permission_source' => $aclSource,
-                                        'global' => 1,
-                                    ]
-                                );
+                                $permissionsBatch[] = [
+                                    'user_name' => $user['user_name'],
+                                    'table' => $currentTable,
+                                    'column' => 'users_id',
+                                    'stic_permission_source' => $aclSource,
+                                    'global' => 1,
+                                ];
                                 break;
                         }
                     }
                 }
 
-                // Limpiar memoria después de procesar cada usuario
-                unset($userActions);
-                gc_collect_cycles();
+                // Realizar inserción por lotes si alcanzamos el tamaño del batch
+                if (count($permissionsBatch) >= $batchInsertSize) {
+                    $this->batchInsertPermissions($permissionsBatch);
+                    $permissionsBatch = [];
+                }
+
+                $userEndTime = microtime(true);
+                $userProcessingTime = round($userEndTime - $userStartTime, 4);
+                $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': User ' . $processedUsers . '/' . $totalUsers .
+                    ' in ' . $userProcessingTime . ' seconds');
             }
 
             $offset += $batchSize;
-
-            // Limpiar memoria después de cada lote
-            unset($res);
             gc_collect_cycles();
 
-        } while ($processedUsers > 0);
+        } while ($processedUsers < $totalUsers);
+
+        // Insertar registros restantes
+        if (!empty($permissionsBatch)) {
+            $this->batchInsertPermissions($permissionsBatch);
+        }
+
+        $endTime = microtime(true);
+        $totalProcessingTime = round($endTime - $startTime, 4);
+        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Completed ACL processing for ' . $processedUsers .
+            ' users in ' . $totalProcessingTime . ' seconds');
+    }
+
+    /**
+     * Realiza inserción por lotes de permisos
+     */
+    private function batchInsertPermissions($permissions) {
+        if (empty($permissions)) return;
+    
+        $db = DBManagerFactory::getInstance();
+        $values = [];
+        $fields = ['user_name', 'group', 'table', 'column', 'stic_permission_source', 'global'];
+    
+        foreach ($permissions as $permission) {
+            $row = [];
+            foreach ($fields as $field) {
+                // Manejo especial para el campo global que es numérico
+                if ($field === 'global') {
+                    $row[] = (int)($permission[$field] ?? 0);
+                } else {
+                    // Añadimos comillas simples para los campos de texto
+                    $row[] = "'" . $db->quote($permission[$field] ?? '') . "'";
+                }
+            }
+            $values[] = '(' . implode(',', $row) . ')';
+        }
+    
+        // Añadimos backticks a los nombres de las columnas
+        $quotedFields = array_map(function($field) {
+            return "`{$field}`";
+        }, $fields);
+    
+        $query = "INSERT INTO `sda_def_permissions` (" . implode(',', $quotedFields) . ") VALUES " . implode(',', $values);
+        
+        // Log para debug si es necesario
+        // $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Query: ' . $query);
+        
+        $db->query($query);
     }
     /**
      * Check the columns in the sda_def_columns table against the columns in the views.
