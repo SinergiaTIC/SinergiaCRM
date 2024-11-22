@@ -155,60 +155,53 @@ class Surveys extends Basic
             unset($_REQUEST['survey_questions_ids']);
         }
         // STIC End
-
-        // STIC-Custom 20241121 ART - Duplication of questions by having a workflow
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-        // First the survey was saved (with parent::save()), and then the questions were processed
-        // $res = parent::save($check_notify);
-        // if (empty($_REQUEST['survey_questions_supplied'])) {
-        //     return $res;
-        // }
-        // END STIC-Custom
-
-        foreach ($_REQUEST['survey_questions_names'] as $key => $val) {
-            if (!empty($_REQUEST['survey_questions_ids'][$key])) {
-                $question = BeanFactory::getBean('SurveyQuestions', $_REQUEST['survey_questions_ids'][$key]);
-                // STIC-Custom 20211110 AAM - With deleted questions, call mark_deleted and skip the loop
-                // STIC#457
-                if ($_REQUEST['survey_questions_deleted'][$key]) {
-                    $question->mark_deleted($question->id);
-                    continue;
-                }
-                // END STIC
-            } else {
-                $question = BeanFactory::newBean('SurveyQuestions');
-            }
-            $question->name = $val;
-            $question->type = $_REQUEST['survey_questions_types'][$key];
-            $question->sort_order = $_REQUEST['survey_questions_sortorder'][$key];
-            $question->survey_id = $this->id;
-            $question->deleted = $_REQUEST['survey_questions_deleted'][$key];
-            $question->save();
-            // STIC-Custom 20211110 AAM - Removing the "s" from the word question(s)
-            // STIC#457
-            // if (!empty($_REQUEST['survey_questions_options'][$key])) {
-            //     $this->saveOptions(
-            //         $_REQUEST['survey_questions_options'][$key],
-            //         $_REQUEST['survey_questions_options_id'][$key],
-            //         $_REQUEST['survey_questions_options_deleted'][$key],
-            if (!empty($_REQUEST['survey_question_options'][$key])) {
-                $this->saveOptions(
-                    $_REQUEST['survey_question_options'][$key],
-                    $_REQUEST['survey_question_options_id'][$key],
-                    $_REQUEST['survey_question_options_deleted'][$key],
-                    $question->id
-                );
-            }
-        }
-
-        // STIC-Custom 20241121 ART - Duplication of questions by having a workflow
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-        // The survey is saved after the questions are processed, allowing for more precise control of how many questions are created
         $res = parent::save($check_notify);
         if (empty($_REQUEST['survey_questions_supplied'])) {
             return $res;
         }
+
+        // STIC-Custom 20241121 ART - Duplication of questions by having a workflow
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/483
+        // Save the survey once when the workflow is not running
+        if ($this->logicHookDepth["after_save"] != 1) {
         // END STIC-Custom
+            foreach ($_REQUEST['survey_questions_names'] as $key => $val) {
+                if (!empty($_REQUEST['survey_questions_ids'][$key])) {
+                    $question = BeanFactory::getBean('SurveyQuestions', $_REQUEST['survey_questions_ids'][$key]);
+                    // STIC-Custom 20211110 AAM - With deleted questions, call mark_deleted and skip the loop
+                    // STIC#457
+                    if ($_REQUEST['survey_questions_deleted'][$key]) {
+                        $question->mark_deleted($question->id);
+                        continue;
+                    }
+                    // END STIC
+                } else {
+                    $question = BeanFactory::newBean('SurveyQuestions');
+                }
+                $question->name = $val;
+                $question->type = $_REQUEST['survey_questions_types'][$key];
+                $question->sort_order = $_REQUEST['survey_questions_sortorder'][$key];
+                $question->survey_id = $this->id;
+                $question->deleted = $_REQUEST['survey_questions_deleted'][$key];
+                $question->save();
+                // STIC-Custom 20211110 AAM - Removing the "s" from the word question(s)
+                // STIC#457
+                // if (!empty($_REQUEST['survey_questions_options'][$key])) {
+                //     $this->saveOptions(
+                //         $_REQUEST['survey_questions_options'][$key],
+                //         $_REQUEST['survey_questions_options_id'][$key],
+                //         $_REQUEST['survey_questions_options_deleted'][$key],
+                if (!empty($_REQUEST['survey_question_options'][$key])) {
+                    $this->saveOptions(
+                        $_REQUEST['survey_question_options'][$key],
+                        $_REQUEST['survey_question_options_id'][$key],
+                        $_REQUEST['survey_question_options_deleted'][$key],
+                        $question->id
+                    );
+                }
+            }
+        }
+
         return $res;
     }
 
