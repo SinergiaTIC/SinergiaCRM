@@ -94,12 +94,12 @@ class templateParser
                 } elseif ($field_def['type'] == 'bool') {
                     if ($focus->{$fieldName} == "1") {
                         // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
                         // $repl_arr[$key . "_" . $fieldName] = "true";
                         $repl_arr[$key . "_" . $fieldName] = translate('LBL_CHECKBOX_TRUE', 'AOS_PDF_Templates');
                     } else {
                         // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates - 
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
                         // $repl_arr[$key . "_" . $fieldName] = "false";
                         $repl_arr[$key . "_" . $fieldName] = translate('LBL_CHECKBOX_FALSE', 'AOS_PDF_Templates');
                         // END STIC-Custom

@@ -101,7 +101,7 @@ $mod_strings = array(
     'LBL_PAGE_SIZE' => 'Mida de la pàgina',
     'LBL_ORIENTATION' => 'Orientació',
     // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates - 
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
     'LBL_CHECKBOX_TRUE' => 'Verdadero',
     'LBL_CHECKBOX_FALSE' => 'Falso',
     // END STIC-Custom
