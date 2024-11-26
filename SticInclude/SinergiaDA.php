@@ -1720,7 +1720,6 @@ class ExternalReporting
      *
      * This function processes user permissions in batches, creating records in the sda_def_permissions table.
      * It processes:
-     * - All admin users with sda_allowed_c enabled
      * - Non-admin users up to the limit specified in $sugar_config['stic_sinergiada']['max_users_processed']
      *   (defaults to 100 if not set)
      *
@@ -1757,12 +1756,6 @@ class ExternalReporting
         // Get maximum number of non-admin users to process
         $maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 100;
 
-        // Get count of admin users
-        $totalAdminUsers = $db->getOne("SELECT COUNT(*) FROM users u
-                                   JOIN users_cstm uc ON u.id = uc.id_c
-                                   WHERE status='Active' AND deleted=0
-                                   AND sda_allowed_c=1 AND is_admin=1");
-
         // Get count of non-admin users (limited)
         $totalNonAdminUsers = $db->getOne("SELECT COUNT(*) FROM users u
                                       JOIN users_cstm uc ON u.id = uc.id_c
@@ -1770,7 +1763,7 @@ class ExternalReporting
                                       AND sda_allowed_c=1 AND is_admin=0
                                       LIMIT $maxNonAdminUsers");
 
-        $totalUsers = $totalAdminUsers + $totalNonAdminUsers;
+        $totalUsers = $totalNonAdminUsers;
         $processedUsers = 0;
 
         // Preload user groups if group permissions are enabled
@@ -1788,15 +1781,6 @@ class ExternalReporting
         $permissionsBatch = [];
         $batchInsertSize = 500;
 
-        // Process admin users
-        $adminQuery = "SELECT id, user_name, is_admin
-                  FROM users
-                  JOIN users_cstm ON users.id = users_cstm.id_c
-                  WHERE status='Active' AND deleted=0
-                  AND sda_allowed_c=1 AND is_admin=1";
-
-        $adminUsers = $db->query($adminQuery);
-
         // Process non-admin users
         $nonAdminQuery = "SELECT id, user_name, is_admin
                      FROM users
@@ -1807,8 +1791,8 @@ class ExternalReporting
 
         $nonAdminUsers = $db->query($nonAdminQuery);
 
-        // Combine both result sets
-        $userQueries = [$adminUsers, $nonAdminUsers];
+        
+        $userQueries = [$nonAdminUsers];
 
         foreach ($userQueries as $users) {
             while ($user = $db->fetchByAssoc($users, false)) {
