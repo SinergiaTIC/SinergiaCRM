@@ -1721,7 +1721,7 @@ class ExternalReporting
      * This function processes user permissions in batches, creating records in the sda_def_permissions table.
      * It processes:
      * - All admin users with sda_allowed_c enabled
-     * - Non-admin users up to the limit specified in $sugar_config['stic_sinergiada']['max_user_processed']
+     * - Non-admin users up to the limit specified in $sugar_config['stic_sinergiada']['max_users_processed']
      *   (defaults to 100 if not set)
      *
      * @param array $modules List of modules to process ACL settings for
@@ -1755,7 +1755,7 @@ class ExternalReporting
         ];
 
         // Get maximum number of non-admin users to process
-        $maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_user_processed'] ?? 100;
+        $maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 100;
 
         // Get count of admin users
         $totalAdminUsers = $db->getOne("SELECT COUNT(*) FROM users u
