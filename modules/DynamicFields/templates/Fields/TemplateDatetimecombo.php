@@ -49,7 +49,7 @@ class TemplateDatetimecombo extends TemplateRange
     public $type = 'datetimecombo';
     public $len = '';
     // STIC-Custom 20241126 ART - Translated Default Datetime Values
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/488
     // public $dateStrings = array(
     //     '-none-' => '',
     //     // STIC-Custom 20221229 AAM - Adding "now" option to default datetime values

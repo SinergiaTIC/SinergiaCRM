@@ -2056,7 +2056,7 @@ $app_strings = array(
 
     'LBL_YESTERDAY' => 'Onte',
     // STIC-Custom 20241126 ART - Translated Default Datetime Values
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/488
     'LBL_NOW' => 'ahora',
     // END STIC-Custom
     'LBL_TODAY' => 'hoxe',
