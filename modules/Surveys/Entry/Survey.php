@@ -146,7 +146,7 @@ function displaySurvey($survey, $contactId, $trackerId)
 {
     ?>
     <!-- STIC-Custom 20241126 - JBL - Disable Submit when clicked -->
-    <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/ -->
+    <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/490 -->
     <!-- <form method="post"> -->
     <form method="post" onsubmit="disableSubmitButton(this)">
     <!-- END STIC-Custom -->
@@ -168,7 +168,7 @@ function displaySurvey($survey, $contactId, $trackerId)
         <button class="btn btn-primary" type="submit"><?php echo $survey->getSubmitText(); ?></button>
     </form>
     <!-- STIC-Custom 20241126 - JBL - Disable Submit when clicked -->
-    <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/ -->
+    <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/490 -->
     <script>
         function disableSubmitButton(form) {
             form.querySelector('button[type="submit"]').disabled = true; 
