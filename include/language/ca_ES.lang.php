@@ -2052,10 +2052,7 @@ $app_strings = array(
     'LBL_DESCRIPTION' => 'Descripció',
 
     'LBL_YESTERDAY' => 'ahir',
-    // STIC-Custom 20241126 ART - Translated Default Datetime Values
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/488
     'LBL_NOW' => 'ara',
-    // END STIC-Custom
     'LBL_TODAY' => 'avui',
     'LBL_TOMORROW' => 'demà',
     'LBL_NEXT_WEEK' => 'la setmana vinent',
