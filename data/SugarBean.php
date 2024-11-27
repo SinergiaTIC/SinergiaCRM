@@ -2863,19 +2863,25 @@ class SugarBean
         // STIC-Custom 20220916 MHP - Assign the record indicated in the subpanel form instead of 
         // the parent record (record from which the subpanel was opened) since they might be different
         // STIC#849
-        if (!empty($new_rel_id) 
+        if (!empty($new_rel_id)
             && ( // Relationships with an ID in the _ida field of the relationship different from the parent record
-                 (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})
-                 // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
-                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
-                    // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
-                    // || (empty($this->{$new_rel_link}) && !empty($this->parent_id) && $new_rel_id !=$this->parent_id)
-                 // END STIC-Custom
-                 )
+                (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})
+                // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
+                // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
+                // || (empty($this->{$new_rel_link}) && !empty($this->parent_id) && $new_rel_id !=$this->parent_id)
+                || (
+                    // Check if LHSModule equals RHSModule
+                    ($this->load_relationship($new_rel_link) && !empty($this->$new_rel_link)
+                        && $this->$new_rel_link->getRelationshipObject()->getLHSModule() == $this->$new_rel_link->getRelationshipObject()->getRHSModule()
+                    )
+                )
+                // END STIC-Custom
+            )
         ) {
             $new_rel_id = ''; // Assign the empty value to this variable, in the same way as when creating the record from the edit view
         }
-        // END STIC_Custom
+            // END STIC_Custom
 
         return array($new_rel_id, $new_rel_link);
     }
