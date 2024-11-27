@@ -360,6 +360,7 @@
          }
          $GLOBALS['log']->debug("Downloading Document: ".$document_id);
          // STIC Custom 20241113 JBL - Fix static calls to non static methods
+         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
          // PackageManagerComm::downloadedDocumentation($document_id);
          (new PackageManagerComm())->downloadedDocumentation($document_id);
          // End STIC Custom

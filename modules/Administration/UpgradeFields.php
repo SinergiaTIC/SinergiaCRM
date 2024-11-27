@@ -126,6 +126,7 @@ foreach ($modules as $the_module => $fields) {
     }
 }
 // STIC Custom 20241113 JBL - Fix static calls to non static methods
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
 // DynamicField :: deleteCache();
 (new DynamicField())->deleteCache();
 // End STIC Custom

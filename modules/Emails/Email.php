@@ -1028,6 +1028,7 @@ class Email extends Basic
             }
             $object_arr['Users'] = $current_user->id;
             // STIC Custom 20241113 JBL - Fix static calls to non static methods
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
             // $this->description_html = EmailTemplate::parse_template($this->description_html, $object_arr);
             // $this->name = EmailTemplate::parse_template($this->name, $object_arr);
             // $this->description = EmailTemplate::parse_template($this->description, $object_arr);
@@ -1424,6 +1425,7 @@ class Email extends Basic
                 } else {
                     $c = BeanFactory::newBean('Cases');
                     // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                     // if ($caseId = InboundEmail::getCaseIdFromCaseNumber($mail->Subject, $c)) {
                     if ($caseId = (new InboundEmail())->getCaseIdFromCaseNumber($mail->Subject, $c)) {
                     // End STIC Custom

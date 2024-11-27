@@ -74,18 +74,21 @@ class SugarpdfFactory
         $path = '/sugarpdf/sugarpdf.'.$type.'.php';
         if (file_exists('custom/modules/'.$module.$path)) {
             // STIC Custom 20241113 JBL - Fix static calls to non static methods
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
             // $sugarpdf = SugarpdfFactory::_buildFromFile('custom/modules/'.$module.$path, $bean, $sugarpdf_object_map, $type, $module);
             $sugarpdf = (new SugarpdfFactory())->_buildFromFile('custom/modules/'.$module.$path, $bean, $sugarpdf_object_map, $type, $module);
             // End STIC Custom
         } else {
             if (file_exists('modules/'.$module.$path)) {
                 // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                 // $sugarpdf = SugarpdfFactory::_buildFromFile('modules/'.$module.$path, $bean, $sugarpdf_object_map, $type, $module);
                 $sugarpdf = (new SugarpdfFactory())->_buildFromFile('modules/'.$module.$path, $bean, $sugarpdf_object_map, $type, $module);
                 // End STIC Custom
             } else {
                 if (file_exists('custom/include/Sugarpdf'.$path)) {
                     // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                     // $sugarpdf = SugarpdfFactory::_buildFromFile('custom/include/Sugarpdf'.$path, $bean, $sugarpdf_object_map, $type, $module);
                     $sugarpdf = (new SugarpdfFactory())->_buildFromFile('custom/include/Sugarpdf'.$path, $bean, $sugarpdf_object_map, $type, $module);
                     // End STIC Custom
@@ -95,6 +98,7 @@ class SugarpdfFactory
                     if (file_exists($file)) {
                         //it appears Sugar does have the proper logic for this file.
                         // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                         // $sugarpdf = SugarpdfFactory::_buildFromFile($file, $bean, $sugarpdf_object_map, $type, $module);
                         $sugarpdf = (new SugarpdfFactory())->_buildFromFile($file, $bean, $sugarpdf_object_map, $type, $module);
                         // End STIC Custom
@@ -159,6 +163,7 @@ class SugarpdfFactory
             }
         }
         // STIC Custom 20241113 JBL - Fix static calls to non static methods
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // return SugarpdfFactory::_buildClass($class, $bean, $sugarpdf_object_map);
         return (new SugarpdfFactory())->_buildClass($class, $bean, $sugarpdf_object_map);
         // End STIC Custom

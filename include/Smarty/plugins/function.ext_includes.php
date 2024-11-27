@@ -51,6 +51,7 @@ function smarty_function_ext_includes($params, &$smarty)
 			$cssDir = opendir("themes/$theme/ext/resources/css");
 			while (($file = readdir($cssDir)) !== false) {
 				// STIC Custom 20241113 JBL - Fix error comparison
+				// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
 				// if (strcasecmp(substr($file, -4), '.css' == 0)) {
 				if (strcasecmp(substr($file, -4), '.css') == 0) {
 				// End STIC Custom

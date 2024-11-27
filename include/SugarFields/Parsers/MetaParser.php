@@ -551,6 +551,7 @@ class MetaParser
         //Now run defined rules
         require_once("include/SugarFields/Parsers/Rules/ParseRules.php");
         // STIC Custom 20241113 JBL - Fix static calls to non static methods
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // $rules = ParseRules::getRules();
         $rules = (new ParseRules())->getRules();
         // End STIC Custom

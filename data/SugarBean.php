@@ -2295,6 +2295,7 @@ class SugarBean
             if ($this->db->tableExists($this->table_name . '_cstm')) {
                 $this->db->dropTableName($this->table_name . '_cstm');
                 // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                 // DynamicField::deleteCache();
                 (new DynamicField())->deleteCache();
                 // END STIC Custom

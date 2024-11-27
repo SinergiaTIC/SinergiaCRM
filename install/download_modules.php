@@ -370,6 +370,7 @@ $hidden_fields .=  "<input type=\"hidden\" name=\"goto\" value=\"{$mod_strings['
 $hidden_fields .=  "<input type=\"hidden\" name=\"languagePackAction\" value=\"commit\">";
 //$form2 = PackageManagerDisplay::buildPackageDisplay($form, $hidden_fields, 'install.php', array('langpack'), 'form1', true);
 // STIC Custom 20241113 JBL - Fix static calls to non static methods
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
 // $form2 = PackageManagerDisplay::buildPatchDisplay($form, $hidden_fields, 'install.php', array('langpack'));
 $form2 = (new PackageManagerDisplay())->buildPatchDisplay($form, $hidden_fields, 'install.php', array('langpack'));
 // End STIC Custom

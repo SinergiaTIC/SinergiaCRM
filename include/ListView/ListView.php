@@ -1198,6 +1198,7 @@ class ListView
         foreach (array_merge($_GET, $_POST) as $name=>$value) {
             //echo ("$name = $value <br/>");
                 // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                 // if (!empty($value) && $name != 'sort_order' //&& $name != ListView::getSessionVariableName($html_varName,"ORDER_BY")
                 //         && $name != ListView::getSessionVariableName($html_varName, "offset")
                 //         /*&& substr_count($name, "ORDER_BY")==0*/ && !in_array($name, $blockVariables)) {

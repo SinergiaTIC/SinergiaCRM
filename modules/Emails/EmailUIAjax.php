@@ -457,6 +457,7 @@ if (isset($_REQUEST['emailUIAction'])) {
                         } // if
 
                         // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                         // $emailAddress = SugarEmailAddress::_cleanAddress($emailAddressWithName);
                         $emailAddress = (new SugarEmailAddress())->_cleanAddress($emailAddressWithName);
                         // End STIC Custom
