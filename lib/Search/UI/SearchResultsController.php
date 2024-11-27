@@ -141,12 +141,58 @@ class SearchResultsController extends Controller
         $smarty->assign('results', $this->results);
         $smarty->assign('APP', $app_strings);
         try {
-            $smarty->assign('resultsAsBean', $this->results->getHitsAsBeans());
+            // STIC Custom 20241127 - JBL - SuiteCRM 7.14.6 core update
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+            // {php} in Smarty Template is not allowed
+            // $smarty->assign('resultsAsBean', $this->results->getHitsAsBeans());
+            $resultsAsBean = $this->results->getHitsAsBeans();
+            $processedResults = $this->translateModulesAndLists($headers, $resultsAsBean);
+            $smarty->assign('resultsAsBean', $processedResults);
+            // End STIC Custom
         } catch (\SuiteCRM\Exception\Exception $e) {
             LoggerManager::getLogger()->fatal("Failed to retrieve ElasticSearch options");
         }
 
         parent::display();
+    }
+
+    // STIC Custom 20241127 - JBL - SuiteCRM 7.14.6 core update
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+    // {php} in Smarty Template is not allowed.
+    // https://github.com/SinergiaTIC/SinergiaCRM-SuiteCRM/pull/696
+    // Translate in global search module and lists labels
+    private function translateModulesAndLists($headers, $resultsAsBean) {
+        foreach ($resultsAsBean as $module => $beans) {
+            foreach ($beans as $bean) {
+                $processedBean = [];
+                foreach ($headers[$module] as $header) {
+                    $field = $header['field'];
+                    $type = $bean->field_name_map[$field]['type'];
+                    $value = $bean->$field;
+        
+                    if ($type == 'enum' || $type == 'dynamicenum') {
+                        global $app_list_strings;
+                        $list = $bean->field_name_map[$field]['options'];
+                        $value = $app_list_strings[$list][$value] ?? $value;
+                    } elseif ($type == 'multienum') {
+                        global $app_list_strings;
+                        $displayFieldValues = unencodeMultienum($value);
+                        $list = $bean->field_name_map[$field]['options'];
+                        array_walk(
+                            $displayFieldValues,
+                            function (&$val) use ($list, $app_list_strings) {
+                                $val = $app_list_strings[$list][$val] ?? $val;
+                            }
+                        );
+                        $value = implode(", ", $displayFieldValues);
+                    }
+       
+                    $processedBean[$field] = $value;
+                }
+                $processedResults[$module][] = $processedBean;
+            }
+        }
+        return $processedResults;
     }
 
     /**
