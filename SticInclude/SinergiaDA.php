@@ -213,6 +213,7 @@ class ExternalReporting
 
         // Get & populate users ACL metadata (must run after $modulesList is created)
         $this->getAndSaveUserACL($modulesList);
+
         foreach ($modulesList as $moduleName) {
             // Reset module index list
             unset($indexesToCreate);
@@ -1716,24 +1717,22 @@ class ExternalReporting
     }
 
     /**
-     * Retrieves and saves Access Control List (ACL) settings for a subset of users
+     * Retrieves and saves Access Control List (ACL) permissions for users in the system.
      *
-     * This function processes user permissions in batches, creating records in the sda_def_permissions table.
-     * It processes:
-     * - Non-admin users up to the limit specified in $sugar_config['stic_sinergiada']['max_users_processed']
-     *   (defaults to 100 if not set)
+     * This function processes ACL permissions for users and creates corresponding entries in the
+     * permissions metadata table. It handles different types of permissions including:
+     * - Security group based permissions
+     * - Owner based permissions
+     * - Global permissions
      *
-     * @param array $modules List of modules to process ACL settings for
+     * @param array $modules Array of modules to process permissions for
      * @return void
-     * @global array $sugar_config Global SuiteCRM configuration
-     * @global object $db Database connection instance
+     * @global array $sugar_config Global SuiteCRM configuration array
+     * @throws SQLException If there are database errors during processing
      */
     public function getAndSaveUserACL($modules)
     {
-
-        // Increase memory limit to 256MB to handle ACL permission processing
-        ini_set('memory_limit', '256M');
-
+        // Track total processing time
         $startTime = microtime(true);
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Starting ACL processing');
 
@@ -1741,7 +1740,7 @@ class ExternalReporting
         $db = DBManagerFactory::getInstance();
         include_once 'modules/ACLActions/ACLAction.php';
 
-        // List of ACL access levels and their corresponding identifiers
+        // Define mapping of access levels to their identifier constants
         $aclSourcesList = [
             100 => 'ACL_ALLOW_ADMIN_DEV',
             99 => 'ACL_ALLOW_ADMIN',
@@ -1753,20 +1752,10 @@ class ExternalReporting
             0 => 'ACL_ALLOW_DEFAULT',
         ];
 
-        // Get maximum number of non-admin users to process
+        // Get configured limit for non-admin user processing
         $maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 100;
 
-        // Get count of non-admin users (limited)
-        $totalNonAdminUsers = $db->getOne("SELECT COUNT(*) FROM users u
-                                      JOIN users_cstm uc ON u.id = uc.id_c
-                                      WHERE status='Active' AND deleted=0
-                                      AND sda_allowed_c=1 AND is_admin=0
-                                      LIMIT $maxNonAdminUsers");
-
-        $totalUsers = $totalNonAdminUsers;
-        $processedUsers = 0;
-
-        // Preload user groups if group permissions are enabled
+        // Preload user groups if group permissions are enabled for better performance
         $userGroups = [];
         if ($sugar_config['stic_sinergiada']['group_permissions_enabled']) {
             $groupsQuery = "SELECT user_name, name as 'group'
@@ -1777,11 +1766,7 @@ class ExternalReporting
             }
         }
 
-        // Initialize batch insertion array
-        $permissionsBatch = [];
-        $batchInsertSize = 500;
-
-        // Process non-admin users
+        // Query to get active non-admin users
         $nonAdminQuery = "SELECT id, user_name, is_admin
                      FROM users
                      JOIN users_cstm ON users.id = users_cstm.id_c
@@ -1790,16 +1775,14 @@ class ExternalReporting
                      LIMIT $maxNonAdminUsers";
 
         $nonAdminUsers = $db->query($nonAdminQuery);
-
-        
         $userQueries = [$nonAdminUsers];
 
+        // Process each user query result set
         foreach ($userQueries as $users) {
             while ($user = $db->fetchByAssoc($users, false)) {
                 $userStartTime = microtime(true);
-                $processedUsers++;
 
-                // Process each module for the current user
+                // Process each module's permissions for current user
                 foreach ($modules as $moduleName => $moduleData) {
                     // Skip Users module for non-admin users
                     if ($user['is_admin'] == 0 && $moduleName == 'Users') {
@@ -1809,22 +1792,22 @@ class ExternalReporting
                     $userActions = ACLAction::getUserActions($user['id'], false, $moduleName);
                     $value = $userActions[$moduleName]['module'] ?? $userActions['module'] ?? null;
 
-                    // Process permissions if valid ACL settings exist
+                    // Only process valid permission configurations
                     if (!empty($value) && $user['is_admin'] == 0 &&
                         $value['access']['aclaccess'] >= 0 &&
                         $value['view']['aclaccess'] >= 0) {
 
                         $aclSource = $aclSourcesList[$value['view']['aclaccess']];
 
-                        // Handle special cases for module names
+                        // Handle special module name cases
                         $key = $moduleName == 'ProjectTask' ? 'Project_Task' : $moduleName;
                         $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
 
                         $currentTable = $this->viewPrefix . '_' . strtolower($key);
 
-                        // Process different types of permissions
+                        // Process permissions based on access level
                         switch ($value['view']['aclaccess']) {
-                            case '80': // Security groups permission
+                            case '80': // Security group permissions
                                 if (!empty($userGroups[$user['user_name']])) {
                                     foreach ($userGroups[$user['user_name']] as $group) {
                                         $permissionsBatch[] = [
@@ -1839,7 +1822,7 @@ class ExternalReporting
                                 }
                                 break;
 
-                            case '75': // Owner-based permission
+                            case '75': // Owner-based permissions
                                 $permissionsBatch[] = [
                                     'user_name' => $user['user_name'],
                                     'table' => $currentTable,
@@ -1849,7 +1832,7 @@ class ExternalReporting
                                 ];
                                 break;
 
-                            default: // Global permission
+                            default: // Global permissions
                                 $permissionsBatch[] = [
                                     'user_name' => $user['user_name'],
                                     'table' => $currentTable,
@@ -1862,103 +1845,113 @@ class ExternalReporting
                     }
                 }
 
-                // Perform batch insert when batch size is reached
-                if (count($permissionsBatch) >= $batchInsertSize) {
-                    $this->batchInsertPermissions($permissionsBatch);
-                    $permissionsBatch = [];
-                }
-
-                // Log processing time for current user
+                // Record processing time for current user
                 $userEndTime = microtime(true);
                 $userProcessingTime = round($userEndTime - $userStartTime, 4);
             }
 
-            gc_collect_cycles(); // Clean up memory
-        }
-
-        // Insert any remaining records
-        if (!empty($permissionsBatch)) {
+            // Insert accumulated permissions in batch
             $this->batchInsertPermissions($permissionsBatch);
+            unset($permissionsBatch);
         }
 
-        // Log total processing time
+        // Log total execution time
         $endTime = microtime(true);
         $totalProcessingTime = round($endTime - $startTime, 4);
-        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Completed ACL processing for ' . $processedUsers .
-            ' users in ' . $totalProcessingTime . ' seconds');
+
+        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Completed ACL processing for <=' . $maxNonAdminUsers . ' users in ' . $totalProcessingTime . ' seconds');
     }
 
     /**
-     * Performs batch insertion of permissions into the database
-     * Processes records in small batches to optimize memory usage
+     * Performs batch insertions of permission records into the database.
      *
-     * @param array $permissionsBatch Array of permission records to insert
+     * This function handles the bulk insertion of permission records into the sda_def_permissions table,
+     * implementing batch processing to optimize database performance. It includes:
+     * - Validation of record structure
+     * - Sanitization of input values
+     * - Batch size management to prevent memory issues
+     * - Error handling and logging
+     *
+     * @param array $permissionsBatch Array of permission records to insert. Each record should contain:
+     *        - user_name: string
+     *        - group: string
+     *        - table: string
+     *        - column: string
+     *        - stic_permission_source: string
+     *        - global: string
      * @return void
+     * @throws Exception If database errors occur during insertion
      */
     private function batchInsertPermissions($permissionsBatch)
     {
+        // Get database instance
         $db = DBManagerFactory::getInstance();
 
-        // Base SQL query for insertions
+        // Define base SQL for all insertions
         $baseSQL = "INSERT INTO sda_def_permissions
-               (user_name, `group`, `table`, `column`, stic_permission_source, `global`)
-               VALUES ";
+           (user_name, `group`, `table`, `column`, stic_permission_source, `global`)
+           VALUES ";
 
-        // Configure batch processing
-        $subBatchSize = 50; // Process 50 records at a time
+        // Set batch processing parameters
+        $subBatchSize = 100000; // Maximum records per batch
         $values = [];
         $count = 0;
 
+        // Process each permission record
         foreach ($permissionsBatch as $record) {
-            // Validate record has all required fields
+            // Ensure record has all required fields
             if (count($record) !== 6) {
-                $GLOBALS['log']->error('Invalid record structure: ' . print_r($record, true));
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invalid record structure: ' . print_r($record, true));
                 continue;
             }
 
-            // Sanitize and properly quote each value
+            // Sanitize and quote record values
             $sanitizedValues = [];
             foreach ($record as $value) {
                 $sanitizedValues[] = "'" . str_replace("'", "''", $value) . "'";
             }
 
+            // Add formatted record to batch
             $values[] = "(" . implode(",", $sanitizedValues) . ")";
             $count++;
 
-            // Process batch when size limit is reached
+            // Execute insertion when batch limit is reached
             if ($count >= $subBatchSize) {
-                $sql = $baseSQL . implode(',', $values);
-                try {
-                    if (!$db->query($sql)) {
-                        $GLOBALS['log']->error('SQL Error: ' . $db->last_error);
-                        $GLOBALS['log']->error('Failed SQL: ' . $sql);
-                    }
-                } catch (Exception $e) {
-                    $GLOBALS['log']->error('Insert error: ' . $e->getMessage());
-                }
+                $this->executeInsertBatch($db, $baseSQL, $values);
 
-                // Reset counters for next batch
+                // Reset batch tracking
                 $values = [];
                 $count = 0;
             }
         }
 
-        // Process any remaining records
+        // Process remaining records if any
         if (!empty($values)) {
-            $sql = $baseSQL . implode(',', $values);
-            try {
-                if (!$db->query($sql)) {
-                    $GLOBALS['log']->error('SQL Error: ' . $db->last_error);
-                    $GLOBALS['log']->error('Failed SQL: ' . $sql);
-                }
-            } catch (Exception $e) {
-                $GLOBALS['log']->error('Insert error: ' . $e->getMessage());
-            }
+            $this->executeInsertBatch($db, $baseSQL, $values);
         }
-
-        // Force garbage collection
-        gc_collect_cycles();
     }
+
+    /**
+     * Helper function to execute a batch of INSERT statements.
+     *
+     * @param object $db Database instance
+     * @param string $baseSQL Base SQL statement
+     * @param array $values Array of formatted value strings
+     * @return void
+     */
+    private function executeInsertBatch($db, $baseSQL, $values)
+    {
+        $sql = $baseSQL . implode(',', $values);
+        try {
+            if (!$db->query($sql)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': SQL Error: ' . $db->last_error);
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed SQL: ' . $sql);
+            }
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Insert error: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Check the columns in the sda_def_columns table against the columns in the views.
      * Display the columns that do not exist in the views.
