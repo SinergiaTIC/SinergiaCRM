@@ -455,41 +455,103 @@ function removeDocumentsFromFS()
     while ($row = $db->fetchByAssoc($resource)) {
         $bean = BeanFactory::getBean($row['module']);
         $bean->retrieve($row['bean_id'], true, false);
-        if (empty($bean->id)) {
+        // STIC Custom 20241029 ART - "Removal of Documents from Filesystem" task has erratic behavior
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+        // if (empty($bean->id)) {
+        //     $isSuccess = true;
+        //     $bean->id = $row['bean_id'];
+        //     $directory = $bean->deleteFileDirectory();
+        //     if (!empty($directory) && is_dir('upload://deleted/' . $directory)) {
+        //         if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
+        //             $directory = explode('/', $directory);
+        //             while (!empty($directory)) {
+        //                 $path = 'upload://deleted/' . implode('/', $directory);
+        //                 if (is_dir($path)) {
+        //                     $directoryIterator = new DirectoryIterator($path);
+        //                     $empty = true;
+        //                     foreach ($directoryIterator as $item) {
+        //                         if ($item->getFilename() == '.' || $item->getFilename() == '..') {
+        //                             continue;
+        //                         }
+        //                         $empty = false;
+        //                         break;
+        //                     }
+        //                     if ($empty) {
+        //                         rmdir($path);
+        //                     }
+        //                 }
+        //                 array_pop($directory);
+        //             }
+        //         }
+        //     }
+        //     if ($isSuccess) {
+        //         $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
+        //     } else {
+        //         $return = false;
+        //     }
+        // } else {
+        //     $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+        // }
+
+        // If the bean (record) has a valid ID (meaning it exists)
+        if ($bean->id) {
             $isSuccess = true;
-            $bean->id = $row['bean_id'];
             $directory = $bean->deleteFileDirectory();
             if (!empty($directory) && is_dir('upload://deleted/' . $directory)) {
-                if ($isSuccess = rmdir_recursive('upload://deleted/' . $directory)) {
+                try {
+                    // Attempt to remove the directory and its contents recursively
+                    $isSuccess = rmdir_recursive('upload://deleted/' . $directory);
+                } catch (Exception $e) {
+                    // Handle any exceptions during directory removal
+                    $isSuccess = false;
+                    $GLOBALS['log']->debug("Error removing directory: {$e->getMessage()}");
+                }
+
+                // If directory removal was successful
+                if ($isSuccess) {
                     $directory = explode('/', $directory);
                     while (!empty($directory)) {
                         $path = 'upload://deleted/' . implode('/', $directory);
-                        if (is_dir($path)) {
-                            $directoryIterator = new DirectoryIterator($path);
-                            $empty = true;
-                            foreach ($directoryIterator as $item) {
-                                if ($item->getFilename() == '.' || $item->getFilename() == '..') {
-                                    continue;
+                        // Check if the directory exists and is truly empty (excluding '.' and '..')
+                        $scanned_directory = scandir($path, SCANDIR_SORT_ASCENDING); // Sort ascending for consistency
+                        if ($scanned_directory === false) {
+                            $GLOBALS['log']->debug("Error while scanning the directory: $path");
+                        } else {
+                            // Count elements, excluding '.' and '..'
+                            if (count($scanned_directory) <= 2) {
+                                if (!rmdir($path)) {
+                                    $GLOBALS['log']->debug("Error removing directory: $path");
                                 }
-                                $empty = false;
-                                break;
-                            }
-                            if ($empty) {
-                                rmdir($path);
                             }
                         }
+                    
                         array_pop($directory);
                     }
                 }
             }
             if ($isSuccess) {
-                $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
+                // If directory removal was successful (and the bean exists)
+                // Delete the entry from the `cron_remove_documents` table
+                $result = $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($row['id']));
+                if (!$result) {
+                    $GLOBALS['log']->debug('Failed to delete from cron_remove_documents table');
+                }
             } else {
                 $return = false;
+                // If directory removal failed, update the `date_modified` in the table
+                $result = $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+                if (!$result) {
+                    $GLOBALS['log']->debug('Failed to update cron_remove_documents table');
+                }
             }
         } else {
-            $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+            // If the bean (record) doesn't exist, update the `date_modified` in the table
+            $result = $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
+            if (!$result) {
+                $GLOBALS['log']->debug('Failed to update cron_remove_documents table');
+            }
         }
+        // END STIC Custom
     }
 
     return $return;
