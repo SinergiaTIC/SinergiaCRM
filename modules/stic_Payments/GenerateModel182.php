@@ -163,11 +163,32 @@ $generalSettingsTemp = stic_SettingsUtils::getSettingsByType('GENERAL');
 $m182FixedValuesTemp = array(
     'M182_PORCENTAJE_DEDUCCION' => 80,
     'M182_PORCENTAJE_DEDUCCION_CUOTAS_PARTIDOS' => 20,
-    'M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE' => 35,
-    'M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE' => 40,
-    'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS' => 35,
-    'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE' => 40,
+    // Previous rates (before 2024)
+    'M182_LIMITE_DEDUCCION_ANTERIOR' => 150,
+    'M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE_ANTERIOR' => 35,
+    'M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE_ANTERIOR' => 40,
+    'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_ANTERIOR' => 35,
+    'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE_ANTERIOR' => 40,
+    // New rates (from 2024)
+    'M182_LIMITE_DEDUCCION' => 250,
+    'M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE' => 40,
+    'M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE' => 45,
+    'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS' => 40,
+    'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE' => 50,
 );
+
+// Helper function to get the correct deduction limit based on the year
+function getLimiteDeduccion($year) {
+    global $m182Vars;
+    return ($year >= 2024) ? $m182Vars['M182_LIMITE_DEDUCCION'] : $m182Vars['M182_LIMITE_DEDUCCION_ANTERIOR'];
+}
+
+// Helper function to get the correct deduction rate based on the year and type
+function getPorcentajeDeduccion($tipo, $year) {
+    global $m182Vars;
+    $suffix = ($year >= 2024) ? '' : '_ANTERIOR';
+    return $m182Vars[$tipo . $suffix];
+}
 
 $m182Vars = array_merge($m182SettingsTemp, $generalSettingsTemp, $m182FixedValuesTemp);
 
@@ -514,18 +535,18 @@ foreach ($contacts as $id) {
 
             if ($id[$year]['kind'] != $id[$year]['total']) {
 
-                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
+                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"]; // Default 80%
                 $m182['clave'] = $donationKey;
                 $m182['importe_donacion'] = $id[$year]['total'] - $id[$year]['kind'];
                 $total += $m182['importe_donacion'];
                 $m182['kind'] = ' ';
 
                 // Calculation of the percentage of deduction based on the amount and recurrence of donations
-                if ($id[$year]['total'] > 150) {
+                if ($m182['importe_donacion'] > getLimiteDeduccion($year)) {
                     if ($id['recurrente']) {
-                        $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE"];
+                        $m182['por_deduccion'] = getPorcentajeDeduccion('M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE', $year);
                     } else {
-                        $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE"];
+                        $m182['por_deduccion'] = getPorcentajeDeduccion('M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE', $year);
                     }
                 }
 
@@ -548,18 +569,18 @@ foreach ($contacts as $id) {
 
             if ($id[$year]['kind'] > 0) {
 
-                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
+                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"]; // Default 80%
                 $m182['clave'] = $donationKey;
                 $m182['importe_donacion'] = $id[$year]['kind'];
                 $total += $m182['importe_donacion'];
-                $m182['kind'] = 'X';
+                $m182['kind'] = 'X';      
 
                 // Calculation of the percentage of deduction based on the amount and recurrence of donations
-                if ($id[$year]['total'] > 150) {
+                if ($m182['importe_donacion'] > getLimiteDeduccion($year)) {
                     if ($id['recurrente']) {
-                        $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE"];
+                        $m182['por_deduccion'] = getPorcentajeDeduccion('M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE', $year);
                     } else {
-                        $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE"];
+                        $m182['por_deduccion'] = getPorcentajeDeduccion('M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE', $year);
                     }
                 }
 
@@ -638,9 +659,9 @@ foreach ($accounts as $id) {
 
                 // Calculation of the percentage of deduction based on the recurrence of donations
                 if ($id['recurrente']) {
-                    $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE"];
+                    $m182['por_deduccion'] = getPorcentajeDeduccion('M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE', $year);
                 } else {
-                    $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS"];
+                    $m182['por_deduccion'] = getPorcentajeDeduccion('M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS', $year);
                 }
 
                 // Recurrence mark
