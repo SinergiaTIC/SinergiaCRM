@@ -1384,6 +1384,12 @@ a#nonprofitized_by {
   float: none;
 }
 
+// fix for recovery password button https://github.com/SinergiaTIC/SinergiaCRM/issues/409
+#forgot_password_dialog input#generate_pwd_button {
+  position: relative ;
+  z-index: 99;
+}
+
 // Font por advanced Menu
 #stic-menu li a{
   font-family: Lato, Arial, sans-serif;
