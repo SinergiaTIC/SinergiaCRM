@@ -716,19 +716,17 @@ $m182['patrimonio_protegido_nombre'] = '';
 $linea1 = model182T1($m182);
 
 // 5.4. Creation of the file to download
-// header("Content-Type: application/force-download");
-// header("Content-type: application/octet-stream");
-// header("Content-Disposition: attachment; filename=\"modelo_182_" . $m182['ejercicio'] . ".txt\";");
-// // disable content type sniffing in MSIE
-// header("X-Content-Type-Options: nosniff");
-// header("Expires: 0");
+header("Content-Type: application/force-download");
+header("Content-type: application/octet-stream");
+header("Content-Disposition: attachment; filename=\"modelo_182_" . $m182['ejercicio'] . ".txt\";");
+// disable content type sniffing in MSIE
+header("X-Content-Type-Options: nosniff");
+header("Expires: 0");
 
-// ob_clean();
-// flush();
-echo "<textarea style='width:1200px;height:500px;'>";
+ob_clean();
+flush();
 echo $linea1; // Header record (declarant)
 foreach ($model182T2 as $linea) {
     echo model182T2($linea); // Declared records
 }
-echo "</textarea>";
 die();
