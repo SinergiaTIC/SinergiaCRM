@@ -147,28 +147,28 @@ if ($paymentTypeArray == '') {
 }
 $paymentTypes = "p.payment_type = '" . implode("' OR p.payment_type = '", $paymentTypeArray) . "'";
 
-// Load M182 settings
-$m182SettingsTemp = stic_SettingsUtils::getSettingsByType('M182');
-
 // Initialize the variables with the years to be analyzed
 $lastyear = date("Y") - 1;   // Year for which we are presenting the M182
 $twoYearsAgo = date("Y") - 2;   // Year before $lastyear
 $threeYearsAgo = date("Y") - 3;   // Year before $twoYearsAgo
 $fourYearsAgo = date("Y") - 4; // Year before $threeYearsAgo
 
+// Load M182 settings
+$m182SettingsTemp = stic_SettingsUtils::getSettingsByType('M182');
+
+// Load GENERAL settings
+$generalSettingsTemp = stic_SettingsUtils::getSettingsByType('GENERAL');
+
 // Set other settings to be used in code
 $m182FixedValuesTemp = array(
     'M182_PORCENTAJE_DEDUCCION' => 80,
     'M182_PORCENTAJE_DEDUCCION_CUOTAS_PARTIDOS' => 20,
-    'M182_LIMITE_DEDUCCION' => 250,
     'M182_PORCENTAJE_DEDUCCION_EXCESO_NO_RECURRENTE' => 40,
     'M182_PORCENTAJE_DEDUCCION_EXCESO_RECURRENTE' => 45,
     'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS' => 40,
     'M182_PORCENTAJE_DEDUCCION_PERSONAS_JURIDICAS_RECURRENTE' => 50,
+    'M182_LIMITE_DEDUCCION' => 250,
 );
-
-// Load GENERAL settings
-$generalSettingsTemp = stic_SettingsUtils::getSettingsByType('GENERAL');
 
 $m182Vars = array_merge($m182SettingsTemp, $generalSettingsTemp, $m182FixedValuesTemp);
 
@@ -515,7 +515,7 @@ foreach ($contacts as $id) {
 
             if ($id[$year]['kind'] != $id[$year]['total']) {
 
-                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"]; // Default 80%
+                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
                 $m182['importe_donacion'] = $id[$year]['total'] - $id[$year]['kind'];
                 $total += $m182['importe_donacion'];
@@ -549,7 +549,7 @@ foreach ($contacts as $id) {
 
             if ($id[$year]['kind'] > 0) {
 
-                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"]; // Default 80%
+                $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
                 $m182['importe_donacion'] = $id[$year]['kind'];
                 $total += $m182['importe_donacion'];
