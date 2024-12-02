@@ -20,36 +20,19 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-require_once 'include/MVC/View/views/view.detail.php';
-require_once 'SticInclude/Views.php';
-
-class stic_ResourcesViewDetail extends ViewDetail
+class stic_Bookings_Places_CalendarUtils
 {
-
-    public function __construct()
+    /**
+     * Returns all the existing resources with the necessary information to display them in the calendar
+     *
+     * @return void
+     */
+    public static function getAllPlaces()
     {
-        parent::__construct();
-
+        global $app_list_strings, $current_language, $sugar_config;
+        // In order to display the Calendar in the Dashlet, we need to retrieve the mod_strings manually from 
+        // the module using this function
+        $mod_strings = return_module_language($current_language, 'stic_Bookings_Calendar');
+        return array();
     }
-
-    public function preDisplay()
-    {
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-    }
-
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Resources/Utils.js");
-
-        // Write here you custom code
-
-    }
-
 }

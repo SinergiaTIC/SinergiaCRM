@@ -68,10 +68,14 @@ $mod_strings = array(
     'LBL_ALL_DAY' => 'Tot el dia',
     'LBL_START_DATE' => "Data d&#39;inici",
     'LBL_END_DATE' => 'Data de finalització',
+    'LBL_PLANNED_START_DATE' => 'Data inici prevista',
+    'LBL_PLANNED_END_DATE' => 'Data final prevista',
     'LBL_FLEX_RELATE' => 'Relacionat amb',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organització que reserva',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona que reserva',
+    'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unitat familiar que reserva',
+    'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromís de pagament',
 
     // Adding resources section
     'LBL_RESOURCES' => 'Recursos',
