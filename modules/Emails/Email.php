@@ -1796,6 +1796,13 @@ class Email extends Basic
         foreach ($this->email_to_text as $textfield => $mailfield) {
             $emailText->{$textfield} = $this->{$mailfield};
         }
+        // STIC-Custom 20240731 MHP - https://github.com/SinergiaTIC/SinergiaCRM/issues/318
+        // CRM sometimes uses the from_addr field and other times the from_addr_name field to store the email that sends the mail. 
+        // Since it does not identify when it uses one and when the other, the from_addr field is always reported before saving.
+        if (isset($this->from_addr) && !empty($this->from_addr)){
+            $emailText->from_addr = $this->from_addr;
+        }
+        // END STIC-Custom        
         $emailText->email_id = $this->id;
         if (!$this->new_with_id) {
             $this->db->update($emailText);
@@ -2646,6 +2653,16 @@ class Email extends Basic
             $note->file_mime_type = $note->file->mime_type;
             $note_id = $note->save();
 
+            // STIC-Custom 20240827 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/377
+            // Create relationship between Email and Note
+            global $db;
+            $query = "INSERT INTO emails_beans (id, email_id, bean_id, bean_module, deleted) 
+                      VALUES (UUID(), '{$this->id}', '{$note->id}', 'Notes', '0')";
+            if ($db->query($query)) {
+                $GLOBALS['log']->fatal("Line ".__LINE__.": ".__METHOD__.":  Error creating relationship between email ({$this->id}) and attached note ({$note->id})");
+            }
+            // END STIC-Custom
+
             $this->saved_attachments[] = $note;
 
             $note->id = $note_id;
@@ -2676,6 +2693,16 @@ class Email extends Basic
                 $docNote->parent_type = 'Emails';
                 $docNote->file_mime_type = $docRev->file_mime_type;
                 $docId = $docNote = $docNote->save();
+
+                // STIC-Custom 20240827 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/377
+                // // Create relationship between email and note created from attached document
+                global $db;
+                $query = "INSERT INTO emails_beans (id, email_id, bean_id, bean_module, deleted) 
+                        VALUES (UUID(), '{$this->id}', '{$docNote}', 'Notes', '0')";
+                if ($db->query($query)) {
+                    $GLOBALS['log']->fatal("Line ".__LINE__.": ".__METHOD__.":  Error creating relationship between email ({$this->id}) and attached note ({$docNote})");
+                }
+                // END STIC-Custom
 
                 $noteFile->duplicate_file($docRev->id, $docId, $docRev->filename);
             }

@@ -1,4 +1,25 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 
 class ExternalReporting
 {
@@ -52,6 +73,7 @@ class ExternalReporting
         'stic_Web_Forms',
         'stic_Incorpora_Locations',
         'stic_Validation_Results',
+        'stic_Custom_Views',
     ];
 
     public function __construct()
@@ -444,7 +466,13 @@ class ExternalReporting
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
 
                                 //Add relate record name
-                                $relatedName = in_array($fieldV['module'], ['Contacts', 'Leads', 'Users']) ? " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) " : "{$leftJoinAlias}.name";
+                                if (in_array($fieldV['module'], ['Contacts', 'Leads']) || (Beanfactory::newBean($fieldV['module'])->field_defs['last_name']) && $fieldV['module'] != 'Users') {
+                                    $relatedName = " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) ";
+                                } elseif ($fieldV['module'] == 'Users') {
+                                    $relatedName = "{$leftJoinAlias}.user_name";
+                                } else {
+                                    $relatedName = "{$leftJoinAlias}.name";
+                                }
 
                                 $fieldSrc .= " IFNULL($relatedName,'') AS {$fieldV['name']}";
 
@@ -574,11 +602,7 @@ class ExternalReporting
                     case 'fullname':
                     case 'name':
                     case 'url':
-                    case 'decimal':
-                    case 'int':
                     case 'html':
-                    case 'currency':
-                    case 'float':
                     case 'user_name':
                     case 'ColorPicker':
                     case 'email':
@@ -595,6 +619,17 @@ class ExternalReporting
                         } else {
                             $fieldSrc = "IFNULL({$fieldPrefix}.{$fieldV['name']},'') AS {$fieldName}";
                         }
+                        break;
+
+                    // Numeric types
+                    case 'decimal':
+                    case 'int':
+                    case 'currency':
+                    case 'float':
+                        $fieldV['alias'] = $fieldV['name'];
+                        // Numeric type columns are converted to decimal to ensure they remain in this type in the view,
+                        // avoiding errors in min and max aggregations due to ordering
+                        $fieldSrc = "CONVERT(IFNULL({$fieldPrefix}.{$fieldV['name']},''), decimal(20,4)  ) AS {$fieldName}";
                         break;
 
                     default:
@@ -695,6 +730,71 @@ class ExternalReporting
                 unset($edaPrecision);
             }
 
+            // VIRTUAL FIELDS
+            // Include existing files in modules and custom/modules/ to create virtual fields in SinergiaCRM
+            $sourceFiles = [
+                "modules/$moduleName/SDAVardefs.php",
+                "custom/modules/$moduleName/Ext/SDAVardefs/SDAVardefs.ext.php",
+            ];
+
+            foreach ($sourceFiles as $file) {
+                if (file_exists($file)) {
+                    require_once $file;
+
+                    $fieldsToProcess = [];
+
+                    if (basename($file) === 'SDAVardefs.ext.php') {
+                        // For custom files, use $dictionary[$moduleName]['SDAVirtualFields']
+                        $fieldsToProcess = $dictionary[$moduleName]['SDAVirtualFields'] ?? [];
+                    } else {
+                        // For standard files, use $SDAVirtualFields
+                        $fieldsToProcess = $SDAVirtualFields ?? [];
+                    }
+
+                    if (!empty($fieldsToProcess) && is_array($fieldsToProcess)) {
+                        foreach ($fieldsToProcess as $fieldName => $fieldData) {
+                            // Get the translated label or use the original if not available
+                            $virtualFieldLabel = $modStrings[$fieldData['label']] ?? $fieldData['label'];
+
+                            // Check if the virtual field label is empty
+                            if (empty($virtualFieldLabel)) {
+                                $this->info .= "<div style='color:red;'>VIRTUAL FIELD ERROR: <b>[{$file}]</b> - The virtual field was not processed because there is no translation available for {$this->langCode}</div>";
+                                $this->info .= "[FATAL: Virtual Field without label $viewName - $file]";
+                                continue;
+                            }
+
+                            // Get the translated description or use the original if not available
+                            $virtualFieldDescription = $modStrings[$fieldData['description']] ?? $fieldData['description'];
+
+                            // Add the virtual field to the fieldList array
+                            $fieldList['virtual'][$fieldName] = " {$fieldData['expression']} AS '{$fieldName}'";
+
+                            // Add metadata record for the virtual field
+                            $this->addMetadataRecord(
+                                'sda_def_columns',
+                                [
+                                    'table' => "{$this->viewPrefix}_{$tableName}",
+                                    'column' => $fieldName,
+                                    'type' => $fieldData['type'],
+                                    'decimals' => $fieldData['precision'] ?? 0,
+                                    'aggregations' => $fieldData['aggregations'] ?? 'none',
+                                    'label' => html_entity_decode($virtualFieldLabel, ENT_QUOTES),
+                                    'description' => addslashes($virtualFieldDescription),
+                                    'sda_hidden' => $fieldData['hidden'] ?? 0,
+                                    'stic_type' => 'virtual',
+                                ]
+                            );
+                        }
+                    } else {
+                        $this->info .= "<div style='color:orange;'>WARNING: The file {$file} does not contain a valid array of virtual fields.</div>";
+                    }
+
+                    // Clear the variables after processing to avoid conflicts with the next file
+                    unset($SDAVirtualFields, $dictionary);
+                }
+            }
+            // END VIRTUAL FIELDS
+
             // Add module metadata
             $this->addMetadataRecord(
                 'sda_def_tables',
@@ -727,6 +827,13 @@ class ExternalReporting
             if (!empty($fieldList['custom'])) {
                 foreach ($fieldList['custom'] as $cKey => $cValue) {
                     $createViewQueryFields .= " {$cValue}, ";
+                }
+            }
+
+            // Add virtual fields
+            if (!empty($fieldList['virtual'])) {
+                foreach ($fieldList['virtual'] as $vKey => $vValue) {
+                    $createViewQueryFields .= " {$vValue}, ";
                 }
             }
 
@@ -806,6 +913,8 @@ class ExternalReporting
             $this->info .= print_r($fieldList['base'], true);
             $this->info .= "<h2>Custom fields</h2>";
             $this->info .= print_r($fieldList['custom'], true);
+            $this->info .= "<h2>Virtual Fields</h2>";
+            $this->info .= print_r($fieldList['virtual'], true);
 
             $this->info .= "</div>";
             $isTable = $tableMode == 'table' ? ' <b style=color:orange>[Table]</b> ' : ' <b style=color:green>[View]</b> ';
@@ -1189,20 +1298,20 @@ class ExternalReporting
                             users u
                             INNER JOIN users_cstm uc on u.id =uc.id_c
                         WHERE
-                            deleted = 0;";
+                            deleted = 0
+                        AND user_hash IS NOT NULL;";
 
         // 2) eda_def_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_groups` AS
-                                  SELECT CONCAT('SDA_',name) as name FROM securitygroups WHERE deleted=0
+                                  SELECT CONCAT('SCRM_',name) as name FROM securitygroups WHERE deleted=0
                                   UNION SELECT 'EDA_ADMIN'
-                                  UNION SELECT 'NO_SINERGIACRM_USERS'
                                   ;";
         // 3) eda_def_users_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS
                             -- Normal users are assigned to their own security groups.
                             SELECT
                                 user_name,
-                                CONCAT('SDA_',s.name) as name
+                                CONCAT('SCRM_',s.name) as name
                             FROM
                                 users u
                             JOIN securitygroups_users su ON
@@ -1224,8 +1333,38 @@ class ExternalReporting
                             WHERE
                                 u.is_admin = 1
                                 AND u.deleted = 0;";
+        // 4) eda_def_permissions
 
-        // 4) eda_def_security_group_records
+        $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_permissions` AS
+                            SELECT * from sda_def_permissions_actions  p where p.stic_permission_source IN ('ACL_ALLOW_ALL', 'ACL_ALLOW_GROUP_priv','ACL_ALLOW_OWNER')
+                            UNION
+                     SELECT
+                        sdug.user_name,
+                        `group`,
+                        `table`,
+                        `column`,
+                        `global`,
+                        stic_permission_source
+                        FROM
+                        sda_def_permissions_actions p
+                        JOIN sda_def_user_groups sdug ON
+                        p.`group` = sdug.name
+                        WHERE
+                        p.stic_permission_source IN('ACL_ALLOW_GROUP') AND(
+                            CONCAT(sdug.user_name, `table`) IN(
+                            SELECT
+                                CONCAT(p.user_name, `table`)
+                            FROM
+                                sda_def_permissions_actions p
+                            WHERE
+                                p.stic_permission_source = 'ACL_ALLOW_GROUP_priv'
+                        )
+                        )
+                        GROUP BY
+                        `group`,
+                        `table`,
+                        sdug.user_name;";
+        // 5) eda_def_security_group_records
 
         // Set a switch to determine whether to populate the sda_def_security_group_records view based
         // on the value of $sugar_config['stic_sinergiada']['group_permissions_enabled']
@@ -1239,7 +1378,7 @@ class ExternalReporting
                             SELECT
                                 CONCAT('{$this->viewPrefix}_', LCASE(module)) as `table`,
                                 record_id,
-                                CONCAT('SDA_',s.name) as `group`
+                                CONCAT('SCRM_',s.name) as `group`
                             FROM
                                 securitygroups_records sr
                                 JOIN securitygroups s on sr.securitygroup_id=s.id
@@ -1325,8 +1464,8 @@ class ExternalReporting
                         ) ENGINE = MyISAM;';
 
         // 5) eda_def_permissions
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions`';
-        $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_permissions` (
+        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions_actions`';
+        $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_permissions_actions` (
                             `user_name` VARCHAR(64) NOT NULL,
                             `group` VARCHAR(64) NOT NULL,
                             `table` VARCHAR(64) NOT NULL,
@@ -1601,7 +1740,7 @@ class ExternalReporting
      * This function retrieves the list of active users from the 'users' table, and for each user,
      * it retrieves their ACL for the specified modules using the 'ACLAction::getUserActions' method.
      * Then it processes the ACL for each module and saves metadata for the user's access level and source of access,
-     * such as 'ACL_ALLOW_GROUP' or 'ACL_ALLOW_OWNER' in the 'sda_def_permissions' table.
+     * such as 'ACL_ALLOW_GROUP' or 'ACL_ALLOW_OWNER' in the 'sda_def_permissions_actions' table.
      * It also saves the user's access level for each module in the 'aclList' array.
      *
      * @return void
@@ -1626,9 +1765,9 @@ class ExternalReporting
         ];
 
         // Get list of active users
-        $res = $db->query("SELECT id,user_name, is_admin FROM users WHERE status='Active' AND deleted=0;");
-        while ($u = $db->fetchByAssoc($res, false)) {
+        $res = $db->query("SELECT id,user_name, is_admin FROM users join users_cstm on users.id = users_cstm.id_c  WHERE status='Active' AND deleted=0 AND sda_allowed_c=1 AND user_hash IS NOT NULL;");
 
+        while ($u = $db->fetchByAssoc($res, false)) {
             $allModulesACL = array_intersect_key(ACLAction::getUserActions($u['id'], true), $modules);
             foreach ($allModulesACL as $key => $value) {
                 unset($aclSource);
@@ -1644,50 +1783,63 @@ class ExternalReporting
                 $key = $key == 'CampaignLog' ? 'Campaign_Log' : $key;
 
                 $currentTable = $this->viewPrefix . '_' . strtolower($key);
-                if ($u['is_admin'] == 1) {
-                    $userModuleAccessMode["{$aclSource}_{$u['user_name']}_{$currentTable}"] = [
-                        'user_name' => $u['user_name'],
-                        'table' => $currentTable,
-                        'column' => 'users_id',
-                        'stic_permission_source' => 'ACL_ALLOW_ALL',
-                        'global' => 1,
-                    ];
-                } elseif ($value['module']['access']['aclaccess'] >= 0 && $value['module']['view']['aclaccess'] >= 0) {
-
+                
+                if ($u['is_admin'] == 0 && $value['module']['access']['aclaccess'] >= 0 && $value['module']['view']['aclaccess'] >= 0) {
                     // Determine the metadata to be saved based on the type of permissions,
                     // first we'll add them to the $userModuleAccessMode array with a unique key to avoid duplicates
                     switch ($value['module']['view']['aclaccess']) {
                         case '80': // Security groups
 
-                            // If $sugar_config['stic_sinergiada']['group_permissions_enabled'] is disabled, access is also disabled to 
+                            // If $sugar_config['stic_sinergiada']['group_permissions_enabled'] is disabled, access is also disabled to
                             // modules where the user has restricted access to their group's records.
                             if (($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? null) != true) {
                                 continue 2;
                             }
 
-                            // In the case of Secutity Groups we add a unique entry for each of the groups the user belongs to,
+                            // In the case of Security Groups we add a unique entry for each of the groups the user belongs to,
                             // ensuring that it does not exist previously for each module.
                             $userGroupsRes = $db->query("SELECT distinct(name) as 'group' FROM sda_def_user_groups ug WHERE user_name='{$u['user_name']}';");
+
                             while ($userGroups = $db->fetchByAssoc($userGroupsRes, false)) {
-                                $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
-                                    'user_name' => null,
-                                    'group' => $userGroups['group'],
-                                    'table' => $currentTable,
-                                    'column' => 'id',
-                                    'stic_permission_source' => $aclSource,
-                                    'global' => 0,
-                                ];
+
+                                $crmGroupName = explode('SCRM_', $userGroups['group'])[1];
+
+                                // Verify whether or not the group or user has access to the module for their roles
+                                $groupHasAccessToModule = groupHasAccess($crmGroupName, $u['id'], $key, 'view');
+
+                                if ($groupHasAccessToModule) {
+
+                                    $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_{$currentTable}"] = [
+                                        'user_name' => null,
+                                        'group' => $userGroups['group'],
+                                        'table' => $currentTable,
+                                        'column' => 'id',
+                                        'stic_permission_source' => $aclSource,
+                                        'global' => 0,
+                                    ];
+
+                                    // Additionally we insert a record that allows each user's access to the records in which match
+                                    // the user_name with the assigned_user_name field content in each module in which the user has group permission
+                                    $userModuleAccessMode["{$u['user_name']}_{$aclSource}_{$userGroups['group']}_private_{$currentTable}"] = [
+                                        'user_name' => $u['user_name'],
+                                        'group' => $userGroups['group'],
+                                        'table' => $currentTable,
+                                        'column' => 'assigned_user_name',
+                                        'stic_permission_source' => "{$aclSource}_priv",
+                                        'global' => 0,
+                                    ];
+                                }
                             }
+
                             break;
 
                         case '75': // Owner case
-                            // In this phase, access to modules where the user has restricted access to their own/assigned records is disabled.
-                            continue 2;
+                            // Modules where the user has restricted access to their own/assigned records .
 
                             $userModuleAccessMode["{$aclSource}_{$u['user_name']}_{$currentTable}"] = [
                                 'user_name' => $u['user_name'],
                                 'table' => $currentTable,
-                                'column' => 'users_id',
+                                'column' => 'assigned_user_name',
                                 'stic_permission_source' => $aclSource,
                                 'global' => 0,
                             ];
@@ -1711,10 +1863,9 @@ class ExternalReporting
         }
 
         // Add the permissions with the values determined in the previous switch case to the metadata table, based on the case.
-        foreach ($userModuleAccessMode as $key => $value) {
-
+        foreach (array_unique($userModuleAccessMode, SORT_REGULAR) as $key => $value) {
             $this->addMetadataRecord(
-                'sda_def_permissions',
+                'sda_def_permissions_actions',
                 [
                     'user_name' => $value['user_name'],
                     'group' => $value['group'],
@@ -1739,7 +1890,7 @@ class ExternalReporting
         // Get an instance of the DBManager
         $db = DBManagerFactory::getInstance();
         // Query to get all the rows from the sda_def_columns table
-        $query = "SELECT `table`, `column` FROM sda_def_columns";
+        $query = "SELECT `table`, `column` FROM sda_def_columns WHERE stic_type != 'virtual'";
         $result = $db->query($query);
 
         // Loop through each row
@@ -1789,7 +1940,7 @@ class ExternalReporting
             UNION SELECT `table`,'sda_def_tables', 'table' FROM sda_def_tables
             UNION SELECT source_table,'sda_def_enumerations','source_table' FROM sda_def_enumerations
             UNION SELECT master_table,'sda_def_enumerations', 'master_table' FROM sda_def_enumerations
-            UNION SELECT `table`, 'sda_def_permissions','table' FROM sda_def_permissions
+            UNION SELECT `table`, 'sda_def_permissions_actions','table' FROM sda_def_permissions_actions
             UNION SELECT source_table,'sda_def_relationships','source_table' FROM sda_def_relationships
             UNION SELECT target_table,'sda_def_relationships','target_table' FROM sda_def_relationships)
             AS source WHERE (
@@ -1822,4 +1973,74 @@ class ExternalReporting
         }
     }
 
+}
+
+/**
+ * Checks if a security group or user has access to a specific action in a given module.
+ *
+ * This function determines whether a security group, identified by its name, or an user, identified by its id has the necessary
+ * permissions to perform a specific action in a given module. It looks up the roles associated
+ * with the group or user and checks the highest access levels available for those roles.
+ *
+ * @param string $group_name The name of the security group to check.
+ * @param string $userId The id of the user to check.
+ * @param string $category The name of the module or category (e.g., 'Accounts', 'Contacts').
+ * @param string $action The specific action to check (e.g., 'view', 'edit', 'delete').
+ * @param string $type The type of ACL, defaults to 'module'.
+ *
+ * @return bool Returns true if the group has access, false otherwise.
+ *
+ * @global object $db SuiteCRM's global database object.
+ *
+ * @throws SQLException If there's an error in executing the SQL queries.
+ */
+function groupHasAccess($group_name, $userId, $category, $action, $type = 'module')
+{
+    global $db;
+
+    // Escape the group name to prevent SQL injection
+    $group_name = $db->quote($group_name);
+
+    // Get the roles associated with this security group or user
+    $query = "SELECT role_id FROM (
+                SELECT role_id FROM securitygroups_acl_roles
+                WHERE securitygroup_id IN (SELECT DISTINCT securitygroup_id FROM securitygroups_users sgu WHERE sgu.user_id='$userId' AND sgu.deleted = false)
+                UNION SELECT role_id FROM acl_roles_users aru
+                WHERE aru.user_id='$userId' AND deleted=false ) m
+             LIMIT 1
+                ";
+    $result = $db->query($query);
+
+    $roles = array();
+    while ($row = $db->fetchByAssoc($result)) {
+        $roles[] = $row['role_id'];
+    }
+
+    if (empty($roles)) {
+        return false; // If there are no roles, there's no access
+    }
+
+    // Check permissions for these roles
+    $roleIds = implode("','", $roles);
+    $query = "SELECT acl_actions.*, acl_roles_actions.access_override
+              FROM acl_actions
+              LEFT JOIN acl_roles_actions ON acl_roles_actions.action_id = acl_actions.id
+                  AND acl_roles_actions.role_id IN ('$roleIds')
+              WHERE acl_actions.category = '$category'
+                AND acl_actions.name = '$action'
+                AND acl_actions.acltype = '$type'
+                AND acl_actions.deleted = 0";
+
+    $result = $db->query($query);
+
+    $highestAccess = -1;
+    while ($row = $db->fetchByAssoc($result)) {
+        // Use access_override if set, otherwise use the default aclaccess
+        $access = $row['access_override'] ?? $row['aclaccess'];
+        $highestAccess = max($highestAccess, $access);
+    }
+
+    // Determine if the access is sufficient
+    // ACL_ALLOW_GROUP should be defined elsewhere in the system
+    return $highestAccess >= ACL_ALLOW_GROUP;
 }

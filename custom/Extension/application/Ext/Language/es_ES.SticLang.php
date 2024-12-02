@@ -81,6 +81,9 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
+// Envío masivo de correos
+$app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'El envío sólo se aplicará a los registros de la página actual. Para envíos masivos se recomienda utilizar el módulo Campañas.';
+
 // Módulos propios de SinergiaCRM y módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizaciones';
 $app_list_strings['moduleList']['Contacts'] = 'Personas';
@@ -132,7 +135,7 @@ $app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Acciones';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizaciones';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condiciones';
-
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -178,7 +181,7 @@ $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personaliz
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
-
+$app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -216,6 +219,7 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display']['Contacts'] = 'Personas';
@@ -254,6 +258,7 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Personas';
@@ -292,6 +297,10 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+
+$app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvenciones';
+$app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
 
 // Porcentajes de IVA vigentes
 $app_list_strings['vat_list']['21'] = '21%';
@@ -2340,17 +2349,25 @@ $app_list_strings['stic_incorpora_country_list']["382"] = 'ZIMBABWE';
 $app_list_strings['stic_incorpora_country_list']["000"] = 'ESTADO NO DETERMINADO';
 $app_list_strings['stic_incorpora_derivation_list'][''] = '';
 $app_list_strings['stic_incorpora_derivation_list']['ADECCO'] = 'Fundación Adecco';
+$app_list_strings['stic_incorpora_derivation_list']['BCCAIXA'] = 'Proyecto Impulsa';
+$app_list_strings['stic_incorpora_derivation_list']['COE'] = 'Comité Olímpico Español';
+$app_list_strings['stic_incorpora_derivation_list']['DISJOB'] = 'DISJOB';
 $app_list_strings['stic_incorpora_derivation_list']['ENF_AVAN'] = 'Enfermedades avanzadas';
-$app_list_strings['stic_incorpora_derivation_list']['ENTIDAD'] = 'Entidad';
+$app_list_strings['stic_incorpora_derivation_list']['ENTIDAD'] = 'Entidad Social';
 $app_list_strings['stic_incorpora_derivation_list']['FAMILIA'] = 'Familiaries, amigos/as';
 $app_list_strings['stic_incorpora_derivation_list']['FUNDACION'] = 'Fundación Bancaria "la Caixa"';
 $app_list_strings['stic_incorpora_derivation_list']['INT_INTER'] = 'Intervención Comunitaria Intercultural';
-$app_list_strings['stic_incorpora_derivation_list']['OFICINA'] = 'Oficina la Caixa';
-$app_list_strings['stic_incorpora_derivation_list']['OTROS_FUND'] = 'Otros programas de Fundación Bancaria "la Caixa"';
+$app_list_strings['stic_incorpora_derivation_list']['INVUL'] = 'Invulnerables';
+$app_list_strings['stic_incorpora_derivation_list']['MEDIO_AMB'] = 'Medio Ambiente';
+$app_list_strings['stic_incorpora_derivation_list']['MUTUNI'] = 'Mutua Universal';
+$app_list_strings['stic_incorpora_derivation_list']['OFC09900'] = 'Oficina CaixaBank 09900';
+$app_list_strings['stic_incorpora_derivation_list']['OFICINA'] = 'CaixaBank';
 $app_list_strings['stic_incorpora_derivation_list']['OTROS'] = 'Otros';
-$app_list_strings['stic_incorpora_derivation_list']['PRO_INF'] = 'Caixaproinfancia';
+$app_list_strings['stic_incorpora_derivation_list']['OTROS_FUND'] = 'Otros programas de Fundación Bancaria "la Caixa"';
+$app_list_strings['stic_incorpora_derivation_list']['PROCON'] = 'Proyecto Confianza';
 $app_list_strings['stic_incorpora_derivation_list']['PROG_PRIV'] = 'Programas Sociales Privados';
 $app_list_strings['stic_incorpora_derivation_list']['PROPIA'] = 'Iniciativa propia';
+$app_list_strings['stic_incorpora_derivation_list']['PRO_INF'] = 'Caixaproinfancia';
 $app_list_strings['stic_incorpora_derivation_list']['REINCORP'] = 'ReIncorpora';
 $app_list_strings['stic_incorpora_derivation_list']['SERV_OTROS'] = 'Otros servicios municipales y de la Administración';
 $app_list_strings['stic_incorpora_derivation_list']['SERV_SOCIA'] = 'Servicios Sociales';
@@ -3256,6 +3273,7 @@ $app_list_strings['stic_work_calendar_types_list']['personal'] = 'Asuntos propio
 $app_list_strings['stic_work_calendar_types_list']['sick'] = 'Baja';
 $app_list_strings['stic_work_calendar_types_list']['leave'] = 'Permiso/Excedencia';
 $app_list_strings['stic_work_calendar_types_list']['other'] = 'Otros';
+$app_list_strings['stic_work_calendar_types_list']['canceled'] = 'Anulado';
 
 // Diario: Tipo de diario
 $app_list_strings['stic_journal_types_list'][''] = '';
@@ -3534,6 +3552,19 @@ $app_list_strings['stic_custom_views_condition_values_list']['yesterday'] = 'Aye
 $app_list_strings['stic_custom_views_condition_values_list']['anniversary'] = 'Aniversario';
 $app_list_strings['stic_custom_views_condition_values_list']['current_user'] = 'Usuario actual';
 
+// Organizaciones subvencionadas: Estado
+$app_list_strings['stic_group_opportunities_status_list']['guest'] = 'Invitada';
+$app_list_strings['stic_group_opportunities_status_list']['participating'] = 'Participante';
+$app_list_strings['stic_group_opportunities_status_list']['rejected'] = 'Rechazada';
+$app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Concedida';
+$app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'No concedida';
+
+// Organizaciones subvencionadas: Estado de la documentación
+$app_list_strings['stic_group_opportunities_doc_status_list']['not_required'] = 'No necesaria';
+$app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'Solicitada';
+$app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Entregada';
+$app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
+
 
 // Modificaciones del core de SuiteCRM
 
@@ -3611,3 +3642,24 @@ $app_list_strings['map_relate_type_list']['Meetings'] = 'Reuniones';
 $app_list_strings['map_relate_type_list']['Opportunities'] = 'Subvenciones';
 $app_list_strings['map_relate_type_list']['Project'] = 'Proyectos';
 $app_list_strings['map_relate_type_list']['Prospects'] = 'Público Objetivo';
+
+// Campañas: Tipos de campaña
+$app_list_strings['campaign_type_dom'][''] = '';
+$app_list_strings['campaign_type_dom']['Telesales'] = 'Televenta';
+$app_list_strings['campaign_type_dom']['Mail'] = 'Correo';
+$app_list_strings['campaign_type_dom']['Email'] = 'Email';
+$app_list_strings['campaign_type_dom']['Print'] = 'Imprenta';
+$app_list_strings['campaign_type_dom']['Web'] = 'Web';
+$app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
+$app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
+$app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
+
+// Plantillas de email: Tipos de plantilla
+$app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
+$app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
+$app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
+$app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
+$app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
+$app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
