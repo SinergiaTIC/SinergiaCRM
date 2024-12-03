@@ -176,6 +176,13 @@ class DynamicField
         while ($row = $this->db->fetchByAssoc($result, false)) {
             $field = get_widget($row['type']);
 
+            // STIC-Custom ART 20241203 - Height defined in iframe field not respected
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            if($row["type"] == 'iframe' && $saveCache->ext4 != $row["ext4"]){
+                $row["ext4"] = $saveCache->ext4;
+            }
+            // END STIC-Custom
+
             foreach ($row as $key => $value) {
                 $field->$key = $value;
             }
@@ -618,7 +625,10 @@ class DynamicField
             // (that will keep the original field definition). To do this, we've created a new function and will skip the original
             // code, that will only apply on field creation.
             $this->sticSaveExtendedAttributes($field, $fmd);
-            $this->buildCache($this->module);
+            // STIC-Custom ART 20241203 - Height defined in iframe field not respected
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/  
+            $this->buildCache($this->module, $field);    
+            // END STIC-Custom
             
             // STIC-Custom - There is a bug in SuiteCRM that requires the cache/themes to be manually rebuilt.
             // https://github.com/salesagility/SuiteCRM/issues/9119
@@ -804,6 +814,12 @@ class DynamicField
                 $to_save['ext4'] = $field->ext4;
                 $to_save['default_value'] = htmlspecialchars_decode($field->ext4, ENT_QUOTES);
                 $to_save['default'] = htmlspecialchars_decode($field->ext4, ENT_QUOTES);            
+            }
+            // END STIC-Custom
+            // STIC-Custom ART 20241203 - Height defined in iframe field not respected
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            if($field->type=='iframe' && ($field->ext4 != $fmd->ext4)) {
+                $to_save['ext4'] = (isset($field->ext4) ? $field->ext4 : '');
             }
             // END STIC-Custom
         }
