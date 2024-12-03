@@ -177,7 +177,7 @@ class DynamicField
             $field = get_widget($row['type']);
 
             // STIC-Custom ART 20241203 - Height defined in iframe field not respected
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
             if($row["type"] == 'iframe' && $saveCache->ext4 != $row["ext4"]){
                 $row["ext4"] = $saveCache->ext4;
             }
@@ -626,7 +626,7 @@ class DynamicField
             // code, that will only apply on field creation.
             $this->sticSaveExtendedAttributes($field, $fmd);
             // STIC-Custom ART 20241203 - Height defined in iframe field not respected
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/  
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
             $this->buildCache($this->module, $field);    
             // END STIC-Custom
             
@@ -817,7 +817,7 @@ class DynamicField
             }
             // END STIC-Custom
             // STIC-Custom ART 20241203 - Height defined in iframe field not respected
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
             if($field->type=='iframe' && ($field->ext4 != $fmd->ext4)) {
                 $to_save['ext4'] = (isset($field->ext4) ? $field->ext4 : '');
             }
