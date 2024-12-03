@@ -59,7 +59,7 @@ class kGoogleChart extends kreportvisualizationplugin{
     public function getItem($thisDivId, $thisReport, $thisParams, $addReportParams = array()) {
 
         $googleData = $this->getChartData($thisReport, $thisParams, 0, $addReportParams);
-        $chartData = $this->wrapGoogleData($googleData, $thisDivId, $thisParams, 0 , $addReportParams);
+        $chartData = $this->wrapGoogleData($googleData, $thisDivId, $thisParams);
 
         $chartDataString = '<script type="text/javascript">';
 

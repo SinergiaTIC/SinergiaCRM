@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class SticUtils
 {
 
@@ -72,7 +73,7 @@ EOQ;
 EOQ;
                         break;
                     case 'decimal':
-                        $fieldValue = self::formatDecimalInConfigSettings($bean->$field);
+                        $fieldValue = formatDecimalInConfigSettings($bean->$field);
                         $js .= <<<EOQ
                         if ($('#$field').text() != '$fieldValue') {
                             $('#$field').text('$fieldValue').fadeOut(500).fadeIn(1000);
