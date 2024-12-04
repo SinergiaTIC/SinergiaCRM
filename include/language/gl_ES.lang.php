@@ -2054,7 +2054,7 @@ $app_strings = array(
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_DESCRIPTION' => 'Descrición',
 
-    'LBL_YESTERDAY' => 'Onte',
+    'LBL_YESTERDAY' => 'onte',
     'LBL_NOW' => 'ahora',
     'LBL_TODAY' => 'hoxe',
     'LBL_TOMORROW' => 'mañá',
