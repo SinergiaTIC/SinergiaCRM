@@ -2879,7 +2879,7 @@ class SugarBean
             // END STIC-Custom
         }
         // END STIC_Custom
-                
+           
         return array($new_rel_id, $new_rel_link);
     }
 
