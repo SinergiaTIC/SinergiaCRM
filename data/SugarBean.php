@@ -2868,15 +2868,15 @@ class SugarBean
                  (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})
                  // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
                  || (empty($this->{$new_rel_link}) && !empty($this->parent_id) && $new_rel_id !=$this->parent_id)
-                // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
-                 || ($rel_link == $new_rel_link)
-            )
-        ) { 
-             if( (!is_null($this->{$new_rel_link}) )  ){
+                )
+        ) {
+            // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
+            // $new_rel_id = '';
+            if( (!is_null($this->{$new_rel_link}) )  ){
                 $new_rel_id = ''; // Assign the empty value to this variable, in the same way as when creating the record from the edit view
              }
-            // END STIC-Custom
+            //END STIC_Custom
         }
         // END STIC_Custom
 
