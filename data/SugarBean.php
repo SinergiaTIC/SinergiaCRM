@@ -2863,10 +2863,10 @@ class SugarBean
         // STIC-Custom 20220916 MHP - Assign the record indicated in the subpanel form instead of 
         // the parent record (record from which the subpanel was opened) since they might be different
         // STIC#849
-        if (!empty($new_rel_id)
+        if (!empty($new_rel_id) 
             && ( // Relationships with an ID in the _ida field of the relationship different from the parent record
-                (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})
-                // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
+                 (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})
+                 // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
                  || (empty($this->{$new_rel_link}) && !empty($this->parent_id) && $new_rel_id !=$this->parent_id)
                 // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
@@ -2878,7 +2878,8 @@ class SugarBean
              }
             // END STIC-Custom
         }
-        // END STIC_Custom        
+        // END STIC_Custom
+                
         return array($new_rel_id, $new_rel_link);
     }
 
