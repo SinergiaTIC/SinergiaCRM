@@ -43,8 +43,6 @@
  * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
  */
 
-use Symfony\Component\Validator\Constraints\IsNull;
-
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -2872,8 +2870,6 @@ class SugarBean
                  || (empty($this->{$new_rel_link}) && !empty($this->parent_id) && $new_rel_id !=$this->parent_id)
                 // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
-                //  )
-                // ) { 
                  || ($rel_link == $new_rel_link)
             )
         ) { 
@@ -2883,6 +2879,7 @@ class SugarBean
             // END STIC-Custom
         }
         // END STIC_Custom
+        
         return array($new_rel_id, $new_rel_link);
     }
 
