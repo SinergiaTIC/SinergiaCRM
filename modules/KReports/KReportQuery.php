@@ -1647,7 +1647,8 @@ class KReportQuery {
             break;
       }
       // process the operator
-      // STIC-Custom EPS 20241205
+      // STIC-Custom EPS 20241205 - quote the value to avoid errors when certain values are used (apostrophe)
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
       $value = $db->quote($value);
       // END STIC-Custom
       switch ($operator) {
