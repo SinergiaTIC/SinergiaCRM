@@ -1548,6 +1548,9 @@ class KReportQuery {
 
    function getWhereOperatorClause($operator, $fieldname, $fieldid, $path, $value, $valuekey, $valueto, $valuetokey = '', $jointype = '') {
       global $current_user;
+      // STIC-Custom EPS 20241205
+      $db = DBManagerFactory::getInstance();
+      // ENS STIC-Custom
 
       // initialize
       $thisWhereString = '';
@@ -1644,6 +1647,10 @@ class KReportQuery {
             break;
       }
       // process the operator
+      // STIC-Custom EPS 20241205 - quote the value to avoid errors when certain values are used (apostrophe)
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
+      $value = $db->quote($value);
+      // END STIC-Custom
       switch ($operator) {
          case 'autocomplete':
             $thisWhereString .= ' = \'' . $value . '\'';
