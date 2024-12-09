@@ -170,6 +170,7 @@ $dictionary['AOW_Processed'] = array(
             'name' => 'aow_processed_index_workflow',
             'type' => 'index',
             // STIC-Custom EPS 20241204
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/507
             // 'fields' => array('aow_workflow_id','status','parent_id','deleted'),
             'fields' => array('aow_workflow_id','parent_id','status','deleted'),
             //END STIC-Custom
