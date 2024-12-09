@@ -1316,6 +1316,8 @@ class ExternalReporting
                                 CONCAT('SCRM_',s.name) as name
                             FROM
                                 users u
+                            JOIN users_cstm uc ON
+                                uc.id_c=u.id
                             JOIN securitygroups_users su ON
                                 u.id = su.user_id
                             JOIN securitygroups s ON
@@ -1325,6 +1327,8 @@ class ExternalReporting
                                 AND u.deleted = 0
                                 AND su.deleted = 0
                                 AND s.deleted = 0
+                                AND uc.sda_allowed_c=1
+                                AND u.status='Active'
                             UNION
                             -- Administrator users should always belong to the EDA_ADMIN group.
                             SELECT
@@ -1334,7 +1338,8 @@ class ExternalReporting
                                 users u
                             WHERE
                                 u.is_admin = 1
-                                AND u.deleted = 0;";
+                                AND u.deleted = 0
+                                AND u.status='Active';";
         // 4) eda_def_security_group_records
 
         // Set a switch to determine whether to populate the sda_def_security_group_records view based
