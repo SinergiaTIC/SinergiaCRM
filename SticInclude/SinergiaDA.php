@@ -1389,7 +1389,6 @@ class ExternalReporting
         $sqlMetadata = [];
 
         // 1) eda_def_tables
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_tables`';
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_tables` (
                             `table` VARCHAR(64) NOT NULL,
                             `label` VARCHAR(100) NOT NULL,
@@ -1398,7 +1397,6 @@ class ExternalReporting
                         ) ENGINE = MyISAM;';
 
         // 2) eda_def_columns
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_columns`';
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_columns` (
                             `table` VARCHAR(64) NOT NULL,
                             `column` VARCHAR(64) NOT NULL,
@@ -1412,7 +1410,6 @@ class ExternalReporting
                             `stic_type` VARCHAR(20)
                         ) ENGINE = MyISAM;';
         // 3) eda_def_relationships
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_relationships`';
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_relationships` (
                             `id` VARCHAR(64) NOT NULL,
                             `source_table` VARCHAR(64) NOT NULL,
@@ -1424,7 +1421,6 @@ class ExternalReporting
                         ) ENGINE = MyISAM;';
 
         // 4) eda_def_enumerations
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_enumerations`';
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_enumerations` (
                             -- `id` CHAR(64) NOT NULL,
                             `source_table` VARCHAR(64) NOT NULL,
@@ -1442,10 +1438,7 @@ class ExternalReporting
         // 5) eda_def_permissions
 
         // remove old objects if exists
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions_actions`';
-        $sqlMetadata[] = 'DROP VIEW IF EXISTS `sda_def_permissions`';
 
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_permissions`';
         $sqlMetadata[] = 'CREATE TABLE `sda_def_permissions` (
                             `id` bigint(20) NOT NULL AUTO_INCREMENT,
                             `user_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
@@ -1464,7 +1457,6 @@ class ExternalReporting
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;';
 
         // 6) sda_def_config
-        $sqlMetadata[] = 'DROP TABLE IF EXISTS `sda_def_config`';
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_config` (
                             `key` VARCHAR(64) NOT NULL,
                             `value` VARCHAR(64) NOT NULL
@@ -1535,7 +1527,6 @@ class ExternalReporting
         $currentList = $app_list_strings[$listName];
 
         // Drop the table if it already exists
-        $dropTableCommand = "DROP TABLE IF EXISTS {$this->listViewPrefix}_{$listViewName}";
         $db->query($dropTableCommand);
 
         // Start building the SQL command to create the table
@@ -1642,14 +1633,23 @@ class ExternalReporting
                 }
             }
 
-            // Get all the tables with matching prefixes
-            $res = $db->query("select table_name from information_schema.tables where table_name like '{$prefix}%'");
+            // Get all the tables & views with matching prefixes
+            $res = $db->query("select table_name, table_type from information_schema.tables where table_name like '{$prefix}%'");
             // Loop through the views
             while ($view = $db->fetchByAssoc($res, false)) {
-                // Delete the view
-                if ($db->query("DROP TABLE {$view['table_name']}")) {
-                    $counterTable++;
+                if($view['table_type'] == 'VIEW'){
+                    // Delete the view
+                    if ($db->query("DROP VIEW IF EXISTS {$view['table_name']}")) {
+                        $counterTable++;
+                    }
+                } elseif ($view['table_type'] == 'BASE TABLE') {
+                    // Delete the table
+                    if ($db->query("DROP TABLE IF EXISTS {$view['table_name']}")) {
+                        $counterTable++;
+                    }
                 }
+                
+                
             }
 
         }
