@@ -2057,19 +2057,19 @@ $app_strings = array(
     'LBL_NEXT_WEEK' => 'la setmana vinent',
     'LBL_NEXT_MONDAY' => 'el dilluns vinent',
     'LBL_NEXT_FRIDAY' => 'el divendres vinent',
-    'LBL_TWO_WEEKS' => 'dues setmanes',
+    'LBL_TWO_WEEKS' => "d'aquí a dues setmanes",
     'LBL_NEXT_MONTH' => 'el mes vinent',
     'LBL_FIRST_DAY_OF_NEXT_MONTH' => 'el primer dia del mes vinent',
-    'LBL_THREE_MONTHS' => 'tres mesos',
-    'LBL_SIXMONTHS' => 'sis mesos',
-    'LBL_NEXT_YEAR' => 'l\'any següent',
+    'LBL_THREE_MONTHS' => "d'aquí a tres mesos",
+    'LBL_SIXMONTHS' => "d'aquí a sis mesos",
+    'LBL_NEXT_YEAR' => "l'any vinent",
 
     //Datetimecombo fields
     'LBL_HOURS' => 'Hores',
     'LBL_MINUTES' => 'Minuts',
     'LBL_MERIDIEM' => 'Meridiem',
-    'LBL_DATE' => 'Fecha',
-    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refrescar',
+    'LBL_DATE' => 'Data',
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Autorefrescar',
 
     'LBL_DURATION_DAY' => 'dia',
     'LBL_DURATION_HOUR' => 'hora',
@@ -2079,13 +2079,13 @@ $app_strings = array(
     'LBL_DURATION_MINUTES' => 'Minuts de durada',
 
     //Calendar widget labels
-    'LBL_CHOOSE_MONTH' => 'Triï mes',
-    'LBL_ENTER_YEAR' => 'Triï any',
-    'LBL_ENTER_VALID_YEAR' => 'Si us plau, entri un any vàlid',
+    'LBL_CHOOSE_MONTH' => 'Trieu el mes',
+    'LBL_ENTER_YEAR' => "Trieu l'any",
+    'LBL_ENTER_VALID_YEAR' => 'Indiqueu un any vàlid',
 
     //File write error label
-    'ERR_FILE_WRITE' => 'Error: No es pot escriure el fitxer {0}. Si us plau, comprovi els permisos del sistema i del servidor web.',
-    'ERR_FILE_NOT_FOUND' => 'Error: No es pot llegir el fitxer {0}. Si us plau, comprovi els permisos del sistema i del servidor web.',
+    'ERR_FILE_WRITE' => 'Error: No es pot escriure el fitxer {0}. Comproveu els permisos del sistema i del servidor web.',
+    'ERR_FILE_NOT_FOUND' => 'Error: No es pot llegir el fitxer {0}. Comproveu els permisos del sistema i del servidor web.',
 
     'LBL_AND' => 'I',
 
@@ -3661,16 +3661,16 @@ $app_list_strings['pdf_page_size_dom']['Letter'] = 'Carta';
 $app_list_strings['pdf_page_size_dom']['Legal'] = 'Legal';
 $app_list_strings['pdf_orientation_dom']['Portrait'] = 'Retrat';
 $app_list_strings['pdf_orientation_dom']['Landscape'] = 'Paisatge';
-$app_list_strings['run_when_dom']['When True'] = 'Avaluar al desar'; // PR 6143
-$app_list_strings['run_when_dom']['Once True'] = 'Perpetu - (camp ha auditar)';
+$app_list_strings['run_when_dom']['When True'] = 'Avalua al desar'; // PR 6143
+$app_list_strings['run_when_dom']['Once True'] = 'Perpetu - (camp a auditar)';
 $app_list_strings['sa_status_list']['Complete'] = 'Completa';
-$app_list_strings['sa_status_list']['In_Review'] = 'En Revisió';
+$app_list_strings['sa_status_list']['In_Review'] = 'En revisió';
 $app_list_strings['sa_status_list']['Issue_Resolution'] = 'Resolució del problema';
 $app_list_strings['sa_status_list']['Pending_Apttus_Submission'] = 'Registre d\'Apptus Pendent';
 $app_list_strings['sharedGroupRule']['none'] = 'Sense Accés';
 $app_list_strings['sharedGroupRule']['view'] = 'Només visualització';
-$app_list_strings['sharedGroupRule']['view_edit'] = 'Veure i Editar';
-$app_list_strings['sharedGroupRule']['view_edit_delete'] = 'Veure, Editar i Borrar';
+$app_list_strings['sharedGroupRule']['view_edit'] = 'Veure i editar';
+$app_list_strings['sharedGroupRule']['view_edit_delete'] = 'Veure, editar i esborrar';
 $app_list_strings['moduleList']['SharedSecurityRulesFields'] = 'Compartir camps de normes de seguretat';
 $app_list_strings['moduleList']['SharedSecurityRules'] = 'Compartir camps de normes de seguretat';
 $app_list_strings['moduleList']['SharedSecurityRulesActions'] = 'Compartir accions de camps de normes de seguretat';
@@ -3682,7 +3682,7 @@ $app_list_strings['aow_condition_type_list']['Field'] = 'Camp';
 $app_list_strings['aow_condition_type_list']['Any_Change'] = 'Qualsevol canvi';
 $app_list_strings['aow_condition_type_list']['SecurityGroup'] = 'En el Grup de Seguretat';
 $app_list_strings['aow_condition_type_list']['currentUser'] = 'Usuari actiu';
-$app_list_strings['aow_condition_type_list']['Date'] = 'Fecha';
+$app_list_strings['aow_condition_type_list']['Date'] = 'Data';
 $app_list_strings['aow_condition_type_list']['Multi'] = 'Un de';
 
 
@@ -3696,13 +3696,13 @@ $app_list_strings['survey_status_list']['Public'] = 'Públic';
 $app_list_strings['survey_status_list']['Closed'] = 'Tancat';
 $app_list_strings['surveys_question_type']['Text'] = 'Text';
 $app_list_strings['surveys_question_type']['Textbox'] = 'Quadre de text';
-$app_list_strings['surveys_question_type']['Checkbox'] = 'Casilla de Verificación';
+$app_list_strings['surveys_question_type']['Checkbox'] = 'Casella de verificació';
 $app_list_strings['surveys_question_type']['Radio'] = 'Ràdio';
 $app_list_strings['surveys_question_type']['Dropdown'] = 'Llista desplegable';
 $app_list_strings['surveys_question_type']['Multiselect'] = 'Multi-selecció';
 $app_list_strings['surveys_question_type']['Matrix'] = 'Matriu';
 $app_list_strings['surveys_question_type']['DateTime'] = 'Data i hora';
-$app_list_strings['surveys_question_type']['Date'] = 'Fecha';
+$app_list_strings['surveys_question_type']['Date'] = 'Data';
 $app_list_strings['surveys_question_type']['Scale'] = 'Escala';
 $app_list_strings['surveys_question_type']['Rating'] = 'Puntuació';
 $app_list_strings['surveys_matrix_options'][0] = 'Satisfet';
