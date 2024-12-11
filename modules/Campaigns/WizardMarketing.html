@@ -547,6 +547,7 @@
 								<input type="checkbox" name="update_exists_template" class="form-checkbox input-sm hidden">
 							</span>
 						</div>
+						{if !$hide_width_set}
 						<script>
 							{literal}
 							$(function(){
@@ -554,6 +555,16 @@
 									onEmailTemplateChange(document.getElementById('template_id'), '{$MOD.LBL_COPY_OF}');
 								}
 							});
+							{/literal}
+                        </script>
+						{/if}
+						<script>
+							{literal}
+							function loadtemplate() {
+									if (document.getElementById('template_id').value) {
+										onEmailTemplateChange(document.getElementById('template_id'), '{$MOD.LBL_COPY_OF}');
+									}
+							}
 							{/literal}
 						</script>
 					</div>
@@ -1128,67 +1139,21 @@
 			var ra = document.getElementById('reply_addr');
 
 			if(mailbox.value != '') {
-				// STIC 20210813 - Select the sender account of the inbound mailbox and not of the outbound mailbox
-				// STIC#379
-				// if(oe_stored_options[mailbox.value]) {
-				// 	var focusOe = oe_stored_options[mailbox.value];
-				// 	// from name
-
-                //                         if(!fn.value) {
-                //                             var fromName = focusOe.smtp_from_name ? focusOe.smtp_from_name : (
-                //                                 focusOe.from_name ? focusOe.from_name : (
-                //                                     focusOe.name ? focusOe.name : ''
-                //                                 ));
-                //                             if (fromName && fromName != "") {
-                //                                 fn.value = fromName;
-                //                             } else {
-                //                                 fn.value = '';
-                //                             }
-                //                         }
-
-				// 	// from addr
-                //                         if(!fa.value) {
-                //                             var fromAddr = focusOe.smtp_from_addr ? focusOe.smtp_from_addr : (
-                //                                 focusOe.from_addr ? focusOe.from_addr : (
-                //                                     focusOe.mail_smtpuser ? focusOe.mail_smtpuser : ''
-                //                                 ));
-                //                             if (fromAddr && fromAddr != "") {
-                //                                 fa.value = fromAddr;
-                //                             } else {
-                //                                 fa.value = '';
-                //                             }
-                //                         }
-                //                 }
-				// if(ie_stored_options[mailbox.value]) {
-				// 	var focusIe = ie_stored_options[mailbox.value];
-				// 	// reply name
-                //                         if (!rn.value) {
-                //                             if (focusIe.from_name && focusIe.from_name != "") {
-                //                                 rn.value = focusIe.from_name;
-                //                             } else {
-                //                                 rn.value = '';
-                //                             }
-                //                         }
-
-                //                         // reply add
-                //                         if (!ra.value) {
-                //                             if(focusIe.from_addr && focusIe.from_addr != "") {
-                //                                 ra.value = focusIe.from_addr;
-                //                             } else {
-                //                                 ra.value = '';
-                //                             }
-                //                         }
-				// }
-				if (ie_stored_options[mailbox.value]) {
-					var focusIe = ie_stored_options[mailbox.value];
+				if(oe_stored_options[mailbox.value]) {
+					var focusOe = oe_stored_options[mailbox.value];
 					// from name
-					if (!fn.value) {
-						if (focusIe.from_name && focusIe.from_name != "") {
-							fn.value = focusIe.from_name;
-						} else {
-							fn.value = '';
-						}
-					}
+
+                                        if(!fn.value) {
+                                            var fromName = focusOe.smtp_from_name ? focusOe.smtp_from_name : (
+                                                focusOe.from_name ? focusOe.from_name : (
+                                                    focusOe.name ? focusOe.name : ''
+                                                ));
+                                            if (fromName && fromName != "") {
+                                                fn.value = fromName;
+                                            } else {
+                                                fn.value = '';
+                                            }
+                                        }
 
 					// from address
 					if (!fa.value) {
@@ -1487,7 +1452,7 @@ function determine_back(){
 			<!-- BEGIN: NoInbound2 -->
 			<tr>
 				<td valign="top" scope="row">
-					{$MOD.LBL_ATTACHMENTS}: 
+					{$MOD.LBL_ATTACHMENTS}:
 				</td>
 				<td colspan="2" nowrap id="attachments_container">
 					{$ATTACHMENTS}
@@ -1510,7 +1475,7 @@ function determine_back(){
 				<input type="hidden" id="documentId" name="seldoc" tabindex="0" />
 				<input type="hidden" id="docRevId" name="seldoc" tabindex="0" />
 				<input type="hidden" id="documentType" name="seldoc" tabindex="0" />
-				
+
 
 				<input type="hidden" name="attach_to_template_id" id="attach_to_template_id" value="{$TEMPLATE_ID}">
 				<input type="hidden" name="campaign_id" value="{$CAMPAIGN_ID}">

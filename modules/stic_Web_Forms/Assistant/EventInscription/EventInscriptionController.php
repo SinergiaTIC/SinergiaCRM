@@ -328,8 +328,8 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
         $this->prepareFieldsToResultForm($requiredFields, $boolFields, $reqFields);
 
         // Prepare the list of required fields and Boolean
-        $reqFields = (!empty($reqFields) ? implode($reqFields, ";") . ";" : "");
-        $boolFields = (!empty($boolFields) ? implode($boolFields, ";") . ";" : "");
+        $reqFields = (is_array($reqFields) && !empty($reqFields) ? implode(";", $reqFields) . ";" : "");
+        $boolFields = (is_array($boolFields) && !empty($boolFields) ? implode(";", $boolFields) . ";" : "");
 
         // Prepare the form definition data
         $defParams = self::formatJsonData2HiddenField(array(
