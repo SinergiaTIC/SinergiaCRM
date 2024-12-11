@@ -185,18 +185,17 @@ while ($row = $db->fetchByAssoc($res)) {
     $warningAttendancesData[$warningAttendances]['name'] = SticUtils::createLinkToDetailView('stic_Attendances', $row['attendance_id'], $row['attendance_name']);
     $warningAttendancesData[$warningAttendances]['attendance_id'] = $attendanceId;
 
+    $warningAttendancesData[$warningAttendances]['assigned_user_id'] = "";
+    $warningAttendancesData[$warningAttendances]['assigned_user'] = "";
+
     if ($row['assigned_user_id'] != null) {
-        $warningAttendancesData[$warningAttendances]['assigned_user_id'] = $row['assigned_user_id'];
         if ($row['assigned_user_deleted'] == 0) {
+            $warningAttendancesData[$warningAttendances]['assigned_user_id'] = $row['assigned_user_id'];
             $warningAttendancesData[$warningAttendances]['assigned_user'] = SticUtils::createLinkToDetailView('Users', $row['assigned_user_id'], $row['assigned_user_first_name'] . ' ' . $row['assigned_user_last_name'] . ' (' . $row['assigned_user_user_name'] . ')');
         } else {
             // For deleted users: show only user name
-            $warningAttendancesData[$warningAttendances]['assigned_user'] = SticUtils::createLinkToDetailView('Users', $row['assigned_user_id'], $row['assigned_user_user_name']);
+            $warningAttendancesData[$warningAttendances]['assigned_user'] = $row['assigned_user_user_name'];
         }
-    }
-    else {
-        $warningAttendancesData[$warningAttendances]['assigned_user_id'] = "";
-        $warningAttendancesData[$warningAttendances]['assigned_user'] = "";
     }
     $warningAttendances++;
 
@@ -323,19 +322,17 @@ foreach ($includedPaymentsData as $includedPaymentId => $includedPaymentData) {
     if (!in_array($includedPaymentId, $uncompletePaymentsId) && !in_array($includedPaymentId, $completePaymentsId)) {
         $warningPaymentsData[$warningPayments]['name'] = SticUtils::createLinkToDetailView('stic_Payments', $includedPaymentData['payment_id'], $includedPaymentData['payment_name']);
 
-
+        $warningPaymentsData[$warningPayments]['assigned_user_id'] = "";
+        $warningPaymentsData[$warningPayments]['assigned_user'] = "";
+    
         if ($includedPaymentData['assigned_user_id'] != null) {
-            $warningPaymentsData[$warningPayments]['assigned_user_id'] = $includedPaymentData['assigned_user_id'];
-            if ($row['assigned_user_deleted'] == 0) {
+            if ($includedPaymentData['assigned_user_deleted'] == 0) {
+                $warningPaymentsData[$warningPayments]['assigned_user_id'] = $includedPaymentData['assigned_user_id'];
                 $warningPaymentsData[$warningPayments]['assigned_user'] = SticUtils::createLinkToDetailView('Users', $includedPaymentData['assigned_user_id'], $includedPaymentData['assigned_user_first_name'] . ' ' . $includedPaymentData['assigned_user_last_name'] . ' (' . $includedPaymentData['assigned_user_user_name'] . ')');
             } else {
                 // For deleted users: show only user name
-                $warningPaymentsData[$warningPayments]['assigned_user'] = SticUtils::createLinkToDetailView('Users', $includedPaymentData['assigned_user_id'], $includedPaymentData['assigned_user_user_name']);
+                $warningPaymentsData[$warningPayments]['assigned_user'] = $includedPaymentData['assigned_user_user_name'];
             }
-        }
-        else {
-            $warningPaymentsData[$warningPayments]['assigned_user_id'] = "";
-            $warningPaymentsData[$warningPayments]['assigned_user'] = "";
         }
         $warningPayments++;
     }
