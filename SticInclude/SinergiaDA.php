@@ -75,6 +75,9 @@ class ExternalReporting
         'stic_Validation_Results',
         'stic_Custom_Views',
     ];
+    private $viewPrefix;
+    private $listViewPrefix;            
+    private $maxNonAdminUsers;
 
     public function __construct()
     {
@@ -127,6 +130,9 @@ class ExternalReporting
 
         $this->viewPrefix = "{$this->versionPrefix}";
         $this->listViewPrefix = "{$this->viewPrefix}_l";
+        
+        // Get configured limit for non-admin user processing
+        $this->maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 100;
     }
     /**
      * Main function responsible for creating and managing MariaDB views and tables (as specified in stic_Settings) based on CRM modules.
@@ -1311,35 +1317,38 @@ class ExternalReporting
         // 3) eda_def_users_groups
         $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS
                             -- Normal users are assigned to their own security groups.
-                            SELECT
-                                user_name,
-                                CONCAT('SCRM_',s.name) as name
-                            FROM
-                                users u
-                            JOIN users_cstm uc ON
-                                uc.id_c=u.id
-                            JOIN securitygroups_users su ON
-                                u.id = su.user_id
-                            JOIN securitygroups s ON
-                                s.id = su.securitygroup_id
-                            WHERE
-                                u.is_admin = 0
-                                AND u.deleted = 0
-                                AND su.deleted = 0
-                                AND s.deleted = 0
-                                AND uc.sda_allowed_c=1
-                                AND u.status='Active'
-                            UNION
-                            -- Administrator users should always belong to the EDA_ADMIN group.
-                            SELECT
-                                user_name,
-                                'EDA_ADMIN'
-                            FROM
-                                users u
-                            WHERE
-                                u.is_admin = 1
-                                AND u.deleted = 0
-                                AND u.status='Active';";
+                            SELECT * FROM (
+                                -- Select 1: Regular users with $this->maxNonAdminUsers LIMIT
+                                SELECT 
+                                    user_name,
+                                    CONCAT('SCRM_', s.name) as name
+                                FROM (
+                                    SELECT DISTINCT u.id, u.user_name
+                                    FROM users u
+                                    JOIN users_cstm uc ON uc.id_c = u.id
+                                    WHERE u.is_admin = 0
+                                        AND u.deleted = 0
+                                        AND uc.sda_allowed_c = 1
+                                        AND u.status = 'Active'
+                                    LIMIT $this->maxNonAdminUsers
+                                ) AS limited_users
+                                JOIN securitygroups_users su ON limited_users.id = su.user_id
+                                JOIN securitygroups s ON s.id = su.securitygroup_id
+                                WHERE su.deleted = 0
+                                    AND s.deleted = 0
+                                ) AS limited_users
+                                -- Select 2: Administrator users should always belong to the EDA_ADMIN group.
+                                UNION
+                                SELECT
+                                    user_name,
+                                    'EDA_ADMIN'
+                                FROM
+                                    users u
+                                WHERE
+                                    u.is_admin = 1
+                                    AND u.deleted = 0
+                                    AND u.status='Active';";
+
         // 4) eda_def_security_group_records
 
         // Set a switch to determine whether to populate the sda_def_security_group_records view based
@@ -1757,8 +1766,8 @@ class ExternalReporting
             0 => 'ACL_ALLOW_DEFAULT',
         ];
 
-        // Get configured limit for non-admin user processing
-        $maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 100;
+       
+       
 
         // Preload user groups if group permissions are enabled for better performance
         $userGroups = [];
@@ -1777,7 +1786,7 @@ class ExternalReporting
                      JOIN users_cstm ON users.id = users_cstm.id_c
                      WHERE status='Active' AND deleted=0
                      AND sda_allowed_c=1 AND is_admin=0
-                     LIMIT $maxNonAdminUsers";
+                     LIMIT $this->maxNonAdminUsers ";
 
         $nonAdminUsers = $db->query($nonAdminQuery);
         $userQueries = [$nonAdminUsers];
