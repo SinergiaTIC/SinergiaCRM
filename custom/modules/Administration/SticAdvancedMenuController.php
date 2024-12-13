@@ -29,13 +29,32 @@ if ($_REQUEST['manageMode'] ?? false) {
         case 'save':
             // Decode HTML entities in the JSON string
             $decodedJson = html_entity_decode($_POST['menuJson']);
-            
+
+            $manageLang = $_POST['manageLang'];
+
             // Convert the decoded JSON to a PHP array
             $GLOBALS["SticTabStructure"] = json_decode($decodedJson, true);
 
+            $flatArray = [];
+            $stack = $GLOBALS["SticTabStructure"]; // Inicializamos el stack con el array original
+
+            while (!empty($stack)) {
+                $item = array_pop($stack); // Extraemos el último elemento del stack
+
+                // Si el elemento tiene 'id' y 'text', lo añadimos al array plano
+                if (isset($item['id']) && isset($item['text'])) {
+                    $flatArray[$item['id']] = $item['text'];
+                }
+
+                // Si tiene 'children', lo añadimos al stack para procesar sus hijos
+                if (isset($item['children']) && is_array($item['children'])) {
+                    $stack = array_merge($stack, $item['children']); // Añadimos los hijos al stack
+                }
+            }
+
             // Write the tab structure to a custom file
             $fileContents = "<?php \n" . '$GLOBALS["SticTabStructure"] =' . var_export($GLOBALS['SticTabStructure'], true) . ';';
-            
+
             sugar_file_put_contents('custom/include/AdvancedTabConfig.php', $fileContents);
             ob_clean();
             SugarApplication::appendSuccessMessage("<div id='saved-notice' class='alert alert-success' role='alert'>{$app_strings['LBL_SAVED']}</div>");
@@ -48,6 +67,32 @@ if ($_REQUEST['manageMode'] ?? false) {
             $configurator->config['stic_advanced_menu_icons'] = $_POST['sticAdvancedMenuIcons'];
             $configurator->config['stic_advanced_menu_all'] = $_POST['sticAdvancedMenuAll'];
             $configurator->saveConfig();
+
+            require_once 'modules/Administration/Common.php';
+            $appStrings = return_application_language($manageLang);
+
+            foreach ($flatArray as $key => $value) {
+                if (empty($app_strings[$key]) || $app_strings[$value] != $value) {
+                    $contents = return_custom_app_list_strings_file_contents($manageLang);
+                    $new_contents = replace_or_add_app_string($key, $value, $contents);
+                    save_custom_app_list_strings_contents($new_contents, $manageLang);
+
+                    $languages = get_languages();
+                    foreach ($languages as $language => $langlabel) {
+                        if ($manageLang == $language) {
+                            continue;
+                        }
+                        $app_strings = return_application_language($language);
+                        if (!isset($app_strings[$key])) {
+                            $contents = return_custom_app_list_strings_file_contents($language);
+                            $new_contents = replace_or_add_app_string($labelID, $labelValue, $contents);
+                            save_custom_app_list_strings_contents($new_contents, $language);
+                        }
+                    }
+                    $app_strings[$labelID] = $labelValue;
+                }
+            }
+            //************* */ Process language labels
 
             die('ok');
             break;
@@ -121,7 +166,7 @@ class SticAdvancedMenu
             }
         }
         $GLOBALS['log']->info(__METHOD__ . '(' . __LINE__ . ') Successfully switched to advanced menu');
-        
+
         return true;
     }
 

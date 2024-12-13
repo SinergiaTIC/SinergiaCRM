@@ -100,8 +100,8 @@ class ViewSticManageMainMenu extends SugarView
         $this->ss->assign('sticAdvancedMenuIcons', $sugar_config['stic_advanced_menu_icons']);
         $this->ss->assign('sticAdvancedMenuAll', $sugar_config['stic_advanced_menu_all']);
 
-        $this->ss->assign('dropdown_languages', get_languages());
         $this->ss->assign('tabGroupSelected_lang', $tabGroupSelected_lang);
+        $this->ss->assign('available_languages', get_languages());
 
         // Display the Smarty template
         $this->ss->display("custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.tpl");

@@ -39,6 +39,11 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 {
     global $app_list_strings, $app_strings, $current_user, $sugar_config;
 
+    if($_REQUEST['lang'] && is_string($_REQUEST['lang']) ){
+        $app_strings= return_application_language($_REQUEST['lang']);
+    }
+
+
     // Initialize valid tabs if not provided
     if ($validTabs === null) {
         require_once 'modules/MySettings/TabController.php';
@@ -185,14 +190,21 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
  *
  * @param array &$array The array of menu items to process.
  */
-function addMenuProperties(&$array)
+function addMenuProperties(&$array, $currentLangStrings=null)
 {
 
     include_once 'modules/MySettings/TabController.php';
     $controller = new TabController();
     $currentTabs = $controller->get_system_tabs();
-
     global $app_list_strings, $app_strings;
+    
+    if($_REQUEST['lang'] && is_string($_REQUEST['lang']) ){
+        $app_strings= return_application_language($_REQUEST['lang']);
+    }
+
+
+
+
     foreach ($array as $key => &$value) {
         if (is_array($value)) {
             if (isset($value['id'])) {

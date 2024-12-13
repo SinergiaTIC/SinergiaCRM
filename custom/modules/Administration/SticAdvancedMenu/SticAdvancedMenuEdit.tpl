@@ -50,6 +50,10 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 
 				<button id="restore-menu" type="button"
 					class="btn btn-md btn-default text-uppercase">{$MOD.LBL_STIC_MENU_RESTORE}</button>
+					<div class="pull-right">
+					{$MOD.LBL_TABGROUP_LANGUAGE}&nbsp;
+					{html_options name='grouptab_lang' id='grouptab_lang' options=$available_languages selected=$tabGroupSelected_lang onchange=" tabLanguageChange(this)"}
+					</div>
 			</div>
 
 			{* <div class="panel panel-default"> *}

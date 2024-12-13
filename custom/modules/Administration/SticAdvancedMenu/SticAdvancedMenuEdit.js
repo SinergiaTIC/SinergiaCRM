@@ -57,13 +57,15 @@ $(document).ready(function() {
   // Save menu button
   $("#save-menu").on("click", function() {
     var $cleanMenu = $("#stic-menu-manager").jstree(true).get_json().map(filterNodes);
-
+    console.log($cleanMenu)
+    
     // Define data to be sent in the request
     var dataToSend = {
       menuJson: JSON.stringify($cleanMenu),
       sticAdvancedMenuIcons: document.getElementById("stic_advanced_menu_icons").checked ? "1" : "0",
       sticAdvancedMenuAll: document.getElementById("stic_advanced_menu_all").checked ? "1" : "0",
-      manageMode: "save"
+      manageMode: "save",
+      manageLang: document.getElementById('grouptab_lang').value
     };
 
     // Perform AJAX request
@@ -98,17 +100,17 @@ $(document).ready(function() {
   });
 
   // Change text and id when renaming a node
-  $("#stic-menu-manager").on("rename_node.jstree", function(e, data) {
-    var tree = $("#stic-menu-manager").jstree(true);
-    var newId = data.text.replace(/\s+/g, "_") + "__" + Math.random().toString(36).substr(2, 4);
+  // $("#stic-menu-manager").on("rename_node.jstree", function(e, data) {
+  //   var tree = $("#stic-menu-manager").jstree(true);
+  //   var newId = "LBL_GROUPTAB_" +Math.floor(Date.now() / 1000);
+    
+  //   // Change the ID directly
+  //   tree.set_id(data.node, newId);
 
-    // Change the ID directly
-    tree.set_id(data.node, newId);
-
-    // Log the current node ID for verification
-    console.log("New ID set:", newId);
-    console.log("Current node ID:", data.node.id);
-  });
+  //   // Log the current node ID for verification
+  //   console.log("New ID set:", newId);
+  //   console.log("Current node ID:", data.node.id);
+  // });
 
   // Handle tree changes
   $("#stic-menu-manager").on("rename_node.jstree", handleTreeChanges);
@@ -196,7 +198,7 @@ function filterNodes(node) {
   if (typeof node === "object" && node !== null) {
     const keys = Object.keys(node);
     for (const key of keys) {
-      if (key !== "id" && key !== "children") {
+      if (key !== "id" && key !== "children" && key !== "text") {
         delete node[key];
       } else if (key === "children") {
         node[key] = node[key].map(filterNodes);
@@ -254,6 +256,7 @@ function createMenu() {
               SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE,
             action: function(obj) {
               $node = tree.create_node($node, {
+                id: "LBL_GROUPTAB_"+ Math.floor(Date.now() / 1000),
                 text: SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT,
                 url: ""
               });
@@ -281,15 +284,15 @@ function createMenu() {
               var nodeData = tree.get_json($node, { no_state: true, no_id: false, no_children: false, no_data: false });
 
               function generateCustomId(baseId) {
-                var randomSuffix = Math.random().toString(36).substr(2, 4);
-                return baseId + "__" + randomSuffix;
+                var randomSuffix = Math.floor(Date.now() / 1000)
+                return baseId + "_" + randomSuffix;
               }
 
               function duplicateNodeRecursively(node) {
                 var nodeCopy = $.extend(true, {}, node);
 
                 // Generate a new custom ID
-                nodeCopy.id = generateCustomId(node.id.split("__")[0]);
+                nodeCopy.id = generateCustomId(node.id.substring(0, node.id.lastIndexOf('_')));
 
                 if (typeof nodeCopy.text === "string") {
                   nodeCopy.text = nodeCopy.text.split("|")[0];
@@ -511,7 +514,7 @@ function newMainNode() {
   var tree = $("#stic-menu-manager").jstree(true);
   var text = SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT;
   var newNode = {
-    id: text + "__" + Math.random().toString(36).substr(2, 4),
+    id: "LBL_GROUPTAB_"+ Math.floor(Date.now() / 1000),
     text: text
   };
 
@@ -656,4 +659,24 @@ function sortHiddenModulesAlphabetically() {
 
   // Refresh the tree to show the new order
   hiddenModulesTree.redraw(true);
+}
+
+
+/**
+ * Changes the language in the URL when a new option is selected in the language dropdown.
+ * The function checks if the current URL already contains a language parameter ('lang') and updates it.
+ * If not found, it adds the new language parameter to the current URL.
+ * 
+ * @param {HTMLSelectElement} sel - The language dropdown element containing the selected language value.
+ */
+function tabLanguageChange(sel){
+  var partURL = window.location.href;
+  if(partURL.search(/&lang=\w*&/i) != -1){
+    partURL = partURL.replace(/&lang=\w*&/i, '&lang='+ sel.value+'&');
+  }else if(partURL.search(/&lang=\w*/i) != -1){
+    partURL = partURL.replace(/&lang=\w*/i, '&lang='+ sel.value);
+  }else{
+    partURL = window.location.href + '&lang='+ sel.value;
+  }
+  window.location.href = partURL;
 }
