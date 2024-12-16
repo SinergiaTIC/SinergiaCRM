@@ -1549,6 +1549,7 @@ class KReportQuery {
    function getWhereOperatorClause($operator, $fieldname, $fieldid, $path, $value, $valuekey, $valueto, $valuetokey = '', $jointype = '') {
       global $current_user;
       // STIC-Custom EPS 20241205
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
       $db = DBManagerFactory::getInstance();
       // ENS STIC-Custom
 
