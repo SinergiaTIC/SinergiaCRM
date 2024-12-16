@@ -81,6 +81,9 @@ $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
+// Envío masivo de correos
+$app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'El envío sólo se aplicará a los registros de la página actual. Para envíos masivos se recomienda utilizar el módulo Campañas.';
+
 // Módulos propios de SinergiaCRM y módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizaciones';
 $app_list_strings['moduleList']['Contacts'] = 'Personas';
@@ -2346,17 +2349,25 @@ $app_list_strings['stic_incorpora_country_list']["382"] = 'ZIMBABWE';
 $app_list_strings['stic_incorpora_country_list']["000"] = 'ESTADO NO DETERMINADO';
 $app_list_strings['stic_incorpora_derivation_list'][''] = '';
 $app_list_strings['stic_incorpora_derivation_list']['ADECCO'] = 'Fundación Adecco';
+$app_list_strings['stic_incorpora_derivation_list']['BCCAIXA'] = 'Proyecto Impulsa';
+$app_list_strings['stic_incorpora_derivation_list']['COE'] = 'Comité Olímpico Español';
+$app_list_strings['stic_incorpora_derivation_list']['DISJOB'] = 'DISJOB';
 $app_list_strings['stic_incorpora_derivation_list']['ENF_AVAN'] = 'Enfermedades avanzadas';
-$app_list_strings['stic_incorpora_derivation_list']['ENTIDAD'] = 'Entidad';
+$app_list_strings['stic_incorpora_derivation_list']['ENTIDAD'] = 'Entidad Social';
 $app_list_strings['stic_incorpora_derivation_list']['FAMILIA'] = 'Familiaries, amigos/as';
 $app_list_strings['stic_incorpora_derivation_list']['FUNDACION'] = 'Fundación Bancaria "la Caixa"';
 $app_list_strings['stic_incorpora_derivation_list']['INT_INTER'] = 'Intervención Comunitaria Intercultural';
-$app_list_strings['stic_incorpora_derivation_list']['OFICINA'] = 'Oficina la Caixa';
-$app_list_strings['stic_incorpora_derivation_list']['OTROS_FUND'] = 'Otros programas de Fundación Bancaria "la Caixa"';
+$app_list_strings['stic_incorpora_derivation_list']['INVUL'] = 'Invulnerables';
+$app_list_strings['stic_incorpora_derivation_list']['MEDIO_AMB'] = 'Medio Ambiente';
+$app_list_strings['stic_incorpora_derivation_list']['MUTUNI'] = 'Mutua Universal';
+$app_list_strings['stic_incorpora_derivation_list']['OFC09900'] = 'Oficina CaixaBank 09900';
+$app_list_strings['stic_incorpora_derivation_list']['OFICINA'] = 'CaixaBank';
 $app_list_strings['stic_incorpora_derivation_list']['OTROS'] = 'Otros';
-$app_list_strings['stic_incorpora_derivation_list']['PRO_INF'] = 'Caixaproinfancia';
+$app_list_strings['stic_incorpora_derivation_list']['OTROS_FUND'] = 'Otros programas de Fundación Bancaria "la Caixa"';
+$app_list_strings['stic_incorpora_derivation_list']['PROCON'] = 'Proyecto Confianza';
 $app_list_strings['stic_incorpora_derivation_list']['PROG_PRIV'] = 'Programas Sociales Privados';
 $app_list_strings['stic_incorpora_derivation_list']['PROPIA'] = 'Iniciativa propia';
+$app_list_strings['stic_incorpora_derivation_list']['PRO_INF'] = 'Caixaproinfancia';
 $app_list_strings['stic_incorpora_derivation_list']['REINCORP'] = 'ReIncorpora';
 $app_list_strings['stic_incorpora_derivation_list']['SERV_OTROS'] = 'Otros servicios municipales y de la Administración';
 $app_list_strings['stic_incorpora_derivation_list']['SERV_SOCIA'] = 'Servicios Sociales';
@@ -3244,6 +3255,7 @@ $app_list_strings['stic_work_calendar_types_list']['personal'] = 'Asuntos propio
 $app_list_strings['stic_work_calendar_types_list']['sick'] = 'Baja';
 $app_list_strings['stic_work_calendar_types_list']['leave'] = 'Permiso/Excedencia';
 $app_list_strings['stic_work_calendar_types_list']['other'] = 'Otros';
+$app_list_strings['stic_work_calendar_types_list']['canceled'] = 'Anulado';
 
 // Diario: Tipo de diario
 $app_list_strings['stic_journal_types_list'][''] = '';
