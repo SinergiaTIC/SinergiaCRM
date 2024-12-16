@@ -58,7 +58,6 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 					</div>
 			</div>
 
-			{* <div class="panel panel-default"> *}
 			<div id="menu-options">
 				<div class="col-xs-4 ">
 					<div class="checkbox">

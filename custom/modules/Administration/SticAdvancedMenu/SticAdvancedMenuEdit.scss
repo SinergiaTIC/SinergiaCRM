@@ -32,7 +32,7 @@ $background-color: #e3e3e3;
     }
 }
 
-// Estilos generales
+// General styles
 .jstree-anchor {
     border: 1px solid $border-color;
     background-color: $background-color;
@@ -54,7 +54,7 @@ $background-color: #e3e3e3;
     }
 }
 
-// Estilos específicos
+// Specific styles
 #stic-menu-manager { 
     @include panel-padding;
     .jstree-anchor {

@@ -99,19 +99,6 @@ $(document).ready(function() {
     handleTreeChanges();
   });
 
-  // Change text and id when renaming a node
-  // $("#stic-menu-manager").on("rename_node.jstree", function(e, data) {
-  //   var tree = $("#stic-menu-manager").jstree(true);
-  //   var newId = "LBL_GROUPTAB_" +Math.floor(Date.now() / 1000);
-    
-  //   // Change the ID directly
-  //   tree.set_id(data.node, newId);
-
-  //   // Log the current node ID for verification
-  //   console.log("New ID set:", newId);
-  //   console.log("Current node ID:", data.node.id);
-  // });
-
   // Handle tree changes
   $("#stic-menu-manager").on("rename_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("move_node.jstree", handleTreeChanges);
@@ -184,8 +171,6 @@ $(document).ready(function() {
     // Log the deleted nodes data
     console.log("Nodes deleted from stic-menu-manager:", deletedNodesArray);
 
-    // If you need to return this array for use elsewhere:
-    // return deletedNodesArray;
   });
 });
 
@@ -438,7 +423,6 @@ function removeMenu() {
   }
 }
 
-// Actualizar la función updateNodeDisplay para manejar IDs
 function updateNodeDisplay(nodeId) {
   var tree = $("#stic-menu-manager").jstree(true);
   var nodeObj = tree.get_node(nodeId);

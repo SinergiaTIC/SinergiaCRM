@@ -111,7 +111,7 @@ span.error:empty{
 <table cellspacing=2>
 <button class='button' style='cursor:default' onmousedown='this.className="buttonOn";return false;'
             onmouseup='this.className="button"' onmouseout='this.className="button"'
-            onclick='studiotabs.generateForm("edittabs");document.edittabs.submit();alert("hola")'>
+            onclick='studiotabs.generateForm("edittabs");document.edittabs.submit()'>
             {$MOD.LBL_BTN_SAVEPUBLISH}</button>
 </table>
 <p />
