@@ -1580,7 +1580,6 @@ class ExternalReporting
     private function createEnumView($listName, $listViewName)
     {
 
-        // return $this->createEnumTable($listName, $listViewName);
 
         // Get the global variable $app_list_strings
         global $app_list_strings;
@@ -1588,8 +1587,15 @@ class ExternalReporting
         // Get instance of DBManagerFactory
         $db = DBManagerFactory::getInstance();
 
-        // Get the current list
+        // Get the current listm or return if not exists
         $currentList = $app_list_strings[$listName];
+        if(!$currentList) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "The referenced dropdown list [{$listName}] is not available. Ommited");
+        return;
+        }
+
+
+
 
         // Start building the SQL command
         $sqlCommand = "CREATE OR REPLACE VIEW {$this->listViewPrefix}_{$listViewName} AS ";
@@ -1609,7 +1615,7 @@ class ExternalReporting
         // Execute the SQL command
         if (!$db->query($sqlCommand)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] running Query: [{$sqlCommand}]");
-            // $this->info .= "[FATAL: No se ha podido crear la vista {$this->listViewPrefix}_{$listViewName}]";
+            
         } else {
             return $listViewName;
         };
@@ -1839,6 +1845,7 @@ class ExternalReporting
                             case '75': // Owner-based permissions
                                 $permissionsBatch[] = [
                                     'user_name' => $user['user_name'],
+                                    'group' =>null,
                                     'table' => $currentTable,
                                     'column' => 'assigned_user_name',
                                     'stic_permission_source' => $aclSource,
@@ -1849,6 +1856,7 @@ class ExternalReporting
                             default: // Global permissions
                                 $permissionsBatch[] = [
                                     'user_name' => $user['user_name'],
+                                    'group' =>null,
                                     'table' => $currentTable,
                                     'column' => 'users_id',
                                     'stic_permission_source' => $aclSource,
