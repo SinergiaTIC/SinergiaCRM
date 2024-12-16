@@ -2530,18 +2530,6 @@ class SugarBean
                     $this->$key = trim($this->$key);
                 }
 
-                // Trim name & varchar type values on save when the value is not null
-                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
-                    $this->$key = trim($this->$key);
-                }
-
-                // STIC Custom - 20221213 - JCH - Trim name & varchar type values on save when the value is not null
-                // STIC#902
-                // STIC#982
-                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
-                    $this->$key = trim($this->$key);
-                }
-                // END STIC
                 if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml')) {
                     $this->$key = purify_html($this->$key, ['HTML.ForbiddenElements' => ['iframe' => true]]);
                 // STIC-Custom 20210326 jchg: Avoid cleaning html in email templates body to preserve content pasted from external sources
