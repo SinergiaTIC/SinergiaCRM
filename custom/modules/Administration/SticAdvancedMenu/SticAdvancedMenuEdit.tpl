@@ -29,6 +29,8 @@ You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 
 	var jsonAll ='{$jsonAll|escape:'javascript'}'
 	var allModules = [JSON.parse(jsonAll)]
+
+	var newNodeString = '{ $newNodeString }' 
 </script>
 <script type="text/javascript"
 	src="{sugar_getjspath file='custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.js'}">

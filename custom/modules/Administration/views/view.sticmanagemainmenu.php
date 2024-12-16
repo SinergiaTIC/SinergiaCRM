@@ -103,6 +103,9 @@ class ViewSticManageMainMenu extends SugarView
         $this->ss->assign('tabGroupSelected_lang', $tabGroupSelected_lang);
         $this->ss->assign('available_languages', get_languages());
 
+        $newNodeString = return_module_language($tabGroupSelected_lang, 'Administration')['LBL_STIC_MENU_COMMAND_CREATE_DEFAULT'];
+        $this->ss->assign('newNodeString', $newNodeString);
+
         // Display the Smarty template
         $this->ss->display("custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.tpl");
 

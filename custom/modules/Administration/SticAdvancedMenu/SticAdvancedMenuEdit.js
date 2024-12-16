@@ -257,7 +257,7 @@ function createMenu() {
             action: function(obj) {
               $node = tree.create_node($node, {
                 id: "LBL_GROUPTAB_"+ Math.floor(Date.now() / 1000),
-                text: SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT,
+                text: newNodeString,
                 url: ""
               });
               tree.edit($node);
@@ -512,7 +512,7 @@ function removeDisabledObjects(arr) {
  */
 function newMainNode() {
   var tree = $("#stic-menu-manager").jstree(true);
-  var text = SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE_DEFAULT;
+  var text = newNodeString;
   var newNode = {
     id: "LBL_GROUPTAB_"+ Math.floor(Date.now() / 1000),
     text: text
