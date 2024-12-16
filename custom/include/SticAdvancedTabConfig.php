@@ -21,7 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-include_once 'custom/include/AdvancedTabConfig.php';
+if (file_exists('custom/include/AdvancedTabConfig.php')) {
+    include_once 'custom/include/AdvancedTabConfig.php';
+}
 
 // If the menu is not defined in the instance, the default menu is loaded
 if (empty($GLOBALS["SticTabStructure"])) {
