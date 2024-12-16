@@ -24,42 +24,45 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
+
+// Handle different management modes for advanced menu configuration
 if ($_REQUEST['manageMode'] ?? false) {
     switch ($_REQUEST['manageMode']) {
         case 'save':
-            // Decode HTML entities in the JSON string
+            // Decode HTML entities in the JSON string to ensure proper parsing
             $decodedJson = html_entity_decode($_POST['menuJson']);
 
             $manageLang = $_POST['manageLang'];
 
-            // Convert the decoded JSON to a PHP array
+            // Convert the decoded JSON to a PHP associative array
             $GLOBALS["SticTabStructure"] = json_decode($decodedJson, true);
 
+            // Flatten the menu structure to extract all labels
             $flatArray = [];
-            $stack = $GLOBALS["SticTabStructure"]; // Inicializamos el stack con el array original
+            $stack = $GLOBALS["SticTabStructure"]; // Initialize stack with the original array
 
             while (!empty($stack)) {
-                $item = array_pop($stack); // Extraemos el último elemento del stack
+                $item = array_pop($stack); // Extract the last element from the stack
 
-                // Si el elemento tiene 'id' y 'text', lo añadimos al array plano
+                // If the item has an 'id' and 'text', add it to the flat array
                 if (isset($item['id']) && isset($item['text'])) {
                     $flatArray[$item['id']] = $item['text'];
                 }
 
-                // Si tiene 'children', lo añadimos al stack para procesar sus hijos
+                // If the item has 'children', add them to the stack for processing
                 if (isset($item['children']) && is_array($item['children'])) {
-                    $stack = array_merge($stack, $item['children']); // Añadimos los hijos al stack
+                    $stack = array_merge($stack, $item['children']); // Add children to the stack
                 }
             }
 
-            // Write the tab structure to a custom file
+            // Write the tab structure to a custom configuration file
             $fileContents = "<?php \n" . '$GLOBALS["SticTabStructure"] =' . var_export($GLOBALS['SticTabStructure'], true) . ';';
 
             sugar_file_put_contents('custom/include/AdvancedTabConfig.php', $fileContents);
             ob_clean();
             SugarApplication::appendSuccessMessage("<div id='saved-notice' class='alert alert-success' role='alert'>{$app_strings['LBL_SAVED']}</div>");
 
-            // Save options in sugar_config
+            // Save menu configuration options
             require_once 'modules/Configurator/Configurator.php';
             $configurator = new Configurator();
 
@@ -68,40 +71,40 @@ if ($_REQUEST['manageMode'] ?? false) {
             $configurator->config['stic_advanced_menu_all'] = $_POST['sticAdvancedMenuAll'];
             $configurator->saveConfig();
 
+            // Manage language labels
             require_once 'modules/Administration/Common.php';
             $app_strings = return_application_language($manageLang);
-            
-            foreach ($flatArray as $key => $value) {
-                
-                //////////////////////////////
-                if (empty($app_strings[$key]) || $app_strings[$key] != $value) {
-                    $contents = return_custom_app_list_strings_file_contents($manageLang);
-                    $new_contents = replace_or_add_app_string($key, $value, $contents);
-                    save_custom_app_list_strings_contents($new_contents, $manageLang);
 
+            // Update language strings for menu labels
+            foreach ($flatArray as $labelID => $labelValue) {
+                // Only update if the label doesn't exist or has changed
+                if (empty($app_strings[$labelID]) || $app_strings[$labelID] != $labelValue) {
+                    $contents = return_custom_app_list_strings_file_contents($manageLang);
+                    $newContents = replace_or_add_app_string($labelID, $labelValue, $contents);
+                    save_custom_app_list_strings_contents($newContents, $manageLang);
+
+                    // Propagate label to other languages if not already set
                     $languages = get_languages();
-                    foreach ($languages as $language) {
+                    foreach ($languages as $language => $langlabel) {
                         if ($manageLang == $language) {
                             continue;
                         }
                         $app_strings = return_application_language($language);
-                        if (!isset($app_strings[$key])) {
+                        if (!isset($app_strings[$labelID])) {
                             $contents = return_custom_app_list_strings_file_contents($language);
-                            $new_contents = replace_or_add_app_string($key, $value, $contents);
-                            save_custom_app_list_strings_contents($new_contents, $language);
+                            $newContents = replace_or_add_app_string($labelID, $labelValue, $contents);
+                            save_custom_app_list_strings_contents($newContents, $language);
                         }
                     }
-                    $app_strings[$key] = $labelValue;
-                }
-                //////////////////////////
-            }
-            //************* */ Process language labels
 
+                    $app_strings[$labelID] = $labelValue;
+                }
+            }
             die('ok');
             break;
-        case 'legacy_mode':
 
-            // Disable advanced menu
+        case 'legacy_mode':
+            // Disable advanced menu and revert to legacy menu
             require_once 'modules/Configurator/Configurator.php';
             $configurator = new Configurator();
             $configurator->config['stic_advanced_menu_enabled'] = false;
@@ -109,9 +112,9 @@ if ($_REQUEST['manageMode'] ?? false) {
 
             die('ok');
             break;
-        case 'advanced_mode':
 
-            // Enable advanced menu
+        case 'advanced_mode':
+            // Enable advanced menu and convert existing menu
             require_once 'modules/Configurator/Configurator.php';
             $configurator = new Configurator();
             $configurator->config['stic_advanced_menu_enabled'] = true;
@@ -120,8 +123,10 @@ if ($_REQUEST['manageMode'] ?? false) {
 
             die('ok');
             break;
+
         case 'restore':
             // Remove custom tab configuration and reset global variable
+            // This allows reverting to the default menu configuration
             unlink('custom/include/AdvancedTabConfig.php');
             unset($GLOBALS["SticTabStructure"]);
             die('ok');
