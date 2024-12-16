@@ -29,11 +29,11 @@ class EventInscriptionBO extends WebFormDataBO
   
 
     // Results constants of the organization's management
-    const ACCOUNT_ERROR = 0;
-    const ACCOUNT_UNIQUE = 1;
-    const ACCOUNT_MULTIPLE = 2;
-    const ACCOUNT_NEW = 3;
-    const ACCOUNT_NO_DATA = 4; // There is no information about the organization
+    public const ACCOUNT_ERROR = 0;
+    public const ACCOUNT_UNIQUE = 1;
+    public const ACCOUNT_MULTIPLE = 2;
+    public const ACCOUNT_NEW = 3;
+    public const ACCOUNT_NO_DATA = 4; // There is no information about the organization
 
     /**
      * Overwriting identifier arrays for value recovery

@@ -40,7 +40,7 @@ class stic_EventsLogicHooks {
             foreach ($bean->stic_registrations_stic_events->getBeans() as $registration) {
                 if ($bean->total_hours != 0) {
                     $registration->attended_hours = empty($registration->attended_hours) ? 0 : $registration->attended_hours;
-                    $registration->attendance_percentage = $registration->attended_hours / $bean->total_hours * 100;
+                    $registration->attendance_percentage = ((float)$bean->total_hours != 0) ? (float)$registration->attended_hours / (float)$bean->total_hours * 100 : 0;
                 } else {
                     $registration->attendance_percentage = 0;
                 }

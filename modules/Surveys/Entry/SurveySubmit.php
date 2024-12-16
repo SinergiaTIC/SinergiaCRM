@@ -63,6 +63,7 @@ function processSurvey(Surveys $survey, $trackerId, $contactId, $request)
     $response->campaign_id = $campaignId;
     $response->happiness = -1;
     $response->happiness_text = '';
+    $response->assigned_user_id = $survey->assigned_user_id;
 
     // STIC-Custom 20230116 AAM - Adding assigned user to response
     // STIC#970
