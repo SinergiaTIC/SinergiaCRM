@@ -69,28 +69,31 @@ if ($_REQUEST['manageMode'] ?? false) {
             $configurator->saveConfig();
 
             require_once 'modules/Administration/Common.php';
-            $appStrings = return_application_language($manageLang);
-
+            $app_strings = return_application_language($manageLang);
+            
             foreach ($flatArray as $key => $value) {
-                if (empty($app_strings[$key]) || $app_strings[$value] != $value) {
+                
+                //////////////////////////////
+                if (empty($app_strings[$key]) || $app_strings[$key] != $value) {
                     $contents = return_custom_app_list_strings_file_contents($manageLang);
                     $new_contents = replace_or_add_app_string($key, $value, $contents);
                     save_custom_app_list_strings_contents($new_contents, $manageLang);
 
                     $languages = get_languages();
-                    foreach ($languages as $language => $langlabel) {
+                    foreach ($languages as $language) {
                         if ($manageLang == $language) {
                             continue;
                         }
                         $app_strings = return_application_language($language);
                         if (!isset($app_strings[$key])) {
                             $contents = return_custom_app_list_strings_file_contents($language);
-                            $new_contents = replace_or_add_app_string($labelID, $labelValue, $contents);
+                            $new_contents = replace_or_add_app_string($key, $value, $contents);
                             save_custom_app_list_strings_contents($new_contents, $language);
                         }
                     }
-                    $app_strings[$labelID] = $labelValue;
+                    $app_strings[$key] = $labelValue;
                 }
+                //////////////////////////
             }
             //************* */ Process language labels
 
