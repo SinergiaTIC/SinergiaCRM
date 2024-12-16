@@ -911,6 +911,7 @@ EOJS;
    }
    
    // STIC-Custom EPS 20241210 Generate order by from current query
+   // https://github.com/SinergiaTIC/SinergiaCRM/pull/515
    function generateOrderBy($queryBin64) {
       $queryData = base64_decode($queryBin64);
       $query = json_decode(html_entity_decode($queryData), true);
@@ -944,6 +945,7 @@ EOJS;
       elseif(isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'entire') {
          $this->generateSearchWhere($_REQUEST['moduloplantilladocumento'], $_REQUEST['current_query_by_page']);
          // STIC-Custom EPS 20241210 Generate order_by from current_query
+         // https://github.com/SinergiaTIC/SinergiaCRM/pull/515
          $order_by = $this->generateOrderBy($_REQUEST['current_query_by_page']);
          // END STIC-Custom
          
