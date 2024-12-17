@@ -195,6 +195,7 @@ $GLOBALS['tabStructure'] = array(
             0 => 'stic_Bookings',
             1 => 'stic_Resources',
             2 => 'stic_Bookings_Calendar',
+            3 => 'stic_Bookings_Places_Calendar',
         ),
     ),
     'LBL_GROUPTAB_SALES' => array(

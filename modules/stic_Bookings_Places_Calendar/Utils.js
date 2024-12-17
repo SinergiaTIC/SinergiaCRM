@@ -93,8 +93,6 @@ function initializeCalendar() {
     },
 
     eventDidMount: function (info) {
-      console.dir(info.event.extendedProps.occupiedInfo);
-
       var eventData = info.event.title; 
 
       var title =

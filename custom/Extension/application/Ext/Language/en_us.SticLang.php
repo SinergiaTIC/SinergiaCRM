@@ -137,6 +137,7 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
+$app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Bookings Places Calendar';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';

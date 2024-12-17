@@ -20,23 +20,12 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+global $mod_strings, $app_strings, $sugar_config;
 
-//prevents directly accessing this file from a web browser
-class stic_Bookings_Places_Calendar extends Basic
-{
+if (ACLController::checkAccess('stic_Bookings', 'edit', true)) {
+    $module_menu[] = array("index.php?module=stic_Bookings&action=EditView&return_module=stic_Bookings_Places_Calendar&return_action=index", translate('LNK_NEW_RECORD', 'stic_Bookings'), "create-stic-bookings", 'stic_Bookings');
+}
 
-    public $module_dir = 'stic_Bookings_Places_Calendar';
-    public $object_name = 'stic_Bookings_Places_Calendar';
-    public $importable = false;
-    //var $disable_vardefs = true;
-
-    public function bean_implements($interface)
-    {
-        switch ($interface) {
-            case 'ACL':
-                return true;
-        }
-        return false;
-    }
-
+if (ACLController::checkAccess('stic_Resources', 'edit', true)) {
+    $module_menu[] = array("index.php?module=stic_Resources&action=EditView&return_module=stic_Bookings_Places_Calendar&return_action=index", translate('LNK_NEW_RECORD', 'stic_Resources'), "create-stic-resources", 'stic_Resources');
 }

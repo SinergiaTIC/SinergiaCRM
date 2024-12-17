@@ -161,9 +161,6 @@ function loadCalendar() {
         },
         // This loads the popup of each event/booking
         eventDidMount: function(info) {
-            // console.log("HOLA HOLITA"+info.event)
-            // console.log("HOLA HOLITA2"+info.event.extendedProps)
-            // console.log("HOLA HOLITA3"+info.event.extendedProps.recordId)
 
             if (info.event.extendedProps.recordId) {
                 var url =
@@ -175,7 +172,6 @@ function loadCalendar() {
                     encodeURI(info.event.extendedProps.resourceName) +
                     "&resource_id=" +
                     info.event.extendedProps.resourceId;
-                console.log("VIENDO"+url);
                     var title = '<div class="qtip-title-text">' + info.event.title + "</div>" + '<div class="qtip-title-buttons">' + "</div>";
                 var body = SUGAR.language.translate("app_strings", "LBL_LOADING_PAGE");
 
@@ -184,7 +180,6 @@ function loadCalendar() {
                         content: { title: { text: title, button: true }, text: body },
                         events: {
                             render: function(event, api) {
-                                console.log('yes1')
                                 $.ajax(url)
                                     .done(function(data) {
                                         SUGAR.util.globalEval(data);

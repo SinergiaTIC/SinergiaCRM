@@ -20,23 +20,19 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-//prevents directly accessing this file from a web browser
-class stic_Bookings_Places_Calendar extends Basic
-{
-
-    public $module_dir = 'stic_Bookings_Places_Calendar';
-    public $object_name = 'stic_Bookings_Places_Calendar';
-    public $importable = false;
-    //var $disable_vardefs = true;
-
-    public function bean_implements($interface)
-    {
-        switch ($interface) {
-            case 'ACL':
-                return true;
-        }
-        return false;
-    }
-
+$dictionary['stic_Bookings_Places_Calendar'] = array(
+    'table' => 'stic_bookings_places_calendar',
+    'audited' => true,
+    'duplicate_merge' => true,
+    'fields' => array(
+    ),
+    'relationships' => array(
+    ),
+    'optimistic_locking' => true,
+    'unified_search' => false,
+    'unified_search_default_enabled' => false,
+);
+if (!class_exists('VardefManager')) {
+    require_once 'include/SugarObjects/VardefManager.php';
 }
+VardefManager::createVardef('stic_Bookings_Places_Calendar', 'stic_Bookings_Places_Calendar', array('basic', 'assignable, securitygroups'));
