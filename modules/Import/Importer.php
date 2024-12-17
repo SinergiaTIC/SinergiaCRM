@@ -827,6 +827,7 @@ class Importer
     public static function handleImportErrors($errno, $errstr, $errfile, $errline)
     {
         // STIC-Custom EPS 20241217 Instead of writing always fatal errors, we use the corresponding log
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/518
         // $GLOBALS['log']->fatal("Caught error: $errstr");
         // END STIC-Custom
 
@@ -842,6 +843,7 @@ class Importer
             case E_USER_ERROR:
                 $message = "ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 // STIC-Custom EPS 20241217 Instead of writing always fatal errors, we use the corresponding log
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/518
                 $GLOBALS['log']->fatal("Caught error: $errstr $errfile $errline");
                 // END STIC-Custom
                 $isFatal = true;
@@ -850,6 +852,7 @@ class Importer
             case E_WARNING:
                 $message = "WARNING: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 // STIC-Custom EPS 20241217 Instead of writing always fatal errors, we use the corresponding log
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/518
                 $GLOBALS['log']->warn("Caught error: $errstr $errfile $errline");
                 // END STIC-Custom
                 break;
@@ -857,6 +860,7 @@ class Importer
             case E_NOTICE:
                 $message = "NOTICE: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 // STIC-Custom EPS 20241217 Instead of writing always fatal errors, we use the corresponding log
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/518
                 $GLOBALS['log']->error("Caught error: $errstr $errfile $errline");
                 // END STIC-Custom
                 break;
@@ -866,6 +870,7 @@ class Importer
                 // don't worry about these
                 // $message = "STRICT ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 // STIC-Custom EPS 20241217 Instead of writing always fatal errors, we use the corresponding log
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/518
                 $GLOBALS['log']->warn("Caught error: $errstr $errfile $errline");
                 // END STIC-Custom
                 $message = "";
@@ -873,6 +878,7 @@ class Importer
             default:
                 $message = "Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n";
                 // STIC-Custom EPS 20241217 Instead of writing always fatal errors, we use the corresponding log
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/518
                 $GLOBALS['log']->fatal("Caught error: $errstr $errfile $errline");
                 // END STIC-Custom
                 break;
