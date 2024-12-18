@@ -819,7 +819,7 @@ class ExternalReporting
                 || $this->sdaSettings['publishAsTable'][0] == '1'
             ) {
                 $tableMode = 'table';
-                $createViewQueryHeader = " CREATE OR REPLACE TABLE {$viewName} ENGINE=MyISAM AS SELECT ";
+                $createViewQueryHeader = " CREATE OR REPLACE TABLE {$viewName} ENGINE=InnoDB AS SELECT ";
             } else {
                 $tableMode = 'view';
                 $createViewQueryHeader = " CREATE OR REPLACE VIEW {$viewName} AS SELECT ";
@@ -1403,7 +1403,7 @@ class ExternalReporting
                             `label` VARCHAR(100) NOT NULL,
                             `description` VARCHAR(255) NOT NULL,
                             `visible` BIT DEFAULT 1
-                        ) ENGINE = MyISAM;';
+                        ) ENGINE = InnoDB;';
 
         // 2) eda_def_columns
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_columns` (
@@ -1417,7 +1417,7 @@ class ExternalReporting
                             `visible` BIT DEFAULT 1,
                             `sda_hidden` INT DEFAULT 0,
                             `stic_type` VARCHAR(20)
-                        ) ENGINE = MyISAM;';
+                        ) ENGINE = InnoDB;';
         // 3) eda_def_relationships
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_relationships` (
                             `id` VARCHAR(64) NOT NULL,
@@ -1427,7 +1427,7 @@ class ExternalReporting
                             `target_column` VARCHAR(64) NOT NULL,
                             `label` VARCHAR(255) NOT NULL,
                             `info` VARCHAR(255) NOT NULL
-                        ) ENGINE = MyISAM;';
+                        ) ENGINE = InnoDB;';
 
         // 4) eda_def_enumerations
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_enumerations` (
@@ -1442,7 +1442,7 @@ class ExternalReporting
                             `target_bridge` VARCHAR(64) NOT NULL,
                             `stic_type` VARCHAR(20) NOT NULL,
                             `info` VARCHAR(255) NOT NULL
-                        ) ENGINE = MyISAM;';
+                        ) ENGINE = InnoDB;';
 
         // 5) eda_def_permissions
 
@@ -1469,7 +1469,7 @@ class ExternalReporting
         $sqlMetadata[] = 'CREATE TABLE IF NOT EXISTS `sda_def_config` (
                             `key` VARCHAR(64) NOT NULL,
                             `value` VARCHAR(64) NOT NULL
-                        ) ENGINE = MyISAM;';
+                        ) ENGINE = InnoDB;';
 
         foreach ($sqlMetadata as $key => $value) {
             if (!$db->query($value)) {
