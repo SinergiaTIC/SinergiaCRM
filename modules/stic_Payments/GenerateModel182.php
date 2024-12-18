@@ -551,7 +551,7 @@ foreach ($contacts as $id) {
 
         case '1': // Organizations related to law 49/2002
 
-            if ($id[$year]['monetary_total'] > 0)
+            if ($id[$year]['monetary_total'] > 0) {
 
                 $m182['por_deduccion'] = $m182Vars["M182_PORCENTAJE_DEDUCCION"];
                 $m182['clave'] = $donationKey;
@@ -628,7 +628,7 @@ foreach ($contacts as $id) {
         $db->query("UPDATE contacts_cstm SET stic_total_annual_donations_c = " . $id[$year]['total'] . " WHERE id_c = '" . $id['id'] . "'");
 
     }
-
+}
 
 // 5.2. Accounts
 foreach ($accounts as $id) {
