@@ -161,6 +161,7 @@ function loadCalendar() {
         },
         // This loads the popup of each event/booking
         eventDidMount: function(info) {
+
             if (info.event.extendedProps.recordId) {
                 var url =
                     "index.php?to_pdf=1&module=Home&action=AdditionalDetailsRetrieve&bean=" +
@@ -171,7 +172,7 @@ function loadCalendar() {
                     encodeURI(info.event.extendedProps.resourceName) +
                     "&resource_id=" +
                     info.event.extendedProps.resourceId;
-                var title = '<div class="qtip-title-text">' + info.event.title + "</div>" + '<div class="qtip-title-buttons">' + "</div>";
+                    var title = '<div class="qtip-title-text">' + info.event.title + "</div>" + '<div class="qtip-title-buttons">' + "</div>";
                 var body = SUGAR.language.translate("app_strings", "LBL_LOADING_PAGE");
 
                 if ($("#cal_module").val() != "Home" && typeof info.event.id !== "undefined") {
@@ -179,7 +180,6 @@ function loadCalendar() {
                         content: { title: { text: title, button: true }, text: body },
                         events: {
                             render: function(event, api) {
-                                console.log('yes1')
                                 $.ajax(url)
                                     .done(function(data) {
                                         SUGAR.util.globalEval(data);

@@ -92,9 +92,7 @@ class stic_Bookings_CalendarViewList extends ViewList
         <script>resourcesGroupArray = $resourcesArrayJson;</script>
     SCRIPT;
 
-        echo '<link href="' . getJSPath('SticInclude/vendor/fullcalendar/lib/main.min.css') . '" rel="stylesheet"/>';
-        echo getVersionedScript("SticInclude/vendor/fullcalendar/lib/main.min.js");
-        echo getVersionedScript("SticInclude/vendor/fullcalendar/lib/locales-all.min.js");
+        echo getVersionedScript("SticInclude/vendor/fullcalendar_new/index.global.min.js");
         echo getVersionedScript("modules/stic_Bookings_Calendar/Utils.js");
 
         $this->ss->display("modules/stic_Bookings_Calendar/tpls/filter.tpl");

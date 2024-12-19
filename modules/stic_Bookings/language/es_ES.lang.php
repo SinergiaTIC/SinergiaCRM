@@ -67,10 +67,14 @@ $mod_strings = array(
     'LBL_ALL_DAY' => 'Todo el día',
     'LBL_START_DATE' => 'Fecha de inicio',
     'LBL_END_DATE' => 'Fecha de finalización',
+    'LBL_PLANNED_START_DATE' => 'Fecha de inicio prevista',
+    'LBL_PLANNED_END_DATE' => 'Fecha de finalización prevista',
     'LBL_FLEX_RELATE' => 'Relacionado con',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización que reserva',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona que reserva',
+    'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unidad familiar que reserva',
+    'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromiso de pago',
 
     // Used for the adding resources section
     'LBL_RESOURCES' => 'Recursos',
@@ -89,6 +93,10 @@ $mod_strings = array(
     'LBL_RESOURCES_START_DATE_ERROR' => 'La fecha de inicio debe ser anterior a la fecha de finalización.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'La reserva no tiene recursos asignados.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'La reserva no tiene recursos asignados. ¿Quiere guardarla de todos modos?',
+  
+    // Used for the adding resources section
+    'LBL_PLACES' => 'Plazas',
+    'LBL_RESOURCES_NAME' => 'Nombre',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurso',

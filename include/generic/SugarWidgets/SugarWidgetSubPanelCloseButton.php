@@ -65,6 +65,9 @@ class SugarWidgetSubPanelCloseButton extends SugarWidgetField
             case 'Tasks':
                 $new_status = 'Completed';
                 break;
+            case 'stic_Resources':
+                $new_status = 'Closed';
+                break;    
         }
         
         if ($layout_def['EditView']) {
