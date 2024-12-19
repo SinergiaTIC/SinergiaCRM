@@ -73,12 +73,14 @@ if ($_REQUEST['manageMode'] ?? false) {
 
             // Manage language labels
             require_once 'modules/Administration/Common.php';
-            $app_strings = return_application_language($manageLang);
-
+            
             // Update language strings for menu labels
             foreach ($flatArray as $labelID => $labelValue) {
+                
+                $menuStrings = array_merge(return_application_language($manageLang),  return_app_list_strings_language($manageLang)['moduleList']);
+                
                 // Only update if the label doesn't exist or has changed
-                if (empty($app_strings[$labelID]) || $app_strings[$labelID] != $labelValue) {
+                if (empty($menuStrings[$labelID]) || $menuStrings[$labelID] != $labelValue) {
                     $contents = return_custom_app_list_strings_file_contents($manageLang);
                     $newContents = replace_or_add_app_string($labelID, $labelValue, $contents);
                     save_custom_app_list_strings_contents($newContents, $manageLang);
@@ -89,15 +91,15 @@ if ($_REQUEST['manageMode'] ?? false) {
                         if ($manageLang == $language) {
                             continue;
                         }
-                        $app_strings = return_application_language($language);
-                        if (!isset($app_strings[$labelID])) {
+                        $menuStrings = array_merge(return_application_language($language),  return_app_list_strings_language($language)['moduleList']);
+                        if (!isset($menuStrings[$labelID])) {
                             $contents = return_custom_app_list_strings_file_contents($language);
                             $newContents = replace_or_add_app_string($labelID, $labelValue, $contents);
                             save_custom_app_list_strings_contents($newContents, $language);
                         }
                     }
 
-                    $app_strings[$labelID] = $labelValue;
+                    $menuStrings[$labelID] = $labelValue;
                 }
             }
             die('ok');
