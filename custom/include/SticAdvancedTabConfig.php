@@ -35,19 +35,24 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'id' => 'Contacts',
                 ),
                 1 => array(
-                    'id' => 'Accounts',
-                ),
-                2 => array(
-                    'id' => 'Leads',
-                ),
-                3 => array(
                     'id' => 'stic_Contacts_Relationships',
                 ),
-                4 => array(
+                2 => array(
+                    'id' => 'Accounts',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Centers',
+                        ),
+                    ),
+                ),
+                3 => array(
                     'id' => 'stic_Accounts_Relationships',
                 ),
+                4 => array(
+                    'id' => 'Leads',
+                ),
                 5 => array(
-                    'id' => 'stic_Centers',
+                    'id' => 'Project',
                 ),
             ),
         ),
@@ -55,49 +60,40 @@ if (empty($GLOBALS["SticTabStructure"])) {
             'id' => 'LBL_GROUPTAB_ACTIVITIES',
             'children' => array(
                 0 => array(
-                    'id' => 'Home',
-                ),
-                1 => array(
                     'id' => 'Calendar',
                 ),
-                2 => array(
+                1 => array(
                     'id' => 'Calls',
                 ),
-                3 => array(
+                2 => array(
                     'id' => 'Meetings',
                 ),
-                4 => array(
-                    'id' => 'Emails',
-                ),
-                5 => array(
+                3 => array(
                     'id' => 'Tasks',
                 ),
-                6 => array(
+                4 => array(
                     'id' => 'Notes',
+                ),
+                5 => array(
+                    'id' => 'Documents',
+                ),
+                6 => array(
+                    'id' => 'Emails',
+                ),
+                7 => array(
+                    'id' => 'LBL_GROUPTAB_RRHH',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Work_Calendar',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Time_Tracker',
+                        ),
+                    ),
                 ),
             ),
         ),
         2 => array(
-            'id' => 'LBL_GROUPTAB_ECONOMY',
-            'children' => array(
-                0 => array(
-                    'id' => 'stic_Payment_Commitments',
-                ),
-                1 => array(
-                    'id' => 'stic_Payments',
-                ),
-                2 => array(
-                    'id' => 'stic_Remittances',
-                ),
-                3 => array(
-                    'id' => 'Opportunities',
-                ),
-                4 => array(
-                    'id' => 'stic_Group_Opportunities',
-                ),
-            ),
-        ),
-        3 => array(
             'id' => 'LBL_GROUPTAB_CAMPAIGNS',
             'children' => array(
                 0 => array(
@@ -111,11 +107,149 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 ),
             ),
         ),
+        3 => array(
+            'id' => 'LBL_GROUPTAB_ECONOMY',
+            'children' => array(
+                0 => array(
+                    'id' => 'Opportunities',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Group_Opportunities',
+                        ),
+                    ),
+                ),
+                1 => array(
+                    'id' => 'stic_Payment_Commitments',
+                ),
+                2 => array(
+                    'id' => 'stic_Payments',
+                ),
+                3 => array(
+                    'id' => 'stic_Remittances',
+                ),
+                4 => array(
+                    'id' => 'LBL_GROUPTAB_SALES',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'AOS_Products',
+                            'children' => array(
+                                0 => array(
+                                    'id' => 'AOS_Product_Categories',
+                                ),
+                            ),
+                        ),
+                        1 => array(
+                            'id' => 'AOS_Quotes',
+                            'children' => array(
+                                0 => array(
+                                    'id' => 'AOS_Invoices',
+                                ),
+                                1 => array(
+                                    'id' => 'AOS_Contracts',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
         4 => array(
+            'id' => 'LBL_GROUPTAB_DIRECTCARE',
+            'children' => array(
+                0 => array(
+                    'id' => 'LBL_GROUPTAB_PERSONAL_INFO',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Personal_Environment',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Families',
+                        ),
+                        2 => array(
+                            'id' => 'stic_Skills',
+                        ),
+                        3 => array(
+                            'id' => 'stic_Work_Experience',
+                        ),
+                        4 => array(
+                            'id' => 'stic_Training',
+                        ),
+                        5 => array(
+                            'id' => 'stic_Grants',
+                        ),
+                    ),
+                ),
+                1 => array(
+                    'id' => 'LBL_GROUPTAB_ASSESSMENT_AND_GOALS',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Assessments',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Goals',
+                        ),
+                    ),
+                ),
+                2 => array(
+                    'id' => 'stic_FollowUps',
+                ),
+                3 => array(
+                    'id' => 'stic_Journal',
+                ),
+                4 => array(
+                    'id' => 'LBL_GROUPTAB_LABOURINSERTION',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Job_Offers',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Job_Applications',
+                        ),
+                        2 => array(
+                            'id' => 'LBL_GROUPTAB_EXTERNAL_APPS',
+                            'children' => array(
+                                0 => array(
+                                    'id' => 'stic_Sepe_Actions',
+                                ),
+                                1 => array(
+                                    'id' => 'stic_Sepe_Incidents',
+                                ),
+                                2 => array(
+                                    'id' => 'stic_Sepe_Files',
+                                ),
+                                3 => array(
+                                    'id' => 'stic_Incorpora_Locations',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                5 => array(
+                    'id' => 'LBL_GROUPTAB_MEDICATION',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Medication_Log',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Prescription',
+                        ),
+                        2 => array(
+                            'id' => 'stic_Medication',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        5 => array(
             'id' => 'LBL_GROUPTAB_EVENTS',
             'children' => array(
                 0 => array(
                     'id' => 'stic_Events',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'FP_Event_Locations',
+                        ),
+                    ),
                 ),
                 1 => array(
                     'id' => 'stic_Registrations',
@@ -126,132 +260,47 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 3 => array(
                     'id' => 'stic_Attendances',
                 ),
-                4 => array(
-                    'id' => 'FP_Event_Locations',
-                ),
-            ),
-        ),
-        5 => array(
-            'id' => 'LBL_GROUPTAB_DIRECTCARE',
-            'children' => array(
-                0 => array(
-                    'id' => 'stic_Assessments',
-                ),
-                1 => array(
-                    'id' => 'stic_Goals',
-                ),
-                2 => array(
-                    'id' => 'stic_Personal_Environment',
-                ),
-                3 => array(
-                    'id' => 'stic_FollowUps',
-                ),
-                4 => array(
-                    'id' => 'stic_Grants',
-                ),
-                5 => array(
-                    'id' => 'stic_Families',
-                ),
-                6 => array(
-                    'id' => 'stic_Medication',
-                ),
-                7 => array(
-                    'id' => 'stic_Prescription',
-                ),
-                8 => array(
-                    'id' => 'stic_Medication_Log',
-                ),
-                9 => array(
-                    'id' => 'stic_Journal',
-                ),
             ),
         ),
         6 => array(
-            'id' => 'LBL_GROUPTAB_LABOURINSERTION',
+            'id' => 'LBL_GROUPTAB_DATA_MINING',
             'children' => array(
                 0 => array(
-                    'id' => 'stic_Job_Offers',
+                    'id' => 'AOS_PDF_Templates',
                 ),
                 1 => array(
-                    'id' => 'stic_Job_Applications',
+                    'id' => 'DHA_PlantillasDocumentos',
                 ),
                 2 => array(
-                    'id' => 'stic_Sepe_Actions',
-                ),
-                3 => array(
-                    'id' => 'stic_Sepe_Incidents',
-                ),
-                4 => array(
-                    'id' => 'stic_Sepe_Files',
-                ),
-                5 => array(
-                    'id' => 'stic_Training',
-                ),
-                6 => array(
-                    'id' => 'stic_Skills',
-                ),
-                7 => array(
-                    'id' => 'stic_Work_Experience',
+                    'id' => 'KReports',
                 ),
             ),
         ),
         7 => array(
-            'id' => 'LBL_GROUPTAB_BOOKINGS',
-            'children' => array(
-                0 => array(
-                    'id' => 'stic_Bookings',
-                ),
-                1 => array(
-                    'id' => 'stic_Resources',
-                ),
-                2 => array(
-                    'id' => 'stic_Bookings_Calendar',
-                ),
-            ),
-        ),
-        8 => array(
-            'id' => 'LBL_GROUPTAB_SALES',
-            'children' => array(
-                0 => array(
-                    'id' => 'AOS_Product_Categories',
-                ),
-                1 => array(
-                    'id' => 'AOS_Products',
-                ),
-                2 => array(
-                    'id' => 'AOS_Quotes',
-                ),
-                3 => array(
-                    'id' => 'AOS_Contracts',
-                ),
-                4 => array(
-                    'id' => 'AOS_Invoices',
-                ),
-            ),
-        ),
-        9 => array(
             'id' => 'LBL_GROUPTAB_OTHER',
             'children' => array(
                 0 => array(
-                    'id' => 'Project',
+                    'id' => 'LBL_GROUPTAB_BOOKINGS',
+                    'children' => array(
+                        0 => array(
+                            'id' => 'stic_Resources',
+                        ),
+                        1 => array(
+                            'id' => 'stic_Bookings',
+                        ),
+                        2 => array(
+                            'id' => 'stic_Bookings_Calendar',
+                        ),
+                    ),
                 ),
                 1 => array(
-                    'id' => 'KReports',
-                ),
-                2 => array(
-                    'id' => 'Documents',
-                ),
-                3 => array(
-                    'id' => 'DHA_PlantillasDocumentos',
-                ),
-                4 => array(
                     'id' => 'AOW_WorkFlow',
                 ),
-                5 => array(
-                    'id' => 'AOR_Reports',
+                2 => array(
+                    'id' => 'Cases',
                 ),
-                6 => array(
-                    'id' => 'AOS_PDF_Templates',
+                3 => array(
+                    'id' => 'Bugs',
                 ),
             ),
         ),
