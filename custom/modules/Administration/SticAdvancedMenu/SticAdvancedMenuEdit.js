@@ -218,6 +218,10 @@ function createMenu() {
     core: {
       data: menu[0],
       check_callback: function(operation, node, parent, position, more) {
+        if (operation === 'rename_node') {
+          // Just allow to rename nodes that begin with "LBL_"
+          return node.id.startsWith("LBL_");
+        }
         return true; // Allow all operations
       },
       themes: {
@@ -257,6 +261,10 @@ function createMenu() {
               SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_RENAME,
             action: function(obj) {
               tree.edit($node);
+            },
+            _disabled: function(data) {
+              // Disable renowned for nodes that do not start with "LBL_"
+              return !$node.id.startsWith("LBL_");
             }
           },
           Duplicate: {

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -88,4 +89,21 @@
 #enabled-modules,
 #not-included-modules {
   margin-top: 2em;
+}
+
+#stic-menu-manager li a[id^=LBL_] {
+  position: relative;
+}
+
+#stic-menu-manager li a[id^=LBL_]::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  /* Tamaño del corte */
+  height: 10px;
+  /* Tamaño del corte */
+  background-color: rgba(0, 0, 0, 0.3);
+  clip-path: polygon(0 100%, 100% 0, 100% 100%);
 }

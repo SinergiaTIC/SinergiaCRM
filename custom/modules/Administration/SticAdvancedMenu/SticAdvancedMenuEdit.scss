@@ -55,15 +55,15 @@ $background-color: #e3e3e3;
 }
 
 // Specific styles
-#stic-menu-manager { 
+#stic-menu-manager {
     @include panel-padding;
     .jstree-anchor {
         background-color: $main-color;
         padding: 0 5px;
         cursor: move;
     }
-    
-    > ul.jstree-container-ul  a {
+
+    > ul.jstree-container-ul a {
         font-weight: 600 !important;
         letter-spacing: 1px;
         text-transform: uppercase;
@@ -110,4 +110,19 @@ $background-color: #e3e3e3;
 #enabled-modules,
 #not-included-modules {
     margin-top: 2em;
+}
+
+#stic-menu-manager li a[id^='LBL_'] {
+    position: relative;
+}
+
+#stic-menu-manager li a[id^='LBL_']::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px; /* Tamaño del corte */
+    height: 10px; /* Tamaño del corte */
+    background-color: rgba(0, 0, 0, 0.3);
+    clip-path: polygon(0 100%, 100% 0, 100% 100%);
 }
