@@ -50,6 +50,9 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Test dataset succesfully de
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Errors have occurred while deleting the test dataset. Please review the <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_insertSticData">log</a>.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
 
+$mod_strings['LBL_TRACKERS_TITLE'] = 'Tracker';
+$mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Log of user sessions and actions with records.';
+
 // SinergiaDA
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_LINK_TITLE'] = 'Sinergia Data Analytics';
 $mod_strings['LBL_STIC_MANAGE_SDA_ACTIONS_DESCRIPTION'] = 'Rebuild the integration with Sinergia Data Analytics.';
