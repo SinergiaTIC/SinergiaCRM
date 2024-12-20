@@ -1649,6 +1649,7 @@ class KReportQuery {
       }
       // process the operator
       // STIC-Custom EPS 20241220 - only quote on some operators
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
       // // STIC-Custom EPS 20241205 - quote the value to avoid errors when certain values are used (apostrophe)
       // // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
       // $value = $db->quote($value);
@@ -1667,6 +1668,7 @@ class KReportQuery {
             // bug 2011-03-21 fixed custom sql function
             // bug 2011-03-25 ... date handling no managed in client
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             if ($this->fieldNameMap[$fieldid]['customFunction'] == '' && $this->fieldNameMap[$fieldid]['sqlFunction'] == '') {
@@ -1694,18 +1696,21 @@ class KReportQuery {
             break;
          case 'soundslike':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' SOUNDS LIKE \'' . $value . '\'';
             break;
          case 'notequal':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' <> \'' . $value . '\'';
             break;
          case 'greater':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' > \'' . $value . '\'';
@@ -1715,12 +1720,14 @@ class KReportQuery {
             // bug 2011-03-25 date no handled in client
             // $thisWhereString .= ' > \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\'';
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' > \'' . $value . '\'';
             break;
          case 'less':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' < \'' . $value . '\'';
@@ -1730,42 +1737,49 @@ class KReportQuery {
             // bug 2011-03-25 date no handled in client
             // $thisWhereString .= ' < \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\'';
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' < \'' . $value . '\'';
             break;
          case 'greaterequal':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' >= \'' . $value . '\'';
             break;
          case 'lessequal':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' <= \'' . $value . '\'';
             break;
          case 'starts':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' LIKE \'' . $value . '%\'';
             break;
          case 'notstarts':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' NOT LIKE \'' . $value . '%\'';
             break;
          case 'contains':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' LIKE \'%' . $value . '%\'';
             break;
          case 'notcontains':
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             $thisWhereString .= ' NOT LIKE \'%' . $value . '%\'';
@@ -1774,6 +1788,7 @@ class KReportQuery {
             // bug 2011-03-10 .. fixed date handling
             // bug 2011-03-25 date handling now on client side
             // STIC-Custom EPS 20241220 - only quote on some operators
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
             if ($this->fieldNameMap[$fieldid]['type'] == 'date' || $this->fieldNameMap[$fieldid]['type'] == 'datetime' || $this->fieldNameMap[$fieldid]['type'] == 'datetimecombo')
