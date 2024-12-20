@@ -131,7 +131,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
                 $itemHtml .= "<a href='index.php?module={$cleanId}&action=index'>$iconString $text </a>";
             } elseif ($item['url']) {
                 // Generate external link for items with custom URLs
-                $itemHtml .= "<a title='{$item['url']}' target='_blank' href='$itemURL'><span class='glyphicon glyphicon-link'></span> $text </a>";
+                $itemHtml .= "<a title='{$item['url']}' target='_blank' href='{$item['url']}'><span class='glyphicon glyphicon-link'></span> $text </a>";
             } elseif ($hasChildren) {
                 // Generate dropdown toggle for items with children
                 $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
