@@ -25,7 +25,7 @@ $(document).ready(function() {
   removeDisabledObjects(menu);
   createMenu();
 
-  // Restore default menu
+  // Restore default menu configuration
   $("#restore-menu").on("click", function() {
     if (confirm(SUGAR.language.languages.Administration.LBL_STIC_MENU_RESTORE_CONFIRM) == false) {
       return;
@@ -36,7 +36,7 @@ $(document).ready(function() {
       manageMode: "restore"
     };
 
-    // Perform AJAX request
+    // Perform AJAX request to restore default menu
     $.ajax({
       url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
@@ -54,21 +54,44 @@ $(document).ready(function() {
     });
   });
 
-  // Save menu button
+  // Save current menu configuration
   $("#save-menu").on("click", function() {
-    var $cleanMenu = $("#stic-menu-manager").jstree(true).get_json().map(filterNodes);
-    console.log($cleanMenu)
-    
+    function getNodeData(id) {
+      var tree = $("#stic-menu-manager").jstree(true);
+      var node = tree.get_node(id);
+      var data = {
+        id: node.id,
+        text: node.text
+      };
+
+      // Add URL if exists
+      if (node.a_attr["data-url"]) {
+        data.url = node.a_attr["data-url"];
+      }
+
+      // Process children recursively
+      if (node.children && node.children.length) {
+        data.children = node.children.map(getNodeData);
+      }
+
+      return data;
+    }
+
+    // Get all root level nodes
+    var rootNodes = $("#stic-menu-manager").jstree(true).get_node("#").children;
+    var $cleanMenu = rootNodes.map(getNodeData);
+
+
     // Define data to be sent in the request
     var dataToSend = {
       menuJson: JSON.stringify($cleanMenu),
       sticAdvancedMenuIcons: document.getElementById("stic_advanced_menu_icons").checked ? "1" : "0",
       sticAdvancedMenuAll: document.getElementById("stic_advanced_menu_all").checked ? "1" : "0",
       manageMode: "save",
-      manageLang: document.getElementById('grouptab_lang').value
+      manageLang: document.getElementById("grouptab_lang").value
     };
 
-    // Perform AJAX request
+    // Perform AJAX request to save menu configuration
     $.ajax({
       url: location.href.slice(0, location.href.indexOf(location.search)),
       type: "POST",
@@ -86,44 +109,38 @@ $(document).ready(function() {
       }
     });
   });
-
-  // Ensure that modules dragged from hidden-modules maintain the original id
+  // Event handler for copied nodes from hidden-modules
   $("#stic-menu-manager").on("copy_node.jstree", function(e, data) {
     var original_node = data.original;
     var new_node = data.node;
 
-    // Preserve the original ID and text
+    // Preserve original ID and text
     var tree = $("#stic-menu-manager").jstree(true);
     tree.set_id(new_node, original_node.id);
 
     handleTreeChanges();
   });
 
-  // Handle tree changes
+  // Tree modification event handlers
   $("#stic-menu-manager").on("rename_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("move_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("delete_node.jstree", handleTreeChanges);
   $("#stic-menu-manager").on("create_node.jstree", handleTreeChanges);
 
-  // Handle options changes
+  // Options change handlers
   $("#stic_advanced_menu_icons").on("change", handleTreeChanges);
   $("#stic_advanced_menu_all").on("change", handleTreeChanges);
 
-  // Hide saved notice after 3 seconds
+  // Auto-hide saved notification
   setTimeout(() => {
     $("#saved-notice").fadeOut(3000);
   }, 3000);
 
   /**
- * Handles the deletion of nodes from the stic-menu-manager tree.
- * When a node is deleted, it and its descendants are added to the hidden-modules tree.
+ * Handles node deletion from the menu tree.
+ * Moves deleted nodes and their children to hidden-modules tree.
  */
   $("#stic-menu-manager").on("delete_node.jstree", function(e, data) {
-    /**
-   * Recursively collects node data and its descendants into a flat array.
-   * @param {Object} node - The node to process.
-   * @returns {Array} An array of node data objects.
-   */
     function getNodeDataArray(node) {
       var nodeDataArray = [];
 
@@ -134,7 +151,6 @@ $(document).ready(function() {
           parent: n.parent
         };
 
-        // Add other relevant properties
         if (n.data) {
           nodeData.data = n.data;
         }
@@ -144,7 +160,7 @@ $(document).ready(function() {
 
         nodeDataArray.push(nodeData);
 
-        // Process children iteratively
+        // Process node children
         if (n.children && n.children.length > 0) {
           n.children.forEach(function(childId) {
             var childNode = data.instance.get_node(childId);
@@ -157,10 +173,9 @@ $(document).ready(function() {
       return nodeDataArray;
     }
 
-    // Get data of the deleted node and its descendants
     var deletedNodesArray = getNodeDataArray(data.node);
 
-    // Add each deleted node to the hidden-modules tree
+    // Transfer nodes to hidden-modules
     deletedNodesArray.forEach(element => {
       addNewItemToHiddenModules({
         id: element.id,
@@ -168,22 +183,20 @@ $(document).ready(function() {
       });
     });
 
-    // Log the deleted nodes data
     console.log("Nodes deleted from stic-menu-manager:", deletedNodesArray);
-
   });
 });
 
 /**
- * Filter node properties, keeping only 'id' and 'children'
- * @param {Object} node - The node to filter
- * @return {Object} The filtered node
+ * Filters node properties to keep only essential data
+ * @param {Object} node - Node to filter
+ * @return {Object} Filtered node with only id, children, text and url
  */
 function filterNodes(node) {
   if (typeof node === "object" && node !== null) {
     const keys = Object.keys(node);
     for (const key of keys) {
-      if (key !== "id" && key !== "children" && key !== "text") {
+      if (key !== "id" && key !== "children" && key !== "text" && key !== "url") {
         delete node[key];
       } else if (key === "children") {
         node[key] = node[key].map(filterNodes);
@@ -195,11 +208,10 @@ function filterNodes(node) {
   }
   return node;
 }
-
 /**
- * Handle tree changes and update save button appearance
- * @param {Event} e - The event object
- * @param {Object} data - The data associated with the event
+ * Updates save button appearance when tree changes
+ * @param {Event} e - Event object
+ * @param {Object} data - Event data
  */
 function handleTreeChanges(e, data) {
   console.log("Tree has been modified:", data);
@@ -211,25 +223,37 @@ function handleTreeChanges(e, data) {
 }
 
 /**
- * Create jsTree menu
+ * Creates and configures the jsTree menu
  */
 function createMenu() {
   $("#stic-menu-manager").jstree({
     core: {
-      data: menu[0],
-      check_callback: function(operation, node, parent, position, more) {
-        if (operation === 'rename_node') {
-          // Just allow to rename nodes that begin with "LBL_"
-          return node.id.startsWith("LBL_");
+      data: menu[0].map(function processNode(node) {
+        if (node.url) {
+          node.a_attr = { title: node.url, "data-url": node.url };
         }
-        return true; // Allow all operations
+        if (node.children && node.children.length) {
+          node.children = node.children.map(processNode);
+        }
+        return node;
+      }),
+      check_callback: function(operation, node, parent, position, more) {
+        if (operation === "copy_node" || operation === "move_node") {
+          node.url = node.original.url;
+        }
+        return true;
       },
       themes: {
         icons: false,
         dots: true
       }
     },
-    plugins: ["dnd", "wholerow", "contextmenu"],
+    plugins: ["dnd", "wholerow", "contextmenu", "types"],
+    types: {
+      default: {
+        valid_children: ["default"]
+      }
+    },
     dnd: {
       copy: false
     },
@@ -245,14 +269,16 @@ function createMenu() {
               SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_CREATE,
             action: function(obj) {
               $node = tree.create_node($node, {
-                id: "LBL_GROUPTAB_"+ Math.floor(Date.now() / 1000),
+                id: "LBL_GROUPTAB_" + Math.floor(Date.now() / 1000),
                 text: newNodeString,
-                url: ""
+                url: "",
+                original: {
+                  url: ""
+                }
               });
               tree.edit($node);
             }
           },
-
           Rename: {
             separator_before: false,
             separator_after: true,
@@ -263,7 +289,6 @@ function createMenu() {
               tree.edit($node);
             },
             _disabled: function(data) {
-              // Disable renowned for nodes that do not start with "LBL_"
               return !$node.id.startsWith("LBL_");
             }
           },
@@ -277,27 +302,19 @@ function createMenu() {
               var nodeData = tree.get_json($node, { no_state: true, no_id: false, no_children: false, no_data: false });
 
               function generateCustomId(baseId) {
-                var randomSuffix = Math.floor(Date.now() / 1000)
+                var randomSuffix = Math.floor(Date.now() / 1000);
                 return baseId + "_" + randomSuffix;
               }
 
               function duplicateNodeRecursively(node) {
                 var nodeCopy = $.extend(true, {}, node);
-
-                // Generate a new custom ID
-                nodeCopy.id = generateCustomId(node.id.substring(0, node.id.lastIndexOf('_')));
-
-                if (typeof nodeCopy.text === "string") {
-                  nodeCopy.text = nodeCopy.text.split("|")[0];
-                } else if (nodeCopy.original && typeof nodeCopy.original.text === "string") {
-                  nodeCopy.text = nodeCopy.original.text.split("|")[0];
-                } else {
-                  nodeCopy.text = "_";
-                }
-
-                if (nodeCopy.original && nodeCopy.original.url) {
-                  nodeCopy.data = { url: nodeCopy.original.url };
-                }
+                nodeCopy.id = generateCustomId(node.id.substring(0, node.id.lastIndexOf("_")));
+                nodeCopy.text = node.text || "_";
+                nodeCopy.url = node.url || (node.original && node.original.url) || "";
+                nodeCopy.original = {
+                  ...nodeCopy,
+                  url: nodeCopy.url
+                };
 
                 if (nodeCopy.children && nodeCopy.children.length > 0) {
                   nodeCopy.children = nodeCopy.children.map(duplicateNodeRecursively);
@@ -307,39 +324,15 @@ function createMenu() {
               }
 
               var duplicatedNode = duplicateNodeRecursively(nodeData);
-
-              // Get the current node index
               var siblings = tree.get_children_dom(tree.get_parent($node));
               var currentIndex = siblings.index(tree.get_node($node, true));
-
-              // Create the new node after the current node
               var newNodeId = tree.create_node(tree.get_parent($node), duplicatedNode, currentIndex + 1);
 
               if (newNodeId) {
                 tree.deselect_all();
                 tree.select_node(newNodeId);
-                console.log("Nuevo nodo creado:", newNodeId);
-
-                function updateNodeDisplayRecursively(nodeId) {
-                  var node = tree.get_node(nodeId);
-                  if (node.data && node.data.url) {
-                    var displayText = node.text + "|" + node.data.url;
-                    tree.rename_node(node, displayText);
-                  }
-                  var children = tree.get_children_dom(nodeId);
-                  children.each(function() {
-                    updateNodeDisplayRecursively(this.id);
-                  });
-                }
-
-                updateNodeDisplayRecursively(newNodeId);
                 handleTreeChanges();
-              } else {
-                console.error("No se pudo crear el nuevo nodo");
               }
-            },
-            _disabled: function(data) {
-              return false; // Allow duplication for all nodes
             }
           },
           EditURL: {
@@ -350,29 +343,33 @@ function createMenu() {
               SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL,
             action: function(obj) {
               var editUrlPrompt = function() {
-                var urlOld=tree.get_node($node).id?.split('|')[1]?.split('__')[0] || ''
+                var urlOld = tree.get_node($node).a_attr["data-url"] || "";
                 var url = prompt(
                   SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT + ":",
-                  urlOld || ""
+                  urlOld
                 );
                 if (url !== null) {
+                  var node = tree.get_node($node);
                   if (url === "") {
-                    // Allow empty URL to clear the value
-                    tree.get_node($node).original.url = "";
-                    updateNodeDisplay($node);
+                    delete node.a_attr["data-url"];
+                    delete node.a_attr["title"];
+                    $("#" + node.id + " a").removeAttr("title").removeAttr("data-url");
                   } else if (isValidUrl(url)) {
-                    tree.get_node($node).original.url = url;
-                    updateNodeDisplay($node);
+                    node.url = url;
+                    node.a_attr = { title: node.url, "data-url": node.url };
+                    $("#" + node.id + " a:first").attr("title", url).attr("data-url", url);
                   } else {
                     alert(SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_EDITURL_PROMPT_VALIDATE);
-                    editUrlPrompt(); // Show the prompt again
+                    editUrlPrompt();
                   }
                 }
               };
               editUrlPrompt();
+            },
+            _disabled: function(data) {
+              return !$node.id.startsWith("LBL_");
             }
           },
-
           Delete: {
             separator_before: false,
             separator_after: false,
@@ -380,7 +377,6 @@ function createMenu() {
               "<i class='glyphicon glyphicon-remove'></i>" +
               SUGAR.language.languages.Administration.LBL_STIC_MENU_COMMAND_REMOVE,
             action: function(obj) {
-              console.log("eliminando");
               if (tree.is_selected($node)) {
                 tree.delete_node(tree.get_selected());
               } else {
@@ -431,19 +427,30 @@ function removeMenu() {
   }
 }
 
+/**
+ * Updates node display with text and URL properties
+ * @param {string} nodeId - ID of the node to update
+ */
 function updateNodeDisplay(nodeId) {
   var tree = $("#stic-menu-manager").jstree(true);
   var nodeObj = tree.get_node(nodeId);
   if (nodeObj) {
-    var displayText = nodeObj.text ? nodeObj.text.split("|")[0] : "Nodo sin título";
-    if (nodeObj.original && nodeObj.original.url) {
-      displayText += "|" + nodeObj.original.url;
+    var displayText = nodeObj.text ? nodeObj.text.split("|")[0] : "Untitled Node";
+    var url = nodeObj.text ? nodeObj.text.split("|")[1] : null;
+
+    if (url) {
+      nodeObj.url = url;
+      $("#" + nodeObj.id).attr("title", url);
     }
     tree.rename_node(nodeId, displayText);
   }
 }
 
-// Function to validate URL
+/**
+ * Validates if a string is a valid URL
+ * @param {string} string - String to validate
+ * @returns {boolean} True if valid URL, false otherwise
+ */
 function isValidUrl(string) {
   try {
     new URL(string);
@@ -454,31 +461,24 @@ function isValidUrl(string) {
 }
 
 /**
- * Recursively removes objects with the property 'disabled' set to true from an array.
- * This function modifies the original array and its nested structures.
- * 
- * @param {Array} arr - The array to process.
- * @returns {Array} The modified array with disabled objects removed.
- * 
+ * Recursively removes disabled objects from array
+ * @param {Array} arr - Array to process
+ * @returns {Array} Processed array with disabled items removed
  */
 function removeDisabledObjects(arr) {
   for (let i = arr.length - 1; i >= 0; i--) {
     let element = arr[i];
 
     if (Array.isArray(element)) {
-      // If the element is an array, recursively call the function
       removeDisabledObjects(element);
-      // If the array became empty after recursion, remove it
       if (element.length === 0) {
         arr.splice(i, 1);
       }
     } else if (typeof element === "object" && element !== null) {
-      // If the element is an object, check if it has the disabled property set to true
       if (element.hasOwnProperty("disabled") && element.disabled === true) {
         arr.splice(i, 1);
         continue;
       }
-      // If the object has properties that are arrays or objects, process them recursively
       for (let prop in element) {
         if (Array.isArray(element[prop])) {
           removeDisabledObjects(element[prop]);
@@ -495,18 +495,14 @@ function removeDisabledObjects(arr) {
   }
   return arr;
 }
-
 /**
- * Creates a new main node in the jsTree.
- * 
- * This function generates a new node with a unique ID and adds it
- * to the root level of the tree as the last item.
+ * Creates a new main node in the jsTree
  */
 function newMainNode() {
   var tree = $("#stic-menu-manager").jstree(true);
   var text = newNodeString;
   var newNode = {
-    id: "LBL_GROUPTAB_"+ Math.floor(Date.now() / 1000),
+    id: "LBL_GROUPTAB_" + Math.floor(Date.now() / 1000),
     text: text
   };
 
@@ -514,11 +510,7 @@ function newMainNode() {
 }
 
 /**
- * Expands all nodes in the jsTree.
- * 
- * This function attempts to open all nodes in the tree. If successful,
- * it logs a success message. If an error occurs, it logs the error.
- * If the tree is not found, it logs a warning.
+ * Expands all nodes in the jsTree
  */
 function expandAll() {
   var $tree = $("#stic-menu-manager");
@@ -535,11 +527,7 @@ function expandAll() {
 }
 
 /**
- * Collapses all nodes in the jsTree.
- * 
- * This function attempts to close all nodes in the tree. If successful,
- * it logs a success message. If an error occurs, it logs the error.
- * If the tree is not found, it logs a warning.
+ * Collapses all nodes in the jsTree
  */
 function collapseAll() {
   var $tree = $("#stic-menu-manager");
@@ -554,42 +542,34 @@ function collapseAll() {
     console.warn("jsTree not found");
   }
 }
-
 /**
- * Adds a new item to the hidden modules tree and applies a highlight effect.
- * 
- * @param {Object} nodeData - The data for the new node.
- * @param {string} nodeData.id - The unique identifier for the node.
- * @param {string} nodeData.text - The display text for the node.
- * @param {string} [nodeData.url] - Optional URL associated with the node.
- * @returns {string|null} The ID of the newly created node, or null if creation failed.
+ * Adds a new item to the hidden modules tree
+ * @param {Object} nodeData - Node data object
+ * @param {string} nodeData.id - Node identifier
+ * @param {string} nodeData.text - Node display text
+ * @param {string} [nodeData.url] - Optional node URL
+ * @returns {string|null} New node ID or null if creation fails
  */
 function addNewItemToHiddenModules(nodeData) {
-  // Verify required properties
   if (!nodeData.id || !nodeData.text) {
-    console.error("Properties 'id' and 'text' are required to create a new node");
+    console.error("Required properties missing");
     return null;
   }
 
   var hiddenModulesTree = $.jstree.reference("#hidden-modules");
-
   if (!hiddenModulesTree) {
-    console.error("Could not find the hidden-modules tree");
+    console.error("Hidden modules tree not found");
     return null;
   }
 
-  // Check if the node already exists
   if (hiddenModulesTree.get_node(nodeData.id)) {
     return null;
   }
 
-  // Prepare the display text
-  var displayText = nodeData.text + (nodeData.url ? "|" + nodeData.url : "");
-
-  // Create the new node
   var newNode = hiddenModulesTree.create_node("#", {
     id: nodeData.id,
-    text: displayText,
+    text: nodeData.text,
+    url: nodeData.url,
     data: nodeData,
     original: nodeData
   });
@@ -600,7 +580,7 @@ function addNewItemToHiddenModules(nodeData) {
       var $node = $("#" + newNode);
       $node.css({
         transition: "background-color 0.5s ease",
-        "background-color": "#B5BC31" // Light yellow color
+        "background-color": "#B5BC31"
       });
       setTimeout(function() {
         $node.css({
@@ -612,63 +592,50 @@ function addNewItemToHiddenModules(nodeData) {
 
     sortHiddenModulesAlphabetically();
     return newNode;
-  } else {
-    console.error("Failed to create new node in hidden-modules");
-    return null;
   }
-}
 
+  console.error("Node creation failed");
+  return null;
+}
 /**
- * Sorts the nodes in the hidden modules tree alphabetically by their text.
+ * Sorts nodes in hidden modules tree alphabetically
  */
 function sortHiddenModulesAlphabetically() {
   var hiddenModulesTree = $.jstree.reference("#hidden-modules");
-
   if (!hiddenModulesTree) {
-    console.error("Could not find the hidden-modules tree");
+    console.error("Hidden modules tree not found");
     return;
   }
 
-  // Get all top-level nodes
   var topLevelNodes = hiddenModulesTree.get_node("#").children;
 
-  // Sort nodes alphabetically by text
   topLevelNodes.sort(function(a, b) {
     var nodeA = hiddenModulesTree.get_node(a);
     var nodeB = hiddenModulesTree.get_node(b);
-
-    // Extract text without URL (if exists)
-    var textA = nodeA.text.split("|")[0].trim().toLowerCase();
-    var textB = nodeB.text.split("|")[0].trim().toLowerCase();
-
+    var textA = nodeA.text.trim().toLowerCase();
+    var textB = nodeB.text.trim().toLowerCase();
     return textA.localeCompare(textB);
   });
 
-  // Reorder nodes in the tree
-  for (var i = 0; i < topLevelNodes.length; i++) {
-    hiddenModulesTree.move_node(topLevelNodes[i], "#", i);
-  }
+  topLevelNodes.forEach((node, index) => {
+    hiddenModulesTree.move_node(node, "#", index);
+  });
 
-  // Refresh the tree to show the new order
   hiddenModulesTree.redraw(true);
 }
 
-
 /**
- * Changes the language in the URL when a new option is selected in the language dropdown.
- * The function checks if the current URL already contains a language parameter ('lang') and updates it.
- * If not found, it adds the new language parameter to the current URL.
- * 
- * @param {HTMLSelectElement} sel - The language dropdown element containing the selected language value.
+ * Updates language parameter in URL
+ * @param {HTMLSelectElement} sel - Language dropdown element
  */
-function tabLanguageChange(sel){
+function tabLanguageChange(sel) {
   var partURL = window.location.href;
-  if(partURL.search(/&lang=\w*&/i) != -1){
-    partURL = partURL.replace(/&lang=\w*&/i, '&lang='+ sel.value+'&');
-  }else if(partURL.search(/&lang=\w*/i) != -1){
-    partURL = partURL.replace(/&lang=\w*/i, '&lang='+ sel.value);
-  }else{
-    partURL = window.location.href + '&lang='+ sel.value;
+  if (partURL.search(/&lang=\w*&/i) != -1) {
+    partURL = partURL.replace(/&lang=\w*&/i, "&lang=" + sel.value + "&");
+  } else if (partURL.search(/&lang=\w*/i) != -1) {
+    partURL = partURL.replace(/&lang=\w*/i, "&lang=" + sel.value);
+  } else {
+    partURL = window.location.href + "&lang=" + sel.value;
   }
   window.location.href = partURL;
 }

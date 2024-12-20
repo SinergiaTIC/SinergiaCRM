@@ -42,7 +42,7 @@ $background-color: #e3e3e3;
 .jstree-default {
     .jstree-wholerow {
         &-hovered {
-            background: lighten($main-color, 40);
+            background: rgba($main-color, 0.3);
         }
         &-clicked {
             background: lighten($main-color, 20);
@@ -112,17 +112,53 @@ $background-color: #e3e3e3;
     margin-top: 2em;
 }
 
-#stic-menu-manager li a[id^='LBL_'] {
+#stic-menu-manager li a[id^="LBL_"] {
     position: relative;
 }
 
-#stic-menu-manager li a[id^='LBL_']::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 10px; /* Tamaño del corte */
-    height: 10px; /* Tamaño del corte */
-    background-color: rgba(0, 0, 0, 0.3);
-    clip-path: polygon(0 100%, 100% 0, 100% 100%);
+#stic-menu-manager li a[id^="LBL_"] {
+    padding-right: 10px;
+
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        background-color: rgba(0, 0, 0, 0.3);
+        clip-path: polygon(0 100%, 100% 0, 100% 100%);
+    }
 }
+#stic-menu-manager li a[data-url]::before {
+    content: "\e144";
+    font-family: "Glyphicons Halflings";
+    display: inline-block;
+    margin-right: 4px;
+    margin-left: -2px;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+//   /* Estilos para el tooltip */
+//   .jstree-default .jstree-node[data-tooltip] {
+//     position: relative;
+//   }
+
+//   .jstree-default .jstree-node[data-tooltip]:hover::after {
+//     content: attr(data-tooltip);
+//     position: absolute;
+//      max-width: 250px;
+//     height: auto;
+//     // bottom: 0;
+//     // right: 0;
+//     // transform: translateX(-50%);
+//     padding: 2px 5px;
+//     // background: rgba(0, 0, 0, 0.8);
+//     // color: white;
+//     // border-radius: 4px;
+//     font-size: 12px;
+//     z-index: 1000;
+//     // word-break: break-all !important;
+//     // overflow-wrap: break-word;
+//     overflow-x: scroll;
+//   }

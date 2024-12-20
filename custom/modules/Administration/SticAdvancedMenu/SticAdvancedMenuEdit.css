@@ -27,7 +27,7 @@
 }
 
 .jstree-default .jstree-wholerow-hovered {
-  background: #eff1c8;
+  background: rgba(181, 188, 49, 0.3);
 }
 .jstree-default .jstree-wholerow-clicked {
   background: #d7dc77;
@@ -95,15 +95,25 @@
   position: relative;
 }
 
+#stic-menu-manager li a[id^=LBL_] {
+  padding-right: 10px;
+}
 #stic-menu-manager li a[id^=LBL_]::after {
   content: "";
   position: absolute;
   bottom: 0;
   right: 0;
   width: 10px;
-  /* Tamaño del corte */
   height: 10px;
-  /* Tamaño del corte */
   background-color: rgba(0, 0, 0, 0.3);
   clip-path: polygon(0 100%, 100% 0, 100% 100%);
+}
+
+#stic-menu-manager li a[data-url]::before {
+  content: "";
+  font-family: "Glyphicons Halflings";
+  display: inline-block;
+  margin-right: 4px;
+  margin-left: -2px;
+  color: rgba(0, 0, 0, 0.3);
 }
