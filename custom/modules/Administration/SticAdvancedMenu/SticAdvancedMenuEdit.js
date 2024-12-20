@@ -308,7 +308,8 @@ function createMenu() {
 
               function duplicateNodeRecursively(node) {
                 var nodeCopy = $.extend(true, {}, node);
-                nodeCopy.id = generateCustomId(node.id.substring(0, node.id.lastIndexOf("_")));
+                
+                nodeCopy.id = generateCustomId(node.id.replace(/_\d+$/, '_'));
                 nodeCopy.text = node.text || "_";
                 nodeCopy.url = node.url || (node.original && node.original.url) || "";
                 nodeCopy.original = {

@@ -39,10 +39,9 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 {
     global $app_list_strings, $app_strings, $current_user, $sugar_config;
 
-    if($_REQUEST['lang'] && is_string($_REQUEST['lang']) ){
-        $app_strings= return_application_language($_REQUEST['lang']);
+    if ($_REQUEST['lang'] && is_string($_REQUEST['lang'])) {
+        $app_strings = return_application_language($_REQUEST['lang']);
     }
-
 
     // Initialize valid tabs if not provided
     if ($validTabs === null) {
@@ -105,16 +104,10 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 
     foreach ($items as $item) {
 
-        $cleanId = preg_replace('/__.*$/', '', $item['id']);
+        $cleanId = preg_replace('/_\d+$/', '', $item['id']);
 
         // Get the display text for the menu item
-        $text = ($app_list_strings['moduleList'][$cleanId] ?? $app_strings[$cleanId] ?? str_replace('_', ' ', $cleanId));
-
-        // If item contains URL, extract it and cut text
-        $itemURL = extractUrl($text);
-        if ($itemURL) {
-            $text = str_replace("|{$itemURL}", '', $text);
-        }
+        $text = ($app_list_strings['moduleList'][$cleanId] ?? $app_strings[$cleanId] ?? $app_strings[$item['id']] ?? str_replace('_', ' ', $cleanId));
 
         $hasChildren = isset($item['children']) && is_array($item['children']) && !empty($item['children']);
         $isValidModule = array_key_exists($cleanId, $validTabs);
@@ -126,7 +119,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         }
 
         // Only include valid modules, items with valid children, or items with custom URLs
-        if ($isValidModule || !empty($childrenHtml) || $itemURL) {
+        if ($isValidModule || !empty($childrenHtml) || $item['url']) {
             $validItemsCount++;
             $itemHtml = '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>';
 
@@ -136,9 +129,9 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
                 // Include icon if enabled in configuration
                 $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
                 $itemHtml .= "<a href='index.php?module={$cleanId}&action=index'>$iconString $text </a>";
-            } elseif ($itemURL) {
+            } elseif ($item['url']) {
                 // Generate external link for items with custom URLs
-                $itemHtml .= "<a title='$itemURL' target='_blank' href='$itemURL'><span class='glyphicon glyphicon-link'></span> $text </a>";
+                $itemHtml .= "<a title='{$item['url']}' target='_blank' href='$itemURL'><span class='glyphicon glyphicon-link'></span> $text </a>";
             } elseif ($hasChildren) {
                 // Generate dropdown toggle for items with children
                 $itemHtml .= "<a href='#' class='no-link'>" . $text . '</a>';
@@ -166,7 +159,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
             $menuHtml .= '<ul>';
             $menuHtml .= '<li><input type="text" id="search-all" placeholder="' . $app_strings['LBL_SEARCH'] . '"></input></li>';
             foreach ($validTabs as $key => $value) {
-                $lowerModule=str_replace('_','-',strtolower($key));
+                $lowerModule = str_replace('_', '-', strtolower($key));
                 $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
                 $menuHtml .= "<li><a href='index.php?module={$key}&action=index'> $iconString  $value </a></li>";
             }
@@ -190,27 +183,24 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
  *
  * @param array &$array The array of menu items to process.
  */
-function addMenuProperties(&$array, $currentLangStrings=null)
+function addMenuProperties(&$array, $currentLangStrings = null)
 {
 
     include_once 'modules/MySettings/TabController.php';
     $controller = new TabController();
     $currentTabs = $controller->get_system_tabs();
     global $app_list_strings, $app_strings;
-    
-    if($_REQUEST['lang'] && is_string($_REQUEST['lang']) ){
-        $app_strings= return_application_language($_REQUEST['lang']);
+
+    if ($_REQUEST['lang'] && is_string($_REQUEST['lang'])) {
+        $app_strings = return_application_language($_REQUEST['lang']);
     }
-
-
-
 
     foreach ($array as $key => &$value) {
         if (is_array($value)) {
             if (isset($value['id'])) {
-                $cleanValueId = preg_replace('/__.*$/', '', $value['id']);
+                $cleanValueId = preg_replace('/_\d+$/', '', $value['id']);
 
-                $value['text'] = ($app_list_strings['moduleList'][$cleanValueId] ?? '');
+                $value['text'] = ($app_list_strings['moduleList'][$cleanValueId] ?? $app_strings[$cleanValueId] ?? $app_strings[$value['id']] ?? str_replace('_', ' ', $cleanValueId));
                 // Set disabled property if module is disabled
                 if (!in_array($cleanValueId, $currentTabs) && isset($app_list_strings['moduleList'][$cleanValueId])) {
                     $value['disabled'] = true;
@@ -225,25 +215,6 @@ function addMenuProperties(&$array, $currentLangStrings=null)
             addMenuProperties($value); // Recursively process sub-arrays
         }
     }
-}
-
-/**
- * Extracts a URL from the end of a string if preceded by a pipe character ('|').
- *
- * Matches URLs with or without 'http(s)://' prefix, including domain and optional path.
- *
- * @param string $string Input string to search for a URL.
- * @return string|null Extracted URL if found, null otherwise.
- */
-function extractUrl($string)
-{
-    $pattern = '/\|((https?:\/\/)?([a-z0-9\.-]+)(:\d+)?(\/[^?#]*)?(\?[^#]*)?(#.*)?$)/i';
-
-    if (preg_match($pattern, $string, $matches)) {
-        return $matches[1];
-    }
-
-    return null;
 }
 
 function getUserModuleRecents($userId, $module)
