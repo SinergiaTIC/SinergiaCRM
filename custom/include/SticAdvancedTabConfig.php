@@ -127,6 +127,7 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'children' => array(
                         0 => array(
                             'id' => 'AOS_Products',
+                        ),
                         1 => array(
                             'id' => 'AOS_Product_Categories',
                         ),
