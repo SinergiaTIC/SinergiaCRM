@@ -81,15 +81,10 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'id' => 'Emails',
                 ),
                 7 => array(
-                    'id' => 'LBL_GROUPTAB_RRHH',
-                    'children' => array(
-                        0 => array(
-                            'id' => 'stic_Work_Calendar',
-                        ),
-                        1 => array(
-                            'id' => 'stic_Time_Tracker',
-                        ),
-                    ),
+                    'id' => 'stic_Work_Calendar',
+                ),
+                8 => array(
+                    'id' => 'stic_Time_Tracker',
                 ),
             ),
         ),
@@ -132,22 +127,17 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'children' => array(
                         0 => array(
                             'id' => 'AOS_Products',
-                            'children' => array(
-                                0 => array(
-                                    'id' => 'AOS_Product_Categories',
-                                ),
-                            ),
-                        ),
                         1 => array(
+                            'id' => 'AOS_Product_Categories',
+                        ),
+                        2 => array(
                             'id' => 'AOS_Quotes',
-                            'children' => array(
-                                0 => array(
-                                    'id' => 'AOS_Invoices',
-                                ),
-                                1 => array(
-                                    'id' => 'AOS_Contracts',
-                                ),
-                            ),
+                        ),
+                        3 => array(
+                            'id' => 'AOS_Invoices',
+                        ),
+                        4 => array(
+                            'id' => 'AOS_Contracts',
                         ),
                     ),
                 ),
@@ -157,7 +147,7 @@ if (empty($GLOBALS["SticTabStructure"])) {
             'id' => 'LBL_GROUPTAB_DIRECTCARE',
             'children' => array(
                 0 => array(
-                    'id' => 'LBL_GROUPTAB_PERSONAL_INFO',
+                    'id' => 'LBL_GROUPTAB_DC_PERSONALINFO',
                     'children' => array(
                         0 => array(
                             'id' => 'stic_Personal_Environment',
@@ -180,7 +170,7 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     ),
                 ),
                 1 => array(
-                    'id' => 'LBL_GROUPTAB_ASSESSMENT_AND_GOALS',
+                    'id' => 'LBL_GROUPTAB_DC_WORKPLAN',
                     'children' => array(
                         0 => array(
                             'id' => 'stic_Assessments',
@@ -188,15 +178,15 @@ if (empty($GLOBALS["SticTabStructure"])) {
                         1 => array(
                             'id' => 'stic_Goals',
                         ),
+                        2 => array(
+                            'id' => 'stic_FollowUps',
+                        ),
                     ),
                 ),
                 2 => array(
-                    'id' => 'stic_FollowUps',
-                ),
-                3 => array(
                     'id' => 'stic_Journal',
                 ),
-                4 => array(
+                3 => array(
                     'id' => 'LBL_GROUPTAB_LABOURINSERTION',
                     'children' => array(
                         0 => array(
@@ -206,26 +196,21 @@ if (empty($GLOBALS["SticTabStructure"])) {
                             'id' => 'stic_Job_Applications',
                         ),
                         2 => array(
-                            'id' => 'LBL_GROUPTAB_EXTERNAL_APPS',
-                            'children' => array(
-                                0 => array(
-                                    'id' => 'stic_Sepe_Actions',
-                                ),
-                                1 => array(
-                                    'id' => 'stic_Sepe_Incidents',
-                                ),
-                                2 => array(
-                                    'id' => 'stic_Sepe_Files',
-                                ),
-                                3 => array(
-                                    'id' => 'stic_Incorpora_Locations',
-                                ),
-                            ),
+                            'id' => 'stic_Sepe_Actions',
+                        ),
+                        3 => array(
+                            'id' => 'stic_Sepe_Incidents',
+                        ),
+                        4 => array(
+                            'id' => 'stic_Sepe_Files',
+                        ),
+                        5 => array(
+                            'id' => 'stic_Incorpora_Locations',
                         ),
                     ),
                 ),
-                5 => array(
-                    'id' => 'LBL_GROUPTAB_MEDICATION',
+                4 => array(
+                    'id' => 'LBL_GROUPTAB_DC_MEDICATION',
                     'children' => array(
                         0 => array(
                             'id' => 'stic_Medication_Log',
@@ -263,7 +248,7 @@ if (empty($GLOBALS["SticTabStructure"])) {
             ),
         ),
         6 => array(
-            'id' => 'LBL_GROUPTAB_DATA_MINING',
+            'id' => 'LBL_GROUPTAB_EXPLOITATION',
             'children' => array(
                 0 => array(
                     'id' => 'AOS_PDF_Templates',
@@ -295,12 +280,6 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 ),
                 1 => array(
                     'id' => 'AOW_WorkFlow',
-                ),
-                2 => array(
-                    'id' => 'Cases',
-                ),
-                3 => array(
-                    'id' => 'Bugs',
                 ),
             ),
         ),
