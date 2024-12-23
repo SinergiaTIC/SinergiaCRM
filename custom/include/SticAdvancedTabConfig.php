@@ -249,6 +249,20 @@ if (empty($GLOBALS["SticTabStructure"])) {
             ),
         ),
         6 => array(
+            'id' => 'LBL_GROUPTAB_BOOKINGS',
+            'children' => array(
+                0 => array(
+                    'id' => 'stic_Resources',
+                ),
+                1 => array(
+                    'id' => 'stic_Bookings',
+                ),
+                2 => array(
+                    'id' => 'stic_Bookings_Calendar',
+                ),
+            ),
+        ),
+        7 => array(
             'id' => 'LBL_GROUPTAB_EXPLOITATION',
             'children' => array(
                 0 => array(
@@ -260,26 +274,7 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 2 => array(
                     'id' => 'KReports',
                 ),
-            ),
-        ),
-        7 => array(
-            'id' => 'LBL_GROUPTAB_OTHER',
-            'children' => array(
-                0 => array(
-                    'id' => 'LBL_GROUPTAB_BOOKINGS',
-                    'children' => array(
-                        0 => array(
-                            'id' => 'stic_Resources',
-                        ),
-                        1 => array(
-                            'id' => 'stic_Bookings',
-                        ),
-                        2 => array(
-                            'id' => 'stic_Bookings_Calendar',
-                        ),
-                    ),
-                ),
-                1 => array(
+                3 => array(
                     'id' => 'AOW_WorkFlow',
                 ),
             ),
