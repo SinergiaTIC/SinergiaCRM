@@ -1791,13 +1791,22 @@ class KReportQuery {
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             $value = $db->quote($value);
             // END STIC-Custom
-            if ($this->fieldNameMap[$fieldid]['type'] == 'date' || $this->fieldNameMap[$fieldid]['type'] == 'datetime' || $this->fieldNameMap[$fieldid]['type'] == 'datetimecombo')
+            if ($this->fieldNameMap[$fieldid]['type'] == 'date' || $this->fieldNameMap[$fieldid]['type'] == 'datetime' || $this->fieldNameMap[$fieldid]['type'] == 'datetimecombo') {
             // $thisWhereString .= ' >= \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . '<=\'' . $GLOBALS['timedate']->to_db_date($valueto, false) . '\'';
+               // STIC-Custom EPS 20241220 - only quote on some operators
+               // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+               $valueto = $db->quote($valueto);
+               // END STIC-Custom
                $thisWhereString .= ' >= \'' . $value . '\' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . '<=\'' . $valueto . '\'';
+            }
             elseif ($this->fieldNameMap[$fieldid]['type'] == 'varchar' || $this->fieldNameMap[$fieldid]['type'] == 'name') {
                //2012-11-24 change so we increae the last char by one ord numkber and change to a smaller than
                // this is more in the logic of the user
                $valueto = substr($valueto, 0, strlen($valueto) - 1) . chr(ord($valueto[strlen($valueto) - 1]) + 1);
+               // STIC-Custom EPS 20241220 - only quote on some operators
+               // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+               $valueto = $db->quote($valueto);
+               // END STIC-Custom
                $thisWhereString .= ' >= \'' . $value . '\' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . '<\'' . $valueto . '\'';
             }
             else
