@@ -95,10 +95,12 @@
   position: relative;
 }
 
-#stic-menu-manager li a[id^=LBL_] {
+#stic-menu-manager li a[id^=LBL_],
+#stic-menu-manager li#SinergiaDA a {
   padding-right: 10px;
 }
-#stic-menu-manager li a[id^=LBL_]::after {
+#stic-menu-manager li a[id^=LBL_]::after,
+#stic-menu-manager li#SinergiaDA a::after {
   content: "";
   position: absolute;
   bottom: 0;

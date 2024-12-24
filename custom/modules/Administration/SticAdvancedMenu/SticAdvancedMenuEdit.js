@@ -293,7 +293,7 @@ function createMenu() {
               tree.edit($node);
             },
             _disabled: function(data) {
-              return !$node.id.startsWith("LBL_");
+              return !($node.id.startsWith("LBL_") || $node.id === "SinergiaDA");
             }
           },
           Duplicate: {
