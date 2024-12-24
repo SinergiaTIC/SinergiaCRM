@@ -33,3 +33,6 @@ $mod_strings['LBL_ABOUT_SINERGIACRM_CONTRIBUTORS'] = 'SinergiaCRM inclou';
 $mod_strings['LBL_ABOUT_SINERGIACRM_KREPORTER'] = 'Kreporter de Christian Knoll';
 $mod_strings['LBL_ABOUT_SINERGIACRM_MAIL_MERGE'] = "Mail Merge Reports d'Izertis";
 $mod_strings['LBL_ABOUT_SINERGIACRM_OTHER'] = "Altres llibreries de codi obert que trobareu a les carpetes <i>/vendor</i> i <i>/SticInclude/vendor</i>. La informació de llicència d'aquestes llibreries és als seus propis fitxers.";
+
+// SinergiaDA menu link
+$mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED'] = "SinergiaDA no està disponible per a l'usuari."; 

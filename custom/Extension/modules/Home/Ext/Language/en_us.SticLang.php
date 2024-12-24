@@ -33,3 +33,6 @@ $mod_strings['LBL_ABOUT_SINERGIACRM_CONTRIBUTORS'] = 'SinergiaCRM includes';
 $mod_strings['LBL_ABOUT_SINERGIACRM_KREPORTER'] = 'Kreporter by Christian Knoll';
 $mod_strings['LBL_ABOUT_SINERGIACRM_MAIL_MERGE'] = 'Mail Merge Reports by Izertis';
 $mod_strings['LBL_ABOUT_SINERGIACRM_OTHER'] = 'Other open source libraries may be found in <i>/vendor</i> and <i>/SticInclude/vendor</i> folders. License information for these libraries can be found in their own files.';
+
+// SinergiaDA menu link
+$mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED'] = 'SinergiaDA is not available for the user.';
