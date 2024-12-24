@@ -277,6 +277,10 @@ if (empty($GLOBALS["SticTabStructure"])) {
                 3 => array(
                     'id' => 'AOW_WorkFlow',
                 ),
+                4 => array(
+                    'id' => 'SinergiaDA',
+                    'url' => 'index.php?module=Home&action=sdaRedirect',
+                ),
             ),
         ),
     );

@@ -177,10 +177,14 @@ $(document).ready(function() {
 
     // Transfer nodes to hidden-modules
     deletedNodesArray.forEach(element => {
-      addNewItemToHiddenModules({
-        id: element.id,
-        text: element.text
-      });
+      if (element.id != "SinergiaDA") {
+        addNewItemToHiddenModules({
+          id: element.id,
+          text: element.text
+        });
+      } else {
+        setTimeout(() => {  addSdaToHidden(); }, 1000);
+      }
     });
 
     console.log("Nodes deleted from stic-menu-manager:", deletedNodesArray);
@@ -308,7 +312,7 @@ function createMenu() {
 
               function duplicateNodeRecursively(node) {
                 var nodeCopy = $.extend(true, {}, node);
-                
+
                 nodeCopy.id = generateCustomId(node.id.replace(/_\d+$/, '_'));
                 nodeCopy.text = node.text || "_";
                 nodeCopy.url = node.url || (node.original && node.original.url) || "";
@@ -392,30 +396,58 @@ function createMenu() {
 
   // Create jsTree for hidden modules
   $("#hidden-modules").jstree({
-    core: {
-      data: allModules[0],
-      themes: {
-        icons: false
-      },
-      check_callback: function(operation, node, node_parent, node_position, more) {
-        if (operation === "move_node") {
-          // Prevent any movement inside the tree
-          return false;
+      core: {
+        data: allModules[0],
+        themes: {
+          icons: false
+        },
+        check_callback: function(operation, node, node_parent, node_position, more) {
+          if (operation === "move_node") {
+            // Prevent any movement inside the tree
+            return false;
+          }
+          // Allow other operations (such as copying out)
+          return true;
         }
-        // Allow other operations (such as copying out)
-        return true;
-      }
-    },
-    plugins: ["dnd", "wholerow", "search", "unique"],
-    dnd: {
-      is_draggable: function(nodes) {
-        // Allow to drag nodes out, but not inside the tree
-        return true;
       },
-      copy: false, // Allow to copy nodes instead of moving them
-      always_copy: false // Always copy, never move
-    }
-  });
+      plugins: ["dnd", "wholerow", "search", "unique"],
+      dnd: {
+        is_draggable: function(nodes) {
+          // Allow to drag nodes out, but not inside the tree
+          return true;
+        },
+        copy: false, // Allow to copy nodes instead of moving them
+        always_copy: false // Always copy, never move
+      }
+    })
+    .on("ready.jstree", function() {
+      addSdaToHidden();
+    });
+}
+
+/**
+ * Adds SinergiaDA to the hidden module if it doesn't exist in the main tree.
+ * 
+ */
+function addSdaToHidden() {
+  // Check if SinergiaDA exists in the main tree
+  var mainTree = $("#stic-menu-manager").jstree(true);
+  var sinergiaDAExists = mainTree && mainTree.get_node("SinergiaDA");
+
+  // If it does not exist in the main tree, we add it to Hidden-Modules
+  if (!sinergiaDAExists) {
+    addNewItemToHiddenModules({
+      id: "SinergiaDA",
+      text: "SinergiaDA",
+      url: "index.php?module=Home&action=sdaRedirect",
+      a_attr: {
+        href: "index.php?module=Home&action=sdaRedirect",
+        "data-url": "index.php?module=Home&action=sdaRedirect",
+        id: "SinergiaDA_anchor",
+        title: "index.php?module=Home&action=sdaRedirect"
+      }
+    });
+  }
 }
 
 /**
@@ -572,7 +604,8 @@ function addNewItemToHiddenModules(nodeData) {
     text: nodeData.text,
     url: nodeData.url,
     data: nodeData,
-    original: nodeData
+    original: nodeData,
+    a_attr: nodeData.a_attr
   });
 
   if (newNode) {
