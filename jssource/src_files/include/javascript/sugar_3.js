@@ -5101,3 +5101,16 @@ function convertReportDateTimeToDB(dateValue, timeValue) {
   }
   return '';
 }
+
+// STIC CUSTOM - 20241226 - JCH - Set focus in global search input
+// 
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelector('button#searchbutton').addEventListener('click', function() {
+      setTimeout(() => {
+          const input = this.parentElement.querySelector('input#query_string');
+          input.focus();
+          console.log(input);
+      }, 200);
+  });
+});
+// END STIC
