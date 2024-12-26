@@ -5103,7 +5103,7 @@ function convertReportDateTimeToDB(dateValue, timeValue) {
 }
 
 // STIC CUSTOM - 20241226 - JCH - Set focus in global search input
-// 
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/531
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('button#searchbutton').addEventListener('click', function() {
       setTimeout(() => {
