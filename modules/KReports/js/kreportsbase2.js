@@ -464,7 +464,6 @@ var bM = function (e, bH) {
                         case "radioenum":
                         case "dynamicenum":
                         case "multienum":
-                            alert('patata');
                             if (
                                 e.record.data.operator == "starts" ||
                                 e.record.data.operator == "notstarts" ||
