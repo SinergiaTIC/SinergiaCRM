@@ -464,6 +464,7 @@ var bM = function (e, bH) {
                         case "radioenum":
                         case "dynamicenum":
                         case "multienum":
+                            alert('patata');
                             if (
                                 e.record.data.operator == "starts" ||
                                 e.record.data.operator == "notstarts" ||
@@ -479,6 +480,11 @@ var bM = function (e, bH) {
                                     case "oneof":
                                     case "oneofnot":
                                     case "oneofnotornull":
+                                    // STIC-Custom EPS 20241220 - equals & notequal must show multi-select also
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+                                    case "equals":
+                                    case "notequal":
+                                    // END STIC-Custom
                                         e.column.setEditor(
                                             new Ext.form.ComboBox({
                                                 typeAhead: false,
@@ -639,6 +645,11 @@ var aL = function (e) {
                             case "oneof":
                             case "oneofnot":
                             case "oneofnotornull":
+                            // STIC-Custom EPS 20241220 - equals & notequal must show multi-select also
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+                            case "equals":
+                            case "notequal":
+                            // END STIC-Custom    
                                 var cR = e.column.getEditor().getStore();
                                 var dc = "";
                                 for (var i = 0; i < e.value.length; i++) {

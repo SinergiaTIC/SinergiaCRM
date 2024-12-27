@@ -1552,7 +1552,7 @@ class KReportQuery {
       // https://github.com/SinergiaTIC/SinergiaCRM/pull/524
       // // STIC-Custom EPS 20241205
       // // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
-      // $db = DBManagerFactory::getInstance();
+      $db = DBManagerFactory::getInstance();
       // // ENS STIC-Custom
       // ENS STIC-Custom
 
@@ -1708,11 +1708,34 @@ class KReportQuery {
             $thisWhereString .= ' SOUNDS LIKE \'' . $value . '\'';
             break;
          case 'notequal':
-            // STIC-Custom EPS 20241220 - only quote on some operators
+            // STIC-Custom EPS 20241220 - not equal not working on multi-enum
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+            // $thisWhereString .= ' <> \'' . $value . '\'';
             $value = $db->quote($value);
+            if ($this->fieldNameMap[$fieldid]['customFunction'] == '' && $this->fieldNameMap[$fieldid]['sqlFunction'] == '') {
+               switch ($this->fieldNameMap[$fieldid]['type']) {
+                  case 'multienum':
+                     $thisWhereString .= ' NOT LIKE \'%^' . $value . '^%\'';
+                     $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $thisWhereString .= ' NOT LIKE \'' . $value . '^%\'';
+                     $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $thisWhereString .= ' NOT LIKE \'%^' . $value . '\'';
+                     $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $thisWhereString .= ' <> \'' . $value . '\'';
+                     break;
+                  //		case 'date':
+                  //		case 'datetime':
+                  //			$thisWhereString .= ' = \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\'';
+                  //			break;
+                  default:
+                     $thisWhereString .= ' <> \'' . $value . '\'';
+                     break;
+               }
+            }
+            else
+               $thisWhereString .= ' <> \'' . $value . '\'';
+
             // END STIC-Custom
-            $thisWhereString .= ' <> \'' . $value . '\'';
             break;
          case 'greater':
             // STIC-Custom EPS 20241220 - only quote on some operators
@@ -1837,8 +1860,19 @@ class KReportQuery {
                foreach ($valueArray as $thisMultiEnumValue) {
                   if ($multienumWhereString != '')
                      $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     // STIC-Custom EPS 20241220 - oneof on multienum was potentially returning incorrect results
+                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+                     // $multienumWhereString .= ' LIKE \'%' . $thisMultiEnumValue . '%\'';
+                     $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '^%\'';
+                     $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $multienumWhereString .= ' LIKE \'' . $thisMultiEnumValue . '^%\'';
+                     $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '\'';
+                     $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $multienumWhereString .= ' = \'' . $thisMultiEnumValue . '\'';
+                     // END STIC-Custom
 
-                  $multienumWhereString .= ' LIKE \'%' . $thisMultiEnumValue . '%\'';
+
                }
                $thisWhereString .= $multienumWhereString;
             }
