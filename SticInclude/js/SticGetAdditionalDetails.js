@@ -1,10 +1,10 @@
 SUGAR.util.getAdditionalDetails = function(bean, id) {
   if (bean && id) {
     var url = 'index.php?to_pdf=1&module=Home&action=AdditionalDetailsRetrieve&bean=' + bean + '&id=' + id;
-    //var title = '<div class="qtip-title-text">' + id + '</div>' + '<div class="qtip-title-buttons">' + '</div>';
+//var title = '<div class="qtip-title-text">' + id + '</div>' + '<div class="qtip-title-buttons">' + '</div>';
     var body = '';
 
-    // Create an instance of qTip2 and configure it with the initial content.
+// Create an instance of qTip2 and configure it with the initial content.
     $(document).qtip({
       content: {
         title: {
@@ -19,17 +19,17 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
           $(divBody).html(SUGAR.language.translate("app_strings", "LBL_LOADING"));
           $.ajax(url)
             .done(function(data) {
-              // Remove everything before the first "}"
+// Remove everything before the first "}"
               data = data.substring(data.indexOf("{"));
-              // Remove everything after the last "}"
+// Remove everything after the last "}"
               data = data.substring(0, data.lastIndexOf("}") + 1);
-              // Parse string as JSON
+// Parse string as JSON
               var parsedData = JSON.parse(data);
               var contentDiv = $('<div/>').html(parsedData.body);
         
               var titleDiv = contentDiv.find("h2").remove().html();
               var tryContent = contentDiv.clone().find("h2").remove().end().html();
-              // Update qTip information
+// Update qTip information
               var divTitle = '#qtip-' + api.id + '-title';
               $(divTitle).html(titleDiv);
               api.set('content.text', tryContent);
@@ -44,6 +44,11 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
         my: 'top right',
         at: 'top left',
         target: $('#adspan_' + id + ' span'),
+        viewport: $(window),
+        adjust: {
+          method: 'shift flip',
+          resize: true
+        }
       },
       show: {
         event: 'mouseenter',
@@ -62,7 +67,14 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
         color: 'blue',
         textAlign: 'left',
         border: { width: 1, radius: 3 },
-        tip: 'rightTop',
+        tip: {
+          corner: true,
+          mimic: false,
+          width: 8,
+          height: 8,
+          border: true,
+          offset: 0
+        },
         classes: {
           tooltip: 'ui-widget',
           tip: 'ui-widget',
