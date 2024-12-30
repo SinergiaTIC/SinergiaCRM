@@ -328,11 +328,17 @@ class stic_Bookings_Places_CalendarController extends SugarController
                     $dateKey = date('Y-m-d', strtotime($currentDate));
                     if (isset($result[$dateKey])) {
                         if (!isset($result[$dateKey]['occupied'][$resource['title']])) {
-                            $result[$dateKey]['occupied'][$resource['title']] = array();
+                            $result[$dateKey]['occupied'][$resource['title']] = array(
+                                'name' => $resource['title'],
+                                'id' => $resource['recordId'],
+                            );
                         }
                         if (!isset($result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']])) {
                             $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']] = array();
                         }
+                        if (!is_array($result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']])) {
+                            $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']] = array();
+                        }                    
                         $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']][] = $resource['resourceName'];
                     }
                     $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));

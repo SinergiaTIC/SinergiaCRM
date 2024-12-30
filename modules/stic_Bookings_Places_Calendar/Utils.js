@@ -52,11 +52,13 @@ function initializeCalendar() {
               let occupiedCount = 0;
 
               for (var booking in data[date].occupied) {
-                for (var center in data[date].occupied[booking]) {
-                  occupiedCount += data[date].occupied[booking][center].length;
+            
+                for (var prop in data[date].occupied[booking]) {
+                  if (Array.isArray(data[date].occupied[booking][prop])) {
+                    occupiedCount += data[date].occupied[booking][prop].length;
+                  }
                 }
               }
-
               events.push({
                 start: date,
                 allDay: true,
@@ -93,41 +95,52 @@ function initializeCalendar() {
     },
 
     eventDidMount: function (info) {
-      var eventData = info.event.title; 
+      var eventData = info.event.title;
 
       var title =
         '<div class="qtip-title-text">' +
         SUGAR.language.translate("app_strings", "LBL_ADDITIONAL_DETAILS") +
         "</div>" +
-        '<div class="qtip-title-buttons">' +
-        "</div>";
+        '<div class="qtip-title-buttons"></div>';
       var occupiedInfo = info.event.extendedProps.occupiedInfo;
 
       var body = "";
 
       for (var booking in occupiedInfo) {
         if (occupiedInfo.hasOwnProperty(booking)) {
-          body += `<div><strong>${booking}</strong></div>`;
-
+          if (occupiedInfo[booking].id && occupiedInfo[booking].name) {
+            body += `<div><a href="index.php?action=DetailView&module=stic_Bookings&record=${occupiedInfo[booking].id}" style="color: #444444;">${booking}</a></div>`;
+          }
           var centers = occupiedInfo[booking];
           for (var center in centers) {
-            if (centers.hasOwnProperty(center)) {
-              body += `<div><strong>- ${SUGAR.language.get(
-                "stic_Bookings_Places_Calendar",
-                "LBL_STIC_CENTERS"
-              )}: </strong>${center}</div>`;
+          if (
+            center !== "id" &&
+            center !== "name" &&
+            centers.hasOwnProperty(center)
+          ) {
+            body += `<div><strong>- ${SUGAR.language.get(
+              "stic_Bookings_Places_Calendar",
+              "LBL_STIC_CENTERS"
+            )}: </strong>${center}</div>`;
 
-              var resources = centers[center];
-              body += `<div> ${SUGAR.language.get(
-                "stic_Bookings_Places_Calendar",
-                "LBL_STIC_RESOURCES"
-              )}</div><ul>`;
+            var resources = centers[center];
+            body += `<div>${SUGAR.language.get(
+              "stic_Bookings_Places_Calendar",
+              "LBL_STIC_RESOURCES"
+            )}</div><ul>`;
+            if (Array.isArray(resources)) {
               resources.forEach(function (resource) {
                 body += `<li>•${resource}</li>`;
               });
-              body += "</ul>";
+            } else {
+              console.warn("Resources is not an array:", resources);
+              if (resources) {
+                body += `<li>•${resources}</li>`;
+              }
             }
+            body += "</ul>";
           }
+        }
         }
       }
       $(info.el).qtip({
@@ -140,11 +153,11 @@ function initializeCalendar() {
           at: "top left",
           target: "mouse",
           adjust: {
-            mouse: false, 
+            mouse: false,
           },
         },
         show: {
-          solo: true, 
+          solo: true,
         },
         hide: {
           event: "mouseleave",
@@ -232,7 +245,7 @@ function initializeCalendar() {
 $("#openCenterPopup").click(function () {
   openCenterPopup();
 });
-var globalCalendar; 
+var globalCalendar;
 
 function runCheckInterval() {
   var checkIfSearchPaneIsLoaded = setInterval(function () {
@@ -386,24 +399,24 @@ function updateCrossVisibility() {
 }
 function closeResource(resourceId, bookingId) {
   if (confirm(SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM"))) {
-      $.ajax({
-          url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
-          dataType: "json",
-          data: {
-              record_id: bookingId,
-              resource_id: resourceId
-          },
-          success: function(res) {
-              if (res.success) {
-                  // Recargar la vista de detalle
-                  window.location.reload();
-              } else {
-                  alert(res.message);
-              }
-          },
-          error: function() {
-              alert("Error al cerrar el recurso");
-          }
-      });
+    $.ajax({
+      url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
+      dataType: "json",
+      data: {
+        record_id: bookingId,
+        resource_id: resourceId
+      },
+      success: function(res) {
+        if (res.success) {
+          // Recargar la vista de detalle
+          window.location.reload();
+        } else {
+          alert(res.message);
+        }
+      },
+      error: function() {
+        alert("Error al cerrar el recurso");
+      }
+    });
   }
 }

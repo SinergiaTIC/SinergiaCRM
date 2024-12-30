@@ -176,45 +176,46 @@ switch (viewType()) {
     previousPlannedEndHours = $("#planned_end_date_hours").val();
     previousPlannedEndMinutes = $("#planned_end_date_minutes").val();
 
-    setInterval(function() {
-        currentPlannedStartDate = $("#planned_start_date_date").val();
-        currentPlannedStartHours = $("#planned_start_date_hours").val();
-        currentPlannedStartMinutes = $("#planned_start_date_minutes").val()
-        currentPlannedEndDate = $("#planned_end_date_date").val();
-        currentPlannedEndHours = $("#planned_end_date_hours").val();
-        currentPlannedEndMinutes = $("#planned_end_date_minutes").val()
+    setInterval(function () {
+      currentPlannedStartDate = $("#planned_start_date_date").val();
+      currentPlannedStartHours = $("#planned_start_date_hours").val();
+      currentPlannedStartMinutes = $("#planned_start_date_minutes").val();
+      currentPlannedEndDate = $("#planned_end_date_date").val();
+      currentPlannedEndHours = $("#planned_end_date_hours").val();
+      currentPlannedEndMinutes = $("#planned_end_date_minutes").val();
 
-        if (currentPlannedStartDate !== previousPlannedStartDate) {
-            $("#start_date_date").val(currentPlannedStartDate).trigger("change");
-            previousPlannedStartDate = currentPlannedStartDate;
-        }
-    
-        if (currentPlannedStartHours !== previousPlannedStartHours) {
-            $("#start_date_hours").val(currentPlannedStartHours).trigger("change");
-            previousPlannedStartHours = currentPlannedStartHours;
-        }
-    
-        if (currentPlannedStartMinutes !== previousPlannedStartMinutes) {
-            $("#start_date_minutes").val(currentPlannedStartMinutes).trigger("change");
-            previousPlannedStartMinutes = currentPlannedStartMinutes;
-        }
-        if (currentPlannedEndDate !== previousPlannedEndDate) {
-          $("#end_date_date").val(currentPlannedEndDate).trigger("change");
-          previousPlannedEndDate = currentPlannedEndDate;
+      if (currentPlannedStartDate !== previousPlannedStartDate) {
+        $("#start_date_date").val(currentPlannedStartDate).trigger("change");
+        previousPlannedStartDate = currentPlannedStartDate;
       }
-  
+
+      if (currentPlannedStartHours !== previousPlannedStartHours) {
+        $("#start_date_hours").val(currentPlannedStartHours).trigger("change");
+        previousPlannedStartHours = currentPlannedStartHours;
+      }
+
+      if (currentPlannedStartMinutes !== previousPlannedStartMinutes) {
+        $("#start_date_minutes")
+          .val(currentPlannedStartMinutes)
+          .trigger("change");
+        previousPlannedStartMinutes = currentPlannedStartMinutes;
+      }
+      if (currentPlannedEndDate !== previousPlannedEndDate) {
+        $("#end_date_date").val(currentPlannedEndDate).trigger("change");
+        previousPlannedEndDate = currentPlannedEndDate;
+      }
+
       if (currentPlannedEndHours !== previousPlannedEndHours) {
-          $("#end_date_hours").val(currentPlannedEndHours).trigger("change");
-          previousPlannedEndHours = currentPlannedEndHours;
-      }
-  
-      if (currentPlannedEndMinutes !== previousPlannedEndMinutes) {
-          $("#end_date_minutes").val(currentPlannedEndMinutes).trigger("change");
-          previousPlannedEndMinutes = currentPlannedEndMinutes;
+        $("#end_date_hours").val(currentPlannedEndHours).trigger("change");
+        previousPlannedEndHours = currentPlannedEndHours;
       }
 
-    }, 500); 
-    
+      if (currentPlannedEndMinutes !== previousPlannedEndMinutes) {
+        $("#end_date_minutes").val(currentPlannedEndMinutes).trigger("change");
+        previousPlannedEndMinutes = currentPlannedEndMinutes;
+      }
+    }, 500);
+
     // Set event listener for center popup
     $("#openCenterPopup").click(function () {
       openCenterPopup();
@@ -222,6 +223,17 @@ switch (viewType()) {
 
     // Set autofill mark beside field label
     setAutofill(["name"]);
+    document
+      .getElementById("place_booking")
+      .addEventListener("change", function () {
+        if (this.checked) {
+          updateResourceFields();
+          $("#openCenterPopup").show();
+        } else {
+          $("#openCenterPopup").hide();
+          updateResourceFields();
+        }
+      });
 
     break;
 
@@ -376,39 +388,37 @@ function resourceLineWithData(resourcesCount) {
   return false;
 }
 function updateResourceFields() {
-    var isPlaceBooking = $("#place_booking").is(":checked");
-    var fields = isPlaceBooking ? config_place_fields : config_resource_fields;
-  
-    var header = "<tr>";
-    fields.forEach(function (field) {
-      header +=
-        "<th class='resource_column " +
-        field +
-        "'>" +
-        SUGAR.language.get(
-          "stic_Bookings",
-          "LBL_RESOURCES_" + field.toUpperCase()
-        ) +
-        "</th>";
-    });
-    header += "<th class='resource_column'></th></tr>";
-    $("#resourceLine thead").html(header);
-  
-    $("#resourceLine tbody").empty();
-    resourceMaxCount = 0;
+  var isPlaceBooking = $("#place_booking").is(":checked");
+  var fields = isPlaceBooking ? config_place_fields : config_resource_fields;
 
-    insertResourceLine();
-    if (!isPlaceBooking) {
-      $("#resourceSearchFields").hide();
-      $("#resourceType").val('');
-      $("#resourceStatus").val('');
-      $("#resourceName").val('');
-      $("#numberOfCenters").val('');
+  var header = "<tr>";
+  fields.forEach(function (field) {
+    header +=
+      "<th class='resource_column " +
+      field +
+      "'>" +
+      SUGAR.language.get(
+        "stic_Bookings",
+        "LBL_RESOURCES_" + field.toUpperCase()
+      ) +
+      "</th>";
+  });
+  header += "<th class='resource_column'></th></tr>";
+  $("#resourceLine thead").html(header);
+
+  $("#resourceLine tbody").empty();
+  resourceMaxCount = 0;
+
+  insertResourceLine();
+  if (!isPlaceBooking) {
+    $("#resourceSearchFields").hide();
+    $("#resourceType").val("");
+    $("#resourceStatus").val("");
+    $("#resourceName").val("");
+    $("#numberOfCenters").val("");
   }
-
-
-  }
-  // Delete a resource row
+}
+// Delete a resource row
 function markResourceLineDeleted(ln) {
   $("#resourceLine" + ln).remove();
 
@@ -436,17 +446,29 @@ function openResourceSelectPopup(ln) {
     field_to_name_array: field_to_name_array,
   };
 
-  var resourceTypes = SUGAR.language.languages['app_list_strings']['stic_resources_types_list'];
+  var resourceTypes =
+    SUGAR.language.languages["app_list_strings"]["stic_resources_types_list"];
   var filteredTypes = Object.keys(resourceTypes).filter(function (type) {
-    return isPlaceBooking ? type === "places" : type !== "places" && type !== "";
+    return isPlaceBooking
+      ? type === "places"
+      : type !== "places" && type !== "";
   });
 
-  var typeQuery = filteredTypes.map(function (type) {
-    return "&type_advanced[]=" + encodeURIComponent(type);
-  }).join("");
+  var typeQuery = filteredTypes
+    .map(function (type) {
+      return "&type_advanced[]=" + encodeURIComponent(type);
+    })
+    .join("");
 
-  open_popup("stic_Resources", 600, 400, typeQuery, true, false, popupRequestData);
-
+  open_popup(
+    "stic_Resources",
+    600,
+    400,
+    typeQuery,
+    true,
+    false,
+    popupRequestData
+  );
 }
 
 function callbackResourceSelectQS(ln) {
@@ -617,18 +639,6 @@ function loadResources() {
   );
 }
 
-document
-  .getElementById("place_booking")
-  .addEventListener("change", function () {
-    if (this.checked) {
-      updateResourceFields();
-      $("#openCenterPopup").show();
-    } else {
-      $("#openCenterPopup").hide();
-      updateResourceFields();
-    }
-  });
-
 $(document).ready(function () {
   $("#resourceSearchFields").hide();
   $("#openCenterPopup").hide();
@@ -754,25 +764,27 @@ function updateResourceLines(resources) {
   });
 }
 function closeResource(resourceId, bookingId) {
-  if (confirm(SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM"))) {
-      $.ajax({
-          url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
-          dataType: "json",
-          data: {
-              record_id: bookingId,
-              resource_id: resourceId
-          },
-          success: function(res) {
-              if (res.success) {
-                  // Recargar la vista de detalle
-                  window.location.reload();
-              } else {
-                  alert(res.message);
-              }
-          },
-          error: function() {
-              alert("Error al cerrar el recurso");
-          }
-      });
+  if (
+    confirm(SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM"))
+  ) {
+    $.ajax({
+      url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
+      dataType: "json",
+      data: {
+        record_id: bookingId,
+        resource_id: resourceId,
+      },
+      success: function (res) {
+        if (res.success) {
+          // Recargar la vista de detalle
+          window.location.reload();
+        } else {
+          alert(res.message);
+        }
+      },
+      error: function () {
+        alert("Error al cerrar el recurso");
+      },
+    });
   }
 }

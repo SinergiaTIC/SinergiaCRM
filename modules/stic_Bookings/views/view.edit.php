@@ -161,6 +161,7 @@ class stic_BookingsViewEdit extends ViewEdit
         $parsedResources = array();
         foreach ($resourcesBeanArray as $resourceBean) {
             $resource = array();
+            $resource['resource_id'] = $resourceBean->id;
             foreach ($config_resource_fields as $field => $label) {
                 $value = $resourceBean->$field;
                 if ($field === 'status' || $field === 'type') {
