@@ -387,6 +387,7 @@ class ExternalReporting
                     case 'emailbody':
                     case 'none':
                     case 'ColourPicker':
+                    case 'collection':
                         continue 2;
                         break;
                     case 'relate':
