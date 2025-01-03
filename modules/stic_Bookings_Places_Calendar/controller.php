@@ -299,11 +299,13 @@ class stic_Bookings_Places_CalendarController extends SugarController
             die();
         }
 
+        $sticCenterId = $_POST['stic_center_id'] ?? $savedFilters['stic_center_id'] ?? '';
+
         $sticPlacesUser = $_POST['stic_resources_places_users_list'] ?? $savedFilters['stic_resources_places_users_list'] ?? [];
         $sticPlacesType = $_POST['stic_resources_places_type_list'] ?? $savedFilters['stic_resources_places_type_list'] ?? [];
         $sticPlacesGender = $_POST['stic_resources_places_gender_list'] ?? $savedFilters['stic_resources_places_gender_list'] ?? [];
 
-        $filteredResources = $this->getFilteredResources($sticPlacesUser, $sticPlacesType, $sticPlacesGender);
+        $filteredResources = $this->getFilteredResources($sticCenterId, $sticPlacesUser, $sticPlacesType, $sticPlacesGender);
 
         $bookedResources = $this->getBookedResources($startDate, $endDate, $filteredResources);
         $availableResources = $this->getPlacesAvailability($startDate, $endDate, $filteredResources);
@@ -338,7 +340,7 @@ class stic_Bookings_Places_CalendarController extends SugarController
                         }
                         if (!is_array($result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']])) {
                             $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']] = array();
-                        }                    
+                        }
                         $result[$dateKey]['occupied'][$resource['title']][$resource['resourceCenterName']][] = $resource['resourceName'];
                     }
                     $currentDate = date('Y-m-d', strtotime($currentDate . ' +1 day'));
@@ -472,11 +474,24 @@ class stic_Bookings_Places_CalendarController extends SugarController
         exit;
 
     }
-    private function getFilteredResources($users, $types, $gender)
+    private function getFilteredResources($center, $users, $types, $gender)
     {
         global $db;
 
-        $query = "SELECT id FROM stic_resources WHERE deleted = 0 AND type = 'places'";
+        // $query = "SELECT id FROM stic_resources WHERE deleted = 0 AND type = 'places'";
+        $query = "SELECT 
+                    r.id 
+                  FROM 
+                    stic_resources r 
+                  INNER JOIN 
+                    stic_resources_stic_centers_c rc
+                  ON 
+                    r.id = rc.stic_resources_stic_centersstic_resources_idb
+                  WHERE 
+                    r.deleted = 0 
+                  AND  
+                    r.type = 'places'
+                ";
 
         if (!empty($users)) {
             $quotedUsers = array_map(array($db, 'quote'), $users);
@@ -498,7 +513,11 @@ class stic_Bookings_Places_CalendarController extends SugarController
             $genderStr = implode("','", $quotedGender);
             $query .= " AND gender IN ('$genderStr')";
         }
-
+        if (!empty($center)) {
+            $centerId = $db->quote($center);
+            $query .= " AND rc.stic_resources_stic_centersstic_centers_ida = '$centerId'";
+        }
+        
         $result = $db->query($query);
         $filteredResources = array();
         while ($row = $db->fetchByAssoc($result)) {

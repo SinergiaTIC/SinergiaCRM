@@ -66,7 +66,6 @@
         {/foreach}
         <th class="resource_column"></th>
     </tr>
-    <!-- Aquí irían las filas con los datos -->
 </table>
 <div style="padding-top: 2px">
     <input type="button" class="button" value="{$MOD.LBL_RESOURCES_ADD}" id="addResourceLine" />

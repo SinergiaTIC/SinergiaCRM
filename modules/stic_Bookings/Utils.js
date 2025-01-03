@@ -220,6 +220,11 @@ switch (viewType()) {
     $("#openCenterPopup").click(function () {
       openCenterPopup();
     });
+    if ($("#place_booking").is(":checked")) {
+      $("#openCenterPopup").show();
+    } else {
+      $("#openCenterPopup").hide();
+    }
 
     // Set autofill mark beside field label
     setAutofill(["name"]);
@@ -230,6 +235,8 @@ switch (viewType()) {
           updateResourceFields();
           $("#openCenterPopup").show();
         } else {
+          console.log("SINOO");
+
           $("#openCenterPopup").hide();
           updateResourceFields();
         }
@@ -641,7 +648,6 @@ function loadResources() {
 
 $(document).ready(function () {
   $("#resourceSearchFields").hide();
-  $("#openCenterPopup").hide();
 });
 
 function updateSelectedCentersList() {
@@ -764,27 +770,42 @@ function updateResourceLines(resources) {
   });
 }
 function closeResource(resourceId, bookingId) {
-  if (
-    confirm(SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM"))
-  ) {
-    $.ajax({
-      url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
-      dataType: "json",
-      data: {
-        record_id: bookingId,
-        resource_id: resourceId,
-      },
-      success: function (res) {
-        if (res.success) {
-          // Recargar la vista de detalle
-          window.location.reload();
-        } else {
-          alert(res.message);
-        }
-      },
-      error: function () {
-        alert("Error al cerrar el recurso");
-      },
-    });
-  }
+  $.ajax({
+    url: "index.php?module=stic_Bookings&action=validateResourceDates&sugar_body_only=true",
+    dataType: "json",
+    async: false,
+    data: {
+      record_id: bookingId,
+    },
+    success: function (response) {
+      if (!response.valid) {
+        alert(
+          SUGAR.language.get("stic_Bookings", "LBL_RESOURCES_START_DATE_ERROR")
+        );
+        return;
+      }
+
+      if (
+        confirm(
+          SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM")
+        )
+      ) {
+        $.ajax({
+          url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
+          dataType: "json",
+          data: {
+            record_id: bookingId,
+            resource_id: resourceId,
+          },
+          success: function (res) {
+            if (res.success) {
+              window.location.reload();
+            } else {
+              alert(res.message);
+            }
+          },
+        });
+      }
+    },
+  });
 }

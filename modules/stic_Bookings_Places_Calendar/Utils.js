@@ -33,7 +33,6 @@ function initializeCalendar() {
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     events: function (fetchInfo, successCallback, failureCallback) {
-
       var start = moment(fetchInfo.start).format("YYYY-MM-DD");
       var end = moment(fetchInfo.end).format("YYYY-MM-DD");
 
@@ -52,7 +51,6 @@ function initializeCalendar() {
               let occupiedCount = 0;
 
               for (var booking in data[date].occupied) {
-            
                 for (var prop in data[date].occupied[booking]) {
                   if (Array.isArray(data[date].occupied[booking][prop])) {
                     occupiedCount += data[date].occupied[booking][prop].length;
@@ -113,34 +111,34 @@ function initializeCalendar() {
           }
           var centers = occupiedInfo[booking];
           for (var center in centers) {
-          if (
-            center !== "id" &&
-            center !== "name" &&
-            centers.hasOwnProperty(center)
-          ) {
-            body += `<div><strong>- ${SUGAR.language.get(
-              "stic_Bookings_Places_Calendar",
-              "LBL_STIC_CENTERS"
-            )}: </strong>${center}</div>`;
+            if (
+              center !== "id" &&
+              center !== "name" &&
+              centers.hasOwnProperty(center)
+            ) {
+              body += `<div><strong>- ${SUGAR.language.get(
+                "stic_Bookings_Places_Calendar",
+                "LBL_STIC_CENTERS"
+              )}: </strong>${center}</div>`;
 
-            var resources = centers[center];
-            body += `<div>${SUGAR.language.get(
-              "stic_Bookings_Places_Calendar",
-              "LBL_STIC_RESOURCES"
-            )}</div><ul>`;
-            if (Array.isArray(resources)) {
-              resources.forEach(function (resource) {
-                body += `<li>•${resource}</li>`;
-              });
-            } else {
-              console.warn("Resources is not an array:", resources);
-              if (resources) {
-                body += `<li>•${resources}</li>`;
+              var resources = centers[center];
+              body += `<div>${SUGAR.language.get(
+                "stic_Bookings_Places_Calendar",
+                "LBL_STIC_RESOURCES"
+              )}</div><ul>`;
+              if (Array.isArray(resources)) {
+                resources.forEach(function (resource) {
+                  body += `<li>•${resource}</li>`;
+                });
+              } else {
+                console.warn("Resources is not an array:", resources);
+                if (resources) {
+                  body += `<li>•${resources}</li>`;
+                }
               }
+              body += "</ul>";
             }
-            body += "</ul>";
           }
-        }
         }
       }
       $(info.el).qtip({
@@ -395,28 +393,5 @@ function updateCrossVisibility() {
     $("#cross_filters").show();
   } else {
     $("#cross_filters").hide();
-  }
-}
-function closeResource(resourceId, bookingId) {
-  if (confirm(SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_CONFIRM"))) {
-    $.ajax({
-      url: "index.php?module=stic_Bookings&action=closeResource&sugar_body_only=true",
-      dataType: "json",
-      data: {
-        record_id: bookingId,
-        resource_id: resourceId
-      },
-      success: function(res) {
-        if (res.success) {
-          // Recargar la vista de detalle
-          window.location.reload();
-        } else {
-          alert(res.message);
-        }
-      },
-      error: function() {
-        alert("Error al cerrar el recurso");
-      }
-    });
   }
 }

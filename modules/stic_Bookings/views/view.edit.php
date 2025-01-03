@@ -98,7 +98,6 @@ class stic_BookingsViewEdit extends ViewEdit
 
         $relationshipName = 'stic_resources_stic_bookings';
 
-        // Pasar la configuración de los campos al JavaScript
         $config_resource_fields_json = json_encode(array_keys($config_resource_fields));
         $config_place_fields_json = json_encode(array_keys($config_place_fields)); 
         
