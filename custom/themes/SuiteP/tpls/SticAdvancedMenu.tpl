@@ -67,11 +67,13 @@
 
                 // Implement live search functionality for the "All" menu
                 $("#search-all").on("keyup", function() {
-                    var searchTerm = $(this).val().toLowerCase();
-
-                    // Filter and toggle visibility of sibling <li> elements based on search term
+                    var searchTerm = $(this).val().toLocaleLowerCase();
+                    var normalizedSearchTerm = searchTerm.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                
                     $("#search-all").parent().siblings().each(function() {
-                        var matchFound = $(this).text().toLowerCase().indexOf(searchTerm) > -1;
+                        var text = $(this).text().toLocaleLowerCase();
+                        var normalizedText = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                        var matchFound = normalizedText.indexOf(normalizedSearchTerm) > -1;
                         $(this).toggle(matchFound);
                     });
                 });
