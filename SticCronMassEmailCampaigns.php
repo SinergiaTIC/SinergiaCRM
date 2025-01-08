@@ -31,7 +31,8 @@ if (!defined('sugarEntry')) {
     define('sugarEntry', true);
 }
 
-// STIC CUSTOM - "Sleep 3 seconds to avoid running multiple cron jobs at the same time"
+// STIC CUSTOM - "Sleep 3 seconds to priorize regular cron execution"
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/534
 sleep(3);
 // End STIC CUSTOM
 
