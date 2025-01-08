@@ -38,6 +38,8 @@
 function generateMenu($items, $isFirstLevel = true, $validTabs = null)
 {
     global $app_list_strings, $app_strings, $current_user, $sugar_config;
+    
+    require_once 'modules/ModuleBuilder/Module/IconRepository.php';
 
     if ($_REQUEST['lang'] && is_string($_REQUEST['lang'])) {
         $app_strings = return_application_language($_REQUEST['lang']);
@@ -126,8 +128,9 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
             if ($isValidModule) {
                 // Generate link for valid modules
                 $lowerModule = str_replace('_', '-', strtolower($cleanId));
+                $moduleIconName = IconRepository::getIconName($cleanId);
                 // Include icon if enabled in configuration
-                $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
+                $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$moduleIconName}'></span>" : '';
                 $itemHtml .= "<a href='index.php?module={$cleanId}&action=index'>$iconString $text </a>";
             } elseif ($item['url']) {
                 // Generate external link for items with custom URLs
@@ -160,7 +163,8 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
             $menuHtml .= '<li><input type="text" id="search-all" placeholder="' . $app_strings['LBL_SEARCH'] . '"></input></li>';
             foreach ($validTabs as $key => $value) {
                 $lowerModule = str_replace('_', '-', strtolower($key));
-                $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$lowerModule}'></span>" : '';
+                $moduleIconName = IconRepository::getIconName($key);
+                $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$moduleIconName}'></span>" : '';
                 $menuHtml .= "<li><a href='index.php?module={$key}&action=index'> $iconString  $value </a></li>";
             }
             $menuHtml .= '</ul>';
