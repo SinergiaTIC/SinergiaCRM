@@ -178,8 +178,19 @@ class DynamicField
 
             // STIC-Custom ART 20241203 - Height defined in iframe field not respected
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
-            if($row["type"] == 'iframe' && $saveCache->ext4 != $row["ext4"]){
-                $row["ext4"] = $saveCache->ext4;
+            if ($row["type"] == 'iframe' && isset($saveCache->name) && $saveCache->name == $row["name"]) {
+                // Check if the field is an iframe and matches the one being updated
+                if (isset($saveCache->ext4) && $saveCache->ext4 != $row["ext4"]) {
+                    // Update only if the new height (ext4) differs from the current value.
+                    $newHeight = intval($saveCache->ext4); // Ensure the height is a valid integer
+
+                    // Update the database with the new height for this field
+                    $updateQuery = "UPDATE fields_meta_data SET ext4 = '{$newHeight}' WHERE id = '{$row['id']}'";
+                    $this->db->query($updateQuery);
+    
+                    // Update the local $row variable with the new height
+                    $row["ext4"] = $newHeight;
+                }
             }
             // END STIC-Custom
 
@@ -818,8 +829,8 @@ class DynamicField
             // END STIC-Custom
             // STIC-Custom ART 20241203 - Height defined in iframe field not respected
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
-            if($field->type=='iframe' && ($field->ext4 != $fmd->ext4)) {
-                $to_save['ext4'] = (isset($field->ext4) ? $field->ext4 : '');
+            if($field->type == 'iframe' && ($field->ext4 != $fmd->ext4) || !isset($fmd->ext4)) {
+                $to_save['ext4'] = (isset($field->ext4) && is_numeric($field->ext4)) ? $field->ext4 : '';
             }
             // END STIC-Custom
         }
