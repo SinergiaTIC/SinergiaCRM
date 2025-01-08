@@ -68,6 +68,7 @@ $mod_strings = array (
     'LBL_TEMPLATE' => 'Plantilla de correo electrónico',
     'LBL_SELECT_ALL' => 'Seleccionar Todas las listas de público objetivo de la campaña',
     'LBL_PROSPECT_LISTS_TITLE' => 'Listas de público objetivo',
+    'LBL_TYPE' => 'Tipo',
 
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
     'LBL_CAMPAIGNS_TITLE' => 'Campaña',

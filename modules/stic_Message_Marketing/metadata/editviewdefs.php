@@ -57,7 +57,7 @@ array (
       array (
         0 => array(
           0 => array('name' => 'campaigns_stic_message_marketing_name'),
-          1 => array(),
+          1 => 'type',
         ),
         1 => 
         array (

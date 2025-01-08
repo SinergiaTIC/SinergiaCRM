@@ -66,6 +66,7 @@ $mod_strings = array (
     'LBL_TEMPLATE' => 'Plantilla de correu electrònic',
     'LBL_SELECT_ALL' => 'Seleccionar Totes les llistes de públic objectiu de la campanya',
     'LBL_PROSPECT_LISTS_TITLE' => 'Llistes de públic objectiu',
+    'LBL_TYPE' => 'Tipus',
 
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
     'LBL_CAMPAIGNS_TITLE' => 'Campanya',

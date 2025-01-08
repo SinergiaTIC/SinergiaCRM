@@ -61,12 +61,14 @@ $mod_strings = array (
     'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
     'LBL_STIC_MESSAGE_MARKETING_SUBPANEL_TITLE' => 'Marketing por mensaje',
     'LBL_NEW_FORM_TITLE' => 'Nuevo Marketing por mensaje',
+    
     'LBL_START_DATE' => 'Fecha de inicio',
     'LBL_START_DATE_TIME' => 'Fecha y hora de inicio',
     'LBL_STATUS' => 'Estado',
     'LBL_TEMPLATE' => 'Plantilla de correo electrónico',
     'LBL_SELECT_ALL' => 'Seleccionar Todas las listas de público objetivo de la campaña',
     'LBL_PROSPECT_LISTS_TITLE' => 'Listas de público objetivo',
+    'LBL_TYPE' => 'Tipo',
     
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
     'LBL_CAMPAIGNS_TITLE' => 'Campaña',

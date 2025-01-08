@@ -142,6 +142,7 @@ $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personaliz
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicións';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['moduleList']['stic_Message_Marketing'] = 'Marketing por mensaje';
+$app_list_strings['moduleList']['stic_MessagesMan'] = 'Cola de mensajes';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
@@ -192,6 +193,7 @@ $app_list_strings['moduleListSingular']['stic_Messages'] = 'Mensaje';
 
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
 $app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Marketing por mensaje';
+$app_list_strings['moduleListSingular']['stic_MessagesMan'] = 'Cola de mensajes';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';

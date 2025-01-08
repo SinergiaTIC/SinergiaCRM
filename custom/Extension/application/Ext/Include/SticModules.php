@@ -68,6 +68,7 @@ $moduleList[] = 'stic_Custom_View_Conditions';
 $moduleList[] = 'stic_Custom_View_Actions';
 $moduleList[] = 'stic_Group_Opportunities';
 $moduleList[] = 'stic_Message_Marketing';
+$moduleList[] = 'stic_MessagesMan';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -117,6 +118,7 @@ $beanList['stic_Custom_View_Conditions'] = 'stic_Custom_View_Conditions';
 $beanList['stic_Custom_View_Actions'] = 'stic_Custom_View_Actions';
 $beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
 $beanList['stic_Message_Marketing'] = 'stic_Message_Marketing';
+$beanList['stic_MessagesMan'] = 'stic_MessagesMan';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -165,6 +167,7 @@ $beanFiles['stic_Custom_View_Conditions'] = 'modules/stic_Custom_View_Conditions
 $beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_Custom_View_Actions.php';
 $beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
 $beanFiles['stic_Message_Marketing'] = 'modules/stic_Message_Marketing/stic_Message_Marketing.php';
+$beanFiles['stic_MessagesMan'] = 'modules/stic_MessagesMan/stic_MessagesMan.php';
 
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
@@ -179,6 +182,8 @@ $modInvisList[] = 'stic_Custom_Views';
 $modInvisList[] = 'stic_Custom_View_Customizations';
 $modInvisList[] = 'stic_Custom_View_Conditions';
 $modInvisList[] = 'stic_Custom_View_Actions';
+// TODOEPS: Activar para no mostrar en menú
+// $modInvisList[] = 'stic_MessagesMan';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
@@ -193,6 +198,8 @@ $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
 $adminOnlyList['stic_Custom_Views'] = array('all' => 1);
+// TODOEPS: Activar para no mostrar en menú
+// $adminOnlyList['stic_MessagesMan'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events
 $modInvisList[] = 'FP_events';

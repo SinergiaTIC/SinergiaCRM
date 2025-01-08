@@ -63,6 +63,7 @@ $mod_strings = array (
   'LBL_TEMPLATE' => 'Email template',
   'LBL_SELECT_ALL' => 'Select to choose all Target List(s) in the Campaign',
   'LBL_PROSPECT_LISTS_TITLE' => 'Target Lists',
+  'LBL_TYPE' => 'Type',
   
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_CAMPAIGNS_TITLE' => 'Campaign',

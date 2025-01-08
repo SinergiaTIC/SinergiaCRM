@@ -3,6 +3,13 @@
 // $campaignId = $_REQUEST['parent_id'];
 $campaignId = $_REQUEST['campaign_id'];
 
+if (empty($campaignId) && $_REQUEST['module'] === 'stic_Message_Marketing') {
+    $db = DBManagerFactory::getInstance();
+    $messageMarketingId = $_REQUEST['record'];
+    $sqlGetCampaign = "SELECT campaigns_stic_message_marketingcampaign_ida FROM campaigns_stic_message_marketing_c WHERE campaigns_stic_message_marketingmessage_idb = '{$messageMarketingId}'";
+    $campaignId = $db->getOne($sqlGetCampaign);
+}
+
 if (!empty($campaignId)) {
     $db = DBManagerFactory::getInstance();
 
