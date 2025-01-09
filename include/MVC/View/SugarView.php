@@ -353,7 +353,6 @@ class SugarView
             // STIC-Custom 20241014 ART - Tracker Module
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
             // $monitor->setValue('action', $action);
-            // $monitor->setValue('user_id', $GLOBALS['current_user']->id);
 
             // Track the view of the current bean
             if ($action == 'editview') {
@@ -363,13 +362,8 @@ class SugarView
                 // Otherwise, use the original action
                 $monitor->setValue('action', $action);
             }
-
-            // Get the current user
-            $current_user = $GLOBALS['current_user'];
-
-            // Set the user ID
-            $monitor->setValue('user_id', $current_user->id);
             // END STIC Custom
+            $monitor->setValue('user_id', $GLOBALS['current_user']->id);
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);
             $monitor->setValue(
