@@ -3497,8 +3497,10 @@ class SugarBean
                 $monitor->action = 'update';
             }
 
-            // Save the monitor to the database
-            $trackerManager->saveMonitor($monitor, true, true);
+            // Save the monitor to the database excluding a module which is not understandable as a record
+            if($monitor->module_name != 'SugarFeed'){
+                $trackerManager->saveMonitor($monitor, true, true);
+            }
             // END STIC Custom
         }
     }
