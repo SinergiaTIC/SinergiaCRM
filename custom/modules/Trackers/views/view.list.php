@@ -36,6 +36,8 @@ class CustomTrackersViewList extends ViewList
         $this->lv->showMassupdateFields = false;
         // Hide Quick Edit Pencil
         $this->lv->quickViewLinks = false;
+        // Don't Delete any record from the list
+        $this->lv->delete = false;
 
         // Sort by date_modified in ASC if there are no params
         if (empty($this->params['orderBy'])) {

@@ -33,10 +33,17 @@ array(
             ),
             'module_name' => array(
                 'type' => 'enum',
-                'label' => 'LBL_MODULE_NAME',
+                'label' => 'LBL_MODULE',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'module_name',
+            ),
+            'item_summary' => array(
+                'type' => 'varchar',
+                'label' => 'LBL_ITEM_SUMMARY',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'item_summary',
             ),
         ),
         'advanced_search' => array(
@@ -69,7 +76,7 @@ array(
             ),
             'module_name' => array(
                 'type' => 'enum',
-                'label' => 'LBL_MODULE_NAME',
+                'label' => 'LBL_MODULE',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'module_name',
