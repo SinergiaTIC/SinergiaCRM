@@ -8,15 +8,6 @@ array(
         'width' => '5%',
         'default' => true,
     ),
-    'USER_ID' => array(
-        'type' => 'varchar',
-        'studio' => 'visible',
-        'label' => 'LBL_USER_ID',
-        'id' => 'USER_ID',
-        'link' => true,
-        'width' => '10%',
-        'default' => false,
-    ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '9%',
         'label' => 'LBL_ASSIGNED_TO_NAME',
@@ -42,6 +33,7 @@ array(
         'label' => 'LBL_ITEM_ID',
         'width' => '10%',
         'default' => false,
+        'link' => false,
     ),
     'ITEM_SUMMARY' => array(
         'type' => 'varchar',
