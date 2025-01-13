@@ -64,6 +64,7 @@ function loadDynamicEnum(field, subfield) {
         // Adding recordId !== undefined condition to check if in ViewList we want to change one field or mass update
         // STIC#1109
         // STIC-Custom PCS 20240113 - Fix dynamicenum in Calendar quickcreateview
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/538
         // The variable moduleName has been moved because it is not defined at this point.
         // var moduleName = module_sugar_grp1;
         var recordId = $('input.listview-checkbox',$('form#EditView').closest('tr')).val();
