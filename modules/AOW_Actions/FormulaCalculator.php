@@ -878,7 +878,7 @@ class FormulaCalculator
             global $timedate, $current_user;
             $date = $timedate->fromDb($date);
             // STIC-Custom PCS 20240113 Calculate datetime according to user preferences in mass update
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/539
             // $date = $timedate->tzUser($date, $current_user);
             $isMassUpdate = isset($_REQUEST['action']) && $_REQUEST['action'] === 'MassUpdate';
             if ($isMassUpdate) {
