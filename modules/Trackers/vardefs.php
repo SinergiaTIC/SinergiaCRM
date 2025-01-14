@@ -291,4 +291,5 @@ $dictionary['Tracker'] = array(
 // Set special values for SuiteCRM base fields
 VardefManager::createVardef('Trackers', 'Tracker', array('basic', 'assignable'));
 $dictionary['Tracker']['fields']['assigned_user_id']['inline_edit'] = 0; // Assigned user can not edit inline in this module
+$dictionary['Tracker']['fields']['assigned_user_name']['inline_edit'] = 0; // Assigned user can not edit inline in this module
 // END STIC Custom
