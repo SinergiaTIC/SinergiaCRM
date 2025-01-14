@@ -595,4 +595,10 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/394
     'show_tasks_as_events' => true,
     // END STIC    
+
+    // STIC Custom 20241016 ART - Tracker prune interval for the Scheduler
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+    // Delete from the tracker table the records of the days prior to the ones configured in config
+    'tracker_prune_interval' => 90,
+    // END STIC Custom
 );
