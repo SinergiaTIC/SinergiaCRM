@@ -64,8 +64,8 @@ class CustomCalendarController extends CalendarController
         
         $fieldName = $_REQUEST['field'];
         
-        $module = isset($_REQUEST['record_module']) ? $_REQUEST['record_module'] : 'Calls';
-        
+        $module = $_REQUEST['record_module'] ?? null;
+
         $bean = BeanFactory::newBean($module);
         $vardef = isset($bean->field_defs[$fieldName]) ? $bean->field_defs[$fieldName] : null;
         
