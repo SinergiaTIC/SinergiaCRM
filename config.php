@@ -576,8 +576,8 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '1.7.1', 
-    'js_custom_version' => 10,
+    'sinergiacrm_version' => '1.7.5', 
+    'js_custom_version' => 13,
     'stic_show_update_alert' => 0,
     // END STIC
 
@@ -590,4 +590,9 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/253
     'disableAjaxUI' => true,
     // END STIC
+
+    // STIC-Custom 20240920 MHP - Change behavior so that tasks are synchronized by default
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/394
+    'show_tasks_as_events' => true,
+    // END STIC    
 );
