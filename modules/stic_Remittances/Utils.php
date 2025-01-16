@@ -147,6 +147,7 @@ class stic_RemittancesUtils
      */
     public static function fillDynamicListForIssuingOrganizations()
     {
+        include_once 'modules/stic_Settings/Utils.php';
         // Load GENERAL Settings
         $generalSettings = stic_SettingsUtils::getSettingsByType('GENERAL');
 
