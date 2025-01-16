@@ -211,17 +211,19 @@ class stic_Work_CalendarController extends SugarController
     {
         // User timezone and offset in hours
         global $current_user, $timedate;
-        $userTz = $current_user->getUserDateTimePreferences();
-        $userGMTOffsetInHours = $userTz["userGmtOffset"] / 60;      
 
-        // Calculate the new date
+         // Calculate the new date
         $format ='Y-m-d H:i:s';
         $date = $timedate->fromUser($dateInfo['original'], $current_user);
-        $date = $timedate->asDb($date);
-        $date = DateTime::createFromFormat($format, $date);
+        $stringDate = $timedate->asDb($date);
+        $date = DateTime::createFromFormat($format, $stringDate);
+        
         switch ($dateInfo['operator']) {
             case '=':
-                $hours = $dateInfo['hours'] - $userGMTOffsetInHours;         
+                $userTz = $current_user->getPreference('timezone');
+                $dateInUserTZ = new DateTime($stringDate, new DateTimeZone($userTz));   
+                $dateOffsetInHours = $dateInUserTZ->getOffset()/3600;
+                $hours = $dateInfo['hours'] - $dateOffsetInHours;       
                 $date->setTime($hours, $dateInfo['minutes']);                            
                 break;
             case '+':
