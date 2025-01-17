@@ -72,6 +72,15 @@ switch (viewType()) {
     break;
 
   case "detail":
+    $recordId = $("#formDetailView input[type=hidden][name=record]").val();
+    var buttons = {
+      sendMessages: {
+        id: "bt_direct_debit",
+        title: SUGAR.language.get("Campaigns", "LBL_SEND_MESSAGES"),
+        onclick: "window.location='index.php?module=stic_Message_Marketing&action=selectMessageMarketing&record=" + $recordId + "'"
+      }
+    };
+    createDetailViewButton(buttons.sendMessages);
     $(document).ready(function() {
       initilizeDetailView();
     });

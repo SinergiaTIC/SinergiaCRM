@@ -71,4 +71,6 @@ $mod_strings = array (
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
     'LBL_CAMPAIGNS_TITLE' => 'Campanya',
     'LBL_STIC_MESSAGE_MARKETING_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona',
+
+    'LBL_SEND_PHONE_MESSAGES' => 'Campanya: Enviar missatges de telèfon',
 );

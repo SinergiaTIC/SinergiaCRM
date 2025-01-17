@@ -82,3 +82,4 @@ $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correu
 
 $mod_strings['LBL_STIC_MESSAGES_MARKETING_CAMPAIGNS_TITLE'] = "Marketing per missatge";
 $mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = "Marketing per missatge";
+$mod_strings['LBL_SEND_MESSAGES'] = "Enviar missatges";

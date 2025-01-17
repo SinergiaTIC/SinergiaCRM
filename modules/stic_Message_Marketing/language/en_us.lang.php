@@ -68,4 +68,6 @@ $mod_strings = array (
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LBL_CAMPAIGNS_TITLE' => 'Campaign',
   'LBL_STIC_MESSAGE_MARKETING_CONTACTS_FROM_CONTACTS_TITLE' => 'Contact',
+
+  'LBL_SEND_PHONE_MESSAGES' => 'Campaign: Send phone messages',
 );

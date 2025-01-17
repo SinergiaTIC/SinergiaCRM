@@ -73,4 +73,6 @@ $mod_strings = array (
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
     'LBL_CAMPAIGNS_TITLE' => 'Campaña',
     'LBL_STIC_MESSAGE_MARKETING_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoa',
+
+    'LBL_SEND_PHONE_MESSAGES' => 'Campaña: Enviar mensajes de teléfono',
 );

@@ -395,26 +395,39 @@ class stic_MessagesMan extends SugarBean
     // }
 
 
-    public function sendMessage($type, $sender, $templateId, $relatedType, $relatedId) {
+    public function sendMessage($sender, $templateId, $type) {
         require_once 'modules/stic_Messages/Utils.php';
         require_once 'modules/stic_Settings/Utils.php';
         include_once 'modules/EmailTemplates/EmailTemplate.php';
+
+        $bean = BeanFactory::getBean($this->related_type, $this->related_id);
+        $targetPhone = stic_MessagesUtils::getPhoneForMessage($bean);
+
+        $mustBeBlocked = $this->checkPresentInExemptLists();
+        if ($mustBeBlocked) {
+            $this->saveLog('blocked', $targetPhone, true);
+            return true;
+        }
+
+        $alreadySent = $this->checkAlreadySent($targetPhone);
+        if ($alreadySent) {
+            $this->saveLog('blocked', $targetPhone, true);
+            return true; 
+        }
 
         // Recuperamos el template (si lo hay)
         $emailTemplate = BeanFactory::getBean('EmailTemplates', $templateId);
         $txt = $emailTemplate->body;
 
         $messageBean = BeanFactory::newBean('stic_Messages');
-        $bean = BeanFactory::getBean($relatedType, $relatedId);
         $txt = $messageBean->replaceTemplateVariables($txt, $bean);
 
-        // TODOEPS: Recueprar sender de la campanya
         $messageBean->sender = $sender;
         $messageBean->template_id_c = $templateId;
         $messageBean->status = 'sent';
         $messageBean->type = $type;
         $messageBean->direction = 'outbound';
-        $messageBean->phone = stic_MessagesUtils::getPhoneForMessage($bean);
+        $messageBean->phone = $targetPhone;
         $messageBean->message = $txt;
         $name = $messageBean->fillName($bean->module_name, $bean->id);
         $messageBean->name = $name;
@@ -422,9 +435,79 @@ class stic_MessagesMan extends SugarBean
         $messageBean->parent_id = $relatedId;
         $messageBean->save();
 
+        if ($messageBean->status != 'sent') {
+            // TODOEPS
+            $this->saveLog('send error', $targetPhone, true);
+            return false;
+        }
+        $this->saveLog('targeted', $targetPhone, true);
+
+        return true;
     }
 
+    protected function checkAlreadySent($targetPhone) {
+        $db = DBManagerFactory::getInstance();
 
+        $query = "select 1 from campaign_log where more_information='{$targetPhone}' and marketing_id='{$this->marketing_id}' and deleted = 0 and activity_type='targeted'";
+
+        $result = $db->getOne($query);
+
+        return $result;
+    }
+
+    public function checkPresentInExemptLists() {
+        $db = DBManagerFactory::getInstance();
+        $sql = "
+            select 1
+            from  prospect_list_campaigns plc 
+            join prospect_lists pl on pl.id = plc.prospect_list_id 
+            join prospect_lists_prospects plp on plp.prospect_list_id = pl.id
+            WHERE plc.campaign_id = '{$this->campaign_id}'
+            AND pl.list_type = 'exempt'
+            and plp.related_id = '{$this->related_id}'
+            and plp.related_type =  '{$this->related_type}'
+            and plp.deleted = 0
+            and pl.deleted = 0
+            and plc.deleted = 0
+        ";
+
+        $result = $db->getOne($sql);
+
+        if ($result) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    public function saveLog($activity_type, $targetPhone, $delete=false) {
+        // TODOEPS: If attempts is not implemented, we can remove the $delete parameter
+        global $timedate;
+
+         //create new campaign log record.
+         $campaign_log = BeanFactory::newBean('CampaignLog');
+         $campaign_log->campaign_id = $this->campaign_id;
+         $campaign_log->target_id = $this->related_id;
+         $campaign_log->target_type = $this->related_type;
+         $campaign_log->marketing_id = $this->marketing_id;
+
+         $campaign_log->more_information = $targetPhone;
+
+         $campaign_log->activity_type = $activity_type;
+         $campaign_log->activity_date = $timedate->nowDb(); //$timedate->now(); //TODOEPS: Recuperar el temps amb segons
+         $campaign_log->list_id = $this->list_id;
+         $campaign_log->related_id = $this->related_id;
+         $campaign_log->related_type = $this->related_type;
+        //  $campaign_log->resend_type = $resend_type;
+         $campaign_log->save();
+
+         // TODOEPS: Remove comments once tested finalized 
+         if($delete) {
+            $this->id = (int)$this->id;
+            $query = "DELETE FROM stic_messagesman WHERE id = {$this->id}";
+            $this->db->query($query);
+         }
+    }
 
 
 
