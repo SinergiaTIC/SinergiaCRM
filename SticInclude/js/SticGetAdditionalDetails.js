@@ -1,10 +1,10 @@
 SUGAR.util.getAdditionalDetails = function(bean, id) {
   if (bean && id) {
     var url = 'index.php?to_pdf=1&module=Home&action=AdditionalDetailsRetrieve&bean=' + bean + '&id=' + id;
-//var title = '<div class="qtip-title-text">' + id + '</div>' + '<div class="qtip-title-buttons">' + '</div>';
+    //var title = '<div class="qtip-title-text">' + id + '</div>' + '<div class="qtip-title-buttons">' + '</div>';
     var body = '';
-
-// Create an instance of qTip2 and configure it with the initial content.
+    
+    // Create an instance of qTip2 and configure it with the initial content.
     $(document).qtip({
       content: {
         title: {
@@ -19,17 +19,26 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
           $(divBody).html(SUGAR.language.translate("app_strings", "LBL_LOADING"));
           $.ajax(url)
             .done(function(data) {
-// Remove everything before the first "}"
+              // Remove everything before the first "}"
               data = data.substring(data.indexOf("{"));
-// Remove everything after the last "}"
+              // Remove everything after the last "}"
               data = data.substring(0, data.lastIndexOf("}") + 1);
-// Parse string as JSON
+              // Parse string as JSON
               var parsedData = JSON.parse(data);
               var contentDiv = $('<div/>').html(parsedData.body);
+              
+              // If we're in a popup, disable all links
+              if (isPopup) {
+                contentDiv.find('a').each(function() {
+                  var $link = $(this);
+                  var text = $link.text();
+                  $link.replaceWith('<span class="disabled-link">' + text + '</span>');
+                });
+              }
         
               var titleDiv = contentDiv.find("h2").remove().html();
-              var tryContent = contentDiv.clone().find("h2").remove().end().html();
-// Update qTip information
+              var tryContent = contentDiv.clone().find("h2").remove().end().html();   
+              // Update qTip information
               var divTitle = '#qtip-' + api.id + '-title';
               $(divTitle).html(titleDiv);
               api.set('content.text', tryContent);
