@@ -4,6 +4,9 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
     //var title = '<div class="qtip-title-text">' + id + '</div>' + '<div class="qtip-title-buttons">' + '</div>';
     var body = '';
 
+    // Check if we're in a popup window
+    var isPopup = window.location.href.indexOf('action=Popup') !== -1;
+
     // Create an instance of qTip2 and configure it with the initial content.
     $(document).qtip({
       content: {
