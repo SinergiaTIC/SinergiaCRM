@@ -108,8 +108,6 @@ $dictionary['Tracker'] = array(
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
             // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
-            'link' => true,
-            'id' => 'item_id',
             // END STIC Custom
         ),
         'item_summary'=>array(
@@ -122,7 +120,6 @@ $dictionary['Tracker'] = array(
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
             // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
-            'id' => 'item_id',
             // END STIC Custom
         ),
         'date_modified'=>array(
