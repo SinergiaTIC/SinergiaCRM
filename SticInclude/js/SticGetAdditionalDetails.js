@@ -3,7 +3,7 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
     var url = 'index.php?to_pdf=1&module=Home&action=AdditionalDetailsRetrieve&bean=' + bean + '&id=' + id;
     //var title = '<div class="qtip-title-text">' + id + '</div>' + '<div class="qtip-title-buttons">' + '</div>';
     var body = '';
-    
+
     // Create an instance of qTip2 and configure it with the initial content.
     $(document).qtip({
       content: {
