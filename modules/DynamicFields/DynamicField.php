@@ -809,7 +809,6 @@ class DynamicField
             // STIC-Custom ART 20241203 - Height defined in iframe field not respected
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
             if($field->type == 'iframe' && ($field->ext4 != $fmd->ext4) || !isset($fmd->ext4)) {
-                $to_save['link_target'] = (isset($field->link_target) && is_numeric($field->link_target)) ? $field->link_target : '200';
                 $to_save['height'] = (isset($field->ext4) && is_numeric($field->ext4)) ? $field->ext4 : '200';
             }
             // END STIC-Custom
