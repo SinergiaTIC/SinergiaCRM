@@ -5107,7 +5107,7 @@ function convertReportDateTimeToDB(dateValue, timeValue) {
 $(document).ready(function(){
   $('button#searchbutton').on('click', function() {
       setTimeout(() => {
-          console.log($(this).parent('li').find('input#query_string').focus());
+          $(this).parent('li').find('input#query_string').focus();
       }, 200);
   });
 })
