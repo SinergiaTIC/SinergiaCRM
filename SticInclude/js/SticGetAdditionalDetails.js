@@ -37,7 +37,7 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
               }
         
               var titleDiv = contentDiv.find("h2").remove().html();
-              var tryContent = contentDiv.clone().find("h2").remove().end().html();   
+              var tryContent = contentDiv.clone().find("h2").remove().end().html();
               // Update qTip information
               var divTitle = '#qtip-' + api.id + '-title';
               $(divTitle).html(titleDiv);
