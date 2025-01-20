@@ -45,7 +45,7 @@ require_once('modules/DynamicFields/templates/Fields/TemplateURL.php');
 class TemplateIFrame extends TemplateURL
 {
     public $type='iframe';
-    
+
     public function get_html_edit()
     {
         $this->prepare();
@@ -60,14 +60,31 @@ class TemplateIFrame extends TemplateURL
     public function get_xtpl_detail()
     {
         $value = parent::get_xtpl_detail();
-        $value .= "BLAH BLAH";
-        return $value;
+        // STIC-Custom ART 20241203 - Height defined in iframe field not respected
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
+        // $value .= "BLAH BLAH";
+        // return $value;
+    
+        // Gets the height value from link_target or a default value
+        $height = !empty($this->link_target) ? $this->link_target : '200';
+    
+        // Returns an array with the required data
+        return [
+            'value' => $value,
+            'height' => $height,
+        ];
+        // END STIC-Custom
     }
     
-    public function get_field_def()
-    {
+    public function get_field_def() {
         $def = parent::get_field_def();
-        $def['height'] = !empty($this->height) ? $this->height : $this->ext4;
+        // STIC-Custom ART 20241203 - Height defined in iframe field not respected
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
+        // $def['height'] = !empty($this->height) ? $this->height : $this->ext4;
+
+        // Set the height from the vardefs with the link_target or use a default value to be picked up in Studio
+        $def['height'] = !empty($this->link_target) ? $this->link_target : '200';
+        // END STIC-Custom
         return $def;
     }
 }

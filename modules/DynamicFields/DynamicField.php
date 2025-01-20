@@ -176,24 +176,6 @@ class DynamicField
         while ($row = $this->db->fetchByAssoc($result, false)) {
             $field = get_widget($row['type']);
 
-            // STIC-Custom ART 20241203 - Height defined in iframe field not respected
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
-            if ($row["type"] == 'iframe' && isset($saveCache->name) && $saveCache->name == $row["name"]) {
-                // Check if the field is an iframe and matches the one being updated
-                if (isset($saveCache->ext4) && $saveCache->ext4 != $row["ext4"]) {
-                    // Update only if the new height (ext4) differs from the current value.
-                    $newHeight = intval($saveCache->ext4); // Ensure the height is a valid integer
-
-                    // Update the database with the new height for this field
-                    $updateQuery = "UPDATE fields_meta_data SET ext4 = '{$newHeight}' WHERE id = '{$row['id']}'";
-                    $this->db->query($updateQuery);
-    
-                    // Update the local $row variable with the new height
-                    $row["ext4"] = $newHeight;
-                }
-            }
-            // END STIC-Custom
-
             foreach ($row as $key => $value) {
                 $field->$key = $value;
             }
@@ -636,10 +618,7 @@ class DynamicField
             // (that will keep the original field definition). To do this, we've created a new function and will skip the original
             // code, that will only apply on field creation.
             $this->sticSaveExtendedAttributes($field, $fmd);
-            // STIC-Custom ART 20241203 - Height defined in iframe field not respected
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
-            $this->buildCache($this->module, $field);    
-            // END STIC-Custom
+            $this->buildCache($this->module);
             
             // STIC-Custom - There is a bug in SuiteCRM that requires the cache/themes to be manually rebuilt.
             // https://github.com/salesagility/SuiteCRM/issues/9119
@@ -830,7 +809,8 @@ class DynamicField
             // STIC-Custom ART 20241203 - Height defined in iframe field not respected
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
             if($field->type == 'iframe' && ($field->ext4 != $fmd->ext4) || !isset($fmd->ext4)) {
-                $to_save['ext4'] = (isset($field->ext4) && is_numeric($field->ext4)) ? $field->ext4 : '';
+                $to_save['link_target'] = (isset($field->link_target) && is_numeric($field->link_target)) ? $field->link_target : '200';
+                $to_save['height'] = (isset($field->ext4) && is_numeric($field->ext4)) ? $field->ext4 : '200';
             }
             // END STIC-Custom
         }
