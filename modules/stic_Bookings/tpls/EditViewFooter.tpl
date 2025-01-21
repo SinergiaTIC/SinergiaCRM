@@ -21,16 +21,49 @@
  *}
 {* This template is showed both in Bookings' ListView and Bookings Calendar reservations popups *}
 
-<h2>{$MOD.LBL_RESOURCES}</h2>
+<h2>{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">Reservar Centro</button>
+</h2>
+
+<div class="center_column">
+    <div id="resourceSearchFields">
+        <div id="selectedCentersContainer">
+            <label>Nombre del Centro:</label>
+            <div id="selectedCentersList"></div>
+        </div>
+        <br>
+
+        <label for="resourceType">Tipo de recurso:</label>
+        <select id="resourceType" name="resourceType"></select>
+
+        <label for="resourceStatus">Estado de recurso:</label>
+        <select id="resourceStatus" name="resourceStatus"></select>
+
+        <label for="resourceOffice">Oficina del recurso:</label>
+        <select id="resourceOffice" name="resourceOffice"></select>
+
+        <label for="resourceName">Nombre del recurso:</label>
+        <input type="text" id="resourceName" name="resourceName">
+        <br>
+
+        <label for="numberOfCenters">Número de Centros:</label>
+        <input type="number" id="numberOfCenters" name="numberOfCenters">
+        <br>
+
+        <button id="loadCenterResourcesButton" type="button" class="button">Cargar Plazas</button>
+        <br>
+
+        <label id="resourceCount"></label>
+    </div>
+</div>
+<br>
 <table id="resourceLine" class="resource-table">
     <tr>
-        <th class="resource_column resource_name">{$MOD.LBL_RESOURCES_NAME}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_CODE}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_STATUS}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_TYPE}</th>
-        <th class="resource_column">{$MOD.LBL_RESOURCES_COLOR}</th>
-        <th class="resource_column hidden-xs hidden-sm">{$MOD.LBL_RESOURCES_HOURLY_RATE}</th>
-        <th class="resource_column hidden-xs hidden-sm">{$MOD.LBL_RESOURCES_DAILY_RATE}</th>
+        {foreach from=$config_resource_fields key=field item=label}
+            <th class="resource_column {if $field eq 'name'}resource_name{/if}
+                {if $field eq 'hourly_rate' || $field eq 'daily_rate'}hidden-xs hidden-sm{/if}">
+                {$label}
+            </th>
+        {/foreach}
         <th class="resource_column"></th>
     </tr>
 </table>

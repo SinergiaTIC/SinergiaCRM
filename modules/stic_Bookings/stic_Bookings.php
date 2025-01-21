@@ -118,7 +118,7 @@ class stic_Bookings extends Basic
         // Save the bean
         parent::save($check_notify);
 
-        // If the save function is launched by save action in editview, relationships 
+        // If the save function is launched by save action in editview, relationships
         // with resources must be managed. In other cases (inline edit, etc.) will do nothing.
         if ($_REQUEST['action'] == 'Save') {
             // Remove previous relationships
@@ -143,7 +143,11 @@ class stic_Bookings extends Basic
 
         // If return module is Booking's Calendar, redirect there
         if ($_REQUEST['return_module'] == 'stic_Bookings_Calendar') {
-            SugarApplication::redirect("index.php?module=stic_Bookings_Calendar&action=index&start_date=".explode(' ', $this->start_date)[0]);
+            SugarApplication::redirect("index.php?module=stic_Bookings_Calendar&action=index&start_date=" . explode(' ', $this->start_date)[0]);
+        }
+        // If return module is Booking's Places Calendar, redirect there
+        if ($_REQUEST['return_module'] == 'stic_Bookings_Places_Calendar') {
+            SugarApplication::redirect("index.php?module=stic_Bookings_Places_Calendar&action=index&start_date=" . explode(' ', $this->start_date)[0]);
         }
 
     }
