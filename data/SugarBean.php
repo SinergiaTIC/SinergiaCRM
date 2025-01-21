@@ -2529,23 +2529,17 @@ class SugarBean
                     $type .= $def['dbType'];
                 }
 
-                // Trim name & varchar type values on save when the value is not null
-                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
-                    $this->$key = trim($this->$key);
-                }
-
-                // Trim name & varchar type values on save when the value is not null
-                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
-                    $this->$key = trim($this->$key);
-                }
-
                 // STIC Custom - 20221213 - JCH - Trim name & varchar type values on save when the value is not null
                 // STIC#902
                 // STIC#982
-                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
+                // STIC-Custom 20241218 EPS - Avoid using property "key" if it is not setted
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/470
+                // if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
+                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !empty($this->$key)) {
+                // END STIC-Custom (EPS 20241218)
                     $this->$key = trim($this->$key);
                 }
-                // END STIC
+
                 if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml')) {
                     $this->$key = purify_html($this->$key, ['HTML.ForbiddenElements' => ['iframe' => true]]);
                 // STIC-Custom 20210326 jchg: Avoid cleaning html in email templates body to preserve content pasted from external sources
@@ -2889,6 +2883,12 @@ class SugarBean
         // the parent record (record from which the subpanel was opened) since they might be different
         // STIC#849
         if (!empty($new_rel_id) 
+            // STIC-Custom 20231021 PCS - Allow parent_id is not equal to the ID of the parent record needed in the activity subpanel
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
+            // is_null function is used instead of empty because, in some cases, an empty string ('') was received, and in such cases, empty is not suitable. 
+            // For this same reason, the use of the empty function is retained in the following condition to evaluate new_rel_link, as once it is not null, it can still be considered empty or not.
+            && (!is_null($this->{$new_rel_link}) || (is_null($this->{$new_rel_link}) &&  $rel_link != $new_rel_link))
+            //END STIC_Custom
             && ( // Relationships with an ID in the _ida field of the relationship different from the parent record
                  (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})
                  // Special relationships like member_accounts where the parent_id is not equal to the ID of the parent record
