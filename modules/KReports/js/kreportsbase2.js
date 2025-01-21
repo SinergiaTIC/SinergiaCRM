@@ -664,7 +664,7 @@ var aL = function (e) {
                                     // More info at https://cdn.sencha.com/ext/gpl/4.2.1/docs/#!/api/Ext.data.Store
                                     // K.kreports.whereOperators.ay.getAt(K.kreports.whereOperators.ay.find("value", e.value)).get("text")
                                     K.kreports.whereOperators.ay.getAt(K.kreports.whereOperators.ay.findExact("value", e.value)).get("text")
-                                    // ENS STIC-Custom
+                                    // END STIC-Custom
                                 );
                                 break;
                         }
