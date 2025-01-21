@@ -53,16 +53,16 @@
         
         <table  style='width:40%; margin:1%; padding:5%;'>
             <tr>
-                <th style='width:30%;'>
+                <th style='width:40%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_FIELD}
                 </th>
-                <th>
+                <th style='width:25%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_OPERADOR}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></h3>
                 </th>
-                <th>
+                <th style='width:15%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_HORAS}
                 </th>
-                <th>
+                <th style='width:15%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_MINUTES}
                 </th>
            </tr>        
