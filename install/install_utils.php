@@ -1731,11 +1731,7 @@ function langPackFinalMove($file)
 
 function getLicenseDisplay($type, $manifest, $zipFile, $next_step, $license_file, $clean_file)
 {
-    // STIC Custom 20241113 JBL - Fix static calls to non static methods
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-    // return PackageManagerDisplay::getLicenseDisplay($license_file, 'install.php', $next_step, $zipFile, $type, $manifest, $clean_file);
-    return (new PackageManagerDisplay())->getLicenseDisplay($license_file, 'install.php', $next_step, $zipFile, $type, $manifest, $clean_file);
-    // End STIC Custom
+    return PackageManagerDisplay::getLicenseDisplay($license_file, 'install.php', $next_step, $zipFile, $type, $manifest, $clean_file);
 }
 
 

@@ -1202,8 +1202,8 @@ class ListView
                 // if (!empty($value) && $name != 'sort_order' //&& $name != ListView::getSessionVariableName($html_varName,"ORDER_BY")
                 //         && $name != ListView::getSessionVariableName($html_varName, "offset")
                 //         /*&& substr_count($name, "ORDER_BY")==0*/ && !in_array($name, $blockVariables)) {
-                if (!empty($value) && $name != 'sort_order' //&& $name != ListView::getSessionVariableName($html_varName,"ORDER_BY")
-                        && $name != (new ListView())->getSessionVariableName($html_varName, "offset")
+                if (!empty($value) && $name != 'sort_order' //&& $name != $this->getSessionVariableName($html_varName,"ORDER_BY")
+                        && $name != $this->getSessionVariableName($html_varName, "offset")
                         /*&& substr_count($name, "ORDER_BY")==0*/ && !in_array($name, $blockVariables)) {
                 // END STIC Custom
                     if (is_array($value)) {
@@ -1244,7 +1244,7 @@ class ListView
 
         // STIC Custom 20241113 JBL - Remove static calls to non static methods
         // $baseurl .= "&".ListView::getSessionVariableName($html_varName, "offset")."=";
-        $baseurl .= "&".(new ListView())->getSessionVariableName($html_varName, "offset")."=";
+        $baseurl .= "&".$this->getSessionVariableName($html_varName, "offset")."=";
         // END STIC
         $cache[$html_varName] = $baseurl;
         return $baseurl;
