@@ -78,6 +78,7 @@ class stic_MessagesManUtils {
             $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ , $row['id']);
             self::sendMessage($row);
         }
+        return true; // Everything OK
     }
 
     protected static function sendMessage($row) {
