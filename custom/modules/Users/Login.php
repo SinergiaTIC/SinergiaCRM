@@ -236,41 +236,71 @@ if (
 $google_signin_clientid = $sugar_config['google_signin_clientid'];
 
 echo $AAA = <<<EOQ
-	<script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleSignIn()"></script>
     <script>
-        $(document).ready(function(){
-			var googleSignInClientId = '$google_signin_clientid';
-			if(googleSignInClientId != '') {
-				$('head').append('<meta name="google-signin-client_id" content="'+googleSignInClientId+'" />');
-				$('form').find('input[type="submit"]').after('<div>OR</div><div class="g-signin2" data-width="370" data-height="40" data-longtitle="true" data-onsuccess="onSignIn"></div>');
-			}
-        });
-		function onSignIn(googleUser) {
-			var profile = googleUser.getBasicProfile();
-			var id_token = googleUser.getAuthResponse().id_token;
-			$.ajax({
-				type: "POST",
-				url: "https://www.googleapis.com/oauth2/v3/tokeninfo",
-				contentType: "application/x-www-form-urlencoded",
-				data: {"id_token": id_token}
-			}).success(function(data) {
-				if(data.email.trim() != '') {
-					$.ajax({
-						type: "POST",
-						url: "index.php?entryPoint=PostGoogleSignIn",
-						data: { "user_email": data.email}
-					}).success(function(data){
-						var result = JSON.parse(data);
-						if(result.code) {
-							window.location.href = result.message;
-						} else {
-							alert(result.message);
-							 location.reload(true);
-						}
-					});
-				}
-			});
-		}
+        function initGoogleSignIn() {
+            var googleSignInClientId = '$google_signin_clientid'; // Reemplaza con tu Client ID.
+            if (googleSignInClientId !== '') {
+                // Agrega el Client ID como meta tag
+                $('head').append('<meta name="google-signin-client_id" content="' + googleSignInClientId + '" />');
+
+                // Agrega el botón de Google Sign-In dinámicamente
+                $('form').find('input[type="submit"]').after('<div>OR</div><div id="g_id_onload"></div><div id="buttonDiv"></div>');
+
+                // Inicializa el botón de Google Sign-In
+                google.accounts.id.initialize({
+                    client_id: googleSignInClientId,
+                    callback: handleCredentialResponse,
+                });
+
+                // Renderiza el botón
+                google.accounts.id.renderButton(
+                    document.getElementById('buttonDiv'),
+                    { theme: 'outline', size: 'large', text: 'signin_with', shape: 'pill' } // Configuración del botón
+                );
+
+                // Opción para mostrar automáticamente el cuadro de inicio de sesión
+                google.accounts.id.prompt();
+            }
+        }
+
+        // Manejo de la respuesta del inicio de sesión
+        function handleCredentialResponse(response) {
+            var id_token = response.credential;
+
+            // Verifica el token con Google
+            $.ajax({
+                type: "POST",
+                url: "https://www.googleapis.com/oauth2/v3/tokeninfo",
+                contentType: "application/x-www-form-urlencoded",
+                data: { "id_token": id_token },
+            })
+                .done(function (data) {
+                    if (data.email && data.email.trim() !== '') {
+                        // Envía la información al backend para procesarla
+                        $.ajax({
+                            type: "POST",
+                            url: "index.php?entryPoint=PostGoogleSignIn",
+                            data: { "user_email": data.email },
+                        })
+                            .done(function (response) {
+                                var result = JSON.parse(response);
+                                if (result.code) {
+                                    window.location.href = result.message; // Redirige si el login es exitoso
+                                } else {
+                                    alert(result.message);
+                                    location.reload(true); // Recarga en caso de error
+                                }
+                            })
+                            .fail(function () {
+                                alert("Error al procesar la solicitud en el servidor.");
+                            });
+                    }
+                })
+                .fail(function () {
+                    alert("Error al verificar el token con Google.");
+                });
+        }
     </script>
 EOQ;
 if (file_exists('custom/themes/' . SugarThemeRegistry::current() . '/login.tpl')) {
