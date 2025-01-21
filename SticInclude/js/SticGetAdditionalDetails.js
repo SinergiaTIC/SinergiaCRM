@@ -54,11 +54,11 @@ SUGAR.util.getAdditionalDetails = function(bean, id) {
       },
       position: {
         my: 'top right',
-        at: 'top left',
+        at: 'bottom left',
         target: $('#adspan_' + id + ' span'),
         viewport: $(window),
         adjust: {
-          method: 'shift flip',
+          method: 'flip shift',
           resize: true
         }
       },
