@@ -46,7 +46,7 @@
     
     <h3>{$MOD.LBL_MASS_UPDATE_TEXT}</h3>
     <br />
-    <form id="MassUpdateDates" name="MassUpdateDates" method="POST">
+    <form id="MassUpdateDates" name="MassUpdateDates" method="POST" onsubmit="return checkRequiredOperator();">
 		<input type="hidden" id="module" name="module" value="stic_Work_Calendar">
 		<input type="hidden" id="action" name="action" value="runMassUpdateDates">
 		<input type="hidden" id="selectedIDs" name="selectedIDs" value="{$selectedIDs}">
@@ -57,7 +57,7 @@
                     {$MOD.LBL_MASS_UPDATE_DATES_FIELD}
                 </th>
                 <th>
-                    {$MOD.LBL_MASS_UPDATE_DATES_OPERADOR}
+                    {$MOD.LBL_MASS_UPDATE_DATES_OPERADOR}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></h3>
                 </th>
                 <th>
                     {$MOD.LBL_MASS_UPDATE_DATES_HORAS}
@@ -276,7 +276,13 @@
                         <option label="59" value="59">59</option>
                     </select>
                 </td>
-            </tr>            
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td id='errorMsg' colspan="3">
+                </td>
+           </tr>               
         </table>
         <br /><br />
 		<div id="cal-edit-buttons" class="ft">
@@ -287,3 +293,24 @@
 		</div>        
     </form>
 </div>
+
+<script>
+
+    const LBL_OPERATOR_REQUIRED = "{$MOD.LBL_OPERATOR_REQUIRED}";
+
+    {literal}
+        function checkRequiredOperator() {
+            const startDateOperatorValue = document.querySelector('select[name="start_date_operator"]').value;
+            const endDateOperatorValue = document.querySelector('select[name="end_date_operator"]').value;
+
+            if (!startDateOperatorValue && !endDateOperatorValue) {
+                const errorTd = document.getElementById('errorMsg');
+                errorTd.textContent = LBL_OPERATOR_REQUIRED;
+                errorTd.style.color = 'red';
+                return false;
+            }
+            return true;
+        }
+    {/literal}
+
+</script>
