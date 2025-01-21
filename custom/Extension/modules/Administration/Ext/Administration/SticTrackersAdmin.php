@@ -31,8 +31,8 @@ $admin_option_defs['Administration']['trackers'] = [
 ];
 
 // Search inside the arrays of the admin_group_header for the section in which we want to add our new subsection, also getting its key
-foreach ($admin_group_header as $key => $section) {
-    if ($section[0] === 'LBL_ADMIN_TOOLS_TITLE' && isset($section[3])) {
+foreach (array_keys($admin_group_header) as $key) {
+    if ($admin_group_header[$key][0] === 'LBL_ADMIN_TOOLS_TITLE' && isset($admin_group_header[$key][3]['Administration'])) {
         // We add the subsection to the end of the defined array
         $admin_group_header[$key][3]['Administration'] = array_merge($admin_group_header[$key][3]['Administration'], $admin_option_defs['Administration']);
         break;
