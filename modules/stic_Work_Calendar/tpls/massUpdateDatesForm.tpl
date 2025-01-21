@@ -53,7 +53,7 @@
         
         <table  style='width:40%; margin:1%; padding:5%;'>
             <tr>
-                <th>
+                <th style='width:30%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_FIELD}
                 </th>
                 <th>
