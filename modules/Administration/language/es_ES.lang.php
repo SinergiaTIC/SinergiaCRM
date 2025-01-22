@@ -175,7 +175,9 @@ $mod_strings = array(
     'LBL_CONFIGURE_SETTINGS_TITLE' => 'Configuración',
     'LBL_CONFIGURE_SETTINGS' => 'Configuración del sistema',
     'LBL_CONFIGURE_TABS_AND_SUBPANELS' => 'Seleccionar Pestañas de Módulos y Subpaneles',
-    'LBL_COULD_NOT_CONNECT' => 'Error: No fue posible la conexión al servidor de SuiteCRM. <br />        Por favor, compruebe la Configuración de Proxy en el panel de administración <a href="index.php?module=Configurator&action=EditView">Configuración del Sistema</a>. <br />        Último intento de conexión en',
+    'LBL_COULD_NOT_CONNECT' => 'Error: No fue posible la conexión al servidor de SuiteCRM.
+        Compruebe la Configuración de Proxy en la <a href="index.php?module=Configurator&action=EditView">Configuración del Sistema</a> en el panel de administración.
+        Último intento de conexión a las ',
     'LBL_CREATE_RESOTRE_FILE' => 'El archivo restoreExpand.sql ha sido creado con éxito.  Por favor, utilice este archivo para echar atrás los cambios a las columnas.',
     'LBL_CURRENCY' => 'Configuración de monedas y tipos de cambio',
     'LBL_CONNECTOR_SETTINGS' => 'Conectores',
@@ -504,6 +506,7 @@ $mod_strings = array(
     'LBL_REPAIRXSS_INSTRUCTIONS' => 'Seleccione un módulo para quitar potenciales cadenas XSS.  Seleccione "Todo" para revisar todos los módulos.<br>Presione ejecutar para iniciar el proceso de detección y eliminación.',
     'LBL_REPAIRXSS_REPAIRED' => 'Objetos reparados',
     'LBL_REPAIRXSS_TITLE' => 'Quita vulnerabilidades XSS de la Base de Datos',
+    
     'LBL_RESTORE_BUTTON_LABEL' => 'Restaurar',
     'LBL_RETURN' => 'Volver',
     'LBL_SEND_STAT' => '<b>Enviar Estadísticas de Uso Anónimas</b> - Si está seleccionado, SuiteCRM enviará estadísticas de forma anónima sobre su actualización a SuiteCRM.com cada vez que su sistema compruebe la existencia de actualizaciones. La información nos ayudará a entender como se utiliza la aplicación y mejorar el producto.',
@@ -539,7 +542,7 @@ $mod_strings = array(
     'LBL_HISTORY_CONTACTS_EMAILS' => 'Subpanel de Historial',
     'LBL_HISTORY_CONTACTS_EMAILS_DESC' => 'Activar o desactivar mensajes de contactos en el historial',
 
-    'LBL_USERS_DESC' => 'Cree, edite, active y desactive usuarios en SuiteCRM. Cree y gestione equipos y roles, incluyendo el aceso a nivel de módulo y campo.',
+    'LBL_USERS_DESC' => 'Cree, edite, active y desactive usuarios en SuiteCRM.',
 
 
     'LBL_UW_BTN_BACK_TO_MOD_LOADER' => 'Volver a Cargador de Módulos',
@@ -751,7 +754,6 @@ $mod_strings = array(
     'LBL_SAML_LOGIN_URL_DESC' => 'Introducir URL de Inicio de Sesión',
     'LBL_SAML_LOGOUT_URL_DESC' => 'Ingrese URL de cierre de sesión',
 
-    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Seleccione el módulo(s) sobre los que usuarios podrán realizar la búsqueda usando la búsqueda global.',
     'LBL_SELECT_MODULES' => 'Avanzado',
     'LBL_SELECT_MODULES_TITLE' => 'Arrastrar y soltar para seleccionar los módulos y para cambiar el orden de presentación. Realizar una búsqueda para aplicar los cambios.',
     'LBL_LANGUAGE_PACKS' => 'Paquetes de Lenguaje' /*for 508 compliance fix*/,
@@ -830,7 +832,8 @@ $mod_strings = array(
     'LBL_SUGGESTION_POPUP_FROM' => 'Degradado de Sugerencia & Ventana Emergente (de):',
     'LBL_SUGGESTION_POPUP_TO' => 'Degradado de Sugerencia & Ventana Emergente (a):',
 
-    'LBL_SALESAGILITY_ADMIN' => 'OpenAdmin Avanzado',
+    'LBL_MODULE_ADMIN' => 'Module Settings',
+    'LBL_MODULE_ADMIN_HEADER_DESC' => 'Configure Module specifics and settings',
     'LBL_AOP_ADMIN_MANAGE_AOP' => 'Configuración de Advanced OpenPortal',
     'LBL_AOP_ENABLE_AOP' => 'Habilitar AOP',
     'LBL_AOP_ENABLE_PORTAL' => 'Habilitar Portal',
@@ -842,17 +845,13 @@ $mod_strings = array(
     'LBL_AOP_ASSIGNMENT_USER' => 'Usuario de Distribución',
     'LBL_AOP_ASSIGNMENT_OPTIONS' => 'Blanco de Distribución',
 
-    'LBL_AOP_ADD_DELIMITER' => '¿Añadir un delimitador de respuesta en correos electrónicos?', // PR 5721
-    'LBL_AOP_EMAIL_REPLY_ADD_DELIMITER' => 'Delimitador de respuesta de correo electrónico', // PR 5721
-    'LBL_AOP_USE_DELIMITER_CASE_CLOSURE' => '¿Utilizar delimitador en el correo de cierre de caso?', // PR 5721
-    'LBL_AOP_USE_DEF_CONF' => 'Utilizar la configuración predeterminada', // PR 5721
     'LBL_AOP_EMAIL_SETTINGS' => 'Configuración de correo',
     'LBL_AOP_CONTACT_EMAIL_TEMPLATE' => 'Plantilla de correo de contacto',
     'LBL_AOP_USER_EMAIL_TEMPLATE' => 'Plantilla de correo de usuario',
     'LBL_AOP_CASE_CREATION_EMAIL_TEMPLATE' => 'Plantilla de caso creado',
     'LBL_AOP_CASE_CLOSURE_EMAIL_TEMPLATE' => 'Plantilla de caso cerrado',
     'LBL_AOP_JOOMLA_ACCOUNT_CREATION_EMAIL_TEMPLATE' => 'Plantilla de creación de cuenta del portal de soporte de Joomla',
-    'LBL_AOP_MEETING_RESPONSE_URL' => 'URL de respuesta para la reunión', // PR 3394
+
     'LBL_AOP_BUSINESS_HOURS_SETTINGS' => 'Horarios',
     'LBL_AOP_BUSINESS_HOURS_DESC' => "Restringir el flujo de trabajo para lanzar solo en ciertos días y horas",
     'LBL_SUPPORT_FROM_ADDRESS' => 'Dirección Remitente de Soporte',
@@ -867,10 +866,6 @@ $mod_strings = array(
     'LBL_AOP_ADD_STATUS' => 'Añadir',
     'LBL_AOP_REMOVE_STATUS' => 'Quitar',
 
-    'LBL_AOD_ADMIN_MANAGE_AOD' => 'Configuración de Advanced OpenDiscovery',
-    'LBL_AOD_ENABLE' => 'Habiltar AOD',
-    'LBL_AOD_SETTINGS' => 'Ajustes AOD',
-
     'LBL_AOS_ADMIN_CONTRACT_SETTINGS' => 'Configuración de Contratos',
     'LBL_AOS_ADMIN_CONTRACT_RENEWAL_REMINDER' => 'Período para el Recordatorio de Renovación',
     'LBL_AOS_ADMIN_MANAGE_AOS' => 'Configuración de Advanced OpenSales',
@@ -882,7 +877,6 @@ $mod_strings = array(
     'LBL_AOS_ADMIN_ENABLE_LINE_ITEM_GROUPS' => 'Habilitar Grupos de Items de Línea',
     'LBL_AOS_ADMIN_ENABLE_LINE_ITEM_TOTAL_TAX' => 'Agregar Impuesto al Total de Linea',
     'LBL_AOS_SETTINGS' => 'Ajustes AOS',
-    'LBL_AOS_PRODUCTS' => 'Productos AOS',
     'LBL_AOS_DAYS' => 'días',
     'LBL_CHANGE_SETTINGS' => 'Cambiar ajustes de Advanced OpenSales',
     'LBL_CHANGE_SETTINGS_AOD' => 'Cambiar ajustes para DescubrimientoAbierto Avanzado',
@@ -943,6 +937,7 @@ $mod_strings = array(
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION' => 'Prueba de conexión',
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION_SUCCESS' => 'Conexión exitosa.',
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION_FAIL' => 'Fallo de conexión.',
+    'LBL_SETUP_ELASTICSEARCH' => 'Please enable ElasticSearch before repairing Indexes',
     'LBL_ELASTIC_SEARCH_TEST_CONNECTION_ERROR' => 'No se pudo realizar una petición de ping.',
     'LBL_ELASTIC_SEARCH_SERVER' => 'Servidor',
     'LBL_ELASTIC_SEARCH_HOST' => 'Host',
@@ -968,37 +963,67 @@ $mod_strings = array(
     'LBL_SEARCH_ENGINE' => 'Motor de búsqueda',
     'LBL_SEARCH_ENGINE_HELP' => 'Configurar el motor de búsqueda predeterminado utilizado por el entorno de la búsqueda.',
     'LBL_SEARCH_ENGINE_TOOLTIP' => 'Seleccione un motor de búsqueda para la búsqueda global.',
+    'LBL_SEARCH_GENERAL' => 'General',
 
     'LBL_SEARCH_MODULES' => 'Módulos de búsqueda',
     'LBL_SEARCH_MODULES_HELP' => 'Seleccione el módulo(s) sobre los que usuarios podrán realizar la búsqueda usando la búsqueda global.',
 
     // Search Engines Translations
-    'LBL_LEGACY_SEARCH_ENGINES' => 'Búsqueda Obsoleta',
     'LBL_SEARCH_WRAPPER_ENGINES' => 'Buscadores (nuevos)',
     'LBL_BASIC_SEARCH_ENGINE' => 'Búsqueda básica',
     'LBL_BASIC_AND_AOD_ENGINE' => 'Búsqueda básica + avanzada',
     'LBL_ELASTIC_SEARCH_ENGINE' => 'Motor búsqueda elástica',
     'LBL_SIMPLE_SQL_SEARCH_ENGINE' => 'Motor de búsqueda SQL simple',
 
+    // SearchWrapper Settings
+    'LBL_PDF_HEADER' => 'PDF Settings',
+    'LBL_CHANGE_PDF_SETTINGS' => 'Change PDF Settings',
+    'LBL_PDF_HEADER_DESC' => 'Manage your PDF preferences',
+    'LBL_PDF_OPTIONS' => 'PDF Engine',
+    'LBL_PDF_OPTIONS_HELP' => 'Select the PDF engine that users will be able to use.',
+    'LBL_PDF_INTERFACE' => 'PDF Interface',
+
+    // PDF Engines Translations
+    'LBL_PDF_WRAPPER_ENGINES' => 'PDF Engines',
+    'LBL_MPDF_ENGINE' => 'MPDF Engine',
+
     // Ajax Submit
-    'LBL_AJAX_SUBMIT_FAIL' => 'Se ha producido un error al guardar los ajustes.',
-    'LBL_SHAREDRULES_SETTINGS' => "Reglas de seguridad compartidas", // PR 6143
-    'LBL_SHAREDRULES_SETTINGS_DESC' => "Gestionar las reglas de seguridad compartidas", // PR 6143
+    'LBL_AJAX_SUBMIT_FAIL' => 'An error has occurred while saving the settings.',
 
-    'MSG_CACHE_CLEANED' => 'La caché ahora está limpia.', // PR 3007
-    'MSG_NOT_CACHE_CLEANED' => 'No se pudo limpiar la caché', // PR 3007
-    'LBL_USER_LOCKOUT' => 'Bloqueo de usuario', // PR 2897
-    'LBL_MAX_FAILED_LOGINS' => 'Cantidad Máxima de inicios de sesión fallidos', // PR 2897
-    'LBL_MAX_FAILED_LOGINS_HELP' => 'El número de inicios de sesión fallidos que tendrá un usuario antes de que su cuenta quede bloqueada.', // PR 2897
-    'LBL_AUTO_UNLOCK_TIME' => 'Tiempo de desbloqueo automático del usuario', // PR 2897
-    'LBL_AUTO_UNLOCK_TIME_HELP' => 'El número de minutos necesarios para que una cuenta de usuario se desbloquee automáticamente.', // PR 2897
-    'LBL_AUTO_UNLOCK_TIME_UNITS' => 'minutos', // PR 2897
-    'ERR_MAX_FAILED_LOGINS' => 'Especifique un valor válido para el número máximo de inicios de sesión fallidos', // PR 2897
-    'ERR_AUTOMATIC_UNLOCK_TIME' => 'Especifique un valor válido para el tiempo de desbloqueo automático', // PR 2897
-    'LBL_ENABLE_MAX_FAILED_LOGINS' => 'Bloquear usuarios después de varios inicios de sesión fallidos', // PR 2897
-    'LBL_AUTO_UNLOCK' => 'Desbloquea automáticamente los usuarios bloqueados', // PR 2897
-    'LBL_AUTO_UNLOCK_HELP' => 'Desbloqueo de usuarios bloqueados después de un período configurable de tiempo', // PR 2897
+    'LBL_ADMIN_TOOLS_TITLE' => 'Admin Tools',
+    'LBL_ADMIN_TOOLS_HEADER_DESC' => 'Repair, upgrade and run diagnosis on your SuiteCRM instance',
+    'LBL_WORKFLOW_MANAGER' => 'Workflow Manager',
+    'LBL_WORKFLOW_MANAGER_DESC' => 'Manage, Add, delete or change Workflow processes',
 
-    'LBL_SHAREDRULES_SETTINGS' => "Reglas de seguridad compartidas", // PR 6143
-    'LBL_SHAREDRULES_SETTINGS_DESC' => "Gestionar las reglas de seguridad compartidas", // PR 6143
+
+    'LBL_WARNING' => 'Warning',
+    'LBL_ERROR' => 'Error',
+    'LBL_SUBMIT' => 'Submit',
+    'LBL_REPAIR_UTF_ENCODING' => 'Repair utf encoding',
+    'LBL_REPAIR_UTF_ENCODING_DESC' => 'Repair records with wrongly encoded utf characters',
+    'LBL_REPAIR_UTF_ENCODING_DATA_WARNING' => 'The data on your tables is going to be updated.',
+    'LBL_REPAIR_UTF_ENCODING_BACKUP_WARNING' => 'Please make sure to backup your database before you run this action.',
+    'LBL_REPAIR_UTF_ENCODING_SYNC_WARNING' => 'By default this action will add a job to the job queue. It will normalize records in batches. This requires cron to be configured.',
+    'LBL_REPAIR_UTF_ENCODING_ASYNC_WARNING' => 'Running in asynchronous mode. A job should have been added to the job queue. It will normalize records in batches. This requires cron to be configured.',
+    'LBL_REPAIR_UTF_ENCODING_ASYNC_PROGRESS_CHECK' => "For progress information, please check the data on the job_queue table entry with name 'repair utf encoding' ",
+    'LBL_REPAIR_UTF_ENCODING_SYNC_PROGRESS_CHECK' => "Running in synchronous mode. This action will take a while. For progress information, please check SuiteCRM logs. Check logs with '[utf-normalize]'",
+    'LBL_KEEP_TRACKING_TABLES' => 'Keep Tracking tables',
+    'LBL_REPAIR_FROM_DATE' => 'Repair from',
+    'LBL_REPAIR_UTF_ENCODING_REPAIR_FROM_INVALID' => 'Provided \'Repair from\' value is not valid',
+    'LBL_SYNC_RUN' => 'Run Repair Synchronously?',
+    'LBL_SYNC_RUNNING' => 'Running in sync mode',
+    'LBL_SYNC_RUNNING_INFORMATION_OUTPUT' => 'Do not move away from this page/view. Result information will be displayed.',
+    'LBL_SYNC_RUNNING_INFORMATION_LOGS' => "You can also check SuiteCRM logs for more information. Check logs with '[utf-normalize]'",
+    'LBL_SYNC_LONG_EXECUTION_WARNING' => 'This action will take a while.',
+    'LBL_SYNC_RUN_DESC' => 'Check to run action in synchronous mode. This action will take a while. Please check SuiteCRM logs for progress information. Check logs with \'[utf-normalize]\'',
+    'LBL_NORMALIZE_SUCCESS' => 'Normalize records successfully executed',
+    'LBL_NORMALIZE_FAILURE' => 'Error while running normalize records',
+    'LBL_EXECUTION_STATUS' => 'Execution Status',
+    'LBL_EXECUTION_MODE' => 'Execution Mode',
+    'LBL_IN_PROGRESS' => 'In Progress',
+    'LBL_REPAIRED' => 'Repaired',
+    'LBL_SYNCHRONOUS' => 'Synchronous',
+    'LBL_ASYNCHRONOUS' => 'Asynchronous',
+    'LBL_OUTPUT' => 'OUTPUT',
+    'LBL_RESULT' => 'Result',
 );
