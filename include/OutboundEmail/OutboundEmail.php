@@ -350,7 +350,7 @@ class OutboundEmail
             $mailer = "type = 'system'";
         } // if
 
-        $q = "SELECT id FROM outbound_email WHERE {$mailer}";
+        $q = "SELECT id FROM outbound_email WHERE {$mailer} AND deleted = 0";
         $r = $this->db->query($q);
         $a = $this->db->fetchByAssoc($r);
 
