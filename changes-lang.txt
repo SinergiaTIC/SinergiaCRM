@@ -1,0 +1,5 @@
+custom/Extension/modules/Studio/Ext/Language/es_ES.SticLang.php - OK
+custom/Extension/application/Ext/Language/es_ES.SticLang.php - OK
+custom/Extension/modules/Administration/Ext/Language/es_ES.SticLang.php - OK
+custom/Extension/modules/Home/Ext/Language/es_ES.SticLang.php - OK
+modules/stic_Remittances/language/es_ES.lang.php
