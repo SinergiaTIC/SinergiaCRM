@@ -156,6 +156,28 @@ class ExternalReporting
 
         $db = DBManagerFactory::getInstance();
 
+        // Check number of non-admin users enabled
+        $normalUsersEnabled = $db->query("SELECT 
+                                            distinct u.id
+                                        FROM users u 
+                                        INNER JOIN users_cstm uc ON uc.id_c = u.id
+                                            WHERE 
+                                                u.is_admin = 0
+                                                AND u.deleted = 0
+                                                AND u.status = 'Active'
+                                                AND uc.sda_allowed_c=1;"
+                                         );
+        // If the number of non-admin users enabled is greater than the limit allowed, the operation is aborted  
+        // to protect the system from possible performance problems   
+        if(!empty($normalUsersEnabled) && is_object($normalUsersEnabled) && $normalUsersEnabled->num_rows > $this->maxNonAdminUsers){
+            $this->info .= "[FATAL: Is not possible to enable more than {$this->maxNonAdminUsers} non-admin users. There is a total of {$normalUsersEnabled->num_rows} non-admin users enabled.]";
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Number of non-admin users enabled is greater than the limit allowed. Is not possible to enable more than {$this->maxNonAdminUsers} non-admin users. There is a total of {$normalUsersEnabled->num_rows} non-admin users enabled.');                
+            return $this->info;
+        }
+
+
+
+
         // Before create any view, delete previous old views
         $this->deleteOldViews();
 
@@ -1289,39 +1311,35 @@ class ExternalReporting
                                   UNION SELECT 'EDA_ADMIN'
                                   ;";
         // 3) eda_def_users_groups
-        $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS
-                            -- Normal users are assigned to their own security groups.
-                            SELECT * FROM (
-                                -- Select 1: Regular users with $this->maxNonAdminUsers LIMIT
-                                SELECT
+        $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS                           
+                                -- Select 1: Regular users
+                            	SELECT
                                     user_name,
                                     CONCAT('SCRM_', s.name) as name
-                                FROM (
-                                    SELECT DISTINCT u.id, u.user_name
-                                    FROM users u
-                                    JOIN users_cstm uc ON uc.id_c = u.id
-                                    WHERE u.is_admin = 0
-                                        AND u.deleted = 0
-                                        AND uc.sda_allowed_c = 1
-                                        AND u.status = 'Active'
-                                    LIMIT $this->maxNonAdminUsers
-                                ) AS limited_users
-                                JOIN securitygroups_users su ON limited_users.id = su.user_id
+                                FROM
+                                    users u
+                                JOIN users_cstm uc ON uc.id_c = u.id
+                                JOIN securitygroups_users su ON u.id = su.user_id
                                 JOIN securitygroups s ON s.id = su.securitygroup_id
-                                WHERE su.deleted = 0
-                                    AND s.deleted = 0
-                                ) AS limited_users
-                                -- Select 2: Administrator users should always belong to the EDA_ADMIN group.
-                                UNION
-                                SELECT
+                                WHERE
+                                    u.is_admin = 0
+                                    AND u.deleted = 0
+                                    AND su.deleted=0
+                                    AND s.deleted=0
+                                    AND uc.sda_allowed_c = 1
+                                    AND u.status = 'Active'
+                                    -- Select 2: Administrator users should always belong to the EDA_ADMIN group.
+                            UNION SELECT
                                     user_name,
                                     'EDA_ADMIN'
                                 FROM
                                     users u
+                                JOIN users_cstm uc ON uc.id_c = u.id
                                 WHERE
                                     u.is_admin = 1
                                     AND u.deleted = 0
-                                    AND u.status='Active';";
+                                    AND u.status = 'Active'
+                                AND uc.sda_allowed_c =1;";
 
         // 4) eda_def_security_group_records
 
@@ -1754,8 +1772,7 @@ class ExternalReporting
                      FROM users
                      JOIN users_cstm ON users.id = users_cstm.id_c
                      WHERE status='Active' AND deleted=0
-                     AND sda_allowed_c=1 AND is_admin=0
-                     LIMIT $this->maxNonAdminUsers ";
+                     AND sda_allowed_c=1 AND is_admin=0";
 
         $nonAdminUsers = $db->query($nonAdminQuery);
         $userQueries = [$nonAdminUsers];
@@ -1844,7 +1861,7 @@ class ExternalReporting
         $endTime = microtime(true);
         $totalProcessingTime = round($endTime - $startTime, 4);
 
-        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Completed ACL processing for <=' . $maxNonAdminUsers . ' users in ' . $totalProcessingTime . ' seconds');
+        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': Completed ACL processing for users in ' . $totalProcessingTime . ' seconds');
     }
 
     /**
