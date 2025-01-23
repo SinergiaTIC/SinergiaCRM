@@ -1293,7 +1293,7 @@ class ExternalReporting
                             -- Normal users are assigned to their own security groups.
                             SELECT * FROM (
                                 -- Select 1: Regular users with $this->maxNonAdminUsers LIMIT
-                                SELECT 
+                                SELECT
                                     user_name,
                                     CONCAT('SCRM_', s.name) as name
                                 FROM (
@@ -1551,7 +1551,6 @@ class ExternalReporting
     private function createEnumView($listName, $listViewName)
     {
 
-
         // Get the global variable $app_list_strings
         global $app_list_strings;
 
@@ -1560,13 +1559,10 @@ class ExternalReporting
 
         // Get the current listm or return if not exists
         $currentList = $app_list_strings[$listName];
-        if(!$currentList) {
+        if (!$currentList) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "The referenced dropdown list [{$listName}] is not available. Ommited");
-        return;
+            return;
         }
-
-
-
 
         // Start building the SQL command
         $sqlCommand = "CREATE OR REPLACE VIEW {$this->listViewPrefix}_{$listViewName} AS ";
@@ -1586,7 +1582,7 @@ class ExternalReporting
         // Execute the SQL command
         if (!$db->query($sqlCommand)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] running Query: [{$sqlCommand}]");
-            
+
         } else {
             return $listViewName;
         };
@@ -1623,7 +1619,7 @@ class ExternalReporting
             $res = $db->query("select table_name, table_type from information_schema.tables where table_name like '{$prefix}%'");
             // Loop through the views
             while ($view = $db->fetchByAssoc($res, false)) {
-                if($view['table_type'] == 'VIEW'){
+                if ($view['table_type'] == 'VIEW') {
                     // Delete the view
                     if ($db->query("DROP VIEW IF EXISTS {$view['table_name']}")) {
                         $counterTable++;
@@ -1634,8 +1630,7 @@ class ExternalReporting
                         $counterTable++;
                     }
                 }
-                
-                
+
             }
 
         }
@@ -1743,9 +1738,6 @@ class ExternalReporting
             0 => 'ACL_ALLOW_DEFAULT',
         ];
 
-       
-       
-
         // Preload user groups if group permissions are enabled for better performance
         $userGroups = [];
         if ($sugar_config['stic_sinergiada']['group_permissions_enabled']) {
@@ -1816,7 +1808,7 @@ class ExternalReporting
                             case '75': // Owner-based permissions
                                 $permissionsBatch[] = [
                                     'user_name' => $user['user_name'],
-                                    'group' =>null,
+                                    'group' => null,
                                     'table' => $currentTable,
                                     'column' => 'assigned_user_name',
                                     'stic_permission_source' => $aclSource,
@@ -1827,7 +1819,7 @@ class ExternalReporting
                             default: // Global permissions
                                 $permissionsBatch[] = [
                                     'user_name' => $user['user_name'],
-                                    'group' =>null,
+                                    'group' => null,
                                     'table' => $currentTable,
                                     'column' => 'users_id',
                                     'stic_permission_source' => $aclSource,
