@@ -76,8 +76,12 @@ class ExternalReporting
         'stic_Custom_Views',
     ];
     private $viewPrefix;
-    private $listViewPrefix;            
+    private $listViewPrefix;
     private $maxNonAdminUsers;
+    private $hostName;
+    private $baseHostname;
+    private $sdaSettings = [];
+    private $langCode;
 
     public function __construct()
     {
@@ -88,23 +92,8 @@ class ExternalReporting
 
         // Retrieve the settings related to SinergiaDA
         require_once 'modules/stic_Settings/Utils.php';
-        $this->sdaSettings = stic_SettingsUtils::getSettingsByType('SINERGIADA');
-        $this->sdaSettings['publishAsTable'] = $sugar_config['stic_sinergiada']['publish_as_table'] ?? [];
 
-        //  Check if certain parameters are present in the request and set the corresponding
-        // instance variables accordingly.
-        if (!isset($_REQUEST['do']) || empty($_REQUEST['do'])) {
-            // If the 'do' parameter is not present or is empty, set the instance variables to true.
-            $this->doCreateViews = true;
-            $this->doCreateMetadata = true;
-            $this->doCreateSecurity = true;
-        } else {
-            // If the 'do' parameter is present and not empty, set the instance variables based on the presence of certain substrings.
-            $do = $_REQUEST['do'];
-            $this->doCreateViews = strpos($do, 'createViews') !== false ? true : false;
-            $this->doCreateMetadata = strpos($do, 'createMetadata') !== false ? true : false;
-            $this->doCreateSecurity = strpos($do, 'createSecurity') !== false ? true : false;
-        }
+        $this->sdaSettings['publishAsTable'] = $sugar_config['stic_sinergiada']['publish_as_table'] ?? [];
 
         // If a specific language is not provided, the language defined for the instance will be used.
         if (!empty($_REQUEST['lang'])) {
@@ -130,7 +119,7 @@ class ExternalReporting
 
         $this->viewPrefix = "{$this->versionPrefix}";
         $this->listViewPrefix = "{$this->viewPrefix}_l";
-        
+
         // Get configured limit for non-admin user processing
         $this->maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 100;
     }
@@ -902,22 +891,6 @@ class ExternalReporting
                 $this->info .= '<div style="font-size:80%"><b>Listas creadas:</b> ' . join(' | ', array_unique($listNames)) . '</div>';
             };
 
-            // If we are in table mode, we must add the corresponding indices to the table
-            // if ($this->sdaSettings['SDA_TABLE_MODE'] == '1') {
-            //     foreach ($indexesToCreate as $indexToCreate) {
-            //         $createIndexQuery = "ALTER TABLE {$viewName} ADD INDEX ($indexToCreate);";
-            //         if (!$db->query($createIndexQuery)) {
-            //             $lastSQLError = array_pop(explode(':', $db->last_error));
-            //             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$createIndexQuery}]");
-            //             $this->info .= "<div class='error' style='color:red;'>ERROR: <textarea style='width:100%;height:300px;border:1px solid red;'> {$createIndexQuery} </textarea>({$lastSQLError})</div>";
-            //             $this->info .= "[FATAL: Unable to create index $indexToCreate]";
-            //         } else {
-            //             $this->info .= '<div style="font-size:80%"><b>Índice creado OK:</b> ' . $indexToCreate . '</div>';
-            //         }
-
-            //     }
-            // }
-
             $this->info .= "<h2>Base fields</h2>";
             $this->info .= print_r($fieldList['base'], true);
             $this->info .= "<h2>Custom fields</h2>";
@@ -1536,9 +1509,6 @@ class ExternalReporting
         // Get the current list
         $currentList = $app_list_strings[$listName];
 
-        // Drop the table if it already exists
-        $db->query($dropTableCommand);
-
         // Start building the SQL command to create the table
         $sqlCommand = "CREATE TABLE {$this->listViewPrefix}_{$listViewName} (code VARCHAR(100), value VARCHAR(100)) AS ";
         $isFirst = false;
@@ -2013,9 +1983,11 @@ class ExternalReporting
         FROM information_schema.tables
         WHERE table_schema = DATABASE();";
         $result = $db->query($query);
-        while ($row = mysqli_fetch_assoc($result)) {
-            if ($row['table_name'] == $tableToCheck) {
-                return true;
+        if ($result instanceof mysqli_result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                if ($row['table_name'] == $tableToCheck) {
+                    return true;
+                }
             }
         }
         return false;
@@ -2047,7 +2019,7 @@ class ExternalReporting
 
         $result = $db->query($missingTables);
         if ($result !== false) {
-            if ($result->num_rows > 0) {
+            if ($result instanceof mysqli_result && $result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE {$row['column_name']} = '{$row['table']}';";
 
