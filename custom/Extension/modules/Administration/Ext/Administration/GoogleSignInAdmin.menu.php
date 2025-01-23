@@ -24,4 +24,3 @@ if (!$tmp_menu_set)
 		$admin_group_header[] = array('GOOGLE_SIGN_IN_ADMIN_TITLE','',false,$admin_option_defs,'GOOGLE_SIGN_IN_ADMIN_DESC');
 	else
 		$admin_group_header[] = array('GOOGLE_SIGN_IN_ADMIN_TITLE','',false,array('Administration' => $admin_option_defs),'GOOGLE_SIGN_IN_ADMIN_DESC');
-?>

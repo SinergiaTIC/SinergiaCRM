@@ -66,4 +66,3 @@ EOQ;
 $sugar_smarty->assign("BUTTONS", $buttons);
 
 $sugar_smarty->display('custom/modules/Administration/GoogleSignInAdmin.tpl');
-?>

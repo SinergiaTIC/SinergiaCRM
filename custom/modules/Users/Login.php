@@ -159,7 +159,7 @@ if (!empty($logindisplay)) {
 }
 
 // RECAPTCHA
-require_once __DIR__.'/../../include/utils/recaptcha_utils.php';
+require_once 'include/utils/recaptcha_utils.php';
 $sugar_smarty->assign('CAPTCHA', displayRecaptcha());
 
 $google_signin_clientid = $sugar_config['google_signin_clientid'];

@@ -77,4 +77,3 @@
     $result['code'] = 1;
     $result['message'] = $url;
     echo json_encode($result);
-?>
