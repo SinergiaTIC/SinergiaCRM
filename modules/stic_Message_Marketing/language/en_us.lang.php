@@ -70,4 +70,6 @@ $mod_strings = array (
   'LBL_STIC_MESSAGE_MARKETING_CONTACTS_FROM_CONTACTS_TITLE' => 'Contact',
 
   'LBL_SEND_PHONE_MESSAGES' => 'Campaign: Send phone messages',
+  'LBL_UNEXPECTED_ERROR' => "Unexpected Error. Please, contact the administrator",
+  'LBL_UNEXPECTED_ERROR_CLEAN' => "Unexpected error: Please, check the messages queue and contact the administrator.",
 );

@@ -79,8 +79,6 @@ class stic_Message_MarketingController extends SugarController {
         $ids = $_REQUEST['mass'];
 
         foreach($ids as $mmid) {
-            // TODOEPS: Cal mirar si hi ha prospects a no incloure (ja enviat previament)
-            // El QueueCampaign el que fa és esborrar els missatges que hih a al MessageMAn
             stic_Message_MarketingUtils::queueMessages($mmid);
         }
 

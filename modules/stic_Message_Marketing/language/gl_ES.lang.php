@@ -75,4 +75,6 @@ $mod_strings = array (
     'LBL_STIC_MESSAGE_MARKETING_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoa',
 
     'LBL_SEND_PHONE_MESSAGES' => 'Campaña: Enviar mensajes de teléfono',
+    'LBL_UNEXPECTED_ERROR' => "Error inesperado. Por favor, contacte con el administrador.",
+    'LBL_UNEXPECTED_ERROR_CLEAN' => "Error inesperado: Por favor, revise la cola de mensajes y contacte con el administrador.",
 );

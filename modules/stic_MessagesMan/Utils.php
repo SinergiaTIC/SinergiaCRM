@@ -61,10 +61,6 @@ class stic_MessagesManUtils {
         $select_query .= " AND stic_messagesman.deleted = 0 AND stic_message_marketing.deleted = 0";
         $select_query .= " AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " . $db->convert($db->quoted($timedate->fromString("-1 day")->asDb()), "datetime") . ")) ";
     
-        // TODOEPS: Vaciar sólo una campaña?
-        if (!empty($campaign_id)) {
-            $select_query .= " AND campaign_id='{$campaign_id}'";
-        }
         $select_query .= " ORDER BY send_date_time ASC,user_id, list_id";
 
         DBManager::setQueryLimit(0);

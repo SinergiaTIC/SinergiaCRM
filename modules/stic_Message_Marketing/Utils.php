@@ -20,34 +20,43 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+ require_once 'SticInclude/Utils.php';
+
 class stic_Message_MarketingUtils
 {
 
 
     protected static function getMessageMarketingInfo($mmid) {
+        global $mod_strings;
+
         $db = DBManagerFactory::getInstance();
 
         $query = "
             SELECT select_all, prospect_lists, start_date_time, csmmc.campaigns_stic_message_marketingcampaign_ida as campaignId 
             FROM stic_message_marketing smm
             JOIN campaigns_stic_message_marketing_c csmmc ON csmmc.campaigns_stic_message_marketingmessage_idb = smm.id
-            WHERE id = '{$mmid}'
+            WHERE smm.id = '{$mmid}'
         ";
 
         $result = $db->query($query);
         if(!$result) {
-            //TODOEPS
-            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $mod_strings['LBL_UNEXPECTED_ERROR'] . '</div>');
+            SugarApplication::redirect("index.php?module={$_REQUEST['return_module']}&action=DetailView&record={$_REQUEST['return_id']}");
+    
+            $GLOBALS['log']->fatal(__METHOD__.' '.__LINE__. ' Error al recuperar stic_message_marketing');
             return false;
         }
         $marketingRow = $db->fetchByAssoc($result);
         if(!$marketingRow) {
-            //TODOEPS
-            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $mod_strings['LBL_UNEXPECTED_ERROR'] . '</div>');
+            SugarApplication::redirect("index.php?module={$_REQUEST['return_module']}&action=DetailView&record={$_REQUEST['return_id']}");
+    
+            $GLOBALS['log']->fatal(__METHOD__.' '.__LINE__. ' Error al recuperar stic_message_marketing');
             return false;
         }
-        return $marketingRow;
 
+        return $marketingRow;
     }
 
     protected static function getProspectsQuery($mmid, $test, $marketingRow) {
@@ -57,7 +66,7 @@ class stic_Message_MarketingUtils
         if ($selectAll) {
             // Get prospects from all default list from Campaign
             $query = "
-            SELECT pl.id, plp.related_type, plp.related_id 
+            SELECT pl.id, plp.related_type, plp.related_id
             FROM campaigns_stic_message_marketing_c csmmc 
             JOIN prospect_list_campaigns plc on plc.campaign_id = csmmc.campaigns_stic_message_marketingcampaign_ida 
             JOIN prospect_lists pl on pl.id = plc.prospect_list_id 
@@ -95,10 +104,9 @@ class stic_Message_MarketingUtils
         $result = $db->query($query);
 
         while ($row = $db->fetchByAssoc($result)) {
-            // TODOEPS: Add prospect toMessageMan
-            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,$row);
             $messageMan = BeanFactory::newBean('stic_MessagesMan');
             $messageMan->marketing_id = $mmid;
+            $messageMan->campaign_id = $marketingRow['campaignId'];
             $messageMan->list_id = $row['id'];
             $messageMan->send_date_time = $marketingRow['start_date_time'];
             $messageMan->in_queue = 0;
@@ -110,6 +118,8 @@ class stic_Message_MarketingUtils
     }
 
     protected static function removeExempts($mmid, $marketingRow) {
+        global $mod_strings;
+
         $db = DBManagerFactory::getInstance();
 
         $query = "
@@ -119,7 +129,7 @@ class stic_Message_MarketingUtils
             JOIN prospect_lists pl ON pl.id = plp.prospect_list_id 
             JOIN prospect_list_campaigns plc ON plc.prospect_list_id = pl.id
             WHERE pl.list_type = 'exempt'
-            AND plc.campaign_id like '%'
+            AND plc.campaign_id = '{$marketingRow['campaignId']}'
             AND plc.deleted = 0
             AND pl.deleted = 0
             and plp.deleted = 0
@@ -128,8 +138,33 @@ class stic_Message_MarketingUtils
         $result = $db->query($query);
 
         if (!$result) {
-            // TODOEPS
-            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $mod_strings['LBL_UNEXPECTED_ERROR_CLEAN'] . '</div>');
+            SugarApplication::redirect("index.php?module={$_REQUEST['return_module']}&action=DetailView&record={$_REQUEST['return_id']}");
+    
+            $GLOBALS['log']->fatal(__METHOD__.' '.__LINE__. ' Error al borrar los exempts');
+            return false;
+        }
+    }
+
+    protected static function removePreviousMessages($mmid) {
+        global $mod_strings;
+
+        $db = DBManagerFactory::getInstance();
+
+        $query = "
+            DELETE 
+            from stic_messagesman 
+            WHERE marketing_id = '{$mmid}'
+        ";
+
+        $result = $db->query($query);
+
+        if (!$result) {
+            SugarApplication::appendErrorMessage('<div class="msg-fatal-lock">' . $mod_strings['LBL_UNEXPECTED_ERROR_CLEAN'] . '</div>');
+            SugarApplication::redirect("index.php?module={$_REQUEST['return_module']}&action=DetailView&record={$_REQUEST['return_id']}");
+    
+            $GLOBALS['log']->fatal(__METHOD__.' '.__LINE__. ' Error al borrar los mensajes previos');
+            return false;
         }
     }
 
@@ -138,6 +173,8 @@ class stic_Message_MarketingUtils
 
         // TODOEPS: $test
         $test = false;
+
+        self::removePreviousMessages($mmid);
 
         $marketingRow = self::getMessageMarketingInfo($mmid);
 
