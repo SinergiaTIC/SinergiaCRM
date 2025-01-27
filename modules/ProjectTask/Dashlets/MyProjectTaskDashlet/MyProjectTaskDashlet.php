@@ -74,7 +74,10 @@ class MyProjectTaskDashlet extends DashletGeneric
     {
         $resultArray = parent::buildWhere();
 
-        $resultArray[] = $this->seedBean->table_name . '.' . "percent_complete != 100";
+        // STIC-Custom 20250127 ART - Dashlet on Project Tasks does not show all tasks
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // $resultArray[] = $this->seedBean->table_name . '.' . "percent_complete != 100";
+        // END STIC-Custom
 
         return $resultArray;
     }
