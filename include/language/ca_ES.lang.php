@@ -2037,6 +2037,7 @@ $app_strings = array(
     'LBL_DESCRIPTION' => 'Descripció',
 
     'LBL_YESTERDAY' => 'ahir',
+    'LBL_NOW' => 'ara',
     'LBL_TODAY' => 'avui',
     'LBL_TOMORROW' => 'demà',
     'LBL_NEXT_WEEK' => 'la setmana vinent',

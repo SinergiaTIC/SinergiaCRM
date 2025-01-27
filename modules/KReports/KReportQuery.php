@@ -1548,6 +1548,13 @@ class KReportQuery {
 
    function getWhereOperatorClause($operator, $fieldname, $fieldid, $path, $value, $valuekey, $valueto, $valuetokey = '', $jointype = '') {
       global $current_user;
+      // STIC-Custom EPS 20211220 - Anular el PR #505
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/524
+      // // STIC-Custom EPS 20241205
+      // // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
+      // $db = DBManagerFactory::getInstance();
+      // // ENS STIC-Custom
+      // ENS STIC-Custom
 
       // initialize
       $thisWhereString = '';
@@ -1644,6 +1651,13 @@ class KReportQuery {
             break;
       }
       // process the operator
+      // STIC-Custom EPS 20211220 - Anular el PR #505
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/524
+      // // STIC-Custom EPS 20241205 - quote the value to avoid errors when certain values are used (apostrophe)
+      // // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
+      // $value = $db->quote($value);
+      // // END STIC-Custom
+      // END STIC-Custom
       switch ($operator) {
          case 'autocomplete':
             $thisWhereString .= ' = \'' . $value . '\'';
