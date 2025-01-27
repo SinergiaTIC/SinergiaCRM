@@ -90,9 +90,6 @@ class ExternalReporting
         $this->hostName = $sugar_config['host_name'];
         $this->baseHostname = explode('.', $this->hostName)[0];
 
-        // Retrieve the settings related to SinergiaDA
-        require_once 'modules/stic_Settings/Utils.php';
-
         $this->sdaSettings['publishAsTable'] = $sugar_config['stic_sinergiada']['publish_as_table'] ?? [];
 
         // If a specific language is not provided, the language defined for the instance will be used.
@@ -121,10 +118,10 @@ class ExternalReporting
         $this->listViewPrefix = "{$this->viewPrefix}_l";
 
         // Get configured limit for non-admin user processing
-        $this->maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 100;
+        $this->maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 9999999;
     }
     /**
-     * Main function responsible for creating and managing MariaDB views and tables (as specified in stic_Settings) based on CRM modules.
+     * Main function responsible for creating and managing MariaDB views and tables based on CRM modules.
      *
      * Here's a breakdown of its operations:
      * 1) For each enabled CRM module (excluding specified ones), it creates a MariaDB view or table. These are derived from the module's primary table and, if present, the _cstm table, excluding records marked as deleted.
