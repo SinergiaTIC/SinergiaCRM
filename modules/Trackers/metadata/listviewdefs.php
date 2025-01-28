@@ -14,6 +14,7 @@ array(
         'module' => 'Users',
         'id' => 'ASSIGNED_USER_ID',
         'default' => true,
+        'sortable' => false,
     ),
     'ACTION' => array(
         'type' => 'enum',
