@@ -1675,30 +1675,69 @@ class KReportQuery {
             // bug 2011-03-25 ... date handling no managed in client
             // STIC-Custom EPS 20241220 - only quote on some operators
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
-            $value = $db->quote($value);
+            //TODOEPS: Tractar multienum (value array o valuekey array)
             // END STIC-Custom
             if ($this->fieldNameMap[$fieldid]['customFunction'] == '' && $this->fieldNameMap[$fieldid]['sqlFunction'] == '') {
                switch ($this->fieldNameMap[$fieldid]['type']) {
                   case 'multienum':
-                     $thisWhereString .= ' LIKE \'%^' . $value . '^%\'';
-                     $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     $thisWhereString .= ' LIKE \'' . $value . '^%\'';
-                     $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     $thisWhereString .= ' LIKE \'%^' . $value . '\'';
-                     $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     $thisWhereString .= ' = \'' . $value . '\'';
+                     $valueArray = (is_array($value) ? $value : preg_split('/,/', $value));
+                     $multienumWhereString = '';
+                     foreach ($valueArray as $thisMultiEnumValue) {
+                        if ($multienumWhereString != '') {
+                           $multienumWhereString .= ') AND (' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $closeMultienumWhereString = ')';
+                        }
+                        else {
+                           $closeMultienumWhereString = '';
+                        }
+                           // TODOEPS: Corregir colació tags STIC-Custom
+                           // STIC-Custom EPS 20241220 - oneof on multienum was potentially returning incorrect results
+                           // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+                           // $multienumWhereString .= ' LIKE \'%' . $thisMultiEnumValue . '%\'';
+                           $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '^%\'';
+                           $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $multienumWhereString .= ' LIKE \'' . $thisMultiEnumValue . '^%\'';
+                           $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '\'';
+                           $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $multienumWhereString .= ' = \'' . $thisMultiEnumValue . '\'';
+                           // END STIC-Custom
+                     }
+                     $numValues = count($valueArray);
+                     if ($numValues > 1) {
+                        $thisWhereString = '(' . $thisWhereString;
+                     }
+                     $thisWhereString .= $multienumWhereString . $closeMultienumWhereString;
+                     if ($numValues > 0) {
+                        $fieldName = $this->get_field_name($path, $fieldname, $fieldid);
+                        $thisWhereString .= " AND {$numValues} = ((CHAR_LENGTH({$fieldName}) - CHAR_LENGTH(REPLACE({$fieldName}, '^,^', ''))) / CHAR_LENGTH('^,^') + 1)";
+                     }
+
+
+
+
+                     // $thisWhereString .= ' LIKE \'%^' . $value . '^%\'';
+                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     // $thisWhereString .= ' LIKE \'' . $value . '^%\'';
+                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     // $thisWhereString .= ' LIKE \'%^' . $value . '\'';
+                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     // $thisWhereString .= ' = \'' . $value . '\'';
                      break;
-                  //		case 'date':
-                  //		case 'datetime':
-                  //			$thisWhereString .= ' = \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\'';
-                  //			break;
+                     //		case 'date':
+                        //		case 'datetime':
+                           //			$thisWhereString .= ' = \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\'';
+                           //			break;
                   default:
+                     $value = $db->quote($value);
                      $thisWhereString .= ' = \'' . $value . '\'';
                      break;
                }
             }
-            else
+            else {
+               $value = $db->quote($value);
                $thisWhereString .= ' = \'' . $value . '\'';
+            }
             break;
          case 'soundslike':
             // STIC-Custom EPS 20241220 - only quote on some operators
@@ -1859,6 +1898,7 @@ class KReportQuery {
                $multienumWhereString = '';
                foreach ($valueArray as $thisMultiEnumValue) {
                   if ($multienumWhereString != '')
+                  // TODOEPS: Comprovar si aquest OR és correcte
                      $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
                      // STIC-Custom EPS 20241220 - oneof on multienum was potentially returning incorrect results
                      // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
@@ -1871,8 +1911,6 @@ class KReportQuery {
                      $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
                      $multienumWhereString .= ' = \'' . $thisMultiEnumValue . '\'';
                      // END STIC-Custom
-
-
                }
                $thisWhereString .= $multienumWhereString;
             }
