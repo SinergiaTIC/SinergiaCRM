@@ -1703,7 +1703,7 @@ class KReportQuery {
                         $fieldName = $this->get_field_name($path, $fieldname, $fieldid);
                         // add condition counting the number of values to prevent selecting records withmore values selected
                         // there's no native way to count occurrences of substring in mysql, so difference in legth is used to simulate
-                        $thisWhereString .= " AND {$numValues} = ((CHAR_LENGTH({$fieldName}) - CHAR_LENGTH(REPLACE({$fieldName}, '^,^', ''))) / CHAR_LENGTH('^,^') + 1)";
+                        $thisWhereString = '(' . $thisWhereString . ')' . " AND {$numValues} = ((CHAR_LENGTH({$fieldName}) - CHAR_LENGTH(REPLACE({$fieldName}, '^,^', ''))) / CHAR_LENGTH('^,^') + 1)";
                      }
                      // END STIC-Custom
                      break;
@@ -1767,7 +1767,7 @@ class KReportQuery {
                         $fieldName = $this->get_field_name($path, $fieldname, $fieldid);
                         // add condition counting the number of values to prevent selecting records withmore values selected
                         // there's no native way to count occurrences of substring in mysql, so difference in legth is used to simulate
-                        $thisWhereString .= " AND {$numValues} = ((CHAR_LENGTH({$fieldName}) - CHAR_LENGTH(REPLACE({$fieldName}, '^,^', ''))) / CHAR_LENGTH('^,^') + 1)";
+                        $thisWhereString = '(' . $thisWhereString . ')' . " AND {$numValues} = ((CHAR_LENGTH({$fieldName}) - CHAR_LENGTH(REPLACE({$fieldName}, '^,^', ''))) / CHAR_LENGTH('^,^') + 1)";
                         $thisWhereString = 'NOT(' . $thisWhereString . ')';
                      }
                      break;
