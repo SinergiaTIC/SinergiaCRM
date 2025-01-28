@@ -1325,6 +1325,7 @@ class ExternalReporting
                                     AND s.deleted=0
                                     AND uc.sda_allowed_c = 1
                                     AND u.status = 'Active'
+                                    AND u.user_hash IS NOT NULL
                                     -- Select 2: Administrator users should always belong to the EDA_ADMIN group.
                             UNION SELECT
                                     user_name,
@@ -1336,6 +1337,7 @@ class ExternalReporting
                                     u.is_admin = 1
                                     AND u.deleted = 0
                                     AND u.status = 'Active'
+                                    AND u.user_hash IS NOT NULL
                                 AND uc.sda_allowed_c =1;";
 
         // 4) eda_def_security_group_records
