@@ -106,7 +106,7 @@ class Monitor implements Trackable
             $this->setValue('session_id', $this->getSessionId());
         } 
 
-        // STIC Custom 20241029 ART - Tracker Module
+        // STIC-Custom 20241029 ART - Tracker Module
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
         // Get the currently logged-in user
         global $current_user;
@@ -121,7 +121,7 @@ class Monitor implements Trackable
             // Set the value of the 'assigned_user_id' metric to the ID of the current user
             $this->setValue('assigned_user_id', $current_user->id);
         }
-        // END STIC Custom
+        // END STIC-Custom
     }
 
     /**

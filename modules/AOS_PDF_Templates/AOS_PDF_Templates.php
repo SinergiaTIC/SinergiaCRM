@@ -64,10 +64,10 @@ class AOS_PDF_Templates extends AOS_PDF_Templates_sugar
     public static function loadTabModules()
     {
         global $app_list_strings;
-        // STIC Custom 20250128 ART - Tracker Module
+        // STIC-Custom 20250128 ART - Tracker Module
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
         global $current_user;
-        // END STIC Custom
+        // END STIC-Custom
         include_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
