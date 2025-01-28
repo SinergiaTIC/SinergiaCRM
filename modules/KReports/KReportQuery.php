@@ -1669,7 +1669,6 @@ class KReportQuery {
                   case 'multienum':
                      // STIC-Custom EPS 20241220 - only quote on some operators
                      // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
-                     //TODOEPS: Tractar multienum (value array o valuekey array)
                      // $thisWhereString .= ' LIKE \'%^' . $value . '^%\'';
                      // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
                      // $thisWhereString .= ' LIKE \'' . $value . '^%\'';
@@ -1735,7 +1734,6 @@ class KReportQuery {
             $thisWhereString .= ' SOUNDS LIKE \'' . $value . '\'';
             break;
          case 'notequal':
-            // TODOEPS: Revisar el notequal
             // STIC-Custom EPS 20241220 - not equal not working on multi-enum
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             // $thisWhereString .= ' <> \'' . $value . '\'';
@@ -1907,7 +1905,6 @@ class KReportQuery {
                $multienumWhereString = '';
                foreach ($valueArray as $thisMultiEnumValue) {
                   if ($multienumWhereString != '')
-                  // TODOEPS: Comprovar si aquest OR és correcte
                      $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
                      // STIC-Custom EPS 20241220 - oneof on multienum was potentially returning incorrect results
                      // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
