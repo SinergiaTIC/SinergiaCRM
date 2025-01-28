@@ -1928,13 +1928,30 @@ class KReportQuery {
             if ($this->fieldNameMap[$fieldid]['type'] == 'multienum') {
                $valueArray = (is_array($value) ? $value : preg_split('/,/', $value));
                $multienumWhereString = '';
+               // STIC-Custom EPS 20241220 - oneof on multienum was potentially returning incorrect results
+               // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+               // foreach ($valueArray as $thisMultiEnumValue) {
+               //    if ($multienumWhereString != '')
+               //       $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+
+               //    $multienumWhereString .= ' NOT LIKE \'%' . $thisMultiEnumValue . '%\'';
+               // }
+               // $thisWhereString .= $multienumWhereString;
                foreach ($valueArray as $thisMultiEnumValue) {
                   if ($multienumWhereString != '')
                      $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
-
-                  $multienumWhereString .= ' NOT LIKE \'%' . $thisMultiEnumValue . '%\'';
+                     $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '^%\'';
+                     $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $multienumWhereString .= ' LIKE \'' . $thisMultiEnumValue . '^%\'';
+                     $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '\'';
+                     $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     $multienumWhereString .= ' = \'' . $thisMultiEnumValue . '\'';
+                     
                }
                $thisWhereString .= $multienumWhereString;
+               $thisWhereString = ' NOT(' . $thisWhereString .') ';
+               // END STIC-Custom
             }
             else {
                $thisWhereString .= ' NOT IN (\'' . str_replace(',', '\',\'', (is_array($value) ? implode(',', $value) : $value)) . '\')';
