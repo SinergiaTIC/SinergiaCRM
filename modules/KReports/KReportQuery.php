@@ -1652,15 +1652,6 @@ class KReportQuery {
       }
       // process the operator
 
-      // STIC-Custom EPS 20241220 - only quote on some operators
-      // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
-      // STIC-Custom EPS 20211220 - Anular el PR #505
-      // https://github.com/SinergiaTIC/SinergiaCRM/pull/524
-      // // STIC-Custom EPS 20241205 - quote the value to avoid errors when certain values are used (apostrophe)
-      // // https://github.com/SinergiaTIC/SinergiaCRM/pull/505
-      // $value = $db->quote($value);
-      // // END STIC-Custom
-      // END STIC-Custom
       switch ($operator) {
          case 'autocomplete':
             // STIC-Custom EPS 20241220 - only quote on some operators
@@ -1673,13 +1664,19 @@ class KReportQuery {
             // bug 2011-03-10 .. fixed date handling
             // bug 2011-03-21 fixed custom sql function
             // bug 2011-03-25 ... date handling no managed in client
-            // STIC-Custom EPS 20241220 - only quote on some operators
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
-            //TODOEPS: Tractar multienum (value array o valuekey array)
-            // END STIC-Custom
             if ($this->fieldNameMap[$fieldid]['customFunction'] == '' && $this->fieldNameMap[$fieldid]['sqlFunction'] == '') {
                switch ($this->fieldNameMap[$fieldid]['type']) {
                   case 'multienum':
+                     // STIC-Custom EPS 20241220 - only quote on some operators
+                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
+                     //TODOEPS: Tractar multienum (value array o valuekey array)
+                     // $thisWhereString .= ' LIKE \'%^' . $value . '^%\'';
+                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     // $thisWhereString .= ' LIKE \'' . $value . '^%\'';
+                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     // $thisWhereString .= ' LIKE \'%^' . $value . '\'';
+                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                     // $thisWhereString .= ' = \'' . $value . '\'';
                      $valueArray = (is_array($value) ? $value : preg_split('/,/', $value));
                      $multienumWhereString = '';
                      foreach ($valueArray as $thisMultiEnumValue) {
@@ -1690,10 +1687,6 @@ class KReportQuery {
                         else {
                            $closeMultienumWhereString = '';
                         }
-                           // TODOEPS: Corregir colació tags STIC-Custom
-                           // STIC-Custom EPS 20241220 - oneof on multienum was potentially returning incorrect results
-                           // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
-                           // $multienumWhereString .= ' LIKE \'%' . $thisMultiEnumValue . '%\'';
                            $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '^%\'';
                            $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
                            $multienumWhereString .= ' LIKE \'' . $thisMultiEnumValue . '^%\'';
@@ -1701,7 +1694,6 @@ class KReportQuery {
                            $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '\'';
                            $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
                            $multienumWhereString .= ' = \'' . $thisMultiEnumValue . '\'';
-                           // END STIC-Custom
                      }
                      $numValues = count($valueArray);
                      if ($numValues > 1) {
@@ -1710,26 +1702,22 @@ class KReportQuery {
                      $thisWhereString .= $multienumWhereString . $closeMultienumWhereString;
                      if ($numValues > 0) {
                         $fieldName = $this->get_field_name($path, $fieldname, $fieldid);
+                        // add condition counting the number of values to prevent selecting records withmore values selected
+                        // there's no native way to count occurrences of substring in mysql, so difference in legth is used to simulate
                         $thisWhereString .= " AND {$numValues} = ((CHAR_LENGTH({$fieldName}) - CHAR_LENGTH(REPLACE({$fieldName}, '^,^', ''))) / CHAR_LENGTH('^,^') + 1)";
                      }
-
-
-
-
-                     // $thisWhereString .= ' LIKE \'%^' . $value . '^%\'';
-                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     // $thisWhereString .= ' LIKE \'' . $value . '^%\'';
-                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     // $thisWhereString .= ' LIKE \'%^' . $value . '\'';
-                     // $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     // $thisWhereString .= ' = \'' . $value . '\'';
+                     // END STIC-Custom
                      break;
                      //		case 'date':
                         //		case 'datetime':
                            //			$thisWhereString .= ' = \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\'';
                            //			break;
                   default:
+
+                     // STIC-Custom EPS 20241220 - only quote on some operators
+                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
                      $value = $db->quote($value);
+                     // END STIC-Custom
                      $thisWhereString .= ' = \'' . $value . '\'';
                      break;
                }
@@ -1747,33 +1735,54 @@ class KReportQuery {
             $thisWhereString .= ' SOUNDS LIKE \'' . $value . '\'';
             break;
          case 'notequal':
+            // TODOEPS: Revisar el notequal
             // STIC-Custom EPS 20241220 - not equal not working on multi-enum
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
             // $thisWhereString .= ' <> \'' . $value . '\'';
-            $value = $db->quote($value);
             if ($this->fieldNameMap[$fieldid]['customFunction'] == '' && $this->fieldNameMap[$fieldid]['sqlFunction'] == '') {
                switch ($this->fieldNameMap[$fieldid]['type']) {
                   case 'multienum':
-                     $thisWhereString .= ' NOT LIKE \'%^' . $value . '^%\'';
-                     $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     $thisWhereString .= ' NOT LIKE \'' . $value . '^%\'';
-                     $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     $thisWhereString .= ' NOT LIKE \'%^' . $value . '\'';
-                     $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid);
-                     $thisWhereString .= ' <> \'' . $value . '\'';
+                     $valueArray = (is_array($value) ? $value : preg_split('/,/', $value));
+                     $multienumWhereString = '';
+                     foreach ($valueArray as $thisMultiEnumValue) {
+                        if ($multienumWhereString != '') {
+                           $multienumWhereString .= ') AND (' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $closeMultienumWhereString = ')';
+                        }
+                        else {
+                           $closeMultienumWhereString = '';
+                        }
+                           $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '^%\'';
+                           $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $multienumWhereString .= ' LIKE \'' . $thisMultiEnumValue . '^%\'';
+                           $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $multienumWhereString .= ' LIKE \'%^' . $thisMultiEnumValue . '\'';
+                           $multienumWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid);
+                           $multienumWhereString .= ' = \'' . $thisMultiEnumValue . '\'';
+                     }
+                     $numValues = count($valueArray);
+                     if ($numValues > 1) {
+                        $thisWhereString = '(' . $thisWhereString;
+                     }
+                     $thisWhereString .= $multienumWhereString . $closeMultienumWhereString;
+                     if ($numValues > 0) {
+                        $fieldName = $this->get_field_name($path, $fieldname, $fieldid);
+                        // add condition counting the number of values to prevent selecting records withmore values selected
+                        // there's no native way to count occurrences of substring in mysql, so difference in legth is used to simulate
+                        $thisWhereString .= " AND {$numValues} = ((CHAR_LENGTH({$fieldName}) - CHAR_LENGTH(REPLACE({$fieldName}, '^,^', ''))) / CHAR_LENGTH('^,^') + 1)";
+                        $thisWhereString = 'NOT(' . $thisWhereString . ')';
+                     }
                      break;
-                  //		case 'date':
-                  //		case 'datetime':
-                  //			$thisWhereString .= ' = \'' . $GLOBALS['timedate']->to_db_date($value, false) . '\'';
-                  //			break;
                   default:
+                     $value = $db->quote($value);
                      $thisWhereString .= ' <> \'' . $value . '\'';
                      break;
                }
             }
-            else
+            else {
+               $value = $db->quote($value);
                $thisWhereString .= ' <> \'' . $value . '\'';
-
+            }
             // END STIC-Custom
             break;
          case 'greater':
