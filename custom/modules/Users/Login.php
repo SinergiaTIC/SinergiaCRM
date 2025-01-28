@@ -210,7 +210,10 @@ echo $AAA = <<<EOQ
                         $.ajax({
                             type: "POST",
                             url: "index.php?entryPoint=PostGoogleSignIn",
-                            data: { "user_email": data.email },
+                            data: { 
+                                "user_email": data.email, 
+                                "login_language": '$display_language', 
+                            },
                         })
                             .done(function (response) {
                                 var result = JSON.parse(response);
