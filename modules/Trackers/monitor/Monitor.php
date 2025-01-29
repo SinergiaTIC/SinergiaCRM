@@ -114,13 +114,9 @@ class Monitor implements Trackable
         if (!isset($this->metrics['assigned_user_id'])) {
             // If the 'assigned_user_id' metric doesn't exist yet, create it
             $this->metrics['assigned_user_id'] = new Metric('varchar', 'assigned_user_id');
-            // Set the value of the 'assigned_user_id' metric to the ID of the current user
-            $this->setValue('assigned_user_id', $current_user->id);
-        // If it exist, assign the current user
-        } else {
-            // Set the value of the 'assigned_user_id' metric to the ID of the current user
-            $this->setValue('assigned_user_id', $current_user->id);
         }
+        // Set the value of the 'assigned_user_id' metric to the ID of the current user
+        $this->setValue('assigned_user_id', $current_user->id);
         // END STIC-Custom
     }
 
