@@ -139,7 +139,7 @@ class ExternalReporting
         $startTime = microtime(true);
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA rebuild script starts!");
 
-        global $app_list_strings;
+        global $app_list_strings, $current_user;
 
         $archivo = __FILE__; // Ruta del archivo actual
         $fechaModificacion = filemtime($archivo);
@@ -167,7 +167,10 @@ class ExternalReporting
         // If the number of non-admin users enabled is greater than the limit allowed, the operation is aborted  
         // to protect the system from possible performance problems   
         if(!empty($normalUsersEnabled) && is_object($normalUsersEnabled) && $normalUsersEnabled->num_rows > $this->maxNonAdminUsers){
-            $this->info .= "[FATAL: Is not possible to enable more than {$this->maxNonAdminUsers} non-admin users. There is a total of {$normalUsersEnabled->num_rows} non-admin users enabled.]";
+            $errorString = return_module_language($_SESSION['authenticated_user_language'], 'Administration')['LBL_STIC_SINERGIADA_MAX_USERS_ERROR'];
+            $errorString = str_replace('__max_users__', $this->maxNonAdminUsers, $errorString);
+            $errorString = str_replace('__enabled_users__', $normalUsersEnabled->num_rows, $errorString);
+            $this->info .= "[FATAL: {$errorString}]";
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Number of non-admin users enabled is greater than the limit allowed. Is not possible to enable more than {$this->maxNonAdminUsers} non-admin users. There is a total of {$normalUsersEnabled->num_rows} non-admin users enabled.');                
             return $this->info;
         }
