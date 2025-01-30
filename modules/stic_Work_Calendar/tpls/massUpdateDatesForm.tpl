@@ -51,18 +51,18 @@
 		<input type="hidden" id="action" name="action" value="runMassUpdateDates">
 		<input type="hidden" id="selectedIDs" name="selectedIDs" value="{$selectedIDs}">
         
-        <table  style='width:40%; margin:1%; padding:5%;'>
+        <table style='width:50%;'>
             <tr>
-                <th style='width:40%;'>
+                <th style='width:30%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_FIELD}
                 </th>
-                <th style='width:25%;'>
+                <th style='width:20%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_OPERADOR}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></h3>
                 </th>
-                <th style='width:15%;'>
+                <th style='width:25%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_HORAS}
                 </th>
-                <th style='width:15%;'>
+                <th style='width:25%;'>
                     {$MOD.LBL_MASS_UPDATE_DATES_MINUTES}
                 </th>
            </tr>        
