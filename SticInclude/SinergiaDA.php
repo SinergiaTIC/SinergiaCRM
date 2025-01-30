@@ -1994,11 +1994,9 @@ class ExternalReporting
         FROM information_schema.tables
         WHERE table_schema = DATABASE();";
         $result = $db->query($query);
-        if ($result instanceof mysqli_result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                if ($row['table_name'] == $tableToCheck) {
-                    return true;
-                }
+        while ($row = $db->fetchByAssoc($result)) {
+            if ($row['table_name'] == $tableToCheck) {
+                return true;
             }
         }
         return false;
@@ -2030,7 +2028,7 @@ class ExternalReporting
 
         $result = $db->query($missingTables);
         if ($result !== false) {
-            if ($result instanceof mysqli_result && $result->num_rows > 0) {
+            if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE {$row['column_name']} = '{$row['table']}';";
 
