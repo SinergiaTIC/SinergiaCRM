@@ -3550,7 +3550,6 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'Re
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Delivered';
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validated';
 
-
 // SuiteCRM Core modifications
 
 // Opportunities: Roles of the contacts in the opportunity context
@@ -3615,3 +3614,11 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
+
+// Trackers: Actions
+$app_list_strings['trackers_actions_list']['save'] = 'Record created';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Record accessed';
+$app_list_strings['trackers_actions_list']['update'] = 'Record updated';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Record deleted';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'User login';
+$app_list_strings['trackers_actions_list']['logout'] = 'User logout';
