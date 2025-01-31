@@ -498,7 +498,6 @@ var bM = function (e, bH) {
                                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
                                     case "equals":
                                     case "notequal":
-                                        debugger;
                                         if (e.record.data.type == 'multienum'){
                                             e.column.setEditor(
                                                 new Ext.form.ComboBox({
@@ -699,7 +698,6 @@ var aL = function (e) {
                             // https://github.com/SinergiaTIC/SinergiaCRM/pull/523
                             case "equals":
                             case "notequal":
-                                debugger;
                                 if (e.record.data.type == 'multienum') {
                                     var cR = e.column.getEditor().getStore();
                                     var dc = "";
