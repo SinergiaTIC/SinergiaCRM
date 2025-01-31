@@ -80,7 +80,7 @@ class templateParser
                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/574
                     // $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false));
                     // If it comes from aos_products_quotes and is product_discount
-                    if ($key == 'aos_products_quotes' && $field_def["name"] ==  'product_discount') {
+                    if ($key == 'aos_products_quotes' && $field_def["name"] == 'product_discount' || $field_def["name"] ==  'service_discount') {
                         if ($focus->discount == 'Percentage') {
                             $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false)) . $app_strings['LBL_PERCENTAGE_SYMBOL'];
                         } else {
