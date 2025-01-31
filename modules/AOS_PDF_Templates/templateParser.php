@@ -46,7 +46,6 @@ class templateParser
                 }
             }
         }
-        $string = $string;
         return $string;
     }
 
