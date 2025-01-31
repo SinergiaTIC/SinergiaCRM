@@ -117,8 +117,6 @@ class ExternalReporting
         $this->viewPrefix = "{$this->versionPrefix}";
         $this->listViewPrefix = "{$this->viewPrefix}_l";
 
-        // Get configured limit for non-admin user processing
-        $this->maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'] ?? 9999999;
     }
     /**
      * Main function responsible for creating and managing MariaDB views and tables based on CRM modules.
@@ -139,7 +137,7 @@ class ExternalReporting
         $startTime = microtime(true);
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA rebuild script starts!");
 
-        global $app_list_strings, $current_user;
+        global $app_list_strings, $sugar_config;
 
         $archivo = __FILE__; // Ruta del archivo actual
         $fechaModificacion = filemtime($archivo);
@@ -154,29 +152,30 @@ class ExternalReporting
         $db = DBManagerFactory::getInstance();
 
         // Check number of non-admin users enabled
-        $normalUsersEnabled = $db->query("SELECT 
-                                            distinct u.id
-                                        FROM users u 
-                                        INNER JOIN users_cstm uc ON uc.id_c = u.id
-                                            WHERE 
-                                                u.is_admin = 0
-                                                AND u.deleted = 0
-                                                AND u.status = 'Active'
-                                                AND uc.sda_allowed_c=1;"
-                                         );
-        // If the number of non-admin users enabled is greater than the limit allowed, the operation is aborted  
-        // to protect the system from possible performance problems   
-        if(!empty($normalUsersEnabled) && is_object($normalUsersEnabled) && $normalUsersEnabled->num_rows > $this->maxNonAdminUsers){
-            $errorString = return_module_language($_SESSION['authenticated_user_language'], 'Administration')['LBL_STIC_SINERGIADA_MAX_USERS_ERROR'];
-            $errorString = str_replace('__max_users__', $this->maxNonAdminUsers, $errorString);
-            $errorString = str_replace('__enabled_users__', $normalUsersEnabled->num_rows, $errorString);
-            $this->info .= "[FATAL: {$errorString}]";
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Number of non-admin users enabled is greater than the limit allowed. Is not possible to enable more than {$this->maxNonAdminUsers} non-admin users. There is a total of {$normalUsersEnabled->num_rows} non-admin users enabled.');                
-            return $this->info;
+        // Get configured limit for non-admin user processing
+        if (is_numeric($sugar_config['stic_sinergiada']['max_users_processed'])) {
+            $maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'];
+            $normalUsersEnabled = $db->query("SELECT
+                                                    distinct u.id
+                                                FROM users u
+                                                INNER JOIN users_cstm uc ON uc.id_c = u.id
+                                                    WHERE
+                                                        u.is_admin = 0
+                                                        AND u.deleted = 0
+                                                        AND u.status = 'Active'
+                                                        AND uc.sda_allowed_c=1;"
+            );
+            // If the number of non-admin users enabled is greater than the limit allowed, the operation is aborted
+            // to protect the system from possible performance problems
+            if (!empty($normalUsersEnabled) && is_object($normalUsersEnabled) && $normalUsersEnabled->num_rows > $maxNonAdminUsers) {
+                $errorString = return_module_language($_SESSION['authenticated_user_language'], 'Administration')['LBL_STIC_SINERGIADA_MAX_USERS_ERROR'];
+                $errorString = str_replace('__max_users__', $maxNonAdminUsers, $errorString);
+                $errorString = str_replace('__enabled_users__', $normalUsersEnabled->num_rows, $errorString);
+                $this->info .= "[FATAL: {$errorString}]";
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Number of non-admin users enabled is greater than the limit allowed. Is not possible to enable more than {$maxNonAdminUsers} non-admin users. There is a total of {$normalUsersEnabled->num_rows} non-admin users enabled.');
+                return $this->info;
+            }
         }
-
-
-
 
         // Before create any view, delete previous old views
         $this->deleteOldViews();
@@ -1311,7 +1310,7 @@ class ExternalReporting
                                   UNION SELECT 'EDA_ADMIN'
                                   ;";
         // 3) eda_def_users_groups
-        $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS                           
+        $sqlMetadata[] = "CREATE or REPLACE VIEW `sda_def_user_groups` AS
                                 -- Select 1: Regular users
                             	SELECT
                                     user_name,
@@ -1510,56 +1509,6 @@ class ExternalReporting
                 'value' => $value,
             ]);
         }
-    }
-
-/**
- * Function to create an MariaDB table for a specific $app_list_strings
- * @param string $listName The name of the SuiteCRM list ($app_mod_string)
- * @param string $listViewName then name of the MariaDB table to create.
- * @return mixed The name of the list if the table is successfully created, void otherwise
- */
-    private function createEnumTable($listName, $listViewName)
-    {
-        // Get the global variable $app_list_strings
-        global $app_list_strings;
-
-        // Get instance of DBManagerFactory
-        $db = DBManagerFactory::getInstance();
-
-        // Get the current list
-        $currentList = $app_list_strings[$listName];
-
-        // Start building the SQL command to create the table
-        $sqlCommand = "CREATE TABLE {$this->listViewPrefix}_{$listViewName} (code VARCHAR(100), value VARCHAR(100)) AS ";
-        $isFirst = false;
-
-        // Loop through the current list
-        foreach ($currentList as $key => $value) {
-            // If it's the first iteration, add SELECT statement
-            if ($isFirst == false) {
-                $sqlCommand .= "SELECT '{$key}' as 'code', '{$db->quote($value)}' as 'value' ";
-                $isFirst = true;
-            } else {
-                // Add UNION SELECT statement for the rest of the iterations
-                $sqlCommand .= "UNION SELECT '{$key}', '{$db->quote($value)}' ";
-            }
-        }
-
-        // Execute the SQL command
-        if (!$db->query($sqlCommand)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] running Query: [{$sqlCommand}]");
-            return;
-        }
-
-        // Create an index on the 'value' column
-        $indexCommand = "CREATE INDEX value_index ON {$this->listViewPrefix}_{$listViewName} (value)";
-
-        if (!$db->query($indexCommand)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] creating Index on: [{$this->listViewPrefix}_{$listViewName}]");
-            return;
-        }
-
-        return $listViewName;
     }
 
     /**
@@ -2029,7 +1978,7 @@ class ExternalReporting
         $result = $db->query($missingTables);
         if ($result !== false) {
             if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
+                while ($row = $db->fetchByassoc($result)) {
                     $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE {$row['column_name']} = '{$row['table']}';";
 
                     $deleteResult = $db->query($queryDelete);
