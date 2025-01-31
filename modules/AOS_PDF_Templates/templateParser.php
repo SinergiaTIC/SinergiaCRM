@@ -77,7 +77,7 @@ class templateParser
 
                 if ($field_def['type'] == 'currency') {
                     // STIC-Custom 20250131 ART - Distinguish Type of Discount
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/574
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/575
                     // $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false));
                     // If it comes from aos_products_quotes and is product_discount
                     if ($key == 'aos_products_quotes' && $field_def["name"] == 'product_discount' || $field_def["name"] ==  'service_discount') {
