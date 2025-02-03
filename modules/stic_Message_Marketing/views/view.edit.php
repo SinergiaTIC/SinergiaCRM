@@ -36,11 +36,15 @@ class stic_Message_MarketingViewEdit extends ViewEdit
 
     public function preDisplay()
     {
+        require_once 'modules/stic_Settings/Utils.php';
+
         parent::preDisplay();
 
         SticViews::preDisplay($this);
 
-        // Write here you custom code
+        if (!isset($this->bean->sender) || empty($this->bean->sender) ){
+            $this->bean->sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER');
+        }
 
     }
 

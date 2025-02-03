@@ -54,7 +54,7 @@ class stic_MessagesManUtils {
 
         // TODOEPS: retries en enviament de missatges?
         $select_query = " 
-            SELECT stic_messagesman.*, stic_message_marketing.template_id_c, stic_message_marketing.type 
+            SELECT stic_messagesman.*, stic_message_marketing.template_id_c, stic_message_marketing.type, stic_message_marketing.sender 
              FROM stic_messagesman 
              join stic_message_marketing on stic_message_marketing.id = stic_messagesman.marketing_id  ";
         $select_query .= " WHERE send_date_time <= " . $db->now();
@@ -80,20 +80,19 @@ class stic_MessagesManUtils {
     protected static function sendMessage($row) {
         require_once 'modules/stic_Settings/Utils.php';
 
-        // TODOEPS: Check if related bean is in an except list
+        // No exempt list is checked just when themessage is being sent. Exempt lists are checked when messages are added to messagesMan.
 
         $messageman = BeanFactory::newBean('stic_MessagesMan');
         foreach ($row as $name => $value) {
             $messageman->$name = $value;
         }
 
-        // TODOEPS: Recueprar sender de la campanya
-        $sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER');
+        $sender = $row['sender'] ? $row['sender'] : stic_SettingsUtils::getSetting('MESSAGES_SENDER');
         $templateId = $row['template_id_c'];
         $type = $row['type'];
         $return = $messageman->sendMessage($sender, $templateId, $type);
 
-        // TODOEPS: Process return value... must remove from list?increment send_attemps?
+        // TODOEPS: Process return value... must remove from list? increment send_attemps?
         if (!$return) {
             $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
         }

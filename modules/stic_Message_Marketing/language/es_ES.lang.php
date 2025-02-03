@@ -65,6 +65,7 @@ $mod_strings = array (
     'LBL_START_DATE' => 'Fecha de inicio',
     'LBL_START_DATE_TIME' => 'Fecha y hora de inicio',
     'LBL_STATUS' => 'Estado',
+    'LBL_SENDER' => 'Remitente',
     'LBL_TEMPLATE' => 'Plantilla de correo electrónico',
     'LBL_SELECT_ALL' => 'Seleccionar Todas las listas de público objetivo de la campaña',
     'LBL_PROSPECT_LISTS_TITLE' => 'Listas de público objetivo',

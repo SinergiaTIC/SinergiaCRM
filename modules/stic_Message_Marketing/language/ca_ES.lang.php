@@ -63,6 +63,7 @@ $mod_strings = array (
     'LBL_START_DATE' => 'Data d\'inici',
     'LBL_START_DATE_TIME' => 'Data i hora d\'inici',
     'LBL_STATUS' => 'Estat',
+    'LBL_SENDER' => 'Remitent',
     'LBL_TEMPLATE' => 'Plantilla de correu electrònic',
     'LBL_SELECT_ALL' => 'Seleccionar Totes les llistes de públic objectiu de la campanya',
     'LBL_PROSPECT_LISTS_TITLE' => 'Llistes de públic objectiu',

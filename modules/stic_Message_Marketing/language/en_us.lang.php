@@ -60,6 +60,7 @@ $mod_strings = array (
   'LBL_START_DATE' => 'Start date',
   'LBL_START_DATE_TIME' => 'Start date and time',
   'LBL_STATUS' => 'Status',
+  'LBL_SENDER' => 'Sender',
   'LBL_TEMPLATE' => 'Email template',
   'LBL_SELECT_ALL' => 'Select to choose all Target List(s) in the Campaign',
   'LBL_PROSPECT_LISTS_TITLE' => 'Target Lists',
