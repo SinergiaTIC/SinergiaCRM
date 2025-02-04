@@ -62,8 +62,11 @@ class MetaParser
 
 
 
-
-    public function parse()
+    // STIC Custom 20250204 JBL - Fix inherited declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function parse()
+    public function parse($filePath)
+    // End STIC Custom
     {
         return "NOT AVAILABLE";
     }
