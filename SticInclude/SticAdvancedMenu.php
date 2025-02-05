@@ -41,7 +41,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
     
     require_once 'modules/ModuleBuilder/Module/IconRepository.php';
 
-    if ($_REQUEST['lang'] && is_string($_REQUEST['lang'])) {
+    if (isset($_REQUEST['lang']) && is_string($_REQUEST['lang'])) {
         $app_strings = return_application_language($_REQUEST['lang']);
     }
 
@@ -121,7 +121,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         }
 
         // Only include valid modules, items with valid children, or items with custom URLs
-        if ($isValidModule || !empty($childrenHtml) || $item['url']) {
+        if ($isValidModule || !empty($childrenHtml) || isset($item['url'])) {
             $validItemsCount++;
             $itemHtml = '<li' . ($hasChildren ? ' class="dropdown"' : '') . '>';
 
@@ -132,7 +132,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
                 // Include icon if enabled in configuration
                 $iconString = $sugar_config['stic_advanced_menu_icons'] ? "<span class='suitepicon suitepicon-module-{$moduleIconName}'></span>" : '';
                 $itemHtml .= "<a href='index.php?module={$cleanId}&action=index'>$iconString $text </a>";
-            } elseif ($item['url']) {
+            } elseif (isset($item['url'])) {
                 // Generate external link for items with custom URLs
                 $itemHtml .= "<a title='{$item['url']}' target='_blank' href='{$item['url']}'><span class='glyphicon glyphicon-link'></span> $text </a>";
             } elseif ($hasChildren) {
@@ -195,7 +195,7 @@ function addMenuProperties(&$array, $currentLangStrings = null)
     $currentTabs = $controller->get_system_tabs();
     global $app_list_strings, $app_strings;
 
-    if ($_REQUEST['lang'] && is_string($_REQUEST['lang'])) {
+    if (isset($_REQUEST['lang']) && is_string($_REQUEST['lang'])) {
         $app_strings = return_application_language($_REQUEST['lang']);
     }
 
