@@ -3462,7 +3462,11 @@ public $aliasNbPgHex;
             if (count($ttf->panose)) {
                 $panoseArray = array_merge(array($ttf->sFamilyClass, $ttf->sFamilySubClass), $ttf->panose);
                 foreach ($panoseArray as $value) {
-                    $panose .= ' '.dechex($value);
+                    // STIC Custom 20250205 JBL - Avoid TypeError in PHP 8.4
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // $panose .= ' '.dechex($value);
+                    $panose .= ' '.dechex((int) $value);
+                    // End STIC Custom
                 }
             }
             $up = round($ttf->underlinePosition);

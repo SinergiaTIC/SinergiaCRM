@@ -302,7 +302,11 @@ function rtf2text($filename)
                         // We need to check whether the stack contains \ucN control word. If it does,
                         // we should remove the N characters from the output stream.
                         case "u":
-                            $toText .= html_entity_decode("&#x".dechex($param).";");
+                            // STIC Custom 20250205 JBL - Avoid TypeError in PHP 8.4
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            // $toText .= html_entity_decode("&#x".dechex($param).";");
+                            $toText .= html_entity_decode("&#x".dechex((int) $param).";");
+                            // End STIC Custom
                             $ucDelta = @$stack[$j]["uc"];
                             if ($ucDelta > 0) {
                                 $i += $ucDelta;

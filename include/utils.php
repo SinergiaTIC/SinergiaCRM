@@ -1647,8 +1647,13 @@ function create_guid()
     $microTime = microtime();
     list($a_dec, $a_sec) = explode(' ', $microTime);
 
-    $dec_hex = dechex($a_dec * 1000000);
-    $sec_hex = dechex($a_sec);
+    // STIC Custom 20250205 JBL - Avoid TypeError in PHP 8.4
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // $dec_hex = dechex($a_dec * 1000000);
+    // $sec_hex = dechex($a_sec);
+    $dec_hex = dechex((int) $a_dec * 1000000);
+    $sec_hex = dechex((int) $a_sec);
+    // End STIC Custom
 
     ensure_length($dec_hex, 5);
     ensure_length($sec_hex, 6);
