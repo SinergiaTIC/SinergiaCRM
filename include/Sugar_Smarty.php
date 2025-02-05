@@ -69,6 +69,8 @@ class Sugar_Smarty extends Smarty
         $this->registerPlugin("modifier", "strstr", "strstr");
         $this->registerPlugin("modifier", "substr", "substr");
         $this->registerPlugin("modifier", "strpos", "strpos");
+        $this->registerPlugin("modifier", "strftime", "strftime");
+        $this->registerPlugin("modifier", "mb_strtolower", "mb_strtolower");
         $this->registerPlugin("modifier", "preg_match", "preg_match");
         $this->registerPlugin("modifier", "json_encode", "json_encode");
         // End STIC Custom
