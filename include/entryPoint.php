@@ -106,7 +106,11 @@ clean_special_arguments();
 $skipAntiXSS = false;
 // See if the current module is set as an exception 
 foreach ($GLOBALS['sugar_config']['anti_xss_data_exceptions'] as $key => $xssException) {
-    if ($xssException['module'] == $_REQUEST['module'] && $skipAntiXSS !== true ) {
+    // STIC Custom 20250205 JBL - Avoid Undefined array key Warning
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // if ($xssException['module'] == $_REQUEST['module'] && $skipAntiXSS !== true ) {
+    if (($xssException['module'] ?? null) === ($_REQUEST['module'] ?? null) && $skipAntiXSS !== true) {
+    // End STIC Custom
         // Sort config exception array (further than module, may contain other params like action or step)
         ksort($xssException);
         // Create a subarray from $_REQUEST containing the elements with keys defined in the prior exception
