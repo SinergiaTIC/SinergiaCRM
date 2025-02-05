@@ -292,7 +292,11 @@ class PackageManagerComm
      *
      * @param document_id	the document the user has clicked on
      */
-    public function downloadedDocumentation($document_id)
+    // STIC Custom 20250121 JBL - Fix static calls to non static methods
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function downloadedDocumentation($document_id)
+    public static function downloadedDocumentation($document_id)
+    // End STIC Custom
     {
         self::initialize();
         //check for fault

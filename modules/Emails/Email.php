@@ -1027,9 +1027,16 @@ class Email extends Basic
                 $object_arr= array('Contacts' => '123');
             }
             $object_arr['Users'] = $current_user->id;
-            $this->description_html = EmailTemplate::parse_template($this->description_html, $object_arr);
-            $this->name = EmailTemplate::parse_template($this->name, $object_arr);
-            $this->description = EmailTemplate::parse_template($this->description, $object_arr);
+            // STIC Custom 20241113 JBL - Fix static calls to non static methods
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $this->description_html = EmailTemplate::parse_template($this->description_html, $object_arr);
+            // $this->name = EmailTemplate::parse_template($this->name, $object_arr);
+            // $this->description = EmailTemplate::parse_template($this->description, $object_arr);
+            $emailTemplate = BeanFactory::newBean('EmailTemplates');
+            $this->description_html = $emailTemplate->parse_template($this->description_html, $object_arr);
+            $this->name = $emailTemplate->parse_template($this->name, $object_arr);
+            $this->description = $emailTemplate->parse_template($this->description, $object_arr);
+            // End STIC Custom
             $this->description = html_entity_decode((string) $this->description, ENT_COMPAT, 'UTF-8');
             if ($this->type != 'draft' && $this->status != 'draft') {
                 $this->id = create_guid();
@@ -1418,7 +1425,12 @@ class Email extends Basic
                 if (!class_exists('aCase')) {
                 } else {
                     $c = BeanFactory::newBean('Cases');
-                    if ($caseId = InboundEmail::getCaseIdFromCaseNumber($mail->Subject, $c)) {
+                    // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // if ($caseId = InboundEmail::getCaseIdFromCaseNumber($mail->Subject, $c)) {
+                    $inboundEmail = BeanFactory::newBean('InboundEmail');
+                    if ($caseId = $inboundEmail->getCaseIdFromCaseNumber($mail->Subject, $c)) {
+                    // End STIC Custom
                         $c->retrieve($caseId);
                         $c->load_relationship('emails');
                         $c->emails->add($this->id);

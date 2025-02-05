@@ -62,8 +62,11 @@ class MetaParser
 
 
 
-
-    public function parse()
+    // STIC Custom 20250204 JBL - Fix inherited declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function parse()
+    public function parse($filePath)
+    // End STIC Custom
     {
         return "NOT AVAILABLE";
     }
@@ -550,7 +553,11 @@ class MetaParser
 
         //Now run defined rules
         require_once("include/SugarFields/Parsers/Rules/ParseRules.php");
-        $rules = ParseRules::getRules();
+        // STIC Custom 20241113 JBL - Fix static calls to non static methods
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $rules = ParseRules::getRules();
+        $rules = (new ParseRules())->getRules();
+        // End STIC Custom
 
         foreach ($rules as $rule) {
             if (!file_exists($rule['file'])) {

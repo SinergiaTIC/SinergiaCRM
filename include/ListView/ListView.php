@@ -1197,9 +1197,15 @@ class ListView
         /*fixes an issue with deletes when doing a search*/
         foreach (array_merge($_GET, $_POST) as $name=>$value) {
             //echo ("$name = $value <br/>");
-                if (!empty($value) && $name != 'sort_order' //&& $name != ListView::getSessionVariableName($html_varName,"ORDER_BY")
-                        && $name != ListView::getSessionVariableName($html_varName, "offset")
+                // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // if (!empty($value) && $name != 'sort_order' //&& $name != ListView::getSessionVariableName($html_varName,"ORDER_BY")
+                //         && $name != ListView::getSessionVariableName($html_varName, "offset")
+                //         /*&& substr_count($name, "ORDER_BY")==0*/ && !in_array($name, $blockVariables)) {
+                if (!empty($value) && $name != 'sort_order' //&& $name != $this->getSessionVariableName($html_varName,"ORDER_BY")
+                        && $name != $this->getSessionVariableName($html_varName, "offset")
                         /*&& substr_count($name, "ORDER_BY")==0*/ && !in_array($name, $blockVariables)) {
+                // END STIC Custom
                     if (is_array($value)) {
                         foreach ($value as $valuename=>$valuevalue) {
                             if (substr_count($baseurl, '?') > 0) {
@@ -1236,7 +1242,10 @@ class ListView
             }
         }
 
-        $baseurl .= "&".ListView::getSessionVariableName($html_varName, "offset")."=";
+        // STIC Custom 20241113 JBL - Remove static calls to non static methods
+        // $baseurl .= "&".ListView::getSessionVariableName($html_varName, "offset")."=";
+        $baseurl .= "&".$this->getSessionVariableName($html_varName, "offset")."=";
+        // END STIC
         $cache[$html_varName] = $baseurl;
         return $baseurl;
     }

@@ -456,7 +456,11 @@ if (isset($_REQUEST['emailUIAction'])) {
                             $emailAddressWithName = $ie->email->reply_to_addr;
                         } // if
 
-                        $emailAddress = SugarEmailAddress::_cleanAddress($emailAddressWithName);
+                        // STIC Custom 20241113 JBL - Fix static calls to non static methods
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // $emailAddress = SugarEmailAddress::_cleanAddress($emailAddressWithName);
+                        $emailAddress = (new SugarEmailAddress())->_cleanAddress($emailAddressWithName);
+                        // End STIC Custom
                         $contactIds = $ie->email->emailAddress->getRelatedId($emailAddress, 'contacts');
                         if (!empty($contactIds)) {
                             $controller->bean->contacts->add($contactIds);

@@ -53,6 +53,11 @@ function getEditFieldHTML($module, $fieldname, $aow_field, $view = 'EditView', $
     global $current_language, $app_strings, $app_list_strings, $current_user, $beanFiles, $beanList;
 
     $bean = BeanFactory::getBean($module, $id);
+    
+    // STIC Custom 20250205 JBL - Fix multiple static declarations
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    static $sfh;
+    // End STIC Custom
 
     if (!checkAccess($bean)) {
         return false;
@@ -143,7 +148,10 @@ function getEditFieldHTML($module, $fieldname, $aow_field, $view = 'EditView', $
         }
 
         // load SugarFieldHandler to render the field tpl file
-        static $sfh;
+        // STIC Custom 20250205 JBL - Fix multiple static declarations
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // static $sfh;
+        // End STIC Custom
 
         if (!isset($sfh)) {
             require_once('include/SugarFields/SugarFieldHandler.php');
@@ -291,7 +299,10 @@ function getEditFieldHTML($module, $fieldname, $aow_field, $view = 'EditView', $
     }
 
     if ($fieldlist[$fieldname]['type'] == 'currency' && $view != 'EditView') {
-        static $sfh;
+        // STIC Custom 20250205 JBL - Fix multiple static declarations
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // static $sfh;
+        // End STIC Custom
 
         if (!isset($sfh)) {
             require_once('include/SugarFields/SugarFieldHandler.php');
