@@ -60,8 +60,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
     $validItemsCount = 0;
 
     $module = $_REQUEST['module'];
-    $moduleLabel = $app_list_strings['moduleList'][$module];
-
+    
     $recents = array_slice(getUserModuleRecents($current_user->id, $module), 0, 5);
     $favs = array_slice(getUserModuleFavs($current_user->id, $module), 0, 5);
 
