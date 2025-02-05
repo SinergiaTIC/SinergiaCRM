@@ -336,6 +336,11 @@ function getModuleField(
     global $beanFiles;
     global $beanList;
 
+    // STIC Custom 20250205 JBL - Fix multiple static declarations
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    static $sfh;
+    // End STIC Custom
+
     // use the mod_strings for this module
     $mod_strings = return_module_language($current_language, $module);
 
@@ -465,7 +470,10 @@ function getModuleField(
         }
 
         // load SugarFieldHandler to render the field tpl file
-        static $sfh;
+        // STIC Custom 20250205 JBL - Fix multiple static declarations
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // static $sfh;
+        // End STIC Custom
 
         if (!isset($sfh)) {
             require_once('include/SugarFields/SugarFieldHandler.php');
@@ -672,7 +680,10 @@ function getModuleField(
     $parentfieldlist = [];
 
     if (isset($fieldlist[$fieldname]['type']) && $fieldlist[$fieldname]['type'] == 'currency' && $view != 'EditView') {
-        static $sfh;
+        // STIC Custom 20250205 JBL - Fix multiple static declarations
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // static $sfh;
+        // End STIC Customstatic $sfh;
 
         if (!isset($sfh)) {
             require_once('include/SugarFields/SugarFieldHandler.php');
