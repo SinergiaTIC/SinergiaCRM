@@ -362,7 +362,11 @@ class MetaParser
             return $javascript;
         }
 
-        return $this->parseDelimiters($javascript);
+        // STIC Custom 20250206 JBL - Fix non static call to static method
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // return $this->parseDelimiters($javascript);
+        return static::parseDelimiters($javascript);
+        // END STIC Custom
     }
 
     public static function parseDelimiters($javascript)

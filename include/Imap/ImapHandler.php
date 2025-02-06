@@ -925,7 +925,11 @@ class ImapHandler implements ImapHandlerInterface
 
             if ($sortOrder === 0) {
                 // Ascending order
-                if ($offset === "end") {
+                // STIC Custom 20250206 JBL - Avoid TypeError $offset is int
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // if ($offset === "end") {
+                if ($offset === 0) {
+                // End STIC Custom
                     $firstMsg = $totalMsgs - (int)$pageSize;
                     $lastMsg = $totalMsgs;
                 } elseif ($offset <= 0) {
@@ -937,7 +941,11 @@ class ImapHandler implements ImapHandlerInterface
                 }
             } else {
                 // Descending order
-                if ($offset === "end") {
+                // STIC Custom 20250206 JBL - Avoid TypeError $offset is int
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // if ($offset === "end") {
+                if ($offset === 0) {
+                // End STIC Custom
                     $firstMsg = 1;
                     $lastMsg = $firstMsg + (int)$pageSize;
                 } elseif ($offset <= 0) {
@@ -986,7 +994,11 @@ class ImapHandler implements ImapHandlerInterface
             $lastSequenceNumber = $mailboxInfo['Nmsgs'] = count($emailSortedHeaders);
 
             // paginate
-            if ($offset === "end") {
+            // STIC Custom 20250206 JBL - Avoid TypeError $offset is int
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if ($offset === "end") {
+            if ($offset === 0) {
+            // End STIC Custom
                 $offset = $lastSequenceNumber - $pageSize;
             } elseif ($offset <= 0) {
                 $offset = 0;
