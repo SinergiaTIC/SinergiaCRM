@@ -938,7 +938,11 @@ class EditView
         //if popup select add panel if user is a member of multiple groups to metadataFile
         global $sugar_config;
         if(isset($sugar_config['securitysuite_popup_select']) && $sugar_config['securitysuite_popup_select'] == true
-            && (empty($this->focus->fetched_row['id']) || ($_REQUEST['isDuplicate'] ?? false) === true) && $this->focus->module_dir != "Users" && $this->focus->module_dir != "SugarFeed") {
+        // STIC-Custom 20250204 EPS - Correcting condition with $_REQUEST['isDuplicate'], it can never be === true cause it comes as a string from $_REQUEST
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // && (empty($this->focus->fetched_row['id']) || ($_REQUEST['isDuplicate'] ?? false) === true) && $this->focus->module_dir != "Users" && $this->focus->module_dir != "SugarFeed") {
+            && (empty($this->focus->fetched_row['id']) || ($_REQUEST['isDuplicate'] ?? false) == true) && $this->focus->module_dir != "Users" && $this->focus->module_dir != "SugarFeed") {
+        // End STIC-Custom
 
             //there are cases such as uploading an attachment to an email template where the request module may
             //not be the same as the current bean module. If that happens we can just skip it
