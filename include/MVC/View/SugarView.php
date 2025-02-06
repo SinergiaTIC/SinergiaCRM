@@ -1305,7 +1305,11 @@ EOHTML;
     private function _calculateFooterMetrics()
     {
         $endTime = microtime(true);
-        $deltaTime = $endTime - (isset($GLOBALS['startTime']) ? $GLOBALS['startTime'] : null);
+        // STIC Custom 20250206 JBL - Avoid Uncaught TypeError: Unsupported operand types: float - null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $deltaTime = $endTime - (isset($GLOBALS['startTime']) ? $GLOBALS['startTime'] : null);
+        $deltaTime = $endTime - (isset($GLOBALS['startTime']) ? $GLOBALS['startTime'] : 0);
+        // End STIC Custom
         $this->responseTime = number_format(round($deltaTime, 2), 2);
         // Print out the resources used in constructing the page.
         $this->fileResources = count(get_included_files());
@@ -1317,7 +1321,11 @@ EOHTML;
     private function _getStatistics()
     {
         $endTime = microtime(true);
-        $deltaTime = $endTime - (isset($GLOBALS['startTime']) ? $GLOBALS['startTime'] : null);
+        // STIC Custom 20250206 JBL - Avoid Uncaught TypeError: Unsupported operand types: float - null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $deltaTime = $endTime - (isset($GLOBALS['startTime']) ? $GLOBALS['startTime'] : null);
+        $deltaTime = $endTime - (isset($GLOBALS['startTime']) ? $GLOBALS['startTime'] : 0);
+        // End STIC Custom
         $response_time_string =
             $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] .
             ' ' .

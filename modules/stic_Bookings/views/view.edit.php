@@ -167,6 +167,10 @@ class stic_BookingsViewEdit extends ViewEdit
         $separator = get_number_separators();
         $thousandsSeparator = $separator[0];
         $decimalSeparator = $separator[1];
-        return number_format($str, 2, $decimalSeparator, $thousandsSeparator);
+        // STIC Custom 20250206 JBL - Avoid Uncaught TypeError in number_format
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // return number_format($str, 2, $decimalSeparator, $thousandsSeparator);
+        return number_format((float) $str, 2, $decimalSeparator, $thousandsSeparator);
+        // End STIC Custom
     }
 }
