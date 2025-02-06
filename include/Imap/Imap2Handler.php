@@ -1167,7 +1167,11 @@ class Imap2Handler implements ImapHandlerInterface
             $lastSequenceNumber = $mailboxInfo['Nmsgs'] = is_countable($emailSortedHeaders) ? count($emailSortedHeaders) : 0;
 
             // paginate
-            if ($offset === "end") {
+            // STIC Custom 20250206 JBL - Avoid TypeError $offset is int
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if ($offset === "end") {
+            if ($offset === 0) {
+            // End STIC Custom
                 $offset = $lastSequenceNumber - $pageSize;
             } elseif ($offset <= 0) {
                 $offset = 0;

@@ -512,7 +512,10 @@ class ImapHandlerFake implements ImapHandlerInterface
      * @return array
      * @throws Exception
      */
-    public function getMessageList(?string $filterCriteria, $sortCriteria, $sortOrder, int $offset, int $pageSize, array &$mailboxInfo, array $columns): array
+    // STIC Custom 20250206 JBL - Declaration of Child:: getMessageList must be compatible with Base::getMessageList
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function getMessageList(?string $filterCriteria, $sortCriteria, $sortOrder, int $offset, int $pageSize, array &$mailboxInfo, array $columns): array
+    public function getMessageList(?string $filterCriteria, $sortCriteria, $sortOrder, int $offset, int $pageSize, array &$mailboxInfo, array $columns, string $auth_type): array
     {
         return $this->fakes->call('getMessageList', [$filterCriteria, $sortCriteria, $sortOrder, $offset, $pageSize, $mailboxInfo, $columns]);
     }
