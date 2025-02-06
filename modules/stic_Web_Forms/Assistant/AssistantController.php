@@ -177,7 +177,7 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
      */
     function saveSelectedFields() 
     {
-        $selectedFields = $this->persistentData['SELECTED_FIELDS'];        
+        $selectedFields = $this->persistentData['SELECTED_FIELDS'] ?? null;        
         if (empty($selectedFields)) 
         {
             $selectedFields = array();

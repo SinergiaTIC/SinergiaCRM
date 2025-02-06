@@ -35,14 +35,14 @@ class DonationController extends stic_Web_FormsAssistantController {
     public function actionStep1() {
         $this->createModulesArray();
         $this->view = 'Donationstep1';
-        $this->view_object_map['WEB_MODULE'] = $this->persistentData['WEB_MODULE']; // Retrieve the value saved in previous steps
+        $this->view_object_map['WEB_MODULE'] = $this->persistentData['WEB_MODULE'] ?? null; // Retrieve the value saved in previous steps
         $this->mapStepNavigation('Step1', 'Step2');
 
         // Get all reCAPTCHA configurations and put it in view_object_map['PERSISTENT_DATA']['recaptcha_configs']
         $this->view_object_map['PERSISTENT_DATA']['recaptcha_configs'] = $this->getRecaptchaConfigurations();
         $this->view_object_map['PERSISTENT_DATA']['recaptcha_configKeys'] = array_keys($this->view_object_map['PERSISTENT_DATA']['recaptcha_configs']);
         // Get index of selected reCAPTCHA configuration
-        $this->view_object_map['PERSISTENT_DATA']['recaptcha_selected'] = $this->persistentData['recaptcha_selected'];
+        $this->view_object_map['PERSISTENT_DATA']['recaptcha_selected'] = $this->persistentData['recaptcha_selected'] ?? null;
     }
 
     /**
