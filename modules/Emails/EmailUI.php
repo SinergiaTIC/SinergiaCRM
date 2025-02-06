@@ -1237,7 +1237,11 @@ HTML;
     /**
      * Generates cache folder structure
      */
-    public function preflightEmailCache($cacheRoot)
+    // STIC Custom 20250206 JBL - Define static function
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function preflightEmailCache($cacheRoot)
+    public static function preflightEmailCache($cacheRoot)
+    // END STIC Custom
     {
         // base
         if (!file_exists($cacheRoot)) {
@@ -1330,7 +1334,11 @@ HTML;
                 if (in_array($personalAccount->id, $showFolders)) {
                     // check for cache value
                     $cacheRoot = sugar_cached("modules/Emails/{$personalAccount->id}");
-                    $this->preflightEmailCache($cacheRoot);
+                    // STIC Custom 20250206 JBL - preflightEmailCache changed to static
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // $this->preflightEmailCache($cacheRoot);
+                    self::preflightEmailCache($cacheRoot);
+                    // END STIC Custom
 
                     if ($this->validCacheFileExists($personalAccount->id, 'folders', "folders.php")) {
                         $mailboxes = $this->getMailBoxesFromCacheValue($personalAccount);
@@ -1377,7 +1385,11 @@ HTML;
             if (in_array($groupAccount->id, $showFolders)) {
                 // check for cache value
                 $cacheRoot = sugar_cached("modules/Emails/{$groupAccount->id}");
-                $this->preflightEmailCache($cacheRoot);
+                // STIC Custom 20250206 JBL - preflightEmailCache changed to static
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $this->preflightEmailCache($cacheRoot);
+                self::preflightEmailCache($cacheRoot);
+                // END STIC Custom
                 //$groupAccount->connectMailserver();
 
                 if ($this->validCacheFileExists($groupAccount->id, 'folders', "folders.php")) {
