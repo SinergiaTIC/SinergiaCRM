@@ -69,6 +69,7 @@ class Sugar_Smarty extends Smarty
         $this->registerPlugin("modifier", "strstr", "strstr");
         $this->registerPlugin("modifier", "substr", "substr");
         $this->registerPlugin("modifier", "strpos", "strpos");
+        $this->registerPlugin("modifier", "is_string", "is_string");
         $this->registerPlugin("modifier", "strftime", "strftime");
         $this->registerPlugin("modifier", "mb_strtolower", "mb_strtolower");
         $this->registerPlugin("modifier", "preg_match", "preg_match");
