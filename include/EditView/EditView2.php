@@ -939,6 +939,7 @@ class EditView
         global $sugar_config;
         if(isset($sugar_config['securitysuite_popup_select']) && $sugar_config['securitysuite_popup_select'] == true
         // STIC-Custom 20250204 EPS - Correcting condition with $_REQUEST['isDuplicate'], it can never be === true cause it comes as a string from $_REQUEST
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
             // && (empty($this->focus->fetched_row['id']) || ($_REQUEST['isDuplicate'] ?? false) === true) && $this->focus->module_dir != "Users" && $this->focus->module_dir != "SugarFeed") {
             && (empty($this->focus->fetched_row['id']) || ($_REQUEST['isDuplicate'] ?? false) == true) && $this->focus->module_dir != "Users" && $this->focus->module_dir != "SugarFeed") {
         // End STIC-Custom

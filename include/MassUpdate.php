@@ -468,7 +468,11 @@ eoq;
                                 return in_array($k['type'], ['decimal', 'currency', 'float']);
                             }, ARRAY_FILTER_USE_BOTH);
                             foreach ($decimalFields as $key => $value) {
-                               $newbean->$key = (float) number_format($newbean->$key, $value['precision'] ?? 2, '.', '');
+                                // STIC Custom 20250206 JBL - Avoid Uncaught TypeError in number_format
+                                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                                // $newbean->$key = (float) number_format($newbean->$key, $value['precision'] ?? 2, '.', '');
+                                $newbean->$key = (float) number_format((float) $newbean->$key, $value['precision'] ?? 2, '.', '');
+                                // End STIC Custom
                             }
                             
                             // A new record shouldn't have a fetched row

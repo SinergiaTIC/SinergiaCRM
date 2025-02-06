@@ -184,7 +184,12 @@ class templateParser
                 // First, standarizing decimal separator
                 $value = str_replace(',', '.', $value); 
                 // Making sure there are two decimals in the value
-                $value = number_format($value, 2, $sep[1], $sep[0]);
+
+                // STIC Custom 20250206 JBL - Avoid Uncaught TypeError in number_format
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $value = number_format($value, 2, $sep[1], $sep[0]);
+                $value = number_format((float) $value, 2, $sep[1], $sep[0]);
+                // End STIC Custom
                 // END STIC-Custom
             }
 
