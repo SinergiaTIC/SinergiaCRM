@@ -489,7 +489,7 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
 	
     		// Conditions of exclusion from the list by field no editable 
 			if ((in_array('studio', $field_def))
-				&& ($field_def['studio'] === false || ($field_def['studio']['view'] ?? true) === false)
+				&& (!empty($field_def['studio']) === false || ($field_def['studio']['view'] ?? true) === false)
 			   )
     		{
     			$GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [{$field_def['name']}] excluded by field no editable.");
@@ -500,8 +500,8 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     		$field_def['vname'] = preg_replace('/:$/','',translate($field_def['vname'], $bean->module_name));
     
     		$colArr = array();
-    		$GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [{$field_def['name']}] - Type [{$field_def['type']}] - FieldDefRequird [{$field_def['required']}] - Required [{$requiredFields[$field_def['name']]}]");
-    
+			$GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [" . ($field_def['name'] ?? 'undefined') . "] - Type [" . ($field_def['type'] ?? 'undefined') . "] - FieldDefRequird [" . ($field_def['required'] ?? 'undefined') . "] - Required [" . ($requiredFields[$field_def['name'] ?? ''] ?? 'undefined') . "]");
+
     		$colsName=$field_def['vname'];
     
     		// If the field name appears in the array of required fields, it has priority over the field definition
@@ -555,7 +555,7 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
 			$extractRequiredFields = array();
 			foreach ($availableFields as $key=>$value) 
 			{
-				if ($value[2]){
+				if (!empty($value[2])){
 					array_push($extractRequiredFields, $value[1]);
 				}
 			}
