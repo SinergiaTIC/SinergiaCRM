@@ -46,6 +46,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Generic chart
  * @api
  */
+// STIC Custom 20250206 JBL - Avoid Undefined property error
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class SugarChart
 {
     private $db;
