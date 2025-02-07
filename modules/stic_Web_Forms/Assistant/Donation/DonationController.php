@@ -100,7 +100,7 @@ class DonationController extends stic_Web_FormsAssistantController {
         global $app_list_strings;
 
         // Generate the default shipping url
-        if (empty($this->persistentData['FORM_WEB_POST_URL'])) {
+        if (!isset($this->persistentData['FORM_WEB_POST_URL']) || $this->persistentData['FORM_WEB_POST_URL'] === '') {
             if ($this->persistentData['include_recaptcha']) {
                 $this->persistentData['FORM_WEB_POST_URL'] = $this->getServerURL() . '/index.php?entryPoint=stic_Web_Forms_saveRecaptcha';
             } else {
@@ -113,7 +113,7 @@ class DonationController extends stic_Web_FormsAssistantController {
         $this->view_object_map['PAYMENT_TYPE_OPTIONS'] = $app_list_strings[$objFP->field_defs['payment_type']['options']];
 
         // Generate the assigned user id
-        if (empty($this->persistentData['ASSIGNED_USER_ID'])) {
+        if (!isset($this->persistentData['ASSIGNED_USER_ID']) || $this->persistentData['ASSIGNED_USER_ID'] === '') {
             global $current_user;
             $this->persistentData['ASSIGNED_USER_ID'] = $current_user->id;
             $this->persistentData['ASSIGNED_USER_NAME'] = $current_user->name;
