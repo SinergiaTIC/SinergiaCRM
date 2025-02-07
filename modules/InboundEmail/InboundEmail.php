@@ -3243,7 +3243,11 @@ class InboundEmail extends SugarBean
             $useSsl = true;
         }
 
-        $exServ = explode('::', $this->service);
+        // STIC Custom 20250205 JBL - Avoid errors using null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $exServ = explode('::', $this->service);
+        $exServ = explode('::', (string) $this->service);
+        // End STIC Custom
         if (!isset($exServ[1])) {
             LoggerManager::getLogger()->warn('incorrect service given: ' . $this->service);
             $service = '/';
