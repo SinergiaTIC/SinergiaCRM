@@ -197,7 +197,13 @@ class TemplateHandler
                         }
 
                         if (is_array($entry)) {
-                            $defs2[$entry['name']] = $entry;
+                            // STIC Custom 20250207 JBL - Remove Undefined array Key warning
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            // $defs2[$entry['name']] = $entry;
+                            if (isset($entry['name'])) {
+                                $defs2[$entry['name']] = $entry;
+                            }
+                            // End STIC Custom
                         } else {
                             $defs2[$entry] = array('name' => $entry);
                         }
@@ -521,7 +527,11 @@ class TemplateHandler
         } else {
             //Loop through the Meta-Data fields to see which ones need quick search support
             foreach ($defs2 as $f) {
-                if (!isset($defs[$f['name']])) {
+                // STIC Custom 20250207 JBL - Remove Undefined array Key warning
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // if (!isset($defs[$f['name']])) {
+                if (!isset($f['name']) || !isset($defs[$f['name']])) {
+                // End STIC Custom
                     continue;
                 }
 
