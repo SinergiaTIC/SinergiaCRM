@@ -140,7 +140,7 @@ class stic_AttendancesUtils
                 continue;
             }
 
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Creating attendance: ' . $row['attendance_name'] . ' for session: ' . $row['session_id'] . ' and registration: ' . $row['registration_id']);
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Creating attendance: ' . ($row['attendance_name'] ?? 'undefined'). ' for session: ' . $row['session_id'] . ' and registration: ' . $row['registration_id']);
             $attendance = BeanFactory::newBean('stic_Attendances');
 
             // Set basic data

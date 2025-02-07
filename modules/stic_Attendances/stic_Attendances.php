@@ -61,7 +61,7 @@ class stic_Attendances extends Basic
 
     public function save_relationship_changes($is_update, $exclude = array())
     {
-        if (!empty($this->stic_attendances_stic_registrationsstic_registrations_ida) && (trim($this->stic_attendances_stic_registrationsstic_registrations_ida) != trim($this->rel_fields_before_value['stic_attendances_stic_registrationsstic_registrations_ida']))) {
+        if (!empty($this->stic_attendances_stic_registrationsstic_registrations_ida) && !empty($this->rel_fields_before_value) && (trim($this->stic_attendances_stic_registrationsstic_registrations_ida) != trim($this->rel_fields_before_value['stic_attendances_stic_registrationsstic_registrations_ida']))) {
             // On new records, inherit amount from related registration
             if (empty($this->amount) && !$is_update) {
                 $registrationBean = BeanFactory::getBean('stic_Registrations', $this->stic_attendances_stic_registrationsstic_registrations_ida);

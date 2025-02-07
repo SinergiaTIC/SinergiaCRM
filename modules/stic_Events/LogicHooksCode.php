@@ -31,7 +31,7 @@ class stic_EventsLogicHooks {
 
         // The percentage is only (re)calculated when total_hours changes its value
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Total hours:' . $bean->total_hours);
-        if ($bean->total_hours != $bean->fetched_row['total_hours']) {
+        if (empty($bean->fetched_row) || $bean->total_hours != $bean->fetched_row['total_hours']) {
 
             // Load the event bean with its related registrations
             $bean->load_relationship('stic_registrations_stic_events');

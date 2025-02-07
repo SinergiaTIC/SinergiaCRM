@@ -358,7 +358,7 @@ eoq;
                         // STIC-Custom - 20220704 - JCH - Add mass duplicate & update logic
                         // STIC#828  
                         // In mass duplicate and update the parent_type value might be stored for later use
-                        if($_REQUEST['mass_duplicate'] == 1 && !empty($newbean->parent_type))
+                        if(!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == 1 && !empty($newbean->parent_type))
                         {
                             $currentParentType = $newbean->parent_type;
                         }
@@ -442,7 +442,7 @@ eoq;
                         // STIC-Custom - 20220704 - JCH - Add mass duplicate & update logic
                         // STIC#776  
                         // STIC#828  
-                        if($_REQUEST['mass_duplicate'] == 1){
+                        if(!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == 1){
                             
                             // Get current id for use later
                             $fromId = $newbean->id;
@@ -688,7 +688,7 @@ eoq;
                             // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
                             // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
                             // $newhtml .= $this->addDatetime($displayname, $field["name"]);
-                            $newhtml .= $this->addDatetime($displayname, $field["name"],$field["display_default"]);
+                            $newhtml .= $this->addDatetime($displayname, $field["name"],$field["display_default"] ?? null);
                             // END STIC-Custom
                             break;
                         case "datetime":

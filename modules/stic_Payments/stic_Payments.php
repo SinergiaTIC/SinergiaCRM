@@ -139,8 +139,8 @@ class stic_Payments extends Basic
             // Check if the status, amount, or payment_date fields have changed or if it is a new record.            
             if (
                 (!empty($tempFetchedRow['status']) && $this->status != $tempFetchedRow['status'])
-                || SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount'])
-                || $userDate->asDBDate() != $tempFetchedRow['payment_date']
+                || (!empty($tempFetchedRow['status']) && SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount']))
+                || (!empty($tempFetchedRow['payment_date']) && $userDate->asDBDate() != $tempFetchedRow['payment_date'])
                 || empty($this->fetched_row)
             ) {
                 // Recalculate the paid_annualized_fee field.
