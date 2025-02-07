@@ -326,9 +326,9 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     				if (is_array($field))  // If it is an array it allows overwriting the default definition of the field
     				{ 
     					$fieldName = $field['name'];
-    					$forceOptions = $field['options'];
-    					$formField['hidden'] = $field['hidden'];
-    					$formField['script'] = $field['script'];
+    					$forceOptions = $field['options'] ?? null;
+    					$formField['hidden'] = $field['hidden'] ?? null;
+    					$formField['script'] = $field['script'] ?? null;
     				} 
     				else {
     					$fieldName = $field;

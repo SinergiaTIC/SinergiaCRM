@@ -179,7 +179,7 @@ class stic_Web_FormsController extends SugarController
     public static function getServerURL()
     {
         global $sugar_config;
-        $protocol = $_SERVER['HTTPS'];
+        $protocol = $_SERVER['HTTPS'] ?? null;
         $protocol = (empty($protocol) || $protocol == 'off') ? 'http' : 'https';
         $siteUrl = $sugar_config['site_url'];
         $rootApp = substr($siteUrl, strpos($siteUrl, '//') + 2);

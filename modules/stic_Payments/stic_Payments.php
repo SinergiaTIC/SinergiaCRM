@@ -126,7 +126,7 @@ class stic_Payments extends Basic
 
         // Since the value of `fetched_row` is reset in the case of audited fields, 
         // we will save its contents in a variable to be used after running the `Save` method.
-        $tempFetchedRow = $this->fetched_row;
+        $tempFetchedRow = $this->fetched_row ?? null;
 
 
         // Call the generic save() function from the SugarBean class
@@ -138,7 +138,7 @@ class stic_Payments extends Basic
             // Recalculate the field paid_annualized_fee if applicable.
             // Check if the status, amount, or payment_date fields have changed or if it is a new record.            
             if (
-                $this->status != $tempFetchedRow['status']
+                (!empty($tempFetchedRow['status']) && $this->status != $tempFetchedRow['status'])
                 || SticUtils::unformatDecimal($this->amount) != SticUtils::unformatDecimal($tempFetchedRow['amount'])
                 || $userDate->asDBDate() != $tempFetchedRow['payment_date']
                 || empty($this->fetched_row)
@@ -164,7 +164,7 @@ class stic_Payments extends Basic
         include_once 'SticInclude/Utils.php';
 
         // If parent payment commitment has changed...
-        if (!empty($this->stic_paymebfe2itments_ida) && (trim($this->stic_paymebfe2itments_ida) != trim($this->rel_fields_before_value['stic_paymebfe2itments_ida']))) {
+        if (!empty($this->stic_paymebfe2itments_ida) && !empty($this->rel_fields_before_value) && (trim($this->stic_paymebfe2itments_ida) != trim($this->rel_fields_before_value['stic_paymebfe2itments_ida'] ))) {
             // Get new parent payment commitment bean
             $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
             // Get payment commmitment related contact (usual case)

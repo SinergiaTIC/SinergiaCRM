@@ -243,7 +243,7 @@ eoq;
             }
             // Stic-Custom EPS 20241005 - Mass update on multienum was not cleaning the field
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/472
-            else if(is_array($value) && count($value) === 1 && $this->sugarbean->field_defs[$post]['type'] == 'multienum' && $value[0] == '__SugarMassUpdateClearField__') {
+            else if(is_array($value) && count($value) === 1 && !empty($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'multienum' && $value[0] == '__SugarMassUpdateClearField__') {
                 $_POST[$post] = '';
             }
             // END STic-Custom
@@ -459,7 +459,7 @@ eoq;
                             $newbean->fromId=$fromId;
 
                             // Inherit parent record (for flex relate fields)
-                            if(empty($_REQUEST['parent_id'])){
+                            if(empty($_REQUEST['parent_id']) && !empty($currentParentType)){
                                 $newbean->parent_type = $currentParentType;
                             }
 
@@ -479,7 +479,7 @@ eoq;
                             unset($newbean->fetched_row);
                             
                             // If requested by user, remove name to rebuild it automatically
-                            if($_REQUEST['remove_name'] == true){
+                            if(isset($_REQUEST['remove_name']) &&  $_REQUEST['remove_name'] == true){
                                 $newbean->name = '';
                             }
                 
