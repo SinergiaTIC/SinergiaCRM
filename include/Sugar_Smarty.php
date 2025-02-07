@@ -75,6 +75,7 @@ class Sugar_Smarty extends Smarty
         $this->registerPlugin("modifier", "preg_match", "preg_match");
         $this->registerPlugin("modifier", "json_encode", "json_encode");
         $this->registerPlugin("modifier", "url2html", "url2html");
+        $this->registerPlugin("modifier", "intval", "intval");
         // End STIC Custom
 
         if (!file_exists(SUGAR_SMARTY_DIR)) {
