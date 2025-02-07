@@ -101,7 +101,7 @@ class stic_Payment_CommitmentsLogicHooks
     {
 
         // Create initial payments, only if it is a new record (and not modified)
-        if (!empty($bean->fetched_row)) {
+        if (empty($bean->fetched_row)) {
             stic_Payment_CommitmentsUtils::createInitialPayments($bean);
         }
 
