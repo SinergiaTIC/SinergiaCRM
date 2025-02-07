@@ -70,7 +70,11 @@
     {assign var="hideTable" value=true}
     <div class="list view listViewEmpty">
         {if $displayEmptyDataMesssages}
-            {if strlen($query) == 0}
+            {* STIC Custom 20250207 JBL - Avoid errors using null as string *}
+            {* https://github.com/SinergiaTIC/SinergiaCRM/pull/477 *}
+            {* {if strlen($query) == 0} *}
+            {if strlen((string)$query) == 0}
+            {* END STIC *}
                 {capture assign="createLink"}<a
                     href="?module={$pageData.bean.moduleDir}&action=EditView&return_module={$pageData.bean.moduleDir}&return_action=DetailView">{$APP.LBL_CREATE_BUTTON_LABEL}</a>{/capture}
                 {capture assign="importLink"}<a
