@@ -7,7 +7,7 @@ function survey_questions_display(Surveys $focus, $field, $value, $view)
     // More info: STIC#367
 
     // $hasResponses = !empty($focus->id) && $focus->get_linked_beans('surveys_surveyresponses');
-    if ($_POST["isDuplicate"] && $_POST["isDuplicate"] == "true") {
+    if (isset($_POST["isDuplicate"]) && $_POST["isDuplicate"] == "true") {
         $hasResponses = false;
     } else {
         $hasResponses = !empty($focus->id) && $focus->get_linked_beans('surveys_surveyresponses');
