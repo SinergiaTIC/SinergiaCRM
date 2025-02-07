@@ -26,7 +26,7 @@ class SticViews {
         foreach ($view->bean as $key => $value) {
             if (is_string($value)) {
                 // We separate the TextArea fields because they can contain line breaks. These produce an error when encoding them to JSON from PHP and decoding them from javascript. 
-                if ($view->bean->field_name_map[$key]["type"] ?? false == 'text') {
+               if (isset($view->bean->field_name_map[$key]["type"]) && $view->bean->field_name_map[$key]["type"] == 'text')
                     $parsedValuesTextToJS[$key] = $value;
                 } else {
                     $parsedValuesToJS[$key] = $value;
