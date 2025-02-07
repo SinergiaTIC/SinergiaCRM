@@ -573,7 +573,11 @@ function getModuleField(
         // but the default value. In order to properly show the expected blank value, we hack the vardef definition overriding default value 
         // with blank value when the stored workflow value (now in $value) is blank.
         if ($fieldlist[$name]['type'] == 'enum' || $fieldlist[$name]['type'] == 'multienum' || $fieldlist[$name]['type'] == 'dynamicenum') {
-            $fieldlist[$name]['default'] = $value === "" ? $value : $fieldlist[$name]['default'];
+            // STIC Custom 20241113 JBL - Fix Undefined array Key
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $fieldlist[$name]['default'] = $value === "" ? $value : $fieldlist[$name]['default'];
+            $fieldlist[$name]['default'] = $value === "" ? $value : $fieldlist[$name]['default'] ?? "";
+            // END STIC Custom
         }
     }
 
