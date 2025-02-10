@@ -559,7 +559,11 @@ class ListViewData
                     $field_name .= "_basic";
                     if (isset($_REQUEST[$field_name])  && (!is_array($basicSearchField) || !isset($basicSearchField['type']) || $basicSearchField['type'] == 'text' || $basicSearchField['type'] == 'name')) {
                         // Ensure the encoding is UTF-8
-                        $queryString = htmlentities($_REQUEST[$field_name], null, 'UTF-8');
+                        // STIC Custom 20250210 JBL - Fix Uncaught TypeError in htmlentities
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // $queryString = htmlentities($_REQUEST[$field_name], null, 'UTF-8');
+                        $queryString = htmlentities($_REQUEST[$field_name], ENT_QUOTES, 'UTF-8');
+                        // END STIC Custom
                         break;
                     }
                 }

@@ -378,7 +378,11 @@ class ListViewDataEmailsSearchOnIMap extends ListViewDataEmailsSearchAbstract
                         )
                     ) {
                         // Ensure the encoding is UTF-8
-                        $queryString = htmlentities((string) $request[$field_name], null, 'UTF-8');
+                        // STIC Custom 20250210 JBL - Fix Uncaught TypeError in htmlentities
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // $queryString = htmlentities((string) $request[$field_name], null, 'UTF-8');
+                        $queryString = htmlentities((string) $request[$field_name], ENT_QUOTES, 'UTF-8');
+                        // END STIC Custom
                         break;
                     }
                 }
