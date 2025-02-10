@@ -96,7 +96,7 @@ class AccountFormBase
         }
         // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/164
-        $focus = SugarModule::get($this->moduleName)->loadBean();        
+        $focus = SugarModule::get("Accounts")->loadBean();        
         if(file_exists("custom/modules/Accounts/sticAccountsDuplicateQueries.php")) {
             require_once("custom/modules/Accounts/sticAccountsDuplicateQueries.php");
             if(method_exists("sticAccountsDuplicateQueries", "getDuplicateQuery")) {
