@@ -179,7 +179,7 @@ class WebFormMailer
         ////    ATTACHMENTS
         ////    20210525 - STIC - Code copied from modules/Emails/Email.php - Line 3039 + Delete the attached file of the array of files to attach once it has been managed.
         $indice = 0;
-        if (!empty($this->$saved_attachment)) {
+        if (!empty($saved_attachment) && !empty($this->$saved_attachment)) {
             foreach ($this->$saved_attachment as $note) {
                 $mime_type = 'text/plain';
                 if ($note->object_name == 'Note') {
