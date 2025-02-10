@@ -973,16 +973,26 @@ class jjwg_Maps extends jjwg_Maps_sugar
                 @$aInfo = array(
                     'address' => $address,
                     'status' => 'APPROXIMATE',
-                    'lat' => $resultsGeography['location']['lat'],
-                    'lng' => $resultsGeography['location']['lng']
+                    // STIC Custom 20250210 JBL - Fix Undefined array key Warning
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // 'lat' => $resultsGeography['location']['lat'],
+                    // 'lng' => $resultsGeography['location']['lng']
+                    'lat' => $resultsGeography['location']['lat'] ?? null,
+                    'lng' => $resultsGeography['location']['lng'] ?? null
+                    // END STIC Custom
                 );
             } else {
                 // Return address info
                 @$aInfo = array(
                     'address' => $address,
                     'status' => $googlemaps['status'],
-                    'lat' => $resultsGeography['location']['lat'],
-                    'lng' => $resultsGeography['location']['lng']
+                    // STIC Custom 20250210 JBL - Fix Undefined array key Warning
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // 'lat' => $resultsGeography['location']['lat'],
+                    // 'lng' => $resultsGeography['location']['lng']
+                    'lat' => $resultsGeography['location']['lat'] ?? null,
+                    'lng' => $resultsGeography['location']['lng'] ?? null
+                    // END STIC Custom
                 );
             }
         }

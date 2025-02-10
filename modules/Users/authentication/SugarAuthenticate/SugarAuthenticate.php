@@ -174,7 +174,11 @@ class SugarAuthenticate
             $authenticated_user_language = $GLOBALS['current_user']->getPreference('language') ?? $_REQUEST['ck_login_language_20'] ?? $sugar_config['default_language'];
         }
 
-        if (str_contains($sugar_config['disabled_languages'], $authenticated_user_language)){
+        // STIC Custom 20250210 JBL - Fix Undefined array key Warning
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (str_contains($sugar_config['disabled_languages'], $authenticated_user_language)){
+        if (!empty($sugar_config['disabled_languages']) && str_contains($sugar_config['disabled_languages'], $authenticated_user_language)){
+        // END STIC Custom
             $authenticated_user_language = $sugar_config['default_language'];
         }
 
