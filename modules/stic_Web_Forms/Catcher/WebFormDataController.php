@@ -462,7 +462,7 @@ class WebFormDataController
         foreach ($fields as $field) {
             $prefixedName = "{$prefix}{$field}";
             // If the value received in $_REQUEST is an array is that it comes from a multiple field, in which case we process it to a valid string for this type of values
-            if (is_array($_REQUEST[$prefixedName])) {
+            if (is_array($_REQUEST[$prefixedName] ?? false)) {
                 $_REQUEST[$prefixedName] = '^' . join('^,^', $_REQUEST[$prefixedName]) . '^';
             }
             $destName = ($erasePrefix ? $field : $prefixedName);

@@ -674,6 +674,7 @@ class WebFormMailer
 
         $mail->Subject = "[SinergiaCRM Web Form Error] {$msg['subject']}";
 
+        $bodyContent = '';
         $bodyContent .= "<h2>{$msg['subject']}</h2>";
         $bodyContent .= "<p>{$msg['information']}</p>";
 
