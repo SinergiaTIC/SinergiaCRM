@@ -38,7 +38,7 @@ class EventInscriptionController extends stic_Web_FormsAssistantController {
         $this->view_object_map['PERSISTENT_DATA']['recaptcha_configs'] = $this->getRecaptchaConfigurations();
         $this->view_object_map['PERSISTENT_DATA']['recaptcha_configKeys'] = array_keys($this->view_object_map['PERSISTENT_DATA']['recaptcha_configs']);
         // Get index of selected reCAPTCHA configuration
-        $this->view_object_map['PERSISTENT_DATA']['recaptcha_selected'] = $this->persistentData['recaptcha_selected'];
+        $this->view_object_map['PERSISTENT_DATA']['recaptcha_selected'] = $this->persistentData['recaptcha_selected'] ?? '';
     }
 
     /**
