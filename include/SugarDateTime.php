@@ -110,7 +110,11 @@ class SugarDateTime extends DateTime
      * @see DateTime::createFromFormat
      */
     #[ReturnTypeWillChange]
-    public static function createFromFormat($format, $time, $timezone = null)
+    // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public static function createFromFormat($format, $time, $timezone = null)
+    public static function createFromFormat($format, $time, $timezone = null) : DateTime|false
+    // END STIC Custom
     {
         if (empty($time) || empty($format)) {
             return false;

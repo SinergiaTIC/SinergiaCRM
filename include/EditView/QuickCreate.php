@@ -56,11 +56,19 @@ class QuickCreate extends EditView
      */
     public $viaAJAX = false;
 
-    public function process()
+    // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function process()
+    public function process($checkFormName = false, $formName = '')
+    // END STIC Custom
     {
         global $current_user, $timedate;
 
-        parent::process();
+        // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // parent::process();
+        parent::process($checkFormName, $formName);
+        // END STIC Custom
 
         $this->ss->assign('ASSIGNED_USER_ID', $current_user->id);
 
