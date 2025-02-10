@@ -47,7 +47,7 @@ class SinergiaDARebuild
             require_once 'SticInclude/SinergiaDA.php';
 
             // Set the force request parameter
-            $_REQUEST['force'] = $_REQUEST['force'] == 1 ? true : false;
+            $_REQUEST['force'] = ($_REQUEST['force'] ?? null) == 1 ? true : false;
 
             // Create views via the ExternalReporting class
             $r = new ExternalReporting();

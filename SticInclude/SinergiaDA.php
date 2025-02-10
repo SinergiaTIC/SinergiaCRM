@@ -315,11 +315,11 @@ class ExternalReporting
 
                 // To avoid exceptional cases where the table name is defined in uppercase
                 // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
-                $fieldV['table'] = strtolower($fieldV['table']);
+                $fieldV['table'] = strtolower($fieldV['table'] ?? null);
 
                 $fieldName = $fieldV['name'];
 
-                $fieldPrefix = $fieldV['source'] == 'custom_fields' ? 'c' : 'm';
+                $fieldPrefix = ($fieldV['source'] ?? null) == 'custom_fields' ? 'c' : 'm';
 
                 // If the field is excluded, skip it
                 if (in_array($fieldV['name'], $this->evenExcludedFields)) {
@@ -335,13 +335,13 @@ class ExternalReporting
                     $sdaHiddenField = true;
                 }
 
-                $fieldV['label'] = $this->sanitizeText($modStrings[$fieldV['vname']]);
+                $fieldV['label'] = $this->sanitizeText($modStrings[$fieldV['vname'] ?? null] ?? null);
 
                 // Attempts to assign a translated label to the field.
                 // If no translation is found, it tries to translate it directly.
                 // The field is skipped if no translation is obtained.
                 if (empty($fieldV['label']) && $fieldV['name'] != 'id') {
-                    $directTranslate = translate($fieldV['vname'], $fieldV['module']);
+                    $directTranslate = translate($fieldV['vname'] ?? '', $fieldV['module'] ?? null);
                     if (!empty($directTranslate)) {
                         $fieldV['label'] = $this->sanitizeText($directTranslate);
                     } else {
@@ -402,13 +402,13 @@ class ExternalReporting
                         break;
                     case 'relate':
                         if (
-                            (in_array($fieldV['module'], $this->evenExcludedModules) && $fieldV['name'] != 'assigned_user_name')
+                            (in_array($fieldV['module'] ?? null, $this->evenExcludedModules) && $fieldV['name'] != 'assigned_user_name')
 
                         ) {
                             continue 2;
                         } else {
 
-                            $relatedModuleName = "{$app_list_strings['moduleList'][$fieldV['module']]}";
+                            $relatedModuleName = $app_list_strings['moduleList'][$fieldV['module'] ?? ''] ?? '';
 
                             // The relationship between contacts and accounts does not have the 'link' property,
                             // which is necessary for retrieval of the relationship values, so we add it directly.
@@ -420,7 +420,7 @@ class ExternalReporting
 
                                 // Build and obtain the translated value from the other side of the relationship so it can be properly displayed in SinergiaDA
                                 $joinModuleRelLabel = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_TITLE';
-                                $joinLabel = translate($joinModuleRelLabel, $fieldV['module']);
+                                $joinLabel = translate($joinModuleRelLabel, $fieldV['module'] ?? '');
                                 $joinLabel = empty($joinLabel) || $joinLabel == $joinModuleRelLabel ? $txModuleName : $joinLabel;
 
                                 $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel);
@@ -467,7 +467,7 @@ class ExternalReporting
                                 $secureName = preg_replace('([^A-Za-z0-9])', '_', $app_list_strings['moduleList'][$fieldV['module']]) . ' (' . $fieldV['label'] . ')';
 
                                 // It is necessary to detect whether or not the field is custom, and in this case, we obtain it looking at the property of the field containing the ID of the Relationship Table ("...id_c")
-                                $fieldV['source'] = $moduleBean->getFieldDefinitions()[$fieldV['id_name']]['source'] ?: $fieldV['source'];
+                                $fieldV['source'] = $moduleBean->getFieldDefinitions()[$fieldV['id_name']]['source'] ?? $fieldV['source'] ?? null;
 
                                 $fieldPrefix = $fieldV['source'] == 'custom_fields' ? 'c' : 'm';
 
@@ -485,7 +485,7 @@ class ExternalReporting
                                 $indexesToCreate[] = "{$fieldV['id_name']}";
 
                                 //Add relate record name
-                                if (in_array($fieldV['module'], ['Contacts', 'Leads']) || (Beanfactory::newBean($fieldV['module'])->field_defs['last_name']) && $fieldV['module'] != 'Users') {
+                                if (in_array($fieldV['module'], ['Contacts', 'Leads']) || (Beanfactory::newBean($fieldV['module'])->field_defs['last_name'] ?? null) && $fieldV['module'] != 'Users') {
                                     $relatedName = " concat_ws(' ', {$leftJoinAlias}.first_name, {$leftJoinAlias}.last_name) ";
                                 } elseif ($fieldV['module'] == 'Users') {
                                     $relatedName = "{$leftJoinAlias}.user_name";
@@ -667,7 +667,7 @@ class ExternalReporting
                     case 'float':
                         $edaType = 'numeric';
                         $edaPrecision = $fieldV['type'] == 'currency' ? 2 : 0;
-                        $edaPrecision = $fieldV['precision'] ? $fieldV['precision'] : $edaPrecision;
+                        $edaPrecision = $fieldV['precision'] ?? $edaPrecision;
                         break;
                     case 'date':
                     case 'datetime':
@@ -709,10 +709,10 @@ class ExternalReporting
 
                 if (isset($fieldSrc)) {
                     // Add to the array of normal base and custom fields
-                    if ($fieldV['source'] == 'custom_fields') {
+                    if (!empty($fieldV['source']) && $fieldV['source'] == 'custom_fields') {
                         $fieldList['custom'][$fieldK] = $fieldSrc;
                         $addColumnToMetadata = 1;
-                    } else if ($fieldV['source'] == 'non-db' && $fieldV['name'] != 'full_name' && $fieldV['name'] != 'email1') {
+                    } else if (!empty($fieldV['source']) && $fieldV['source'] == 'non-db' && $fieldV['name'] != 'full_name' && $fieldV['name'] != 'email1') {
                         // This source is not processed, so we are moving them away
                         $fieldList['non-db'][$fieldK] = $fieldSrc;
                         $addColumnToMetadata = 0;
@@ -723,7 +723,7 @@ class ExternalReporting
                         }
                     }
 
-                    if ($excludeColumnFromMetadada == true) {
+                    if (isset($excludeColumnFromMetadada) && $excludeColumnFromMetadada == true) {
                         $addColumnToMetadata = 0;
                     }
                     // Only the columns that are really going to be added to the views are added to the SDA_def_Columns table
@@ -735,7 +735,7 @@ class ExternalReporting
                                 'table' => "{$this->viewPrefix}_{$tableName}",
                                 'column' => $fieldV['alias'],
                                 'type' => $edaType,
-                                'decimals' => $edaPrecision,
+                                'decimals' => $edaPrecision ?? 0,
                                 'aggregations' => empty($edaAggregations) ? 'none' : $edaAggregations,
                                 'label' => html_entity_decode($fieldV['label'], ENT_QUOTES),
                                 'description' => addslashes($fieldV['label']),
@@ -827,7 +827,7 @@ class ExternalReporting
             // Sql Header. Depending on the value of the SDA_MODE_MODE setting we create tables or views mysql
             if (
                 in_array($moduleName, $this->sdaSettings['publishAsTable'])
-                || $this->sdaSettings['publishAsTable'][0] == '1'
+                || (!empty($this->sdaSettings['publishAsTable'][0]) && $this->sdaSettings['publishAsTable'][0] == '1')
             ) {
                 $tableMode = 'table';
                 $createViewQueryHeader = " CREATE OR REPLACE TABLE {$viewName} ENGINE=InnoDB AS SELECT ";
@@ -885,9 +885,9 @@ class ExternalReporting
             // Create FROM
             unset($createViewQueryFrom);
             if (isset($fieldList['custom'])) {
-                $createViewQueryFrom .= " FROM  {$tableName} m LEFT JOIN {$tableName}_cstm c ON m.id=c.id_c ";
+                $createViewQueryFrom = " FROM  {$tableName} m LEFT JOIN {$tableName}_cstm c ON m.id=c.id_c ";
             } else {
-                $createViewQueryFrom .= " FROM  {$tableName} AS m ";
+                $createViewQueryFrom = " FROM  {$tableName} AS m ";
             }
 
             // Create left joins
@@ -913,11 +913,11 @@ class ExternalReporting
             };
 
             $this->info .= "<h2>Base fields</h2>";
-            $this->info .= print_r($fieldList['base'], true);
+            $this->info .= print_r($fieldList['base'] ?? '', true);
             $this->info .= "<h2>Custom fields</h2>";
-            $this->info .= print_r($fieldList['custom'], true);
+            $this->info .= print_r($fieldList['custom'] ?? '', true);
             $this->info .= "<h2>Virtual Fields</h2>";
-            $this->info .= print_r($fieldList['virtual'], true);
+            $this->info .= print_r($fieldList['virtual'] ?? '', true);
 
             $this->info .= "</div>";
             $isTable = $tableMode == 'table' ? ' <b style=color:orange>[Table]</b> ' : ' <b style=color:green>[View]</b> ';
@@ -1111,7 +1111,7 @@ class ExternalReporting
             // Standard join using join table
 
             // **Determine join side based on current module:**
-            if ($rel['lhs_module'] == $field['module']) {
+            if (!empty($rel['lhs_module']) && !empty($field['module']) && $rel['lhs_module'] == $field['module']) {
                 // Current module is on the left side
 
                 // Add metadata record
@@ -1132,7 +1132,7 @@ class ExternalReporting
                     'field' => "{$rel['join_table']}.{$rel['join_key_lhs']}",
                     'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
                 ];
-            } elseif ($rel['rhs_module'] == $field['module']) {
+            } elseif (!empty($rel['rhs_module']) && !empty($field['module']) && $rel['rhs_module'] == $field['module']) {
                 // Current module is on the right side
 
                 // Add metadata record
@@ -1526,8 +1526,8 @@ class ExternalReporting
         // Get instance of DBManagerFactory
         $db = DBManagerFactory::getInstance();
 
-        // Get the current listm or return if not exists
-        $currentList = $app_list_strings[$listName];
+        // Get the current list or return if not exists
+        $currentList = $app_list_strings[$listName] ?? null;
         if (!$currentList) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "The referenced dropdown list [{$listName}] is not available. Ommited");
             return;
@@ -1804,8 +1804,10 @@ class ExternalReporting
             }
 
             // Insert accumulated permissions in batch
-            $this->batchInsertPermissions($permissionsBatch);
-            unset($permissionsBatch);
+            if (!empty($permissionsBatch)) {
+                $this->batchInsertPermissions($permissionsBatch);
+                unset($permissionsBatch);
+            }
         }
 
         // Log total execution time
