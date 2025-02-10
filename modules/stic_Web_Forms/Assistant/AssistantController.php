@@ -375,7 +375,7 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     					}
     
     					// If the field is required and was not included, it is included in the output array
-    					if ($formField['DEF']['required'] && ! in_array($formField['name'], $outRequiredFields)) 
+    					if (isset($formField['DEF']['required']) && $formField['DEF']['required'] && ! in_array($formField['name'], $outRequiredFields)) 
     					{
     						array_push($outRequiredFields, $formField['name']);
     					}
