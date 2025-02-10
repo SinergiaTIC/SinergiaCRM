@@ -51,7 +51,7 @@ class stic_BookingsViewEdit extends ViewEdit
         } else {
             // If all_day is checked then remove the hours and minutes
             // and apply timezone to the dates
-            if ($this->bean->all_day == '1') {
+            if (isset($this->bean->all_day) && $this->bean->all_day == '1') {
                 $startDate = explode(' ', $this->bean->fetched_row['start_date']);
                 if ($startDate[1] > "12:00") {
                     $startDate = new DateTime($startDate[0]);
