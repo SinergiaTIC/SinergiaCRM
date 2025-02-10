@@ -121,7 +121,7 @@ class actionSendEmail extends actionBase
             
         // Show output accounts
         $emailsList = $this->get_output_smtps();
-        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp']);
+        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp'] ?? '');
         
         $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none;' class='advancedOptions'>";
         $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
@@ -131,7 +131,7 @@ class actionSendEmail extends actionBase
         $html .= '</td>';
 
         $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
-        $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp']) . "</select>";
+        $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp'] ?? '') . "</select>";
         $html .= '</td>';
         $html .= '</tr>';
 
