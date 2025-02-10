@@ -46,6 +46,10 @@ require_once('include/EditView/SugarVCR.php');
  * ListView - list of many objects
  * @api
  */
+// STIC Custom 20250210 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class ListView
 {
     public $local_theme= null;

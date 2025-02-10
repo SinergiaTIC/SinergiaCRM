@@ -5259,7 +5259,11 @@ function create_export_query_relate_link_patch($module, $searchFields, $where)
             $join = $seed->$fieldLink->getJoin($params, true);
             $join_table_alias = 'join_' . $field['name'];
             if (isset($field['db_concat_fields'])) {
-                $db_field = DBManager::concat($join_table_alias, $field['db_concat_fields']);
+                // STIC Custom 20250210 JBL - Fix static calls to non static methods
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $db_field = DBManager::concat($join_table_alias, $field['db_concat_fields']);
+                $db_field = $seed->db->concat($join_table_alias, $field['db_concat_fields']);
+                // END STIC Custom
                 $where = preg_replace('/' . $field['name'] . '/', $db_field, (string) $where);
             } else {
                 $where = preg_replace('/(^|[\s(])' . $field['name'] . '/', '${1}' . $join_table_alias . '.' . $field['rname'], (string) $where);

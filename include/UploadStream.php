@@ -308,7 +308,12 @@ class UploadStream
 
     public function url_stat($path, $flags)
     {
-        return @stat(self::path($path));
+        // STIC Custom 20250210 JBL - Fix Warnings in missing files
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // return @stat(self::path($path));
+        $realPath = self::path($path);
+        return file_exists($realPath) ? @stat($realPath) : false;
+        // END STIC Custom
     }
 
     public static function move_uploaded_file($upload, $path)

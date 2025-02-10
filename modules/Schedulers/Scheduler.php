@@ -1067,7 +1067,12 @@ class Scheduler extends SugarBean
             // job functions
             self::$job_strings = array('url::' => 'URL');
             foreach ($job_strings as $k => $v) {
-                self::$job_strings['function::' . $v] = $mod_strings['LBL_' . strtoupper($v)];
+                // STIC Custom 20250210 JBL - Fix Undefined array key Warning
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // self::$job_strings['function::' . $v] = $mod_strings['LBL_' . strtoupper($v)];
+                $label = 'LBL_' . strtoupper($v);
+                self::$job_strings['function::' . $v] = $mod_strings[$label] ?? $label;
+                // END STIC Custom
             }
         }
         return self::$job_strings;

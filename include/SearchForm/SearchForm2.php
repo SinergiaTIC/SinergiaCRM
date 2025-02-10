@@ -630,7 +630,11 @@ class SearchForm
                     if (isset($data['enabled']) && $data['enabled'] == false) {
                         continue;
                     }
-                    $data['name'] = $data['name'] . '_' . $this->parsedView;
+                    // STIC Custom 20250210 JBL - Fix Undefined array key Warning
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // $data['name'] = $data['name'] . '_' . $this->parsedView;
+                    $data['name'] = ($data['name'] ?? '') . '_' . $this->parsedView;
+                    // END STIC Custom
                     $this->formData[] = array('field' => $data);
                     $this->fieldDefs[$data['name']] = $data;
                 } else {
