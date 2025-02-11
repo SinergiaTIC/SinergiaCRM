@@ -70,7 +70,7 @@ class templateParser
                 // STIC Custom - JCH - 202210006 - Check if field is really empty
                 // STIC#880
                 // if (empty($focus->$fieldName)) {
-                if (empty($focus->$fieldName) && $focus->$fieldName == '' ) {
+                if (!isset($focus->$fieldName) || $focus->$fieldName == '' ) {
                 // END STIC-Custom
                     $repl_arr[$key . '_' . $fieldName] = '';
                     continue;
