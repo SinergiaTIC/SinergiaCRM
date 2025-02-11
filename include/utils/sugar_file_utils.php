@@ -294,14 +294,30 @@ function sugar_file_get_contents($filename, $use_include_path = false, $context 
  */
 function sugar_touch($filename, $time = null, $atime = null)
 {
-    if (!empty($atime) && !empty($time)) {
-        $result = @touch($filename, $time, $atime);
-    } elseif (!empty($time)) {
-        $result = @touch($filename, $time);
-    } else {
-        $result = @touch($filename);
+    // STIC Custom 20241113 JBL - Avoid Warning touch(): UploadStream::stream_metadata is not implemented!
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // if (!empty($atime) && !empty($time)) {
+    //     $result = @touch($filename, $time, $atime);
+    // } elseif (!empty($time)) {
+    //     $result = @touch($filename, $time);
+    // } else {
+    //     $result = @touch($filename);
+    // }
+    // We need to check if is a local file, it can be a stream wrapper (ex: upload://myfile.txt)
+    // touch is only available in local files
+    if (stream_is_local($filename)) {
+        if (!empty($atime) && !empty($time)) {
+            $result = @touch($filename, $time, $atime);
+        } elseif (!empty($time)) {
+            $result = @touch($filename, $time);
+        } else {
+            $result = @touch($filename);
+        }
     }
-
+    else {
+        $result = false;
+    }
+    // END STIC Custom
     if (!$result) {
         $GLOBALS['log']->error("File $filename cannot be touched");
 
