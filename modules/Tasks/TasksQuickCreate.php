@@ -50,8 +50,12 @@ require_once('include/EditView/QuickCreate.php');
 class TasksQuickCreate extends QuickCreate
 {
     public $javascript;
-    
-    public function process()
+
+    // STIC Custom 20250211 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function process()
+    public function process($checkFormName = false, $formName = '')
+    // End STIC Custom
     {
         global $current_user, $timedate, $app_list_strings, $current_language, $mod_strings;
         $mod_strings = return_module_language($current_language, 'Tasks');
