@@ -68,7 +68,7 @@ class stic_Sessions extends Basic
 
     public function save_relationship_changes($is_update, $exclude = array())
     {
-        if (!empty($this->stic_sessions_stic_eventsstic_events_ida) && (trim($this->stic_sessions_stic_eventsstic_events_ida) != trim($this->rel_fields_before_value['stic_sessions_stic_eventsstic_events_ida']))) {
+        if (!empty($this->stic_sessions_stic_eventsstic_events_ida) && (empty($this->rel_fields_before_value) || (trim($this->stic_sessions_stic_eventsstic_events_ida) != trim($this->rel_fields_before_value['stic_sessions_stic_eventsstic_events_ida'])))) {
             // On new records, inherit session_color from related registration
             if (empty($this->color) && !$is_update) {
                 $eventBean = BeanFactory::getBean('stic_Events', $this->stic_sessions_stic_eventsstic_events_ida);

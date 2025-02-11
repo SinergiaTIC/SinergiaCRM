@@ -74,7 +74,7 @@ class stic_SessionsLogicHooks
         $bean->duration = (float) number_format($duration / 3600, 2);
 
         // If start_date has changed set weekday
-        if ($bean->start_date != $bean->fetched_row['start_date']) {
+        if (empty($bean->fetched_row) || $bean->start_date != $bean->fetched_row['start_date']) {
             $bean->weekday = date('w', strtotime($bean->start_date));
         }
 

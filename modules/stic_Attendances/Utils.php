@@ -50,6 +50,7 @@ class stic_AttendancesUtils
         }
 
         // Add registration filter if needed
+        $registrationIdWhere = '';
         if (!empty($registrationId)) {
             $registrationIdWhere = " AND i.id='$registrationId' ";
         }
