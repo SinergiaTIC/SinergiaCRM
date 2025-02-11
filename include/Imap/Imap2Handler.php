@@ -910,7 +910,11 @@ class Imap2Handler implements ImapHandlerInterface
      * @param int $options
      * @return bool Returns TRUE on success or FALSE on failure.
      */
-    public function setFlagFull($sequence, $flag, $options = NIL)
+    // STIC Custom 20250211 JBL - Change NIL deprecated
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function setFlagFull($sequence, $flag, $options = NIL)
+    public function setFlagFull($sequence, $flag, $options = null)
+    // END STIC Custom
     {
         $this->logCall(__FUNCTION__, func_get_args());
         $ret = imap2_setflag_full($this->getStream(), $sequence, $flag, $options);
