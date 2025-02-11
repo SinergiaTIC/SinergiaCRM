@@ -311,8 +311,10 @@ class actionSendEmail extends actionBase
                     $props['smtp_from_name'],
                     $props['smtp_from_addr'],
                 );
+                return $selectedData;
             }
         }
+        $selectedData = array(null, null);
         return $selectedData;
     }
     private function get_output_smtps_options($emailsList, $selectedSmtp) {
@@ -711,7 +713,8 @@ class actionSendEmail extends actionBase
             $outboundEmail = $outboundEmail->getSystemMailerSettings();
         }
         else {
-            $user = ''; // User defined SMTPs are not used on Workflows, so User will always be empty
+            $user = new User();
+            $user->getSystemUser();
             $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
         }
         $mail->From = $fromEmail? $fromEmail : $outboundEmail->smtp_from_addr;
