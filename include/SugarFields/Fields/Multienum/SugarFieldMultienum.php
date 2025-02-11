@@ -86,7 +86,11 @@ class SugarFieldMultienum extends SugarFieldEnum
     public function save(&$bean, $params, $field, $properties, $prefix = '')
     {
         if (isset($params[$prefix.$field])) {
-            if ($params[$prefix.$field][0] === '' && !empty($params[$prefix.$field][1])) {
+            // STIC Custom 20241113 JBL - Fix null exception
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if ($params[$prefix.$field][0] === '' && !empty($params[$prefix.$field][1])) {
+            if (($params[$prefix.$field][0] ?? '') === '' && !empty($params[$prefix.$field][1])) {
+            // END STIC Custom
                 unset($params[$prefix.$field][0]);
             }
 
