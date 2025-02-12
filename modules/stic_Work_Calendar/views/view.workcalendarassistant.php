@@ -65,9 +65,11 @@ class stic_Work_CalendarViewWorkCalendarAssistant extends SugarView
             $dow[] = array("index" => $day_index, "label" => $app_list_strings['dom_cal_day_short'][$day_index + 1]);
         }
 
+        $selectedEmployees = [];
+
         if (!empty($_REQUEST['employeeId'])){
             $user = BeanFactory::getBean('Employees', $_REQUEST['employeeId']);
-            $selectedEmployees[0] = $user->name;
+            $selectedEmployees[] = $user->name;
         } else if (!empty($_REQUEST['mass'])) {   
             $selectedEmployees = $_REQUEST["mass"];
             foreach ($selectedEmployees as $key => $id){
