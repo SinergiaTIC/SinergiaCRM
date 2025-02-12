@@ -1512,6 +1512,10 @@ class ExternalReporting
             }
         }
 
+        // Add the default language to the config values
+        $tmpConfigValues['default_language'] = substr($sugar_config['default_language'],0,2);
+
+
         // Add each gathered config value to the metadata record
         foreach ($tmpConfigValues as $key => $value) {
             $this->addMetadataRecord('sda_def_config', [
