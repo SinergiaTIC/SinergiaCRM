@@ -536,9 +536,15 @@ class ListViewData
 
         $queryString = '';
 
+        // STIC Custom 20250212 JBL - Fix Uncaught TypeError: count() must be of type Countable|array
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search" ||
+        //     isset($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"]) > 1 || $_REQUEST["type_basic"][0] != "") ||
+        //     isset($_REQUEST["module"]) && $_REQUEST["module"] == "MergeRecords") {
         if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search" ||
-            isset($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"]) > 1 || $_REQUEST["type_basic"][0] != "") ||
+            isset($_REQUEST["type_basic"]) && is_array($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"]) > 1 || $_REQUEST["type_basic"][0] != "") ||
             isset($_REQUEST["module"]) && $_REQUEST["module"] == "MergeRecords") {
+        // END STIC Custom
             $queryString = "-advanced_search";
         } else {
             if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "basic_search") {
