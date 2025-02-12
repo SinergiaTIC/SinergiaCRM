@@ -363,7 +363,11 @@ class SugarFieldBase
                 return $funcName(
                     $parentFieldArray,
                     $vardef['name'],
-                    $parentFieldArray[strtoupper($vardef['name'])],
+                    // STIC Custom 20250212 JBL - Fix Uncaught TypeError: Cannot access offset of type string
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // $parentFieldArray[strtoupper($vardef['name'])],
+                    is_array($parentFieldArray) ? ($parentFieldArray[strtoupper($vardef['name'] ?? '')] ?? null) : null,
+                    // END STIC Custom
                     $displayType
                 );
             } else {
