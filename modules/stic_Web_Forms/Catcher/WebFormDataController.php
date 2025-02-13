@@ -89,6 +89,7 @@ class WebFormDataController
             $this->lang = $_REQUEST['language'];
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Indicating language [{$this->lang}] from form.");
         } else {
+            $_SERVER["HTTP_ACCEPT_LANGUAGE"] =  $_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? '';
             $http_lang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2);
             switch ($http_lang) {
                 case 'es':
@@ -102,7 +103,7 @@ class WebFormDataController
                     $this->lang = 'en_us';
                     break;
             }
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  ndicating language [{$_SERVER["HTTP_ACCEPT_LANGUAGE"]} -> {$http_lang} -> {$this->lang}] from browser parameter.");
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  indicating language [{$_SERVER["HTTP_ACCEPT_LANGUAGE"]} -> {$http_lang} -> {$this->lang}] from browser parameter.");
         }
 
         $this->app_strings = return_application_language($this->lang); // Load application labels
@@ -189,7 +190,7 @@ class WebFormDataController
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  : Loading specific driver...");
         $actionDefParams = $this->bo->getActionDefParams();
 
-        if ($actionDefParams['webFormClass']) {
+        if (!empty($actionDefParams['webFormClass'])) {
             $webFormClass = $actionDefParams['webFormClass'];
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Loading controller [{$webFormClass}]...");
             $controllerName = "{$webFormClass}Controller";

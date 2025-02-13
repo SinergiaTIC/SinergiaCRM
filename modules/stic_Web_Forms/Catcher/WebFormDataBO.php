@@ -81,6 +81,7 @@ class WebFormDataBO
             $this->lang = $_REQUEST['language'];
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Indicating language [{$this->lang}] from form.");
         } else {
+            $_SERVER["HTTP_ACCEPT_LANGUAGE"] =  $_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? '';
             $http_lang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2);
             switch ($http_lang) {
                 case 'es':

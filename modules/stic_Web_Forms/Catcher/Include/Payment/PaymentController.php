@@ -776,11 +776,8 @@ class PaymentController extends WebFormDataController {
 
         $req = 'cmd=_notify-validate'; // Prefix that must be added to the message to verify
 
-        if (function_exists('get_magic_quotes_gpc')) {
-            $get_magic_quotes_exists = true;
-        }
         foreach ($myPost as $key => $value) {
-            if ($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
+            if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() == 1) {
                 $value = urlencode(stripslashes($value));
             } else {
                 $value = urlencode($value);
@@ -812,6 +809,8 @@ class PaymentController extends WebFormDataController {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
 
+        define('DEBUG', false);
+        
         if (DEBUG == true) {
             curl_setopt($ch, CURLOPT_HEADER, 1);
             curl_setopt($ch, CURLINFO_HEADER_OUT, 1);

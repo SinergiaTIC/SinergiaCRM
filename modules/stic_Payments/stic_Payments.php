@@ -91,13 +91,13 @@ class stic_Payments extends Basic
         // Get payment commitment bean. Depending on the context (editview, subpanel, workflow, etc.)
         // stic_paymebfe2itments_ida will be an string that contains the id of the related payment
         // commitment or will be an object of type Link2, so let's manage it properly.
-        if ($this->stic_paymebfe2itments_ida instanceof Link2) {
+        if (isset($this->stic_paymebfe2itments_ida) && $this->stic_paymebfe2itments_ida instanceof Link2) {
             $PCBean = SticUtils::getRelatedBeanObject($this, 'stic_payments_stic_payment_commitments');
-        } else {
+        } else if(isset($this->stic_paymebfe2itments_ida)) {
             $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
         }
 
-        if ($PCBean) {
+        if (isset($PCBean)) {
             global $timedate;
             
             // Get userDate object from user format or from database format 
@@ -133,7 +133,7 @@ class stic_Payments extends Basic
         parent::save();
 
 
-        if ($PCBean && $userDate) {
+        if (isset($PCBean) && isset($userDate)) {
         
             // Recalculate the field paid_annualized_fee if applicable.
             // Check if the status, amount, or payment_date fields have changed or if it is a new record.            

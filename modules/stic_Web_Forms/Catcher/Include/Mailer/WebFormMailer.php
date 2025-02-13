@@ -579,7 +579,7 @@ class WebFormMailer
 
         ini_set('track_errors', 1);
         $ret = false;
-        $data = file_get_contents($fileName);
+        $data = file_exists($fileName) ? file_get_contents($fileName) : false;
         if ($data === false) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Error reading file.");
         } else {
@@ -601,7 +601,7 @@ class WebFormMailer
             }
         }
 
-        if ($deleteTmpFile) {
+        if ($deleteTmpFile && file_exists($fileName)) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Deleting File [{$fileName}]...");
             unlink($fileName);
         }

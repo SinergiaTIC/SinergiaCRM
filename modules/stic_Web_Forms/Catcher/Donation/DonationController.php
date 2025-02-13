@@ -64,6 +64,7 @@ class DonationController extends WebFormDataController
 
             // If there are required fields, we also delete the prefix
             if (!empty($defParams['req_id'])) {
+                $prefix = $prefix ?? null;
                 $newReqId = preg_replace("/{$prefix}/u", '', $defParams['req_id']);
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  New Req Id {$newReqId}");
                 $defParams['req_id'] = $newReqId;
