@@ -2793,7 +2793,11 @@ class SugarBean
 
         foreach ($this->field_defs as $field => $data) {
             if (!$dbOnly || !isset($data['source']) || $data['source'] == 'db') {
-                if (!$stringOnly || is_string($this->$field)) {
+                // STIC Custom 20250213 JBL - Fix Warning: Undefined property access 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // if (!$stringOnly || is_string($this->$field)) {
+                if (!$stringOnly || (isset($this->$field) && is_string($this->$field))) {
+                // END STIC Custom
                     if ($upperKeys) {
                         if (!isset($cache[$field])) {
                             $cache[$field] = strtoupper($field);

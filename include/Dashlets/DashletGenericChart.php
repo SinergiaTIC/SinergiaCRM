@@ -250,6 +250,10 @@ abstract class DashletGenericChart extends Dashlet
         $currentSearchFields = array();
 
         if (is_array($this->_searchFields)) {
+            // STIC Custom 20250213 JBL - Fix Warning: Undefined variable $count 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            $count = 0;
+            // END STIC Custom
             foreach ($this->_searchFields as $name=>$params) {
                 if (!empty($name)) {
                     $name = strtolower($name);
@@ -273,8 +277,13 @@ abstract class DashletGenericChart extends Dashlet
                     }
                     $currentSearchFields[$name]['input'] = $this->layoutManager->widgetDisplayInput($widgetDef, true, (empty($this->$name) ? '' : $this->$name));
                 } else { // ability to create spacers in input fields
-                    $currentSearchFields['blank' + $count]['label'] = '';
-                    $currentSearchFields['blank' + $count]['input'] = '';
+                    // STIC Custom 20250213 JBL - Fix Uncaught TypeError
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // $currentSearchFields['blank' + $count]['label'] = '';
+                    // $currentSearchFields['blank' + $count]['input'] = '';
+                    $currentSearchFields['blank' . $count]['label'] = '';
+                    $currentSearchFields['blank' . $count]['input'] = '';
+                    // END STIC Custom
                     $count++;
                 }
             }
