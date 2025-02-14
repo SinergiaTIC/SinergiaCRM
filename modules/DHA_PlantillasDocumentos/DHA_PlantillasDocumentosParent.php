@@ -309,7 +309,7 @@ class DHA_PlantillasDocumentosParent extends File {
          if($this->ACLAccess('DetailView')){
             // Nota Sugar 7: El entry_point debe de empezar por download_xxxx para que Sugar no cambie la url a modo #bwc. Ver la funcion javascript "_rewriteNewWindowLinks"
             //$this->file_url = "<a href='index.php?action=download&record=".$this->id."&module=DHA_PlantillasDocumentos' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
-            $this->file_url = "<a href='index.php?entryPoint=download_dha_document_template&type=DHA_PlantillasDocumentos&id=".$this->id."&v=".date('YmdHis')."' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+            $this->file_url = "<a href='index.php?entryPoint=download_dha_document_template&type=DHA_PlantillasDocumentos&id=".$this->id."&v=".date('YmdHis')."' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.($mod_strings['LBL_LIST_VIEW_DOCUMENT']??'').'"  border="0"')."</a>";
          }
       }
 

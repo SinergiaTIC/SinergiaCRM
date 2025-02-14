@@ -141,7 +141,7 @@ class Generate_Document {
       $this->userTZ = $current_user->getPreference("timezone");
       $this->userTZlabel = $this->userTZ." ".$this->userDateTimePrefs["userGmt"];
 
-      $seps = get_number_seperators();
+      $seps = get_number_separators();
       $this->thousands_sep = $seps[0];
       $this->decimal_point = $seps[1];
       $this->decimals = $locale->getPrecision();
