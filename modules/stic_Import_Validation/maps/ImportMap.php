@@ -31,7 +31,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 
 
-
+// STIC Custom 20250206 JBL - Allow Dynamic Properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class ImportMap extends SugarBean
 {
     /**
