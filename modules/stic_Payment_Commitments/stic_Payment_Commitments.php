@@ -22,6 +22,7 @@
  */
 
 
+#[\AllowDynamicProperties]
 class stic_Payment_Commitments extends Basic
 {
     public $new_schema = true;

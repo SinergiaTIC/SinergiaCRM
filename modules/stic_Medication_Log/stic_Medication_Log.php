@@ -22,6 +22,7 @@
  */
 
 
+#[\AllowDynamicProperties]
 class stic_Medication_Log extends Basic
 {
     public $new_schema = true;
