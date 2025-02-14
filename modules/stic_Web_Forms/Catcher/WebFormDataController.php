@@ -348,7 +348,7 @@ class WebFormDataController
         // Try the answer
         if ($delegate) {
             // If we have to delegate the execution, return the response
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Delegating type response [{$response['type']}]...");
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Delegating type response [" . ($response['type'] ?? null) . "]...");
             return $response;
         } else {
             // If we have to deal with the answer, we deal with it.

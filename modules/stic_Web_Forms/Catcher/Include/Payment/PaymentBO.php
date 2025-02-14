@@ -773,7 +773,7 @@ class PaymentBO extends WebFormDataBO
                 break;
         }
 
-        return $this->returnCode($ret);
+        return $this->returnCode($ret ?? null);
     }
 
     /**

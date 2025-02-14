@@ -393,7 +393,7 @@ class WebFormMailer
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing object [{$i}] [{$replacementObjects[$i]->module_dir}] ... ");
             $macro_nv = array();
             $obj = $this->prepareBean2EmailTemplate($replacementObjects[$i]);
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Date [{$obj->registration_date}] ... ");
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Date [" . ($obj->registration_date ?? null) . "] ... ");
             $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
             $j = $i + 1;
             $parseArr["text{$j}"] = $parseArr["text{$i}"];
@@ -413,7 +413,7 @@ class WebFormMailer
 
         // Get the attached files through Notes
         $notesBean = BeanFactory::getBean('Notes');
-        $this->$saved_attachment = $notesBean->get_full_list(
+        $this->saved_attachment = $notesBean->get_full_list(
             'name',
             "notes.parent_id = '$template->id'"
         );
@@ -448,11 +448,11 @@ class WebFormMailer
                 case 'date':
                     $dateTimeFormat = "{$dateFormat}{$dateTimeFormat}";
                     $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Format [{$fieldDef['type']}] = [{$dateTimeFormat}].");
-                    $td = $timedate->fromDbType($ret->$field, $fieldDef['type']);
+                    $td = !empty($ret->$field) ? $timedate->fromDbType($ret->$field, $fieldDef['type']) : null;
                     if (!empty($td)) {
                         $ret->$field = $td->format($dateTimeFormat);
                     }
-                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [{$field}] formatted [{$bean->$field}] => [{$ret->$field}].");
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Field [{$field}] formatted [" . ($bean->$field ?? null) ." ] => [" . ($ret->$field ?? null) . "]");
                     break;
             }
         }

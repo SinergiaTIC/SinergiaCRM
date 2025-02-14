@@ -108,6 +108,7 @@ class DonationController extends WebFormDataController
         $response = $this->fp->manage(true);
 
         // If the creation of the payment method has been successful (or is initiated in the case of card or bizum payment, send the corresponding mail)
+        $response['status'] = $response['status'] ?? null;
         if ($response['status'] == self::RESPONSE_STATUS_OK ||
             $response['status'] == self::RESPONSE_STATUS_PENDING) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating warning mail ...");
