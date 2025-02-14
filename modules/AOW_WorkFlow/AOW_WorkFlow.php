@@ -780,6 +780,10 @@ class AOW_WorkFlow extends Basic
                 if (in_array($data['type'], $dateFields)) {
                     $field = strtotime($field);
                 }
+                // STIC Custom 20250214 JBL - Fix undefined variable Warning
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                $type = '';
+                // END STIC Custom
 
                 switch ($condition->value_type) {
                     case 'Field':
