@@ -128,7 +128,11 @@ class templateParser
                     $repl_arr[$key . "_" . $fieldName] = html_entity_decode((string) $focus->{$fieldName},
                         ENT_COMPAT, 'UTF-8');
                 } elseif ($field_def['type'] == 'decimal' || $field_def['type'] == 'float') {
-                    if ($_REQUEST['entryPoint'] == 'formLetter') {
+                    // STIC Custom 20250215 JBL - Remove Warning: Undefined array key access
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull
+                    // if ($_REQUEST['entryPoint'] == 'formLetter') {
+                    if (!empty($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'formLetter') {
+                    // END STIC Custom
                         $value = formatDecimalInConfigSettings($focus->$fieldName, true);
                     } else {
                         $value = formatDecimalInConfigSettings($focus->$fieldName, false);
