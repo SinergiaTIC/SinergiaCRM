@@ -108,8 +108,15 @@ EOF;
                         break;
                     case "Rating":
                     case "Scale":
-                        $data[$questionId]['chartData'][$questionResponse->answer]++;
-                        $data[$questionId]['responses'][$questionResponse->answer]['count']++;
+                        // STIC Custom 20250217 JBL - Avoid Undefined array key Warning
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // $data[$questionId]['chartData'][$questionResponse->answer]++;
+                        // $data[$questionId]['responses'][$questionResponse->answer]['count']++;
+                        if (!empty($questionResponse->answer)) {
+                            $data[$questionId]['chartData'][$questionResponse->answer]++;
+                            $data[$questionId]['responses'][$questionResponse->answer]['count']++;
+                        }
+                        // End STIC Custom
                         break;
                     case "Textbox":
                     case "Text":

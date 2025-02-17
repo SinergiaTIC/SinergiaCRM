@@ -105,7 +105,11 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 
     public function getWidgetId($buttonSuffix = true)
     {
-        $widgetID = parent::getWidgetId() . '_'.preg_replace('[ ]', '', mb_strtolower($this->form_value, 'UTF-8'));
+        // STIC Custom 20250217 JBL - Avoid pass null in mb_strtolower
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $widgetID = parent::getWidgetId() . '_'.preg_replace('[ ]', '', mb_strtolower($this->form_value, 'UTF-8'));
+        $widgetID = parent::getWidgetId() . '_'.preg_replace('[ ]', '', mb_strtolower((string)$this->form_value, 'UTF-8'));
+        // End STIC Custom
         if ($buttonSuffix) {
             $widgetID .= '_button';
         }
