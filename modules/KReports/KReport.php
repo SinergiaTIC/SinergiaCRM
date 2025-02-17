@@ -234,13 +234,13 @@ class KReportPluginManager {
             if ($thisPlugin->checkAccess($thisReport)) {
                $thisMenuItem = $thisPlugin->getMenuItem();
 
-               if ($thisMenuItem['menuItem'] != '')
+               if ($thisMenuItem['menuItem']??'' != '')
                   $pluginArray[$this->plugins[$plugin]['metadata']['category']][] = $thisMenuItem['menuItem'];
 
-               if ($thisMenuItem['jsCode'] != '')
+               if ($thisMenuItem['jsCode']??'' != '')
                   $pluginjsArray[] = $thisMenuItem['jsCode'];
 
-               if ($thisMenuItem['jsFile'] != '')
+               if ($thisMenuItem['jsFile']??'' != '')
                   if (is_array($thisMenuItem['jsFile'])) {
                      foreach ($thisMenuItem['jsFile'] as $thisFile)
                         $pluginFilesArray[] = '<script type="text/javascript" src="' . $thisFile . '"></script>';
@@ -588,7 +588,7 @@ class KReport extends SugarBean {
                $linkFieldArray[$unionid] = array(
                    'module' => $unionQuery['kQuery']->fieldNameMap[$fieldId]['module'],
                    // 2013-08-21 BUG #491 .. check if custom field and trake root path alias
-                   'idfield' => ($unionQuery['kQuery']->fieldNameMap[$fieldId]['fields_name_map_entry']['source'] == 'custom_fields' ? $unionQuery['kQuery']->fieldNameMap[$fieldId]['pathalias'] : $unionQuery['kQuery']->fieldNameMap[$fieldId]['tablealias']) . 'id'
+                   'idfield' => (($unionQuery['kQuery']->fieldNameMap[$fieldId]['fields_name_map_entry']['source']??'') == 'custom_fields' ? $unionQuery['kQuery']->fieldNameMap[$fieldId]['pathalias'] : $unionQuery['kQuery']->fieldNameMap[$fieldId]['tablealias']) . 'id'
                );
             }
 
@@ -1231,7 +1231,7 @@ class KReport extends SugarBean {
       $query = $this->get_report_main_sql_query(true, $additionalFilter, $additionalGroupBy, $parameters);
       $queryResults = $db->query($query);
 
-      if ($_REQUEST['kreportdebugquery'] == true)
+      if ($_REQUEST['kreportdebugquery']??'' == true)
          echo $query;
 
       // 2011-02-03 added for percentage calculation of total
@@ -1808,11 +1808,11 @@ class KReport extends SugarBean {
                      case 'datetime':
                         if (isset($whereField ['valuekey'])) {
                            $valKeyArray = explode(' ', $whereField ['valuekey']);
-                           $whereField ['value'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . $valKeyArray[1];
+                           $whereField ['value'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . ($valKeyArray[1]??'');
                         }
                         if (isset($whereField ['valuetokey'])) {
                            $valKeyArray = explode(' ', $whereField ['valuetokey']);
-                           $whereField ['valueto'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . $valKeyArray[1];
+                           $whereField ['valueto'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . ($valKeyArray[1]??'');
                         }
                         break;
                      case 'date':

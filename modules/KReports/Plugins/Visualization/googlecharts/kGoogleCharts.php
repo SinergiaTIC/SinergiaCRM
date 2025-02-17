@@ -112,8 +112,8 @@ class kGoogleChart extends kreportvisualizationplugin{
 
         // set Chart Params
         $chartParams = array();
-        $chartParams['showEmptyValues'] = ($thisParams['options']['emptyvalues'] == 'on' ? true : false);
-        if ($thisParams['context'] != '')
+        $chartParams['showEmptyValues'] = ($thisParams['options']['emptyvalues']??'' == 'on' ? true : false);
+        if ($thisParams['context']??'' != '')
             $chartParams['context'] = $thisParams['context'];
 
         $rawData = $chartDataObj->getChartData($thisReport, $snaphotid, $chartParams, $dimensions, $dataseries, $addReportParams);

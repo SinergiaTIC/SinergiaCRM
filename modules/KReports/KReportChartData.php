@@ -106,7 +106,7 @@ class KReportChartData {
                   //2012-11-27 ... if the value is not numeric count .. otherwiese sum
                   if (is_numeric($thisResultRecord[$thisDataSeries['fieldid']]))
                   // 2013-03-19 handle Chart Function properly Bug #448
-                     switch ($thisDataSeries['chartfunction']) {
+                     switch ($thisDataSeries['chartfunction']??'') {
                         case 'MAX':
                            if ($thisResultRecord[$thisDataSeries['fieldid']] > $chartData[$thisDataSeries['fieldid']]['value'])
                               $chartData[$thisDataSeries['fieldid']]['value'] = $thisResultRecord[$thisDataSeries['fieldid']];
@@ -130,7 +130,9 @@ class KReportChartData {
             case 1:
                // 2013-03-19 handle Chart Function properly Bug #448
                // set the dimension Counter
-               $dimCountArray[$thisResultRecord[$dimensions[0]['fieldid']]]++;
+               if(isset($dimCountArray[$thisResultRecord[$dimensions[0]['fieldid']]])) {
+                  $dimCountArray[$thisResultRecord[$dimensions[0]['fieldid']]]++;
+               }
 
                // this is straight forwards
                foreach ($dataSeries as $thisDataSeries) {
@@ -218,7 +220,7 @@ class KReportChartData {
          case 0:
             foreach ($dataSeries as $thisDataSeries) {
                // 2013-03-19 handle Chart Function properly Bug #448
-               switch ($thisDataSeries['chartfunction']) {
+               switch ($thisDataSeries['chartfunction']??'') {
                   case 'AVG':
                      $chartData[$thisDataSeries['fieldid']]['value'] = $chartData[$thisDataSeries['fieldid']]['value'] / count($reportResults);
                      break;
@@ -233,7 +235,7 @@ class KReportChartData {
                         $chartData[$thisKey][$thisDataSeries['fieldid']] = 0;
 
                      // 2013-03-19 handle Chart Function properly Bug #448
-                     switch ($thisDataSeries['chartfunction']) {
+                     switch ($thisDataSeries['chartfunction']??'') {
                         case 'AVG':
                            $chartData[$thisKey][$thisDataSeries['fieldid']] = $chartData[$thisKey][$thisDataSeries['fieldid']] / $dimCountArray[$thisKey]; 
                            break;
