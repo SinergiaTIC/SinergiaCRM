@@ -140,7 +140,9 @@ class templateParser
                     $repl_arr[$key . "_" . $fieldName] = $value;
                 // STIC-Custom 20221013 AAM - Parsing date/datetime fields when the bean is being modified
                 // STIC#883
-                } elseif ($field_def['dbType'] == 'date' || $field_def['dbType'] == 'datetime' || (!isset($field_def['dbType']) && ($field_def['type'] == 'date' || $field_def['type'] == 'datetime') )) {
+                } elseif ((isset($field_def['dbType']) && $field_def['dbType'] == 'date') || 
+                          (isset($field_def['dbType']) && $field_def['dbType'] == 'datetime') || 
+                          (!isset($field_def['dbType']) && isset($field_def['type']) &&  ($field_def['type'] == 'date' || $field_def['type'] == 'datetime'))) {                    
                     global $disable_date_format;
                     if($focus->$fieldName && ($focus->fetched_row || $disable_date_format)) {
                         $oldValueDisableDateFormat = $disable_date_format;
