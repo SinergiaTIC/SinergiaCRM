@@ -56,7 +56,7 @@ class stic_Import_ValidationViewStep2 extends stic_Import_ValidationView
         ));
 
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
-        $this->ss->assign("HEADER", $app_strings['LBL_STIC_IMPORT_VALIDATION']." ". $mod_strings['LBL_MODULE_NAME']);
+        $this->ss->assign("HEADER", ($app_strings['LBL_STIC_IMPORT_VALIDATION'] ?? '') ." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
         $this->ss->assign("SAMPLE_URL", "<a href=\"javascript: void(0);\" onclick=\"window.location.href='index.php?entryPoint=export&module=".urlencode($_REQUEST['import_module'])."&action=index&all=true&sample=true'\" >".$mod_strings['LBL_EXAMPLE_FILE']."</a>");
 

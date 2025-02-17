@@ -50,7 +50,8 @@ class stic_Import_ValidationViewConfirm extends stic_Import_ValidationView
         $error_msgs = [];
 
         // STIC-Code MHP - If we are in multimodule import, cancel the file verification
-        if (!$_SESSION["stic_ImporValidation"]["multimodule"]) {
+        $multimodule = $_SESSION["stic_ImporValidation"]["multimodule"] ?? '';
+        if (empty($multimodule)) {
             if (isset($_FILES['userfile']['name']) && !hasValidFileName('import_upload_file_name', $_FILES['userfile']['name'])) {
                 LoggerManager::getLogger()->fatal('Invalid import file name');
                 echo $app_strings['LBL_LOGGER_INVALID_FILENAME'];
@@ -83,7 +84,7 @@ class stic_Import_ValidationViewConfirm extends stic_Import_ValidationView
         ImportCacheFiles::clearCacheFiles();
 
         // STIC-Code MHP - If we are in multimodule import, assign the file that we have saved in session
-        if (!$_SESSION["stic_ImporValidation"]["multimodule"]) 
+        if (empty($multimodule))
         {
             // handle uploaded file
             $uploadFile = new UploadFile('userfile');

@@ -178,7 +178,7 @@ class stic_Import_ValidationViewStep3 extends stic_Import_ValidationView
                 false
                 )))
             );
-        $this->ss->assign("HEADER", $app_strings['LBL_STIC_IMPORT_VALIDATION']." ". $mod_strings['LBL_MODULE_NAME']);
+        $this->ss->assign("HEADER", ($app_strings['LBL_STIC_IMPORT_VALIDATION'] ?? '')." ". $mod_strings['LBL_MODULE_NAME']);
 
         // we export it as email_address, but import as email1
         $field_map['email_address'] = 'email1';
