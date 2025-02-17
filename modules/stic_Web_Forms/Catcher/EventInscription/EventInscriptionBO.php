@@ -128,7 +128,7 @@ class EventInscriptionBO extends WebFormDataBO
         $this->requiredFormFields[] = 'Contacts___last_name'; // The person's last name is mandatory
 
         // If the registration includes a payment add the identification number as a required field unless explicitly unrequired in the form
-        if ($defParams['include_payment_commitment'] && $_REQUEST["unrequire_identification_number"] != 1) {
+        if ($defParams['include_payment_commitment'] && (isset($_REQUEST["unrequire_identification_number"]) && $_REQUEST["unrequire_identification_number"] != 1)) {
             $this->requiredFormFields[] = 'Contacts___stic_identification_number_c';
         }
 

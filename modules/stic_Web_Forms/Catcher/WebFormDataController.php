@@ -352,7 +352,9 @@ class WebFormDataController
             return $response;
         } else {
             // If we have to deal with the answer, we deal with it.
+            $response['type'] = $response['type'] ?? null;
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Managing type response [{$response['type']}]...");
+            $response['data'] = $response['data'] ?? null;
             switch ($response['type']) {
                 case self::
                         RESPONSE_TYPE_TXT:echo $response['data'];
