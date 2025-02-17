@@ -84,7 +84,8 @@ class stic_Bookings extends Basic
             // problems of crossing code assignation in case of concurrent bookings creation. If this
             // proves to be a problem in the future, this section should be rethinked. Anyway, it only
             // affects the name field, which is not a critical data.
-            if (!$currentNum = $this->code) {
+            $currentNum = $this->code ?? null;
+            if (!$currentNum) {
                 // Get last assigned code
                 $query = "SELECT code
                 FROM stic_bookings
