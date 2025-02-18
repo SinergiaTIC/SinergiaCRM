@@ -77,7 +77,7 @@ class stic_Families extends Basic
             $query = "SELECT code FROM stic_families ORDER BY code DESC LIMIT 1";
             $result = $db->query($query, true);
             $row = $db->fetchByAssoc($result);
-            $lastNum = $row['code'];
+            $lastNum = $row['code'] ?? 0;
             if (!isset($lastNum) || empty($lastNum)) {
                 $lastNum = 0;
             }

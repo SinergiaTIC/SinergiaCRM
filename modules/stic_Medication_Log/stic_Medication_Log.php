@@ -110,7 +110,7 @@ class stic_Medication_Log extends Basic
             }
 
             $date = SugarDateTime::createFromFormat(TimeDate::DB_DATE_FORMAT, $intakeDate, null);
-            $intakeDateFormatted = $date->format($timedate->get_date_format($user));
+            $intakeDateFormatted = $date->format($timedate->get_date_format($current_user));
 
             
             $this->name = $contactName . ' - ' . $medicationName . ' - ' . $intakeDateFormatted
