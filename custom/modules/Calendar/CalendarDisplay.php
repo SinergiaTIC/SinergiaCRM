@@ -107,7 +107,7 @@ class CustomCalendarDisplay extends CalendarDisplay
         if (empty($activity)) {
             $activity = $this->activity_colors;
         }
-        $newActivities = unserialize(base64_decode($current_user->getPreference("CalendarActivities")));
+        $newActivities = unserialize(base64_decode((string)$current_user->getPreference("CalendarActivities")));
         if ($newActivities) {
             $activity = array_merge($activity, $newActivities);
         }
