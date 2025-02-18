@@ -519,33 +519,13 @@ class SecurityGroup extends SecurityGroup_sugar
                                         
                     if(!empty($relate_parent_id) && !empty($relate_parent_type))
                     {
-                        // STIC-Custom EPS 20250218 - If it receives a Link2 object causes an error on quote the value in next function
-                        // self::inherit_parentQuery(
-                        //     $focus,
-                        //     $relate_parent_type,
-                        //     $relate_parent_id,
-                        //     $focus_id,
-                        //     $focus_module_dir
-                        // );
-                        $safeRelatedId = $relate_parent_id;
-                        if ($relate_parent_id instanceof Link2) {
-                            $relationshipName = $relate_parent_id->relationship->name;
-                            if (!$focus->load_relationship($relationshipName)) {
-                                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': : Failed retrieve relationship data');
-                                return false;
-                            }
-                            $relatedBeans = $focus->$relationshipName->getBeans();
-                            $relatedBean = array_pop($relatedBeans);
-                            $safeRelatedId = $relatedBean ? $relatedBean->id : '';
-                        }
                         self::inherit_parentQuery(
                             $focus,
                             $relate_parent_type,
-                            $safeRelatedId,
+                            $relate_parent_id,
                             $focus_id,
                             $focus_module_dir
                         );
-                        // END STIC-Custom
                     }
                     
                     // Reset variables
