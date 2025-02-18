@@ -50,7 +50,7 @@ class stic_Payment_CommitmentsLogicHooks
         // Set pending_annualized_fee if any of the fields involved in the calculation changes, 
         // or if the payment commitment is active, and either expected_payments_detail 
         // or pending_annualized_fee fields are empty.
-        if (isset($bean->fetched_row) && 
+        if (is_array($bean->fetched_row) && 
             ($bean->fetched_row['first_payment_date'] != $bean->first_payment_date
             || $bean->fetched_row['end_date'] != $bean->end_date
             || $bean->fetched_row['amount'] != $bean->amount
@@ -75,9 +75,9 @@ class stic_Payment_CommitmentsLogicHooks
             }
 
             // In case the account number or mandate has changed and there is an account number
-            if (!empty($bean->bank_account) && !empty($bean->fetched_row) && ($bean->bank_account != $bean->fetched_row['bank_account'] || ($bean->mandate != $bean->fetched_row['mandate'] && !empty($bean->mandate)))) {
+            if (!empty($bean->bank_account) && ($bean->bank_account != ($bean->fetched_row['bank_account'] ?? null) || ($bean->mandate != $bean->fetched_row['mandate'] && !empty($bean->mandate)))) {
                 // If mandate is empty or has not been modified by the user, we generate it
-                if (empty($bean->mandate) || ($bean->mandate == $bean->fetched_row['mandate'])) {
+                if (empty($bean->mandate) || ($bean->mandate == ($bean->fetched_row['mandate'] ?? null))) {
                     $bean->mandate = substr(mt_rand(100000000, 999999999), 0, 8);
                 }
                 // The signature date is updated in all cases where the mandate or account number has changed
