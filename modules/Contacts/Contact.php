@@ -425,9 +425,13 @@ class Contact extends Person implements EmailInterface
 		where contacts.id = '" . $this->id . "'";
         // Bug 43196 - If a contact is related to multiple accounts, make sure we pull the one we are looking for
         // Bug 44730  was introduced due to this, fix is to simply clear any whitespaces around the account_id first
-
-        $clean_account_id = trim($this->account_id);
-
+        
+        // STIC Custom 20250218 JBL - Avoid pass null to trim
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $clean_account_id = trim($this->account_id);
+        $clean_account_id = trim((string)$this->account_id);
+        // End STIC Custom
+        
         if (!empty($clean_account_id)) {
             $query .= " and acc.id = '{$this->account_id}'";
         }

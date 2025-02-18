@@ -148,7 +148,11 @@ EOQ;
 
         $no_mass_assign_list = array("Emails" => "Emails", "ACLRoles" => "ACLRoles"); //,"Users"=>"Users");
         //check if security suite enabled
-        $action = strtolower($action);
+        // STIC Custom 20250218 JBL - Avoid pass null to strtolower
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $action = strtolower($action);
+        $action = strtolower((string)$action);
+        // End STIC Custom
         if (isset($module) && ($action == "list" || $action == "index" || $action == "listview")
             && (!isset($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] != true)
             && !array_key_exists($module, $no_mass_assign_list)
