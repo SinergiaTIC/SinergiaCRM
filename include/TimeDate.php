@@ -980,7 +980,11 @@ class TimeDate
      */
     protected function _convert($date, $fromFormat, $fromTZ, $toFormat, $toTZ, $expand = false)
     {
-        $date = trim($date);
+        // STIC Custom 20250218 JBL - Avoid pass null to trim
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $date = trim($date);
+        $date = trim((string) $date);
+        // End STIC Custom
         if (empty($date)) {
             return $date;
         }
