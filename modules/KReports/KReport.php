@@ -739,7 +739,7 @@ class KReport extends SugarBean {
                case 'multienum' :
                   // do not format if we have a function (Count ... etc ... )
                   if ($this->fieldNameMap [$fieldID] ['sqlFunction'] == '') {
-                     $fieldArray = preg_split('/\^,\^/', $fieldValue);
+                     $fieldArray = preg_split('/\^,\^/', $fieldValue??'');
                      //bugfix 2010-09-22 if only one value is selected 
                      if (is_array($fieldArray) && count($fieldArray) > 1) {
                         $fieldValue = '';
@@ -755,7 +755,7 @@ class KReport extends SugarBean {
                      } else {
                         // bug 2011-03-07 fields might have different options if in a join
                         // $fieldValue = $app_list_strings[$this->fieldNameMap[$fieldID]['fields_name_map_entry']['options']][trim($fieldValue, '^')];
-                        $fieldValue = $app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [trim($fieldValue, '^')];
+                        $fieldValue = ($app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [trim($fieldValue??'', '^')])??'';
                      }
                   }
                   break;

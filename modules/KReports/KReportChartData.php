@@ -141,7 +141,7 @@ class KReportChartData {
                   //2012-11-27 ... if the value is not numeric count .. otherwiese sum
                   if (is_numeric($thisResultRecord[$thisDataSeries['fieldid']]))
                   // 2013-03-19 handle Chart Function properly Bug #448
-                     switch ($thisDataSeries['chartfunction']) {
+                     switch ($thisDataSeries['chartfunction']??'') {
                         case 'MAX':
                            if ($chartData[$thisResultRecord[$dimensions[0]['fieldid']]][$thisDataSeries['fieldid']] < $thisResultRecord[$thisDataSeries['fieldid']])
                               $chartData[$thisResultRecord[$dimensions[0]['fieldid']]][$thisDataSeries['fieldid']] = $thisResultRecord[$thisDataSeries['fieldid']];
@@ -228,7 +228,7 @@ class KReportChartData {
             }
             break;
          case 1:
-            if (is_array($dimensions[0]['values']) || is_object($dimensions[0]['values'])){ 
+            if (is_array(($dimensions[0]['values']??'')) || is_object($dimensions[0]['values']??'')){ 
                foreach ($dimensions[0]['values'] as $thisKey => $thisValue) {
                   foreach ($dataSeries as $thisDataSeries) {
                      if (!isset($chartData[$thisKey][$thisDataSeries['fieldid']]))

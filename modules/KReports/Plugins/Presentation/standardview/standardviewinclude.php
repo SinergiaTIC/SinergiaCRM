@@ -35,7 +35,7 @@ class kreportpresentationstandard extends kreportpresentationplugin {
       // STIC-Custom 20250217 EPS -  htmlentities was changing single quotes by html special character &#039; and causing a javascript error
       // $viewJS .= '<script type="text/javascript">FieldsArray = ' . htmlentities($this->buildFieldArray($thisReport)) . ';</script>';
       $viewJS = '';
-      $viewJS .= '<script type="text/javascript">FieldsArray = ' . htmlspecialchars($this->buildFieldArray($thisReport), ENT_NOQUOTES) . ';</script>';
+      $viewJS .= '<script type="text/javascript">FieldsArray = ' . htmlspecialchars($this->buildFieldArray($thisReport), ENT_NOQUOTES|ENT_HTML401) . ';</script>';
       // END STIC-Custom
 
       // TODO .. JSON Encode with Bitmask ... need Doku

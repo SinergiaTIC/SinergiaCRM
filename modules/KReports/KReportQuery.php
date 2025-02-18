@@ -955,7 +955,7 @@ class KReportQuery {
                      $this->joinSegments[$thisPath]['object'] = new $beanList[$this->joinSegments[$leftPath]['object']->field_defs[$rightArray[2]]['module']]();
 
                      // join on the id = relate id .. on _cstm if custom field .. on main if regular
-                     $this->fromString .= ' ' . $thisPathDetails['jointype'] . ' ' . $this->joinSegments[$thisPath]['object']->table_name . ' AS ' . $this->joinSegments[$thisPath]['alias'] . ' ON ' . $this->joinSegments[$thisPath]['alias'] . '.id=' . ( $this->joinSegments[$leftPath]['object']->field_defs[$this->joinSegments[$leftPath]['object']->field_defs[$rightArray[2]]['id_name']]['source'] == 'custom_fields' ? $this->joinSegments[$leftPath]['customjoin'] : $this->joinSegments[$leftPath]['alias']) . '.' . $this->joinSegments[$leftPath]['object']->field_defs[$rightArray[2]]['id_name'] . ' ';
+                     $this->fromString .= ' ' . $thisPathDetails['jointype'] . ' ' . $this->joinSegments[$thisPath]['object']->table_name . ' AS ' . $this->joinSegments[$thisPath]['alias'] . ' ON ' . $this->joinSegments[$thisPath]['alias'] . '.id=' . ( ($this->joinSegments[$leftPath]['object']->field_defs[$this->joinSegments[$leftPath]['object']->field_defs[$rightArray[2]]['id_name']]['source']??'') == 'custom_fields' ? $this->joinSegments[$leftPath]['customjoin'] : $this->joinSegments[$leftPath]['alias']) . '.' . $this->joinSegments[$leftPath]['object']->field_defs[$rightArray[2]]['id_name'] . ' ';
 
                      // check for Custom Fields
                      if ($this->joinSegments[$thisPath]['object']->hasCustomFields()) {
@@ -1189,7 +1189,12 @@ class KReportQuery {
 
 
                // required handling foir sql function also needed for
-               if ($thisListEntry['sqlfunction'] != '-' && $this->evalSQLFunctions && ($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] != 'kreporter' || ($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] == 'kreporter' && $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['evalSQLFunction'] == 'X'))) {
+               if ($thisListEntry['sqlfunction'] != '-' && $this->evalSQLFunctions && 
+               ( $pathName == '' ||
+                  (($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] ?? '') != 'kreporter' 
+                  || (($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] ?? '') == 'kreporter' 
+                  && ($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['evalSQLFunction'] ?? '') == 'X')))
+                  ) {
                   if ($thisListEntry['sqlfunction'] == 'GROUP_CONCAT') {
                      $this->unionSelectString .= ', ' . $thisListEntry['sqlfunction'] . '(DISTINCT ' . $thisListEntry['fieldid'] . ' SEPARATOR \', \')';
                   }
@@ -1599,7 +1604,7 @@ class KReportQuery {
               ($operator != 'nextnddays' && !is_numeric($value)) &&
               ($operator != 'betwnddays' && !is_numeric($value))
       ) {
-         if ($this->fieldNameMap[$fieldid]['type'] == 'date') {
+         if (($this->fieldNameMap[$fieldid]['type']??'') == 'date') {
             //2011-07-17 ... get db formatted field from key field
             //else try legacy handliung with date interpretation
             if ($valuekey != '')
@@ -1612,7 +1617,7 @@ class KReportQuery {
             else
                $valueto = $GLOBALS['timedate']->to_db_date($value, false);
          }
-         if ($this->fieldNameMap[$fieldid]['type'] == 'datetime' || $this->fieldNameMap[$fieldid]['type'] == 'datetimecombo') {
+         if (($this->fieldNameMap[$fieldid]['type']??'') == 'datetime' || ($this->fieldNameMap[$fieldid]['type']??'') == 'datetimecombo') {
             //2011-07-17 .. db formated dtae stroed in key field
             if ($valuekey != '')
                $value = $valuekey;
