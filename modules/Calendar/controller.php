@@ -193,7 +193,11 @@ class CalendarController extends SugarController
         if ($this->currentBean->module_dir == "Tasks") {
             $dateField = "date_due";
         }
-        if ($_REQUEST['allDay'] == true) {
+        // STIC Custom 20250218 JBL - Solve undefined array key access
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if ($_REQUEST['allDay'] == true) {
+        if (isset($_REQUEST['allDay']) && $_REQUEST['allDay'] == true) {
+        // End STIC Custom
             $endDateField = "date_end";
             list($tmp, $time) = explode(" ", $this->currentBean->$endDateField);
             list($date, $tmp) = explode(" ", $_REQUEST['enddatetime']);
