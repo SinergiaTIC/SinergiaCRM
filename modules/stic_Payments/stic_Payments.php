@@ -92,10 +92,12 @@ class stic_Payments extends Basic
         // Get payment commitment bean. Depending on the context (editview, subpanel, workflow, etc.)
         // stic_paymebfe2itments_ida will be an string that contains the id of the related payment
         // commitment or will be an object of type Link2, so let's manage it properly.
-        if (isset($this->stic_paymebfe2itments_ida) && $this->stic_paymebfe2itments_ida instanceof Link2) {
-            $PCBean = SticUtils::getRelatedBeanObject($this, 'stic_payments_stic_payment_commitments');
-        } else if(isset($this->stic_paymebfe2itments_ida)) {
-            $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
+        if (isset($this->stic_paymebfe2itments_ida)) {
+            if ($this->stic_paymebfe2itments_ida instanceof Link2) {
+                $PCBean = SticUtils::getRelatedBeanObject($this, 'stic_payments_stic_payment_commitments');
+            } else {
+                $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
+            }
         }
 
         if (isset($PCBean)) {
@@ -165,11 +167,11 @@ class stic_Payments extends Basic
         include_once 'SticInclude/Utils.php';
 
         // If parent payment commitment has changed...
-        if (!empty($this->stic_paymebfe2itments_ida) && !empty($this->rel_fields_before_value) && (trim($this->stic_paymebfe2itments_ida) != trim($this->rel_fields_before_value['stic_paymebfe2itments_ida'] ))) {
+        if (trim($this->stic_paymebfe2itments_ida) != trim($this->rel_fields_before_value['stic_paymebfe2itments_ida'] ?? null )) {
             // Get new parent payment commitment bean
             $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
             // Get payment commmitment related contact (usual case)
-            $contactId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts')->id;
+            $contactId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts')->id ?? null; ; 
             if (!empty($contactId)) {
                 // Remove previous relationship with an account, if any
                 // (a payment can only be related with a single contact or account, not both)
@@ -178,7 +180,7 @@ class stic_Payments extends Basic
                 $this->stic_payments_contactscontacts_ida = $contactId;
             } else {
                 // Get payment commitment related account
-                $accountId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_accounts')->id;
+                $accountId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_accounts')->id ?? null;
                 if (!empty($accountId)) {
                     // Remove previous relationship with a contact, if any
                     // (a payment can only be related with a single contact or account, not both)
