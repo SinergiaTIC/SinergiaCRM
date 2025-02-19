@@ -227,6 +227,13 @@ class ImportFile extends ImportDataSource
             }
         }
 
+        // STIC Custom 20250213 JBL - Avoid iterate over "false"
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if(!is_array($this->_currentRow)) {
+            return false;
+        }
+        // END STIC Custom
+
         global $locale;
         foreach ($this->_currentRow as $key => $value) {
             // If encoding is set, convert all values from it
@@ -416,27 +423,47 @@ class ImportFile extends ImportDataSource
     }
 
     //Begin Implementation for SPL's Iterator interface
-    public function key()
+    // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function key()
+    public function key(): mixed
+    // END STIC Custom
     {
         return $this->_rowsCount;
     }
 
-    public function current()
+    // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function current()
+    public function current(): mixed
+    // END STIC Custom
     {
         return $this->_currentRow;
     }
 
-    public function next()
+    // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function next()
+    public function next(): void
+    // END STIC Custom
     {
         $this->getNextRow();
     }
 
-    public function valid()
+    // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function valid()
+    public function valid(): bool
+    // END STIC Custom
     {
         return $this->_currentRow !== false;
     }
 
-    public function rewind()
+    // STIC Custom 20241113 JBL - Fix inherited function declaration compatibility
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function rewind()
+    public function rewind(): void
+    // END STIC Custom
     {
         $this->setFpAfterBOM();
         //Load our first row
