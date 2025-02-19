@@ -397,7 +397,7 @@ class stic_Security_Groups_RulesUtils
                 if ($rulesBean->inherit_parent == 1 || in_array($value['field'], $filteredRelatedModules)) {
 
                     // Obtain id from parent record
-                    $relatedId = $bean->{$value['field']};
+                    $relatedId = ($bean->{$value['field']})??null;
 
                     // If it is not a string, it indicates we're accessing from a subpanel.
                     // In such cases, retrieve the id in one of the three following ways, or continue.
