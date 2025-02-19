@@ -32,7 +32,7 @@ class stic_AttendancesLogicHooks
         // Exit function in case of automatically generated attendances as
         // all actions performed below are already done in createAttendances function.
         // This way we save time, specially when creating a large number of attendances.
-        if ($bean->automaticCreate) {
+        if ($bean->automaticCreate??false) {
             return;
         }
 

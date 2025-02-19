@@ -79,7 +79,7 @@ class stic_SessionsLogicHooks
         }
 
         // If name is empty or start_date has changed, set the name
-        if (empty($bean->name) || $bean->start_date != $bean->fetched_row['start_date']) {
+        if (empty($bean->name) || $bean->start_date != ($bean->fetched_row['start_date']??'')) {
             require_once 'modules/stic_Sessions/Utils.php';
             stic_SessionsUtils::setSessionName($bean);
         }
