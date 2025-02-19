@@ -489,7 +489,10 @@ class Generate_Document {
             $this->TBS->Show(OPENTBS_FILE, $file_name);   
 
             $pdf_command = '"'.$sugar_config['DHA_OpenOffice_exe'].'" --headless --nologo --nofirststartwizard --convert-to pdf "'.$file_name.'" --outdir "'.$out_dir.'"';
-            exec($pdf_command, $return_output, $return_var);
+            // Run exec only if is allowed
+            if (function_exists('exec') && !in_array('exec', explode(',', ini_get('disable_functions')))) {
+               exec($pdf_command, $return_output, $return_var);
+            }
 
             if ($this->Download) {
                $this->DescargarInforme ($file_name_pdf);
@@ -546,7 +549,10 @@ class Generate_Document {
             $GLOBALS['log']->debug('PDF - Path env after: ' . getenv("PATH") );             
 
             $pdf_command = $sugar_config['DHA_OpenOffice_cde'].' --headless --nologo --nofirststartwizard --convert-to pdf /home/'.$file_name_sandbox.' --outdir /home';
-            exec($pdf_command, $return_output, $return_var);
+            // Run exec only if is allowed
+            if (function_exists('exec') && !in_array('exec', explode(',', ini_get('disable_functions')))) {
+               exec($pdf_command, $return_output, $return_var);
+            }
 
             $GLOBALS['log']->debug('PDF - file_name: ' . $file_name );              
             $GLOBALS['log']->debug('PDF - file_name_sandbox: ' . $file_name_sandbox );         
