@@ -338,8 +338,14 @@ function export($type, $records = null, $members = false, $sample=false)
 
                 // Keep as $key => $value for post-processing
                 $cleanCSV = new CleanCSV();
-                $new_arr[$key] = preg_replace("/\"/", "\"\"", $cleanCSV->escapeField($value));
+                // STIC Custom 20250219 JBL - Avoid pass null to preg_replace
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $new_arr[$key] = preg_replace("/\"/", "\"\"", $cleanCSV->escapeField($value));
+                $new_arr[$key] = preg_replace("/\"/", "\"\"", (string) $cleanCSV->escapeField($value));
+                // End STIC Custom
+
             }
+            
 
             // Use Bean ID as key for records
             $records[$pre_id] = $new_arr;
