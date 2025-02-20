@@ -1593,7 +1593,11 @@ abstract class DBManager
             return $this->convert($this->quoted($value), "datetime");
         }
         if ($this->isNumericType($type)) {
-            return 0 + $value; // ensure it's numeric
+            // STIC Custom 20250220 JBL - Fix Fatal error: Uncaught TypeError: Unsupported operand types: int + string
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // return 0 + $value; // ensure it's numeric
+            return is_numeric($value) ? 0 + $value : 0; // ensure it's numeric
+            // END STIC Custom
         }
 
         return $this->quoted($value);
@@ -3031,7 +3035,11 @@ abstract class DBManager
      * @param array|null $field_filter Array of filter names to be inspected (NULL means all fields)
      * @return array
      */
-    public function getDataChanges(SugarBean &$bean, array $field_filter = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function getDataChanges(SugarBean &$bean, array $field_filter = null)
+    public function getDataChanges(SugarBean &$bean, ?array $field_filter = null)
+    // END STIC Custom
     {
         $bean->fixUpFormatting();
         $changed_values = array();
@@ -3982,7 +3990,11 @@ abstract class DBManager
      * @param mixed[]|null $configOptions
      * @param boolean $dieOnError
      */
-    abstract public function connect(array $configOptions = null, $dieOnError = false);
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // abstract public function connect(array $configOptions = null, $dieOnError = false);
+    abstract public function connect(?array $configOptions = null, $dieOnError = false);
+    // END STIC Custom
 
     /**
      * Generates sql for create table statement for a bean.

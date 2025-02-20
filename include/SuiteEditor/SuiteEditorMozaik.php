@@ -64,7 +64,11 @@ class SuiteEditorMozaik implements SuiteEditorInterface
      *
      * @param SuiteEditorSettings $settings
      */
-    public function setup(SuiteEditorSettings $settings = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function setup(SuiteEditorSettings $settings = null)
+    public function setup(?SuiteEditorSettings $settings = null)
+    // END STIC Custom    
     {
         $this->settings = $settings;
         require_once('include/SuiteMozaik.php');

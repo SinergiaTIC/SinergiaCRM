@@ -1089,7 +1089,11 @@ HTML;
         }
 
         // subscribed accounts
-        $showFolders = sugar_unserialize(base64_decode($user->getPreference('showFolders', 'Emails')));
+        // STIC Custom 20250220 JBL - Avoid Warning: pass null to base64_decode
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $showFolders = sugar_unserialize(base64_decode($user->getPreference('showFolders', 'Emails')));
+        $showFolders = sugar_unserialize(base64_decode((string) $user->getPreference('showFolders', 'Emails')));
+        // END STIC Custom
 
         // general settings
         $emailSettings = $user->getPreference('emailSettings', 'Emails');
@@ -1320,7 +1324,11 @@ HTML;
         $rootNode->dynamicloadfunction = '';
         $rootNode->expanded = true;
         $rootNode->dynamic_load = true;
-        $showFolders = sugar_unserialize(base64_decode($user->getPreference('showFolders', 'Emails')));
+        // STIC Custom 20250220 JBL - Avoid Warning: pass null to base64_decode
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $showFolders = sugar_unserialize(base64_decode($user->getPreference('showFolders', 'Emails')));
+        $showFolders = sugar_unserialize(base64_decode((string) $user->getPreference('showFolders', 'Emails')));
+        // END STIC Custom
 
         if (empty($showFolders)) {
             $showFolders = array();

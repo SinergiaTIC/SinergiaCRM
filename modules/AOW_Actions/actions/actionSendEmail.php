@@ -687,7 +687,11 @@ class actionSendEmail extends actionBase
     // STIC-Custom 20240307 EPS - Improve send mail action
     // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
     // public function sendEmail($emailTo, $emailSubject, $emailBody, $altemailBody, SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
-    public function sendEmail($templateData, $emailTo, $mailerName = 'system', $fromEmail = '', $fromName = '', $replyto = '', $replytoName = '', SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function sendEmail($templateData, $emailTo, $mailerName = 'system', $fromEmail = '', $fromName = '', $replyto = '', $replytoName = '', SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    public function sendEmail($templateData, $emailTo, $mailerName = 'system', $fromEmail = '', $fromName = '', $replyto = '', $replytoName = '', ?SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    // END STIC Custom JBL
     // END STIC-Custom
     {
         require_once('modules/Emails/Email.php');

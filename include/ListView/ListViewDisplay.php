@@ -640,7 +640,11 @@ class ListViewDisplay
      *
      * @return string HTML
      */
-    protected function buildMergeLink(array $modules_array = null, $loc = 'top')
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected function buildMergeLink(array $modules_array = null, $loc = 'top')
+    protected function buildMergeLink(?array $modules_array = null, $loc = 'top')
+    // END STIC Custom
     {
         if (empty($modules_array)) {
             require('modules/MailMerge/modules_array.php');

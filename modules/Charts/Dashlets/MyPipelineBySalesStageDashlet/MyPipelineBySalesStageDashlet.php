@@ -61,7 +61,11 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
      */
     public function __construct(
         $id,
-        array $options = null
+        // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // array $options = null
+        ?array $options = null
+        // END STIC Custom        
     ) {
         global $timedate;
 

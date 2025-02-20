@@ -105,7 +105,11 @@ $json = getJSONobj();
 
 global $current_user;
 
-$showFolders = sugar_unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+// STIC Custom 20250220 JBL - Avoid Warning: pass null to base64_decode
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+// $showFolders = sugar_unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+$showFolders = sugar_unserialize(base64_decode((string) $current_user->getPreference('showFolders', 'Emails')));
+// END STIC Custom
 
 if (isset($_REQUEST['emailUIAction'])) {
     if (isset($_REQUEST['user']) && $_REQUEST['user'] && is_admin($current_user)) {

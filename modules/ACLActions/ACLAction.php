@@ -477,7 +477,11 @@ class ACLAction extends SugarBean
     /**
      * static function hasAccess($is_owner=false, $access = 0){
      */
-    public static function hasAccess($is_owner = false, $in_group = false, $access = 0, ACLAction $action = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public static function hasAccess($is_owner = false, $in_group = false, $access = 0, ACLAction $action = null)
+    public static function hasAccess($is_owner = false, $in_group = false, $access = 0, ?ACLAction $action = null)
+    // END STIC Custom
     {
         /**
          * if($access != 0 && $access == ACL_ALLOW_ALL || ($is_owner && $access == ACL_ALLOW_OWNER))return true;

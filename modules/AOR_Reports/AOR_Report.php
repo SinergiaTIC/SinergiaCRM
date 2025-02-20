@@ -1374,7 +1374,11 @@ class AOR_Report extends Basic
         SugarBean $module,
         $type,
         $query = array(),
-        SugarBean $rel_module = null
+        // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // SugarBean $rel_module = null
+        ?SugarBean $rel_module = null
+        // END STIC Custom
     ) {
 
         // Alias to keep lines short

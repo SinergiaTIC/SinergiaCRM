@@ -299,7 +299,11 @@ class MysqliManager extends MysqlManager
     /**
      * @see DBManager::connect()
      */
-    public function connect(array $configOptions = null, $dieOnError = false)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function connect(array $configOptions = null, $dieOnError = false)
+    public function connect(?array $configOptions = null, $dieOnError = false)
+    // END STIC Custom
     {
         global $sugar_config;
 
