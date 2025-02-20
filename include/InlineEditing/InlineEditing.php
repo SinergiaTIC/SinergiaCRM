@@ -486,7 +486,13 @@ function formatDisplayValue($bean, $value, $vardef, $method = "save")
         // use the calculated datetime_format
         $datetime = DateTime::createFromFormat($datetime_format, $value, new DateTimeZone('UTC'));
 
-        $value = $datetime->format($datetime_format);
+        // STIC Custom 20250220 JBL - Fix Fatal Error: Uncaught Error: Call to a member function format() on false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $value = $datetime->format($datetime_format);
+        if ($datetime!==false) {
+            $value = $datetime->format($datetime_format);
+        }
+        // END STIC Custom
     }
 
     //If field is of type bool, checkbox.
