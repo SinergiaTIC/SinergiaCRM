@@ -227,7 +227,7 @@ class KReportPluginManager {
    // loop over all plugins and bild an aray with the active ones
     if ($integrationParams->activePlugins)
       foreach ($this->plugins as $plugin => $pluginData) {
-         if ($pluginData['type'] == 'integration' && $integrationParams->activePlugins->$plugin == 1) {
+         if ($pluginData['type'] == 'integration' && ($integrationParams->activePlugins->$plugin??false) == 1) {
             require_once($this->plugins[$plugin]['plugindirectory'] . '/' . $this->plugins[$plugin]['metadata']['integration']['include']);
             $thisPlugin = new $this->plugins[$plugin]['metadata']['integration']['class']();
 
@@ -728,7 +728,7 @@ class KReport extends SugarBean {
                      // bug 2011-03-07 fields might have different options if in a join
                      //$fieldValue = $app_list_strings[$this->fieldNameMap[$fieldID]['fields_name_map_entry']['options']][$fieldValue];
                      if ($fieldValue != '' && isset($this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']))
-                        $fieldValue = $app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [$fieldValue];
+                        $fieldValue = $app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [$fieldValue] ?? null;
                   }
 
                   // bug 2011-05-25
@@ -1161,7 +1161,13 @@ class KReport extends SugarBean {
             if (strpos($selectionLimit, 'p') > 0) {
                $isPercentage = true;
                $selectionLimit = trim(str_replace('p', '', $this->selectionlimit));
-               $totalRows = $db->getRowCount($queryResults = $db->query($query));
+               $queryResults = $db->query($query);
+               if ($queryResults) {
+                  $totalRows = $db->getRowCount($queryResults);
+               }
+               else {
+                  $totalRows = 0;
+               }
                $selectionLimit = round($totalRows / 100 * $selectionLimit, 0);
             }
             return $db->getRowCount($db->limitquery($query, 0, $selectionLimit));
@@ -1179,7 +1185,11 @@ class KReport extends SugarBean {
               }
               } else
              */
-            return $db->getRowCount($queryResults = $db->query($query));
+            $queryResults = $db->query($query);
+            if ($queryResults){
+               return $db->getRowCount($queryResults);
+            }
+            return false;
          }
       }
 

@@ -549,7 +549,7 @@ class KReportQueryArray {
                   $this->totalSelectString .= ', ';
                   
                   //2014-06-27 support for Oracle with " instead of '
-               $this->totalSelectString .= ' ' . $funcArray[1] . '(' . $thisListEntry['fieldid'] . ")  as \"" . $thisListEntry['fieldid'] . "_total\"";
+               $this->totalSelectString .= ' ' . ($funcArray[1]??'') . '(' . $thisListEntry['fieldid'] . ")  as \"" . $thisListEntry['fieldid'] . "_total\"";
                
                //2014-06-27 support for Oracle
                $fromArray[] = $thisListEntry['fieldid']; $toArray[] = strtoupper($thisListEntry['fieldid']);
@@ -1291,7 +1291,7 @@ class KReportQuery {
             // 2010-12-18 handle currencies if value is set in vardefs
             // 2011-03-28 handle curencies in any case
             // 2012-11-04 also check the rootfieldNameMap
-            if (isset($this->joinSegments[$pathName]) && ($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] == 'currency' || (isset($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype']) && $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype'] == 'currency')) || (isset($this->rootfieldNameMap) && $this->rootfieldNameMap[$thisListEntry['fieldid']]['type'] == 'currency')) {
+            if (isset($this->joinSegments[$pathName]) && (($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] ?? '') == 'currency' || (isset($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype']) && $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype'] == 'currency')) || (isset($this->rootfieldNameMap) && $this->rootfieldNameMap[$thisListEntry['fieldid']]['type'] == 'currency')) {
                // if we have a currency id and no SQL function select the currency .. if we have an SQL fnction select -99 for the system currency
                if (isset($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['currency_id']) && ($thisListEntry['sqlfunction'] == '-' || strtoupper($thisListEntry['sqlfunction']) == 'SUM'))
                   $this->selectString .= ", " . $this->joinSegments[$pathName]['alias'] . "." . $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['currency_id'] . " as '" . $thisListEntry['fieldid'] . "_curid'";
@@ -2311,12 +2311,12 @@ class KReportQuery {
                 'sqlFunction' => $sqlFunction,
                 'customFunction' => (is_array($thisFieldIdEntry) && array_key_exists('customsqlfunction', $thisFieldIdEntry) ? $thisFieldIdEntry['customsqlfunction'] : ''),
                 'tablealias' => $thisAlias,
-                'fields_name_map_entry' => $this->joinSegments[$path]['object']->field_name_map[$field],
-                'type' => ($this->joinSegments[$path]['object']->field_name_map[$field]['type'] == 'kreporter') ? $this->joinSegments[$path]['object']->field_name_map[$field]['kreporttype'] : $this->joinSegments[$path]['object']->field_name_map[$field]['type'],
+                'fields_name_map_entry' => ($this->joinSegments[$path]['object']->field_name_map[$field] ?? null),
+                'type' => (($this->joinSegments[$path]['object']->field_name_map[$field]['type']??'') == 'kreporter') ? $this->joinSegments[$path]['object']->field_name_map[$field]['kreporttype'] : ($this->joinSegments[$path]['object']->field_name_map[$field]['type']??''),
                 'module' => $thisModule);
 
          // check for custom function
-         if ($this->joinSegments[$path]['object']->field_name_map[$field]['type'] == 'kreporter') {
+         if (($this->joinSegments[$path]['object']->field_name_map[$field]['type']?? '') == 'kreporter') {
             //2012-12-24 checkif eval is an array ... then we have to do more
             $thisEval = '';
             if (is_array($this->joinSegments[$path]['object']->field_name_map[$field]['eval']))
