@@ -50,13 +50,11 @@ class stic_Payment_CommitmentsLogicHooks
         // Set pending_annualized_fee if any of the fields involved in the calculation changes, 
         // or if the payment commitment is active, and either expected_payments_detail 
         // or pending_annualized_fee fields are empty.
-        if (isset($bean->fetched_row) && 
-            ($bean->fetched_row['first_payment_date'] != $bean->first_payment_date
-            || $bean->fetched_row['end_date'] != $bean->end_date
-            || $bean->fetched_row['amount'] != $bean->amount
-            || $bean->fetched_row['periodicity'] != $bean->periodicity
+        if ($bean->fetched_row['first_payment_date'] ?? null != $bean->first_payment_date
+            || $bean->fetched_row['end_date'] ?? null != $bean->end_date
+            || $bean->fetched_row['amount'] ?? null != $bean->amount
+            || $bean->fetched_row['periodicity'] ?? null != $bean->periodicity
             || ($bean->active == 1 && (empty($bean->expected_payments_detail) || empty($bean->pending_annualized_fee)))
-            )
         ) {
             $res = stic_Payment_CommitmentsUtils::getPendingPayments($bean);
             $bean->pending_annualized_fee = $res['pending_annualized_fee'];
