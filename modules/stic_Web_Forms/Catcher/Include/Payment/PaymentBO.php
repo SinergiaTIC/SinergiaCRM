@@ -891,7 +891,7 @@ class PaymentBO extends WebFormDataBO
             $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transaction_code));
             $pcBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
             // Update Subscription Id
-            if ($session->subscription != null) {
+            if ($session->subscription != null && isset($pcBean)) {
                 $pcBean->stripe_subscr_id = $session->subscription;
                 $pcBean->save();
             }
@@ -1022,7 +1022,7 @@ class PaymentBO extends WebFormDataBO
 
         // Update end date
         if (!empty($subscription->ended_at)) {
-            $pcBean->end_date = date('Y-m-d H:i:s', $subscription->ended_at);
+            $pcBean->end_date = date('Y-m-d', $subscription->ended_at);
             $pcBean->gateway_log .= '##### ' . print_r($subscription, true);
             $pcBean->save();
         }
@@ -1052,7 +1052,7 @@ class PaymentBO extends WebFormDataBO
 
     private function getBeanPaymentFromStripePaymentCommitment($pcBean, $paymentTimestamp)
     {
-        $pcId = $pcBean->id;
+        $pcId = $pcBean->id ?? null;
         $paymentDate = date('Ym', $paymentTimestamp);
         $paymentIdSQL ="SELECT p.id
                         FROM stic_payments p
@@ -1072,13 +1072,13 @@ class PaymentBO extends WebFormDataBO
             $paymentBean = BeanFactory::getBean('stic_Payments', $paymentId);
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieved {$paymentId} payment for [{$pcBean->stripe_subscr_id}] Stripe subscription with date {$paymentDate}.");
         } else {
-            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": No payment has been found for [{$pcBean->stripe_subscr_id}] Stripe subscription with date {$paymentDate}.");
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": No payment has been found for [".($pcBean->stripe_subscr_id ?? null)."] Stripe subscription with date {$paymentDate}.");
         }
 
-        if ($paymentBean->id) {
+        if (isset($paymentBean->id)) {
             return $paymentBean;
         } else {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ":  The payment referred in the Stripe event could not be retrieved: subscr_id {$pcBean->stripe_subscr_id}, for date {$paymentDate}");
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ":  The payment referred in the Stripe event could not be retrieved: subscr_id ".($pcBean->stripe_subscr_id ?? null).", for date {$paymentDate}");
         }
     }
 
