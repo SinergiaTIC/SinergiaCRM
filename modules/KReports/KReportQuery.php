@@ -1293,7 +1293,7 @@ class KReportQuery {
             // 2012-11-04 also check the rootfieldNameMap
             if (isset($this->joinSegments[$pathName]) && (($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] ?? '') == 'currency' || (isset($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype']) && $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype'] == 'currency')) || (isset($this->rootfieldNameMap) && $this->rootfieldNameMap[$thisListEntry['fieldid']]['type'] == 'currency')) {
                // if we have a currency id and no SQL function select the currency .. if we have an SQL fnction select -99 for the system currency
-               if (isset($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['currency_id']) && ($thisListEntry['sqlfunction'] == '-' || strtoupper($thisListEntry['sqlfunction']) == 'SUM'))
+               if (isset($fieldArray[1]) && isset($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['currency_id']) && ($thisListEntry['sqlfunction'] == '-' || strtoupper($thisListEntry['sqlfunction']) == 'SUM'))
                   $this->selectString .= ", " . $this->joinSegments[$pathName]['alias'] . "." . $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['currency_id'] . " as '" . $thisListEntry['fieldid'] . "_curid'";
                else
                   $this->selectString .= ", '-99' as '" . $thisListEntry['fieldid'] . "_curid'";
