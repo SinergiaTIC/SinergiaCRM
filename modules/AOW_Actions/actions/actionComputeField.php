@@ -368,7 +368,11 @@ class actionComputeField extends actionBase
      *
      * @return string
      */
-    public function edit_display($line, SugarBean $bean = null, $params = array())
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function edit_display($line, SugarBean $bean = null, $params = array())
+    public function edit_display($line, ?SugarBean $bean = null, $params = array())
+    // END STIC Custom
     {
         require_once("modules/AOW_WorkFlow/aow_utils.php");
 

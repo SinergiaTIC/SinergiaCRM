@@ -55,7 +55,11 @@ class CronExpression
      *
      * @return CronExpression
      */
-    public static function factory($expression, FieldFactory $fieldFactory = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public static function factory($expression, FieldFactory $fieldFactory = null)
+    public static function factory($expression, ?FieldFactory $fieldFactory = null)
+    // END STIC Custom    
     {
         $mappings = array(
             '@yearly' => '0 0 1 1 *',

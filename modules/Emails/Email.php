@@ -545,7 +545,11 @@ class Email extends Basic
      *
      * @param \Email|null $email
      */
-    protected function createTempEmailAtSend(Email $email = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected function createTempEmailAtSend(Email $email = null)
+    protected function createTempEmailAtSend(?Email $email = null)
+    // END STIC Custom
     {
         $this->tempEmailAtSend = $email ? $email : BeanFactory::newBean('Emails');
         if (!$this->tempEmailAtSend->date_sent_received) {
@@ -2992,10 +2996,17 @@ class Email extends Basic
      * @return boolean True on success
      */
     public function send(
-        SugarPHPMailer $mail = null,
-        NonGmailSentFolderHandler $nonGmailSentFolder = null,
-        InboundEmail $ie = null,
-        Email $tempEmail = null,
+        // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // SugarPHPMailer $mail = null,
+        // NonGmailSentFolderHandler $nonGmailSentFolder = null,
+        // InboundEmail $ie = null,
+        // Email $tempEmail = null,
+        ?SugarPHPMailer $mail = null,
+        ?NonGmailSentFolderHandler $nonGmailSentFolder = null,
+        ?InboundEmail $ie = null,
+        ?Email $tempEmail = null,
+        // END STIC Custom
         $check_notify = false,
         $options = "\\Seen"
     ) {
@@ -3230,7 +3241,11 @@ class Email extends Basic
     protected function saveAndStoreInSent(
         SugarPHPMailer $mail,
         InboundEmail $ie,
-        NonGmailSentFolderHandler $nonGmailSentFolder = null,
+        // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // NonGmailSentFolderHandler $nonGmailSentFolder = null,
+        ?NonGmailSentFolderHandler $nonGmailSentFolder = null,
+        // END STIC Custom
         $check_notify = false,
         $options = "\\Seen"
     ) {

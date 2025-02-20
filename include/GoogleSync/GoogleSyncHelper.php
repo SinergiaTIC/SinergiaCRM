@@ -66,7 +66,11 @@ class GoogleSyncHelper
      *
      * @return string push, pull, skip, or false on error
      */
-    public function singleEventAction(Meeting $meeting = null, Google\Service\Calendar\Event $event = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function singleEventAction(Meeting $meeting = null, Google\Service\Calendar\Event $event = null)
+    public function singleEventAction(?Meeting $meeting = null, ?Google\Service\Calendar\Event $event = null)
+    // END STIC Custom
     {
         if (empty($meeting) && empty($event)) {
             return false;

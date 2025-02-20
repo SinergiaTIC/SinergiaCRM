@@ -553,7 +553,11 @@ class GoogleSyncBase
      *
      * @return string|bool Meeting Id on success, false on failure
      */
-    protected function pushEvent(Meeting $event_local = null, Google\Service\Calendar\Event $event_remote = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected function pushEvent(Meeting $event_local = null, Google\Service\Calendar\Event $event_remote = null)
+    protected function pushEvent(?Meeting $event_local = null, ?Google\Service\Calendar\Event $event_remote = null)
+    // END STIC Custom
     {
         if (!$event_local instanceof Meeting) {
             throw new InvalidArgumentException('Argument 1 passed to GoogleSyncBase::pushEvent() must be an instance of Meeting, ' . getType($event_local) . ' given.');
@@ -628,7 +632,11 @@ class GoogleSyncBase
      * @return bool Success/Failure of setLastSync, since that's what saves the record
      * @throws GoogleSyncException if returned event invalid
      */
-    protected function pullEvent(Google\Service\Calendar\Event $event_remote = null, Meeting $event_local = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected function pullEvent(Google\Service\Calendar\Event $event_remote = null, Meeting $event_local = null)
+    protected function pullEvent(?Google\Service\Calendar\Event $event_remote = null, ?Meeting $event_local = null)
+    // END STIC Custom
     {
         if (!$event_remote instanceof Google\Service\Calendar\Event) {
             throw new InvalidArgumentException('Argument 1 passed to GoogleSyncBase::pullEvent() must be an instance of Google\Service\Calendar\Event, ' . getType($event_local) . ' given.');
@@ -668,7 +676,11 @@ class GoogleSyncBase
      *
      * @return string|bool Meeting Id on success, false on failure (from setLastSync, since that's what saves the record)
      */
-    protected function delMeeting(Meeting $meeting = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected function delMeeting(Meeting $meeting = null)
+    protected function delMeeting(?Meeting $meeting = null)
+    // END STIC Custom    
     {
         if (!$meeting instanceof Meeting) {
             throw new InvalidArgumentException('Argument 1 passed to GoogleSyncBase::delMeeting() must be an instance of Meeting, ' . getType($meeting) . ' given.');
@@ -691,7 +703,11 @@ class GoogleSyncBase
      * @throws GoogleSyncException If Meeting ID fails validation
      * @throws GoogleSyncException If delete fails
      */
-    protected function delEvent(Google\Service\Calendar\Event $event = null, $meeting_id = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected function delEvent(Google\Service\Calendar\Event $event = null, $meeting_id = null)
+    protected function delEvent(?Google\Service\Calendar\Event $event = null, $meeting_id = null)
+    // END STIC Custom
     {
         if (!$event instanceof Google\Service\Calendar\Event) {
             throw new InvalidArgumentException('Argument 1 passed to GoogleSyncBase::delEvent() must be an instance of Google\Service\Calendar\Event, ' . gettype($event) . ' given');

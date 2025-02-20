@@ -307,7 +307,11 @@ class Zend_Oauth_Provider
      * @throws Zend_Oauth_Exception
      * @throws \Zend_Uri_Exception
      */
-    public function checkOAuthRequest(Zend_Uri_Http $url = null, $params = array())
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function checkOAuthRequest(Zend_Uri_Http $url = null, $params = array())
+    public function checkOAuthRequest(?Zend_Uri_Http $url = null, $params = array())
+    // END STIC Custom
     {
         if ($url === null) {
             $this->url = $this->getRequestUrl();

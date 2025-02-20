@@ -57,7 +57,11 @@ class actionCreateRecord extends actionBase
      * @param array $params
      * @return string
      */
-    public function edit_display($line, SugarBean $bean = null, $params = array())
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function edit_display($line, SugarBean $bean = null, $params = array())
+    public function edit_display($line, ?SugarBean $bean = null, $params = array())
+    // END STIC Custom
     {
         global $app_list_strings;
 
