@@ -69,7 +69,11 @@ class LegacyMPDFEngine extends PDFEngine
      * MPDFEngine constructor.
      * @param mPDF|null $pdf
      */
-    public function __construct(mPDF $pdf = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function __construct(mPDF $pdf = null)
+    public function __construct(?mPDF $pdf = null)
+    // END STIC Custom    
     {
         @$this->pdf = $pdf ?? new mPDF();
     }

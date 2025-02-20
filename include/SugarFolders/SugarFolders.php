@@ -1507,7 +1507,11 @@ class SugarFolder
      * @param array|null $folders
      * @return bool
      */
-    public function isToDisplay(?string $folderId, array $folders = null): bool {
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function isToDisplay(?string $folderId, array $folders = null): bool {
+    public function isToDisplay(?string $folderId, ?array $folders = null): bool {
+    // END STIC Custom    
         global $current_user;
 
         if (empty($folderId)){

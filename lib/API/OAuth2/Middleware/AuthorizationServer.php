@@ -123,7 +123,11 @@ class AuthorizationServer implements EmitterAwareInterface
         ScopeRepositoryInterface $scopeRepository,
         $privateKey,
         $publicKey,
-        ResponseTypeInterface $responseType = null
+        // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // ResponseTypeInterface $responseType = null
+        ?ResponseTypeInterface $responseType = null
+        // END STIC Custom        
     ) {
         $this->clientRepository = $clientRepository;
         $this->accessTokenRepository = $accessTokenRepository;
@@ -159,7 +163,11 @@ class AuthorizationServer implements EmitterAwareInterface
      * @param null|\DateInterval $accessTokenTTL
      * @throws \Exception
      */
-    public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function enableGrantType(GrantTypeInterface $grantType, \DateInterval $accessTokenTTL = null)
+    public function enableGrantType(GrantTypeInterface $grantType, ?\DateInterval $accessTokenTTL = null)
+    // END STIC Custom    
     {
         if ($accessTokenTTL instanceof \DateInterval === false) {
             $accessTokenTTL = new \DateInterval('PT1H');

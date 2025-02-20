@@ -81,7 +81,11 @@ class TCPDFEngine extends PDFEngine
      * TFPDFEngine constructor.
      * @param SuiteTCPDF|null $pdf
      */
-    public function __construct(SuiteTCPDF $pdf = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function __construct(SuiteTCPDF $pdf = null)
+    public function __construct(?SuiteTCPDF $pdf = null)
+    // END STIC Custom    
     {
         $this->pdf = $pdf ?? new SuiteTCPDF();
         

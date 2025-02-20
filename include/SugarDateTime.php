@@ -149,7 +149,11 @@ class SugarDateTime extends DateTime
      * @return SugarDateTime
      * @see DateTime::createFromFormat
      */
-    protected static function _createFromFormat($format, $time, DateTimeZone $timezone = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected static function _createFromFormat($format, $time, DateTimeZone $timezone = null)
+    protected static function _createFromFormat($format, $time, ?DateTimeZone $timezone = null)
+    // END STIC Custom    
     {
         $res = new self();
         if (!empty($timezone)) {

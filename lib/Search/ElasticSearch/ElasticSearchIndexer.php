@@ -188,7 +188,11 @@ class ElasticSearchIndexer extends AbstractIndexer
      * @param string $index name of the index
      * @param array|null $body options of the index
      */
-    public function createIndex(string $index, array $body = null): void
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function createIndex(string $index, array $body = null): void
+    public function createIndex(string $index, ?array $body = null): void
+    // END STIC Custom    
     {
         $params = ['index' => $index];
 

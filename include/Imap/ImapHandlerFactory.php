@@ -194,7 +194,11 @@ class ImapHandlerFactory
      * @return ImapHandlerInterface
      * @throws ImapHandlerException
      */
-    public function getImapHandler(string $testSettings = null, string $handlerType = 'native' )
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function getImapHandler(string $testSettings = null, string $handlerType = 'native' )
+    public function getImapHandler(?string $testSettings = null, string $handlerType = 'native' )
+    // END STIC Custom
     {
         if (null === $this->interfaceObject) {
             global $sugar_config, $log;

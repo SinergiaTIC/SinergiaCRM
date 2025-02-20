@@ -1894,8 +1894,8 @@ class TimeDate
      */
     // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-    protected function diffYear($ydiff, ?User $user = null, $adjustForTimezone = true)
     // protected function diffYear($ydiff, User $user = null, $adjustForTimezone = true)
+    protected function diffYear($ydiff, ?User $user = null, $adjustForTimezone = true)
     // END STIC Custom
     {
         $rawTime = $this->getNow();
