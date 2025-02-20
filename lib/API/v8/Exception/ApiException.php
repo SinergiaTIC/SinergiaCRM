@@ -79,7 +79,11 @@ class ApiException extends LangException
      * @param \Exception|null $previous
      * @param LangText|null $langMessage
      */
-    public function __construct($message = "", $code = 0, \Exception $previous = null, LangText $langMessage = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function __construct($message = "", $code = 0, \Exception $previous = null, LangText $langMessage = null)
+    public function __construct($message = "", $code = 0, ?\Exception $previous = null, ?LangText $langMessage = null)
+    // END STIC Custom
     {
         parent::__construct((self::MSG_PREFIX === $this::MSG_PREFIX ? $this::MSG_PREFIX : self::MSG_PREFIX . ' ' . $this::MSG_PREFIX) . ' ' . $message, $code ? $code : self::DEFAULT_CODE, $previous, $langMessage);
     }

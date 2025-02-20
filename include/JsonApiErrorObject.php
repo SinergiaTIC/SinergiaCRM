@@ -133,7 +133,11 @@ class JsonApiErrorObject
      * @param array $source
      * @param array $meta
      */
-    public function __construct(LangText $title = null, LangText $detail = null, $id = null, $code = null, $status = null, $links = null, $source = null, $meta = null)
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function __construct(LangText $title = null, LangText $detail = null, $id = null, $code = null, $status = null, $links = null, $source = null, $meta = null)
+    public function __construct(?LangText $title = null, ?LangText $detail = null, $id = null, $code = null, $status = null, $links = null, $source = null, $meta = null)
+    // END STIC Custom
     {
         $this->setTitle($title ? $title : $this->getDefaultTitle());
         $this->setDetail($detail ? $detail : $this->getDefaultDetail());

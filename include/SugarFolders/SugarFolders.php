@@ -132,7 +132,11 @@ class SugarFolder
      * Sole constructor
      */
     public function __construct(
-        User $current_user = null,
+        // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // User $current_user = null,
+        ?User $current_user = null,
+        // END STIC Custom
         $app_strings       = null,
         $mod_strings       = null,
         $timedate          = null,
