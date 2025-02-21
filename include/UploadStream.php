@@ -257,7 +257,18 @@ class UploadStream
             $this->fp = fopen($fullpath, $mode);
         } else {
             // if we will be writing, try to transparently create the directory
-            $this->fp = @fopen($fullpath, $mode);
+            // STIC Custom 20250221 JBL - Avoid errors trying to fopen non-existent file
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $this->fp = @fopen($fullpath, $mode);
+            // This code never create transparently the directory! 
+            // If the directory (or file) does not exist, return false without taking any action.
+            if (file_exists($fullpath)) {
+                $this->fp = @fopen($fullpath, $mode);
+            }
+            else {
+                $this->fp = false;
+            }
+            // END STIC Custom
             if (!$this->fp && !file_exists(dirname($fullpath))) {
                 if (!mkdir($concurrentDirectory = dirname($fullpath), 0755, true) && !is_dir($concurrentDirectory)) {
                     throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));

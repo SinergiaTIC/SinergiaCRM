@@ -518,7 +518,12 @@ class SchedulersJob extends Basic
             }
             $func = $exJob[1];
             $GLOBALS['log']->debug("----->SchedulersJob calling function: $func");
-            set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
+            // STIC Custom 20250221 JBL - Avoid Deprecated Warning: Constant E_STRICT is deprecated
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
+            // In PHP8+ old E_STRICT are E_WARNING, E_DEPRECATED or errors
+            set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE);
+            // END STIC Custom
             if (!is_callable($func)) {
                 $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_CALL', 'SchedulersJobs'), $func));
             }
