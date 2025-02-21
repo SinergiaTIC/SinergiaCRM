@@ -775,7 +775,11 @@ class AOW_WorkFlow extends Basic
                     $field = $data['id_name'];
                     $condition->field = $data['id_name'];
                 }
-                $field = $condition_bean->$field;
+                // STIC Custom 20250221 JBL - Avoid Warning: Property does not exist
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $field = $condition_bean->$field;
+                $field = $condition_bean->$field ?? null;
+                // END STIC Custom
                 
                 if (in_array($data['type'], $dateFields)) {
                     $field = strtotime($field);
