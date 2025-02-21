@@ -106,7 +106,7 @@ class KReportVisualizationManager {
                         "left:" . $this->layouts[$thisLayout]['items'][$i]['left'] . ";" .
                         "height:" . $this->layouts[$thisLayout]['items'][$i]['height'] . ";" .
                         "width:" . $this->layouts[$thisLayout]['items'][$i]['width'] .
-                        ($this->layouts[$thisLayout]['items'][$i]['style'] != '' ? '; ' . $this->layouts[$thisLayout]['items'][$i]['style'] : '') . "'></div>";
+                        (($this->layouts[$thisLayout]['items'][$i]['style'] ?? '') != '' ? '; ' . $this->layouts[$thisLayout]['items'][$i]['style'] : '') . "'></div>";
             }
         }
 
@@ -166,7 +166,7 @@ class KReportVisualizationManager {
             $visObject = json_decode($visData, true);
             if ($visObject['layout'] != '-') {
                 for ($thisElement = 1; $thisElement <= count($this->layouts[$visObject['layout']]['items']); $thisElement++) {
-                    $thisData = $visObject[$thisElement];
+                    $thisData = $visObject[$thisElement] ?? null;
                     if (is_array($thisData) && isset($thisData['plugin'])) {
                         if (!isset($this->headerData[$thisData['plugin']])) {
                             $this->headerData[$thisData['plugin']]['object'] = $this->pluginManager->getVisualizationObject($thisData['plugin']);

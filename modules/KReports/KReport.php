@@ -495,6 +495,7 @@ class KReport extends SugarBean {
       // evaluate report Options and pass them along to the Query Array
       $reportOptions = json_decode_kinamu(html_entity_decode($this->reportoptions, ENT_QUOTES));
 
+      $paramsArray = array();
       if (isset($reportOptions ['authCheck']))
          $paramsArray ['authChecklevel'] = $reportOptions ['authCheck'];
       if (isset($reportOptions ['showDeleted']))

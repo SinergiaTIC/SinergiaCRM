@@ -811,7 +811,7 @@ class KReportsController extends SugarController {
          $thisReport->whereOverride = json_decode_kinamu(html_entity_decode($_REQUEST['whereConditions']));
       }
 
-      echo $thisReport->getSelectionResults(array('start' => $_REQUEST['start'], 'limit' => $_REQUEST['limit']), isset($_REQUEST['snapshotid']) ? $_REQUEST['snapshotid'] : '0', true);
+      echo $thisReport->getSelectionResults(array('start' => ($_REQUEST['start'] ?? null), 'limit' => ($_REQUEST['limit'] ?? null)), isset($_REQUEST['snapshotid']) ? $_REQUEST['snapshotid'] : '0', true);
    }
 
    function action_get_nodes() {
