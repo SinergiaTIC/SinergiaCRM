@@ -305,7 +305,9 @@ function sugar_touch($filename, $time = null, $atime = null)
     // }
     // We need to check if is a local file, it can be a stream wrapper (ex: upload://myfile.txt)
     // touch is only available in local files
-    if (stream_is_local($filename) && file_exists($filename)) {
+    $result = false;
+    if (is_string($filename) && !empty($filename) &&
+        stream_is_local($filename) && @file_exists($filename)) {
         if (!empty($atime) && !empty($time)) {
             $result = @touch($filename, $time, $atime);
         } elseif (!empty($time)) {
@@ -313,9 +315,6 @@ function sugar_touch($filename, $time = null, $atime = null)
         } else {
             $result = @touch($filename);
         }
-    }
-    else {
-        $result = false;
     }
     // END STIC Custom
     if (!$result) {
