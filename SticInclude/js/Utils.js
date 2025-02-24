@@ -328,7 +328,7 @@ function setDisabledStatus(elementId, clearField) {
       });
     $("#" + elementId, $form).parent().find("button")
     .addClass("pseudo-disabled")
-    .on('mousedown mouseup focus click change keydown keyup', function (e) {
+    .on('mousedown.pseudoDisabled mouseup.pseudoDisabled focus.pseudoDisabled click.pseudoDisabled change.pseudoDisabled keydown.pseudoDisabled keyup.pseudoDisabled', function (e) {
       e.preventDefault()
       e.stopPropagation();
     });
