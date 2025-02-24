@@ -1622,7 +1622,7 @@ final class UTF8
     public static function extract_text(
         string $str,
         string $search = '',
-        int $length = null,
+        ?int $length = null,
         string $replacer_for_skipped_text = '…',
         string $encoding = 'UTF-8'
     ): string {
@@ -1843,8 +1843,8 @@ final class UTF8
         string $filename,
         bool $use_include_path = false,
         $context = null,
-        int $offset = null,
-        int $max_length = null,
+        ?int $offset = null,
+        ?int $max_length = null,
         int $timeout = 10,
         bool $convert_to_utf8 = true,
         string $from_encoding = ''
@@ -2577,7 +2577,7 @@ final class UTF8
      *               return bool-value, if $key is used and available<br>
      *               otherwise return <strong>null</strong>
      */
-    public static function getSupportInfo(string $key = null)
+    public static function getSupportInfo(?string $key = null)
     {
         if ($key === null) {
             return self::$SUPPORT;
@@ -3028,7 +3028,7 @@ final class UTF8
      */
     public static function html_entity_decode(
         string $str,
-        int $flags = null,
+        ?int $flags = null,
         string $encoding = 'UTF-8'
     ): string {
         if (
@@ -4302,7 +4302,7 @@ final class UTF8
         string $str,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         if ($clean_utf8) {
@@ -4368,7 +4368,7 @@ final class UTF8
         string $char_list = '',
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         if (!$str) {
@@ -4441,7 +4441,7 @@ final class UTF8
      *
      * @return string the string with unwanted characters stripped from the left
      */
-    public static function ltrim(string $str = '', string $chars = null): string
+    public static function ltrim(string $str = '', ?string $chars = null): string
     {
         if ($str === '') {
             return '';
@@ -5622,7 +5622,7 @@ final class UTF8
      * @return string
      *                <p>A string with unwanted characters stripped from the right.</p>
      */
-    public static function rtrim(string $str = '', string $chars = null): string
+    public static function rtrim(string $str = '', ?string $chars = null): string
     {
         if ($str === '') {
             return '';
@@ -5763,7 +5763,7 @@ final class UTF8
         string $str,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         if ($clean_utf8) {
@@ -6024,7 +6024,7 @@ final class UTF8
         string $delimiter,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         if (self::$SUPPORT['mbstring'] === true) {
@@ -7679,7 +7679,7 @@ final class UTF8
         $search,
         $replace,
         $subject,
-        int &$count = null
+        ?int &$count = null
     ) {
         /**
          * @psalm-suppress PossiblyNullArgument
@@ -7913,7 +7913,7 @@ final class UTF8
     public static function str_slice(
         string $str,
         int $start,
-        int $end = null,
+        ?int $end = null,
         string $encoding = 'UTF-8'
     ) {
         if ($encoding === 'UTF-8') {
@@ -8703,13 +8703,13 @@ final class UTF8
      */
     public static function str_titleize(
         string $str,
-        array $ignore = null,
+        ?array $ignore = null,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false,
         bool $use_trim_first = true,
-        string $word_define_chars = null
+        ?string $word_define_chars = null
     ): string {
         if ($str === '') {
             return '';
@@ -9061,7 +9061,7 @@ final class UTF8
      *
      * @return string[]
      */
-    public static function str_to_lines(string $str, bool $remove_empty_values = false, int $remove_short_values = null): array
+    public static function str_to_lines(string $str, bool $remove_empty_values = false, ?int $remove_short_values = null): array
     {
         if ($str === '') {
             return $remove_empty_values ? [] : [''];
@@ -9112,7 +9112,7 @@ final class UTF8
         string $str,
         string $char_list = '',
         bool $remove_empty_values = false,
-        int $remove_short_values = null
+        ?int $remove_short_values = null
     ): array {
         if ($str === '') {
             return $remove_empty_values ? [] : [''];
@@ -9353,7 +9353,7 @@ final class UTF8
         string $str,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         return self::ucfirst(self::str_camelize($str, $encoding), $encoding, $clean_utf8, $lang, $try_to_keep_the_string_length);
