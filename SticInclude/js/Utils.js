@@ -283,10 +283,10 @@ function setEnabledStatus(elementId, clearField) {
       .prop("readonly", false);
     $("#" + elementId, $form)
     .removeClass("pseudo-disabled")
-    .off('mousedown mouseup focus click change keydown keyup');
+    .off('.pseudoDisabled'); // delete all pseudoDisabled events
     $("#" + elementId, $form).parent().find("button")
     .removeClass("pseudo-disabled")
-    .off('mousedown mouseup focus click change keydown keyup');
+    .off('.pseudoDisabled'); // delete all pseudoDisabled events
   }
   $("#" + elementId, $form)
     .closest(".edit-view-row-item")
@@ -321,8 +321,8 @@ function setDisabledStatus(elementId, clearField) {
       .prop("readonly", true);
     $("#" + elementId, $form)
       .addClass("pseudo-disabled")
-      .off('mousedown mouseup focus click change keydown keyup')
-      .on('mousedown mouseup focus click change keydown keyup', function (e) {
+      .off('.pseudoDisabled') // delete all pseudoDisabled events
+      .on('mousedown.pseudoDisabled mouseup.pseudoDisabled focus.pseudoDisabled click.pseudoDisabled change.pseudoDisabled keydown.pseudoDisabled keyup.pseudoDisabled', function (e) {
         e.preventDefault()
         e.stopPropagation();
       });
