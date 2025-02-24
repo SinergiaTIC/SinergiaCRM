@@ -282,9 +282,11 @@ function setEnabledStatus(elementId, clearField) {
     $("#" + elementId, $form)
       .prop("readonly", false);
     $("#" + elementId, $form)
-      .prop("disabled", false);
+    .removeClass("pseudo-disabled")
+    .off('mousedown mouseup focus click change keydown keyup');
     $("#" + elementId, $form).parent().find("button")
-      .prop("disabled", false);
+    .removeClass("pseudo-disabled")
+    .off('mousedown mouseup focus click change keydown keyup');
   }
   $("#" + elementId, $form)
     .closest(".edit-view-row-item")
@@ -318,9 +320,18 @@ function setDisabledStatus(elementId, clearField) {
     $("#" + elementId, $form)
       .prop("readonly", true);
     $("#" + elementId, $form)
-      .prop("disabled", true);
+      .addClass("pseudo-disabled")
+      .off('mousedown mouseup focus click change keydown keyup')
+      .on('mousedown mouseup focus click change keydown keyup', function (e) {
+        e.preventDefault()
+        e.stopPropagation();
+      });
     $("#" + elementId, $form).parent().find("button")
-      .prop("disabled", true);
+    .addClass("pseudo-disabled")
+    .on('mousedown mouseup focus click change keydown keyup', function (e) {
+      e.preventDefault()
+      e.stopPropagation();
+    });
   }
   $("#" + elementId, $form)
     .closest(".edit-view-row-item")
