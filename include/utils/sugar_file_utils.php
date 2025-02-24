@@ -307,7 +307,7 @@ function sugar_touch($filename, $time = null, $atime = null)
     // touch is only available in local files
     $result = false;
     if (is_string($filename) && !empty($filename) &&
-        stream_is_local($filename) && @file_exists($filename)) {
+        stream_is_local($filename)) {
         if (!empty($atime) && !empty($time)) {
             $result = @touch($filename, $time, $atime);
         } elseif (!empty($time)) {
