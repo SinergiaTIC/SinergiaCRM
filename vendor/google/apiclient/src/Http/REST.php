@@ -54,8 +54,8 @@ class REST
     ) {
         $runner = new Runner(
             $config,
-            sprintf('%s %s', $request->getMethod(), (string) $request->getUri()),
-            [get_class(), 'doExecute'],
+            sprintf('%s %s', $request->getMethod(), (string)$request->getUri()),
+            [self::class, 'doExecute'],
             [$client, $request, $expectedClass]
         );
 
@@ -128,7 +128,7 @@ class REST
         // retry strategy
         if (intVal($code) >= 400) {
             // if we errored out, it should be safe to grab the response body
-            $body = (string) $response->getBody();
+            $body = (string)$response->getBody();
 
             // Check if we received errors, and add those to the Exception for convenience
             throw new GoogleServiceException($body, $code, null, self::getResponseErrors($body));
@@ -154,7 +154,7 @@ class REST
             return '';
         }
 
-        return (string) $response->getBody();
+        return (string)$response->getBody();
     }
 
     private static function determineExpectedClass($expectedClass, ?RequestInterface $request = null)
