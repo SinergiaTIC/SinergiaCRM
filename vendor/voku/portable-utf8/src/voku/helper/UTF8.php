@@ -9516,7 +9516,7 @@ final class UTF8
         string $str,
         string $char_list,
         int $offset = 0,
-        int $length = null,
+        ?int $length = null,
         string $encoding = 'UTF-8'
     ): int {
         if ($encoding !== 'UTF-8' && $encoding !== 'CP850') {
@@ -9651,7 +9651,7 @@ final class UTF8
      */
     public static function strip_tags(
         string $str,
-        string $allowable_tags = null,
+        ?string $allowable_tags = null,
         bool $clean_utf8 = false
     ): string {
         if ($str === '') {
@@ -11119,7 +11119,7 @@ final class UTF8
         string $str,
         string $mask,
         int $offset = 0,
-        int $length = null,
+        ?int $length = null,
         string $encoding = 'UTF-8'
     ) {
         if ($encoding !== 'UTF-8' && $encoding !== 'CP850') {
@@ -11350,7 +11350,7 @@ final class UTF8
         bool $full = true,
         bool $clean_utf8 = false,
         string $encoding = 'UTF-8',
-        string $lang = null,
+        ?string $lang = null,
         bool $lower = true
     ): string {
         if ($str === '') {
@@ -11404,7 +11404,7 @@ final class UTF8
         $str,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         // init
@@ -11484,7 +11484,7 @@ final class UTF8
         $str,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         // init
@@ -11698,7 +11698,7 @@ final class UTF8
     public static function substr(
         string $str,
         int $offset = 0,
-        int $length = null,
+        ?int $length = null,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false
     ) {
@@ -11869,7 +11869,7 @@ final class UTF8
         string $str1,
         string $str2,
         int $offset = 0,
-        int $length = null,
+        ?int $length = null,
         bool $case_insensitivity = false,
         string $encoding = 'UTF-8'
     ): int {
@@ -11927,7 +11927,7 @@ final class UTF8
         string $haystack,
         string $needle,
         int $offset = 0,
-        int $length = null,
+        ?int $length = null,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false
     ) {
@@ -12019,7 +12019,7 @@ final class UTF8
         string $haystack,
         string $needle,
         int $offset = 0,
-        int $length = null
+        ?int $length = null
     ) {
         if ($haystack === '' || $needle === '') {
             return 0;
@@ -12169,7 +12169,7 @@ final class UTF8
      *                      <i>length</i> parameters.</p><p>If <i>str</i> is shorter than <i>offset</i>
      *                      characters long, <b>FALSE</b> will be returned.</p>
      */
-    public static function substr_in_byte(string $str, int $offset = 0, int $length = null)
+    public static function substr_in_byte(string $str, int $offset = 0, ?int $length = null)
     {
         // empty string
         if ($str === '' || $length === 0) {
@@ -12567,7 +12567,7 @@ final class UTF8
         string $str,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         if ($clean_utf8) {
@@ -12981,7 +12981,7 @@ final class UTF8
      * @return string
      *                <p>The trimmed string.</p>
      */
-    public static function trim(string $str = '', string $chars = null): string
+    public static function trim(string $str = '', ?string $chars = null): string
     {
         if ($str === '') {
             return '';
@@ -13031,7 +13031,7 @@ final class UTF8
         string $str,
         string $encoding = 'UTF-8',
         bool $clean_utf8 = false,
-        string $lang = null,
+        ?string $lang = null,
         bool $try_to_keep_the_string_length = false
     ): string {
         if ($str === '') {
@@ -13499,7 +13499,7 @@ final class UTF8
         string $break = "\n",
         bool $cut = false,
         bool $add_final_break = true,
-        string $delimiter = null
+        ?string $delimiter = null
     ): string {
         if ($delimiter === null) {
             $strings = \preg_split('/\\r\\n|\\r|\\n/', $str);
@@ -13827,7 +13827,7 @@ final class UTF8
     private static function reduce_string_array(
         array $strings,
         bool $remove_empty_values,
-        int $remove_short_values = null
+        ?int $remove_short_values = null
     ) {
         // init
         $return = [];
