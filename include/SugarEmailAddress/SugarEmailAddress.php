@@ -50,7 +50,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once("include/JSON.php");
 
-
+// STIC Custom 20250206 JBL - Allow Dynamic Properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class SugarEmailAddress extends SugarBean
 {
     const ERR_INVALID_REQUEST_NO_USER_PROFILE_PAGE_SAVE_ACTION = 1;
@@ -491,7 +494,7 @@ class SugarEmailAddress extends SugarBean
                     email_address = '$_address', 
                     email_address_caps = '$_addressCaps' 
                   WHERE 
-                    id = '{$_id}' AND
+                    id = {$_id} AND
                     deleted = 0";
             $result = $db->query($query);
             if (!$result) {

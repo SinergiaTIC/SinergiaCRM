@@ -32,7 +32,7 @@ class stic_AttendancesLogicHooks
         // Exit function in case of automatically generated attendances as
         // all actions performed below are already done in createAttendances function.
         // This way we save time, specially when creating a large number of attendances.
-        if ($bean->automaticCreate) {
+        if ($bean->automaticCreate??false) {
             return;
         }
 
@@ -118,7 +118,7 @@ class stic_AttendancesLogicHooks
         }
 
         // Set session counters in case of attendance creation or status change
-        if ($bean->status != $bean->fetched_row['status'] || empty($bean->fetched_row['id'])) {
+        if (empty($bean->fetched_row) || $bean->status != $bean->fetched_row['status'] || empty($bean->fetched_row['id'])) {
             require_once 'modules/stic_Sessions/Utils.php';
             if ($sessionId = $this->getSessionIdFromAttendanceId($bean->id)) {
                 if ($session = BeanFactory::getBean('stic_Sessions', $sessionId)) {

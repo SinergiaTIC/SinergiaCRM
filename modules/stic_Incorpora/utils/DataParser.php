@@ -190,7 +190,7 @@ class DataParser
             $bean->$incSynchronizationLog = $log['logs'][$bean->id]['msg'];
             $bean->save();
             $log['logs'][$bean->id]['cod'] = $dataIncorpora->salidaComun->codRespuesta;
-            $log['logs'][$bean->id]['url'] = $this->createLinkToDetailView($this->module, $bean->id, $bean->name);
+            $log['logs'][$bean->id]['url'] = static::createLinkToDetailView($this->module, $bean->id, $bean->name);
             $this->log = $log;
             // $GLOBALS['log']->fatal(__METHOD__.' '.__LINE__.' ', $errors );
 
@@ -386,7 +386,7 @@ class DataParser
         $bean->$incSynchronizationLog = $log['logs'][$bean->id]['msg'];
         $bean->save();
         $log['logs'][$bean->id]['cod'] = $dataIncorpora->salidaComun->codRespuesta;
-        $log['logs'][$bean->id]['url'] = $this->createLinkToDetailView($this->module, $bean->id, $bean->name);
+        $log['logs'][$bean->id]['url'] = static::createLinkToDetailView($this->module, $bean->id, $bean->name);
         return $log;
     }
 
@@ -480,7 +480,7 @@ class DataParser
                     $syncDate = $timedate->fromDb(gmdate('Y-m-d H:i:s'));
                     $bean->$incSynchronizationDate = $timedate->asUser($syncDate, $current_user);
                     $bean->$incSynchronizationLog = $log['logs'][$bean->id]['msg'];
-                    $log['logs'][$bean->id]['url'] = $this->createLinkToDetailView($this->module, $bean->id, $bean->name);
+                    $log['logs'][$bean->id]['url'] = static::createLinkToDetailView($this->module, $bean->id, $bean->name);
                     $log['logs'][$bean->id]['cod'] = $response['cod'];
                     $bean->save();
                     return $log;

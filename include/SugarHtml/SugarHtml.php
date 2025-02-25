@@ -303,8 +303,13 @@ class SugarHtml
         $_str = ltrim(substr($code, $offset + 1));
 
         preg_match("/^[$\w]+/", $_str, $statement);
-        $_smarty_closing = self::SMARTY_TAG_BEGIN.'/'.$statement[0];
-        $_left = strlen($statement[0]);
+        // STIC Custom 20250207 JBL - Avoid errors using null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $_smarty_closing = self::SMARTY_TAG_BEGIN.'/'.$statement[0];
+        // $_left = strlen($statement[0]);
+        $_smarty_closing = self::SMARTY_TAG_BEGIN.'/'.$statement[0]??'';
+        $_left = strlen($statement[0]??'');
+        // End STIC Custom
 
         $_right = strpos($code, $_smarty_closing, $offset);
         if ($_right === false) { //smarty closed itself
