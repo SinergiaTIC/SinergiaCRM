@@ -124,11 +124,21 @@ class actionComputeField extends actionBase
             if ($in_save) {
                 global $current_user;
                 $bean->processed = true;
+                // STIC Custom 20250226 JBL - Avoid Fatal error: Cannot access offset of type bool (when $bean->fetched_row==false)
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $check_notify =
+                //     $bean->assigned_user_id != $current_user->id &&
+                //     $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
                 $check_notify =
                     $bean->assigned_user_id != $current_user->id &&
-                    $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
+                    $bean->assigned_user_id != is_array($bean->fetched_row) ? ($bean->fetched_row['assigned_user_id'] ?? null) : null;
+                // END STIC Custom
             } else {
-                $check_notify = $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
+                // STIC Custom 20250226 JBL - Avoid Fatal error: Cannot access offset of type bool (when $bean->fetched_row==false)
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $check_notify = $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
+                $check_notify = $bean->assigned_user_id != is_array($bean->fetched_row) ? ($bean->fetched_row['assigned_user_id'] ?? null) : null;
+                // END STIC Custom
             }
 
             $bean->process_save_dates = false;
