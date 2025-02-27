@@ -97,7 +97,11 @@ class SugarRestJSON extends SugarRest{
             if (!isset($data['application_name']) && isset($data['application'])){
                 $data['application_name'] = $data['application'];
             }
-			$res = call_user_func_array(array( $this->implementation, $method),$data);
+			// STIC-Custom 20250227 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+			// Do not use call_user_func_array to avoid parameter names having to be the same on client and server and to maintain the behavior with php 7.4
+			// $res = call_user_func_array(array( $this->implementation, $method),$data);
+			$res = $this->implementation->{$method}(...array_values($data));
+			// END STIC-Custom
 			$GLOBALS['log']->info('End: SugarRestJSON->serve');
 			return $res;
 		} // else
