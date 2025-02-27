@@ -20,7 +20,6 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-#[\AllowDynamicProperties]
 class ExternalReporting
 {
     // Default language, it will be used if the instance language cannot be obtained from the settings.
