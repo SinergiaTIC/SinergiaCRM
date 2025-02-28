@@ -277,6 +277,7 @@ class ModuleInstaller
 
     public function post_uninstall()
     {
+        global $sugar_config;
         require_once($this->base_dir . '/manifest.php');
         if (isset($this->installdefs['post_uninstall']) && is_array($this->installdefs['post_uninstall'])) {
             foreach ($this->installdefs['post_uninstall'] as $includefile) {

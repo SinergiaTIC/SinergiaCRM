@@ -58,6 +58,7 @@ class RepairAndClear
     public function repairAndClearAll($selected_actions, $modules, $autoexecute = false, $show_output = true)
     {
         global $mod_strings;
+        global $sugar_config;
         $this->module_list = $modules;
         $this->show_output = $show_output;
         $this->actions = $selected_actions;
