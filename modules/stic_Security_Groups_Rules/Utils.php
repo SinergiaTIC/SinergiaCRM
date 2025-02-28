@@ -123,7 +123,7 @@ class stic_Security_Groups_RulesUtils
                                 'relationship' => $val['relationship'],
                                 'field' => $val['field'] ?? null,
                                 'module' => $val['module'] ?? null,
-                                'label' => translate($val['vname'], $mainModule) . ($destModuleLabel ?? ''),
+                                'label' => translate($val['vname'] ?? '', $mainModule) . ($destModuleLabel ?? ''),
                             ];
                         }
                     } elseif (!in_array($val['link'], array_column($options, 'relationship'))) {
