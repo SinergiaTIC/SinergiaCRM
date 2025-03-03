@@ -195,8 +195,14 @@ class UserPreference extends SugarBean
             }
             $GLOBALS['savePreferencesToDBCats'][$category] = true;
         }
+        // If setting preferences for different user, we don't save in session
+        if ($GLOBALS['current_user']->user_name === $user->user_name) {
+            $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
+        }
 
-        $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
+        $user->user_preferences = (!isset($user->user_preferences) || !is_array($user->user_preferences)) ? [] : $user->user_preferences;
+        $user->user_preferences[$category] = $user->user_preferences[$category] ?? [];
+        $user->user_preferences[$category][$name] = $value;
     }
 
     /**
@@ -347,18 +353,26 @@ class UserPreference extends SugarBean
         }
 
         $GLOBALS['log']->debug('Saving Preferences to DB ' . $user->user_name);
-        if (isset($_SESSION[$user->user_name. '_PREFERENCES']) && is_array($_SESSION[$user->user_name. '_PREFERENCES'])) {
+
+        // Checking either if the changes are with same logged used or another
+        $arrayPreferences = null;
+        if ($GLOBALS['current_user']->user_name !== $user->user_name) {
+            $arrayPreferences = $user->user_preferences;
+        } else {
+            $arrayPreferences = $_SESSION[$user->user_name. '_PREFERENCES'] ?? null;
+        }
+        if (is_array($arrayPreferences)) {
             $GLOBALS['log']->debug("Saving Preferences to DB: {$user->user_name}");
             // only save the categories that have been modified or all?
             if (!$all && isset($GLOBALS['savePreferencesToDBCats']) && is_array($GLOBALS['savePreferencesToDBCats'])) {
                 $catsToSave = array();
                 foreach ($GLOBALS['savePreferencesToDBCats'] as $category => $value) {
-                    if (isset($_SESSION[$user->user_name. '_PREFERENCES'][$category])) {
-                        $catsToSave[$category] = $_SESSION[$user->user_name. '_PREFERENCES'][$category];
+                    if (isset($arrayPreferences[$category])) {
+                        $catsToSave[$category] = $arrayPreferences[$category];
                     }
                 }
             } else {
-                $catsToSave = $_SESSION[$user->user_name. '_PREFERENCES'];
+                $catsToSave = $arrayPreferences;
             }
 
             foreach ($catsToSave as $category => $contents) {
