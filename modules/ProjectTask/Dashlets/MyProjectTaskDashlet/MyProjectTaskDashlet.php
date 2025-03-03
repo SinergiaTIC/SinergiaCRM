@@ -77,6 +77,7 @@ class MyProjectTaskDashlet extends DashletGeneric
         // STIC-Custom 20250127 ART - Dashlet on Project Tasks does not show all tasks
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/565
         // $resultArray[] = $this->seedBean->table_name . '.' . "percent_complete != 100";
+        $resultArray[] = "(" . $this->seedBean->table_name . ".percent_complete != 100 OR " . $this->seedBean->table_name . ".percent_complete IS NULL OR " . $this->seedBean->table_name . ".percent_complete = '')";
         // END STIC-Custom
 
         return $resultArray;
