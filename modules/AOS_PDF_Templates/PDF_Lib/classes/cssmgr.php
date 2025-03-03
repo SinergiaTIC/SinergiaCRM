@@ -1,5 +1,9 @@
 <?php
 
+// STIC Custom 20250303 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class cssmgr
 {
     public $mpdf = null;
