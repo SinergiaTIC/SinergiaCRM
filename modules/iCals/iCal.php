@@ -328,7 +328,7 @@ class iCal extends vCal
                 $ical_array[] = array("DTSTAMP", $dtstamp);
                 // STIC-Custom 20220315 AAM - Encoding the activity description to UTF8 in order to display special characters
                 // $ical_array[] = array("DESCRIPTION", $event->description);
-                $ical_array[] = array("DESCRIPTION", utf8_encode($event->description));
+                $ical_array[] = array("DESCRIPTION", utf8_encode($event->description ?? ''));
                 // END STIC
                 $ical_array[] = array(
                     "URL;VALUE=URI",
