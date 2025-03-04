@@ -1563,6 +1563,7 @@
      */
     public function deleteOldViews()
     {
+        global $sugar_config;
         // List of prefixes to be deleted
         $prefixesToDelete = ['sda_'];
 
@@ -1574,8 +1575,8 @@
         // Loop through the prefixes
         foreach ($prefixesToDelete as $prefix) {
 
-            // Get all the views with matching prefixes
-            $res = $db->query("select table_name from information_schema.views where table_name like '{$prefix}%'");
+            // Get all the views with matching prefixes for the current database
+            $res = $db->query("SELECT table_name FROM information_schema.views WHERE table_name LIKE '{$prefix}%' AND table_schema='{$sugar_config['dbconfig']['db_name']}'");
             // Loop through the views
             while ($view = $db->fetchByAssoc($res, false)) {
                 // Delete the view
