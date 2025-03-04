@@ -418,7 +418,7 @@ class EventInscriptionMailer extends WebFormMailer
                     if (!empty($objList) && strpos($objList, 'range_search_dom') === false) // If it is a drop-down field, load the labels
                     {
                         // TODO: review multi-selection fields
-                        $value = $GLOBALS['app_list_strings'][$objWeb->field_defs[$key]['options']][$value];
+                        $value = $GLOBALS['app_list_strings'][$objWeb->field_defs[$key]['options']][$value] ?? null;
                     }
                     $html .= '    <tr><th>' . rtrim($label, ':') . ':</th><td>' . $value . '</td></tr>';
                 }

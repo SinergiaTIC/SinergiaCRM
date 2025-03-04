@@ -1036,7 +1036,9 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
 	function ConvXmlUtf8($Txt, $ConvBr) {
 	// Used by TBS to convert special chars and new lines.
-		$x = htmlspecialchars(utf8_encode($Txt));
+		// Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+		// $x = htmlspecialchars(utf8_encode($Txt));
+		$x = htmlspecialchars(mb_convert_encoding($Txt, 'UTF-8', 'ISO-8859-1'));
 		if ($ConvBr) $this->ConvBr($x);
 		return $x;
 	}

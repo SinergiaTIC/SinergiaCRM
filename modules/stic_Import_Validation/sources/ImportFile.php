@@ -194,7 +194,9 @@ class ImportFile extends ImportDataSource
                 return false;
             }
         } else {
-            $row = fgetcsv($this->_fp, 8192, $this->_delimiter, $this->_enclosure);
+            // Avoid Deprecated warning: the $escape parameter must be provided as its default value will change
+            // $row = fgetcsv($this->_fp, 8192, $this->_delimiter, $this->_enclosure);
+            $row = fgetcsv($this->_fp, 8192, $this->_delimiter, $this->_enclosure, '\\');
             if ($row !== false && $row != array(null)) {
                 $this->_currentRow = $row;
             } else {

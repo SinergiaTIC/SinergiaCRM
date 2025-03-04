@@ -1416,7 +1416,9 @@ function meth_Locator_Replace(&$Txt,&$Loc,&$Value,$SubStart) {
 			$CurrVal = str_replace(array("\n","\r","\t"),array('\n','\r','\t'),$CurrVal);
 		}
 		if ($Loc->ConvUrl) $CurrVal = urlencode($CurrVal);
-		if ($Loc->ConvUtf8) $CurrVal = utf8_encode($CurrVal);
+		// Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+		// if ($Loc->ConvUtf8) $CurrVal = utf8_encode($CurrVal);
+		if ($Loc->ConvUtf8) $CurrVal = mb_convert_encoding($CurrVal, 'UTF-8', 'ISO-8859-1');
 	}
 
 	// if/then/else process, there may be several if/then

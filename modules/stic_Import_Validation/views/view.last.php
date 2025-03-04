@@ -65,7 +65,9 @@ class stic_Import_ValidationViewLast extends stic_Import_ValidationView
         // Read the data if we successfully opened file
         if ($fp !== false) {
             // Read rows 1 by 1 and add the info
-            while ($row = fgetcsv($fp, 8192)) {
+            // Avoid Deprecated warning: the $escape parameter must be provided as its default value will change
+            // while ($row = fgetcsv($fp, 8192)) {
+            while ($row = fgetcsv($fp, 8192, ',', '"', '\\')) {
                 $count         += (int) $row[0];
                 $errorCount    += (int) $row[1];
                 $dupeCount     += (int) $row[2];

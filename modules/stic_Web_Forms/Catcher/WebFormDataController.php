@@ -471,7 +471,9 @@ class WebFormDataController
             $destName = ($erasePrefix ? $field : $prefixedName);
 
             if (isset($_REQUEST[$prefixedName])) {
-                $ret[$destName] = filter_var($_REQUEST[$prefixedName], FILTER_SANITIZE_STRING);
+                // Avoid use of deprecated constant FILTER_SANITIZE_STRING
+                // $ret[$destName] = filter_var($_REQUEST[$prefixedName], FILTER_SANITIZE_STRING);
+                $ret[$destName] = strip_tags($_REQUEST[$prefixedName] ?? '');
             } else if (isset($default[$prefixedName])) {
                 $ret[$destName] = $default[$prefixedName];
             }
