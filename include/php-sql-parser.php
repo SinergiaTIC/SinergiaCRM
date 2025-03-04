@@ -563,8 +563,11 @@ EOREGEX
             if ($prev_category === $token_category) {
                 // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                if ($out === false) {
+                    $out = [];
+                }
                 if (!isset($out[$token_category]) || $out[$token_category] === false) {
-                    $out[$token_category] = []; // Convert `false` to an array
+                    $out[$token_category] = [];
                 }
                 // END STIC Custom
                 $out[$token_category][] = $token;
