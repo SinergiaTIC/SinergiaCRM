@@ -738,8 +738,7 @@ class DynamicField
             // STIC#679
             // STIC#750
             // STIC#962
-            if (
-                $field->$property != $fmd->$property
+            if ( ($field->$property ?? null) != ($fmd->$property ?? null)
                 || $property == 'inline_edit' || $property == 'labelValue'
                 || $property == 'massupdate'  || $property == 'disable_num_format' || $property == 'enable_range_search' || $property == 'audit'
                 || $property == 'default' || $property == 'display_default' || $property == 'duplicate_merge' || $property == 'required'

@@ -142,9 +142,7 @@
 	{* // fieldSets *}
 
     {* Documents *}
-	{literal}
 		{$FILES_HTML_STRING}
-	{/literal}
     {* //Documents *}
 
 

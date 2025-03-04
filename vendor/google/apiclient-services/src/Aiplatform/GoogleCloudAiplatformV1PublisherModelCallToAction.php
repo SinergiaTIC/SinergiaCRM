@@ -25,8 +25,8 @@ class GoogleCloudAiplatformV1PublisherModelCallToAction extends \Google\Model
   protected $deployDataType = '';
   protected $deployGkeType = GoogleCloudAiplatformV1PublisherModelCallToActionDeployGke::class;
   protected $deployGkeDataType = '';
-  protected $fineTuneType = GoogleCloudAiplatformV1PublisherModelCallToActionRegionalResourceReferences::class;
-  protected $fineTuneDataType = '';
+  protected $multiDeployVertexType = GoogleCloudAiplatformV1PublisherModelCallToActionDeployVertex::class;
+  protected $multiDeployVertexDataType = '';
   protected $openEvaluationPipelineType = GoogleCloudAiplatformV1PublisherModelCallToActionRegionalResourceReferences::class;
   protected $openEvaluationPipelineDataType = '';
   protected $openFineTuningPipelineType = GoogleCloudAiplatformV1PublisherModelCallToActionRegionalResourceReferences::class;
@@ -91,18 +91,18 @@ class GoogleCloudAiplatformV1PublisherModelCallToAction extends \Google\Model
     return $this->deployGke;
   }
   /**
-   * @param GoogleCloudAiplatformV1PublisherModelCallToActionRegionalResourceReferences
+   * @param GoogleCloudAiplatformV1PublisherModelCallToActionDeployVertex
    */
-  public function setFineTune(GoogleCloudAiplatformV1PublisherModelCallToActionRegionalResourceReferences $fineTune)
+  public function setMultiDeployVertex(GoogleCloudAiplatformV1PublisherModelCallToActionDeployVertex $multiDeployVertex)
   {
-    $this->fineTune = $fineTune;
+    $this->multiDeployVertex = $multiDeployVertex;
   }
   /**
-   * @return GoogleCloudAiplatformV1PublisherModelCallToActionRegionalResourceReferences
+   * @return GoogleCloudAiplatformV1PublisherModelCallToActionDeployVertex
    */
-  public function getFineTune()
+  public function getMultiDeployVertex()
   {
-    return $this->fineTune;
+    return $this->multiDeployVertex;
   }
   /**
    * @param GoogleCloudAiplatformV1PublisherModelCallToActionRegionalResourceReferences

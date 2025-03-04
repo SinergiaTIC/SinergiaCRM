@@ -16,7 +16,6 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
-use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\CryptTrait;
@@ -52,7 +51,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
      * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param \DateInterval|null             $jwtValidAtDateLeeway
      */
-    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository, \DateInterval $jwtValidAtDateLeeway = null)
+    public function __construct(AccessTokenRepositoryInterface $accessTokenRepository, ?\DateInterval $jwtValidAtDateLeeway = null)
     {
         $this->accessTokenRepository = $accessTokenRepository;
         $this->jwtValidAtDateLeeway = $jwtValidAtDateLeeway;
@@ -82,9 +81,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
 
         $clock = new SystemClock(new DateTimeZone(\date_default_timezone_get()));
         $this->jwtConfiguration->setValidationConstraints(
-            \class_exists(LooseValidAt::class)
-                ? new LooseValidAt($clock, $this->jwtValidAtDateLeeway)
-                : new ValidAt($clock, $this->jwtValidAtDateLeeway),
+            new LooseValidAt($clock, $this->jwtValidAtDateLeeway),
             new SignedWith(
                 new Sha256(),
                 InMemory::plainText($this->publicKey->getKeyContents(), $this->publicKey->getPassPhrase() ?? '')
@@ -116,7 +113,7 @@ class BearerTokenValidator implements AuthorizationValidatorInterface
             $constraints = $this->jwtConfiguration->validationConstraints();
             $this->jwtConfiguration->validator()->assert($token, ...$constraints);
         } catch (RequiredConstraintsViolated $exception) {
-            throw OAuthServerException::accessDenied('Access token could not be verified');
+            throw OAuthServerException::accessDenied('Access token could not be verified', null, $exception);
         }
 
         $claims = $token->claims();

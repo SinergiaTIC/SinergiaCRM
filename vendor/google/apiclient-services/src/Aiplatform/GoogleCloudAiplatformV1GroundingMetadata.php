@@ -20,6 +20,12 @@ namespace Google\Service\Aiplatform;
 class GoogleCloudAiplatformV1GroundingMetadata extends \Google\Collection
 {
   protected $collection_key = 'webSearchQueries';
+  protected $groundingChunksType = GoogleCloudAiplatformV1GroundingChunk::class;
+  protected $groundingChunksDataType = 'array';
+  protected $groundingSupportsType = GoogleCloudAiplatformV1GroundingSupport::class;
+  protected $groundingSupportsDataType = 'array';
+  protected $retrievalMetadataType = GoogleCloudAiplatformV1RetrievalMetadata::class;
+  protected $retrievalMetadataDataType = '';
   protected $searchEntryPointType = GoogleCloudAiplatformV1SearchEntryPoint::class;
   protected $searchEntryPointDataType = '';
   /**
@@ -27,6 +33,48 @@ class GoogleCloudAiplatformV1GroundingMetadata extends \Google\Collection
    */
   public $webSearchQueries;
 
+  /**
+   * @param GoogleCloudAiplatformV1GroundingChunk[]
+   */
+  public function setGroundingChunks($groundingChunks)
+  {
+    $this->groundingChunks = $groundingChunks;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1GroundingChunk[]
+   */
+  public function getGroundingChunks()
+  {
+    return $this->groundingChunks;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1GroundingSupport[]
+   */
+  public function setGroundingSupports($groundingSupports)
+  {
+    $this->groundingSupports = $groundingSupports;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1GroundingSupport[]
+   */
+  public function getGroundingSupports()
+  {
+    return $this->groundingSupports;
+  }
+  /**
+   * @param GoogleCloudAiplatformV1RetrievalMetadata
+   */
+  public function setRetrievalMetadata(GoogleCloudAiplatformV1RetrievalMetadata $retrievalMetadata)
+  {
+    $this->retrievalMetadata = $retrievalMetadata;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1RetrievalMetadata
+   */
+  public function getRetrievalMetadata()
+  {
+    return $this->retrievalMetadata;
+  }
   /**
    * @param GoogleCloudAiplatformV1SearchEntryPoint
    */

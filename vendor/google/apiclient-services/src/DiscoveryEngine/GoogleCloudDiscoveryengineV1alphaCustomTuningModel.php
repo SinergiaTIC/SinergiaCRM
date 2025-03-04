@@ -30,6 +30,11 @@ class GoogleCloudDiscoveryengineV1alphaCustomTuningModel extends \Google\Model
   /**
    * @var string
    */
+  public $errorMessage;
+  public $metrics;
+  /**
+   * @var string
+   */
   public $modelState;
   /**
    * @var string
@@ -71,6 +76,28 @@ class GoogleCloudDiscoveryengineV1alphaCustomTuningModel extends \Google\Model
   public function getDisplayName()
   {
     return $this->displayName;
+  }
+  /**
+   * @param string
+   */
+  public function setErrorMessage($errorMessage)
+  {
+    $this->errorMessage = $errorMessage;
+  }
+  /**
+   * @return string
+   */
+  public function getErrorMessage()
+  {
+    return $this->errorMessage;
+  }
+  public function setMetrics($metrics)
+  {
+    $this->metrics = $metrics;
+  }
+  public function getMetrics()
+  {
+    return $this->metrics;
   }
   /**
    * @param string

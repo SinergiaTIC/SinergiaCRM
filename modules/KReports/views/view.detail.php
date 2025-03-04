@@ -113,7 +113,7 @@ class KReportsViewDetail extends ViewDetail {
       //    $this->bean->listtype = 'standard';
       //$this->ss->assign('viewJS', $this->setFormatVars() . '<script type="text/javascript" src="modules/KReports/views/view.detail.' . $this->bean->listtype . /* @ObfsProperty@ */ '.js" charset="utf-8"></script>');
       // override the options settings if the user is the admin
-      $optionsJson = json_decode(html_entity_decode($this->bean->reportoptions));
+      $optionsJson = json_decode(html_entity_decode($this->bean->reportoptions ?? '')) ?: (object) [];
       if ($current_user->is_admin) {
          $optionsJson->showTools = true;
          $optionsJson->showExport = true;

@@ -196,7 +196,7 @@ class DonationBO extends WebFormDataBO
         $requiredParams = array_unique(array_merge($requiredParams, $moduleRequiredFields));
 
         // If identification number is not required, remove it from validation array.
-        if ($_REQUEST["unrequire_identification_number"] == 1) {
+        if (!empty($_REQUEST["unrequire_identification_number"]) && $_REQUEST["unrequire_identification_number"] == 1) {
             if (($key = array_search('stic_identification_number_c', $requiredParams)) !== false) {
                 unset($requiredParams[$key]);
             }

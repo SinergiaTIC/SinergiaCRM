@@ -965,7 +965,7 @@ If they are blank spaces, line beaks, or other unexpected characters, then you h
 
 	}
 
-	function TbsDebug_Merge($XmlFormat = true, $Current) {
+	function TbsDebug_Merge($XmlFormat , $Current) {
 	// display modified and added files
 
 		$this->TbsDebug_Init($nl, $sep, $bull, ($Current ? 'OPENTBS_DEBUG_XML_CURRENT' :'OPENTBS_DEBUG_XML_SHOW'));

@@ -178,6 +178,10 @@ function generateSEPADirectDebits($remittance)
 
         // 1) That the person / organization exists and has a name / surname
         $debtorName = '';
+        
+        // Error and warning messages
+        $errorMsg = '';
+        $warningMsg = '';
 
         // If the debtor is a person
         if ($contact) {

@@ -47,7 +47,7 @@ class stic_Import_ValidationViewLast extends stic_Import_ValidationView
 
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE", $_REQUEST['type']);
-        $this->ss->assign("HEADER", $app_strings['LBL_STIC_IMPORT_VALIDATION']." ". $mod_strings['LBL_MODULE_NAME']);
+        $this->ss->assign("HEADER", ($app_strings['LBL_STIC_IMPORT_VALIDATION'] ?? '')." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         // lookup this module's $mod_strings to get the correct module name
         $module_mod_strings =
@@ -104,6 +104,7 @@ class stic_Import_ValidationViewLast extends stic_Import_ValidationView
         $this->ss->assign("dupeFile", ImportCacheFiles::convertFileNameToUrl(ImportCacheFiles::getDuplicateFileName()));
 
         // STIC-Code MHP - Check if there are duplicate values in the columns corresponding to the selected search filters within the file
+        $duplicatesValues = [];
         if (isset($_SESSION["stic_ImporValidation"]['duplicateFilters'])){
             $duplicateFilters = $_SESSION["stic_ImporValidation"]['duplicateFilters'];
             foreach ($duplicateFilters as $filter => $valuesArray) {
@@ -188,7 +189,7 @@ class stic_Import_ValidationViewLast extends stic_Import_ValidationView
             if ($mod != $_REQUEST["import_module"] && ACLController::checkAccess($mod, 'import', true)) {
                 // Check if module has import functionality enabled
                 $bean = BeanFactory::newBean($mod);
-                if ($bean->importable){
+                if (isset($bean->importable) && $bean->importable){
                     $modules[$key] = (isset($app_list_strings['moduleList'][$key])) ? $app_list_strings['moduleList'][$key] : $key;
                 }
             }

@@ -2891,7 +2891,8 @@ class SugarBean
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/447
             // is_null function is used instead of empty because, in some cases, an empty string ('') was received, and in such cases, empty is not suitable. 
             // For this same reason, the use of the empty function is retained in the following condition to evaluate new_rel_link, as once it is not null, it can still be considered empty or not.
-            && (!is_null($this->{$new_rel_link}) || (is_null($this->{$new_rel_link}) &&  $rel_link != $new_rel_link))
+            // && (!is_null($this->{$new_rel_link}) || (is_null($this->{$new_rel_link}) &&  $rel_link != $new_rel_link))
+            && (!empty($this->{$new_rel_link}) || (empty($this->{$new_rel_link}) &&  $rel_link != $new_rel_link))
             //END STIC_Custom
             && ( // Relationships with an ID in the _ida field of the relationship different from the parent record
                  (!empty($this->{$new_rel_link}) && is_string($this->{$new_rel_link}) && $new_rel_id != $this->{$new_rel_link})

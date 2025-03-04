@@ -227,20 +227,20 @@ class KReportPluginManager {
    // loop over all plugins and bild an aray with the active ones
     if ($integrationParams->activePlugins)
       foreach ($this->plugins as $plugin => $pluginData) {
-         if ($pluginData['type'] == 'integration' && $integrationParams->activePlugins->$plugin == 1) {
+         if ($pluginData['type'] == 'integration' && ($integrationParams->activePlugins->$plugin??false) == 1) {
             require_once($this->plugins[$plugin]['plugindirectory'] . '/' . $this->plugins[$plugin]['metadata']['integration']['include']);
             $thisPlugin = new $this->plugins[$plugin]['metadata']['integration']['class']();
 
             if ($thisPlugin->checkAccess($thisReport)) {
                $thisMenuItem = $thisPlugin->getMenuItem();
 
-               if ($thisMenuItem['menuItem'] != '')
+               if ($thisMenuItem['menuItem']??'' != '')
                   $pluginArray[$this->plugins[$plugin]['metadata']['category']][] = $thisMenuItem['menuItem'];
 
-               if ($thisMenuItem['jsCode'] != '')
+               if ($thisMenuItem['jsCode']??'' != '')
                   $pluginjsArray[] = $thisMenuItem['jsCode'];
 
-               if ($thisMenuItem['jsFile'] != '')
+               if ($thisMenuItem['jsFile']??'' != '')
                   if (is_array($thisMenuItem['jsFile'])) {
                      foreach ($thisMenuItem['jsFile'] as $thisFile)
                         $pluginFilesArray[] = '<script type="text/javascript" src="' . $thisFile . '"></script>';
@@ -495,6 +495,7 @@ class KReport extends SugarBean {
       // evaluate report Options and pass them along to the Query Array
       $reportOptions = json_decode_kinamu(html_entity_decode($this->reportoptions, ENT_QUOTES));
 
+      $paramsArray = array();
       if (isset($reportOptions ['authCheck']))
          $paramsArray ['authChecklevel'] = $reportOptions ['authCheck'];
       if (isset($reportOptions ['showDeleted']))
@@ -588,7 +589,7 @@ class KReport extends SugarBean {
                $linkFieldArray[$unionid] = array(
                    'module' => $unionQuery['kQuery']->fieldNameMap[$fieldId]['module'],
                    // 2013-08-21 BUG #491 .. check if custom field and trake root path alias
-                   'idfield' => ($unionQuery['kQuery']->fieldNameMap[$fieldId]['fields_name_map_entry']['source'] == 'custom_fields' ? $unionQuery['kQuery']->fieldNameMap[$fieldId]['pathalias'] : $unionQuery['kQuery']->fieldNameMap[$fieldId]['tablealias']) . 'id'
+                   'idfield' => (($unionQuery['kQuery']->fieldNameMap[$fieldId]['fields_name_map_entry']['source']??'') == 'custom_fields' ? $unionQuery['kQuery']->fieldNameMap[$fieldId]['pathalias'] : $unionQuery['kQuery']->fieldNameMap[$fieldId]['tablealias']) . 'id'
                );
             }
 
@@ -728,7 +729,7 @@ class KReport extends SugarBean {
                      // bug 2011-03-07 fields might have different options if in a join
                      //$fieldValue = $app_list_strings[$this->fieldNameMap[$fieldID]['fields_name_map_entry']['options']][$fieldValue];
                      if ($fieldValue != '' && isset($this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']))
-                        $fieldValue = $app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [$fieldValue];
+                        $fieldValue = $app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [$fieldValue] ?? null;
                   }
 
                   // bug 2011-05-25
@@ -739,7 +740,7 @@ class KReport extends SugarBean {
                case 'multienum' :
                   // do not format if we have a function (Count ... etc ... )
                   if ($this->fieldNameMap [$fieldID] ['sqlFunction'] == '') {
-                     $fieldArray = preg_split('/\^,\^/', $fieldValue);
+                     $fieldArray = preg_split('/\^,\^/', $fieldValue??'');
                      //bugfix 2010-09-22 if only one value is selected 
                      if (is_array($fieldArray) && count($fieldArray) > 1) {
                         $fieldValue = '';
@@ -755,7 +756,7 @@ class KReport extends SugarBean {
                      } else {
                         // bug 2011-03-07 fields might have different options if in a join
                         // $fieldValue = $app_list_strings[$this->fieldNameMap[$fieldID]['fields_name_map_entry']['options']][trim($fieldValue, '^')];
-                        $fieldValue = $app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [trim($fieldValue, '^')];
+                        $fieldValue = ($app_list_strings [$this->kQueryArray->queryArray [(isset($fieldArray ['unionid']) ? $fieldArray ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldID] ['fields_name_map_entry'] ['options']] [trim($fieldValue??'', '^')])??'';
                      }
                   }
                   break;
@@ -1161,7 +1162,13 @@ class KReport extends SugarBean {
             if (strpos($selectionLimit, 'p') > 0) {
                $isPercentage = true;
                $selectionLimit = trim(str_replace('p', '', $this->selectionlimit));
-               $totalRows = $db->getRowCount($queryResults = $db->query($query));
+               $queryResults = $db->query($query);
+               if ($queryResults) {
+                  $totalRows = $db->getRowCount($queryResults);
+               }
+               else {
+                  $totalRows = 0;
+               }
                $selectionLimit = round($totalRows / 100 * $selectionLimit, 0);
             }
             return $db->getRowCount($db->limitquery($query, 0, $selectionLimit));
@@ -1179,7 +1186,11 @@ class KReport extends SugarBean {
               }
               } else
              */
-            return $db->getRowCount($queryResults = $db->query($query));
+            $queryResults = $db->query($query);
+            if ($queryResults){
+               return $db->getRowCount($queryResults);
+            }
+            return false;
          }
       }
 
@@ -1231,7 +1242,7 @@ class KReport extends SugarBean {
       $query = $this->get_report_main_sql_query(true, $additionalFilter, $additionalGroupBy, $parameters);
       $queryResults = $db->query($query);
 
-      if ($_REQUEST['kreportdebugquery'] == true)
+      if ($_REQUEST['kreportdebugquery']??'' == true)
          echo $query;
 
       // 2011-02-03 added for percentage calculation of total
@@ -1808,11 +1819,11 @@ class KReport extends SugarBean {
                      case 'datetime':
                         if (isset($whereField ['valuekey'])) {
                            $valKeyArray = explode(' ', $whereField ['valuekey']);
-                           $whereField ['value'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . $valKeyArray[1];
+                           $whereField ['value'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . ($valKeyArray[1]??'');
                         }
                         if (isset($whereField ['valuetokey'])) {
                            $valKeyArray = explode(' ', $whereField ['valuetokey']);
-                           $whereField ['valueto'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . $valKeyArray[1];
+                           $whereField ['valueto'] = $GLOBALS ['timedate']->to_display_date($valKeyArray[0]) . ' ' . ($valKeyArray[1]??'');
                         }
                         break;
                      case 'date':

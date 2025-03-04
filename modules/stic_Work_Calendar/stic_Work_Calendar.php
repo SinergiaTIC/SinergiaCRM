@@ -24,6 +24,7 @@ use function GuzzleHttp\default_user_agent;
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+#[\AllowDynamicProperties]
 class stic_Work_Calendar extends Basic
 {
     public const ALL_DAY_TYPES = ['vacation', 'holiday', 'personal', 'sick', 'leave'];

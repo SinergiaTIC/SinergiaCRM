@@ -68,6 +68,12 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   /**
    * @var string
    */
+  public $previousId;
+  protected $sourceInfoType = GoogleFirestoreAdminV1SourceInfo::class;
+  protected $sourceInfoDataType = '';
+  /**
+   * @var string
+   */
   public $type;
   /**
    * @var string
@@ -249,6 +255,34 @@ class GoogleFirestoreAdminV1Database extends \Google\Model
   public function getPointInTimeRecoveryEnablement()
   {
     return $this->pointInTimeRecoveryEnablement;
+  }
+  /**
+   * @param string
+   */
+  public function setPreviousId($previousId)
+  {
+    $this->previousId = $previousId;
+  }
+  /**
+   * @return string
+   */
+  public function getPreviousId()
+  {
+    return $this->previousId;
+  }
+  /**
+   * @param GoogleFirestoreAdminV1SourceInfo
+   */
+  public function setSourceInfo(GoogleFirestoreAdminV1SourceInfo $sourceInfo)
+  {
+    $this->sourceInfo = $sourceInfo;
+  }
+  /**
+   * @return GoogleFirestoreAdminV1SourceInfo
+   */
+  public function getSourceInfo()
+  {
+    return $this->sourceInfo;
   }
   /**
    * @param string

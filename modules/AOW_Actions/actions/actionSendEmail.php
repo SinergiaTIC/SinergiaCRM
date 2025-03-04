@@ -125,7 +125,7 @@ class actionSendEmail extends actionBase
             
         // Show output accounts
         $emailsList = $this->get_output_smtps();
-        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp']);
+        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp'] ?? '');
         
         $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none;' class='advancedOptions'>";
         $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
@@ -135,7 +135,7 @@ class actionSendEmail extends actionBase
         $html .= '</td>';
 
         $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
-        $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp']) . "</select>";
+        $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp'] ?? '') . "</select>";
         $html .= '</td>';
         $html .= '</tr>';
 
@@ -315,8 +315,10 @@ class actionSendEmail extends actionBase
                     $props['smtp_from_name'],
                     $props['smtp_from_addr'],
                 );
+                return $selectedData;
             }
         }
+        $selectedData = array(null, null);
         return $selectedData;
     }
     private function get_output_smtps_options($emailsList, $selectedSmtp) {
@@ -719,7 +721,8 @@ class actionSendEmail extends actionBase
             $outboundEmail = $outboundEmail->getSystemMailerSettings();
         }
         else {
-            $user = ''; // User defined SMTPs are not used on Workflows, so User will always be empty
+            $user = new User();
+            $user->getSystemUser();
             $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
         }
         $mail->From = $fromEmail? $fromEmail : $outboundEmail->smtp_from_addr;

@@ -610,8 +610,12 @@ function getRunningUser()
     // works on Windows and Linux, but might return null on systems that include "exec" in
     // disabled_functions in php.ini (typical in shared hosting)
     // $runningUser = exec('whoami');
+    $runningUser = null;
 
-    $runningUser = @exec('whoami');
+    // Run exec only if is allowed
+    if (function_exists('exec') && !in_array('exec', explode(',', ini_get('disable_functions')))) {
+        $runningUser = exec('whoami');
+    }
     // End STIC Custom
 
     if ($runningUser == null) {  // matches null, false and ""
