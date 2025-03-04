@@ -265,8 +265,13 @@ class SearchResultsController extends Controller
 
         return [
             'label' => $this->getListViewHeaderLabel($bean, $fieldValue, $fieldDef),
-            'comment' => $fieldDef['comment'] ?? null,
-            'field' => $fieldDef['name'],
+            // STIC Custom 20250304 JBL - Avoid Trying to access array offset on false
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // 'comment' => $fieldDef['comment'] ?? null,
+            // 'field' => $fieldDef['name'],
+            'comment' => is_array($fieldDef) ? ($fieldDef['comment'] ?? null) : null,
+            'field' => is_array($fieldDef) ? ($fieldDef['name'] ?? null) : null,
+            // END STIC Custom
         ];
     }
 
