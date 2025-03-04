@@ -139,7 +139,11 @@ class ErrorResponse implements JsonSerializable
     /**
      * @inheritdoc
      */
-    public function jsonSerialize()
+    // STIC Custom 20250304 JBL - jsonSerialize() should either be compatible with JsonSerializable::jsonSerialize(): mixed
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function jsonSerialize()
+    public function jsonSerialize(): mixed
+    // END STIC Custom
     {
         $ret = [
             'errors' => [
