@@ -323,7 +323,11 @@ EOREGEX
             $stop_at = $token_count;
         }
 
-        $out = false;
+        // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $out = false;
+        $out = [];
+        // END STIC Custom
 
         for ($token_number = $start_at;$token_number<$stop_at;++$token_number) {
             $token = trim($tokens[$token_number]);
@@ -438,6 +442,12 @@ EOREGEX
                     case 'HELP':
                         $token_category = $upper; /* set the category in case these get subclauses
                                           in a future version of MySQL */
+                        // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        if (!isset($out[$upper])) {
+                            $out[$upper] = [];
+                        }
+                        // END STIC Custom
                         $out[$upper][0] = $upper;
                         continue 2;
                     break;
@@ -446,10 +456,22 @@ EOREGEX
                     case 'LOCK':
                         if ($token_category == "") {
                             $token_category = $upper;
+                            // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            if (!isset($out[$upper])) {
+                                $out[$upper] = [];
+                            }
+                            // END STIC Custom
                             $out[$upper][0] = $upper;
                         } else {
                             $token = 'LOCK IN SHARE MODE';
                             $skip_next=true;
+                            // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            if (!isset($out['OPTIONS'])) {
+                                $out['OPTIONS'] = [];
+                            }
+                            // END STIC Custom                            
                             $out['OPTIONS'][] = $token;
                         }
                         continue 2;
@@ -471,6 +493,12 @@ EOREGEX
                     case 'DROP':
                         if ($token_category != 'ALTER') {
                             $token_category = $upper;
+                            // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            if (!isset($out[$upper])) {
+                                $out[$upper] = [];
+                            }
+                            // END STIC Custom
                             $out[$upper][0] = $upper;
                             continue 2;
                         }
@@ -478,6 +506,12 @@ EOREGEX
 
                     case 'FOR':
                         $skip_next=true;
+                        // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        if (!isset($out['OPTIONS'])) {
+                            $out['OPTIONS'] = [];
+                        }
+                        // END STIC Custom
                         $out['OPTIONS'][] = 'FOR UPDATE';
                         continue 2;
                     break;
@@ -496,6 +530,12 @@ EOREGEX
 
                     case 'START':
                         $token = "BEGIN";
+                        // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        if (!isset($out[$upper])) {
+                            $out[$upper] = [];
+                        }
+                        // END STIC Custom
                         $out[$upper][0] = $upper;
                         $skip_next = true;
                     break;
@@ -535,6 +575,12 @@ EOREGEX
                     case 'SQL_CACHE':
                     case 'SQL_NO_CACHE':
                     case 'SQL_CALC_FOUND_ROWS':
+                        // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        if (!isset($out['OPTIONS'])) {
+                            $out['OPTIONS'] = [];
+                        }
+                        // END STIC Custom
                         $out['OPTIONS'][] = $upper;
                         continue 2;
                     break;
@@ -542,6 +588,12 @@ EOREGEX
                     case 'WITH':
                         if ($token_category == 'GROUP') {
                             $skip_next=true;
+                            // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            if (!isset($out['OPTIONS'])) {
+                                $out['OPTIONS'] = [];
+                            }
+                            // END STIC Custom
                             $out['OPTIONS'][] = 'WITH ROLLUP';
                             continue 2;
                         }
@@ -563,10 +615,7 @@ EOREGEX
             if ($prev_category === $token_category) {
                 // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-                if ($out === false) {
-                    $out = [];
-                }
-                if (!isset($out[$token_category]) || $out[$token_category] === false) {
+                if (!isset($out[$token_category])) {
                     $out[$token_category] = [];
                 }
                 // END STIC Custom
@@ -576,7 +625,11 @@ EOREGEX
             $prev_category = $token_category;
         }
 
-        if (!$out) {
+        // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (!$out) {
+        if (empty($out)) {
+        // END STIC Custom
             return false;
         }
 
