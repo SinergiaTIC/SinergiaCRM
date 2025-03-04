@@ -5197,6 +5197,10 @@ function unencodeMultienum($string)
     if (is_array($string)) {
         return $string;
     }
+    // STIC Custom 20250304 JBL - Avoid TypeError with null as string
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    $string = (string) ($string ?? '');
+    // END STIC Custom
     if (substr($string, 0, 1) == '^' && substr($string, -1) == '^') {
         $string = substr(substr($string, 1), 0, strlen($string) - 2);
     }

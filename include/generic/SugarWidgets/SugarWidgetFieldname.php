@@ -151,7 +151,11 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
         }
 
         if (! empty($layout_def['table_alias'])) {
-            $comps = preg_split("/([fl])/", $localeNameFormat, null, PREG_SPLIT_DELIM_CAPTURE);
+            // STIC Custom 20250303 JBL - Fix Type Error: Expected type 'int', found 'null'
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $comps = preg_split("/([fl])/", $localeNameFormat, null, PREG_SPLIT_DELIM_CAPTURE);
+            $comps = preg_split("/([fl])/", $localeNameFormat, -1, PREG_SPLIT_DELIM_CAPTURE);
+            // END STIC Custom
             $name = array();
             foreach ($comps as $val) {
                 if ($val == 'f') {

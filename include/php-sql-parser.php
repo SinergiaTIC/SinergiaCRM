@@ -561,6 +561,12 @@ EOREGEX
                 }
 
             if ($prev_category === $token_category) {
+                // STIC Custom 20250304 JBL - Avoid Deprecated automatic conversion of false to array
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                if (!isset($out[$token_category]) || $out[$token_category] === false) {
+                    $out[$token_category] = []; // Convert `false` to an array
+                }
+                // END STIC Custom
                 $out[$token_category][] = $token;
             }
 
@@ -778,13 +784,24 @@ EOREGEX
         $last = array_pop($stripped);
         if (!$alias && $last['expr_type'] == 'colref') {
             $prev = array_pop($stripped);
-            if ($prev['expr_type'] == 'operator' ||
-                   $prev['expr_type'] == 'const' ||
-                   $prev['expr_type'] == 'function' ||
-                   $prev['expr_type'] == 'expression' ||
-                   #$prev['expr_type'] == 'aggregate_function' ||
-                   $prev['expr_type'] == 'subquery' ||
-                   $prev['expr_type'] == 'colref') {
+            // STIC Custom 20250304 JBL - Avoid error when $prev is null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if ($prev['expr_type'] == 'operator' ||
+            //     $prev['expr_type'] == 'const' ||
+            //     $prev['expr_type'] == 'function' ||
+            //     $prev['expr_type'] == 'expression' ||
+            //     #$prev['expr_type'] == 'aggregate_function' ||
+            //     $prev['expr_type'] == 'subquery' ||
+            //     $prev['expr_type'] == 'colref') {
+            if (!empty($prev) && 
+                ($prev['expr_type'] == 'operator' ||
+                $prev['expr_type'] == 'const' ||
+                $prev['expr_type'] == 'function' ||
+                $prev['expr_type'] == 'expression' ||
+                #$prev['expr_type'] == 'aggregate_function' ||
+                $prev['expr_type'] == 'subquery' ||
+                $prev['expr_type'] == 'colref')) {
+            // END STIC Custom
                 $alias = $last['base_expr'];
 
                 #remove the last token

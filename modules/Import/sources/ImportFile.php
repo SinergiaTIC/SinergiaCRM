@@ -219,7 +219,11 @@ class ImportFile extends ImportDataSource
                 return false;
             }
         } else {
-            $row = fgetcsv($this->_fp, 8192, $this->_delimiter, $this->_enclosure);
+            // STIC Custom 20250304 JBL - Avoid Deprecated warning: the $escape parameter must be provided as its default value will change
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $row = fgetcsv($this->_fp, 8192, $this->_delimiter, $this->_enclosure);
+            $row = fgetcsv($this->_fp, 8192, $this->_delimiter, $this->_enclosure, '\\');
+            // END STIC Custom
             if ($row !== false && $row != array(null)) {
                 $this->_currentRow = $row;
             } else {

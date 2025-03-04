@@ -549,7 +549,12 @@ class SchedulersJob extends Basic
         } elseif ($exJob[0] == 'url') {
             if (function_exists('curl_init')) {
                 $GLOBALS['log']->debug('----->SchedulersJob firing URL job: '.$exJob[1]);
-                set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
+                // STIC Custom 20250303 JBL - Avoid Deprecated Warning: Constant E_STRICT is deprecated
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE & ~E_STRICT);
+                // In PHP8+ old E_STRICT are E_WARNING, E_DEPRECATED or errors
+                set_error_handler(array($this, "errorHandler"), E_ALL & ~E_NOTICE);
+                // END STIC Custom
                 if ($this->fireUrl($exJob[1])) {
                     restore_error_handler();
                     $this->resolveJob(self::JOB_SUCCESS);

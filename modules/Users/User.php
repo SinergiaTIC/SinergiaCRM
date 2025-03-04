@@ -52,6 +52,10 @@ require_once __DIR__ . '/../../include/EmailInterface.php';
 require_once __DIR__ . '/../Emails/EmailUI.php';
 
 // User is used to store customer information.
+// STIC Custom 20250304 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class User extends Person implements EmailInterface
 {
 

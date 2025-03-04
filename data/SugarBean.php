@@ -3397,11 +3397,19 @@ class SugarBean
         }
     }
 
+    // STIC Custom 20250303 JBL - Fix param types in comments
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // /**
+    //  * This function handles create the email notifications email.     * 
+    //  * @param string $notify_user the user to send the notification email to
+    //  * @return SugarPHPMailer
+    //  */
     /**
-     * This function handles create the email notifications email.
-     * @param string $notify_user the user to send the notification email to
+     * This function handles create the email notifications email.     * 
+     * @param User $notify_user the user to send the notification email to
      * @return SugarPHPMailer
      */
+    // END STIC Custom
     public function create_notification_email($notify_user)
     {
         global $sugar_version;
@@ -5994,13 +6002,23 @@ class SugarBean
         }
     }
 
+    // STIC Custom 20250303 JBL - Fix param types in comments
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // /**
+    //  * @param $table
+    //  * @param $relate_values
+    //  * @param bool $check_duplicates
+    //  * @param bool $do_update
+    //  * @param null $data_values
+    //  */
     /**
      * @param $table
      * @param $relate_values
      * @param bool $check_duplicates
      * @param bool $do_update
-     * @param null $data_values
+     * @param array $data_values
      */
+    // END STIC Custom
     public function set_relationship(
         $table,
         $relate_values,
@@ -6157,7 +6175,11 @@ class SugarBean
         if ($current_user->isAdmin() || !$this->bean_implements('ACL')) {
             return true;
         }
-        $view = strtolower($view);
+        // STIC Custom 20250303 JBL - Avoid pass null to strtolower
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $view = strtolower($view);
+        $view = strtolower((string) $view);
+        // End STIC Custom
         switch ($view) {
             case 'list':
             case 'index':

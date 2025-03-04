@@ -3135,7 +3135,11 @@ class Email extends Basic
      */
     public function sendFromOutbound(
         OutboundEmailAccounts $outboundEmailAccount,
-        SugarPHPMailer $mail = null
+        // STIC Custom 20250303 JBL - Implicit nullable parameters are deprecated
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // SugarPHPMailer $mail = null
+        ?SugarPHPMailer $mail = null
+        // END STIC Custom
     ) {
         global $mod_strings, $app_strings, $sugar_config, $locale;
 
@@ -4588,7 +4592,11 @@ eoq;
         }
 
 
-        $toEmailAddresses = preg_split('/[,;]/', (string) $bean->to_addrs, null, PREG_SPLIT_NO_EMPTY);
+        // STIC Custom 20250303 JBL - Fix Type Error: Expected type 'int', found 'null'
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $toEmailAddresses = preg_split('/[,;]/', (string) $bean->to_addrs, null, PREG_SPLIT_NO_EMPTY);
+        $toEmailAddresses = preg_split('/[,;]/', (string) $bean->to_addrs, -1, PREG_SPLIT_NO_EMPTY);
+        // END STIC Custom
         $bean->to_addr_arr = array();
         foreach ($toEmailAddresses as $ea => $address) {
             preg_match(
@@ -4631,7 +4639,11 @@ eoq;
             }
         }
 
-        $ccEmailAddresses = preg_split('/[,;]/', (string) $bean->cc_addrs, null, PREG_SPLIT_NO_EMPTY);
+        // STIC Custom 20250303 JBL - Fix Type Error: Expected type 'int', found 'null'
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $ccEmailAddresses = preg_split('/[,;]/', (string) $bean->cc_addrs, null, PREG_SPLIT_NO_EMPTY);
+        $ccEmailAddresses = preg_split('/[,;]/', (string) $bean->cc_addrs, -1, PREG_SPLIT_NO_EMPTY);
+        // END STIC Custom
         $bean->cc_addrs_arr = array();
         foreach ($ccEmailAddresses as $ea => $address) {
             $email = '';
@@ -4675,7 +4687,11 @@ eoq;
             }
         }
 
-        $bccEmailAddresses = preg_split('/[,;]/', (string) $bean->bcc_addrs, null, PREG_SPLIT_NO_EMPTY);
+        // STIC Custom 20250303 JBL - Fix Type Error: Expected type 'int', found 'null'
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $bccEmailAddresses = preg_split('/[,;]/', (string) $bean->bcc_addrs, null, PREG_SPLIT_NO_EMPTY);
+        $bccEmailAddresses = preg_split('/[,;]/', (string) $bean->bcc_addrs, -1, PREG_SPLIT_NO_EMPTY);
+        // END STIC Custom
         $bean->bcc_addrs_arr = array();
         foreach ($bccEmailAddresses as $ea => $address) {
             $email = '';
