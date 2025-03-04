@@ -79,7 +79,11 @@ class UserPreference extends SugarBean
 
     // Do not actually declare, use the functions statically
     public function __construct(
-        User $user = null
+        // STIC Custom 20250303 JBL - Implicit nullable parameters are deprecated
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // User $user = null
+        ?User $user = null
+        // END STIC Custom
         ) {
         parent::__construct();
 

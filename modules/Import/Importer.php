@@ -864,7 +864,11 @@ class Importer
                 $GLOBALS['log']->error("Caught error: $errstr $errfile $errline");
                 // END STIC-Custom
                 break;
-            case E_STRICT:
+            // STIC Custom 20250304 JBL - Avoid Deprecated Warning: Constant E_STRICT is deprecated
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // In PHP8+ old E_STRICT are E_NOTICE, E_WARNING, E_DEPRECATED or errors
+            // case E_STRICT:
+            // END STIC Custom
             case E_DEPRECATED:
             case E_USER_DEPRECATED:
                 // don't worry about these

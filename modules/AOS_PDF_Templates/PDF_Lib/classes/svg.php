@@ -11,6 +11,10 @@
 // NB UNITS - Works in pixels as main units - converting to PDF units when outputing to PDF string
 // and on returning size
 
+// STIC Custom 20250303 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class SVG
 {
     public $svg_gradient;	//	array - contient les infos sur les gradient fill du svg class� par id du svg

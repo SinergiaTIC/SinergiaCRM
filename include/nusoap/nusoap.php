@@ -320,6 +320,10 @@ $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 0;
 
 * @access   public
 */
+// STIC Custom 20250303 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class nusoap_base
 {
     /**
@@ -2568,6 +2572,10 @@ class nusoap_xmlschema extends nusoap_base
     */
     public function serializeTypeDef($type)
     {
+        // STIC Custom 20250303 JBL - Avoid undefined variable
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $str = '';
+        // END STIC Custom
         //print "in sTD() for type $type<br>";
         if ($typeDef = $this->getTypeDef($type)) {
             $str .= '<'.$type;
@@ -2605,6 +2613,10 @@ class nusoap_xmlschema extends nusoap_base
     */
     public function typeToForm($name, $type)
     {
+        // STIC Custom 20250303 JBL - Avoid undefined variable
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $buffer = '';
+        // END STIC Custom
         // get typedef
         if ($typeDef = $this->getTypeDef($type)) {
             // if struct

@@ -381,6 +381,12 @@ class DashletGeneric extends Dashlet
 
     protected function loadCustomMetadata()
     {
+        // STIC Custom 20250304 JBL - Avoid Error when $this->seedBean is null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if ($this->seedBean == null) {
+            return;
+        }
+        // END STIC Custom
         $dashletData = [];
         $customMetadata = 'custom/modules/'.$this->seedBean->module_dir.'/metadata/dashletviewdefs.php';
         if (file_exists($customMetadata)) {
@@ -568,6 +574,12 @@ class DashletGeneric extends Dashlet
      */
     public function addCustomFields()
     {
+        // STIC Custom 20250304 JBL - Avoid Error when $this->seedBean is null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if ($this->seedBean == null) {
+            return;
+        }
+        // END STIC Custom
         foreach ($this->seedBean->field_defs as $fieldName => $def) {
             if (!empty($def['type']) && $def['type'] == 'html') {
                 continue;

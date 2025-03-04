@@ -186,6 +186,10 @@ class ListViewData
         if (!isset($_REQUEST['module'])) {
             LoggerManager::getLogger()->warn('Undefined index: module');
         }
+        // STIC Custom 20250304 JBL - Avoid TypeError with null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $baseName = (string) ($baseName ?? '');
+        // END STIC Custom
 
         $module = (!empty($listviewName)) ? $listviewName: (isset($_REQUEST['module']) ? $_REQUEST['module'] : null);
         $this->var_name = $module .'2_'. strtoupper($baseName) . ($id?'_'.$id:'');

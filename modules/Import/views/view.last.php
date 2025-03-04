@@ -84,7 +84,11 @@ class ImportViewLast extends ImportView
         // Read the data if we successfully opened file
         if ($fp !== false) {
             // Read rows 1 by 1 and add the info
-            while ($row = fgetcsv($fp, 8192)) {
+            // STIC Custom 20250304 JBL - Avoid Deprecated warning: the $escape parameter must be provided as its default value will change
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // while ($row = fgetcsv($fp, 8192)) {
+            while ($row = fgetcsv($fp, 8192, ',', '"', '\\')) {
+            // END STIC Custom
                 $count         += (int) $row[0];
                 $errorCount    += (int) $row[1];
                 $dupeCount     += (int) $row[2];
