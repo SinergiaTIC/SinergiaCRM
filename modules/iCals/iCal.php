@@ -160,7 +160,10 @@ class iCal extends vCal
         $ical_array[] = array("DTSTAMP", $dtstamp);
         // STIC-Custom 20220315 AAM - Encoding the activity name to UTF8 in order to display special characters
         // $ical_array[] = array("SUMMARY", $task->name);
-        $ical_array[] = array("SUMMARY", utf8_encode($task->name));
+        // STIC Custom 20250304 JBL - Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+        // $ical_array[] = array("SUMMARY", utf8_encode($task->name));
+        $ical_array[] = array("SUMMARY", mb_convert_encoding($task->name, 'UTF-8', 'ISO-8859-1'));
+        // END STIC Custom JBL
         // END STIC
         $ical_array[] = array("UID", $task->id);
         if ($validDueDate) {
@@ -175,12 +178,18 @@ class iCal extends vCal
                 "DESCRIPTION:Project",
                 // STIC-Custom 20220315 AAM - Encoding the activity description to UTF8 in order to display special characters
                 // $task->project_name . vCal::EOL . vCal::EOL . $task->description
-                utf8_encode($task->project_name) . vCal::EOL . vCal::EOL . utf8_encode($task->description)
+                // STIC Custom 20250304 JBL - Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+                // utf8_encode($task->project_name) . vCal::EOL . vCal::EOL . utf8_encode($task->description)
+                mb_convert_encoding($task->project_name, 'UTF-8', 'ISO-8859-1') . vCal::EOL . vCal::EOL . mb_convert_encoding($task->description ?? '', 'UTF-8', 'ISO-8859-1')
+                // END STIC Custom JBL
             );
         } else {
             // STIC-Custom 20220315 AAM - Encoding the activity description to UTF8 in order to display special characters
             // $ical_array[] = array("DESCRIPTION", $task->description);
-            $ical_array[] = array("DESCRIPTION", utf8_encode($task->description));
+            // STIC Custom 20250304 JBL - Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+            // $ical_array[] = array("DESCRIPTION", utf8_encode($task->description));
+            $ical_array[] = array("DESCRIPTION", mb_convert_encoding($task->description ?? '', 'UTF-8', 'ISO-8859-1'));
+            // END STIC Custom JBL
             // END STIC
         }
         $ical_array[] = array(
@@ -307,7 +316,10 @@ class iCal extends vCal
                 $ical_array[] = array("BEGIN", "VEVENT");
                 // STIC-Custom 20220315 AAM - Encoding the activity name to UTF8 in order to display special characters
                 // $ical_array[] = array("SUMMARY", $event->name);
-                $ical_array[] = array("SUMMARY", utf8_encode($event->name));
+                // STIC Custom 20250304 JBL - Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+                // $ical_array[] = array("SUMMARY", utf8_encode($event->name));
+                $ical_array[] = array("SUMMARY", mb_convert_encoding($event->name, 'UTF-8', 'ISO-8859-1'));
+                // END STIC Custom JBL
                 // END STIC
                 $ical_array[] = array(
                     "DTSTART;TZID=" . $user_bean->getPreference('timezone'),
@@ -328,7 +340,10 @@ class iCal extends vCal
                 $ical_array[] = array("DTSTAMP", $dtstamp);
                 // STIC-Custom 20220315 AAM - Encoding the activity description to UTF8 in order to display special characters
                 // $ical_array[] = array("DESCRIPTION", $event->description);
-                $ical_array[] = array("DESCRIPTION", utf8_encode($event->description ?? ''));
+                // STIC Custom 20250304 JBL - Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+                // $ical_array[] = array("DESCRIPTION", utf8_encode($event->description ?? ''));
+                $ical_array[] = array("DESCRIPTION", mb_convert_encoding($event->description ?? '', 'UTF-8', 'ISO-8859-1'));
+                // END STIC Custom
                 // END STIC
                 $ical_array[] = array(
                     "URL;VALUE=URI",
@@ -404,7 +419,10 @@ class iCal extends vCal
                     $ical_array[] = array("ACTION", "DISPLAY");
                     // STIC-Custom 20220315 AAM - Encoding the activity description to UTF8 in order to display special characters
                     // $ical_array[] = array("DESCRIPTION", $event->name);
-                    $ical_array[] = array("DESCRIPTION", utf8_encode($event->name));
+                    // STIC Custom 20250304 JBL - Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+                    // $ical_array[] = array("DESCRIPTION", utf8_encode($event->name));
+                    $ical_array[] = array("DESCRIPTION", mb_convert_encoding($event->name, 'UTF-8', 'ISO-8859-1'));
+                    // END STIC Custom JBL
                     // END STIC
                     $ical_array[] = array("END", "VALARM");
                 }
