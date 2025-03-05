@@ -194,6 +194,7 @@ class SearchResultsController extends Controller
         }
         return $processedResults;
     }
+    // End STIC Custom
 
     /**
      *
