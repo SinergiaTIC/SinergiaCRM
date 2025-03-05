@@ -172,11 +172,7 @@ function getControl(
             $fieldlist[$name]['options'] = $mod_strings[$fieldlist[$name]['options']];
         }
         // Bug 22730: make sure all enums have the ability to select blank as the default value.
-        // STIC-Custom 20250228 MHP - Check that $fieldlist[$name]['options'] exists and is an array before assigning an element to it
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
-        // if (!isset($fieldlist[$name]['options'][''])) {
-        if (isset($fieldlist[$name]['options']) && is_array($fieldlist[$name]['options']) && !isset($fieldlist[$name]['options'][''])) {
-        // END STIC-Custom
+        if (!isset($fieldlist[$name]['options'][''])) {
             if ($name === 'report_module'){
                 continue;
             }
