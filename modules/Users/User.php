@@ -123,7 +123,7 @@ class User extends Person implements EmailInterface
     // STIC Custom 20250305 JBL - Avoid Attempt to access to undefined property
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
     public $default_team;
-    // END STIC Custom    
+    // END STIC Custom
 
     /**
      * @var bool
