@@ -4024,6 +4024,11 @@ class Email extends Basic
      */
     public function trimLongTo($str)
     {
+        // STIC Custom 20250305 JBL - Avoid TypeError with null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $str = (string) ($str ?? '');
+        // END STIC Custom
+        
         if (strpos($str, ',')) {
             $exStr = explode(',', $str);
 
