@@ -160,19 +160,35 @@ if (isTrue($focus->is_personal)) {
     }
 }
 
+// STIC-Custom 20250218 MHP - Prevent type matching in bounce emails accounts
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+// if ($type === 'bounce') {
+//     $focus->mailbox_type = 'bounce';
+// }
+
+// if (!empty($_REQUEST['external_oauth_connection_id'])) {
+//     $externalOauthConnection = BeanFactory::getBean('ExternalOAuthConnection', $_REQUEST['external_oauth_connection_id']);
+
+//     if ($externalOauthConnection->type !== $focus->type) {
+//         SugarApplication::appendErrorMessage($mod_strings['LBL_TYPE_DIFFERENT']);
+//         SugarApplication::redirect('index.php?module=InboundEmail&action=EditView&is_personal=1&type=personal');
+//         return;
+//     }
+// }
 if ($type === 'bounce') {
     $focus->mailbox_type = 'bounce';
-}
-
-if (!empty($_REQUEST['external_oauth_connection_id'])) {
-    $externalOauthConnection = BeanFactory::getBean('ExternalOAuthConnection', $_REQUEST['external_oauth_connection_id']);
-
-    if ($externalOauthConnection->type !== $focus->type) {
-        SugarApplication::appendErrorMessage($mod_strings['LBL_TYPE_DIFFERENT']);
-        SugarApplication::redirect('index.php?module=InboundEmail&action=EditView&is_personal=1&type=personal');
-        return;
+} else {
+    if (!empty($_REQUEST['external_oauth_connection_id'])) {
+        $externalOauthConnection = BeanFactory::getBean('ExternalOAuthConnection', $_REQUEST['external_oauth_connection_id']);
+        
+        if ($externalOauthConnection->type !== $focus->type) {
+            SugarApplication::appendErrorMessage($mod_strings['LBL_TYPE_DIFFERENT']);
+            SugarApplication::redirect('index.php?module=InboundEmail&action=EditView&is_personal=1&type=personal');
+            return;
+        }
     }
 }
+// END STIC-Custom
 
 /////////////////////////////////////////////////////////
 ////	SERVICE STRING CONCATENATION
