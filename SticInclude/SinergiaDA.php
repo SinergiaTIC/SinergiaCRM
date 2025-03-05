@@ -1077,7 +1077,7 @@ class ExternalReporting
      */
     private function sanitizeText($text)
     {
-        $text = trim($text, ' _:');
+        $text = trim((string) $text, ' _:');
         return $text;
     }
 
