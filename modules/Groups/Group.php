@@ -50,7 +50,11 @@ class Group extends User
     // User attribute overrides
     public $status			= 'Group';
     public $password		= ''; // to disallow logins
-    public $default_team;
+    // STIC Custom 20250305 JBL - Avoid Attempt to access to undefined property
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // Property $default_team is defined in parent class (User)
+    // public $default_team;
+    // END STIC Custom
     public $importable = false;
 
 
