@@ -314,8 +314,8 @@ class ExternalReporting
 
                 // To avoid exceptional cases where the table name is defined in uppercase
                 // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
-                $fieldV['table'] = strtolower($fieldV['table'] ?? null);
-
+                $fieldV['table'] = strtolower($fieldV['table'] ?? '');
+                
                 $fieldName = $fieldV['name'];
 
                 $fieldPrefix = ($fieldV['source'] ?? null) == 'custom_fields' ? 'c' : 'm';
