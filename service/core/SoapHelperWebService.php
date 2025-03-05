@@ -343,6 +343,17 @@ class SoapHelperWebServices
     public function checkACLAccess($bean, $viewType, $errorObject, $error_key)
     {
         $GLOBALS['log']->info('Begin: SoapHelperWebServices->checkACLAccess');
+        // STIC Custom 20250305 JBL - Avoid Fatal Error: Call to a member function ACLAccess() on false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if ($bean === false) {
+            $GLOBALS['log']->error('SoapHelperWebServices->checkACLAccess - no ACLAccess ($bean is "false")');
+            $errorObject->set_error($error_key);
+            $this->setFaultObject($errorObject);
+            $GLOBALS['log']->info('End: SoapHelperWebServices->checkACLAccess');
+
+            return false;
+        } // if
+        // END STIC Custom
         if (!$bean->ACLAccess($viewType)) {
             $GLOBALS['log']->error('SoapHelperWebServices->checkACLAccess - no ACLAccess');
             $errorObject->set_error($error_key);

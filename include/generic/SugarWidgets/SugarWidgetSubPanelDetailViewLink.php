@@ -115,7 +115,11 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
         $action = 'DetailView';
         if($module === "Emails"){
             $email = BeanFactory::getBean($module, $record);
-            if($email->status === "draft"){
+            // STIC Custom 20250305 JBL - Avoid Attempt to read property "status" on false
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if($email->status === "draft"){
+            if($email !== false && $email->status === "draft"){
+            // END STIC Custom
                 $action = 'DetailDraftView';
             }
         }
