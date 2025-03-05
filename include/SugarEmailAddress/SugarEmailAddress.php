@@ -578,6 +578,12 @@ class SugarEmailAddress extends SugarBean
         $this->addresses = $this->getAddressesByGUID($bean->id, $module_dir);
         $this->populateLegacyFields($bean);
         if (isset($bean->email1) && !isset($bean->fetched_row['email1'])) {
+            // STIC Custom 20250305 JBL - Avoid Deprecated warning: Automatic conversion of false to array
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            if ($bean->fetched_row === false) {
+                $bean->fetched_row = [];
+            }
+            // END STIC Custom
             $bean->fetched_row['email1'] = $bean->email1;
         }
 

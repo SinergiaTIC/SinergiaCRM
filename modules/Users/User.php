@@ -120,6 +120,11 @@ class User extends Person implements EmailInterface
     public $emailAddress;
     public $new_schema = true;
 
+    // STIC Custom 20250305 JBL - Avoid Attempt to access to undefined property
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    public $default_team;
+    // END STIC Custom    
+
     /**
      * @var bool
      */
