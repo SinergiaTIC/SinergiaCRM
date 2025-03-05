@@ -293,8 +293,8 @@ class ModuleInstaller
 
         if (file_exists($rebuildSDAFile) && $sdaEnabled) {
             require_once $rebuildSDAFile;
+            $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Uninstalling module. {$this->base_dir}. Rebuilding SinergiaDA");
             SinergiaDARebuild::callApiRebuildSDA(true, 'views');
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Uninstalling module. {$this->base_dir}. Rebuilding SinergiaDA");
         }
         // END STIC
     }
