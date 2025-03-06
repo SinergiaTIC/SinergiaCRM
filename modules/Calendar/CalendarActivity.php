@@ -132,7 +132,11 @@ class CalendarActivity
             $end_ts_obj,
             $field_name,
             $field_end_date,
-            array('self', 'within')
+            // STIC Custom 20250306 JBL - Avoid Deprecated warning: Use of "self" in callables is deprecated
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // array('self', 'within')
+            [CalendarActivity::class, 'within']
+            // END STIC Custom
         );
     }
 
@@ -161,7 +165,11 @@ class CalendarActivity
             $end_ts_obj,
             $field_name,
             $field_end_date,
-            array('self', 'until')
+            // STIC Custom 20250306 JBL - Avoid Deprecated warning: Use of "self" in callables is deprecated
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // array('self', 'until')
+            [CalendarActivity::class, 'until']
+            // END STIC Custom
         );
     }
 
