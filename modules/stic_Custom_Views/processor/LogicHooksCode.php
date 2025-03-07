@@ -38,7 +38,7 @@ class stic_Custom_Views_ProcessorLogicHooks
             $view = "quickcreate";
         }
         
-        $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'];
+        $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'] ?? [];
         if (!array_key_exists($view, $availableViews)) {
             return "";
         }
