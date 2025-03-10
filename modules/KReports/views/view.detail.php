@@ -172,19 +172,19 @@ class KReportsViewDetail extends ViewDetail {
 
       //$varJS = '<script type="text/javascript">';
 
-      $varJS = 'kreport_default_currency_symbol = \'' . $GLOBALS['sugar_config']['default_currency_symbol'] . '\';';
-      $varJS .= 'kreport_dec_sep = \'' . $_SESSION[$current_user->user_name . '_PREFERENCES']['global']['dec_sep'] . '\';';
-      $varJS .= 'kreport_num_grp_sep = \'' . $_SESSION[$current_user->user_name . '_PREFERENCES']['global']['num_grp_sep'] . '\';';
-      $varJS .= 'kreport_default_currency_significant_digits = \'' . $_SESSION[$current_user->user_name . '_PREFERENCES']['global']['default_currency_significant_digits'] . '\';';
+      $varJS = 'kreport_default_currency_symbol = \'' . ($GLOBALS['sugar_config']['default_currency_symbol'] ?? '') . '\';';
+      $varJS .= 'kreport_dec_sep = \'' . ($_SESSION[$current_user->user_name . '_PREFERENCES']['global']['dec_sep'] ?? '') . '\';';
+      $varJS .= 'kreport_num_grp_sep = \'' . ($_SESSION[$current_user->user_name . '_PREFERENCES']['global']['num_grp_sep'] ?? '') . '\';';
+      $varJS .= 'kreport_default_currency_significant_digits = \'' . ($_SESSION[$current_user->user_name . '_PREFERENCES']['global']['default_currency_significant_digits'] ?? '') . '\';';
 
       //2013-05-17 add users time format BUG #484
-      $varJS .= 'kreport_tf = \'' . $_SESSION[$current_user->user_name . '_PREFERENCES']['global']['timef'] . '\';';
+      $varJS .= 'kreport_tf = \'' . ($_SESSION[$current_user->user_name . '_PREFERENCES']['global']['timef'] ?? '') . '\';';
       
       // get currencies
       $curResArray = $GLOBALS['db']->query('SELECT id, symbol FROM currencies WHERE deleted = \'0\'');
 
       $curArray = array();
-      $curArray['-99'] = $GLOBALS['sugar_config']['default_currency_symbol'];
+      $curArray = ['-99' => ($GLOBALS['sugar_config']['default_currency_symbol'] ?? '')];
       while ($thisCurEntry = $GLOBALS['db']->fetchByAssoc($curResArray)) {
          $curArray[$thisCurEntry['id']] = $thisCurEntry['symbol'];
       }
