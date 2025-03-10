@@ -126,7 +126,7 @@ abstract class DataCheckFunction
             $lang = $GLOBALS['current_language'];
         }
         if ($lang != null) {
-            return $this->lang[$lang][mb_strtoupper($label)];
+            return $this->lang[$lang][mb_strtoupper($label)] ?? null;
         } else {
             return null;
         }
