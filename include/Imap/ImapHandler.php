@@ -515,6 +515,14 @@ class ImapHandler implements ImapHandlerInterface
     public function expunge()
     {
         $this->logCall(__FUNCTION__, func_get_args());
+        // STIC Custom 20250310 JBL - Avoid Warning when getStream returns false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if (!$this->getStream()) {
+            $this->log('IMAP get Setream error in expunge');
+            return false;
+        }
+        // END STIC Custom
+                
         $ret = imap_expunge($this->getStream());
         if (!$ret) {
             $this->log('IMAP expunge error');
