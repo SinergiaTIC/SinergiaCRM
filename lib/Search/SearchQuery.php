@@ -194,7 +194,15 @@ class SearchQuery implements JsonSerializable
             return $default;
         }
 
-        $value = filter_var($array[$key], $filter);
+        // STIC Custom 20250311 JBL - Manage option when $filter is null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $value = filter_var($array[$key], $filter);
+        if ($filter === null) {
+            $value = $array[$key];
+        } else {
+            $value = filter_var($array[$key], $filter);
+        }
+        // END STIC Custom
 
         if ($value === false) {
             return $default;
