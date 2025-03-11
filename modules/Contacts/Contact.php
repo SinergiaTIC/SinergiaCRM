@@ -572,7 +572,11 @@ class Contact extends Person implements EmailInterface
         global $locale;
 
         $xtpl->assign("CONTACT_NAME", trim($locale->getLocaleFormattedName($contact->first_name, $contact->last_name)));
-        $xtpl->assign("CONTACT_DESCRIPTION", nl2br($contact->description));
+        // STIC Custom 20250311 JBL - Avoid passing null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $xtpl->assign("CONTACT_DESCRIPTION", nl2br($contact->description));
+        $xtpl->assign("CONTACT_DESCRIPTION", nl2br((string) $contact->description));
+        // END STIC Custom        
 
         return $xtpl;
     }
