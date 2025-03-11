@@ -219,7 +219,14 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             // STIC#1066
             //  - PHP Warning:  count(): Parameter must be an array or an object that implements Countable
             // $total_files = count($_FILES["documents"]["name"]);
-            $total_files = is_array($_FILES["documents"]["name"])? count($_FILES["documents"]["name"]) : 0;
+            // STIC Custom 20250311 JBL - Fix Warning: Trying to access array offset on null
+            // $total_files = is_array($_FILES["documents"]["name"])? count($_FILES["documents"]["name"]) : 0;
+            $total_files = 0;
+            if (isset($_FILES["documents"]) && is_array($_FILES["documents"]) && 
+                isset($_FILES["documents"]["name"]) && is_array($_FILES["documents"]["name"])) {
+                $total_files = count($_FILES["documents"]["name"]);
+            }
+            // End STIC Custom 20250311 - JBL
             // End STIC Custom 20230511 - JBL
 
             for ($i = 0; $i < $total_files; $i++) {
