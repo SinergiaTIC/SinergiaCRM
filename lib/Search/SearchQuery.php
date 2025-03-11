@@ -139,17 +139,18 @@ class SearchQuery implements JsonSerializable
     public static function fromRequestArray(array $request): SearchQuery
     {
         // STIC Custom 20250311 JBL - Avoid use of deprecated const: FILTER_SANITIZE_STRING
+        //                          - Ensure passing string to strip_tags 
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // $searchQuery = self::filterArray($request, 'search-query-string', '', FILTER_SANITIZE_STRING);
         // $searchQueryAlt = self::filterArray($request, 'query_string', '', FILTER_SANITIZE_STRING);
         // $searchSize = self::filterArray($request, 'search-query-size', null, FILTER_SANITIZE_NUMBER_INT);
         // $searchFrom = self::filterArray($request, 'search-query-from', 0, FILTER_SANITIZE_NUMBER_INT);
         // $searchEngine = self::filterArray($request, 'search-engine', null, FILTER_SANITIZE_STRING);
-        $searchQuery = strip_tags(self::filterArray($request, 'search-query-string', '', null));
-        $searchQueryAlt = strip_tags(self::filterArray($request, 'query_string', '', null));
+        $searchQuery = strip_tags((string) self::filterArray($request, 'search-query-string', '', null));
+        $searchQueryAlt = strip_tags((string) self::filterArray($request, 'query_string', '', null));
         $searchSize = self::filterArray($request, 'search-query-size', null, FILTER_SANITIZE_NUMBER_INT);
         $searchFrom = self::filterArray($request, 'search-query-from', 0, FILTER_SANITIZE_NUMBER_INT);
-        $searchEngine = strip_tags(self::filterArray($request, 'search-engine', null, null));
+        $searchEngine = strip_tags((string) self::filterArray($request, 'search-engine', null, null));
         // END STIC Custom
 
         if (!empty($searchQueryAlt) && empty($searchQuery)) {

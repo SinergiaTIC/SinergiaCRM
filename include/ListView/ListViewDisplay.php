@@ -172,7 +172,13 @@ class ListViewDisplay
 
         $this->fillDisplayColumnsWithVardefs();
 
-        $this->process($file, $data, $seed->object_name);
+        // STIC Custom 20250304 JBL - Avoid Error when $seed is null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $this->process($file, $data, $seed->object_name);
+        if ($seed?->object_name != null) {
+            $this->process($file, $data, $seed->object_name);
+        }
+        // END STIC Custom
         return true;
     }
 
