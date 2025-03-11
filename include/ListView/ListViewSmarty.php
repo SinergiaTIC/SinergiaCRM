@@ -116,16 +116,31 @@ class ListViewSmarty extends ListViewDisplay
         }
         global $odd_bg, $even_bg, $hilite_bg, $app_strings, $sugar_config;
 
-        $seedClass = get_parent_class($this->seed);
-        if (in_array($seedClass, array('Company', 'Person'), true)) {
-            $configurator = new Configurator();
-            if ($configurator->isConfirmOptInEnabled()) {
-                $sendConfirmOptInEmailToPersonAndCompany = $this->buildSendConfirmOptInEmailToPersonAndCompany();
-                if (!in_array($sendConfirmOptInEmailToPersonAndCompany, $this->actionsMenuExtraItems, true)) {
-                    $this->actionsMenuExtraItems[] = $this->buildSendConfirmOptInEmailToPersonAndCompany();
+        // STIC Custom 20250311 JBL - Avoid get_parent_class of null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $seedClass = get_parent_class($this->seed);
+        // if (in_array($seedClass, array('Company', 'Person'), true)) {
+        //     $configurator = new Configurator();
+        //     if ($configurator->isConfirmOptInEnabled()) {
+        //         $sendConfirmOptInEmailToPersonAndCompany = $this->buildSendConfirmOptInEmailToPersonAndCompany();
+        //         if (!in_array($sendConfirmOptInEmailToPersonAndCompany, $this->actionsMenuExtraItems, true)) {
+        //             $this->actionsMenuExtraItems[] = $this->buildSendConfirmOptInEmailToPersonAndCompany();
+        //         }
+        //     }
+        // }
+        if ($this->seed != null) {
+            $seedClass = get_parent_class($this->seed);
+            if (in_array($seedClass, array('Company', 'Person'), true)) {
+                $configurator = new Configurator();
+                if ($configurator->isConfirmOptInEnabled()) {
+                    $sendConfirmOptInEmailToPersonAndCompany = $this->buildSendConfirmOptInEmailToPersonAndCompany();
+                    if (!in_array($sendConfirmOptInEmailToPersonAndCompany, $this->actionsMenuExtraItems, true)) {
+                        $this->actionsMenuExtraItems[] = $this->buildSendConfirmOptInEmailToPersonAndCompany();
+                    }
                 }
             }
         }
+        // END STIC Custom
 
         parent::process($file, $data, $htmlpublic);
 
