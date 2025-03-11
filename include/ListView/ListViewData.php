@@ -257,6 +257,12 @@ class ListViewData
      */
     public function getListViewData($seed, $where, $offset=-1, $limit = -1, $filter_fields=array(), $params=array(), $id_field = 'id', $singleSelect=true, $id = null)
     {
+        // STIC Custom 20250311 JBL - Avoid Error when $seed is null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if ($seed == null) {
+            return null;
+        }
+        // END STIC Custom
         global $current_user;
         require_once 'include/SearchForm/SearchForm2.php';
         SugarVCR::erase($seed->module_dir);
