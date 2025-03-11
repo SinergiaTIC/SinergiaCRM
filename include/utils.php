@@ -1905,13 +1905,13 @@ function get_select_options_with_id_separate_key($label_list, $key_list, $select
     if (empty($key_list)) {
         $key_list = array();
     }
+    //create the type dropdown domain and set the selected value if $opp value already exists
     // STIC Custom 20250311 JBL - Avoid loop over string
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // foreach ($key_list as $option_key => $option_value) {
     $key_list_array = is_array($key_list) ? $key_list : [$key_list];
+    foreach ($key_list_array as $option_key => $option_value) {
     // END STIC Custom
-    
-    //create the type dropdown domain and set the selected value if $opp value already exists
-    foreach ($key_list as $option_key => $option_value) {
         $selected_string = '';
 
         if (is_string($selected_key)) {
