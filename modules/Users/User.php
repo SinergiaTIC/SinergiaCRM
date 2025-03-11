@@ -1385,7 +1385,11 @@ EOQ;
         $result = $db->limitQuery($query, 0, 1, false);
         if (!empty($result)) {
             $row = $db->fetchByAssoc($result);
-            if (!$checkPasswordMD5 || self::checkPasswordMD5($password, $row['user_hash'])) {
+            // STIC Custom 20250311 JBL - Avoid trying to access array offset on false
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if (!$checkPasswordMD5 || self::checkPasswordMD5($password, $row['user_hash'])) {
+            if ($row !== false && (!$checkPasswordMD5 || self::checkPasswordMD5($password, $row['user_hash']))) {
+            // END STIC Custom            
                 return $row;
             }
         }

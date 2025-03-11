@@ -542,19 +542,37 @@ class SoapHelperWebServices
 
 
             foreach ($filterFields as $field) {
-                $var = $value->field_defs[$field];
-                if (isset($value->{$var['name']})) {
-                    $val = $value->{$var['name']};
-                    $type = $var['type'];
+                // STIC Custom 20250311 JBL - Avoid Trying to access offset on null
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $var = $value->field_defs[$field];
+                // if (isset($value->{$var['name']})) {
+                //     $val = $value->{$var['name']};
+                //     $type = $var['type'];
 
-                    if (strcmp($type, 'date') == 0) {
-                        $val = substr((string) $val, 0, 10);
-                    } elseif (strcmp($type, 'enum') == 0 && !empty($var['options'])) {
-                        //$val = $app_list_strings[$var['options']][$val];
-                    }
+                //     if (strcmp($type, 'date') == 0) {
+                //         $val = substr((string) $val, 0, 10);
+                //     } elseif (strcmp($type, 'enum') == 0 && !empty($var['options'])) {
+                //         //$val = $app_list_strings[$var['options']][$val];
+                //     }
 
-                    $list[$var['name']] = $this->get_name_value($var['name'], $val);
-                } // if
+                //     $list[$var['name']] = $this->get_name_value($var['name'], $val);
+                // } // if
+                if (isset($value->field_defs) && is_array($value->field_defs) && isset($value->field_defs[$field])) {
+                    $var = $value->field_defs[$field];
+                    if (isset($value->{$var['name']})) {
+                        $val = $value->{$var['name']};
+                        $type = $var['type'];
+
+                        if (strcmp($type, 'date') == 0) {
+                            $val = substr((string) $val, 0, 10);
+                        } elseif (strcmp($type, 'enum') == 0 && !empty($var['options'])) {
+                            //$val = $app_list_strings[$var['options']][$val];
+                        }
+
+                        $list[$var['name']] = $this->get_name_value($var['name'], $val);
+                    } // if
+                }
+                // END STIC Custom
             } // foreach
         } // if
         $GLOBALS['log']->info('End: SoapHelperWebServices->get_name_value_list_for_fields');

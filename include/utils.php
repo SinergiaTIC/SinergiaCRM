@@ -2184,6 +2184,13 @@ function translate($string, $mod = '', $selectedValue = '')
         return $returnValue[$selectedValue];
     }
 
+    // STIC Custom 20250311 JBL - Sometimes translate returns an array and can not be processed
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    if (is_array($returnValue)) {
+        return (string) ($returnValue[0] ?? $string);
+    } 
+    // END STIC Custom
+
     return $returnValue;
 }
 

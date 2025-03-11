@@ -312,14 +312,28 @@ class DashletGeneric extends Dashlet
         if (!is_array($this->filters)) {
             // use defaults
             $this->filters = array();
-            foreach ($this->searchFields as $name => $params) {
-                if (!empty($params['default'])) {
-                    $this->filters[$name] = $params['default'];
+            // STIC Custom 20250311 JBL - Avoid foreach over null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // foreach ($this->searchFields as $name => $params) {
+            //     if (!empty($params['default'])) {
+            //         $this->filters[$name] = $params['default'];
+            //     }
+            // }
+            if (is_array($this->searchFields)) {
+                foreach ($this->searchFields as $name => $params) {
+                    if (!empty($params['default'])) {
+                        $this->filters[$name] = $params['default'];
+                    }
                 }
             }
+            // END STIC Custom
         }
         foreach ($this->filters as $name=>$params) {
-            if (!empty($params)) {
+            // STIC Custom 20250311 JBL - Avoid attempt to read property on null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if (!empty($params)) {
+            if (!empty($params) && $this->seedBean != null) {
+            // END STIC Custom
                 if ($name == 'assigned_user_id' && $this->myItemsOnly) {
                     continue;
                 } // don't handle assigned user filter if filtering my items only
@@ -373,7 +387,11 @@ class DashletGeneric extends Dashlet
         }
 
         if ($this->myItemsOnly) {
-            array_push($returnArray, $this->seedBean->table_name . '.' . "assigned_user_id = '" . $current_user->id . "'");
+            // STIC Custom 20250311 JBL - Avoid attempt to read property on null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // array_push($returnArray, $this->seedBean->table_name . '.' . "assigned_user_id = '" . $current_user->id . "'");
+            array_push($returnArray, ($this->seedBean?->table_name ?? "") . '.' . "assigned_user_id = '" . $current_user->id . "'");
+            // END STIC Custom            
         }
 
         return $returnArray;
@@ -445,7 +463,11 @@ class DashletGeneric extends Dashlet
         $this->lvs->displayColumns = $displayColumns;
 
 
-        $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
+        // STIC Custom 20250311 JBL - Avoid attempt to read property on null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
+        $this->lvs->lvd->setVariableName($this->seedBean?->object_name, array());
+        // END STIC Custom
         $lvdOrderBy = $this->lvs->lvd->getOrderBy(); // has this list been ordered, if not use default
 
         $nameRelatedFields = array();
