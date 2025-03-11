@@ -389,18 +389,35 @@ class EditView
     public function render()
     {
         $totalWidth = 0;
-        foreach ($this->defs['templateMeta']['widths'] as $col => $def) {
-            foreach ($def as $k => $value) {
-                $totalWidth += $value;
-            }
-        }
+        // STIC Custom 20250311 JBL - Avoid access to Undefined array key "widths"
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // foreach ($this->defs['templateMeta']['widths'] as $col => $def) {
+        //     foreach ($def as $k => $value) {
+        //         $totalWidth += $value;
+        //     }
+        // }
 
-        // calculate widths
-        foreach ($this->defs['templateMeta']['widths'] as $col => $def) {
-            foreach ($def as $k => $value) {
-                $this->defs['templateMeta']['widths'][$col][$k] = round($value / ($totalWidth / 100), 2);
+        // // calculate widths
+        // foreach ($this->defs['templateMeta']['widths'] as $col => $def) {
+        //     foreach ($def as $k => $value) {
+        //         $this->defs['templateMeta']['widths'][$col][$k] = round($value / ($totalWidth / 100), 2);
+        //     }
+        // }
+        if(isset($this->defs['templateMeta']['widths']) && is_array($this->defs['templateMeta']['widths'])) {
+            foreach ($this->defs['templateMeta']['widths'] as $col => $def) {
+                foreach ($def as $k => $value) {
+                    $totalWidth += $value;
+                }
+            }
+
+            // calculate widths
+            foreach ($this->defs['templateMeta']['widths'] as $col => $def) {
+                foreach ($def as $k => $value) {
+                    $this->defs['templateMeta']['widths'][$col][$k] = round($value / ($totalWidth / 100), 2);
+                }
             }
         }
+        // END STIC Custom
 
         $this->sectionPanels = array();
         $this->sectionLabels = array();
@@ -422,51 +439,101 @@ class EditView
         static $itemCount = 100; //Start the generated tab indexes at 100 so they don't step on custom ones.
 
         /* loop all the panels */
-        foreach ($this->defs['panels'] as $key => $p) {
-            $panel = array();
+        // STIC Custom 20250311 JBL - Avoid loop over null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477        
+        // foreach ($this->defs['panels'] as $key => $p) {
+        //     $panel = array();
 
-            if (!is_array($this->defs['panels'][$key])) {
-                $this->sectionPanels[strtoupper($key)] = $p;
-            } else {
-                foreach ($p as $row => $rowDef) {
-                    $columnsInRows = is_countable($rowDef) ? count($rowDef) : 0;
-                    $columnsUsed = 0;
-                    foreach ($rowDef as $col => $colDef) {
-                        $panel[$row][$col] = is_array($p[$row][$col])
-                            ? array('field' => $p[$row][$col])
-                            : array('field' => array('name' => $p[$row][$col]));
+        //     if (!is_array($this->defs['panels'][$key])) {
+        //         $this->sectionPanels[strtoupper($key)] = $p;
+        //     } else {
+        //         foreach ($p as $row => $rowDef) {
+        //             $columnsInRows = is_countable($rowDef) ? count($rowDef) : 0;
+        //             $columnsUsed = 0;
+        //             foreach ($rowDef as $col => $colDef) {
+        //                 $panel[$row][$col] = is_array($p[$row][$col])
+        //                     ? array('field' => $p[$row][$col])
+        //                     : array('field' => array('name' => $p[$row][$col]));
 
-                        $panel[$row][$col]['field']['tabindex'] =
-                            (isset($p[$row][$col]['tabindex']) && is_numeric($p[$row][$col]['tabindex']))
-                                ? $p[$row][$col]['tabindex']
-                                : '0';
+        //                 $panel[$row][$col]['field']['tabindex'] =
+        //                     (isset($p[$row][$col]['tabindex']) && is_numeric($p[$row][$col]['tabindex']))
+        //                         ? $p[$row][$col]['tabindex']
+        //                         : '0';
 
-                        if ($columnsInRows < $maxColumns) {
-                            if ($col == $columnsInRows - 1) {
-                                $panel[$row][$col]['colspan'] = 2 * $maxColumns - ($columnsUsed + 1);
-                            } else {
-                                $panel[$row][$col]['colspan'] = floor(($maxColumns * 2 - $columnsInRows) / $columnsInRows);
-                                $columnsUsed = $panel[$row][$col]['colspan'];
+        //                 if ($columnsInRows < $maxColumns) {
+        //                     if ($col == $columnsInRows - 1) {
+        //                         $panel[$row][$col]['colspan'] = 2 * $maxColumns - ($columnsUsed + 1);
+        //                     } else {
+        //                         $panel[$row][$col]['colspan'] = floor(($maxColumns * 2 - $columnsInRows) / $columnsInRows);
+        //                         $columnsUsed = $panel[$row][$col]['colspan'];
+        //                     }
+        //                 }
+
+        //                 //Set address types to have colspan value of 2 if colspan is not already defined
+        //                 if (is_array($colDef) && !empty($colDef['hideLabel']) && !isset($panel[$row][$col]['colspan'])) {
+        //                     $panel[$row][$col]['colspan'] = 2;
+        //                 }
+
+        //                 $itemCount++;
+        //             }
+        //         }
+
+        //         $panel = $this->getPanelWithFillers($panel);
+
+        //         $this->sectionPanels[strtoupper($key)] = $panel;
+        //     }
+
+
+        //     $panelCount++;
+        // } //foreach
+        if (is_array($this->defs['panels'])) {
+            foreach ($this->defs['panels'] as $key => $p) {
+                $panel = array();
+
+                if (!is_array($this->defs['panels'][$key])) {
+                    $this->sectionPanels[strtoupper($key)] = $p;
+                } else {
+                    foreach ($p as $row => $rowDef) {
+                        $columnsInRows = is_countable($rowDef) ? count($rowDef) : 0;
+                        $columnsUsed = 0;
+                        foreach ($rowDef as $col => $colDef) {
+                            $panel[$row][$col] = is_array($p[$row][$col])
+                                ? array('field' => $p[$row][$col])
+                                : array('field' => array('name' => $p[$row][$col]));
+
+                            $panel[$row][$col]['field']['tabindex'] =
+                                (isset($p[$row][$col]['tabindex']) && is_numeric($p[$row][$col]['tabindex']))
+                                    ? $p[$row][$col]['tabindex']
+                                    : '0';
+
+                            if ($columnsInRows < $maxColumns) {
+                                if ($col == $columnsInRows - 1) {
+                                    $panel[$row][$col]['colspan'] = 2 * $maxColumns - ($columnsUsed + 1);
+                                } else {
+                                    $panel[$row][$col]['colspan'] = floor(($maxColumns * 2 - $columnsInRows) / $columnsInRows);
+                                    $columnsUsed = $panel[$row][$col]['colspan'];
+                                }
                             }
-                        }
 
-                        //Set address types to have colspan value of 2 if colspan is not already defined
-                        if (is_array($colDef) && !empty($colDef['hideLabel']) && !isset($panel[$row][$col]['colspan'])) {
-                            $panel[$row][$col]['colspan'] = 2;
-                        }
+                            //Set address types to have colspan value of 2 if colspan is not already defined
+                            if (is_array($colDef) && !empty($colDef['hideLabel']) && !isset($panel[$row][$col]['colspan'])) {
+                                $panel[$row][$col]['colspan'] = 2;
+                            }
 
-                        $itemCount++;
+                            $itemCount++;
+                        }
                     }
+
+                    $panel = $this->getPanelWithFillers($panel);
+
+                    $this->sectionPanels[strtoupper($key)] = $panel;
                 }
 
-                $panel = $this->getPanelWithFillers($panel);
 
-                $this->sectionPanels[strtoupper($key)] = $panel;
-            }
-
-
-            $panelCount++;
-        } //foreach
+                $panelCount++;
+            } //foreach
+        }
+        // END STIC Custom
     }
 
     /**
