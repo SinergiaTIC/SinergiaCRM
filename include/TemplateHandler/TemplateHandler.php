@@ -181,35 +181,69 @@ class TemplateHandler
             //Retrieve all panel field definitions with displayParams Array field set
             $panelFields = array();
 
-            foreach ($metaDataDefs['panels'] as $panel) {
-                foreach ($panel as $row) {
-                    foreach ($row as $entry) {
-                        if (empty($entry)) {
-                            continue;
-                        }
+            // STIC Custom 20250311 JBL - Avoid loop over null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477 
+            // foreach ($metaDataDefs['panels'] as $panel) {
+            //     foreach ($panel as $row) {
+            //         foreach ($row as $entry) {
+            //             if (empty($entry)) {
+            //                 continue;
+            //             }
 
-                        if (is_array($entry) &&
-                            isset($entry['name']) &&
-                            isset($entry['displayParams']['required']) &&
-                            $entry['displayParams']['required']
-                        ) {
-                            $panelFields[$entry['name']] = $entry;
-                        }
+            //             if (is_array($entry) &&
+            //                 isset($entry['name']) &&
+            //                 isset($entry['displayParams']['required']) &&
+            //                 $entry['displayParams']['required']
+            //             ) {
+            //                 $panelFields[$entry['name']] = $entry;
+            //             }
 
-                        if (is_array($entry)) {
-                            // STIC Custom 20250207 JBL - Remove Undefined array Key warning
-                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-                            // $defs2[$entry['name']] = $entry;
-                            if (isset($entry['name'])) {
-                                $defs2[$entry['name']] = $entry;
+            //             if (is_array($entry)) {
+            //                 // STIC Custom 20250207 JBL - Remove Undefined array Key warning
+            //                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            //                 // $defs2[$entry['name']] = $entry;
+            //                 if (isset($entry['name'])) {
+            //                     $defs2[$entry['name']] = $entry;
+            //                 }
+            //                 // End STIC Custom
+            //             } else {
+            //                 $defs2[$entry] = array('name' => $entry);
+            //             }
+            //         } //foreach
+            //     } //foreach
+            // } //foreach
+            if (is_array($metaDataDefs['panels'])) {
+                foreach ($metaDataDefs['panels'] as $panel) {
+                    foreach ($panel as $row) {
+                        foreach ($row as $entry) {
+                            if (empty($entry)) {
+                                continue;
                             }
-                            // End STIC Custom
-                        } else {
-                            $defs2[$entry] = array('name' => $entry);
-                        }
+
+                            if (is_array($entry) &&
+                                isset($entry['name']) &&
+                                isset($entry['displayParams']['required']) &&
+                                $entry['displayParams']['required']
+                            ) {
+                                $panelFields[$entry['name']] = $entry;
+                            }
+
+                            if (is_array($entry)) {
+                                // STIC Custom 20250207 JBL - Remove Undefined array Key warning
+                                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                                // $defs2[$entry['name']] = $entry;
+                                if (isset($entry['name'])) {
+                                    $defs2[$entry['name']] = $entry;
+                                }
+                                // End STIC Custom
+                            } else {
+                                $defs2[$entry] = array('name' => $entry);
+                            }
+                        } //foreach
                     } //foreach
                 } //foreach
-            } //foreach
+            }
+            // END STIC Custom
 
             foreach ($panelFields as $field => $value) {
                 $nameList = array();
