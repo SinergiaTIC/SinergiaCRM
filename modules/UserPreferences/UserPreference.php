@@ -244,11 +244,17 @@ class UserPreference extends SugarBean
             return false;
         }
         $GLOBALS['log']->debug('Loading Preferences DB ' . $user->user_name);
-        if ($GLOBALS['current_user']->user_name === $user->user_name){
-            if (!isset($_SESSION[$user->user_name . '_PREFERENCES'])) {
-                $_SESSION[$user->user_name . '_PREFERENCES'] = array();
-            }
+        // STIC-Custom AAM 20250303 - Undoing changes of https://github.com/salesagility/SuiteCRM/commit/ea756b13f0ae606997c0ccb4382e1a72902a9207
+        // Fix reset preferences for users https://github.com/salesagility/SuiteCRM/issues/10637
+        // if ($GLOBALS['current_user']->user_name === $user->user_name){
+            // if (!isset($_SESSION[$user->user_name . '_PREFERENCES'])) {
+            //     $_SESSION[$user->user_name . '_PREFERENCES'] = array();
+            // }
+        // }
+        if (!isset($_SESSION[$user->user_name . '_PREFERENCES'])) {
+            $_SESSION[$user->user_name . '_PREFERENCES'] = array();
         }
+        // END STIC-Custom
         if (!isset($user->user_preferences) || !is_array($user->user_preferences)) {
             $user->user_preferences = array();
         }
@@ -256,15 +262,23 @@ class UserPreference extends SugarBean
         $result = $db->query("SELECT contents FROM user_preferences WHERE assigned_user_id='$user->id' AND category = '" . $category . "' AND deleted = 0", false, 'Failed to load user preferences');
         $row = $db->fetchByAssoc($result);
         if ($row) {
-            if ($GLOBALS['current_user']->user_name === $user->user_name){
-                $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
-            }
+            // STIC-Custom AAM 20250303 - Undoing changes of https://github.com/salesagility/SuiteCRM/commit/ea756b13f0ae606997c0ccb4382e1a72902a9207
+            // Fix reset preferences for users https://github.com/salesagility/SuiteCRM/issues/10637
+            // if ($GLOBALS['current_user']->user_name === $user->user_name){
+                // $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
+            // }
+            $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
+            // END STIC-Custom
             $user->user_preferences[$category] = unserialize(base64_decode($row['contents']));
             return true;
         } else {
-            if ($GLOBALS['current_user']->user_name === $user->user_name){
-                $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
-            }
+            // STIC-Custom AAM 20250303 - Undoing changes of https://github.com/salesagility/SuiteCRM/commit/ea756b13f0ae606997c0ccb4382e1a72902a9207
+            // Fix reset preferences for users https://github.com/salesagility/SuiteCRM/issues/10637
+            // if ($GLOBALS['current_user']->user_name === $user->user_name){
+                // $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
+            // }
+            $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
+            // END STIC-Custom
             $user->user_preferences[$category] = array();
         }
         return false;
