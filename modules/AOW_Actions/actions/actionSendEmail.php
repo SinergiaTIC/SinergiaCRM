@@ -619,7 +619,11 @@ class actionSendEmail extends actionBase
                     $idName = $bean_arr['id_name'];
                     if (isset($bean->field_defs[$idName]) && ($bean->field_defs[$idName]['source'] ?? '') != 'non-db') {
                         if (!isset($object_arr[$bean_arr['module']])) {
-                            $object_arr[$bean_arr['module']] = $bean->$idName;
+                            // STIC Custom 20250312 JBL - Avoid Warning: Undefined property
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            // $object_arr[$bean_arr['module']] = $bean->$idName;
+                            $object_arr[$bean_arr['module']] = $bean->$idName ?? '';
+                            // END STIC Custom
                         }
                     }
                 }
