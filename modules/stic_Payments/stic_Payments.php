@@ -167,7 +167,7 @@ class stic_Payments extends Basic
         include_once 'SticInclude/Utils.php';
 
         // If parent payment commitment has changed...
-        if (trim((string) $this->stic_paymebfe2itments_ida) != trim((string) $this->rel_fields_before_value['stic_paymebfe2itments_ida'])) {
+        if (trim((string) $this->stic_paymebfe2itments_ida) != trim((string) ($this->rel_fields_before_value['stic_paymebfe2itments_ida'] ?? ''))) {
             // Get new parent payment commitment bean
             $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
             // Get payment commmitment related contact (usual case)
