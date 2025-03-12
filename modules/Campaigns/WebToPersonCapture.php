@@ -297,13 +297,35 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                     continue;
                 }
 
-                if ($first_iteration) {
-                    $first_iteration = false;
-                    $query_string .= $first_char;
+                // STIC Custom 20250312 JBL - Fix TypeError when $value is an array
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // if ($first_iteration) {
+                //     $first_iteration = false;
+                //     $query_string .= $first_char;
+                // } else {
+                //     $query_string .= "&";
+                // }
+                // $query_string .= "{$param}=".urlencode($value);
+                if (is_array($value)) {
+                    foreach ($value as $multiple) {
+                        if ($first_iteration) {
+                            $first_iteration = false;
+                            $query_string .= $first_char;
+                        } else {
+                            $query_string .= '&';
+                        }
+                        $query_string .= "{$param}=" . urlencode($multiple);
+                    }
                 } else {
-                    $query_string .= '&';
+                    if ($first_iteration) {
+                        $first_iteration = false;
+                        $query_string .= $first_char;
+                    } else {
+                        $query_string .= '&';
+                    }
+                    $query_string .= "{$param}=" . urlencode($value);
                 }
-                $query_string .= "{$param}=".urlencode($value);
+                // END STIC Custom    
             }
             if (empty($person)) {
                 if ($first_iteration) {

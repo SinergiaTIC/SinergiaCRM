@@ -85,7 +85,15 @@ class templateParser
                     $translatedVals = array();
 
                     foreach ($mVals as $mVal) {
-                        $translatedVals[] = translate($field_def['options'], $focus->module_dir, $mVal);
+                        // STIC Custom 20250312 JBL - Avoid Warning: Array to string conversion
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // $translatedVals[] = translate($field_def['options'], $focus->module_dir, $mVal);
+                        $translated = translate($field_def['options'], $focus->module_dir, $mVal);
+                        if (is_array($translated)) {
+                            $translated = implode(", ", $translated);
+                        }
+                        $translatedVals[] = $translated;
+                        // END STIC Custom
                     }
 
                     $repl_arr[$key . "_" . $fieldName] = implode(", ", $translatedVals);
