@@ -90,7 +90,7 @@ function generateMenu($items, $isFirstLevel = true, $validTabs = null)
         if (!empty($favs)) {
             $html .= '<li class="dropdown-header" id="recents-area">Favoritos</li>';
             foreach ($favs as $fav) {
-                $text = strlen($fav['item_summary']) > 70 ? $fav['item_summary_short'] : $fav['item_summary'];
+                $text = strlen((string) $fav['item_summary']) > 70 ? $fav['item_summary_short'] : $fav['item_summary'];
                 $html .= "<li style='display:flex;justify-content: space-between;'>
                     <a style='width:80%' href='index.php?module=$module&action=DetailView&record={$fav['id']}' title='{$fav['item_summary']}'>$text</a>
                     <a style='width:20%' href='index.php?module=$module&action=DetailView&record={$fav['id']}' title='{$fav['item_summary']}'><i class='glyphicon glyphicon-pencil' aria-hidden='true'></i></a>

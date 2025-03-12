@@ -167,27 +167,29 @@ class SearchResultsController extends Controller
                 $processedBean = [];
                 foreach ($headers[$module] as $header) {
                     $field = $header['field'];
-                    $type = $bean->field_name_map[$field]['type'];
-                    $value = $bean->$field;
+                    if (isset($bean->field_name_map[$field])) {
+                        $type = $bean->field_name_map[$field]['type'];
+                        $value = $bean->$field;
+            
+                        if ($type == 'enum' || $type == 'dynamicenum') {
+                            global $app_list_strings;
+                            $list = $bean->field_name_map[$field]['options'];
+                            $value = $app_list_strings[$list][$value] ?? $value;
+                        } elseif ($type == 'multienum') {
+                            global $app_list_strings;
+                            $displayFieldValues = unencodeMultienum($value);
+                            $list = $bean->field_name_map[$field]['options'];
+                            array_walk(
+                                $displayFieldValues,
+                                function (&$val) use ($list, $app_list_strings) {
+                                    $val = $app_list_strings[$list][$val] ?? $val;
+                                }
+                            );
+                            $value = implode(", ", $displayFieldValues);
+                        }
         
-                    if ($type == 'enum' || $type == 'dynamicenum') {
-                        global $app_list_strings;
-                        $list = $bean->field_name_map[$field]['options'];
-                        $value = $app_list_strings[$list][$value] ?? $value;
-                    } elseif ($type == 'multienum') {
-                        global $app_list_strings;
-                        $displayFieldValues = unencodeMultienum($value);
-                        $list = $bean->field_name_map[$field]['options'];
-                        array_walk(
-                            $displayFieldValues,
-                            function (&$val) use ($list, $app_list_strings) {
-                                $val = $app_list_strings[$list][$val] ?? $val;
-                            }
-                        );
-                        $value = implode(", ", $displayFieldValues);
+                        $processedBean[$field] = $value;
                     }
-       
-                    $processedBean[$field] = $value;
                 }
                 $processedResults[$module][] = $processedBean;
             }
