@@ -523,11 +523,11 @@ class actionSendEmail extends actionBase
 
         // STIC-Custom 20240307 EPS - Improve send mail action
         // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
-        $fromEmail = $params['from_email_address'];
-        $fromName = $params['from_email_name'];
-        $replyto = $params['reply_to'];
-        $replytoName = $params['reply_to_name'];
-        $outputSmtp = $params['output_smtp'];
+        $fromEmail = $params['from_email_address'] ?? '';
+        $fromName = $params['from_email_name'] ?? '';
+        $replyto = $params['reply_to'] ?? '';
+        $replytoName = $params['reply_to_name'] ?? '';
+        $outputSmtp = $params['output_smtp'] ?? '';
         // END STIC-Custom
 
         $ret = true;
