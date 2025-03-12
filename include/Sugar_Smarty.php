@@ -338,7 +338,11 @@ class Sugar_Smarty extends Smarty
     {
         $current_theme = SugarThemeRegistry::current();
         $theme_directory = (string)$current_theme;
-        if (strpos($template, "themes" . DIRECTORY_SEPARATOR . $theme_directory) === false) {
+        // STIC Custom 20250311 JBL - Avoid passing null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (strpos($template, "themes" . DIRECTORY_SEPARATOR . $theme_directory) === false) {
+        if (strpos((string) $template, "themes" . DIRECTORY_SEPARATOR . $theme_directory) === false) {
+        // END STIC Custom
             $test_path = SUGAR_PATH . DIRECTORY_SEPARATOR . "themes" . DIRECTORY_SEPARATOR . $theme_directory . DIRECTORY_SEPARATOR . $template;
             if (file_exists($test_path)) {
                 $template = "themes" . DIRECTORY_SEPARATOR . $theme_directory . DIRECTORY_SEPARATOR . $template;
