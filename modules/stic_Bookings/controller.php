@@ -37,7 +37,7 @@ class stic_BookingsController extends SugarController
 
         $startDate = $_REQUEST['startDate'];
         $endDate = $_REQUEST['endDate'];
-        $bookingId = $_REQUEST['bookingId'];
+        $bookingId = $_REQUEST['bookingId'] ?? null;
         $resourceRequestId = $_REQUEST['resourceId'];
 
         $result = $this->checkResourceAvailability($resourceRequestId, $startDate, $endDate, $bookingId);

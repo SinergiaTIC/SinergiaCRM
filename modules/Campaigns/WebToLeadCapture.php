@@ -178,12 +178,12 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                 $sea->AddUpdateEmailAddress($lead->email2, 0, 1);
             }
         }
-        if (isset($_POST['redirect_url']) && !empty($_POST['redirect_url'])) {
+        if (isset($_POST['redirect_url']) && !empty($_POST['redirect_url']) && isWebToLeadAllowedRedirectHost($_POST['redirect_url'] ?? '')) {
             // Get the redirect url, and make sure the query string is not too long
             $redirect_url = $_POST['redirect_url'];
             $query_string = '';
             $first_char = '&';
-            if (strpos($redirect_url, '?') === false) {
+            if (strpos((string) $redirect_url, '?') === false) {
                 $first_char = '?';
             }
             $first_iteration = true;
@@ -193,13 +193,35 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                     continue;
                 }
                     
-                if ($first_iteration) {
-                    $first_iteration = false;
-                    $query_string .= $first_char;
+                // STIC Custom 20250312 JBL - Fix TypeError when $value is an array
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // if ($first_iteration) {
+                //     $first_iteration = false;
+                //     $query_string .= $first_char;
+                // } else {
+                //     $query_string .= "&";
+                // }
+                // $query_string .= "{$param}=".urlencode($value);
+                if (is_array($value)) {
+                    foreach ($value as $multiple) {
+                        if ($first_iteration) {
+                            $first_iteration = false;
+                            $query_string .= $first_char;
+                        } else {
+                            $query_string .= '&';
+                        }
+                        $query_string .= "{$param}=" . urlencode($multiple);
+                    }
                 } else {
-                    $query_string .= "&";
+                    if ($first_iteration) {
+                        $first_iteration = false;
+                        $query_string .= $first_char;
+                    } else {
+                        $query_string .= '&';
+                    }
+                    $query_string .= "{$param}=" . urlencode($value);
                 }
-                $query_string .= "{$param}=".urlencode($value);
+                // END STIC Custom                
             }
             if (empty($lead)) {
                 if ($first_iteration) {
@@ -247,7 +269,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
     }
 }
 
-if (!empty($_POST['redirect'])) {
+if (!empty($_POST['redirect']) && isWebToLeadAllowedRedirectHost($_POST['redirect'] ?? '')) {
     if (headers_sent()) {
         echo '<html ' . get_language_header() . '><head><title>SugarCRM</title></head><body>';
         echo '<form name="redirect" action="' .$_POST['redirect']. '" method="GET">';

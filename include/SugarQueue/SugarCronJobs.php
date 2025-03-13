@@ -48,6 +48,10 @@ require_once 'modules/Schedulers/Scheduler.php';
  * CRON driver for job queue
  * @api
  */
+// STIC Custom 20250221 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class SugarCronJobs
 {
     /**
