@@ -266,7 +266,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
             if (file_exists($from_path) && is_file($from_path)) {
                 //read in license script
                 if (function_exists('sugar_fopen')) {
-                    $file_handle = sugar_fopen($from_path, 'r');
+                    // STIC Custom 20250313 JBL - auto_detect_line_endings removed do not work in PHP8.4
+                    // Ensure compatibility Windows/Linux
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // $file_handle = sugar_fopen($from_path, 'r');
+                    $file_handle = sugar_fopen($from_path, 'rb');
+                    // END STIC Custom
                 } else {
                     $file_handle = fopen($from_path, 'rb');
                 }
