@@ -259,6 +259,10 @@ class Call extends SugarBean
     {
         $reminderData = $reminders;
         $uninvited = array();
+        // STIC Custom 20250313 JBL - Avoid iterate over null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $reminders ??= [];
+        // END STIC Custom
         foreach ($reminders as $r => $reminder) {
             foreach ($reminder['invitees'] as $i => $invitee) {
                 switch ($invitee['module']) {
