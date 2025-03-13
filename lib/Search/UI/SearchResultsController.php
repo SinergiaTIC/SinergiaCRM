@@ -162,6 +162,7 @@ class SearchResultsController extends Controller
     // https://github.com/SinergiaTIC/SinergiaCRM-SuiteCRM/pull/696
     // Translate in global search module and lists labels
     private function translateModulesAndLists($headers, $resultsAsBean) {
+        $processedResults = [];
         foreach ($resultsAsBean as $module => $beans) {
             foreach ($beans as $bean) {
                 $processedBean = [];
@@ -190,6 +191,9 @@ class SearchResultsController extends Controller
         
                         $processedBean[$field] = $value;
                     }
+                }
+                if (!isset($processedResults[$module])) {
+                    $processedResults[$module] = [];
                 }
                 $processedResults[$module][] = $processedBean;
             }
