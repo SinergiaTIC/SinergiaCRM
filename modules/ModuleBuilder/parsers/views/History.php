@@ -178,7 +178,11 @@ class History implements HistoryInterface
         $retries = 0;
 
         $now = TimeDate::getInstance()->getNow();
-        $new_file = null;
+        // STIC Custom 20250313 JBL - Avoid passing null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $new_file = null;
+        $new_file = '';
+        // END STIC Custom
         for ($retries = 0; !file_exists($new_file) && $retries < 5; $retries++) {
             $now->modify("+1 second");
             $time = $now->__get('ts');
