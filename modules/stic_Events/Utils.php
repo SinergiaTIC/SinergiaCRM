@@ -47,7 +47,7 @@ class stic_EventsUtils
         $user = $current_user->id;
         $type = $_REQUEST['repeat_type'];
         $interval = $_REQUEST['repeat_interval'];
-        $count = $_REQUEST['repeat_count'];
+        $count = $_REQUEST['repeat_count'] ?? null;
         $until = $_REQUEST['repeat_until']??null;
         $startDay = $_REQUEST['repeat_start_day'];
         $finalDay = $_REQUEST['repeat_final_day'];
