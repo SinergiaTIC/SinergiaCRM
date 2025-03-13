@@ -507,7 +507,15 @@ class DashletGeneric extends Dashlet
                 }
             }
             // assign a baseURL w/ the action set as DisplayDashlet
-            foreach ($this->lvs->data['pageData']['urls'] as $type => $url) {
+            // STIC Custom 20250313 JBL - Avoid array offset on null and iterate over null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // foreach ($this->lvs->data['pageData']['urls'] as $type => $url) {
+            $urls = $this->lvs?->data['pageData']['urls'] ?? [];
+            if (!is_array($urls)) {
+                $urls = [];
+            }
+            foreach ($urls as $type => $url) {
+            // END STIC Custom            
                 // awu Replacing action=DisplayDashlet with action=DynamicAction&DynamicAction=DisplayDashlet
                 if ($type == 'orderBy') {
                     $this->lvs->data['pageData']['urls'][$type] = preg_replace('/(action=.*&)/Ui', 'action=DynamicAction&DynamicAction=displayDashlet&', (string) $url);

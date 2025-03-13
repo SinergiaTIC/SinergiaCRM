@@ -2180,7 +2180,11 @@ class TimeDate
             return '';
         }
         $selected = array("am" => "", "pm" => "", "AM" => "", "PM" => "");
-        if (preg_match('/([ap]m)/i', $date, $match)) {
+        // STIC Custom 20250313 JBL - Avoid passing null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (preg_match('/([ap]m)/i', $date, $match)) {
+        if (preg_match('/([ap]m)/i', (string) $date, $match)) {
+        // END STIC Custom        
             $selected[$match[1]] = " selected";
         }
 
