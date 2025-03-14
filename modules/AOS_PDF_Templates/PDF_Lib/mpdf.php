@@ -4791,7 +4791,11 @@ public $aliasNbPgHex;
                 $txt .= code2utf($b[1][$i]);
             }
             if ($this->usingCoreFont) {
-                $txt = utf8_decode($txt);
+                // STIC Custom 20250314 JBL - utf8_decode is deprecated
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $txt = utf8_decode($txt);
+                $txt = mb_convert_encoding($txt, 'ISO-8859-1', 'UTF-8');
+                // END STIC Custom
             }
             if ($mode == 'SIPSMP') {
                 $txt = $this->UTF8toSubset($txt);
