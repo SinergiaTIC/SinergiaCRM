@@ -105,11 +105,22 @@ class GroupedTabStructure
         /* Only return modules which exists in the modList */
         foreach ($tabStructure as $mainTab => $subModules) {
             //Ensure even empty groups are returned
+            // STIC Custom 20250314 JBL - In PHP8+ arrays are not created automatically
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if ($labelAsKey) {
+            //     $retStruct[$subModules['label']]['modules'] = array();
+            // } else {
+            //     $retStruct[$app_strings[$subModules['label']]]['modules']= array();
+            // }
             if ($labelAsKey) {
-                $retStruct[$subModules['label']]['modules'] = array();
+                $retStruct[$subModules['label']] ??= [];
+                $retStruct[$subModules['label']]['modules'] ??= [];
             } else {
-                $retStruct[$app_strings[$subModules['label']]]['modules']= array();
+                $tabKey = $app_strings[$subModules['label']] ?? ''; // Same behavior as PHP 7
+                $retStruct[$tabKey] ??= [];
+                $retStruct[$tabKey]['modules'] ??= [];
             }
+            // END STIC Custom
 
             foreach ($subModules['modules'] as $key => $subModule) {
                 /* Perform a case-insensitive in_array check
