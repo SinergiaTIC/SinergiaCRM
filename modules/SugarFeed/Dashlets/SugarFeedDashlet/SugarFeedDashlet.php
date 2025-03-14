@@ -415,9 +415,12 @@ class SugarFeedDashlet extends DashletGeneric
 
             $resortQueue[] = $normalMessage;
         }
-
         $function = function ($a, $b) {
-            return $a["sort_key"] < $b["sort_key"];
+            // STIC Custom 20250313 JBL - usort(): Returning bool from comparison function is deprecated
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // return $a["sort_key"] < $b["sort_key"];
+            return $a["sort_key"] <=> $b["sort_key"];
+            // END STIC Custom
         };
 
         usort($resortQueue, $function);
