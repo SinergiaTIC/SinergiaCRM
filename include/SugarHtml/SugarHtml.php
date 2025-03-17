@@ -201,7 +201,13 @@ class SugarHtml
                         if ($count++ > 0) {
                             $out .= ' ';
                         }
-                        $out .= (empty($value)) ? $attr : $attr.'="'.$value.'"';
+                        // STIC Custom 20250317 JBL - Solve PHP Warning: Array to string conversion
+                        // Sometimes $value is an array
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // $out .= (empty($value)) ? $attr : $attr.'="'.$value.'"';
+                        $valueStr = is_array($value) ? implode(', ', $value) : $value;
+                        $out .= (empty($valueStr)) ? $attr : $attr.'="'.$valueStr.'"';
+                        // END STIC Custom
                     }
                 }
             }
