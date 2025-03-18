@@ -20,7 +20,6 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
 #[\AllowDynamicProperties]
 class stic_Registrations extends Basic
 {
@@ -68,7 +67,7 @@ class stic_Registrations extends Basic
 
     public function save_relationship_changes($is_update, $exclude = array())
     {
-        if (!empty($this->stic_registrations_stic_eventsstic_events_ida) && !empty($this->rel_fields_before_value) && (trim($this->stic_registrations_stic_eventsstic_events_ida) != trim($this->rel_fields_before_value['stic_registrations_stic_eventsstic_events_ida']))) {
+        if (!empty($this->stic_registrations_stic_eventsstic_events_ida) && (trim($this->stic_registrations_stic_eventsstic_events_ida) != trim($this->rel_fields_before_value['stic_registrations_stic_eventsstic_events_ida'] ?? '')) ) {
             // On new records, inherit amount from related event
             if (empty($this->session_amount) && !$is_update) {
                 $eventBean = BeanFactory::getBean('stic_Events', $this->stic_registrations_stic_eventsstic_events_ida);
