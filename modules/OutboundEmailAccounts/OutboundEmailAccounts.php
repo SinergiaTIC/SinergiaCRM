@@ -198,7 +198,7 @@ class OutboundEmailAccounts extends OutboundEmailAccounts_sugar
 
             $showGroupRecords = "($tableName.type IS NULL) OR ($tableName.type != 'user' ) OR ";
 
-            // STIC-Custom 2050314 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+            // STIC-Custom 2050314 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/477
             // Checks if the user can use non-personal accounts and if not, checks the roles instead of applying the has_group_action_acls_defined() function
             
             // $hasActionAclsDefined = has_group_action_acls_defined('OutboundEmailAccounts', 'list');
