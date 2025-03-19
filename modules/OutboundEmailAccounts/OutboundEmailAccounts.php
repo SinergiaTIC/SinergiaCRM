@@ -198,12 +198,28 @@ class OutboundEmailAccounts extends OutboundEmailAccounts_sugar
 
             $showGroupRecords = "($tableName.type IS NULL) OR ($tableName.type != 'user' ) OR ";
 
-            $hasActionAclsDefined = has_group_action_acls_defined('OutboundEmailAccounts', 'list');
+            // STIC-Custom 2050314 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+            // Checks if the user can use non-personal accounts and if not, checks the roles instead of applying the has_group_action_acls_defined() function
+            
+            // $hasActionAclsDefined = has_group_action_acls_defined('OutboundEmailAccounts', 'list');
+            // if($hasActionAclsDefined === false) {
+            //     $showGroupRecords = '';
+            // }
 
-            if($hasActionAclsDefined === false) {
-                $showGroupRecords = '';
+            global $db;
+            $res = $db->query("SELECT * FROM config WHERE name = 'allow_default_outbound'");
+            $row = $db->fetchByAssoc($res);
+            $notify_allow_default_outbound = isset($row['value']) ? $row['value'] != 0 : false;
+
+            if (!$notify_allow_default_outbound) {
+                // Check only role permissions instead of applying the has_group_action_acls_defined() function
+                $hasActionAclsDefined = ACLController::checkAccess('OutboundEmailAccounts', 'list');
+                
+                if($hasActionAclsDefined === false) {
+                        $showGroupRecords = '';
+                    }
             }
-
+            // END STIC-Custom
             $ret_array['where'] = $ret_array['where'] . " AND ( $showGroupRecords ($tableName.type = 'user' AND $tableName.user_id = '$currentUserId') )";
         }
 
