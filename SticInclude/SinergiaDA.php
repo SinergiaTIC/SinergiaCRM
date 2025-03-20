@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- class ExternalReporting
+class ExternalReporting
 {
     // Default language, it will be used if the instance language cannot be obtained from the settings.
     private $lang = 'es';
@@ -233,6 +233,13 @@
         foreach ($modulesList as $moduleName) {
             // Reset module index list
             unset($indexesToCreate);
+
+            // Reset auto relationships
+            $autoRelationships = [];
+            
+            // View creation query
+            $createViewQuery = [];
+
             $moduleStart = microtime(true);
             // If $onlyIncludeModule is set, only this module will be processed and others will be ignored for debugging purposes).
             if ($moduleName != $onlyIncludeModule && !empty($onlyIncludeModule)) {
@@ -311,7 +318,7 @@
             // Process the content of the field according to the type
             foreach ($moduleBean->getFieldDefinitions() as $fieldK => $fieldV) {
                 // We reset certain variables to avoid errors
-                unset($fieldSrc, $relatedModuleName, $secureName, $edaAggregations, $sdaHiddenField, $excludeColumnFromMetadada);
+                unset($fieldSrc, $relatedModuleName, $secureName, $edaAggregations, $sdaHiddenField, $excludeColumnFromMetadada, $isAutoRelationship);
 
                 // To avoid exceptional cases where the table name is defined in uppercase
                 // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
@@ -407,9 +414,17 @@
                         ) {
                             continue 2;
                         } else {
+                            // Check if the relationship is with the same module
+                            if ($fieldV['module'] == $moduleName) {
+                                $isAutoRelationship = true;
+                                $autoRelationships[$fieldV['link']] = $fieldV;
+
+                                if ($moduleName == 'Project') {
+                                    echo '';
+                                }
+                            }
 
                             $relatedModuleName = $app_list_strings['moduleList'][$fieldV['module'] ?? ''] ?? '';
-
                             // The relationship between contacts and accounts does not have the 'link' property,
                             // which is necessary for retrieval of the relationship values, so we add it directly.
                             if ($fieldName == 'account_id' && $moduleName == 'Contacts') {
@@ -649,9 +664,9 @@
                         
                         if($fieldV['type'] == 'float'  && in_array($fieldV['name'], ['jjwg_maps_lat_c', 'jjwg_maps_lng_c'])){
                             // We use a specific configuration for the latitude and longitude fields of the JJWG Maps module
-                            $decConfig='11,8';
-                        } else{
-                            $decConfig='20,4';
+                            $decConfig = '11,8';
+                        } else {
+                            $decConfig = '20,4';
                         }
 
                         // Numeric type columns are converted to decimal to ensure they remain in this type in the view,
@@ -905,22 +920,33 @@
             // Create WHERE
             $createViewQueryWhere = " WHERE m.deleted = 0 ";
 
-            // We create the SQL instruction with the pieces created above
-            $createViewQuery = "{$createViewQueryHeader}  {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere}";
+            // Create Group By
+            $createViewQueryGroupBy = " GROUP BY m.id ";
 
-            if (!$db->query($createViewQuery)) {
-                $lastSQLError = array_pop(explode(':', $db->last_error));
+            // Create the SQL instruction with the pieces created above for main module view
+            $createViewQuery[] = "{$createViewQueryHeader}  {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere} {$createViewQueryGroupBy}";
 
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$createViewQuery}]");
+            // Create the SQL instruction with some modifications for each autorelationship view
+            foreach ($autoRelationships as $key => $value) {
+                // TODO: decide if create table or view 
+                $createViewQuery[] = "CREATE OR REPLACE VIEW {$viewName}_{$key} AS SELECT   {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere} HAVING  {$value['id_name']} IS NOT NULL ";
+            }
 
-                $this->info .= "<div class='error' style='color:red;'>ERROR: <textarea style='width:100%;height:300px;border:1px solid red;'> {$createViewQuery} </textarea>({$lastSQLError})</div>";
-                $this->info .= "[FATAL: Unable to create view $viewName]";
+            foreach ($createViewQuery as $query) {
+                // Execute the query
+                if (!$db->query($query)) {
+                    $lastSQLError = array_pop(explode(':', $db->last_error));
 
-            } else {
-                $this->info .= '<div style="color:green;">OK: <textarea style="width:100%;height:300px;border:1px solid green;">' . $createViewQuery . '</textarea>  </div>';
-                $this->info .= '<div style="font-size:80%"><b>Listas creadas:</b> ' . join(' | ', array_unique($listNames)) . '</div>';
-            };
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$query}]");
 
+                    $this->info .= "<div class='error' style='color:red;'>ERROR: <textarea style='width:100%;height:300px;border:1px solid red;'> {$query} </textarea>({$lastSQLError})</div>";
+                    $this->info .= "[FATAL: Unable to create view $viewName]";
+
+                } else {
+                    $this->info .= '<div style="color:green;">OK: <textarea style="width:100%;height:300px;border:1px solid green;">' . $query . '</textarea>  </div>';
+                    $this->info .= '<div style="font-size:80%"><b>Listas creadas:</b> ' . join(' | ', array_unique($listNames)) . '</div>';
+                };
+            }
             $this->info .= "<h2>Base fields</h2>";
             $this->info .= print_r($fieldList['base'] ?? '', true);
             $this->info .= "<h2>Custom fields</h2>";
@@ -1512,8 +1538,7 @@
         }
 
         // Add the default language to the config values
-        $tmpConfigValues['default_language'] = substr($sugar_config['default_language'],0,2);
-
+        $tmpConfigValues['default_language'] = substr($sugar_config['default_language'], 0, 2);
 
         // Add each gathered config value to the metadata record
         foreach ($tmpConfigValues as $key => $value) {
