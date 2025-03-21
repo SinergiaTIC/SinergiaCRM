@@ -82,6 +82,7 @@ class ExternalReporting
     private $baseHostname;
     private $sdaSettings = [];
     private $langCode;
+    private $autoRelationshipsRegistered = []; // Array to store all modules auto relationships already registered for use in ACLs
 
     public function __construct()
     {
@@ -226,9 +227,6 @@ class ExternalReporting
         }
 
         natsort($modulesList);
-
-        // Get & populate users ACL metadata (must run after $modulesList is created)
-        $this->getAndSaveUserACL($modulesList);
 
         foreach ($modulesList as $moduleName) {
             // Reset module index list
@@ -437,6 +435,7 @@ class ExternalReporting
                                     $autoRelJoinLabel = empty($autoRelJoinLabel) || $autoRelJoinLabel == $autoRelJoinModuleRelLabel ? $txModuleName : $autoRelJoinLabel;
                                     $fieldV['joinLabel'] = $autoRelJoinLabel;
                                     $autoRelationships[$fieldV['link']] = $fieldV;
+                                    $this->autoRelationshipsRegistered[$fieldV['link']] = $fieldV['table'];
                                 }
 
                                 $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel, $isAutoRelationship);
@@ -951,7 +950,7 @@ class ExternalReporting
             if (!empty($autoRelationships)) {
                 foreach ($autoRelationships as $key => $value) {
                     // Create the SQL instruction with some modifications for each autorelationship view
-                    $createViewQuery[] = "CREATE OR REPLACE VIEW {$viewName}_{$key} AS SELECT   {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere} HAVING  {$value['id_name']} IS NOT NULL ";
+                    $createViewQuery[] = "CREATE OR REPLACE VIEW {$viewName}_{$key} AS SELECT * FROM (SELECT   {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere}) a WHERE {$value['id_name']} !=''";
                     
                 }
 
@@ -991,8 +990,14 @@ class ExternalReporting
             });</script>";
         }
 
+        // Get & populate users ACL metadata (must run after $modulesList is created)
+        $this->getAndSaveUserACL($modulesList);
+
         // We create the views Join Multienum, right now that we already have all the views and the complete metadata table.
         $this->createMultiEnumJoinViews();
+
+        // Clone the permissions records for autorelationships  
+        $this ->clonePermissionRecordsForAutorelationships();
 
         $this->checkSdaColumns();
         $this->checkSdaTablesInViews();
@@ -2092,15 +2097,40 @@ class ExternalReporting
         $db = DBManagerFactory::getInstance();
         foreach ($autoRelationships as $relationship) {
             $this->info .= "<li>{$relationship['source_table']} -> {$relationship['target_table']}</li>";
-            $query = "SELECT * FROM sda_def_columns WHERE `table` = '{$this->viewPrefix}_{$relationship['table']}'"; 
+            $query = "SELECT * FROM sda_def_columns WHERE `table` = '{$this->viewPrefix}_{$relationship['table']}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
                 $row['table'] = "{$this->viewPrefix}_{$relationship['table']}_{$relationship['link']}";
                 $this->addMetadataRecord('sda_def_columns', $row);
             }
         }
-        
-        
+
+    }
+
+
+    
+    /**
+     * Clones permission records for auto-relationships.
+     *
+     * This method iterates through the registered auto-relationships and clones
+     * the permission records from the `sda_def_permissions` table for each 
+     * relationship. The cloned records will have their `table` field updated to 
+     * include the relationship name and their `id` field set to null.
+     *
+     * @return void
+     */
+    public function clonePermissionRecordsForAutorelationships()
+    {
+        $db = DBManagerFactory::getInstance();
+        foreach ($this->autoRelationshipsRegistered as $relationship => $table) {
+            $query = "SELECT * FROM sda_def_permissions WHERE `table` = '{$this->viewPrefix}_{$table}'";
+            $result = $db->query($query);
+            while ($row = $db->fetchByAssoc($result)) {
+                $row['table'] = "{$this->viewPrefix}_{$table}_{$relationship}";
+                $row['id'] = null;
+                $this->addMetadataRecord('sda_def_permissions', $row);
+            }
+        }
     }
 
 }
