@@ -59,7 +59,11 @@ class SugarLoggerHandler extends AbstractProcessingHandler
      * @param  array $record
      * @return void
      */
-    protected function write(array $record)
+    // STIC Custom 20250324 JBL - Fix Fatal error: declaration compatible with parent
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // protected function write(array $record)
+    protected function write(array $record): void
+    // END STIC Custom    
     {
         $logger = LoggerManager::getLogger();
 
