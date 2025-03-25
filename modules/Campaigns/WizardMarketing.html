@@ -1022,10 +1022,15 @@
 
 		{literal}
 		<script type="text/javascript">
-                    $(document).ready(function(){
-                       $('#inbound_email_id').change();
-                       $('#outbound_email_id').change();
-                    });
+			// STIC-Custom 20250325 MHP - Take data from the SMTP account instead of the bounce account
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/315			
+			// It is used to differentiate when we are loading the view or when the user has changed the value of the outgoing account
+			var onReady = 1;
+			$(document).ready(function(){
+				// $('#inbound_email_id').change();
+				$('#outbound_email_id').change();
+			});
+			// End STIC-Custom			
 /*
 			Calendar.setup ({{/literal}
 				inputField : "date_start", ifFormat : "{$CALENDAR_DATEFORMAT}", showsTime : false, button : "jscal_trigger", singleClick : true, step : 1
@@ -1142,104 +1147,109 @@
 			var rn = document.getElementById('reply_name');
 			var ra = document.getElementById('reply_addr');
 
-			if(mailbox.value != '') {
-				if(oe_stored_options[mailbox.value]) {
-					var focusOe = oe_stored_options[mailbox.value];
-					// from name
+			// STIC-Custom 20250325 MHP - Take data from the SMTP account instead of the bounce account
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/315			
+        	if (!onReady || (onReady && fn.value == '')) {
+				if(mailbox.value != '') {
+					if(oe_stored_options[mailbox.value]) {
+						var focusOe = oe_stored_options[mailbox.value];
+						
+						// STIC-Custom 20250117 MHP - Pre-populate SMTP account values ​​into Sender and Reply fields
+						// https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+						// 						if(!fn.value) {
+						//                             var fromName = focusOe.smtp_from_name ? focusOe.smtp_from_name : (
+						//                                 focusOe.from_name ? focusOe.from_name : (
+						//                                     focusOe.name ? focusOe.name : ''
+						//                                 ));
+						//                             if (fromName && fromName != "") {
+						//                                 fn.value = fromName;
+						//                             } else {
+						//                                 fn.value = '';
+						//                             }
+						//                         }
 
+						// 	// from address
+						// 	if (!fa.value) {
+						// 		if (focusIe.from_addr && focusIe.from_addr != "") {
+						// 			fa.value = focusIe.from_addr;
+						// 		} else {
+						// 			fa.value = '';
+						// 		}
+						// 	}
 
-				// STIC-Custom 20250117 MHP - Pre-populate SMTP account values ​​into Sender and Reply fields
-				// https://github.com/SinergiaTIC/SinergiaCRM/pull/315
-				// 						if(!fn.value) {
-				//                             var fromName = focusOe.smtp_from_name ? focusOe.smtp_from_name : (
-				//                                 focusOe.from_name ? focusOe.from_name : (
-				//                                     focusOe.name ? focusOe.name : ''
-				//                                 ));
-				//                             if (fromName && fromName != "") {
-				//                                 fn.value = fromName;
-				//                             } else {
-				//                                 fn.value = '';
-				//                             }
-				//                         }
+						// 	// reply name
+						// 	if (!rn.value) {
+						// 		if (focusIe.reply_to_name && focusIe.reply_to_name != "") {
+						// 			rn.value = focusIe.reply_to_name;
+						// 		} else {
+						// 			rn.value = '';
+						// 		}
+						// 	}
 
-				// 	// from address
-				// 	if (!fa.value) {
-				// 		if (focusIe.from_addr && focusIe.from_addr != "") {
-				// 			fa.value = focusIe.from_addr;
-				// 		} else {
-				// 			fa.value = '';
-				// 		}
-				// 	}
+						// 	// reply address
+						// 	if (!ra.value) {
+						// 		if (focusIe.reply_to_addr && focusIe.reply_to_addr != "") {
+						// 			ra.value = focusIe.reply_to_addr;
+						// 		} else {
+						// 			ra.value = '';
+						// 		}
+						// 	}
+						// }
+						
+						// from name					
+						var fromName = focusOe.smtp_from_name ? focusOe.smtp_from_name : (
+							focusOe.from_name ? focusOe.from_name : (
+								focusOe.name ? focusOe.name : ''
+							));
+						if (fromName && fromName != "") {
+							fn.value = fromName;
+						} else {
+							fn.value = '';
+						}
 
-				// 	// reply name
-				// 	if (!rn.value) {
-				// 		if (focusIe.reply_to_name && focusIe.reply_to_name != "") {
-				// 			rn.value = focusIe.reply_to_name;
-				// 		} else {
-				// 			rn.value = '';
-				// 		}
-				// 	}
+						// from addr
+						var fromAddr = focusOe.smtp_from_addr ? focusOe.smtp_from_addr : (
+							focusOe.from_addr ? focusOe.from_addr : (
+								focusOe.mail_smtpuser ? focusOe.mail_smtpuser : ''
+							));
+						if (fromAddr && fromAddr != "") {
+							fa.value = fromAddr;
+						} else {
+							fa.value = '';
+						}
 
-				// 	// reply address
-				// 	if (!ra.value) {
-				// 		if (focusIe.reply_to_addr && focusIe.reply_to_addr != "") {
-				// 			ra.value = focusIe.reply_to_addr;
-				// 		} else {
-				// 			ra.value = '';
-				// 		}
-				// 	}
-				// }
-					
-					var fromName = focusOe.smtp_from_name ? focusOe.smtp_from_name : (
-						focusOe.from_name ? focusOe.from_name : (
-							focusOe.name ? focusOe.name : ''
-						));
-					if (fromName && fromName != "") {
-						fn.value = fromName;
-					} else {
-						fn.value = '';
+						// reply name
+						var replyToName = focusOe.smtp_reply_to_name ? focusOe.smtp_reply_to_name : (
+							focusOe.reply_to_name ? focusOe.reply_to_name : (
+								focusOe.reply_to_name ? focusOe.reply_to_name : ''
+							));
+						if (replyToName && replyToName != "") {
+							rn.value = replyToName;
+						} else {
+							rn.value = '';
+						}
+
+						// reply addr
+						var replyToAddr = focusOe.smtp_reply_to_addr ? focusOe.smtp_reply_to_addr : (
+							focusOe.reply_to_addr ? focusOe.reply_to_addr : (
+								focusOe.reply_to_addr ? focusOe.reply_to_addr : ''
+							));
+						if (replyToAddr && replyToAddr != "") {
+							ra.value = replyToAddr;
+						} else {
+							ra.value = '';
+						}
 					}
-
-					// from addr
-					var fromAddr = focusOe.smtp_from_addr ? focusOe.smtp_from_addr : (
-						focusOe.from_addr ? focusOe.from_addr : (
-							focusOe.mail_smtpuser ? focusOe.mail_smtpuser : ''
-						));
-					if (fromAddr && fromAddr != "") {
-						fa.value = fromAddr;
-					} else {
-						fa.value = '';
-					}
-
-					// reply name
-					var replyToName = focusOe.smtp_reply_to_name ? focusOe.smtp_reply_to_name : (
-						focusOe.reply_to_name ? focusOe.reply_to_name : (
-							focusOe.reply_to_name ? focusOe.reply_to_name : ''
-						));
-					if (replyToName && replyToName != "") {
-						rn.value = replyToName;
-					} else {
-						rn.value = '';
-					}
-
-					// reply addr
-					var replyToAddr = focusOe.smtp_reply_to_addr ? focusOe.smtp_reply_to_addr : (
-						focusOe.reply_to_addr ? focusOe.reply_to_addr : (
-							focusOe.reply_to_addr ? focusOe.reply_to_addr : ''
-						));
-					if (replyToAddr && replyToAddr != "") {
-						ra.value = replyToAddr;
-					} else {
-						ra.value = '';
-					}
+					// END STIC-Custom
+				} else {
+					fn.value = '';
+					fa.value = '';
+					rn.value = '';
+					ra.value = '';
 				}
-				// END STIC-Custom
-			} else {
-				fn.value = '';
-				fa.value = '';
-				rn.value = '';
-				ra.value = '';
-			}
+			}        
+			onReady = 0;
+			// END STIC-Custom
 		}
 
 
