@@ -24,6 +24,7 @@
 /**
  * This class contains all the methods necessarries to stablish the connection with Incorpora WS using SOAPclient PHP plugin.
  */
+#[\AllowDynamicProperties]
 class Incorpora
 {
     private $soapClient;
