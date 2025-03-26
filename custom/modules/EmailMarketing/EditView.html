@@ -308,11 +308,10 @@
         var rn = document.getElementById('reply_to_name');
         var ra = document.getElementById('reply_to_addr');
 
+        // STIC-Custom 20250326 MHP - Pre-populate SMTP account values ​​into sender and reply fields
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/315      
         if (!onReady || (onReady && fn.value == '')) { 
             if (mailbox.value != '') {
-
-                // STIC-Custom 20250117 MHP - Pre-populate SMTP account values ​​into sender and reply fields
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315            
                 // if (ie_stored_options[mailbox.value]) {
                 //     var focusIe = ie_stored_options[mailbox.value];
                 //     // from name
@@ -366,7 +365,6 @@
                     else
                         ra.value = '';
                 }
-                // END STIC-Custom            
             } else {
                 fn.value = '';
                 fa.value = '';
@@ -375,6 +373,7 @@
             }
         }
         onReady = 0;
+        // END STIC-Custom        
     }
 </script>
 {JAVASCRIPT}
