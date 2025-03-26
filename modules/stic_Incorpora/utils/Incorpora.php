@@ -122,7 +122,7 @@ class Incorpora
             if (!$this->wsdlFileTest) {
                 $this->logMsg['err'] .= $mod_strings['LBL_INCORPORA_MISSING_CREDENTIALS'] . $constantTestUrl . '<br>';
             }
-            if ($this->logMsg['err']) {
+            if (isset($this->logMsg['err']) && $this->logMsg['err']) {
                 return false;
             }
             $optionsConn = array(
