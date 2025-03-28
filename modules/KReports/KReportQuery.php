@@ -830,7 +830,7 @@ class KReportQuery {
       /*
        * Build the array for the joins based on the various Path we have
        */
-      foreach ($this->tablePath as $thisPath => $thisPathJoinType) {
+      foreach (($this->tablePath ?? []) as $thisPath => $thisPathJoinType) {
          // Process backcutting until we have found the node going upwards
          // in the segments array or we are on the root segment
          // (when no '::' can be found)

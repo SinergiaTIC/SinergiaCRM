@@ -2043,7 +2043,7 @@ class KReportRenderer {
                $fieldValue .= $app_list_strings [$this->report->kQueryArray->queryArray [(isset($record ['unionid']) ? $record ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldid] ['fields_name_map_entry'] ['options']] [trim($thisValue)];
          }
       } else {
-         $fieldValue = $app_list_strings [$this->report->kQueryArray->queryArray [(isset($record ['unionid']) ? $record ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldid] ['fields_name_map_entry'] ['options']] [$record[$fieldid]];
+         $fieldValue = $app_list_strings[$this->report->kQueryArray->queryArray[(isset($record['unionid']) ? $record['unionid'] : 'root')]['kQuery']->fieldNameMap[$fieldid]['fields_name_map_entry']['options'] ?? ''][$record[$fieldid]];
       }
 
       // if value is empty we return the original value
@@ -2092,7 +2092,7 @@ class KReportRenderer {
 
    public static function kintRenderer($fieldid, $record) {
    		// NS-TEAM -> round(,0)
-      return round($record[$fieldid], 0);
+      return is_numeric($record[$fieldid] ?? null) ? round($record[$fieldid], 0) : null;
    }
 
    public static function kdateRenderer($fieldid, $record) {
