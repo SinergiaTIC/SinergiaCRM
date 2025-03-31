@@ -305,7 +305,11 @@ class actionCreateRecord extends actionBase
                                 } else {
                                     $dateToUse = $params['value'][$key][0];
                                     $bean->retrieve($bean->id);
-                                    $date = $timedate->fromUser($bean->$dateToUse)->asDB();
+                                    // STIC Custom 20250331 JBL - Fix Uncaught Error: Call to a member function asDB() on null
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                                    // $date = $timedate->fromUser($bean->$dateToUse)->asDB();
+                                    $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
+                                    // END STIC Custom
                                 }
 
                                 if ($params['value'][$key][1] !== 'now') {
