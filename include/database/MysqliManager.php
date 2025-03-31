@@ -293,7 +293,11 @@ class MysqliManager extends MysqlManager
      */
     public function quote($string)
     {
-        return mysqli_real_escape_string($this->getDatabase(), $this->quoteInternal($string));
+        // STIC Custom 20250331 JBL - Fix Uncaught TypeError: Argument #2 ($string) must be of type string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // return mysqli_real_escape_string($this->getDatabase(), $this->quoteInternal($string));
+        return mysqli_real_escape_string($this->getDatabase(), (string) $this->quoteInternal($string));
+        // END STIC Custom
     }
 
     /**
