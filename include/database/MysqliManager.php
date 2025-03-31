@@ -323,13 +323,27 @@ class MysqliManager extends MysqlManager
                 $dbport = substr($configOptions['db_host_name'], $pos + 1);
             }
 
-            $this->database = @mysqli_connect(
-                $dbhost,
-                $configOptions['db_user_name'],
-                $configOptions['db_password'],
-                isset($configOptions['db_name']) ? $configOptions['db_name'] : '',
-                $dbport
-            );
+            // STIC Custom 20250331 JBL - Fix Fatal error: Uncaught mysqli_sql_exception: No such file or directory
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $this->database = @mysqli_connect(
+            //     $dbhost,
+            //     $configOptions['db_user_name'],
+            //     $configOptions['db_password'],
+            //     isset($configOptions['db_name']) ? $configOptions['db_name'] : '',
+            //     $dbport
+            // );
+            try {
+                $this->database = @mysqli_connect(
+                    $dbhost,
+                    $configOptions['db_user_name'],
+                    $configOptions['db_password'],
+                    isset($configOptions['db_name']) ? $configOptions['db_name'] : '',
+                    $dbport
+                );
+            } catch (mysqli_sql_exception $e) {
+                $this->database = false;
+            }
+            // END STIC Custom
             if (empty($this->database)) {
                 $GLOBALS['log']->fatal("Could not connect to DB server " . $dbhost . " as " . $configOptions['db_user_name'] . ". port " . $dbport . ": " . mysqli_connect_error());
                 if ($dieOnError) {
