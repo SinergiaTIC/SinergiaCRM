@@ -218,7 +218,7 @@ class DataParser
         // include 'modules/stic_Incorpora/utils/FieldsDef.php';
         foreach ($fieldsDef as $key => $value) {
             if (!isset($value['skipConsulta']) || !$value['skipConsulta']) {
-                switch ($value[1]) {
+                switch ($value[1] ?? null) {
                     case 'location':
                         if (isset($bean->$key)) {
                             $sufix = $bean->field_defs['inc_id_c'] ? '_c' : '';
@@ -280,7 +280,20 @@ class DataParser
                                 include 'modules/stic_Incorpora/utils/TransformedLists.php';
                                 if (isset($value[2]) && $value[2]) {
                                     $list = $value[2];
-                                    $bean->$key = array_key_exists($dataIncorpora->{$value[0]}, ${$list}) ? ${$list}[$dataIncorpora->{$value[0]}] : ${$list}['**not_listed**'];
+                                    // STIC Custom 20250401 JBL - Fix Fatal error
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                                    // $bean->$key = array_key_exists($dataIncorpora->{$value[0]}, ${$list}) ? ${$list}[$dataIncorpora->{$value[0]}] : ${$list}['**not_listed**'];
+                                    $propertyName = $value[0];
+                                    try {
+                                        $propertyValue = $dataIncorpora->$propertyName;
+                                        $bean->$key = array_key_exists($propertyValue, ${$list}) 
+                                            ? ${$list}[$propertyValue] 
+                                            : ${$list}['**not_listed**'];
+                                    } catch (Error $e) {
+                                        // Property does not exists: Use not_listed value
+                                        $bean->$key = ${$list}['**not_listed**'];
+                                    }
+                                    // END STIC Custom
                                 } else {
                                     $errors .= $mod_strings['LBL_RESULTS_DATAPARSER_LIST_NOT_SET'] . $incField[0] . ' / ' . $beanField;
                                 }
