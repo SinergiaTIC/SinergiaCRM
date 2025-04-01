@@ -3874,7 +3874,17 @@ class SugarBean
                         $localTable .= '_cstm';
                     }
                     global $beanFiles, $beanList;
-                    require_once($beanFiles[$beanList[$joinModule]]);
+                    // STIC Custom 20250401 JBL - Fix Fatal error when class or file is not defined
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // require_once($beanFiles[$beanList[$joinModule]]);
+                    $moduleClass = $beanList[$joinModule] ?? '';
+                    $filePath = $beanFiles[$moduleClass] ?? '';
+                    if (!empty($filePath)) {
+                        require_once($filePath);
+                    } else {
+                        $GLOBALS['log']->fatal("Unable to load module $joinModule");
+                    }
+                    // END STIC Custom
                     $rel_mod = new $beanList[$joinModule]();
                     $nameField = "$joinTableAlias.name";
                     if (isset($rel_mod->field_defs['name'])) {
