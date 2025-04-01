@@ -379,7 +379,7 @@ class stic_IncorporaController extends SugarController
                 $logParser = $DataParser->parseResponseIncorpora($Incorpora->getLogMsg(), $bean, $this->option);
 
                 // At this point, it could happen that the user doesn't have permission to edit the record. It will be displayed here.
-                if ($logParser['aut']) {
+                if (isset($logParser['aut']) && $logParser['aut']) {
                     $GLOBALS['log']->error(__METHOD__ . ' ' . __LINE__ . ' ' . ' ERROR INCORPORA RESPONSE:  ', $logParser);
                     $this->log = $logParser;
                     continue;
