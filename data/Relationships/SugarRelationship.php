@@ -471,6 +471,13 @@ abstract class SugarRelationship
     {
         $GLOBALS['resavingRelatedBeans'] = true;
 
+        // STIC Custom 20250403 JBL - Fix Uncaught Error when $beansToResave is not iterable
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if (empty(self::$beansToResave) || !is_array(self::$beansToResave)) {
+            return;
+        }
+        // END STIC Custom
+
         //Resave any bean not currently in the middle of a save operation
         foreach (self::$beansToResave as $module => $beans) {
             foreach ($beans as $bean) {
@@ -484,9 +491,18 @@ abstract class SugarRelationship
                     $bean->save();
                 } else {
                     // Bug 55942 save the in-save id which will be used to send workflow alert later
-                    if (isset($bean->id) && !empty($_SESSION['WORKFLOW_ALERTS'])) {
+                    // STIC Custom 20250403 JBL - Fix Uncaught Error 
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // if (isset($bean->id) && !empty($_SESSION['WORKFLOW_ALERTS'])) {
+                    //     $_SESSION['WORKFLOW_ALERTS']['id'] = $bean->id;
+                    // }
+                    if (isset($bean->id)) {
+                        if (!isset($_SESSION['WORKFLOW_ALERTS']) || !is_array($_SESSION['WORKFLOW_ALERTS'])) {
+                            $_SESSION['WORKFLOW_ALERTS'] = [];
+                        }
                         $_SESSION['WORKFLOW_ALERTS']['id'] = $bean->id;
                     }
+                    // END STIC Custom
                 }
             }
         }
