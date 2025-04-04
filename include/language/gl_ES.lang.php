@@ -3619,6 +3619,8 @@ $app_list_strings['moduleList']['SecurityGroups'] = 'Xestión de Seguridade';
 $app_strings['LBL_SECURITYGROUP'] = 'Grupo de seguridade';
 
 $app_list_strings['moduleList']['OutboundEmailAccounts'] = 'Contas de correo electrónico saínte';
+$app_list_strings['moduleList']['ExternalOAuthConnection'] = 'Conexiones OAuth Externas';
+$app_list_strings['moduleList']['ExternalOAuthProvider'] = 'Proveedores OAuth Externas';
 
 //social
 $app_strings['FACEBOOK_USER_C'] = 'Facebook';

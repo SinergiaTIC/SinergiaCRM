@@ -202,17 +202,19 @@ class OutboundEmailAccounts extends OutboundEmailAccounts_sugar
             // Checks if the user can use non-personal accounts and if not, checks list permission instead of applying the has_group_action_acls_defined() function
             // $hasActionAclsDefined = has_group_action_acls_defined('OutboundEmailAccounts', 'list');
             $hasActionAclsDefined = ACLController::checkAccess('OutboundEmailAccounts', 'list');
-            if($hasActionAclsDefined === false) {
+            if($hasActionAclsDefined === false) 
+            {
                 $showGroupRecords = '';
-            }
 
-            global $db;
-            $res = $db->query("SELECT * FROM config WHERE name = 'allow_default_outbound'");
-            $row = $db->fetchByAssoc($res);
-            $notify_allow_default_outbound = isset($row['value']) ? $row['value'] != 0 : false;
+                // Check "allow_default_outbound" propierty to list or not the system outbound account
+                global $db;
+                $res = $db->query("SELECT * FROM config WHERE name = 'allow_default_outbound'");
+                $row = $db->fetchByAssoc($res);
+                $notify_allow_default_outbound = isset($row['value']) ? $row['value'] != 0 : false;
 
-            if ($notify_allow_default_outbound) {
-                $showGroupRecords = "($tableName.type = 'system') OR ";
+                if ($notify_allow_default_outbound) {
+                    $showGroupRecords = "($tableName.type = 'system') OR ";
+                }
             }
             // END STIC-Custom
 
