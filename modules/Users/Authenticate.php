@@ -102,12 +102,15 @@ if (isset($_SESSION['authenticated_user_id'])) {
         // Set the date and time of the login
         $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
 
-        // Set the user ID, module name, action, item ID, and item summary
+        // Set the user ID, assigned user ID, module name, action, item ID, item summary, visibility and session ID
         $monitor->setValue('user_id', $current_user->id);
+        $monitor->setValue('assigned_user_id', $current_user->id);
         $monitor->setValue('module_name', 'Users');
         $monitor->setValue('action', 'login_ok');
         $monitor->setValue('item_id', $current_user->id);
         $monitor->setValue('item_summary', $current_user->full_name .' - Login');
+        $monitor->setValue('visible', true);
+        $monitor->setValue('session_id', $monitor->getSessionId());
 
         // Save the monitor to the database
         $trackerManager->saveMonitor($monitor, true, true);
