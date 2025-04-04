@@ -1,5 +1,25 @@
 <?php
-
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -39,7 +59,7 @@ function sticShutdownHandler() {
     // Clean site URL (removing http/https)
     $instanceClean = preg_replace('/^https?:\/\//', '', $sugar_config['site_url'] ?? '');
     $hostname = $sugar_config['host_name'] ?? 'unknown';
-    
+
     // Get last error, if any
     $error = error_get_last();
     $log_message = "Script executed successfully."; // Default log message
@@ -48,10 +68,12 @@ function sticShutdownHandler() {
     if ($error !== null) {
         [$errno, $errstr, $errfile, $errline] = [$error['type'], $error['message'], $error['file'], $error['line']];
         $log_message = "[SuiteCRM Error $errno] $errstr in $errfile on line $errline";
-        
         // Log to SuiteCRM built-in logger
         $GLOBALS['log']->fatal($log_message);
+
     }
+
+    $messageType = $error ? mapPhpErrorToMonologLevel($error['type']) : 'info';
 
     // Calculate execution time
 
@@ -77,7 +99,7 @@ function sticShutdownHandler() {
     ]);
 
     // Send execution data and error (if any) to Loki
-    $logger->info($log_message, [
+    $logger->$messageType($log_message, [
         'error_type' => $error['type'] ?? null,
         'error_message' => $error['message'] ?? null,
         'error_file' => $error['file'] ?? null,
@@ -100,6 +122,33 @@ function sticShutdownHandler() {
     ]);
 
 }
+
+function mapPhpErrorToMonologLevel(int $errno) {
+    switch ($errno) {
+        case E_ERROR:
+        case E_CORE_ERROR:
+        case E_COMPILE_ERROR:
+        case E_PARSE:
+            return 'critical';
+        case E_USER_ERROR:
+            return 'error';
+        case E_WARNING:
+        case E_CORE_WARNING:
+        case E_COMPILE_WARNING:
+        case E_USER_WARNING:
+            return 'warning';
+        case E_NOTICE:
+        case E_USER_NOTICE:
+        case E_STRICT:
+            return 'notice';
+        case E_DEPRECATED:
+        case E_USER_DEPRECATED:
+            return 'info';
+        default:
+            return 'error'; // fallback
+    }
+}
+
 
 // Register shutdown function to log execution and errors
 // register_shutdown_function('suitecrmShutdownHandler');
