@@ -636,4 +636,9 @@ $sugar_config = array(
     'stic_advanced_menu_icons' => '1',
     'stic_advanced_menu_all' => '1',
     // END STIC
+
+    'stic_remote_monitor_enabled' => false,
+    'stic_remote_monitor_url' => '', 
+    'stic_remote_monitor_duration_threshold' => null,
+    'stic_remote_monitor_memory_threshold' => null,
 );
