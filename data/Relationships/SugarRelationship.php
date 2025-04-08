@@ -471,9 +471,10 @@ abstract class SugarRelationship
     {
         $GLOBALS['resavingRelatedBeans'] = true;
 
-        // STIC Custom 20250403 JBL - Fix Uncaught Error when $beansToResave is not iterable
+        // STIC Custom 20250408 JBL - Fix Uncaught Error when $beansToResave is not iterable
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         if (is_array(self::$beansToResave)) {
+        // END STIC Custom
             //Resave any bean not currently in the middle of a save operation
             foreach (self::$beansToResave as $module => $beans) {
                 foreach ($beans as $bean) {
@@ -502,7 +503,10 @@ abstract class SugarRelationship
                     }
                 }
             }
+        // STIC Custom 20250408 JBL - Fix Uncaught Error when $beansToResave is not iterable
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         }
+        // END STIC Custom
         $GLOBALS['resavingRelatedBeans'] = false;
 
         //Reset the list of beans that will need to be resaved
