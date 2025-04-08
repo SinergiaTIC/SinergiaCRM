@@ -21,35 +21,35 @@
  *}
 {* This template is showed both in Bookings' ListView and Bookings Calendar reservations popups *}
 
-<h2>{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">Reservar Centro</button>
+<h2>{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">{$MOD.LBL_CENTERS_BUTTON}</button>
 </h2>
 
 <div class="center_column">
     <div id="resourceSearchFields">
         <div id="selectedCentersContainer">
-            <label>Nombre del Centro:</label>
+            <label>{$MOD.LBL_RESOURCES_ADD}</label>
             <div id="selectedCentersList"></div>
         </div>
         <br>
 
-        <label for="resourceType">Tipo de recurso:</label>
-        <select id="resourceType" name="resourceType"></select>
+        <label for="resourcePlaceUserType">{$MOD.LBL_RESOURCES_TYPE}</label>
+        <select id="resourcePlaceUserType" name="resourcePlaceUserType"></select>
 
-        <label for="resourceStatus">Estado de recurso:</label>
-        <select id="resourceStatus" name="resourceStatus"></select>
+        <label for="resourcePlaceType">{$MOD.LBL_RESOURCES_PLACE_TYPE}</label>
+        <select id="resourcePlaceType" name="resourcePlaceType"></select>
 
-        <label for="resourceOffice">Oficina del recurso:</label>
-        <select id="resourceOffice" name="resourceOffice"></select>
+        <label for="resourceGender">{$MOD.LBL_RESOURCES_STATUS}</label>
+        <select id="resourceGender" name="resourceGender"></select>
 
-        <label for="resourceName">Nombre del recurso:</label>
+        <label for="resourceName">{$MOD.LBL_RESOURCES_NAME}</label>
         <input type="text" id="resourceName" name="resourceName">
         <br>
 
-        <label for="numberOfCenters">Número de Centros:</label>
+        <label for="numberOfCenters">{$MOD.LBL_NUMBER_OF_PLACES}</label>
         <input type="number" id="numberOfCenters" name="numberOfCenters">
         <br>
 
-        <button id="loadCenterResourcesButton" type="button" class="button">Cargar Plazas</button>
+        <button id="loadCenterResourcesButton" type="button" class="button">{$MOD.LBL_RESOURCES_BUTTON}</button>
         <br>
 
         <label id="resourceCount"></label>

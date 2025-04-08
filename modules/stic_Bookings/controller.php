@@ -50,20 +50,21 @@ class stic_BookingsController extends SugarController
     {
         $startDate = isset($_REQUEST['startDate']) ? $_REQUEST['startDate'] : '';
         $endDate = isset($_REQUEST['endDate']) ? $_REQUEST['endDate'] : '';
-        $bookingId = $_REQUEST['bookingId'];
+        $bookingId = isset($_REQUEST['bookingId']) ? $_REQUEST['bookingId'] : null;
         $centerIds = $_REQUEST['centerIds'];
-        $resourceType = isset($_REQUEST['resourceType']) ? $_REQUEST['resourceType'] : '';
+        $resourcePlaceUserType = isset($_REQUEST['resourcePlaceUserType']) ? $_REQUEST['resourcePlaceUserType'] : '';
+        $resourcePlaceType = isset($_REQUEST['resourcePlaceType']) ? $_REQUEST['resourcePlaceType'] : '';
         $resourceName = isset($_REQUEST['resourceName']) ? $_REQUEST['resourceName'] : '';
-        $resourceStatus = isset($_REQUEST['resourceStatus']) ? $_REQUEST['resourceStatus'] : '';
+        $resourceGender = isset($_REQUEST['resourceGender']) ? $_REQUEST['resourceGender'] : '';
         $numberOfCenters = isset($_REQUEST['numberOfCenters']) ? $_REQUEST['numberOfCenters'] : '';
 
         if (empty($centerIds)) {
-            echo json_encode(['success' => false, 'message' => 'ID del centro inválido.']);
+            echo json_encode(['success' => false]);
             return;
         }
 
-        require_once 'modules/stic_Bookings/config_resource_fields.php';
-        require_once 'modules/stic_Bookings/config_place_fields.php';
+        require_once 'modules/stic_Bookings/configResourceFields.php';
+        require_once 'modules/stic_Bookings/configPlaceFields.php';
 
         global $config_resource_fields, $config_place_fields;
 
@@ -81,7 +82,7 @@ class stic_BookingsController extends SugarController
             while ($row = $db->fetchByAssoc($result)) {
                 $resourceId = $row['stic_resources_stic_centersstic_resources_idb'];
 
-                if ($numberOfCenters && $totalCenters >= $numberOfCenters) {
+                if ($numberOfCenters && $totalCenters >= (int)$numberOfCenters) {
                     break;
                 }
                 $availability = $this->checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
@@ -91,17 +92,20 @@ class stic_BookingsController extends SugarController
                                       FROM stic_resources
                                       WHERE id = '$resourceId'";
 
-                    if (!empty($resourceType)) {
-                        $resourceQuery .= " AND type LIKE '%$resourceType%'";
+                    if (!empty($resourcePlaceUserType)) {
+                        $resourceQuery .= " AND user_type LIKE '%$resourcePlaceUserType%'";
                     }
-                    if (!empty($resourceStatus)) {
-                        $resourceQuery .= " AND status LIKE '%$resourceStatus%'";
+                    if (!empty($resourcePlaceType)) {
+                        $resourceQuery .= " AND place_type LIKE '%$resourcePlaceType%'";
+                    }
+                    if (!empty($resourceGender)) {
+                        $resourceQuery .= " AND gender LIKE '%$resourceGender%'";
                     }
                     if (!empty($resourceName)) {
                         $resourceQuery .= " AND name LIKE '%$resourceName%'";
                     }
                     if (!empty($numberOfCenters)) {
-                        $query .= " LIMIT $numberOfCenters";
+                        $resourceQuery .= " LIMIT $numberOfCenters"; 
                     }
 
                     $resourceResult = $db->query($resourceQuery);
@@ -126,7 +130,7 @@ class stic_BookingsController extends SugarController
                 }
             }
 
-            if ($numberOfCenters && $totalCenters >= $numberOfCenters) {
+            if ($numberOfCenters && $totalCenters >= (int)$numberOfCenters) {
                 break;
             }
         }
@@ -146,13 +150,16 @@ class stic_BookingsController extends SugarController
         } else if ($bookingId) {
             // If a single resource id is not provided, will check all resources attached to the booking
             $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
-            if ($booking->load_relationship('stic_resources_stic_bookings')) {
+            if ($booking && $booking->load_relationship('stic_resources_stic_bookings')) {
                 foreach ($booking->stic_resources_stic_bookings->getBeans() as $resourceBean) {
-                    $resourcesIds[] = $resourceBean->id;
+                        $resourcesIds[] = $resourceBean->id;
                 }
             }
         }
-
+        if (empty($resourcesIds)) {
+            return array('success' => true, 'resources_allowed' => true);
+        }
+    
         $db = DBManagerFactory::getInstance();
         $tzone = $current_user->getPreference('timezone');
         $dateTimeZone = new DateTimeZone($tzone);
@@ -200,10 +207,11 @@ class stic_BookingsController extends SugarController
 
         require_once 'modules/stic_Resources/vardefs.php';
         global $app_list_strings;
-        $options = $app_list_strings['stic_resources_types_list'];
-        $options2 = $app_list_strings['stic_resources_status_list'];
+        $options = $app_list_strings['stic_resources_places_users_list'];
+        $options2 = $app_list_strings['stic_resources_places_type_list'];
+        $options3 = $app_list_strings['stic_resources_places_gender_list'];
 
-        $response = array('success' => true, 'options' => array(), 'options2' => array());
+        $response = array('success' => true, 'options' => array(), 'options2' => array(), 'options3' => array());
 
         foreach ($options as $value => $label) {
             $response['options'][] = array('value' => $value, 'label' => $label);
@@ -211,6 +219,10 @@ class stic_BookingsController extends SugarController
         foreach ($options2 as $value => $label) {
             $response['options2'][] = array('value' => $value, 'label' => $label);
         }
+        foreach ($options3 as $value => $label) {
+            $response['options3'][] = array('value' => $value, 'label' => $label);
+        }
+
         echo json_encode($response);
         sugar_cleanup(true);
     }
@@ -219,7 +231,7 @@ class stic_BookingsController extends SugarController
         global $app_list_strings, $timedate, $current_user;
 
         if (empty($_REQUEST['record_id']) || empty($_REQUEST['resource_id'])) {
-            echo json_encode(['success' => false, 'message' => 'ID del registro o recurso inválido.']);
+            echo json_encode(['success' => false]);
             return;
         }
 
@@ -245,6 +257,9 @@ class stic_BookingsController extends SugarController
             $uniqueName = $baseName . '.' . $counter;
         }
 
+        $nowDb = $timedate->nowDb();
+        $endDate = $timedate->to_display_date_time($nowDb, true, true, $current_user);
+
         $newBooking->name = $uniqueName;
         $newBooking->status = $booking->status;
         $newBooking->start_date = $booking->start_date;
@@ -263,7 +278,7 @@ class stic_BookingsController extends SugarController
         if ($newBooking->load_relationship('stic_resources_stic_bookings')) {
             $newBooking->stic_resources_stic_bookings->add($resourceId);
         } else {
-            echo json_encode(['success' => false, 'message' => 'No se pudo cargar la relación stic_resources_stic_bookings.']);
+            echo json_encode(['success' => false]);
             return;
         }
 
@@ -279,7 +294,7 @@ class stic_BookingsController extends SugarController
         global $timedate;
 
         if (empty($_REQUEST['record_id'])) {
-            echo json_encode(['valid' => false, 'message' => 'ID del registro inválido.']);
+            echo json_encode(['valid' => false]);
             return;
         }
 
@@ -287,7 +302,7 @@ class stic_BookingsController extends SugarController
         $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
 
         if (!$booking) {
-            echo json_encode(['valid' => false, 'message' => 'Reserva no encontrada.']);
+            echo json_encode(['valid' => false]);
             return;
         }
 

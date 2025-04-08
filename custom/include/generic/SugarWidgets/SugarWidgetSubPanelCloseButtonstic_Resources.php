@@ -23,7 +23,18 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-
+/**
+ * Class SugarWidgetSubPanelCloseButtonstic_Resources
+ *
+ * Extends SugarWidgetField to add a close button in the subpanel of the stic_Resources module.
+ * 
+ * This button allows closing a resource in a booking by creating a new one
+ * where the end date is set to the selected close button's date.
+ *
+ * @category  SugarCRM
+ * @package   CustomWidgets
+ * @extends   SugarWidgetField
+ */
 class SugarWidgetSubPanelCloseButtonstic_Resources extends SugarWidgetField
 {
     public function displayList(&$layout_def)

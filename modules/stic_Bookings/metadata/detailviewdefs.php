@@ -62,7 +62,13 @@ array(
                     0 => 'name',
                     1 => 'assigned_user_name',
                 ),
-                1 => array(
+                1=> array(
+                    0 => array(
+                        'name' => 'code',
+                    ),
+                    1 => array(
+                    ),
+                ),                2 => array(
                     0 => array(
                         'name' => 'stic_bookings_contacts_name',
                     ),
@@ -70,7 +76,7 @@ array(
                         'name' => 'stic_bookings_accounts_name',
                     ),
                 ),
-                2 => array(
+                3 => array(
                     0 => array(
                         'name' => 'stic_bookings_stic_families_name',
                     ),
@@ -78,7 +84,7 @@ array(
                         'name' => 'stic_bookings_stic_payment_commitments_name',
                     ),
                 ),
-                3 => array(
+                4 => array(
                     0 => array(
                         'name' => 'all_day',
                         'label' => 'LBL_ALL_DAY',
@@ -88,7 +94,7 @@ array(
                         'label' => 'LBL_PLACE_BOOKING',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'start_date',
                         'label' => 'LBL_START_DATE',
@@ -98,7 +104,7 @@ array(
                         'label' => 'LBL_END_DATE',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'planned_start_date',
                         'label' => 'LBL_PLANNED_START_DATE',
@@ -108,7 +114,7 @@ array(
                         'label' => 'LBL_PLANNED_END_DATE',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
@@ -119,7 +125,7 @@ array(
                         'label' => 'LBL_FLEX_RELATE',
                     ),
                 ),
-                7 => array(
+                8 => array(
                     0 => 'description',
                 ),
             ),

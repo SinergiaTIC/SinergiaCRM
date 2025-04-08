@@ -67,10 +67,14 @@ $mod_strings = array(
     'LBL_ALL_DAY' => 'Todo o día',
     'LBL_START_DATE' => 'Data de inicio',
     'LBL_END_DATE' => 'Data de finalización',
+    'LBL_PLANNED_START_DATE' => 'Fecha de inicio prevista',
+    'LBL_PLANNED_END_DATE' => 'Fecha de finalización prevista',
     'LBL_FLEX_RELATE' => 'Relacionado con',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización que reserva',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoa que reserva',
+    'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unidad familiar que reserva',
+    'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromiso de pago',
 
     // Used for the adding resources section
     'LBL_RESOURCES' => 'Recursos',
@@ -81,6 +85,8 @@ $mod_strings = array(
     'LBL_RESOURCES_COLOR' => 'Color',
     'LBL_RESOURCES_HOURLY_RATE' => 'Tarifa horaria',
     'LBL_RESOURCES_DAILY_RATE' => 'Tarifa diaria',
+    'LBL_RESOURCES_CENTER' => 'Centro',
+    'LBL_RESOURCES_GENDER' => 'Género de la plaza',
     'LBL_RESOURCES_ADD' => 'Engadir recurso',
     'LBL_RESOURCES_ERROR' => 'Recurso en conflito con outra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hai recursos que non están dispoñibles nesta data.',
@@ -89,6 +95,12 @@ $mod_strings = array(
     'LBL_RESOURCES_START_DATE_ERROR' => 'A data de inicio debe ser anterior á data de finalización.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'A reserva non ten recursos asignados.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'A reserva non ten recursos asignados. ¿Quere gardala de todos modos?',
+    'LBL_CLOSE_RESOURCE_CONFIRM' => '¿Quiere finalizar la reserva de este recurso?',
+    'LBL_CENTER_RESOURCE_ERROR' => 'Error al cargar las plazas del centro: ',
+    'LBL_CENTERS_MESSAGE' => 'Número de plazas encontradas: ',
+    'LBL_RESOURCES_BUTTON' => 'Cargar recursos',
+    'LBL_CENTERS_BUTTON' => 'Cargar centros',
+    'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurso',

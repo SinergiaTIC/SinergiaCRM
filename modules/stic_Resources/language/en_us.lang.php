@@ -82,4 +82,7 @@ $mod_strings = array(
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Daily amount per unoccupied place',
     'LBL_AMOUNT_DAY_OVEROCCUPIED' => 'Daily amount per overoccupied place',
     'LBL_AMOUNT_COPAYMENT' => 'Copayment daily amount',
+
+    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'You must indicate a center',
+    'LBL_PLACES' => 'Places',
 );

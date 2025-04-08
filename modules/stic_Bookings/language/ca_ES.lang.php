@@ -86,6 +86,8 @@ $mod_strings = array(
     'LBL_RESOURCES_COLOR' => 'Color',
     'LBL_RESOURCES_HOURLY_RATE' => 'Tarifa horària',
     'LBL_RESOURCES_DAILY_RATE' => 'Tarifa diària',
+    'LBL_RESOURCES_CENTER' => 'Centro',
+    'LBL_RESOURCES_GENDER' => 'Gènere de la plaça',
     'LBL_RESOURCES_ADD' => 'Afegeix un recurs',
     'LBL_RESOURCES_ERROR' => 'Recurs en conflicte amb una altra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hi ha recursos que no estan disponibles en aquesta data.',
@@ -94,6 +96,12 @@ $mod_strings = array(
     'LBL_RESOURCES_START_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'Aquesta reserva no té cap recurs assignat.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'Aquesta reserva no te cap recurs assignat. Voleu desar-la igualment?',
+    'LBL_CLOSE_RESOURCE_CONFIRM' => "Vol finalitzar la reserva d’aquest recurs?",
+    'LBL_CENTER_RESOURCE_ERROR' => 'Error en carregar les places del centre: ',
+    'LBL_CENTERS_MESSAGE' => 'Nombre de places trobats: ',
+    'LBL_RESOURCES_BUTTON' => 'Carregar recursos',
+    'LBL_CENTERS_BUTTON' => 'Carregar centres',
+    'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurs',

@@ -24,7 +24,7 @@
 require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
 
-class stic_ResourcesViewList2 extends ViewList
+class stic_ResourcesViewListPlaces extends ViewList
 {
 
     public function __construct()
@@ -45,12 +45,17 @@ class stic_ResourcesViewList2 extends ViewList
 
     public function display()
     {
+        global $mod_strings;
         parent::display();
         echo getVersionedScript("modules/stic_Resources/Utils.js");
 
         SticViews::display($this);
-
-        // Write here you custom code
+        
+        echo "<script>
+            $(document).ready(function(){
+                $('.moduleTitle').html('<h2>{$mod_strings['LBL_PLACES']}</h2>');
+            });
+        </script>";
     }
     
     function listViewProcess() {

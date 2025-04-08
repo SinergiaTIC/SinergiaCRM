@@ -117,12 +117,31 @@ switch (viewType()) {
       $("#start_date_minutes").val("00");
       $("#end_date_hours").val("00");
       $("#end_date_minutes").val("00");
+
+      // Update planned date fields as well
+      $("#planned_start_date_hours").val("00");
+      $("#planned_start_date_minutes").val("00");
+      $("#planned_end_date_hours").val("00");
+      $("#planned_end_date_minutes").val("00");
+
       $("#start_date_hours").change();
       $("#start_date_minutes").change();
       $("#end_date_hours").change();
       $("#end_date_minutes").change();
+
+      // Trigger change on planned date fields
+      $("#planned_start_date_hours").change();
+      $("#planned_start_date_minutes").change();
+      $("#planned_end_date_hours").change();
+      $("#planned_end_date_minutes").change();
+
       $("#start_date_time_section").parent().hide();
       $("#end_date_time_section").parent().hide();
+
+      // Hide planned date time sections
+      $("#planned_start_date_time_section").parent().hide();
+      $("#planned_end_date_time_section").parent().hide();
+
       if ($("#end_date_date").val()) {
         var formatString = cal_date_format
           .replace(/%/g, "")
@@ -138,6 +157,20 @@ switch (viewType()) {
         endDateValue = $.datepicker.formatDate(formatString, endDate);
         $("#end_date_date").val(endDateValue);
         $("#end_date_date").change();
+
+        if ($("#planned_end_date_date").val()) {
+          plannedEndDate = $.datepicker.parseDate(
+            formatString,
+            $("#planned_end_date_date").val()
+          );
+          plannedEndDate.setDate(plannedEndDate.getDate() - 1);
+          plannedEndDateValue = $.datepicker.formatDate(
+            formatString,
+            plannedEndDate
+          );
+          $("#planned_end_date_date").val(plannedEndDateValue);
+          $("#planned_end_date_date").change();
+        }
       }
     }
     $("#all_day", "form").on("change", function () {
@@ -146,27 +179,94 @@ switch (viewType()) {
         previousStartDateMinutes = $("#start_date_minutes").val();
         previousEndDateHours = $("#end_date_hours").val();
         previousEndDateMinutes = $("#end_date_minutes").val();
+
+        previousPlannedStartHours = $("#planned_start_date_hours").val();
+        previousPlannedStartMinutes = $("#planned_start_date_minutes").val();
+        previousPlannedEndHours = $("#planned_end_date_hours").val();
+        previousPlannedEndMinutes = $("#planned_end_date_minutes").val();
+
         $("#start_date_hours").val("00");
         $("#start_date_minutes").val("00");
         $("#end_date_hours").val("00");
         $("#end_date_minutes").val("00");
+
+        $("#planned_start_date_hours").val("00");
+        $("#planned_start_date_minutes").val("00");
+        $("#planned_end_date_hours").val("00");
+        $("#planned_end_date_minutes").val("00");
+
         $("#start_date_hours").change();
         $("#start_date_minutes").change();
         $("#end_date_hours").change();
         $("#end_date_minutes").change();
+
+        $("#planned_start_date_hours").change();
+        $("#planned_start_date_minutes").change();
+        $("#planned_end_date_hours").change();
+        $("#planned_end_date_minutes").change();
+
         $("#start_date_time_section").parent().hide();
         $("#end_date_time_section").parent().hide();
+
+        $("#planned_start_date_time_section").parent().hide();
+        $("#planned_end_date_time_section").parent().hide();
+
+        if ($("#end_date_date").val()) {
+          var formatString = cal_date_format
+            .replace(/%/g, "")
+            .toLowerCase()
+            .replace(/y/g, "yy")
+            .replace(/m/g, "mm")
+            .replace(/d/g, "dd");
+          endDate = $.datepicker.parseDate(
+            formatString,
+            $("#end_date_date").val()
+          );
+          endDate.setDate(endDate.getDate() - 1);
+          endDateValue = $.datepicker.formatDate(formatString, endDate);
+          $("#end_date_date").val(endDateValue);
+          $("#end_date_date").change();
+
+          if ($("#planned_end_date_date").val()) {
+            plannedEndDate = $.datepicker.parseDate(
+              formatString,
+              $("#planned_end_date_date").val()
+            );
+            plannedEndDate.setDate(plannedEndDate.getDate() - 1);
+            plannedEndDateValue = $.datepicker.formatDate(
+              formatString,
+              plannedEndDate
+            );
+            $("#planned_end_date_date").val(plannedEndDateValue);
+            $("#planned_end_date_date").change();
+          }
+        }
       } else {
         $("#start_date_hours").val(previousStartDateHours);
         $("#start_date_minutes").val(previousStartDateMinutes);
         $("#end_date_hours").val(previousEndDateHours);
         $("#end_date_minutes").val(previousEndDateMinutes);
+
+        $("#planned_start_date_hours").val(previousPlannedStartHours);
+        $("#planned_start_date_minutes").val(previousPlannedStartMinutes);
+        $("#planned_end_date_hours").val(previousPlannedEndHours);
+        $("#planned_end_date_minutes").val(previousPlannedEndMinutes);
+
         $("#start_date_hours").change();
         $("#start_date_minutes").change();
         $("#end_date_hours").change();
         $("#end_date_minutes").change();
+
+        $("#planned_start_date_hours").change();
+        $("#planned_start_date_minutes").change();
+        $("#planned_end_date_hours").change();
+        $("#planned_end_date_minutes").change();
+
         $("#start_date_time_section").parent().show();
         $("#end_date_time_section").parent().show();
+
+        $("#planned_start_date_time_section").parent().show();
+        $("#planned_end_date_time_section").parent().show();
       }
     });
     previousPlannedStartDate = $("#planned_start_date_date").val();
@@ -235,8 +335,6 @@ switch (viewType()) {
           updateResourceFields();
           $("#openCenterPopup").show();
         } else {
-          console.log("SINOO");
-
           $("#openCenterPopup").hide();
           updateResourceFields();
         }
@@ -259,7 +357,6 @@ function insertResourceLine() {
   var fields = isPlaceBooking ? config_place_fields : config_resource_fields;
 
   if (!fields || !Array.isArray(fields)) {
-    console.error("fields is not defined or is not an array");
     return;
   }
 
@@ -419,8 +516,9 @@ function updateResourceFields() {
   insertResourceLine();
   if (!isPlaceBooking) {
     $("#resourceSearchFields").hide();
-    $("#resourceType").val("");
-    $("#resourceStatus").val("");
+    $("#resourcePlaceUserType").val("");
+    $("#resourcePlaceType").val("");
+    $("#resourceGender").val("");
     $("#resourceName").val("");
     $("#numberOfCenters").val("");
   }
@@ -496,7 +594,7 @@ function callbackResourceSelectQS(ln) {
 }
 
 var fromPopupReturn = false;
-// callback function used after the Popup that select resources
+// Callback function used after the Popup that select resources
 function callbackResourceSelectPopup(popupReplyData) {
   fromPopupReturn = true;
   var nameToValueArray = popupReplyData.name_to_value_array;
@@ -617,9 +715,10 @@ $("#loadCenterResourcesButton").on("click", function () {
 function loadResources() {
   var startDate = getFieldValue("start_date");
   var endDate = getFieldValue("end_date");
-  var resourceType = $("#resourceType").val();
+  var resourcePlaceUserType = $("#resourcePlaceUserType").val();
+  var resourcePlaceType = $("#resourcePlaceType").val();
   var resourceName = $("#resourceName").val();
-  var resourceStatus = $("#resourceStatus").val();
+  var resourceGender = $("#resourceGender").val();
   var numberOfCenters = $("#numberOfCenters").val();
 
   if (startDate === "" || endDate === "") {
@@ -637,12 +736,11 @@ function loadResources() {
   }
 
   loadCenterResources(
-    resourceType,
-    resourceStatus,
+    resourcePlaceUserType,
+    resourcePlaceType,
+    resourceGender,
     resourceName,
-    numberOfCenters,
-    getDateObject(startDate),
-    getDateObject(endDate)
+    numberOfCenters
   );
 }
 
@@ -673,14 +771,16 @@ function updateSelectedCentersList() {
       var index = $(this).data("index");
       selectedCenters.splice(index, 1);
       updateSelectedCentersList();
-      var resourceType = $("#resourceType").val();
+      var resourcePlaceUserType = $("#resourcePlaceUserType").val();
+      var resourcePlaceType = $("#resourcePlaceType").val();
       var resourceName = $("#resourceName").val();
-      var resourceStatus = $("#resourceStatus").val();
+      var resourceGender = $("#resourceGender").val();
       var numberOfCenters = $("#numberOfCenters").val();
 
       loadCenterResources(
-        resourceType,
-        resourceStatus,
+        resourcePlaceUserType,
+        resourcePlaceType,
+        resourceGender,
         resourceName,
         numberOfCenters,
         getDateObject(startDate),
@@ -696,35 +796,42 @@ function loadResourceTypes(centerId) {
     success: function (res) {
       if (res.success) {
         var options = res.options;
-        var resourceTypeSelect = $("#resourceType");
-        resourceTypeSelect.empty();
+        var resourcePlaceUserType = $("#resourcePlaceUserType");
+        resourcePlaceUserType.empty();
         options.forEach(function (option) {
-          resourceTypeSelect.append(new Option(option.label, option.value));
+          resourcePlaceUserType.append(new Option(option.label, option.value));
         });
 
         var options2 = res.options2;
-        var resourceStatusSelect = $("#resourceStatus");
-        resourceStatusSelect.empty();
+        var resourcePlaceTypeSelect = $("#resourcePlaceType");
+        resourcePlaceTypeSelect.empty();
         options2.forEach(function (option) {
-          resourceStatusSelect.append(new Option(option.label, option.value));
+          resourcePlaceTypeSelect.append(new Option(option.label, option.value));
         });
+        var options3 = res.options3;
+        var resourceGenderSelect = $("#resourceGender");
+        resourceGenderSelect.empty();
+        options3.forEach(function (option) {
+          resourceGenderSelect.append(new Option(option.label, option.value));
+        });
+
       } else {
-        alert("Error al cargar los tipos de recurso");
+        alert(
+          SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR")
+        );
       }
     },
     error: function () {
-      alert("Error al enviar la solicitud");
+      alert(SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR"));
     },
   });
 }
-
 function loadCenterResources(
-  resourceType = "",
-  resourceStatus = "",
+  resourcePlaceUserType = "",
+  resourcePlaceType = "",
+  resourceGender = "",
   resourceName = "",
-  numberOfCenters = "",
-  startDate,
-  endDate
+  numberOfCenters = ""
 ) {
   var centerIds = selectedCenters.map((center) => center.centerId).join(",");
   var startDate = getDateObject(getFieldValue("start_date"));
@@ -737,8 +844,9 @@ function loadCenterResources(
       startDate: dateToYMDHM(startDate),
       endDate: dateToYMDHM(endDate),
       centerIds: centerIds,
-      resourceType: resourceType,
-      resourceStatus: resourceStatus,
+      resourcePlaceUserType: resourcePlaceUserType,
+      resourcePlaceType: resourcePlaceType,
+      resourceGender: resourceGender,
       resourceName: resourceName,
       numberOfCenters: numberOfCenters,
     },
@@ -746,14 +854,16 @@ function loadCenterResources(
       if (res.success) {
         updateResourceLines(res.resources);
         $("#resourceCount").text(
-          "Número de centros encontrados: " + res.resources.length
+          SUGAR.language.get("stic_Bookings", "LBL_CENTERS_MESSAGE") + res.resources.length
         );
       } else {
-        alert("Error al cargar los recursos del centro");
+        alert(
+          SUGAR.language.get("stic_Bookings", "LBL_CENTER_RESOURCE_ERROR") + res.message
+        );
       }
     },
-    error: function () {
-      alert("Error al enviar la solicitud");
+    error: function (jqXHR, textStatus, errorThrown) {
+      alert(SUGAR.language.get("stic_Bookings", "LBL_CENTER_RESOURCE_ERROR") + " " + textStatus);
     },
   });
 }

@@ -89,8 +89,8 @@ class stic_BookingsViewEdit extends ViewEdit
     public function display()
     {
         require_once 'SticInclude/Utils.php';
-        require_once 'modules/stic_Bookings/config_resource_fields.php';
-        require_once 'modules/stic_Bookings/config_place_fields.php';
+        require_once 'modules/stic_Bookings/configResourceFields.php';
+        require_once 'modules/stic_Bookings/configPlaceFields.php';
 
         global $config_resource_fields, $config_place_fields;
 
@@ -163,13 +163,19 @@ class stic_BookingsViewEdit extends ViewEdit
             $resource['resource_id'] = $resourceBean->id;
             foreach ($config_resource_fields as $field => $label) {
                 $value = $resourceBean->$field;
+                
                 if ($field === 'status' || $field === 'type') {
-                    $value = $app_list_strings['stic_resources_' . $field . '_list'][$value];
+                    $listKey = 'stic_resources_' . $field . '_list';
+            
+                    if (!empty($app_list_strings[$listKey]) && !empty($app_list_strings[$listKey][$value])) {
+                        $value = $app_list_strings[$listKey][$value];
+                    }
                 } elseif ($field === 'daily_rate' || $field === 'hourly_rate') {
                     $value = self::formatNumberDec($value);
                 }
                 $resource['resource_' . $field] = $value;
             }
+            
             $parsedResources[] = $resource;
         }
         return $parsedResources;

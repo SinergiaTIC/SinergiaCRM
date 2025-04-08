@@ -9,7 +9,10 @@ $mod_strings = array(
     'LBL_SAVE_BUTTON' => 'Desa',
     'LBL_DELETE_BUTTON' => 'Elimina',
     'LBL_APPLY_BUTTON' => 'Aplica',
+    'LBL_CANCEL_BUTTON' => 'Cancel·la',
     'LBL_ACTION_VIEW_BOOKINGS_PLACES_CALENDAR' => 'Mostra el Calendari de Places',
+    'LBL_MOBILE_BUTTON' => 'Mòbil', 
+    'LBL_FILTERS' => 'Filtres',
 
     'LBL_FILTERS_STIC_CENTER' => 'Centre',
     'LBL_FILTERS_STIC_PLACE_GENDER' => 'Gènere',

@@ -85,6 +85,8 @@ $mod_strings = array(
     'LBL_RESOURCES_COLOR' => 'Color',
     'LBL_RESOURCES_HOURLY_RATE' => 'Tarifa horaria',
     'LBL_RESOURCES_DAILY_RATE' => 'Tarifa diaria',
+    'LBL_RESOURCES_CENTER' => 'Centro',
+    'LBL_RESOURCES_GENDER' => 'Género de la plaza',
     'LBL_RESOURCES_ADD' => 'Añadir recurso',
     'LBL_RESOURCES_ERROR' => 'Recurso en conflicto con otra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hay recursos que no están disponibles en esta fecha.',
@@ -93,10 +95,12 @@ $mod_strings = array(
     'LBL_RESOURCES_START_DATE_ERROR' => 'La fecha de inicio debe ser anterior a la fecha de finalización.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'La reserva no tiene recursos asignados.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'La reserva no tiene recursos asignados. ¿Quiere guardarla de todos modos?',
-  
-    // Used for the adding resources section
-    'LBL_PLACES' => 'Plazas',
-    'LBL_RESOURCES_NAME' => 'Nombre',
+    'LBL_CLOSE_RESOURCE_CONFIRM' => '¿Quiere finalizar la reserva de este recurso?',
+    'LBL_CENTER_RESOURCE_ERROR' => 'Error al cargar las plazas del centro: ',
+    'LBL_CENTERS_MESSAGE' => 'Número de plazas encontradas: ',
+    'LBL_RESOURCES_BUTTON' => 'Cargar recursos',
+    'LBL_CENTERS_BUTTON' => 'Cargar centros',
+    'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurso',

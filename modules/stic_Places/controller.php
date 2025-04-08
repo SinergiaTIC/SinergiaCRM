@@ -21,16 +21,12 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-class stic_ResourcesController extends SugarController
-{
-    /**
-     * Show the M182 wizard
-     *
-     * @return void
-     */
-    public function action_listplaces()
-    {        
-        // Call to the smarty template
-        $this->view = "listplaces";
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+class stic_PlacesController extends SugarController {
+    
+    function action_ListView() {
+        // Redirección específica a la vista de lista
+        SugarApplication::redirect('index.php?module=stic_Resources&action=listplaces');
     }
 }

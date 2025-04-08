@@ -69,10 +69,6 @@ $mod_strings = array(
     'LBL_TYPE' => 'Tipo',
     'LBL_HOURLY_RATE' => 'Tarifa horaria',
     'LBL_DAILY_RATE' => 'Tarifa diaria',
-    'LBL_PLACE_TYPE' => 'Tipo de plaza',
-    'LBL_USER_TYPE' => 'Tipo de usuario',
-    'LBL_GENDER' => 'Género',
-    'LBL_BOOKING_TYPE' => 'Tipo reserva permitida',
     'LBL_OWNER_CONTACT' => 'Persona propietaria',
     'LBL_OWNER_ACCOUNT' => 'Organización propietaria',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Reservas',
@@ -86,5 +82,8 @@ $mod_strings = array(
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Importe diario por plaza desocupada',
     'LBL_AMOUNT_DAY_OVEROCCUPIED' => 'Importe diario por plaza sobreocupada',
     'LBL_AMOUNT_COPAYMENT' => 'Importe diario de copago',
+
+    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
+    'LBL_PLACES' => 'Plazas',
 
 );

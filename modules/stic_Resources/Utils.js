@@ -23,6 +23,12 @@
 // Set module name
 var module = "stic_Resources";
 
+/* VALIDATION CALLBACKS */
+
+addToValidateCallback(getFormName(), "stic_resources_stic_centers_name", "relate", false, SUGAR.language.get(module, "LBL_CENTER_REQUIRED_FOR_PLACES"), function() {
+  return checkCenterForPlaces();
+});
+
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
     case "edit":
@@ -30,9 +36,8 @@ switch (viewType()) {
     case "popup":
   
       $(document).ready(function () {
-        // Definition of the behavior of fields that are conditionally enabled or disabled
         showTabsEdit();
-        setAutofill(["name"]);
+        updateCenterRequirement();
       });
       break;
   
@@ -51,6 +56,40 @@ switch (viewType()) {
   }
 
 /* AUX FUNCTIONS */
+
+// Function to check if center is required based on type
+function checkCenterForPlaces() {
+  var typeValue = getFieldValue("type");
+  var centerValue = getFieldValue("stic_resources_stic_centers_name");
+
+  // Si el tipo es "places", el campo center debe estar completado
+  if (typeValue === "places" && centerValue === "") {
+    return false;
+  }
+  
+  return true;
+}
+
+// Function to update UI indicating center field is required when type is places
+function updateCenterRequirement() {
+  var typeValue = $("#type").val();
+  var centerField = $("#stic_resources_stic_centers_name");
+  var centerLabelTd = $('td:contains("LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE")').first();
+  
+  if (typeValue === "places") {
+    // Add the visual indicator for required field
+    if (centerLabelTd.length && !centerLabelTd.find("span.required").length) {
+      centerLabelTd.append('<span class="required">*</span>');
+    }
+    // Add the conditional-required class to make the field background change color
+    centerField.addClass("conditional-required");
+  } else {
+    // Remove the visual indicators
+    centerLabelTd.find("span.required").remove();
+    centerField.removeClass("conditional-required");
+  }
+}
+
 // Function to show the tabs depending of the type
 function showTabs(typeSelected) {
 
@@ -61,10 +100,12 @@ function showTabs(typeSelected) {
 
     if (typeSelected === "places") {
         // Mostrar el panel de lenguaje si typeSelected es 'language'
-        panelPlace(panelPlaces, "show");
+        panelPlace(panelPlaces, "show");          
+        updateCenterRequirement();
     } else {
         // Ocultar el panel de lenguaje si typeSelected no es 'language'
         panelPlace(panelPlaces, "hide");
+        updateCenterRequirement();
     }
 }
 
@@ -83,13 +124,17 @@ function showTabsEdit() {
         typeSelected = $("#whole_subpanel_stic_resources_stic_bookings #type");
         typeSelected.on("change", function () {
           showTabs(typeSelected.val());
+          updateCenterRequirement();
         });
       }
     } else {
       $("#type").on("change", function () {
-        showTabsEdit();
+        var newType = $(this).val();
+        showTabs(newType);
+        updateCenterRequirement();
       });
     }
+
 }
   
 function panelPlace(panelPlaces, view) {

@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$module_name = 'stic_Resources';
+$module_name = 'stic_Places';
 $placesListViewDefs[$module_name] = array(
     'NAME' => array(
         'width' => '20%',

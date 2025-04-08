@@ -31,7 +31,24 @@ function initializeCalendar() {
   }
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: "dayGridMonth",
+    views: {
+      threeDays: {
+        type: "timeGridWeek",
+        duration: { days: 3 },
+        buttonText: SUGAR.language.get(
+          "stic_Bookings_Places_Calendar",
+          "LBL_MOBILE_BUTTON"
+        ),
+      },
+    },
+
+    // Choose init view
+    initialView:
+      window.innerWidth >= 767
+        ? calendarView
+          ? calendarView
+          : "dayGridMonth"
+        : "threeDays",
     events: function (fetchInfo, successCallback, failureCallback) {
       var start = moment(fetchInfo.start).format("YYYY-MM-DD");
       var end = moment(fetchInfo.end).format("YYYY-MM-DD");
@@ -194,7 +211,56 @@ function initializeCalendar() {
           arg.allDay
       );
     },
+    headerToolbar: {
+      left: 'prev,next today,filterButton',
+      center: 'title',
+      right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,threeDays",
+    },
+    customButtons: {
+      filterButton: {
+        click: function() {
+          $('#filtersModal').modal('toggle');
+        }
+      },
+    },    
+    datesSet: function() {
+      setTimeout(function () {
+        $('.fc-filterButton-button')
+          .html('<span class="glyphicon glyphicon-filter"></span>')
+      }, 0);
+    }
+      
   });
+  if (!$('#filtersModal').length) {
+    $('body').append(`
+      <div id="filtersModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">${SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_FILTERS")}</h4>
+            </div>
+            <div class="modal-body" id="filtersContainer">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" id="applyFilters">${SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_APPLY_BUTTON")}</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">${SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_CANCEL_BUTTON")}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+    
+    // Configurar los manejadores de eventos
+    $('#applyFilters').click(function() {
+      saveFilters();
+      $('#filtersModal').modal('hide');
+    });
+  }
+  
+  $('#form_filters').appendTo('#filtersContainer').show();
+
+
   // Add custom CSS to the page
   var style = document.createElement("style");
   style.textContent = `

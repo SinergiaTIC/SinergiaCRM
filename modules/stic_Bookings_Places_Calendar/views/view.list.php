@@ -43,7 +43,7 @@ class stic_Bookings_Places_CalendarViewList extends ViewList
         global $mod_strings, $current_user, $app_strings, $app_list_strings, $sugar_config;
         SticViews::display($this);
 
-        $initialCalendarDate = $_REQUEST['start_date'] ? $_REQUEST['start_date'] : '';
+        $initialCalendarDate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : '';
         $initialCalendarDate = json_encode($initialCalendarDate);
         echo <<<SCRIPT
         <script>initialCalendarDate = $initialCalendarDate;</script>
@@ -79,21 +79,24 @@ class stic_Bookings_Places_CalendarViewList extends ViewList
         $resources = stic_Bookings_Places_CalendarUtils::getAllPlaces();
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);
-        $this->ss->assign('RESOURCESGROUP', $resources['resourcesArrayByGroup']);
-        $resourcesArrayJson = json_encode($resources['resourcesArray']);
+        $this->ss->assign('RESOURCESGROUP', $resources['resourcesArrayByGroup'] ?? []);
+        $resourcesArrayJson = json_encode($resources['resourcesArray']??null);
         echo <<<SCRIPT
         <script>resourcesGroupArray = $resourcesArrayJson;</script>
     SCRIPT;
-
+        echo '<link rel="stylesheet" href="include/javascript/selectize/selectize.bootstrap3.css">';
+        echo getVersionedScript("include/javascript/selectize/selectize.min.js");
+    
+    
         require_once 'modules/UserPreferences/UserPreference.php';
 
-        $savedFilters = json_decode($current_user->getPreference('stic_bookings_places_calendar_filters'), true) ?? [];
+        $savedFilters = json_decode($current_user->getPreference('stic_bookings_places_calendar_filters') ?? '{}', true);
 
         $sticCenterId = $savedFilters['stic_center_id'] ?? '';
         $sticCenterName = $savedFilters['stic_center_name'] ?? '';
-        $sticPlacesUser = $savedFilters['stic_resources_places_users_list'];
-        $sticPlacesType = $savedFilters['stic_resources_places_type_list'];
-        $sticPlacesGender = $savedFilters['stic_resources_places_gender_list'];
+        $sticPlacesUser = $savedFilters['stic_resources_places_users_list']?? '';
+        $sticPlacesType = $savedFilters['stic_resources_places_type_list']?? '';
+        $sticPlacesGender = $savedFilters['stic_resources_places_gender_list']?? '';
 
         $this->ss->assign('stic_center_id', $sticCenterId);
         $this->ss->assign('stic_center_name', $sticCenterName);
