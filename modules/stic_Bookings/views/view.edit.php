@@ -106,6 +106,9 @@ class stic_BookingsViewEdit extends ViewEdit
             var config_resource_fields = $config_resource_fields_json;
             var config_place_fields = $config_place_fields_json;
         </script>";
+        
+        echo '<link rel="stylesheet" href="include/javascript/selectize/selectize.bootstrap3.css">';
+        echo getVersionedScript("include/javascript/selectize/selectize.min.js");
 
         // If the Bookings editview is launched from the "new" button in the Resources detailview Bookings subpanel,
         // then add the resource into the new booking. Notice that stic_resources_id is only available in that case,
@@ -164,7 +167,7 @@ class stic_BookingsViewEdit extends ViewEdit
             foreach ($config_resource_fields as $field => $label) {
                 $value = $resourceBean->$field;
                 
-                if ($field === 'status' || $field === 'type') {
+                if ($field === 'gender' || $field === 'user_type' || $field === 'place_type') {
                     $listKey = 'stic_resources_' . $field . '_list';
             
                     if (!empty($app_list_strings[$listKey]) && !empty($app_list_strings[$listKey][$value])) {

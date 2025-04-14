@@ -57,88 +57,137 @@ class stic_BookingsController extends SugarController
         $resourceName = isset($_REQUEST['resourceName']) ? $_REQUEST['resourceName'] : '';
         $resourceGender = isset($_REQUEST['resourceGender']) ? $_REQUEST['resourceGender'] : '';
         $numberOfCenters = isset($_REQUEST['numberOfCenters']) ? $_REQUEST['numberOfCenters'] : '';
-
+        
         if (empty($centerIds)) {
             echo json_encode(['success' => false]);
             return;
         }
-
-        require_once 'modules/stic_Bookings/configResourceFields.php';
+        
         require_once 'modules/stic_Bookings/configPlaceFields.php';
-
-        global $config_resource_fields, $config_place_fields;
-
+        global $config_place_fields;
         $db = DBManagerFactory::getInstance();
         $centerIdsArray = explode(',', $centerIds);
         $resources = [];
         $totalCenters = 0;
-
+        
+        $resourceGenderCondition = '';
+        if (!empty($resourceGender)) {
+            if (is_array($resourceGender)) {
+                $genderFilters = [];
+                foreach ($resourceGender as $gender) {
+                    $genderSafe = $db->quote($gender);
+                    $genderFilters[] = "gender LIKE '%$genderSafe%'";
+                }
+                if (!empty($genderFilters)) {
+                    $resourceGenderCondition = " AND (" . implode(" OR ", $genderFilters) . ")";
+                }
+            } else {
+                $resourceGenderSafe = $db->quote($resourceGender);
+                $resourceGenderCondition = " AND gender LIKE '%$resourceGenderSafe%'";
+            }
+        }
+        
+        $resourcePlaceUserTypeCondition = '';
+        if (!empty($resourcePlaceUserType)) {
+            if (is_array($resourcePlaceUserType)) {
+                $typeFilters = [];
+                foreach ($resourcePlaceUserType as $type) {
+                    $typeSafe = $db->quote($type);
+                    $typeFilters[] = "user_type LIKE '%$typeSafe%'";
+                }
+                if (!empty($typeFilters)) {
+                    $resourcePlaceUserTypeCondition = " AND (" . implode(" OR ", $typeFilters) . ")";
+                }
+            } else {
+                $typeSafe = $db->quote($resourcePlaceUserType);
+                $resourcePlaceUserTypeCondition = " AND user_type LIKE '%$typeSafe%'";
+            }
+        }
+        
+        $resourcePlaceTypeCondition = '';
+        if (!empty($resourcePlaceType)) {
+            if (is_array($resourcePlaceType)) {
+                $placeTypeFilters = [];
+                foreach ($resourcePlaceType as $placeType) {
+                    $placeTypeSafe = $db->quote($placeType);
+                    $placeTypeFilters[] = "place_type LIKE '%$placeTypeSafe%'";
+                }
+                if (!empty($placeTypeFilters)) {
+                    $resourcePlaceTypeCondition = " AND (" . implode(" OR ", $placeTypeFilters) . ")";
+                }
+            } else {
+                $placeTypeSafe = $db->quote($resourcePlaceType);
+                $resourcePlaceTypeCondition = " AND place_type LIKE '%$placeTypeSafe%'";
+            }
+        }
+        
+        $resourceNameCondition = '';
+        if (!empty($resourceName)) {
+            $resourceNameSafe = $db->quote($resourceName);
+            $resourceNameCondition = " AND name LIKE '%$resourceNameSafe%'";
+        }
+        
         foreach ($centerIdsArray as $centerId) {
             $query = "SELECT stic_resources_stic_centersstic_resources_idb
                       FROM stic_resources_stic_centers_c
                       WHERE stic_resources_stic_centersstic_centers_ida = '$centerId'";
             $result = $db->query($query, true);
-
+            
             while ($row = $db->fetchByAssoc($result)) {
                 $resourceId = $row['stic_resources_stic_centersstic_resources_idb'];
-
+                
                 if ($numberOfCenters && $totalCenters >= (int)$numberOfCenters) {
                     break;
                 }
+                
                 $availability = $this->checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
-
+                
                 if ($availability['resources_allowed']) {
                     $resourceQuery = "SELECT *
                                       FROM stic_resources
                                       WHERE id = '$resourceId'";
-
-                    if (!empty($resourcePlaceUserType)) {
-                        $resourceQuery .= " AND user_type LIKE '%$resourcePlaceUserType%'";
-                    }
-                    if (!empty($resourcePlaceType)) {
-                        $resourceQuery .= " AND place_type LIKE '%$resourcePlaceType%'";
-                    }
-                    if (!empty($resourceGender)) {
-                        $resourceQuery .= " AND gender LIKE '%$resourceGender%'";
-                    }
-                    if (!empty($resourceName)) {
-                        $resourceQuery .= " AND name LIKE '%$resourceName%'";
-                    }
+                    
+                    $resourceQuery .= $resourcePlaceUserTypeCondition;
+                    $resourceQuery .= $resourcePlaceTypeCondition;
+                    $resourceQuery .= $resourceGenderCondition;
+                    $resourceQuery .= $resourceNameCondition;
+                    
                     if (!empty($numberOfCenters)) {
                         $resourceQuery .= " LIMIT $numberOfCenters"; 
                     }
-
+                    
                     $resourceResult = $db->query($resourceQuery);
-
+                    
                     if ($resourceResult !== false) {
                         $resourceData = $db->fetchByAssoc($resourceResult);
+                        
                         if ($resourceData !== false) {
                             $resourceItem = [
                                 'resource_id' => $resourceData['id'],
                             ];
-
-                            foreach ($config_resource_fields as $fieldKey => $fieldLabel) {
+                            
+                            foreach ($config_place_fields as $fieldKey => $fieldLabel) {
                                 if (isset($resourceData[$fieldKey])) {
                                     $resourceItem['resource_' . $fieldKey] = $resourceData[$fieldKey];
                                 }
                             }
-
+                            
                             $resources[] = $resourceItem;
                         }
                     }
+                    
                     $totalCenters++;
                 }
             }
-
+            
             if ($numberOfCenters && $totalCenters >= (int)$numberOfCenters) {
                 break;
             }
         }
-
+        
         echo json_encode(['success' => true, 'resources' => $resources]);
         return;
     }
-
     private function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId)
     {
         global $current_user;
@@ -207,9 +256,9 @@ class stic_BookingsController extends SugarController
 
         require_once 'modules/stic_Resources/vardefs.php';
         global $app_list_strings;
-        $options = $app_list_strings['stic_resources_places_users_list'];
-        $options2 = $app_list_strings['stic_resources_places_type_list'];
-        $options3 = $app_list_strings['stic_resources_places_gender_list'];
+        $options = $app_list_strings['stic_resources_places_users_list'] ?? [];
+        $options2 = $app_list_strings['stic_resources_places_type_list'] ?? [];
+        $options3 = $app_list_strings['stic_resources_places_gender_list'] ?? [];
 
         $response = array('success' => true, 'options' => array(), 'options2' => array(), 'options3' => array());
 

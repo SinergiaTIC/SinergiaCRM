@@ -89,7 +89,6 @@ $(document).ready(function() {
         plugins: ['remove_button'],
         delimiter: ',',
         persist: false,
-        placeholder: SUGAR.language.translate('app_strings', 'LBL_SELECT_ITEM'),
         allowEmptyOption: true,
         create: false
     });

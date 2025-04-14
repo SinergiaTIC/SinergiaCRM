@@ -24,35 +24,48 @@
 <h2>{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">{$MOD.LBL_CENTERS_BUTTON}</button>
 </h2>
 
-<div class="center_column">
-    <div id="resourceSearchFields">
+<div class="filter-box">
+    <div id="resourceSearchFields" class="filter-content">
         <div id="selectedCentersContainer">
             <label>{$MOD.LBL_RESOURCES_ADD}</label>
             <div id="selectedCentersList"></div>
         </div>
-        <br>
-
-        <label for="resourcePlaceUserType">{$MOD.LBL_RESOURCES_TYPE}</label>
-        <select id="resourcePlaceUserType" name="resourcePlaceUserType"></select>
-
-        <label for="resourcePlaceType">{$MOD.LBL_RESOURCES_PLACE_TYPE}</label>
-        <select id="resourcePlaceType" name="resourcePlaceType"></select>
-
-        <label for="resourceGender">{$MOD.LBL_RESOURCES_STATUS}</label>
-        <select id="resourceGender" name="resourceGender"></select>
-
-        <label for="resourceName">{$MOD.LBL_RESOURCES_NAME}</label>
-        <input type="text" id="resourceName" name="resourceName">
-        <br>
-
-        <label for="numberOfCenters">{$MOD.LBL_NUMBER_OF_PLACES}</label>
-        <input type="number" id="numberOfCenters" name="numberOfCenters">
-        <br>
-
-        <button id="loadCenterResourcesButton" type="button" class="button">{$MOD.LBL_RESOURCES_BUTTON}</button>
-        <br>
-
-        <label id="resourceCount"></label>
+        
+        <div class="filter-row">
+            <div class="filter-item">
+                <label for="resourcePlaceUserType">{$MOD.LBL_RESOURCES_USER_TYPE}</label>
+                <select id="resourcePlaceUserType" name="resourcePlaceUserType" multiple></select>
+            </div>
+            
+            <div class="filter-item">
+                <label for="resourcePlaceType">{$MOD.LBL_RESOURCES_PLACE_TYPE}</label>
+                <select id="resourcePlaceType" name="resourcePlaceType" multiple></select>
+            </div>
+        </div>
+        
+        <div class="filter-row">
+            <div class="filter-item">
+                <label for="resourceGender">{$MOD.LBL_RESOURCES_STATUS}</label>
+                <select id="resourceGender" name="resourceGender" multiple></select>
+            </div>
+            
+            <div class="filter-item">
+                <label for="resourceName">{$MOD.LBL_RESOURCES_NAME}</label>
+                <input type="text" id="resourceName" name="resourceName">
+            </div>
+        </div>
+        
+        <div class="filter-row">
+            <div class="filter-item">
+                <label for="numberOfCenters">{$MOD.LBL_NUMBER_OF_PLACES}</label>
+                <input type="number" id="numberOfCenters" name="numberOfCenters">
+            </div>
+        </div>
+        
+        <div class="filter-actions">
+            <button id="loadCenterResourcesButton" type="button" class="button">{$MOD.LBL_RESOURCES_BUTTON}</button>
+            <span id="resourceCount"></span>
+        </div>
     </div>
 </div>
 <br>
@@ -72,7 +85,20 @@
 </div>
 <br>
 {literal}
+<script>
+$(document).ready(function() {
+    // Initialize Selectize on all multiple select elements
+    $('#stic_resources_places_gender_list, #stic_resources_places_type_list, #stic_resources_places_users_list').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        persist: false,
+        allowEmptyOption: false,
+        create: false
+    });
+});
+</script>
     <style>
+        /* Estilos originales */
         .resource-table .resouce_data_group>input {
             width: calc(100% - 85px);
         }
@@ -103,11 +129,72 @@
             border-color: grey !important;
         }
 
-        /* Responsive tables for firefox and bootstrap*/
-        @-moz-document url-prefix() {
-            fieldset {
-                display: table-cell;
-            }
+        .filter-box {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .filter-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .filter-item select,
+        .filter-item input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .filter-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        
+        #resourceCount {
+            font-weight: bold;
+        }
+        #numberOfCenters {
+            width: 100px;
+        }
+        #resourceName {
+            height: 32px; 
+            box-sizing: border-box;
+            padding: 8px 10px;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            width: 90%;
+            font-size: 13px;
+        }
+
+        #selectedCentersContainer {
+            margin-bottom: 10px;
         }
     </style>
 {/literal}

@@ -15,7 +15,7 @@ $mod_strings = array(
     'LBL_FILTERS' => 'Filtros',
 
     'LBL_FILTERS_STIC_CENTER' => 'Centro',
-    'LBL_FILTERS_STIC_PLACE_GENDER' => 'Gender',
+    'LBL_FILTERS_STIC_PLACE_GENDER' => 'Género',
     'LBL_FILTERS_STIC_PLACE_TYPE' => 'Tipo de plaza',
     'LBL_FILTERS_STIC_PLACE_USER_TYPE' => 'Tipo de usuario',
     'LBL_FILTERS_STIC_PLACE_BOOKING_TYPE' => 'Tipo de reserva',

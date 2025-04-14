@@ -515,6 +515,7 @@ function updateResourceFields() {
 
   insertResourceLine();
   if (!isPlaceBooking) {
+    $(".filter-box").hide();
     $("#resourceSearchFields").hide();
     $("#resourcePlaceUserType").val("");
     $("#resourcePlaceType").val("");
@@ -701,6 +702,7 @@ function callbackCenterSelectPopup(popupReplyData) {
   selectedCenters.push({ centerId: centerId, centerName: centerName });
   updateSelectedCentersList();
   $("#selectedCenterName").text(centerName);
+  $(".filter-box").show();
   $("#resourceSearchFields").show();
 
   if (selectedCenters.length === 1) {
@@ -715,10 +717,21 @@ $("#loadCenterResourcesButton").on("click", function () {
 function loadResources() {
   var startDate = getFieldValue("start_date");
   var endDate = getFieldValue("end_date");
-  var resourcePlaceUserType = $("#resourcePlaceUserType").val();
-  var resourcePlaceType = $("#resourcePlaceType").val();
+  
+  // Obtener valores correctamente de Selectize
+  var resourcePlaceUserType = $("#resourcePlaceUserType")[0].selectize ? 
+    $("#resourcePlaceUserType")[0].selectize.getValue() : 
+    $("#resourcePlaceUserType").val();
+  
+  var resourcePlaceType = $("#resourcePlaceType")[0].selectize ? 
+    $("#resourcePlaceType")[0].selectize.getValue() : 
+    $("#resourcePlaceType").val();
+  
+  var resourceGender = $("#resourceGender")[0].selectize ? 
+    $("#resourceGender")[0].selectize.getValue() : 
+    $("#resourceGender").val();
+  
   var resourceName = $("#resourceName").val();
-  var resourceGender = $("#resourceGender").val();
   var numberOfCenters = $("#numberOfCenters").val();
 
   if (startDate === "" || endDate === "") {
@@ -744,10 +757,16 @@ function loadResources() {
   );
 }
 
-$(document).ready(function () {
+$(document).ready(function() {
   $("#resourceSearchFields").hide();
+  $(".filter-box").hide();
+  $("#resourcePlaceUserType, #resourcePlaceType, #resourceGender").selectize({
+      plugins: ['remove_button'],
+      create: false,
+      allowEmptyOption: true,
+      multiple: true  
+  });
 });
-
 function updateSelectedCentersList() {
   var list = $("#selectedCentersList");
   list.empty();
@@ -795,33 +814,44 @@ function loadResourceTypes(centerId) {
     data: { centerId: centerId },
     success: function (res) {
       if (res.success) {
-        var options = res.options;
-        var resourcePlaceUserType = $("#resourcePlaceUserType");
-        resourcePlaceUserType.empty();
-        options.forEach(function (option) {
-          resourcePlaceUserType.append(new Option(option.label, option.value));
-        });
+        $(".filter-box").show();
+        $("#resourceSearchFields").show();
 
-        var options2 = res.options2;
-        var resourcePlaceTypeSelect = $("#resourcePlaceType");
-        resourcePlaceTypeSelect.empty();
-        options2.forEach(function (option) {
-          resourcePlaceTypeSelect.append(new Option(option.label, option.value));
-        });
-        var options3 = res.options3;
-        var resourceGenderSelect = $("#resourceGender");
-        resourceGenderSelect.empty();
-        options3.forEach(function (option) {
-          resourceGenderSelect.append(new Option(option.label, option.value));
-        });
-
+        var userTypeSelectize = $("#resourcePlaceUserType")[0].selectize;
+        var placeTypeSelectize = $("#resourcePlaceType")[0].selectize;
+        var genderSelectize = $("#resourceGender")[0].selectize;
+        
+        if (userTypeSelectize) {
+          userTypeSelectize.clearOptions();
+          res.options.forEach(function(option) {
+            userTypeSelectize.addOption({value: option.value, text: option.label});
+          });
+        }
+        
+        if (placeTypeSelectize) {
+          placeTypeSelectize.clearOptions();
+          res.options2.forEach(function(option) {
+            placeTypeSelectize.addOption({value: option.value, text: option.label});
+          });
+        }
+        
+        if (genderSelectize) {
+          genderSelectize.clearOptions();
+          res.options3.forEach(function(option) {
+            genderSelectize.addOption({value: option.value, text: option.label});
+          });
+        }
       } else {
+        $(".filter-box").hide();
+        $("#resourceSearchFields").hide();
         alert(
           SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR")
         );
       }
     },
     error: function () {
+      $(".filter-box").hide();
+      $("#resourceSearchFields").hide();
       alert(SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR"));
     },
   });
