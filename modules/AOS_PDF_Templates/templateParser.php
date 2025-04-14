@@ -141,10 +141,17 @@ class templateParser
                     // if ($_REQUEST['entryPoint'] == 'formLetter') {
                     if (!empty($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'formLetter') {
                     // END STIC Custom
-                        $value = formatDecimalInConfigSettings($focus->$fieldName, true);
+                    // STIC Custom 20250414 ART - SticUtils function for UserPreferences decimals formatting
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull
+                    //     $value = formatDecimalInConfigSettings($focus->$fieldName, true);
+                    // } else {
+                    //     $value = formatDecimalInConfigSettings($focus->$fieldName, false);
+                    // }
+                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, true);
                     } else {
-                        $value = formatDecimalInConfigSettings($focus->$fieldName, false);
+                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, false);
                     }
+                    // END STIC Custom
                     $repl_arr[$key . "_" . $fieldName] = $value;
                 // STIC-Custom 20221013 AAM - Parsing date/datetime fields when the bean is being modified
                 // STIC#883
