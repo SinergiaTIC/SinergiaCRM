@@ -139,7 +139,11 @@ class SearchThrowableHandler
                 $message = $mod_strings['LBL_ELASTIC_SEARCH_EXCEPTION_DEFAULT'];
         }
 
-        return $message;
+        // STIC Custom 20250315 JBL - Fix TypeError: Return value must be of type string, null returned
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // return $message;
+        return $message ?? '';
+        // END STIC Custom
     }
 
     /**
