@@ -70,6 +70,7 @@ WHERE
 $res = $db->query($includedPaymentsQuery);
 
 $includedPayments = 0;
+$includedPaymentsData = [];
 
 // Prepare includable payments
 while ($row = $db->fetchByAssoc($res)) {
