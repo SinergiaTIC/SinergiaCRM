@@ -123,6 +123,7 @@ class Settings
      * @throws Exception If Settings is incorrectly supplied
      */
     // STIC Custom 20250304 JBL - Implicit nullable parameters are deprecated
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
     // public function __construct(array $settings = null, $spValidationOnly = false)
     public function __construct(?array $settings = null, $spValidationOnly = false)
     // END STIC Custom    
