@@ -98,7 +98,7 @@ function get_body(&$ss, $vardef)
         //since we do not have a default value then we should assign the first one.
         $key = $dropdowns[0];
         // STIC Custom 20250215 JBL - Remove Warning: Undefined array key access
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // $default_dropdowns = $my_list_strings[$key];
         if(isset($my_list_strings[$key])) {
             $default_dropdowns = $my_list_strings[$key];

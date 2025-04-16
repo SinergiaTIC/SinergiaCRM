@@ -142,7 +142,7 @@ class templateParser
                     // END STIC Custom
 
                     // STIC Custom 20250215 JBL - Remove Warning: Undefined array key access
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                     // if ($_REQUEST['entryPoint'] == 'formLetter') {
                     if (!empty($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'formLetter') {
                     // END STIC Custom
