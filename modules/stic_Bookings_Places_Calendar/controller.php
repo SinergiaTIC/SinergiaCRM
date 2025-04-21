@@ -26,104 +26,19 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class stic_Bookings_Places_CalendarController extends SugarController
+require_once 'modules/stic_Bookings_Calendar/controller.php';
+
+class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarController
 {
     /**
-     * This action is called by the FullCalendar and retrieves a collection of
-     * booked or available resources (depending on user's settings) in a certain time range.
-     *
-     * @return void
+     * Override method to get booked resources with additional place-specific fields
+     * 
+     * @param String $start_date
+     * @param String $end_date
+     * @param Array $filteredResources
+     * @return array
      */
-    public function action_getResources()
-    {
-        global $current_user, $timedate;
-
-        // Parse the timeZone parameter if it is present.
-        $userTimeZone = $current_user->getPreference('timezone');
-        if (empty($userTimeZone)) {
-            if (isset($_GET['timeZone'])) {
-                $userTimeZone = new DateTimeZone($_GET['timeZone']);
-            } else {
-                $tz = substr($_GET['start'], -6, 6);
-                $userTimeZone = new DateTimeZone($tz);
-            }
-        } else {
-            $userTimeZone = new DateTimeZone($userTimeZone);
-        }
-
-        // Parse the dates that arrive from the FullCalendar
-        $startDate = new DateTime($_GET['start']);
-        $startDate = $timedate->to_display_date_time(date_format($startDate, 'Y-m-d H:i:s'), false, false, $current_user);
-        $startDate = $timedate->fromUser($startDate, $current_user);
-        $startDate = $startDate->asDb();
-
-        $endDate = new DateTime($_GET['end']);
-        $endDate = $timedate->to_display_date_time(date_format($endDate, 'Y-m-d H:i:s'), false, false, $current_user);
-        $endDate = $timedate->fromUser($endDate, $current_user);
-        $endDate = $endDate->asDb();
-
-        $range_start = parseDateTime($startDate);
-        $range_end = parseDateTime($endDate);
-
-        // Get configuration params from the user configuration
-        $userBean = new UserPreference($current_user);
-
-        // stic_bookings_calendar_availability_mode: sets if the user will see resources availability or existing bookings
-        if (!$availabilityMode = $_REQUEST['availabilityMode']) {
-            $availabilityMode = $userBean->getPreference('stic_bookings_calendar_availability_mode');
-        }
-
-        // stic_bookings_calendar_filtered_resources: the default list of resources the user wants to see
-        if (!isset($_REQUEST['filteredResources']) || empty($_REQUEST['filteredResources'])) {
-            $filteredResources = $userBean->getPreference('stic_bookings_calendar_filtered_resources');
-        } else {
-            $filteredResources = explode(',', $_REQUEST['filteredResources']);
-        }
-
-        $calendarItems = array();
-        if ($availabilityMode == "true") {
-            $calendarItems = $this->getResourcesAvailability($startDate, $endDate, $filteredResources);
-        } else {
-            $calendarItems = $this->getBookedResources($startDate, $endDate, $filteredResources);
-        }
-
-        $calendarObjects = array();
-        foreach ($calendarItems as $calendarItem) {
-            $calendarObject = new CalendarObject($calendarItem, $userTimeZone);
-            if ($calendarObject->isWithinDayRange($range_start, $range_end)) {
-                $calendarObjects[] = $calendarObject->toArray();
-            }
-        }
-        echo json_encode($calendarObjects);
-
-        die();
-    }
-
-    /**
-     * Action used to save the user preferences set by the user related to the Bookings Calendar module
-     *
-     * @return void
-     */
-    public function action_saveUserPreferences()
-    {
-        global $current_user;
-        if (!$userPreference = $_POST['user_preference']) {
-            echo false;
-            die();
-        }
-        if (!isset($_POST['preference_value'])) {
-            $_POST['preference_value'] = '';
-        }
-        $preferenceValue = $_POST['preference_value'];
-
-        require_once 'modules/UserPreferences/UserPreference.php';
-        $userBean = new UserPreference($current_user);
-        $userBean->setPreference($userPreference, $preferenceValue);
-        echo true;
-        die();
-    }
-
-    private function getBookedResources($start_date, $end_date, $filteredResources)
+    protected function getBookedResources($start_date, $end_date, $filteredResources)
     {
         global $current_user, $db;
         $resourcesBean = BeanFactory::getBean('stic_Resources');
@@ -187,100 +102,12 @@ class stic_Bookings_Places_CalendarController extends SugarController
 
         return $bookedResources;
     }
+    
     /**
-     *  Returns the availability of the existing resources.
+     * Places-specific action to get availability data
      *
-     * @param String $start_date
-     * @param String $end_date
-     * @param Array $filteredResources
-     * @return array()
+     * @return void
      */
-    private function getResourcesAvailability($start_date, $end_date, $filteredResources)
-    {
-        $resourcesAvailability = array();
-
-        foreach ($filteredResources as $resourceId) {
-            $resourceBean = BeanFactory::getBean('stic_Resources', $resourceId);
-
-            $query =
-                "SELECT DISTINCT
-                date_availability,
-                GROUP_CONCAT(DISTINCT availability ORDER BY availability) as superavail
-            FROM
-            (SELECT
-                date_availability,
-                if(date_availability BETWEEN start_date AND end_date - INTERVAL 15 MINUTE, 1, 0) as availability
-            FROM
-            (SELECT
-                date('$start_date') + interval (seq * 15) Minute as date_availability,
-                booked.start_date,
-                booked.end_date
-            FROM
-                seq_0_to_12000
-            LEFT JOIN
-                (
-                select
-                    name,
-                    start_date,
-                    end_date
-                from
-                    stic_bookings sb
-                join stic_resources_stic_bookings_c srsbc on
-                    srsbc.stic_resources_stic_bookingsstic_bookings_idb = sb.id
-                WHERE
-                    srsbc.stic_resources_stic_bookingsstic_resources_ida = '$resourceBean->id'
-                    AND srsbc.deleted = 0
-                    AND sb.deleted = 0
-                    AND sb.end_date >= '$start_date'
-                    AND sb.start_date <= '$end_date'
-                    AND sb.status != 'cancelled') booked
-            ON
-                1 = 1) main) supermain
-            GROUP BY date_availability
-            HAVING superavail = '0';";
-            $db = DBManagerFactory::getInstance();
-            $res = $db->query($query);
-            $row = $db->fetchByAssoc($res);
-            $startDate = $row['date_availability'];
-
-            $lastDate = $row['date_availability'];
-            while ($row = $db->fetchByAssoc($res)) {
-                if (strtotime($row['date_availability']) - strtotime($lastDate) > 15 * 60) {
-
-                    $resourcesAvailability[] = array(
-                        'title' => $resourceBean->name,
-                        'resourceName' => $resourceBean->name,
-                        'module' => $resourceBean->module_name,
-                        'recordId' => $resourceBean->id,
-                        'resourceId' => $resourceBean->id,
-                        'start' => $startDate,
-                        'end' => $lastDate,
-                        'className' => 'id-' . $resourceBean->id,
-                    );
-                    $startDate = $row['date_availability'];
-                    $lastDate = $row['date_availability'];
-
-                } else {
-                    $lastDate = $row['date_availability'];
-                }
-            }
-            if ($startDate != $lastDate) {
-                $resourcesAvailability[] = array(
-                    'title' => $resourceBean->name,
-                    'resourceName' => $resourceBean->name,
-                    'module' => $resourceBean->module_name,
-                    'recordId' => $resourceBean->id,
-                    'resourceId' => $resourceBean->id,
-                    'start' => $startDate,
-                    'end' => $lastDate,
-                    'className' => 'id-' . $resourceBean->id,
-                );
-            }
-
-        }
-        return $resourcesAvailability;
-    }
-
     public function action_get_places_availability_data()
     {
         global $current_user, $timedate;
@@ -321,11 +148,11 @@ class stic_Bookings_Places_CalendarController extends SugarController
         }
 
         foreach ($bookedResources as $resource) {
-            $resourceStart = max($startDate, $resource['start']);
-            $resourceEnd = min($endDate, $resource['end']);
+            $resourceStart = max($startDate, substr($resource['start'], 0, 10));
+            $resourceEnd = min($endDate, substr($resource['end'], 0, 10));
             $currentDate = $resourceStart;
 
-            if ($resource['resourceType'] == 'places' && in_array($resource['resourceId'], $filteredResources)) {
+            if (isset($resource['resourceType']) && $resource['resourceType'] == 'places' && in_array($resource['resourceId'], $filteredResources)) {
                 while ($currentDate <= $resourceEnd) {
                     $dateKey = date('Y-m-d', strtotime($currentDate));
                     if (isset($result[$dateKey])) {
@@ -351,6 +178,15 @@ class stic_Bookings_Places_CalendarController extends SugarController
         echo json_encode($result);
         die();
     }
+    
+    /**
+     * Places-specific method to get places availability
+     * 
+     * @param String $start_date
+     * @param String $end_date
+     * @param Array $filteredResources
+     * @return array
+     */
     private function getPlacesAvailability($start_date, $end_date, $filteredResources = null)
     {
         global $db;
@@ -369,7 +205,9 @@ class stic_Bookings_Places_CalendarController extends SugarController
                 WHERE
                     stic_resources.deleted = 0 AND stic_resources.type = 'places'";
         // Filters are added
-        $query .= " AND stic_resources.id IN ('" . implode("','", $filteredResources) . "')";
+        if (!empty($filteredResources)) {
+            $query .= " AND stic_resources.id IN ('" . implode("','", $filteredResources) . "')";
+        }
 
         $result = $db->query($query);
 
@@ -410,7 +248,6 @@ class stic_Bookings_Places_CalendarController extends SugarController
             }
         }
 
-        // Calcular los recursos disponibles para cada día
         $currentDate = $start_date;
         while ($currentDate <= $end_date) {
             $dateKey = date('Y-m-d', strtotime($currentDate));
@@ -433,25 +270,11 @@ class stic_Bookings_Places_CalendarController extends SugarController
         return $availablePlaces;
     }
 
-    private function validateDate($date, $format = 'Y-m-d')
-    {
-        $d = DateTime::createFromFormat($format, $date);
-        return $d && $d->format($format) === $date;
-    }
-
-    private function getDatesArray($startDate, $endDate)
-    {
-        $dates = array();
-        $current = strtotime($startDate);
-        $end = strtotime($endDate);
-
-        while ($current <= $end) {
-            $dates[] = date('Y-m-d', $current);
-            $current = strtotime('+1 day', $current);
-        }
-
-        return $dates;
-    }
+    /**
+     * Save place-specific filters for the user
+     *
+     * @return void
+     */
     public function action_SaveFilters()
     {
         global $current_user, $timedate;
@@ -472,13 +295,21 @@ class stic_Bookings_Places_CalendarController extends SugarController
             header("Location: index.php?module=stic_Bookings_Places_Calendar&action=index");
         }
         exit;
-
     }
+    
+    /**
+     * Get resources filtered by specific place attributes
+     *
+     * @param string $center Center ID
+     * @param array $users User types
+     * @param array $types Place types
+     * @param array $gender Gender types
+     * @return array
+     */
     private function getFilteredResources($center, $users, $types, $gender)
     {
         global $db;
 
-        // $query = "SELECT id FROM stic_resources WHERE deleted = 0 AND type = 'places'";
         $query = "SELECT 
                     r.id 
                   FROM 
@@ -495,21 +326,18 @@ class stic_Bookings_Places_CalendarController extends SugarController
 
         if (!empty($users)) {
             $quotedUsers = array_map(array($db, 'quote'), $users);
-            // Convertir el array en una cadena separada por comas
             $usersStr = implode("','", $quotedUsers);
             $query .= " AND user_type IN ('$usersStr')";
         }
 
         if (!empty($types)) {
             $quotedTypes = array_map(array($db, 'quote'), $types);
-            // Convertir el array en una cadena separada por comas
             $typesStr = implode("','", $quotedTypes);
             $query .= " AND place_type IN ('$typesStr')";
         }
 
         if (!empty($gender)) {
             $quotedGender = array_map(array($db, 'quote'), $gender);
-            // Convertir el array en una cadena separada por comas
             $genderStr = implode("','", $quotedGender);
             $query .= " AND gender IN ('$genderStr')";
         }

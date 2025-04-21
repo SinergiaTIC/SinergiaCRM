@@ -63,8 +63,8 @@ class stic_BookingsController extends SugarController
             return;
         }
         
-        require_once 'modules/stic_Bookings/configPlaceFields.php';
-        global $config_place_fields;
+        $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
+
         $db = DBManagerFactory::getInstance();
         $centerIdsArray = explode(',', $centerIds);
         $resources = [];

@@ -89,11 +89,10 @@ class stic_BookingsViewEdit extends ViewEdit
     public function display()
     {
         require_once 'SticInclude/Utils.php';
-        require_once 'modules/stic_Bookings/configResourceFields.php';
-        require_once 'modules/stic_Bookings/configPlaceFields.php';
 
-        global $config_resource_fields, $config_place_fields;
-
+        $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
+        $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
+    
         // Add the resources template
         $this->ev->defs['templateMeta']['form']['footerTpl'] = 'modules/stic_Bookings/tpls/EditViewFooter.tpl';
 
@@ -158,7 +157,9 @@ class stic_BookingsViewEdit extends ViewEdit
     // Prepare resources data to be displayed in the editview
     public function parseResourceItems($resourcesBeanArray)
     {
-        global $app_list_strings, $config_resource_fields;
+        global $app_list_strings;
+
+        $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
 
         $parsedResources = array();
         foreach ($resourcesBeanArray as $resourceBean) {

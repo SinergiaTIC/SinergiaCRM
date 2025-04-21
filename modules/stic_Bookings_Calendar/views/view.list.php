@@ -92,7 +92,7 @@ class stic_Bookings_CalendarViewList extends ViewList
         <script>resourcesGroupArray = $resourcesArrayJson;</script>
     SCRIPT;
 
-        echo getVersionedScript("SticInclude/vendor/fullcalendar_new/index.global.min.js");
+        echo getVersionedScript("SticInclude/vendor/fullcalendar/index.global.min.js");
         echo getVersionedScript("modules/stic_Bookings_Calendar/Utils.js");
 
         $this->ss->display("modules/stic_Bookings_Calendar/tpls/filter.tpl");

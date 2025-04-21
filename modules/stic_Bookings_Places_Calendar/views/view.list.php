@@ -110,7 +110,7 @@ class stic_Bookings_Places_CalendarViewList extends ViewList
             $this->ss->assign('applied_filters', false);
         }
         
-        echo getVersionedScript("SticInclude/vendor/fullcalendar_new/index.global.min.js");
+        echo getVersionedScript("SticInclude/vendor/fullcalendar/index.global.min.js");
         echo getVersionedScript("modules/stic_Bookings_Places_Calendar/Utils.js");
 
         $this->ss->display("modules/stic_Bookings_Places_Calendar/tpls/filters.tpl");
