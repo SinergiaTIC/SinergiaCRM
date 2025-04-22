@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $module_name = 'stic_Resources';
-if ($this->action == 'places') {
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'listplaces') {
     include 'modules/stic_Resources/metadata/listviewdefs2.php';
     $listViewDefs[$module_name] = $placesListViewDefs[$module_name];
 } else {
@@ -83,7 +83,6 @@ if ($this->action == 'places') {
             'width' => '10%',
             'default' => false,
         ),
-
         'PLACE_TYPE' => array(
             'type' => 'enum',
             'studio' => 'visible',
@@ -91,7 +90,6 @@ if ($this->action == 'places') {
             'width' => '10%',
             'default' => false,
         ),
-
         'GENDER' => array(
             'type' => 'enum',
             'studio' => 'visible',
@@ -99,7 +97,6 @@ if ($this->action == 'places') {
             'width' => '10%',
             'default' => false,
         ),
-
         'TYPE' => array(
             'type' => 'enum',
             'studio' => 'visible',
@@ -107,7 +104,6 @@ if ($this->action == 'places') {
             'width' => '10%',
             'default' => true,
         ),
-
         'OWNER_CONTACT' => array(
             'type' => 'relate',
             'label' => 'LBL_OWNER_CONTACT',

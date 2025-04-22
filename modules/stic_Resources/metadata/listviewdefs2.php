@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$module_name = 'stic_Places';
+$module_name = 'stic_Resources';
 $placesListViewDefs[$module_name] = array(
     'NAME' => array(
         'width' => '20%',
@@ -31,12 +31,11 @@ $placesListViewDefs[$module_name] = array(
         'table_key' => 'stic_resources',
         'db_key' => 'name'
     ),
-    'CODE' => array(
-        'type' => 'varchar',
-        'label' => 'LBL_CODE',
+    'STATUS' => array(
+        'label' => 'LBL_STATUS',
         'width' => '10%',
         'default' => true,
-    ),       
+    ),
     'PLACE_TYPE' => array(
         'type' => 'enum',
         'studio' => 'visible',
@@ -44,6 +43,12 @@ $placesListViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => true,
     ),
+        'CODE' => array(
+        'type' => 'varchar',
+        'label' => 'LBL_CODE',
+        'width' => '10%',
+        'default' => true,
+    ),       
     'USER_TYPE' => array(
         'type' => 'enum',
         'studio' => 'visible',
@@ -56,6 +61,13 @@ $placesListViewDefs[$module_name] = array(
         'studio' => 'visible',
         'label' => 'LBL_GENDER',
         'width' => '10%',
+        'default' => true,
+    ),
+    'ASSIGNED_USER_NAME' => array(
+        'width' => '9%',
+        'label' => 'LBL_ASSIGNED_TO_NAME',
+        'module' => 'Employees',
+        'id' => 'ASSIGNED_USER_ID',
         'default' => true,
     ),
 );
