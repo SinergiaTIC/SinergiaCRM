@@ -71,8 +71,8 @@ class stic_Time_Tracker extends Basic
     {
         global $timedate, $current_user;
 
-        // Calculate datetime fields in user and bbdd format
-        if ($_REQUEST["action"] == 'saveHTMLField') { // Inline Edit
+        // Calculate datetimes fields in user format and bbdd format
+        if (!$timedate->check_matching_format($this->start_date, TimeDate::DB_DATETIME_FORMAT)) { 
             $startDate = $this->start_date;
             $this->start_date = $timedate->fromUser($this->start_date, $current_user);
             $this->start_date = $timedate->asDb($this->start_date);
