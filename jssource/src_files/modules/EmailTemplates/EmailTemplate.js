@@ -500,6 +500,51 @@ function EmailTrackerController(action, campaignId) {
 	}
 
 	switch (action) {
+		// STIC-Custom 20250423 MHP - 
+		// Create tracking URLs from the links in the HTML editor content and replace each href with the corresponding tracking URL
+		case "convertLinksInTrackingUrls":
+			// Get the content of the HTML editor
+			fullHtml = tinymce.activeEditor.getContent();
+			
+			// Create an HTML document with the editor code and get the links
+			const doc = document.implementation.createHTMLDocument('temp');
+			doc.documentElement.innerHTML = fullHtml;
+			const links = doc.querySelectorAll('a');
+
+			if (links.length > 0) 
+			{
+				// Simulate the tracking URL creation form
+				$('body').append(`
+					<input type="text" id="url_text">
+					<input type="text" id="tracker_url_add">
+					<input type="checkbox" id="is_optout">
+				`);
+				
+				const seenUrls = new Set(); // Set where to save already processed links
+				links.forEach((link) => 
+				{
+					const url = link.getAttribute('href');
+					if (url && !seenUrls.has(url) && !url.includes('mailto')) 
+					{
+						// Mark this URL as already seen
+						seenUrls.add(url); 
+							
+						// Fill the values and create the tracking URL
+						linkName = 'Link_' + seenUrls.size;
+						$('#url_text').val(linkName);
+						$('#tracker_url_add').val(url);
+						$('#is_optout').prop('checked', false); 
+						create();
+
+						// Change the link href in the message text
+						fullHtml = fullHtml.replace(url, "{" + linkName + "}");
+					}
+				});
+				// Save the content with the modified links in the HTML editor
+				tinymce.activeEditor.setContent(fullHtml);
+			}
+			break;
+		// END Stic			
 		case "create":
 			$('#url_text').val('');
 			$('#tracker_name').val('');
