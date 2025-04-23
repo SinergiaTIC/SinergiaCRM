@@ -2294,7 +2294,7 @@ class KReportQuery {
 
          global $beanList;
          // 2010-25-10 replace the -> object name with get_class function to handle also the funny aCase obejcts
-         $thisModule = array_search(get_class($this->joinSegments[$path]['object']), $beanList);
+         $thisModule = is_object($this->joinSegments[$path]['object'] ?? null) ? array_search(get_class($this->joinSegments[$path]['object']), $beanList) : null;
 
          // bugfix 2011-03-21 moved up to allow proper value handling in tree
          // get the field details
