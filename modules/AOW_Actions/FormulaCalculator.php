@@ -377,7 +377,11 @@ class FormulaCalculator
         }
 
         if (($params = $this->evaluateFunctionParams("divide", $text, $childItems)) != null) {
-            return $this->parseFloat($params[0]) / $this->parseFloat($params[1]);
+            // STIC-Custom 20250324 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // Fix PHP Fatal error:  Uncaught DivisionByZeroError returning NAN just like in php 7.4
+            // return $this->parseFloat($params[0]) / $this->parseFloat($params[1]);
+            return ($params[1] == 0) ? NAN : ($this->parseFloat($params[0]) / $this->parseFloat($params[1]));
+            // END STIC-Custom
         }
 
         if (($params = $this->evaluateFunctionParams("power", $text, $childItems)) != null) {
