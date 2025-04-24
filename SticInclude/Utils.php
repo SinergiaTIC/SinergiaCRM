@@ -108,7 +108,7 @@ EOQ;
      */
     public static function getRelatedBeanObject($bean, $relationshipName)
     {
-        if (!$bean->load_relationship($relationshipName)) {
+        if (!$bean || !$bean->load_relationship($relationshipName)) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': : Failed retrieve contacts relationship data');
             return false;
         }
