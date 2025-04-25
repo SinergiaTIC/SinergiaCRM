@@ -511,7 +511,7 @@ EOQ;
         $sig_digits = empty($user_sig_digits) ? $sugar_config['default_currency_significant_digits'] : $user_sig_digits;
 
         // Format the number
-        $value = number_format($decimalValue, $sig_digits, $dec_sep, $grp_sep);
+        $value = is_numeric($decimalValue) ? number_format((float)$decimalValue, $sig_digits, $dec_sep, $grp_sep) : '';
         return $value;
     }
 
