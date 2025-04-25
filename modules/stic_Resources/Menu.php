@@ -37,6 +37,11 @@ if ($current_action != 'listplaces') {
         $module_menu[] = array("index.php?module=stic_Resources&action=index&return_module=stic_Resources&return_action=DetailView", $mod_strings['LNK_LIST'], "View", 'stic_Resources');
     }
     
+    if (ACLController::checkAccess('stic_Resources', 'list', true)) {
+        $module_menu[] = array("index.php?module=stic_Resources&action=listplaces", $mod_strings['LNK_LIST2'], "View", 'stic_Resources');
+    }
+
+
     if (ACLController::checkAccess('stic_Resources', 'import', true)) {
         $module_menu[] = array("index.php?module=Import&action=Step1&import_module=stic_Resources&return_module=stic_Resources&return_action=index", $app_strings['LBL_IMPORT'], "Import", 'stic_Resources');
     }
@@ -49,6 +54,10 @@ else {
     
     if (ACLController::checkAccess('stic_Resources', 'list', true)) {
         $module_menu[] = array("index.php?module=stic_Resources&action=listplaces", $mod_strings['LNK_LIST2'], "View", 'stic_Resources');
+    }
+
+    if (ACLController::checkAccess('stic_Resources', 'list', true)) {
+        $module_menu[] = array("index.php?module=stic_Resources&action=index&return_module=stic_Resources&return_action=DetailView", $mod_strings['LNK_LIST'], "View", 'stic_Resources');
     }
 
     if (ACLController::checkAccess('stic_Resources', 'import', true)) {

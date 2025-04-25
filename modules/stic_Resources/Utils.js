@@ -62,7 +62,6 @@ function checkCenterForPlaces() {
   var typeValue = getFieldValue("type");
   var centerValue = getFieldValue("stic_resources_stic_centers_name");
 
-  // Si el tipo es "places", el campo center debe estar completado
   if (typeValue === "places" && centerValue === "") {
     return false;
   }
@@ -95,15 +94,12 @@ function showTabs(typeSelected) {
 
     var panelPlaces = $("div.panel-content");
 
-    // Ocultar el panel de lenguaje por defecto
     panelPlace(panelPlaces, "hide");
 
     if (typeSelected === "places") {
-        // Mostrar el panel de lenguaje si typeSelected es 'language'
         panelPlace(panelPlaces, "show");          
         updateCenterRequirement();
     } else {
-        // Ocultar el panel de lenguaje si typeSelected no es 'language'
         panelPlace(panelPlaces, "hide");
         updateCenterRequirement();
     }
