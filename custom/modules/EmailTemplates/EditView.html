@@ -157,6 +157,35 @@ STIC#368 -->
 <!-- END: variable_button -->
 						</td>
 					</tr>
+					{literal}
+					<script type="text/javascript">
+						var hideFieldErrorMessages = function() 
+						{
+							$('.error_message').each(function(i,e){
+								$('#' + $(e).attr('for')).css('background-color', 'initial');
+								$(e).html('').hide();
+							});
+						};
+
+						var setTrackerUrlSelectVisibility = function()
+						{
+							if($('select[name="tracker_url"]').val()=='-1') {
+								$('#insert_tracker_div').hide();
+								$('#create_tracker_div').show();
+							}
+							else {
+								$('#insert_tracker_div').show();
+								$('#create_tracker_div').hide();
+							}
+						};
+					</script>
+					{/literal}						
+					<tr>
+						<td width="15%" scope="row"></td>
+						<td width="85%" colspan="3" valign="top" >
+							<input type='button' tabindex="0" onclick='{CONVERT_LINKS_IN_TRACKING_URL_ONCLICK}' class='button' value='{MOD.LBL_CONVERT_LINKS_TO_TRACKING_URLS}'>
+						</td>
+					</tr>
 <!-- BEGIN: tracker_url -->
 					<tr>
 						<td width="15%" scope="row" align='left'>

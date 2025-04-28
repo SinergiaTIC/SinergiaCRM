@@ -345,6 +345,7 @@ if (true) {
         // STIC#687
         // $xtpl->assign("INSERT_URL_ONCLICK", "insert_variable_html_link(document.EditView.tracker_url.value)");
         $xtpl->assign("INSERT_URL_ONCLICK", 'EmailTrackerController("insert", "{$CAMPAIGN_ID}")');
+        $xtpl->assign("CONVERT_LINKS_IN_TRACKING_URL_ONCLICK", 'EmailTrackerController("convertLinksInTrackingUrls", "{$CAMPAIGN_ID}")');
         // END STIC-Custom
         if ($has_campaign) {
             $campaign_urls = get_campaign_urls($_REQUEST['campaign_id']);

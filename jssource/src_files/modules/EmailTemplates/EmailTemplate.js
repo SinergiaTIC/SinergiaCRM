@@ -435,7 +435,12 @@ function EmailTrackerController(action, campaignId) {
 		if(!trackerURL) {
 			errors.push({field: 'tracker_url', message: SUGAR.language.translate('Campaigns', 'ERR_REQUIRED_TRACKER_URL')});
 		}
-		hideFieldErrorMessages();
+		// STIC-Custom 20250423 MHP - 
+		// Avoid running hideFieldErrorMessages() in the edit view of an email template
+		if (!document.forms.EditView || document.forms.EditView.module.value != 'EmailTemplates') {
+			hideFieldErrorMessages();
+		}
+		// END STIC-Custom
 		window.parent.$('.ui-dialog-content:visible').dialog('close');
 
 		$.post('index.php?entryPoint=campaignTrackerSave', {
@@ -455,7 +460,12 @@ function EmailTrackerController(action, campaignId) {
 				$('select[name="tracker_url"]').val('{' + trackerName + '}');
 				$('#url_text').val('{' + trackerName + '}');
 			}
-			setTrackerUrlSelectVisibility();
+			// STIC-Custom 20250423 MHP - 
+			// Avoid running hideFieldErrorMessages() in the edit view of an email template
+			if (!document.forms.EditView || document.forms.EditView.module.value != 'EmailTemplates') {
+				setTrackerUrlSelectVisibility();
+			}
+			// END STIC-Custom
 		});
 	}
 
@@ -544,7 +554,7 @@ function EmailTrackerController(action, campaignId) {
 				tinymce.activeEditor.setContent(fullHtml);
 			}
 			break;
-		// END Stic			
+		// END STIC-Custom			
 		case "create":
 			$('#url_text').val('');
 			$('#tracker_name').val('');
