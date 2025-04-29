@@ -2277,9 +2277,15 @@ class KReportQuery {
 
    function get_table_for_module($module) {
       global $beanList, $beanFiles;
-      require_once($beanFiles[$beanList[$module] ?? ''] ?? '');
-      $thisModule = !empty($beanList[$module]) ? new $beanList[$module] : null;
-      return is_object($thisModule) ? $thisModule->table_name : '';
+      if (isset($beanList[$module]) && !empty($beanList[$module]) && isset($beanFiles[$beanList[$module]])) {
+         require_once($beanFiles[$beanList[$module]]);
+
+         if (class_exists($beanList[$module])) {
+            $thisModule = new $beanList[$module];
+            return $thisModule->table_name;
+         }
+      }
+      return '';
    }
 
    /*
@@ -2290,11 +2296,17 @@ class KReportQuery {
       // if we do not have a path we have a fixed value field so do not return a name
       if ($path != '') {
          // normal processing
-         $thisAlias = (isset($this->joinSegments[$path]['object']) && $this->joinSegments[$path]['object']?->field_name_map[$field]['source'] === 'custom_fields') ? ($this->joinSegments[$path]['customjoin'] ?? '') : ($this->joinSegments[$path]['alias'] ?? '');
+         $thisAlias = (isset($this->joinSegments[$path]['object']) && 
+                       isset($this->joinSegments[$path]['object']->field_name_map[$field]['source']) && 
+                       $this->joinSegments[$path]['object']->field_name_map[$field]['source'] === 'custom_fields') 
+                     ? ($this->joinSegments[$path]['customjoin'] ?? '')
+                     : ($this->joinSegments[$path]['alias'] ?? '');
 
          global $beanList;
          // 2010-25-10 replace the -> object name with get_class function to handle also the funny aCase obejcts
-         $thisModule = is_object($this->joinSegments[$path]['object'] ?? null) ? array_search(get_class($this->joinSegments[$path]['object']), $beanList) : null;
+         $thisModule = (isset($this->joinSegments[$path]['object']) && is_object($this->joinSegments[$path]['object'])) 
+                     ? array_search(get_class($this->joinSegments[$path]['object']), $beanList) 
+                     : false;
 
          // bugfix 2011-03-21 moved up to allow proper value handling in tree
          // get the field details
