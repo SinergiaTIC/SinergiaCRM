@@ -949,8 +949,18 @@ class ExternalReporting
 
             if (!empty($autoRelationships)) {
                 foreach ($autoRelationships as $key => $value) {
+                    // Set mode for autorelationships (table or view) according to the module settings
+                    if (
+                        in_array($moduleName, $this->sdaSettings['publishAsTable'])
+                        || (!empty($this->sdaSettings['publishAsTable'][0]) && $this->sdaSettings['publishAsTable'][0] == '1')
+                    ) {
+                        $mode = 'TABLE';
+                    } else {
+                        $mode = 'VIEW';                      
+                    }
+
                     // Create the SQL instruction with some modifications for each autorelationship view
-                    $createViewQuery[] = "CREATE OR REPLACE VIEW {$viewName}_{$key} AS SELECT * FROM (SELECT   {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere}) a WHERE {$value['id_name']} !=''";
+                    $createViewQuery[] = "CREATE OR REPLACE {$mode} {$viewName}_{$key} AS SELECT * FROM (SELECT   {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere}) a WHERE {$value['id_name']} !=''";
                     
                 }
 
