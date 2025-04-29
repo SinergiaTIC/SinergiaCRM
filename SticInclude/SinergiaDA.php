@@ -1291,7 +1291,7 @@ class ExternalReporting
 
         $fieldsAvailable = array();
         //Iterate through the view definition panels
-        foreach ($viewdefs[$moduleName]['DetailView']['panels'] as $panel) {
+        foreach (($viewdefs[$moduleName]['DetailView']['panels'] ?? []) as $panel) {
             foreach ($panel as $row) {
                 foreach ($row as $fieldArray) {
                     if (isset($fieldArray['name'])) {
