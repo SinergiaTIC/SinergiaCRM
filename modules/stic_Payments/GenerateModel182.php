@@ -90,7 +90,7 @@ function model182T1($data) {
     $text .= SticUtils::fillLeft($data['decl_sustitutiva'], " ", 1);
     $text .= SticUtils::fillLeft($data['num_justificante_anterior'], 0, 13);
     $text .= SticUtils::fillLeft($data['num_total_registros_declarados'], 0, 9);
-    $text .= SticUtils::fillLeft(convertAmount($data['importe_donacion']), 0, 15);
+    $text .= SticUtils::fillLeft(convertAmount($data['importe_donacion'] ?? 0), 0, 15);
     $text .= SticUtils::fillLeft($data['naturaleza_decl'], " ", 1);
     $text .= ($data['nif_patrimonio_protegido'] == '' ? SticUtils::fillLeft($data['nif_patrimonio_protegido'], " ", 9) : SticUtils::fillLeft($data['nif_patrimonio_protegido'], 0, 9));
     $text .= SticUtils::fillRigth($data['patrimonio_protegido_apellido_1'] . " " . $data['patrimonio_protegido_apellido_2'] . " " . $data['patrimonio_protegido_nombre'], " ", 40);
@@ -113,11 +113,11 @@ function model182T2($data) {
     $text .= SticUtils::fillRigth(trim($data['nombre_fiscal']) ? trim($data['nombre_fiscal']) : (trim(trim(trim($data['declarado_apellido_1']) . " " . trim($data['declarado_apellido_2'])) . " " . trim($data['declarado_nombre']))), " ", 40);
     $text .= SticUtils::fillLeft($data['declarado_provincia'], 0, 2);
     $text .= SticUtils::fillLeft($data['clave'], " ", 1);
-    $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion']), 0, 5);
-    $text .= SticUtils::fillLeft(convertAmount($data['importe_donacion']), 0, 13);
+    $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion'] ?? 0), 0, 5);
+    $text .= SticUtils::fillLeft(convertAmount($data['importe_donacion'] ?? 0), 0, 13);
     $text .= SticUtils::fillLeft($data['kind'], " ", 1);
     $text .= SticUtils::fillLeft($data['deduccion_com_autonoma'], 0, 2);
-    $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion_com_autonoma']), 0, 5);
+    $text .= SticUtils::fillLeft(convertAmount($data['por_deduccion_com_autonoma'] ?? 0), 0, 5);
     $text .= SticUtils::fillLeft($data['naturaleza_declarado'], " ", 1);
     $text .= ' 0000';
     $text .= SticUtils::fillLeft("", " ", 21);
@@ -187,6 +187,7 @@ $sqlCurrentPayments = "SELECT p.id
                 AND (p.m182_excluded = 0 OR p.m182_excluded IS NULL)
                 AND p.deleted = 0";
 $currentPaymentResult = $db->query($sqlCurrentPayments);
+$paymentsIds = [];
 while ($row = $db->fetchByAssoc($currentPaymentResult)) {
     $paymentsIds[] = $row['id'];
 }
@@ -200,10 +201,9 @@ $GLOBALS['log']->info('[M182] ' . (is_array($paymentsIds) ? sizeof($paymentsIds)
 // The arrays indexes are the ids of accounts and contacts.
 $contacts = array();
 $accounts = array();
-$lastyearPayments = array();
+$yearPayments = array();
 
 // Process the selected payments
-$paymentsIds = is_array($paymentsIds) ? $paymentsIds : [];
 foreach ($paymentsIds as $id) {
 
     // For each payment get the associated contact/account
@@ -250,10 +250,16 @@ foreach ($paymentsIds as $id) {
     // Store the contacts in an array, the accounts in another one and the total amounts in a third one, classified by type of payment.
     if (isset($contactRow)) {
         $contacts[$contactRow['contact_id']] = $contactRow['contact_id'];
+        if (!isset($yearPayments[$contactRow['contact_id']])) {
+            $yearPayments[$contactRow['contact_id']] = [];
+        }
         $yearPayments[$contactRow['contact_id']][$contactRow['payment_type']] = ($yearPayments[$contactRow['contact_id']][$contactRow['payment_type']] ?? 0) + $contactRow['amount'];
     } elseif (isset($accountRow)) {
         $accounts[$accountRow['accountId']] = $accountRow['accountId'];
-        $yearPayments[$contactRow['accountId']][$contactRow['payment_type']] = ($yearPayments[$contactRow['accountId']][$contactRow['payment_type']] ?? 0) + $contactRow['amount'];
+        if (!isset($yearPayments[$accountRow['accountId']])) {
+            $yearPayments[$accountRow['accountId']] = [];
+        }
+        $yearPayments[$accountRow['accountId']][$accountRow['payment_type']] = ($yearPayments[$accountRow['accountId']][$accountRow['payment_type']] ?? 0) + $accountRow['amount'];
     }
 }
 
