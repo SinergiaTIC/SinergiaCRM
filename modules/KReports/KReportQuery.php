@@ -1227,7 +1227,7 @@ class KReportQuery {
                    'sqlFunction' => '',
                    'tablealias' => $this->rootGuid,
                    'fields_name_map_entry' => '',
-                   'type' => /* 'fixedvalue' */ (isset($this->joinSegments[$pathName]) ? ($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] == 'kreporter') ? $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype'] : $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type']  : 'fixedvalue'),
+                   'type' => /* 'fixedvalue' */ (isset($this->joinSegments[$pathName]) ? (($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] == 'kreporter') ? $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype'] : $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'])  : 'fixedvalue'),
                    'module' => $this->root_module,
                    'fields_name_map_entry' => (isset($this->joinSegments[$pathName]) ? $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]] : array()));
             }
