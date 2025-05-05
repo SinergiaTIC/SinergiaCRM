@@ -1348,7 +1348,7 @@ class KReportQuery {
       foreach ($this->whereGroupsArray as $whereGroupIndex => $thisWhereGroup) {
          $thisWhereString = '';
          // reset the Where fields and loop over all fields to see if any is in our group
-         reset($this->whereArray);
+         reset(is_array($this->whereArray) ? $this->whereArray : []);
          foreach ($this->whereArray as $thisWhere) {
             //2012-11-24 cater for a potential empty where string
             $tempWhereString = '';
