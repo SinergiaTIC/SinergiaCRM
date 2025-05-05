@@ -33,7 +33,7 @@ class stic_Web_FormsController extends SugarController
         $this->getFilteredParams();
 
         // The webFormClass attribute is necessary to load the appropriate driver, if it is empty it cannot be continued
-        if (($this->webFormClass ?? '') === '') {
+        if (empty($this->webFormClass)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Cannot set the module to map the fields");
             $this->no_action(); // Display the No Action screen
         }
