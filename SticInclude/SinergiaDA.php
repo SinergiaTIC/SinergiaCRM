@@ -414,6 +414,7 @@ class ExternalReporting
                         } else {
 
                             $relatedModuleName = $app_list_strings['moduleList'][$fieldV['module'] ?? ''] ?? '';
+
                             // The relationship between contacts and accounts does not have the 'link' property,
                             // which is necessary for retrieval of the relationship values, so we add it directly.
                             if ($fieldName == 'account_id' && $moduleName == 'Contacts') {
@@ -427,27 +428,40 @@ class ExternalReporting
                                 $joinLabel = translate($joinModuleRelLabel, $fieldV['module'] ?? '');
                                 $joinLabel = empty($joinLabel) || $joinLabel == $joinModuleRelLabel ? $txModuleName : $joinLabel;
 
-                                // Check if the relationship is with the same module
+                                // Check if the relationship is an autorelationship & prepare autorelationship data for use later
                                 if ($fieldV['module'] == $moduleName) {
-                                    $isAutoRelationship = true;
-                                    $autoRelJoinModuleRelLabel = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE';
-                                    $autoRelJoinLabel = translate($autoRelJoinModuleRelLabel, $fieldV['module'] ?? '');
-                                    $autoRelJoinLabel = empty($autoRelJoinLabel) || $autoRelJoinLabel == $autoRelJoinModuleRelLabel ? $txModuleName : $autoRelJoinLabel;
-                                    $fieldV['joinLabel'] = $autoRelJoinLabel;
+                                    $fieldV['isAutoRelationship'] = true;
+                                    $fieldV['rLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE', $fieldV['module']);
+                                    $fieldV['lLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_L_TITLE', $fieldV['module']);
+                                    $fieldV['autoRelJoinModuleRelLabel'] = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE';
                                     $autoRelationships[$fieldV['link']] = $fieldV;
                                     $this->autoRelationshipsRegistered[$fieldV['link']] = $fieldV['table'];
                                 }
 
-                                $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel, $isAutoRelationship);
+                                $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel, $fieldV['isAutoRelationship']);
 
                                 if (empty($res)) {
                                     continue 2;
                                 }
 
                                 $fieldSrc = " IFNULL({$res['field']},'') ";
-                                $leftJoins .= "\n\t{$res['leftJoin']} ";
+
+                                // Prepare parent_id field for autorelationships
+                                if (isset($res['fieldForAutoRelationshipsNSide'])) {
+                                    $autoRelationships[$fieldV['link']]['parentIdfieldSrc'] = ", IFNULL({$res['fieldForAutoRelationshipsNSide']},'') as parent_id";
+                                }
+
+                                // Common left join for all relationships
+                                if (!empty($res['leftJoin'])) {
+                                    $leftJoins .= "\n\t{$res['leftJoin']} ";
+                                }
 
                                 $fieldV['alias'] = substr($fieldV['id_name'], 0, 64);
+
+                                // Inner join for autorelationships N side
+                                if (!empty($res['innerJoinForAutoRelationshipsNSide'])) {
+                                    $autoRelationships[$fieldV['link']]['innerJoin'] = "{$res['innerJoinForAutoRelationshipsNSide']} ";
+                                }
 
                                 if (in_array($fieldV['alias'], $usedAlias)) {
                                     $relName = $fieldV['link'];
@@ -849,10 +863,11 @@ class ExternalReporting
             );
 
             // Add auto relationships metadata if exists
+            unset($qualifiedLabel);
             if (!empty($autoRelationships)) {
                 foreach ($autoRelationships as $key => $value) {
-                    if ($txModuleName != $value['joinLabel']) {
-                        $qualifiedLabel = "{$txModuleName} ({$value['joinLabel']})";
+                    if ($txModuleName != $value['rLabel']) {
+                        $qualifiedLabel = "{$txModuleName} ({$value['rLabel']})";
                     } else {
                         $qualifiedLabel = "{$txModuleName} ({$value['label']})";
                     }
@@ -947,6 +962,7 @@ class ExternalReporting
             // Create the SQL instruction with the pieces created above for main module view
             $createViewQuery[] = "{$createViewQueryHeader}  {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere} {$createViewQueryGroupBy}";
 
+            // Process autorelationships
             if (!empty($autoRelationships)) {
                 foreach ($autoRelationships as $key => $value) {
                     // Set mode for autorelationships (table or view) according to the module settings
@@ -956,12 +972,16 @@ class ExternalReporting
                     ) {
                         $mode = 'TABLE';
                     } else {
-                        $mode = 'VIEW';                      
+                        $mode = 'VIEW';
                     }
 
                     // Create the SQL instruction with some modifications for each autorelationship view
-                    $createViewQuery[] = "CREATE OR REPLACE {$mode} {$viewName}_{$key} AS SELECT * FROM (SELECT   {$createViewQueryFields} {$createViewQueryFrom} {$createViewQueryLeftJoins} {$createViewQueryWhere}) a WHERE {$value['id_name']} !=''";
-                    
+                    $createViewQuery[] = "CREATE OR REPLACE {$mode} {$viewName}_{$key} AS
+                    SELECT   {$createViewQueryFields} {$value['parentIdfieldSrc']}
+                    {$createViewQueryFrom}
+                    {$createViewQueryLeftJoins} {$value['innerJoin']}
+                    {$createViewQueryWhere}";
+
                 }
 
                 // Add sda_def_columns metadata record for auto relationships
@@ -1006,8 +1026,8 @@ class ExternalReporting
         // We create the views Join Multienum, right now that we already have all the views and the complete metadata table.
         $this->createMultiEnumJoinViews();
 
-        // Clone the permissions records for autorelationships  
-        $this ->clonePermissionRecordsForAutorelationships();
+        // Clone the permissions records for autorelationships
+        $this->clonePermissionRecordsForAutorelationships();
 
         $this->checkSdaColumns();
         $this->checkSdaTablesInViews();
@@ -1017,7 +1037,7 @@ class ExternalReporting
         }
 
         $this->info .= '<script>
-        // Selecciona todos los elementos li con el atributo module
+        // select all li elements with the attribute module
         var liElements = document.querySelectorAll("li[module]");
 
         // Recorre todos los elementos li seleccionados
@@ -1196,29 +1216,52 @@ class ExternalReporting
                 if ($isAutoRelationship !== true) {
                     $targetTable = "{$this->viewPrefix}_{$field['table']}";
                     $label = "{$field['label']}|{$tableLabel}";
+
+                    // Add metadata record
+                    $this->addMetadataRecord(
+                        'sda_def_relationships',
+                        [
+                            'id' => $field['link'],
+                            'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
+                            'source_column' => $field['id_name'],
+                            'target_table' => $targetTable,
+                            'target_column' => 'id',
+                            'info' => 'link_lhs' . ($isAutoRelationship ? '_auto_relationship' : ''),
+                            'label' => $label,
+                        ]
+                    );
+
+                    return [
+                        'field' => "{$rel['join_table']}.{$rel['join_key_lhs']}",
+                        'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
+                    ];
                 } else {
                     $targetTable = "{$this->viewPrefix}_{$field['table']}_{$field['link']}";
                     $label = "{$tableLabel} ({$field['joinLabel']})|{$tableLabel}";
+
+                    // Add metadata record
+                    $this->addMetadataRecord(
+                        'sda_def_relationships',
+                        [
+                            'id' => $field['link'],
+                            'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
+                            'source_column' => $field['id_name'],
+                            'target_table' => $targetTable,
+                            'target_column' => 'id',
+                            'info' => 'link_lhs' . ($isAutoRelationship ? '_auto_relationship' : ''),
+                            'label' => $label,
+                        ]
+                    );
+
+                    return [
+                        'field' => " NULL ",
+                        'leftJoin' => "  ",
+                        'innerJoinForAutoRelationshipsNSide' => " INNER JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_lhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
+                        'fieldForAutoRelationshipsNSide' => "{$rel['join_table']}.{$rel['join_key_rhs']}",
+                    ];
+
                 }
 
-                // Add metadata record
-                $this->addMetadataRecord(
-                    'sda_def_relationships',
-                    [
-                        'id' => $field['link'],
-                        'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
-                        'source_column' => $field['id_name'],
-                        'target_table' => $targetTable,
-                        'target_column' => 'id',
-                        'info' => 'link_lhs' . ($isAutoRelationship ? '_auto_relationship' : ''),
-                        'label' => $label,
-                    ]
-                );
-
-                return [
-                    'field' => "{$rel['join_table']}.{$rel['join_key_lhs']}",
-                    'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
-                ];
             } elseif (!empty($rel['rhs_module']) && !empty($field['module']) && $rel['rhs_module'] == $field['module']) {
                 // Current module is on the right side
 
@@ -2118,13 +2161,13 @@ class ExternalReporting
     }
 
 
-    
+
     /**
      * Clones permission records for auto-relationships.
      *
      * This method iterates through the registered auto-relationships and clones
-     * the permission records from the `sda_def_permissions` table for each 
-     * relationship. The cloned records will have their `table` field updated to 
+     * the permission records from the `sda_def_permissions` table for each
+     * relationship. The cloned records will have their `table` field updated to
      * include the relationship name and their `id` field set to null.
      *
      * @return void
