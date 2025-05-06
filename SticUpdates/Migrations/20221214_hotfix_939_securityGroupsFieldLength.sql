@@ -1,1 +1,0 @@
-ALTER TABLE `securitygroups_records` CHANGE `module` `module` VARCHAR(100) NULL DEFAULT NULL;
