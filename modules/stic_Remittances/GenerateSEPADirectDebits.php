@@ -33,7 +33,8 @@
  * from which this function is invoked, including the View and the Bean of the remittance
  * @return void
  */
-function generateSEPADirectDebits($remittance) {
+function generateSEPADirectDebits($remittance)
+{
 
     require_once 'SticInclude/vendor/php-iban/php-iban.php';
     require_once 'modules/stic_Settings/Utils.php';
@@ -72,16 +73,22 @@ function generateSEPADirectDebits($remittance) {
     // Join SEPA & GENERAL Settings
     $directDebitsVars = array_merge($sepaSettingsTemp, $generalSettingsTemp);
 
+    // Get Issuing Organization Suffix
+    $orgKey = $remittance->bean->issuing_organization;
+    if (!empty($orgKey)) {
+        $orgKey = "_".$orgKey;
+    }
+
     // Check empty settings
     $needingSetting = array(
-        'GENERAL_ORGANIZATION_NAME',
-        'SEPA_DEBIT_CREDITOR_IDENTIFIER',
-        'SEPA_DEBIT_DEFAULT_REMITTANCE_INFO',
+        'GENERAL_ORGANIZATION_NAME'.$orgKey,
+        'SEPA_DEBIT_CREDITOR_IDENTIFIER'.$orgKey,
+        'SEPA_DEBIT_DEFAULT_REMITTANCE_INFO'.$orgKey,
     );
 
     // If so indicated in the CRM configuration, we include the SEPA_BIC_CODE
-    if ($directDebitsVars['SEPA_DEBIT_BIC_MODE'] == 1) {
-        array_push($needingSetting, "SEPA_BIC_CODE");
+    if ($directDebitsVars['SEPA_DEBIT_BIC_MODE'.$orgKey] == 1) {
+        array_push($needingSetting, "SEPA_BIC_CODE".$orgKey);
     }
 
     $missingSettings = array();
@@ -95,13 +102,16 @@ function generateSEPADirectDebits($remittance) {
         SticUtils::showErrorMessagesAndDie($remittance, $mod_strings['LBL_MISSING_SEPA_VARIABLES'] . ' <br>' . join('<br>', $missingSettings));
     }
 
+   // Truncate GENERAL_ORGANIZATION_NAME to 70 characters as allowed
+   $directDebitsVars['GENERAL_ORGANIZATION_NAME'.$orgKey] = substr($directDebitsVars['GENERAL_ORGANIZATION_NAME'.$orgKey],0,70);
+
     $message = new SEPAMessage('urn:iso:std:iso:20022:tech:xsd:pain.008.001.02');
 
     // Header of the remittance
     $groupHeader = new SEPAGroupHeader(); // (1..1)
     $groupHeader->setMessageIdentification('SEPA' . time()); // Unique ID for this job
-    $groupHeader->setInitiatingPartyId($directDebitsVars['SEPA_DEBIT_CREDITOR_IDENTIFIER']); // ID of the party sending the job. Usually the creditor
-    $groupHeader->setInitiatingPartyName(mb_substr(trim(SticUtils::cleanText($directDebitsVars['GENERAL_ORGANIZATION_NAME'])), 0, 70, 'UTF-8')); // Name of the party sending the job. Usually the creditor
+    $groupHeader->setInitiatingPartyId($directDebitsVars['SEPA_DEBIT_CREDITOR_IDENTIFIER'.$orgKey]); // ID of the party sending the job. Usually the creditor
+    $groupHeader->setInitiatingPartyName(mb_substr(trim(SticUtils::cleanText($directDebitsVars['GENERAL_ORGANIZATION_NAME'.$orgKey])), 0, 70, 'UTF-8')); // Name of the party sending the job. Usually the creditor
     $message->setGroupHeader($groupHeader);
 
     $paymentInfo = new SEPAPaymentInfo(); // (1..n)
@@ -168,6 +178,10 @@ function generateSEPADirectDebits($remittance) {
 
         // 1) That the person / organization exists and has a name / surname
         $debtorName = '';
+        
+        // Error and warning messages
+        $errorMsg = '';
+        $warningMsg = '';
 
         // If the debtor is a person
         if ($contact) {
@@ -194,10 +208,11 @@ function generateSEPADirectDebits($remittance) {
         !verify_iban($paymentResult['bank_account'], true) === true ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_INVALID_IBAN'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 4) That the mandate is set and is valid
-        empty($paymentResult['mandate']) || $paymentResult['mandate'] == '' || strlen($paymentResult['mandate']) > 35 ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_MANDATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
+        empty($paymentResult['mandate']) || $paymentResult['mandate'] == '' || strlen($paymentResult['mandate']) > 35 || strpos($paymentResult['mandate'], ' ') !== false ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_MANDATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
-        // 5) That the date of signature of the mandate exists
-        $sqlSignatureDate = "SELECT
+        // 5) That the related Payment Commitment exists
+        $sqlPC = "SELECT
+                                fp.id,
                                 fp.signature_date
                             FROM
                                 stic_payment_commitments fp
@@ -207,10 +222,15 @@ function generateSEPADirectDebits($remittance) {
                                 fpp.stic_payments_stic_payment_commitmentsstic_payments_idb = '{$paymentResult['id']}'
                                 and fp.deleted = 0
                                 and fpp.deleted = 0";
-        $signatureDate = $db->getOne($sqlSignatureDate);
-        empty($signatureDate) || $signatureDate == '' ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
-        // 6) That the status is not "paid"
+        $PCRow = $db->fetchOne($sqlPC);
+        empty($PCRow['id']) ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
+
+        // 6) That the date of signature of the mandate exists (and PC exists)
+        $signatureDate = $PCRow['signature_date'];
+        !empty($PCRow['id']) && (empty($signatureDate) || $signatureDate == '') ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
+
+        // 7) That the status is not "paid"
         $paymentResult['status'] == 'paid' ? $warningMsg .= '<p class="msg-warning">' . $mod_strings['LBL_SEPA_INVALID_STATUS'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : null;
 
         // Set explicit var to generate/not generate XML in case of fatal errors in any payment
@@ -240,7 +260,7 @@ function generateSEPADirectDebits($remittance) {
 
             // We establish the concept of the receipt
             if (empty($paymentResult['banking_concept'])) {
-                $finalConcept = $directDebitsVars['SEPA_DEBIT_DEFAULT_REMITTANCE_INFO'];
+                $finalConcept = $directDebitsVars['SEPA_DEBIT_DEFAULT_REMITTANCE_INFO'.$orgKey];
             } else {
                 $finalConcept = $paymentResult['banking_concept'];
             }
@@ -289,16 +309,16 @@ function generateSEPADirectDebits($remittance) {
         $paymentInfo->setBatchBooking('false');
         $paymentInfo->setLocalInstrumentCode('CORE'); // Other options: COR1, B2B
         $paymentInfo->setSequenceType('RCUR');
-        $paymentInfo->setCreditorSchemeIdentification($directDebitsVars['SEPA_DEBIT_CREDITOR_IDENTIFIER']);
+        $paymentInfo->setCreditorSchemeIdentification($directDebitsVars['SEPA_DEBIT_CREDITOR_IDENTIFIER'.$orgKey]);
         $paymentInfo->setRequestedCollectionDate(date('Y-m-d', strtotime(str_replace('/', '-', $remittance->bean->charge_date)))); //Fecha de cargo del fichero
 
         // Creditor data (organization that issues receipts)
-        $paymentInfo->setCreditorName(mb_substr(trim($directDebitsVars['GENERAL_ORGANIZATION_NAME']), 0, 70, 'UTF-8'));
+        $paymentInfo->setCreditorName(mb_substr(trim($directDebitsVars['GENERAL_ORGANIZATION_NAME'.$orgKey]), 0, 70, 'UTF-8'));
         $paymentInfo->setCreditorAccountIBAN($remittance->bean->bank_account);
 
         // If so indicated in the CRM configuration, we include the BIC
-        if ($directDebitsVars['SEPA_DEBIT_BIC_MODE'] == 1) {
-            $paymentInfo->setCreditorAgentBIC($directDebitsVars['SEPA_BIC_CODE']);
+        if ($directDebitsVars['SEPA_DEBIT_BIC_MODE'.$orgKey] == 1) {
+            $paymentInfo->setCreditorAgentBIC($directDebitsVars['SEPA_BIC_CODE'.$orgKey]);
         }
 
         // We generate the downloadable file in XML format

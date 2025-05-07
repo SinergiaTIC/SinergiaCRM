@@ -46,6 +46,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
      * ListView for the subpanel- list of many objects
      * @api
      */
+    #[\AllowDynamicProperties]
     class ListViewSubPanel extends ListView
     {
         protected $smartyTemplate;
@@ -140,7 +141,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
             $html_var = $this->subpanel_module . "_CELL";
 
             $list_data = $this->processUnionBeans($sugarbean, $subpanel_def, $html_var, $countOnly);
-            
+
             if ($countOnly) {
                 return $list_data;
             }
@@ -495,11 +496,19 @@ if (!defined('sugarEntry') || !sugarEntry) {
                                         $widget_contents[$aVal][$field_name] = '&nbsp;';
                                     }
                                 } elseif (preg_match("/button/i", $list_field['name'])) {
-                                    if ((($list_field['name'] === 'edit_button' && $field_acl['EditView']) || ($list_field['name'] === 'close_button' && $field_acl['EditView']) || ($list_field['name'] === 'remove_button' && $field_acl['EditView'])) && '' != ($_content = $layout_manager->widgetDisplay($list_field))) {
+                                    // STIC-Custom 20240214 JBL - QuickEdit view
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+                                    // if ((($list_field['name'] === 'edit_button' && $field_acl['EditView']) || ($list_field['name'] === 'close_button' && $field_acl['EditView']) || ($list_field['name'] === 'remove_button' && $field_acl['EditView'])) && '' != ($_content = $layout_manager->widgetDisplay($list_field))) {
+                                    if ((($list_field['name'] === 'edit_button' && $field_acl['EditView']) || ($list_field['name'] === 'quickedit_button' && $field_acl['EditView']) || ($list_field['name'] === 'close_button' && $field_acl['EditView']) || ($list_field['name'] === 'remove_button' && $field_acl['EditView'])) && '' != ($_content = $layout_manager->widgetDisplay($list_field))) {
+                                    // END STIC-Custom
                                         $button_contents[$aVal][] = $_content;
                                         unset($_content);
                                     } else {
-                                        $doNotProcessTheseActions = array("edit_button", "close_button","remove_button");
+                                        // STIC-Custom 20240214 JBL - QuickEdit view
+                                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+                                        // $doNotProcessTheseActions = array("edit_button", "close_button","remove_button");
+                                        $doNotProcessTheseActions = array("edit_button", "quickedit_button", "close_button","remove_button");
+                                        // END STIC-Custom
                                         if (!in_array($list_field['name'], $doNotProcessTheseActions) && '' != ($_content = $layout_manager->widgetDisplay($list_field))) {
                                             $button_contents[$aVal][] = $_content;
                                             unset($_content);
@@ -541,7 +550,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
             if (!isset($current_offset) || empty($current_offset)) {
                 $current_offset=0;
             }
-            $start_record = $current_offset + 1;
+            // STIC Custom 20250403 JBL - Fix Uncaught TypeError when $current_offset is not an int
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $start_record = $current_offset + 1;
+            $start_record = (int)$current_offset + 1;
+            // END STIC Custom
 
             if (!is_numeric($col_count)) {
                 $col_count = 20;

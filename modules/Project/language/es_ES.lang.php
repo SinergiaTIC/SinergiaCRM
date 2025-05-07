@@ -48,7 +48,7 @@ $mod_strings = array(
     'LBL_SEARCH_FORM_TITLE' => 'Búsqueda de Proyectos',
     'LBL_LIST_FORM_TITLE' => 'Lista de Proyectos',
     'LBL_HISTORY_TITLE' => 'Historial',
-    'LBL_ID' => 'Identificación:',
+    'LBL_ID' => 'ID:',
     'LBL_DATE_ENTERED' => 'Fecha de Creación:',
     'LBL_DATE_MODIFIED' => 'Fecha Modificación:',
     'LBL_ASSIGNED_USER_ID' => 'Asignado a:',
@@ -176,4 +176,6 @@ $mod_strings = array(
     'LBL_AM_PROJECTTEMPLATES_PROJECT_1_FROM_PROJECT_TITLE' => 'Plantilla de proyecto: Proyecto a partir del nombre del proyecto',
     'LBL_AOS_QUOTES_PROJECT' => 'Presupuestos: Proyecto',
 
+    'LBL_ASCENDING' => 'Ascendente',
+    'LBL_DESCENDING' => 'Descendente',
 );

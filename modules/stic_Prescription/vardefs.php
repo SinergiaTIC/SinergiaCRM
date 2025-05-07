@@ -46,7 +46,8 @@ $dictionary['stic_Prescription'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'size' => '20',
-    'enable_range_search' => false,
+    'options' => 'date_range_search_dom',
+    'enable_range_search' => 1,
   ),
   'end_date' => 
   array (
@@ -67,7 +68,8 @@ $dictionary['stic_Prescription'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'size' => '20',
-    'enable_range_search' => false,
+    'options' => 'date_range_search_dom',
+    'enable_range_search' => 1,
   ),
   'active' => 
   array (
@@ -440,6 +442,8 @@ $dictionary['stic_Prescription'] = array(
 ),
     'optimistic_locking' => true,
     'unified_search' => true,
+    'full_text_search' => false,    
+    'unified_search_default_enabled' => false,    
 );
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');

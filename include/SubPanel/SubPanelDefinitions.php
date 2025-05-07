@@ -259,10 +259,16 @@ class aSubPanel
         // STIC#1157
         global $dictionary;
 
-        $relationshipType = $dictionary[$this->name]['true_relationship_type'];
+        $relationshipType = $dictionary[$this->name]['true_relationship_type'] ?? null;
         // if($relationshipType == 'one-to-many') {
         if($relationshipType == 'one-to-many' || $relationshipType == 'many-to-one') {
-            $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
+            // STIC-Custom JBL 20240123: Don't show button in Custom views
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/73
+            // $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
+            if(!isset($this->parent_bean->show_SubPanelTopButtonListView) || $this->parent_bean->show_SubPanelTopButtonListView) {
+                $buttons[] = array('widget_class' => 'SubPanelTopButtonListView');
+            }
+            // END STIC-Custom
         }
         // END STIC-Custom
 
@@ -434,7 +440,8 @@ class aSubPanel
 
     public function isDatasourceFunction()
     {
-        if (strpos($this->get_inst_prop_value('get_subpanel_data'), 'function') === false) {
+        $subpanelData = $this->get_inst_prop_value('get_subpanel_data') ?? '';
+        if (strpos($subpanelData, 'function') === false) {
             return false ;
         }
         return true ;

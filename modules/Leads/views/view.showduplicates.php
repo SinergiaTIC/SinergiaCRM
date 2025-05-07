@@ -48,6 +48,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * This is the SugarView subclass to handle displaying the list of duplicate Leads found when attempting to create
  * a new Lead.  This class is called from the LeadFormBase class handleSave function.
  */
+#[\AllowDynamicProperties]
 class ViewShowDuplicates extends SugarView
 {
     public function display()
@@ -77,9 +78,18 @@ class ViewShowDuplicates extends SugarView
         $GLOBALS['check_notify'] = false;
 
         $query = 'SELECT id, first_name, last_name, title FROM leads WHERE deleted=0 ';
+        // STIC-Custom 20240312 JBL - Allow Custom duplicate Queries
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/164
+        if(file_exists("custom/modules/Leads/sticLeadsDuplicateQueries.php")) {
+            require_once("custom/modules/Leads/sticLeadsDuplicateQueries.php");
+            if(method_exists("sticLeadsDuplicateQueries", "getShowDuplicateQuery")) {
+                $query = sticLeadsDuplicateQueries::getShowDuplicateQuery();
+            }
+        }
+        // END STIC-Custom
 
         $duplicates = $_POST['duplicate'];
-        $count = count($duplicates);
+        $count = is_countable($duplicates) ? count($duplicates) : 0;
         $db = DBManagerFactory::getInstance();
         if ($count > 0) {
             $query .= "and (";
@@ -108,13 +118,13 @@ class ViewShowDuplicates extends SugarView
         $input = '';
         foreach ($lead->column_fields as $field) {
             if (!empty($_POST['Leads'.$field])) {
-                $input .= "<input type='hidden' name='$field' value='${_POST['Leads'.$field]}'>\n";
+                $input .= "<input type='hidden' name='$field' value='{$_POST['Leads'.$field]}'>\n";
             }
         }
 
         foreach ($lead->additional_column_fields as $field) {
             if (!empty($_POST['Leads'.$field])) {
-                $input .= "<input type='hidden' name='$field' value='${_POST['Leads'.$field]}'>\n";
+                $input .= "<input type='hidden' name='$field' value='{$_POST['Leads'.$field]}'>\n";
             }
         }
 

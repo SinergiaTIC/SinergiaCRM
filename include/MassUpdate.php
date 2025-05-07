@@ -48,6 +48,7 @@ require_once('include/EditView/EditView2.php');
  * MassUpdate class for updating multiple records at once
  * @api
  */
+#[\AllowDynamicProperties]
 class MassUpdate
 {
     /*
@@ -184,7 +185,7 @@ eoq;
                 if (empty($value)) {
                     unset($_POST[$post]);
                 }
-            } elseif (strlen($value) == 0) {
+            } elseif (strlen((string) $value) == 0) {
                 if (isset($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post])) {
                     $_POST[$post] = '';
                 } else {
@@ -219,7 +220,10 @@ eoq;
                     // STIC-Custom 20230519 PCS - Enabling massupdate for dynamicenum
                     // STIC#1109
                     // || ($this->sugarbean->field_defs[$post]['type'] == 'enum' && $value == '__SugarMassUpdateClearField__') // Set to '' if it's an explicit clear
-                    || (($this->sugarbean->field_defs[$post]['type'] == 'enum' || $this->sugarbean->field_defs[$post]['type'] == 'dynamicenum') && $value == '__SugarMassUpdateClearField__') // Set to '' if it's an explicit clear
+                    // Stic-Custom EPS 20241005 - Mass update on multienum was not cleaning the field
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/472
+                    // || (($this->sugarbean->field_defs[$post]['type'] == 'enum' || $this->sugarbean->field_defs[$post]['type'] == 'dynamicenum') && $value == '__SugarMassUpdateClearField__') // Set to '' if it's an explicit clear
+                    || ((in_array($this->sugarbean->field_defs[$post]['type'], array('enum', 'dynamicenum', 'multienum'))) && $value == '__SugarMassUpdateClearField__') // Set to '' if it's an explicit clear
                     //END STIC-Custom
                 ) {
                     $_POST[$post] = '';
@@ -237,6 +241,12 @@ eoq;
                     $_POST[$post] = $timedate->to_db($_POST[$post]);
                 }
             }
+            // Stic-Custom EPS 20241005 - Mass update on multienum was not cleaning the field
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/472
+            else if(is_array($value) && count($value) === 1 && !empty($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'multienum' && $value[0] == '__SugarMassUpdateClearField__') {
+                $_POST[$post] = '';
+            }
+            // END STic-Custom
         }
 
         //We need to disable_date_format so that date values for the beans remain in database format
@@ -348,7 +358,7 @@ eoq;
                         // STIC-Custom - 20220704 - JCH - Add mass duplicate & update logic
                         // STIC#828  
                         // In mass duplicate and update the parent_type value might be stored for later use
-                        if($_REQUEST['mass_duplicate'] == 1 && !empty($newbean->parent_type))
+                        if(!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == 1 && !empty($newbean->parent_type))
                         {
                             $currentParentType = $newbean->parent_type;
                         }
@@ -413,15 +423,12 @@ eoq;
                                     $parentenum_value = $newbean->$parentenum_name;
 
                                     $dynamic_field_name = $field_name['name'];
-                                    // Dynamic field set value.
-                                    list($dynamic_field_value) = explode('_', $newbean->$dynamic_field_name);
 
-                                    if ($parentenum_value != $dynamic_field_value) {
-
+                                    if (strpos($newbean->$dynamic_field_name, $parentenum_value) !== 0) {
                                         // Change to the default value of the correct value set.
                                         $defaultValue = '';
                                         foreach ($app_list_strings[$field_name['options']] as $key => $value) {
-                                            if (strpos($key, $parentenum_value) === 0) {
+                                            if (strpos((string) $key, (string) $parentenum_value) === 0) {
                                                 $defaultValue = $key;
                                                 break;
                                             }
@@ -435,7 +442,7 @@ eoq;
                         // STIC-Custom - 20220704 - JCH - Add mass duplicate & update logic
                         // STIC#776  
                         // STIC#828  
-                        if($_REQUEST['mass_duplicate'] == 1){
+                        if(!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == 1){
                             
                             // Get current id for use later
                             $fromId = $newbean->id;
@@ -452,7 +459,7 @@ eoq;
                             $newbean->fromId=$fromId;
 
                             // Inherit parent record (for flex relate fields)
-                            if(empty($_REQUEST['parent_id'])){
+                            if(empty($_REQUEST['parent_id']) && !empty($currentParentType)){
                                 $newbean->parent_type = $currentParentType;
                             }
 
@@ -461,14 +468,18 @@ eoq;
                                 return in_array($k['type'], ['decimal', 'currency', 'float']);
                             }, ARRAY_FILTER_USE_BOTH);
                             foreach ($decimalFields as $key => $value) {
-                               $newbean->$key = (float) number_format($newbean->$key, $value['precision'] ?? 2, '.', '');
+                                // STIC Custom 20250206 JBL - Avoid Uncaught TypeError in number_format
+                                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                                // $newbean->$key = (float) number_format($newbean->$key, $value['precision'] ?? 2, '.', '');
+                                $newbean->$key = (float) number_format((float) $newbean->$key, $value['precision'] ?? 2, '.', '');
+                                // End STIC Custom
                             }
                             
                             // A new record shouldn't have a fetched row
                             unset($newbean->fetched_row);
                             
                             // If requested by user, remove name to rebuild it automatically
-                            if($_REQUEST['remove_name'] == true){
+                            if(isset($_REQUEST['remove_name']) &&  $_REQUEST['remove_name'] == true){
                                 $newbean->name = '';
                             }
                 
@@ -674,7 +685,11 @@ eoq;
                             break;
                         case "datetimecombo":
                             $even = !$even;
-                            $newhtml .= $this->addDatetime($displayname, $field["name"]);
+                            // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
+                            // $newhtml .= $this->addDatetime($displayname, $field["name"]);
+                            $newhtml .= $this->addDatetime($displayname, $field["name"],$field["display_default"] ?? null);
+                            // END STIC-Custom
                             break;
                         case "datetime":
                         case "date":
@@ -925,7 +940,7 @@ EOJS;
         $types = get_select_options_with_id($parent_types, '');
         //BS Fix Bug 17110
         $pattern = "/\n<OPTION.*" . $app_strings['LBL_NONE'] . "<\/OPTION>/";
-        $types = preg_replace($pattern, "", $types);
+        $types = preg_replace($pattern, "", (string) $types);
         // End Fix
 
         $json = getJSONobj();
@@ -1382,7 +1397,7 @@ EOQ;
         $javascriptend = <<<EOQ
 		 <script type="text/javascript">
 		Calendar.setup ({
-			inputField : "${varname}jscal_field", daFormat : "$cal_dateformat", ifFormat : "$cal_dateformat", showsTime : false, button : "${varname}jscal_trigger", singleClick : true, step : 1, startWeekday: $cal_fdow, weekNumbers:false
+			inputField : "{$varname}jscal_field", daFormat : "$cal_dateformat", ifFormat : "$cal_dateformat", showsTime : false, button : "{$varname}jscal_trigger", singleClick : true, step : 1, startWeekday: $cal_fdow, weekNumbers:false
 		});
 		</script>
 EOQ;
@@ -1413,6 +1428,7 @@ EOQ;
 
     public function addRadioenum($displayname, $varname, $options)
     {
+        $_html_result = [];
         foreach ($options as $_key => $_val) {
             $_html_result[] = $this->addRadioenumItem($varname, $_key, $_val);
         }
@@ -1428,22 +1444,30 @@ EOQ;
      * @param displayname Name to display in the popup window
      * @param varname name of the variable
      */
-    public function addDatetime($displayname, $varname)
+    // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
+    // public function addDatetime($displayname, $varname)
+    public function addDatetime($displayname, $varname, $fieldtimeformat)
     {
+    // END STIC-Custom
         global $timedate, $app_strings, $app_list_strings, $theme, $current_user;
         // STIC-Custom 20220224 AAM - Adding slashes to avoid sintax error with single quotes. Replicating solution as in addDate() function
         // STIC#617/
         $displayname = addslashes($displayname);
-        // END STIC
+        // END STIC-Custom
         $userformat = $timedate->get_user_time_format();
         $cal_dateformat = $timedate->get_cal_date_format();
 	    $cal_fdow = $current_user->get_first_day_of_week() ? $current_user->get_first_day_of_week() : '0';
 
         $javascriptend = <<<EOQ
-		 
+
 	<span id="{$varname}_trigger" class="suitepicon suitepicon-module-calendar" onclick="return false;"></span>
 EOQ;
-        $dtscript = getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
+        // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
+        // $dtscript = getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
+        $dtscript = getVersionedScript('custom/include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
+        // END STIC-Custom
         $html = <<<EOQ
 		<td scope="row" width="20%">$displayname</td>
 		<td class='dataField' width="30%"><input onblur="parseDate(this, '$cal_dateformat')" type="text" name='$varname' size="12" id='{$varname}_date' maxlength='10' value="">
@@ -1454,7 +1478,11 @@ EOQ;
 		<input type="hidden" id="{$varname}" name="{$varname}">
 		$dtscript
 		<script type="text/javascript">
-		var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1);
+        // STIC-Custom 20240122 PCS - Mass update datetime sensitivity same as EditView
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/79
+        // var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1,);
+		var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1,"$fieldtimeformat");
+        // END STIC-Custom
 		//Render the remaining widget fields
 		text = combo_{$varname}.html('');
 		document.getElementById('{$varname}_time_section').innerHTML = text;
@@ -1557,8 +1585,8 @@ EOQ;
 
     public function checkClearField($field, $value)
     {
-        if ($value == 1 && strpos($field, '_flag')) {
-            $fName = substr($field, -5);
+        if ($value == 1 && strpos((string) $field, '_flag')) {
+            $fName = substr((string) $field, -5);
             if (isset($this->sugarbean->field_defs[$field]['group'])) {
                 $group = $this->sugarbean->field_defs[$field]['group'];
                 if (isset($this->sugarbean->field_defs[$group])) {
@@ -1580,7 +1608,7 @@ EOQ;
                 //So currently massupdate will not gernerate the where sql. It will use the sql stored in the SESSION. But this will cause bug 24722, and it cannot be avoided now.
                 $where = $_SESSION['export_where'];
                 $whereArr = explode(" ", trim($where));
-                if ($whereArr[0] == trim('where')) {
+                if ($whereArr[0] === trim('where')) {
                     $whereClean = array_shift($whereArr);
                 }
                 $this->where_clauses = implode(" ", $whereArr);
@@ -1619,7 +1647,7 @@ EOQ;
         $searchForm->populateFromArray($query, null, true);
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
-        if (count($where_clauses) > 0) {
+        if ((is_countable($where_clauses) ? count($where_clauses) : 0) > 0) {
             $this->where_clauses = '(' . implode(' ) AND ( ', $where_clauses) . ')';
             $GLOBALS['log']->info("MassUpdate Where Clause: {$this->where_clauses}");
         } else {

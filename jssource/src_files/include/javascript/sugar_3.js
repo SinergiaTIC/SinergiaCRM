@@ -821,8 +821,16 @@ function add_error_style(formname, input, txt, flash) {
       // }
       if (typeof window[formname + "_tabs"] != "undefined") {
         if ($(".validation-message")) {
+          // STIC-Custom - 20240215 - JBL - Do not show hidden tabs without errors
+          // https://github.com/SinergiaTIC/SinergiaCRM/pull/119
           // Reset tab error styles
-          $("#EditView_tabs li a").removeAttr("style");
+          // $("#EditView_tabs li a").removeAttr("style");
+          $("#EditView_tabs li a").each(function() {
+            if($(this).css("background-color")=="rgb(255, 0, 0)") {
+              $(this).css("background-color","");
+            }
+          })
+          // END STIC-Custom
           counter = 0;
           $(".validation-message").each(function () {
             // Get error validation tabs ids
@@ -1582,7 +1590,7 @@ function http_fetch_async(url, callback, request_id, post_data) {
         callback.call(document, args);
       }
       else {
-        alert("There was a problem retrieving the XML data:\n" + global_xmlhttp.statusText);
+        alert(SUGAR.language.get('app_strings', 'LBL_RETRIEVING_XML_DATA') + global_xmlhttp.statusText);
       }
     }
   }
@@ -3038,7 +3046,7 @@ SUGAR.util = function () {
               // Bug #49205 : Subpanels fail to load when selecting subpanel tab
               // Create a YUI instance using the io-base module.
               (function (srcResult) {
-                $.ajax({ 
+                $.ajax({
                   url: srcResult,
                   async: false,
                   method: 'GET'
@@ -3700,6 +3708,7 @@ SUGAR.savedViews = function () {
         }
         // Firefox needs this to be set after all the option nodes are created.
         document.getElementById('orderBySelect').selectedIndex = selectedIndex;
+
       };
       SUGAR.tabChooser.movementCallback(document.getElementById('display_tabs_td').getElementsByTagName('select')[0]);
 
@@ -3716,6 +3725,25 @@ SUGAR.savedViews = function () {
       // handle direction
       if (SUGAR.savedViews.selectedSortOrder == 'DESC') document.getElementById('sort_order_desc_radio').checked = true;
       else document.getElementById('sort_order_asc_radio').checked = true;
+      var sortableColumnsCount = 0;
+
+      var columnDefs = SUGAR.savedViews.columnsMeta;
+      if(columnDefs && typeof columnDefs === 'object' && Object.keys(columnDefs))  {
+        Object.keys(columnDefs).forEach(function (columnKey) {
+          var column = columnDefs[columnKey];
+          if (!column) {
+            return;
+          }
+
+          if (column.sortable !== false) {
+            sortableColumnsCount++;
+          }
+        })
+      }
+
+      if (sortableColumnsCount < 1 ) {
+        $('.saved-search-sort-column-config-row').hide();
+      }
     }
   };
 }();
@@ -4119,7 +4147,7 @@ SUGAR.tabChooser = function () {
       }
 
       if (max_left != '' && (display_columns_ref.length + selected_right.length) > max_left) {
-        alert('Maximum of ' + max_left + ' columns can be displayed.');
+        alert(SUGAR.language.interpolate(SUGAR.language.get('app_strings', 'LBL_MAX_DASHLET_COLUMNS'), [max_left]));
         return;
       }
 
@@ -4272,6 +4300,14 @@ SUGAR.language = function () {
     translate: function (module, str) {
       text = this.get(module, str);
       return text != 'undefined' ? text : this.get('app_strings', str);
+    },
+
+    interpolate: function (labelString, argumentsArray) {
+      var regexExpression = /%s/;
+      var replace = function (string, replaceValue) {
+        return string.replace(regexExpression, replaceValue);
+      }
+      return argumentsArray.reduce(replace, labelString);
     }
   }
 }();
@@ -5093,3 +5129,14 @@ function convertReportDateTimeToDB(dateValue, timeValue) {
   }
   return '';
 }
+
+// STIC CUSTOM - 20241226 - JCH - Set focus in global search input
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/531
+$(document).ready(function(){
+  $('button#searchbutton').on('click', function() {
+      setTimeout(() => {
+          $(this).parent('li').find('input#query_string').focus();
+      }, 200);
+  });
+})
+// END STIC

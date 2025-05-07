@@ -68,6 +68,7 @@ $mod_strings = array (
     'LBL_DEFAULT_PANEL' => 'Dades generals',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
     'LBL_STATUS' => 'Estat',
+    'LBL_ISSUING_ORGANIZATION' => 'Organització emissora',
     'LBL_GENERATE_SEPA_DIRECT_DEBITS_SEPA' => 'Genera la remesa SEPA de rebuts',
     'LBL_GENERATE_SEPA_CREDIT_TRANSFERS' => 'Genera la remesa SEPA de transferències',
     'LBL_PROCESS_REDSYS_CARD_PAYMENTS' => 'Processa els pagaments amb targeta',
@@ -94,8 +95,9 @@ $mod_strings = array (
     'LBL_SEPA_CREDIT_INVALID_TYPE' => 'El fitxer no es pot generar perquè el seu tipus hauria de ser <b>transferències emeses</b>.',
 
     // Missatges SEPA per a rebuts
+    'LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT' => 'El pagament no està relacionat amb cap compromís de pagament: ',
     'LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE' => 'La <b>data de signatura</b> del compromís de pagament està buida: ',
-    'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'El <b>mandat</b> del pagament no és vàlid. Està buit o supera els 35 caràcters (comproveu també el compromís de pagament): ',
+    'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'El <b>mandat</b> del pagament no és vàlid. Està buit, supera els 35 caràcters o conté espais en blanc (comproveu també el compromís de pagament): ',
     'LBL_SEPA_DEBIT_INVALID_NIF' => "El <b>número d'identificació</b> (NIF, NIE...) de la persona/organització està buit: ",
     'LBL_SEPA_DEBIT_INVALID_TYPE' => 'El fitxer no es pot generar perquè el seu tipus hauria de ser <b>rebuts domiciliats</b>.',
 

@@ -27,10 +27,10 @@
 class DonationBO extends WebFormDataBO
 {
     // Donor management result constants
-    const DONATOR_ERROR = 0;
-    const DONATOR_UNIQUE = 1;
-    const DONATOR_MULTIPLE = 2;
-    const DONATOR_NEW = 3;
+    public const DONATOR_ERROR = 0;
+    public const DONATOR_UNIQUE = 1;
+    public const DONATOR_MULTIPLE = 2;
+    public const DONATOR_NEW = 3;
 
     // Overwriting identifier arrays for value recovery
     protected $defFields = array('campaign_id', 'defParams', 'web_module', 'req_id'); // Array with the definition fields of any form
@@ -148,6 +148,7 @@ class DonationBO extends WebFormDataBO
         $requiredParams = $this->requiredFormFields;
 
         // Define those required based on the target module.
+        $this->formParams['stic_identification_number_c'] = trim($this->formParams['stic_identification_number_c']);
         switch ($this->defParams['web_module']) {
             case 'Contacts':
                 $moduleRequiredFields = array('last_name', 'stic_identification_number_c');
@@ -195,7 +196,7 @@ class DonationBO extends WebFormDataBO
         $requiredParams = array_unique(array_merge($requiredParams, $moduleRequiredFields));
 
         // If identification number is not required, remove it from validation array.
-        if ($_REQUEST["unrequire_identification_number"] == 1) {
+        if (!empty($_REQUEST["unrequire_identification_number"]) && $_REQUEST["unrequire_identification_number"] == 1) {
             if (($key = array_search('stic_identification_number_c', $requiredParams)) !== false) {
                 unset($requiredParams[$key]);
             }
@@ -282,6 +283,8 @@ class DonationBO extends WebFormDataBO
             }
         }
 
+        $this->objectsCreated[$this->defParams['web_module']] = $objToLink;
+
         // Link the campaign
         $this->linkToCampaign($objToLink);
 
@@ -367,6 +370,7 @@ class DonationBO extends WebFormDataBO
                     // STIC#1209
                     // $objToLink->$relName->add($rel->id);
                     // END EPS
+                    $this->objectsCreated[$relType] = $rel;
                 }
             }
             return $rel;

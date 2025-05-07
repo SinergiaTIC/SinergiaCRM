@@ -52,6 +52,7 @@ require_once('include/EditView/SugarVCR.php');
  * Data set for ListView
  * @api
  */
+#[\AllowDynamicProperties]
 class ListViewData
 {
     public $additionalDetails = true;
@@ -185,6 +186,10 @@ class ListViewData
         if (!isset($_REQUEST['module'])) {
             LoggerManager::getLogger()->warn('Undefined index: module');
         }
+        // STIC Custom 20250304 JBL - Avoid TypeError with null as string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $baseName = (string) ($baseName ?? '');
+        // END STIC Custom
 
         $module = (!empty($listviewName)) ? $listviewName: (isset($_REQUEST['module']) ? $_REQUEST['module'] : null);
         $this->var_name = $module .'2_'. strtoupper($baseName) . ($id?'_'.$id:'');
@@ -252,6 +257,12 @@ class ListViewData
      */
     public function getListViewData($seed, $where, $offset=-1, $limit = -1, $filter_fields=array(), $params=array(), $id_field = 'id', $singleSelect=true, $id = null)
     {
+        // STIC Custom 20250311 JBL - Avoid Error when $seed is null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if ($seed == null) {
+            return null;
+        }
+        // END STIC Custom
         global $current_user;
         require_once 'include/SearchForm/SearchForm2.php';
         SugarVCR::erase($seed->module_dir);
@@ -310,6 +321,13 @@ class ListViewData
             $orderBy = 'last_name '.$order['sortOrder'].', first_name '.$order['sortOrder'];
         }
 
+        // STIC-Custom 20240715 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/62
+        // If 'uploadfile' field is included in the fields to be displayed, 'filename' is added to the array since in custom modules
+        // that inherit from the file type module, the database field that stores the name is called 'filename'.
+        if (isset($GLOBALS["dictionary"][$seed->module_dir]['templates']['file']) && in_array('uploadfile', $filter_fields)){
+            $filter_fields['filename'] = true;
+        }
+        // END STIC-Custom
         $ret_array = $seed->create_new_list_query($orderBy, $where, $filter_fields, $params, 0, '', true, $seed, $singleSelect);
         $ret_array['inner_join'] = '';
         if (!empty($this->seed->listview_inner_join)) {
@@ -369,6 +387,15 @@ class ListViewData
 
         while (($row = $this->db->fetchByAssoc($result)) != null) {
             if ($count < $limit) {
+                // STIC-Custom 20240715 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/62
+                // In custom modules that inherit from the file type module, the field that displays the file name is called 'uploadfile' instead of 'filename'.
+                // The value of the 'filename' field is copied to the 'uploadfile' so that it can be displayed in the list view.
+                if (isset($GLOBALS["dictionary"][$seed->module_dir]['templates']['file']) && 
+                    !isset($row['uploadfile']) && isset($row['filename']) && !empty($row['filename']))
+                {
+                    $row['uploadfile'] = $row['filename'];
+                }   
+                // END STIC-Custom
                 $id_list .= ',\''.$row[$id_field].'\'';
                 $idIndex[$row[$id_field]][] = count($rows);
                 $rows[] = $seed->convertRow($row);
@@ -457,7 +484,7 @@ class ListViewData
                 if ($additionalDetailsAllow) {
                     if ($this->additionalDetailsAjax) {
                         LoggerManager::getLogger()->warn('Undefined data index ID for list view data.');
-                        $ar = $this->getAdditionalDetailsAjax(isset($data[$dataIndex]['ID']) ? $data[$dataIndex]['ID'] : null);
+                        $ar = $this->getAdditionalDetailsAjax($data[$dataIndex]['ID'] ?? null);
                     } else {
                         $additionalDetailsFile = 'modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php';
                         if (file_exists('custom/modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php')) {
@@ -470,6 +497,9 @@ class ListViewData
                             $additionalDetailsEdit
                         );
                     }
+                    $ar['string'] = $ar['string'] ?? '';
+                    $ar['fieldToAddTo'] = $ar['fieldToAddTo'] ?? '';
+
                     $pageData['additionalDetails'][$dataIndex] = $ar['string'];
                     $pageData['additionalDetails']['fieldToAddTo'] = $ar['fieldToAddTo'];
                 }
@@ -516,9 +546,15 @@ class ListViewData
 
         $queryString = '';
 
+        // STIC Custom 20250212 JBL - Fix Uncaught TypeError: count() must be of type Countable|array
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search" ||
+        //     isset($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"]) > 1 || $_REQUEST["type_basic"][0] != "") ||
+        //     isset($_REQUEST["module"]) && $_REQUEST["module"] == "MergeRecords") {
         if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "advanced_search" ||
-            isset($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"]) > 1 || $_REQUEST["type_basic"][0] != "") ||
+            isset($_REQUEST["type_basic"]) && is_array($_REQUEST["type_basic"]) && (count($_REQUEST["type_basic"]) > 1 || $_REQUEST["type_basic"][0] != "") ||
             isset($_REQUEST["module"]) && $_REQUEST["module"] == "MergeRecords") {
+        // END STIC Custom
             $queryString = "-advanced_search";
         } else {
             if (isset($_REQUEST["searchFormTab"]) && $_REQUEST["searchFormTab"] == "basic_search") {
@@ -539,7 +575,11 @@ class ListViewData
                     $field_name .= "_basic";
                     if (isset($_REQUEST[$field_name])  && (!is_array($basicSearchField) || !isset($basicSearchField['type']) || $basicSearchField['type'] == 'text' || $basicSearchField['type'] == 'name')) {
                         // Ensure the encoding is UTF-8
-                        $queryString = htmlentities($_REQUEST[$field_name], null, 'UTF-8');
+                        // STIC Custom 20250210 JBL - Fix Uncaught TypeError in htmlentities
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // $queryString = htmlentities($_REQUEST[$field_name], null, 'UTF-8');
+                        $queryString = htmlentities($_REQUEST[$field_name], ENT_QUOTES, 'UTF-8');
+                        // END STIC Custom
                         break;
                     }
                 }

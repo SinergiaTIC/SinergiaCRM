@@ -114,6 +114,27 @@ $dictionary['stic_Remittances'] = array(
             'studio' => 'visible',
             'dependency' => 0,
         ),
+        'issuing_organization' => array(
+            'required' => false,
+            'name' => 'issuing_organization',
+            'vname' => 'LBL_ISSUING_ORGANIZATION',
+            'type' => 'enum',
+            'massupdate' => 1,
+            'no_default' => false,
+            'comments' => '',
+            'help' => '',
+            'importable' => 'true',
+            'duplicate_merge' => 'disabled',
+            'duplicate_merge_dom_value' => '0',
+            'audited' => true,
+            'inline_edit' => false,
+            'reportable' => true,
+            'unified_search' => false,
+            'merge_filter' => 'disabled',
+            'size' => '20',
+            'options' => 'dynamic_issuing_organization_list',
+            'studio' => 'visible',
+        ),
         'log' => array(
             'required' => 0,
             'name' => 'log',
@@ -147,12 +168,11 @@ $dictionary['stic_Remittances'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_PAYMENTS_STIC_REMITTANCES_FROM_STIC_PAYMENTS_TITLE',
         ),
-
     ),
     'relationships' => array(
     ),
     'optimistic_locking' => 1,
-    'unified_search' => 1,
+    'unified_search' => true,
     'unified_search_default_enabled' => true,
 );
 if (!class_exists('VardefManager')) {

@@ -767,6 +767,44 @@ $app_list_strings = array(
         'PM' => 'PM',
     ),
 
+    'dom_inbound_email_account_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+        'bounce' => 'Rebote',
+    ],
+
+    'dom_inbound_email_auth_types' => [
+        'basic' => 'Autenticación Básica',
+        'oauth' => 'OAuth',
+    ],
+
+    'dom_external_oauth_connection_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+    ],
+
+    'dom_external_oauth_provider_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+    ],
+
+    'dom_outbound_email_account_types' => [
+        'user' => 'Personal',
+        'group' => 'Grupo',
+        'system' => 'Sistema',
+        'system-override' => 'Anulación del Sistema',
+    ],
+
+    'dom_inbound_email_account_status' => [
+        'Active' => 'Activo',
+        'Inactive' => 'Inactivo',
+    ],
+
+    'dom_email_body_filtering_option' => [
+      'multi' => 'Búsqueda de Múltiples Palabras',
+      'single' => 'Búsqueda de Una Palabra',
+    ],
+
     'dom_email_types' => array(
         'out' => 'Enviado',
         'archived' => 'Arquivado',
@@ -1557,6 +1595,10 @@ $app_strings = array(
     'LBL_DATE_ENTERED' => 'Data de Creación:',
     'LBL_DATE_MODIFIED' => 'Data de Modificación:',
     'LBL_EDIT_BUTTON' => 'Editar',
+    // STIC-Custom 20240214 JBL - QuickEdit view
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+    'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
+    // END STIC-Custom
     'LBL_DUPLICATE_BUTTON' => 'Duplicar',
     'LBL_DELETE_BUTTON' => 'Eliminar',
     'LBL_DELETE' => 'Eliminar',
@@ -1960,6 +2002,8 @@ $app_strings = array(
     'LBL_REMOVE_DASHLET_CONFIRM' => '¿Está seguro de que desexa quitar o SuiteCRM Dashlet?',
     'LBL_REMOVING_DASHLET' => 'Quitando SuiteCRM Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'SuiteCRM Dashlet Quitado',
+    'LBL_MAX_DASHLET_COLUMNS' => "Se pueden mostrar un máximo de %s columnas.",
+    'LBL_RETRIEVING_XML_DATA' => "Hubo un problema al recuperar los datos XML:\n",
 
     // MySugar Menu Options
 
@@ -2050,7 +2094,8 @@ $app_strings = array(
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_DESCRIPTION' => 'Descrición',
 
-    'LBL_YESTERDAY' => 'Onte',
+    'LBL_YESTERDAY' => 'onte',
+    'LBL_NOW' => 'ahora',
     'LBL_TODAY' => 'hoxe',
     'LBL_TOMORROW' => 'mañá',
     'LBL_NEXT_WEEK' => 'a semana que ven',
@@ -3802,5 +3847,13 @@ $app_strings['LBL_SEARCH_PREV'] = 'Anterior';
 $app_strings['LBL_SEARCH_NEXT'] = 'Seguinte';
 $app_strings['LBL_SEARCH_PAGE'] = 'Páxina ';
 $app_strings['LBL_SEARCH_OF'] = ' de '; // Usage: Page 1 of 5
+$app_strings['LBL_USE_ADVANCED_SEARCH'] = 'Utilizar la búsqueda avanzada';
+$app_strings['LBL_USE_BASIC_SEARCH'] = 'Utilizar la búsqueda básica';
 
-$app_list_strings['LBL_REPORTS_RESTRICTED'] = 'Un dos informes que seleccionaches apunta a un módulo ao que non tes acceso. Por favor, selecciona un informe que apunte a un módulo ao que si teñas acceso.';
+// PDF Engines
+$app_strings['LBL_LEGACY_MPDF_ENGINE'] = 'Motor MPDF obsoleto';
+$app_strings['LBL_TCPDF_ENGINE'] = 'Motor TCPDF';
+
+$app_strings['ERR_INVALID_FILE_NAME'] = 'El nombre del fichero no es válido:';
+$app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'Solo puede contener caracteres alfanuméricos, el punto (.), el guion (-) o el guion bajo (_).';
+$app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'El nombre del fichero de importación no es válido';

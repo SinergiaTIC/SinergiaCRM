@@ -86,7 +86,9 @@ class CustomCalendarActivity extends CalendarActivity
             $this->end_time = $timedate->fromUser($this->sugar_bean->date_due);
         // STIC-Custom 20220314 AAM - Adding STIC modules to iCal
         // STIC#625
-        } else if ($sugar_bean->object_name === 'stic_Sessions') {
+        // STIC-Custom 20240222 MHP - Adding stic_Work_Calendar module to iCal
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
+        } else if ($sugar_bean->object_name === 'stic_Sessions' || $sugar_bean->object_name === 'stic_Work_Calendar') {
             $this->start_time = $timedate->fromUser($this->sugar_bean->start_date);
             if (empty($this->start_time)) {
                 return;
@@ -155,6 +157,12 @@ class CustomCalendarActivity extends CalendarActivity
             $completedTasks = " AND tasks.status != 'Completed' ";
         }
 
+        // STIC-Custom 20240222 MHP - Get the user preference
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
+        $show_work_calendar = $GLOBALS['current_user']->getPreference('show_work_calendar');
+        $show_work_calendar = $show_work_calendar ?: false;
+        // END STIC-Custom
+
         foreach ($activities as $key => $activity) {
             if (ACLController::checkAccess($key, 'list', true)) {
                 /* END - SECURITY GROUPS */
@@ -188,6 +196,13 @@ class CustomCalendarActivity extends CalendarActivity
                     }
                 }
 
+                // STIC-Custom 20240222 MHP - Get the user preference
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/114
+                if ($key === 'stic_Work_Calendar' && !$show_work_calendar) {
+                    continue;
+                }
+                // END STIC-Custom
+
                 $focus_list = build_related_list_by_user_id($bean, $user_id, $where);
                 // require_once 'modules/SecurityGroups/SecurityGroup.php';
                 foreach ($focus_list as $focusBean) {
@@ -212,6 +227,12 @@ class CustomCalendarActivity extends CalendarActivity
                     $act = new CustomCalendarActivity($focusBean);
 
                     if (!empty($act)) {
+                        // STIC-Custom 20241004 MHP - Exclude cancelled work calendar records from displaying them in the Activity Calendar
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/425
+                        if ($act->sugar_bean->module_dir === 'stic_Work_Calendar' && $act->sugar_bean->type == 'canceled' ) {
+                            continue;
+                        }
+                        // END STIC-Custom                        
                         $act_list[] = $act;
                     }
                 }

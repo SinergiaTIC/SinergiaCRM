@@ -50,8 +50,8 @@ require_once('modules/AOW_Actions/actions/actionBase.php');
  */
 class actionComputeField extends actionBase
 {
-    const RAW_VALUE = "raw";
-    const FORMATTED_VALUE = "formatted";
+    public const RAW_VALUE = "raw";
+    public const FORMATTED_VALUE = "formatted";
 
     /**
      * @return array
@@ -102,25 +102,43 @@ class actionComputeField extends actionBase
             );
 
             $relateFields = $this->getAllRelatedFields($bean);
+            $formulasCount = is_countable($formulas) ? count($formulas) : 0;
 
-            for ($i = 0; $i < count($formulas); $i++) {
+             for ($i = 0; $i < $formulasCount; $i++) {
                 if (array_key_exists($formulas[$i], $relateFields) && isset($relateFields[$formulas[$i]]['id_name'])) {
-                    $calcValue = $calculator->calculateFormula($formulaContents[$i]);
-                    $bean->{$relateFields[$formulas[$i]]['id_name']} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
+                    $bean->{$relateFields[$formulas[$i]]['id_name']} = $calculator->calculateFormula($formulaContents[$i]);
                 } else {
-                    $calcValue = $calculator->calculateFormula($formulaContents[$i]);
-                    $bean->{$formulas[$i]} = ( is_numeric($calcValue) ? (float)$calcValue : $calcValue );
+                    $value = $calculator->calculateFormula($formulaContents[$i]);
+                    $fieldType = $bean->field_defs[$formulas[$i]]['type'] ?? 'string';
+                    if (in_array($fieldType, ['float', 'decimal', 'currency', 'double'])) {
+                        $value = (float) $value;
+                    }
+                    elseif (in_array($fieldType, ['int', 'uint', 'ulong', 'long', 'short', 'tinyint'])) {
+                        $value = (int) $value;
+                    }
+                    $bean->{$formulas[$i]} = $value;
                 }
             }
+            // End STIC-Custom 20240118
 
             if ($in_save) {
                 global $current_user;
                 $bean->processed = true;
+                // STIC Custom 20250226 JBL - Avoid Fatal error: Cannot access offset of type bool (when $bean->fetched_row==false)
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $check_notify =
+                //     $bean->assigned_user_id != $current_user->id &&
+                //     $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
                 $check_notify =
                     $bean->assigned_user_id != $current_user->id &&
-                    $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
+                    $bean->assigned_user_id != is_array($bean->fetched_row) ? ($bean->fetched_row['assigned_user_id'] ?? null) : null;
+                // END STIC Custom
             } else {
-                $check_notify = $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
+                // STIC Custom 20250226 JBL - Avoid Fatal error: Cannot access offset of type bool (when $bean->fetched_row==false)
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $check_notify = $bean->assigned_user_id != $bean->fetched_row['assigned_user_id'];
+                $check_notify = $bean->assigned_user_id != is_array($bean->fetched_row) ? ($bean->fetched_row['assigned_user_id'] ?? null) : null;
+                // END STIC Custom
             }
 
             $bean->process_save_dates = false;
@@ -148,8 +166,9 @@ class actionComputeField extends actionBase
     private function resolveParameters($bean, $parameters, $parameterTypes)
     {
         $resolvedParameters = array();
+        $parametersCount = is_countable($parameters) ? count($parameters) : 0;
 
-        for ($i = 0; $i < count($parameters); $i++) {
+        for ($i = 0; $i < $parametersCount; $i++) {
             if ($parameterTypes[$i] == actionComputeField::FORMATTED_VALUE) {
                 $dataType = $bean->field_name_map[$parameters[$i]]['type'];
 
@@ -176,6 +195,13 @@ class actionComputeField extends actionBase
                 }                
                 if ($bean->{$parameters[$i]} == null) {
                     $resolvedParameters[$i] = "";
+                } 
+                // STIC-Custom 20230212 PCS - Format datetime fields in compute field actions when not using formulas.
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/113
+                if($type == 'datetimecombodatetime'){
+                   global $timedate;
+                   $resolvedParameters[$i] = $timedate->to_display_date_time($bean->{$parameters[$i]});
+                // END STIC-Custom
                 } elseif (
                     (strpos($type, 'char') !== false || strpos($type, 'text') !== false || $type == 'enum') &&
                     !empty($bean->{$parameters[$i]})
@@ -202,13 +228,8 @@ class actionComputeField extends actionBase
 
         array_walk(
             $displayFieldValues,
-            // STIC-Custom AAM 20220314 - Wrong usage of function and Array
-            // STIC#635
-            // function ($val) use ($bean, $fieldName) {
-                // $val = $GLOBALS['app_list_strings'][$bean->field_defs[$fieldName]['options'][$bean->$fieldName]];
             function (&$val) use ($bean, $fieldName) {
                 $val = $GLOBALS['app_list_strings'][$bean->field_defs[$fieldName]['options']][$val];
-            // END STIC
             }
         );
 
@@ -254,8 +275,9 @@ class actionComputeField extends actionBase
         $resolvedRelationParameters = array();
 
         $relateFields = $this->getAllRelatedFields($bean);
+        $relationParametersCount = is_countable($relateFields) ? count($relationParameters) : 0;
 
-        for ($i = 0; $i < count($relationParameters); $i++) {
+        for ($i = 0; $i < $relationParametersCount; $i++) {
             $entity = null;
 
             if (isset($relateFields[$relationParameters[$i]]) &&
@@ -356,7 +378,11 @@ class actionComputeField extends actionBase
      *
      * @return string
      */
-    public function edit_display($line, SugarBean $bean = null, $params = array())
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function edit_display($line, SugarBean $bean = null, $params = array())
+    public function edit_display($line, ?SugarBean $bean = null, $params = array())
+    // END STIC Custom
     {
         require_once("modules/AOW_WorkFlow/aow_utils.php");
 
@@ -476,7 +502,6 @@ class actionComputeField extends actionBase
 					</div>
 				</fieldset>";
 
-        if (count($params) > 0) {
             $parameters = $this->createJavascriptArrayFromParams($params, 'parameter');
             $parameterTypes = $this->createJavascriptArrayFromParams($params, 'parameterType');
             $formulas = $this->createJavascriptArrayFromParams($params, 'formula');
@@ -484,6 +509,7 @@ class actionComputeField extends actionBase
             $relationParameters = $this->createJavascriptArrayFromParams($params, 'relationParameter');
             $relationParameterFields = $this->createJavascriptArrayFromParams($params, 'relationParameterField');
             $relationParameterTypes = $this->createJavascriptArrayFromParams($params, 'relationParameterType');
+
 
             $html .= "
 				<script id ='aow_script$line' type='text/javascript'>
@@ -498,7 +524,7 @@ class actionComputeField extends actionBase
 					$('#relationParameterSelect$line').change();
 					
 					function onFieldChange$line(dropdown, valueDropdown) {
-						var value = $(dropdown).find('option:selected').attr('dataType');						
+                        var value = $(dropdown).find('option:selected').attr('dataType');						
 						if (value == 'enum' || value == 'multienum' || value == 'dynamicenum') {
 							$(valueDropdown).show();
 						} else {
@@ -516,12 +542,8 @@ class actionComputeField extends actionBase
 					
 					$('#$containerName .computeFieldParametersContainer').find('.parameterSelect').change();
 					$('#$containerName .computeFieldRelationParametersContainer').find('.relationParameterFieldSelect:visible').change();
-				</script>";
-        }
-
-        $html .= "
-			</div>
-		";
+				</script>
+			</div>";
 
         return $html;
     }
@@ -533,7 +555,7 @@ class actionComputeField extends actionBase
      */
     public function getModuleFieldsDropdown($bean)
     {
-        $moduleFields = json_decode(getModuleFields($bean->module_name, "JSON"), true);
+        $moduleFields = json_decode((string) getModuleFields($bean->module_name, "JSON"), true);
         $optionsString = "";
 
         foreach ($moduleFields as $key => $value) {
@@ -726,7 +748,7 @@ class actionComputeField extends actionBase
                 $compareString1 = $item1['module'] . ' : ' . $item1['relation'];
                 $compareString2 = $item2['module'] . ' : ' . $item2['relation'];
 
-                if ($compareString1 == $compareString2) {
+                if ($compareString1 === $compareString2) {
                     return 0;
                 }
 
@@ -768,6 +790,8 @@ class actionComputeField extends actionBase
      */
     private function getOption($relationName, $oppositeModule)
     {
+        $oneRelation = [];
+
         return "<option value='" .
             $oneRelation['name'] .
             "'>" .
@@ -795,11 +819,11 @@ class actionComputeField extends actionBase
         $row = $db->fetchByAssoc($result);
 
         if ($row != null) {
-            if (strtolower($row['rhs_module']) == strtolower($module)) {
+            if (strtolower($row['rhs_module']) === strtolower($module)) {
                 return $row['lhs_module'];
             }
 
-            if (strtolower($row['lhs_module']) == strtolower($module)) {
+            if (strtolower($row['lhs_module']) === strtolower($module)) {
                 return $row['rhs_module'];
             }
         }

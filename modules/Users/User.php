@@ -52,6 +52,10 @@ require_once __DIR__ . '/../../include/EmailInterface.php';
 require_once __DIR__ . '/../Emails/EmailUI.php';
 
 // User is used to store customer information.
+// STIC Custom 20250304 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 class User extends Person implements EmailInterface
 {
 
@@ -115,6 +119,11 @@ class User extends Person implements EmailInterface
     );
     public $emailAddress;
     public $new_schema = true;
+
+    // STIC Custom 20250305 JBL - Avoid Attempt to access to undefined property
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    public $default_team;
+    // END STIC Custom
 
     /**
      * @var bool
@@ -637,7 +646,7 @@ class User extends Person implements EmailInterface
                     SugarApplication::appendErrorMessage($mod_strings['ERR_USER_FACTOR_SMTP_REQUIRED']);
                 }
             } else {
-                if (($tmpUser instanceof User) && ($this->factor_auth != $tmpUser->factor_auth || $this->factor_auth_interface != $tmpUser->factor_auth_interface)) {
+                if (($tmpUser instanceof User) && ($this->factor_auth !== $tmpUser->factor_auth || $this->factor_auth_interface !== $tmpUser->factor_auth_interface)) {
                     $msg .= 'Current user is not able to change two factor authentication settings.';
                     $GLOBALS['log']->warn($msg);
                     SugarApplication::appendErrorMessage($mod_strings['ERR_USER_FACTOR_CHANGE_DISABLED']);
@@ -821,7 +830,7 @@ class User extends Person implements EmailInterface
         if (!$this->is_group && !$this->portal_only) {
             require_once('modules/MySettings/TabController.php');
 
-            global $current_user, $sugar_config;
+            global $current_user, $sugar_config, $app_strings, $mod_strings, $current_language;
 
             $display_tabs_def = isset($_REQUEST['display_tabs_def']) ? urldecode($_REQUEST['display_tabs_def']) : '';
             $hide_tabs_def = isset($_REQUEST['hide_tabs_def']) ? urldecode($_REQUEST['hide_tabs_def']) : '';
@@ -935,6 +944,8 @@ class User extends Person implements EmailInterface
 
             if (isset($_POST['timezone'])) {
                 $this->setPreference('timezone', $_POST['timezone'], 0, 'global');
+            } else {
+                $this->setPreference('timezone', 'UTC', 0, 'global');
             }
             if (isset($_POST['ut'])) {
                 $this->setPreference('ut', '0', 0, 'global');
@@ -964,6 +975,15 @@ class User extends Person implements EmailInterface
             }
             if (isset($_POST['timezone'])) {
                 $this->setPreference('timezone', $_POST['timezone'], 0, 'global');
+            }
+            if (isset($_POST['language'])) {
+                if ($_SESSION['authenticated_user_id'] === $this->id){
+                    $_SESSION['authenticated_user_language'] = $_POST['language'];
+                }
+                $current_language = $_POST['language'];
+                $mod_strings = return_module_language($_POST['language'], 'Users');
+                $app_strings = return_application_language($_POST['language']);
+                $this->setPreference('language', $_POST['language'], 0, 'global');
             }
             if (isset($_POST['mail_fromname'])) {
                 $this->setPreference('mail_fromname', $_POST['mail_fromname'], 0, 'global');
@@ -1054,9 +1074,14 @@ class User extends Person implements EmailInterface
                 $this->setPreference('default_email_charset', $_REQUEST['default_email_charset'], 0, 'global');
             }
 
-            if (isset($_POST['calendar_publish_key'])) {
+            $isValidator = new \SuiteCRM\Utility\SuiteValidator();
+
+            if (isset($_POST['calendar_publish_key']) && $isValidator->isValidKey($_POST['calendar_publish_key'])) {
                 $this->setPreference('calendar_publish_key', $_POST['calendar_publish_key'], 0, 'global');
+            } elseif (isset($_POST['calendar_publish_key'])) {
+                $_POST['calendar_publish_key'] = '';
             }
+
             if (isset($_POST['subtheme'])) {
                 $this->setPreference('subtheme', $_POST['subtheme'], 0, 'global');
             }
@@ -1150,7 +1175,7 @@ class User extends Person implements EmailInterface
     public function encrypt_password($username_password)
     {
         // encrypt the password.
-        $salt = substr($this->user_name, 0, 2);
+        $salt = substr((string) $this->user_name, 0, 2);
         $encrypted_password = crypt($username_password, $salt);
 
         return $encrypted_password;
@@ -1360,7 +1385,11 @@ EOQ;
         $result = $db->limitQuery($query, 0, 1, false);
         if (!empty($result)) {
             $row = $db->fetchByAssoc($result);
-            if (!$checkPasswordMD5 || self::checkPasswordMD5($password, $row['user_hash'])) {
+            // STIC Custom 20250311 JBL - Avoid trying to access array offset on false
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if (!$checkPasswordMD5 || self::checkPasswordMD5($password, $row['user_hash'])) {
+            if ($row !== false && (!$checkPasswordMD5 || self::checkPasswordMD5($password, $row['user_hash']))) {
+            // END STIC Custom            
                 return $row;
             }
         }
@@ -1511,7 +1540,7 @@ EOQ;
         $onespecial = $sugar_config['passwordsetting']['onespecial'];
 
 
-        if ($minpwdlength && strlen($newPassword) < $minpwdlength) {
+        if ($minpwdlength && strlen((string) $newPassword) < $minpwdlength) {
             $messages[] = sprintf($mod_strings['ERR_PASSWORD_MINPWDLENGTH'], $minpwdlength);
         }
 
@@ -1523,7 +1552,7 @@ EOQ;
             $messages[] = $mod_strings['ERR_PASSWORD_ONELOWER'];
         }
 
-        if ($onenumber && !preg_match('/[0-9]/', $newPassword)) {
+        if ($onenumber && !preg_match('/[0-9]/', (string) $newPassword)) {
             $messages[] = $mod_strings['ERR_PASSWORD_ONENUMBER'];
         }
 
@@ -1702,7 +1731,7 @@ EOQ;
             $user_fields['IS_ADMIN'] = '';
         }
         if ($this->is_group) {
-            $user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '', null, null, '.gif', $mod_strings['LBL_CHECKMARK']);
+            $user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '', null, null, '.gif', translate('LBL_CHECKMARK', 'Users'));
         } else {
             $user_fields['IS_GROUP_IMAGE'] = '';
         }
@@ -1984,6 +2013,7 @@ EOQ;
             }
         }
 
+        $ret = [];
         $ret['name'] = $fromName;
         $ret['email'] = $fromaddr;
 
@@ -2014,8 +2044,9 @@ EOQ;
         $emailLink = '';
 
         $emailUI = new EmailUI();
-        for ($i = 0; $i < count($focus->emailAddress->addresses); $i++) {
-            $emailField = 'email' . (string) ($i + 1);
+        $addressesCount = is_countable($focus->emailAddress->addresses) ? count($focus->emailAddress->addresses) : 0;
+        for ($i = 0; $i < $addressesCount; $i++) {
+            $emailField = 'email' . ($i + 1);
             $optOut = (bool)$focus->emailAddress->addresses[$i]['opt_out'];
             if (!$optOut && $focus->emailAddress->addresses[$i]['email_address'] === $emailAddress) {
                 $focus->$emailField = $emailAddress;
@@ -2090,11 +2121,13 @@ EOQ;
         global $mod_strings;
         global $app_strings;
 
+        $format = [];
         $format['f'] = $mod_strings['LBL_LOCALE_DESC_FIRST'];
         $format['l'] = $mod_strings['LBL_LOCALE_DESC_LAST'];
         $format['s'] = $mod_strings['LBL_LOCALE_DESC_SALUTATION'];
         $format['t'] = $mod_strings['LBL_LOCALE_DESC_TITLE'];
 
+        $name = [];
         $name['f'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_FIRST'];
         $name['l'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_LAST'];
         $name['s'] = $app_strings['LBL_LOCALE_NAME_EXAMPLE_SALUTATION'];
@@ -2104,7 +2137,7 @@ EOQ;
 
         $ret1 = '';
         $ret2 = '';
-        for ($i = 0, $iMax = strlen($macro); $i < $iMax; $i++) {
+        for ($i = 0, $iMax = strlen((string) $macro); $i < $iMax; $i++) {
             if (array_key_exists($macro[$i], $format)) {
                 $ret1 .= "<i>" . $format[$macro[$i]] . "</i>";
                 $ret2 .= "<i>" . $name[$macro[$i]] . "</i>";
@@ -2133,7 +2166,7 @@ EOQ;
         if ($module == 'ContractTypes') {
             $module = 'Contracts';
         }
-        if (preg_match('/Product[a-zA-Z]*/', $module)) {
+        if (preg_match('/Product[a-zA-Z]*/', (string) $module)) {
             $module = 'Products';
         }
 
@@ -2325,7 +2358,7 @@ EOQ;
     {
         global $locale;
         $localeFormat = $locale->getLocaleFormatMacro($this);
-        if (strpos($localeFormat, 'l') > strpos($localeFormat, 'f')) {
+        if (strpos((string) $localeFormat, 'l') > strpos((string) $localeFormat, 'f')) {
             return false;
         }
         return true;
@@ -2422,16 +2455,54 @@ EOQ;
         $NUMBER = "0123456789";
         $UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $SPECIAL = '~!@#$%^&*()_+=-{}|';
-        $condition = 0;
-        $charBKT .= $UPPERCASE . $LOWERCASE . $NUMBER;
-        $password = "";
-        $length = '6';
 
-        // Create random characters for the ones that doesnt have requirements
-        for ($i = 0; $i < $length - $condition; $i++) {  // loop and create password
-            $password = $password . substr($charBKT, mt_rand() % strlen($charBKT), 1);
+        // STIC - JBL - 20241002 - Generate password with security requirements
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/417
+        // $condition = 0;
+        // $charBKT .= $UPPERCASE . $LOWERCASE . $NUMBER;
+        // $password = "";
+        // $length = '6';
+
+        // // Create random characters for the ones that doesnt have requirements
+        // for ($i = 0; $i < $length - $condition; $i++) {  // loop and create password
+        //     $password = $password . substr($charBKT, mt_rand() % strlen($charBKT), 1);
+        // }
+
+        // Get password requirements
+        $length = 6;
+        if (isset($res['minpwdlength']) && is_numeric($res['minpwdlength']) && $res['minpwdlength'] > $length) {
+            $length = $res['minpwdlength'];
         }
 
+        $charBKT .= $UPPERCASE . $LOWERCASE . $NUMBER;
+        $requirements = [];
+        $password = "";
+
+        // Set one Upper, Lower, Number or Special if are required
+        if (isset($res['oneupper']) && $res['oneupper']) {
+            $requirements[] = $UPPERCASE[mt_rand(0, strlen($UPPERCASE) - 1)];
+        }
+        if (isset($res['onelower']) && $res['onelower']) {
+            $requirements[] = $LOWERCASE[mt_rand(0, strlen($LOWERCASE) - 1)];
+        }
+        if (isset($res['onenumber']) && $res['onenumber']) {
+            $requirements[] = $NUMBER[mt_rand(0, strlen($NUMBER) - 1)];
+        }
+        if (isset($res['onespecial']) && $res['onespecial']) {
+            $requirements[] = $SPECIAL[mt_rand(0, strlen($SPECIAL) - 1)];
+            $charBKT .= $SPECIAL;
+        }
+        $password .= implode('', $requirements);
+
+        // Create other random characters 
+        for ($i = 0; $i < $length - count($requirements); $i++) {  // loop and create password
+            $password .= $charBKT[mt_rand(0, strlen($charBKT) - 1)];
+        }
+
+        // Shuffle password characters
+        $password = str_shuffle($password);
+
+        // END STIC
         return $password;
     }
 
@@ -2463,11 +2534,11 @@ EOQ;
         $htmlBody = $emailTemp->body_html;
         $body = $emailTemp->body;
         if (isset($additionalData['link']) && $additionalData['link'] == true) {
-            $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], $htmlBody);
-            $body = str_replace('$contact_user_link_guid', $additionalData['url'], $body);
+            $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], (string) $htmlBody);
+            $body = str_replace('$contact_user_link_guid', $additionalData['url'], (string) $body);
         } else {
-            $htmlBody = str_replace('$contact_user_user_hash', $additionalData['password'], $htmlBody);
-            $body = str_replace('$contact_user_user_hash', $additionalData['password'], $body);
+            $htmlBody = str_replace('$contact_user_user_hash', $additionalData['password'], (string) $htmlBody);
+            $body = str_replace('$contact_user_user_hash', $additionalData['password'], (string) $body);
         }
         // Bug 36833 - Add replacing of special value $instance_url
         $htmlBody = str_replace('$config_site_url', $sugar_config['site_url'], $htmlBody);
@@ -2581,7 +2652,7 @@ EOQ;
      */
     public function isPrimaryEmail($email)
     {
-        if (!empty($this->email1) && !empty($email) && strcasecmp($this->email1, $email) == 0) {
+        if (!empty($this->email1) && !empty($email) && strcasecmp($this->email1, $email) === 0) {
             return true;
         }
         return false;

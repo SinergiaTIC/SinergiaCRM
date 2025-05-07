@@ -68,6 +68,7 @@ $mod_strings = array(
     'LBL_DEFAULT_PANEL' => 'Overview',
     'LBL_PANEL_RECORD_DETAILS' => 'Record details',
     'LBL_STATUS' => 'Status',
+    'LBL_ISSUING_ORGANIZATION' => 'Issuing organization',
     'LBL_GENERATE_SEPA_DIRECT_DEBITS_SEPA' => 'Generate SEPA Direct Debits remittance',
     'LBL_GENERATE_SEPA_CREDIT_TRANSFERS' => 'Generate SEPA Credit Transfers remittance',
     'LBL_PROCESS_REDSYS_CARD_PAYMENTS' => 'Process card payments',
@@ -94,8 +95,9 @@ $mod_strings = array(
     'LBL_SEPA_CREDIT_INVALID_TYPE' => "File won't be generated because its type should be <b>credit transfers</b>.",
 
     // SEPA direct debits messages
+    'LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT' => 'The payment is not related to any payment commitment: ',
     'LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE' => 'The <b>date of signature</b> of the payment commitment is empty: ',
-    'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'The payment <b>mandate</b> is invalid. It is empty or exceeds 35 characters (check the payment commitment too): ',
+    'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'The payment <b>mandate</b> is invalid. It is empty, exceeds 35 characters or contains white spaces (check the payment commitment too): ',
     'LBL_SEPA_DEBIT_INVALID_NIF' => 'The contact/account <b>identification number</b> is empty:  ',
     'LBL_SEPA_DEBIT_INVALID_TYPE' => "File won't be generated because its type should be <b>direct debits</b>.",
 

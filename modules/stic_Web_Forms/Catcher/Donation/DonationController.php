@@ -39,6 +39,10 @@ class DonationController extends WebFormDataController
         $this->bo = new DonationBO();
     }
 
+    public function getObjectsCreated() {
+        return array_merge($this->bo->getObjectsCreated(), $this->fp->getObjectsCreated());
+    }
+
     /**
      * Overload of the parent method.
      * Retrieve the form parameters and populate the formParams array with it
@@ -60,6 +64,7 @@ class DonationController extends WebFormDataController
 
             // If there are required fields, we also delete the prefix
             if (!empty($defParams['req_id'])) {
+                $prefix = $prefix ?? null;
                 $newReqId = preg_replace("/{$prefix}/u", '', $defParams['req_id']);
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  New Req Id {$newReqId}");
                 $defParams['req_id'] = $newReqId;
@@ -103,6 +108,7 @@ class DonationController extends WebFormDataController
         $response = $this->fp->manage(true);
 
         // If the creation of the payment method has been successful (or is initiated in the case of card or bizum payment, send the corresponding mail)
+        $response['status'] = $response['status'] ?? null;
         if ($response['status'] == self::RESPONSE_STATUS_OK ||
             $response['status'] == self::RESPONSE_STATUS_PENDING) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Generating warning mail ...");
@@ -137,7 +143,7 @@ class DonationController extends WebFormDataController
                     }
                 } // If it is an immediate operation the notification is automatically sent
                 else if (!$mailer->sendUserMail($defParams['decodedDefParams']['email_template_id'], $objWeb, $payment)) {
-                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Unable to send confirmation email to user.");
+                    $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Unable to send confirmation email to user.");
                 }
             }
         }

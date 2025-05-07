@@ -54,10 +54,11 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
  * For subpanels we must make use of the SubPanelDefinitions class to do this; this also means that the history mechanism,
  * which tracks files, not objects, needs us to create an intermediate file representation of the definition that it can manage and restore
  */
+#[\AllowDynamicProperties]
 class DeployedSubpanelImplementation extends AbstractMetaDataImplementation implements MetaDataImplementationInterface
 {
-    const HISTORYFILENAME = 'restored.php';
-    const HISTORYVARIABLENAME = 'layout_defs';
+    public const HISTORYFILENAME = 'restored.php';
+    public const HISTORYVARIABLENAME = 'layout_defs';
 
     /**
      * @var string $_subpanelName
@@ -126,6 +127,21 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
                 //First load the original defs from the module folder
                 $originalSubpanel = $spd->load_subpanel($subpanelName, false, true);
                 $this->_fullFielddefs = $originalSubpanel->get_list_fields();
+                
+                // STIC-Custom 20240214 JBL - QuickEdit view
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+                // Add quickedit_button if edit_button is present
+                if (array_key_exists('edit_button', $this->_fullFielddefs) && 
+                   !array_key_exists('quickedit_button', $this->_fullFielddefs)) {
+                    $this->_fullFielddefs['quickedit_button'] = array(
+                        'vname' => 'LBL_QUICKEDIT_BUTTON',
+                        'widget_class' => 'SubPanelQuickEditButton',
+                        'module' => $moduleName,
+                        'width' => '4%',
+                    );
+                }
+                // END STIC-Custom
+
                 $this->_mergeFielddefs($this->_fielddefs, $this->_fullFielddefs);
 
                 $this->_aSubPanelObject = $spd->load_subpanel($subpanelName);
@@ -233,7 +249,7 @@ class DeployedSubpanelImplementation extends AbstractMetaDataImplementation impl
         $sm = StudioModuleFactory::getStudioModule($moduleName);
         foreach ($sm->sources as $file => $def) {
             if (!empty($def['view'])) {
-                $filenames[$def['view']] = substr($file, 0, strlen($file) - 4);
+                $filenames[$def['view']] = substr((string) $file, 0, strlen((string) $file) - 4);
             }
         }
 

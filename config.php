@@ -59,6 +59,10 @@ $sugar_config = array(
         // STIC#1086 - Do not apply Ajax in this module, the same as in Import module.
         2 => 'stic_Import_Validation',
         // END STIC
+        // STIC - JCH - 20240118 - Avoid Ajax in module Rules
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/66
+        3 => 'stic_Security_Groups_Rules',
+        // END STIC
     ),
     'admin_access_control' => false,
     'admin_export_only' => false,
@@ -479,7 +483,7 @@ $sugar_config = array(
     'strict_id_validation' => false,
     'sugar_version' => '6.5.25',
     'sugarbeet' => false,
-    'suitecrm_version' => '7.12.4',
+    'suitecrm_version' => '7.14.5',
     'system_email_templates' => array(
         'confirm_opt_in_template_id' => '9cbe9b2c-0b86-ad83-dd83-5d71212484f4',
     ),
@@ -535,6 +539,40 @@ $sugar_config = array(
     'vcal_time' => '2',
     'verify_client_ip' => true,
 
+    // STIC Custom 20240826 JBL - Upgrade SuiteCRM core to 7.14.5
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+    'legacy_email_behaviour' => true,
+    'valid_imap_ports' => array(
+        '110', 
+        '143', 
+        '993', 
+        '995'
+    ),
+    'web_to_lead_allowed_redirect_hosts' => array(),
+    'trusted_hosts' => array(),
+    'login_language' => true,
+    'upload_bad_ext' => array(
+        'php',
+        'php3',
+        'php4',
+        'php5',
+        'php6',
+        'php7',
+        'php8',
+        'pl',
+        'cgi',
+        'py',
+        'asp',
+        'cfm',
+        'js',
+        'vbs',
+        'html',
+        'htm',
+        'phtml',
+        'phar'
+    ),
+    // END STIC
+
     // STIC Custom 20211025 MHP - Related to "SinergiaCRM - Purge database" scheduler. Sets the number of days after which records will be totally deleted from database.
     // STIC#448 y STIC#540
     'stic_purge_database_days' => 90,
@@ -553,7 +591,7 @@ $sugar_config = array(
     // STIC#708
     'stic_datetime_combo_minute_interval' => 15,
     // END STIC
-    
+
     // STIC-Custom 20231122 AAM - Deactivate to allow installation through SticInstall.php
     // STIC#1298
     'stic_install_locked' => true,
@@ -562,16 +600,40 @@ $sugar_config = array(
     // STIC Custom 20220422 JCH - publish JS variables
     // STIC#708
     // STIC#760
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
     'js_available' => array(
         0 => 'stic_datetime_combo_minute_interval',
         1 => 'stic_sinergiada_public',
+        2 => 'stic_security_groups_rules_enabled',
     ),
     // END STIC
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '1.0.0',
-    'js_custom_version' => 1,
+    'sinergiacrm_version' => '1.8.0', 
+    'js_custom_version' => 14,
     'stic_show_update_alert' => 0,
+    // END STIC
+
+    // STIC-Custom 20240117 JCH - Security Groups Module Rules activation config
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
+    'stic_security_groups_rules_enabled' => false,
+    // END STIC
+
+    // STIC-Custom 20240528 JBL - Disable AjaxUI calls
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/253
+    'disableAjaxUI' => true,
+    // END STIC
+
+    // STIC-Custom 20240920 MHP - Change behavior so that tasks are synchronized by default
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/394
+    'show_tasks_as_events' => true,
+    // END STIC    
+
+    // STIC-Custom 20240709 JCH - Advanced Tab config (multilevel) 
+    // STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208
+    'stic_advanced_menu_enabled' => true,
+    'stic_advanced_menu_icons' => '1',
+    'stic_advanced_menu_all' => '1',
     // END STIC
 );

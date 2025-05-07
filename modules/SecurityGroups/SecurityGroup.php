@@ -2,6 +2,7 @@
 
 require_once 'modules/SecurityGroups/SecurityGroup_sugar.php';
 
+#[\AllowDynamicProperties]
 class SecurityGroup extends SecurityGroup_sugar
 {
     /**
@@ -206,6 +207,27 @@ class SecurityGroup extends SecurityGroup_sugar
     public static function inherit($focus, $isUpdate)
     {
         global $sugar_config;
+
+        // STIC-CUSTOM JCH 2024-02-02 Do not apply global inheritance rules if a custom rule is defined for current module and $sugar_config['stic_security_groups_rules_enabled'] === true.
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/3
+
+        if ($sugar_config['stic_security_groups_rules_enabled'] === true && $isUpdate === false) {
+            
+            // Check for a custom rule for the module in stic_Security_Groups_Rules
+            $customRuleQuery = "SELECT count(*) FROM stic_security_groups_rules WHERE name='{$focus->module_dir}' AND deleted=0 AND active=true";
+            $customRuleCount = $focus->db->getOne($customRuleQuery);
+
+            // If a custom rule is defined for current module, apply custom rules and exit the function
+            if ($customRuleCount == 1) {
+                require_once 'modules/stic_Security_Groups_Rules/Utils.php';
+                stic_Security_Groups_RulesUtils::applyCustomInheritance($focus);
+
+                // This prevents the application of default inheritance global rules
+                return;
+            }
+        }
+        // END STIC CUSTOM
+
         self::assign_default_groups($focus, $isUpdate); //this must be first because it does not check for dups
         // STIC custom - JCH - 20221128 - Don't apply assigned user inheritance when saving an existing record
         // STIC#929
@@ -224,7 +246,7 @@ class SecurityGroup extends SecurityGroup_sugar
             //check to see if a member of more than 1 group...if not then just inherit the one.
             //Otherwise, this is taken on the edit view on create now
             $security_modules = self::getSecurityModules();
-            if (in_array($focus->module_dir, array_keys($security_modules))) {
+            if (array_key_exists($focus->module_dir, $security_modules)) {
                 //check if user is in more than 1 group. If so then set the session var otherwise inherit it's only group
                 global $current_user;
 
@@ -246,7 +268,7 @@ class SecurityGroup extends SecurityGroup_sugar
         if (!$isUpdate) {
             //inherit only for those that support Security Groups
             $security_modules = self::getSecurityModules();
-            if (!in_array($focus->module_dir, array_keys($security_modules))) {
+            if (!array_key_exists($focus->module_dir, $security_modules)) {
                 return;
             }
 
@@ -293,7 +315,7 @@ class SecurityGroup extends SecurityGroup_sugar
             //inherit only for those that support Security Groups
             $security_modules = self::getSecurityModules();
 
-            if (in_array($focus->module_dir, array_keys($security_modules))) {
+            if (array_key_exists($focus->module_dir, $security_modules)) {
                 $query = 'INSERT INTO securitygroups_records(id,securitygroup_id,record_id,module,date_modified,deleted) '
                     . 'SELECT DISTINCT ';
                 if ($focus->db->dbType == 'mysql') {
@@ -328,10 +350,10 @@ class SecurityGroup extends SecurityGroup_sugar
      */
     // STIC custom - JCH - 20221128 - Don't apply assigned user inheritance when saving an existing record
     // STIC#929
-    // public static function inherit_assigned($focus, $isUpdate)
+    // public static function inherit_assigned($focus)
     // {
     //     global $sugar_config;
-    //     if (isset($sugar_config['securitysuite_inherit_assigned']) && $sugar_config['securitysuite_inherit_assigned'] == true && $isUpdate == false) {
+    //     if (isset($sugar_config['securitysuite_inherit_assigned']) && $sugar_config['securitysuite_inherit_assigned'] == true) {
     public static function inherit_assigned($focus, $isUpdate)
     {
         global $sugar_config;
@@ -342,7 +364,7 @@ class SecurityGroup extends SecurityGroup_sugar
                 //inherit only for those that support Security Groups
                 $security_modules = self::getSecurityModules();
                 //if(in_array($focus->module_dir,$security_modules)) {
-                if (in_array($focus->module_dir, array_keys($security_modules))) {
+                if (array_key_exists($focus->module_dir, $security_modules)) {
                     $query = 'INSERT INTO securitygroups_records(id,securitygroup_id,record_id,module,date_modified,deleted) '
                         . 'SELECT DISTINCT ';
                     if ($focus->db->dbType == 'mysql') {
@@ -381,7 +403,7 @@ class SecurityGroup extends SecurityGroup_sugar
             //inherit only for those that support Security Groups
             $security_modules = self::getSecurityModules();
             //if(!in_array($focus_module_dir,$security_modules)) {
-            if (!in_array($focus_module_dir, array_keys($security_modules))) {
+            if (!array_key_exists($focus_module_dir, $security_modules)) {
                 //rost fix2
                 return; //don't inherit for this module
             }
@@ -398,7 +420,7 @@ class SecurityGroup extends SecurityGroup_sugar
             // END STIC
                 //relate_to is not guaranteed to be a module name anymore.
                 //if it isn't load the relationship and find the module name that way
-                if (!in_array($_REQUEST['relate_to'], array_keys($security_modules))) {
+                if (!array_key_exists($_REQUEST['relate_to'], $security_modules)) {
                     //check to see if relate_to is the relationship name
                     require_once 'modules/Relationships/Relationship.php';
                     $relationship = BeanFactory::newBean('Relationships');
@@ -724,8 +746,9 @@ class SecurityGroup extends SecurityGroup_sugar
         $query = "SELECT lhs_module, rhs_module FROM $rs->table_name WHERE deleted=0 AND (lhs_module = 'SecurityGroups' OR rhs_module='SecurityGroups')";
         $GLOBALS['log']->debug("SecuritySuite: Get SecuritySuite Enabled Modules: $query");
         $result = $rs->db->query($query);
+
         while (($row = $rs->db->fetchByAssoc($result)) != null) {
-            if ($row['lhs_module'] == 'SecurityGroups') {
+            if ($row['lhs_module'] === 'SecurityGroups') {
                 if (in_array($row['rhs_module'], $module_blacklist)) {
                     continue;
                 }

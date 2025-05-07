@@ -176,6 +176,12 @@
                 </div>
             </div>
         </div>
+        {* STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist *}
+        {* STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208 *}
+        {if $STIC_MENU }
+            {include file="custom/themes/SuiteP/tpls/SticAdvancedMenu.tpl"}
+        {else}    
+        {* END STIC *}    
         <div class="desktop-toolbar" id="toolbar">
             {if $USE_GROUP_TABS}
                 <ul class="nav navbar-nav">
@@ -523,7 +529,10 @@
 
             {/if}
         </div>
-
+        {* STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist *}
+        {* STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208 *}
+        {/if}
+        {* END STIC *}
         <!-- Right side of the main navigation -->
         <div class="mobile-bar">
             <ul id="toolbar" class="toolbar">
@@ -593,6 +602,13 @@
                         </form>
                     </div>
                 </li>
+                {* STIC-Custom 20240222 MHP - Adding efficient registration button 
+                   https://github.com/SinergiaTIC/SinergiaCRM/pull/114 *}
+                <li class="time_tracker_button_row no-show-time-tracker-button">
+                    <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                        onclick="showTimeTrackerConfirmBox();"></button>
+                </li>
+                {* END STIC-Custom *}
                 <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                     <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                         data-toggle="dropdown" aria-expanded="false">
@@ -726,6 +742,13 @@
                             </div>
                         </form>
                     </li>
+                    {* STIC-Custom 20240222 MHP - Adding efficient registration button 
+                       https://github.com/SinergiaTIC/SinergiaCRM/pull/114     *}
+                    <li class="time_tracker_button_row no-show-time-tracker-button">
+                        <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                            onclick="showTimeTrackerConfirmBox();"></button>
+                    </li>
+                    {* END STIC-Custom *}                    
                     <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                         <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                             data-toggle="dropdown" aria-expanded="false">
@@ -842,6 +865,13 @@
                                 </div>
                             </form>
                         </li>
+                        {* STIC-Custom 20240222 MHP - Adding efficient registration button 
+                           https://github.com/SinergiaTIC/SinergiaCRM/pull/114 *}
+                        <li class="time_tracker_button_row no-show-time-tracker-button">
+                            <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
+                                onclick="showTimeTrackerConfirmBox();"></button>
+                        </li>
+                        {* END STIC-Custom *}
                         <li id="desktop_notifications" class="dropdown nav navbar-nav desktop_notifications">
                             <button class="alertsButton btn dropdown-toggle suitepicon suitepicon-action-alerts"
                                 data-toggle="dropdown" aria-expanded="false">
@@ -873,9 +903,12 @@
                                 </ul>
                             </li>
                         </ul>
-
                     </div>
             </nav>
+            {* STIC-Custom 20240222 MHP - Add registration button dialog 
+               https://github.com/SinergiaTIC/SinergiaCRM/pull/114 *}
+            <div id="time-tracker-dialog-box"></div>
+            {* END STIC-Custom *}
             <!--End Responsive Top Navigation Menu -->
             {if $THEME_CONFIG.display_sidebar}
                 <!--Start Page Container and Responsive Sidebar -->
@@ -928,7 +961,11 @@
                                                     href="{sugar_link module=$item.module_name action='DetailView' record=$item.item_id link_only=1}"
                                                     class="recent-links-detail">
                                                     <span class="suitepicon suitepicon-module-{$item.module_name|lower|replace:'_':'-'}"></span>
-                                                    <span>{$item.item_summary_short}</span>
+                                                    {* STIC-Custom - JCH - 20240305 -  Add record tooltip *}
+                                                    {* https://github.com/SinergiaTIC/SinergiaCRM/pull/151 *}
+                                                    {* <span>{$item.item_summary_short}</span> *}
+                                                    <span title="{$item.item_summary}">{$item.item_summary_short}</span>
+                                                    {* END STIC *}
                                                 </a>
                                                 {capture assign='access'}{suite_check_access module=$item.module_name action='edit' record=$item.item_id }{/capture}
                                                 {if $access}
@@ -958,11 +995,19 @@
                                 {if $smarty.foreach.lastViewed.index < 5}
                                     <div class="recently_viewed_link_container_sidebar">
                                         <li class="recentlinks" role="presentation">
-                                            <a title="{$item.module_name}" accessKey="{$smarty.foreach.lastViewed.iteration}"
+                                            {* STIC-Custom - JCH - 20240305 -  Add record tooltip *}
+                                            {* https://github.com/SinergiaTIC/SinergiaCRM/pull/151 *}
+                                            {* <a title="{module=$item.module_name}" accessKey="{$smarty.foreach.lastViewed.iteration}" *}
+                                            <a title="{sugar_translate module=$item.module_name label=LBL_MODULE_NAME}" accessKey="{$smarty.foreach.lastViewed.iteration}"
+                                            {* END STIC *}
                                                 href="{sugar_link module=$item.module_name action='DetailView' record=$item.id link_only=1}"
                                                 class="favorite-links-detail">
                                                 <span class="suitepicon suitepicon-module-{$item.module_name|lower|replace:'_':'-'}"></span>
-                                                <span aria-hidden="true">{$item.item_summary_short}</span>
+                                                {* STIC-Custom - JCH - 20240305 -  Add record tooltip *}
+                                                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/151 *}
+                                                {* <span aria-hidden="true">{$item.item_summary_short}</span> *}
+                                                <span title="{$item.item_summary}" aria-hidden="true">{$item.item_summary_short}</span>
+                                                {* END STIC *}
                                             </a>
                                             {capture assign='access'}{suite_check_access module=$item.module_name action='edit' record=$item.item_id }{/capture}
                                             {if $access}
@@ -976,9 +1021,92 @@
                             {/foreach}
                         </ul>
                     </div>
+
+                    {* 
+                        STIC-Custom - ART - 20240216 - Sidebar Admin Actions
+                        https://github.com/SinergiaTIC/SinergiaCRM/pull/124
+                    *}
+                    {literal}
+                        <script>
+                            $(document).ready(function() {
+                                if($('#admin_link').length == 1) {
+                                    $('#admin_actions').show();
+                                } else {
+                                    $('#admin_actions').hide();
+                                }
+                            });
+                        </script>
+                        <!-- STIC-Custom - PCS - 20240416 - Sidebar theme options -->
+                        <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/193 -->
+                        <style>
+                          h2.admin_actions_title {font-size: 16px;font-weight: bold; margin: 10px 15px;}
+                        </style>
+                    {/literal}
+                        <div id='admin_actions' class="actionMenuSidebar adminMenuSidebar" hidden>
+                        <!-- END STIC-Custom -->
+                        <h2 class="admin_actions_title">{sugar_translate module="Administration" label="LBL_ADMIN_ACTIONS"}</h2>
+                            <ul>
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=Administration" target="_blank">
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-module-administration"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_MODULE_NAME"}
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=ModuleBuilder&action=index&type=studio" target="_blank" >
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-studio"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_STUDIO"}
+                                        </div>
+                                    </a>
+                                </li>
+                                {* STIC-Custom - JBL - 20240405 -  Custom Views link *}
+                                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/73 *}
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=stic_Custom_Views&action=index" target="_blank" >
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-stic-custom-views"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_STIC_CUSTOM_VIEWS_LINK_TITLE"}
+                                        </div>
+                                    </a>
+                                </li>
+                                {* END STIC-Custom *}
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=Administration&action=Upgrade" target="_blank">
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-repair"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Administration" label="LBL_UPGRADE_TITLE"}
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="actionmenulinks" role="presentation">
+                                    <a href="./index.php?module=Configurator&action=EditView" target="_blank">
+                                        <div class="side-bar-action-icon">
+                                            <span class="suitepicon suitepicon-admin-system-settings"></span>
+                                        </div>
+                                        <div class="actionmenulink">
+                                            {sugar_translate module="Configurator" label="LBL_MODULE_NAME"}
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {* END STIC-Custom *}
+
                 </div>
                 <!--</div>-->
             </div>
             <!--End Responsive Sidebar -->
         {/if}
         <!--Start Page content -->
+        

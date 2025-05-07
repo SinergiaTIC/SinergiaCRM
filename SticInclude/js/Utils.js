@@ -281,6 +281,10 @@ function setEnabledStatus(elementId, clearField) {
   } else {
     $("#" + elementId, $form)
       .prop("readonly", false);
+    $("#" + elementId, $form)
+      .prop("disabled", false);
+    $("#" + elementId, $form).parent().find("button")
+      .prop("disabled", false);
   }
   $("#" + elementId, $form)
     .closest(".edit-view-row-item")
@@ -313,6 +317,10 @@ function setDisabledStatus(elementId, clearField) {
   } else {
     $("#" + elementId, $form)
       .prop("readonly", true);
+    $("#" + elementId, $form)
+      .prop("disabled", true);
+    $("#" + elementId, $form).parent().find("button")
+      .prop("disabled", true);
   }
   $("#" + elementId, $form)
     .closest(".edit-view-row-item")
@@ -367,6 +375,22 @@ function setRequiredStatus(fieldId, fieldType, fieldMessage) {
 function setUnrequiredStatus(fieldId) {
   removeFromValidate(getFormName(), fieldId);
   removeRequiredMark(fieldId);
+}
+
+/**
+ * Returns true if the field is required
+ * 
+ * @param {*} fieldId id of field
+ */
+function getRequiredStatus(fieldId) {
+  var validateFields = validate[getFormName()];
+  for (i = 0; i < validateFields.length; i++) {
+    // Array(name, type, required, msg);
+    if (validateFields[i][0] == fieldId) {
+      return validateFields[i][2];
+    }
+  }
+  return false;
 }
 
 /**
@@ -977,4 +1001,33 @@ function buildDetailedColorFieldSelectize(fieldName) {
       $color[0].outerHTML + text + '</div>'
     );
   }
+}
+
+/**
+ * Add qtip (info-popup) functionality to an html element.
+ * Normally used in this element:
+ * <span id="id_selector" style='position: relative;'class="inline-help glyphicon glyphicon-info-sign data-hasqtip"></span>
+ * @param {String} selector qtip selector ('#' for id, '.' for class)
+ * @param {String} module 
+ * @param {String} label LBL...
+ */
+function addQtipFunctionality(selector, module, label) {
+  $(selector).qtip({
+    content: {
+      text: function (api) {
+        return SUGAR.language.translate(module, label);
+      },
+      title: {
+        text: SUGAR.language.languages.app_strings.LBL_ALT_INFO,
+      },
+      style: {
+        classes: 'qtip-inline-help'
+      }
+    },
+    hide: { 
+    event: 'mouseleave unfocus',
+    fixed: true,
+    delay: 200,
+    }
+  });
 }

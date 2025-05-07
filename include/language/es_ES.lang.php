@@ -767,6 +767,44 @@ $app_list_strings = array(
         'PM' => 'PM',
     ),
 
+    'dom_inbound_email_account_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+        'bounce' => 'Rebote',
+    ],
+
+    'dom_inbound_email_auth_types' => [
+        'basic' => 'Autenticación Básica',
+        'oauth' => 'OAuth',
+    ],
+
+    'dom_external_oauth_connection_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+    ],
+
+    'dom_external_oauth_provider_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+    ],
+
+    'dom_outbound_email_account_types' => [
+        'user' => 'Personal',
+        'group' => 'Grupo',
+        'system' => 'Sistema',
+        'system-override' => 'Anulación del Sistema',
+    ],
+
+    'dom_inbound_email_account_status' => [
+        'Active' => 'Activo',
+        'Inactive' => 'Inactivo',
+    ],
+
+    'dom_email_body_filtering_option' => [
+      'multi' => 'Búsqueda de Múltiples Palabras',
+      'single' => 'Búsqueda de Una Palabra',
+    ],
+
     'dom_email_types' => array(
         'out' => 'Enviado',
         'archived' => 'Archivado',
@@ -1508,7 +1546,7 @@ $app_strings = array(
     'LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS' => 'Añadir contactos a la lista de destino',
     'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE' => 'Clic para Cerrar',
     'LBL_ADDITIONAL_DETAILS' => 'Detalles Adicionales',
-    'LBL_ADMIN' => 'Administrador',
+    'LBL_ADMIN' => 'Administración',
     'LBL_ALT_HOT_KEY' => '',
     'LBL_ARCHIVE' => 'Archivo',
     'LBL_ASSIGNED_TO_USER' => 'Asignado a Usuario',
@@ -1520,7 +1558,7 @@ $app_strings = array(
     'LBL_BUGS' => 'Incidencias',
     'LBL_BY' => 'por',
     'LBL_CALLS' => 'Llamadas',
-    'LBL_CAMPAIGNS_SEND_QUEUED' => 'Enviar Emails de Campaña Encolados',
+    'LBL_CAMPAIGNS_SEND_QUEUED' => 'Enviar los mensajes de la cola de correo',
     'LBL_SUBMIT_BUTTON_LABEL' => 'Enviar',
     'LBL_CASE' => 'Caso',
     'LBL_CASES' => 'Casos',
@@ -1557,6 +1595,10 @@ $app_strings = array(
     'LBL_DATE_ENTERED' => 'Fecha de Creación:',
     'LBL_DATE_MODIFIED' => 'Fecha de Modificación:',
     'LBL_EDIT_BUTTON' => 'Editar',
+    // STIC-Custom 20240214 JBL - QuickEdit view
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+    'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
+    // END STIC-Custom
     'LBL_DUPLICATE_BUTTON' => 'Duplicar',
     'LBL_DELETE_BUTTON' => 'Eliminar',
     'LBL_DELETE' => 'Eliminar',
@@ -1960,6 +2002,8 @@ $app_strings = array(
     'LBL_REMOVE_DASHLET_CONFIRM' => '¿Está seguro de que desea quitar el SuiteCRM Dashlet?',
     'LBL_REMOVING_DASHLET' => 'Quitando SuiteCRM Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'SuiteCRM Dashlet Quitado',
+    'LBL_MAX_DASHLET_COLUMNS' => "Se pueden mostrar un máximo de %s columnas.",
+    'LBL_RETRIEVING_XML_DATA' => "Hubo un problema al recuperar los datos XML:\n",
 
     // MySugar Menu Options
 
@@ -2050,7 +2094,8 @@ $app_strings = array(
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_DESCRIPTION' => 'Descripción',
 
-    'LBL_YESTERDAY' => 'Ayer',
+    'LBL_YESTERDAY' => 'ayer',
+    'LBL_NOW' => 'ahora',
     'LBL_TODAY' => 'hoy',
     'LBL_TOMORROW' => 'mañana',
     'LBL_NEXT_WEEK' => 'la semana que viene',
@@ -3802,5 +3847,13 @@ $app_strings['LBL_SEARCH_PREV'] = 'Anterior';
 $app_strings['LBL_SEARCH_NEXT'] = 'Siguiente';
 $app_strings['LBL_SEARCH_PAGE'] = 'Página ';
 $app_strings['LBL_SEARCH_OF'] = ' de '; // Usage: Page 1 of 5
+$app_strings['LBL_USE_ADVANCED_SEARCH'] = 'Utilizar la búsqueda avanzada';
+$app_strings['LBL_USE_BASIC_SEARCH'] = 'Utilizar la búsqueda básica';
 
-$app_list_strings['LBL_REPORTS_RESTRICTED'] = 'Uno de los informes que has seleccionado apunta a un módulo al que no tienes acceso. Por favor, selecciona un informe que apunte a un módulo al que si tengas acceso.';
+// PDF Engines
+$app_strings['LBL_LEGACY_MPDF_ENGINE'] = 'Motor MPDF obsoleto';
+$app_strings['LBL_TCPDF_ENGINE'] = 'Motor TCPDF';
+
+$app_strings['ERR_INVALID_FILE_NAME'] = 'El nombre del fichero no es válido:';
+$app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'Solo puede contener caracteres alfanuméricos, el punto (.), el guion (-) o el guion bajo (_).';
+$app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'El nombre del fichero de importación no es válido';

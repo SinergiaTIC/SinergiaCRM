@@ -142,6 +142,9 @@ $mod_strings['LBL_INC_INCORPORA_RECORD_HELP'] = "Cuando este campo está activad
 // Cadenas Recursos y Reservas
 $mod_strings['LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE'] = 'Reservas';
 
+// Cadenas Organizaciones subvencionadas
+$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Participación en subvenciones';
+
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direcciones de correo";
 
@@ -172,5 +175,10 @@ $mod_strings['MSG_SHOW_DUPLICATES'] = 'El registro que está a punto de crear po
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizaciones';
 
 // Cadenas Ayudas
-
 $mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';
+
+// Cadenas Formación
+$mod_strings['LBL_STIC_TRAINING_ACCOUNTS_FROM_STIC_TRAINING_TITLE'] = 'Formación';
+
+// Cadenas Experiencia laboral
+$mod_strings['LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiencia laboral';

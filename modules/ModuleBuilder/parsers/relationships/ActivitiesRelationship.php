@@ -72,6 +72,7 @@ require_once 'modules/ModuleBuilder/parsers/relationships/OneToManyRelationship.
  * A link field which references the shared Relationship
  */
 
+#[\AllowDynamicProperties]
 class ActivitiesRelationship extends OneToManyRelationship
 {
     protected static $subpanelsAdded = array();
@@ -95,7 +96,7 @@ class ActivitiesRelationship extends OneToManyRelationship
      * Define the labels to be added to the module for the new relationships
      * @return array    An array of system value => display value
      */
-    public function buildLabels()
+    public function buildLabels($update = false)
     {
         $labelDefinitions = array( ) ;
         if (!$this->relationship_only) {
@@ -154,7 +155,7 @@ class ActivitiesRelationship extends OneToManyRelationship
         return $vardefs ;
     }
 
-    protected function getLinkFieldDefinition($sourceModule, $relationshipName)
+    protected function getLinkFieldDefinition($sourceModule, $relationshipName, $right_side = false, $vname = "", $id_name = false)
     {
         $vardef = array( ) ;
         $vardef [ 'name' ] = $relationshipName;
@@ -187,7 +188,7 @@ class ActivitiesRelationship extends OneToManyRelationship
         }
 
         ActivitiesRelationship::$subpanelsAdded[$this->lhs_module] = true;
-        $relationshipName = substr($this->relationship_name, 0, strrpos($this->relationship_name, '_'));
+        $relationshipName = substr((string) $this->relationship_name, 0, strrpos((string) $this->relationship_name, '_'));
         return array( $this->lhs_module => array(
                       'activities' => $this->buildActivitiesSubpanelDefinition($relationshipName),
                       'history' => $this->buildHistorySubpanelDefinition($relationshipName) ,
@@ -261,7 +262,11 @@ class ActivitiesRelationship extends OneToManyRelationship
             'order' => 20 ,
             'sort_order' => 'desc' ,
             'sort_by' => 'date_modified' ,
-            'title_key' => 'LBL_HISTORY' ,
+            // STIC-Custom 20240116 MHP - Assign the correct label to the titel_key field
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/64
+            // 'title_key' => 'LBL_HISTORY' ,
+            'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE' ,
+            // END STIC-Custom
             'type' => 'collection' ,
             'subpanel_name' => 'history' , //this values is not associated with a physical file.
             'module' => 'History' ,

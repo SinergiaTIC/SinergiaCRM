@@ -29,11 +29,11 @@ class EventInscriptionBO extends WebFormDataBO
   
 
     // Results constants of the organization's management
-    const ACCOUNT_ERROR = 0;
-    const ACCOUNT_UNIQUE = 1;
-    const ACCOUNT_MULTIPLE = 2;
-    const ACCOUNT_NEW = 3;
-    const ACCOUNT_NO_DATA = 4; // There is no information about the organization
+    public const ACCOUNT_ERROR = 0;
+    public const ACCOUNT_UNIQUE = 1;
+    public const ACCOUNT_MULTIPLE = 2;
+    public const ACCOUNT_NEW = 3;
+    public const ACCOUNT_NO_DATA = 4; // There is no information about the organization
 
     /**
      * Overwriting identifier arrays for value recovery
@@ -53,6 +53,15 @@ class EventInscriptionBO extends WebFormDataBO
     protected $accountObject = null;
     protected $accountCandidates = null;
     protected $accountResult = self::ACCOUNT_NO_DATA;
+
+
+    public function getObjectsCreated() {
+        return array(
+            'Contacts' => $this->contactObject,
+            'stic_Registrations' => $this->inscription,
+            'Accounts' => $this->accountObject
+        );
+    }
 
     /**
      * Property access methods
@@ -119,7 +128,7 @@ class EventInscriptionBO extends WebFormDataBO
         $this->requiredFormFields[] = 'Contacts___last_name'; // The person's last name is mandatory
 
         // If the registration includes a payment add the identification number as a required field unless explicitly unrequired in the form
-        if ($defParams['include_payment_commitment'] && $_REQUEST["unrequire_identification_number"] != 1) {
+        if ($defParams['include_payment_commitment'] && (isset($_REQUEST["unrequire_identification_number"]) && $_REQUEST["unrequire_identification_number"] != 1)) {
             $this->requiredFormFields[] = 'Contacts___stic_identification_number_c';
         }
 
@@ -263,6 +272,7 @@ class EventInscriptionBO extends WebFormDataBO
 
         if ($_REQUEST["validate_identification_number"] == '1') {
             // If identification type is not set or it is a NIF/NIE, validate it. In other case, don't validate
+            $this->formParams['Contacts___stic_identification_number_c'] = trim($this->formParams['Contacts___stic_identification_number_c'] ?? '');
             if ($this->formParams['Contacts___stic_identification_number_c']
                 && (empty($this->formParams['Contacts___stic_identification_type_c'])
                     || $this->formParams['Contacts___stic_identification_type_c'] == 'nif'
@@ -274,6 +284,7 @@ class EventInscriptionBO extends WebFormDataBO
             }
 
             // If organization's id is available, validate it
+            $this->formParams['Accounts___stic_identification_number_c'] = trim($this->formParams['Accounts___stic_identification_number_c'] ?? '');
             if (!empty($this->formParams['Accounts___stic_identification_number_c']) &&
                 !self::checkTaxIdentity($this->formParams['Accounts___stic_identification_number_c'])) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  The organization ID [{$this->formParams['Accounts___stic_identification_number_c']}] is not valid.");
@@ -298,6 +309,7 @@ class EventInscriptionBO extends WebFormDataBO
         } else {
             $this->contactResult = $this->getContact($this->contactObject, $this->contactCandidates);
         }
+
         /*
          * If information about the organization is incorporated, the data is recovered
          * The organization can be included in the form as an optional data, therefore, even if it is included
@@ -306,7 +318,6 @@ class EventInscriptionBO extends WebFormDataBO
          */
         if ($this->defParams['include_organization'] && !empty($this->formParams['Accounts___name'])) {
             $this->accountResult = $this->getAccount($this->accountObject, $this->accountCandidates);
-
             // If it is a new contact try to link the organization
             if ($this->contactResult == self::CONTACT_NEW &&
                 $this->accountResult != self::ACCOUNT_ERROR) {
@@ -492,7 +503,9 @@ class EventInscriptionBO extends WebFormDataBO
         if ($ret == self::ACCOUNT_ERROR) // This indicates that it has not been found yet.
         {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Retrieving list of named organizations = [{$name}] ...");
-            $objCandidates = $accounts->get_full_list("name", "accounts.name = '{$name}'");
+            $db = DBManagerFactory::getInstance();
+            $sqlName = $db->quote($name);
+            $objCandidates = $accounts->get_full_list("name", "accounts.name = '{$sqlName}'");
 
             $nCandidates = count($objCandidates); // Count the number of results obtained
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Found {$nCandidates} candidates.");
@@ -590,7 +603,7 @@ class EventInscriptionBO extends WebFormDataBO
 
         // Manage attached files
         require_once 'modules/Documents/Document.php'; // Call to the Document class.
-        $total_files = $_FILES["documents"]["name"] ? count($_FILES["documents"]["name"]) : 0; // Assignment of the number of attachments received from the form
+        $total_files = (!empty($_FILES['documents']) && !empty($_FILES["documents"]["name"])) ? count($_FILES["documents"]["name"]) : 0; // Assignment of the number of attachments received from the form
         $objContact->load_relationship('documents'); // Loading of the relationship between the contact module and the document module
 
         // For each document received from the form

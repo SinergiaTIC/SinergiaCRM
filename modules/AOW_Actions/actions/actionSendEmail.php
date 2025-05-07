@@ -52,7 +52,11 @@ class actionSendEmail extends actionBase
         return array('modules/AOW_Actions/actions/actionSendEmail.js');
     }
 
-    public function edit_display($line, SugarBean $bean = null, $params = array())
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function edit_display($line, SugarBean $bean = null, $params = array())
+    public function edit_display($line, ?SugarBean $bean = null, $params = array())
+    // END STIC Custom
     {
         global $app_list_strings;
         $email_templates_arr = get_bean_select_array(true, 'EmailTemplate', 'name', '', 'name');
@@ -83,8 +87,10 @@ class actionSendEmail extends actionBase
         $html .= "<td valign='top'>";
         $html .= "<input type='hidden' name='aow_actions_param[".$line."][individual_email]' value='0' >";
         $html .= "<input type='checkbox' id='aow_actions_param[".$line."][individual_email]' name='aow_actions_param[".$line."][individual_email]' value='1' $checked></td>";
-        $html .= '</td>';
-
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        // $html .= '</td>';
+        // END STIC-Custom
         if (!isset($params['email_template'])) {
             $params['email_template'] = '';
         }
@@ -104,6 +110,113 @@ class actionSendEmail extends actionBase
         $html .= "&nbsp;<span name='edit_template' id='aow_actions_edit_template_link".$line."' $hidden><a href='javascript:edit_email_template_form(".$line.")' >".translate('LBL_EDIT_EMAIL_TEMPLATE', 'AOW_Actions')."</a></span>";
         $html .= "</td>";
         $html .= "</tr>";
+
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+
+        // Advanced options section
+        $html .= "<tr style='margin-top:20px;' >";
+        $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;" > <a href="javascript:void($(\'.advancedOptions\').toggle());">' . translate(
+            "LBL_SHOW_ADVANCED",
+            "AOW_Actions"
+            ) . '<span class="inline-help glyphicon glyphicon-triangle-bottom"></span> <span id="info-availability" class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="1" aria-describedby="qtip-1"></span></a> ';
+        $html .= '</td>'; 
+        $html .= "</tr>";
+            
+        // Show output accounts
+        $emailsList = $this->get_output_smtps();
+        list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp'] ?? '');
+        
+        $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none;' class='advancedOptions'>";
+        $html .= '<td id="relate_label_5" scope="row" valign="top" style="width:20%;"><label>' . translate(
+            "LBL_OUTPUT_SMTP",
+            "AOW_Actions"
+        ) . ':<span class="required">*</span></label>';
+        $html .= '</td>';
+
+        $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
+        $html .= "<select name='aow_actions_param[".$line."][output_smtp]' id='aow_actions_param[".$line."][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp'] ?? '') . "</select>";
+        $html .= '</td>';
+        $html .= '</tr>';
+
+        // From name
+        if (isset($params['from_email_name']) && $params['from_email_name']) {
+            $from_name = $params['from_email_name'];
+        } else {
+            $from_name= $fromName;
+        }      
+
+        $html .= "<tr style='margin-top:20px; display:none;' class='advancedOptions'>";
+        $html .= '<td id="relate_label_3" scope="row" valign="top" style="width:20%;"><label>' . translate(
+            "LBL_FROM_NAME",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][from_email_name]' value='0' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][from_email_name]' name='aow_actions_param[".$line."][from_email_name]' value='{$from_name}' ></td>";
+ 
+        // From address
+        if (isset($params['from_email_address']) && $params['from_email_address']) {
+            $from = $params['from_email_address'];
+        } else {
+            $from= $fromAddress;
+        }
+
+        $html .= '<td id="relate_label_2" scope="row" valign="top" style="width:20%;"> <label>' . translate(
+            "LBL_FROM_EMAIL",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][from_email_address]' value='' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][from_email_address]' name='aow_actions_param[".$line."][from_email_address]' value='{$from}' ></td>";
+        $html .= "</tr>";
+
+        // Reply to name
+        if (isset($params['reply_to_name']) && $params['reply_to_name']) {
+            $reply_to_name = $params['reply_to_name'];
+
+        } else {
+            $reply_to_name = '';
+        }  
+        $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none' class='advancedOptions'>";
+        $html .= '<td id="relate_label_4" scope="row" valign="top" style="width:20%;"><label>' . translate(
+            "LBL_REPLY_TO_NAME",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][reply_to_name]' value='0' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][reply_to_name'] name='aow_actions_param[".$line."][reply_to_name]' value='{$reply_to_name}' ></td>";
+        $html .= '</td>';
+
+        // Reply to address
+        if (isset($params['reply_to']) && $params['reply_to']) {
+            $reply_to = $params['reply_to'];
+
+        } else {
+            $reply_to='';
+        }  
+        $html .= '<td id="relate_label_4" scope="row" valign="top" style="width:20%;"><label>' . translate(
+            "LBL_REPLY_TO_EMAIL",
+            "AOW_Actions"
+        ) . ':</label>';
+        $html .= '</td>';
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<input type='hidden' name='aow_actions_param[".$line."][reply_to]' value='0' >";
+        $html .= "<input type='text' id='aow_actions_param[".$line."][reply_to'] name='aow_actions_param[".$line."][reply_to]' value='{$reply_to}' ></td>";
+        $html .= '</td>';
+        $html .= "</tr>";
+
+        // Section end
+        $html .= "<tr style='margin-top:20px;' >";
+        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= '</td>';
+        $html .= '</tr>';
+
+        // END STIC-Custom
+
         $html .= "<tr>";
         $html .= '<td id="name_label" scope="row" valign="top"><label>' . translate(
             "LBL_EMAIL",
@@ -147,8 +260,91 @@ class actionSendEmail extends actionBase
         }
         $html .= "</script>";
 
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        
+        $html .= "<script id ='info'> 
+        // script for tooltip
+        $('#info-availability').qtip({
+            content: {
+              text: '". translate(
+                "LBL_ADVANCED_TOOLTIP_BODY",
+                "AOW_Actions"
+            )."',
+              title: {
+                text: '". translate(
+                    "LBL_ADVANCED_TOOLTIP_HEADER",
+                    "AOW_Actions"
+                ) ."',
+              },
+              style: {
+                classes: 'qtip-inline-help'
+              }
+            },
+        });
+
+        // script for outbound mail change
+        var selection = document.getElementById('aow_actions_param[".$line."][output_smtp]');
+        selection.onchange = function(event){
+          let from = event.target.options[event.target.selectedIndex].dataset.from;
+          let address = event.target.options[event.target.selectedIndex].dataset.address;
+          document.getElementById('aow_actions_param[" . $line . "][from_email_address]').setAttribute('value', address);
+          document.getElementById('aow_actions_param[" . $line . "][from_email_name]').setAttribute('value', from);
+        };";
+
+        // Hide advanced section when default configuration is used
+        if (isset($params['output_smtp']) && ($params['output_smtp'] != 'system' || $fromName != $from_name || $fromAddress != $from
+                || !empty($params['reply_to']) || !empty($params['reply_to_name']))) {
+            $html .= "$('.advancedOptions').toggle();";
+        }
+
+        $html .= "</script>";
+        //END STIC-Custom
+
         return $html;
     }
+
+    // STIC-Custom 20240307 EPS - Improve send mail action
+    // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+
+    private function getSelectedSMTPData($emailsList, $selectedSmtp) {
+        $selectedData = array();
+        foreach($emailsList as $id => $props) {
+            if ($selectedSmtp == $props['name']) {
+                $selectedData = array(
+                    $props['smtp_from_name'],
+                    $props['smtp_from_addr'],
+                );
+                return $selectedData;
+            }
+        }
+        $selectedData = array(null, null);
+        return $selectedData;
+    }
+    private function get_output_smtps_options($emailsList, $selectedSmtp) {
+        $selectedSmtp = $selectedSmtp == '' ? 'system' : $selectedSmtp;
+        $optionString = "";
+        foreach($emailsList as $id => $props) {
+            $selected = $props['name'] == $selectedSmtp ? 'selected' : '';
+            $optionString .= "<option value='{$props['name']}' {$selected} data-from='{$props['smtp_from_name']}' data-address='{$props['smtp_from_addr']}'>{$props['name']}</option> ";
+        }
+
+        return $optionString;
+    }
+
+    private function get_output_smtps() {
+        $emailsList = array();
+        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "(type = 'system' OR type = 'group')"); // Personal and overrides are ignored, as this will be a system based email
+        foreach ($oeaList as $oea) {
+            $emailsList[$oea->id] = array(
+                'name' => $oea->name,
+                'smtp_from_name' => $oea->smtp_from_name,
+                'smtp_from_addr' => $oea->smtp_from_addr
+            );
+        }
+        return $emailsList;
+    }
+    // END STIC-Custom
 
     protected function getEmailsFromParams(SugarBean $bean, $params)
     {
@@ -325,14 +521,31 @@ class actionSendEmail extends actionBase
 
         $attachments = $this->getAttachments($emailTemp);
 
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        $fromEmail = $params['from_email_address'] ?? '';
+        $fromName = $params['from_email_name'] ?? '';
+        $replyto = $params['reply_to'] ?? '';
+        $replytoName = $params['reply_to_name'] ?? '';
+        $outputSmtp = $params['output_smtp'] ?? '';
+        // END STIC-Custom
+
         $ret = true;
+
+        $emailCC = $emails['cc'] ?? '';
+        $emailBCC = $emails['bcc'] ?? '';
+
         if (isset($params['individual_email']) && $params['individual_email']) {
             foreach ($emails['to'] as $email_to) {
                 $emailTemp = BeanFactory::newBean('EmailTemplates');
                 $emailTemp->retrieve($params['email_template']);
-                $template_override = isset($emails['template_override'][$email_to]) ? $emails['template_override'][$email_to] : array();
+                $template_override = $emails['template_override'][$email_to] ?? array();
                 $this->parse_template($bean, $emailTemp, $template_override);
-                if (!$this->sendEmail(array($email_to), $emailTemp->subject, $emailTemp->body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
+                // STIC-Custom 20240307 EPS - Improve send mail action
+                // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+                // if (!$this->sendEmail(array($email_to), $emailTemp->subject, $emailTemp->body_html, $emailTemp->body, $bean, $emailCC, $emailBCC, $attachments)) {
+                if (!$this->sendEmail($emailTemp, array($email_to), $outputSmtp, $fromEmail, $fromName, $replyto, $replytoName, $bean, $emailCC, $emailBCC, $attachments)) {
+                // END STIC-Custom
                     $ret = false;
                     $this->lastEmailsFailed++;
                 } else {
@@ -342,12 +555,18 @@ class actionSendEmail extends actionBase
         } else {
             $this->parse_template($bean, $emailTemp);
             if ($emailTemp->text_only == '1') {
-                $email_body_html = $emailTemp->body;
+                $email_body = $emailTemp->body;
+                $email_body_alt = null;
             } else {
-                $email_body_html = $emailTemp->body_html;
+                $email_body = $emailTemp->body_html;
+                $email_body_alt = $emailTemp->body;
             }
 
-            if (!$this->sendEmail($emails['to'], $emailTemp->subject, $email_body_html, $emailTemp->body, $bean, $emails['cc'], $emails['bcc'], $attachments)) {
+            // STIC-Custom 20240307 EPS - Improve send mail action
+            // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+            // if (!$this->sendEmail($emails['to'], $emailTemp->subject, $email_body, $email_body_alt, $bean, $emailCC, $emailBCC, $attachments)) {
+            if (!$this->sendEmail($emailTemp, $emails['to'], $outputSmtp, $fromEmail, $fromName, $replyto, $replytoName, $bean, $emailCC, $emailBCC, $attachments)) {
+            // END STIC-Custom
                 $ret = false;
                 $this->lastEmailsFailed++;
             } else {
@@ -386,19 +605,25 @@ class actionSendEmail extends actionBase
 
     public function parse_template(SugarBean $bean, &$template, $object_override = array())
     {
+
         global $sugar_config;
 
         require_once __DIR__ . '/templateParser.php';
 
+        $object_arr = [];
         $object_arr[$bean->module_dir] = $bean->id;
 
         foreach ($bean->field_defs as $bean_arr) {
             if ($bean_arr['type'] == 'relate') {
                 if (isset($bean_arr['module']) &&  $bean_arr['module'] != '' && isset($bean_arr['id_name']) &&  $bean_arr['id_name'] != '' && $bean_arr['module'] != 'EmailAddress') {
                     $idName = $bean_arr['id_name'];
-                    if (isset($bean->field_defs[$idName]) && $bean->field_defs[$idName]['source'] != 'non-db') {
+                    if (isset($bean->field_defs[$idName]) && ($bean->field_defs[$idName]['source'] ?? '') != 'non-db') {
                         if (!isset($object_arr[$bean_arr['module']])) {
-                            $object_arr[$bean_arr['module']] = $bean->$idName;
+                            // STIC Custom 20250312 JBL - Avoid Warning: Undefined property
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            // $object_arr[$bean_arr['module']] = $bean->$idName;
+                            $object_arr[$bean_arr['module']] = $bean->$idName ?? '';
+                            // END STIC Custom
                         }
                     }
                 }
@@ -424,7 +649,7 @@ class actionSendEmail extends actionBase
 
         $object_arr = array_merge($object_arr, $object_override);
 
-        $parsedSiteUrl = parse_url($sugar_config['site_url']);
+        $parsedSiteUrl = parse_url((string) $sugar_config['site_url']);
         $host = $parsedSiteUrl['host'];
         if (!isset($parsedSiteUrl['port'])) {
             $parsedSiteUrl['port'] = 80;
@@ -436,15 +661,15 @@ class actionSendEmail extends actionBase
 
         $url =  $cleanUrl."/index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}";
 
-        $template->subject = str_replace("\$contact_user", "\$user", $template->subject);
-        $template->body_html = str_replace("\$contact_user", "\$user", $template->body_html);
-        $template->body = str_replace("\$contact_user", "\$user", $template->body);
+        $template->subject = str_replace("\$contact_user", "\$user", (string) $template->subject);
+        $template->body_html = str_replace("\$contact_user", "\$user", (string) $template->body_html);
+        $template->body = str_replace("\$contact_user", "\$user", (string) $template->body);
         $template->subject = aowTemplateParser::parse_template($template->subject, $object_arr);
         $template->body_html = aowTemplateParser::parse_template($template->body_html, $object_arr);
-        $template->body_html = str_replace("\$url", $url, $template->body_html);
+        $template->body_html = str_replace("\$url", $url, (string) $template->body_html);
         $template->body_html = str_replace('$sugarurl', $sugar_config['site_url'], $template->body_html);
         $template->body = aowTemplateParser::parse_template($template->body, $object_arr);
-        $template->body = str_replace("\$url", $url, $template->body);
+        $template->body = str_replace("\$url", $url, (string) $template->body);
         $template->body = str_replace('$sugarurl', $sugar_config['site_url'], $template->body);
     }
 
@@ -463,33 +688,102 @@ class actionSendEmail extends actionBase
         }
         return $attachments;
     }
-
-    public function sendEmail($emailTo, $emailSubject, $emailBody, $altemailBody, SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    // STIC-Custom 20240307 EPS - Improve send mail action
+    // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+    // public function sendEmail($emailTo, $emailSubject, $emailBody, $altemailBody, SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    // STIC Custom 20250220 JBL - Avoid Deprecated Warning: Using explicit nullable type
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function sendEmail($templateData, $emailTo, $mailerName = 'system', $fromEmail = '', $fromName = '', $replyto = '', $replytoName = '', SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    public function sendEmail($templateData, $emailTo, $mailerName = 'system', $fromEmail = '', $fromName = '', $replyto = '', $replytoName = '', ?SugarBean $relatedBean = null, $emailCc = array(), $emailBcc = array(), $attachments = array())
+    // END STIC Custom JBL
+    // END STIC-Custom
     {
         require_once('modules/Emails/Email.php');
         require_once('include/SugarPHPMailer.php');
 
-        $emailObj = BeanFactory::newBean('Emails');
-        $defaults = $emailObj->getSystemDefaultEmail();
-        $mail = new SugarPHPMailer();
-        $mail->setMailerForSystem();
-        $mail->From = $defaults['email'];
-        isValidEmailAddress($mail->From);
-        $mail->FromName = $defaults['name'];
-        $mail->ClearAllRecipients();
-        $mail->ClearReplyTos();
-        $mail->Subject=from_html($emailSubject);
-        $mail->Body=$emailBody;
-        $mail->AltBody = $altemailBody;
-        $mail->handleAttachments($attachments);
-        $mail->prepForOutbound();
-
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
         if ((empty($emailTo)) || (!is_array($emailTo))) {
             return false;
         }
+        // END STIC-Custom
+
+        $emailObj = BeanFactory::newBean('Emails');
+        $mail = new SugarPHPMailer();
+
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        // $defaults = $emailObj->getSystemDefaultEmail();
+        // $mail->setMailerForSystem();
+        // $mail->From = $defaults['email'];
+        // isValidEmailAddress($mail->From);
+        // $mail->FromName = $defaults['name'];
+        
+        
+        $outboundEmail = new OutboundEmail();
+        if (empty($mailerName) || $mailerName === 'system') {
+            $outboundEmail = $outboundEmail->getSystemMailerSettings();
+        }
+        else {
+            $user = new User();
+            $user->getSystemUser();
+            $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
+        }
+        $mail->From = $fromEmail? $fromEmail : $outboundEmail->smtp_from_addr;
+        $mail->FromName = $fromName ? $fromName : $outboundEmail->smtp_from_name;
+        $mail->ClearCustomHeaders();
+
+        $mail->Mailer = 'smtp';
+        $mail->Host = $outboundEmail->mail_smtpserver;
+        $mail->Port = $outboundEmail->mail_smtpport;
+
+        if ($outboundEmail->mail_smtpssl == 1) {
+            $mail->SMTPSecure = 'ssl';
+        } // if
+        if ($outboundEmail->mail_smtpssl == 2) {
+            $mail->SMTPSecure = 'tls';
+        } // if
+        if ($outboundEmail->mail_smtpauth_req) {
+            $mail->SMTPAuth = true;
+            $mail->Username = $outboundEmail->mail_smtpuser;
+            $mail->Password = $outboundEmail->mail_smtppass;
+        }
+        // END STIC-Custom 
+
+        $mail->ClearAllRecipients();
+        $mail->ClearReplyTos();
+
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        // $mail->Subject=from_html($emailSubject);
+        // $mail->Body=$emailBody;
+        // if($altemailBody){
+        //     $mail->AltBody = $altemailBody;
+        // }
+        $mail->Subject = $templateData->subject;
+        if ($templateData->text_only == '1') {
+            $mail->Body = $templateData->body;
+        } else {
+            $mail->Body = $templateData->body_html;
+            $mail->isHTML(true);
+        }
+        $mail->AltBody = $templateData->body;
+        // END STIC-Custom
+
+
+        $mail->handleAttachments($attachments);
+        $mail->prepForOutbound();
+
         foreach ($emailTo as $to) {
             $mail->AddAddress($to);
         }
+
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        if (!empty($replyto)){
+            $mail->addReplyTo($replyto, $replytoName);
+        }
+        // END STIC-Custom
         if (!empty($emailCc)) {
             foreach ($emailCc as $email) {
                 $mail->AddCC($email);
@@ -558,8 +852,17 @@ class actionSendEmail extends actionBase
                 }
                 $note->save();
             }
-            return true;
+        // STIC-Custom 20240307 EPS - Improve send mail action
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
+        //     return true;
+        // }
+        // return false;
         }
-        return false;
+        else {
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error send the notification email.");
+            return false;
+        }
+        return true;
     }
+    // END STIC-Custom
 }
