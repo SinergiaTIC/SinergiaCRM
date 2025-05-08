@@ -804,8 +804,15 @@ class User extends Person implements EmailInterface
                     $this->setPreference('calendar_publish_key', create_guid());
                 }
             }
-            $this->saveFormPreferences();
-            $this->savePreferencesToDB();
+            // STIC Custom 20250508 JBL - Avoid reset preferences in MassUpdate
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // $this->saveFormPreferences();
+            // $this->savePreferencesToDB();
+            if (!isset($_POST['action']) || $_POST['action']!="MassUpdate") {
+                $this->saveFormPreferences();
+                $this->savePreferencesToDB();
+            }
+            // END STIC Custom
 
             // Set the new password in the database
             if ($saveUserAndPassword) {
