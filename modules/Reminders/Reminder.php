@@ -107,6 +107,10 @@ class Reminder extends Basic
         $db = DBManagerFactory::getInstance();
 
         $savedReminderIds = array();
+        // STIC Custom 20250313 JBL - Avoid iterate over null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $remindersData ??= [];
+        // END STIC Custom        
         foreach ($remindersData as $reminderData) {
             if (isset($_POST['isDuplicate']) && $_POST['isDuplicate']) {
                 $reminderData->id = '';

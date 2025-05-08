@@ -78,6 +78,7 @@ class Sugar_Smarty extends Smarty
         $this->registerPlugin("modifier", "intval", "intval");
         $this->registerPlugin("modifier", "array_values", "array_values");
         $this->registerPlugin("modifier", "max", "max");
+        $this->registerPlugin("modifier", "key", "key");
         // End STIC Custom
 
         if (!file_exists(SUGAR_SMARTY_DIR)) {

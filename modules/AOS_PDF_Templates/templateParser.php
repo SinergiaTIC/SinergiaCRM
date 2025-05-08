@@ -136,16 +136,34 @@ class templateParser
                     $repl_arr[$key . "_" . $fieldName] = html_entity_decode((string) $focus->{$fieldName},
                         ENT_COMPAT, 'UTF-8');
                 } elseif ($field_def['type'] == 'decimal' || $field_def['type'] == 'float') {
+                    // STIC Custom 20250414 ART - SticUtils function for UserPreferences decimals formatting
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                    require_once 'SticInclude/Utils.php';
+                    // END STIC Custom
+
                     // STIC Custom 20250215 JBL - Remove Warning: Undefined array key access
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                     // if ($_REQUEST['entryPoint'] == 'formLetter') {
                     if (!empty($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'formLetter') {
                     // END STIC Custom
-                        $value = formatDecimalInConfigSettings($focus->$fieldName, true);
+                    
+                    // STIC Custom 20250414 ART - SticUtils function for UserPreferences decimals formatting
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                    //     $value = formatDecimalInConfigSettings($focus->$fieldName, true);
+                    // } else {
+                    //     $value = formatDecimalInConfigSettings($focus->$fieldName, false);
+                    // }
+                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, true);
                     } else {
-                        $value = formatDecimalInConfigSettings($focus->$fieldName, false);
+                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, false);
                     }
+                    // END STIC Custom
                     $repl_arr[$key . "_" . $fieldName] = $value;
+                // STIC Custom 20250424 JBL - Añadimos funcionalidad Addon campo de Firma
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                } elseif ($field_def['type'] == 'Signature') {
+                    $repl_arr[$key . "_" . $fieldName] = '<img src="' . $focus->$fieldName . '" width="'.$field_def['width'].'" height="'.$field_def['height'].'">';
+                // END STIC Custom
                 // STIC-Custom 20221013 AAM - Parsing date/datetime fields when the bean is being modified
                 // STIC#883
                 } elseif ((isset($field_def['dbType']) && $field_def['dbType'] == 'date') || 

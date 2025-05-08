@@ -83,8 +83,12 @@ class MBLanguage
 
     public function loadAppListStrings($file)
     {
-        global $app_list_strings;
-        $app_list_strings = $app_list_strings ?? [];
+        // STIC Custom 20250313 JBL - Fix Language labels in ModuleBuilder
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/601
+        // global $app_list_strings;
+        // $app_list_strings = $app_list_strings ?? [];
+        $app_list_strings = [];
+        // END STIC Custom
         if (!file_exists($file)) {
             return;
         }

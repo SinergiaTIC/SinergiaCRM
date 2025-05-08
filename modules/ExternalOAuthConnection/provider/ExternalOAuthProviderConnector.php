@@ -168,10 +168,21 @@ abstract class ExternalOAuthProviderConnector implements ExternalOAuthProviderCo
 
         $options = array_merge_recursive($options, $this->getRefreshTokenRequestOptions($config));
 
-        return $provider->getAccessToken(
-            $this->getRefreshTokenRequestGrant($config),
-            $options
-        );
+        // STIC Custom 20250325 JBL - Fix Fatal Error: Uncaught exception
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // return $provider->getAccessToken(
+        //     $this->getRefreshTokenRequestGrant($config),
+        //     $options
+        // );
+        try {
+            return $provider->getAccessToken(
+                $this->getRefreshTokenRequestGrant($config),
+                $options
+            );
+        } catch (IdentityProviderException $e) {
+            return null;
+        }
+        // END STIC Custom
     }
 
     /**

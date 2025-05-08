@@ -108,7 +108,11 @@
         <tbody>
             {foreach from=$beans item=bean}
             <tr class="{cycle values="oddListRowS1,evenListRowS1"}">
-                <td><a href="{$APP_CONFIG.site_url}/index.php?action=EditView&module={$module}&record={$bean->id}&offset=1"><span class="suitepicon suitepicon-action-edit"></span></a></td>
+                {* STIC-Custom 20220325 JBL - Use correct access to an array element *}
+                {* https://github.com/SinergiaTIC/SinergiaCRM/pull/477 *}
+                {* <td><a href="{$APP_CONFIG.site_url}/index.php?action=EditView&module={$module}&record={$bean->id}&offset=1"><span class="suitepicon suitepicon-action-edit"></span></a></td> *}
+                <td><a href="{$APP_CONFIG.site_url}/index.php?action=EditView&module={$module}&record={$bean['id']}&offset=1"><span class="suitepicon suitepicon-action-edit"></span></a></td>
+                {* END STIC Custom *}
                 {foreach from=$headers[$module] item=header}
                 {* STIC-Custom 20220407 AAM - Translate Dropdown field values *}
                 {* STIC#696 *}

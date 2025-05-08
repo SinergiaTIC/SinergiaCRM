@@ -46,6 +46,10 @@
  * @method Smarty_Internal_TemplateBase unregisterFilter(string $type, mixed $callback)
  * @method Smarty_Internal_TemplateBase unregisterResource(string $name)
  */
+// STIC Custom 20250326 JBL - Allow dynamic properties
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+#[\AllowDynamicProperties]
+// END STIC Custom
 abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
 {
     /**

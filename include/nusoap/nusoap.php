@@ -3734,7 +3734,11 @@ class soap_transport_http extends nusoap_base
     * @access   public
     * @deprecated
     */
-    public function sendHTTPS($data, $timeout=0, $response_timeout=30, $cookies)
+    // STIC Custom 20250313 JBL - Avoid optional parameters declared before required
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // public function sendHTTPS($data, $timeout=0, $response_timeout=30, $cookies)
+    public function sendHTTPS($data, $timeout=0, $response_timeout=30, $cookies = null)
+    // END STIC Custom
     {
         return $this->send($data, $timeout, $response_timeout, $cookies);
     }
@@ -8812,7 +8816,11 @@ class nusoap_parser extends nusoap_base
             // raw UTF-8 that, e.g., might not map to iso-8859-1
             // TODO: this can also be handled with xml_parser_set_option($this->parser, XML_OPTION_TARGET_ENCODING, "ISO-8859-1");
             if ($this->decode_utf8) {
-                $data = utf8_decode($data);
+                // STIC Custom 20250314 JBL - utf8_decode is deprecated
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $data = utf8_decode($data);
+                $data = mb_convert_encoding($data, 'ISO-8859-1', 'UTF-8');
+                // END STIC Custom
             }
         }
         $this->message[$pos]['cdata'] .= $data;

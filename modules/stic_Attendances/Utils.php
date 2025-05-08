@@ -137,7 +137,7 @@ class stic_AttendancesUtils
             // Avoid attendance creation if $date weekday appears in registration disabled_weekdays string
             $currentWeekday = date('w', strtotime($row['start_date']));
             if (strpos($row['disabled_weekdays'], $currentWeekday) !== false) {
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Attendance creation for session: ' . $row['session_id'] . ' and registration: ' . $row['registration_id'] . ' is ommited because ' . $row['weekday'] . ' is in registration disabled_weekdays');
+                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Attendance creation for session: ' . $row['session_id'] . ' and registration: ' . $row['registration_id'] . ' is ommited because ' . ($row['weekday'] ?? null) . ' is in registration disabled_weekdays');
                 continue;
             }
 

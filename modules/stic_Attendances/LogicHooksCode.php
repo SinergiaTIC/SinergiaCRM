@@ -70,13 +70,20 @@ class stic_AttendancesLogicHooks
 
         // Set name if it is empty
         if (empty($bean->name)) {
-            if (is_string($bean->stic_attendances_stic_registrationsstic_registrations_ida)) {
-                $registration_id = $bean->stic_attendances_stic_registrationsstic_registrations_ida;
+            // Fix Fatal Error when stic_attendances_stic_registrationsstic_registrations_ida is null - https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+            if ($bean->stic_attendances_stic_registrationsstic_registrations_ida !== null) {
+                if (is_string($bean->stic_attendances_stic_registrationsstic_registrations_ida)) {
+                    $registration_id = $bean->stic_attendances_stic_registrationsstic_registrations_ida;
+                } else {
+                    $bean->stic_attendances_stic_registrationsstic_registrations_ida->load();
+                    $registration_id = key($bean->stic_attendances_stic_registrationsstic_registrations_ida->rows);
+                }
+                $registrationBean = BeanFactory::getBean('stic_Registrations', $registration_id);
             } else {
-                $bean->stic_attendances_stic_registrationsstic_registrations_ida->load();
-                $registration_id = key($bean->stic_attendances_stic_registrationsstic_registrations_ida->rows);
+                // If there is no registration, use one with name "Unkmown"
+                $registrationBean = new stic_Registrations();
+                $registrationBean->name = 'Unknown - Unknown';
             }
-            $registrationBean = BeanFactory::getBean('stic_Registrations', $registration_id);
             
             // Attendance's name includes registration's and session's names, both of them potentially including event's name.
             // Let's check it in order to avoid repeating event's name in attendance's name.

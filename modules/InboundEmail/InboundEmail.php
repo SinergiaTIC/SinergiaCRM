@@ -6958,8 +6958,17 @@ class InboundEmail extends SugarBean
         /** @var User $owner */
         $owner = BeanFactory::getBean('Users', $createdBy);
 
-        $emailSignatures = $owner->getPreference('account_signatures', 'Emails') ?? '';
-        $emailSignatures = sugar_unserialize(base64_decode($emailSignatures));
+        // STIC Custom 20250320 JBL - Fix Fatal Error: Call to a member function on false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $emailSignatures = $owner->getPreference('account_signatures', 'Emails') ?? '';
+        // $emailSignatures = sugar_unserialize(base64_decode($emailSignatures));
+        if ($owner === false) {
+            $emailSignatures = [];
+        } else {
+            $emailSignatures = $owner->getPreference('account_signatures', 'Emails') ?? '';
+            $emailSignatures = sugar_unserialize(base64_decode($emailSignatures));
+        }
+        // END STIC Custom
 
         $signatureId = $emailSignatures[$inboundEmailId] ?? '';
 

@@ -133,7 +133,11 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
             $camplog->related_type = $lead->module_dir;
             $camplog->activity_type = "lead";
             $camplog->target_type = $lead->module_dir;
-            $campaign_log->activity_date=$timedate->now();
+            // STIC Custom 20250331 JBL - Fix Fatal error:  Uncaught Error: Attempt to assign property "activity_date" on null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $campaign_log->activity_date=$timedate->now();
+            $camplog->activity_date=$timedate->now();
+            // END STIC Custom
             $camplog->target_id    = $lead->id;
             if (isset($marketing_data['id'])) {
                 $camplog->marketing_id = $marketing_data['id'];

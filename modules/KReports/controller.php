@@ -102,7 +102,7 @@ class KReportsController extends SugarController {
       include('modules/KReports/config/KReportWhereOperators.php');
 
       //2013-01-18 take in account the users language
-      $mod_strings = return_module_language($_SESSION['authenticated_user_language'], 'KReports');
+      $mod_strings = return_module_language($_SESSION['authenticated_user_language'] ?? '', 'KReports');
 
       $retarray[] = array(
           'operator' => 'ignore',

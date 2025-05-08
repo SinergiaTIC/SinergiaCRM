@@ -148,7 +148,11 @@ class EmailsDataAddressCollector
         foreach ($ieAccounts as $inboundEmail) {
             $this->validateInboundEmail($inboundEmail);
 
-            if (in_array($inboundEmail->id, $showFolders)) {
+            // STIC Custom 20250331 JBL - Fix Uncaught TypeError: in_array(): Argument #2 ($haystack) must be of type array
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // if (in_array($inboundEmail->id, $showFolders)) {
+            if (is_array($showFolders) && in_array($inboundEmail->id, $showFolders)) {
+            // END STIC Custom
                 $storedOptions = sugar_unserialize(base64_decode($inboundEmail->stored_options));
                 $isGroupEmailAccount = $inboundEmail->isGroupEmailAccount();
                 $isPersonalEmailAccount = $inboundEmail->isPersonalEmailAccount();
