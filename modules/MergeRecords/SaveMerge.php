@@ -153,7 +153,12 @@ if (is_array($_POST['merged_ids'])) {
                     handleEmailMerge($focus, $name, $mergeSource->$name->get());
                 } else {
                     $data = $mergeSource->$name->get();
-                    if (is_array($data) && $focus->merge_bean->load_relationship($name)) {
+                    // STIC Custom 20250508 JBL - Fix Fatal error: Call to a member function add() on string
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // if (is_array($data) && $focus->merge_bean->load_relationship($name)) {
+                    if (is_array($data) && $focus->merge_bean->load_relationship($name) &&
+                        is_object($focus->merge_bean->$name) && method_exists($focus->merge_bean->$name, 'add')) {
+                    // END STIC Custom
                         foreach ($data as $related_id) {
                             //add to primary bean
                             $focus->merge_bean->$name->add($related_id);
