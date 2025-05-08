@@ -805,7 +805,7 @@ class User extends Person implements EmailInterface
                 }
             }
             // STIC Custom 20250508 JBL - Avoid reset preferences in MassUpdate
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/637
             // $this->saveFormPreferences();
             // $this->savePreferencesToDB();
             if (!isset($_POST['action']) || $_POST['action']!="MassUpdate") {
