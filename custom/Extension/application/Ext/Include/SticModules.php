@@ -62,10 +62,6 @@ $moduleList[] = 'stic_Training';
 $moduleList[] = 'stic_Work_Experience';
 $moduleList[] = 'stic_Skills';
 $moduleList[] = 'stic_Messages';
-$moduleList[] = 'stic_Custom_Views';
-$moduleList[] = 'stic_Custom_View_Customizations';
-$moduleList[] = 'stic_Custom_View_Conditions';
-$moduleList[] = 'stic_Custom_View_Actions';
 $moduleList[] = 'stic_Group_Opportunities';
 
 // Bean names for custom modules
