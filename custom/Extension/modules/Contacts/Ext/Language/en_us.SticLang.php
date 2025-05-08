@@ -105,6 +105,7 @@ $mod_strings['LBL_INC_CHILDREN'] = 'Number of children (Incorpora)';
 $mod_strings['LBL_INC_COLLECTIVES'] = 'Collectives (Incorpora)';
 $mod_strings['LBL_INC_COMMUNICATIONS_LANGUAGE'] = 'Communications language (Incorpora)';
 $mod_strings['LBL_INC_COUNTRY'] = 'Country (Incorpora)';
+$mod_strings['LBL_INC_COUNTRY_NATIONALITY'] = 'Country nationality (Incorpora)';
 $mod_strings['LBL_INC_DERIVATION'] = 'Derivation (Incorpora)';
 $mod_strings['LBL_INC_DISABILITY_CERT_ID'] = 'Disability certificate id (Incorpora)';
 $mod_strings['LBL_INC_DISABILITY_DEGREE'] = 'Degree of disability (Incorpora)';
