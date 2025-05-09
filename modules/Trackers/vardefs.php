@@ -286,7 +286,7 @@ $dictionary['Tracker'] = array(
 // STIC-Custom 20241029 ART - Tracker Module
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
 // Set special values for SuiteCRM base fields
-VardefManager::createVardef('Trackers', 'Tracker', array('basic', 'assignable'));
+VardefManager::createVardef('Trackers', 'Tracker', array('assignable'));
 $dictionary['Tracker']['fields']['assigned_user_id']['inline_edit'] = 0; // Assigned user can not edit inline in this module
 $dictionary['Tracker']['fields']['assigned_user_name']['inline_edit'] = 0; // Assigned user can not edit inline in this module
 // END STIC-Custom
