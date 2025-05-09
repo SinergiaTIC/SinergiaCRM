@@ -39,12 +39,12 @@ class CustomTrackersViewList extends ViewList
         // Don't Delete any record from the list
         $this->lv->delete = false;
 
-        // Sort by date_modified in ASC if there are no params
+        // Sort by date_modified in DESC if there are no params
         if (empty($this->params['orderBy'])) {
             $this->params['orderBy'] = 'date_modified';
             $this->params['overrideOrder'] = true;
             if (empty($this->params['sortOrder'])) {
-                $this->params['sortOrder'] = 'ASC';
+                $this->params['sortOrder'] = 'DESC';
             }
         }
 
