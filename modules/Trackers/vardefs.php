@@ -190,11 +190,11 @@ $dictionary['Tracker'] = array(
         ),
         'assigned_user_link'=>array(
             'name' => 'assigned_user_link',
-            'module'=>'Users',
             'type' => 'link',
             'relationship' => 'tracker_user_id',
             'vname' => 'LBL_ASSIGNED_TO_USER',
             'link_type' => 'one',
+            'module'=>'Users',
             'bean_name'=>'User',
             'source'=>'non-db',
             // STIC-Custom 20241016 ART - Tracker Module
