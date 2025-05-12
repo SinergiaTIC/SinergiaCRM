@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 // STIC CUSTOM - 20250512 - JCH -  Prepare for LDAPAuthenticateUser.php
-// PR XXXXX
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/638
 // If there is a custom version of this file, use it instead
 if(file_exists('custom/modules/Users/authentication/LDAPAuthenticate/LDAPAuthenticateUser.php')){
     require_once('custom/modules/Users/authentication/LDAPAuthenticate/LDAPAuthenticateUser.php');

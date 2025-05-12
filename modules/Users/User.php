@@ -748,7 +748,7 @@ class User extends Person implements EmailInterface
         // Init a couple of vars for later use
         $saveUserWithoutPassword = false;
         // STIC Custom - 20250512 - JCH - Prepare for LDAP Customization
-        // PR XXXXX
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/638
         // $saveUserAndPassword = false;
 
         // // We won't be validating the password in these two cases:
