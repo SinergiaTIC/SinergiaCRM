@@ -75,6 +75,17 @@ class ExternalReporting
         'stic_Validation_Results',
         'stic_Custom_Views',
     ];
+
+    // Autorelationships that we always exclude. 
+    // We use the module && field name instead of the relationship name, because the iteration is done through the fields and not through the relationships
+
+    private $evenExcludedAutoRelationships = [
+        'Contacts:reports_to_link',
+        'Users:reports_to_link',
+        
+    ];
+    // Autorleationships that we always include
+
     private $viewPrefix;
     private $listViewPrefix;
     private $maxNonAdminUsers;
@@ -430,6 +441,12 @@ class ExternalReporting
 
                                 // Check if the relationship is an autorelationship & prepare autorelationship data for use later
                                 if ($fieldV['module'] == $moduleName) {
+                                    
+                                    // Check if the autorelationship is excluded
+                                    if(in_array("{$fieldV['module']}:{$fieldV['link']}", $this->evenExcludedAutoRelationships)){
+                                        continue 2;
+                                    }
+
                                     $fieldV['isAutoRelationship'] = true;
                                     $fieldV['rLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE', $fieldV['module']);
                                     $fieldV['lLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_L_TITLE', $fieldV['module']);
