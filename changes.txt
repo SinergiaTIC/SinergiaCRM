@@ -1,0 +1,8 @@
+M	include/MySugar/MySugar.php
+M	modules/AOW_Actions/FormulaCalculator.php
+M	modules/KReports/KReportQuery.php
+M	modules/MergeRecords/SaveMerge.php
+M	modules/ModuleBuilder/controller.php
+M	modules/ModuleBuilder/views/view.relationship.php
+M	modules/stic_Bookings/stic_Bookings.php
+M	modules/stic_Contacts_Relationships/LogicHooksCode.php
