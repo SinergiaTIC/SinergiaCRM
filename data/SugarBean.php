@@ -834,7 +834,7 @@ class SugarBean
         // STIC Custom 20250512 JBL - Fix Error: checking method without object (string)
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // if (method_exists($subpanel_def ?? '', 'isCollection')) {
-        if ($subpanel_def !== null && method_exists($subpanel_def ?? '', 'isCollection')) {
+        if ($subpanel_def != null && method_exists($subpanel_def, 'isCollection')) {
         // END STIC Custom
             if ($subpanel_def->isCollection()) {
                 if ($subpanel_def->load_sub_subpanels() === false) {
