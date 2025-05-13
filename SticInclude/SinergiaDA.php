@@ -1204,13 +1204,21 @@ class ExternalReporting
      * it creates a LEFT JOIN based on whether the current module is the left or right side of the relationship.
      * If no join table is used, it checks if the relationship is a one-to-many relationship for the
      * current table and builds the join accordingly. If no suitable relationship is found, it does not return a join.
+     * 
      *
      * @param array $field The field array containing information about the current field
      * @param string $tableName The name of the table being processed
      * @param string $tableLabel The label of the other side relationships
      * @param bool $isAutoRelationship Indicates if the relationship is an auto relationship
      *
-     * @return array|null An array containing the 'field' and 'leftJoin' information, or null if no join is created
+     * @return array|null Returns an associative array containing:
+     *                    - 'field': The field to be used in the SELECT clause.
+     *                    - 'leftJoin': The LEFT JOIN SQL clause.
+     *                    - 'innerJoinForAutoRelationshipsNSide': (Optional) INNER JOIN clause for
+     *                      auto-relationships on the N-side.
+     *                    - 'fieldForAutoRelationshipsNSide': (Optional) Field for auto-relationships
+     *                      on the N-side.
+     *                    Returns null if no valid relationship is found.
      */
 
     private function createRelateLeftJoin($field, $tableName, $tableLabel, $isAutoRelationship = false)
