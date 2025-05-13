@@ -1,176 +1,111 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-/**
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
- *
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- * 
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo. 
- * If the display of the logos is not reasonably feasible for technical reasons, 
- * the Appropriate Legal Notices must display the words "Powered by SugarCRM", 
- * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
- */
-
-// STIC-Custom - MHP - 20240201 - Override the core metadata files with the custom metadata files 
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/105
-// $viewdefs = array(
-//   'Contacts' =>
-//   array(
-//     'QuickCreate' =>
-//     array(
-//       'templateMeta' =>
-//       array(
-//         'form' =>
-//         array(
-//           'hidden' =>
-//           array(
-//             '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
-//             '<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
-//             '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
-//             '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
-//             '<input type="hidden" name="inbound_email_id" value="{$smarty.request.inbound_email_id}">',
-//             '{if !empty($smarty.request.contact_id)}<input type="hidden" name="reports_to_id" value="{$smarty.request.contact_id}">{/if}',
-//             '{if !empty($smarty.request.contact_name)}<input type="hidden" name="report_to_name" value="{$smarty.request.contact_name}">{/if}',
-//           ),
-//         ),
-//         'maxColumns' => '2',
-//         'widths' =>
-//         array(
-//           array(
-//             'label' => '10',
-//             'field' => '30',
-//           ),
-//           array(
-//             'label' => '10',
-//             'field' => '30',
-//           ),
-//         ),
-//       ),
-//       'panels' =>
-//       array(
-//         'default' =>
-//         array(
-
-//           array(
-
-//             array(
-//               'name' => 'first_name',
-//                 'customCode' => '{html_options name="salutation" id="salutation" options=$fields.salutation.options selected=$fields.salutation.value}'
-//                 . '&nbsp;<input name="first_name" id="first_name" size="25" maxlength="25" type="text" value="{$fields.first_name.value}">',
-//             ),
-
-//             array(
-//               'name' => 'account_name',
-//             ),
-//           ),
-
-//           array(
-
-//             array(
-//               'name' => 'last_name',
-//               'displayParams'=>array('required'=>true),
-//             ),
-
-//             array(
-//               'name' => 'phone_work',
-//             ),
-//           ),
-
-//           array(
-
-//             array(
-//               'name' => 'title',
-//             ),
-
-//             array(
-//               'name' => 'phone_mobile',
-//             ),
-//           ),
-
-//           array(
-
-//             array(
-//               'name' => 'phone_fax',
-//             ),
-
-//             array(
-//               'name' => 'do_not_call',
-//             ),
-//           ),
-
-//           array(
-//             array(
-//               'name' => 'email1',
-//             ),
-//             array(
-//               'name' => 'lead_source',
-//             ),
-//           ),
-
-//           array(
-
-//             array(
-//               'name' => 'assigned_user_name',
-//             ),
-//           ),
-//         ),
-//       ),
-//     ),
-//   ),
-// );
-
 $viewdefs ['Contacts'] = 
 array (
-  'QuickCreate' => 
+  'DetailView' => 
   array (
     'templateMeta' => 
     array (
       'form' => 
       array (
-        'hidden' => 
+        'buttons' => 
         array (
-          0 => '<input type="hidden" name="opportunity_id" value="{$smarty.request.opportunity_id}">',
-          1 => '<input type="hidden" name="case_id" value="{$smarty.request.case_id}">',
-          2 => '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
-          3 => '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
-          4 => '<input type="hidden" name="inbound_email_id" value="{$smarty.request.inbound_email_id}">',
-          5 => '{if !empty($smarty.request.contact_id)}<input type="hidden" name="reports_to_id" value="{$smarty.request.contact_id}">{/if}',
-          6 => '{if !empty($smarty.request.contact_name)}<input type="hidden" name="report_to_name" value="{$smarty.request.contact_name}">{/if}',
+          'SEND_CONFIRM_OPT_IN_EMAIL' => 
+          array (
+            'customCode' => '<input type="submit" class="button hidden" disabled="disabled" title="{$APP.LBL_SEND_CONFIRM_OPT_IN_EMAIL}" onclick="this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'Contacts\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'sendConfirmOptInEmail\'; this.form.module.value=\'Contacts\'; this.form.module_tab.value=\'Contacts\';" name="send_confirm_opt_in_email" value="{$APP.LBL_SEND_CONFIRM_OPT_IN_EMAIL}"/>',
+            'sugar_html' => 
+            array (
+              'type' => 'submit',
+              'value' => '{$APP.LBL_SEND_CONFIRM_OPT_IN_EMAIL}',
+              'htmlOptions' => 
+              array (
+                'class' => 'button hidden',
+                'id' => 'send_confirm_opt_in_email',
+                'title' => '{$APP.LBL_SEND_CONFIRM_OPT_IN_EMAIL}',
+                'onclick' => 'this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'sendConfirmOptInEmail\'; this.form.module.value=\'Contacts\'; this.form.module_tab.value=\'Contacts\';',
+                'name' => 'send_confirm_opt_in_email',
+                'disabled' => true,
+              ),
+            ),
+          ),
+          0 => 'EDIT',
+          1 => 'DUPLICATE',
+          2 => 'DELETE',
+          3 => 'FIND_DUPLICATES',
+          4 => 
+          array (
+            'customCode' => '<input type="submit" class="button" title="{$APP.LBL_MANAGE_SUBSCRIPTIONS}" onclick="this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Contacts\';" name="Manage Subscriptions" value="{$APP.LBL_MANAGE_SUBSCRIPTIONS}"/>',
+            'sugar_html' => 
+            array (
+              'type' => 'submit',
+              'value' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
+              'htmlOptions' => 
+              array (
+                'class' => 'button',
+                'id' => 'manage_subscriptions_button',
+                'title' => '{$APP.LBL_MANAGE_SUBSCRIPTIONS}',
+                'onclick' => 'this.form.return_module.value=\'Contacts\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Contacts\';',
+                'name' => 'Manage Subscriptions',
+              ),
+            ),
+          ),
+          'AOS_GENLET' => 
+          array (
+            'customCode' => '<input type="button" class="button" onClick="showPopup();" value="{$APP.LBL_PRINT_AS_PDF}">',
+          ),
+          'AOP_CREATE' => 
+          array (
+            'customCode' => '{if !$fields.joomla_account_id.value && $AOP_PORTAL_ENABLED}<input type="submit" class="button" onClick="this.form.action.value=\'createPortalUser\';" value="{$MOD.LBL_CREATE_PORTAL_USER}"> {/if}',
+            'sugar_html' => 
+            array (
+              'type' => 'submit',
+              'value' => '{$MOD.LBL_CREATE_PORTAL_USER}',
+              'htmlOptions' => 
+              array (
+                'title' => '{$MOD.LBL_CREATE_PORTAL_USER}',
+                'class' => 'button',
+                'onclick' => 'this.form.action.value=\'createPortalUser\';',
+                'name' => 'buttonCreatePortalUser',
+                'id' => 'createPortalUser_button',
+              ),
+              'template' => '{if !$fields.joomla_account_id.value && $AOP_PORTAL_ENABLED}[CONTENT]{/if}',
+            ),
+          ),
+          'AOP_DISABLE' => 
+          array (
+            'customCode' => '{if $fields.joomla_account_id.value && !$fields.portal_account_disabled.value && $AOP_PORTAL_ENABLED}<input type="submit" class="button" onClick="this.form.action.value=\'disablePortalUser\';" value="{$MOD.LBL_DISABLE_PORTAL_USER}"> {/if}',
+            'sugar_html' => 
+            array (
+              'type' => 'submit',
+              'value' => '{$MOD.LBL_DISABLE_PORTAL_USER}',
+              'htmlOptions' => 
+              array (
+                'title' => '{$MOD.LBL_DISABLE_PORTAL_USER}',
+                'class' => 'button',
+                'onclick' => 'this.form.action.value=\'disablePortalUser\';',
+                'name' => 'buttonDisablePortalUser',
+                'id' => 'disablePortalUser_button',
+              ),
+              'template' => '{if $fields.joomla_account_id.value && !$fields.portal_account_disabled.value && $AOP_PORTAL_ENABLED}[CONTENT]{/if}',
+            ),
+          ),
+          'AOP_ENABLE' => 
+          array (
+            'customCode' => '{if $fields.joomla_account_id.value && $fields.portal_account_disabled.value && $AOP_PORTAL_ENABLED}<input type="submit" class="button" onClick="this.form.action.value=\'enablePortalUser\';" value="{$MOD.LBL_ENABLE_PORTAL_USER}"> {/if}',
+            'sugar_html' => 
+            array (
+              'type' => 'submit',
+              'value' => '{$MOD.LBL_ENABLE_PORTAL_USER}',
+              'htmlOptions' => 
+              array (
+                'title' => '{$MOD.LBL_ENABLE_PORTAL_USER}',
+                'class' => 'button',
+                'onclick' => 'this.form.action.value=\'enablePortalUser\';',
+                'name' => 'buttonENablePortalUser',
+                'id' => 'enablePortalUser_button',
+              ),
+              'template' => '{if $fields.joomla_account_id.value && $fields.portal_account_disabled.value && $AOP_PORTAL_ENABLED}[CONTENT]{/if}',
+            ),
+          ),
         ),
       ),
       'maxColumns' => '2',
@@ -185,6 +120,13 @@ array (
         array (
           'label' => '10',
           'field' => '30',
+        ),
+      ),
+      'includes' => 
+      array (
+        0 => 
+        array (
+          'file' => 'modules/Contacts/Contact.js',
         ),
       ),
       'useTabs' => true,
@@ -230,7 +172,18 @@ array (
           'newTab' => false,
           'panelDefault' => 'expanded',
         ),
+        'LBL_STIC_PANEL_INCORPORA_SYNC' => 
+        array (
+          'newTab' => false,
+          'panelDefault' => 'expanded',
+        ),
+        'LBL_STIC_PANEL_RECORD_DETAILS' => 
+        array (
+          'newTab' => true,
+          'panelDefault' => 'expanded',
+        ),
       ),
+      'syncDetailEditViews' => true,
     ),
     'panels' => 
     array (
@@ -247,27 +200,35 @@ array (
             ),
             'label' => 'LBL_PHOTO',
           ),
-          1 => 
-          array (
-            'name' => 'assigned_user_name',
-          ),
+          1 => '',
         ),
         1 => 
         array (
           0 => 
           array (
             'name' => 'first_name',
+            'label' => 'LBL_FIRST_NAME',
           ),
           1 => 
           array (
             'name' => 'last_name',
-            'displayParams' => 
-            array (
-              'required' => true,
-            ),
+            'label' => 'LBL_LAST_NAME',
           ),
         ),
         2 => 
+        array (
+          0 => 
+          array (
+            'name' => 'assigned_user_name',
+            'label' => 'LBL_ASSIGNED_TO_NAME',
+          ),
+          1 => 
+          array (
+            'name' => 'stic_relationship_type_c',
+            'label' => 'LBL_STIC_RELATIONSHIP_TYPE',
+          ),
+        ),
+        3 => 
         array (
           0 => 
           array (
@@ -280,7 +241,7 @@ array (
             'label' => 'LBL_STIC_IDENTIFICATION_NUMBER',
           ),
         ),
-        3 => 
+        4 => 
         array (
           0 => 
           array (
@@ -293,30 +254,29 @@ array (
             'label' => 'LBL_STIC_GENDER',
           ),
         ),
-        4 => 
-        array (
-          0 => 
-          array (
-            'name' => 'birthdate',
-            'comment' => 'The birthdate of the contact',
-            'label' => 'LBL_BIRTHDATE',
-          ),
-          1 => '',
-        ),
         5 => 
         array (
           0 => 
           array (
-            'name' => 'campaign_name',
-            'label' => 'LBL_CAMPAIGN',
+            'name' => 'birthdate',
+            'label' => 'LBL_BIRTHDATE',
           ),
+          1 => 
+          array (
+            'name' => 'stic_age_c',
+            'label' => 'LBL_STIC_AGE',
+          ),
+        ),
+        6 => 
+        array (
+          0 => 'campaign_name',
           1 => 
           array (
             'name' => 'stic_acquisition_channel_c',
             'label' => 'LBL_STIC_ACQUISITION_CHANNEL',
           ),
         ),
-        6 => 
+        7 => 
         array (
           0 => 
           array (
@@ -325,12 +285,11 @@ array (
           ),
           1 => '',
         ),
-        7 => 
+        8 => 
         array (
           0 => 
           array (
             'name' => 'description',
-            'comment' => 'Full text of the note',
             'label' => 'LBL_DESCRIPTION',
           ),
         ),
@@ -342,6 +301,8 @@ array (
           0 => 
           array (
             'name' => 'email1',
+            'studio' => 'false',
+            'label' => 'LBL_EMAIL_ADDRESS',
           ),
         ),
         1 => 
@@ -349,11 +310,11 @@ array (
           0 => 
           array (
             'name' => 'phone_mobile',
+            'label' => 'LBL_MOBILE_PHONE',
           ),
           1 => 
           array (
             'name' => 'phone_home',
-            'comment' => 'Home phone number of the contact',
             'label' => 'LBL_HOME_PHONE',
           ),
         ),
@@ -362,11 +323,11 @@ array (
           0 => 
           array (
             'name' => 'phone_work',
+            'label' => 'LBL_OFFICE_PHONE',
           ),
           1 => 
           array (
             'name' => 'phone_other',
-            'comment' => 'Other phone number for the contact',
             'label' => 'LBL_OTHER_PHONE',
           ),
         ),
@@ -542,6 +503,7 @@ array (
           1 => 
           array (
             'name' => 'account_name',
+            'label' => 'LBL_ACCOUNT_NAME',
           ),
         ),
         3 => 
@@ -549,6 +511,7 @@ array (
           0 => 
           array (
             'name' => 'title',
+            'label' => 'LBL_TITLE',
           ),
           1 => 
           array (
@@ -560,14 +523,23 @@ array (
         array (
           0 => 
           array (
-            'name' => 'stic_tax_name_c',
-            'label' => 'LBL_STIC_TAX_NAME',
+            'name' => 'stic_182_error_c',
+            'label' => 'LBL_STIC_182_ERROR',
           ),
           1 => 
           array (
             'name' => 'stic_182_excluded_c',
             'label' => 'LBL_STIC_182_EXCLUDED',
           ),
+        ),
+        5 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_tax_name_c',
+            'label' => 'LBL_STIC_TAX_NAME',
+          ),
+          1 => 'stic_total_annual_donations_c',
         ),
       ),
       'LBL_STIC_PANEL_GDPR' => 
@@ -672,6 +644,7 @@ array (
           0 => 
           array (
             'name' => 'inc_country_origin_c',
+            'studio' => 'visible',
             'label' => 'LBL_INC_COUNTRY_ORIGIN',
           ),
           1 => 
@@ -723,13 +696,13 @@ array (
         array (
           0 => 
           array (
-            'name' => 'inc_disabled_children_c',
-            'label' => 'LBL_INC_DISABLED_CHILDREN',
+            'name' => 'inc_children_c',
+            'label' => 'LBL_INC_CHILDREN',
           ),
           1 => 
           array (
-            'name' => 'inc_children_c',
-            'label' => 'LBL_INC_CHILDREN',
+            'name' => 'inc_disabled_children_c',
+            'label' => 'LBL_INC_DISABLED_CHILDREN',
           ),
         ),
         7 => 
@@ -903,16 +876,16 @@ array (
           ),
           1 => 
           array (
-            'name' => 'inc_address_postal_code_c',
-            'label' => 'LBL_INC_ADDRESS_POSTAL_CODE',
+            'name' => 'inc_address_district_c',
+            'label' => 'LBL_INC_ADDRESS_DISTRICT',
           ),
         ),
         4 => 
         array (
           0 => 
           array (
-            'name' => 'inc_address_district_c',
-            'label' => 'LBL_INC_ADDRESS_DISTRICT',
+            'name' => 'inc_address_postal_code_c',
+            'label' => 'LBL_INC_ADDRESS_POSTAL_CODE',
           ),
           1 => 
           array (
@@ -925,13 +898,145 @@ array (
         array (
           0 => 
           array (
+            'name' => 'inc_municipality_c',
+            'label' => 'LBL_INC_MUNICIPALITY',
+          ),
+          1 => 
+          array (
+            'name' => 'inc_town_c',
+            'label' => 'LBL_INC_TOWN',
+          ),
+        ),
+        6 => 
+        array (
+          0 => 
+          array (
+            'name' => 'inc_state_c',
+            'label' => 'LBL_INC_STATE',
+          ),
+          1 => 
+          array (
             'name' => 'inc_country_c',
             'studio' => 'visible',
             'label' => 'LBL_INC_COUNTRY',
           ),
         ),
       ),
+      'LBL_STIC_PANEL_INCORPORA_SYNC' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'studio' => 
+            array (
+              'no_duplicate' => true,
+              'editview' => false,
+              'quickcreate' => false,
+            ),
+            'name' => 'inc_reference_officer_c',
+            'label' => 'LBL_INC_REFERENCE_OFFICER',
+          ),
+          1 => 
+          array (
+            'studio' => 
+            array (
+              'no_duplicate' => true,
+              'editview' => false,
+              'quickcreate' => false,
+            ),
+            'name' => 'inc_reference_entity_c',
+            'label' => 'LBL_INC_REFERENCE_ENTITYIN',
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array (
+            'studio' => 
+            array (
+              'no_duplicate' => true,
+              'editview' => false,
+              'quickcreate' => false,
+            ),
+            'name' => 'inc_reference_group_c',
+            'label' => 'LBL_INC_REFERENCE_GROUP',
+          ),
+          1 => '',
+        ),
+        2 => 
+        array (
+          0 => 
+          array (
+            'studio' => 
+            array (
+              'no_duplicate' => true,
+              'editview' => false,
+              'quickcreate' => false,
+            ),
+            'name' => 'inc_synchronization_date_c',
+            'label' => 'LBL_INC_SYNCHRONIZATION_DATE',
+          ),
+          1 => 
+          array (
+            'studio' => 
+            array (
+              'no_duplicate' => true,
+              'editview' => false,
+              'quickcreate' => false,
+            ),
+            'name' => 'inc_synchronization_errors_c',
+            'label' => 'LBL_INC_SYNCHRONIZATION_ERRORS',
+          ),
+        ),
+        3 => 
+        array (
+          0 => 
+          array (
+            'studio' => 
+            array (
+              'no_duplicate' => true,
+              'editview' => false,
+              'quickcreate' => false,
+            ),
+            'name' => 'inc_synchronization_log_c',
+            'label' => 'LBL_INC_SYNCHRONIZATION_LOG',
+          ),
+        ),
+      ),
+      'LBL_STIC_PANEL_RECORD_DETAILS' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'name' => 'created_by_name',
+            'label' => 'LBL_CREATED',
+          ),
+          1 => 
+          array (
+            'name' => 'date_entered',
+            'customCode' => '{$fields.date_entered.value}',
+            'label' => 'LBL_DATE_ENTERED',
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array (
+            'name' => 'modified_by_name',
+            'label' => 'LBL_MODIFIED_NAME',
+          ),
+          1 => 
+          array (
+            'name' => 'date_modified',
+            'customCode' => '{$fields.date_modified.value}',
+            'label' => 'LBL_DATE_MODIFIED',
+          ),
+        ),
+      ),
     ),
   ),
 );
-// END STIC-Custom 
+;
+?>

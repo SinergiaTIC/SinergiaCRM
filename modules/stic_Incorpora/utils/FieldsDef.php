@@ -357,7 +357,7 @@ $contactDef = array(
         1 => 'date',
         'required' => true,
     ),
-    'inc_country_nationality_c' => array(
+    'inc_country_origin_c' => array(
         0 => 'beneficiarioPais',
         'required' => true,
     ),

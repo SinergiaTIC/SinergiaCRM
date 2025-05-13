@@ -1690,11 +1690,11 @@ $dictionary['Contact']['fields']['inc_max_commuting_time_c'] = array(
     'len' => '255',
     'size' => '20',
 );
-$dictionary['Contact']['fields']['inc_country_nationality_c'] = array(
-    'id' => 'Contactsinc_country_nationality_c',
+$dictionary['Contact']['fields']['inc_country_origin_c'] = array(
+    'id' => 'Contactsinc_country_origin_c',
     'custom_module' => 'Contacts',
-    'name' => 'inc_country_nationality_c',
-    'vname' => 'LBL_INC_COUNTRY_NATIONALITY',
+    'name' => 'inc_country_origin_c',
+    'vname' => 'LBL_INC_COUNTRY_ORIGIN',
     'required' => false,
     'source' => 'custom_fields',
     'type' => 'enum',
