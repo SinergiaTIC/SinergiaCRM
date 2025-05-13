@@ -442,7 +442,7 @@ class ExternalReporting
                                 // Check if the relationship is an autorelationship & prepare autorelationship data for use later
                                 if ($fieldV['module'] == $moduleName) {
                                     
-                                    // Check if the autorelationship is excluded
+                                    // Check if the autorelationship is excluded & skip it if it is
                                     if(in_array("{$fieldV['module']}:{$fieldV['link']}", $this->evenExcludedAutoRelationships)){
                                         continue 2;
                                     }
@@ -1231,6 +1231,7 @@ class ExternalReporting
 
                 // Check if the relationship is an auto relationship to compose the target table name
                 if ($isAutoRelationship !== true) {
+                    // if not an auto relationship
                     $targetTable = "{$this->viewPrefix}_{$field['table']}";
                     $label = "{$field['label']}|{$tableLabel}";
 
@@ -1253,17 +1254,19 @@ class ExternalReporting
                         'leftJoin' => " LEFT JOIN {$rel['join_table']} ON {$rel['join_table']}.{$rel['join_key_rhs']}=m.id AND {$rel['join_table']}.deleted=0 ",
                     ];
                 } else {
+                    // if an auto relationship
                     $targetTable = "{$this->viewPrefix}_{$field['table']}_{$field['link']}";
-                    $label = "{$tableLabel} ({$field['joinLabel']})|{$tableLabel}";
+                    $label = "{$tableLabel} ({$field['rLabel']})|{$tableLabel}";
+                    $label = "{$tableLabel}|{$tableLabel} ({$field['rLabel']})";
 
                     // Add metadata record
                     $this->addMetadataRecord(
                         'sda_def_relationships',
                         [
                             'id' => $field['link'],
-                            'source_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
-                            'source_column' => $field['id_name'],
-                            'target_table' => $targetTable,
+                            'source_table' => $targetTable,
+                            'source_column' => 'parent_id',
+                            'target_table' => "{$this->viewPrefix}_{$rel['rhs_table']}",
                             'target_column' => 'id',
                             'info' => 'link_lhs' . ($isAutoRelationship ? '_auto_relationship' : ''),
                             'label' => $label,
