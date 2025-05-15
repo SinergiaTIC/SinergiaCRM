@@ -3871,6 +3871,7 @@ class SugarBean
                 );
                 if ($match) {
                     // Stic-Custom EPS 20250514 - When modules does not have underscore in name but table does (ProejctTask - project_task), it does not get the right values 
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/641
                     if (substr_count($matches[2], '_') > substr_count($matches[3], '_')) {
                         $matched = $matches[2] . '_ ' .$matches[3];
                         $parts = explode('_', $matched);
