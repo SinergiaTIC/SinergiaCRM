@@ -90,7 +90,8 @@ class SevenSMSHelper implements stic_MessagesHelper {
     }
 
     protected function apiCall(?string $from, string $text, string $to): string {
-        if (!$this->getActive()) return [null, null];
+        // if (!$this->getActive()) return [null, null];
+        if (!$this->getActive()) return '{"success": "500", "message":"module not active"}';
 
         $curlOpts = [
             CURLOPT_HTTPHEADER => [
