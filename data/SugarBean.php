@@ -831,10 +831,10 @@ class SugarBean
         $final_query = '';
         $final_query_rows = '';
         $subpanel_list = array();
-        // STIC Custom 20250512 JBL - Fix Error: checking method without object (string)
+        // STIC Custom 20250512 JBL - Fix Error: Argument must be of type object|string
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // if (method_exists($subpanel_def ?? '', 'isCollection')) {
-        if ($subpanel_def != null && method_exists($subpanel_def, 'isCollection')) {
+        if ((is_object($subpanel_def) || is_string($subpanel_def)) && method_exists($subpanel_def, 'isCollection')) {
         // END STIC Custom
             if ($subpanel_def->isCollection()) {
                 if ($subpanel_def->load_sub_subpanels() === false) {
