@@ -259,7 +259,7 @@ class aSubPanel
         // STIC#1157
         global $dictionary;
 
-        // STIC_Custom EPS 20250516 On long relationship names, the name of the subpanel is not the name of the relationship
+        // STIC-Custom EPS 20250516 On long relationship names, the name of the subpanel is not the name of the relationship
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/645
         // $relationshipType = $dictionary[$this->name]['true_relationship_type'] ?? null;
         $relationshipType = $dictionary[($dictionary[($this->parent_bean->module_name)]['fields'][($this->name)]['relationship'])]['true_relationship_type'] ?? null;
