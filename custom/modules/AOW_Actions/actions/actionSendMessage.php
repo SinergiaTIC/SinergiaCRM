@@ -45,9 +45,9 @@ class actionSendMessage extends actionBase
         // Get default values for combos
         $messagesBean = BeanFactory::newBean('stic_Messages');
 
-        $defaultType = $messagesBean->field_defs['type']['default'];
-        $defaultDirection = $messagesBean->field_defs['direction']['default'];
-        $defaultStatus = $messagesBean->field_defs['status']['default'];
+        $defaultType = $messagesBean->field_defs['type']['default'] ?? '';
+        $defaultDirection = $messagesBean->field_defs['direction']['default'] ?? '';
+        $defaultStatus = $messagesBean->field_defs['status']['default'] ?? '';
 
         // Get the email templates of type SMS
         global $app_list_strings;
@@ -317,7 +317,7 @@ class actionSendMessage extends actionBase
      */
     public function run_action(SugarBean $bean, $params = array(), $in_save = false)
     {
-        include_once __DIR__ . '/../../EmailTemplates/EmailTemplate.php';
+        include_once 'modules/EmailTemplates/EmailTemplate.php';
 
         // Recuperamos el template (si lo hay)
         $emailTemplate = BeanFactory::getBean('EmailTemplates', $params['email_template']);
@@ -336,7 +336,7 @@ class actionSendMessage extends actionBase
         $messageBean->status = $params['status'];
         $messageBean->type = $params['type'];
         $messageBean->direction = $params['direction'];
-        $messageBean->phone = $recipient['phone'];
+        // $messageBean->phone = $recipients['phone'];
         $messageBean->message = $txt;
         $name = $messageBean->fillName($bean->module_name, $bean->id);
 
