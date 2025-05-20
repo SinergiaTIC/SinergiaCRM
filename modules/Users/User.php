@@ -804,11 +804,11 @@ class User extends Person implements EmailInterface
                     $this->setPreference('calendar_publish_key', create_guid());
                 }
             }
-            // STIC Custom 20250508 JBL - Set preferences only from Edit Form
+            // STIC Custom 20250508 JBL - Set preferences only from Edit Form and Initial User Config
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/637
             // $this->saveFormPreferences();
             // $this->savePreferencesToDB();
-            if (isset($_POST['action']) && $_POST['action']=="Save") {
+            if (isset($_POST['action']) && ($_POST['action']=="Save" || $_POST['action']=="SaveUserWizard")) {
                 $this->saveFormPreferences();
                 $this->savePreferencesToDB();
             }
