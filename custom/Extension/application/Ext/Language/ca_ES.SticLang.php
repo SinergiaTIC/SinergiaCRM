@@ -3175,8 +3175,8 @@ $app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocup
 // Resources: User tipus
 $app_list_strings['stic_resources_places_users_list'][''] = '';
 $app_list_strings['stic_resources_places_users_list']['adults'] = 'Adults';
-$app_list_strings['stic_resources_places_users_list']['families'] = 'Families';
-$app_list_strings['stic_resources_places_users_list']['minors'] = 'Minors';
+$app_list_strings['stic_resources_places_users_list']['families'] = 'Famílies';
+$app_list_strings['stic_resources_places_users_list']['minors'] = 'Menors';
 
 // Resources: Gender
 $app_list_strings['stic_resources_places_gender_list'][''] = '';
