@@ -808,7 +808,6 @@ class User extends Person implements EmailInterface
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/637
             // $this->saveFormPreferences();
             // $this->savePreferencesToDB();
-            // if (!isset($_POST['action']) || $_POST['action']!="MassUpdate") {
             if (isset($_POST['action']) && $_POST['action']=="Save") {
                 $this->saveFormPreferences();
                 $this->savePreferencesToDB();
