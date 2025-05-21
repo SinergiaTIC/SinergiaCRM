@@ -136,6 +136,13 @@ $campaign_id = $focus->id;
       if (empty($opp_data1['opp_count'])) {
           $opp_data1['opp_count']=0;
       }
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
 
      $smarty->assign("OPPORTUNITIES_WON", $opp_data1['opp_count']);
           

@@ -93,6 +93,13 @@ class AOW_WorkFlow extends Basic
         }
         return $sqlOperatorList[$key];
     }
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
 
     /**
      * check an SQL operator is exists

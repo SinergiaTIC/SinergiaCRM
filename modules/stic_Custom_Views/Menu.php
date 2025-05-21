@@ -24,6 +24,14 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+
 
 global $mod_strings, $app_strings, $sugar_config;
 

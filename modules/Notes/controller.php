@@ -61,6 +61,14 @@
              $_REQUEST['relate_id'] = false;
          }
 
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         
          // If Note is related to a Contact, we automatically fill the Contact field
          if ($_REQUEST['parent_type'] === 'Contacts'
             && !empty($_REQUEST['parent_id'])
