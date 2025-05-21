@@ -831,7 +831,7 @@ class SugarBean
         $final_query = '';
         $final_query_rows = '';
         $subpanel_list = array();
-        // STIC Custom 20250512 JBL - Fix Error: Argument must be of type object|string
+        // STIC Custom 20250512 JBL - Fix Error: Argument can not be null or false
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // if (method_exists($subpanel_def ?? '', 'isCollection')) {
         if (method_exists($subpanel_def ? $subpanel_def : '', 'isCollection')) {
