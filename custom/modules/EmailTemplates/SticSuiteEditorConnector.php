@@ -47,7 +47,7 @@ class SticSuiteEditorConnector extends SuiteEditorConnector
                 },
                 width: '80%',
                 height : '480',
-                language: 'es',
+                language: '{$userLang}',
                 language_url: 'SticInclude/vendor/tinymce/langs/{$userLang}.js',
                 toolbar1: 'code undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
                 toolbar2: 'print preview media | forecolor backcolor | image | emoticons | table | link | fontselect fontsizeselect',
