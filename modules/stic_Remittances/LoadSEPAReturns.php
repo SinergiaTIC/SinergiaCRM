@@ -154,6 +154,12 @@ class SepaReturns {
         $debtor = $receipt['OrgnlTxRef']['Dbtr']['Nm'] ?? null;
         $GLOBALS['log']->debug('Debtor: ' . $debtor);
 
+        // JBL: Comment Blà blà, blá!!!
+        // fsdafds fasdfd afds fdasf dsaf sdafdafsd
+        // fdasfdsafdsafdsa fsdafds afdsa fds afd sa fdsafdsa
+        // fasdfdsafdsafdsfdasdsafdsafasdf 
+        // fadsfsdfdsafdsdffd
+
         // Set receiptId not case-sensitive
         $receiptId = strtolower($receiptId);
 

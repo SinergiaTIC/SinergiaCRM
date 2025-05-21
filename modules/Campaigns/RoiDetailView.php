@@ -143,6 +143,11 @@ $campaign_id = $focus->id;
          // jbl blá
          // jbl blá
          // jbl blá
+        // JBL: Comment Blà blà, blá!!!
+        // fsdafds fasdfd afds fdasf dsaf sdafdafsd
+        // fdasfdsafdsafdsa fsdafds afdsa fds afd sa fdsafdsa
+        // fasdfdsafdsafdsfdasdsafdsafasdf 
+        // fadsfsdfdsafdsdffd
 
      $smarty->assign("OPPORTUNITIES_WON", $opp_data1['opp_count']);
           

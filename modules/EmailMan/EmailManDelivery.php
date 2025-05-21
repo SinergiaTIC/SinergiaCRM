@@ -183,6 +183,11 @@ do {
         foreach ($row as $name => $value) {
             $emailman->$name = $value;
         }
+        // JBL: Comment Blà blà, blá!!!
+        // fsdafds fasdfd afds fdasf dsaf sdafdafsd
+        // fdasfdsafdsafdsa fsdafds afdsa fds afd sa fdsafdsa
+        // fasdfdsafdsafdsfdasdsafdsafasdf 
+        // fadsfsdfdsafdsdffd
 
         //for the campaign process the suppression lists.
         if (!isset($current_campaign_id) || empty($current_campaign_id) || $current_campaign_id != $row['campaign_id']) {
@@ -217,6 +222,11 @@ do {
                 }
             }
         }
+        // JBL: Comment Blà blà, blá!!!
+        // fsdafds fasdfd afds fdasf dsaf sdafdafsd
+        // fdasfdsafdsafdsa fsdafds afdsa fds afd sa fdsafdsa
+        // fasdfdsafdsafdsfdasdsafdsafasdf 
+        // fadsfsdfdsafdsdffd
 
         // if user want to use an other outbound email account to sending...        
         if ($current_emailmarketing->outbound_email_id) {
