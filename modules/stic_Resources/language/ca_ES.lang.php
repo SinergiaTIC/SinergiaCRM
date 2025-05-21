@@ -84,6 +84,6 @@ $mod_strings = array(
     'LBL_AMOUNT_COPAYMENT' => 'Import diari de copagament',
 
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Cal indicar un centre',
-    'LBL_PLACES' => 'Plaças',
+    'LBL_PLACES' => 'Places',
 
 );
