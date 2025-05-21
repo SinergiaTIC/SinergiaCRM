@@ -50,6 +50,14 @@ if (ACLController::checkAccess('Campaigns', 'edit', true)) {
         $mod_strings['LNL_NEW_CAMPAIGN_WIZARD'],"Create"
     );
 }
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+
 /*
 if(ACLController::checkAccess('Campaigns', 'edit', true))
     $module_menu[]=	array(

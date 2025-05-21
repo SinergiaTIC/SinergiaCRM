@@ -262,11 +262,6 @@ do {
                 continue;
             }
             // END STIC-Custom
-        // JBL: Comment Blà blà, blá!!!
-        // fsdafds fasdfd afds fdasf dsaf sdafdafsd
-        // fdasfdsafdsafdsa fsdafds afdsa fds afd sa fdsafdsa
-        // fasdfdsafdsafdsfdasdsafdsafasdf 
-        // fadsfsdfdsafdsdffd
             $mail->oe->mail_smtpauth_req = $outboundEmailAccount->mail_smtpauth_req;
             $mail->oe->mail_smtpuser = $outboundEmailAccount->mail_smtpuser;
             $mail->oe->mail_smtppass = $outboundEmailAccount->mail_smtppass;

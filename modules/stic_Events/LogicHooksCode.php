@@ -25,6 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+         // jbl blá
+
+
 class stic_EventsLogicHooks {
 
     public function after_save(&$bean, $event, $arguments) {
