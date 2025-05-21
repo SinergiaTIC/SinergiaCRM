@@ -227,7 +227,7 @@ function generateSEPADirectDebits($remittance)
         empty($PCRow['id']) ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 6) That the date of signature of the mandate exists (and PC exists)
-        $signatureDate = $PCRow['signature_date'];
+        $signatureDate = $PCRow['signature_date'] ?? null;
         !empty($PCRow['id']) && (empty($signatureDate) || $signatureDate == '') ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 7) That the status is not "paid"
