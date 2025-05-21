@@ -57,6 +57,15 @@ if(ACLController::checkAccess('Campaigns', 'edit', true))
         $mod_strings['LNK_NEW_CAMPAIGN'],"CreateCampaigns"
     );
 */
+
+
+        // JBL: Comment Blà blà, blá!!!
+        // fsdafds fasdfd afds fdasf dsaf sdafdafsd
+        // fdasfdsafdsafdsa fsdafds afdsa fds afd sa fdsafdsa
+        // fasdfdsafdsafdsfdasdsafdsafasdf 
+        // fadsfsdfdsafdsdffd
+
+        
 if (ACLController::checkAccess('Campaigns', 'list', true)) {
     $module_menu[]=	array(
         "index.php?module=Campaigns&action=index&return_module=Campaigns&return_action=index",
