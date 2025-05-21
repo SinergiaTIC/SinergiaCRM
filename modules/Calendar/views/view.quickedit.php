@@ -51,7 +51,11 @@ class CalendarViewQuickEdit extends SugarView
     {
         $this->bean = $this->view_object_map['currentBean'];
 
-        if ($this->bean->ACLAccess('Save')) {
+        // STIC Custom 20250315 JBL - Fix Error: Call to a member function ACLAccess() on false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if ($this->bean->ACLAccess('Save')) {
+        if ($this->bean !== false && $this->bean->ACLAccess('Save')) {
+        // END STIC Custom
             $this->editable = 1;
         } else {
             $this->editable = 0;

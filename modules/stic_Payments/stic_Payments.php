@@ -167,26 +167,46 @@ class stic_Payments extends Basic
         include_once 'SticInclude/Utils.php';
 
         // If parent payment commitment has changed...
-        if (trim((string) $this->stic_paymebfe2itments_ida) != trim((string) ($this->rel_fields_before_value['stic_paymebfe2itments_ida'] ?? ''))) {
-            // Get new parent payment commitment bean
-            $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
-            // Get payment commmitment related contact (usual case)
-            $contactId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts')->id ?? null; ; 
-            if (!empty($contactId)) {
-                // Remove previous relationship with an account, if any
-                // (a payment can only be related with a single contact or account, not both)
-                $this->stic_payments_accountsaccounts_ida = '';
-                // Set the relationship between payment and contact
-                $this->stic_payments_contactscontacts_ida = $contactId;
-            } else {
-                // Get payment commitment related account
-                $accountId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_accounts')->id ?? null;
-                if (!empty($accountId)) {
-                    // Remove previous relationship with a contact, if any
+        // STIC Custom 20250416 JBL - Fix Warnings and TypeErrors
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+        // if (!empty($this->stic_paymebfe2itments_ida) && (trim($this->stic_paymebfe2itments_ida) != trim($this->rel_fields_before_value['stic_paymebfe2itments_ida']))) {
+        if (!empty($this->stic_paymebfe2itments_ida)) {
+            $payment_commitment_id = '';
+            if (is_string($this->stic_paymebfe2itments_ida) || 
+                (is_object($this->stic_paymebfe2itments_ida) && 
+                 method_exists($this->stic_paymebfe2itments_ida, '__toString'))) {
+                $payment_commitment_id = (string)$this->stic_paymebfe2itments_ida;
+            }
+            $payment_commitment_id_before = '';
+            if (isset($this->rel_fields_before_value['stic_paymebfe2itments_ida'])) {
+                if (is_string($this->rel_fields_before_value['stic_paymebfe2itments_ida']) ||
+                    (is_object($this->rel_fields_before_value['stic_paymebfe2itments_ida']) && 
+                     method_exists($this->rel_fields_before_value['stic_paymebfe2itments_ida'], '__toString'))) {
+                    $payment_commitment_id_before = (string)$this->rel_fields_before_value['stic_paymebfe2itments_ida'];
+                }
+            }
+            if (trim($payment_commitment_id) != trim($payment_commitment_id_before)) {
+        // END STIC Custom
+                // Get new parent payment commitment bean
+                $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
+                // Get payment commmitment related contact (usual case)
+                $contactId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts')->id ?? null; ; 
+                if (!empty($contactId)) {
+                    // Remove previous relationship with an account, if any
                     // (a payment can only be related with a single contact or account, not both)
-                    $this->stic_payments_contactscontacts_ida = '';
-                    // Set the relationship between payment and account
-                    $this->stic_payments_accountsaccounts_ida = $accountId;
+                    $this->stic_payments_accountsaccounts_ida = '';
+                    // Set the relationship between payment and contact
+                    $this->stic_payments_contactscontacts_ida = $contactId;
+                } else {
+                    // Get payment commitment related account
+                    $accountId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_accounts')->id ?? null;
+                    if (!empty($accountId)) {
+                        // Remove previous relationship with a contact, if any
+                        // (a payment can only be related with a single contact or account, not both)
+                        $this->stic_payments_contactscontacts_ida = '';
+                        // Set the relationship between payment and account
+                        $this->stic_payments_accountsaccounts_ida = $accountId;
+                    }
                 }
             }
         }

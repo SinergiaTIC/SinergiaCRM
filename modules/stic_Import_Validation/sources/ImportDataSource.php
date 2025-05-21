@@ -422,7 +422,7 @@ abstract class ImportDataSource implements Iterator
         if ($this->_rowsCount != $this->_previousRowCount){
             // Avoid Deprecated warning: the $escape parameter must be provided as its default value will change
             // fputcsv($fpNoErrors, $rowData, $_REQUEST["custom_delimiter"], html_entity_decode($_REQUEST["custom_enclosure"], ENT_QUOTES));
-            fputcsv($fpNoErrors, $rowData, $_REQUEST["custom_delimiter"], html_entity_decode($_REQUEST["custom_enclosure"], ENT_QUOTES), `\\`);
+            fputcsv($fpNoErrors, $rowData, $_REQUEST["custom_delimiter"], html_entity_decode($_REQUEST["custom_enclosure"], ENT_QUOTES), '\\');
             $this->_previousRowCount = $this->_rowsCount;
         } else { // Being an error on a row already reported, we eliminate the last existing row to concatenate the errors
             // Read content of file

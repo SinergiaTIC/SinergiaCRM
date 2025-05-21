@@ -180,7 +180,13 @@ class ViewRelationship extends SugarView
 
         $rhs_subpanels = $relatableModules [ $relationship->rhs_module ] ;
         // Fix to re-add sorting of the subpanel names so that the 'default' subpanel always appears first in the list. This assumes that subpanels are usually named ForXYZ which is the case currently, and hence 'default' will be sorted first. If this assumption is incorrect, then a better solution would be to remove 'default' from the subpanel list, then sort, and finally array_unshift it back on.
-        natcasesort($rhs_subpanels);
+        // STIC Custom 20250508 JBL - Fix TypeError: Argument null 
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // natcasesort($rhs_subpanels);
+        if ($rhs_subpanels != null) {
+            natcasesort($rhs_subpanels);
+        }
+        // END STIC Custom
 
         if (empty($_REQUEST [ 'relationship_name' ])) {
             // tidy up the options for the view based on the modules participating in the relationship and the cardinality

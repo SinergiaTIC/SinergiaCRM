@@ -4532,7 +4532,11 @@ eoq;
                 // just make sure are there any default 'from' address set? (validation)
 
                 if (!isset($defaultEmail['email']) || !$defaultEmail['email']) {
-                    throw new EmailException("No system default 'from' email address", NO_DEFAULT_FROM_ADDR);
+                    // STIC Custom 20250519 JBL - Fix Undefined constant
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // throw new EmailException("No system default 'from' email address", NO_DEFAULT_FROM_ADDR);
+                    throw new EmailException("No system default 'from' email address", EmailException::NO_DEFAULT_FROM_ADDR);
+                    // END STIC Custom
                 }
 
                 // use the default one
@@ -4547,7 +4551,11 @@ eoq;
                 // just make sure are there any default 'from' address set? (validation)
 
                 if (!isset($defaultEmail['name']) || !$defaultEmail['name']) {
-                    throw new EmailException("No system default 'from' name", NO_DEFAULT_FROM_NAME);
+                    // STIC Custom 20250519 JBL - Fix Undefined constant
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // throw new EmailException("No system default 'from' name", NO_DEFAULT_FROM_NAME);
+                    throw new EmailException("No system default 'from' name", EmailException::NO_DEFAULT_FROM_NAME);
+                    // END STIC Custom
                 }
 
                 // use the default one

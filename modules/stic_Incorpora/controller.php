@@ -216,7 +216,7 @@ class stic_IncorporaController extends SugarController
 
         // Retrieving user parameters if it's PRO or TEST.
         // For the correct visualization in the UI, we need to 
-        if ($test = $_REQUEST['test']) {
+        if ($test = ($_REQUEST['test'] ?? false)) {
             $this->incorporaUserParams = array(
                 'group' => $_REQUEST['reference_group_test_code'],
                 'entity' => $_REQUEST['reference_entity_test_code'],
@@ -522,7 +522,7 @@ class stic_IncorporaController extends SugarController
         $this->summary['failed'] = 0;
         foreach ($this->log['logs'] as $row) {
             // Errors may come from Incorpora WS (cod > 0) or from the CRM (error = 1). Both should be considered in totals.
-            if ($row['cod'] > 0 || $row['error'] == 1) {
+            if (($row['cod'] ?? 0) > 0 || ($row['error'] ?? 0) == 1) {
                 $this->summary['failed']++;
             } else {
                 $this->summary['successful']++;

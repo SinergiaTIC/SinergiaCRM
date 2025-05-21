@@ -131,6 +131,7 @@ if(!function_exists('html_entity_decode_utf8'))
             $trans_tbl = array();
             foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key)
                 // STIC Custom 20250304 JBL - Avoid Deprecated warning: Function utf8_encode() is deprecated since 8.2
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
                 // $trans_tbl[$key] = utf8_encode($val);
                 $trans_tbl[$key] = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
                 // END STIC Custom
