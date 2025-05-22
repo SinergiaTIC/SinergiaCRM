@@ -97,8 +97,8 @@ $dictionary['AOW_Processed'] = array(
   array(
     'name'=> 'parent_name',
     'parent_type'=>'record_type_display' ,
-    'type_name'=>'bean_module',
-    'id_name'=>'bean_id',
+    'type_name'=>'parent_type',
+    'id_name'=>'parent_id',
     'vname'=>'LBL_BEAN',
     'type'=>'parent',
     'group'=>'parent_name',
@@ -169,7 +169,11 @@ $dictionary['AOW_Processed'] = array(
         array(
             'name' => 'aow_processed_index_workflow',
             'type' => 'index',
-            'fields' => array('aow_workflow_id','status','parent_id','deleted'),
+            // STIC-Custom EPS 20241204
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/507
+            // 'fields' => array('aow_workflow_id','status','parent_id','deleted'),
+            'fields' => array('aow_workflow_id','parent_id','status','deleted'),
+            //END STIC-Custom
         ),
         array(
             'name' => 'aow_processed_index_status',

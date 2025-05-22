@@ -42,9 +42,10 @@
  * Reminder class
  *
  */
+#[\AllowDynamicProperties]
 class Reminder extends Basic
 {
-    const UPGRADE_VERSION = '7.4.3';
+    public const UPGRADE_VERSION = '7.4.3';
 
     public $name;
 
@@ -106,6 +107,10 @@ class Reminder extends Basic
         $db = DBManagerFactory::getInstance();
 
         $savedReminderIds = array();
+        // STIC Custom 20250313 JBL - Avoid iterate over null
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        $remindersData ??= [];
+        // END STIC Custom        
         foreach ($remindersData as $reminderData) {
             if (isset($_POST['isDuplicate']) && $_POST['isDuplicate']) {
                 $reminderData->id = '';
@@ -238,14 +243,23 @@ class Reminder extends Basic
                 $inviteeModuleId = $invitee->related_invitee_module_id;
                 $personBean = BeanFactory::getBean($inviteeModule, $inviteeModuleId);
                 // The original email reminders check the accept_status field in related users/leads/contacts etc. and filtered these users who not decline this event.
-                if ($checkDecline && !self::isDecline($event, $personBean)) {
-                    if (!empty($personBean->email1)) {
-                        $arr = array(
-                            'type' => $inviteeModule,
-                            'name' => $personBean->full_name,
-                            'email' => $personBean->email1,
-                        );
-                        $emails[] = $arr;
+
+                // STIC-Custom 20240926 ART - “Run Email Reminder Notifications” does not run when deleting a person
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/406
+                // Avoid sending the reminder to any guest if the guest does not already exist in the CRM, as it causes an error that prevents the “Run Email Reminder Notifications” task from finishing correctly
+
+                // Prevent a deleted contact, user, etc. from being deleted in order for the task to run
+                if($personBean != false) {
+                // END STIC-Custom
+                    if ($checkDecline && !self::isDecline($event, $personBean)) {
+                        if (!empty($personBean->email1)) {
+                            $arr = array(
+                                'type' => $inviteeModule,
+                                'name' => $personBean->full_name,
+                                'email' => $personBean->email1,
+                            );
+                            $emails[] = $arr;
+                        }
                     }
                 }
             }
@@ -264,7 +278,13 @@ class Reminder extends Basic
                 if ($eventBean) {
                     $remind_ts = $timedate->fromUser($eventBean->date_start)->modify("-{$reminderBean->timer_email} seconds")->ts;
                     $now_ts = $timedate->getNow()->ts;
-                    if ($now_ts >= $remind_ts) {
+
+                    // STIC-Custom 20241001 ART - Do not send a reminder if the meeting has already taken place 
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/406
+                    // if ($now_ts >= $remind_ts) {
+                    $event_ts = $timedate->fromUser($eventBean->date_start)->ts;
+                    if ($now_ts >= $remind_ts && $now_ts <= $event_ts) {
+                    // END STIC-Custom
                         $reminders[$reminderBean->id] = $reminderBean;
                     }
                 } else {
@@ -308,7 +328,7 @@ class Reminder extends Basic
         $dateTimeMax = $timedate->getNow(true)->modify("+{$app_list_strings['reminder_max_time']} seconds")->asDb(false);
 
         $dateTimeNow = $timedate->getNow(true)->asDb(false);
-        
+
 
         // Original jsAlert used to a meeting integration.
 
@@ -458,7 +478,7 @@ class Reminder extends Basic
     private static function unQuoteTime($timestr)
     {
         $ret = '';
-        for ($i = 0; $i < strlen($timestr); $i++) {
+        for ($i = 0; $i < strlen((string) $timestr); $i++) {
             if ($timestr[$i] != "'") {
                 $ret .= $timestr[$i];
             }
@@ -478,7 +498,7 @@ class Reminder extends Basic
         if ($acceptStats = self::getEventPersonAcceptStatus($event, $person)) {
             $acceptStatusLower = strtolower($acceptStatus);
             foreach ((array)$acceptStats as $acceptStat) {
-                if (strtolower($acceptStat) == $acceptStatusLower) {
+                if (strtolower($acceptStat) === $acceptStatusLower) {
                     return true;
                 }
             }
@@ -520,7 +540,7 @@ class Reminder extends Basic
 
     private static function getEventPersonQuery(SugarBean $event, SugarBean $person)
     {
-        $eventIdField = array_search($event->table_name, $event->relationship_fields);
+        $eventIdField = array_search($event->table_name, $event->relationship_fields, true);
         if (!$eventIdField) {
             $eventIdField = strtolower($event->object_name . '_id');
         }

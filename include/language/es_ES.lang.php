@@ -767,6 +767,44 @@ $app_list_strings = array(
         'PM' => 'PM',
     ),
 
+    'dom_inbound_email_account_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+        'bounce' => 'Rebote',
+    ],
+
+    'dom_inbound_email_auth_types' => [
+        'basic' => 'Autenticación Básica',
+        'oauth' => 'OAuth',
+    ],
+
+    'dom_external_oauth_connection_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+    ],
+
+    'dom_external_oauth_provider_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grupo',
+    ],
+
+    'dom_outbound_email_account_types' => [
+        'user' => 'Personal',
+        'group' => 'Grupo',
+        'system' => 'Sistema',
+        'system-override' => 'Anulación del Sistema',
+    ],
+
+    'dom_inbound_email_account_status' => [
+        'Active' => 'Activo',
+        'Inactive' => 'Inactivo',
+    ],
+
+    'dom_email_body_filtering_option' => [
+      'multi' => 'Búsqueda de Múltiples Palabras',
+      'single' => 'Búsqueda de Una Palabra',
+    ],
+
     'dom_email_types' => array(
         'out' => 'Enviado',
         'archived' => 'Archivado',
@@ -1508,7 +1546,7 @@ $app_strings = array(
     'LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS' => 'Añadir contactos a la lista de destino',
     'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE' => 'Clic para Cerrar',
     'LBL_ADDITIONAL_DETAILS' => 'Detalles Adicionales',
-    'LBL_ADMIN' => 'Administrador',
+    'LBL_ADMIN' => 'Administración',
     'LBL_ALT_HOT_KEY' => '',
     'LBL_ARCHIVE' => 'Archivo',
     'LBL_ASSIGNED_TO_USER' => 'Asignado a Usuario',
@@ -1520,7 +1558,7 @@ $app_strings = array(
     'LBL_BUGS' => 'Incidencias',
     'LBL_BY' => 'por',
     'LBL_CALLS' => 'Llamadas',
-    'LBL_CAMPAIGNS_SEND_QUEUED' => 'Enviar Emails de Campaña Encolados',
+    'LBL_CAMPAIGNS_SEND_QUEUED' => 'Enviar los mensajes de la cola de correo',
     'LBL_SUBMIT_BUTTON_LABEL' => 'Enviar',
     'LBL_CASE' => 'Caso',
     'LBL_CASES' => 'Casos',
@@ -1964,6 +2002,8 @@ $app_strings = array(
     'LBL_REMOVE_DASHLET_CONFIRM' => '¿Está seguro de que desea quitar el SuiteCRM Dashlet?',
     'LBL_REMOVING_DASHLET' => 'Quitando SuiteCRM Dashlet ...',
     'LBL_REMOVED_DASHLET' => 'SuiteCRM Dashlet Quitado',
+    'LBL_MAX_DASHLET_COLUMNS' => "Se pueden mostrar un máximo de %s columnas.",
+    'LBL_RETRIEVING_XML_DATA' => "Hubo un problema al recuperar los datos XML:\n",
 
     // MySugar Menu Options
 
@@ -2054,7 +2094,8 @@ $app_strings = array(
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_DESCRIPTION' => 'Descripción',
 
-    'LBL_YESTERDAY' => 'Ayer',
+    'LBL_YESTERDAY' => 'ayer',
+    'LBL_NOW' => 'ahora',
     'LBL_TODAY' => 'hoy',
     'LBL_TOMORROW' => 'mañana',
     'LBL_NEXT_WEEK' => 'la semana que viene',

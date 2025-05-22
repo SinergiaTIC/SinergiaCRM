@@ -171,7 +171,9 @@
 							{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
 						{elseif $params.currency_format}
 							{sugar_currency_format
-	                            var=$rowData.$col
+								id=$rowData.ID
+								var=$rowData.$col
+								field_name=$params.name
 	                            round=$params.currency_format.round
 	                            decimals=$params.currency_format.decimals
 	                            symbol=$params.currency_format.symbol
@@ -189,7 +191,23 @@
 								{multienum_to_array string=$rowData.$col assign="vals"}
 								{foreach from=$vals item=item}
 									{counter name="oCount"}
-									{sugar_translate label=$params.options select=$item}{if $oCount !=  count($vals)},{/if}
+									{* STIC-Custom 20240717 MHP -  https://github.com/SinergiaTIC/SinergiaCRM/pull/15
+										Show the value in case it does not belong to the values ​​in the list *}
+									{* {sugar_translate label=$params.options select=$item}{if $oCount !=  count($vals)},{/if} *}
+									{assign var=itemInArray value=false}
+									{assign var=fieldName value=$params.name}
+									{foreach from=$fields.$fieldName.options key=key item=value}
+										{if ($key == $item)}
+											{assign var=itemInArray value=true}
+										{/if}
+									{/foreach}	
+									{if ($itemInArray)}
+										{sugar_translate label=$params.options select=$item}
+									{else}
+										{$item}
+									{/if}
+									{if $oCount !=  count($vals)},{/if}
+									{* STIC-Custom *}
 								{/foreach}
                         {else}
                             {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}

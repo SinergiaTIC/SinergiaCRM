@@ -193,6 +193,10 @@ class EventInscriptionMailer extends WebFormMailer
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  The data received does not include user email, notification cannot be sent.");
             return false;
         }
+        if (empty($templateId)) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ":  No templateId present.");
+            return false;
+        }
 
         // Añade el destinatario
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Adding recipient [{$objContactWeb->email1}] ...");
@@ -410,11 +414,11 @@ class EventInscriptionMailer extends WebFormMailer
                 if (!in_array($key, $excludeFields)) // If the field is not in the list of fields to ignore ...
                 {
                     $label = $this->translate($objWeb->field_defs[$key]['vname'], $objWeb->module_name);
-                    $objList = $objWeb->field_defs[$key]['options'];
+                    $objList = $objWeb->field_defs[$key]['options'] ?? null;
                     if (!empty($objList) && strpos($objList, 'range_search_dom') === false) // If it is a drop-down field, load the labels
                     {
                         // TODO: review multi-selection fields
-                        $value = $GLOBALS['app_list_strings'][$objWeb->field_defs[$key]['options']][$value];
+                        $value = $GLOBALS['app_list_strings'][$objWeb->field_defs[$key]['options']][$value] ?? null;
                     }
                     $html .= '    <tr><th>' . rtrim($label, ':') . ':</th><td>' . $value . '</td></tr>';
                 }

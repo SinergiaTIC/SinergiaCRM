@@ -176,6 +176,12 @@
                 </div>
             </div>
         </div>
+        {* STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist *}
+        {* STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208 *}
+        {if $STIC_MENU }
+            {include file="custom/themes/SuiteP/tpls/SticAdvancedMenu.tpl"}
+        {else}    
+        {* END STIC *}    
         <div class="desktop-toolbar" id="toolbar">
             {if $USE_GROUP_TABS}
                 <ul class="nav navbar-nav">
@@ -523,7 +529,10 @@
 
             {/if}
         </div>
-
+        {* STIC CUSTOM 20240709 JCH - Show Advanced Tab config (multilevel) if exist *}
+        {* STIC https://github.com/SinergiaTIC/SinergiaCRM/pull/208 *}
+        {/if}
+        {* END STIC *}
         <!-- Right side of the main navigation -->
         <div class="mobile-bar">
             <ul id="toolbar" class="toolbar">
@@ -593,7 +602,8 @@
                         </form>
                     </div>
                 </li>
-                {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                {* STIC-Custom 20240222 MHP - Adding efficient registration button 
+                   https://github.com/SinergiaTIC/SinergiaCRM/pull/114 *}
                 <li class="time_tracker_button_row no-show-time-tracker-button">
                     <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
                         onclick="showTimeTrackerConfirmBox();"></button>
@@ -732,7 +742,8 @@
                             </div>
                         </form>
                     </li>
-                    {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                    {* STIC-Custom 20240222 MHP - Adding efficient registration button 
+                       https://github.com/SinergiaTIC/SinergiaCRM/pull/114     *}
                     <li class="time_tracker_button_row no-show-time-tracker-button">
                         <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
                             onclick="showTimeTrackerConfirmBox();"></button>
@@ -854,7 +865,8 @@
                                 </div>
                             </form>
                         </li>
-                        {* STIC-Custom 20240222 MHP - Adding efficient registration button *}
+                        {* STIC-Custom 20240222 MHP - Adding efficient registration button 
+                           https://github.com/SinergiaTIC/SinergiaCRM/pull/114 *}
                         <li class="time_tracker_button_row no-show-time-tracker-button">
                             <button class="time_tracker_button btn suitepicon suitepicon-module-tasks"
                                 onclick="showTimeTrackerConfirmBox();"></button>
@@ -893,7 +905,8 @@
                         </ul>
                     </div>
             </nav>
-            {* STIC-Custom 20240222 MHP - Add registration button dialog *}
+            {* STIC-Custom 20240222 MHP - Add registration button dialog 
+               https://github.com/SinergiaTIC/SinergiaCRM/pull/114 *}
             <div id="time-tracker-dialog-box"></div>
             {* END STIC-Custom *}
             <!--End Responsive Top Navigation Menu -->
@@ -1096,3 +1109,4 @@
             <!--End Responsive Sidebar -->
         {/if}
         <!--Start Page content -->
+        

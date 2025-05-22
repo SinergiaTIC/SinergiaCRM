@@ -74,32 +74,35 @@ class stic_DataAnalyzer
                         throw new Exception("Database error [" . $db->lastError() . "]");
                     }
 
-                    // Create an array with the records to validate
-                    $records = array();
-                    while ($row = $db->fetchByAssoc($dbResult)) {
-                        array_push($records, $row);
-                    }
+                    if (!is_bool($dbResult)) 
+                    {   
+                        // Create an array with the records to validate
+                        $records = array();
+                        while ($row = $db->fetchByAssoc($dbResult)) {
+                            array_push($records, $row);
+                        }
 
-                    // If the result of the query was an object, close it
-                    if (is_object($dbResult)) {
-                        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Closing query object.");
-                        $dbResult->close();
-                    }
-                                    
-                    // Remove stale validation results related to the running validation action
-                    $func->removeObsoleteValidationResults($records, $db, $func->selector, $func->id);
-
-                    // Apply validation action
-                    $result = $func->doAction($records, $action);
-                    if ($result) {
-                        // If the action was executed correctly, the date of the last execution is updated
-                        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Action [{$action->id} - {$action->name}] has been successfully completed.");
-                        global $timedate;
-                        $action->last_execution = $timedate->getInstance()->now();
-                        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Saving execution date...");
-                        $action->save();
-                    } else {
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Action [{$action->id} - {$action->name}]has ended with error.");
+                        // If the result of the query was an object, close it
+                        if (is_object($dbResult)) {
+                            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Closing query object.");
+                            $dbResult->close();
+                        }
+                                        
+                        // Remove stale validation results related to the running validation action
+                        $func->removeObsoleteValidationResults($records, $db, $func->selector, $func->id);
+                        
+                        // Apply validation action
+                        $result = $func->doAction($records, $action);
+                        if ($result) {
+                            // If the action was executed correctly, the date of the last execution is updated
+                            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Action [{$action->id} - {$action->name}] has been successfully completed.");
+                            global $timedate;
+                            $action->last_execution = $timedate->getInstance()->now();
+                            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Saving execution date...");
+                            $action->save();
+                        } else {
+                            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Action [{$action->id} - {$action->name}]has ended with error.");
+                        }
                     }
                 } catch (Exception $e) {
                     $idError = uniqid();
@@ -115,7 +118,9 @@ class stic_DataAnalyzer
         }
 
         // Send email only if there are validation results on the same day
-        $query = "SELECT count(*) as num_results FROM `stic_validation_results` WHERE deleted = 0 AND DATE_FORMAT(date_modified,'%Y-%m-%d') LIKE UTC_DATE();";
+        global $current_user;
+        $tzone = $current_user->getPreference('timezone') ?? $sugar_config['default_timezone'] ?? date_default_timezone_get();        
+        $query = "SELECT count(*) as num_results FROM `stic_validation_results` WHERE deleted = 0 AND DATE_FORMAT(CONVERT_TZ(date_modified, '+00:00', '" . $tzone ."'),'%Y-%m-%d') LIKE CURDATE();";
         $result = $db->query($query);
         $row = $db->fetchByAssoc($result);
         if (isset($row['num_results']) && intval($row['num_results']) > 0) {

@@ -142,6 +142,9 @@ $mod_strings['LBL_INC_INCORPORA_RECORD_HELP'] = "Cando este campo está activado
 // Cadenas Recursos y Reservas
 $mod_strings['LBL_STIC_BOOKINGS_ACCOUNTS_FROM_STIC_BOOKINGS_TITLE'] = 'Reservas';
 
+// Cadenas Organizaciones subvencionadas
+$mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_ACCOUNTS_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Participación en subvencións';
+
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direccións de correo";
 
@@ -171,7 +174,7 @@ $mod_strings['MSG_DUPLICATE'] = 'O rexistro que está a punto de crear podería 
 $mod_strings['MSG_SHOW_DUPLICATES'] = 'O rexistro que está a punto de crear podería ser un duplicado doutra organización existente. Os rexistros de organización con nomes similares lístanse a continuación. Para confirmar a creación desta organización faga clic en Gardar. En caso contrario, pulse Cancelar.';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizacións';
 
-// Cadeas Ayudas
+// Cadeas Axudas
 $mod_strings['LBL_STIC_GRANTS_ACCOUNTS_FROM_STIC_GRANTS_TITLE'] = 'Axudas';
 
 // Cadeas Formación
