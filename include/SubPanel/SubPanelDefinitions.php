@@ -262,7 +262,7 @@ class aSubPanel
         // STIC-Custom EPS 20250516 On long relationship names, the name of the subpanel is not the name of the relationship
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/645
         // $relationshipType = $dictionary[$this->name]['true_relationship_type'] ?? null;
-        $relationshipType = $dictionary[($dictionary[($this->parent_bean->module_name)]['fields'][($this->name)]['relationship'])]['true_relationship_type'] ?? null;
+        $relationshipType = $dictionary[($dictionary[($this->parent_bean->object_name)]['fields'][($this->name)]['relationship'])]['true_relationship_type'] ?? null;
         // END STIC-Custom
         // if($relationshipType == 'one-to-many') {
         if($relationshipType == 'one-to-many' || $relationshipType == 'many-to-one') {
