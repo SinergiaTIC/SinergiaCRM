@@ -31,8 +31,13 @@ if (!defined('sugarEntry')) {
     define('sugarEntry', true);
 }
 
+// STIC CUSTOM - "Sleep 3 seconds to priorize regular cron execution"
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/534
+sleep(3);
+// End STIC CUSTOM
+
 // STIC Custom - "Run Nightly Mass Email Campaign" scheduler id
-if (!$schedulerId = $_REQUEST['scheduler_id']) {
+if (!$schedulerId = $_REQUEST['scheduler_id'] ?? false) {
     $schedulerId = '72ed826e-bd84-758a-d742-5e830d2ce892';
 }
 // End STIC Custom
