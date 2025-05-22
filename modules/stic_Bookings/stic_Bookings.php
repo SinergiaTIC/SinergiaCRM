@@ -149,8 +149,8 @@ class stic_Bookings extends Basic
             SugarApplication::redirect("index.php?module=stic_Bookings_Calendar&action=index&start_date=" . explode(' ', $this->start_date)[0]);
         }
         // If return module is Booking's Places Calendar, redirect there
-        if ($_REQUEST['return_module'] == 'stic_Bookings_Places_Calendar') {
-            SugarApplication::redirect("index.php?module=stic_Bookings_Places_Calendar&action=index&start_date=" . explode(' ', $this->start_date)[0]);
+        if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'stic_Bookings_Calendar') {
+            SugarApplication::redirect("index.php?module=stic_Bookings_Calendar&action=index&start_date=".explode(' ', $this->start_date)[0]);
         }
 
     }
