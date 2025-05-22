@@ -107,7 +107,7 @@ class stic_Bookings extends Basic
         // If all_day is checked and the request is from user interface, set the proper start_date and end_date values.
         // From the API or from the import process is not necessary since the start_date and end_date values are received by the save() method in UTC and in database format.
         // Control that a FdT or an LH does not recalculate the dates more than once through the condition !$this->processed
-        if ($this->all_day == '1' && !empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date']) && (!isset($this->processed) || !$this->processed)) {
+        if (isset($this->all_day) && $this->all_day == '1' && !empty($_REQUEST['start_date']) && !empty($_REQUEST['end_date']) && (!isset($this->processed) || !$this->processed)) {
             $startDate = $timedate->fromUser($_REQUEST['start_date'], $current_user);
             $startDate = $startDate->get_day_begin();
             $startDate = $timedate->asUserDate($startDate, false, $current_user);

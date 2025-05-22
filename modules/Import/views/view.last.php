@@ -79,8 +79,13 @@ class ImportViewLast extends ImportView
         $dupeCount    = 0;
         $createdCount = 0;
         $updatedCount = 0;
-        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(), 'r');
-        
+        // STIC Custom 20250313 JBL - auto_detect_line_endings removed do not work in PHP8.4
+        // Ensure compatibility Windows/Linux
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(), 'r');
+        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(), 'rb');
+        // END STIC Custom
+
         // Read the data if we successfully opened file
         if ($fp !== false) {
             // Read rows 1 by 1 and add the info
@@ -97,7 +102,7 @@ class ImportViewLast extends ImportView
             }
             fclose($fp);
         }
-        
+
         $this->ss->assign("showUndoButton", false);
         if ($createdCount > 0) {
             $this->ss->assign("showUndoButton", true);

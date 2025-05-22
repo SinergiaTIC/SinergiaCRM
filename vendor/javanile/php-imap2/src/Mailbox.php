@@ -35,7 +35,12 @@ class Mailbox
             return imap_check($imap);
         }
 
-        trigger_error(Errors::invalidImapConnection(debug_backtrace(), 1), E_USER_WARNING);
+        // STIC Custom 20250325 JBL - Fix Fatal Error: Too few arguments to function
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+        // this error still occurs with the latest javanile version (0.1.10): https://github.com/javanile/php-imap2/blob/main/src/Mailbox.php
+        // trigger_error(Errors::invalidImapConnection(debug_backtrace(), 1), E_USER_WARNING);
+        trigger_error(Errors::invalidImapConnection(debug_backtrace(), 1, false), E_USER_WARNING);
+        // END STIC Custom
 
         return false;
     }

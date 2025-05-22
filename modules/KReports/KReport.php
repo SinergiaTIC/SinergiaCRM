@@ -1037,7 +1037,11 @@ class KReport extends SugarBean {
       $fieldIdArray = array();
       foreach ($arrayList as $thisList) {
          if ($thisList ['display'] == 'yes') {
-            $fieldArray [] = array('label' => utf8_decode($thisList ['name']), 'width' => (isset($thisList ['width']) && $thisList ['width'] != '' && $thisList ['width'] != '0') ? $thisList ['width'] : '100', 'display' => $thisList ['display']);
+            // STIC Custom 20250314 JBL - utf8_decode is deprecated
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $fieldArray [] = array('label' => utf8_decode($thisList ['name']), 'width' => (isset($thisList ['width']) && $thisList ['width'] != '' && $thisList ['width'] != '0') ? $thisList ['width'] : '100', 'display' => $thisList ['display']);
+            $fieldArray [] = array('label' => mb_convert_encoding($thisList['name'], 'ISO-8859-1', 'UTF-8'), 'width' => (isset($thisList ['width']) && $thisList ['width'] != '' && $thisList ['width'] != '0') ? $thisList ['width'] : '100', 'display' => $thisList ['display']);
+            // END STIC Custom
             $fieldIdArray [] = $thisList ['fieldid'];
          }
       }
@@ -1061,7 +1065,11 @@ class KReport extends SugarBean {
                            $header .= iconv("UTF-8", $current_user->getPreference('default_export_charset'), $fieldArray ['name']) . $current_user->getPreference('export_delimiter');
                   }
 
-                  $rows .= '"' . iconv("UTF-8", $current_user->getPreference('default_export_charset') . '//IGNORE', preg_replace(array('/"/'), array('""'), html_entity_decode($value, ENT_QUOTES))) . '"' . $current_user->getPreference(('export_delimiter'));
+                  // STIC Custom 20250314 JBL - Avoid pass null as string
+                  // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                  // $rows .= '"' . iconv("UTF-8", $current_user->getPreference('default_export_charset') . '//IGNORE', preg_replace(array('/"/'), array('""'), html_entity_decode($value, ENT_QUOTES))) . '"' . $current_user->getPreference(('export_delimiter'));
+                  $rows .= '"' . iconv("UTF-8", $current_user->getPreference('default_export_charset') . '//IGNORE', preg_replace(array('/"/'), array('""'), html_entity_decode((string) $value, ENT_QUOTES))) . '"' . $current_user->getPreference(('export_delimiter'));
+                  // END STIC Custom
                }
             }
             if ($getHeader)
@@ -2035,7 +2043,7 @@ class KReportRenderer {
                $fieldValue .= $app_list_strings [$this->report->kQueryArray->queryArray [(isset($record ['unionid']) ? $record ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldid] ['fields_name_map_entry'] ['options']] [trim($thisValue)];
          }
       } else {
-         $fieldValue = $app_list_strings [$this->report->kQueryArray->queryArray [(isset($record ['unionid']) ? $record ['unionid'] : 'root')] ['kQuery']->fieldNameMap [$fieldid] ['fields_name_map_entry'] ['options']] [$record[$fieldid]];
+         $fieldValue = $app_list_strings[$this->report->kQueryArray->queryArray[(isset($record['unionid']) ? $record['unionid'] : 'root')]['kQuery']->fieldNameMap[$fieldid]['fields_name_map_entry']['options'] ?? ''][$record[$fieldid]];
       }
 
       // if value is empty we return the original value
@@ -2084,7 +2092,7 @@ class KReportRenderer {
 
    public static function kintRenderer($fieldid, $record) {
    		// NS-TEAM -> round(,0)
-      return round($record[$fieldid], 0);
+      return is_numeric($record[$fieldid] ?? null) ? round($record[$fieldid], 0) : null;
    }
 
    public static function kdateRenderer($fieldid, $record) {
@@ -2109,7 +2117,7 @@ class KReportRenderer {
    }
 
    public static function ktextRenderer($fieldid, $record) {
-      return nl2br($record[$fieldid]);
+      return nl2br((string)($record[$fieldid] ?? ''));
    }
 
 }

@@ -285,7 +285,11 @@ class SchedulersJob extends Basic
     {
         $GLOBALS['log']->info("Resolving job {$this->id} as $resolution: $message");
         if ($resolution == self::JOB_FAILURE) {
-            $this->failure_count++;
+            // STIC Custom 20250315 JBL - Fix deprecated Warning: increment non-alphanumeric string
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $this->failure_count++;
+            $this->failure_count = (int)$this->failure_count + 1;
+            // END STIC Custom
             if ($this->requeue && $this->retry_count > 0) {
                 // retry failed job
                 $this->status = self::JOB_STATUS_QUEUED;

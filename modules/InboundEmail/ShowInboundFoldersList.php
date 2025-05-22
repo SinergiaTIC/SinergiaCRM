@@ -245,7 +245,11 @@ echo '	</table>';
 ////	COMPLETE RENDERING OF THE POPUP
 echo '<input type="hidden" id="sf_returnstatus" name="returnstatus" value="'. $returnArray['status'] .'">';
 echo '<input type="hidden" id="sf_foldersList" name="foldersList" value="'. htmlspecialchars((string) $foldersList) .'">';
-echo '<input type="hidden" id="sf_selectedfoldersList" name="selectedfoldersList" value="'. implode(",", $requestMailBox) .'">';
+// STIC Custom 20250326 JBL - Fix Fatal error: argument #2 must be of type array
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+// echo '<input type="hidden" id="sf_selectedfoldersList" name="selectedfoldersList" value="'. implode(",", $requestMailBox) .'">';
+echo '<input type="hidden" id="sf_selectedfoldersList" name="selectedfoldersList" value="'. implode(",", $requestMailBox ?? []) .'">';
+// END STIC Custom
 echo '<input type="hidden" id="sf_searchField" name="searchField" value="'. $searchField .'">';
 
 echo '

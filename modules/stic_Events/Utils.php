@@ -84,6 +84,8 @@ class stic_EventsUtils
         $finalDay = date('Y-m-d H:i:s', strtotime($finalDay . " + $finalHour hours + $finalMinute minutes"));
         $duration = strtotime($finalDay) - strtotime($startDay);
 
+        $date = [];
+
         // Depending on the chosen type, perform the right operation
         // (none, daily, weekly, monthly or annual)
         if ($type == '') {

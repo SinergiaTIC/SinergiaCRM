@@ -1893,7 +1893,11 @@ public $aliasNbPgHex;
             }
         }
         /*-- END COLUMNS --*/
-        if (count($this->divbuffer)) {
+        // STIC Custom 20250411 JBL - Fix TypeError: count(): Argument must be of type Countable|array
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (count($this->divbuffer)) {
+        if (is_array($this->divbuffer) && count($this->divbuffer)) {
+        // END STIC Custom
             $this->printdivbuffer();
         }
 
@@ -4791,7 +4795,11 @@ public $aliasNbPgHex;
                 $txt .= code2utf($b[1][$i]);
             }
             if ($this->usingCoreFont) {
-                $txt = utf8_decode($txt);
+                // STIC Custom 20250314 JBL - utf8_decode is deprecated
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $txt = utf8_decode($txt);
+                $txt = mb_convert_encoding($txt, 'ISO-8859-1', 'UTF-8');
+                // END STIC Custom
             }
             if ($mode == 'SIPSMP') {
                 $txt = $this->UTF8toSubset($txt);
@@ -37154,7 +37162,11 @@ public function TOC($tocfont='', $tocfontsize=0, $tocindent=0, $resetpagenum='',
           $size *= $maxsize*2;
       }
   } else {
-      $size *= (25.4/$this->dpi);
+    // STIC Custom 20250411 JBL - Fix Uncaught TypeError: Unsupported operand types
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // $size *= (25.4/$this->dpi);
+    $size = (float)$size * (25.4/$this->dpi);
+    // END STIC Custom
   } //nothing == px
   
         return $size;

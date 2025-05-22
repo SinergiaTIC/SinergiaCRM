@@ -109,7 +109,11 @@ function convertQuestionResponseForDisplay($responseArr, $type)
             }
             // no break
         case "Rating":
-            $answer = $responseArr[0]->answer ?? '';
+            // STIC Custom 20250324 JBL - Fix TypeError
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477            
+            // $answer = $responseArr[0]->answer ?? '';
+            $answer = (int) ($responseArr[0]->answer ?? null);
+            // END STIC Custom
             if (is_int($answer)) {
                 return str_repeat('<img width=20 src="modules/Surveys/imgs/star.png"/>', $answer);
             }

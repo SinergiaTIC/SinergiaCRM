@@ -192,6 +192,9 @@ class SearchResultsController extends Controller
                         $processedBean[$field] = $value;
                     }
                 }
+                if (!isset($processedBean['id'])) {
+                    $processedBean['id'] = $bean->id;
+                }
                 if (!isset($processedResults[$module])) {
                     $processedResults[$module] = [];
                 }

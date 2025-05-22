@@ -193,7 +193,13 @@ class One2MBeanRelationship extends One2MRelationship
             if (isset($link->getFocus()->$rhsID)) {
                 $id = $link->getFocus()->$rhsID;
             } else {
-                LoggerManager::getLogger()->warn('Incorrect linked relationship rhs ID: ' . get_class($link->getFocus()) . '::$' . $rhsID . ' is undefined');
+                // STIC Custom 20250315 JBL - Fix Uncaught TypeError: get_class(): Argument must be of type object, false given
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // LoggerManager::getLogger()->warn('Incorrect linked relationship rhs ID: ' . get_class($link->getFocus()) . '::$' . $rhsID . ' is undefined');
+                $focus = $link->getFocus();
+                $className = is_object($focus) ? get_class($focus) : 'unknown';
+                LoggerManager::getLogger()->warn('Incorrect linked relationship rhs ID: ' . $className . '::$' . $rhsID . ' is undefined');
+                // END STIC Custom
             }
 
             if (!empty($id)) {

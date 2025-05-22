@@ -294,8 +294,11 @@ class CalendarController extends SugarController
 
         require_once("data/BeanFactory.php");
         $this->currentBean = BeanFactory::getBean($module, $record);
-
-        if (!empty($actionToCheck)) {
+        // STIC Custom 20250331 JBL - Fix Fatal error:  Uncaught Error: Call to a member function ACLAccess() on false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // if (!empty($actionToCheck)) {
+        if (!empty($actionToCheck) && !empty($this->currentBean)) {
+        // END STIC Custom
             if (!$this->currentBean->ACLAccess($actionToCheck)) {
                 $this->view = 'json';
                 $jsonData = array(

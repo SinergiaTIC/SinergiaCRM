@@ -142,7 +142,12 @@ if (!empty($_REQUEST['display'])) {
     if ($_SESSION['log_file_size'] == $cur_size) {
         echo $mod_strings['LBL_LOG_NOT_CHANGED'].'<br>';
     } else {
-        $fp = sugar_fopen($logFile, 'r');
+        // STIC Custom 20250313 JBL - auto_detect_line_endings removed do not work in PHP8.4
+        // Ensure compatibility Windows/Linux
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // $fp = sugar_fopen($logFile, 'r');
+        $fp = sugar_fopen($logFile, 'rb');
+        // END STIC Custom        
         fseek($fp, $pos, SEEK_END);
         echo '<pre>';
         while ($line = fgets($fp)) {
