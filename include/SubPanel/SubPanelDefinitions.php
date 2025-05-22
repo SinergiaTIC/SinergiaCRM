@@ -259,7 +259,11 @@ class aSubPanel
         // STIC#1157
         global $dictionary;
 
-        $relationshipType = $dictionary[$this->name]['true_relationship_type'] ?? null;
+        // STIC-Custom EPS 20250516 On long relationship names, the name of the subpanel is not the name of the relationship
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/645
+        // $relationshipType = $dictionary[$this->name]['true_relationship_type'] ?? null;
+        $relationshipType = $dictionary[($dictionary[($this->parent_bean->object_name)]['fields'][($this->name)]['relationship'])]['true_relationship_type'] ?? null;
+        // END STIC-Custom
         // if($relationshipType == 'one-to-many') {
         if($relationshipType == 'one-to-many' || $relationshipType == 'many-to-one') {
             // STIC-Custom JBL 20240123: Don't show button in Custom views
