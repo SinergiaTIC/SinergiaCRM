@@ -24,6 +24,7 @@
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 
+#[\AllowDynamicProperties]
 class stic_RemittancesViewEdit extends ViewEdit
 {
 
@@ -41,7 +42,8 @@ class stic_RemittancesViewEdit extends ViewEdit
         SticViews::preDisplay($this);
 
         // Write here you custom code
-
+        include_once "modules/stic_Remittances/Utils.php";
+        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations();
     }
 
     public function display()

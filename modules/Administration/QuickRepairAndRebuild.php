@@ -47,6 +47,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+use Api\Core\Config\ApiConfig;
+
+#[\AllowDynamicProperties]
 class RepairAndClear
 {
     public $module_list;
@@ -58,6 +61,7 @@ class RepairAndClear
     public function repairAndClearAll($selected_actions, $modules, $autoexecute = false, $show_output = true)
     {
         global $mod_strings;
+        global $sugar_config;
         $this->module_list = $modules;
         $this->show_output = $show_output;
         $this->actions = $selected_actions;
@@ -141,7 +145,7 @@ class RepairAndClear
                 isset($_REQUEST['silent']) && $_REQUEST['silent'] == 'true' &&
                 isset($_REQUEST['action']) && in_array($_REQUEST['action'], ['DeleteField', 'DeleteRelationship'])
             ) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Action {$_REQUEST['action']}. Rebuilding SinergiaDA");
+                $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Action {$_REQUEST['action']}. Rebuilding SinergiaDA");
                 require_once 'SticInclude/SinergiaDARebuild.php';
                 SinergiaDARebuild::callApiRebuildSDA(true, 'views');
             }
@@ -404,7 +408,7 @@ class RepairAndClear
         $search_dir = sugar_cached('');
         $src_file = $search_dir . 'modules/unified_search_modules.php';
         if (file_exists($src_file)) {
-            unlink((string) $src_file);
+            unlink($src_file);
         }
     }
     public function clearExternalAPICache()
@@ -466,7 +470,7 @@ class RepairAndClear
                 $focus->create_audit_table();
             } else {
                 if ($this->show_output) {
-                    $echo = str_replace('%1$', $focus->object_name, $mod_strings['LBL_REBUILD_AUDIT_SKIP']);
+                    $echo=str_replace('%1$', $focus->object_name, (string) $mod_strings['LBL_REBUILD_AUDIT_SKIP']);
                     echo $echo;
                 }
             }
@@ -500,7 +504,7 @@ class RepairAndClear
                 if ($children != "." && $children != "..") {
                     if (is_dir($thedir . "/" . $children)) {
                         $this->_clearCache($thedir . "/" . $children, $extension);
-                    } elseif (is_file($thedir . "/" . $children) && (substr_count($children, $extension))) {
+                    } elseif (is_file($thedir . "/" . $children) && (substr_count($children, (string) $extension))) {
                         unlink($thedir . "/" . $children);
                     }
                 }
