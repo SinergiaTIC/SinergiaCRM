@@ -34,8 +34,11 @@ class stic_Custom_Views_ProcessorLogicHooks
         if ($action == "subpanelcreates") {
             $view = "quickcreate";
             $module = $_POST["target_module"];
+        } else if ($action == "popup") {
+            $view = "quickcreate";
         }
-        $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'];
+        
+        $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'] ?? [];
         if (!array_key_exists($view, $availableViews)) {
             return "";
         }
@@ -152,7 +155,10 @@ class stic_Custom_Views_ProcessorLogicHooks
                 foreach ($conditionBeanArray as $conditionBean) {
                     $value_typeArray = explode("|", $conditionBean->value_type);
                     $value_type = $value_typeArray[0];
-                    $value_list = $value_typeArray[1];
+                    if ($value_type != "enum" && $value_type != "multienum" && $value_type != "dynamicenum") {
+                        $value_typeArray[1] = "";
+                    }
+                    $value_list = $value_typeArray[1] ?? "";
                     $condition_type = $conditionBean->condition_type;
                     if($condition_type=="value") {
                         $value = $this->value_to_display($conditionBean->value, $value_type);
@@ -180,8 +186,8 @@ class stic_Custom_Views_ProcessorLogicHooks
                 $actions = array();
                 foreach ($actionsBeanArray as $actionBean) {
                     $value_typeArray = explode("|", $actionBean->value_type);
-                    $value_type = $value_typeArray[0];
-                    $value_list = $value_typeArray[1];
+                    $value_type = $value_typeArray[0] ?? "";
+                    $value_list = $value_typeArray[1] ?? "";
                     if ($actionBean->action == "fixed_value") {
                         $value = $this->value_to_display($actionBean->value, $value_type);
                     } else {
@@ -252,9 +258,10 @@ class stic_Custom_Views_ProcessorLogicHooks
                 return str_replace('.', $dec_sep, $value);
 
             case "date":
+                return $timedate->asUser($timedate->fromDbFormat($value, TimeDate::DB_DATE_FORMAT), $current_user);
             case "datetime":
             case "datetimecombo":
-                return $timedate->to_display_date_time($value, true, false, $current_user);
+                return $timedate->asUser($timedate->fromDbFormat($value, TimeDate::DB_DATETIME_FORMAT), $current_user);
         }
         return $value;
     }
@@ -269,7 +276,7 @@ class stic_Custom_Views_ProcessorLogicHooks
     private function string_contains_any($str, array $arr)
     {
         foreach ($arr as $a) {
-            if (stripos($str, $a) !== false) {
+            if (stripos($str, (string) $a) !== false) {
                 return true;
             }
         }

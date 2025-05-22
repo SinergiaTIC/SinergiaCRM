@@ -1,4 +1,5 @@
 <?php
+#[\AllowDynamicProperties]
 class SticUtils
 {
 
@@ -72,7 +73,7 @@ EOQ;
 EOQ;
                         break;
                     case 'decimal':
-                        $fieldValue = self::formatDecimalInConfigSettings($bean->$field);
+                        $fieldValue = formatDecimalInConfigSettings($bean->$field);
                         $js .= <<<EOQ
                         if ($('#$field').text() != '$fieldValue') {
                             $('#$field').text('$fieldValue').fadeOut(500).fadeIn(1000);
@@ -107,7 +108,7 @@ EOQ;
      */
     public static function getRelatedBeanObject($bean, $relationshipName)
     {
-        if (!$bean->load_relationship($relationshipName)) {
+        if (!$bean || !$bean->load_relationship($relationshipName)) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': : Failed retrieve contacts relationship data');
             return false;
         }
@@ -484,7 +485,7 @@ EOQ;
     }
 
     /**
-     * Set the proper decimal separator according to the user/system configuration
+     * Set value with appropriate separators according to user/system configuration
      *
      * @param Decimal $decimalValue
      * @param Boolean $userSetting. Indicates whether to choose user or system configuration
@@ -494,13 +495,24 @@ EOQ;
     {
         global $current_user, $sugar_config;
 
+        // Get the user preferences for the thousands and decimal separator and the number of decimal places 
         if ($userSetting) {
+            // User decimal separator
             $user_dec_sep = (!empty($current_user->id) ? $current_user->getPreference('dec_sep') : null);
+            // User thousands separator
+            $user_grp_sep = (!empty($current_user->id) ? $current_user->getPreference('num_grp_sep') : null);
+            // User number of decimal places
+            $user_sig_digits = (!empty($current_user->id) ? $current_user->getPreference('default_currency_significant_digits') : null);
         }
 
+        // Set the user preferences or the default preferences
         $dec_sep = empty($user_dec_sep) ? $sugar_config['default_decimal_seperator'] : $user_dec_sep;
+        $grp_sep = empty($user_grp_sep) ? $sugar_config['default_number_grouping_seperator'] : $user_grp_sep;
+        $sig_digits = empty($user_sig_digits) ? $sugar_config['default_currency_significant_digits'] : $user_sig_digits;
 
-        return str_replace('.', $dec_sep, $decimalValue);
+        // Format the number
+        $value = number_format((float)$decimalValue, $sig_digits, $dec_sep, $grp_sep);
+        return $value;
     }
 
     /**
@@ -578,7 +590,7 @@ EOQ;
             return in_array($k['type'], ['decimal', 'currency', 'float']);
         }, ARRAY_FILTER_USE_BOTH);
         foreach ($decimalFields as $key => $value) {
-            $duplicateBean->$key = (float) number_format($duplicateBean->$key, $value['precision'] ?? 2, '.', '');
+            $duplicateBean->$key = (float) number_format((float)$duplicateBean->$key, $value['precision'] ?? 2, '.', '');
         }
 
         // Apply any changes

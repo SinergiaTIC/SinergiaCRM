@@ -24,6 +24,7 @@
 require_once 'include/MVC/View/views/view.popup.php';
 require_once 'SticInclude/Views.php';
 
+#[\AllowDynamicProperties]
 class stic_RemittancesViewPopup extends ViewPopup
 {
 
@@ -39,6 +40,8 @@ class stic_RemittancesViewPopup extends ViewPopup
 
         SticViews::preDisplay($this);
 
+        include_once "modules/stic_Remittances/Utils.php";
+        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations();
     }
     public function display()
     {

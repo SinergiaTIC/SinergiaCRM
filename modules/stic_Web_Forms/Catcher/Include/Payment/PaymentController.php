@@ -28,11 +28,11 @@ require_once __DIR__ . '/../../WebFormDataController.php';
  * Class that controls the flow for donation forms
  */
 class PaymentController extends WebFormDataController {
-    const RESPONSE_TYPE_NEW_PAYMENT = '';
-    const RESPONSE_TYPE_TPV_RESPONSE = 'TPV_RESPONSE';
-    const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_CECA_RESPONSE';
-    const RESPONSE_TYPE_PAYPAL_RESPONSE = 'PAYPAL_RESPONSE';
-    const RESPONSE_TYPE_STRIPE_RESPONSE = 'STRIPE_RESPONSE';
+    public const RESPONSE_TYPE_NEW_PAYMENT = '';
+    public const RESPONSE_TYPE_TPV_RESPONSE = 'TPV_RESPONSE';
+    public const RESPONSE_TYPE_TPVCECA_RESPONSE = 'TPV_CECA_RESPONSE';
+    public const RESPONSE_TYPE_PAYPAL_RESPONSE = 'PAYPAL_RESPONSE';
+    public const RESPONSE_TYPE_STRIPE_RESPONSE = 'STRIPE_RESPONSE';
 
     protected $version = 1; // Use the same logic for forms generated with different versions of the wizard
 
@@ -407,6 +407,24 @@ class PaymentController extends WebFormDataController {
         $tpvSys->setParameter("DS_MERCHANT_URLOK", $okURL);
         $tpvSys->setParameter("DS_MERCHANT_CONSUMERLANGUAGE", PaymentBO::getTPVLanguage($this->getLanguage()));
 
+        // Set the Titular name to the TPV (DS_MERCHANT_TITULAR)
+        include_once 'SticInclude/Utils.php';
+        $merchant_titular = "";
+        $relatedContactBean = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts');
+        if($relatedContactBean) {
+            $merchant_titular = $relatedContactBean->full_name;
+        } else {
+            $relatedAccountBean = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_accounts');
+            if($relatedAccountBean) {
+                $merchant_titular = $relatedAccountBean->name;
+            }
+        }
+        if (!empty($merchant_titular)) {
+            // Limit to length 16
+            $merchant_titular = substr($merchant_titular, 0, 60);
+            $tpvSys->setParameter("DS_MERCHANT_TITULAR", $merchant_titular);
+        }
+
         // Configuration data
         $version = $settings["TPV_VERSION"];
         $kc = $settings["TPV_PASSWORD"];
@@ -467,7 +485,7 @@ class PaymentController extends WebFormDataController {
         ];
 
         foreach ($requiredConsts as $key) {
-            if (empty($settings[$key])) {
+            if (empty($settings[$key]) && $settings[$key] != 0 ) { 
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": The setting {$key} is missing or empty.");
                 $this->returnCode('UNEXPECTED_ERROR');
                 return $this->feedBackError($this);
@@ -758,11 +776,8 @@ class PaymentController extends WebFormDataController {
 
         $req = 'cmd=_notify-validate'; // Prefix that must be added to the message to verify
 
-        if (function_exists('get_magic_quotes_gpc')) {
-            $get_magic_quotes_exists = true;
-        }
         foreach ($myPost as $key => $value) {
-            if ($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
+            if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() == 1) {
                 $value = urlencode(stripslashes($value));
             } else {
                 $value = urlencode($value);
@@ -794,6 +809,8 @@ class PaymentController extends WebFormDataController {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
 
+        define('DEBUG', false);
+        
         if (DEBUG == true) {
             curl_setopt($ch, CURLOPT_HEADER, 1);
             curl_setopt($ch, CURLINFO_HEADER_OUT, 1);

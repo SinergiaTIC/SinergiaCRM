@@ -47,7 +47,7 @@
 
 <div class="layer">
     <span>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED} = {$DATA.totalRecordsProcessed}</span>
-    <br /><span style='color:green'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED} = {$DATA.totalRecordsCreated ?? 0}</span>
+    <br /><span style='color:green'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED} = {$DATA.totalRecordsCreated|default:0}</span>
     <br /><span style='color:red'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED} = {$DATA.totalRecordsNotCreated}</span>
 </div>
 <br />
@@ -86,8 +86,15 @@
         <div class="pagination-container" id="pagination"></div>
     </div>
 {/if}
-<br /><br />    
 
+<br /><br />    
+<div>
+    <a href="index.php?module=stic_Work_Calendar&action=showWorkCalendarAssistant" style="margin-right: 2em">
+        <button type='button' class='button'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_CONTINUE_WITH_EMPLOYEES}</button>
+    </a>
+</div>
+
+<br /><br />    
 <div>
     <a href="index.php?module=Employees&action=index" style="margin-right: 2em">
         <button type='button' class='button'>{$MOD.LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES}</button>
@@ -151,7 +158,9 @@
                 renderRecordsNotCreated(currentUserId, pageNumber, pageSize);
                 renderPagination(currentUserId, pageNumber, pageSize, data[currentUserId].numRecordsNotCreated);
             } else {
-               document.getElementById('listContainer').style.display='none';
+                if (document.getElementById('listContainer')) {
+                    document.getElementById('listContainer').style.display='none';
+                }
             }
         }
 

@@ -42,13 +42,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+#[\AllowDynamicProperties]
 class EmailTemplateParser
 {
     /**
      * Official expression for variables, extended with underscore
      * @see http://php.net/manual/en/language.variables.basics.php
      */
-    const PATTERN = '/\$([a-zA-Z_\x7f-\xff]+_[a-zA-Z0-9_\x7f-\xff]*)/';
+    public const PATTERN = '/\$([a-zA-Z_\x7f-\xff]+_[a-zA-Z0-9_\x7f-\xff]*)/';
 
     /**
      * Allowed keys as result
@@ -111,6 +112,26 @@ class EmailTemplateParser
         $this->module = $module;
         $this->siteUrl = $siteUrl;
         $this->trackerId = $trackerId;
+
+        // STIC-Custom - JBL - 20240709 - Notifications: Parse Email Templates with notified module
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+        if ($campaign->campaign_type == "Notification" && !empty($campaign->parent_id)) {
+            global $beanList, $beanFiles;
+
+            // If the Campaign is of type 'Notification' and has a parent_id
+            // Set up to parse with the related object specified in parent_id
+            if (isset($beanList[$campaign->parent_type])) {
+                $class = $beanList[$campaign->parent_type];
+                // Ensure the class is loaded
+                if (!class_exists($class)) {
+                    require_once($beanFiles[$class]);
+                }
+                // Instantiate the related object and retrieve its data using parent_id
+                $this->module = new $class();
+                $this->module->retrieve($campaign->parent_id);
+            }
+        }
+        // END STIC-Custom
     }
 
     /**
@@ -196,15 +217,14 @@ class EmailTemplateParser
                 if (isset($app_list_strings[$enum][$this->module->$attribute])) {
                     $this->module->$attribute = $app_list_strings[$enum][$this->module->$attribute];
                 }
-            }
-            // STIC-custom 20210922 - Parse decimal symbol in templates according to configuration
-            // STIC#390
-            else if (($this->module->field_name_map[$attribute]['type']) && ($this->module->field_name_map[$attribute]['type']) === 'decimal'){
-                require_once('SticInclude/Utils.php');
-                $value = SticUtils::formatDecimalInConfigSettings($this->module->$attribute, false);
+            } else if (($this->module->field_name_map[$attribute]['type']) && (($this->module->field_name_map[$attribute]['type']) === 'decimal' || ($this->module->field_name_map[$attribute]['type']) === 'float')) {
+                $value = formatDecimalInConfigSettings($this->module->$attribute, false);
                 return $value;
             }
-            // END STIC-custom
+            else if (($this->module->field_name_map[$attribute]['type']) && (($this->module->field_name_map[$attribute]['type']) === 'decimal' || ($this->module->field_name_map[$attribute]['type']) === 'float')){
+                $value = formatDecimalInConfigSettings($this->module->$attribute, false);
+                return $value;
+            }
             return $this->module->$attribute;
         }
 

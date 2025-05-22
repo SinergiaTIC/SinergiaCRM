@@ -21,6 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+#[\AllowDynamicProperties]
 class stic_Custom_View_Conditions extends Basic
 {
     public $new_schema = true;
@@ -108,6 +109,11 @@ class stic_Custom_View_Conditions extends Basic
                     $condition->condition_order = ++$j;
                     $condition->name = $parent->name . '-' . $condition->condition_order;
                     $condition->stic_custo233dzations_ida = $parent->id;
+                    if ($condition->value===true) {
+                        $condition->value = 1;
+                    } else if ($condition->value===false) {
+                        $condition->value = 0;
+                    }
                     $condition->save();
                 }
             }
