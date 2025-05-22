@@ -139,7 +139,11 @@ class SugarCronJobs
             $this->markLastRun();
             return true;
         } else {
-            $ts = file_get_contents($this->lockfile);
+            // STIC Custom 20250315 JBL - Fix Uncaught TypeError: Unsupported operand types
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $ts = file_get_contents($this->lockfile);
+            $ts = (int) file_get_contents($this->lockfile);
+            // END STIC Custom
             $this->markLastRun();
             $now = time();
             if ($now - $ts < $this->min_interval) {

@@ -1676,7 +1676,11 @@ EOHTML;
                     }
                     break;
                 case 'DetailView':
-                    $beanName = $this->bean->get_summary_text();
+                    // STIC Custom 20250316 JBL - Fix Uncaught Error: Call to a member function get_summary_text() on null
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                    // $beanName = $this->bean->get_summary_text();
+                    $beanName = $this->bean?->get_summary_text() ?? '';
+                    // END STIC Custom
                     $params[] = $beanName;
                     break;
             }

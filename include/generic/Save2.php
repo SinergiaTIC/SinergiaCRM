@@ -195,10 +195,21 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
                         $add_values[substr($key, 14)]=$value;
                     }
                 }
-                $relName = $_REQUEST['subpanel_field_name'];
-                $focus->load_relationship($relName);
-                $focus->$relName->add($_REQUEST['subpanel_id'], $add_values);
-                $focus->save();
+                // STIC Custom 20250401 PCS - Fix Access to undefined array key
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $relName = $_REQUEST['subpanel_field_name'];
+                // $focus->load_relationship($relName);
+                // $focus->$relName->add($_REQUEST['subpanel_id'], $add_values);
+                // $focus->save();
+                if (!empty($_REQUEST['subpanel_field_name']) && !empty($_REQUEST['subpanel_id'])) {
+                    $relName = $_REQUEST['subpanel_field_name'];
+
+                    if ($focus->load_relationship($relName)) {
+                        $focus->$relName->add($_REQUEST['subpanel_id'], $add_values);
+                        $focus->save();
+                    }
+                }
+                // END STIC Custom
             }
         }
     }

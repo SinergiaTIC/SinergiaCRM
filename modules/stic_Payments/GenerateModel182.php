@@ -187,6 +187,7 @@ $sqlCurrentPayments = "SELECT p.id
                 AND (p.m182_excluded = 0 OR p.m182_excluded IS NULL)
                 AND p.deleted = 0";
 $currentPaymentResult = $db->query($sqlCurrentPayments);
+$paymentsIds = [];
 while ($row = $db->fetchByAssoc($currentPaymentResult)) {
     $paymentsIds[] = $row['id'];
 }
@@ -200,10 +201,9 @@ $GLOBALS['log']->info('[M182] ' . (is_array($paymentsIds) ? sizeof($paymentsIds)
 // The arrays indexes are the ids of accounts and contacts.
 $contacts = array();
 $accounts = array();
-$lastyearPayments = array();
+$yearPayments = array();
 
 // Process the selected payments
-$paymentsIds = is_array($paymentsIds) ? $paymentsIds : [];
 foreach ($paymentsIds as $id) {
 
     // For each payment get the associated contact/account
@@ -250,10 +250,16 @@ foreach ($paymentsIds as $id) {
     // Store the contacts in an array, the accounts in another one and the total amounts in a third one, classified by type of payment.
     if (isset($contactRow)) {
         $contacts[$contactRow['contact_id']] = $contactRow['contact_id'];
+        if (!isset($yearPayments[$contactRow['contact_id']])) {
+            $yearPayments[$contactRow['contact_id']] = [];
+        }
         $yearPayments[$contactRow['contact_id']][$contactRow['payment_type']] = ($yearPayments[$contactRow['contact_id']][$contactRow['payment_type']] ?? 0) + $contactRow['amount'];
     } elseif (isset($accountRow)) {
         $accounts[$accountRow['accountId']] = $accountRow['accountId'];
-        $yearPayments[$contactRow['accountId']][$contactRow['payment_type']] = ($yearPayments[$contactRow['accountId']][$contactRow['payment_type']] ?? 0) + $contactRow['amount'];
+        if (!isset($yearPayments[$accountRow['accountId']])) {
+            $yearPayments[$accountRow['accountId']] = [];
+        }
+        $yearPayments[$accountRow['accountId']][$accountRow['payment_type']] = ($yearPayments[$accountRow['accountId']][$accountRow['payment_type']] ?? 0) + $accountRow['amount'];
     }
 }
 

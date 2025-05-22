@@ -147,6 +147,7 @@ class stic_Work_CalendarUtils
 
         // Depending on the chosen type, perform the right operation
         // (none, daily, weekly, monthly or annual)
+        $date = [];
         if ($repeat_type == '') {
             header("Location: index.php?action=index&module=stic_Work_Calendar");
         } else {

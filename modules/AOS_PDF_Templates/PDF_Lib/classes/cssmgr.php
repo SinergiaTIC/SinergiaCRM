@@ -1241,6 +1241,13 @@ class cssmgr
 
     public function MergeCSS($inherit, $tag, $attr)
     {
+        // STIC Custom 20250411 JBL - Fix TypeError when $attr is not an array
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        if (!is_array($attr)) {
+            $attr = [];
+        }
+        // END STIC Custom
+
         $p = array();
         $zp = array();
 

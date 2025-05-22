@@ -113,7 +113,11 @@ class HtmlSanitizer
      */
     public static function cleanHtml($dirtyHtml, $removeHtml = false)
     {
-        return self::getInstance()->clean($dirtyHtml, $removeHtml);
+        // STIC Custom 20250304 JBL - Fix TypeError: argument must be of type string
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // return self::getInstance()->clean($dirtyHtml, $removeHtml);
+        return self::getInstance()->clean((string) $dirtyHtml, $removeHtml);
+        // END STIC Custom
     }
 
     /**

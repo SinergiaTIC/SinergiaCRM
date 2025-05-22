@@ -612,7 +612,7 @@ $sugar_config = array(
     // STIC#1319
     'sinergiacrm_version' => '1.8.0', 
     'js_custom_version' => 14,
-    'stic_show_update_alert' => 1,
+    'stic_show_update_alert' => 0,
     // END STIC
 
     // STIC-Custom 20240117 JCH - Security Groups Module Rules activation config

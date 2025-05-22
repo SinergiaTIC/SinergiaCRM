@@ -1247,6 +1247,7 @@ class ListView
         }
 
         // STIC Custom 20241113 JBL - Remove static calls to non static methods
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // $baseurl .= "&".ListView::getSessionVariableName($html_varName, "offset")."=";
         $baseurl .= "&".$this->getSessionVariableName($html_varName, "offset")."=";
         // END STIC

@@ -218,7 +218,7 @@ class DataParser
         // include 'modules/stic_Incorpora/utils/FieldsDef.php';
         foreach ($fieldsDef as $key => $value) {
             if (!isset($value['skipConsulta']) || !$value['skipConsulta']) {
-                switch ($value[1]) {
+                switch ($value[1] ?? null) {
                     case 'location':
                         if (isset($bean->$key)) {
                             $sufix = $bean->field_defs['inc_id_c'] ? '_c' : '';
@@ -251,7 +251,7 @@ class DataParser
                                 if ($locationBean->id) {
                                     $bean->$sticIncorporaLocationsId = $locationBean->id;
                                 } else {
-                                    $errors .= $mod_strings['LBL_RESULTS_DATAPARSER_NO_LOCATION_ID'] . $dataIncorpora->{$value[0]};
+                                    $errors .= $mod_strings['LBL_RESULTS_DATAPARSER_NO_LOCATION_ID'] . ($dataIncorpora->{$value[0]} ?? '');
                                     $GLOBALS['log']->fatal(__METHOD__ . ' ' . __LINE__ . ' ' . $mod_strings['LBL_RESULTS_DATAPARSER_NO_LOCATION_ID']);
                                 }
                             }
@@ -261,7 +261,7 @@ class DataParser
                     case 'dropdownDependent':
                         if (isset($bean->$key)) {
                             if ($override || empty($bean->$key)) {
-                                $bean->$key = strval($bean->{$value[2]}) . "_" . strval($dataIncorpora->{$value[0]});
+                                $bean->$key = strval($bean->{$value[2]}) . "_" . strval($dataIncorpora->{$value[0]} ?? '');
                             }
                         }
                         break;
@@ -269,7 +269,7 @@ class DataParser
                     case 'multienum':
                         if (isset($bean->$key)) {
                             if ($override || empty($bean->$key)) {
-                                $bean->$key = '^' . str_replace(",", "^,^", $dataIncorpora->{$value[0]}) . '^';
+                                $bean->$key = '^' . str_replace(",", "^,^", ($dataIncorpora->{$value[0]} ?? '')) . '^';
                             }
                         }
                         break;
@@ -280,7 +280,20 @@ class DataParser
                                 include 'modules/stic_Incorpora/utils/TransformedLists.php';
                                 if (isset($value[2]) && $value[2]) {
                                     $list = $value[2];
-                                    $bean->$key = array_key_exists($dataIncorpora->{$value[0]}, ${$list}) ? ${$list}[$dataIncorpora->{$value[0]}] : ${$list}['**not_listed**'];
+                                    // STIC Custom 20250401 JBL - Fix Fatal error
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                                    // $bean->$key = array_key_exists($dataIncorpora->{$value[0]}, ${$list}) ? ${$list}[$dataIncorpora->{$value[0]}] : ${$list}['**not_listed**'];
+                                    $propertyName = $value[0];
+                                    try {
+                                        $propertyValue = $dataIncorpora->$propertyName;
+                                        $bean->$key = array_key_exists($propertyValue, ${$list}) 
+                                            ? ${$list}[$propertyValue] 
+                                            : ${$list}['**not_listed**'];
+                                    } catch (Error $e) {
+                                        // Property does not exists: Use not_listed value
+                                        $bean->$key = ${$list}['**not_listed**'];
+                                    }
+                                    // END STIC Custom
                                 } else {
                                     $errors .= $mod_strings['LBL_RESULTS_DATAPARSER_LIST_NOT_SET'] . $incField[0] . ' / ' . $beanField;
                                 }
@@ -308,10 +321,10 @@ class DataParser
                     case 'dropdown': // We use this because Incorpora return -1 when empty value for dropdown lists
                         if (isset($bean->$key)) {
                             if ($override || empty($bean->$key)) {
-                                if ($dataIncorpora->{$value[0]} == '-1') {
+                                if (($dataIncorpora->{$value[0]} ?? '') == '-1') {
                                     $bean->$key = '';
                                 } else {
-                                    $bean->$key = $dataIncorpora->{$value[0]};
+                                    $bean->$key = $dataIncorpora->{$value[0]} ?? null;
                                 }
                             }
                         }
@@ -319,7 +332,7 @@ class DataParser
                     case 'consultaDiferentFields':
                         if (isset($bean->$key)) {
                             if ($override || empty($bean->$key)) {
-                                $bean->$key = $dataIncorpora->{$value[2]};
+                                $bean->$key = $dataIncorpora->{$value[2]} ?? null;
                             }
                         }
                         break;
@@ -337,14 +350,14 @@ class DataParser
                     case 'concat':
                         if (isset($bean->$key)) {
                             if ($override || empty($bean->$key)) {
-                                $bean->$key = $dataIncorpora->{$value[0]} .' '.$dataIncorpora->{$value[2]};
+                                $bean->$key = ($dataIncorpora->{$value[0]} ?? '') .' '. ($dataIncorpora->{$value[2]} ?? '');
                             }
                         }
                         break;
                     case 'overrideZero':
                         if (isset($bean->$key)) {
                             if ($override || empty($bean->$key) || $bean->$key == 0) {
-                                $bean->$key = $dataIncorpora->{$value[0]};
+                                $bean->$key = $dataIncorpora->{$value[0]} ?? null;
                             }
                         }
                         break;
@@ -355,7 +368,7 @@ class DataParser
                     default:
                         if (isset($bean->$key)) {
                             if ($override || empty($bean->$key)) {
-                                $bean->$key = $dataIncorpora->{$value[0]};
+                                $bean->$key = $dataIncorpora->{$value[0]} ?? null;
                             }
                         }
                         break;
