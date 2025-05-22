@@ -351,7 +351,11 @@ class OutboundEmail
             $mailer = "type = 'system'";
         } // if
 
-        $q = "SELECT id FROM outbound_email WHERE {$mailer}";
+        // STIC-Custom 20250122 EPS - Evitar recoger los datos de un registro borrado
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/560
+        // $q = "SELECT id FROM outbound_email WHERE {$mailer}";
+        $q = "SELECT id FROM outbound_email WHERE {$mailer} AND deleted = 0";
+        // END STIC-Custom
         $r = $this->db->query($q);
         $a = $this->db->fetchByAssoc($r);
 
