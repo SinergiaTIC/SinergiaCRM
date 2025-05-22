@@ -2117,7 +2117,7 @@ class KReportRenderer {
    }
 
    public static function ktextRenderer($fieldid, $record) {
-      return nl2br($record[$fieldid]);
+      return nl2br((string)($record[$fieldid] ?? ''));
    }
 
 }
