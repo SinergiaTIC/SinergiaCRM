@@ -108,7 +108,7 @@ class stic_AttendancesLogicHooks
 
         // Set registration data in case of attendance update with duration or status change
         if (!empty($bean->fetched_row['id']) || in_array($bean->status, array('yes', 'partial')) == true) {
-            if ($bean->duration != $bean->fetched_row['duration'] || $bean->status != $bean->fetched_row['status']) {
+            if (empty($bean->fetched_row) || $bean->duration != $bean->fetched_row['duration'] || $bean->status != $bean->fetched_row['status']) {
                 require_once 'modules/stic_Attendances/Utils.php';
                 if ($registrationId = $this->getRegistrationIdFromAttendanceId($bean->id)) {
                     if ($registration = BeanFactory::getBean('stic_Registrations', $registrationId)) {
