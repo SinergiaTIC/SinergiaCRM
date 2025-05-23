@@ -273,21 +273,20 @@
           },
           {key: 'messages', label: '', formatter: "messageDisplay", className: 'yui-cstm-cntrd-liner'}];
 
-          var query = "index.php?module=Emails&action=EmailUIAjax&to_pdf=true&emailUIAction=retrieveAllOutbound" + (user ? '&user=' + user : '');
-          this.obDataSource = new YAHOO.util.DataSource(query);
-          this.obDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
-          this.obDataSource.responseSchema = {
-  
-            resultsList: "outbound_account_list",
-            fields: ['id', 'name', 'is_editable', 'mail_smtpserver', 'type', 'errors']
-          };
-  
-          this.outboundAccountsSettingsTable = new YAHOO.widget.DataTable("outboundAccountsTable", this.obAccntsColumnDefs, this.obDataSource);
-  
-  
-          this.outboundAccountsSettingsTable.subscribe("rowMouseoverEvent", this.outboundAccountsSettingsTable.onEventHighlightRow);
-          this.outboundAccountsSettingsTable.subscribe("rowMouseoutEvent", this.outboundAccountsSettingsTable.onEventUnhighlightRow);
-          this.outboundAccountsSettingsTable.subscribe("postRenderEvent", this.rebuildMailerOptions);
+          // STIC-Custom 20250523 MHP - 
+          // Remove this deprecated code as it is not necessary to list SMTP accounts when entering mail settings from the user profile
+          // Removing it prevents a system-override outgoing email account from being incorrectly created if the "Users may send as this account's identity" option is disabled on the general email account.
+          // case "retrieveAllOutbound":
+          //     $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: retrieveAllOutbound");
+          //     global $current_user;
+          //     $oe = new OutboundEmail();
+          //     $outbounds = $oe->getUserMailers($current_user);
+          //     $results = array('outbound_account_list' => $outbounds, 'count' => is_countable($outbounds) ? count($outbounds) : 0);
+          //     $out = $json->encode($results, false);
+          //     echo $out;
+
+          //     break;
+          // END STIC-Custom
       }
     },
     /**
