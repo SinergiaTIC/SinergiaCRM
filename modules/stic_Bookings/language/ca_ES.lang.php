@@ -20,7 +20,6 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
 $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
@@ -66,6 +65,7 @@ $mod_strings = array(
     'LBL_CODE' => 'Codi',
     'LBL_STATUS' => 'Estat',
     'LBL_ALL_DAY' => 'Tot el dia',
+    'LBL_PLACE_BOOKING' => 'Reserva de places',
     'LBL_START_DATE' => "Data d&#39;inici",
     'LBL_END_DATE' => 'Data de finalització',
     'LBL_PLANNED_START_DATE' => 'Data inici prevista',
@@ -99,10 +99,12 @@ $mod_strings = array(
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'Aquesta reserva no té cap recurs assignat.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'Aquesta reserva no te cap recurs assignat. Voleu desar-la igualment?',
     'LBL_CLOSE_RESOURCE_CONFIRM' => "Vol finalitzar la reserva d’aquest recurs?",
+    'LBL_CLOSE_RESOURCE_BEFORE_START_ERROR' => "No es pot tancar un recurs d'una reserva que encara no ha començat. Edita la reserva per modificar-la.",
     'LBL_CENTER_RESOURCE_ERROR' => 'Error en carregar les places del centre: ',
     'LBL_CENTERS_MESSAGE' => 'Nombre de places trobats: ',
     'LBL_RESOURCES_BUTTON' => 'Carregar recursos',
     'LBL_CENTERS_BUTTON' => 'Carregar centres',
+    'LBL_CENTER_ALREADY_SELECTED' => 'Aquest centre ja ha estat seleccionat',
     'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
 
     // Additional details

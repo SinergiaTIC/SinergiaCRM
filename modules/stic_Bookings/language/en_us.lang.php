@@ -99,10 +99,12 @@ $mod_strings = array(
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'This booking has no resources.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'This booking has no resources. Do you want to save it anyway?',
     'LBL_CLOSE_RESOURCE_CONFIRM' => 'Do you want to end the booking of this resource?',
+    'LBL_CLOSE_RESOURCE_BEFORE_START_ERROR' => 'Cannot close a resource from a booking that has not started. Edit the booking to modify it.',
     'LBL_CENTER_RESOURCE_ERROR' => 'Error loading center places: ',
     'LBL_CENTERS_MESSAGE' => 'Places loaded: ',
     'LBL_RESOURCES_BUTTON' => 'Load resources',
     'LBL_CENTERS_BUTTON' => 'Load centers',
+    'LBL_CENTER_ALREADY_SELECTED' => 'This center has already been selected',
     'LBL_NUMBER_OF_PLACES' => 'Number of places: ',
 
     // Additional details

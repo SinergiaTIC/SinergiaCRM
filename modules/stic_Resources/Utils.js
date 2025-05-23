@@ -73,18 +73,16 @@ function checkCenterForPlaces() {
 function updateCenterRequirement() {
   var typeValue = $("#type").val();
   var centerField = $("#stic_resources_stic_centers_name");
-  var centerLabelTd = $('td:contains("LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE")').first();
-  
+  var centerLabelDiv = $('[data-label="LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE"]');
+
   if (typeValue === "places") {
-    // Add the visual indicator for required field
-    if (centerLabelTd.length && !centerLabelTd.find("span.required").length) {
-      centerLabelTd.append('<span class="required">*</span>');
+    if (centerLabelDiv.length && !centerLabelDiv.find("span.required").length) {
+      centerLabelDiv.append('<span class="required">*</span>');
     }
-    // Add the conditional-required class to make the field background change color
+
     centerField.addClass("conditional-required");
   } else {
-    // Remove the visual indicators
-    centerLabelTd.find("span.required").remove();
+    centerLabelDiv.find("span.required").remove();
     centerField.removeClass("conditional-required");
   }
 }

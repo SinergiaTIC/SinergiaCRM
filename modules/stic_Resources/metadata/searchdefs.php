@@ -97,6 +97,16 @@ array(
                 'default' => true,
                 'name' => 'daily_rate',
             ),
+            'stic_resources_stic_centers_name' => 
+            array (
+              'type' => 'relate',
+              'link' => true,
+              'label' => 'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE',
+              'id' => 'STIC_RESOURCES_STIC_CENTERSSTIC_CENTERS_IDA',
+              'width' => '10%',
+              'default' => true,
+              'name' => 'stic_resources_stic_centers_name',
+            ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
@@ -250,6 +260,16 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'owner_account',
+            ),
+            'stic_resources_stic_centers_name' => 
+            array (
+              'type' => 'relate',
+              'link' => true,
+              'label' => 'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE',
+              'id' => 'STIC_RESOURCES_STIC_CENTERSSTIC_CENTERS_IDA',
+              'width' => '10%',
+              'default' => true,
+              'name' => 'stic_resources_stic_centers_name',
             ),
             'description' => array(
                 'type' => 'text',

@@ -65,6 +65,7 @@ $mod_strings = array(
     'LBL_CODE' => 'Código',
     'LBL_STATUS' => 'Estado',
     'LBL_ALL_DAY' => 'Todo o día',
+    'LBL_PLACE_BOOKING' => 'Reserrva de plazas',
     'LBL_START_DATE' => 'Data de inicio',
     'LBL_END_DATE' => 'Data de finalización',
     'LBL_PLANNED_START_DATE' => 'Fecha de inicio prevista',
@@ -98,10 +99,12 @@ $mod_strings = array(
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'La reserva no tiene recursos asignados.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'La reserva no tiene recursos asignados. ¿Quiere guardarla de todos modos?',
     'LBL_CLOSE_RESOURCE_CONFIRM' => '¿Quiere finalizar la reserva de este recurso?',
+    'LBL_CLOSE_RESOURCE_BEFORE_START_ERROR' => 'No se puede cerrar un recurso de una reserva que aún no ha iniciado. Edite la reserva para modificarla.',
     'LBL_CENTER_RESOURCE_ERROR' => 'Error al cargar las plazas del centro: ',
     'LBL_CENTERS_MESSAGE' => 'Número de plazas encontradas: ',
     'LBL_RESOURCES_BUTTON' => 'Cargar recursos',
     'LBL_CENTERS_BUTTON' => 'Cargar centros',
+    'LBL_CENTER_ALREADY_SELECTED' => 'Este centro ya ha sido seleccionado',
     'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
 
     // Additional details

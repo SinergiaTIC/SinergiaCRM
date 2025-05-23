@@ -168,7 +168,19 @@ class stic_BookingsController extends SugarController
                             
                             foreach ($config_place_fields as $fieldKey => $fieldLabel) {
                                 if (isset($resourceData[$fieldKey])) {
-                                    $resourceItem['resource_' . $fieldKey] = $resourceData[$fieldKey];
+                                    $value = $resourceData[$fieldKey];
+                                    
+                                    if ($fieldKey === 'user_type' && !empty($value)) {
+                                        $value = $this->translateDropdownValue('stic_resources_places_users_list', $value);
+                                    } elseif ($fieldKey === 'place_type' && !empty($value)) {
+                                        $value = $this->translateDropdownValue('stic_resources_places_type_list', $value);
+                                    } elseif ($fieldKey === 'gender' && !empty($value)) {
+                                        $value = $this->translateDropdownValue('stic_resources_places_gender_list', $value);
+                                    } elseif ($fieldKey === 'type' && !empty($value)) {
+                                        $value = $this->translateDropdownValue('stic_resources_types_list', $value);
+                                    }
+                                    
+                                    $resourceItem['resource_' . $fieldKey] = $value;
                                 }
                             }
                             
@@ -187,6 +199,30 @@ class stic_BookingsController extends SugarController
         
         echo json_encode(['success' => true, 'resources' => $resources]);
         return;
+    }
+    
+    private function translateDropdownValue($listName, $value)
+    {
+        global $app_list_strings;
+        
+        if (empty($app_list_strings)) {
+            $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+        }
+        
+        $possibleListNames = [
+            $listName,
+            'stic_' . str_replace('stic_resources_', '', $listName),
+            str_replace('stic_resources_', '', $listName),
+            str_replace('_list', '', $listName) . '_dom'
+        ];
+        
+        foreach ($possibleListNames as $listKey) {
+            if (isset($app_list_strings[$listKey]) && isset($app_list_strings[$listKey][$value])) {
+                return $app_list_strings[$listKey][$value];
+            }
+        }
+        
+        return $value;
     }
     private function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId)
     {

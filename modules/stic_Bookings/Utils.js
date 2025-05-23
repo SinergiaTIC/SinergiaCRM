@@ -699,12 +699,21 @@ function openCenterPopup() {
 function callbackCenterSelectPopup(popupReplyData) {
   var centerId = popupReplyData.name_to_value_array.center_id;
   var centerName = popupReplyData.name_to_value_array.center_name;
+  
+  var centerAlreadySelected = selectedCenters.some(function(center) {
+    return center.centerId === centerId;
+  });
+  
+  if (centerAlreadySelected) {
+    alert(SUGAR.language.get(module, "LBL_CENTER_ALREADY_SELECTED")+ ": " + centerName);
+    return; 
+  }
+  
   selectedCenters.push({ centerId: centerId, centerName: centerName });
   updateSelectedCentersList();
   $("#selectedCenterName").text(centerName);
   $(".filter-box").show();
   $("#resourceSearchFields").show();
-
   if (selectedCenters.length === 1) {
     loadResourceTypes(centerId);
   }
