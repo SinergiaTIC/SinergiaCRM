@@ -23,7 +23,18 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-require('SticInclude/vendor/monolog-loki/src/main/php/Handler/LokiHandler.php');
+
+require_once('vendor/monolog/monolog/src/Monolog/Handler/FormattableHandlerInterface.php');
+require_once('vendor/monolog/monolog/src/Monolog/Handler/ProcessableHandlerInterface.php');
+require_once('vendor/monolog/monolog/src/Monolog/Handler/FormattableHandlerTrait.php');
+require_once('vendor/monolog/monolog/src/Monolog/Handler/ProcessableHandlerTrait.php');
+require_once('vendor/monolog/monolog/src/Monolog/ResettableInterface.php');
+require_once('vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php');
+require_once('vendor/monolog/monolog/src/Monolog/Handler/Handler.php');
+require_once('vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php');
+require_once('vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php');
+require_once('SticInclude/vendor/monolog-loki/src/main/php/Handler/LokiHandler.php');
+
 use Itspire\MonologLoki\Handler\LokiHandler;
 use Monolog\Handler\WhatFailureGroupHandler;
 use Monolog\Logger;
