@@ -24,22 +24,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('vendor/monolog/monolog/src/Monolog/Handler/FormattableHandlerInterface.php');
-require_once('vendor/monolog/monolog/src/Monolog/Handler/ProcessableHandlerInterface.php');
-require_once('vendor/monolog/monolog/src/Monolog/Handler/FormattableHandlerTrait.php');
-require_once('vendor/monolog/monolog/src/Monolog/Handler/ProcessableHandlerTrait.php');
-require_once('vendor/monolog/monolog/src/Monolog/ResettableInterface.php');
-require_once('vendor/monolog/monolog/src/Monolog/Handler/HandlerInterface.php');
-require_once('vendor/monolog/monolog/src/Monolog/Handler/Handler.php');
-require_once('vendor/monolog/monolog/src/Monolog/Handler/AbstractHandler.php');
-require_once('vendor/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php');
-require_once('SticInclude/vendor/monolog-loki/src/main/php/Handler/LokiHandler.php');
-
-use Itspire\MonologLoki\Handler\LokiHandler;
-use Monolog\Handler\WhatFailureGroupHandler;
-use Monolog\Logger;
-
-
 class SticRemoteLogLogicHooks
 {
     public function server_round_trip($event, $arguments)
@@ -88,11 +72,20 @@ function sticShutdownHandler() {
 
     // Calculate execution time
 
-    $logger = new Logger('loki-no-failure', [
-        new WhatFailureGroupHandler([
-            new LokiHandler([
+    if (!class_exists(\Itspire\MonologLoki\Handler\LokiHandler::class)) {
+        require_once 'vendor/autoload.php';
+        require_once 'SticInclude/vendor/monolog-loki/src/main/php/Handler/LokiHandler.php';
+        require_once 'SticInclude/vendor/monolog-loki/src/main/php/Formatter/LokiFormatter.php';
+    }
+
+    $logger = new \Monolog\Logger('loki-no-failure', [
+        new \Monolog\Handler\WhatFailureGroupHandler([
+            new \Itspire\MonologLoki\Handler\LokiHandler([
                 'entrypoint' => $sugar_config['stic_remote_monitor_url'],
-                'context' => ['environment' => 'production'],
+                'context' => [
+                    'environment' => 'production',
+
+                ],
                 'labels' => [
                     'app' => 'SinergiaCRM',
                     'instance' => $instanceClean,
@@ -100,7 +93,7 @@ function sticShutdownHandler() {
                 'client_name' => $instanceClean,
                 'tenant_id' => 'some-tenant',
                 'auth' => ['basic' => ['user', 'password']],
-                'contextPrefix' => '',
+                'contextPrefix' => 'blabla_',
                 'curl_options' => [
                     CURLOPT_CONNECTTIMEOUT_MS => 500,
                     CURLOPT_TIMEOUT_MS => 600,
