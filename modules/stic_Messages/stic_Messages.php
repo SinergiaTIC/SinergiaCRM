@@ -117,7 +117,6 @@ class stic_Messages extends Basic
             }
         }
 
-
         // Save the bean
         parent::save($check_notify);
         $sticSavingMessage = false;
