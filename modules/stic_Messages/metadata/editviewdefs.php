@@ -60,6 +60,9 @@ array(
                       'name' => 'template',
                       'studio' => 'visible',
                       'label' => 'LBL_TEMPLATE',
+                      'displayParams' => array(
+                        'initial_filter' => "&type_advanced[]=sms"
+                        ),
                     ),
                 ),
                 2 => array(

@@ -764,6 +764,44 @@ $app_list_strings = array(
         'PM' => 'PM',
     ),
 
+    'dom_inbound_email_account_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grup',
+        'bounce' => 'Rebot',
+    ],
+
+    'dom_inbound_email_auth_types' => [
+        'basic' => 'Autenticació Bàsica',
+        'oauth' => 'OAuth',
+    ],
+
+    'dom_external_oauth_connection_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grup',
+    ],
+
+    'dom_external_oauth_provider_types' => [
+        'personal' => 'Personal',
+        'group' => 'Grup',
+    ],
+
+    'dom_outbound_email_account_types' => [
+        'user' => 'Personal',
+        'group' => 'Grup',
+        'system' => 'Sistema',
+        'system-override' => 'Anul·lació del sistema',
+    ],
+
+    'dom_inbound_email_account_status' => [
+        'Active' => 'Actiu',
+        'Inactive' => 'Inactiu',
+    ],
+
+    'dom_email_body_filtering_option' => [
+      'multi' => 'Cerca de Múltiples Paraules',
+      'single' => "Cerca d'una Paraula",
+    ],
+
     'dom_email_types' => array(
         'out' => 'Enviat',
         'archived' => 'Arxivat',
@@ -1961,6 +1999,8 @@ $app_strings = array(
     'LBL_REMOVE_DASHLET_CONFIRM' => 'Està segur que vol eliminar el Dashlet de SuiteCRM?',
     'LBL_REMOVING_DASHLET' => 'Eliminant Dashlet de SuiteCRM...',
     'LBL_REMOVED_DASHLET' => 'Dashlet de SuiteCRM eliminat',
+    'LBL_MAX_DASHLET_COLUMNS' => "Es poden mostrar un màxim de %s columnes.",
+    'LBL_RETRIEVING_XML_DATA' => "Hi ha hagut un problema en recuperar les dades XML:\n",
 
     // MySugar Menu Options
 
@@ -2052,23 +2092,24 @@ $app_strings = array(
     'LBL_DESCRIPTION' => 'Descripció',
 
     'LBL_YESTERDAY' => 'ahir',
+    'LBL_NOW' => 'ara',
     'LBL_TODAY' => 'avui',
     'LBL_TOMORROW' => 'demà',
     'LBL_NEXT_WEEK' => 'la setmana vinent',
     'LBL_NEXT_MONDAY' => 'el dilluns vinent',
     'LBL_NEXT_FRIDAY' => 'el divendres vinent',
-    'LBL_TWO_WEEKS' => 'dues setmanes',
+    'LBL_TWO_WEEKS' => "d'aquí a dues setmanes",
     'LBL_NEXT_MONTH' => 'el mes vinent',
     'LBL_FIRST_DAY_OF_NEXT_MONTH' => 'el primer dia del mes vinent',
-    'LBL_THREE_MONTHS' => 'tres mesos',
-    'LBL_SIXMONTHS' => 'sis mesos',
-    'LBL_NEXT_YEAR' => 'l\'any següent',
+    'LBL_THREE_MONTHS' => "d'aquí a tres mesos",
+    'LBL_SIXMONTHS' => "d'aquí a sis mesos",
+    'LBL_NEXT_YEAR' => "l'any vinent",
 
     //Datetimecombo fields
     'LBL_HOURS' => 'Hores',
     'LBL_MINUTES' => 'Minuts',
     'LBL_MERIDIEM' => 'Meridiem',
-    'LBL_DATE' => 'Fecha',
+    'LBL_DATE' => 'Data',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refrescar',
 
     'LBL_DURATION_DAY' => 'dia',
@@ -2079,9 +2120,9 @@ $app_strings = array(
     'LBL_DURATION_MINUTES' => 'Minuts de durada',
 
     //Calendar widget labels
-    'LBL_CHOOSE_MONTH' => 'Triï mes',
-    'LBL_ENTER_YEAR' => 'Triï any',
-    'LBL_ENTER_VALID_YEAR' => 'Si us plau, entri un any vàlid',
+    'LBL_CHOOSE_MONTH' => 'Trieu el mes',
+    'LBL_ENTER_YEAR' => "Trieu l'any",
+    'LBL_ENTER_VALID_YEAR' => 'Indiqueu un any vàlid',
 
     //File write error label
     'ERR_FILE_WRITE' => 'Error: No es pot escriure el fitxer {0}. Si us plau, comprovi els permisos del sistema i del servidor web.',

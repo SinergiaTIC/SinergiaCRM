@@ -223,15 +223,17 @@ $(function() {
 
     const recordId = $("input[name=record]")[0].value;
 
-    for (const phone of [...document.querySelectorAll('[type=phone]')]) {
-        if (phone.getAttribute(attr) !== null) continue
-    
-        const to = phone.textContent.trim()
-        if (to === '') continue
-    
-        phone.insertAdjacentHTML('beforeend',
-            `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' onclick='openMessagesModal(this)'></span>`)
-        phone.setAttribute(attr, 'true')
+    if (getMessagesActive()) {
+      for (const phone of [...document.querySelectorAll('[type=phone]')]) {
+          if (phone.getAttribute(attr) !== null) continue
+      
+          const to = phone.textContent.trim()
+          if (to === '') continue
+      
+          phone.insertAdjacentHTML('beforeend',
+              `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' onclick='openMessagesModal(this)'></span>`)
+          phone.setAttribute(attr, 'true')
+      }
     }
   }
 

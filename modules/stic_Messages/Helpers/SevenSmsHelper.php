@@ -82,7 +82,7 @@ class SevenSMSHelper implements stic_MessagesHelper {
             return array('code' => stic_Messages::ERROR_NOT_SENT, 'message' => $result);
         }
         if ($resultArray['messages'][0]['success']) {
-            return array('code' => stic_Messages::OK);
+            return array('code' => stic_Messages::OK, 'message' => 'Message sent');
         }
         else {
             return array('code' => stic_Messages::ERROR_NOT_SENT, 'message' => $result);
@@ -90,7 +90,8 @@ class SevenSMSHelper implements stic_MessagesHelper {
     }
 
     protected function apiCall(?string $from, string $text, string $to): string {
-        if (!$this->getActive()) return [null, null];
+        // if (!$this->getActive()) return [null, null];
+        if (!$this->getActive()) return '{"success": "500", "message":"module not active"}';
 
         $curlOpts = [
             CURLOPT_HTTPHEADER => [

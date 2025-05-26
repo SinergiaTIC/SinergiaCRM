@@ -104,11 +104,11 @@ class stic_Messages extends Basic
                 $response = $this->sendMessage();
                 if ($response['code'] === self::OK) {
                     $this->status = 'sent';
-                    $this->response = $response['message'];
+                    $this->response = $response['message'] ?? '';
                 }
                 else {
                     $this->status = 'error';
-                    $this->response = $response['message'];
+                    $this->response = $response['message'] ?? '';
                 }
             }
             else {
@@ -116,7 +116,6 @@ class stic_Messages extends Basic
                 $this->response = 'No phone number';
             }
         }
-
 
         // Save the bean
         parent::save($check_notify);
