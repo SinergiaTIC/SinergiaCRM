@@ -188,7 +188,14 @@ class stic_Payments extends Basic
             if (trim($payment_commitment_id) != trim($payment_commitment_id_before)) {
         // END STIC Custom
                 // Get new parent payment commitment bean
-                $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
+                // $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
+                if (isset($this->stic_paymebfe2itments_ida)) {
+                    if ($this->stic_paymebfe2itments_ida instanceof Link2) {
+                        $PCBean = SticUtils::getRelatedBeanObject($this, 'stic_payments_stic_payment_commitments');
+                    } else {
+                        $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
+                    }
+                }
                 // Get payment commmitment related contact (usual case)
                 $contactId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts')->id ?? null; ; 
                 if (!empty($contactId)) {
