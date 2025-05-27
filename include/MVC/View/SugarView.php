@@ -376,6 +376,19 @@ class SugarView
                 $monitor->setValue('item_summary', $this->bean->get_summary_text());
             }
 
+            // STIC-Custom 20250527 ART - Tracker Module
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+            // Get the listview from any module except the Tracker module
+            if ($action == 'index' && $this->type == 'list' && $this->module != 'Trackers') {
+                $monitor->action = 'listview';
+                // Show the listview search as a json
+                $monitor->item_summary = json_encode($_REQUEST, JSON_UNESCAPED_UNICODE);
+                $monitor->visible = true;
+
+                $trackerManager->saveMonitor($monitor, true, true);
+            }
+            // END STIC Custom
+
             //If visible is true, but there is no bean, do not track (invalid/unauthorized reference)
             //Also, do not track save actions where there is no bean id
             if ($monitor->visible && empty($this->bean->id)) {

@@ -3658,6 +3658,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 // Monitorizaciones: Acciones
 $app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
 $app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
+$app_list_strings['trackers_actions_list']['listview'] = 'Registros listados';
 $app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
 $app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
