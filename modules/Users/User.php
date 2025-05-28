@@ -766,6 +766,7 @@ class User extends Person implements EmailInterface
         // ) 
         
         // STIC-Custom EPS 20250528 Error importing users
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/662
         // $saveUserAndPassword = $_REQUEST['LDAP_user'] ?: false;
         $ldapUser = $_REQUEST['LDAP_user'] ?? null;
         $saveUserAndPassword = $ldapUser ?: false;
