@@ -129,7 +129,7 @@ class SearchForm
         $this->searchdefs = isset($searchdefs[$this->module]) ? $searchdefs[$this->module] : null;
 
         // STIC Custom 20250528 JBL - Show options list in "Modified By" and "Created By" filters 
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/??
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/664
         if (isset($this->searchdefs['layout'])) {
             foreach ($this->searchdefs['layout'] as $layoutType => $fields) {
                 foreach ($fields as $key => $field) {
