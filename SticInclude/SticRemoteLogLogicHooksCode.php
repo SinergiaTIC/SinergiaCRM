@@ -23,11 +23,6 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-require('SticInclude/vendor/monolog-loki/src/main/php/Handler/LokiHandler.php');
-use Itspire\MonologLoki\Handler\LokiHandler;
-use Monolog\Handler\WhatFailureGroupHandler;
-use Monolog\Logger;
-
 
 class SticRemoteLogLogicHooks
 {
@@ -77,19 +72,30 @@ function sticShutdownHandler() {
 
     // Calculate execution time
 
-    $logger = new Logger('loki-no-failure', [
-        new WhatFailureGroupHandler([
-            new LokiHandler([
+    if (!class_exists(\Itspire\MonologLoki\Handler\LokiHandler::class)) {
+        require_once 'vendor/autoload.php';
+        require_once 'SticInclude/vendor/monolog-loki/src/main/php/Handler/LokiHandler.php';
+        require_once 'SticInclude/vendor/monolog-loki/src/main/php/Formatter/LokiFormatter.php';
+    }
+
+    $logger = new \Monolog\Logger('loki-no-failure', [
+        new \Monolog\Handler\WhatFailureGroupHandler([
+            new \Itspire\MonologLoki\Handler\LokiHandler([
                 'entrypoint' => $sugar_config['stic_remote_monitor_url'],
-                'context' => ['environment' => 'production'],
+                'context' => [],
                 'labels' => [
+                    'action' => $_REQUEST['action'] ?? 'N/A',
                     'app' => 'SinergiaCRM',
+                    'environment' => 'production',
+                    'host_name' => $hostname,
                     'instance' => $instanceClean,
+                    'module' => $_REQUEST['module'] ?? 'N/A',
+                    'site_url' => $instanceClean,
                 ],
                 'client_name' => $instanceClean,
                 'tenant_id' => 'some-tenant',
                 'auth' => ['basic' => ['user', 'password']],
-                'contextPrefix' => '',
+                'contextPrefix' => 'blabla_',
                 'curl_options' => [
                     CURLOPT_CONNECTTIMEOUT_MS => 500,
                     CURLOPT_TIMEOUT_MS => 600,
@@ -106,8 +112,6 @@ function sticShutdownHandler() {
         'error_line' => $error['line'] ?? null,
         'memory_usage' => memory_get_usage(),
         'memory_peak_usage' => memory_get_peak_usage(),
-        'module' => $_REQUEST['module'] ?? 'N/A',
-        'action' => $_REQUEST['action'] ?? 'N/A',
         'record' => $_REQUEST['record'] ?? 'N/A',
         'url_string' => $_SERVER['QUERY_STRING'],
         'request_uri' => $_SERVER['REQUEST_URI'],
@@ -117,8 +121,6 @@ function sticShutdownHandler() {
         'php_pid' => getmypid(),
         'start_time' => $_SERVER['REQUEST_TIME_FLOAT'],
         'duration' => microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'],
-        'site_url' => $instanceClean,
-        'host_name' => $hostname,
     ]);
 
 }
