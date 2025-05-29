@@ -765,7 +765,7 @@ class User extends Person implements EmailInterface
         //     )
         // ) 
         
-        $saveUserAndPassword = $_REQUEST['LDAP_user'] ?: false;
+        $saveUserAndPassword = $_REQUEST['LDAP_user'] ?? false;
 
         // We won't be validating the password in these two cases:
         // 1- The user didn't fill the required password fields, or one of them
