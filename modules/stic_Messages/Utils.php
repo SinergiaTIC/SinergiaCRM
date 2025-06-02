@@ -210,7 +210,7 @@ class stic_MessagesUtils {
         require_once 'modules/MySettings/TabController.php';
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
-        if (!$currentTabs['stic_Messages']){
+        if (!($currentTabs['stic_Messages'] ?? false)){
             $active = 'false';
         }
         else {
