@@ -999,7 +999,7 @@ function closeResource(resourceId, bookingId) {
     success: function (response) {
       if (!response.valid) {
         alert(
-          SUGAR.language.get("stic_Bookings", "LBL_RESOURCES_START_DATE_ERROR")
+          SUGAR.language.get("stic_Bookings", "LBL_CLOSE_RESOURCE_BEFORE_START_ERROR")
         );
         return;
       }
