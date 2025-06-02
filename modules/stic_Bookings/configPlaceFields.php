@@ -10,6 +10,8 @@ return [
     'user_type' => $mod_strings['LBL_RESOURCES_USER_TYPE'],
     'place_type' => $mod_strings['LBL_RESOURCES_PLACE_TYPE'],
     'gender' => $mod_strings['LBL_RESOURCES_GENDER'],
+    'amount_day_occupied' => $mod_strings['LBL_RESOURCES_AMOUNT_DAY_OCCUPIED'],
+    'amount_copayment' => $mod_strings['LBL_RESOURCES_AMOUNT_COPAYMENT'],
 ];
 
 

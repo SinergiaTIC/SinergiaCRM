@@ -200,7 +200,64 @@ class stic_BookingsController extends SugarController
         echo json_encode(['success' => true, 'resources' => $resources]);
         return;
     }
+
+public function action_loadExistingResources()
+{
+    $bookingId = $_REQUEST['bookingId'] ?? null;
     
+    if (empty($bookingId)) {
+        echo json_encode(['success' => false]);
+        return;
+    }
+    
+    $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
+    
+    $db = DBManagerFactory::getInstance();
+    $resources = [];
+    
+    $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
+    if ($booking && $booking->load_relationship('stic_resources_stic_bookings')) {
+        foreach ($booking->stic_resources_stic_bookings->getBeans() as $resourceBean) {
+            $resourceId = $resourceBean->id;
+            
+            $resourceQuery = "SELECT * FROM stic_resources WHERE id = '$resourceId' AND deleted = 0";
+            $resourceResult = $db->query($resourceQuery);
+            
+            if ($resourceResult !== false) {
+                $resourceData = $db->fetchByAssoc($resourceResult);
+                
+                if ($resourceData !== false) {
+                    $resourceItem = [
+                        'resource_id' => $resourceData['id'],
+                    ];
+                    
+                    foreach ($config_place_fields as $fieldKey => $fieldLabel) {
+                        if (isset($resourceData[$fieldKey])) {
+                            $value = $resourceData[$fieldKey];
+                            
+                            if ($fieldKey === 'user_type' && !empty($value)) {
+                                $value = $this->translateDropdownValue('stic_resources_places_users_list', $value);
+                            } elseif ($fieldKey === 'place_type' && !empty($value)) {
+                                $value = $this->translateDropdownValue('stic_resources_places_type_list', $value);
+                            } elseif ($fieldKey === 'gender' && !empty($value)) {
+                                $value = $this->translateDropdownValue('stic_resources_places_gender_list', $value);
+                            } elseif ($fieldKey === 'type' && !empty($value)) {
+                                $value = $this->translateDropdownValue('stic_resources_types_list', $value);
+                            }
+                            
+                            $resourceItem['resource_' . $fieldKey] = $value;
+                        }
+                    }
+                    
+                    $resources[] = $resourceItem;
+                }
+            }
+        }
+    }
+    
+    echo json_encode(['success' => true, 'resources' => $resources]);
+    return;
+}
     private function translateDropdownValue($listName, $value)
     {
         global $app_list_strings;

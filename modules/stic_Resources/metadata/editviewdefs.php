@@ -142,14 +142,11 @@ array(
                 ),
                 3 => array(
                     0 => array(
-                        'name' => 'amount_day_overoccupied',
-                        'studio' => 'visible',
-                        'label' => 'LBL_AMOUNT_DAY_OVEROCCUPIED',
-                    ),
-                    1 => array(
                         'name' => 'amount_copayment',
                         'studio' => 'visible',
                         'label' => 'LBL_AMOUNT_COPAYMENT',
+                    ),
+                    1 => array(
                     ),
                 ),
 

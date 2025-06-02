@@ -71,7 +71,7 @@ $mod_strings = array(
     'LBL_PLANNED_START_DATE' => 'Fecha de inicio prevista',
     'LBL_PLANNED_END_DATE' => 'Fecha de finalización prevista',
     'LBL_FLEX_RELATE' => 'Relacionado con',
-    'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos',
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos/Plazas',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización que reserva',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoa que reserva',
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unidad familiar que reserva',
@@ -106,6 +106,8 @@ $mod_strings = array(
     'LBL_CENTERS_BUTTON' => 'Cargar centros',
     'LBL_CENTER_ALREADY_SELECTED' => 'Este centro ya ha sido seleccionado',
     'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
+    'LBL_TOTAL_AMOUNT' => 'Tarifa total',
+    'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa copago',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurso',

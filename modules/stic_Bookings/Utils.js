@@ -94,12 +94,20 @@ addToValidateCallback(
 switch (viewType()) {
   case "edit":
   case "quickcreate":
-    // Include the resources that are in the booking (will do nothing on quickcreate)
-    insertResourceLine();
-    resources.map((resource) => {
-      insertResourceLine();
-      populateResourceLine(resource, resourceMaxCount - 1);
-    });
+
+    if (typeof resources !== 'undefined' && resources.length > 0) {
+      if ($("#place_booking").is(":checked") && $('[name="record"]').val()) {
+          loadExistingResourcesData();
+      } else {
+        resources.forEach((resource) => {
+          insertResourceLine();
+          populateResourceLine(resource, resourceMaxCount - 1);
+        });
+      }
+    } else {
+        insertResourceLine();
+    }
+
     // Set event to add more lines in the resources area when needed
     $("#addResourceLine").click(function () {
       insertResourceLine();
@@ -322,6 +330,7 @@ switch (viewType()) {
     });
     if ($("#place_booking").is(":checked")) {
       $("#openCenterPopup").show();
+      updateLabelsBasedOnBookingType();
     } else {
       $("#openCenterPopup").hide();
     }
@@ -497,6 +506,10 @@ function updateResourceFields() {
 
   var header = "<tr>";
   fields.forEach(function (field) {
+    var labelKey = isPlaceBooking ? 
+      "LBL_PLACES_" + field.toUpperCase() : 
+      "LBL_RESOURCES_" + field.toUpperCase();
+    
     header +=
       "<th class='resource_column " +
       field +
@@ -523,7 +536,33 @@ function updateResourceFields() {
     $("#resourceName").val("");
     $("#numberOfCenters").val("");
   }
+  updateLabelsBasedOnBookingType();
 }
+
+function updateLabelsBasedOnBookingType() {
+  var isPlaceBooking = $("#place_booking").is(":checked");
+  
+  if (isPlaceBooking) {
+    // Change to PLACES labels
+    $("#resourcesTitle").html(SUGAR.language.get('stic_Bookings', 'LBL_PLACES') + '  <button id="openCenterPopup" type="button" class="button">' + SUGAR.language.get('stic_Bookings', 'LBL_CENTERS_BUTTON') + '</button>');
+    $("#resourcesAddLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_PLACES_ADD'));
+    $("#resourceNameLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_PLACES_NAME'));
+    $("#addResourceLine").val(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_PLACES_ADD'));
+    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_BUTTON'));
+  } else {
+    // Change to RESOURCES labels
+    $("#resourcesTitle").html(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES') + '  <button id="openCenterPopup" type="button" class="button">' + SUGAR.language.get('stic_Bookings', 'LBL_CENTERS_BUTTON') + '</button>');
+    $("#resourcesAddLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_ADD'));
+    $("#resourceNameLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_NAME'));
+    $("#addResourceLine").val(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_ADD'));
+    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_BUTTON'));
+  }
+  
+  $("#openCenterPopup").off('click').on('click', function() {
+    openCenterPopup();
+  });
+}
+
 // Delete a resource row
 function markResourceLineDeleted(ln) {
   $("#resourceLine" + ln).remove();
@@ -916,6 +955,37 @@ function updateResourceLines(resources) {
   resources.forEach(function (resource) {
     insertResourceLine();
     populateResourceLine(resource, resourceMaxCount - 1);
+  });
+}
+function loadExistingResourcesData() {
+  var bookingId = $('[name="record"]').val();
+  
+  if (!bookingId) {
+      return;
+  }
+  
+  $.ajax({
+      url: "index.php?module=stic_Bookings&action=loadExistingResources&sugar_body_only=true",
+      dataType: "json",
+      data: {
+          bookingId: bookingId
+      },
+      success: function (res) {
+          if (res.success && res.resources.length > 0) {
+              for (var i = 0; i < resourceMaxCount; i++) {
+                  $("#resourceLine" + i).remove();
+              }
+              resourceMaxCount = 0;
+              
+              res.resources.forEach(function (resource) {
+                  insertResourceLine();
+                  populateResourceLine(resource, resourceMaxCount - 1);
+              });
+          }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+          console.log("Error loading existing resources: " + textStatus);
+      }
   });
 }
 function closeResource(resourceId, bookingId) {

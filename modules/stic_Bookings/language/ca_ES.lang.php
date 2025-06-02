@@ -71,7 +71,7 @@ $mod_strings = array(
     'LBL_PLANNED_START_DATE' => 'Data inici prevista',
     'LBL_PLANNED_END_DATE' => 'Data final prevista',
     'LBL_FLEX_RELATE' => 'Relacionat amb',
-    'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos',
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos/Places',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organització que reserva',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona que reserva',
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unitat familiar que reserva',
@@ -106,7 +106,10 @@ $mod_strings = array(
     'LBL_CENTERS_BUTTON' => 'Carregar centres',
     'LBL_CENTER_ALREADY_SELECTED' => 'Aquest centre ja ha estat seleccionat',
     'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
+    'LBL_TOTAL_AMOUNT' => 'Tarifa total',
+    'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa de copagament',
 
+    
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurs',
     'LBL_RESOURCE_COUNT' => 'Recursos totals',

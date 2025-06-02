@@ -71,7 +71,7 @@ $mod_strings = array(
     'LBL_PLANNED_START_DATE' => 'Planned start date',
     'LBL_PLANNED_END_DATE' => 'Planned end date',
     'LBL_FLEX_RELATE' => 'Related with',
-    'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Resources',
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Resources/Places',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Account',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Contact',
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Family',
@@ -79,6 +79,7 @@ $mod_strings = array(
 
     // Adding resources section
     'LBL_RESOURCES' => 'Resources',
+    'LBL_PLACES' => 'Places',
     'LBL_RESOURCES_NAME' => 'Name',
     'LBL_RESOURCES_STATUS' => 'Status',
     'LBL_RESOURCES_TYPE' => 'Type',
@@ -90,7 +91,11 @@ $mod_strings = array(
     'LBL_RESOURCES_GENDER' => 'Gender',
     'LBL_RESOURCES_PLACE_TYPE' => 'Place type',
     'LBL_RESOURCES_USER_TYPE' => 'User type',
+    'LBL_RESOURCES_AMOUNT_DAY_OCCUPIED' => 'Amount occupied place',
+    'LBL_RESOURCES_AMOUNT_DAY_UNOCCUPIED' => 'Amount unoccupied place',
+    'LBL_RESOURCES_AMOUNT_COPAYMENT' => 'Copayment amount',
     'LBL_RESOURCES_ADD' => 'Add resource',
+    'LBL_RESOURCES_PLACES_ADD' => 'Add place',
     'LBL_RESOURCES_ERROR' => 'Resource in conflict with another booking',
     'LBL_RESOURCES_DATE_ERROR' => 'Some resources are not available on this date.',
     'LBL_RESOURCES_STATUS_ERROR' => "The booking can't be activated on these dates, some resoruces aren't available.",
@@ -102,10 +107,12 @@ $mod_strings = array(
     'LBL_CLOSE_RESOURCE_BEFORE_START_ERROR' => 'Cannot close a resource from a booking that has not started. Edit the booking to modify it.',
     'LBL_CENTER_RESOURCE_ERROR' => 'Error loading center places: ',
     'LBL_CENTERS_MESSAGE' => 'Places loaded: ',
-    'LBL_RESOURCES_BUTTON' => 'Load resources',
+    'LBL_RESOURCES_BUTTON' => 'Load places',
     'LBL_CENTERS_BUTTON' => 'Load centers',
     'LBL_CENTER_ALREADY_SELECTED' => 'This center has already been selected',
     'LBL_NUMBER_OF_PLACES' => 'Number of places: ',
+    'LBL_TOTAL_AMOUNT' => 'Total rate',
+    'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Total copayment rate',
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Resource',

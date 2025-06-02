@@ -74,7 +74,7 @@ function updateCenterRequirement() {
   var typeValue = $("#type").val();
   var centerField = $("#stic_resources_stic_centers_name");
   var centerLabelDiv = $('[data-label="LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE"]');
-
+  
   if (typeValue === "places") {
     if (centerLabelDiv.length && !centerLabelDiv.find("span.required").length) {
       centerLabelDiv.append('<span class="required">*</span>');
@@ -91,15 +91,27 @@ function updateCenterRequirement() {
 function showTabs(typeSelected) {
 
     var panelPlaces = $("div.panel-content");
+    var hourlyRateField = $("#hourly_rate");
+    var dailyRateField = $("#daily_rate");
+    var hourlyRateLabel = $('[data-label="LBL_HOURLY_RATE"]');
+    var dailyRateLabel = $('[data-label="LBL_DAILY_RATE"]');
 
     panelPlace(panelPlaces, "hide");
 
     if (typeSelected === "places") {
         panelPlace(panelPlaces, "show");          
         updateCenterRequirement();
+        hourlyRateField.hide();
+        dailyRateField.hide();
+        hourlyRateLabel.hide();
+        dailyRateLabel.hide();
     } else {
         panelPlace(panelPlaces, "hide");
         updateCenterRequirement();
+        hourlyRateField.show();
+        dailyRateField.show();
+        hourlyRateLabel.show();
+        dailyRateLabel.show();
     }
 }
 

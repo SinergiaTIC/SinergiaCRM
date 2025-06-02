@@ -80,7 +80,6 @@ $mod_strings = array(
     'LBL_BOOKING_TYPE' => 'Tipo de reserva',
     'LBL_AMOUNT_DAY_OCCUPIED' => 'Importe diario por plaza ocupada',
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Importe diario por plaza desocupada',
-    'LBL_AMOUNT_DAY_OVEROCCUPIED' => 'Importe diario por plaza sobreocupada',
     'LBL_AMOUNT_COPAYMENT' => 'Importe diario de copago',
 
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',

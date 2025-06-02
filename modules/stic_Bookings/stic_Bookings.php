@@ -123,7 +123,7 @@ class stic_Bookings extends Basic
 
         // If the save function is launched by save action in editview, relationships
         // with resources must be managed. In other cases (inline edit, etc.) will do nothing.
-        if ($_REQUEST['action'] == 'Save') {
+        if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'Save' && !isset($this->skip_amount_calculation)) {   
             // Remove previous relationships
             $oldRelatedResources = array();
             $oldRelatedResources = $this->get_linked_beans('stic_resources_stic_bookings', 'stic_Resources');
@@ -133,15 +133,18 @@ class stic_Bookings extends Basic
 
             // Retrieve the resources selected in the EditViewFooter
             $newRelatedResources = array();
-            foreach ($_REQUEST['resource_id'] as $parent => $key) {
-                if (empty($_REQUEST['deleted'][$parent])) {
-                    $newRelatedResources[] = $_REQUEST['resource_id'][$parent];
+            if (isset($_REQUEST['resource_id']) && is_array($_REQUEST['resource_id'])) {
+                foreach ($_REQUEST['resource_id'] as $parent => $key) {
+                    if (empty($_REQUEST['deleted'][$parent])) {
+                        $newRelatedResources[] = $_REQUEST['resource_id'][$parent];
+                    }
                 }
             }
             // Set current relationships
             foreach ($newRelatedResources as $newRelatedResource) {
                 $this->stic_resources_stic_bookings->add($newRelatedResource);
             }
+            $this->calculateAndUpdateTotalAmount();
         }
 
         // If return module is Booking's Calendar, redirect there
@@ -154,4 +157,201 @@ class stic_Bookings extends Basic
         }
 
     }
+
+    /**
+     * Calculate and update the total amount based on current resources and booking duration
+     * This method updates the database directly to avoid infinite loops
+     */
+    private function calculateAndUpdateTotalAmount()
+    {
+        global $db;
+
+        // Calculate duration in hours and days
+        $durationInfo = $this->getBookingDuration();
+        
+        if ($durationInfo['hours'] <= 0) {
+            $this->updateTotalAmountInDB(0);
+            if (isset($this->place_booking) && $this->place_booking == '1') {
+                $this->updateTotalCopaymentInDB(0);
+            }
+            return;
+        }
+
+        // Get current related resources with their rates
+        $query = "SELECT r.id, r.hourly_rate, r.daily_rate, r.amount_day_occupied, r.amount_day_occupied, r.amount_copayment 
+                FROM stic_resources r
+                INNER JOIN stic_resources_stic_bookings_c rb ON r.id = rb.stic_resources_stic_bookingsstic_resources_ida
+                WHERE rb.stic_resources_stic_bookingsstic_bookings_idb = '{$this->id}'
+                AND rb.deleted = 0 
+                AND r.deleted = 0";
+        
+        $result = $db->query($query);
+        $totalAmount = 0;
+        $totalCopayment = 0;
+        $isPlaceBooking = isset($this->place_booking) && $this->place_booking == '1';
+
+        while ($row = $db->fetchByAssoc($result)) {
+            $resourceAmount = $this->calculateResourceAmount($row, $durationInfo);
+            $resourceTotalAmount = $resourceAmount['total_amount'];
+            $totalAmount += $resourceTotalAmount;
+    
+            if ($isPlaceBooking) {
+                $resourceCopayment = $resourceAmount['copayment_amount'];
+                $totalCopayment += $resourceCopayment;
+            }
+        }
+    
+        // Update total_amount in database directly
+        $this->updateTotalAmountInDB($totalAmount);
+        
+        if ($isPlaceBooking) {
+            $this->updateTotalCopaymentInDB($totalCopayment);
+        } 
+    
+    }
+
+    /**
+     * Calculate the amount for a single resource based on booking duration and resource rates
+     */
+    private function calculateResourceAmount($resource, $durationInfo)
+    {
+        $hourlyRate = floatval($resource['hourly_rate'] ?? 0);
+        $dailyRate = floatval($resource['daily_rate'] ?? 0);
+        $occupiedRate = floatval($resource['amount_day_occupied'] ?? 0);
+        $copaymentRate = floatval($resource['amount_copayment'] ?? 0); // Usar el valor real del copago
+
+        $isPlaceBooking = isset($this->place_booking) && $this->place_booking == '1';
+    
+        if ($isPlaceBooking) {
+            // For place bookings, always calculate by days
+            $rate = 0;
+    
+            if ($occupiedRate > 0) {
+                $rate = $occupiedRate;
+            } 
+    
+            return [
+                'total_amount' => $rate * $durationInfo['days'],
+                'copayment_amount' => $copaymentRate * $durationInfo['days']
+            ];
+
+        }
+    
+        // Regular bookings
+        if ($dailyRate > 0 && $hourlyRate > 0) {
+            $fullDays = floor($durationInfo['days']);
+            $remainingHours = $durationInfo['hours'] - ($fullDays * 24);
+    
+            $amount = ($fullDays * $dailyRate) + ($remainingHours * $hourlyRate);
+            return [
+                'total_amount' => round($amount, 2),
+                'copayment_amount' => 0
+            ];
+
+        }
+    
+        if ($dailyRate > 0) {
+            return [
+                'total_amount' => round($dailyRate * $durationInfo['days'], 2),
+                'copayment_amount' => 0
+            ];
+
+
+        }
+    
+        if ($hourlyRate > 0) {
+            return [
+                'total_amount' => round($hourlyRate * $durationInfo['hours'], 2),
+                'copayment_amount' => 0
+            ];
+
+        }
+    
+        return [
+            'total_amount' => 0,
+            'copayment_amount' => 0
+        ];
+
+    }
+    
+    /**
+     * Calculate booking duration in both hours and days
+     * Returns array with 'hours' and 'days' keys
+     */
+    private function getBookingDuration()
+    {
+        if (empty($this->start_date) || empty($this->end_date)) {
+            return ['hours' => 0, 'days' => 0];
+        }
+
+        try {
+            $startDateTime = new DateTime($this->start_date);
+            $endDateTime = new DateTime($this->end_date);
+            
+            $interval = $startDateTime->diff($endDateTime);
+            
+            // Calculate total hours
+            $totalHours = $interval->days * 24 + $interval->h + ($interval->i / 60) + ($interval->s / 3600);
+            
+            // Calculate days based on booking type
+            $totalDays = 0;
+            
+            if (isset($this->all_day) && $this->all_day == '1') {
+                // For all-day bookings, count calendar days
+                $totalDays = $interval->days;
+                
+                // If same day booking, it's still 1 day
+                if ($totalDays == 0) {
+                    $totalDays = 1;
+                }
+            } else {
+                // For regular bookings, calculate days based on 24-hour periods
+                $totalDays = round($totalHours / 24, 2);
+            }
+            
+            return [
+                'hours' => floatval($totalHours),
+                'days' => round($totalDays, 2)
+            ];
+            
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Error calculating booking duration: ' . $e->getMessage());
+            return ['hours' => 0, 'days' => 0];
+        }
+    }
+
+    /**
+     * Update total_amount field directly in database to avoid triggering save() again
+     */
+    private function updateTotalAmountInDB($amount)
+    {
+        global $db;
+        
+        $amount = floatval($amount);
+        $query = "UPDATE stic_bookings 
+                SET total_amount = {$amount} 
+                WHERE id = '{$this->id}'";
+        
+        $db->query($query);
+        
+        // Also update the current object
+        $this->total_amount = $amount;
+    }
+    /**
+     * Update total_amount field directly in database to avoid triggering save() again
+     */
+    private function updateTotalCopaymentInDB($copayment)
+    {
+        global $db;
+        
+        $copayment = floatval($copayment);
+        $query = "UPDATE stic_bookings 
+                SET copayment_amount = {$copayment} 
+                WHERE id = '{$this->id}'";
+        
+        $db->query($query);
+        
+        $this->copayment_amount = $copayment;
+    }
+
 }

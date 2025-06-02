@@ -76,20 +76,6 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'listplaces') {
             'id' => 'ASSIGNED_USER_ID',
             'default' => true,
         ),
-        'USER_TYPE' => array(
-            'type' => 'enum',
-            'studio' => 'visible',
-            'label' => 'LBL_USER_TYPE',
-            'width' => '10%',
-            'default' => false,
-        ),
-        'PLACE_TYPE' => array(
-            'type' => 'enum',
-            'studio' => 'visible',
-            'label' => 'LBL_PLACE_TYPE',
-            'width' => '10%',
-            'default' => false,
-        ),
         'GENDER' => array(
             'type' => 'enum',
             'studio' => 'visible',
@@ -97,12 +83,23 @@ if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'listplaces') {
             'width' => '10%',
             'default' => false,
         ),
-        'TYPE' => array(
-            'type' => 'enum',
-            'studio' => 'visible',
-            'label' => 'LBL_TYPE',
+        'AMOUNT_DAY_OCCUPIED' => array(
+            'type' => 'decimal',
+            'label' => 'LBL_AMOUNT_DAY_OCCUPIED',
             'width' => '10%',
-            'default' => true,
+            'default' => false,
+        ),
+        'AMOUNT_DAY_UNOCCUPIED' => array(
+            'type' => 'decimal',
+            'label' => 'LBL_AMOUNT_DAY_UNOCCUPIED',
+            'width' => '10%',
+            'default' => false,
+        ),
+        'AMOUNT_COPAYMENT' => array(
+            'type' => 'decimal',
+            'label' => 'LBL_AMOUNT_COPAYMENT',
+            'width' => '10%',
+            'default' => false,
         ),
         'OWNER_CONTACT' => array(
             'type' => 'relate',

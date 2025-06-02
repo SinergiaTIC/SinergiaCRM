@@ -21,13 +21,13 @@
  *}
 {* This template is showed both in Bookings' ListView and Bookings Calendar reservations popups *}
 
-<h2>{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">{$MOD.LBL_CENTERS_BUTTON}</button>
+<h2 id="resourcesTitle">{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">{$MOD.LBL_CENTERS_BUTTON}</button>
 </h2>
 
 <div class="filter-box">
     <div id="resourceSearchFields" class="filter-content">
         <div id="selectedCentersContainer">
-            <label>{$MOD.LBL_RESOURCES_ADD}</label>
+            <label id="resourcesAddLabel">{$MOD.LBL_RESOURCES_ADD}</label>
             <div id="selectedCentersList"></div>
         </div>
         
@@ -45,7 +45,7 @@
         
         <div class="filter-row">
             <div class="filter-item">
-                <label for="resourceGender">{$MOD.LBL_RESOURCES_STATUS}</label>
+                <label for="resourceGender">{$MOD.LBL_RESOURCES_GENDER}</label>
                 <select id="resourceGender" name="resourceGender" multiple></select>
             </div>
             

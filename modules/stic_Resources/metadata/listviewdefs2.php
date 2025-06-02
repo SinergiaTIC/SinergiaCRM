@@ -43,7 +43,7 @@ $placesListViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => true,
     ),
-        'CODE' => array(
+    'CODE' => array(
         'type' => 'varchar',
         'label' => 'LBL_CODE',
         'width' => '10%',
@@ -62,6 +62,31 @@ $placesListViewDefs[$module_name] = array(
         'label' => 'LBL_GENDER',
         'width' => '10%',
         'default' => true,
+    ),
+    'GENDER' => array(
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_GENDER',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'AMOUNT_DAY_OCCUPIED' => array(
+        'type' => 'decimal',
+        'label' => 'LBL_AMOUNT_DAY_OCCUPIED',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'AMOUNT_DAY_UNOCCUPIED' => array(
+        'type' => 'decimal',
+        'label' => 'LBL_AMOUNT_DAY_UNOCCUPIED',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'AMOUNT_COPAYMENT' => array(
+        'type' => 'decimal',
+        'label' => 'LBL_AMOUNT_COPAYMENT',
+        'width' => '10%',
+        'default' => false,
     ),
     'ASSIGNED_USER_NAME' => array(
         'width' => '9%',

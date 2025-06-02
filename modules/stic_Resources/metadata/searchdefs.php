@@ -211,14 +211,6 @@ array(
                 'default' => true,
                 'name' => 'amount_day_unoccupied',
             ),
-            'amount_day_overoccupied' => array(
-                'type' => 'decimal',
-                'studio' => 'visible',
-                'label' => 'LBL_AMOUNT_DAY_OVEROCCUPIED',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'amount_day_overoccupied',
-            ),     
             'amount_copayment' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
