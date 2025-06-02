@@ -96,7 +96,7 @@ $dictionary['stic_Message_Marketing'] = array(
     'len' => 100,
     'size' => '20',
     'options' => 'stic_messages_type_list',
-    'studio' => 'visible',
+    'studio' => false,
     'dependency' => false,
   ),
   'status' => array (
