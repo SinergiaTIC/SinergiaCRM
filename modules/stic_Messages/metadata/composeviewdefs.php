@@ -106,7 +106,8 @@ array(
                       'label' => 'LBL_TEMPLATE',
                       'displayParams' => array(
                         'call_back_function' => '$.fn.stic_MessagesComposeView.onTemplateSelect',
-                    ),
+                        'initial_filter' => "&type_advanced[]=sms"
+                        ),
                     ),
                 ),
             ),

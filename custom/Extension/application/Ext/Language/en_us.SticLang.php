@@ -3666,3 +3666,11 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+// Email Templates: Template types
+$app_list_strings['emailTemplates_type_list'][''] = '';
+$app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaign';
+$app_list_strings['emailTemplates_type_list']['notification'] = 'Notification';
+$app_list_strings['emailTemplates_type_list']['email'] = 'Email';
+$app_list_strings['emailTemplates_type_list']['event'] = 'Event';
+$app_list_strings['emailTemplates_type_list']['system'] = 'System';
+$app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
