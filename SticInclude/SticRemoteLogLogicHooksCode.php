@@ -105,7 +105,6 @@ class SticRemoteLogLogicHooks
                         'crm_action' => $_REQUEST['action'] ?? 'N/A',
 
                         'user_admin' => is_admin($current_user),
-                        'user_name' => $current_user->user_name ?? 'unknown',
                     ],
                     'curl_options' => [
                         CURLOPT_CONNECTTIMEOUT_MS => 500,
@@ -141,6 +140,7 @@ class SticRemoteLogLogicHooks
             'url_request_uri' => $_SERVER['REQUEST_URI'],
 
             'user_id' => $current_user->id ?? 'unknown',
+            'user_name' => $current_user->user_name ?? 'unknown',
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
         ]);
 
