@@ -95,6 +95,12 @@ class SticRemoteLogLogicHooks
                         'host_name' => $hostname,
                         'error_type' => $error['type'] ?? null,
                         'detected_level' => $messageType,
+
+                        'crm_module' => $_REQUEST['module'] ?? 'N/A',
+                        'crm_action' => $_REQUEST['action'] ?? 'N/A',
+
+                        'user_admin' => is_admin($current_user),
+                        'user_name' => $current_user->user_name ?? 'unknown',
                     ],
                     'curl_options' => [
                         CURLOPT_CONNECTTIMEOUT_MS => 500,
@@ -106,17 +112,23 @@ class SticRemoteLogLogicHooks
 
         // Send execution data and error (if any) to Loki
         $logger->$messageType($log_message, [
-            '_module' => $_REQUEST['module'] ?? 'N/A',
-            '_action' => $_REQUEST['action'] ?? 'N/A',
-            '_record' => $_REQUEST['record'] ?? 'N/A',
+            'crm_record' => $_REQUEST['record'] ?? 'N/A',
             
             'error_message' => $error['message'] ?? null,
             'error_file_full' => $error['file'] ?? null,
             'error_file' => str_replace(dirname(__DIR__, 1). '/', '', $error['file'] ?? ''),
             'error_line' => $error['line'] ?? null,
 
-            'memory_usage' => memory_get_usage(),
-            'memory_peak_usage' => memory_get_peak_usage(),
+            'memory_usage_bytes' => memory_get_usage(),
+            'memory_peak_usage_bytes' => memory_get_peak_usage(),
+
+            'php_pid' => getmypid(),
+            'php_session_id' => session_id(),
+
+            'time_duration_log' => round(microtime(true) - $this->startLogTime, 4),
+            'time_duration_script' => round($this->scriptDuration, 4),
+            'time_sent_log' => microtime(true),
+            'time_start' => $_SERVER['REQUEST_TIME_FLOAT'],
 
             'url_string' => $_SERVER['QUERY_STRING'],
             'url_full' => $full_url,
@@ -124,15 +136,6 @@ class SticRemoteLogLogicHooks
             'url_request_uri' => $_SERVER['REQUEST_URI'],
 
             'user_id' => $current_user->id ?? 'unknown',
-            'user_name' => $current_user->user_name ?? 'unknown',
-
-            'php_session_id' => session_id(),
-            'php_pid' => getmypid(),
-
-            'time_start' => $_SERVER['REQUEST_TIME_FLOAT'],
-            'time_duration_script' => round($this->scriptDuration, 4),
-            'time_duration_log' => round(microtime(true) - $this->startLogTime, 4),
-            'time_sent_log' => microtime(true),
         ]);
 
     }
