@@ -91,10 +91,15 @@ class SticRemoteLogLogicHooks
                     'context' => [],
                     'labels' => [
                         'app' => 'SinergiaCRM',
+                        'app_version' => $sugar_config['sinergiacrm_version'] ?? 'unknown', 
                         'environment' => $sugar_config['stic_environment'] ?? 'production',
                         'host_name' => $hostname,
                         'error_type' => $error['type'] ?? null,
                         'detected_level' => $messageType,
+
+                        'http_method' => $_SERVER['REQUEST_METHOD'],
+                        'http_status_code' => http_response_code(),
+                        'is_ajax_request' => (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'),
 
                         'crm_module' => $_REQUEST['module'] ?? 'N/A',
                         'crm_action' => $_REQUEST['action'] ?? 'N/A',
@@ -136,6 +141,7 @@ class SticRemoteLogLogicHooks
             'url_request_uri' => $_SERVER['REQUEST_URI'],
 
             'user_id' => $current_user->id ?? 'unknown',
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
         ]);
 
     }
