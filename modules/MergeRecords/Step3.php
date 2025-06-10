@@ -73,7 +73,7 @@ $filter_for_valid_editable_attributes =
          array('type'=>'float','source'=>'db'),
          array('type'=>'short','source'=>'db'),
          // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
-         // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+         // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
          array('type'=>'decimal','source'=>'db'),
          array('type'=>'dynamicenum','source'=>'db'),
          array('type'=>'datetimecombo','source'=>'db'),
@@ -234,7 +234,7 @@ foreach ($temp_field_array as $field_array) {
             case ('double'):
             case ('currency'):
             // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
             case ('decimal'):
             case ('image'):
             // END STIC Custom
@@ -245,7 +245,7 @@ foreach ($temp_field_array as $field_array) {
                 break;
             case ('text'):
             // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
             case ('mediumtext'):
             case ('longtext'):
             // END STIC Custom
@@ -255,7 +255,7 @@ foreach ($temp_field_array as $field_array) {
                 break;
             case ('enum'):
             // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
             case ('dynamicenum'):
             // END STIC Custom
                 $xtpl->assign("SELECT_OPTIONS", get_select_options_with_id($app_list_strings[$field_array['options']], $select_row_curr_field_value));
@@ -312,7 +312,7 @@ foreach ($temp_field_array as $field_array) {
             case ('date'):
             case ('datetime'):
             // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
             case ('datetimecombo'):
             // END STIC Custom
                 $xtpl->assign("CALENDAR_LANG", "en");
