@@ -55,28 +55,22 @@ class SticRemoteLogLogicHooks
      */
     protected function sticShutdownHandler() {
         global $current_user, $sugar_config;
+        $appName = 'SinergiaCRM';
         
         $site_url = $sugar_config['site_url'] ?? '';
         // Clean site URL (removing http/https)
-        $instanceClean = preg_replace('/^https?:\/\//', '', $site_url);
+        // $instanceClean = preg_replace('/^https?:\/\//', '', $site_url);
 
         $hostname = $sugar_config['host_name'] ?? 'unknown';
         $full_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-        // Get last error, if any
-        $error = error_get_last();
-        $log_message = "Script executed successfully."; // Default log message
-
-        // If there's an error, extract details
-        if ($error !== null) {
-            [$errno, $errstr, $errfile, $errline] = [$error['type'], $error['message'], $error['file'], $error['line']];
-            $log_message = "[SuiteCRM Error $errno] $errstr in $errfile on line $errline";
+        // Get last error, if any and extract details
+        $errorInfo = self::getErrorInfo($appName);
+        if ($errorInfo['HasError']) {
             // Log to SuiteCRM built-in logger
-            $GLOBALS['log']->fatal($log_message);
-
+            $GLOBALS['log']->{$errorInfo['SuitecrmLevel']}($errorInfo['LogMessage']);
         }
 
-        $messageType = $error ? $this->mapPhpErrorToMonologLevel($error['type']) : 'info';
 
         if (!class_exists(\Itspire\MonologLoki\Handler\LokiHandler::class)) {
             require_once 'vendor/autoload.php';
@@ -90,12 +84,12 @@ class SticRemoteLogLogicHooks
                     'entrypoint' => $sugar_config['stic_remote_monitor_url'],
                     'context' => [],
                     'labels' => [
-                        'app' => 'SinergiaCRM',
+                        'app' => $appName,
                         'app_version' => $sugar_config['sinergiacrm_version'] ?? 'unknown', 
                         'environment' => $sugar_config['stic_environment'] ?? 'production',
                         'host_name' => $hostname,
-                        'error_type' => $error['type'] ?? null,
-                        'detected_level' => $messageType,
+                        'error_type' => $errorInfo['ErrorNumber'],
+                        'detected_level' => $errorInfo['MonologLevel'],
 
                         'http_method' => $_SERVER['REQUEST_METHOD'],
                         'http_status_code' => http_response_code(),
@@ -115,13 +109,13 @@ class SticRemoteLogLogicHooks
         ]);
 
         // Send execution data and error (if any) to Loki
-        $logger->$messageType($log_message, [
+        $logger->{$errorInfo['MonologLevel']}($errorInfo['LogMessage'], [
             'crm_record' => $_REQUEST['record'] ?? 'N/A',
             
-            'error_message' => $error['message'] ?? null,
-            'error_file_full' => $error['file'] ?? null,
-            'error_file' => str_replace(dirname(__DIR__, 1). '/', '', $error['file'] ?? ''),
-            'error_line' => $error['line'] ?? null,
+            'error_message' => $errorInfo['ErrorMessage'],
+            'error_file_full' => $errorInfo['ErrorFileFull'],
+            'error_file' => $errorInfo['ErrorFile'],
+            'error_line' => $errorInfo['ErrorLine'],
 
             'memory_usage_bytes' => memory_get_usage(),
             'memory_peak_usage_bytes' => memory_get_peak_usage(),
@@ -146,36 +140,140 @@ class SticRemoteLogLogicHooks
 
     }
 
-    private function mapPhpErrorToMonologLevel(int $errno) {
-        switch ($errno) {
-            case E_ERROR:
-            case E_CORE_ERROR:
-            case E_COMPILE_ERROR:
-            case E_PARSE:
-            case E_RECOVERABLE_ERROR:
-                return 'critical';
+    private static function getErrorInfo(string $appName) : array {
+        // Get last error, if any
+        $error = error_get_last();
+        $errno = $error['type'] ?? null;
+        $result = [
+            'HasError' => false,
+            'ErrorNumber' => $errno,
+            'ErrorName' => '',
+            'ErrorDesc' => '',
+            'ErrorFileFull' => $error['file'] ?? null,
+            'ErrorFile' => str_replace(dirname(__DIR__, 1). '/', '', $error['file'] ?? ''),
+            'ErrorMessage' => $error['message'] ?? '',
+            'ErrorLine' => $error['line'] ?? '',
+            'ErrorType' => 'Info',
+            'SuitecrmLevel' => 'info',
+            'MonologLevel' => 'info',
+            'LogMessage' => 'Script executed successfully.',
+        ];
+        if ($error !== null) {
+            $result['HasError'] = true;
 
-            case E_USER_ERROR:
-                return 'error';
+            switch ($errno) {
+                case E_ERROR: // Fatal run-time errors (1)
+                    $result['ErrorName'] = "E_ERROR";
+                    $result['ErrorDesc'] = "Fatal run-time error";
+                    $result['SuitecrmLevel'] = 'fatal';
+                    $result['MonologLevel'] = 'critical';
+                    break;
 
-            case E_WARNING:
-            case E_CORE_WARNING:
-            case E_COMPILE_WARNING:
-            case E_USER_WARNING:
-                return 'warning';
+                case E_WARNING: // Run-time warnings (2)
+                    $result['ErrorName'] = "E_WARNING";
+                    $result['ErrorDesc'] = "Run-time warning";
+                    $result['SuitecrmLevel'] = 'warn';
+                    $result['MonologLevel'] = 'warning';
+                    break;
 
-            case E_NOTICE:
-            case E_USER_NOTICE:
-                return 'notice';
+                case E_PARSE: // Compile-time parse errors (4)
+                    $result['ErrorName'] = "E_PARSE";
+                    $result['ErrorDesc'] = "Compile-time parse error";
+                    $result['SuitecrmLevel'] = 'fatal';
+                    $result['MonologLevel'] = 'critical';
+                    break;
 
-            case E_DEPRECATED:
-            case E_USER_DEPRECATED:
-                return 'info';
+                case E_NOTICE: // Run-time notices (8)
+                    $result['ErrorName'] = "E_NOTICE";
+                    $result['ErrorDesc'] = "Run-time notice";
+                    $result['SuitecrmLevel'] = 'info';
+                    $result['MonologLevel'] = 'notice';
+                    break;
 
-            default:
-                return 'error'; // fallback
-        }
+                case E_CORE_ERROR: // Fatal errors that occur during PHP's initial startup (16)
+                    $result['ErrorName'] = "E_CORE_ERROR";
+                    $result['ErrorDesc'] = "Fatal error that occur during PHP's initial startup";
+                    $result['SuitecrmLevel'] = 'fatal';
+                    $result['MonologLevel'] = 'critical';
+                    break;
+
+                case E_CORE_WARNING: // Warning that occur during PHP's initial startup (32)
+                    $result['ErrorName'] = "E_CORE_WARNING";
+                    $result['ErrorDesc'] = "Warning that occur during PHP's initial startup";
+                    $result['SuitecrmLevel'] = 'warn';
+                    $result['MonologLevel'] = 'warning';
+                    break;
+                
+                case E_COMPILE_ERROR: // Fatal compile-time error (64)
+                    $result['ErrorName'] = "E_COMPILE_ERROR";
+                    $result['ErrorDesc'] = "Fatal compile-time error";
+                    $result['SuitecrmLevel'] = 'fatal';
+                    $result['MonologLevel'] = 'critical';
+                    break;
+
+                case E_COMPILE_WARNING: // Compile-time warning (128)
+                    $result['ErrorName'] = "E_COMPILE_WARNING";
+                    $result['ErrorDesc'] = "Compile-time warning";
+                    $result['SuitecrmLevel'] = 'warn';
+                    $result['MonologLevel'] = 'warning';
+                    break;
+
+                case E_DEPRECATED: // Run-time deprecation notice (8192)
+                    $result['ErrorName'] = "E_DEPRECATED";
+                    $result['ErrorDesc'] = "Run-time deprecation notice";
+                    $result['SuitecrmLevel'] = 'warn';
+                    $result['MonologLevel'] = 'warning';
+                    break;
+
+                case E_USER_ERROR: // User-generated error message (256)
+                    $result['ErrorName'] = "E_USER_ERROR";
+                    $result['ErrorDesc'] = "User-generated error message";
+                    $result['SuitecrmLevel'] = 'error';
+                    $result['MonologLevel'] = 'error';
+                    break;
+
+                case E_USER_WARNING: // User-generated warning message (512)
+                    $result['ErrorName'] = "E_USER_WARNING";
+                    $result['ErrorDesc'] = "User-generated warning message";
+                    $result['SuitecrmLevel'] = 'warn';
+                    $result['MonologLevel'] = 'warning';
+                    break;
+
+                case E_USER_NOTICE: // User-generated notice message (1824)
+                    $result['ErrorName'] = "E_USER_NOTICE";
+                    $result['ErrorDesc'] = "User-generated notice message";
+                    $result['SuitecrmLevel'] = 'info';
+                    $result['MonologLevel'] = 'notice';
+                    break;
+
+                case E_USER_DEPRECATED: // User-generated deprecation message (16384)
+                    $result['ErrorName'] = "E_USER_DEPRECATED";
+                    $result['ErrorDesc'] = "User-generated deprecation message";
+                    $result['SuitecrmLevel'] = 'warn';
+                    $result['MonologLevel'] = 'warning';
+                    break;
+
+                case E_RECOVERABLE_ERROR: // Legacy engine "exceptions" which correspond to catchable fatal error (4096)
+                    $result['ErrorName'] = "E_RECOVERABLE_ERROR";
+                    $result['ErrorDesc'] = "Legacy engine 'exceptions' which correspond to catchable fatal error";
+                    $result['SuitecrmLevel'] = 'fatal';
+                    $result['MonologLevel'] = 'critical';
+                    break;
+
+                default:
+                    $result['ErrorName'] = "Unknown";
+                    $result['ErrorDesc'] = "Unknown error";
+                    $result['SuitecrmLevel'] = 'error';
+                    $result['MonologLevel'] = 'error';
+                    break;
+            }
+            $result['ErrorType'] = ucfirst($result['MonologLevel']);
+            $result['LogMessage'] = "[{$appName} {$result['ErrorType']} {$result['ErrorName']} ({$result['ErrorDesc']}:{$result['ErrorNumber']})] ". 
+                                    "{$result['ErrorMessage']} in {$result['ErrorFile']}:{$result['ErrorLine']}";
+        }        
+        return $result;
     }
+
 }
 
 
