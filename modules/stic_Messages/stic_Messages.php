@@ -125,7 +125,7 @@ class stic_Messages extends Basic
 
     public function fillName($parentType = null, $parentId = null)
     {
-        global $current_user, $timedate;
+        global $current_user, $timedate, $sugar_config;
 
         $parentType = $parentType?? $this->parent_type;
         $parentId = $parentId ?? $this->parent_id;
@@ -154,12 +154,18 @@ class stic_Messages extends Basic
 
         // get user timezone
         $userPreferences = new UserPreference($current_user);
-        $userPreferences->retrieve_by_string_fields(array('assigned_user_id' => $current_user->id));
+        // $userPreferences->retrieve_by_string_fields(array('assigned_user_id' => $current_user->id));
+        $userPreferences->loadPreferences();
 
         // Get the timezone from the user's preferences
         $timezone = $userPreferences->getPreference('timezone');
 
+        // $timedate = new TimeDate();
+        // $system_default_timezone = $timedate->getSystemTimezone();
+
+        // $timezone = date_default_timezone_get();
         $date = $date->setTimezone(new DateTimeZone($timezone));
+        $date = $timedate->tzUser($date);
         $formatedDate = $date->format($timedate->get_date_time_format($current_user));
 
 
