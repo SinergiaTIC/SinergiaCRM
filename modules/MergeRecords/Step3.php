@@ -72,6 +72,14 @@ $filter_for_valid_editable_attributes =
          array('type'=>'double','source'=>'db'),
          array('type'=>'float','source'=>'db'),
          array('type'=>'short','source'=>'db'),
+         // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
+         // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+         array('type'=>'decimal','source'=>'db'),
+         array('type'=>'dynamicenum','source'=>'db'),
+         array('type'=>'datetimecombo','source'=>'db'),
+         array('type'=>'mediumtext','source'=>'db'),
+         array('type'=>'longtext','source'=>'db'),
+         // END STIC Custom
          array('dbType'=>'varchar','source'=>'db'),
          array('dbType'=>'double','source'=>'db'),
          array('type'=>'relate'),
@@ -225,17 +233,31 @@ foreach ($temp_field_array as $field_array) {
             case ('float'):
             case ('double'):
             case ('currency'):
+            // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            case ('decimal'):
+            case ('image'):
+            // END STIC Custom
 
                 $xtpl->assign("EDIT_FIELD_VALUE", $select_row_curr_field_value);
                 $xtpl->assign("CELL_WIDTH", $col_width);
                 $xtpl->parse("main.".$section_name.".merge_cell_edit_text");
                 break;
             case ('text'):
+            // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            case ('mediumtext'):
+            case ('longtext'):
+            // END STIC Custom
                 $xtpl->assign("EDIT_FIELD_VALUE", $select_row_curr_field_value);
                 $xtpl->assign("CELL_WIDTH", $col_width);
                 $xtpl->parse("main.".$section_name.".merge_cell_edit_textarea");
                 break;
             case ('enum'):
+            // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            case ('dynamicenum'):
+            // END STIC Custom
                 $xtpl->assign("SELECT_OPTIONS", get_select_options_with_id($app_list_strings[$field_array['options']], $select_row_curr_field_value));
                 $xtpl->assign("CELL_WIDTH", $col_width);
                 $xtpl->parse("main.".$section_name.".merge_cell_edit_dropdown");
@@ -289,6 +311,10 @@ foreach ($temp_field_array as $field_array) {
                 break;
             case ('date'):
             case ('datetime'):
+            // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+            case ('datetimecombo'):
+            // END STIC Custom
                 $xtpl->assign("CALENDAR_LANG", "en");
                 $xtpl->assign("USER_DATEFORMAT", '('.$timedate->get_user_date_format().')');
                 $xtpl->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
