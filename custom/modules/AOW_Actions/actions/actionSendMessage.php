@@ -39,7 +39,7 @@ class actionSendMessage extends actionBase
         return array('custom/modules/AOW_Actions/actions/actionSendMessage.js');
     }
 
-    public function edit_display($line, SugarBean $bean = null, $params = array())
+    public function edit_display($line, ?SugarBean $bean = null, $params = array())
     {
 
         // Get default values for combos
