@@ -342,9 +342,6 @@ function export($type, $records = null, $members = false, $sample=false)
                 isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']]) &&
                 isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value])
             ) {
-                if (($key == 'primary_address_state') || ($key == 'primary_address_state')){
-                    $value = $value;
-                }
                 $value = $app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value];
             }
             // END STIC-Custom 
