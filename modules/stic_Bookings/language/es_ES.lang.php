@@ -65,11 +65,11 @@ $mod_strings = array(
     'LBL_CODE' => 'Código',
     'LBL_STATUS' => 'Estado',
     'LBL_ALL_DAY' => 'Todo el día',
-    'LBL_PLACE_BOOKING' => 'Reserrva de plazas',
+    'LBL_PLACE_BOOKING' => 'Reserva de plazas',
     'LBL_START_DATE' => 'Fecha de inicio',
     'LBL_END_DATE' => 'Fecha de finalización',
-    'LBL_PLANNED_START_DATE' => 'Fecha de inicio prevista',
-    'LBL_PLANNED_END_DATE' => 'Fecha de finalización prevista',
+    'LBL_PLANNED_START_DATE' => 'Fecha prevista de inicio',
+    'LBL_PLANNED_END_DATE' => 'Fecha prevista de finalización',
     'LBL_FLEX_RELATE' => 'Relacionado con',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos/Plazas',
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización que reserva',
@@ -77,7 +77,7 @@ $mod_strings = array(
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unidad familiar que reserva',
     'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromiso de pago',
 
-    // Used for the adding resources section
+    // Cadenas de la sección "Añadir recursos"
     'LBL_RESOURCES' => 'Recursos',
     'LBL_RESOURCES_NAME' => 'Nombre',
     'LBL_RESOURCES_STATUS' => 'Estado',
@@ -99,7 +99,7 @@ $mod_strings = array(
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'La reserva no tiene recursos asignados.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'La reserva no tiene recursos asignados. ¿Quiere guardarla de todos modos?',
     'LBL_CLOSE_RESOURCE_CONFIRM' => '¿Quiere finalizar la reserva de este recurso?',
-    'LBL_CLOSE_RESOURCE_BEFORE_START_ERROR' => 'No se puede cerrar un recurso de una reserva que aún no ha iniciado. Edite la reserva para modificarla.',
+    'LBL_CLOSE_RESOURCE_BEFORE_START_ERROR' => 'No se puede finalizar la reserva de un recurso concreto de una reserva que aún no se ha iniciado. Edite la reserva para modificarla.',
     'LBL_CENTER_RESOURCE_ERROR' => 'Error al cargar las plazas del centro: ',
     'LBL_CENTERS_MESSAGE' => 'Número de plazas encontradas: ',
     'LBL_RESOURCES_BUTTON' => 'Cargar recursos',
