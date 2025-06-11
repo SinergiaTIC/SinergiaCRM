@@ -3173,22 +3173,22 @@ $app_list_strings['stic_resources_status_list']['inactive'] = 'Inactiu';
 $app_list_strings['stic_resources_status_list']['unavailable'] = 'No disponible';
 $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'No disponible temporalment';
 
-// Resources: Plaça tipus
+// Recursos: Tipus de places
 $app_list_strings['stic_resources_places_type_list'][''] = '';
 $app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
 $app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocupació';
 
-// Resources: User tipus
+// Recursos: Tipus d'usuaris
 $app_list_strings['stic_resources_places_users_list'][''] = '';
 $app_list_strings['stic_resources_places_users_list']['adults'] = 'Adults';
 $app_list_strings['stic_resources_places_users_list']['families'] = 'Famílies';
 $app_list_strings['stic_resources_places_users_list']['minors'] = 'Menors';
 
-// Resources: Gender
+// Recursos: Tipus de gèneres de les places
 $app_list_strings['stic_resources_places_gender_list'][''] = '';
 $app_list_strings['stic_resources_places_gender_list']['men'] = 'Home';
 $app_list_strings['stic_resources_places_gender_list']['women'] = 'Dona';
-$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixt';
 
 // Reserves: Estats
 $app_list_strings['stic_bookings_status_list'][''] = '';
