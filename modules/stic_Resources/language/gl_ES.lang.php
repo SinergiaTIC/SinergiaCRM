@@ -84,5 +84,4 @@ $mod_strings = array(
 
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
     'LBL_PLACES' => 'Plazas',
-
 );
