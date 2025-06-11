@@ -265,7 +265,7 @@ function export($type, $records = null, $members = false, $sample=false)
                 //getting content values depending on their types
                 $fieldNameMapKey = $fields_array[$key];
                 // STIC-Custom 20250611 MHP - If the module is Accounts, update the value of the primary_address_state field to billing_address_state
-                //
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/674
                 if (($val['related_type'] == 'Accounts') && ($fieldNameMapKey == 'primary_address_state')) {
                     $fieldNameMapKey = 'billing_address_state';
                 }
@@ -315,23 +315,14 @@ function export($type, $records = null, $members = false, $sample=false)
                     // Bug 32463 - Properly have multienum field translated into something useful for the client
                     case 'multienum':
             $valueArray = unencodeMultiEnum($value);
-                        // STIC-Custom 20250611 MHP - Use $fieldNameMapKey instead of $fields_array[$key]
-                        //
-                        // if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']])) {
-                        //     foreach ($valueArray as $multikey => $multivalue) {
-                        //         if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue])) {
-                        //             $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
-                        //         }
-                        //     }
-                        // }
-                        if (isset($focus->field_name_map[$fieldNameMapKey]['options']) && isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']])) {
+
+                        if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']])) {
                             foreach ($valueArray as $multikey => $multivalue) {
-                                if (isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$multivalue])) {
-                                    $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$multivalue];
+                                if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue])) {
+                                    $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
                                 }
                             }
                         }
-                        // END STIC-Custom                         
             $value = implode(",", $valueArray);
 
                         break;
@@ -340,7 +331,7 @@ function export($type, $records = null, $members = false, $sample=false)
         case 'dynamicenum':
         case 'enum':
             // STIC-Custom 20250611 MHP - Use $fieldNameMapKey instead of $fields_array[$key]
-            //       
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/674
             // if (isset($focus->field_name_map[$fields_array[$key]]['options']) &&
             //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) &&
             //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value])
@@ -356,6 +347,7 @@ function export($type, $records = null, $members = false, $sample=false)
                 }
                 $value = $app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value];
             }
+            // END STIC-Custom 
 
             break;
                 }
