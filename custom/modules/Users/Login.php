@@ -162,7 +162,7 @@ if (!empty($logindisplay)) {
 require_once 'include/utils/recaptcha_utils.php';
 $sugar_smarty->assign('CAPTCHA', displayRecaptcha());
 
-$google_signin_clientid = $sugar_config['google_signin_clientid'];
+$google_signin_clientid = $sugar_config['google_signin_clientid'] ?? '';
 
 echo $AAA = <<<EOQ
     <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleSignIn()"></script>
