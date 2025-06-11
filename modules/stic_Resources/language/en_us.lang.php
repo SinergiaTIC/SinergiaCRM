@@ -74,14 +74,14 @@ $mod_strings = array(
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Bookings',
     'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_CENTERS_TITLE' => 'Center',
     'LBL_STIC_RESOURCES_PROJECT_FROM_PROJECT_TITLE' => 'Project',
-    'LBL_PLACE_TYPE' => 'Type of place',
+    'LBL_PLACE_TYPE' => 'Place type',
     'LBL_GENDER' => 'Place gender',
-    'LBL_USER_TYPE' => 'Type of beneficiary',
+    'LBL_USER_TYPE' => 'Beneficiary type',
     'LBL_BOOKING_TYPE' => 'Booking type',
     'LBL_AMOUNT_DAY_OCCUPIED' => 'Daily amount per occupied place',
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Daily amount per unoccupied place',
     'LBL_AMOUNT_COPAYMENT' => 'Copayment daily amount',
 
-    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'You must indicate a center',
+    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'A center is required',
     'LBL_PLACES' => 'Places',
 );
