@@ -264,7 +264,12 @@ function export($type, $records = null, $members = false, $sample=false)
             foreach ($val as $key => $value) {
                 //getting content values depending on their types
                 $fieldNameMapKey = $fields_array[$key];
-
+                // STIC-Custom 20250611 MHP - If the module is Accounts, update the value of the primary_address_state field to billing_address_state
+                //
+                if (($val['related_type'] == 'Accounts') && ($fieldNameMapKey == 'primary_address_state')) {
+                    $fieldNameMapKey = 'billing_address_state';
+                }
+                // END STIC-Custom 
                 //Dont export fields that have been explicitly marked not to be exportable
                 if (isset($focus->field_name_map[$fieldNameMapKey])  && isset($focus->field_name_map[$fieldNameMapKey]['exportable']) &&
                 $focus->field_name_map[$fieldNameMapKey]['exportable'] === false) {
@@ -310,14 +315,23 @@ function export($type, $records = null, $members = false, $sample=false)
                     // Bug 32463 - Properly have multienum field translated into something useful for the client
                     case 'multienum':
             $valueArray = unencodeMultiEnum($value);
-
-                        if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']])) {
+                        // STIC-Custom 20250611 MHP - Use $fieldNameMapKey instead of $fields_array[$key]
+                        //
+                        // if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']])) {
+                        //     foreach ($valueArray as $multikey => $multivalue) {
+                        //         if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue])) {
+                        //             $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                        //         }
+                        //     }
+                        // }
+                        if (isset($focus->field_name_map[$fieldNameMapKey]['options']) && isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']])) {
                             foreach ($valueArray as $multikey => $multivalue) {
-                                if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue])) {
-                                    $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                                if (isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$multivalue])) {
+                                    $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$multivalue];
                                 }
                             }
                         }
+                        // END STIC-Custom                         
             $value = implode(",", $valueArray);
 
                         break;
@@ -325,11 +339,22 @@ function export($type, $records = null, $members = false, $sample=false)
         // Fix Issue 9153 - Exporting DynamicDropdown fields return keys
         case 'dynamicenum':
         case 'enum':
-            if (isset($focus->field_name_map[$fields_array[$key]]['options']) &&
-                isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) &&
-                isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value])
+            // STIC-Custom 20250611 MHP - Use $fieldNameMapKey instead of $fields_array[$key]
+            //       
+            // if (isset($focus->field_name_map[$fields_array[$key]]['options']) &&
+            //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) &&
+            //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value])
+            // ) {
+            //     $value = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value];
+            // }     
+            if (isset($focus->field_name_map[$fieldNameMapKey]['options']) &&
+                isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']]) &&
+                isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value])
             ) {
-                $value = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value];
+                if (($key == 'primary_address_state') || ($key == 'primary_address_state')){
+                    $value = $value;
+                }
+                $value = $app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value];
             }
 
             break;
