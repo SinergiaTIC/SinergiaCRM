@@ -3186,9 +3186,9 @@ $app_list_strings['stic_resources_places_users_list']['minors'] = 'Menors';
 
 // Recursos: Tipus de gèneres de les places
 $app_list_strings['stic_resources_places_gender_list'][''] = '';
-$app_list_strings['stic_resources_places_gender_list']['men'] = 'Home';
-$app_list_strings['stic_resources_places_gender_list']['women'] = 'Dona';
-$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixt';
+$app_list_strings['stic_resources_places_gender_list']['men'] = 'Homes';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Dones';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
 
 // Reserves: Estats
 $app_list_strings['stic_bookings_status_list'][''] = '';
