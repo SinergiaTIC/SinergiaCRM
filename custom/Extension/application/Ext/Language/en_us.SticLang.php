@@ -141,7 +141,7 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
-$app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Bookings Places Calendar';
+$app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
@@ -187,7 +187,7 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condition';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Granted account';
-$app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Bookings Places Calendar';
+$app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Places';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
@@ -227,7 +227,7 @@ $app_list_strings['parent_type_display']['stic_Training'] = 'Training';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Skills';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
-$app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Bookings Places Calendar';
+$app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
@@ -268,7 +268,7 @@ $app_list_strings['record_type_display']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Skills';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Granted accounts';
-$app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Bookings Places Calendar';
+$app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
@@ -309,7 +309,7 @@ $app_list_strings['record_type_display_notes']['stic_Training'] = 'Training';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Skills';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Granted accounts';
-$app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Bookings Places Calendar';
+$app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Places Booking Calendar';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
@@ -3188,7 +3188,7 @@ $app_list_strings['stic_resources_places_users_list']['adults'] = 'Adults';
 $app_list_strings['stic_resources_places_users_list']['families'] = 'Families';
 $app_list_strings['stic_resources_places_users_list']['minors'] = 'Minors';
 
-// Resources: Gender
+// Resources: Places gender type
 $app_list_strings['stic_resources_places_gender_list'][''] = '';
 $app_list_strings['stic_resources_places_gender_list']['men'] = 'Home';
 $app_list_strings['stic_resources_places_gender_list']['women'] = 'Dona';
