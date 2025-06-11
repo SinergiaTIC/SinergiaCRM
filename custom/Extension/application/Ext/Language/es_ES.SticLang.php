@@ -3173,12 +3173,12 @@ $app_list_strings['stic_resources_status_list']['inactive'] = 'Inactivo';
 $app_list_strings['stic_resources_status_list']['unavailable'] = 'No disponible';
 $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'No disponible temporalmente';
 
-// Recursos: Tipo de plaza
+// Recursos: Tipos de plazas
 $app_list_strings['stic_resources_places_type_list'][''] = '';
 $app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
 $app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocupación';
 
-// Recursos: Tipo de usuario
+// Recursos: Tipos de usuarios
 $app_list_strings['stic_resources_places_users_list'][''] = '';
 $app_list_strings['stic_resources_places_users_list']['adults'] = 'Adultos';
 $app_list_strings['stic_resources_places_users_list']['families'] = 'Familias';
