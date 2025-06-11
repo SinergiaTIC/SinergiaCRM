@@ -64,7 +64,7 @@ foreach ($settingLinks as $key => $value) {
         'linkinfo' => array($linkText => "javascript:void(window.open('{$linkUrl}'))", 'class' => 'custom_link'),
     );
 }
-
+global $sugar_config;
 // Set the final array: STIC elements + Custom links + Admin + Other core links. The Profile element is always added later at the top place.
 $global_control_links = array_merge($sticElements, $customLinks, $adminElement, $global_control_links);
 $sdaEnabled = $sugar_config['stic_sinergiada']['enabled'] ?? false;
@@ -75,7 +75,7 @@ if ($sdaEnabled) {
     $r = $db->query($q);
     $a = $db->fetchByAssoc($r);
 
-    if ($a['sda_allowed_c'] == 1) {
+    if (!empty($a['sda_allowed_c']) && $a['sda_allowed_c'] == 1) {
         // Generate sdaUrl
         $currentDomain = $_SERVER['HTTP_HOST'];
         $lang = explode('_', $sugar_config['default_language'])[0];
