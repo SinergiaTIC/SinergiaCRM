@@ -76,13 +76,12 @@ $mod_strings = array(
     'LBL_STIC_RESOURCES_PROJECT_FROM_PROJECT_TITLE' => 'Projecte',
     'LBL_PLACE_TYPE' => 'Tipus de plaça',
     'LBL_GENDER' => 'Gènere de la plaça',
-    'LBL_USER_TYPE' => "Tipus d’usuari del servei",
-    'LBL_BOOKING_TYPE' => 'Tipus de reserve',
+    'LBL_USER_TYPE' => "Tipus d'usuari del servei",
+    'LBL_BOOKING_TYPE' => 'Tipus de reserva',
     'LBL_AMOUNT_DAY_OCCUPIED' => 'Import diari per plaça ocupada',
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Import diari per plaça desocupada',
     'LBL_AMOUNT_COPAYMENT' => 'Import diari de copagament',
 
-    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Cal indicar un centre',
+    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Cal que indiqueu un centre',
     'LBL_PLACES' => 'Places',
-
 );
