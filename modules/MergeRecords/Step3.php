@@ -311,10 +311,6 @@ foreach ($temp_field_array as $field_array) {
                 break;
             case ('date'):
             case ('datetime'):
-            // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
-            case ('datetimecombo'):
-            // END STIC Custom
                 $xtpl->assign("CALENDAR_LANG", "en");
                 $xtpl->assign("USER_DATEFORMAT", '('.$timedate->get_user_date_format().')');
                 $xtpl->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
