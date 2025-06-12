@@ -3633,7 +3633,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Públic Objecti
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Interessats';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Organitzacions';
 
-// Fluxos de treball: llistes adaptades
+// Fluxos de treball: Llistes adaptades
 $app_list_strings['aow_date_options']['now'] = 'Ara';
 $app_list_strings['aow_date_options']['today'] = 'Avui';
 $app_list_strings['aow_date_options']['field'] = 'Aquest camp';
@@ -3647,14 +3647,14 @@ $app_list_strings['aow_date_type_list']['month'] = 'Mesos';
 $app_list_strings['aow_date_type_list']['year'] = 'Anys'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Horari laboral';
 
-// Fluxos de treball: destinataris de missatges
+// Fluxos de treball: Destinataris de missatges
 $app_list_strings['aow_message_type_list']['Phone'] = 'Telèfon';
 $app_list_strings['aow_message_type_list']['Record Phone'] = 'Telèfon del registre';
 $app_list_strings['aow_message_type_list']['Related Field'] = 'Camp relacionat';
 $app_list_strings['aow_message_type_list']['Specify User'] = 'Usuari';
 $app_list_strings['aow_message_type_list']['Users'] = 'Usuaris';
 
-// Mapes: llistes adaptades
+// Mapes: Llistes adaptades
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organitzacions';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Persones';
 $app_list_strings['map_module_type_list']['Cases'] = 'Casos';
@@ -3693,6 +3693,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu ele
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campanya';
