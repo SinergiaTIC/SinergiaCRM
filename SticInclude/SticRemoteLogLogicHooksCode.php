@@ -71,6 +71,21 @@ class SticRemoteLogLogicHooks
             $GLOBALS['log']->{$errorInfo['SuitecrmLevel']}($errorInfo['LogMessage']);
         }
 
+        // Get info about call
+        $request_uri = $_SERVER['REQUEST_URI'] ?? '';
+        $queryString = $_SERVER['QUERY_STRING'] ?? '';
+        $entryPoint = 'N/A';
+        $module = 'N/A';
+        if (str_starts_with($request_uri, '/index.php?entryPoint=')) {
+            $entryPoint = substr($request_uri, strlen('/index.php?entryPoint='));
+            $action = 'entryPoint';
+        } else if(str_starts_with($request_uri, '/SticMonitor.php')) {
+            $action = 'SticMonitor';
+        } else {
+            $module = $_REQUEST['module'] ?? 'N/A';
+            $action = $_REQUEST['action'] ?? 'N/A';
+        }
+
 
         if (!class_exists(\Itspire\MonologLoki\Handler\LokiHandler::class)) {
             require_once 'vendor/autoload.php';
@@ -95,8 +110,9 @@ class SticRemoteLogLogicHooks
                         'http_status_code' => http_response_code(),
                         'is_ajax_request' => (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest'),
 
-                        'crm_module' => $_REQUEST['module'] ?? 'N/A',
-                        'crm_action' => $_REQUEST['action'] ?? 'N/A',
+                        'crm_module' => $module,
+                        'crm_action' => $action,
+                        'crm_entryPoint' => $entryPoint,
 
                         'user_admin' => is_admin($current_user),
                     ],
@@ -128,10 +144,10 @@ class SticRemoteLogLogicHooks
             'time_sent_log' => microtime(true),
             'time_start' => $_SERVER['REQUEST_TIME_FLOAT'],
 
-            'url_string' => $_SERVER['QUERY_STRING'],
+            'url_string' => $queryString, 
             'url_full' => $full_url,
             'url_site' => $site_url,
-            'url_request_uri' => $_SERVER['REQUEST_URI'],
+            'url_request_uri' => $request_uri,
 
             'user_id' => $current_user->id ?? 'unknown',
             'user_name' => $current_user->user_name ?? 'unknown',
