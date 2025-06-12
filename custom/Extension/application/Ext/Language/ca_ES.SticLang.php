@@ -3489,7 +3489,7 @@ $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
 
-// Missatges: Status
+// Missatges: Estats
 $app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
