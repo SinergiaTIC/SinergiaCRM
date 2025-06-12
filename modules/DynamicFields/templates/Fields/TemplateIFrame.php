@@ -67,7 +67,7 @@ class TemplateIFrame extends TemplateURL
         // return $value;
     
         // Gets the height value from the updated vardef or the default value
-        $height = !empty($this->link_target) ? $this->link_target : $this->height;
+        $height = !empty($this->height) ? $this->height : $this->ext4;
     
         // Returns an array with the required data
         return [
@@ -80,11 +80,7 @@ class TemplateIFrame extends TemplateURL
     public function get_field_def()
     {
         $def = parent::get_field_def();
-        // STIC-Custom ART 20241203 - Height defined in iframe field not respected
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/502
-        // $def['height'] = !empty($this->height) ? $this->height : $this->ext4;
-        $def['height'] = !empty($this->link_target) ? $this->link_target : $this->ext4;
-        // END STIC-Custom
+        $def['height'] = !empty($this->height) ? $this->height : $this->ext4;
         return $def;
     }
 }
