@@ -35,6 +35,9 @@ $mod_strings['LBL_STIC_VALIDATION_RESULTS_DESCRIPTION'] = 'Gestiona y revisa los
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Vistas personalizadas';
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Personalización condicional de las vistas de los módulos.';
 
+$mod_strings['LBL_STIC_MESSAGES_QUEUE_LINK_TITLE'] = 'Cola de mensajes de teléfono';
+$mod_strings['LBL_STIC_MESSAGES_QUEUE_DESCRIPTION'] = 'Gestión de la cola de mensajes salientes.';
+
 $mod_strings['LBL_STIC_SETTINGS_LINK_TITLE'] = 'Configuración';
 $mod_strings['LBL_STIC_SETTINGS_DESCRIPTION'] = 'Opciones de configuración de SinergiaCRM.';
 
