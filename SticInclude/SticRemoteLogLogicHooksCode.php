@@ -77,8 +77,10 @@ class SticRemoteLogLogicHooks
         $entryPoint = 'N/A';
         $module = 'N/A';
         if (str_starts_with($request_uri, '/index.php?entryPoint=')) {
-            $entryPoint = substr($request_uri, strlen('/index.php?entryPoint='));
-            $action = 'entryPoint';
+            $action = 'EntryPoint';
+            $entryPointWithParams = substr($request_uri, strlen('/index.php?entryPoint='));
+            $entryPontParts = explode('&', $entryPointWithParams, 2);
+            $entryPoint = $entryPontParts[0];
         } else if(str_starts_with($request_uri, '/SticMonitor.php')) {
             $action = 'SticMonitor';
         } else {
@@ -112,7 +114,7 @@ class SticRemoteLogLogicHooks
 
                         'crm_module' => $module,
                         'crm_action' => $action,
-                        'crm_entryPoint' => $entryPoint,
+                        'crm_entrypoint' => $entryPoint,
 
                         'user_admin' => is_admin($current_user),
                     ],
