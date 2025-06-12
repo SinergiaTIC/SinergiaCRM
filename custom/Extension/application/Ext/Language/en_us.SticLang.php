@@ -3628,4 +3628,5 @@ $app_list_strings['trackers_actions_list']['listview'] = 'Records listed';
 $app_list_strings['trackers_actions_list']['update'] = 'Record updated';
 $app_list_strings['trackers_actions_list']['deleted'] = 'Record deleted';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'User login';
+$app_list_strings['trackers_actions_list']['login_failed'] = 'Login failed';
 $app_list_strings['trackers_actions_list']['logout'] = 'User logout';

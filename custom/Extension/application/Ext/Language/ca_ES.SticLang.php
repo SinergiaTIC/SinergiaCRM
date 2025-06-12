@@ -3662,4 +3662,5 @@ $app_list_strings['trackers_actions_list']['listview'] = 'Registros listados';
 $app_list_strings['trackers_actions_list']['update'] = 'Registre modificat';
 $app_list_strings['trackers_actions_list']['deleted'] = 'Registre eliminat';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuari connectat';
+$app_list_strings['trackers_actions_list']['login_failed'] = 'Login fallido';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
