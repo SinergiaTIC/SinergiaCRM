@@ -1689,7 +1689,7 @@ class ExternalReporting
         // Get the current list or return if not exists
         $currentList = $app_list_strings[$listName] ?? null;
         if (!$currentList) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "The referenced dropdown list [{$listName}] is not available. Ommited");
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "The referenced dropdown list [{$listName}] is not available. Ommited");
             return;
         }
 
