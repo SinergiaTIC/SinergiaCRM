@@ -3488,9 +3488,9 @@ $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Outbound';
 
 // Messages: Status
+$app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Sent';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
-$app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 
 // Messages: Parent types
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Accounts';
@@ -3616,7 +3616,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Targets';
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Leads';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Accounts';
 
-// Workflows: customized lists
+// Workflows: Customized lists
 $app_list_strings['aow_date_options']['now'] = 'Now';
 $app_list_strings['aow_date_options']['today'] = 'Today';
 $app_list_strings['aow_date_options']['field'] = 'This field';
@@ -3630,12 +3630,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
-// Fluxos de treball: destinataris de missatges
+// Workflows: Message recipients types
 $app_list_strings['aow_message_type_list']['Phone'] = 'Phone';
 $app_list_strings['aow_message_type_list']['Record Phone'] = 'Record Phone';
 $app_list_strings['aow_message_type_list']['Related Field'] = 'Related Field';
 $app_list_strings['aow_message_type_list']['Specify User'] = 'User';
 $app_list_strings['aow_message_type_list']['Users'] = 'Users';
+
 // Campaigns: Campaign types
 $app_list_strings['campaign_type_dom'][''] = '';
 $app_list_strings['campaign_type_dom']['Telesales'] = 'Telesales';
@@ -3657,6 +3658,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaign';
