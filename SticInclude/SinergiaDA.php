@@ -164,7 +164,7 @@ class ExternalReporting
 
         // Check number of non-admin users enabled
         // Get configured limit for non-admin user processing
-        if (is_numeric($sugar_config['stic_sinergiada']['max_users_processed'])) {
+        if (is_numeric($sugar_config['stic_sinergiada']['max_users_processed'] ?? null)) {
             $maxNonAdminUsers = $sugar_config['stic_sinergiada']['max_users_processed'];
             $normalUsersEnabled = $db->query("SELECT
                                                     distinct u.id
@@ -368,7 +368,7 @@ class ExternalReporting
                 switch ($moduleName) {
                     case 'Cases':
                         // exclude this field because there is another with same name
-                        if ($fieldV['id_name'] == 'account_id') {
+                        if (($fieldV['id_name'] ?? null) == 'account_id') {
                             continue 2;
                         }
                         break;
@@ -439,7 +439,7 @@ class ExternalReporting
                                 $joinLabel = empty($joinLabel) || $joinLabel == $joinModuleRelLabel ? $txModuleName : $joinLabel;
 
                                 // Check if the relationship is an autorelationship & prepare autorelationship data for use later
-                                if ($fieldV['module'] == $moduleName) {
+                                if (($fieldV['module'] ?? null) == $moduleName) {
                                     
                                     // Check if the autorelationship is excluded & skip it if it is
                                     if(in_array("{$fieldV['module']}:{$fieldV['link']}", $this->evenExcludedAutoRelationships)){
@@ -454,7 +454,7 @@ class ExternalReporting
                                     $this->autoRelationshipsRegistered[$fieldV['link']] = $fieldV['table'];
                                 }
 
-                                $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel, $fieldV['isAutoRelationship']);
+                                $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel, ($fieldV['isAutoRelationship'] ?? null));
 
                                 if (empty($res)) {
                                     continue 2;
