@@ -3490,11 +3490,11 @@ $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
 
 // Missatges: Status
+$app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
-$app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 
-// Missatges: Parent types
+// Missatges: Tipus de registres pare
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interessats';
