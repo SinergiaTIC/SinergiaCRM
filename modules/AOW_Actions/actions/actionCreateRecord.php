@@ -304,14 +304,19 @@ class actionCreateRecord extends actionBase
                                     $date = $params['value'][$key][0];
                                 } else {
                                     $dateToUse = $params['value'][$key][0];
-                                    $bean->retrieve($bean->id);
                                     // STIC Custom 20250331 JBL - Fix Uncaught Error: Call to a member function asDB() on null
                                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                                     // $date = $timedate->fromUser($bean->$dateToUse)->asDB();
                                     // STIC Custom 20250613 JBL - Fix Uncaught Error: Use correct date format.
                                     // $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
-                                    $date = $timedate->fromUser($bean->$dateToUse)?->asDB() ?? 
-                                            $timedate->fromUserDate($bean->$dateToUse)?->asDB();
+                                    $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
+                                    // Check for date (without time)
+                                    if ($date == null) {
+                                        $res = $timedate->fromUserDate($bean->$dateToUse);
+                                        if($res !== false) {
+                                            $date = $res?->asDB();
+                                        }
+                                    }
                                     // END STIC Custom 20250613
                                     // END STIC Custom
                                 }
