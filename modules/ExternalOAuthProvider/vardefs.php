@@ -108,6 +108,10 @@ $dictionary['ExternalOAuthProvider'] = [
             'importable' => false,
             'exportable' => false,
             'unified_search' => false,
+            // STIC-Custom 20250612 MHP - Add labels to improve functionality when selecting a connector
+            //             
+            'popupHelp' => 'LBL_CONNECTOR_HELP',
+            // END STIC-Custom
         ],
         'redirect_uri' => [
             'name' => 'redirect_uri',

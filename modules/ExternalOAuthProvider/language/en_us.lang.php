@@ -106,4 +106,10 @@ $mod_strings = [
     'LNK_LIST_EXTERNAL_OAUTH_CONNECTION' => 'External OAuth Connections',
 
     'LBL_OWNER' => 'Owner',
+
+    // STIC-Custom 20250612 MHP - Add labels to improve functionality when selecting a connector
+    // 
+    'LBL_CONNECTOR_HELP' => 'Selecting a connector configures several default options to facilitate provider creation. <br /><br />These options are displayed when selecting each connector, except for the generic connector, which does not configure any default options.',
+    'LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS' => 'DEFAULT OPTIONS CONFIGURED',
+    // END STIC-Custom    
 ];
