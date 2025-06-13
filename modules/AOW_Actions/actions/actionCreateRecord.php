@@ -308,7 +308,11 @@ class actionCreateRecord extends actionBase
                                     // STIC Custom 20250331 JBL - Fix Uncaught Error: Call to a member function asDB() on null
                                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                                     // $date = $timedate->fromUser($bean->$dateToUse)->asDB();
-                                    $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
+                                    // STIC Custom 20250613 JBL - Fix Uncaught Error: Use correct date format.
+                                    // $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
+                                    $date = $timedate->fromUser($bean->$dateToUse)?->asDB() ?? 
+                                            $timedate->fromUserDate($bean->$dateToUse)?->asDB();
+                                    // END STIC Custom 20250613
                                     // END STIC Custom
                                 }
 
