@@ -310,12 +310,22 @@ class actionCreateRecord extends actionBase
                                     // STIC Custom 20250613 JBL - Fix Uncaught Error: Use correct date format.
                                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/678
                                     // $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
-                                    $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
-                                    // Check for date (without time)
-                                    if ($date == null) {
-                                        $res = $timedate->fromUserDate($bean->$dateToUse);
-                                        if($res !== false) {
-                                            $date = $res?->asDB();
+
+                                    // Check if date to use is in db format
+                                    $dateInDbFormat = DateTime::createFromFormat($dformat, $bean->$dateToUse);
+                                    if ($dateInDbFormat !== false) {
+                                        $date = $bean->$dateToUse;
+                                    } else {
+                                        // Date to use is in user format: Can be DateTime or Date
+
+                                        // Check for dateTime
+                                        $date = $timedate->fromUser($bean->$dateToUse)?->asDB();
+                                        // Check for date (without time)
+                                        if ($date == null) {
+                                            $res = $timedate->fromUserDate($bean->$dateToUse);
+                                            if($res !== false) {
+                                                $date = $res?->asDB();
+                                            }
                                         }
                                     }
                                     // END STIC Custom 20250613
