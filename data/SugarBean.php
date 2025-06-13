@@ -3539,8 +3539,10 @@ class SugarBean
                 $monitor->action = 'update';
             }
 
-            // Save the monitor to the database excluding a module which is not understandable as a record
-            if($monitor->module_name != 'SugarFeed'){
+            // Save the monitor to the database excluding modules that are not understandable as a record
+            $excludedModules = ['SugarFeed', 'AOW_Processed', 'SchedulersJobs', 'Import'];
+            // Untrack the innecesary information
+            if (!in_array($monitor->module_name, $excludedModules)) {
                 $trackerManager->saveMonitor($monitor, true, true);
             }
             // END STIC Custom
