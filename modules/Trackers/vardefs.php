@@ -113,13 +113,14 @@ $dictionary['Tracker'] = array(
         'item_summary'=>array(
             'name' => 'item_summary',
             'vname' => 'LBL_ITEM_SUMMARY',
-            'type' => 'varchar',
             'len' => '255',
             'isnull' => 'false',
-            // STIC-Custom 20241016 ART - Tracker Module
+            // STIC-Custom 20250613 ART - Tracker Module
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+            // 'type' => 'varchar',
             // We add the properties, since in extension does not pick them up and then they disappear 
             'inline_edit' => 0,
+            'type' => 'html',
             // END STIC-Custom
         ),
         'date_modified'=>array(

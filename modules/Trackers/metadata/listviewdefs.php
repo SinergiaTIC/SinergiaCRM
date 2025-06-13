@@ -37,7 +37,7 @@ array(
         'link' => false,
     ),
     'ITEM_SUMMARY' => array(
-        'type' => 'varchar',
+        'type' => 'html',
         'label' => 'LBL_ITEM_SUMMARY',
         'width' => '20%',
         'default' => true,
