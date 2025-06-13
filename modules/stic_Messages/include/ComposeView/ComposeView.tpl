@@ -26,7 +26,7 @@
 {sugar_include include=$includes}
 <form class="compose-view" id="ComposeView" name="ComposeView" method="POST" action="index.php?module=stic_Messages&action=Save">
     <input type="hidden" name="module" value="stic_Messages">
-    <input type="hidden" name="action" value="Save">
+    <input type="hidden" name="action" value="SavePopUp">
     <input type="hidden" name="record" value="{$RECORD}">
     {{* <input type="hidden" name="type" value="out">
     <input type="hidden" name="send" value="1"> *}}
@@ -179,6 +179,86 @@
     </div>
 {{sugar_include type='smarty' file=$footerTpl}}
 </div>
+
+{literal}
+<script type="text/javascript">
+    console.log('cccc');
+    $(function(){
+        console.log('dddd');
+        //debugger;
+        
+        const myButtons = $('[id="SAVE"]');
+        xxx = function(event) {
+            event.preventDefault();
+            // _form = document.getElementById('EditView');
+            // _form.action.value='SavePopUp'; 
+            if(check_form('EditView')){
+                // const form = document.getElementById('EditView');
+                //const formData = new FormData(form);
+                //const formData = "{'assessmentId': 4444}";
+                const formDataArray = $('#EditView').serializeArray();
+                const formObject = {};
+
+                $.each(formDataArray, function (i, field) {
+                    if (formObject[field.name]) {
+                        if (!Array.isArray(formObject[field.name])) {
+                            formObject[field.name] = [formObject[field.name]];
+                        }
+                        formObject[field.name].push(field.value);
+                    } else {
+                        formObject[field.name] = field.value;
+                    }
+                });
+
+                const jsonString = JSON.stringify(formObject, null, 2);
+               debugger;
+                $.ajax({
+                    url: "index.php?module=stic_Messages&action=savePopUp",
+                    type:"post",
+                    dataType: "json",
+                    async: false,
+                    data: {
+                        'parent_type':$("#parent_type").val(),
+                        'parent_id':$("#parent_id").val()
+                    },
+                    success: function(res) {
+                        debugger;
+                        if (res.success) {
+                            console.log('good');
+                        } else {
+                            console.log("Error in the controller", res);
+                        }
+                    },
+                    error: function() {
+                        debugger;
+                        console.log("Error send Request");
+                    }
+                });
+
+
+            } else {
+                alert('ko');
+                /*
+                SUGAR.alerts.show('save-success', {
+                    level: 'success', // Green pop-up
+                    title: 'Success',
+                    messages: data.message,
+                    autoClose: true
+                });
+                */
+                // Potentially close the modal or refresh the page
+                // $('#myModal').modal('hide');
+            }
+            return false;
+        }
+        // var _form = document.getElementById('EditView'); _form.action.value='Save'; if(check_form('EditView'))SUGAR.ajaxUI.submitForm(_form);return false;
+        myButtons.removeAttr('onclick');
+        myButtons.on('click', xxx);
+
+    });
+</script>
+{/literal}
+
 {if !$IS_MODAL}
 
     {literal}
@@ -235,6 +315,7 @@
     {/literal}
 
     <script>
+    console.log('bbb');
         {* Compose view has a TEMP ID in case you want to display multi instance of the ComposeView *}
       $( "#template" ).change(function() {ldelim}
           $.fn.stic_MessagesComposeView.onTemplateChange()

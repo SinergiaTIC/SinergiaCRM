@@ -105,8 +105,18 @@ class SevenSMSHelper implements stic_MessagesHelper {
             CURLOPT_TIMEOUT => 7500,
         ];
         $curl = curl_init('https://gateway.seven.io/api/sms');
+        $curl = curl_init('https://gggggateway.sevessssn.io/api/sms');
         curl_setopt_array($curl, $curlOpts);
         $response = curl_exec($curl);
+
+        if ($response === false) {
+            $errorNumber = curl_errno($curl);
+            $errorMessage = curl_error($curl);
+            $GLOBALS['log']->fatal('Error sending SMS' . __METHOD__ . __LINE__ , $errorNumber, $errorMessage);
+            $errorMsg = $errorNumber . '-' . $errorMessage;
+            $response = "{'success': 0, 'message': '$errorMsg'}";
+        }
+
         curl_close($curl);
 
         return $response;

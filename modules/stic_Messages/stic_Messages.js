@@ -143,7 +143,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         type: 'POST',
         data: paramsPost,
         success: function(data) {
-
         var panelBody = $('<div>').append(data).find('#EditView').parent();
 
         var dataPhone = $(source).attr('data-phone');
