@@ -59,9 +59,6 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Delete the sample datas
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Test dataset succesfully deleted.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Errors have occurred while deleting the test dataset. Please review the <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_insertSticData">log</a>.';
 
-$mod_strings['LBL_TRACKERS_TITLE'] = 'Tracker';
-$mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Log of user sessions and actions with records.';
-
 // SinergiaDA
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Rebuild now';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Rebuild and repair the views and other necessary elements for integration with Sinergia Data Analytics. Add new fields if needed.';
@@ -96,5 +93,7 @@ $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Subpanel grouping';
 $mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configure how subpanels are grouped in the detail views';
 
 // Other strings
+$mod_strings['LBL_TRACKERS_TITLE'] = 'Tracker';
+$mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Logging of user sessions and record actions.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Set the email template that will be sent when the system generates the password of a new user.';
