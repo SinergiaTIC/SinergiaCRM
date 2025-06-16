@@ -88,7 +88,7 @@ if (!empty($_REQUEST['identifier'])) {
         $id = $db->quote($id);
 
         //no opt out for users.
-        if (preg_match('/^[0-9A-Za-z\-]*$/', $id) && $module != 'Users') {
+        if (preg_match('/^[0-9A-Za-z\-]*$/', (string) $id) && $module != 'Users') {
 
             // STIC-Custom 202410617 MHP - Audit in email_addresses_audit table the unsubscription action through the campaign email 
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/277
