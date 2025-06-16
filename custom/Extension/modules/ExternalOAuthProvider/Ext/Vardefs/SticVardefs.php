@@ -22,3 +22,5 @@
  */
 
 $dictionary['ExternalOAuthProvider']['fields']['connector']['popupHelp'] = 'LBL_CONNECTOR_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['scope']['popupHelp'] = 'LBL_SCOPE_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['client_secret']['popupHelp'] = 'LBL_CLIENT_SECRET_HELP';

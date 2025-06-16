@@ -20,5 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_CONNECTOR_HELP'] = 'En seleccionar un connector es configuren diverses opcions per defecte per facilitar la creació del proveïdor. <br /><br /> Aquestes opcions es mostren en seleccionar cadascun dels connectors, exceptuant el connector genèric que no configura cap opció per defecte.';
-$mod_strings['LBL_CONNLBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONSECTOR_HELP'] = 'OPCIONS CONFIGURADES PER DEFECTE';
+$mod_strings['LBL_CONNECTOR_HELP'] = "Per facilitar la creació del registre de proveïdor OAuth extern, en seleccionar un connector es configuren diverses opcions per defecte i no caldrà indicar-les. <br /><br /> Aquestes opcions són mostrades a l'àrea inferior i seran actualitzades en seleccionar cadascun dels connectors exceptuant el connector genèric que no configura cap opció per defecte.";
+$mod_strings['LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS'] = 'OPCIONS CONFIGURADES PER DEFECTE';
+$mod_strings['LBL_SCOPE_HELP'] = "Introduïu el nom dels permisos atorgats a l\'aplicació creada al proveïdor de correu extern.";
+$mod_strings['LBL_CLIENT_SECRET_HELP'] = 'Introdueix el valor (no confondre amb l\'ID del secret) del secret generat en l\'aplicació creada al proveïdor de correu extern.';
