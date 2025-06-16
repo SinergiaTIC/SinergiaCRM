@@ -3558,6 +3558,16 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'So
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Entregada';
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
 
+// Monitorización: Acciones
+$app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
+$app_list_strings['trackers_actions_list']['listview'] = 'Registros listados';
+$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
+$app_list_strings['trackers_actions_list']['login_failed'] = 'Inicio de sesión erróneo';
+$app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
+
 // Modificaciones del core de SuiteCRM
 
 // Cadenas generales (procedentes de include)
@@ -3655,13 +3665,3 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
-
-// Monitorizaciones: Acciones
-$app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
-$app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
-$app_list_strings['trackers_actions_list']['listview'] = 'Registros listados';
-$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
-$app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
-$app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
-$app_list_strings['trackers_actions_list']['login_failed'] = 'Login fallido';
-$app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
