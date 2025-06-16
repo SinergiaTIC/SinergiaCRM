@@ -5,6 +5,7 @@
  *
  * This class is used to rebuild the Sinergia Data Analytics system.
  */
+#[\AllowDynamicProperties]
 class SinergiaDARebuild
 {
 
@@ -46,7 +47,7 @@ class SinergiaDARebuild
             require_once 'SticInclude/SinergiaDA.php';
 
             // Set the force request parameter
-            $_REQUEST['force'] = $_REQUEST['force'] == 1 ? true : false;
+            $_REQUEST['force'] = ($_REQUEST['force'] ?? null) == 1 ? true : false;
 
             // Create views via the ExternalReporting class
             $r = new ExternalReporting();
@@ -93,7 +94,7 @@ class SinergiaDARebuild
     public static function callApiRebuildSDA($callUpdateModel = false, $rebuildFilter = 'all')
     {
         global $sugar_config;
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Rebuilding SinergiaDA via API");
+        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Rebuilding SinergiaDA via API");
 
         $db_user_name = $sugar_config['dbconfig']['db_user_name'];
 
@@ -130,13 +131,16 @@ class SinergiaDARebuild
 
         // Check if any error occurred
         if (curl_errno($ch)) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Rebuilding SinergiaDA via API. ERROR " . curl_error($ch));
+            $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Rebuilding SinergiaDA via API. ERROR " . curl_error($ch));
+        } else{
+            $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Rebuilding SinergiaDA via API. OK " );
+
         }
 
         // Close the curl instance
         curl_close($ch);
 
-        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Rebuilding SinergiaDA via API. END");
+        $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Rebuilding SinergiaDA via API. END");
     }
 
 }

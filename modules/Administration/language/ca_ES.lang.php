@@ -322,10 +322,17 @@ $mod_strings = array(
     'LBL_LOCALE_DEFAULT_TIME_FORMAT' => 'Format d\'hora per defecte',
     'LBL_LOCALE_EXAMPLE_NAME_FORMAT' => 'Exemple',
     'LBL_LOCALE_NAME_FORMAT_DESC' => '"s" Salutació<br>"f" Nom<br>"l" Cognom',
-    'LBL_LOCALE_TITLE' => 'Configuració regional',
-    'LBL_LOCALE' => 'Configuració regional per defecte del sistema',
-    'LBL_MAILBOX_DESC' => 'Configuració dels comptes dels quals cal monitoritzar el correu entrant.',
-    'LBL_MAILBOX_OUTBOUND_DESC' => 'Configuració de les opcions de correu electrònic de sortida.',
+    'LBL_LOCALE_TITLE' => 'Configuració regional del sistema',
+    'LBL_LOCALE' => 'Estableix la configuració regional per defecte',
+    'LBL_MAILBOX_DESC' => 'Configureu els comptes pels quals cal monitoritzar el correu entrant.',
+    'LBL_MAILBOX_OUTBOUND_DESC' => 'Configureu les opcions de correu electrònic de sortida.',
+
+    'LBL_MANAGE_EXTERNAL_OAUTH_CONNECTIONS' => 'Connexions OAuth Externes',
+    'LBL_MANAGE_EXTERNAL_OAUTH_CONNECTIONS_DESC' => 'Configurar connexions OAuth externes',
+
+    'LBL_MANAGE_EXTERNAL_OAUTH_PROVIDERS' => 'Proveïdors OAuth Externs',
+    'LBL_MANAGE_EXTERNAL_OAUTH_PROVIDERS_DESC' => 'Configurar proveïdors OAuth externs',
+
     'LBL_MANAGE_CURRENCIES' => 'Monedes',
     'LBL_MANAGE_LANGUAGES' => 'Idiomes',
     'LBL_MANAGE_LICENSE_TITLE' => 'Administració de llicències',
