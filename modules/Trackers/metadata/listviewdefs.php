@@ -42,6 +42,7 @@ array(
         'width' => '20%',
         'default' => true,
         'link' => false,
+        'customCode' => '<div style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{$ITEM_SUMMARY}</div>',
     ),
     'SESSION_ID' => array(
         'name' => 'session_id',
