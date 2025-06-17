@@ -1,7 +1,5 @@
 <?php
 
-use function GuzzleHttp\default_user_agent;
-
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -96,13 +94,30 @@ class stic_Work_Calendar extends Basic
             $endDate = $timedate->asUser($endDate, $current_user);                
             $this->name = $assignedUser->name . " - " . $typeLabel . " - " . $startDate . " - " . substr($endDate, -5);
         } else {
-            $endDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
-            $endDate = $endDate->modify("next day");
+            // If it is a new record or the type before the modification was not an all-day one
+            if (!isset($this->fetched_row['type']) || !in_array($this->fetched_row['type'], self::ALL_DAY_TYPES)) 
+            {
+                if ($_REQUEST["action"] != "Save") {
+                    // Set the time to 00:00:00 of the start date and time
+                    $auxStartDate = date('Y-m-d 00:00:00', strtotime($this->start_date));
+                
+                    // Convert $auxStartDate to UTC
+                    $userTZ = $current_user->getPreference('timezone');
+                    $dateInUserTZ = new DateTime($auxStartDate, new DateTimeZone($userTZ));
+                    $auxStartDate = $dateInUserTZ->setTimezone(new DateTimeZone('UTC'));
+                } else {
+                    // The time now comes to 00:00:00 as it is updated in the user interface
+                    $auxStartDate = $startDateInTZ;
+                } 
+
+                // Update the start date and time, the end date and time after adding one day, and the record name
+                $this->start_date = $timedate->asDb($auxStartDate, $current_user);  
+                $this->end_date = $timedate->asDb($auxStartDate->modify("next day"), $current_user);                         
+            }
             $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDate, 0, 10);            
-            $this->end_date = $timedate->asDb($endDate, $current_user);                         
         }
 
-        if ($_REQUEST["action"] != "Save" && $_REQUEST["action"] != "runMassUpdateDates") // MassUpdate, API, Import..
+        if ($_REQUEST["action"] != "Save") // MassUpdate, API, Import..
         {
             // Reactivate disable date_format to work with the rest of the date type fields
             $GLOBALS['disable_date_format'] = true;
