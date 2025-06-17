@@ -296,7 +296,11 @@ class MysqliManager extends MysqlManager
         // STIC Custom 20250331 JBL - Fix Uncaught TypeError: Argument #2 ($string) must be of type string
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
         // return mysqli_real_escape_string($this->getDatabase(), $this->quoteInternal($string));
-        return mysqli_real_escape_string($this->getDatabase(), (string) $this->quoteInternal($string));
+        try {
+            return mysqli_real_escape_string($this->getDatabase(), (string) $this->quoteInternal($string));
+        } catch (Throwable $e) {
+            return mysqli_real_escape_string($this->getDatabase(), "");
+        }
         // END STIC Custom
     }
 

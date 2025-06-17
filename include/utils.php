@@ -2699,7 +2699,11 @@ function purify_html(?string $value, array $extraOptions = []): string {
 
     $sanitizer = new SuiteCRM\HtmlSanitizer($extraOptions);
 
-    $cleanedValue = htmlentities($sanitizer->clean($value, true));
+    // STIC Custom 20250304 JBL - Fix TypeError: argument must be of type string
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    // $cleanedValue = htmlentities($sanitizer->clean($value, true));
+    $cleanedValue = htmlentities($sanitizer->clean((string) $value, true));
+    // END STIC Custom
     $decoded = html_entity_decode($cleanedValue);
     $doubleDecoded = html_entity_decode($decoded);
 

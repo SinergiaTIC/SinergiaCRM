@@ -1626,7 +1626,15 @@ class AOR_Report extends Basic
                             break;
 
                         case 'Date':
-                            $params = unserialize(base64_decode($condition->value));
+                            // STIC Custom 20250315 JBL - Fix TypeError: base64_decode(): Argument must be of type string
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            // $params = unserialize(base64_decode($condition->value));
+                            if (is_string($condition->value)) {
+                                $params = unserialize(base64_decode($condition->value));
+                            } else {
+                                $params = $condition->value;
+                            }
+                            // END STIC Custom
 
                             // Fix for issue #1272 - AOR_Report module cannot update Date type parameter.
                             if ($params == false) {
