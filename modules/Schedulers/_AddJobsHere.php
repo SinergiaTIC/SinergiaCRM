@@ -453,10 +453,10 @@ function removeDocumentsFromFS()
     $resource = $db->limitQuery("SELECT * FROM cron_remove_documents WHERE 1=1 ORDER BY date_modified ASC", 0, 100);
     $return = true;
     while ($row = $db->fetchByAssoc($resource)) {
-        $bean = BeanFactory::getBean($row['module']);
-        $bean->retrieve($row['bean_id'], true, false);
         // STIC Custom 20241029 ART - "Removal of Documents from Filesystem" task has erratic behavior
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/41
+        // $bean = BeanFactory::getBean($row['module']);
+        // $bean->retrieve($row['bean_id'], true, false);
         // if (empty($bean->id)) {
         //     $isSuccess = true;
         //     $bean->id = $row['bean_id'];
@@ -492,6 +492,105 @@ function removeDocumentsFromFS()
         // } else {
         //     $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($row['id']));
         // }
+
+        $module = $row['module'];
+        $beanId = $row['bean_id'];
+        $entryId = $row['id'];
+
+        // Check if the module actually exists and returns a valid bean
+        $bean = BeanFactory::getBean($module);
+        if (!$bean || !($bean instanceof SugarBean)) {
+            // Module is invalid, delete the record from the temp table
+            $GLOBALS['log']->debug("removeDocumentsFromFS: Invalid or non-existent module '$module'. Removing entry ID: $entryId");
+
+            // Calculate the directory path based on beanId structure
+            $directoryPath = substr($beanId, 0, 2) . '/' . substr($beanId, 2, 2) . '/' . substr($beanId, 4, 2) . '/' . substr($beanId, 6) . '/' . $beanId;
+            $fullPath = 'upload://deleted/' . $directoryPath;
+            
+            // Check if directory exists using real path - use the actual upload directory
+            $uploadDir = isset($GLOBALS['sugar_config']['upload_dir']) ? $GLOBALS['sugar_config']['upload_dir'] : 'upload';
+
+            // If uploadDir is relative, convert it to absolute using the current working directory
+            if (!(substr($uploadDir, 0, 1) === '/' || (strlen($uploadDir) > 1 && substr($uploadDir, 1, 1) === ':'))) {
+                $uploadDir = rtrim(getcwd(), '/\\') . DIRECTORY_SEPARATOR . ltrim($uploadDir, '/\\');
+            }
+
+            // Build real system path to the file/folder to delete
+            $realPath = rtrim($uploadDir, '/\\') . DIRECTORY_SEPARATOR . 'deleted' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $directoryPath);
+            
+            // If the path is a directory, try to recursively remove it and its contents
+            if (is_dir($realPath)) {
+                try {
+                    $isSuccess = rmdir_recursive($fullPath);
+                    if ($isSuccess) {
+                        $GLOBALS['log']->debug("removeDocumentsFromFS: Successfully removed directory: $fullPath");
+                        
+                        // Clean up empty parent directories, stopping at "upload/deleted"
+                        $pathParts = explode('/', $directoryPath);
+                        array_pop($pathParts); // Remove the beanId part
+                        
+                        while (!empty($pathParts)) {
+                            $parentPath = 'upload://deleted/' . implode('/', $pathParts);
+
+                            if (is_dir($parentPath)) {
+                                $scanned_directory = scandir($parentPath, SCANDIR_SORT_ASCENDING);
+                                if ($scanned_directory !== false && count($scanned_directory) <= 2) {
+                                    if (!rmdir($parentPath)) {
+                                        $GLOBALS['log']->debug("Error removing empty parent directory: $parentPath");
+                                        break; // Stop if we can't remove this level
+                                    }
+                                } else {
+                                    break; // Directory not empty, stop cleaning up
+                                }
+                            }
+                            array_pop($pathParts);
+                        }
+
+                        // Remove the row from the tracking table
+                        $db->query("DELETE FROM $tableName WHERE id = " . $db->quoted($entryId));
+                    } else {
+                        $GLOBALS['log']->debug("removeDocumentsFromFS: Failed to remove directory: $fullPath");
+                    }
+                } catch (Exception $e) {
+                    $GLOBALS['log']->debug("removeDocumentsFromFS: Error removing directory $fullPath: {$e->getMessage()}");
+                }
+            } else {
+                // Delete if it is an individual file
+                if (is_file($realPath)) {
+                    unlink($realPath);
+                    $GLOBALS['log']->debug("File deleted: $realPath");
+
+                    // Cleaning of empty directories
+                    $pathParts = explode(DIRECTORY_SEPARATOR, $realPath);
+
+                    // Stop before reaching “upload/deleted”
+                    while (count($pathParts) > 2) {
+                        $currentDir = implode(DIRECTORY_SEPARATOR, $pathParts);
+                        if (@is_dir($currentDir)) {
+                            $items = scandir($currentDir);
+                            if (count($items) <= 2) {
+                                rmdir($currentDir);
+                                $GLOBALS['log']->debug("Empty directory deleted: $currentDir");
+                            } else {
+                                // Directory not empty
+                                break;
+                            }
+                        }
+                        array_pop($pathParts);
+                    }
+
+                    // Remove the row from the tracking table
+                    $db->query("DELETE FROM $tableName WHERE id = " . $db->quoted($entryId));
+                } else {
+                    $GLOBALS['log']->debug("No directory or file exists in: $realPath");
+                }
+            }
+
+            continue;
+        }
+
+        // Try to retrieve the bean (record)
+        $bean->retrieve($beanId, true, false);
 
         // If the bean (record) has a valid ID (meaning it exists)
         if ($bean->id) {
