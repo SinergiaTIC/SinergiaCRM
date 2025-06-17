@@ -381,8 +381,19 @@ class SugarView
             // Get the listview from any module except the Tracker module
             if ($action == 'index' && $this->type == 'list' && $this->module != 'Trackers') {
                 $monitor->action = 'listview';
-                // Show the listview search as a json
-                $monitor->item_summary = json_encode($_REQUEST, JSON_UNESCAPED_UNICODE);
+
+                // Filter the $_REQUEST to remove empty keys to use later in the url
+                $filteredRequest = array_filter($_REQUEST, function ($value) {
+                    return !(
+                        $value == '' ||
+                        $value == null ||
+                        $value == false ||
+                        (is_array($value) && count($value) == 0)
+                    );
+                });
+
+                // Show the listview search as a url
+                $monitor->setValue('item_summary', http_build_query($filteredRequest));
                 $monitor->visible = true;
 
                 $trackerManager->saveMonitor($monitor, true, true);
