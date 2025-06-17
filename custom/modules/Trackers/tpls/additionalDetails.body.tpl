@@ -19,17 +19,16 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  *}
-{if !empty($FIELD.ITEM_ID)}
+{if !empty($FIELD.LINK_URL)}
     <div>
-        <a href="index.php?action=DetailView&module={$FIELD.MODULE_CODE}&record={$FIELD.ITEM_ID}">{$FIELD.ITEM_SUMMARY}</a>
+        <a href="{$FIELD.LINK_URL}">{$FIELD.LINK_TEXT}</a>
     </div>
 {/if}
-{if empty($FIELD.ITEM_ID)}
+{if empty($FIELD.LINK_URL)}
     <div>
         <strong>{$FIELD.ACTION}</strong>
     </div>
 {/if}
-
 <br>
 {if !empty($FIELD.ASSIGNED_USER_NAME)}
     <div>

@@ -33,6 +33,19 @@ function additionalDetailsTracker($fields, ?SugarBean $bean = null, $params = ar
     // Virtual field to take the internal value of module_name
     $fields['MODULE_CODE'] = array_search($bean->module_name, $app_list_strings['moduleList']);
 
+    // If the item_id is not empty, create the url with the item_id and the module_name
+    if (!empty($fields['ITEM_ID'])) {
+        $fields['LINK_URL'] = 'index.php?action=DetailView&module=' . $fields['MODULE_CODE']. '&record=' . $fields['ITEM_ID'];
+        $fields['LINK_TEXT'] = $fields['ITEM_SUMMARY'];
+    // Create the url with the listview showing only the action
+    } else if(array_search($bean->action, $app_list_strings['trackers_actions_list']) == "listview") {
+        $fields['LINK_URL'] = 'index.php?' . $fields['ITEM_SUMMARY'];
+        $fields['LINK_TEXT'] = $fields['ACTION'];
+    // Otherwise, show the action
+    } else {
+        $fields['LINK_URL'] = '';
+    }
+
     // Reassign module_name to call Trackers and not the tracked module
     $bean->module_name = $bean->module_dir;
 
