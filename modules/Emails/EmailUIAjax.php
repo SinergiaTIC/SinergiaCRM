@@ -1261,7 +1261,7 @@ eoq;
         ///////////////////////////////////////////////////////////////////////////
         ////    INBOUND EMAIL ACCOUNTS
 
-        // STIC-Custom 20250523 MHP - 
+        // STIC-Custom 20250523 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/657
         // Remove this deprecated code as it is not necessary to list SMTP accounts when entering mail settings from the user profile
         // Removing it prevents a system-override outgoing email account from being incorrectly created if the "Users may send as this account's identity" option is disabled on the general email account.
         // case "retrieveAllOutbound":
