@@ -77,7 +77,7 @@ class stic_Work_Calendar extends Basic
     public function save($check_notify = true)
     {
         global $app_list_strings, $current_user, $timedate;
-        if ($_REQUEST["action"] != "saveHTMLField") // Inline Edit
+        if ($_REQUEST["action"] && $_REQUEST["action"] != "saveHTMLField") // Inline Edit
         {
             $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
             $typeLabel = $app_list_strings['stic_work_calendar_types_list'][$this->type];
@@ -120,7 +120,7 @@ class stic_Work_Calendar extends Basic
             }      
 
             // Set weekday field
-            if (isset($this->fetched_row['start_date']) && $this->start_date != $this->fetched_row['start_date']) {
+            if ($this->start_date != $this->fetched_row['start_date']) {
                 $this->weekday = date('w', strtotime($startDateInTZ));
             }
         }       
