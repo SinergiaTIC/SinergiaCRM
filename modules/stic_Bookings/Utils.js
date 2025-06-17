@@ -595,8 +595,8 @@ function openResourceSelectPopup(ln) {
     SUGAR.language.languages["app_list_strings"]["stic_resources_types_list"];
   var filteredTypes = Object.keys(resourceTypes).filter(function (type) {
     return isPlaceBooking
-      ? type === "places"
-      : type !== "places" && type !== "";
+      ? type === "place"
+      : type !== "place" && type !== "";
   });
 
   var typeQuery = filteredTypes

@@ -84,6 +84,7 @@ class stic_Bookings_CalendarController extends SugarController
             $filteredResources = explode(',', $_REQUEST['filteredResources']);
         }
 
+
         // Get the data to be displayed in the calendar according to stic_bookings_calendar_availability_mode param
         $calendarItems = array();
         if ($availabilityMode == "true") {
@@ -91,10 +92,17 @@ class stic_Bookings_CalendarController extends SugarController
         } else {
             $calendarItems = $this->getBookedResources($startDate, $endDate, $filteredResources);
         }
-
+        
         // Convert calendar items into calendar printable objects.
         $calendarObjects = array();
         foreach ($calendarItems as $calendarItem) {
+            if (
+                isset($_REQUEST['module']) && $_REQUEST['module'] === 'stic_Bookings_Calendar' &&
+                isset($calendarItem['resourceType']) && $calendarItem['resourceType'] === 'places'
+            ) {
+                continue;
+            }
+
             $calendarObject = new CalendarObject($calendarItem, $userTimeZone);
             // If the CalendarObject is in-bounds, add it to the output.
             // Probably we don't need this here because we are filtering the bookings before, but we leave it just in case.
@@ -147,7 +155,6 @@ class stic_Bookings_CalendarController extends SugarController
         $resources = $resourcesBean->get_full_list('name');
         $bookedResources = array();
         $query = "stic_bookings.end_date >= '$start_date' AND stic_bookings.start_date <= '$end_date' AND stic_bookings.status != 'cancelled'";
-
         foreach ($resources as $resource) {
             if (!$filteredResources || in_array($resource->id, $filteredResources)) {
                 $relBeans = $resource->get_linked_beans(
@@ -168,6 +175,7 @@ class stic_Bookings_CalendarController extends SugarController
                         'id' => $relBean->id,
                         'recordId' => $relBean->id,
                         'resourceId' => $resource->id,
+                        'resourceType'=> $resource->type,
                         // 'backgroundColor' => $resource->color,
                         // 'borderColor' => $resource->color,
                         'allDay' => $relBean->all_day,

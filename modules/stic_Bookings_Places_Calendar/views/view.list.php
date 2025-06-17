@@ -40,7 +40,7 @@ class stic_Bookings_Places_CalendarViewList extends ViewList
 
     public function display()
     {
-        global $mod_strings, $current_user, $app_strings, $app_list_strings, $sugar_config;
+        global $mod_strings, $current_user, $app_strings, $app_list_strings, $sugar_config, $timedate;
         SticViews::display($this);
 
         $initialCalendarDate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : '';
@@ -55,6 +55,11 @@ class stic_Bookings_Places_CalendarViewList extends ViewList
         $lang = json_encode($lang[0]);
         echo <<<SCRIPT
         <script>lang = $lang;</script>
+    SCRIPT;
+
+        $start_weekday = $GLOBALS['current_user']->get_first_day_of_week();
+        echo <<<SCRIPT
+        <script>start_weekday = $start_weekday;</script>
     SCRIPT;
 
         // Retrieve user configuration for the availability mode

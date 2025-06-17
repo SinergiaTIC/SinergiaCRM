@@ -228,8 +228,16 @@ function initializeCalendar() {
         $('.fc-filterButton-button')
           .html('<span class="glyphicon glyphicon-filter"></span>')
       }, 0);
-    }
-      
+    },
+    firstDay: start_weekday,
+    // Define business hours. This will set a different color for non business hours
+      daysOfWeek: [1, 2, 3, 4, 5],
+      startTime: "07:00",
+      endTime: "21:00",
+    // ToDo
+    // slotMinTime: "06:00:00",
+    // slotMaxTime: "24:00:00",
+    locale: lang,
   });
   if (!$('#filtersModal').length) {
     $('body').append(`

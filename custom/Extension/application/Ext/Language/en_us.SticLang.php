@@ -3167,7 +3167,7 @@ $app_list_strings['stic_resources_types_list']['office_materials'] = 'Office mat
 $app_list_strings['stic_resources_types_list']['electronics'] = 'Electronics';
 $app_list_strings['stic_resources_types_list']['technical_equipment'] = 'Technical equipment';
 $app_list_strings['stic_resources_types_list']['accessory'] = 'Accessory';
-$app_list_strings['stic_resources_types_list']['places'] = 'Places';
+$app_list_strings['stic_resources_types_list']['place'] = 'Places';
 $app_list_strings['stic_resources_types_list']['other'] = 'Other';
 
 // Resources: Status

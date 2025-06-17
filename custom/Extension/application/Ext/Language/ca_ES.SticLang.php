@@ -3163,7 +3163,7 @@ $app_list_strings['stic_resources_types_list']['office_materials'] = "Material d
 $app_list_strings['stic_resources_types_list']['electronics'] = 'Electrònica';
 $app_list_strings['stic_resources_types_list']['technical_equipment'] = 'Equipament tècnic';
 $app_list_strings['stic_resources_types_list']['accessory'] = 'Accessoris';
-$app_list_strings['stic_resources_types_list']['places'] = 'Plaça';
+$app_list_strings['stic_resources_types_list']['place'] = 'Plaça';
 $app_list_strings['stic_resources_types_list']['other'] = 'Altres';
 
 // Recursos: Estats

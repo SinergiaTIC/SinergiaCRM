@@ -339,6 +339,7 @@ function loadCalendar() {
         }
       }
     },
+    firstDay: start_weekday,
     // Define business hours. This will set a different color for non business hours
     businessHours: {
       daysOfWeek: [1, 2, 3, 4, 5],
@@ -350,8 +351,6 @@ function loadCalendar() {
     // slotMinTime: "06:00:00",
     // slotMaxTime: "24:00:00",
     locale: lang,
-    // plugins: [ momentTimezonePlugin ],
-    timeZone: "UTC",
   });
 
   calendar.render();

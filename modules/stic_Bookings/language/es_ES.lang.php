@@ -79,6 +79,7 @@ $mod_strings = array(
 
     // Cadenas de la sección "Añadir recursos"
     'LBL_RESOURCES' => 'Recursos',
+    'LBL_PLACES' => 'Plazas',
     'LBL_RESOURCES_NAME' => 'Nombre',
     'LBL_RESOURCES_STATUS' => 'Estado',
     'LBL_RESOURCES_TYPE' => 'Tipo',
@@ -90,7 +91,11 @@ $mod_strings = array(
     'LBL_RESOURCES_GENDER' => 'Género de la plaza',
     'LBL_RESOURCES_PLACE_TYPE' => 'Tipo de plaza',
     'LBL_RESOURCES_USER_TYPE' => 'Tipo de usuario',
+    'LBL_RESOURCES_AMOUNT_DAY_OCCUPIED' => 'Importe por plaza ocupada',
+    'LBL_RESOURCES_AMOUNT_DAY_UNOCCUPIED' => 'Importe por plaza desocupada',
+    'LBL_RESOURCES_AMOUNT_COPAYMENT' => 'Importe copago',
     'LBL_RESOURCES_ADD' => 'Añadir recurso',
+    'LBL_RESOURCES_PLACES_ADD' => 'Añadir plazas',
     'LBL_RESOURCES_ERROR' => 'Recurso en conflicto con otra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hay recursos que no están disponibles en esta fecha.',
     'LBL_RESOURCES_STATUS_ERROR' => 'No se puede activar la reserva en estas fechas, hay recursos que no están disponibles.',

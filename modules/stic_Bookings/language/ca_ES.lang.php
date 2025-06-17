@@ -79,6 +79,7 @@ $mod_strings = array(
 
     // Cadenes de la secció "Afegeix recursos"
     'LBL_RESOURCES' => 'Recursos',
+    'LBL_PLACES' => 'Places',
     'LBL_RESOURCES_NAME' => 'Nom',
     'LBL_RESOURCES_STATUS' => 'Estat',
     'LBL_RESOURCES_TYPE' => 'Tipus',
@@ -90,7 +91,11 @@ $mod_strings = array(
     'LBL_RESOURCES_GENDER' => 'Gènere de la plaça',
     'LBL_RESOURCES_PLACE_TYPE' => 'Tipus de plaça',
     'LBL_RESOURCES_USER_TYPE' => "Tipus d'usuari",
+    'LBL_RESOURCES_AMOUNT_DAY_OCCUPIED' => 'Import per plaça ocupada',
+    'LBL_RESOURCES_AMOUNT_DAY_UNOCCUPIED' => 'Import per plaça desocupada',
+    'LBL_RESOURCES_AMOUNT_COPAYMENT' => 'Import copagament',
     'LBL_RESOURCES_ADD' => 'Afegeix un recurs',
+    'LBL_RESOURCES_PLACES_ADD' => 'Afegeix places',
     'LBL_RESOURCES_ERROR' => 'Recurs en conflicte amb una altra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hi ha recursos que no estan disponibles en aquesta data.',
     'LBL_RESOURCES_STATUS_ERROR' => 'No es pot activar la reserva en aquestes dates, hi ha recursos que no estan disponibles.',
