@@ -593,7 +593,7 @@ function removeDocumentsFromFS()
             // Module no longer exists or is invalid
             $GLOBALS['log']->debug("Invalid or non-existent module '$module'. Removing associated filesystem data for entry ID: $entryId");
 
-            // Construct path like ab/cd/ef/ghijklmn/abcdefgh
+            // Construct the path
             $directoryPath = substr($beanId, 0, 2) . '/' . substr($beanId, 2, 2) . '/' . substr($beanId, 4, 2) . '/' . substr($beanId, 6) . '/' . $beanId;
 
             $deleteFromFilesystem($directoryPath, $entryId);
