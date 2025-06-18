@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_CONNECTOR_HELP'] = "Per facilitar la creació del registre de proveïdor OAuth extern, en seleccionar un connector es configuren diverses opcions per defecte i, en conseqüència, no caldrà indicar-les. <br /><br /> Aquestes opcions són mostrades a l'àrea inferior i seran actualitzades en seleccionar cadascun dels connectors exceptuant el connector genèric que no configura cap opció per defecte. . <br /><br /> Més informació a l'apartat de <a href='https://wikisuite.sinergiacrm.org/index.php?title=Configuraci%C3%B3n_de_correo#Proveedores_OAuth_externos' target='_blank'>Proveïdors Oauth Externs de la de la wiki</a>";
-$mod_strings['LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS'] = 'OPCIONS CONFIGURADES PER DEFECTE';
-$mod_strings['LBL_SCOPE_HELP'] = "Introduïu el nom dels permisos atorgats a l\'aplicació creada al proveïdor de correu extern.";
-$mod_strings['LBL_CLIENT_SECRET_HELP'] = 'Introdueix el valor (no confondre amb l\'ID del secret) del secret generat en l\'aplicació creada al proveïdor de correu extern.';
+$mod_strings['LBL_CONNECTOR_HELP'] = "Per facilitar la creació del registre de proveïdor OAuth extern, en seleccionar un connector es configuren diverses opcions per defecte i, en conseqüència, no cal indicar-les explícitament. Les opcions configurades per defecte es mostren a l'àrea inferior. Cal tenir en compte que el connector genèric no configura cap opció per defecte. Més informació a l'apartat <a href='https://wikisuite.sinergiacrm.org/index.php?title=Configuraci%C3%B3n_de_correo#Proveedores_OAuth_externos' target='_blank'>Proveïdors Oauth Externs</a> del wiki de SinergiaCRM.";
+$mod_strings['LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS'] = 'Opcions configurades per defecte';
+$mod_strings['LBL_SCOPE_HELP'] = "En aquest camp s'hi poden indicar els permisos atorgats a l'aplicació creada al proveïdor de correu extern.";
+$mod_strings['LBL_CLIENT_SECRET_HELP'] = "En aquest camp cal indicar-hi el valor del secret generat a l'aplicació creada al proveïdor de correu extern. És important no confondre el valor del secret amb l'ID del secret.";
