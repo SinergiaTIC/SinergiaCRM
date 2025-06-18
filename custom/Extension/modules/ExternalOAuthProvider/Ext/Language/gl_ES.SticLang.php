@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_CONNECTOR_HELP'] = 'Para facilitar la creación del registro de proveedor OAuth externo, al seleccionar un conector se configuran varias opciones por defecto y no será necesario indicarlas. <br /><br /> Estas opciones son mostradas en el área inferior y serán actualizadas al seleccionar cada uno de los conectores exceptuando el conector genérico que no configura ninguna opción por defecto.';
+$mod_strings['LBL_CONNECTOR_HELP'] = 'Para facilitar la creación del registro de proveedor OAuth externo, al seleccionar un conector se configuran varias opciones por defecto y, en consecuencia, no será necesario indicarlas. <br /><br /> Estas opciones son mostradas en el área inferior y serán actualizadas al seleccionar cada uno de los conectores exceptuando el conector genérico que no configura ninguna opción por defecto. . <br /><br /> Más información en el apartado de <a href="https://wikisuite.sinergiacrm.org/index.php?title=Configuraci%C3%B3n_de_correo#Proveedores_OAuth_externos" target="_blank">Proveedores Oauth Externos de la wiki</a>';
 $mod_strings['LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS'] = 'OPCIONES CONFIGURADAS POR DEFECTO';
-$mod_strings['LBL_SCOPE_HELP'] = 'Introduce el nombre de los permisos otorgados a las aplicación creada en el proveedor de correo externo.';
+$mod_strings['LBL_SCOPE_HELP'] = 'Introduce el nombre de los permisos otorgados a la aplicación creada en el proveedor de correo externo.';
 $mod_strings['LBL_CLIENT_SECRET_HELP'] = 'Introduce el valor (no confundir con el ID del secreto) del secreto generado en la aplicación creada en el proveedor de correo externo.';

@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_CONNECTOR_HELP'] = 'To facilitate the creation of the external OAuth provider record, when selecting a connector several options are configured by default and it will not be necessary to indicate them. <br /><br /> These options are shown in the lower area and will be updated when selecting each of the connectors except for the generic connector that does not configure any options by default.';
+$mod_strings['LBL_CONNECTOR_HELP'] = 'To facilitate the creation of the external OAuth provider record, several options are configured by default when selecting a connector, so you will not need to specify them. <br /><br /> These options are shown in the lower area and will be updated when selecting each of the connectors except for the generic connector that does not configure any options by default. . <br /><br /> More information in the <a href="https://wikisuite.sinergiacrm.org/index.php?title=Configuraci%C3%B3n_de_correo#Proveedores_OAuth_externos" target="_blank">External Oauth Providers of the wiki</a> section';
 $mod_strings['LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS'] = 'DEFAULT OPTIONS CONFIGURED';
 $mod_strings['LBL_SCOPE_HELP'] = 'Enter the name of the permissions granted to the application created on the external email provider.';
 $mod_strings['LBL_CLIENT_SECRET_HELP'] = 'Enter the value (not to be confused with the secret ID) of the secret generated in the application created on the external email provider.';
