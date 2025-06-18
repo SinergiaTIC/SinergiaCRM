@@ -37,6 +37,12 @@ function additionalDetailsTracker($fields, ?SugarBean $bean = null, $params = ar
     if (!empty($fields['ITEM_ID'])) {
         $fields['LINK_URL'] = 'index.php?action=DetailView&module=' . $fields['MODULE_CODE']. '&record=' . $fields['ITEM_ID'];
         $fields['LINK_TEXT'] = $fields['ITEM_SUMMARY'];
+
+        // Remove the url when the record is deleted
+        if(array_search($bean->action, $app_list_strings['trackers_actions_list']) == "deleted"){
+            $fields['LINK_URL'] = '';
+        }
+
     // Create the url with the listview showing only the action
     } else if(array_search($bean->action, $app_list_strings['trackers_actions_list']) == "listview") {
         $fields['LINK_URL'] = 'index.php?' . $fields['ITEM_SUMMARY'];

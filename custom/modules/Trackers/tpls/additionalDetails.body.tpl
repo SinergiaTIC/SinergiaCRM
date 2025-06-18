@@ -57,7 +57,7 @@
         {$FIELD.MODULE_NAME}
     </div>
 {/if}
-{if empty($FIELD.ITEM_ID)}
+{if empty($FIELD.ITEM_ID) || empty($FIELD.LINK_URL)}
     <div>
         <strong>{$APP.LBL_ITEM_SUMMARY}:</strong>
         {$FIELD.ITEM_SUMMARY}
