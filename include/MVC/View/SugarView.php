@@ -380,7 +380,7 @@ class SugarView
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
             // Get the listview from any module except the Tracker module
             if ($action == 'index' && $this->type == 'list' && $this->module != 'Trackers') {
-                $monitor->action = 'listview';
+                $monitor->setValue('action', 'listview');
 
                 // Filter the $_REQUEST to remove empty keys to use later in the url
                 $filteredRequest = array_filter($_REQUEST, function ($value) {
@@ -394,7 +394,7 @@ class SugarView
 
                 // Show the listview search as a url
                 $monitor->setValue('item_summary', http_build_query($filteredRequest));
-                $monitor->visible = true;
+                $monitor->setValue('visible', true);
 
                 $trackerManager->saveMonitor($monitor, true, true);
             }
