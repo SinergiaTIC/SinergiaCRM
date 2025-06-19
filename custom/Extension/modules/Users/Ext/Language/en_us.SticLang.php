@@ -50,3 +50,7 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
 
 // Work Calendar record creation wizard
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generate Work calendar';
+
+// Autenticación de Google
+$mod_strings['LBL_GOOGLE_AUTH_ERR_INVALID_EMAIL_1'] = 'La dirección de correo electrónico ';
+$mod_strings['LBL_GOOGLE_AUTH_ERR_INVALID_EMAIL_2'] = ' no pertenece a ningún usuario del CRM. Por favor contacte con un administrador';
