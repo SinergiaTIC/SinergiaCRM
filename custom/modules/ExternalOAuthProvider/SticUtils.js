@@ -255,23 +255,17 @@ function addCSS() {
         }
         
         .config-cell-full {
-            text-align: left;
             font-weight: bold;
             padding: 1rem;
-            display: flex;
-            align-items: center;
         }
 
         .config-cell-left {
             width: 40%;
-            display: flex;
             padding: 0 1rem;
         }
         
         .config-cell-right {
             width: 60%;
-            display: flex;
-            text-align: left;
             padding: 0.2rem 1rem;
             word-break: break-all;
             overflow-wrap: break-word;
