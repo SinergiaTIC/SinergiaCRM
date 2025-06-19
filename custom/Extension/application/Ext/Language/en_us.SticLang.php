@@ -3559,6 +3559,7 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Va
 // Trackers: Actions
 $app_list_strings['trackers_actions_list']['save'] = 'Record created';
 $app_list_strings['trackers_actions_list']['detailview'] = 'Record accessed';
+$app_list_strings['trackers_actions_list']['editview'] = 'Record in edition';
 $app_list_strings['trackers_actions_list']['listview'] = 'Records listed';
 $app_list_strings['trackers_actions_list']['update'] = 'Record updated';
 $app_list_strings['trackers_actions_list']['deleted'] = 'Record deleted';

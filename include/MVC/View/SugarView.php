@@ -350,19 +350,7 @@ class SugarView
         $trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
         if ($monitor = $trackerManager->getMonitor('tracker')) {
-            // STIC-Custom 20241014 ART - Tracker Module
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
-            // $monitor->setValue('action', $action);
-
-            // Track the view of the current bean
-            if ($action == 'editview') {
-                // If the action is 'editview', mark it as 'save' (assuming the user is saving changes)
-                $monitor->setValue('action', 'save');
-            } else {
-                // Otherwise, use the original action
-                $monitor->setValue('action', $action);
-            }
-            // END STIC Custom
+            $monitor->setValue('action', $action);
             $monitor->setValue('user_id', $GLOBALS['current_user']->id);
             $monitor->setValue('module_name', $this->module);
             $monitor->setValue('date_modified', $timeStamp);
