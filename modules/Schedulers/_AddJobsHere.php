@@ -500,15 +500,15 @@ function removeDocumentsFromFS()
 
         // If it is a directory, try to remove it recursively
         if (is_dir($fullPath)) {
-            $GLOBALS['log']->debug("Attempting to remove directory: $fullPath");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to remove directory: ' . $fullPath);
 
             try {
                 $isSuccess = rmdir_recursive($fullPath);
                 if ($isSuccess) {
-                    $GLOBALS['log']->debug("Successfully removed directory: $fullPath");
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Successfully removed directory: ' . $fullPath);
                 }
             } catch (Exception $e) {
-                $GLOBALS['log']->debug("Error removing directory $fullPath: {$e->getMessage()}");
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Error removing directory ' . $fullPath . ':' . $e->getMessage());
                 return false;
             }
 
@@ -522,9 +522,9 @@ function removeDocumentsFromFS()
                     $items = @scandir($parentPath);
                     if (is_array($items) && count($items) <= 2) {
                         if (@rmdir($parentPath)) {
-                            $GLOBALS['log']->debug("Removed empty parent directory: $parentPath");
+                            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed empty parent directory: ' . $parentPath);
                         } else {
-                            $GLOBALS['log']->debug("Failed to remove parent directory: $parentPath");
+                            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to remove parent directory: ' . $parentPath);
                             break;
                         }
                     } else {
@@ -536,10 +536,10 @@ function removeDocumentsFromFS()
         }
         // If it is a file, delete it and cleanup parent folders
         elseif (is_file($fullPath)) {
-            $GLOBALS['log']->debug("Attempting to delete file: $fullPath");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to delete file: ' . $fullPath);
             $isSuccess = @unlink($fullPath);
             if ($isSuccess) {
-                $GLOBALS['log']->debug("Successfully deleted file: $fullPath");
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Successfully deleted file: ' . $fullPath);
 
                 // Clean up parent directories
                 $pathParts = explode('/', $relativePath);
@@ -549,9 +549,9 @@ function removeDocumentsFromFS()
                     $items = @scandir($parentPath);
                     if (is_array($items) && count($items) <= 2) {
                         if (@rmdir($parentPath)) {
-                            $GLOBALS['log']->debug("Removed empty parent directory: $parentPath");
+                            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed empty parent directory: ' . $parentPath);
                         } else {
-                            $GLOBALS['log']->debug("Failed to remove parent directory: $parentPath");
+                            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to remove parent directory: ' . $parentPath);
                             break;
                         }
                     } else {
@@ -560,16 +560,16 @@ function removeDocumentsFromFS()
                     array_pop($pathParts);
                 }
             } else {
-                $GLOBALS['log']->debug("Failed to delete file: $fullPath");
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to delete file: ' . $fullPath);
             }
         } else {
-            $GLOBALS['log']->debug("No directory or file found at: $fullPath");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': No directory or file found at: ' . $fullPath);
         }
 
         // If deletion was successful, remove the record from the tracking table
         if ($isSuccess && $entryId) {
             $db->query("DELETE FROM $tableName WHERE id = " . $db->quoted($entryId));
-            $GLOBALS['log']->debug("Removed entry from $tableName: $entryId");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Removed entry from $tableName: ' . $entryId);
         }
 
         return $isSuccess;
@@ -584,14 +584,14 @@ function removeDocumentsFromFS()
         $beanId = $row['bean_id'];
         $entryId = $row['id'];
 
-        $GLOBALS['log']->debug("Processing entry: $entryId, module: $module, bean ID: $beanId");
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Processing entry: ' . $entryId . ', module: ' . $module . ', bean ID: ' . $beanId);
 
         // Attempt to load the bean from the module
         $bean = BeanFactory::getBean($module);
 
         if (!$bean || !($bean instanceof SugarBean)) {
             // Module no longer exists or is invalid
-            $GLOBALS['log']->debug("Invalid or non-existent module '$module'. Removing associated filesystem data for entry ID: $entryId");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Invalid or non-existent module ' . $module . '. Removing associated filesystem data for entry ID: ' . $entryId);
 
             // Construct the path
             $directoryPath = substr($beanId, 0, 2) . '/' . substr($beanId, 2, 2) . '/' . substr($beanId, 4, 2) . '/' . substr($beanId, 6) . '/' . $beanId;
@@ -608,12 +608,12 @@ function removeDocumentsFromFS()
             $directory = $bean->deleteFileDirectory();
 
             if (!empty($directory)) {
-                $GLOBALS['log']->debug("Attempting to remove directory for bean: $directory");
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Attempting to remove directory for bean: ' . $directory);
 
                 $isSuccess = $deleteFromFilesystem($directory, $entryId);
 
                 if (!$isSuccess) {
-                    $GLOBALS['log']->debug("Failed to remove directory for bean ID: $beanId");
+                    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Failed to remove directory for bean ID: ' . $beanId);
                     $return = false;
 
                     // Update last attempt timestamp
@@ -622,11 +622,11 @@ function removeDocumentsFromFS()
             } else {
                 // No directory to delete, just remove entry
                 $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
-                $GLOBALS['log']->debug("No directory found, entry removed from $tableName: $entryId");
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': No directory found, entry removed from ' . $tableName . ': ' . $entryId);
             }
         } else {
             // Bean not found, but module exists — update timestamp for retry
-            $GLOBALS['log']->debug("Bean not found for ID: $beanId. Updating timestamp for future retry.");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Bean not found for ID: ' . $beanId . '. Updating timestamp for future retry.');
             $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
         }
         // END STIC Custom
