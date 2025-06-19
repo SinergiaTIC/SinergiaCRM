@@ -120,31 +120,28 @@ function showDefaultConfigConnector(view, connectorValue)
 function displayDefaultConfigOfConnector(view, data)
 {
     // Remove defaultConfigData Div Element if exists
-    defaultConfigDataDiv = document.getElementById('defaultConfigData');
-    if (defaultConfigDataDiv) {
-        defaultConfigDataDiv.remove();
+    defaultConfigDataContainer = document.getElementById('defaultConfigData');
+    if (defaultConfigDataContainer) {
+        defaultConfigDataContainer.remove();
     }
     if (data) 
     {
-        // Create defaultConfigData Div Element
-        defaultConfigDataDiv = document.createElement('div');
-        defaultConfigDataDiv.id = 'defaultConfigData';
-
-        // Create Table Element
-        const table = document.createElement('table');
-        table.style.backgroundColor = '#F5F5F5';   
-        table.style.float = 'right';
-        table.style.minWidth = '45%'; 
+        // Create default Config Data Container
+        defaultConfigDataContainer = document.createElement('div');
+        defaultConfigDataContainer.id = 'defaultConfigData';
 
         if (view == 'edit') {
-            table.style.margin = '0px 4% 2% 2%';
+            defaultConfigDataContainer.style.margin = '0% 3.5% 1.5% 0%';   
         } else {
-            table.style.margin = '0px 0px 2% 2%';
+            defaultConfigDataContainer.style.margin = '0.5% 0.2% 1.5% 0%';   
         }
+        
+        // Create config Container
+        configContainer = document.createElement('div');
+        configContainer.className = 'config-container';
 
-        // Create Row Elements
-        const tbody = document.createElement('tbody');
-        addRow(tbody, SUGAR.language.get('ExternalOAuthProvider', 'LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS'));
+        // Create Rows Container
+        addHeaderRow(configContainer, SUGAR.language.get('ExternalOAuthProvider', 'LBL_CONNECTOR_DEFAULT_CONFIGURED_OPTIONS'), 'h4');
 
         Object.entries(data).forEach(([key, value]) => 
         {
@@ -152,9 +149,9 @@ function displayDefaultConfigOfConnector(view, data)
             {
                 case 'scope':
                     field = SUGAR.language.get('ExternalOAuthProvider', 'LBL_SCOPE');
-                    addRow(tbody, field);
+                    addHeaderRow(configContainer, field);
                     value.forEach( elem => {
-                        addRow(tbody, '', elem, false);
+                        addKeyValueRow(configContainer, '', elem);
                     });
                     break;
                     
@@ -166,21 +163,16 @@ function displayDefaultConfigOfConnector(view, data)
                     } else {
                         field = SUGAR.language.get('ExternalOAuthProvider', 'LBL_EXTRA_PROVIDER_PARAMS');;
                     }
-                    addRow(tbody, field);
+                    addHeaderRow(configContainer, field, 'div');
                     Object.entries(value).forEach(([k, v]) => 
                     {
                         option = k + ': '
-                        addRow(tbody, option, v, false);
+                        addKeyValueRow(configContainer, option, v);
                     });
                     break;
             }
         });
-        table.appendChild(tbody);
-        defaultConfigDataDiv.appendChild(table);
-
-        // Create "clear" Div Element
-        const clearDiv = document.createElement('div');
-        clearDiv.className = 'clear';
+        defaultConfigDataContainer.appendChild(configContainer);
 
         // Select the row element that will remain below the div to be added
         if (view == 'edit') {
@@ -189,37 +181,107 @@ function displayDefaultConfigOfConnector(view, data)
             row = $('div.detail-view-row-item[data-field="connector"]').closest('.detail-view-row').next();
         }
 
-        // Insert clearDiv and defaultConfigDataDiv before the first "clear" after the Connector field
-        $(clearDiv).insertBefore(row);
-        $(defaultConfigDataDiv).insertBefore(row);
-        $(clearDiv).insertBefore(row);
+        // Insert clearDiv and defaultConfigDataContainer before the first "clear" after the Connector field
+        $(defaultConfigDataContainer).insertBefore(row);
+        
+        // Create and Insert "clear" Div Element
+        const clearDiv = document.createElement('div');
+        clearDiv.className = 'clear';
+        $(clearDiv).insertBefore(defaultConfigDataContainer);
+
     }
 }
 
 /**
- * Add a row to the body of the table with the values ​​received in key and value
+ * Add a header row 
  */
-function addRow(tbody, key, value = '', header = true)
+function addHeaderRow(configContainer, label= '', element)
 {
-    const row = document.createElement('tr');
+    const configRow = document.createElement('div');
+    configRow.className = 'config-row';
+
+    if (label) {
+        const fullCell = document.createElement(element);
+        fullCell.className = 'config-cell-full';
+        fullCell.textContent = label;
+        configRow.appendChild(fullCell);
+    }
+    configContainer.appendChild(configRow);
+}
+
+/**
+ * Add a key-value row 
+ */
+function addKeyValueRow(configContainer, key, value = '')
+{
+    const configRow = document.createElement('div');
+    configRow.className = 'config-row';
 
     if (key) {
-        const tdKey = document.createElement('td');
-        tdKey.textContent = key;
-        tdKey.style.padding = '1rem';
-        tdKey.style.width = '40%';
-        if (header) {
-            tdKey.style.fontWeight = 'bold';   
-        };
-        row.appendChild(tdKey);
+        const leftCell = document.createElement('div');
+        leftCell.className = 'config-cell-left';
+        leftCell.textContent = key;
+        configRow.appendChild(leftCell);
     }
 
-    const tdValue = document.createElement('td');
-    tdValue.textContent = value;
-    tdValue.style.width = '60%';
-    tdValue.style.textAlign = 'left';
-    tdValue.style.padding = '1rem';
-    row.appendChild(tdValue);
+    const rightCell = document.createElement('div');
+    rightCell.textContent = value;
+    rightCell.className = 'config-cell-right';
+    configRow.appendChild(rightCell);
 
-    tbody.appendChild(row);
+    configContainer.appendChild(configRow);
 }
+
+/**
+ * Add CSS Styles
+ */
+function addCSS() {
+    const css = `
+        #defaultConfigData {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .config-container {
+            display: flex;
+            flex-direction: column;
+            background-color: rgb(245, 245, 245);      
+            min-width: 48%;
+        }
+        
+        .config-row {
+            display: flex;
+            min-height: auto;
+        }
+        
+        .config-cell-full {
+            text-align: left;
+            font-weight: bold;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .config-cell-left {
+            width: 40%;
+            display: flex;
+            padding: 0 1rem;
+        }
+        
+        .config-cell-right {
+            width: 60%;
+            display: flex;
+            text-align: left;
+            padding: 0.2rem 1rem;
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+    `;
+
+    const style = document.createElement('style');
+    style.innerHTML = css;
+    document.head.appendChild(style);
+}
+
+// Llamar a la función para añadir el CSS
+addCSS();
