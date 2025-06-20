@@ -3560,7 +3560,7 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Va
 // Monitoratge: Accions
 $app_list_strings['trackers_actions_list']['save'] = 'Registre creat';
 $app_list_strings['trackers_actions_list']['detailview'] = 'Registre accedit';
-$app_list_strings['trackers_actions_list']['editview'] = 'Registro en edición';
+$app_list_strings['trackers_actions_list']['editview'] = 'Registre en edició';
 $app_list_strings['trackers_actions_list']['listview'] = 'Registres llistats';
 $app_list_strings['trackers_actions_list']['update'] = 'Registre modificat';
 $app_list_strings['trackers_actions_list']['deleted'] = 'Registre esborrat';
