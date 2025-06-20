@@ -72,6 +72,6 @@ $mod_strings = array (
   'LBL_LIST_RELATED_TO_ID' => 'Related to ID',
   'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Retry sending',
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Send group messages',
-  'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => "This action will send a message for each record selected. Are you sure?",
+  'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => 'This action will send a message for each selected record. Do you want to proceed?',
   'LBL_MESSAGE_SENT' => 'Message sent',
 );

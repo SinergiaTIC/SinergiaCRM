@@ -86,11 +86,12 @@ $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Mensajes: acciones subpanel
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nuevo Mensaje';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nuevo Mensaje';
-$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Esta operación borrará o contido da mensaxe, ¿quere continuar?';
-$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Sobrepasado el límite de mensajes a enviar simultaneamente';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nuevo mensaje';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nuevo mensaje';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Esta operación borrará el contenido del mensaje. ¿Desea continuar?';
+$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Se ha sobrepasado el límite de mensajes que es posible enviar simultáneamente.';
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nuevo mensaje';
+
 // Envío masivo de correos
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'El envío sólo se aplicará a los registros de la página actual. Para envíos masivos se recomienda utilizar el módulo Campañas.';
 
@@ -3486,14 +3487,14 @@ $app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Salida';
 
-// Mensajes: Status
+// Mensajes: Estados
+$app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
-$app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 
-// Mensajes: Parent types
-$app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organizacións';
-$app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persoas';
+// Mensajes: Tipos de registros padre
+$app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organizaciones';
+$app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interesados';
 $app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Empleados';
 
@@ -3630,7 +3631,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Público Obxect
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Interesados';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Organizacións';
 
-// Flujos de trabajo: listas adaptadas
+// Flujos de trabajo: Listas adaptadas
 $app_list_strings['aow_date_options']['now'] = 'Agora';
 $app_list_strings['aow_date_options']['today'] = 'Hoxe';
 $app_list_strings['aow_date_options']['field'] = 'Este campo';
@@ -3644,14 +3645,14 @@ $app_list_strings['aow_date_type_list']['month'] = 'Meses';
 $app_list_strings['aow_date_type_list']['year'] = 'Anos'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Horario laboral';
 
-// Fluxos de treball: destinataris de missatges
+// Flujos de trabajo: Destinatarios de mensajes
 $app_list_strings['aow_message_type_list']['Phone'] = 'Teléfono';
 $app_list_strings['aow_message_type_list']['Record Phone'] = 'Teléfono do Rexistro';
 $app_list_strings['aow_message_type_list']['Related Field'] = 'Campo relacionado';
 $app_list_strings['aow_message_type_list']['Specify User'] = 'Usuario';
 $app_list_strings['aow_message_type_list']['Users'] = 'Usuarios';
 
-// Mapas: listas adaptadas
+// Mapas: Listas adaptadas
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organizacións';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Persoas';
 $app_list_strings['map_module_type_list']['Cases'] = 'Casos';
@@ -3682,7 +3683,7 @@ $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
 
-// Plantillas de email: Tipos de plantilla
+// Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
 $app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
@@ -3690,7 +3691,8 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
-// Plantillas de email: Tipos de plantilla
+
+// Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';

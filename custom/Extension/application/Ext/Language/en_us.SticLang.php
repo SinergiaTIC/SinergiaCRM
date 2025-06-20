@@ -32,7 +32,7 @@ $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Add A
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Incorpora synchronization';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Send PDF by email';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validate import';
-$app_strings['LBL_PRINT_AS_PDF'] = 'Generate PDF document';
+$app_strings['LBL_PRINT_AS_PDF'] = 'Generate PDF document'; // This string only appears in this file, not in other languages, and it is ok
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'An error has occurred';
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Show in list view';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Nonprofitized by SinergiaCRM';
@@ -87,11 +87,12 @@ $app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Messages: subpanel actions
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New Message';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New Message';
-$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content, do you want to continue?';
-$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Too many records selected to send a bulk message';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New message';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New message';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content. Do you want to continue?';
+$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'The limit of messages that can be sent simultaneously has been exceeded.';
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
+
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
 
@@ -120,8 +121,8 @@ $app_list_strings['moduleList']['stic_Goals'] = 'Goals';
 $app_list_strings['moduleList']['stic_Personal_Environment'] = 'Personal Environment';
 $app_list_strings['moduleList']['stic_FollowUps'] = 'FollowUps';
 $app_list_strings['moduleList']['stic_Families'] = 'Families';
-$app_list_strings['moduleList']['stic_Incorpora_Locations'] = 'Incorpora Locations';
 $app_list_strings['moduleList']['stic_Incorpora'] = 'Incorpora';
+$app_list_strings['moduleList']['stic_Incorpora_Locations'] = 'Incorpora Locations';
 $app_list_strings['moduleList']['stic_Job_Applications'] = 'Job applications';
 $app_list_strings['moduleList']['stic_Job_Offers'] = 'Job offers';
 $app_list_strings['moduleList']['stic_Sepe_Actions'] = 'SEPE Actions';
@@ -133,12 +134,12 @@ $app_list_strings['moduleList']['stic_Bookings_Calendar'] = 'Bookings Calendar';
 $app_list_strings['moduleList']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['moduleList']['stic_Medication'] = 'Medicines';
 $app_list_strings['moduleList']['stic_Prescription'] = 'Prescriptions';
+$app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Security Groups Module Rules';
 $app_list_strings['moduleList']['stic_Grants'] = 'Grants';
 $app_list_strings['moduleList']['stic_Centers'] = 'Centers';
-$app_list_strings['moduleList']['stic_Journal'] = 'Journal';
-$app_list_strings['moduleList']['stic_Security_Groups_Rules'] = 'Security Groups Module Rules';
 $app_list_strings['moduleList']['stic_Time_Tracker'] = 'Time tracker';
 $app_list_strings['moduleList']['stic_Work_Calendar'] = 'Work calendar';
+$app_list_strings['moduleList']['stic_Journal'] = 'Journal';
 $app_list_strings['moduleList']['stic_Training'] = 'Training';
 $app_list_strings['moduleList']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleList']['stic_Skills'] = 'Skills';
@@ -180,10 +181,12 @@ $app_list_strings['moduleListSingular']['stic_Resources'] = 'Resource';
 $app_list_strings['moduleListSingular']['stic_Medication_Log'] = 'Medication Log';
 $app_list_strings['moduleListSingular']['stic_Medication'] = 'Medicine';
 $app_list_strings['moduleListSingular']['stic_Prescription'] = 'Prescription';
-$app_list_strings['moduleListSingular']['stic_Journal'] = 'Journal';
 $app_list_strings['moduleListSingular']['stic_Security_Groups_Rules'] = 'Security Groups Module Rule';
+$app_list_strings['moduleListSingular']['stic_Grants'] = 'Grant';
+$app_list_strings['moduleListSingular']['stic_Centers'] = 'Center';
 $app_list_strings['moduleListSingular']['stic_Time_Tracker'] = 'Time tracker';
 $app_list_strings['moduleListSingular']['stic_Work_Calendar'] = 'Work calendar';
+$app_list_strings['moduleListSingular']['stic_Journal'] = 'Journal';
 $app_list_strings['moduleListSingular']['stic_Training'] = 'Training';
 $app_list_strings['moduleListSingular']['stic_Work_Experience'] = 'Work experience';
 $app_list_strings['moduleListSingular']['stic_Skills'] = 'Skill';
@@ -3485,9 +3488,9 @@ $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Outbound';
 
 // Messages: Status
+$app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Sent';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
-$app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 
 // Messages: Parent types
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Accounts';
@@ -3613,7 +3616,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Targets';
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Leads';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Accounts';
 
-// Workflows: customized lists
+// Workflows: Customized lists
 $app_list_strings['aow_date_options']['now'] = 'Now';
 $app_list_strings['aow_date_options']['today'] = 'Today';
 $app_list_strings['aow_date_options']['field'] = 'This field';
@@ -3627,12 +3630,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
-// Fluxos de treball: destinataris de missatges
+// Workflows: Message recipients types
 $app_list_strings['aow_message_type_list']['Phone'] = 'Phone';
 $app_list_strings['aow_message_type_list']['Record Phone'] = 'Record Phone';
 $app_list_strings['aow_message_type_list']['Related Field'] = 'Related Field';
 $app_list_strings['aow_message_type_list']['Specify User'] = 'User';
 $app_list_strings['aow_message_type_list']['Users'] = 'Users';
+
 // Campaigns: Campaign types
 $app_list_strings['campaign_type_dom'][''] = '';
 $app_list_strings['campaign_type_dom']['Telesales'] = 'Telesales';
@@ -3654,6 +3658,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+
 // Email Templates: Template types
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaign';
