@@ -90,6 +90,7 @@ class stic_MessagesViewCompose extends ViewEdit
         SticViews::display($this);
 
         echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
+        echo getVersionedScript("include/javascript/sugar_grp_yui_widgets.js");
         
         // Write here you custom code
 

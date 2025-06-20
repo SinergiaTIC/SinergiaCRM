@@ -73,4 +73,5 @@ $mod_strings = array (
   'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Reintentar enviament',
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Enviar grup de missatges',
   'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => "Aquesta operació enviarà un missatge per cada registre seleccionat. N'esteu segurs?",
+  'LBL_MESSAGE_SENT' => 'Missatge enviat',
 );

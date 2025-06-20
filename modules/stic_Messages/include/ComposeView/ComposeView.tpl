@@ -34,6 +34,8 @@
     <input type="hidden" name="return_action" value="{$RETURN_ACTION}">
     <input type="hidden" name="return_id" value="{$RETURN_ID}">
     <input type="hidden" name="mass_ids" id = "mass_ids" value="">
+    <input type="hidden" name="confirmationMessage" id="confirmationMessage" value="{sugar_translate label='LBL_EMAIL_SUCCESS'}">
+    <input type="hidden" name="confirmationMessageText" id="confirmationMessageText" value="{sugar_translate label='LBL_MESSAGE_SENT' module='stic_Messages'}">
 <div class="content">
 <div id="EditView_tabs">
     {*display tabs*}
@@ -180,6 +182,7 @@
 {{sugar_include type='smarty' file=$footerTpl}}
 </div>
 
+
 {literal}
 <script type="text/javascript">
     console.log('cccc');
@@ -212,26 +215,80 @@
 
                 const jsonString = JSON.stringify(formObject, null, 2);
                debugger;
+               function getFormDataAsObject($form) {
+                    var unindexed_array = $form.serializeArray();
+                    var indexed_array = {};
+
+                    $.map(unindexed_array, function(n, i) {
+                        indexed_array[n['name']] = n['value'];
+                    });
+
+                    return indexed_array;
+                }
+               var formData = getFormDataAsObject($('#EditView'));
+               var formDataJson = JSON.stringify(formData);
+               var serialized = $('#EditView').serialize();
                 $.ajax({
                     url: "index.php?module=stic_Messages&action=savePopUp",
                     type:"post",
                     dataType: "json",
                     async: false,
+                    /*
                     data: {
                         'parent_type':$("#parent_type").val(),
                         'parent_id':$("#parent_id").val()
                     },
+                    */
+                     data: formData,
                     success: function(res) {
                         debugger;
                         if (res.success) {
                             console.log('good');
+                            //SUGAR.showMessageBox('Mesage sent', 'Message sent detail', 'alert');
+                            var mb = messageBox({backdrop:'static'});
+                            // mb.hideHeader();    
+                            mb.setTitle($("#confirmationMessage").val());
+                            mb.hideCancel();
+                            // mb.setBody('Message sent');
+                            mb.setBody($("#confirmationMessageText").val());
+                            mb.css('z-index', 26000)
+                            mb.show();
+                            mb.on('ok', function () {
+                                "use strict";
+                                console.log('asdsa');
+                                mb.remove();
+                            });
                         } else {
                             console.log("Error in the controller", res);
+                            var mb = messageBox({backdrop:'static'});
+                            // mb.hideHeader();    
+                            mb.setTitle('Error');
+                            mb.hideCancel();
+                            mb.setBody('There was an error: Message not sent');
+                            mb.css('z-index', 26000)
+                            mb.show();
+                            mb.on('ok', function () {
+                                "use strict";
+                                console.log('asdsa');
+                                mb.remove();
+                            });
                         }
                     },
                     error: function() {
                         debugger;
                         console.log("Error send Request");
+                        var mb = messageBox({backdrop:'static'});
+                            // mb.hideHeader();    
+                            mb.setTitle('Error');
+                            mb.hideCancel();
+                            mb.setBody('There was an error: Message not sent');
+                            mb.css('z-index', 26000)
+                            mb.show();
+                            mb.on('ok', function () {
+                                "use strict";
+                                console.log('asdsa');
+                                mb.remove();
+                            });
                     }
                 });
 

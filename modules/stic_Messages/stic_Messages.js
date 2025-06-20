@@ -51,7 +51,7 @@ function onClickMassRetryMessagesButton() {
   mb.show();
 
   var popupId = mb.controls.modal.container.attr('id');
-  $('#' + popupId).css('z-index', '25000');
+  $('#' + popupId).css('z-index', '1030');
 
   var args = JSON.stringify(args);
 

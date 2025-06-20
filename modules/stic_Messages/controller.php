@@ -59,6 +59,10 @@ class stic_MessagesController extends SugarController
         }
     }
 
+    public function pre_savePopUp(){
+        parent::pre_save();
+    }
+
     public function action_SavePopUp() {
         if (isset($_REQUEST['mass_ids']) && $_REQUEST['mass_ids'] !== '') {
             $idsArray = explode(';', $_REQUEST['mass_ids']);
@@ -79,7 +83,8 @@ class stic_MessagesController extends SugarController
             header('Content-Type: application/json');
             // $this->bean->response
             // echo "{'status': 200, 'message': 'ok'}";
-            echo json_encode(array('success' => true, 'number_found' => true));
+            echo json_encode(array('success' => $this->bean->status === 'error' ? false : true));
+            // echo json_encode(array('success' => true, 'number_found' => true));
             exit;
         }
     }
