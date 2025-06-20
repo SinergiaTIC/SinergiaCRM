@@ -3544,6 +3544,9 @@ class SugarBean
             // Untrack the innecesary information
             if (!in_array($monitor->module_name, $excludedModules)) {
                 $trackerManager->saveMonitor($monitor, true, true);
+            } else {
+                // If not, mark as not visible
+                $monitor->setValue('visible', false);
             }
             // END STIC Custom
         }
