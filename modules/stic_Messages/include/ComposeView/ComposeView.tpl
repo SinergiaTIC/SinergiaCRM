@@ -257,6 +257,15 @@
                                 "use strict";
                                 console.log('asdsa');
                                 mb.remove();
+                                var baseUrl = window.location.href.split('?')[0];
+                                var returnModule = $('#EditView [name="return_module"]').val();
+                                var returnAction = $('#EditView [name="return_action"]').val();
+                                var returnId = $('#EditView [name="return_id"]').val();
+                                var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
+                                    + '&action=' + encodeURIComponent(returnAction)
+                                    + '&record=' + encodeURIComponent(returnId);
+                                console.log("Redirecting to: " + newUrl);
+                                window.location.href = newUrl;
                             });
                         } else {
                             console.log("Error in the controller", res);
