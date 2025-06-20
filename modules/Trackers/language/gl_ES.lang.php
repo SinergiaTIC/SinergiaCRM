@@ -52,7 +52,7 @@ $mod_strings = array(
     'users' => 'Usuarios',
 
     //Administration related labels
-    'LBL_MODULE_NAME' => 'Monitorizacións',
+    'LBL_MODULE_NAME' => 'Monitorización',
 
     'LBL_ASCENDING' => 'Ascendente',
     'LBL_DESCENDING' => 'Descendente',
