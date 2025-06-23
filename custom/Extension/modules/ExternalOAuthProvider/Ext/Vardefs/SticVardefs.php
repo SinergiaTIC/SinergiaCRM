@@ -22,5 +22,11 @@
  */
 
 $dictionary['ExternalOAuthProvider']['fields']['connector']['popupHelp'] = 'LBL_CONNECTOR_HELP';
-$dictionary['ExternalOAuthProvider']['fields']['scope']['popupHelp'] = 'LBL_SCOPE_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['client_id']['popupHelp'] = 'LBL_CLIENT_ID_HELP';
 $dictionary['ExternalOAuthProvider']['fields']['client_secret']['popupHelp'] = 'LBL_CLIENT_SECRET_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['scope']['popupHelp'] = 'LBL_SCOPE_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['url_authorize']['popupHelp'] = 'LBL_AUTHORIZE_URL_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['authorize_url_options']['popupHelp'] = 'LBL_AUTHORIZE_URL_OPTIONS_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['url_access_token']['popupHelp'] = 'LBL_URL_ACCESS_TOKEN_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['redirect_uri']['popupHelp'] = 'LBL_REDIRECT_URI_HELP';
+$dictionary['ExternalOAuthProvider']['fields']['extra_provider_params']['popupHelp'] = 'LBL_EXTRA_PROVIDER_PARAMS_HELP';
