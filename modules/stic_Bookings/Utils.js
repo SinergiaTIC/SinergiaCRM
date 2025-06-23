@@ -25,6 +25,8 @@ var module = "stic_Bookings";
 var resourceLineCount = 0;
 var resourceMaxCount = 0;
 var selectedCenters = [];
+var resourceGroups = [];
+var currentGroupIndex = 0;
 
 /* INCLUDES */
 // Load moment.js to use in validations
@@ -112,7 +114,13 @@ switch (viewType()) {
     $("#addResourceLine").click(function () {
       insertResourceLine();
     });
-
+    $("#deleteResourcesButton").click(function () {
+      deleteAllResources();
+    });
+    
+    $("#resetResourcesButton").click(function () {
+      deleteLastResourceGroup();
+    });
     previousStartDateHours = "10";
     previousStartDateMinutes = "00";
     previousEndDateHours = "10";
@@ -545,17 +553,15 @@ function updateLabelsBasedOnBookingType() {
   if (isPlaceBooking) {
     // Change to PLACES labels
     $("#resourcesTitle").html(SUGAR.language.get('stic_Bookings', 'LBL_PLACES') + '  <button id="openCenterPopup" type="button" class="button">' + SUGAR.language.get('stic_Bookings', 'LBL_CENTERS_BUTTON') + '</button>');
-    $("#resourcesAddLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_PLACES_ADD'));
     $("#resourceNameLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_PLACES_NAME'));
     $("#addResourceLine").val(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_PLACES_ADD'));
-    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_BUTTON'));
+    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_ADD_BUTTON'));
   } else {
     // Change to RESOURCES labels
     $("#resourcesTitle").html(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES') + '  <button id="openCenterPopup" type="button" class="button">' + SUGAR.language.get('stic_Bookings', 'LBL_CENTERS_BUTTON') + '</button>');
-    $("#resourcesAddLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_ADD'));
     $("#resourceNameLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_NAME'));
     $("#addResourceLine").val(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_ADD'));
-    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_BUTTON'));
+    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_ADD_BUTTON'));
   }
   
   $("#openCenterPopup").off('click').on('click', function() {
@@ -692,7 +698,6 @@ function isResourceAvailable(resourceElement = null) {
         if (res.success) {
           resourcesAllowed = res.resources_allowed;
         } else {
-          alert("Error in the controller", res);
         }
       },
       error: function () {
@@ -766,7 +771,6 @@ function loadResources() {
   var startDate = getFieldValue("start_date");
   var endDate = getFieldValue("end_date");
   
-  // Obtener valores correctamente de Selectize
   var resourcePlaceUserType = $("#resourcePlaceUserType")[0].selectize ? 
     $("#resourcePlaceUserType")[0].selectize.getValue() : 
     $("#resourcePlaceUserType").val();
@@ -833,27 +837,25 @@ function updateSelectedCentersList() {
   var startDate = getFieldValue("start_date");
   var endDate = getFieldValue("end_date");
   $(".removeCenterButton")
-    .off("click")
-    .on("click", function () {
-      var index = $(this).data("index");
+  .off("click")
+  .on("click", function () {
+    var index = $(this).data("index");
+    var centerToRemove = selectedCenters[index];
+
+    checkAndRemoveCenterResources(centerToRemove.centerId, function() {
       selectedCenters.splice(index, 1);
       updateSelectedCentersList();
-      var resourcePlaceUserType = $("#resourcePlaceUserType").val();
-      var resourcePlaceType = $("#resourcePlaceType").val();
-      var resourceName = $("#resourceName").val();
-      var resourceGender = $("#resourceGender").val();
-      var numberOfCenters = $("#numberOfCenters").val();
-
-      loadCenterResources(
-        resourcePlaceUserType,
-        resourcePlaceType,
-        resourceGender,
-        resourceName,
-        numberOfCenters,
-        getDateObject(startDate),
-        getDateObject(endDate)
+      
+      $("#resourceCount").text(
+        SUGAR.language.get("stic_Bookings", "LBL_CENTERS_MESSAGE") + getTotalResourceCount()
       );
+      
+      if (selectedCenters.length === 0) {
+        $(".filter-box").hide();
+        $("#resourceSearchFields").hide();
+      }
     });
+  });
 }
 function loadResourceTypes(centerId) {
   $.ajax({
@@ -914,6 +916,9 @@ function loadCenterResources(
   var centerIds = selectedCenters.map((center) => center.centerId).join(",");
   var startDate = getDateObject(getFieldValue("start_date"));
   var endDate = getDateObject(getFieldValue("end_date"));
+  
+  // SOLUCIÓN: Obtener IDs de recursos existentes de forma más precisa
+  var existingResourceIds = getCurrentResourceIds();
 
   $.ajax({
     url: "index.php?module=stic_Bookings&action=loadCenterResources&sugar_body_only=true",
@@ -927,20 +932,25 @@ function loadCenterResources(
       resourceGender: resourceGender,
       resourceName: resourceName,
       numberOfCenters: numberOfCenters,
+      existingResourceIds: existingResourceIds.join(',')
     },
     success: function (res) {
       if (res.success) {
-        updateResourceLines(res.resources);
-        $("#resourceCount").text(
-          SUGAR.language.get("stic_Bookings", "LBL_CENTERS_MESSAGE") + res.resources.length
-        );
+        if (res.resources.length > 0) {
+          addNewResourceGroup(res.resources);
+          $("#resourceCount").text(
+            SUGAR.language.get("stic_Bookings", "LBL_CENTERS_MESSAGE") + getTotalResourceCount()
+          );
+        } else {
+          alert(SUGAR.language.get("stic_Bookings", "LBL_NO_NEW_RESOURCES"));
+        }
       } else {
         alert(
           SUGAR.language.get("stic_Bookings", "LBL_CENTER_RESOURCE_ERROR") + res.message
         );
       }
     },
-    error: function (jqXHR, textStatus, errorThrown) {
+    error: function (xhr, textStatus, errorThrown) {
       alert(SUGAR.language.get("stic_Bookings", "LBL_CENTER_RESOURCE_ERROR") + " " + textStatus);
     },
   });
@@ -951,6 +961,8 @@ function updateResourceLines(resources) {
     $("#resourceLine" + i).remove();
   }
   resourceMaxCount = 0;
+  resourceGroups = [];
+  currentGroupIndex = 0;
 
   resources.forEach(function (resource) {
     insertResourceLine();
@@ -983,8 +995,8 @@ function loadExistingResourcesData() {
               });
           }
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-          console.log("Error loading existing resources: " + textStatus);
+      error: function(xhr, status, error) {
+        console.error("Request error:", status, error);
       }
   });
 }
@@ -1027,4 +1039,217 @@ function closeResource(resourceId, bookingId) {
       }
     },
   });
+}
+function addNewResourceGroup(resources) {
+  var newGroup = {
+    groupId: currentGroupIndex++,
+    resourceLines: []
+  };
+
+  resources.forEach(function (resource) {
+    insertResourceLine();
+    var lineIndex = resourceMaxCount - 1;
+    populateResourceLine(resource, lineIndex);
+    
+    $("#resourceLine" + lineIndex).css('background-color', '#E6E6E6');
+
+    newGroup.resourceLines.push(lineIndex);
+  });
+
+  resourceGroups.push(newGroup);
+  
+  if (resourceGroups.length > 1) {
+    var previousGroup = resourceGroups[resourceGroups.length - 2];
+    previousGroup.resourceLines.forEach(function(lineIndex) {
+      $("#resourceLine" + lineIndex).css('background-color', '');
+    });
+  }
+}
+
+function getTotalResourceCount() {
+  var count = 0;
+  for (var i = 0; i < resourceMaxCount; i++) {
+    if ($("#resource_id" + i).length && $("#resource_id" + i).val()) {
+      count++;
+    }
+  }
+  return count;
+}
+
+function deleteAllResources() {
+  if (confirm(SUGAR.language.get("stic_Bookings", "LBL_CONFIRM_DELETE_ALL_RESOURCES"))) {
+    for (var i = 0; i < resourceMaxCount; i++) {
+      $("#resourceLine" + i).remove();
+    }
+    resourceMaxCount = 0;
+    resourceGroups = [];
+    currentGroupIndex = 0;
+    insertResourceLine();
+    $("#resourceCount").text("");
+  }
+}
+
+function deleteLastResourceGroup() {
+  if (resourceGroups.length === 0) {
+    alert(SUGAR.language.get("stic_Bookings", "LBL_NO_GROUPS_TO_DELETE"));
+    return;
+  }
+  
+  if (confirm(SUGAR.language.get("stic_Bookings", "LBL_CONFIRM_DELETE_LAST_GROUP"))) {
+    var lastGroup = resourceGroups.pop();
+    
+    lastGroup.resourceLines.forEach(function(lineIndex) {
+      $("#resourceLine" + lineIndex).remove();
+    });
+    
+    resourceMaxCount = 0;
+    $("tr[id^='resourceLine']").each(function() {
+      var id = $(this).attr('id');
+      var index = parseInt(id.replace('resourceLine', ''));
+      if (index >= resourceMaxCount) {
+        resourceMaxCount = index + 1;
+      }
+    });
+    
+    if (getTotalResourceCount() === 0) {
+      insertResourceLine();
+    } else {
+      if (resourceGroups.length > 0) {
+        var newLastGroup = resourceGroups[resourceGroups.length - 1];
+        newLastGroup.resourceLines.forEach(function(lineIndex) {
+          $("#resourceLine" + lineIndex).css('background-color', '#E6E6E6');
+        });
+      }
+    }
+  }
+}
+function checkAndRemoveCenterResources(centerId, callback) {
+  var resourcesToCheck = [];
+  var resourcesToRemove = [];
+
+  for (var i = 0; i < resourceMaxCount; i++) {
+    var resourceId = $("#resource_id" + i).val();
+    if (resourceId && $("#resourceLine" + i).length) {
+      resourcesToCheck.push({
+        resourceId: resourceId,
+        lineIndex: i,
+      });
+    }
+  }
+
+  if (resourcesToCheck.length === 0) {
+    callback();
+    return;
+  }
+
+  var completedChecks = 0;
+  var totalChecks = resourcesToCheck.length;
+
+  resourcesToCheck.forEach(function (resource) {
+    $.ajax({
+      url: "index.php?module=stic_Bookings&action=isResourceFromCenter&sugar_body_only=true",
+      dataType: "json",
+      data: {
+        centerId: centerId,
+        resourceId: resource.resourceId,
+      },
+      success: function (response) {
+        completedChecks++;
+
+        if (response === "1" || response === 1) {
+          resourcesToRemove.push(resource.lineIndex);
+        }
+
+        if (completedChecks === totalChecks) {
+          if (resourcesToRemove.length > 0) {
+            resourcesToRemove.forEach(function (lineIndex) {
+              $("#resourceLine" + lineIndex).remove();
+
+              resourceGroups.forEach(function (group) {
+                var indexInGroup = group.resourceLines.indexOf(lineIndex);
+                if (indexInGroup > -1) {
+                  group.resourceLines.splice(indexInGroup, 1);
+                }
+              });
+            });
+
+            resourceGroups = resourceGroups.filter(function (group) {
+              return group.resourceLines.length > 0;
+            });
+
+            reorganizeResourceLines();
+
+            if (getTotalResourceCount() === 0) {
+              insertResourceLine();
+            }
+
+            alert(SUGAR.language.get("stic_Bookings","LBL_RESOURCES_REMOVED_FROM_CENTER"));
+          }
+
+          callback();
+        }
+      },
+      error: function(xhr, status, error) {
+        completedChecks++;
+
+        if (completedChecks === totalChecks) {
+          callback();
+        }
+      },
+    });
+  });
+}
+function reorganizeResourceLines() {
+  var existingLines = [];
+  var existingResources = [];
+
+  for (var i = 0; i < resourceMaxCount; i++) {
+    if ($("#resourceLine" + i).length && $("#resource_id" + i).val()) {
+      var resourceData = {};
+      var isPlaceBooking = $("#place_booking").is(":checked");
+      var fields = isPlaceBooking
+        ? config_place_fields
+        : config_resource_fields;
+
+      resourceData.resource_id = $("#resource_id" + i).val();
+      fields.forEach(function (field) {
+        resourceData["resource_" + field] = $("#resource_" + field + i).val();
+      });
+
+      existingResources.push(resourceData);
+      existingLines.push(i);
+    }
+  }
+
+  existingLines.forEach(function (lineIndex) {
+    $("#resourceLine" + lineIndex).remove();
+  });
+
+  resourceMaxCount = 0;
+  resourceGroups = [];
+  currentGroupIndex = 0;
+
+  existingResources.forEach(function (resource) {
+    insertResourceLine();
+    populateResourceLine(resource, resourceMaxCount - 1);
+  });
+
+  if (existingResources.length === 0) {
+    insertResourceLine();
+  }
+}
+function getCurrentResourceIds() {
+  var existingResourceIds = [];
+
+  $("tr[id^='resourceLine']").each(function () {
+    var rowId = $(this).attr("id");
+    var index = rowId.replace("resourceLine", "");
+    var resourceId = $("#resource_id" + index).val();
+
+    if (resourceId && resourceId.trim() !== "") {
+      existingResourceIds.push(resourceId);
+    }
+  });
+
+  return existingResourceIds;
 }

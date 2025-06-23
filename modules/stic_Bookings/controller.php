@@ -57,7 +57,9 @@ class stic_BookingsController extends SugarController
         $resourceName = isset($_REQUEST['resourceName']) ? $_REQUEST['resourceName'] : '';
         $resourceGender = isset($_REQUEST['resourceGender']) ? $_REQUEST['resourceGender'] : '';
         $numberOfCenters = isset($_REQUEST['numberOfCenters']) ? $_REQUEST['numberOfCenters'] : '';
-        
+        $existingResourceIds = isset($_REQUEST['existingResourceIds']) ? $_REQUEST['existingResourceIds'] : '';
+        $existingResourceIdsArray = !empty($existingResourceIds) ? explode(',', $existingResourceIds) : [];
+
         if (empty($centerIds)) {
             echo json_encode(['success' => false]);
             return;
@@ -139,7 +141,10 @@ class stic_BookingsController extends SugarController
                 if ($numberOfCenters && $totalCenters >= (int)$numberOfCenters) {
                     break;
                 }
-                
+                if (in_array($resourceId, $existingResourceIdsArray)) {
+                    continue; 
+                }
+    
                 $availability = $this->checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
                 
                 if ($availability['resources_allowed']) {
@@ -200,64 +205,86 @@ class stic_BookingsController extends SugarController
         echo json_encode(['success' => true, 'resources' => $resources]);
         return;
     }
-
-public function action_loadExistingResources()
-{
-    $bookingId = $_REQUEST['bookingId'] ?? null;
+    public function action_isResourceFromCenter()
+    {
+        $db = DBManagerFactory::getInstance();
     
-    if (empty($bookingId)) {
-        echo json_encode(['success' => false]);
-        return;
+        $centerId = $db->quote($_REQUEST['centerId']);
+        $resourceId = $db->quote($_REQUEST['resourceId']);
+        
+        $query = "
+            SELECT COUNT(*) as count FROM stic_resources_stic_centers_c 
+            WHERE stic_resources_stic_centersstic_resources_idb = '$resourceId'
+            AND stic_resources_stic_centersstic_centers_ida = '$centerId'
+            AND deleted = 0
+        ";
+        
+        $result = $db->query($query);
+        $row = $db->fetchByAssoc($result);
+        
+        header('Content-Type: application/json');
+        $belongsToCenter = $row && $row['count'] > 0;
+        
+        echo json_encode($belongsToCenter ? "1" : "0");
+        sugar_cleanup(true);
     }
-    
-    $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
-    
-    $db = DBManagerFactory::getInstance();
-    $resources = [];
-    
-    $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
-    if ($booking && $booking->load_relationship('stic_resources_stic_bookings')) {
-        foreach ($booking->stic_resources_stic_bookings->getBeans() as $resourceBean) {
-            $resourceId = $resourceBean->id;
-            
-            $resourceQuery = "SELECT * FROM stic_resources WHERE id = '$resourceId' AND deleted = 0";
-            $resourceResult = $db->query($resourceQuery);
-            
-            if ($resourceResult !== false) {
-                $resourceData = $db->fetchByAssoc($resourceResult);
+    public function action_loadExistingResources()
+    {
+        $bookingId = $_REQUEST['bookingId'] ?? null;
+        
+        if (empty($bookingId)) {
+            echo json_encode(['success' => false]);
+            return;
+        }
+        
+        $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
+        
+        $db = DBManagerFactory::getInstance();
+        $resources = [];
+        
+        $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
+        if ($booking && $booking->load_relationship('stic_resources_stic_bookings')) {
+            foreach ($booking->stic_resources_stic_bookings->getBeans() as $resourceBean) {
+                $resourceId = $resourceBean->id;
                 
-                if ($resourceData !== false) {
-                    $resourceItem = [
-                        'resource_id' => $resourceData['id'],
-                    ];
+                $resourceQuery = "SELECT * FROM stic_resources WHERE id = '$resourceId' AND deleted = 0";
+                $resourceResult = $db->query($resourceQuery);           
+                
+                if ($resourceResult !== false) {
+                    $resourceData = $db->fetchByAssoc($resourceResult);
                     
-                    foreach ($config_place_fields as $fieldKey => $fieldLabel) {
-                        if (isset($resourceData[$fieldKey])) {
-                            $value = $resourceData[$fieldKey];
-                            
-                            if ($fieldKey === 'user_type' && !empty($value)) {
-                                $value = $this->translateDropdownValue('stic_resources_places_users_list', $value);
-                            } elseif ($fieldKey === 'place_type' && !empty($value)) {
-                                $value = $this->translateDropdownValue('stic_resources_places_type_list', $value);
-                            } elseif ($fieldKey === 'gender' && !empty($value)) {
-                                $value = $this->translateDropdownValue('stic_resources_places_gender_list', $value);
-                            } elseif ($fieldKey === 'type' && !empty($value)) {
-                                $value = $this->translateDropdownValue('stic_resources_types_list', $value);
+                    if ($resourceData !== false) {
+                        $resourceItem = [
+                            'resource_id' => $resourceData['id'],
+                        ];
+                        
+                        foreach ($config_place_fields as $fieldKey => $fieldLabel) {
+                            if (isset($resourceData[$fieldKey])) {
+                                $value = $resourceData[$fieldKey];
+                                
+                                if ($fieldKey === 'user_type' && !empty($value)) {
+                                    $value = $this->translateDropdownValue('stic_resources_places_users_list', $value);
+                                } elseif ($fieldKey === 'place_type' && !empty($value)) {
+                                    $value = $this->translateDropdownValue('stic_resources_places_type_list', $value);
+                                } elseif ($fieldKey === 'gender' && !empty($value)) {
+                                    $value = $this->translateDropdownValue('stic_resources_places_gender_list', $value);
+                                } elseif ($fieldKey === 'type' && !empty($value)) {
+                                    $value = $this->translateDropdownValue('stic_resources_types_list', $value);
+                                }
+                                
+                                $resourceItem['resource_' . $fieldKey] = $value;
                             }
-                            
-                            $resourceItem['resource_' . $fieldKey] = $value;
                         }
+                        
+                        $resources[] = $resourceItem;
                     }
-                    
-                    $resources[] = $resourceItem;
                 }
             }
         }
+        
+        echo json_encode(['success' => true, 'resources' => $resources]);
+        return;
     }
-    
-    echo json_encode(['success' => true, 'resources' => $resources]);
-    return;
-}
     private function translateDropdownValue($listName, $value)
     {
         global $app_list_strings;

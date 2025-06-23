@@ -312,6 +312,7 @@ $dictionary['stic_Bookings'] = array(
         'stic_resources_stic_bookings' => array(
             'name' => 'stic_resources_stic_bookings',
             'type' => 'link',
+            'autocomplete' => false,
             'relationship' => 'stic_resources_stic_bookings',
             'source' => 'non-db',
             'vname' => 'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE',

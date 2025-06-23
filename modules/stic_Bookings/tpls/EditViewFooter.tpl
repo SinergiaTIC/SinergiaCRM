@@ -27,7 +27,6 @@
 <div class="filter-box">
     <div id="resourceSearchFields" class="filter-content">
         <div id="selectedCentersContainer">
-            <label id="resourcesAddLabel">{$MOD.LBL_RESOURCES_ADD}</label>
             <div id="selectedCentersList"></div>
         </div>
         
@@ -61,9 +60,16 @@
                 <input type="number" id="numberOfCenters" name="numberOfCenters">
             </div>
         </div>
-        
-        <div class="filter-actions">
-            <button id="loadCenterResourcesButton" type="button" class="button">{$MOD.LBL_RESOURCES_BUTTON}</button>
+        <div class="filter-actions grouped-buttons">
+            <button id="loadCenterResourcesButton" type="button" class="button">
+                {$MOD.LBL_ADD_BUTTON}
+            </button>
+            <button id="resetResourcesButton" type="button" class="button">
+                {$MOD.LBL_UNDO_BUTTON}
+            </button>
+            <button id="deleteResourcesButton" type="button" class="button">
+                {$APP.LBL_DELETE_BUTTON}
+            </button>
             <span id="resourceCount"></span>
         </div>
     </div>
@@ -98,7 +104,6 @@ $(document).ready(function() {
 });
 </script>
     <style>
-        /* Estilos originales */
         .resource-table .resouce_data_group>input {
             width: calc(100% - 85px);
         }
@@ -169,11 +174,10 @@ $(document).ready(function() {
             border: 1px solid #ccc;
             border-radius: 4px;
         }
-        
         .filter-actions {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 8px; /* espaciado entre botones */
             margin-top: 5px;
         }
         

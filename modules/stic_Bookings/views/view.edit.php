@@ -90,6 +90,9 @@ class stic_BookingsViewEdit extends ViewEdit
     {
         require_once 'SticInclude/Utils.php';
 
+        global $mod_strings, $app_strings;
+        SticViews::display($this);
+        
         $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
         $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
     
@@ -100,7 +103,9 @@ class stic_BookingsViewEdit extends ViewEdit
 
         $config_resource_fields_json = json_encode(array_keys($config_resource_fields));
         $config_place_fields_json = json_encode(array_keys($config_place_fields)); 
-        
+        $this->ss->assign('MOD', $mod_strings);
+        $this->ss->assign('APP', $app_strings);
+
         echo "<script>
             var config_resource_fields = $config_resource_fields_json;
             var config_place_fields = $config_place_fields_json;
