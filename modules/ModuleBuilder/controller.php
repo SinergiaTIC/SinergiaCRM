@@ -610,7 +610,11 @@ class ModuleBuilderController extends SugarController
                 $df->setup($seed) ;
                 //Need to load the entire field_meta_data for some field types
                 $field = $df->getFieldWidget($moduleName, $field->name);
-                $field->delete($df) ;
+                // STIC Custom 20250506 JBL - Fix Uncaught Error: Call to a member function delete() on null
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                // $field->delete($df) ;
+                $field?->delete($df);
+                // END STIC Custom
 
                 $GLOBALS [ 'mod_strings' ]['LBL_ALL_MODULES'] = 'all_modules';
                 $_REQUEST['execute_sql'] = true;
@@ -624,7 +628,11 @@ class ModuleBuilderController extends SugarController
             $mb = new ModuleBuilder() ;
             $module = & $mb->getPackageModule($_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ]) ;
             $field = $module->getField($field->name);
-            $field->delete($module) ;
+            // STIC Custom 20250506 JBL - Fix Uncaught Error: Call to a member function delete() on null
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+            // $field->delete($module) ;
+            $field?->delete($module);
+            // END STIC Custom
             $mb->save() ;
         }
         $module->removeFieldFromLayouts($field->name);

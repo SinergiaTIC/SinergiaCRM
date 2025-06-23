@@ -159,6 +159,11 @@ class templateParser
                     }
                     // END STIC Custom
                     $repl_arr[$key . "_" . $fieldName] = $value;
+                // STIC Custom 20250424 JBL - Añadimos funcionalidad Addon campo de Firma
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                } elseif ($field_def['type'] == 'Signature') {
+                    $repl_arr[$key . "_" . $fieldName] = '<img src="' . $focus->$fieldName . '" width="'.$field_def['width'].'" height="'.$field_def['height'].'">';
+                // END STIC Custom
                 // STIC-Custom 20221013 AAM - Parsing date/datetime fields when the bean is being modified
                 // STIC#883
                 } elseif ((isset($field_def['dbType']) && $field_def['dbType'] == 'date') || 

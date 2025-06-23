@@ -1227,7 +1227,7 @@ class KReportQuery {
                    'sqlFunction' => '',
                    'tablealias' => $this->rootGuid,
                    'fields_name_map_entry' => '',
-                   'type' => /* 'fixedvalue' */ (isset($this->joinSegments[$pathName]) ? ($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] == 'kreporter') ? $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype'] : $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type']  : 'fixedvalue'),
+                   'type' => /* 'fixedvalue' */ (isset($this->joinSegments[$pathName]) ? (($this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'] == 'kreporter') ? $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['kreporttype'] : $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]]['type'])  : 'fixedvalue'),
                    'module' => $this->root_module,
                    'fields_name_map_entry' => (isset($this->joinSegments[$pathName]) ? $this->joinSegments[$pathName]['object']->field_name_map[$fieldArray[1]] : array()));
             }
@@ -1348,6 +1348,9 @@ class KReportQuery {
       foreach ($this->whereGroupsArray as $whereGroupIndex => $thisWhereGroup) {
          $thisWhereString = '';
          // reset the Where fields and loop over all fields to see if any is in our group
+         if (!is_array($this->whereArray)) {
+            $this->whereArray = array();
+         }
          reset($this->whereArray);
          foreach ($this->whereArray as $thisWhere) {
             //2012-11-24 cater for a potential empty where string
@@ -2277,9 +2280,15 @@ class KReportQuery {
 
    function get_table_for_module($module) {
       global $beanList, $beanFiles;
-      require_once($beanFiles[$beanList[$module]]);
-      $thisModule = new $beanList[$module];
-      return $thisModule->table_name;
+      if (isset($beanList[$module]) && !empty($beanList[$module]) && isset($beanFiles[$beanList[$module]])) {
+         require_once($beanFiles[$beanList[$module]]);
+
+         if (class_exists($beanList[$module])) {
+            $thisModule = new $beanList[$module];
+            return $thisModule->table_name;
+         }
+      }
+      return '';
    }
 
    /*
@@ -2290,11 +2299,17 @@ class KReportQuery {
       // if we do not have a path we have a fixed value field so do not return a name
       if ($path != '') {
          // normal processing
-         $thisAlias = (isset($this->joinSegments[$path]['object']->field_name_map[$field]['source']) && $this->joinSegments[$path]['object']->field_name_map[$field]['source'] == 'custom_fields') ? $this->joinSegments[$path]['customjoin'] : $this->joinSegments[$path]['alias'];
+         $thisAlias = (isset($this->joinSegments[$path]['object']) && 
+                       isset($this->joinSegments[$path]['object']->field_name_map[$field]['source']) && 
+                       $this->joinSegments[$path]['object']->field_name_map[$field]['source'] === 'custom_fields') 
+                     ? ($this->joinSegments[$path]['customjoin'] ?? '')
+                     : ($this->joinSegments[$path]['alias'] ?? '');
 
          global $beanList;
          // 2010-25-10 replace the -> object name with get_class function to handle also the funny aCase obejcts
-         $thisModule = array_search(get_class($this->joinSegments[$path]['object']), $beanList);
+         $thisModule = (isset($this->joinSegments[$path]['object']) && is_object($this->joinSegments[$path]['object'])) 
+                     ? array_search(get_class($this->joinSegments[$path]['object']), $beanList) 
+                     : false;
 
          // bugfix 2011-03-21 moved up to allow proper value handling in tree
          // get the field details
