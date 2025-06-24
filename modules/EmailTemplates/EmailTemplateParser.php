@@ -194,7 +194,7 @@ class EmailTemplateParser
         }
 
         // STIC-Custom 20250624 MHP - Get the module name correctly
-        // 
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/696
         if ($this->campaign->campaign_type == 'Notification' && $this->module->module_name == 'stic_Events') 
         {
             $variable = ltrim($variable, $charVariable);
