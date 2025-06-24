@@ -193,8 +193,18 @@ class EmailTemplateParser
             return '';
         }
 
-        $parts = explode($charUnderscore, ltrim($variable, $charVariable));
-        list($moduleName, $attribute) = [array_shift($parts), implode($charUnderscore, $parts)];
+        // STIC-Custom 20250624 MHP - Get the module name correctly
+        // 
+        if ($this->campaign->campaign_type == 'Notification' && $this->module->module_name == 'stic_Events') 
+        {
+            $variable = ltrim($variable, $charVariable);
+            $moduleName = 'stic_events';
+            $attribute = substr($variable, strlen($moduleName . '_'));
+        } else {
+            $parts = explode($charUnderscore, ltrim($variable, $charVariable));
+            list($moduleName, $attribute) = [array_shift($parts), implode($charUnderscore, $parts)];
+        }
+        // END STIC-Custom
 
         /* Leads/Prospects/Users have a special variable naming scheme.
         $contact_xxx for leads/prospects and $contact_user_xxx for users */
