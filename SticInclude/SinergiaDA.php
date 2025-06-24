@@ -628,7 +628,7 @@ class ExternalReporting
                         // Create listViewName for use in metadata & view creation
                         $listViewName = substr(join('_', [$tableName, $fieldV['name'], $listName]), 0, 58);
 
-                        $fieldSrc = " IFNULL(CAST({$fieldPrefix}.{$fieldV['name']} AS CHAR),'') AS {$fieldName}";
+                        $fieldSrc = " IFNULL({$fieldPrefix}.{$fieldV['name']} ,'') AS {$fieldName}";
 
                         $createdListView = $this->createEnumView($listName, $listViewName);
 
