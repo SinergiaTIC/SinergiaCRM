@@ -610,8 +610,8 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '2.0.0', 
-    'js_custom_version' => 15,
+    'sinergiacrm_version' => '2.1.0', 
+    'js_custom_version' => 16,
     'stic_show_update_alert' => 1,
     // END STIC
 
@@ -644,4 +644,10 @@ $sugar_config = array(
     'stic_remote_monitor_duration_threshold' => null,
     'stic_remote_monitor_memory_threshold' => null,
     // END STIC
+
+    // STIC Custom 20241016 ART - Tracker prune interval for the Scheduler
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
+    // Delete from the tracker table the records of the days prior to the ones configured in config
+    'tracker_prune_interval' => 90,
+    // END STIC Custom
 );
