@@ -50,3 +50,7 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direccións de correo';
 
 // Asistente de creación de registros de Calendario laboral
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Xerar Calendario laboral';
+
+// Autenticación de Google
+$mod_strings['LBL_GOOGLE_AUTH_ERR_INVALID_EMAIL_1'] = 'La dirección de correo electrónico ';
+$mod_strings['LBL_GOOGLE_AUTH_ERR_INVALID_EMAIL_2'] = ' no pertenece a ningún usuario del CRM. Por favor contacte con un administrador';

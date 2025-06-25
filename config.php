@@ -644,4 +644,8 @@ $sugar_config = array(
     'stic_remote_monitor_duration_threshold' => null,
     'stic_remote_monitor_memory_threshold' => null,
     // END STIC
+    'authenticationClass' => 'GoogleAuthenticate',
+    'google_auth_enabled' => true,
+    'google_auth_client_id' => 'taltal',
+    'google_auth_only_form' => false,
 );
