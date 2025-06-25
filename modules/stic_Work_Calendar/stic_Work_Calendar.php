@@ -119,9 +119,10 @@ class stic_Work_Calendar extends Basic
                 $this->duration = 0;
             }      
 
-        // Set weekday field
-        if (isset($this->fetched_row['start_date']) && $this->start_date != $this->fetched_row['start_date']) {
-            $this->weekday = date('w', strtotime($startDateInTZ));
+            // Set weekday field
+            if (isset($this->fetched_row['start_date']) && $this->start_date != $this->fetched_row['start_date']) {
+                $this->weekday = date('w', strtotime($startDateInTZ));
+            }
         }
 
         // Save the bean
