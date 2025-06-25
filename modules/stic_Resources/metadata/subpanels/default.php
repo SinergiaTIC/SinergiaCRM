@@ -87,6 +87,15 @@ $subpanel_layout = array(
             'target_module' => 'Users',
             'target_record_key' => 'assigned_user_id',
         ),
+        'close_button' => [
+            'widget_class' => 'SubPanelCloseButtonstic_Resources',
+            'vname' => 'LBL_LIST_CLOSE',
+            'record_id' => '{stic_resources_stic_bookings_stic_resources_ida}',
+            'link' => true,
+            'sortable' => false,
+            'default' => true,
+                'width' => '1%',
+        ],
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
             'widget_class' => 'SubPanelEditButton',

@@ -85,8 +85,18 @@ class stic_BookingsViewDetail extends ViewDetail
 
         SticViews::display($this);
 
+        if ($this->bean->place_booking==0) {
+            echo <<<EOT
+                <script type="text/javascript">
+                document.addEventListener("DOMContentLoaded", function () {
+                    const field = document.querySelector('[data-field="copayment_amount"]');
+                    if (field) {
+                        field.style.display = "none";
+                    }
+                });
+                </script>
+            EOT;
+        }
         echo getVersionedScript("modules/stic_Bookings/Utils.js");
-
     }
-
 }

@@ -78,7 +78,7 @@ class stic_BookingsViewEdit extends ViewEdit
             }
         }
 
-	    parent::preDisplay();
+        parent::preDisplay();
 
         SticViews::preDisplay($this);
 
@@ -90,12 +90,31 @@ class stic_BookingsViewEdit extends ViewEdit
     {
         require_once 'SticInclude/Utils.php';
 
+        global $mod_strings, $app_strings;
+        SticViews::display($this);
+        
+        $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
+        $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
+    
         // Add the resources template
         $this->ev->defs['templateMeta']['form']['footerTpl'] = 'modules/stic_Bookings/tpls/EditViewFooter.tpl';
 
         $relationshipName = 'stic_resources_stic_bookings';
 
-        // If the Bookings editview is launched from the "new" button in the Resources detailview Bookings subpanel, 
+        $config_resource_fields_json = json_encode(array_keys($config_resource_fields));
+        $config_place_fields_json = json_encode(array_keys($config_place_fields)); 
+        $this->ss->assign('MOD', $mod_strings);
+        $this->ss->assign('APP', $app_strings);
+
+        echo "<script>
+            var config_resource_fields = $config_resource_fields_json;
+            var config_place_fields = $config_place_fields_json;
+        </script>";
+        
+        echo '<link rel="stylesheet" href="include/javascript/selectize/selectize.bootstrap3.css">';
+        echo getVersionedScript("include/javascript/selectize/selectize.min.js");
+
+        // If the Bookings editview is launched from the "new" button in the Resources detailview Bookings subpanel,
         // then add the resource into the new booking. Notice that stic_resources_id is only available in that case,
         // not when Bookings editview is launched from the "edit" button in an already existing booking in the subpanel.
         if (($_REQUEST['return_module'] ?? null) == 'stic_Resources' && !empty($_REQUEST['stic_resources_id'] ?? '')){
@@ -105,7 +124,7 @@ class stic_BookingsViewEdit extends ViewEdit
             unset($_REQUEST['parent_type']);
             unset($_REQUEST['parent_name']);
             unset($_REQUEST['parent_id']);
-            
+
             $resources[] = BeanFactory::getBean('stic_Resources', $_REQUEST['stic_resources_id']);
             $parsedResources = $this->parseResourceItems($resources);
             $parsedResourcesJson = json_encode($parsedResources);
@@ -145,18 +164,28 @@ class stic_BookingsViewEdit extends ViewEdit
     {
         global $app_list_strings;
 
+        $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
+
         $parsedResources = array();
         foreach ($resourcesBeanArray as $resourceBean) {
-            $parsedResources[] = array(
-                'resource_id' => $resourceBean->id,
-                'resource_name' => $resourceBean->name,
-                'resource_code' => $resourceBean->code,
-                'resource_color' => $resourceBean->color,
-                'resource_status' => $app_list_strings['stic_resources_status_list'][$resourceBean->status],
-                'resource_type' => $app_list_strings['stic_resources_types_list'][$resourceBean->type],
-                'resource_daily_rate' => self::formatNumberDec($resourceBean->daily_rate),
-                'resource_hourly_rate' => self::formatNumberDec($resourceBean->hourly_rate),
-            );
+            $resource = array();
+            $resource['resource_id'] = $resourceBean->id;
+            foreach ($config_resource_fields as $field => $label) {
+                $value = $resourceBean->$field;
+                
+                if ($field === 'gender' || $field === 'user_type' || $field === 'place_type') {
+                    $listKey = 'stic_resources_' . $field . '_list';
+            
+                    if (!empty($app_list_strings[$listKey]) && !empty($app_list_strings[$listKey][$value])) {
+                        $value = $app_list_strings[$listKey][$value];
+                    }
+                } elseif ($field === 'daily_rate' || $field === 'hourly_rate') {
+                    $value = self::formatNumberDec($value);
+                }
+                $resource['resource_' . $field] = $value;
+            }
+            
+            $parsedResources[] = $resource;
         }
         return $parsedResources;
     }
