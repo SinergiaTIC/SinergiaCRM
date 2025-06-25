@@ -110,60 +110,102 @@ ob_start();
 // Checks if a file has been indicated in the request, if it exists in the file system and executes it
 if (isset($_REQUEST['file'])) {
     $file = $_REQUEST['file'];
+    echo "Executing single file {$file} <br>";
     if (file_exists($file)) {
         $ext = substr($file, -3);
         if ($ext === "php") {
-            echo "$file <br>";
+            echo "{$file} <br>";
             require($file);   
         } else if ($ext === "sql") {
             $connection = connectToDBWithPDO();
-            executeSQLFile($connection,$file);
+            executeSQLFile($connection, $file);
             // Dereferencing the PDO instance, allowing the PHP garbage collector to free the resources associated with the connection
             $connection = null;
         } else {
-            echo "File: ".$file.". The file extension must be php or sql";    
+            echo "File: {$file}. The file extension must be php or sql";    
         }
     } else {
-        echo "File ".$file." doesn't exist in server";
+        echo "File {$file} doesn't exist in server";
     }
 
-} else {
+} elseif ($folder = $_REQUEST['folder']) {
+    echo "Executing all files from folder {$folder} <br>";
+    if (is_dir($folder)) {
+        echo "Executing all PHP files from folder {$folder} <br>";
+        if($files = glob("{$folder}/*.php")) {
+            foreach ($files as $file) {
+                echo "{$file} <br>";
+                require($file);   
+            }
+        } else {
+            echo "No PHP files found in folder {$folder} <br>";
+        }
 
-    echo "File isn't specified in URL";
+        echo "Executing all SQL files from folder {$folder} <br>";
+        if($files = glob("{$folder}/*.sql")) {
+            $connection = connectToDBWithPDO();
+            foreach ($files as $file) {
+                executeSQLFile($connection,$file);
+            }
+        } else {
+            echo "No SQL files found in folder {$folder} <br>";
+        }
+    } else {
+        echo "Folder {$folder} doesn't exist in server";
+    }
+} else {
+    echo "Executing all files from SticUpdates/ <br>";
 
     // SCRIPTS - Check if there are files in the scripts folder and run them
-    if (!isEmptyFolder("SticUpdates/Scripts/")) 
-    {
-        echo "Executing all files from SticUpdates/Scripts/ <br>";
-        $files = glob('SticUpdates/Scripts/*.php');
-        foreach ($files as $file) {
-            echo "$file <br>";
-            require($file);   
+    $folder = "SticUpdates/Scripts";
+    if (is_dir($folder)) {
+        echo "Executing all PHP files from folder {$folder} <br>";
+        if($files = glob("{$folder}/*.php")) {
+            foreach ($files as $file) {
+                echo "$file <br>";
+                require($file);   
+            }
+        } else {
+            echo "No PHP files found in folder {$folder} <br>";
         }
+    } else {
+        echo "Folder {$folder} doesn't exist in server";
     }
-    
+
     // MIGRATIONS - Check if there are files in the migrations folder and run them
-    if (!isEmptyFolder("SticUpdates/Migrations/")) 
-    {
-        echo "Executing all SQL files from SticUpdates/Migrations/, both general and language files <br>";
+    $folder = "SticUpdates/Migrations";
+    if (is_dir($folder)) {
         $connection = connectToDBWithPDO();
 
         // Run all general migrations files from the SticUpdates/Migrations/ folder
-        $files = glob('SticUpdates/Migrations/*.sql');
-        foreach ($files as $file) 
-        {
-            executeSQLFile($connection,$file);
+        echo "Executing all SQL files from folder {$folder} <br>";
+        if($files = glob("{$folder}/*.sql")) {
+            foreach ($files as $file) {
+                executeSQLFile($connection,$file);
+            }
+        } else {
+            echo "No SQL files found in folder {$folder} <br>";
         }
         
         // Run all languages migrations files from the SticUpdates/Migrations/<language> folder
         $language = substr($sugar_config["default_language"], 0, 2);
-        $files = glob("SticUpdates/Migrations/$language/*.sql");
-        foreach ($files as $file) 
-        {
-            executeSQLFile($connection,$file);
+        $folder .= "/{$language}";
+        if (is_dir($folder)) {
+            echo "Executing all SQL files from language folder {$folder} <br>";
+            if($files = glob("{$folder}/*.sql")) {
+                foreach ($files as $file) {
+                    executeSQLFile($connection,$file);
+                }
+            } else {
+                echo "No SQL files found in folder {$folder} <br>";
+            }
+        } else {
+            echo "Folder {$folder} doesn't exist in server";
         }
         
         // Dereferencing the PDO instance, allowing the PHP garbage collector to free the resources associated with the connection
         $connection = null;
+    } else {
+        echo "Folder {$folder} doesn't exist in server";
     }
 } 
