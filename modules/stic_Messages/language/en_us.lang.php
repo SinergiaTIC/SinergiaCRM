@@ -74,4 +74,6 @@ $mod_strings = array (
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Send group messages',
   'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => 'This action will send a message for each selected record. Do you want to proceed?',
   'LBL_MESSAGE_SENT' => 'Message sent',
+  'LBL_MESSAGE_NOT_SENT' => 'Message not sent',
+  'LBL_CHECK_STATUS' => 'Messages sent. Check status',
 );

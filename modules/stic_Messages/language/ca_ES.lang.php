@@ -74,4 +74,6 @@ $mod_strings = array (
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Envia un grup de missatges',
   'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => "Aquesta operació enviarà un missatge per a cada registre seleccionat. N'esteu segur?",
   'LBL_MESSAGE_SENT' => 'Missatge enviat',
+  'LBL_MESSAGE_NOT_SENT' => 'Missatge no enviat',
+  'LBL_CHECK_STATUS' => "Missatges enviats. Comprova l'estat",
 );

@@ -106,7 +106,7 @@ class SevenSMSHelper implements stic_MessagesHelper {
         ];
         $curl = curl_init('https://gateway.seven.io/api/sms');
         // ####EPS ####
-        // $curl = curl_init('https://gggggateway.sevessssn.io/api/sms');
+        $curl = curl_init('https://gggggateway.sevessssn.io/api/sms');
         curl_setopt_array($curl, $curlOpts);
         $response = curl_exec($curl);
 

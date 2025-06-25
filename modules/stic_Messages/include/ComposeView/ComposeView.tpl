@@ -247,10 +247,12 @@
                             //SUGAR.showMessageBox('Mesage sent', 'Message sent detail', 'alert');
                             var mb = messageBox({backdrop:'static'});
                             // mb.hideHeader();    
-                            mb.setTitle($("#confirmationMessage").val());
+                            //mb.setTitle($("#confirmationMessage").val());
+                            mb.setTitle(res.title);
                             mb.hideCancel();
                             // mb.setBody('Message sent');
-                            mb.setBody($("#confirmationMessageText").val());
+                            //mb.setBody($("#confirmationMessageText").val());
+                            mb.setBody(res.detail);
                             mb.css('z-index', 26000)
                             mb.show();
                             mb.on('ok', function () {
@@ -261,9 +263,12 @@
                                 var returnModule = $('#EditView [name="return_module"]').val();
                                 var returnAction = $('#EditView [name="return_action"]').val();
                                 var returnId = $('#EditView [name="return_id"]').val();
+                                if(!returnId && res.id) {
+                                    returnId = res.id;
+                                }
                                 var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
                                     + '&action=' + encodeURIComponent(returnAction)
-                                    + '&record=' + encodeURIComponent(returnId);
+                                    + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
                                 console.log("Redirecting to: " + newUrl);
                                 window.location.href = newUrl;
                             });
@@ -271,15 +276,29 @@
                             console.log("Error in the controller", res);
                             var mb = messageBox({backdrop:'static'});
                             // mb.hideHeader();    
-                            mb.setTitle('Error');
+                            //mb.setTitle('Error');
+                            mb.setTitle(res.title);
                             mb.hideCancel();
-                            mb.setBody('There was an error: Message not sent');
+                            //mb.setBody('There was an error: Message not sent');
+                            mb.setBody(res.detail);
                             mb.css('z-index', 26000)
                             mb.show();
                             mb.on('ok', function () {
                                 "use strict";
                                 console.log('asdsa');
                                 mb.remove();
+                                var baseUrl = window.location.href.split('?')[0];
+                                var returnModule = $('#EditView [name="return_module"]').val();
+                                var returnAction = $('#EditView [name="return_action"]').val();
+                                var returnId = $('#EditView [name="return_id"]').val();
+                                if(!returnId && res.id) {
+                                    returnId = res.id;
+                                }
+                                var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
+                                    + '&action=' + encodeURIComponent(returnAction)
+                                    + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
+                                console.log("Redirecting to: " + newUrl);
+                                window.location.href = newUrl;
                             });
                         }
                     },

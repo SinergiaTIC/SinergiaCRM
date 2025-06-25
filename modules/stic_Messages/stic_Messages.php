@@ -120,7 +120,7 @@ class stic_Messages extends Basic
         // Save the bean
         parent::save($check_notify);
         $sticSavingMessage = false;
-
+        return $this->id;
     }
 
     public function fillName($parentType = null, $parentId = null)

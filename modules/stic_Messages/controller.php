@@ -64,6 +64,9 @@ class stic_MessagesController extends SugarController
     }
 
     public function action_SavePopUp() {
+        global $app_strings, $current_language;
+        $mod_strings = return_module_language($current_language, $this->module);
+
         if (isset($_REQUEST['mass_ids']) && $_REQUEST['mass_ids'] !== '') {
             $idsArray = explode(';', $_REQUEST['mass_ids']);
             $phonesArray = explode(',', $_REQUEST['phone']);
@@ -77,14 +80,19 @@ class stic_MessagesController extends SugarController
                 $this->bean->phone = $phone;
                 $this->bean->save(!empty($this->bean->notify_on_save));  
             }, $idsArray, $phonesArray);
+            header('Content-Type: application/json');
+            echo json_encode(array('success' =>  true, 'title' => $app_strings['LBL_EMAIL_SUCCESS'], 'detail' => $mod_strings['LBL_CHECK_STATUS']));
+            exit;
         }
         else {
-            $this->bean->save(!empty($this->bean->notify_on_save));
+            $id = $this->bean->save(!empty($this->bean->notify_on_save));
             header('Content-Type: application/json');
             // $this->bean->response
             // echo "{'status': 200, 'message': 'ok'}";
-            echo json_encode(array('success' => $this->bean->status === 'error' ? false : true));
-            // echo json_encode(array('success' => true, 'number_found' => true));
+            $title = $this->bean->status !== 'error' ? $app_strings['LBL_EMAIL_SUCCESS'] : $app_strings['LBL_NOT_SENT'];
+            $detail = $this->bean->status !== 'error' ? $mod_strings['LBL_MESSAGE_SENT'] : $mod_strings('LBL_MESSAGE_NOT_SENT');
+            echo json_encode(array('success' => $this->bean->status === 'error' ? false : true, 'title' => $title, 'detail' => $detail, 'id' => $id));
+            // echo json_encode(array('success' => true, 'number_found' => true)); 
             exit;
         }
     }
@@ -134,40 +142,41 @@ class stic_MessagesController extends SugarController
 
 
         // Building and running the query that retrieves all the record that were selected in ListView
-        
-        $bean = BeanFactory::getBean($_REQUEST['targetModule']);
-        $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($bean->module_name);
-        $nameFieldName = stic_MessagesUtils::getNameFieldNameForMessage($bean->module_name);
-        $moduleTable = $bean->table_name;
-        $moduleName = $bean->module_name;
-        $sql = "SELECT id, $phoneFieldName as phone, $nameFieldName as name FROM {$moduleTable} WHERE {$moduleTable}.deleted=0";
-        $where = '';
-        if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
-            require_once 'include/export_utils.php';
-            $retArray = generateSearchWhere($moduleName, $_REQUEST['current_query_by_page']);
+        if(!empty($_REQUEST['targetModule'])){
+            $bean = BeanFactory::getBean($_REQUEST['targetModule']);
+            $phoneFieldName = stic_MessagesUtils::getPhoneFieldNameForMessage($bean->module_name);
+            $nameFieldName = stic_MessagesUtils::getNameFieldNameForMessage($bean->module_name);
+            $moduleTable = $bean->table_name;
+            $moduleName = $bean->module_name;
+            $sql = "SELECT id, $phoneFieldName as phone, $nameFieldName as name FROM {$moduleTable} WHERE {$moduleTable}.deleted=0";
             $where = '';
-            if (!empty($retArray['where'])) {
-                $where = " AND " . $retArray['where'];
+            if (isset($_REQUEST['select_entire_list']) && $_REQUEST['select_entire_list'] == '1' && isset($_REQUEST['current_query_by_page'])) {
+                require_once 'include/export_utils.php';
+                $retArray = generateSearchWhere($moduleName, $_REQUEST['current_query_by_page']);
+                $where = '';
+                if (!empty($retArray['where'])) {
+                    $where = " AND " . $retArray['where'];
+                }
+            } else {
+                $ids = explode(',', rtrim($_REQUEST['ids'], ','));
+                $idList = implode("','", $ids);
+                $where = " AND id in ('{$idList}')";
             }
-        } else {
-            $ids = explode(',', rtrim($_REQUEST['ids'], ','));
-            $idList = implode("','", $ids);
-            $where = " AND id in ('{$idList}')";
-        }
-        $sql .= $where;
-        $db = DBManagerFactory::getInstance();
-        $resultado = $db->query($sql);
-        unset($ids);
-        $ids = array();
-
-        while ($row = $db->fetchByAssoc($resultado)) {
-            // Building the Summary count table
-            $idLine = '<input type="hidden" class="phone-compose-view-to-list" ';
-            $idLine .= 'data-record-module="' . $_REQUEST['targetModule'] . '" ';
-            $idLine .= 'data-record-id="' . $row['id'] . '" ';
-            $idLine .= 'data-record-name="' . $row['name'] . '" ';
-            $idLine .= 'data-record-phone="' . $row['phone'] . '">';
-            echo $idLine;
+            $sql .= $where;
+            $db = DBManagerFactory::getInstance();
+            $resultado = $db->query($sql);
+            unset($ids);
+            $ids = array();
+    
+            while ($row = $db->fetchByAssoc($resultado)) {
+                // Building the Summary count table
+                $idLine = '<input type="hidden" class="phone-compose-view-to-list" ';
+                $idLine .= 'data-record-module="' . $_REQUEST['targetModule'] . '" ';
+                $idLine .= 'data-record-id="' . $row['id'] . '" ';
+                $idLine .= 'data-record-name="' . $row['name'] . '" ';
+                $idLine .= 'data-record-phone="' . $row['phone'] . '">';
+                echo $idLine;
+            }
         }
     }
 
