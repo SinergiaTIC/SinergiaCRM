@@ -36,6 +36,9 @@ class stic_Custom_Views_ProcessorLogicHooks
             $module = $_POST["target_module"];
         } else if ($action == "popup") {
             $view = "quickcreate";
+        } else if ($module == "Calendar" && $action == "quickedit") {
+            $view = "quickcreate";
+            $module = $_POST["current_module"];
         }
         
         $availableViews = $GLOBALS['app_list_strings']['stic_custom_views_views_list'] ?? [];
@@ -223,15 +226,33 @@ class stic_Custom_Views_ProcessorLogicHooks
 
         // Set Current user in js
         // Write a js call to processSticCustomView when loaded
-        $html =
-        "<script type=\"text/javascript\" language=\"JavaScript\">" .
-            "SUGAR.sticCV_currentUser = \"".$current_user->id."|".$current_user->user_name."\";".
-            "$(document).ready(function () {" .
-                "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"" . addslashes($customizationsJson) . "\");" .
-            "});" .
-        "</script>";
 
-        echo $html;
+        // Ajax needs js callable code, non Ajax html code
+        $isAjax = isset($_REQUEST['ajax_load']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'xmlhttprequest';
+        if($isAjax) {
+            // echo
+            //     "(function() {" .
+            //         "SUGAR.sticCV_currentUser = \"".$current_user->id."|".$current_user->user_name."\";".
+            //         "$(function () {" .
+            //             "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"" . addslashes($customizationsJson) . "\");" .
+            //         "});" .
+            //     "})";
+            // AJAX: Call is evaluated in Cal.js:462 : SUGAR.util.globalEval("retValue = (" + o.responseText + ")");
+            echo 
+                // "(function() {" .
+                    // "SUGAR.sticCV_currentUser = \"" . $current_user->id . "|" . $current_user->user_name . "\";" .
+                    "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"" . addslashes($customizationsJson) . "\");";
+                //"})";
+        } else {
+            echo
+                "<script type=\"text/javascript\" language=\"JavaScript\">" .
+                    "SUGAR.sticCV_currentUser = \"".$current_user->id."|".$current_user->user_name."\";".
+                    "$(document).ready(function () {" .
+                        "sticCustomizeView.For(\"{$view}\").processSticCustomView(\"" . addslashes($customizationsJson) . "\");" .
+                    "});" .
+                "</script>";
+        }
+
         return "";
     }
 
