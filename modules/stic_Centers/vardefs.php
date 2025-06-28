@@ -324,7 +324,7 @@ $dictionary['stic_Centers'] = array(
             'relationship' => 'stic_resources_stic_centers',
             'source' => 'non-db',
             'module' => 'stic_Resources',
-            'bean_name' => 'stic_Resources',
+            'bean_name' => 'false',
             'side' => 'right',
             'vname' => 'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_RESOURCES_TITLE',
         ),

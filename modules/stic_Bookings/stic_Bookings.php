@@ -74,34 +74,38 @@ class stic_Bookings extends Basic
         // Retrieve the strings of the needed module
         // (otherwise when accessing from ListView mod_string would return the global app strings)
         $mod_strings = return_module_language($current_language, 'stic_Bookings');
-
         // Set booking name
         if (empty($this->name)) {
-            // On new bookings, define booking code
-            // Warning: the lines below retrieve the last existing code in the db in order to calculate
-            // the code for the newly created booking because the value of the field code is not available
-            // until the record is created in the db (it is an autoincrement db field). This may cause
-            // problems of crossing code assignation in case of concurrent bookings creation. If this
-            // proves to be a problem in the future, this section should be rethinked. Anyway, it only
-            // affects the name field, which is not a critical data.
-            $currentNum = $this->code ?? null;
-            if (!$currentNum) {
-                // Get last assigned code
-                $query = "SELECT code
-                FROM stic_bookings
-                ORDER BY code DESC LIMIT 1";
-                $result = $db->query($query, true);
-                $row = $db->fetchByAssoc($result);
-                $lastNum = $row['code'];
-                if (!isset($lastNum) || empty($lastNum)) {
-                    $lastNum = 0;
+                // On new bookings, define booking code
+                // Warning: the lines below retrieve the last existing code in the db in order to calculate
+                // the code for the newly created booking because the value of the field code is not available
+                // until the record is created in the db (it is an autoincrement db field). This may cause
+                // problems of crossing code assignation in case of concurrent bookings creation. If this
+                // proves to be a problem in the future, this section should be rethinked. Anyway, it only
+                // affects the name field, which is not a critical data.
+                $currentNum = $this->code ?? null;
+                if (!$currentNum) {
+                    // Get last assigned code
+                    $query = "SELECT code
+                    FROM stic_bookings
+                    ORDER BY code DESC LIMIT 1";
+                    $result = $db->query($query, true);
+                    $row = $db->fetchByAssoc($result);
+                    $lastNum = $row['code'];
+                    if (!isset($lastNum) || empty($lastNum)) {
+                        $lastNum = 0;
+                    }
+                    $currentNum = $lastNum + 1;
                 }
-                $currentNum = $lastNum + 1;
+                // Format code
+                $currentNum = str_pad($currentNum, 5, "0", STR_PAD_LEFT);
+                // Build booking name
+                if (!empty($this->place_booking)) {
+                    $this->name = $mod_strings['LBL_PLACE_BOOKING'] . ' ' . $currentNum;
+                } else {
+    
+                $this->name = $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . $currentNum;
             }
-            // Format code
-            $currentNum = str_pad($currentNum, 5, "0", STR_PAD_LEFT);
-            // Build booking name
-            $this->name = $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . $currentNum;
         }
 
         // If all_day is checked and the request is from user interface, set the proper start_date and end_date values.

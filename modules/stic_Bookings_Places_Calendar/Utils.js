@@ -30,7 +30,10 @@ function initializeCalendar() {
     return;
   }
 
+  var calendarLocale = lang || 'es';
+  
   var calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: calendarLocale,
     views: {
       threeDays: {
         type: "timeGridWeek",
@@ -49,6 +52,15 @@ function initializeCalendar() {
           ? calendarView
           : "dayGridMonth"
         : "threeDays",
+        buttonText: {
+          today: SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_TODAY"),
+          month: SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_MONTH"),
+          week: SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_WEEK"),
+          day: SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_DAY"),
+          list: SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_LIST"),
+          mobile: SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_MOBILE_BUTTON"),
+        },
+        
     events: function (fetchInfo, successCallback, failureCallback) {
       var start = moment(fetchInfo.start).format("YYYY-MM-DD");
       var end = moment(fetchInfo.end).format("YYYY-MM-DD");
@@ -218,6 +230,7 @@ function initializeCalendar() {
     },
     customButtons: {
       filterButton: {
+        text: SUGAR.language.get("stic_Bookings_Places_Calendar", "LBL_FILTERS"),
         click: function() {
           $('#filtersModal').modal('toggle');
         }
@@ -226,18 +239,19 @@ function initializeCalendar() {
     datesSet: function() {
       setTimeout(function () {
         $('.fc-filterButton-button')
-          .html('<span class="glyphicon glyphicon-filter"></span>')
+          .html('<span class="glyphicon glyphicon-filter"></span> ');
       }, 0);
     },
     firstDay: start_weekday,
     // Define business hours. This will set a different color for non business hours
+    businessHours: {
       daysOfWeek: [1, 2, 3, 4, 5],
       startTime: "07:00",
       endTime: "21:00",
+    },
     // ToDo
     // slotMinTime: "06:00:00",
     // slotMaxTime: "24:00:00",
-    locale: lang,
   });
   if (!$('#filtersModal').length) {
     $('body').append(`

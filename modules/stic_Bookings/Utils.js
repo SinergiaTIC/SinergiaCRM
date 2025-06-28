@@ -91,6 +91,16 @@ addToValidateCallback(
         );
   }
 );
+addToValidateCallback(
+  getFormName(),
+  "resource_name0",
+  "text",
+  true,
+  SUGAR.language.get(module, "LBL_RESOURCES_TYPE_MIX_ERROR"),
+  function () {
+    return checkBookingResourceTypes();
+  }
+);
 
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
@@ -285,6 +295,7 @@ switch (viewType()) {
         $("#planned_end_date_time_section").parent().show();
       }
     });
+
     previousPlannedStartDate = $("#planned_start_date_date").val();
     previousPlannedStartHours = $("#planned_start_date_hours").val();
     previousPlannedStartMinutes = $("#planned_start_date_minutes").val();
@@ -300,37 +311,106 @@ switch (viewType()) {
       currentPlannedEndHours = $("#planned_end_date_hours").val();
       currentPlannedEndMinutes = $("#planned_end_date_minutes").val();
 
-      if (currentPlannedStartDate !== previousPlannedStartDate) {
-        $("#start_date_date").val(currentPlannedStartDate).trigger("change");
+      var startDateInput = $("#start_date_date");
+      var startHoursInput = $("#start_date_hours");
+      var startMinutesInput = $("#start_date_minutes");
+
+      var endDateInput = $("#end_date_date");
+      var endHoursInput = $("#end_date_hours");
+      var endMinutesInput = $("#end_date_minutes");
+
+      var now = moment(); // Usar moment.js para la fecha actual
+
+      // --- Lógica para start_date ---
+      var currentStartDateVal = startDateInput.val();
+      var currentStartDateObj = null;
+
+      if (currentStartDateVal) {
+          var momentFormatString = cal_date_format
+              .replace(/%Y/g, 'YYYY')
+              .replace(/%m/g, 'MM')
+              .replace(/%d/g, 'DD')
+              .replace(/%H/g, 'HH')
+              .replace(/%M/g, 'mm');
+
+          if (!$("#all_day", "form").is(":checked")) {
+              var startDateHour = $("#start_date_hours").val();
+              var startDateMinute = $("#start_date_minutes").val();
+              if (startDateHour && startDateMinute) {
+                  currentStartDateVal = currentStartDateVal + ' ' + startDateHour + ':' + startDateMinute;
+                  momentFormatString = momentFormatString + ' HH:mm';
+              }
+          }
+          currentStartDateObj = moment(currentStartDateVal, momentFormatString);
+      }
+      console.log("Voy a ver currentPlannedStartDate"+currentPlannedStartDate)
+      console.log("Voy a ver startDateInput"+startDateInput)
+
+      // Lógica para start_date_date
+      if (currentPlannedStartDate !== startDateInput) {
+        console.log("Voy a ver currentStartDateObj"+currentStartDateObj)
+        console.log("Voy a ver now"+now)
+        console.log("Vemos resultado comparación"+currentStartDateObj.isSameOrAfter(now, 'day'))
+  
+        // Solo actualizar si start_date_date está vacío O si no ha pasado ya
+        if (!currentStartDateVal || (currentStartDateObj && currentStartDateObj.isSameOrAfter(now, 'day'))) {
+          startDateInput.val(currentPlannedStartDate).trigger("change");
+          startHoursInput.val(currentPlannedStartHours).trigger("change");
+          startMinutesInput.val(currentPlannedStartMinutes).trigger("change");
+        }
         previousPlannedStartDate = currentPlannedStartDate;
-      }
-
-      if (currentPlannedStartHours !== previousPlannedStartHours) {
-        $("#start_date_hours").val(currentPlannedStartHours).trigger("change");
         previousPlannedStartHours = currentPlannedStartHours;
+        previousPlannedStartMinutes = currentPlannedStartMinutes;
+
+      }
+      // --- Lógica para end_date (ahora con la misma restricción de fecha pasada) ---
+      var currentEndDateVal = endDateInput.val();
+      var currentEndDateObj = null;
+
+      if (currentEndDateVal) {
+          var momentFormatStringEnd = cal_date_format
+              .replace(/%Y/g, 'YYYY')
+              .replace(/%m/g, 'MM')
+              .replace(/%d/g, 'DD')
+              .replace(/%H/g, 'HH')
+              .replace(/%M/g, 'mm');
+
+          if (!$("#all_day", "form").is(":checked")) {
+              var endDateHour = $("#end_date_hours").val();
+              var endDateMinute = $("#end_date_minutes").val();
+              if (endDateHour && endDateMinute) {
+                  currentEndDateVal = currentEndDateVal + ' ' + endDateHour + ':' + endDateMinute;
+                  momentFormatStringEnd = momentFormatStringEnd + ' HH:mm';
+              }
+          }
+          currentEndDateObj = moment(currentEndDateVal, momentFormatStringEnd);
       }
 
-      if (currentPlannedStartMinutes !== previousPlannedStartMinutes) {
-        $("#start_date_minutes")
-          .val(currentPlannedStartMinutes)
-          .trigger("change");
-        previousPlannedStartMinutes = currentPlannedStartMinutes;
-      }
+      // Lógica para end_date_date
       if (currentPlannedEndDate !== previousPlannedEndDate) {
-        $("#end_date_date").val(currentPlannedEndDate).trigger("change");
+        // Actualizar si end_date_date está vacío O si no ha pasado ya
+        if (!currentEndDateVal || (currentEndDateObj && currentEndDateObj.isSameOrAfter(now, 'day'))) {
+          endDateInput.val(currentPlannedEndDate).trigger("change");
+        }
         previousPlannedEndDate = currentPlannedEndDate;
       }
 
       if (currentPlannedEndHours !== previousPlannedEndHours) {
-        $("#end_date_hours").val(currentPlannedEndHours).trigger("change");
+        if (!currentEndDateVal || (currentEndDateObj && currentEndDateObj.isSameOrAfter(now, 'day'))) {
+          endHoursInput.val(currentPlannedEndHours).trigger("change");
+        }
         previousPlannedEndHours = currentPlannedEndHours;
-      }
-
-      if (currentPlannedEndMinutes !== previousPlannedEndMinutes) {
-        $("#end_date_minutes").val(currentPlannedEndMinutes).trigger("change");
         previousPlannedEndMinutes = currentPlannedEndMinutes;
       }
+
+      // if (currentPlannedEndMinutes !== previousPlannedEndMinutes) {
+      //   if (!currentEndDateVal || (currentEndDateObj && currentEndDateObj.isSameOrAfter(now, 'day'))) {
+      //     endMinutesInput.val(currentPlannedEndMinutes).trigger("change");
+      //   }
+      //   previousPlannedEndMinutes = currentPlannedEndMinutes;
+      // }
     }, 500);
+
 
     // Set event listener for center popup
     $("#openCenterPopup").click(function () {
@@ -1252,4 +1332,80 @@ function getCurrentResourceIds() {
   });
 
   return existingResourceIds;
+}
+function getResourceTypeAjax(resourceId) {
+  var resourceType = null;
+  $.ajax({
+    url: "index.php?module=stic_Bookings&action=getResourceType&sugar_body_only=true",
+    dataType: "json",
+    async: false, 
+    data: {
+      resourceId: resourceId
+    },
+    success: function (res) {
+      if (res.success) {
+        resourceType = res.type;
+      } else {
+        console.error(res.message);
+      }
+    },
+    error: function () {
+      console.error(res.message);
+    },
+  });
+  return resourceType;
+}
+
+function checkBookingResourceTypes() {
+  var isPlaceBookingChecked = $("#place_booking").is(":checked");
+  var resourceIds = [];
+  
+  for (var i = 0; i < resourceMaxCount; i++) {
+    if ($("#resource_id" + i).length && $("#resource_id" + i).val()) {
+      resourceIds.push($("#resource_id" + i).val());
+    }
+  }
+
+  if (resourceIds.length === 0) {
+    return true;
+  }
+
+  var containsPlace = false;
+  var containsOther = false;
+
+  for (var i = 0; i < resourceIds.length; i++) {
+    var resourceType = getResourceTypeAjax(resourceIds[i]);
+    if (resourceType === 'place') {
+      containsPlace = true;
+    } else if (resourceType !== null && resourceType !== '') {
+      containsOther = true;
+    }
+  }
+
+  if (isPlaceBookingChecked) {
+    if (containsOther && containsPlace) {
+      return false; 
+    }
+    if (containsOther && !containsPlace) {
+      return false; 
+    }
+    if (!containsPlace && containsOther) {
+      return false;
+    }
+    if (containsPlace && !containsOther) {
+      return true;
+    }
+    return true;
+  } else {
+    if (containsPlace && containsOther) {
+      return false;
+    }
+    if (containsPlace && !containsOther) {
+      return false;
+    }
+    if (!containsPlace && containsOther) {
+      return true;
+    }
+    return true;
+  }
 }

@@ -23,4 +23,9 @@ $mod_strings = array(
     'LBL_STIC_CENTERS' => 'Centros',
     'LBL_STIC_RESOURCES' => 'Recursos',
 
+    'LBL_TODAY' => 'Hoy',
+    'LBL_MONTH' => 'Mes',
+    'LBL_WEEK' => 'Semana',
+    'LBL_DAY' =>  'Día',
+    'LBL_LIST' => 'Lista',
 );

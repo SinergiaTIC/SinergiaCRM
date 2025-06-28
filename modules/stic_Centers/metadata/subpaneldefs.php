@@ -141,12 +141,12 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_resources_stic_centers'] = ar
     'module' => 'stic_Resources',
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
-    'sort_by' => 'id',
+    'sort_by' => 'name',
     'title_key' => 'LBL_STIC_RESOURCES_STIC_CENTERS_FROM_STIC_RESOURCES_TITLE',
     'get_subpanel_data' => 'stic_resources_stic_centers',
     'top_buttons' => array(
         0 => array(
-            'widget_class' => 'SubPanelTopButtonQuickCreate',
+            'widget_class' => 'SubPanelTopCreateButton',
         ),
         1 => array(
             'widget_class' => 'SubPanelTopSelectButton',

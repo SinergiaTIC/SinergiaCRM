@@ -94,10 +94,14 @@ function loadCalendar() {
       threeDays: {
         type: "timeGridWeek",
         duration: { days: 3 },
-        buttonText: SUGAR.language.get(
-          "stic_Bookings_Calendar",
-          "LBL_MOBILE_BUTTON"
-        ),
+        buttonText: {
+          today: SUGAR.language.get("stic_Bookings_Calendar", "LBL_TODAY"),
+          month: SUGAR.language.get("stic_Bookings_Calendar", "LBL_MONTH"),
+          week: SUGAR.language.get("stic_Bookings_Calendar", "LBL_WEEK"),
+          day: SUGAR.language.get("stic_Bookings_Calendar", "LBL_DAY"),
+          list: SUGAR.language.get("stic_Bookings_Calendar", "LBL_LIST"),
+          mobile: SUGAR.language.get("stic_Bookings_Calendar", "LBL_MOBILE_BUTTON"),
+        },
       },
     },
     viewDidMount: function ({ view }) {

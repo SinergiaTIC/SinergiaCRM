@@ -487,4 +487,30 @@ class stic_BookingsController extends SugarController
         echo json_encode(['valid' => $valid]);
         return;
     }
+    /**
+     * Get resource type for validation
+     */
+    public function action_getResourceType()
+    {
+        global $db;
+        
+        $resourceId = $_REQUEST['resourceId'] ?? '';
+        
+        if (empty($resourceId)) {
+            echo json_encode(array('success' => false, 'message' => 'Resource ID is required'));
+            return;
+        }
+        
+        $query = "SELECT type FROM stic_resources WHERE id = " . $db->quoted($resourceId) . " AND deleted = 0";
+        $result = $db->query($query);
+        
+        if ($row = $db->fetchByAssoc($result)) {
+            echo json_encode(array(
+                'success' => true, 
+                'type' => $row['type']
+            ));
+        } else {
+            echo json_encode(array('success' => false, 'message' => 'Resource not found'));
+        }
+    }
 }
