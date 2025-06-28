@@ -138,12 +138,14 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
     };
 
     var mb = messageBox();
+    debugger;
     mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
     mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
+    mb.css('z-index', 26000);
     mb.show();
 
     var popupId = mb.controls.modal.container.attr('id');
-    $('#' + popupId).css('z-index', '1030');
+    $('#' + popupId).css('z-index', '16030');
 
     var args = JSON.stringify(args);
 
@@ -172,12 +174,14 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
       set_return(args);
     };
     var mb = messageBox();
+    debugger;
     mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
     mb.setBody(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
+    mb.css('z-index', 26000);
     mb.show();
 
     var popupId = mb.controls.modal.container.attr('id');
-    $('#' + popupId).css('z-index', '1030');
+    $('#' + popupId).css('z-index', '16030');
 
     mb.on('ok', function () {
       "use strict";

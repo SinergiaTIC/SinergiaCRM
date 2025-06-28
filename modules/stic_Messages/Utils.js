@@ -41,10 +41,24 @@ switch (viewType()) {
     break;
 
   case "detail":
+    debugger;
     $(document).ready(function() {
       var typeSelected = $('#type').val();
       showTabs(typeSelected);
     });
+
+    // Get record Id 
+    recordId = $("#formDetailView input[type=hidden][name=record]").val();
+    // Define button content
+    var buttons = {
+      retry: {
+        id: "bt_retry_detailview",
+        title: SUGAR.language.get("stic_Messages", "LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE"),
+        // onclick: "window.location='index.php?module=stic_Incorpora&action=fromDetailView&record=" + recordId + "&return_module="+ module +"'"
+        onclick: "onClickRetryMessagesButton(recordId)"
+      }
+    };
+    createDetailViewButton(buttons.retry);
     break;
 
   case "list":

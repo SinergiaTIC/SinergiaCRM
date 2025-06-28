@@ -89,8 +89,8 @@ class stic_MessagesController extends SugarController
             header('Content-Type: application/json');
             // $this->bean->response
             // echo "{'status': 200, 'message': 'ok'}";
-            $title = $this->bean->status !== 'error' ? $app_strings['LBL_EMAIL_SUCCESS'] : $app_strings['LBL_NOT_SENT'];
-            $detail = $this->bean->status !== 'error' ? $mod_strings['LBL_MESSAGE_SENT'] : $mod_strings('LBL_MESSAGE_NOT_SENT');
+            $title = $this->bean->status !== 'error' ? $app_strings['LBL_EMAIL_SUCCESS'] : $mod_strings['LBL_ERROR'];
+            $detail = $this->bean->status !== 'error' ? $mod_strings['LBL_MESSAGE_SENT'] : $mod_strings['LBL_MESSAGE_NOT_SENT'];
             echo json_encode(array('success' => $this->bean->status === 'error' ? false : true, 'title' => $title, 'detail' => $detail, 'id' => $id));
             // echo json_encode(array('success' => true, 'number_found' => true)); 
             exit;
@@ -98,6 +98,19 @@ class stic_MessagesController extends SugarController
     }
 
 
+    public function action_RetryOne() {
+        global $app_strings, $mod_strings;
+
+        $id = $_REQUEST['recordId'];
+        $bean = BeanFactory::getBean('stic_Messages', $id);
+        $bean->status = 'sent';
+        $bean->save();
+
+        $title = $bean->status !== 'error' ? $app_strings['LBL_EMAIL_SUCCESS'] : $mod_strings['LBL_ERROR'];
+        $detail = $bean->status !== 'error' ? $mod_strings['LBL_MESSAGE_SENT'] : $mod_strings['LBL_MESSAGE_NOT_SENT'];
+        echo json_encode(array('success' => $bean->status === 'error' ? false : true, 'title' => $title, 'detail' => $detail, 'id' => $id));
+        exit;
+    }
     public function action_Retry(){
 
         $db = DBManagerFactory::getInstance();

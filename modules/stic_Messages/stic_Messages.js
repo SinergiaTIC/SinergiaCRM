@@ -32,6 +32,106 @@ function onClickMassSendMessagesButton() {
   openMessagesModal(this, jsonString);
 }
 
+function showMessabeBox(title, detail, onOk, onCancel) {
+  
+}
+
+
+
+function onClickRetryMessagesButton(recordId) {
+  debugger;
+  var status = $("#status").val();
+  if(status === 'sent') {
+    var mb = messageBox({backdrop:'static'});
+    mb.setTitle(SUGAR.language.get('stic_Messages', 'LBL_ERROR'));
+    mb.hideCancel();
+    mb.setBody(SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
+    mb.css('z-index', 26000)
+    mb.show();
+    mb.on('ok', function () {
+      "use strict";
+      console.log('asdsa');
+      mb.remove();
+    });
+  }
+  else {
+    $.ajax({
+      url: "index.php?module=stic_Messages&action=retryOne",
+      type:"post",
+      dataType: "json",
+      async: false,
+      data: {
+          'recordId':recordId
+      },
+      success: function(res) {
+          debugger;
+          if (res.success) {
+              var mb = messageBox({backdrop:'static'});
+              // ###EPS### Aquests literals no són els que toquen aquí
+              mb.setTitle(res.title);
+              mb.hideCancel();
+              mb.setBody(res.detail);
+              mb.css('z-index', 26000)
+              mb.show();
+              mb.on('ok', function () {
+                  "use strict";
+                  mb.remove();
+                  // var baseUrl = window.location.href.split('?')[0];
+                  // var returnModule = 'stic_Messages';
+                  // var returnAction = 'DetailView';
+                  // var returnId = res.id;
+                  // var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
+                  //     + '&action=' + encodeURIComponent(returnAction)
+                  //     + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
+                  // console.log("Redirecting to: " + newUrl);
+                  // window.location.href = newUrl;
+              });
+          } else {
+              console.log("Error in the controller", res);
+              var mb = messageBox({backdrop:'static'});
+              mb.setTitle(res.title);
+              mb.hideCancel();
+              mb.setBody(res.detail);
+              mb.css('z-index', 26000);
+              mb.show();
+              mb.on('ok', function () {
+                  "use strict";
+                  mb.remove();
+                  // var baseUrl = window.location.href.split('?')[0];
+                  // var returnModule = 'stic_Messages';
+                  // var returnAction = 'DetailView';
+                  // var returnId = res.id;
+                  // var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
+                  //     + '&action=' + encodeURIComponent(returnAction)
+                  //     + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
+                  // console.log("Redirecting to: " + newUrl);
+                  // window.location.href = newUrl;
+              });
+          }
+      },
+      error: function() {
+          debugger;
+          console.log("Error send Request");
+          var mb = messageBox({backdrop:'static'});
+              debugger; 
+              mb.setTitle(SUGAR.language.get('stic_Messages', 'LBL_ERROR'));
+              mb.hideCancel();
+              mb.setBody(SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'));
+              mb.css('z-index', 26000)
+              mb.show();
+              mb.on('ok', function () {
+                  "use strict";
+                  console.log('asdsa');
+                  debugger;
+                  mb.remove();
+
+              });
+      }
+    });
+  }
+}
+
+
 
 function onClickMassRetryMessagesButton() {
   // confirmation panel

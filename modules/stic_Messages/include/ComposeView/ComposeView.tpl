@@ -34,8 +34,8 @@
     <input type="hidden" name="return_action" value="{$RETURN_ACTION}">
     <input type="hidden" name="return_id" value="{$RETURN_ID}">
     <input type="hidden" name="mass_ids" id = "mass_ids" value="">
-    <input type="hidden" name="confirmationMessage" id="confirmationMessage" value="{sugar_translate label='LBL_EMAIL_SUCCESS'}">
-    <input type="hidden" name="confirmationMessageText" id="confirmationMessageText" value="{sugar_translate label='LBL_MESSAGE_SENT' module='stic_Messages'}">
+    <input type="hidden" name="errorMessage" id="errorMessage" value="{sugar_translate label='LBL_ERROR' module='stic_Messages'}">
+    <input type="hidden" name="errorMessageText" id="errorMessageText" value="{sugar_translate label='LBL_MESSAGE_NOT_SENT' module='stic_Messages'}">
 <div class="content">
 <div id="EditView_tabs">
     {*display tabs*}
@@ -281,7 +281,7 @@
                             mb.hideCancel();
                             //mb.setBody('There was an error: Message not sent');
                             mb.setBody(res.detail);
-                            mb.css('z-index', 26000)
+                            mb.css('z-index', 26000);
                             mb.show();
                             mb.on('ok', function () {
                                 "use strict";
@@ -306,16 +306,27 @@
                         debugger;
                         console.log("Error send Request");
                         var mb = messageBox({backdrop:'static'});
-                            // mb.hideHeader();    
-                            mb.setTitle('Error');
+                            // mb.hideHeader();   
+                            debugger; 
+                            mb.setTitle($("#errorMessage").val());
                             mb.hideCancel();
-                            mb.setBody('There was an error: Message not sent');
+                            mb.setBody($("#errorMessageText").val());
                             mb.css('z-index', 26000)
                             mb.show();
                             mb.on('ok', function () {
                                 "use strict";
                                 console.log('asdsa');
+                                debugger;
                                 mb.remove();
+                                var baseUrl = window.location.href.split('?')[0];
+                                var returnModule = $('#EditView [name="return_module"]').val();
+                                var returnAction = $('#EditView [name="return_action"]').val();
+                                var returnId = $('#EditView [name="return_id"]').val();
+                                var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
+                                    + '&action=' + encodeURIComponent(returnAction)
+                                    + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
+                                console.log("Redirecting to: " + newUrl);
+                                window.location.href = newUrl;
                             });
                     }
                 });
