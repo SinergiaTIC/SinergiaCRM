@@ -319,9 +319,8 @@ switch (viewType()) {
       var endHoursInput = $("#end_date_hours");
       var endMinutesInput = $("#end_date_minutes");
 
-      var now = moment(); // Usar moment.js para la fecha actual
+      var now = moment();
 
-      // --- Lógica para start_date ---
       var currentStartDateVal = startDateInput.val();
       var currentStartDateObj = null;
 
@@ -343,16 +342,8 @@ switch (viewType()) {
           }
           currentStartDateObj = moment(currentStartDateVal, momentFormatString);
       }
-      console.log("Voy a ver currentPlannedStartDate"+currentPlannedStartDate)
-      console.log("Voy a ver startDateInput"+startDateInput)
 
-      // Lógica para start_date_date
       if (currentPlannedStartDate !== startDateInput) {
-        console.log("Voy a ver currentStartDateObj"+currentStartDateObj)
-        console.log("Voy a ver now"+now)
-        console.log("Vemos resultado comparación"+currentStartDateObj.isSameOrAfter(now, 'day'))
-  
-        // Solo actualizar si start_date_date está vacío O si no ha pasado ya
         if (!currentStartDateVal || (currentStartDateObj && currentStartDateObj.isSameOrAfter(now, 'day'))) {
           startDateInput.val(currentPlannedStartDate).trigger("change");
           startHoursInput.val(currentPlannedStartHours).trigger("change");
@@ -363,7 +354,6 @@ switch (viewType()) {
         previousPlannedStartMinutes = currentPlannedStartMinutes;
 
       }
-      // --- Lógica para end_date (ahora con la misma restricción de fecha pasada) ---
       var currentEndDateVal = endDateInput.val();
       var currentEndDateObj = null;
 
@@ -386,9 +376,7 @@ switch (viewType()) {
           currentEndDateObj = moment(currentEndDateVal, momentFormatStringEnd);
       }
 
-      // Lógica para end_date_date
       if (currentPlannedEndDate !== previousPlannedEndDate) {
-        // Actualizar si end_date_date está vacío O si no ha pasado ya
         if (!currentEndDateVal || (currentEndDateObj && currentEndDateObj.isSameOrAfter(now, 'day'))) {
           endDateInput.val(currentPlannedEndDate).trigger("change");
         }
@@ -403,12 +391,6 @@ switch (viewType()) {
         previousPlannedEndMinutes = currentPlannedEndMinutes;
       }
 
-      // if (currentPlannedEndMinutes !== previousPlannedEndMinutes) {
-      //   if (!currentEndDateVal || (currentEndDateObj && currentEndDateObj.isSameOrAfter(now, 'day'))) {
-      //     endMinutesInput.val(currentPlannedEndMinutes).trigger("change");
-      //   }
-      //   previousPlannedEndMinutes = currentPlannedEndMinutes;
-      // }
     }, 500);
 
 
