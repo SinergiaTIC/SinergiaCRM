@@ -2205,7 +2205,7 @@ class ExternalReporting
             $query = "SELECT * FROM sda_def_permissions WHERE `table` = '{$this->viewPrefix}_{$table}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
-                $row['table'] = "{$this->viewPrefix}_{$table}_{$relationship}";
+                $row['table'] = $this->truncateStringMiddle("{$this->viewPrefix}_{$table}_{$relationship}");
                 $row['id'] = null;
                 $this->addMetadataRecord('sda_def_permissions', $row);
             }
