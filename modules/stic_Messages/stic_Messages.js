@@ -39,6 +39,7 @@ function showMessageBox(title, detail, onOk = null, onCancel = null) {
   if (!onCancel){
     mb.hideCancel();
   }
+  mb.css('z-index', 26000);
   mb.show();
   mb.on('ok', function () {
     "use strict";
