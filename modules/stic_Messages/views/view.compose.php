@@ -91,7 +91,7 @@ class stic_MessagesViewCompose extends ViewEdit
 
         echo getVersionedScript("modules/stic_Messages/Utils.js");
         echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
-        echo getVersionedScript("cache/include/javascript/sugar_grp_yui_widgets.js");
+        // echo getVersionedScript("cache/include/javascript/sugar_grp_yui_widgets.js");
         
         // Write here you custom code
 

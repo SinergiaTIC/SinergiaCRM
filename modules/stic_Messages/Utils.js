@@ -41,10 +41,6 @@ switch (viewType()) {
 
   case "detail":
     debugger;
-    $(document).ready(function() {
-      var typeSelected = $('#type').val();
-      showTabs(typeSelected);
-    });
 
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
