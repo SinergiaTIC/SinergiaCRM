@@ -423,6 +423,7 @@ $app_list_strings['stic_catalonia_counties_list']['garraf'] = 'Garraf';
 $app_list_strings['stic_catalonia_counties_list']['garrigues'] = 'Garrigues';
 $app_list_strings['stic_catalonia_counties_list']['garrotxa'] = 'Garrotxa';
 $app_list_strings['stic_catalonia_counties_list']['girones'] = 'Gironès';
+$app_list_strings['stic_catalonia_counties_list']['lluçanes'] = 'Lluçanès';
 $app_list_strings['stic_catalonia_counties_list']['maresme'] = 'Maresme';
 $app_list_strings['stic_catalonia_counties_list']['moianes'] = 'Moianès';
 $app_list_strings['stic_catalonia_counties_list']['montsia'] = 'Montsià';
@@ -1195,9 +1196,9 @@ $app_list_strings['stic_sepe_file_types_list']['annual_accd'] = 'ACCD anual';
 // Campos y valores Incorpora
 $app_list_strings['stic_incorpora_activity_sector_list'][''] = '';
 $app_list_strings['stic_incorpora_activity_sector_list']['AGRICULT'] = 'Agricultura';
-$app_list_strings['stic_incorpora_activity_sector_list']['COMEERCIO'] = 'Comercio';
 $app_list_strings['stic_incorpora_activity_sector_list']['INDUSTRIA'] = 'Industria';
 $app_list_strings['stic_incorpora_activity_sector_list']['SERVICIOS'] = 'Servicios';
+$app_list_strings['stic_incorpora_activity_sector_list']['COMEERCIO'] = 'Comercio (Obsoleto)';
 $app_list_strings['stic_incorpora_addr_street_type_list'][''] = '';
 $app_list_strings['stic_incorpora_addr_street_type_list']['1'] = 'Calle';
 $app_list_strings['stic_incorpora_addr_street_type_list']['10'] = 'Muelle';
@@ -2388,16 +2389,22 @@ $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_33_les
 $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_65'] = '>=65%';
 $app_list_strings['stic_incorpora_disability_degree_list']['less_33'] = '<33%';
 $app_list_strings['stic_incorpora_economic_benefit_list'][''] = '';
-$app_list_strings['stic_incorpora_economic_benefit_list']['CONTRIB'] = 'Contributiva';
-$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desempleo';
-$app_list_strings['stic_incorpora_economic_benefit_list']['GRAN_INVAL'] = 'Gran invalidez';
-$app_list_strings['stic_incorpora_economic_benefit_list']['INVALIDEZ'] = 'Invalidez';
 $app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'No';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO_CONTRIB'] = 'No contributiva';
-$app_list_strings['stic_incorpora_economic_benefit_list']['OTROS'] = 'Otras';
-$app_list_strings['stic_incorpora_economic_benefit_list']['P_PROF_HAB'] = 'Incapacidad permanente parcial para la profesión habitual';
-$app_list_strings['stic_incorpora_economic_benefit_list']['PERM_ABS'] = 'Incapacidad permanente absoluta';
-$app_list_strings['stic_incorpora_economic_benefit_list']['T_PROF_HAB'] = 'Incapacidad permanente total para la profesión habitual';
+$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Prestaciones y subsidios por desocupación';
+$app_list_strings['stic_incorpora_economic_benefit_list']['CESE_ACT'] = 'Prestación por cese de actividad de trabajadores autónomos';
+$app_list_strings['stic_incorpora_economic_benefit_list']['SEG_SOCIAL'] = 'Prestaciones económicas de la Seguridad Social';
+$app_list_strings['stic_incorpora_economic_benefit_list']['PRES_IMV'] = 'Ingreso Mínimo Vital';
+$app_list_strings['stic_incorpora_economic_benefit_list']['AU_IMV'] = 'Autonómica asimilable al Ingreso Mínimo Vital';
+$app_list_strings['stic_incorpora_economic_benefit_list']['CONTRIB'] = 'Contributiva (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desempleo (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['GRAN_INVAL'] = 'Gran invalidez (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['INVALIDEZ'] = 'Invalidez (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'No (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO_CONTRIB'] = 'No contributiva (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['OTROS'] = 'Otras (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['P_PROF_HAB'] = 'Incapacidad permanente parcial para la profesión habitual (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['PERM_ABS'] = 'Incapacidad permanente absoluta (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['T_PROF_HAB'] = 'Incapacidad permanente total para la profesión habitual (Obsoleto)';
 $app_list_strings['stic_incorpora_education_languages_list'][''] = '';
 $app_list_strings['stic_incorpora_education_languages_list']['10'] = 'Castellano';
 $app_list_strings['stic_incorpora_education_languages_list']['11'] = 'Catalán';
@@ -2452,9 +2459,9 @@ $app_list_strings['stic_incorpora_lopd_consent_list'][''] = '';
 $app_list_strings['stic_incorpora_lopd_consent_list']['FLC'] = 'Consentimiento para Incorpora y Fundación "la Caixa"';
 $app_list_strings['stic_incorpora_lopd_consent_list']['INCORPORA'] = 'Consentimiento para Incorpora';
 $app_list_strings['stic_incorpora_lopd_consent_list']['LA_CAIXA'] = 'Consentimiento para Fundación “la Caixa”';
-$app_list_strings['stic_incorpora_nationality_list'][''] = '';
-$app_list_strings['stic_incorpora_nationality_list']['extranjero'] = 'Extranjera';
-$app_list_strings['stic_incorpora_nationality_list']['nacional'] = 'Española';
+$app_list_strings['stic_incorpora_nationality_list'][''] = ' (Obsoleto)';
+$app_list_strings['stic_incorpora_nationality_list']['extranjero'] = 'Extranjera (Obsoleto)';
+$app_list_strings['stic_incorpora_nationality_list']['nacional'] = 'Española (Obsoleto)';
 $app_list_strings['stic_incorpora_offer_origin_list'][''] = '';
 $app_list_strings['stic_incorpora_offer_origin_list']['AUTOEMPLEO'] = 'Incorpora Autoempleo';
 $app_list_strings['stic_incorpora_offer_origin_list']['CAIXAEMP'] = 'CaixaEmpresa';
@@ -3551,6 +3558,16 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'So
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Entregada';
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
 
+// Monitorización: Acciones
+$app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
+$app_list_strings['trackers_actions_list']['editview'] = 'Registro en edición';
+$app_list_strings['trackers_actions_list']['listview'] = 'Registros listados';
+$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
+$app_list_strings['trackers_actions_list']['login_failed'] = 'Inicio de sesión erróneo';
+$app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
 
 // Modificaciones del core de SuiteCRM
 
@@ -3642,7 +3659,7 @@ $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
 
-// Plantillas de email: Tipos de plantilla
+// Plantillas de correo: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
 $app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
