@@ -2175,7 +2175,7 @@ class ExternalReporting
     {
         $db = DBManagerFactory::getInstance();
         foreach ($autoRelationships as $relationship) {
-            $this->info .= "<li>{$relationship['source_table']} -> {$relationship['target_table']}</li>";
+            $this->info .= "<li>" . ($relationship['source_table'] ?? 'N/A') . " -> " . ($relationship['target_table'] ?? 'N/A') . "</li>";
             $query = "SELECT * FROM sda_def_columns WHERE `table` = '{$this->viewPrefix}_{$relationship['table']}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
