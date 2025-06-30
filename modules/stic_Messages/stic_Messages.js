@@ -57,17 +57,6 @@ function onClickRetryMessagesButton(recordId) {
   debugger;
   var status = $("#status").val();
   if(status === 'sent') {
-    // var mb = messageBox({backdrop:'static'});
-    // mb.setTitle(SUGAR.language.get('stic_Messages', 'LBL_ERROR'));
-    // mb.hideCancel();
-    // mb.setBody(SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
-    // mb.css('z-index', 26000)
-    // mb.show();
-    // mb.on('ok', function () {
-    //   "use strict";
-    //   console.log('asdsa');
-    //   mb.remove();
-    // });
     showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
   }
   else {
@@ -117,9 +106,6 @@ function onClickMassRetryMessagesButton() {
   mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY'));
   mb.css('z-index', 26000);
   mb.show();
-
-  // var popupId = mb.controls.modal.container.attr('id');
-  // $('#' + popupId).css('z-index', '1030');
 
   var args = JSON.stringify(args);
 

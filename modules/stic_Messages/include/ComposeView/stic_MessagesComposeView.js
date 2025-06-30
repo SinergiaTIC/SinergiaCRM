@@ -144,9 +144,6 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
     mb.css('z-index', 26000);
     mb.show();
 
-    var popupId = mb.controls.modal.container.attr('id');
-    $('#' + popupId).css('z-index', '16030');
-
     var args = JSON.stringify(args);
 
     mb.on('ok', function () {
@@ -179,9 +176,6 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
     mb.setBody(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
     mb.css('z-index', 26000);
     mb.show();
-
-    var popupId = mb.controls.modal.container.attr('id');
-    $('#' + popupId).css('z-index', '16030');
 
     mb.on('ok', function () {
       "use strict";
