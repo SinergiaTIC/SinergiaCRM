@@ -37,7 +37,7 @@ class stic_MessagesViewList extends ViewList
     {
         parent::preDisplay();
 
-        SticViews::preDisplay($this);
+        // SticViews::preDisplay($this);
 
         // Write here you custom code
 
@@ -47,10 +47,10 @@ class stic_MessagesViewList extends ViewList
     {
         parent::display();
 
-        SticViews::display($this);
+        // SticViews::display($this);
 
-        echo getVersionedScript("modules/stic_Messages/Utils.js");
-        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        // echo getVersionedScript("modules/stic_Messages/Utils.js");
+        // echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 
         // Write here you custom code
     }

@@ -20,7 +20,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-
 /**
  * 
  * Used as a callback for sending various messages from list view
@@ -30,96 +29,6 @@ function onClickMassSendMessagesButton() {
   let jsonString = JSON.stringify(obj);
 
   openMessagesModal(this, jsonString);
-}
-
-function showMessageBox(title, detail, onOk = null, onCancel = null) {
-  var mb = messageBox({backdrop:'static'});
-  mb.setTitle(title);
-  mb.setBody(detail);
-  if (!onCancel){
-    mb.hideCancel();
-  }
-  mb.css('z-index', 26000);
-  mb.show();
-  mb.on('ok', function () {
-    "use strict";
-    debugger;
-    mb.remove();
-    if(onOk){
-      onOk();
-    }
-  });
-}
-
-
-
-function onClickRetryMessagesButton(recordId) {
-  debugger;
-  var status = $("#status").val();
-  if(status === 'sent') {
-    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
-  }
-  else {
-    $.ajax({
-      url: "index.php?module=stic_Messages&action=retryOne",
-      type:"post",
-      dataType: "json",
-      async: false,
-      data: {
-          'recordId':recordId
-      },
-      success: function(res) {
-          debugger;
-          if (res.success) {
-            showMessageBox(res.title, res.detail,function() {window.location.reload();});
-          } else {
-              console.log("Error in the controller", res);
-              showMessageBox(res.title, res.detail);
-          }
-      },
-      error: function() {
-          debugger;
-          console.log("Error send Request");
-          showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'));
-      }
-    });
-  }
-}
-
-
-
-function onClickMassRetryMessagesButton() {
-  // confirmation panel
-  var confirmed = function (args) {
-    sugarListView.get_checks();
-    if(sugarListView.get_checks_count() < 1) {
-        alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
-        return false;
-    }
-    document.MassUpdate.action.value='Retry';
-    document.MassUpdate.module.value='stic_Messages';
-    document.MassUpdate.submit();
-  };
-  debugger;
-  var mb = messageBox();
-  mb.setTitle(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE'));
-  mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY'));
-  mb.css('z-index', 26000);
-  mb.show();
-
-  var args = JSON.stringify(args);
-
-  mb.on('ok', function () {
-    "use strict";
-    confirmed(args);
-    mb.remove();
-  });
-
-  mb.on('cancel', function () {
-    "use strict";
-    mb.remove();
-  });
-
 }
 
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
