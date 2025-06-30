@@ -1262,8 +1262,7 @@ class ExternalReporting
                     ];
                 } else {
                     // if an auto relationship
-                    $targetTable = "{$this->viewPrefix}_{$field['table']}_{$field['link']}";
-                    $label = "{$tableLabel} ({$field['rLabel']})|{$tableLabel}";
+                    $targetTable = $this->truncateStringMiddle("{$this->viewPrefix}_{$field['table']}_{$field['link']}",64);
                     $label = "{$tableLabel}|{$tableLabel} ({$field['rLabel']})";
 
                     // Add metadata record
