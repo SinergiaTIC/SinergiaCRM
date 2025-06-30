@@ -32,8 +32,22 @@ function onClickMassSendMessagesButton() {
   openMessagesModal(this, jsonString);
 }
 
-function showMessabeBox(title, detail, onOk, onCancel) {
-  
+function showMessageBox(title, detail, onOk = null, onCancel = null) {
+  var mb = messageBox({backdrop:'static'});
+  mb.setTitle(title);
+  mb.setBody(detail);
+  if (!onCancel){
+    mb.hideCancel();
+  }
+  mb.show();
+  mb.on('ok', function () {
+    "use strict";
+    debugger;
+    mb.remove();
+    if(onOk){
+      onOk();
+    }
+  });
 }
 
 
@@ -42,17 +56,18 @@ function onClickRetryMessagesButton(recordId) {
   debugger;
   var status = $("#status").val();
   if(status === 'sent') {
-    var mb = messageBox({backdrop:'static'});
-    mb.setTitle(SUGAR.language.get('stic_Messages', 'LBL_ERROR'));
-    mb.hideCancel();
-    mb.setBody(SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
-    mb.css('z-index', 26000)
-    mb.show();
-    mb.on('ok', function () {
-      "use strict";
-      console.log('asdsa');
-      mb.remove();
-    });
+    // var mb = messageBox({backdrop:'static'});
+    // mb.setTitle(SUGAR.language.get('stic_Messages', 'LBL_ERROR'));
+    // mb.hideCancel();
+    // mb.setBody(SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
+    // mb.css('z-index', 26000)
+    // mb.show();
+    // mb.on('ok', function () {
+    //   "use strict";
+    //   console.log('asdsa');
+    //   mb.remove();
+    // });
+    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
   }
   else {
     $.ajax({
@@ -66,66 +81,16 @@ function onClickRetryMessagesButton(recordId) {
       success: function(res) {
           debugger;
           if (res.success) {
-              var mb = messageBox({backdrop:'static'});
-              // ###EPS### Aquests literals no són els que toquen aquí
-              mb.setTitle(res.title);
-              mb.hideCancel();
-              mb.setBody(res.detail);
-              mb.css('z-index', 26000)
-              mb.show();
-              mb.on('ok', function () {
-                  "use strict";
-                  mb.remove();
-                  // var baseUrl = window.location.href.split('?')[0];
-                  // var returnModule = 'stic_Messages';
-                  // var returnAction = 'DetailView';
-                  // var returnId = res.id;
-                  // var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
-                  //     + '&action=' + encodeURIComponent(returnAction)
-                  //     + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
-                  // console.log("Redirecting to: " + newUrl);
-                  // window.location.href = newUrl;
-              });
+            showMessageBox(res.title, res.detail,function() {window.location.reload();});
           } else {
               console.log("Error in the controller", res);
-              var mb = messageBox({backdrop:'static'});
-              mb.setTitle(res.title);
-              mb.hideCancel();
-              mb.setBody(res.detail);
-              mb.css('z-index', 26000);
-              mb.show();
-              mb.on('ok', function () {
-                  "use strict";
-                  mb.remove();
-                  // var baseUrl = window.location.href.split('?')[0];
-                  // var returnModule = 'stic_Messages';
-                  // var returnAction = 'DetailView';
-                  // var returnId = res.id;
-                  // var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
-                  //     + '&action=' + encodeURIComponent(returnAction)
-                  //     + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
-                  // console.log("Redirecting to: " + newUrl);
-                  // window.location.href = newUrl;
-              });
+              showMessageBox(res.title, res.detail);
           }
       },
       error: function() {
           debugger;
           console.log("Error send Request");
-          var mb = messageBox({backdrop:'static'});
-              debugger; 
-              mb.setTitle(SUGAR.language.get('stic_Messages', 'LBL_ERROR'));
-              mb.hideCancel();
-              mb.setBody(SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'));
-              mb.css('z-index', 26000)
-              mb.show();
-              mb.on('ok', function () {
-                  "use strict";
-                  console.log('asdsa');
-                  debugger;
-                  mb.remove();
-
-              });
+          showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'));
       }
     });
   }
@@ -145,13 +110,15 @@ function onClickMassRetryMessagesButton() {
     document.MassUpdate.module.value='stic_Messages';
     document.MassUpdate.submit();
   };
+  debugger;
   var mb = messageBox();
   mb.setTitle(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE'));
   mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY'));
+  mb.css('z-index', 26000);
   mb.show();
 
-  var popupId = mb.controls.modal.container.attr('id');
-  $('#' + popupId).css('z-index', '1030');
+  // var popupId = mb.controls.modal.container.attr('id');
+  // $('#' + popupId).css('z-index', '1030');
 
   var args = JSON.stringify(args);
 

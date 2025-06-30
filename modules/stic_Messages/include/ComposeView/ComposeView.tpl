@@ -322,11 +322,13 @@
                                 var returnModule = $('#EditView [name="return_module"]').val();
                                 var returnAction = $('#EditView [name="return_action"]').val();
                                 var returnId = $('#EditView [name="return_id"]').val();
-                                var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
-                                    + '&action=' + encodeURIComponent(returnAction)
-                                    + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
-                                console.log("Redirecting to: " + newUrl);
-                                window.location.href = newUrl;
+                                if(returnId) {
+                                    var newUrl = baseUrl + '?module=' + encodeURIComponent(returnModule)
+                                        + '&action=' + encodeURIComponent(returnAction)
+                                        + (returnId ? '&record=' + encodeURIComponent(returnId) : '');
+                                    console.log("Redirecting to: " + newUrl);
+                                    window.location.href = newUrl;
+                                }
                             });
                     }
                 });
