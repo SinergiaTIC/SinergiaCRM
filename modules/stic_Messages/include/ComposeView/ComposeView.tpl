@@ -240,19 +240,10 @@
     {/literal}
 
     <script>
-    console.log('bbb');
         {* Compose view has a TEMP ID in case you want to display multi instance of the ComposeView *}
-      $( "#template" ).change(function() {ldelim}
-          $.fn.stic_MessagesComposeView.onTemplateChange()
-      {rdelim});
-    //   $( "#parent_name" ).change(function() {ldelim}
-    //     console.log('parent-name');
-    //       $.fn.stic_MessagesComposeView.onParentChange()
-    //   {rdelim});
-    //   $( "#parent_id" ).change(function() {ldelim}
-    //         console.log('parent-id');
-    //       $.fn.stic_MessagesComposeView.onParentChange()
-    //   {rdelim});
+        $( "#template" ).change(function() {ldelim}
+            $.fn.stic_MessagesComposeView.onTemplateChange()
+        {rdelim});
     </script>
     {/if}
 </form>

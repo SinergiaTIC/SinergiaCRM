@@ -40,8 +40,6 @@ switch (viewType()) {
     break;
 
   case "detail":
-    debugger;
-
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
     // Define button content
@@ -87,7 +85,6 @@ function showMessageBox(title, detail, onOk = null, onCancel = null) {
   mb.show();
   mb.on('ok', function () {
     "use strict";
-    debugger;
     mb.remove();
     if(onOk){
       onOk();
@@ -98,7 +95,6 @@ function showMessageBox(title, detail, onOk = null, onCancel = null) {
 
 
 function onClickRetryMessagesButton(recordId) {
-  debugger;
   var status = $("#status").val();
   if(status === 'sent') {
     showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
@@ -113,17 +109,13 @@ function onClickRetryMessagesButton(recordId) {
           'recordId':recordId
       },
       success: function(res) {
-          debugger;
           if (res.success) {
             showMessageBox(res.title, res.detail,function() {window.location.reload();});
           } else {
-              console.log("Error in the controller", res);
               showMessageBox(res.title, res.detail);
           }
       },
       error: function() {
-          debugger;
-          console.log("Error send Request");
           showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'));
       }
     });
@@ -134,7 +126,7 @@ function onClickRetryMessagesButton(recordId) {
 
 function onClickMassRetryMessagesButton() {
   // confirmation panel
-  var confirmed = function (args) {
+  var confirmed = function () {
     sugarListView.get_checks();
     if(sugarListView.get_checks_count() < 1) {
         alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
@@ -144,21 +136,18 @@ function onClickMassRetryMessagesButton() {
     document.MassUpdate.module.value='stic_Messages';
     document.MassUpdate.submit();
   };
-  debugger;
+
   var mb = messageBox();
   mb.setTitle(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE'));
   mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY'));
   mb.css('z-index', 26000);
   mb.show();
 
-  var args = JSON.stringify(args);
-
   mb.on('ok', function () {
     "use strict";
-    confirmed(args);
+    confirmed();
     mb.remove();
   });
-
   mb.on('cancel', function () {
     "use strict";
     mb.remove();
