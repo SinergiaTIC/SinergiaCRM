@@ -90,10 +90,7 @@ class stic_MessagesController extends SugarController
             $title = $this->bean->status !== 'error' ? $app_strings['LBL_EMAIL_SUCCESS'] : $mod_strings['LBL_ERROR'];
             $detail = $this->bean->status !== 'error' ? $mod_strings['LBL_MESSAGE_SENT'] : $mod_strings['LBL_MESSAGE_NOT_SENT'];
             echo json_encode(array('success' => $this->bean->status === 'error' ? false : true, 'title' => $title, 'detail' => $detail, 'id' => $id));
-            // if (ijfdsof) {
-
-            // }
-             exit;
+            exit;
         }
     }
 
