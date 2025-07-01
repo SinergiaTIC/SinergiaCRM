@@ -3644,7 +3644,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Públic Objecti
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Interessats';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Organitzacions';
 
-// Fluxos de treball: Llistes adaptades
+// Fluxos de treball: llistes adaptades
 $app_list_strings['aow_date_options']['now'] = 'Ara';
 $app_list_strings['aow_date_options']['today'] = 'Avui';
 $app_list_strings['aow_date_options']['field'] = 'Aquest camp';
@@ -3665,7 +3665,7 @@ $app_list_strings['aow_message_type_list']['Related Field'] = 'Camp relacionat';
 $app_list_strings['aow_message_type_list']['Specify User'] = 'Usuari';
 $app_list_strings['aow_message_type_list']['Users'] = 'Usuaris';
 
-// Mapes: Llistes adaptades
+// Mapes: llistes adaptades
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organitzacions';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Persones';
 $app_list_strings['map_module_type_list']['Cases'] = 'Casos';

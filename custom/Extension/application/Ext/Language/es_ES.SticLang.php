@@ -272,8 +272,11 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
+
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
+$app_list_strings['record_type_display_notes']['Contacts'] = 'Personas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
 $app_list_strings['record_type_display_notes']['Opportunities'] = 'Subvenciones';
 $app_list_strings['record_type_display_notes']['Meetings'] = 'Reuniones';
@@ -3641,7 +3644,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Público Objeti
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Interesados';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Organizaciones';
 
-// Flujos de trabajo: Listas adaptadas
+// Flujos de trabajo: listas adaptadas
 $app_list_strings['aow_date_options']['now'] = 'Ahora';
 $app_list_strings['aow_date_options']['today'] = 'Hoy';
 $app_list_strings['aow_date_options']['field'] = 'Este campo';
@@ -3662,7 +3665,7 @@ $app_list_strings['aow_message_type_list']['Related Field'] = 'Campo relacionado
 $app_list_strings['aow_message_type_list']['Specify User'] = 'Usuario';
 $app_list_strings['aow_message_type_list']['Users'] = 'Usuarios';
 
-// Mapas: Listas adaptadas
+// Mapas: listas adaptadas
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organizaciones';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Personas';
 $app_list_strings['map_module_type_list']['Cases'] = 'Casos';

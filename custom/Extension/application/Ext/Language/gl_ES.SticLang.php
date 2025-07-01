@@ -277,6 +277,7 @@ $app_list_strings['record_type_display']['stic_Messages'] = 'Mensajes';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
+$app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
 $app_list_strings['record_type_display_notes']['Leads'] = 'Interesados';
 $app_list_strings['record_type_display_notes']['Opportunities'] = 'Subvencións';
 $app_list_strings['record_type_display_notes']['Meetings'] = 'Reunións';
@@ -3644,7 +3645,7 @@ $app_list_strings['campainglog_target_type_dom']['Prospects'] = 'Público Obxect
 $app_list_strings['campainglog_target_type_dom']['Leads'] = 'Interesados';
 $app_list_strings['campainglog_target_type_dom']['Accounts'] = 'Organizacións';
 
-// Flujos de trabajo: Listas adaptadas
+// Flujos de trabajo: listas adaptadas
 $app_list_strings['aow_date_options']['now'] = 'Agora';
 $app_list_strings['aow_date_options']['today'] = 'Hoxe';
 $app_list_strings['aow_date_options']['field'] = 'Este campo';
@@ -3665,7 +3666,7 @@ $app_list_strings['aow_message_type_list']['Related Field'] = 'Campo relacionado
 $app_list_strings['aow_message_type_list']['Specify User'] = 'Usuario';
 $app_list_strings['aow_message_type_list']['Users'] = 'Usuarios';
 
-// Mapas: Listas adaptadas
+// Mapas: listas adaptadas
 $app_list_strings['map_module_type_list']['Accounts'] = 'Organizacións';
 $app_list_strings['map_module_type_list']['Contacts'] = 'Persoas';
 $app_list_strings['map_module_type_list']['Cases'] = 'Casos';
