@@ -2610,7 +2610,7 @@ class SugarBean
                                 break;
                             }
                             // STIC Custom 20250702 JBL - Fix passing DateTime to a Date
-                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/713
                             if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/', (string) $this->$field)) {
                                 // If format is YYYY-MM-DD HH:MM:SS, take only data (YYYY-MM-DD)
                                 $this->$field = substr((string) $this->$field, 0, 10);
