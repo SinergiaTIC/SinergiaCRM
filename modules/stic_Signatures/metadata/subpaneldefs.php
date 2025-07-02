@@ -1,0 +1,52 @@
+<?php
+$module_name = 'stic_Signatures';
+$layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
+    'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect')),
+    'order' => 900,
+    'sort_by' => 'name',
+    'sort_order' => 'asc',
+    'module' => 'SecurityGroups',
+    'refresh_page' => 1,
+    'subpanel_name' => 'default',
+    'get_subpanel_data' => 'SecurityGroups',
+    'add_subpanel_data' => 'securitygroup_id',
+    'title_key' => 'LBL_SECURITYGROUPS_SUBPANEL_TITLE',
+);
+
+$layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signature_logs'] = array(
+    'order' => 100,
+    'module' => 'stic_Signature_Logs',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNATURE_LOGS_TITLE',
+    'get_subpanel_data' => 'stic_signatures_stic_signature_logs',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'mode' => 'MultiSelect',
+        ),
+    ),
+);
+
+$layout_defs[$module_name]["subpanel_setup"]['stic_signatures_stic_signers'] = array(
+    'order' => 100,
+    'module' => 'stic_Signers',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_SIGNATURES_STIC_SIGNERS_FROM_STIC_SIGNERS_TITLE',
+    'get_subpanel_data' => 'stic_signatures_stic_signers',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'mode' => 'MultiSelect',
+        ),
+    ),
+);
