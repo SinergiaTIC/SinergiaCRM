@@ -7,6 +7,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $stic_updates_index = [
     '2.1.0' => [
         'metadata' => [
+            'version' => '2.1.0',
             'prev_version' => '2.0.0',
             'timestamp' => '2025-06-25 12:00:00',
             'jv_version' => '16',
@@ -28,6 +29,7 @@ $stic_updates_index = [
 
     '2.0.0' => [
         'metadata' => [
+            'version' => '2.0.0',
             'prev_version' => '1.8.0',
             'timestamp' => '2025-05-22 12:00:00',
             'jv_version' => '15',
@@ -48,6 +50,7 @@ $stic_updates_index = [
 
     '1.8.0' => [
         'metadata' => [
+            'version' => '1.8.0',
             'prev_version' => '1.7.5',
             'timestamp' => '2025-01-22 12:00:00',
             'jv_version' => '14',
