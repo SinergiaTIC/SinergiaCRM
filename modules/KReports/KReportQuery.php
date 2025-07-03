@@ -1900,7 +1900,7 @@ class KReportQuery {
             // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
             if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
-               $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . '\'^^\'';
+               $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . ' = \'^^\'';
             }
             // END STIC-Custom
             break;
@@ -1909,7 +1909,7 @@ class KReportQuery {
             // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
             if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
-               $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . '\'^^\'';
+               $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . ' = \'^^\'';
             }
             // END STIC-Custom
             break;
