@@ -265,6 +265,13 @@ class actionCreateRecord extends actionBase
                                 $value = $bean->$fieldName;
                                 break;
                         }
+                        // STIC Custom 20250703 JBL - Fix passing DateTime to a Date
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/713
+                        $destData = $bean->field_defs[$params['field'][$key]];
+                        if ($destData['type'] == "date" && preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/', (string)$value)) {
+                            $value = substr((string)$value, 0, 10);
+                        }
+                        // END STIC Custom
                         break;
                     case 'Date':
                         $dformat = 'Y-m-d H:i:s';
@@ -300,6 +307,11 @@ class actionCreateRecord extends actionBase
                                 } elseif ($params['value'][$key][0] === 'field') {
                                     $dateToUse = $params['field'][$key];
                                     $date = $record->$dateToUse;
+                                // STIC Custom 20250703 JBL - Fix passing DateTime to a Date
+                                // https://github.com/SinergiaTIC/SinergiaCRM/pull/713
+                                } elseif (property_exists($record, $params['value'][$key][0])) {
+                                    $date = $record->{$params['value'][$key][0]};
+                                // END STIC Custom
                                 } elseif ($params['value'][$key][0] === 'today') {
                                     $date = $params['value'][$key][0];
                                 } else {
