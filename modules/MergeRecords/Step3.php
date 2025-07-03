@@ -230,19 +230,30 @@ foreach ($temp_field_array as $field_array) {
             case ('custom_fields'):
             case ('url'):
             case ('int'):
+            // STIC Custom 20250703 JBL - Manage correctly fields in Merge records 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
+            // case ('float'):
+            // case ('double'):
+            // case ('currency'):
+            case ('image'):
+            // END STIC Custom
+                $xtpl->assign("EDIT_FIELD_VALUE", $select_row_curr_field_value);
+                $xtpl->assign("CELL_WIDTH", $col_width);
+                $xtpl->parse("main.".$section_name.".merge_cell_edit_text");
+                break;
+            // STIC Custom 20250703 JBL - Manage correctly fields in Merge records 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
             case ('float'):
             case ('double'):
             case ('currency'):
-            // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
             case ('decimal'):
-            case ('image'):
-            // END STIC Custom
+                $select_row_curr_field_value = formatDecimalInConfigSettings($select_row_curr_field_value, true);
 
                 $xtpl->assign("EDIT_FIELD_VALUE", $select_row_curr_field_value);
                 $xtpl->assign("CELL_WIDTH", $col_width);
                 $xtpl->parse("main.".$section_name.".merge_cell_edit_text");
                 break;
+            // END STIC Custom
             case ('text'):
             // STIC Custom 20250610 JBL - Manage correctly fields in Merge records 
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
@@ -374,6 +385,17 @@ foreach ($temp_field_array as $field_array) {
                        display_field_value($mergeBeanArray[$id]->$tempName);
                     $field_name="main.".$section_name.".merge_cell_field_value";
                     break;
+                // STIC Custom 20250703 JBL - Manage correctly fields in Merge records 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/672
+                case ('float'):
+                case ('double'):
+                case ('currency'):
+                case ('decimal'):
+                    $mergeBeanArray[$id]->$tempName = formatDecimalInConfigSettings($mergeBeanArray[$id]->$tempName, true);
+                    display_field_value($mergeBeanArray[$id]->$tempName);
+                    $field_name="main.".$section_name.".merge_cell_field_value";
+                    break;
+                // END STIC Custom                    
                 default:
                     display_field_value($mergeBeanArray[$id]->$tempName);
                     $field_name="main.".$section_name.".merge_cell_field_value";
