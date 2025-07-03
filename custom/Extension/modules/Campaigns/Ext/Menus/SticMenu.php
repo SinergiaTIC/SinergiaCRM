@@ -28,6 +28,13 @@ if (ACLController::checkAccess('Campaigns', 'edit', true)) {
         $mod_strings['LNK_NEW_CAMPAIGN'], "Create Classic Campaign")
     );
 }
+
+if(ACLController::checkAccess('TemplateSectionLine', 'edit', true)) {
+    $module_menu[] = array(
+        'index.php?module=TemplateSectionLine&action=EditView&return_module=TemplateSectionLine&return_action=DetailView', 
+        $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'], 'View_Create_Email_Templates', 'TemplateSectionLine');
+}
+
 if (ACLController::checkAccess('Campaigns', 'edit', true)) {
     $module_menu[] = array(
         "index.php?module=stic_Web_Forms&action=assistant&webFormClass=Donation&return_module=Campaigns&return_action=index",
