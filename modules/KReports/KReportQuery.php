@@ -1898,6 +1898,7 @@ class KReportQuery {
          case 'isempty':
             $thisWhereString .= ' = \'\'';
             // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
             if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
                $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . '\'^^\'';
             }
@@ -1906,6 +1907,7 @@ class KReportQuery {
          case 'isemptyornull':
             $thisWhereString .= ' = \'\' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . ' IS NULL';
             // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
             if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
                $thisWhereString .= ' OR ' . $this->get_field_name($path, $fieldname, $fieldid) . '\'^^\'';
             }
@@ -1917,6 +1919,7 @@ class KReportQuery {
          case 'isnotempty':
             $thisWhereString .= ' <> \'\' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . ' is not null';
             // STIC-Custom EPS 20250703 multienum fields are not evaluated correctly
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/716
             if ($this->fieldNameMap[$fieldid]['type'] === 'multienum') {
                $thisWhereString .= ' AND ' . $this->get_field_name($path, $fieldname, $fieldid) . ' <> \'^^\'';
             }
