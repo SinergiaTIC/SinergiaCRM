@@ -1,10 +1,10 @@
 @font-face {
     font-family: "suitepicon";
-    src: url("suitepicon.eot?d4c010fba4dad084be37eb0af2ee33ff?#iefix") format("embedded-opentype"),
-url("suitepicon.woff2?d4c010fba4dad084be37eb0af2ee33ff") format("woff2"),
-url("suitepicon.woff?d4c010fba4dad084be37eb0af2ee33ff") format("woff"),
-url("suitepicon.ttf?d4c010fba4dad084be37eb0af2ee33ff") format("truetype"),
-url("suitepicon.svg?d4c010fba4dad084be37eb0af2ee33ff#suitepicon") format("svg");
+    src: url("suitepicon.eot?01f376074869115c3b960e115fdeff56?#iefix") format("embedded-opentype"),
+url("suitepicon.woff2?01f376074869115c3b960e115fdeff56") format("woff2"),
+url("suitepicon.woff?01f376074869115c3b960e115fdeff56") format("woff"),
+url("suitepicon.ttf?01f376074869115c3b960e115fdeff56") format("truetype"),
+url("suitepicon.svg?01f376074869115c3b960e115fdeff56#suitepicon") format("svg");
 }
 
 i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
@@ -324,10 +324,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-admin-module-trackers:before {
     content: "\f166";
 }
-.suitepicon-admin-oauth-keys:before {
+.suitepicon-admin-oauth2:before {
     content: "\f167";
 }
-.suitepicon-admin-oauth2:before {
+.suitepicon-admin-oauth-keys:before {
     content: "\f168";
 }
 .suitepicon-admin-outbound-email:before {
@@ -498,16 +498,16 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-campaigntrackers:before {
     content: "\f1a0";
 }
-.suitepicon-module-case-updates:before {
+.suitepicon-module-cases:before {
     content: "\f1a1";
 }
-.suitepicon-module-cases:before {
+.suitepicon-module-case-updates:before {
     content: "\f1a2";
 }
-.suitepicon-module-company:before {
+.suitepicon-module-companyc:before {
     content: "\f1a3";
 }
-.suitepicon-module-companyc:before {
+.suitepicon-module-company:before {
     content: "\f1a4";
 }
 .suitepicon-module-contacts:before {
@@ -531,10 +531,10 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-editview:before {
     content: "\f1ab";
 }
-.suitepicon-module-email-marketing:before {
+.suitepicon-module-email-marketing2:before {
     content: "\f1ac";
 }
-.suitepicon-module-email-marketing2:before {
+.suitepicon-module-email-marketing:before {
     content: "\f1ad";
 }
 .suitepicon-module-emails:before {
@@ -732,48 +732,57 @@ i[class^="suitepicon-"]:before, i[class*=" suitepicon-"]:before {
 .suitepicon-module-stic-sessions:before {
     content: "\f1ee";
 }
-.suitepicon-module-stic-skills:before {
+.suitepicon-module-stic-signature-logs:before {
     content: "\f1ef";
 }
-.suitepicon-module-stic-time-tracker:before {
+.suitepicon-module-stic-signatures:before {
     content: "\f1f0";
 }
-.suitepicon-module-stic-training:before {
+.suitepicon-module-stic-signers:before {
     content: "\f1f1";
 }
-.suitepicon-module-stic-validation-actions:before {
+.suitepicon-module-stic-skills:before {
     content: "\f1f2";
 }
-.suitepicon-module-stic-work-calendar:before {
+.suitepicon-module-stic-time-tracker:before {
     content: "\f1f3";
 }
-.suitepicon-module-stic-work-experience:before {
+.suitepicon-module-stic-training:before {
     content: "\f1f4";
 }
-.suitepicon-module-subpanels:before {
+.suitepicon-module-stic-validation-actions:before {
     content: "\f1f5";
 }
-.suitepicon-module-survey-responses:before {
+.suitepicon-module-stic-work-calendar:before {
     content: "\f1f6";
 }
-.suitepicon-module-surveys:before {
+.suitepicon-module-stic-work-experience:before {
     content: "\f1f7";
 }
-.suitepicon-module-targets:before {
+.suitepicon-module-subpanels:before {
     content: "\f1f8";
 }
-.suitepicon-module-tasks:before {
+.suitepicon-module-survey-responses:before {
     content: "\f1f9";
 }
-.suitepicon-module-users:before {
+.suitepicon-module-surveys:before {
     content: "\f1fa";
 }
-.suitepicon-template-company:before {
+.suitepicon-module-targets:before {
     content: "\f1fb";
 }
-.suitepicon-template-file:before {
+.suitepicon-module-tasks:before {
     content: "\f1fc";
 }
-.suitepicon-template-issue:before {
+.suitepicon-module-users:before {
     content: "\f1fd";
+}
+.suitepicon-template-company:before {
+    content: "\f1fe";
+}
+.suitepicon-template-file:before {
+    content: "\f1ff";
+}
+.suitepicon-template-issue:before {
+    content: "\f200";
 }
