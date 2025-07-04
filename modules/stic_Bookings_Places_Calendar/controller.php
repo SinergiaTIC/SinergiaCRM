@@ -203,7 +203,7 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                     stic_centers
                 ON    stic_centers.id = stic_resources_stic_centers_c.stic_resources_stic_centersstic_centers_ida
                 WHERE
-                    stic_resources.deleted = 0 AND stic_resources.type = 'places'";
+                    stic_resources.deleted = 0 AND stic_resources.type = 'place'";
         // Filters are added
         if (!empty($filteredResources)) {
             $query .= " AND stic_resources.id IN ('" . implode("','", $filteredResources) . "')";
@@ -321,7 +321,7 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
                   WHERE 
                     r.deleted = 0 
                   AND  
-                    r.type = 'places'
+                    r.type = 'place'
                 ";
 
         if (!empty($users)) {
