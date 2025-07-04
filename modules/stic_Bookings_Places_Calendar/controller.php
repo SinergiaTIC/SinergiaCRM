@@ -152,7 +152,7 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             $resourceEnd = min($endDate, substr($resource['end'], 0, 10));
             $currentDate = $resourceStart;
 
-            if (isset($resource['resourceType']) && $resource['resourceType'] == 'places' && in_array($resource['resourceId'], $filteredResources)) {
+            if (isset($resource['resourceType']) && $resource['resourceType'] == 'place' && in_array($resource['resourceId'], $filteredResources)) {
                 while ($currentDate <= $resourceEnd) {
                     $dateKey = date('Y-m-d', strtotime($currentDate));
                     if (isset($result[$dateKey])) {
