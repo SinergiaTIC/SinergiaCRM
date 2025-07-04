@@ -68,10 +68,10 @@ $dictionary['stic_Signatures'] = array(
             'studio' => 'visible',
             'dependency' => false,
         ),
-        'module' => array(
+        'main_module' => array(
             'required' => false,
-            'name' => 'module',
-            'vname' => 'LBL_MODULE',
+            'name' => 'main_module',
+            'vname' => 'LBL_MAIN_MODULE',
             'type' => 'enum',
             'massupdate' => 0,
             'no_default' => false,

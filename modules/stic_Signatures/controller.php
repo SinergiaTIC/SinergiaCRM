@@ -26,7 +26,7 @@ class stic_SignaturesController extends SugarController
     public function action_getRelationships()
     {
 
-        var_dump($this->getModuleRelationships($_REQUEST['getmodule']));
+        echo $this->getModuleRelationships($_REQUEST['getmodule']);
         die();
     }
 
@@ -110,6 +110,6 @@ class stic_SignaturesController extends SugarController
         // Prepare the final output structure
         $moduleOptions[$moduleName] = ["module" => $module_options, "option" => $firstOptions];
 
-        return $moduleOptions;
+        return json_encode($moduleOptions);
     }
 }
