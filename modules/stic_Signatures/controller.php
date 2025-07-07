@@ -26,7 +26,7 @@ class stic_SignaturesController extends SugarController
     public function action_getRelationships()
     {
 
-        echo $this->getModuleRelationships($_REQUEST['getmodule']);
+        var_dump($this->getModuleRelationships($_REQUEST['getmodule'], $_REQUEST['format'] ?? 'raw'));
         die();
     }
 
@@ -39,9 +39,10 @@ class stic_SignaturesController extends SugarController
      * '$[relationship_name]:[field_name]' for clarity in reporting or display.
      *
      * @param string $moduleName The name of the module (e.g., 'Accounts', 'Contacts').
-     * @return array An associative array containing module relationships and field options.
+     * @param string $format The format of the output, either 'raw' or 'json'.
+     * @return array An associative array or string containing module relationships and field options.
      */
-    public function getModuleRelationships($moduleName)
+    public function getModuleRelationships($moduleName, $format = 'raw')
     {
         global $beanList;
 
@@ -108,8 +109,18 @@ class stic_SignaturesController extends SugarController
         $module_options = $mod_options_array;
 
         // Prepare the final output structure
-        $moduleOptions[$moduleName] = ["module" => $module_options, "option" => $firstOptions];
+        $moduleOptions = ["module" => $module_options, "option" => $firstOptions];
 
-        return json_encode($moduleOptions);
+        if($format=='json') {
+            // Convert to JSON format if requested
+            $moduleOptions = json_encode($moduleOptions);
+            echo $moduleOptions;
+            die();
+        } else {
+            // Otherwise, return as an associative array
+            $moduleOptions = $moduleOptions;
+            return $moduleOptions;
+        }
+
     }
 }

@@ -36,6 +36,7 @@ class stic_SignaturesViewEdit extends ViewEdit
 
     public function displayTMCE()
     {
+        global $app_strings, $mod_strings;
         include 'include/SuiteEditor/SuiteEditorConnector.php';
 
         require_once "include/SugarTinyMCE.php";
@@ -43,6 +44,8 @@ class stic_SignaturesViewEdit extends ViewEdit
         $userLang = explode('_', $_SESSION['authenticated_user_language'])[0];
         $tiny = new SugarTinyMCE();
         $tinyMCE = $tiny->getConfig();
+
+        
 
         $js = <<<JS
 		<script language="javascript" type="text/javascript">
@@ -58,7 +61,8 @@ class stic_SignaturesViewEdit extends ViewEdit
             // }
         ];
 
-		var currentModulesButtonName = 'SinergiaCRM';
+		var currentModulesButtonName = '{$app_strings['LBL_MODULE']}';
+
         // Define un array global para almacenar callbacks que se ejecutarán cuando TinyMCE esté listo.
         // Inicializa solo si no existe ya.
         window.tinyMceInitCallbacks = window.tinyMceInitCallbacks || [];
@@ -72,7 +76,7 @@ class stic_SignaturesViewEdit extends ViewEdit
 			elements : "main_html",
 			theme_advanced_toolbar_location : "top",
 			toolbar1: 'code undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | dynamicModulesButton',
-            toolbar2: 'print preview media | forecolor backcolor | image | emoticons | table | link | fontselect fontsizeselect | modulesDropdownButton',
+            toolbar2: 'print preview media | forecolor backcolor | image | emoticons | table | link | fontselect fontsizeselect | modulesDropdownButton fieldsDropdownButton',
 			theme_advanced_fonts:"Andale Mono=andale mono,times;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier;Georgia=georgia,palatino;Helvetica=helvetica;Helvetica Neu=helveticaneue,sans-serif;Impact=impact,chicago;Symbol=symbol;Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco;Times New Roman=times new roman,times;Trebuchet MS=trebuchet ms,geneva;Verdana=verdana,geneva;Webdings=webdings;Wingdings=wingdings,zapf dingbats",
 			resize: 'both',
 			code_dialog_height: 600,
@@ -97,7 +101,6 @@ class stic_SignaturesViewEdit extends ViewEdit
             setup: function (editor) {
                 // Este listener del evento 'init' es el punto clave.
                 editor.on('init', function() {
-                    console.log('TinyMCE: Editor está completamente inicializado.');
                     // Ejecuta todos los callbacks que se hayan suscrito
                     window.tinyMceInitCallbacks.forEach(function(callback) {
                         if (typeof callback === 'function') {
@@ -109,14 +112,19 @@ class stic_SignaturesViewEdit extends ViewEdit
                 });
 
                 editor.ui.registry.addMenuButton('modulesDropdownButton', {
-                    text: 'SinergiaCRM',
+                    text: '{$app_strings['LBL_MODULE']}',
                     fetch: function (callback) {
                         callback(dynamicModuleItems);
                     },
-                    onSetup: function (api) {
-                        var buttonElement = api.element;
-                        $(buttonElement).attr('data-custom-button-id', 'modulesDropdownButton');
-                    }
+
+                });
+
+                editor.ui.registry.addMenuButton('fieldsDropdownButton', {
+                    text: '{$app_strings['LBL_AVAILABLE_FIELDS']}',
+                    fetch: function (callback) {
+                        callback(dynamicFieldsItems);
+                    },
+
                 });
             }
 		});

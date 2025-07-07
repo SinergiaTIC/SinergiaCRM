@@ -79,6 +79,52 @@ $('#main_module').on('change', function () {
 })
 
 
+var currentModuleList, currentFieldList;
+
+
+/* * Retrieves a list of modules or fields related to the specified module.
+ *
+ * @param {string} moduleName - The name of the module to retrieve relationships for.
+ * @param {string} [modulesOrFields='modules'] - Specifies whether to retrieve 'modules' or 'fields'.
+ * @returns {Array} An array of module names or field options.
+ */
+function getModuleOrFieldList(moduleName, modulesOrFields = 'modules') {
+    var moduleList = [];
+
+    $.ajax({
+        url: location.href.slice(0, location.href.indexOf(location.search)),
+        type: "POST",
+        async: false, // Se mantiene síncrono según la solicitud de no cambiar la funcionalidad
+        dataType: "json", // jQuery parseará automáticamente la respuesta como JSON
+        data: {
+            module: "stic_Signatures",
+            action: "getRelationships",
+            getmodule: moduleName,
+            format: "json",
+        },
+        success: function (response) {
+            // 'response' ya es un objeto JavaScript debido a 'dataType: "json"'
+            if (response && response.module) {
+                if (modulesOrFields === 'fields') {
+                    moduleList = response.option;
+                } else {
+                    moduleList = response.module;
+                }
+            } else {
+                console.error("No se pudo recuperar la lista de módulos. Respuesta:", response);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al recuperar la lista de módulos:", status, error);
+        }
+    });
+
+    return moduleList;
+}
+
+
+
+
 
 /**
  * Cambia el texto visible del botón desplegable "Módulos" en la barra de herramientas de TinyMCE.
@@ -92,7 +138,7 @@ function renameModulesDropdownButton(newName) {
         return;
     }
 
-    newName = 'SinergiaCRM: ' + newName;
+    newName = SUGAR.language.languages.app_strings['LBL_MODULE'] + ': ' + newName;
 
     if (!editor) {
         console.error("Editor de TinyMCE no encontrado. Asegúrate de que el ID del textarea es 'main_html' y el editor está inicializado.");
