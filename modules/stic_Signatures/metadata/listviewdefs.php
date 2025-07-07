@@ -13,7 +13,7 @@ array (
   array (
     'type' => 'enum',
     'studio' => 'visible',
-    'label' => 'LBL_MODULE',
+    'label' => 'LBL_MAIN_MODULE',
     'width' => '10%',
     'default' => true,
   ),

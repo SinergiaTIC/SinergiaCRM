@@ -66,7 +66,7 @@ array (
           array (
             'name' => 'module',
             'studio' => 'visible',
-            'label' => 'LBL_MODULE',
+            'label' => 'LBL_MAIN_MODULE',
           ),
           1 => 
           array (
