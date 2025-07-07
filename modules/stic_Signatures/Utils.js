@@ -35,12 +35,6 @@ var validationDependencies = {
 
 /* VIEWS CUSTOM CODE */
 
-$('#main_module').on('change', function () {
-    alert('El módulo ha cambiado a: ' + $(this).val());
-})
-
-
-
 
 /* AUX. FUNCTIONS */
 
@@ -62,3 +56,79 @@ switch (viewType()) {
 }
 
 
+if (typeof tinymce !== 'undefined' && tinymce.activeEditor) {
+    // Si TinyMCE ya está inicializado, ejecuta las acciones inmediatamente
+    editorReadyFunctions(tinymce.activeEditor);
+} else {
+    // Si no, suscribe la función al array de callbacks para que se ejecute cuando esté listo.
+    // Asegúrate de que 'window.tinyMceInitCallbacks' es accesible (definido en view.edit.php)
+    window.tinyMceInitCallbacks = window.tinyMceInitCallbacks || []; // Asegura que el array existe
+    window.tinyMceInitCallbacks.push(editorReadyFunctions);
+}
+
+
+// TinyMCE editor initialization 
+function editorReadyFunctions(editor) {
+    renameModulesDropdownButton($('#main_module').find("option:selected").text());
+}
+
+
+// Event listener for the main module dropdown change
+$('#main_module').on('change', function () {
+    renameModulesDropdownButton($(this).find("option:selected").text());
+})
+
+
+
+/**
+ * Cambia el texto visible del botón desplegable "Módulos" en la barra de herramientas de TinyMCE.
+ *
+ * @param {string} newName El nuevo nombre para el botón.
+ */
+function renameModulesDropdownButton(newName) {
+    var editor = tinymce.get('main_html');
+
+    if (newName === 'Home' || newName === null || newName.trim() === '') {
+        return;
+    }
+
+    newName = 'SinergiaCRM: ' + newName;
+
+    if (!editor) {
+        console.error("Editor de TinyMCE no encontrado. Asegúrate de que el ID del textarea es 'main_html' y el editor está inicializado.");
+        return;
+    }
+
+    // Los botones de TinyMCE 5+ generalmente tienen la clase 'tox-tbtn'.
+    // El texto visible está dentro de un <span> con la clase 'tox-tbtn__select-label'.
+    // El título (tooltip) está en el atributo 'title' del botón.
+    // La etiqueta de accesibilidad está en el atributo 'aria-label'.
+
+    // Intentamos encontrar el botón por su título o aria-label actuales.
+    // Nota: El valor 'Módulos' aquí debe coincidir con el texto actual del botón.
+    // Si tu TinyMCE está en otro idioma o el botón ya ha sido renombrado,
+    // deberías ajustar esta parte para que coincida con el valor actual.
+    var $button = $('.tox-tbtn[title="' + currentModulesButtonName + '"], .tox-tbtn[aria-label="' + currentModulesButtonName + '"]');
+
+    if ($button.length === 0) {
+        // Fallback: Si no se encuentra por título/aria-label, intenta buscar por el texto visible
+        // (menos fiable si hay múltiples botones con el mismo texto visible)
+        $button = $('.tox-tbtn:has(.tox-tbtn__select-label:contains("' + currentModulesButtonName + '"))');
+    }
+
+
+    if ($button.length > 0) {
+        // Actualiza el texto visible dentro del botón
+        $button.find('.tox-tbtn__select-label').text(newName);
+        // Actualiza el atributo title (tooltip)
+        $button.attr('title', newName);
+        // Actualiza el atributo aria-label (accesibilidad)
+        $button.attr('aria-label', newName);
+        currentModulesButtonName = newName; // Actualiza la variable global para reflejar el nuevo nombre
+
+        console.log(`Nombre del botón 'Módulos' cambiado a '${newName}'.`);
+    } else {
+        console.warn("No se encontró el botón 'Módulos' en la barra de herramientas de TinyMCE.");
+        console.warn("Asegúrate de que el botón existe y su texto/título actual es 'Módulos' para que esta función pueda encontrarlo.");
+    }
+}
