@@ -50,7 +50,7 @@ class stic_MessagesViewList extends ViewList
         SticViews::display($this);
 
         echo getVersionedScript("modules/stic_Messages/Utils.js");
-        echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
+        // echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 
         // Write here you custom code
     }

@@ -32,7 +32,7 @@ $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Add A
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Incorpora synchronization';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Send PDF by email';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validate import';
-$app_strings['LBL_PRINT_AS_PDF'] = 'Generate PDF document';
+$app_strings['LBL_PRINT_AS_PDF'] = 'Generate PDF document'; 
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'An error has occurred';
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Show in list view';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Nonprofitized by SinergiaCRM';
@@ -87,11 +87,12 @@ $app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Messages: subpanel actions
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New Message';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New Message';
-$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content, do you want to continue?';
-$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'Too many records selected to send a bulk message';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'New message';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'New message';
+$app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'This operation will override the message content. Do you want to continue?';
+$app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = 'The limit of messages that can be sent simultaneously has been exceeded.';
 $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
+
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
 
@@ -320,9 +321,11 @@ $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Messages';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Granted accounts';
 $app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Message Marketing';
 
+$app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';
 
 // Current VAT percentages (IVA)
+$app_list_strings['vat_list']['21'] = '21%';
 $app_list_strings['vat_list']['10'] = '10%';
 $app_list_strings['vat_list']['5'] = '5%';
 $app_list_strings['vat_list']['4'] = '4%';
@@ -438,6 +441,7 @@ $app_list_strings['stic_catalonia_counties_list']['garraf'] = 'Garraf';
 $app_list_strings['stic_catalonia_counties_list']['garrigues'] = 'Garrigues';
 $app_list_strings['stic_catalonia_counties_list']['garrotxa'] = 'Garrotxa';
 $app_list_strings['stic_catalonia_counties_list']['girones'] = 'Gironès';
+$app_list_strings['stic_catalonia_counties_list']['lluçanes'] = 'Lluçanès';
 $app_list_strings['stic_catalonia_counties_list']['maresme'] = 'Maresme';
 $app_list_strings['stic_catalonia_counties_list']['moianes'] = 'Moianès';
 $app_list_strings['stic_catalonia_counties_list']['montsia'] = 'Montsià';
@@ -3493,9 +3497,9 @@ $app_list_strings['stic_messages_direction_list']['inbound'] = 'Inbound';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Outbound';
 
 // Messages: Status
+$app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Sent';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
-$app_list_strings['stic_messages_status_list']['draft'] = 'Draft';
 
 // Messages: Parent types
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Accounts';
@@ -3590,6 +3594,16 @@ $app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'Re
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Delivered';
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validated';
 
+// Trackers: Actions
+$app_list_strings['trackers_actions_list']['save'] = 'Record created';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Record accessed';
+$app_list_strings['trackers_actions_list']['editview'] = 'Record in edition';
+$app_list_strings['trackers_actions_list']['listview'] = 'Records listed';
+$app_list_strings['trackers_actions_list']['update'] = 'Record updated';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Record deleted';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'User login';
+$app_list_strings['trackers_actions_list']['login_failed'] = 'Login failed';
+$app_list_strings['trackers_actions_list']['logout'] = 'User logout';
 
 // SuiteCRM Core modifications
 
@@ -3635,12 +3649,13 @@ $app_list_strings['aow_date_type_list']['month'] = 'Months';
 $app_list_strings['aow_date_type_list']['year'] = 'Years'; // New STIC item
 $app_list_strings['aow_date_type_list']['business_hours'] = 'Business hours';
 
-// Fluxos de treball: destinataris de missatges
+// Workflows: Message recipients types
 $app_list_strings['aow_message_type_list']['Phone'] = 'Phone';
 $app_list_strings['aow_message_type_list']['Record Phone'] = 'Record Phone';
 $app_list_strings['aow_message_type_list']['Related Field'] = 'Related Field';
 $app_list_strings['aow_message_type_list']['Specify User'] = 'User';
 $app_list_strings['aow_message_type_list']['Users'] = 'Users';
+
 // Campaigns: Campaign types
 $app_list_strings['campaign_type_dom'][''] = '';
 $app_list_strings['campaign_type_dom']['Telesales'] = 'Telesales';

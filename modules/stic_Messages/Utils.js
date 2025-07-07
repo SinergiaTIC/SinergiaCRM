@@ -28,7 +28,6 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
     $(document).ready(function() {
-      showTabsEdit();
       setAutofill(["name"]);
     });
     state = $('#status').val();
@@ -41,10 +40,18 @@ switch (viewType()) {
     break;
 
   case "detail":
-    $(document).ready(function() {
-      var typeSelected = $('#type').val();
-      showTabs(typeSelected);
-    });
+    // Get record Id 
+    recordId = $("#formDetailView input[type=hidden][name=record]").val();
+    // Define button content
+    var buttons = {
+      retry: {
+        id: "bt_retry_detailview",
+        title: SUGAR.language.get("stic_Messages", "LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE"),
+        // onclick: "window.location='index.php?module=stic_Incorpora&action=fromDetailView&record=" + recordId + "&return_module="+ module +"'"
+        onclick: "onClickRetryMessagesButton(recordId)"
+      }
+    };
+    createDetailViewButton(buttons.retry);
     break;
 
   case "list":
@@ -62,4 +69,88 @@ switch (viewType()) {
 
   default:
     break;
+}
+
+
+
+
+function showMessageBox(title, detail, onOk = null, onCancel = null) {
+  var mb = messageBox({backdrop:'static'});
+  mb.setTitle(title);
+  mb.setBody(detail);
+  if (!onCancel){
+    mb.hideCancel();
+  }
+  mb.css('z-index', 26000);
+  mb.show();
+  mb.on('ok', function () {
+    "use strict";
+    mb.remove();
+    if(onOk){
+      onOk();
+    }
+  });
+}
+
+
+
+function onClickRetryMessagesButton(recordId) {
+  var status = $("#status").val();
+  if(status === 'sent') {
+    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
+  }
+  else {
+    $.ajax({
+      url: "index.php?module=stic_Messages&action=retryOne",
+      type:"post",
+      dataType: "json",
+      async: false,
+      data: {
+          'recordId':recordId
+      },
+      success: function(res) {
+          if (res.success) {
+            showMessageBox(res.title, res.detail,function() {window.location.reload();});
+          } else {
+              showMessageBox(res.title, res.detail);
+          }
+      },
+      error: function() {
+          showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'));
+      }
+    });
+  }
+}
+
+
+
+function onClickMassRetryMessagesButton() {
+  // confirmation panel
+  var confirmed = function () {
+    sugarListView.get_checks();
+    if(sugarListView.get_checks_count() < 1) {
+        alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
+        return false;
+    }
+    document.MassUpdate.action.value='Retry';
+    document.MassUpdate.module.value='stic_Messages';
+    document.MassUpdate.submit();
+  };
+
+  var mb = messageBox();
+  mb.setTitle(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE'));
+  mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY'));
+  mb.css('z-index', 26000);
+  mb.show();
+
+  mb.on('ok', function () {
+    "use strict";
+    confirmed();
+    mb.remove();
+  });
+  mb.on('cancel', function () {
+    "use strict";
+    mb.remove();
+  });
+
 }

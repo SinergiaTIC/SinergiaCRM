@@ -26,7 +26,7 @@
 {sugar_include include=$includes}
 <form class="compose-view" id="ComposeView" name="ComposeView" method="POST" action="index.php?module=stic_Messages&action=Save">
     <input type="hidden" name="module" value="stic_Messages">
-    <input type="hidden" name="action" value="Save">
+    <input type="hidden" name="action" value="SavePopUp">
     <input type="hidden" name="record" value="{$RECORD}">
     {{* <input type="hidden" name="type" value="out">
     <input type="hidden" name="send" value="1"> *}}
@@ -34,6 +34,8 @@
     <input type="hidden" name="return_action" value="{$RETURN_ACTION}">
     <input type="hidden" name="return_id" value="{$RETURN_ID}">
     <input type="hidden" name="mass_ids" id = "mass_ids" value="">
+    <input type="hidden" name="errorMessage" id="errorMessage" value="{sugar_translate label='LBL_ERROR' module='stic_Messages'}">
+    <input type="hidden" name="errorMessageText" id="errorMessageText" value="{sugar_translate label='LBL_MESSAGE_NOT_SENT' module='stic_Messages'}">
 <div class="content">
 <div id="EditView_tabs">
     {*display tabs*}
@@ -179,6 +181,9 @@
     </div>
 {{sugar_include type='smarty' file=$footerTpl}}
 </div>
+
+
+
 {if !$IS_MODAL}
 
     {literal}
@@ -236,17 +241,9 @@
 
     <script>
         {* Compose view has a TEMP ID in case you want to display multi instance of the ComposeView *}
-      $( "#template" ).change(function() {ldelim}
-          $.fn.stic_MessagesComposeView.onTemplateChange()
-      {rdelim});
-    //   $( "#parent_name" ).change(function() {ldelim}
-    //     console.log('parent-name');
-    //       $.fn.stic_MessagesComposeView.onParentChange()
-    //   {rdelim});
-    //   $( "#parent_id" ).change(function() {ldelim}
-    //         console.log('parent-id');
-    //       $.fn.stic_MessagesComposeView.onParentChange()
-    //   {rdelim});
+        $( "#template" ).change(function() {ldelim}
+            $.fn.stic_MessagesComposeView.onTemplateChange()
+        {rdelim});
     </script>
     {/if}
 </form>

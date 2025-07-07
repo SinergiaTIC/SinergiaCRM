@@ -80,7 +80,7 @@ class stic_Messages extends Basic
      */
     public function save($check_notify = false)
     {
-        global $sticSavingMessage, $current_user;
+        global $current_user;
 
         if (empty($this->name)){
             $this->fillName();
@@ -119,8 +119,7 @@ class stic_Messages extends Basic
 
         // Save the bean
         parent::save($check_notify);
-        $sticSavingMessage = false;
-
+        return $this->id;
     }
 
     public function fillName($parentType = null, $parentId = null)

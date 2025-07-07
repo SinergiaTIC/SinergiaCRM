@@ -20,7 +20,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-
 /**
  * 
  * Used as a callback for sending various messages from list view
@@ -30,42 +29,6 @@ function onClickMassSendMessagesButton() {
   let jsonString = JSON.stringify(obj);
 
   openMessagesModal(this, jsonString);
-}
-
-
-function onClickMassRetryMessagesButton() {
-  // confirmation panel
-  var confirmed = function (args) {
-    sugarListView.get_checks();
-    if(sugarListView.get_checks_count() < 1) {
-        alert(SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED'));
-        return false;
-    }
-    document.MassUpdate.action.value='Retry';
-    document.MassUpdate.module.value='stic_Messages';
-    document.MassUpdate.submit();
-  };
-  var mb = messageBox();
-  mb.setTitle(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE'));
-  mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY'));
-  mb.show();
-
-  var popupId = mb.controls.modal.container.attr('id');
-  $('#' + popupId).css('z-index', '25000');
-
-  var args = JSON.stringify(args);
-
-  mb.on('ok', function () {
-    "use strict";
-    confirmed(args);
-    mb.remove();
-  });
-
-  mb.on('cancel', function () {
-    "use strict";
-    mb.remove();
-  });
-
 }
 
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
@@ -143,7 +106,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         type: 'POST',
         data: paramsPost,
         success: function(data) {
-
         var panelBody = $('<div>').append(data).find('#EditView').parent();
 
         var dataPhone = $(source).attr('data-phone');
@@ -205,7 +167,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             $('#namesList').val(namesList);
           }
           $( "#template" ).change(function() {
-              console.log('template change');
               $.fn.stic_MessagesComposeView.onTemplateChange()
             });
         },

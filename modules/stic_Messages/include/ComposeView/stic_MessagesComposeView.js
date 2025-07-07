@@ -127,7 +127,6 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
   $.fn.stic_MessagesComposeView.onTemplateSelect = function (args) {
     var confirmed = function (args) {
       var args = JSON.parse(args);
-      var form = $('[name="' + args.form_name + '"]');
       $.post('index.php?entryPoint=emailTemplateData', {
         emailTemplateId: args.name_to_value_array.template_id_c
       }, function (jsonResponse) {
@@ -140,10 +139,8 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
     var mb = messageBox();
     mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
     mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
+    mb.css('z-index', 26000);
     mb.show();
-
-    var popupId = mb.controls.modal.container.attr('id');
-    $('#' + popupId).css('z-index', '25000');
 
     var args = JSON.stringify(args);
 
@@ -162,7 +159,7 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
   $.fn.stic_MessagesComposeView.onTemplateChange = function (args) {
     var confirmed = function (args) {
       var args = JSON.parse(args);
-      var form = $('[name="' + args.form_name + '"]');
+
       $.post('index.php?entryPoint=emailTemplateData', {
         emailTemplateId: $('#template_id_c').val()
       }, function (jsonResponse) {
@@ -171,13 +168,12 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
       });
       set_return(args);
     };
+
     var mb = messageBox();
     mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
     mb.setBody(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
+    mb.css('z-index', 26000);
     mb.show();
-
-    var popupId = mb.controls.modal.container.attr('id');
-    $('#' + popupId).css('z-index', '25000');
 
     mb.on('ok', function () {
       "use strict";
@@ -229,7 +225,6 @@ function checkStatus() {
 YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
 
 function parentIdChanged() {
-  console.log('goalchanged');
   let parentName = $('#parent_name').val();
   let parentId = $('#parent_id').val();
   let parentType = $('#parent_type').val();
@@ -270,3 +265,88 @@ function getParentAsync(parentId, parentType, callbackFunction) {
   });
 }
 
+$(function () {
+  const myButtons = $('[id="SAVE"]');
+  saveMessage = function (event) {
+    event.preventDefault();
+    if (check_form("EditView")) {
+      const formDataArray = $("#EditView").serializeArray();
+      const formObject = {};
+
+      $.each(formDataArray, function (i, field) {
+        if (formObject[field.name]) {
+          if (!Array.isArray(formObject[field.name])) {
+            formObject[field.name] = [formObject[field.name]];
+          }
+          formObject[field.name].push(field.value);
+        } else {
+          formObject[field.name] = field.value;
+        }
+      });
+
+      function getFormDataAsObject($form) {
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function (n, i) {
+          indexed_array[n["name"]] = n["value"];
+        });
+
+        return indexed_array;
+      }
+      var formData = getFormDataAsObject($("#EditView"));
+      $.ajax({
+        url: "index.php?module=stic_Messages&action=savePopUp",
+        type: "post",
+        dataType: "json",
+        async: false,
+        data: formData,
+        success: function (res) {
+          showMessageBox(res.title, res.detail, function () {
+            var baseUrl = window.location.href.split("?")[0];
+            var returnModule = $('#EditView [name="return_module"]').val();
+            var returnAction = $('#EditView [name="return_action"]').val();
+            var returnId = $('#EditView [name="return_id"]').val();
+            if (!returnId && res.id) {
+              returnId = res.id;
+            }
+            var newUrl =
+              baseUrl +
+              "?module=" +
+              encodeURIComponent(returnModule) +
+              "&action=" +
+              encodeURIComponent(returnAction) +
+              (returnId ? "&record=" + encodeURIComponent(returnId) : "");
+            window.location.href = newUrl;
+          });
+        },
+        error: function () {
+          showMessageBox(
+            $("#errorMessage").val(),
+            $("#errorMessageText").val(),
+            function () {
+              var baseUrl = window.location.href.split("?")[0];
+              var returnModule = $('#EditView [name="return_module"]').val();
+              var returnAction = $('#EditView [name="return_action"]').val();
+              var returnId = $('#EditView [name="return_id"]').val();
+              if (returnId) {
+                var newUrl =
+                  baseUrl +
+                  "?module=" +
+                  encodeURIComponent(returnModule) +
+                  "&action=" +
+                  encodeURIComponent(returnAction) +
+                  (returnId ? "&record=" + encodeURIComponent(returnId) : "");
+                window.location.href = newUrl;
+              }
+            }
+          );
+        },
+      });
+    }
+    return false;
+  };
+  // var _form = document.getElementById('EditView'); _form.action.value='Save'; if(check_form('EditView'))SUGAR.ajaxUI.submitForm(_form);return false;
+  myButtons.removeAttr("onclick");
+  myButtons.on("click", saveMessage);
+});

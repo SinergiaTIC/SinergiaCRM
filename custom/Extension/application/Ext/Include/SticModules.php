@@ -196,6 +196,7 @@ $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
 $adminOnlyList['stic_Custom_Views'] = array('all' => 1);
 // TODOEPS: Activar para no mostrar en menú
 // $adminOnlyList['stic_MessagesMan'] = array('all' => 1);
+$adminOnlyList['Trackers'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events
 $modInvisList[] = 'FP_events';

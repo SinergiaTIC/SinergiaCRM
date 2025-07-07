@@ -72,5 +72,10 @@ $mod_strings = array (
   'LBL_LIST_RELATED_TO_ID' => 'Relacionado con ID',
   'LBL_MASS_RETRY_MESSAGE_BUTTON_TITTLE' => 'Reintentar envío',
   'LBL_CONFIRM_SEND_BULK_MESSAGES_TITLE' => 'Enviar grupo de mensajes',
-  'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => "Esta acción enviará un mensaje por cada registro seleccionado. Está seguro?",
+  'LBL_CONFIRM_APPLY_SEND_BULK_MESSAGES_BODY' => 'Esta acción enviará un mensaje por cada registro seleccionado. ¿Desea continuar?',
+  'LBL_MESSAGE_SENT' => 'Mensaje enviado',
+  'LBL_MESSAGE_NOT_SENT' => 'Mensaje no enviado',  
+  'LBL_ERROR' => 'ERROR',
+  'LBL_CHECK_STATUS' => 'Mensajes enviados. Comprobar el estado',
+  'LBL_ALREADY_SENT' => 'Mensaje ya enviado',
 );
