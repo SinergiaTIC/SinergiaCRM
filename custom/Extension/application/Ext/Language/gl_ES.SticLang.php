@@ -3703,8 +3703,6 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
 
-// Dynamic list
-include 'modules/stic_Message_Marketing/dynamicLPOs.php';
 // Plantillas de email: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
 $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
@@ -3713,3 +3711,6 @@ $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+
+// Dynamic list
+include 'modules/stic_Message_Marketing/dynamicLPOs.php';
