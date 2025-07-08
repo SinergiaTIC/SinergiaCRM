@@ -38,28 +38,13 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Signature_Logs/stic_Signature_Logs.php');
-
-class stic_Signature_LogsDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
-    {
-        global $current_user, $app_strings;
-        require('modules/stic_Signature_Logs/metadata/dashletviewdefs.php');
-
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Signature_Logs');
-        }
-
-        $this->searchFields = $dashletData['stic_Signature_LogsDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Signature_LogsDashlet']['columns'];
-
-        $this->seedBean = new stic_Signature_Logs();        
-    }
-}
+$module_name = 'stic_Signature_Log';
+$metafiles[$module_name] = array(
+    'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
+    'editviewdefs' => 'modules/' . $module_name . '/metadata/editviewdefs.php',
+    'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
+    'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
+    'popupdefs' => 'modules/' . $module_name . '/metadata/popupdefs.php',
+    'searchfields' => 'modules/' . $module_name . '/metadata/SearchFields.php',
+    'subpaneldefs' => 'modules/' . $module_name . '/metadata/subpaneldefs.php',
+);

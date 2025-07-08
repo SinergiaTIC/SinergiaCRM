@@ -38,15 +38,45 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
+
+class stic_Signature_Log extends Basic
+{
+    public $new_schema = true;
+    public $module_dir = 'stic_Signature_Log';
+    public $object_name = 'stic_Signature_Log';
+    public $table_name = 'stic_signature_log';
+    public $importable = false;
+
+    public $id;
+    public $name;
+    public $date_entered;
+    public $date_modified;
+    public $modified_user_id;
+    public $modified_by_name;
+    public $created_by;
+    public $created_by_name;
+    public $description;
+    public $deleted;
+    public $created_by_link;
+    public $modified_user_link;
+    public $assigned_user_id;
+    public $assigned_user_name;
+    public $assigned_user_link;
+    public $SecurityGroups;
+    public $action;
+    public $date;
+    public $ip_address;
+    public $user_agent;
+	
+    public function bean_implements($interface)
+    {
+        switch($interface)
+        {
+            case 'ACL':
+                return true;
+        }
+
+        return false;
+    }
+	
 }
-
-global $app_strings;
-
-$dashletMeta['stic_Signature_LogsDashlet'] = array(
-    'module' => 'stic_Signature_Logs',
-    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Signature_Logs'),
-    'description' => 'A customizable view into stic_Signature_Logs',
-    'category' => 'Module Views'
-);

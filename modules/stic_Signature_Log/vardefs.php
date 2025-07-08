@@ -38,16 +38,16 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-$dictionary['stic_Signature_Logs'] = array(
-    'table' => 'stic_signature_logs',
+$dictionary['stic_Signature_Log'] = array(
+    'table' => 'stic_signature_log',
     'audited' => true,
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array(
-        'action_type' => array(
+        'action' => array(
             'required' => false,
-            'name' => 'action_type',
-            'vname' => 'LBL_ACTION_TYPE',
+            'name' => 'action',
+            'vname' => 'LBL_ACTION',
             'type' => 'varchar',
             'massupdate' => 0,
             'no_default' => false,
@@ -64,10 +64,10 @@ $dictionary['stic_Signature_Logs'] = array(
             'len' => '100',
             'size' => '20',
         ),
-        'action_datetime' => array(
+        'date' => array(
             'required' => false,
-            'name' => 'action_datetime',
-            'vname' => 'LBL_ACTION_DATETIME',
+            'name' => 'date',
+            'vname' => 'LBL_DATE',
             'type' => 'datetimecombo',
             'massupdate' => 0,
             'no_default' => false,
@@ -125,67 +125,67 @@ $dictionary['stic_Signature_Logs'] = array(
             'len' => '255',
             'size' => '20',
         ),
-        'stic_signers_stic_signature_logs' => array(
-            'name' => 'stic_signers_stic_signature_logs',
+        'stic_signers_stic_signature_log' => array(
+            'name' => 'stic_signers_stic_signature_log',
             'type' => 'link',
-            'relationship' => 'stic_signers_stic_signature_logs',
+            'relationship' => 'stic_signers_stic_signature_log',
             'source' => 'non-db',
             'module' => 'stic_Signers',
             'bean_name' => 'stic_Signers',
-            'vname' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNERS_TITLE',
-            'id_name' => 'stic_signers_stic_signature_logsstic_signers_ida',
+            'vname' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNERS_TITLE',
+            'id_name' => 'stic_signers_stic_signature_logtic_signers_ida',
         ),
-        'stic_signers_stic_signature_logs_name' => array(
-            'name' => 'stic_signers_stic_signature_logs_name',
+        'stic_signers_stic_signature_log_name' => array(
+            'name' => 'stic_signers_stic_signature_log_name',
             'type' => 'relate',
             'source' => 'non-db',
-            'vname' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNERS_TITLE',
+            'vname' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNERS_TITLE',
             'save' => true,
-            'id_name' => 'stic_signers_stic_signature_logsstic_signers_ida',
-            'link' => 'stic_signers_stic_signature_logs',
+            'id_name' => 'stic_signers_stic_signature_logtic_signers_ida',
+            'link' => 'stic_signers_stic_signature_log',
             'table' => 'stic_signers',
             'module' => 'stic_Signers',
             'rname' => 'name',
         ),
-        'stic_signers_stic_signature_logsstic_signers_ida' => array(
-            'name' => 'stic_signers_stic_signature_logsstic_signers_ida',
+        'stic_signers_stic_signature_logtic_signers_ida' => array(
+            'name' => 'stic_signers_stic_signature_logtic_signers_ida',
             'type' => 'link',
-            'relationship' => 'stic_signers_stic_signature_logs',
+            'relationship' => 'stic_signers_stic_signature_log',
             'source' => 'non-db',
             'reportable' => false,
             'side' => 'right',
-            'vname' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNATURE_LOGS_TITLE',
+            'vname' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE',
         ),
-        'stic_signatures_stic_signature_logs' => array(
-            'name' => 'stic_signatures_stic_signature_logs',
+        'stic_signatures_stic_signature_log' => array(
+            'name' => 'stic_signatures_stic_signature_log',
             'type' => 'link',
-            'relationship' => 'stic_signatures_stic_signature_logs',
+            'relationship' => 'stic_signatures_stic_signature_log',
             'source' => 'non-db',
             'module' => 'stic_Signatures',
             'bean_name' => 'stic_Signatures',
-            'vname' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNATURES_TITLE',
-            'id_name' => 'stic_signatures_stic_signature_logsstic_signatures_ida',
+            'vname' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURES_TITLE',
+            'id_name' => 'stic_signatures_stic_signature_logtic_signatures_ida',
         ),
-        'stic_signatures_stic_signature_logs_name' => array(
-            'name' => 'stic_signatures_stic_signature_logs_name',
+        'stic_signatures_stic_signature_log_name' => array(
+            'name' => 'stic_signatures_stic_signature_log_name',
             'type' => 'relate',
             'source' => 'non-db',
-            'vname' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNATURES_TITLE',
+            'vname' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURES_TITLE',
             'save' => true,
-            'id_name' => 'stic_signatures_stic_signature_logsstic_signatures_ida',
-            'link' => 'stic_signatures_stic_signature_logs',
+            'id_name' => 'stic_signatures_stic_signature_logtic_signatures_ida',
+            'link' => 'stic_signatures_stic_signature_log',
             'table' => 'stic_signatures',
             'module' => 'stic_Signatures',
             'rname' => 'name',
         ),
-        'stic_signatures_stic_signature_logsstic_signatures_ida' => array(
-            'name' => 'stic_signatures_stic_signature_logsstic_signatures_ida',
+        'stic_signatures_stic_signature_logtic_signatures_ida' => array(
+            'name' => 'stic_signatures_stic_signature_logtic_signatures_ida',
             'type' => 'link',
-            'relationship' => 'stic_signatures_stic_signature_logs',
+            'relationship' => 'stic_signatures_stic_signature_log',
             'source' => 'non-db',
             'reportable' => false,
             'side' => 'right',
-            'vname' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNATURE_LOGS_TITLE',
+            'vname' => 'LBL_STIC_SIGNATURES_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE',
         ),
     ),
     'relationships' => array(
@@ -196,4 +196,4 @@ $dictionary['stic_Signature_Logs'] = array(
 if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
-VardefManager::createVardef('stic_Signature_Logs', 'stic_Signature_Logs', array('basic', 'assignable', 'security_groups'));
+VardefManager::createVardef('stic_Signature_Log', 'stic_Signature_Log', array('basic', 'assignable', 'security_groups'));

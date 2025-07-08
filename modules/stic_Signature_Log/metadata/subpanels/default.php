@@ -42,16 +42,45 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Signature_Logs';
-$object_name = 'stic_Signature_Logs';
-$_module_name = 'stic_signature_logs';
-$popupMeta = array(
-    'moduleMain' => $module_name,
-    'varName' => $object_name,
-    'orderBy' => $_module_name . '.name',
-    'whereClauses' => array(
-        'name' => $_module_name . '.name',
+$module_name = 'stic_Signature_Log';
+$subpanel_layout = array(
+    'top_buttons' => array(
+        array('widget_class' => 'SubPanelTopCreateButton'),
+        array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
     ),
-    'searchInputs' => array($_module_name . '_number', 'name', 'priority', 'status'),
 
+    'where' => '',
+
+    'list_fields' => array(
+        'name' => array(
+            'vname' => 'LBL_NAME',
+            'widget_class' => 'SubPanelDetailViewLink',
+            'width' => '45%',
+        ),
+        'date_modified' => array(
+            'vname' => 'LBL_DATE_MODIFIED',
+            'width' => '45%',
+        ),
+        'edit_button' => array(
+            'vname' => 'LBL_EDIT_BUTTON',
+            'widget_class' => 'SubPanelEditButton',
+            'module' => $module_name,
+            'width' => '4%',
+        ),
+        // STIC-Custom 20240214 JBL - QuickEdit view
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
+        'quickedit_button' => array(
+            'vname' => 'LBL_QUICKEDIT_BUTTON',
+            'widget_class' => 'SubPanelQuickEditButton',
+            'module' => $module_name,
+            'width' => '4%',
+        ),
+        // END STIC-Custom
+        'remove_button' => array(
+            'vname' => 'LBL_REMOVE',
+            'widget_class' => 'SubPanelRemoveButton',
+            'module' => $module_name,
+            'width' => '5%',
+        ),
+    ),
 );

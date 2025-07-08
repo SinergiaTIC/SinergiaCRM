@@ -13,14 +13,14 @@ $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'title_key' => 'LBL_SECURITYGROUPS_SUBPANEL_TITLE',
 );
 
-$layout_defs[$module_name]["subpanel_setup"]['stic_signers_stic_signature_logs'] = array(
+$layout_defs[$module_name]["subpanel_setup"]['stic_signers_stic_signature_log'] = array(
     'order' => 100,
-    'module' => 'stic_Signature_Logs',
+    'module' => 'stic_Signature_Log',
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOGS_FROM_STIC_SIGNATURE_LOGS_TITLE',
-    'get_subpanel_data' => 'stic_signers_stic_signature_logs',
+    'title_key' => 'LBL_STIC_SIGNERS_STIC_SIGNATURE_LOG_FROM_STIC_SIGNATURE_LOG_TITLE',
+    'get_subpanel_data' => 'stic_signers_stic_signature_log',
     'top_buttons' => array(
         0 => array(
             'widget_class' => 'SubPanelTopButtonQuickCreate',

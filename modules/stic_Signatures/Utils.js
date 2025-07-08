@@ -132,7 +132,7 @@ function getModuleOrFieldList(moduleName, modulesOrFields = 'modules') {
  * @param {string} newName El nuevo nombre para el botón.
  */
 function renameModulesDropdownButton(newName) {
-    var editor = tinymce.get('main_html');
+    var editor = tinymce.get('body');
 
     if (newName === 'Home' || newName === null || newName.trim() === '') {
         return;
@@ -141,7 +141,7 @@ function renameModulesDropdownButton(newName) {
     newName = SUGAR.language.languages.app_strings['LBL_MODULE'] + ': ' + newName;
 
     if (!editor) {
-        console.error("Editor de TinyMCE no encontrado. Asegúrate de que el ID del textarea es 'main_html' y el editor está inicializado.");
+        console.error("Editor de TinyMCE no encontrado. Asegúrate de que el ID del textarea es 'body' y el editor está inicializado.");
         return;
     }
 

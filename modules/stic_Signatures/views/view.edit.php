@@ -38,13 +38,15 @@ class stic_SignaturesViewEdit extends ViewEdit
     {
         global $app_strings, $mod_strings;
         include 'include/SuiteEditor/SuiteEditorConnector.php';
-
+        
         require_once "include/SugarTinyMCE.php";
         global $locale;
+
         $userLang = explode('_', $_SESSION['authenticated_user_language'])[0];
         $tiny = new SugarTinyMCE();
         $tinyMCE = $tiny->getConfig();
-
+        
+        
         
 
         $js = <<<JS
@@ -63,6 +65,7 @@ class stic_SignaturesViewEdit extends ViewEdit
 
 		var currentModulesButtonName = '{$app_strings['LBL_MODULE']}';
 
+
         // Define un array global para almacenar callbacks que se ejecutarán cuando TinyMCE esté listo.
         // Inicializa solo si no existe ya.
         window.tinyMceInitCallbacks = window.tinyMceInitCallbacks || [];
@@ -73,7 +76,7 @@ class stic_SignaturesViewEdit extends ViewEdit
     		theme : "silver",
     		theme_advanced_toolbar_align : "left",
     		mode: "exact",
-			elements : "main_html",
+			elements : "body",
 			theme_advanced_toolbar_location : "top",
 			toolbar1: 'code undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | dynamicModulesButton',
             toolbar2: 'print preview media | forecolor backcolor | image | emoticons | table | link | fontselect fontsizeselect | modulesDropdownButton fieldsDropdownButton',
@@ -132,6 +135,9 @@ class stic_SignaturesViewEdit extends ViewEdit
 		</script>
 
 JS;
+        
+
+
         echo $js;
         echo getVersionedScript("modules/stic_Signatures/Utils.js");
     }

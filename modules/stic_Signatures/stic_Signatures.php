@@ -65,20 +65,20 @@ class stic_Signatures extends Basic
     public $SecurityGroups;
     public $status;
     public $module;
-    public $recipient_path;
-    public $main_html;
-    public $header_html;
-    public $footer_html;
+    public $signer_path;
+    public $body;
+    public $header;
+    public $footer;
     public $auth_method;
-    public $signature_type;
-    public $start_datetime;
-    public $end_datetime;
+    public $type;
+    public $activation_date;
+    public $expiration_date;
     public $minimum_signatures;
-    public $signature_reminder_frequency;
+    public $reminder_frequency;
     public $pdf_audit_page;
     public $generate_pdf;
-    public $completed_datetime;
-    public $signature_hash;
+    public $end_date;
+    public $verification_code;
     public $margin_left;
     public $margin_right;
     public $margin_top;
@@ -89,7 +89,7 @@ class stic_Signatures extends Basic
     public $orientation;
     public $emailtemplate_id_c;
     public $email_template;
-    public $is_representative_signature;
+    public $on_behalf_of;
     public $pdf_document;
 	
     public function bean_implements($interface)

@@ -1,5 +1,5 @@
 <?php
-$module_name = 'stic_Signature_Logs';
+$module_name = 'stic_Signature_Log';
 $viewdefs [$module_name] = 
 array (
   'DetailView' => 
@@ -60,14 +60,14 @@ array (
           0 => 'description',
           1 => 
           array (
-            'name' => 'stic_signatures_stic_signature_logs_name',
+            'name' => 'stic_signatures_stic_signature_log_name',
           ),
         ),
         3 => 
         array (
           0 => 
           array (
-            'name' => 'stic_signers_stic_signature_logs_name',
+            'name' => 'stic_signers_stic_signature_log_name',
           ),
         ),
       ),

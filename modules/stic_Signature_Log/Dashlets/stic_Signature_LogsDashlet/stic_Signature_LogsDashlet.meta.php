@@ -42,20 +42,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Signature_Logs';
-$listViewDefs[$module_name] = array(
-    'NAME' => array(
-        'width' => '32',
-        'label' => 'LBL_NAME',
-        'default' => true,
-        'link' => true
-    ),
-    'ASSIGNED_USER_NAME' => array(
-        'width' => '9',
-        'label' => 'LBL_ASSIGNED_TO_NAME',
-        'module' => 'Employees',
-        'id' => 'ASSIGNED_USER_ID',
-        'default' => true
-    ),
+global $app_strings;
 
+$dashletMeta['stic_Signature_LogDashlet'] = array(
+    'module' => 'stic_Signature_Log',
+    'title' => translate('LBL_HOMEPAGE_TITLE', 'stic_Signature_Log'),
+    'description' => 'A customizable view into stic_Signature_Log',
+    'category' => 'Module Views'
 );

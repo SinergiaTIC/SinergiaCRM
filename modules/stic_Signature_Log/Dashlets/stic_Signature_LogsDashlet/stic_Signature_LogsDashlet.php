@@ -38,45 +38,28 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 
-class stic_Signature_Logs extends Basic
-{
-    public $new_schema = true;
-    public $module_dir = 'stic_Signature_Logs';
-    public $object_name = 'stic_Signature_Logs';
-    public $table_name = 'stic_signature_logs';
-    public $importable = false;
+require_once('include/Dashlets/DashletGeneric.php');
+require_once('modules/stic_Signature_Log/stic_Signature_Log.php');
 
-    public $id;
-    public $name;
-    public $date_entered;
-    public $date_modified;
-    public $modified_user_id;
-    public $modified_by_name;
-    public $created_by;
-    public $created_by_name;
-    public $description;
-    public $deleted;
-    public $created_by_link;
-    public $modified_user_link;
-    public $assigned_user_id;
-    public $assigned_user_name;
-    public $assigned_user_link;
-    public $SecurityGroups;
-    public $action_type;
-    public $action_datetime;
-    public $ip_address;
-    public $user_agent;
-	
-    public function bean_implements($interface)
+class stic_Signature_LogDashlet extends DashletGeneric {
+    function __construct($id, $def = null)
     {
-        switch($interface)
-        {
-            case 'ACL':
-                return true;
+        global $current_user, $app_strings;
+        require('modules/stic_Signature_Log/metadata/dashletviewdefs.php');
+
+        parent::__construct($id, $def);
+
+        if (empty($def['title'])) {
+            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Signature_Log');
         }
 
-        return false;
+        $this->searchFields = $dashletData['stic_Signature_LogDashlet']['searchFields'];
+        $this->columns = $dashletData['stic_Signature_LogDashlet']['columns'];
+
+        $this->seedBean = new stic_Signature_Log();        
     }
-	
 }

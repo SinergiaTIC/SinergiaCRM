@@ -67,13 +67,13 @@ class stic_Signers extends Basic
     public $parent_type;
     public $parent_id;
     public $record_id;
-    public $recipient_email;
-    public $recipient_phone;
+    public $email_address;
+    public $phone;
     public $status;
     public $unique_link;
     public $pdf_document;
-    public $signature_datetime;
-    public $signature_hash;
+    public $signature_date;
+    public $verification_code;
     public $signature_image;
     public $variables;
     public $rejection_reason;

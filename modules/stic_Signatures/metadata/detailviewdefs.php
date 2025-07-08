@@ -70,9 +70,9 @@ array (
           ),
           1 => 
           array (
-            'name' => 'signature_type',
+            'name' => 'type',
             'studio' => 'visible',
-            'label' => 'LBL_SIGNATURE_TYPE',
+            'label' => 'LBL_TYPE',
           ),
         ),
         2 => 
@@ -85,9 +85,9 @@ array (
           ),
           1 => 
           array (
-            'name' => 'is_representative_signature',
+            'name' => 'on_behalf_of',
             'studio' => 'visible',
-            'label' => 'LBL_IS_REPRESENTATIVE_SIGNATURE',
+            'label' => 'LBL_ON_BEHALF_OF',
           ),
         ),
         3 => 
@@ -123,21 +123,21 @@ array (
         array (
           0 => 
           array (
-            'name' => 'start_datetime',
-            'label' => 'LBL_START_DATETIME',
+            'name' => 'activation_date',
+            'label' => 'LBL_ACTIVATION_DATE',
           ),
           1 => 
           array (
-            'name' => 'end_datetime',
-            'label' => 'LBL_END_DATETIME',
+            'name' => 'expiration_date',
+            'label' => 'LBL_EXPIRATION_DATE',
           ),
         ),
         6 => 
         array (
           0 => 
           array (
-            'name' => 'completed_datetime',
-            'label' => 'LBL_COMPLETED_DATETIME',
+            'name' => 'end_date',
+            'label' => 'LBL_END_DATE',
           ),
           1 => 
           array (
@@ -150,21 +150,21 @@ array (
         array (
           0 => 
           array (
-            'name' => 'recipient_path',
-            'label' => 'LBL_RECIPIENT_PATH',
+            'name' => 'signer_path',
+            'label' => 'LBL_SIGNER_PATH',
           ),
           1 => 
           array (
-            'name' => 'signature_reminder_frequency',
-            'label' => 'LBL_SIGNATURE_REMINDER_FREQUENCY',
+            'name' => 'reminder_frequency',
+            'label' => 'LBL_REMINDER_FREQUENCY',
           ),
         ),
         8 => 
         array (
           0 => 
           array (
-            'name' => 'signature_hash',
-            'label' => 'LBL_SIGNATURE_HASH',
+            'name' => 'verification_code',
+            'label' => 'LBL_VERIFICATION_CODE',
           ),
           1 => 
           array (
@@ -184,24 +184,24 @@ array (
         array (
           0 => 
           array (
-            'name' => 'header_html',
-            'label' => 'LBL_HEADER_HTML',
+            'name' => 'header',
+            'label' => 'LBL_HEADER',
           ),
         ),
         1 => 
         array (
           0 => 
           array (
-            'name' => 'main_html',
-            'label' => 'LBL_MAIN_HTML',
+            'name' => 'body',
+            'label' => 'LBL_BODY',
           ),
         ),
         2 => 
         array (
           0 => 
           array (
-            'name' => 'footer_html',
-            'label' => 'LBL_FOOTER_HTML',
+            'name' => 'footer',
+            'label' => 'LBL_FOOTER',
           ),
         ),
       ),

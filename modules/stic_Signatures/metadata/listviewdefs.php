@@ -25,25 +25,25 @@ array (
     'label' => 'LBL_STATUS',
     'width' => '10%',
   ),
-  'SIGNATURE_TYPE' => 
+  'TYPE' => 
   array (
     'type' => 'enum',
     'studio' => 'visible',
-    'label' => 'LBL_SIGNATURE_TYPE',
+    'label' => 'LBL_TYPE',
     'width' => '10%',
     'default' => true,
   ),
-  'START_DATETIME' => 
+  'ACTIVATION_DATE' => 
   array (
     'type' => 'datetimecombo',
-    'label' => 'LBL_START_DATETIME',
+    'label' => 'LBL_ACTIVATION_DATE',
     'width' => '10%',
     'default' => true,
   ),
-  'END_DATETIME' => 
+  'EXPIRATION_DATE' => 
   array (
     'type' => 'datetimecombo',
-    'label' => 'LBL_END_DATETIME',
+    'label' => 'LBL_EXPIRATION_DATE',
     'width' => '10%',
     'default' => true,
   ),
@@ -65,19 +65,19 @@ array (
     'width' => '10%',
     'default' => true,
   ),
-  'COMPLETED_DATETIME' => 
+  'END_DATE' => 
   array (
     'type' => 'datetimecombo',
-    'label' => 'LBL_COMPLETED_DATETIME',
+    'label' => 'LBL_END_DATE',
     'width' => '10%',
     'default' => true,
   ),
-  'IS_REPRESENTATIVE_SIGNATURE' => 
+  'ON_BEHALF_OF' => 
   array (
     'type' => 'enum',
     'default' => true,
     'studio' => 'visible',
-    'label' => 'LBL_IS_REPRESENTATIVE_SIGNATURE',
+    'label' => 'LBL_ON_BEHALF_OF',
     'width' => '10%',
   ),
   'ASSIGNED_USER_NAME' => 
@@ -146,10 +146,10 @@ array (
     'label' => 'LBL_MARGIN_LEFT',
     'width' => '10%',
   ),
-  'SIGNATURE_HASH' => 
+  'VERIFICATION_CODE' => 
   array (
     'type' => 'varchar',
-    'label' => 'LBL_SIGNATURE_HASH',
+    'label' => 'LBL_VERIFICATION_CODE',
     'width' => '10%',
     'default' => false,
   ),
@@ -169,10 +169,10 @@ array (
     'width' => '10%',
     'default' => false,
   ),
-  'SIGNATURE_REMINDER_FREQUENCY' => 
+  'REMINDER_FREQUENCY' => 
   array (
     'type' => 'int',
-    'label' => 'LBL_SIGNATURE_REMINDER_FREQUENCY',
+    'label' => 'LBL_REMINDER_FREQUENCY',
     'width' => '10%',
     'default' => false,
   ),
@@ -183,31 +183,31 @@ array (
     'label' => 'LBL_MINIMUM_SIGNATURES',
     'width' => '10%',
   ),
-  'FOOTER_HTML' => 
+  'FOOTER' => 
   array (
     'type' => 'wysiwyg',
-    'label' => 'LBL_FOOTER_HTML',
+    'label' => 'LBL_FOOTER',
     'width' => '10%',
     'default' => false,
   ),
-  'HEADER_HTML' => 
+  'HEADER' => 
   array (
     'type' => 'wysiwyg',
-    'label' => 'LBL_HEADER_HTML',
+    'label' => 'LBL_HEADER',
     'width' => '10%',
     'default' => false,
   ),
-  'MAIN_HTML' => 
+  'BODY' => 
   array (
     'type' => 'wysiwyg',
-    'label' => 'LBL_MAIN_HTML',
+    'label' => 'LBL_BODY',
     'width' => '10%',
     'default' => false,
   ),
-  'RECIPIENT_PATH' => 
+  'SIGNER_PATH' => 
   array (
     'type' => 'varchar',
-    'label' => 'LBL_RECIPIENT_PATH',
+    'label' => 'LBL_SIGNER_PATH',
     'width' => '10%',
     'default' => false,
   ),

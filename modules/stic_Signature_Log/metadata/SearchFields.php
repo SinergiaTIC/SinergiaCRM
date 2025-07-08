@@ -38,15 +38,44 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
- if (!defined('sugarEntry') || !sugarEntry) {
+if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-global $mod_strings, $app_strings, $sugar_config;
- 
-if(ACLController::checkAccess('stic_Signature_Logs', 'edit', true)){
-    $module_menu[]=array('index.php?module=stic_Signature_Logs&action=EditView&return_module=stic_Signature_Logs&return_action=DetailView', $mod_strings['LNK_NEW_RECORD'], 'Add', 'stic_Signature_Logs');
-}
-if(ACLController::checkAccess('stic_Signature_Logs', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_Signature_Logs&action=index&return_module=stic_Signature_Logs&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Signature_Logs');
-}
+$module_name = 'stic_Signature_Log';
+$searchFields[$module_name] = array(
+    'name' => array('query_type' => 'default'),
+    'current_user_only' => array(
+        'query_type' => 'default',
+        'db_field' => array('assigned_user_id'),
+        'my_items' => true,
+        'vname' => 'LBL_CURRENT_USER_FILTER',
+        'type' => 'bool'
+    ),
+    'assigned_user_id' => array('query_type' => 'default'),
+
+    //Range Search Support
+    'range_date_entered' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'start_range_date_entered' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'end_range_date_entered' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'range_date_modified' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'start_range_date_modified' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    'end_range_date_modified' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true
+    ),
+    //Range Search Support
+);
