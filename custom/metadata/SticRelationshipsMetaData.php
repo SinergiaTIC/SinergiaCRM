@@ -6961,25 +6961,25 @@ $dictionary["stic_group_opportunities_accounts"] = array (
     ),
   );
 
-$dictionary["stic_signatures_stic_signature_logs"] = array (
+$dictionary["stic_signatures_stic_signature_log"] = array (
   'true_relationship_type' => 'one-to-many',
   'relationships' => 
   array (
-    'stic_signatures_stic_signature_logs' => 
+    'stic_signatures_stic_signature_log' => 
     array (
       'lhs_module' => 'stic_Signatures',
       'lhs_table' => 'stic_signatures',
       'lhs_key' => 'id',
-      'rhs_module' => 'stic_Signature_Logs',
-      'rhs_table' => 'stic_signature_logs',
+      'rhs_module' => 'stic_Signature_Log',
+      'rhs_table' => 'stic_signature_log',
       'rhs_key' => 'id',
       'relationship_type' => 'many-to-many',
-      'join_table' => 'stic_signatures_stic_signature_logs_c',
-      'join_key_lhs' => 'stic_signatures_stic_signature_logsstic_signatures_ida',
-      'join_key_rhs' => 'stic_signatures_stic_signature_logsstic_signature_logs_idb',
+      'join_table' => 'stic_signatures_stic_signature_log_c',
+      'join_key_lhs' => 'stic_signatures_stic_signature_logtic_signatures_ida',
+      'join_key_rhs' => 'stic_signatures_stic_signature_logtic_signature_logs_idb',
     ),
   ),
-  'table' => 'stic_signatures_stic_signature_logs_c',
+  'table' => 'stic_signatures_stic_signature_log_c',
   'fields' => 
   array (
     0 => 
@@ -7003,13 +7003,13 @@ $dictionary["stic_signatures_stic_signature_logs"] = array (
     ),
     3 => 
     array (
-      'name' => 'stic_signatures_stic_signature_logsstic_signatures_ida',
+      'name' => 'stic_signatures_stic_signature_logtic_signatures_ida',
       'type' => 'varchar',
       'len' => 36,
     ),
     4 => 
     array (
-      'name' => 'stic_signatures_stic_signature_logsstic_signature_logs_idb',
+      'name' => 'stic_signatures_stic_signature_logtic_signature_logs_idb',
       'type' => 'varchar',
       'len' => 36,
     ),
@@ -7018,7 +7018,7 @@ $dictionary["stic_signatures_stic_signature_logs"] = array (
   array (
     0 => 
     array (
-      'name' => 'stic_signatures_stic_signature_logsspk',
+      'name' => 'stic_signatures_stic_signature_logpk',
       'type' => 'primary',
       'fields' => 
       array (
@@ -7027,20 +7027,20 @@ $dictionary["stic_signatures_stic_signature_logs"] = array (
     ),
     1 => 
     array (
-      'name' => 'stic_signatures_stic_signature_logs_ida1',
+      'name' => 'stic_signatures_stic_signature_log_ida1',
       'type' => 'index',
       'fields' => 
       array (
-        0 => 'stic_signatures_stic_signature_logsstic_signatures_ida',
+        0 => 'stic_signatures_stic_signature_logtic_signatures_ida',
       ),
     ),
     2 => 
     array (
-      'name' => 'stic_signatures_stic_signature_logs_alt',
+      'name' => 'stic_signatures_stic_signature_log_alt',
       'type' => 'alternate_key',
       'fields' => 
       array (
-        0 => 'stic_signatures_stic_signature_logsstic_signature_logs_idb',
+        0 => 'stic_signatures_stic_signature_logtic_signature_logs_idb',
       ),
     ),
   ),
@@ -7131,25 +7131,25 @@ $dictionary["stic_signatures_stic_signers"] = array (
   ),
 );
 
-$dictionary["stic_signers_stic_signature_logs"] = array (
+$dictionary["stic_signers_stic_signature_log"] = array (
   'true_relationship_type' => 'one-to-many',
   'relationships' => 
   array (
-    'stic_signers_stic_signature_logs' => 
+    'stic_signers_stic_signature_log' => 
     array (
       'lhs_module' => 'stic_Signers',
       'lhs_table' => 'stic_signers',
       'lhs_key' => 'id',
-      'rhs_module' => 'stic_Signature_Logs',
-      'rhs_table' => 'stic_signature_logs',
+      'rhs_module' => 'stic_Signature_Log',
+      'rhs_table' => 'stic_signature_log',
       'rhs_key' => 'id',
       'relationship_type' => 'many-to-many',
-      'join_table' => 'stic_signers_stic_signature_logs_c',
-      'join_key_lhs' => 'stic_signers_stic_signature_logsstic_signers_ida',
-      'join_key_rhs' => 'stic_signers_stic_signature_logsstic_signature_logs_idb',
+      'join_table' => 'stic_signers_stic_signature_log_c',
+      'join_key_lhs' => 'stic_signers_stic_signature_logtic_signers_ida',
+      'join_key_rhs' => 'stic_signers_stic_signature_logtic_signature_log_idb',
     ),
   ),
-  'table' => 'stic_signers_stic_signature_logs_c',
+  'table' => 'stic_signers_stic_signature_log_c',
   'fields' => 
   array (
     0 => 
@@ -7173,13 +7173,13 @@ $dictionary["stic_signers_stic_signature_logs"] = array (
     ),
     3 => 
     array (
-      'name' => 'stic_signers_stic_signature_logsstic_signers_ida',
+      'name' => 'stic_signers_stic_signature_logtic_signers_ida',
       'type' => 'varchar',
       'len' => 36,
     ),
     4 => 
     array (
-      'name' => 'stic_signers_stic_signature_logsstic_signature_logs_idb',
+      'name' => 'stic_signers_stic_signature_logtic_signature_log_idb',
       'type' => 'varchar',
       'len' => 36,
     ),
@@ -7188,7 +7188,7 @@ $dictionary["stic_signers_stic_signature_logs"] = array (
   array (
     0 => 
     array (
-      'name' => 'stic_signers_stic_signature_logsspk',
+      'name' => 'stic_signers_stic_signature_logpk',
       'type' => 'primary',
       'fields' => 
       array (
@@ -7197,20 +7197,20 @@ $dictionary["stic_signers_stic_signature_logs"] = array (
     ),
     1 => 
     array (
-      'name' => 'stic_signers_stic_signature_logs_ida1',
+      'name' => 'stic_signers_stic_signature_log_ida1',
       'type' => 'index',
       'fields' => 
       array (
-        0 => 'stic_signers_stic_signature_logsstic_signers_ida',
+        0 => 'stic_signers_stic_signature_logtic_signers_ida',
       ),
     ),
     2 => 
     array (
-      'name' => 'stic_signers_stic_signature_logs_alt',
+      'name' => 'stic_signers_stic_signature_log_alt',
       'type' => 'alternate_key',
       'fields' => 
       array (
-        0 => 'stic_signers_stic_signature_logsstic_signature_logs_idb',
+        0 => 'stic_signers_stic_signature_logtic_signature_log_idb',
       ),
     ),
   ),
