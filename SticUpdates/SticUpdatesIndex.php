@@ -10,7 +10,7 @@ $stic_updates_index = [
             'version' => '2.1.0',
             'prev_version' => '2.0.0',
             'timestamp' => '2025-06-25 12:00:00',
-            'jv_version' => '16',
+            'inc_js_version' => true,
             'show_message' => true,
         ],
         'instructions' => [
@@ -32,7 +32,7 @@ $stic_updates_index = [
             'version' => '2.0.0',
             'prev_version' => '1.8.0',
             'timestamp' => '2025-05-22 12:00:00',
-            'jv_version' => '15',
+            'inc_js_version' => true,
             'show_message' => true,
         ],
         'instructions' => [
@@ -53,7 +53,7 @@ $stic_updates_index = [
             'version' => '1.8.0',
             'prev_version' => '1.7.5',
             'timestamp' => '2025-01-22 12:00:00',
-            'jv_version' => '14',
+            'inc_js_version' => true,
             'show_message' => true,
         ],
         'instructions' => [

@@ -85,16 +85,153 @@
 
         // In $updateDefs there are all versions, from newer to older
         // Install all versions from older to newer
-        $error = false;
-        for ($i = count($updateDefs) - 1; $i >= 0 && !$error; $i--) {
-            $error = self::processSingleUpdate($updateDefs[$i]);
+        $isOk = true;
+        for ($i = count($updateDefs) - 1; $i >= 0 && $isOk; $i--) {
+            $isOk = self::processSingleUpdate($updateDefs[$i]);
         }
 
         self::lockUpdate(false);
-        return !$error;
+        return $isOk;
     }
 
     private static function processSingleUpdate(array $updateDef) : bool {
+        // '2.1.0' => [
+        //     'metadata' => [
+        //         'version' => '2.1.0',
+        //         'prev_version' => '2.0.0',
+        //         'timestamp' => '2025-06-25 12:00:00',
+        //         'inc_js_version' => true,
+        //         'show_message' => true,
+        //     ],
+        //     'instructions' => [
+        //         // 'repair',
+        //         'SticUpdates/Migrations/20250130_feature_TrackerModule.sql',
+        //         // 'sda_rebuild',
+        //         'SticUpdates/Migrations/20250617_enhancement_glTranslations.sql',
+        //     ],
+        //     'finally' => [
+        //         'repair',
+        //         'css',
+        //         'sda_rebuild',
+        //         'cache_rebuild', // Borrar y regenerar (para los css de los formularios web)
+        //     ],
+        // ],
+        foreach ($updateDef['instructions'] as $instruction) {
+            if(!self::processSingleInstruction($instruction)) {
+                return false;
+            }
+        }
+        foreach ($updateDef['finally'] as $instruction) {
+            if(!self::processSingleInstruction($instruction)) {
+                return false;
+            }
+        }
+
+        // Update metadata version
+        return self::updateVersionInfo($updateDef['metadata']);
+    }
+
+    private static function processSingleInstruction(string $instruction) : bool {
+
+        // Check if instruction is a file (script)
+        if (file_exists($instruction)) {
+            if (str_ends_with(strtolower($instruction), ".php")) {
+                return self::executePhpFile($instruction);
+            } elseif (str_ends_with(strtolower($instruction), ".sql")) {
+                return self::executeSqlFile($instruction);
+            } else {
+                self::addError("Script not supported: " . $instruction);
+                return false;
+            }
+        }
+
+        $instruction = strtolower($instruction);
+        switch($instruction) {
+            case "repair": 
+                return self::executeRepair();
+            case "sda_rebuild":
+                return self::executeSdaRebuild();
+            case "cache_rebuild":
+                return self::executeCacheRebuild();
+            case "css": 
+                return self::executeCss();
+            default:
+                self::addError("Unknown instruction: " . $instruction);
+                return false;
+        }
+        return true;
+    }
+
+    private static function executePhpFile(string $file) : bool {
+        require($file);
+
+        return true;
+    }
+
+    private static function executeSqlFile(string $file) : bool {
+        $connection = self::connectToDBWithPDO();
+        if (!$connection) {
+            return false;
+        }
+
+        $sqlFileContent = file_get_contents($file);
+        // Execute SQL statements
+        try {
+            $connection->exec($sqlFileContent);
+        } catch (PDOException $e) {
+            self::addError("Error when executing sql statements: " . $e->getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    private static function connectToDBWithPDO(): PDO|false {
+        global $sugar_config;
+        $mysqlHost = $sugar_config["dbconfig"]["db_host_name"];
+        $mysqlDatabase = $sugar_config["dbconfig"]["db_name"];
+        $mysqlUser = $sugar_config["dbconfig"]["db_user_name"];
+        $mysqlPassword = $sugar_config["dbconfig"]["db_password"];
+        try {
+            $connection = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDatabase", $mysqlUser, $mysqlPassword);
+            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $connection->exec("SET NAMES 'utf8'"); // Setting codification
+            return $connection;
+        } catch (PDOException $e) {
+            self::addError("Connection Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    private static function executeRepair() : bool {
+        // TODO
+        return true;
+    }
+
+    private static function executeSdaRebuild() : bool {
+        // TODO
+        return true;
+    }
+
+    private static function executeCacheRebuild() : bool {
+        // TODO
+        return true;
+    }
+
+    private static function executeCss() : bool {
+        // TODO
+        return true;
+    }
+
+    private static function updateVersionInfo(array $verMetadata) : bool {
+        // TODO
+
+        //     'metadata' => [
+        //         'version' => '2.1.0',
+        //         'prev_version' => '2.0.0',
+        //         'timestamp' => '2025-06-25 12:00:00',
+        //         'inc_js_version' => true,
+        //         'show_message' => true,
+        //     ],
 
         return true;
     }
