@@ -140,6 +140,8 @@ class CampaignsViewDetail extends ViewDetail
             }
             // STIC-Custom 20240603 JBL - New Campaign type: Notification
             // https://github.com/SinergiaTIC/SinergiaCRM/pull/44
+            // STIC-Custom 20250708 MHP - Display subpanels in Survey type campaigns
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/714
             // //only show email marketing subpanel for email/newsletter campaigns
             // if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter') {
             //     //exclude emailmarketing subpanel if not on an email or newsletter campaign
@@ -148,11 +150,11 @@ class CampaignsViewDetail extends ViewDetail
             //     $subpanel->subpanel_definitions->exclude_tab('tracked_urls');
             // }
             // only show email marketing subpanel for email/newsletter/notification campaigns
-            if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter' && $this->bean->campaign_type != "Notification") {
+            if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter' && $this->bean->campaign_type != "Survey" && $this->bean->campaign_type != "Notification") {
                 //exclude emailmarketing subpanel if not on an email, newsletter or notification campaign
                 $subpanel->subpanel_definitions->exclude_tab('emailmarketing');
             }
-            if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter') {
+            if ($this->bean->campaign_type != 'Email' && $this->bean->campaign_type != 'NewsLetter' && $this->bean->campaign_type != "Survey") {
                 // Bug #49893  - 20120120 - Captivea (ybi) - Remove trackers subpanels if not on an email/newsletter campaign (useless subpannl)
                 $subpanel->subpanel_definitions->exclude_tab('tracked_urls');
             }
