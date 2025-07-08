@@ -134,6 +134,7 @@ function type_change() {
 
   updateViewNewsLetterType(typeValue == "NewsLetter");
   updateViewNotificationType(typeValue == "Notification");
+  updateViewSurveyType(typeValue == "Survey");
   mail_change();
 }
 
@@ -193,6 +194,14 @@ function updateViewNewsLetterType(isNewsLetter) {
     $('[data-field="frequency"]').hide();
     $('#freq_label').hide();
     $('#freq_field').hide();
+  }
+}
+
+function updateViewSurveyType(isSurvey) {
+  if (isSurvey) {
+    $('[data-field="survey_name"]').show();
+  } else {
+    $('[data-field="survey_name"]').hide();
   }
 }
 
