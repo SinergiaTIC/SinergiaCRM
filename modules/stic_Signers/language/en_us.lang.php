@@ -38,7 +38,7 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 $mod_strings = array(
-    'LBL_ASSIGNED_TO_ID' => 'Assigned User Id',
+    'LBL_ASSIGNED_TO_ID' => 'Assigned to (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
     'LBL_SECURITYGROUPS' => 'Security Groups',
     'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Security Groups',
@@ -46,13 +46,13 @@ $mod_strings = array(
     'LBL_DATE_ENTERED' => 'Date Created',
     'LBL_DATE_MODIFIED' => 'Date Modified',
     'LBL_MODIFIED' => 'Modified By',
-    'LBL_MODIFIED_NAME' => 'Modified By Name',
+    'LBL_MODIFIED_NAME' => 'Modified By',
     'LBL_CREATED' => 'Created By',
     'LBL_DESCRIPTION' => 'Description',
     'LBL_DELETED' => 'Deleted',
     'LBL_NAME' => 'Name',
-    'LBL_CREATED_USER' => 'Created by User',
-    'LBL_MODIFIED_USER' => 'Modified by User',
+    'LBL_CREATED_USER' => 'Created By',
+    'LBL_MODIFIED_USER' => 'Modified By',
     'LBL_LIST_NAME' => 'Name',
     'LBL_EDIT_BUTTON' => 'Edit',
     'LBL_QUICKEDIT_BUTTON' => '↙ Edit',
