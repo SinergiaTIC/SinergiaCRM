@@ -96,7 +96,8 @@ class stic_SignaturesController extends SugarController
 
                     if ($module_arr['vname'] != 'LBL_DELETED') {
                         $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
-                        $fmod_options_array[$module_arr['vname']] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
+                        $module_path = $module_arr['module'] . ':' . ($module_arr['link'] ?? $module_arr['id_name']);
+                        $fmod_options_array[$module_path] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
                     }
                 }
             }

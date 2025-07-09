@@ -70,12 +70,16 @@ if (typeof tinymce !== 'undefined' && tinymce.activeEditor) {
 // TinyMCE editor initialization 
 function editorReadyFunctions(editor) {
     renameModulesDropdownButton($('#main_module').find("option:selected").text());
+    populateModulesDropdown(); // Llama a la nueva función para poblar el dropdown al iniciar el editor
+    populateFieldsDropdown($('#main_module').val()); // Llama a la nueva función para poblar el dropdown de campos al iniciar el editor
 }
 
 
 // Event listener for the main module dropdown change
 $('#main_module').on('change', function () {
     renameModulesDropdownButton($(this).find("option:selected").text());
+    populateModulesDropdown(); // Vuelve a poblar el dropdown de módulos cuando cambia el módulo principal
+    populateFieldsDropdown($(this).val()); // Vuelve a poblar el dropdown de campos cuando cambia el módulo principal
 })
 
 
@@ -89,7 +93,11 @@ var currentModuleList, currentFieldList;
  * @returns {Array} An array of module names or field options.
  */
 function getModuleOrFieldList(moduleName, modulesOrFields = 'modules') {
-    var moduleList = [];
+    var list = []; // Cambiado a 'list' para ser más genérico
+    if (!moduleName) {
+        console.warn("getModuleOrFieldList: No se proporcionó moduleName.");
+        return list;
+    }
 
     $.ajax({
         url: location.href.slice(0, location.href.indexOf(location.search)),
@@ -104,26 +112,114 @@ function getModuleOrFieldList(moduleName, modulesOrFields = 'modules') {
         },
         success: function (response) {
             // 'response' ya es un objeto JavaScript debido a 'dataType: "json"'
-            if (response && response.module) {
-                if (modulesOrFields === 'fields') {
-                    moduleList = response.option;
+            if (response) {
+                if (modulesOrFields === 'fields' && response.option) {
+                    list = response.option;
+                } else if (modulesOrFields === 'modules' && response.module) {
+                    list = response.module;
                 } else {
-                    moduleList = response.module;
+                    console.error("No se pudo recuperar la lista de " + modulesOrFields + ". Respuesta:", response);
                 }
             } else {
-                console.error("No se pudo recuperar la lista de módulos. Respuesta:", response);
+                console.error("Respuesta vacía al recuperar la lista de " + modulesOrFields + " para el módulo: " + moduleName);
             }
         },
         error: function (xhr, status, error) {
-            console.error("Error al recuperar la lista de módulos:", status, error);
+            console.error("Error al recuperar la lista de " + modulesOrFields + " para el módulo: " + moduleName, status, error);
         }
     });
 
-    return moduleList;
+    return list;
 }
 
+/**
+ * Pobla el menú desplegable de módulos de TinyMCE con los módulos relacionados al módulo principal actual.
+ */
+function populateModulesDropdown() {
+    var editor = tinymce.get('body');
+    if (!editor) {
+        console.warn("Editor de TinyMCE no encontrado para poblar el dropdown de módulos.");
+        return;
+    }
 
+    var mainModule = $('#main_module').val(); // Obtiene el nombre del módulo principal
+    if (!mainModule) {
+        console.warn("No se pudo obtener el módulo principal para poblar el dropdown de módulos.");
+        return;
+    }
 
+    var modules = getModuleOrFieldList(mainModule, 'modules');
+    var menuItems = [];
+
+    // 'modules' es un objeto con formato {nombreModulo: 'Etiqueta del Módulo', ...}
+    for (var key in modules) {
+        if (modules.hasOwnProperty(key)) {
+            // key es el nombre del módulo (ej: 'stic_Sessions')
+            // modules[key] es la etiqueta (ej: 'Sesiones')
+            menuItems.push({
+                type: 'menuitem',
+                text: modules[key],
+                onAction: (function(moduleName) {
+                    return function () {
+                        // Al seleccionar un módulo, inserta el nombre del módulo y luego
+                        // actualiza el desplegable de campos para ese módulo.
+                        rawModuleName = moduleName.split(':')[0]; // Guarda el nombre del módulo seleccionado
+                        editor.insertContent('$' + rawModuleName + '.');
+                        console.log('Módulo seleccionado en el menú de módulos:', rawModuleName);
+                        populateFieldsDropdown(rawModuleName); // Actualiza el dropdown de campos
+                    };
+                })(key) // Captura el valor de 'key' para cada iteración
+            });
+        }
+    }
+
+    // Actualiza la variable global dynamicModuleItems, que es la fuente de datos para el botón de módulos
+    window.dynamicModuleItems = menuItems;
+
+    console.log("Menú de módulos actualizado para el módulo principal:", mainModule);
+}
+
+/**
+ * Pobla el menú desplegable de campos de TinyMCE con los campos del módulo especificado.
+ * @param {string} moduleName El nombre del módulo para el cual se recuperarán los campos.
+ */
+function populateFieldsDropdown(moduleName) {
+    var editor = tinymce.get('body');
+    if (!editor) {
+        console.warn("Editor de TinyMCE no encontrado para poblar el dropdown de campos.");
+        return;
+    }
+
+    if (!moduleName) {
+        console.warn("No se proporcionó un nombre de módulo para poblar el dropdown de campos.");
+        window.dynamicFieldsItems = []; // Vacía la lista si no hay módulo
+        return;
+    }
+
+    var fields = getModuleOrFieldList(moduleName, 'fields');
+    var menuItems = [];
+
+    // 'fields' es un objeto con formato {"": "", "$stic_sessions:name": "Nombre", ...}
+    for (var key in fields) {
+        if (fields.hasOwnProperty(key) && key !== "") { // Ignora la clave vacía si existe
+            menuItems.push({
+                type: 'menuitem',
+                text: fields[key], // La etiqueta del campo
+                onAction: (function(fieldKey) {
+                    return function () {
+                        editor.insertContent(fieldKey); // Inserta la clave del campo (ej: $stic_sessions:name)
+                        console.log('Campo seleccionado:', fieldKey);
+                    };
+                })(key) // Captura el valor de 'key' para cada iteración
+            });
+        }
+    }
+
+    // Actualiza la variable global dynamicFieldsItems, que es la fuente de datos para el botón de campos
+    window.dynamicFieldsItems = menuItems;
+
+    console.log("Menú de campos actualizado para el módulo:", moduleName);
+}
 
 
 /**
