@@ -1049,7 +1049,7 @@ class EmailMan extends SugarBean
             $mail->AddCustomHeader('X-CampTrackID:' . $this->getTargetId());
 
             // STIC-Custom 20250710 MHP - Add unsubscribe headers to emails sent by a campaign
-            //
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/724
             $site_url = rtrim($sugar_config['site_url'], "/");
             $mail->AddCustomHeader("List-Unsubscribe: <{$site_url}/index.php?entryPoint=removemeConfirmed&identifier=" . $this->getTargetId() . ">");
             $mail->AddCustomHeader("List-Unsubscribe-Post: List-Unsubscribe=One-Click");
