@@ -31,6 +31,12 @@ $placesListViewDefs[$module_name] = array(
         'table_key' => 'stic_resources',
         'db_key' => 'name'
     ),
+    'CODE' => array(
+        'type' => 'varchar',
+        'label' => 'LBL_CODE',
+        'width' => '10%',
+        'default' => true,
+    ),
     'STATUS' => array(
         'label' => 'LBL_STATUS',
         'width' => '10%',
@@ -43,12 +49,6 @@ $placesListViewDefs[$module_name] = array(
         'width' => '10%',
         'default' => true,
     ),
-    'CODE' => array(
-        'type' => 'varchar',
-        'label' => 'LBL_CODE',
-        'width' => '10%',
-        'default' => true,
-    ),       
     'USER_TYPE' => array(
         'type' => 'enum',
         'studio' => 'visible',
@@ -62,13 +62,6 @@ $placesListViewDefs[$module_name] = array(
         'label' => 'LBL_GENDER',
         'width' => '10%',
         'default' => true,
-    ),
-    'GENDER' => array(
-        'type' => 'enum',
-        'studio' => 'visible',
-        'label' => 'LBL_GENDER',
-        'width' => '10%',
-        'default' => false,
     ),
     'AMOUNT_DAY_OCCUPIED' => array(
         'type' => 'decimal',

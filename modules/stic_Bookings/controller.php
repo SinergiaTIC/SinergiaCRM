@@ -56,7 +56,7 @@ class stic_BookingsController extends SugarController
         $resourcePlaceType = isset($_REQUEST['resourcePlaceType']) ? $_REQUEST['resourcePlaceType'] : '';
         $resourceName = isset($_REQUEST['resourceName']) ? $_REQUEST['resourceName'] : '';
         $resourceGender = isset($_REQUEST['resourceGender']) ? $_REQUEST['resourceGender'] : '';
-        $numberOfCenters = isset($_REQUEST['numberOfCenters']) ? $_REQUEST['numberOfCenters'] : '';
+        $numberOfPlaces = isset($_REQUEST['numberOfPlaces']) ? $_REQUEST['numberOfPlaces'] : '';
         $existingResourceIds = isset($_REQUEST['existingResourceIds']) ? $_REQUEST['existingResourceIds'] : '';
         $existingResourceIdsArray = !empty($existingResourceIds) ? explode(',', $existingResourceIds) : [];
 
@@ -71,57 +71,11 @@ class stic_BookingsController extends SugarController
         $centerIdsArray = explode(',', $centerIds);
         $resources = [];
         $totalCenters = 0;
-        
-        $resourceGenderCondition = '';
-        if (!empty($resourceGender)) {
-            if (is_array($resourceGender)) {
-                $genderFilters = [];
-                foreach ($resourceGender as $gender) {
-                    $genderSafe = $db->quote($gender);
-                    $genderFilters[] = "gender LIKE '%$genderSafe%'";
-                }
-                if (!empty($genderFilters)) {
-                    $resourceGenderCondition = " AND (" . implode(" OR ", $genderFilters) . ")";
-                }
-            } else {
-                $resourceGenderSafe = $db->quote($resourceGender);
-                $resourceGenderCondition = " AND gender LIKE '%$resourceGenderSafe%'";
-            }
-        }
-        
-        $resourcePlaceUserTypeCondition = '';
-        if (!empty($resourcePlaceUserType)) {
-            if (is_array($resourcePlaceUserType)) {
-                $typeFilters = [];
-                foreach ($resourcePlaceUserType as $type) {
-                    $typeSafe = $db->quote($type);
-                    $typeFilters[] = "user_type LIKE '%$typeSafe%'";
-                }
-                if (!empty($typeFilters)) {
-                    $resourcePlaceUserTypeCondition = " AND (" . implode(" OR ", $typeFilters) . ")";
-                }
-            } else {
-                $typeSafe = $db->quote($resourcePlaceUserType);
-                $resourcePlaceUserTypeCondition = " AND user_type LIKE '%$typeSafe%'";
-            }
-        }
-        
-        $resourcePlaceTypeCondition = '';
-        if (!empty($resourcePlaceType)) {
-            if (is_array($resourcePlaceType)) {
-                $placeTypeFilters = [];
-                foreach ($resourcePlaceType as $placeType) {
-                    $placeTypeSafe = $db->quote($placeType);
-                    $placeTypeFilters[] = "place_type LIKE '%$placeTypeSafe%'";
-                }
-                if (!empty($placeTypeFilters)) {
-                    $resourcePlaceTypeCondition = " AND (" . implode(" OR ", $placeTypeFilters) . ")";
-                }
-            } else {
-                $placeTypeSafe = $db->quote($resourcePlaceType);
-                $resourcePlaceTypeCondition = " AND place_type LIKE '%$placeTypeSafe%'";
-            }
-        }
+
+        $resourceGenderCondition = $this->createFilterCondition($resourceGender, 'gender', $db);
+        $resourcePlaceTypeCondition = $this->createFilterCondition($resourcePlaceType, 'place_type', $db);
+        $resourcePlaceUserTypeCondition = $this->createFilterCondition($resourcePlaceUserType, 'user_type', $db);
+
         
         $resourceNameCondition = '';
         if (!empty($resourceName)) {
@@ -138,7 +92,7 @@ class stic_BookingsController extends SugarController
             while ($row = $db->fetchByAssoc($result)) {
                 $resourceId = $row['stic_resources_stic_centersstic_resources_idb'];
                 
-                if ($numberOfCenters && $totalCenters >= (int)$numberOfCenters) {
+                if ($numberOfPlaces && $totalCenters >= (int)$numberOfPlaces) {
                     break;
                 }
                 if (in_array($resourceId, $existingResourceIdsArray)) {
@@ -157,8 +111,8 @@ class stic_BookingsController extends SugarController
                     $resourceQuery .= $resourceGenderCondition;
                     $resourceQuery .= $resourceNameCondition;
                     
-                    if (!empty($numberOfCenters)) {
-                        $resourceQuery .= " LIMIT $numberOfCenters"; 
+                    if (!empty($numberOfPlaces)) {
+                        $resourceQuery .= " LIMIT $numberOfPlaces"; 
                     }
                     
                     $resourceResult = $db->query($resourceQuery);
@@ -197,7 +151,7 @@ class stic_BookingsController extends SugarController
                 }
             }
             
-            if ($numberOfCenters && $totalCenters >= (int)$numberOfCenters) {
+            if ($numberOfPlaces && $totalCenters >= (int)$numberOfPlaces) {
                 break;
             }
         }
@@ -369,7 +323,6 @@ class stic_BookingsController extends SugarController
         // Requested resource(s) is(are) available
         return array('success' => true, 'resources_allowed' => true);
     }
-
     public function action_getResourceTypes()
     {
         $centerId = $_REQUEST['centerId'];
@@ -513,4 +466,36 @@ class stic_BookingsController extends SugarController
             echo json_encode(array('success' => false, 'message' => 'Resource not found'));
         }
     }
+
+    public function createFilterCondition($filterValue, $columnName, $db) {
+        if (empty($filterValue)) {
+            return '';
+        }
+        
+        $filters = [];
+        $hasNonEmpty = false;
+        
+        $filterArray = is_array($filterValue) ? $filterValue : [$filterValue];
+        
+        foreach ($filterArray as $value) {
+            if (trim($value) === '') {
+                $filters[] = "$columnName = ''";
+            } else {
+                $valueSafe = $db->quote($value);
+                $filters[] = "$columnName LIKE '%$valueSafe%'";
+                $hasNonEmpty = true;
+            }
+        }
+        
+        if (empty($filters)) {
+            return '';
+        }
+        
+        if ($hasNonEmpty && !in_array("$columnName = ''", $filters)) {
+            $filters[] = "$columnName = ''";
+        }
+        
+        return " AND (" . implode(" OR ", $filters) . ")";
+    }
+    
 }

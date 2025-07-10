@@ -86,7 +86,7 @@ addToValidateCallback(
       : confirm(
           SUGAR.language.get(
             module,
-            "LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG"
+            "LBL_RESOURCES_EMPTY_RESOURCES_ERROR"
           )
         );
   }
@@ -343,7 +343,12 @@ switch (viewType()) {
           currentStartDateObj = moment(currentStartDateVal, momentFormatString);
       }
 
-      if (currentPlannedStartDate !== startDateInput) {
+      // Check if planned_start_date has changed
+      if (currentPlannedStartDate !== previousPlannedStartDate ||
+          currentPlannedStartHours !== previousPlannedStartHours ||
+          currentPlannedStartMinutes !== previousPlannedStartMinutes) {
+
+        // If start_date is empty OR start_date is a future/current date
         if (!currentStartDateVal || (currentStartDateObj && currentStartDateObj.isSameOrAfter(now, 'day'))) {
           startDateInput.val(currentPlannedStartDate).trigger("change");
           startHoursInput.val(currentPlannedStartHours).trigger("change");
@@ -352,8 +357,8 @@ switch (viewType()) {
         previousPlannedStartDate = currentPlannedStartDate;
         previousPlannedStartHours = currentPlannedStartHours;
         previousPlannedStartMinutes = currentPlannedStartMinutes;
-
       }
+
       var currentEndDateVal = endDateInput.val();
       var currentEndDateObj = null;
 
@@ -376,23 +381,23 @@ switch (viewType()) {
           currentEndDateObj = moment(currentEndDateVal, momentFormatStringEnd);
       }
 
-      if (currentPlannedEndDate !== previousPlannedEndDate) {
+      // Check if planned_end_date has changed
+      if (currentPlannedEndDate !== previousPlannedEndDate ||
+          currentPlannedEndHours !== previousPlannedEndHours ||
+          currentPlannedEndMinutes !== previousPlannedEndMinutes) {
+
+        // If end_date is empty OR end_date is a future/current date
         if (!currentEndDateVal || (currentEndDateObj && currentEndDateObj.isSameOrAfter(now, 'day'))) {
           endDateInput.val(currentPlannedEndDate).trigger("change");
+          endHoursInput.val(currentPlannedEndHours).trigger("change");
+          endMinutesInput.val(currentPlannedEndMinutes).trigger("change");
         }
         previousPlannedEndDate = currentPlannedEndDate;
-      }
-
-      if (currentPlannedEndHours !== previousPlannedEndHours) {
-        if (!currentEndDateVal || (currentEndDateObj && currentEndDateObj.isSameOrAfter(now, 'day'))) {
-          endHoursInput.val(currentPlannedEndHours).trigger("change");
-        }
         previousPlannedEndHours = currentPlannedEndHours;
         previousPlannedEndMinutes = currentPlannedEndMinutes;
       }
 
     }, 500);
-
 
     // Set event listener for center popup
     $("#openCenterPopup").click(function () {
@@ -604,7 +609,7 @@ function updateResourceFields() {
     $("#resourcePlaceType").val("");
     $("#resourceGender").val("");
     $("#resourceName").val("");
-    $("#numberOfCenters").val("");
+    $("#numberOfPlaces").val("");
   }
   updateLabelsBasedOnBookingType();
 }
@@ -617,13 +622,13 @@ function updateLabelsBasedOnBookingType() {
     $("#resourcesTitle").html(SUGAR.language.get('stic_Bookings', 'LBL_PLACES') + '  <button id="openCenterPopup" type="button" class="button">' + SUGAR.language.get('stic_Bookings', 'LBL_CENTERS_BUTTON') + '</button>');
     $("#resourceNameLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_PLACES_NAME'));
     $("#addResourceLine").val(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_PLACES_ADD'));
-    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_ADD_BUTTON'));
+    $("#openCenterPopup").show(); 
   } else {
     // Change to RESOURCES labels
     $("#resourcesTitle").html(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES') + '  <button id="openCenterPopup" type="button" class="button">' + SUGAR.language.get('stic_Bookings', 'LBL_CENTERS_BUTTON') + '</button>');
     $("#resourceNameLabel").text(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_NAME'));
     $("#addResourceLine").val(SUGAR.language.get('stic_Bookings', 'LBL_RESOURCES_ADD'));
-    $("#loadCenterResourcesButton").text(SUGAR.language.get('stic_Bookings', 'LBL_ADD_BUTTON'));
+    $("#openCenterPopup").hide(); 
   }
   
   $("#openCenterPopup").off('click').on('click', function() {
@@ -633,10 +638,39 @@ function updateLabelsBasedOnBookingType() {
 
 // Delete a resource row
 function markResourceLineDeleted(ln) {
+  var isPlaceBooking = $("#place_booking").is(":checked");
+  var fields = isPlaceBooking ? config_place_fields : config_resource_fields;
+  
+  $("#resource_id" + ln).val("");
+  $("#resource_name" + ln).val("");
+  fields.forEach(function (field) {
+    $("#resource_" + field + ln).val("");
+    if (field === "color") {
+      $("#resource_" + field + ln).css("background-color", "");
+    }
+  });
+  
   $("#resourceLine" + ln).remove();
-
+  
+  resourceGroups.forEach(function (group) {
+    var indexInGroup = group.resourceLines.indexOf(ln);
+    if (indexInGroup > -1) {
+      group.resourceLines.splice(indexInGroup, 1);
+    }
+  });
+  
+  resourceGroups = resourceGroups.filter(function (group) {
+    return group.resourceLines.length > 0;
+  });
+  
+  reorganizeResourceLines();
+  
+  $("#resourceCount").text(
+    SUGAR.language.get("stic_Bookings", "LBL_CENTERS_MESSAGE") + getTotalResourceCount()
+  );
+  
   if (!resourceLineWithData(resourceMaxCount)) {
-    resourceLineCount = insertResourceLine();
+    insertResourceLine();
   }
 }
 
@@ -846,7 +880,7 @@ function loadResources() {
     $("#resourceGender").val();
   
   var resourceName = $("#resourceName").val();
-  var numberOfCenters = $("#numberOfCenters").val();
+  var numberOfPlaces = $("#numberOfPlaces").val();
 
   if (startDate === "" || endDate === "") {
     add_error_style(
@@ -867,7 +901,7 @@ function loadResources() {
     resourcePlaceType,
     resourceGender,
     resourceName,
-    numberOfCenters
+    numberOfPlaces
   );
 }
 
@@ -973,7 +1007,7 @@ function loadCenterResources(
   resourcePlaceType = "",
   resourceGender = "",
   resourceName = "",
-  numberOfCenters = ""
+  numberOfPlaces = ""
 ) {
   var centerIds = selectedCenters.map((center) => center.centerId).join(",");
   var startDate = getDateObject(getFieldValue("start_date"));
@@ -993,7 +1027,7 @@ function loadCenterResources(
       resourcePlaceType: resourcePlaceType,
       resourceGender: resourceGender,
       resourceName: resourceName,
-      numberOfCenters: numberOfCenters,
+      numberOfPlaces: numberOfPlaces,
       existingResourceIds: existingResourceIds.join(',')
     },
     success: function (res) {

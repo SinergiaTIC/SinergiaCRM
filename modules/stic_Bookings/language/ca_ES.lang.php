@@ -102,7 +102,6 @@ $mod_strings = array(
     'LBL_RESOURCES_END_DATE_ERROR' => "La data de finalització ha de ser posterior a la data d'inici.",
     'LBL_RESOURCES_START_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'Aquesta reserva no té cap recurs assignat.',
-    'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'Aquesta reserva no te cap recurs assignat. Voleu desar-la igualment?',
     'LBL_RESOURCES_TYPE_MIX_ERROR' => 'No es pot desar: la reserva conté una combinació de tipus de recursos (places i no places). Si us plau, selecciona només places o només recursos que no siguin places.',
     'LBL_NO_NEW_RESOURCES' => "No hi ha places per afegir.",
     'LBL_CONFIRM_DELETE_ALL_RESOURCES' => "Vol eliminar totes les places afegides a la reserva?",

@@ -102,7 +102,6 @@ $mod_strings = array(
     'LBL_RESOURCES_END_DATE_ERROR' => 'End date must be after Start date.',
     'LBL_RESOURCES_START_DATE_ERROR' => 'Start date must be before End date.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'This booking has no resources.',
-    'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'This booking has no resources. Do you want to save it anyway?',
     'LBL_RESOURCES_TYPE_MIX_ERROR' => 'Cannot save: Booking contains a mix of resource types (places and non-places). Please select either only places or only non-place resources.',
     'LBL_NO_NEW_RESOURCES' => 'There are no places to add.',
     'LBL_CONFIRM_DELETE_ALL_RESOURCES' => 'Do you want to delete all places added to the booking?',

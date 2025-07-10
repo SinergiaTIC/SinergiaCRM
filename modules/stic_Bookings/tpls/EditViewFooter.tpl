@@ -56,8 +56,8 @@
         
         <div class="filter-row">
             <div class="filter-item">
-                <label for="numberOfCenters">{$MOD.LBL_NUMBER_OF_PLACES}</label>
-                <input type="number" id="numberOfCenters" name="numberOfCenters">
+                <label for="numberOfPlaces">{$MOD.LBL_NUMBER_OF_PLACES}</label>
+                <input type="number" id="numberOfPlaces" name="numberOfPlaces">
             </div>
         </div>
         <div class="filter-actions grouped-buttons">
@@ -184,7 +184,7 @@ $(document).ready(function() {
         #resourceCount {
             font-weight: bold;
         }
-        #numberOfCenters {
+        #numberOfPlaces {
             width: 100px;
         }
         #resourceName {

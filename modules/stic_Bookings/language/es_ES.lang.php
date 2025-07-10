@@ -102,7 +102,6 @@ $mod_strings = array(
     'LBL_RESOURCES_END_DATE_ERROR' => 'La fecha de finalización debe ser posterior a la fecha de inicio.',
     'LBL_RESOURCES_START_DATE_ERROR' => 'La fecha de inicio debe ser anterior a la fecha de finalización.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'La reserva no tiene recursos asignados.',
-    'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'La reserva no tiene recursos asignados. ¿Quiere guardarla de todos modos?',
     'LBL_RESOURCES_TYPE_MIX_ERROR' => 'No se puede guardar: la reserva contiene una combinación de tipos de recursos (plazas y no plazas). Por favor, selecciona solo plazas o solo recursos que no sean plazas.',
     'LBL_NO_NEW_RESOURCES' => 'No hay plazas que añadir.',
     'LBL_CONFIRM_DELETE_ALL_RESOURCES' => '¿Quiere eliminar todas las plazas añadidas a la reserva?',
