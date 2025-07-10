@@ -180,7 +180,7 @@ EOF;
     private function getChoiceQuestionSkeleton($arr, $options)
     {
         // STIC Custom 20250710 JBL - Prepare skeleton for choice without options
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/722
         $arr['chartLabels'] = [];
         $arr['chartData'] = [];
         $arr['responses'] = [];
