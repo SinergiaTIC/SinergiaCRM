@@ -70,18 +70,33 @@ class stic_Message_MarketingController extends SugarController {
         $this->view_object_map['MMLIST'] = $mmlist;
         $this->view_object_map['RETURN_MODULE'] = 'Campaigns';
         $this->view_object_map['RETURN_ID'] = $campaign_id;
+        $this->view_object_map['TEST'] = $_REQUEST['test'];
         // $this->mapStepNavigation('results'); //next action to be run
     }
 
     public function action_sendMessages() {
         require_once 'modules/stic_Message_Marketing/Utils.php';
+        require_once 'modules/stic_MessagesMan/Utils.php';
         
         $ids = $_REQUEST['mass'];
+        $test = $_REQUEST['test'];
 
-        foreach($ids as $mmid) {
-            stic_Message_MarketingUtils::queueMessages($mmid);
+        if ($test) {
+            foreach($ids as $mmid) {
+                stic_Message_MarketingUtils::queueMessages($mmid, true);
+                stic_MessagesManUtils::sendQueuedMessages(true);
+            }
+        }
+        else {
+            foreach($ids as $mmid) {
+                stic_Message_MarketingUtils::queueMessages($mmid);
+            }
         }
 
         header("Location: index.php?module=Campaigns&action=DetailView&record={$_REQUEST['return_id']}");
+        $this->redirect_url = "index.php?module=Campaigns&action=DetailView&record={$_REQUEST['return_id']}";
+        // exit;
+        // SugarApplication::redirect("index.php?module=Campaigns&action=index");
+        // SugarApplication::redirect("index.php?module=Campaigns&action=DetailView&record={$_REQUEST['return_id']}");
     }
 }

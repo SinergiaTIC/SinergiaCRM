@@ -63,6 +63,14 @@ class stic_Message_MarketingUtils
 
         $selectAll = $marketingRow['select_all'];
 
+        $listTypeWhere = '';
+        if ($test) {
+            $listTypeWhere = " AND pl.list_type = 'test' ";
+        }
+        else {
+            $listTypeWhere = " AND pl.list_type IN ('default', 'test') ";
+        }
+
         if ($selectAll) {
             // Get prospects from all default list from Campaign
             $query = "
@@ -72,11 +80,11 @@ class stic_Message_MarketingUtils
             JOIN prospect_lists pl on pl.id = plc.prospect_list_id 
             JOIN prospect_lists_prospects plp on plp.prospect_list_id = pl.id
             WHERE csmmc.campaigns_stic_message_marketingmessage_idb = '{$mmid}'
+            {$listTypeWhere}
             AND csmmc.deleted = 0
             AND plc.deleted = 0
             AND pl.deleted = 0
             AND plp.deleted = 0
-            AND pl.list_type IN ('default', 'test')
             ";
         }
         else {
@@ -168,12 +176,8 @@ class stic_Message_MarketingUtils
         }
     }
 
-    public static function queueMessages($mmid) {
+    public static function queueMessages($mmid, $test = false) {
         
-
-        // TODOEPS: $test
-        $test = false;
-
         self::removePreviousMessages($mmid);
 
         $marketingRow = self::getMessageMarketingInfo($mmid);

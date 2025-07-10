@@ -395,7 +395,7 @@ class stic_MessagesMan extends SugarBean
     // }
 
 
-    public function sendMessage($sender, $templateId, $type) {
+    public function sendMessage($sender, $templateId, $type, $test = false) {
         require_once 'modules/stic_Messages/Utils.php';
         require_once 'modules/stic_Settings/Utils.php';
         include_once 'modules/EmailTemplates/EmailTemplate.php';
@@ -403,16 +403,18 @@ class stic_MessagesMan extends SugarBean
         $bean = BeanFactory::getBean($this->related_type, $this->related_id);
         $targetPhone = stic_MessagesUtils::getPhoneForMessage($bean);
 
-        $mustBeBlocked = $this->checkPresentInExemptLists();
-        if ($mustBeBlocked) {
-            $this->saveLog('blocked', $targetPhone, true);
-            return true;
-        }
-
-        $alreadySent = $this->checkAlreadySent($targetPhone);
-        if ($alreadySent) {
-            $this->saveLog('blocked', $targetPhone, true);
-            return true; 
+        if (!$test){
+            $mustBeBlocked = $this->checkPresentInExemptLists();
+            if ($mustBeBlocked) {
+                $this->saveLog('blocked', $targetPhone, true);
+                return true;
+            }
+    
+            $alreadySent = $this->checkAlreadySent($targetPhone);
+            if ($alreadySent) {
+                $this->saveLog('blocked', $targetPhone, true);
+                return true; 
+            }
         }
 
         // Recuperamos el template (si lo hay)

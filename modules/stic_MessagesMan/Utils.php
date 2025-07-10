@@ -27,7 +27,7 @@
 
 
 class stic_MessagesManUtils {
-    public static function sendQueuedMessages($all = true) {
+    public static function sendQueuedMessages($test = false) {
         $admin = BeanFactory::newBean('Administration');
         $admin->retrieveSettings();
         // TODOEPS: Max messages per run? If implemented, do it as a STIC config value?
@@ -53,15 +53,34 @@ class stic_MessagesManUtils {
         $messagesMan = BeanFactory::newBean('stic_MessagesMan');
 
         // TODOEPS: retries en enviament de missatges?
-        $select_query = " 
-            SELECT stic_messagesman.*, stic_message_marketing.template_id_c, stic_message_marketing.type, stic_message_marketing.sender 
-             FROM stic_messagesman 
-             join stic_message_marketing on stic_message_marketing.id = stic_messagesman.marketing_id  ";
-        $select_query .= " WHERE send_date_time <= " . $db->now();
-        $select_query .= " AND stic_messagesman.deleted = 0 AND stic_message_marketing.deleted = 0";
-        $select_query .= " AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " . $db->convert($db->quoted($timedate->fromString("-1 day")->asDb()), "datetime") . ")) ";
-    
-        $select_query .= " ORDER BY send_date_time ASC,user_id, list_id";
+
+
+        // TODOEPS: test
+        if ($test) {
+            $select_query = " 
+                SELECT stic_messagesman.*, stic_message_marketing.template_id_c, stic_message_marketing.type, stic_message_marketing.sender 
+                FROM stic_messagesman 
+                join stic_message_marketing on stic_message_marketing.id = stic_messagesman.marketing_id  ";
+            $select_query .= " join prospect_list_campaigns plc on stic_messagesman.campaign_id = plc.campaign_id";
+            $select_query .= " join prospect_lists pl on pl.id = plc.prospect_list_id ";
+            $select_query .= " WHERE send_date_time <= " . $db->now();
+            $select_query .= " AND stic_messagesman.list_id = pl.id AND pl.list_type = 'test'";
+            $select_query .= " AND stic_messagesman.deleted = 0 AND stic_message_marketing.deleted = 0";
+            $select_query .= " AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " . $db->convert($db->quoted($timedate->fromString("-1 day")->asDb()), "datetime") . ")) ";
+        
+            $select_query .= " ORDER BY send_date_time ASC,user_id, list_id";
+
+        }else {
+            $select_query = " 
+                SELECT stic_messagesman.*, stic_message_marketing.template_id_c, stic_message_marketing.type, stic_message_marketing.sender 
+                 FROM stic_messagesman 
+                 join stic_message_marketing on stic_message_marketing.id = stic_messagesman.marketing_id  ";
+            $select_query .= " WHERE send_date_time <= " . $db->now();
+            $select_query .= " AND stic_messagesman.deleted = 0 AND stic_message_marketing.deleted = 0";
+            $select_query .= " AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " . $db->convert($db->quoted($timedate->fromString("-1 day")->asDb()), "datetime") . ")) ";
+        
+            $select_query .= " ORDER BY send_date_time ASC,user_id, list_id";
+        }
 
         DBManager::setQueryLimit(0);
         $result = $db->query($select_query);
@@ -72,12 +91,12 @@ class stic_MessagesManUtils {
         }
         while ($row = $db->fetchByAssoc($result)) {
             $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ , $row['id']);
-            self::sendMessage($row);
+            self::sendMessage($row, $test);
         }
         return true; // Everything OK
     }
 
-    protected static function sendMessage($row) {
+    protected static function sendMessage($row, $test = false) {
         require_once 'modules/stic_Settings/Utils.php';
 
         // No exempt list is checked just when themessage is being sent. Exempt lists are checked when messages are added to messagesMan.
@@ -90,7 +109,7 @@ class stic_MessagesManUtils {
         $sender = $row['sender'] ? $row['sender'] : stic_SettingsUtils::getSetting('MESSAGES_SENDER');
         $templateId = $row['template_id_c'];
         $type = $row['type'];
-        $return = $messageman->sendMessage($sender, $templateId, $type);
+        $return = $messageman->sendMessage($sender, $templateId, $type, $test);
 
         // TODOEPS: Process return value... must remove from list? increment send_attemps?
         if (!$return) {
