@@ -1,7 +1,4 @@
 <?php
-
-use Symfony\Component\Validator\Constraints\Length;
-
 /**
  * repair file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -24,6 +21,26 @@ use Symfony\Component\Validator\Constraints\Length;
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+require_once('include/utils/sugar_file_utils.php');
+require_once('include/utils/file_utils.php');
+require_once('include/database/DBManagerFactory.php');
+require_once('include/TimeDate.php');
+require_once('include/utils/db_utils.php');
+require_once('include/utils.php');
+require_once('include/SugarObjects/VardefManager.php');
+require_once('data/BeanFactory.php');
+require_once('include/SugarObjects/LanguageManager.php');
+require_once('include/SugarEmailAddress/SugarEmailAddress.php');
+require_once("include/SugarObjects/SugarConfig.php");
+require_once("modules/Users/User.php");
+require_once("modules/UserPreferences/UserPreference.php");
+require_once("include/utils/LogicHook.php");
+require_once("include/Localization/Localization.php");
+
+require_once("custom/include/SugarLogger/SticLogger.php");
+require_once('SticInclude/SticRepairAndRebuild.php');
+require_once('modules/Configurator/Configurator.php');
+
 
  class SticUpdateUtils 
  {
@@ -32,8 +49,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
     private static function log(string $level, int $line, string $method, string $text): void {
         if( !isset($GLOBALS['log'])) {
-            require_once ("include/SugarObjects/SugarConfig.php");
-            require_once ("custom/include/SugarLogger/SticLogger.php");
+
             $GLOBALS['log'] = LoggerManager::getLogger();
         }
         $GLOBALS['log']->$level(__FILE__ . ':' . $line . ' ' . $method . ' - ' . $text);
@@ -81,7 +97,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
         $currentVersion = $sugar_config['sinergiacrm_version'];
         
-        include ('SticUpdates/SticUpdatesIndex.php');
+        include('SticUpdates/SticUpdatesIndex.php');
         $lastVersion = array_key_first($stic_updates_index);
 
         self::logInfo(__LINE__, __METHOD__ , "Installed version: {$currentVersion} - Last version: {$lastVersion}");
@@ -120,7 +136,7 @@ use Symfony\Component\Validator\Constraints\Length;
 
         $currentVersion = $sugar_config['sinergiacrm_version'];
 
-        include ('SticUpdates/SticUpdatesIndex.php');
+        include('SticUpdates/SticUpdatesIndex.php');
         $lastVersion = array_key_first($stic_updates_index);
 
         if($currentVersion == $lastVersion) {
@@ -175,9 +191,7 @@ use Symfony\Component\Validator\Constraints\Length;
             return false;
         }
 
-
         // Reset 'stic_force_dev_update' config
-        include_once ('modules/Configurator/Configurator.php');
         $configurator = new Configurator();
 
         $configurator->config['stic_force_dev_update'] = false;
@@ -307,18 +321,6 @@ use Symfony\Component\Validator\Constraints\Length;
     }
 
     private static function executeRepair() : bool {
-        require_once('include/utils/sugar_file_utils.php');
-        require_once('include/utils/file_utils.php');
-        require_once 'include/database/DBManagerFactory.php';
-        require_once 'include/TimeDate.php';
-        require_once('include/utils/db_utils.php');
-        require_once 'include/utils.php';
-        require_once 'include/SugarObjects/VardefManager.php';
-        require_once 'data/BeanFactory.php';
-        require_once 'include/SugarObjects/LanguageManager.php';
-        require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
-        include_once('SticInclude/SticRepairAndRebuild.php');
-
         $repair = new SticRepairAndRebuild();
         try {
             $repair->clearVardefs();
@@ -335,18 +337,6 @@ use Symfony\Component\Validator\Constraints\Length;
     }
 
     private static function executeSdaRebuild() : bool {
-        require_once('include/utils/sugar_file_utils.php');
-        require_once('include/utils/file_utils.php');
-        require_once 'include/database/DBManagerFactory.php';
-        require_once 'include/TimeDate.php';
-        require_once('include/utils/db_utils.php');
-        require_once 'include/utils.php';
-        require_once 'include/SugarObjects/VardefManager.php';
-        require_once 'data/BeanFactory.php';
-        require_once 'include/SugarObjects/LanguageManager.php';
-        require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
-        include_once('SticInclude/SticRepairAndRebuild.php');
-
         $repair = new SticRepairAndRebuild();
         try {
             $repair->rebuildSDA();
@@ -358,18 +348,6 @@ use Symfony\Component\Validator\Constraints\Length;
     }
 
     private static function executeCacheRebuild() : bool {
-        require_once('include/utils/sugar_file_utils.php');
-        require_once('include/utils/file_utils.php');
-        require_once 'include/database/DBManagerFactory.php';
-        require_once 'include/TimeDate.php';
-        require_once('include/utils/db_utils.php');
-        require_once 'include/utils.php';
-        require_once 'include/SugarObjects/VardefManager.php';
-        require_once 'data/BeanFactory.php';
-        require_once 'include/SugarObjects/LanguageManager.php';
-        require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
-        include_once('SticInclude/SticRepairAndRebuild.php');
-
         $repair = new SticRepairAndRebuild();
 
         // TODO:
@@ -398,13 +376,11 @@ use Symfony\Component\Validator\Constraints\Length;
     }
 
     private static function executeCss() : bool {
-        include_once ('SticInclude/SticCustomScss.php');
+        include('SticInclude/SticCustomScss.php');
         return true;
     }
 
     private static function updateVersionInfo(array $verMetadata) : bool {
-        include_once ('modules/Configurator/Configurator.php');
-
         //     'metadata' => [
         //         'version' => '2.1.0',
         //         'prev_version' => '2.0.0',
