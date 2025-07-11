@@ -36,6 +36,8 @@ loadScript("include/javascript/moment.min.js");
 var validationDependencies = {
   end_date: "start_date",
   start_date: "end_date",
+  planned_end_date: "planned_start_date",
+  planned_start_date: "planned_end_date",
 };
 
 /* VALIDATION CALLBACKS */
@@ -51,6 +53,7 @@ addToValidateCallback(
     );
   }
 );
+
 addToValidateCallback(
   getFormName(),
   "start_date",
@@ -60,6 +63,32 @@ addToValidateCallback(
   function () {
     return JSON.parse(
       checkStartAndEndDatesCoherence("start_date", "end_date", false)
+    );
+  }
+);
+
+addToValidateCallback(
+  getFormName(),
+  "planned_start_date",
+  "date",
+  false,
+  SUGAR.language.get(module, "LBL_RESOURCES_PLANNED_START_DATE_ERROR"),
+  function () {
+    return JSON.parse(
+      checkStartAndEndDatesCoherence("planned_start_date", "planned_end_date", false)
+    );
+  }
+);
+
+addToValidateCallback(
+  getFormName(),
+  "planned_end_date",
+  "date",
+  false,
+  SUGAR.language.get(module, "LBL_RESOURCES_PLANNED_END_DATE_ERROR"),
+  function () {
+    return JSON.parse(
+      checkStartAndEndDatesCoherence("planned_start_date", "planned_end_date", false)
     );
   }
 );
