@@ -47,25 +47,33 @@ array (
       array (
         0 => 
         array (
-          0 => 'name',
-          1 => 'assigned_user_name',
+          0 => 
+          array (
+            'name' => 'body',
+            'label' => 'LBL_BODY',
+          ),
         ),
         1 => 
         array (
+          0 => 'name',
+          1 => 'assigned_user_name',
+        ),
+        2 => 
+        array (
           0 => 
-          array (
-            'name' => 'module',
-            'studio' => 'visible',
-            'label' => 'LBL_MAIN_MODULE',
-          ),
-          1 => 
           array (
             'name' => 'type',
             'studio' => 'visible',
             'label' => 'LBL_TYPE',
           ),
+          1 => 
+          array (
+            'name' => 'main_module',
+            'studio' => 'visible',
+            'label' => 'LBL_MAIN_MODULE',
+          ),
         ),
-        2 => 
+        3 => 
         array (
           0 => 
           array (
@@ -80,7 +88,7 @@ array (
             'label' => 'LBL_ON_BEHALF_OF',
           ),
         ),
-        3 => 
+        4 => 
         array (
           0 => 
           array (
@@ -94,7 +102,7 @@ array (
             'label' => 'LBL_MINIMUM_SIGNATURES',
           ),
         ),
-        4 => 
+        5 => 
         array (
           0 => 
           array (
@@ -109,7 +117,7 @@ array (
             'label' => 'LBL_PDF_AUDIT_PAGE',
           ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (
@@ -122,7 +130,7 @@ array (
             'label' => 'LBL_EXPIRATION_DATE',
           ),
         ),
-        6 => 
+        7 => 
         array (
           0 => 
           array (
@@ -136,7 +144,7 @@ array (
             'label' => 'LBL_EMAIL_TEMPLATE',
           ),
         ),
-        7 => 
+        8 => 
         array (
           0 => 
           array (
@@ -149,7 +157,7 @@ array (
             'label' => 'LBL_REMINDER_FREQUENCY',
           ),
         ),
-        8 => 
+        9 => 
         array (
           0 => 
           array (
@@ -163,7 +171,7 @@ array (
             'label' => 'LBL_PDF_DOCUMENT',
           ),
         ),
-        9 => 
+        10 => 
         array (
           0 => 'description',
         ),
@@ -179,14 +187,6 @@ array (
           ),
         ),
         1 => 
-        array (
-          0 => 
-          array (
-            'name' => 'body',
-            'label' => 'LBL_BODY',
-          ),
-        ),
-        2 => 
         array (
           0 => 
           array (
