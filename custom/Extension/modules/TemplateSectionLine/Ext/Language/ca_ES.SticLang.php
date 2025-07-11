@@ -21,4 +21,37 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- $mod_strings['LBL_THUMBNAIL_HELP'] = "Indica la ruta on es troba el fitxer amb la imatge associada a la línia de secció de plantilla. Per a línies de secció de plantilles pròpies de l'entitat cal accedir a un document, accedir a la versió a través del subpanell de Versions i indicar en aquest camp l'ID de la versió precedit de la cadena de text: upload/.";
+$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Assignat a (ID)';
+$mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Assignat a';
+$mod_strings['LBL_ASSIGNED_TO'] = 'Assignat a';
+$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Assignat a';
+$mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Assignat a';
+$mod_strings['LBL_CREATED'] = 'Creat per';
+$mod_strings['LBL_CREATED_USER'] = 'Creat per';
+$mod_strings['LBL_CREATED_ID'] = 'Creat per (ID)';
+$mod_strings['LBL_MODIFIED'] = 'Modificat per';
+$mod_strings['LBL_MODIFIED_NAME'] = 'Modificat per';
+$mod_strings['LBL_MODIFIED_USER'] = 'Modificat per';
+$mod_strings['LBL_MODIFIED_ID'] = 'Modificat per (ID)';
+$mod_strings['LBL_SECURITYGROUPS'] = 'Grups de seguretat';
+$mod_strings['LBL_SECURITYGROUPS_SUBPANEL_TITLE'] = 'Grups de seguretat';
+$mod_strings['LBL_ID'] = 'ID';
+$mod_strings['LBL_DATE_ENTERED'] = 'Data de Creació';
+$mod_strings['LBL_DATE_MODIFIED'] = 'Data de Modificació';
+$mod_strings['LBL_DESCRIPTION'] = 'Descripció';
+$mod_strings['LBL_DELETED'] = 'Suprimit';
+$mod_strings['LBL_NAME'] = 'Nom';
+$mod_strings['LBL_LIST_NAME'] = 'Nom';
+$mod_strings['LBL_EDIT_BUTTON'] = 'Edita';
+$mod_strings['LBL_REMOVE'] = 'Desvincula';
+$mod_strings['LBL_ASCENDING'] = 'Ascendent';
+$mod_strings['LBL_DESCENDING'] = 'Descendent';
+$mod_strings['LBL_LIST_FORM_TITLE'] = 'Llista de Línies de secció de plantilla';
+$mod_strings['LBL_MODULE_NAME'] = 'Línies de secció de plantilla';
+$mod_strings['LBL_MODULE_TITLE'] = 'Línies de secció de plantilla';
+$mod_strings['LBL_HOMEPAGE_TITLE'] = 'Les meves línies de secció de plantilla';
+$mod_strings['LNK_NEW_RECORD'] = 'Crear Línia de secció de plantilla';
+$mod_strings['LNK_LIST'] = 'Veure Línies de secció de plantilla';
+$mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Cerca Línies de secció de plantilla';
+
+$mod_strings['LBL_THUMBNAIL_HELP'] = "Indica la ruta on es troba el fitxer amb la imatge associada a la línia de secció de plantilla. Per a línies de secció de plantilles pròpies de l'entitat cal accedir a un document, accedir a la versió a través del subpanell de Versions i indicar en aquest camp l'ID de la versió precedit de la cadena de text: upload/.";

@@ -21,4 +21,37 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- $mod_strings['LBL_THUMBNAIL_HELP'] = 'Indica la ruta donde se encuentra el archivo con la imagen asociada a la línea de sección de plantilla. Para líneas de sección de plantillas propias de la entidad se debe acceder a un documento, acceder a la versión a través del subpanel de Versiones e indicar en este campo el ID de la versión precedido de la cadena de texto: upload/.';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a (ID)';
+$mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
+$mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
+$mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
+$mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
+$mod_strings['LBL_CREATED'] = 'Creado por';
+$mod_strings['LBL_CREATED_USER'] = 'Creado por';
+$mod_strings['LBL_CREATED_ID'] = 'Creado por (ID)';
+$mod_strings['LBL_MODIFIED'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
+$mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
+$mod_strings['LBL_SECURITYGROUPS'] = 'Grupos de seguridad';
+$mod_strings['LBL_SECURITYGROUPS_SUBPANEL_TITLE'] = 'Grupos de seguridad';
+$mod_strings['LBL_ID'] = 'ID';
+$mod_strings['LBL_DATE_ENTERED'] = 'Fecha de Creación';
+$mod_strings['LBL_DATE_MODIFIED'] = 'Fecha de Modificación';
+$mod_strings['LBL_DESCRIPTION'] = 'Descripción';
+$mod_strings['LBL_DELETED'] = 'Eliminado';
+$mod_strings['LBL_NAME'] = 'Nombre';
+$mod_strings['LBL_LIST_NAME'] = 'Nombre';
+$mod_strings['LBL_EDIT_BUTTON'] = 'Editar';
+$mod_strings['LBL_REMOVE'] = 'Desvincular';
+$mod_strings['LBL_ASCENDING'] = 'Ascendente';
+$mod_strings['LBL_DESCENDING'] = 'Descendente';
+$mod_strings['LBL_LIST_FORM_TITLE'] = 'Lista de Líneas de sección de plantilla';
+$mod_strings['LBL_MODULE_NAME'] = 'Líneas de sección de plantilla';
+$mod_strings['LBL_MODULE_TITLE'] = 'Líneas de sección de plantilla';
+$mod_strings['LBL_HOMEPAGE_TITLE'] = 'Mis Líneas de sección de plantilla';
+$mod_strings['LNK_NEW_RECORD'] = 'Crear Línea de sección de plantilla';
+$mod_strings['LNK_LIST'] = 'Ver Líneas de sección de plantilla';
+$mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Buscar Líneas de sección de plantilla';
+ 
+$mod_strings['LBL_THUMBNAIL_HELP'] = 'Indica la ruta donde se encuentra el archivo con la imagen asociada a la línea de sección de plantilla. Para líneas de sección de plantillas propias de la entidad se debe acceder a un documento, acceder a la versión a través del subpanel de Versiones e indicar en este campo el ID de la versión precedido de la cadena de texto: upload/.';
