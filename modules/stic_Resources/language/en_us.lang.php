@@ -81,7 +81,8 @@ $mod_strings = array(
     'LBL_AMOUNT_DAY_OCCUPIED' => 'Daily amount per occupied place',
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Daily amount per unoccupied place',
     'LBL_AMOUNT_COPAYMENT' => 'Copayment daily amount',
-
+   
+    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'The resource type cannot be changed because it has associated bookings',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'A center is required',
     'LBL_PLACES' => 'Places',
 );

@@ -151,7 +151,19 @@ class stic_BookingsViewEdit extends ViewEdit
                 }
             }
         }
-
+        // Check if it's a place booking
+        if (!empty($resources)) { 
+            $isPlaceBooking = true;
+            foreach ($resources as $resourceBean) {
+                if ($resourceBean->type !== 'place') {
+                    $isPlaceBooking = false;
+                    break;
+                }
+            }
+            if ($isPlaceBooking) {
+                $this->bean->place_booking = true; 
+            }
+        }
         parent::display();
 
         SticViews::display($this);

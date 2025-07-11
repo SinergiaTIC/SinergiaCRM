@@ -81,21 +81,14 @@ addToValidateCallback(
   false,
   SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR"),
   function () {
-    return resourceLineWithData(resourceMaxCount)
-      ? true
-      : confirm(
-          SUGAR.language.get(
-            module,
-            "LBL_RESOURCES_EMPTY_RESOURCES_ERROR"
-          )
-        );
+    return true; 
   }
 );
 addToValidateCallback(
   getFormName(),
   "resource_name0",
   "text",
-  true,
+  false,
   SUGAR.language.get(module, "LBL_RESOURCES_TYPE_MIX_ERROR"),
   function () {
     return checkBookingResourceTypes();
@@ -118,6 +111,9 @@ switch (viewType()) {
       }
     } else {
         insertResourceLine();
+    }
+    if ($("#place_booking").is(":checked")) {
+      $("#place_booking").trigger('change');
     }
 
     // Set event to add more lines in the resources area when needed
@@ -415,7 +411,18 @@ switch (viewType()) {
     document
       .getElementById("place_booking")
       .addEventListener("change", function () {
-        if (this.checked) {
+        var currentCheckbox = this;
+        var isChecked = currentCheckbox.checked;
+        var hasResources = getTotalResourceCount() > 0;
+
+        if (isChecked && hasResources) {
+          if (!confirm(SUGAR.language.get(module, "LBL_CONFIRM_CHANGE_BOOKING_TYPE"))) {
+            currentCheckbox.checked = false; 
+            return;
+          }
+        }
+
+        if (isChecked) {
           updateResourceFields();
           $("#openCenterPopup").show();
         } else {
@@ -698,7 +705,7 @@ function openResourceSelectPopup(ln) {
   var filteredTypes = Object.keys(resourceTypes).filter(function (type) {
     return isPlaceBooking
       ? type === "place"
-      : type !== "place" && type !== "";
+      : type !== "place";
   });
 
   var typeQuery = filteredTypes
@@ -1398,30 +1405,17 @@ function checkBookingResourceTypes() {
     }
   }
 
-  if (isPlaceBookingChecked) {
-    if (containsOther && containsPlace) {
-      return false; 
-    }
-    if (containsOther && !containsPlace) {
-      return false; 
-    }
-    if (!containsPlace && containsOther) {
-      return false;
-    }
-    if (containsPlace && !containsOther) {
-      return true;
-    }
-    return true;
-  } else {
-    if (containsPlace && containsOther) {
-      return false;
-    }
-    if (containsPlace && !containsOther) {
-      return false;
-    }
-    if (!containsPlace && containsOther) {
-      return true;
-    }
-    return true;
+  if (isPlaceBookingChecked && containsOther) {
+    return false
   }
+
+  if (!isPlaceBookingChecked && containsPlace) {
+    return false
+  }
+
+  if (containsPlace && containsOther) {
+    return false;
+  }
+  
+  return true;
 }

@@ -70,7 +70,7 @@ class stic_BookingsController extends SugarController
         $db = DBManagerFactory::getInstance();
         $centerIdsArray = explode(',', $centerIds);
         $resources = [];
-        $totalCenters = 0;
+
 
         $resourceGenderCondition = $this->createFilterCondition($resourceGender, 'gender', $db);
         $resourcePlaceTypeCondition = $this->createFilterCondition($resourcePlaceType, 'place_type', $db);
@@ -92,7 +92,7 @@ class stic_BookingsController extends SugarController
             while ($row = $db->fetchByAssoc($result)) {
                 $resourceId = $row['stic_resources_stic_centersstic_resources_idb'];
                 
-                if ($numberOfPlaces && $totalCenters >= (int)$numberOfPlaces) {
+                if ($numberOfPlaces && count($resources) >= (int)$numberOfPlaces) {
                     break;
                 }
                 if (in_array($resourceId, $existingResourceIdsArray)) {
@@ -146,12 +146,10 @@ class stic_BookingsController extends SugarController
                             $resources[] = $resourceItem;
                         }
                     }
-                    
-                    $totalCenters++;
                 }
             }
             
-            if ($numberOfPlaces && $totalCenters >= (int)$numberOfPlaces) {
+            if ($numberOfPlaces && count($resources) >= (int)$numberOfPlaces) {
                 break;
             }
         }
@@ -482,7 +480,7 @@ class stic_BookingsController extends SugarController
                 $filters[] = "$columnName = ''";
             } else {
                 $valueSafe = $db->quote($value);
-                $filters[] = "$columnName LIKE '%$valueSafe%'";
+                $filters[] = "$columnName = ".$db->quoted($valueSafe)."";
                 $hasNonEmpty = true;
             }
         }

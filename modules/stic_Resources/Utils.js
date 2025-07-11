@@ -23,6 +23,9 @@
 // Set module name
 var module = "stic_Resources";
 
+// Variable to store the original type value
+var originalType = null;
+
 /* VALIDATION CALLBACKS */
 
 addToValidateCallback(getFormName(), "stic_resources_stic_centers_name", "relate", false, SUGAR.language.get(module, "LBL_CENTER_REQUIRED_FOR_PLACES"), function() {
@@ -36,6 +39,8 @@ switch (viewType()) {
     case "popup":
   
       $(document).ready(function () {
+        // Store the original type value
+        originalType = $("#type").val();
         showTabsEdit();
         updateCenterRequirement();
       });
@@ -67,6 +72,61 @@ function checkCenterForPlaces() {
   }
   
   return true;
+}
+
+// Function to check if resource has bookings
+function checkResourceBookings(resourceId, callback) {
+  console.log("Se esta checkeando checkResourceBookings")
+  if (!resourceId) {
+    callback(false);
+    return;
+  }
+  $.ajax({
+    url: 'index.php?module=stic_Resources&action=checkBookings',
+    type: 'POST',
+    data: {
+      resource_id: resourceId
+    },
+    dataType: 'json',
+    success: function(response) {
+      console.log("Respuesta del servidor (success):", response);
+      callback(response.hasBookings || false);
+    },
+    error: function(jqXHR, textStatus, errorThrown) { 
+      callback(false);
+    }
+  });
+}
+
+// Function to validate type change
+function validateTypeChange(newType, callback) {
+  var resourceId = $('[name="record"]').val();
+
+  var currentType = originalType;
+
+  if (!currentType || currentType === newType) {
+    callback(true);
+    return;
+  }
+  
+  // Check if we're changing between place and non-place types
+  var isChangingToPlace = (currentType !== "place" && newType === "place");
+  var isChangingFromPlace = (currentType === "place" && newType !== "place");
+
+  if (isChangingToPlace || isChangingFromPlace) {
+
+    checkResourceBookings(resourceId, function(hasBookings) {
+
+      if (hasBookings) {    
+        alert(SUGAR.language.get(module, "LBL_RESOURCE_TYPE_CHANGE_ERROR"));
+        callback(false);
+      } else {
+        callback(true);
+      }
+    });
+  } else {
+    callback(true);
+  }
 }
 
 // Function to update UI indicating center field is required when type is places
@@ -129,18 +189,36 @@ function showTabsEdit() {
       if (typeContact != null) {
         typeSelected = $("#whole_subpanel_stic_resources_stic_bookings #type");
         typeSelected.on("change", function () {
-          showTabs(typeSelected.val());
-          updateCenterRequirement();
+          var newType = $(this).val();
+          
+          validateTypeChange(newType, function(isValid) {
+            if (isValid) {
+              showTabs(newType);
+              updateCenterRequirement();
+              originalType = newType; 
+            } else {
+              $(this).val(originalType);
+            }
+          });
         });
       }
     } else {
       $("#type").on("change", function () {
         var newType = $(this).val();
-        showTabs(newType);
-        updateCenterRequirement();
+        var $this = $(this);
+        
+        validateTypeChange(newType, function(isValid) {
+          if (isValid) {
+            showTabs(newType);
+            updateCenterRequirement();
+            originalType = newType; 
+          } else {
+            // Revert to original type
+            $this.val(originalType);
+          }
+        });
       });
     }
-
 }
   
 function panelPlace(panelPlaces, view) {
