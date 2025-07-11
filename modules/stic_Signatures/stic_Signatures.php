@@ -66,9 +66,6 @@ class stic_Signatures extends Basic
     public $status;
     public $module;
     public $signer_path;
-    public $body;
-    public $header;
-    public $footer;
     public $auth_method;
     public $type;
     public $activation_date;
@@ -79,16 +76,10 @@ class stic_Signatures extends Basic
     public $generate_pdf;
     public $end_date;
     public $verification_code;
-    public $margin_left;
-    public $margin_right;
-    public $margin_top;
-    public $margin_bottom;
-    public $margin_header;
-    public $margin_footer;
-    public $page_size;
-    public $orientation;
     public $emailtemplate_id_c;
     public $email_template;
+    public $pdftemplate_id_c;
+    public $pdf_template;
     public $on_behalf_of;
     public $pdf_document;
 	

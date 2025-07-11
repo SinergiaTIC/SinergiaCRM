@@ -21,39 +21,37 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'include/MVC/View/views/view.edit.php';
+require_once 'include/MVC/View/views/view.popup.php';
 require_once 'SticInclude/Views.php';
 
 #[\AllowDynamicProperties]
-class stic_SignaturesViewEdit extends ViewEdit
+class stic_SignaturesViewPopup extends ViewPopup
 {
 
     public function __construct()
     {
+
         parent::__construct();
-        $this->useForSubpanel = true;
-        $this->useModuleQuickCreateTemplate = true;
+
     }
 
     public function preDisplay()
     {
+
         parent::preDisplay();
 
         SticViews::preDisplay($this);
 
-        // Write here you custom code
-
     }
-
     public function display()
     {
+
         parent::display();
 
         SticViews::display($this);
 
-        // Write here you custom code
-
         echo getVersionedScript("modules/stic_Signatures/Utils.js");
+
     }
 
 }

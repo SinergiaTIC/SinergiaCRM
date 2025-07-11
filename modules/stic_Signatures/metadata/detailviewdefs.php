@@ -49,7 +49,7 @@ array (
           'panelDefault' => 'expanded',
         ),
       ),
-      'syncDetailEditViews' => true,
+     
     ),
     'panels' => 
     array (
@@ -57,11 +57,7 @@ array (
       array (
         0 => 
         array (
-          0 => 
-          array (
-            'name' => 'body',
-            'label' => 'LBL_BODY',
-          ),
+         
         ),
         1 => 
         array (
