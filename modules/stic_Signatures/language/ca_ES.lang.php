@@ -97,4 +97,8 @@ $mod_strings = array(
     'LBL_EDITVIEW_PANEL2' => 'Plantilla',
     'LBL_ON_BEHALF_OF' => 'En representació',
     'LBL_PDF_DOCUMENT' => 'Documento PDF',
+
+    // Messages
+    'LBL_ACTIVATION_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",
+    'LBL EXPIRATION_DATE_ERROR' => "La data de finalització ha de ser posterior a la data d'inici.",
 );
