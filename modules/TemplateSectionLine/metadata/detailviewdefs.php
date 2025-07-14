@@ -110,7 +110,11 @@ array(
       array(
         0 =>
         array(
-          0 => 'name',
+          0 => 
+          array (
+            0 => 'name',
+            1 => 'assigned_user_name',
+          ),
           1 =>
           array(
             'name' => 'grp',
@@ -128,3 +132,4 @@ array(
     ),
   ),
 );
+// END STIC-Custom
