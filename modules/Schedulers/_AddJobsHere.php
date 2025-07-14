@@ -598,6 +598,8 @@ function removeDocumentsFromFS()
                 $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Bean not found for ID: ' . $beanId . '. Updating timestamp for future retry.');
 
                 $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
+
+                $bean->id = $beanId;
             }
     
             $directory = $bean->deleteFileDirectory();
