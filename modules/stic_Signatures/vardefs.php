@@ -359,7 +359,7 @@ $dictionary['stic_Signatures'] = array(
             'size' => '20',
         ),
         'pdf_template' => array(
-            'required' => false,
+            'required' => true,
             'source' => 'non-db',
             'name' => 'pdf_template',
             'vname' => 'LBL_PDF_TEMPLATE',
@@ -510,7 +510,11 @@ $dictionary['stic_Signatures'] = array(
     'optimistic_locking' => true,
     'unified_search' => true,
 );
+
 if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
 VardefManager::createVardef('stic_Signatures', 'stic_Signatures', array('basic', 'assignable', 'security_groups'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Signatures']['fields']['name']['required'] = false;

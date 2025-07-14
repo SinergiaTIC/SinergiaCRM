@@ -38,7 +38,6 @@
  * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
-
 class stic_Signatures extends Basic
 {
     public $new_schema = true;
@@ -82,16 +81,39 @@ class stic_Signatures extends Basic
     public $pdf_template;
     public $on_behalf_of;
     public $pdf_document;
-	
+
     public function bean_implements($interface)
     {
-        switch($interface)
-        {
+        switch ($interface) {
             case 'ACL':
                 return true;
         }
 
         return false;
     }
-	
+
+    /**
+     * Overriding SugarBean save function to insert additional logic:
+     * Build the name of the journal using the name of the center, the date and the type
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = false)
+    {
+
+        include_once 'SticInclude/Utils.php';
+        global $app_list_strings;
+
+        // Create name if empty
+        if (empty($this->name)) {
+            $mainModule = $app_list_strings['moduleList'][$this->main_module];
+            $type = $app_list_strings['stic_signatures_types_list'][$this->type];
+            $this->name = "{$mainModule} - {$type} - {$this->pdf_template}";
+        }
+
+        // Call the generic save() function from the SugarBean class
+        parent::save();
+    }
+
 }
