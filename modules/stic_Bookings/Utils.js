@@ -27,6 +27,9 @@ var resourceMaxCount = 0;
 var selectedCenters = [];
 var resourceGroups = [];
 var currentGroupIndex = 0;
+var bookingId = $('[name="record"]').val()
+? $('[name="record"]').val()
+: $(".listview-checkbox", $(".inlineEditActive").closest("tr")).val();
 
 /* INCLUDES */
 // Load moment.js to use in validations
@@ -192,18 +195,14 @@ switch (viewType()) {
       // Hide planned date time sections
       $("#planned_start_date_time_section").parent().hide();
       $("#planned_end_date_time_section").parent().hide();
-
       if ($("#end_date_date").val()) {
         var formatString = cal_date_format
-          .replace(/%/g, "")
-          .toLowerCase()
-          .replace(/y/g, "yy")
-          .replace(/m/g, "mm")
-          .replace(/d/g, "dd");
-        endDate = $.datepicker.parseDate(
-          formatString,
-          $("#end_date_date").val()
-        );
+            .replace(/%/g, "")
+            .toLowerCase()
+            .replace(/y/g, "yy")
+            .replace(/m/g, "mm")
+            .replace(/d/g, "dd");
+        endDate = $.datepicker.parseDate(formatString, $("#end_date_date").val());
         endDate.setDate(endDate.getDate() - 1);
         endDateValue = $.datepicker.formatDate(formatString, endDate);
         $("#end_date_date").val(endDateValue);
@@ -261,37 +260,6 @@ switch (viewType()) {
 
         $("#planned_start_date_time_section").parent().hide();
         $("#planned_end_date_time_section").parent().hide();
-
-        if ($("#end_date_date").val()) {
-          var formatString = cal_date_format
-            .replace(/%/g, "")
-            .toLowerCase()
-            .replace(/y/g, "yy")
-            .replace(/m/g, "mm")
-            .replace(/d/g, "dd");
-          endDate = $.datepicker.parseDate(
-            formatString,
-            $("#end_date_date").val()
-          );
-          endDate.setDate(endDate.getDate() - 1);
-          endDateValue = $.datepicker.formatDate(formatString, endDate);
-          $("#end_date_date").val(endDateValue);
-          $("#end_date_date").change();
-
-          if ($("#planned_end_date_date").val()) {
-            plannedEndDate = $.datepicker.parseDate(
-              formatString,
-              $("#planned_end_date_date").val()
-            );
-            plannedEndDate.setDate(plannedEndDate.getDate() - 1);
-            plannedEndDateValue = $.datepicker.formatDate(
-              formatString,
-              plannedEndDate
-            );
-            $("#planned_end_date_date").val(plannedEndDateValue);
-            $("#planned_end_date_date").change();
-          }
-        }
       } else {
         $("#start_date_hours").val(previousStartDateHours);
         $("#start_date_minutes").val(previousStartDateMinutes);
@@ -1064,6 +1032,7 @@ function loadCenterResources(
       resourceGender: resourceGender,
       resourceName: resourceName,
       numberOfPlaces: numberOfPlaces,
+      bookingId: bookingId,
       existingResourceIds: existingResourceIds.join(',')
     },
     success: function (res) {

@@ -59,7 +59,7 @@ class stic_ResourcesController extends SugarController
                   FROM stic_resources_stic_bookings_c rsb
                   INNER JOIN stic_bookings sb ON rsb.stic_resources_stic_bookingsstic_bookings_idb = sb.id
                   WHERE rsb.stic_resources_stic_bookingsstic_resources_ida = '" . $db->quote($resourceId) . "'
-                  AND sb.deleted = 0;";
+                  AND rsb.deleted = 0;";
     
         $result = $db->query($query);
     

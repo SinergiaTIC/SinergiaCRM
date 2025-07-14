@@ -392,6 +392,7 @@ class stic_BookingsController extends SugarController
         $newBooking->assigned_user_id = $booking->assigned_user_id;
         $newBooking->assigned_user_name = $booking->assigned_user_name;
         $newBooking->description = $booking->description;
+        $newBooking->place_booking = $booking->place_booking;
 
         $newBooking->save();
 

@@ -56,7 +56,7 @@ class stic_Bookings_CalendarUtils
     
             $resourcesArray[] = $resourceObject;
     
-            if ($type !== 'places') {
+            if ($type !== 'place') {
                 $resourcesArrayNoPlaces[] = $resourceObject;
                 $resourcesArrayByGroup[$type][] = $resourceObject;
             }

@@ -98,7 +98,7 @@ class stic_Bookings_CalendarController extends SugarController
         foreach ($calendarItems as $calendarItem) {
             if (
                 isset($_REQUEST['module']) && $_REQUEST['module'] === 'stic_Bookings_Calendar' &&
-                isset($calendarItem['resourceType']) && $calendarItem['resourceType'] === 'places'
+                isset($calendarItem['resourceType']) && $calendarItem['resourceType'] === 'place'
             ) {
                 continue;
             }
@@ -154,8 +154,11 @@ class stic_Bookings_CalendarController extends SugarController
         $resourcesBean = BeanFactory::getBean('stic_Resources');
         $resources = $resourcesBean->get_full_list('name');
         $bookedResources = array();
-        $query = "stic_bookings.end_date >= '$start_date' AND stic_bookings.start_date <= '$end_date' AND stic_bookings.status != 'cancelled'";
-        foreach ($resources as $resource) {
+        $query = "stic_bookings.end_date >= '$start_date' 
+                AND stic_bookings.start_date <= '$end_date' 
+                AND stic_bookings.place_booking = 0 
+                AND stic_bookings.status != 'cancelled'";
+      foreach ($resources as $resource) {
             if (!$filteredResources || in_array($resource->id, $filteredResources)) {
                 $relBeans = $resource->get_linked_beans(
                     'stic_resources_stic_bookings',
