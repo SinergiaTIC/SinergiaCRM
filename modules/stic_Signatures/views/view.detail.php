@@ -39,7 +39,9 @@ class stic_SignaturesViewDetail extends ViewDetail
 
         SticViews::preDisplay($this);
 
-        // Write here you custom code
+        // get emailable related modules and populate the dropdown
+        require_once 'modules/stic_Signatures/Utils.php';
+        stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module);
 
     }
 
