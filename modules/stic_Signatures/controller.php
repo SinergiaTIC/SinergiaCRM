@@ -46,7 +46,13 @@ class stic_SignaturesController extends SugarController
             $signatureId = '0000070f-664a-4c6d-14c3-68763b7509c5';
             $mainModuleIds = '8d89183c-58c8-4aa0-2e0f-63106cc1aa5f';
             
-            
+            // reuniones
+            $signatureId = '000003fb-a3c6-f802-becd-68765156ce82';
+            $mainModuleIds = '00000978-be6b-07b9-6f16-6847d3a2d799';
+
+
+
+
             $signerPathList = stic_SignaturesUtils::getSignatureSigners($signatureId, $mainModuleIds);
             
         

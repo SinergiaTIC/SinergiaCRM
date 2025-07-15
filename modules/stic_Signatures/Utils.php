@@ -81,13 +81,6 @@ class stic_SignaturesUtils
                     if (!is_null($relate_module_class_name)) {
                         $relate_module = new $relate_module_class_name();
 
-                        foreach ($relate_module->field_defs as $relate_name => $relate_arr) {
-                            if (!((isset($relate_arr['dbType']) && strtolower($relate_arr['dbType']) == 'id') || $relate_arr['type'] == 'id' || $relate_arr['type'] == 'link')) {
-                                if ((!isset($relate_arr['reportable']) || $relate_arr['reportable']) && isset($relate_arr['vname'])) {
-                                    $options_array['$' . $module_arr['name'] . ':' . $relate_name] = translate($relate_arr['vname'], $relate_module->module_dir);
-                                }
-                            }
-                        }
                     }
 
                     $options = $options_array;
@@ -195,6 +188,16 @@ class stic_SignaturesUtils
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main Module Bean for ID [{$mainModuleId}] is empty.");
                 continue;
             }
+
+// TEST
+                require_once 'SticInclude/Utils.php';
+                $signers= SticUtils::getRelatedBeanObject($mainModuleBean, $signerPath);
+
+//TEST
+
+
+
+
 
             // try to retrieve the linked beans based on relatinships
             $signers = $mainModuleBean->get_linked_beans($signerPath, $signerModule);
