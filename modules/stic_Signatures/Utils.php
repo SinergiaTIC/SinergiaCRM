@@ -157,4 +157,54 @@ class stic_SignaturesUtils
         }
     }
 
+    /**
+     * Retrieves the signers for a given signature ID and main module IDs.
+     *
+     * @param string $signatureId The ID of the signature.
+     * @param array|string $mainModuleIds An array or single value of main module IDs.
+     * @return array An array of signer IDs.
+     */
+    public static function getSignatureSigners($signatureId, $mainModuleIds)
+    {
+        if (empty($signatureId) || empty($mainModuleIds)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature [{$signatureId}] or Main Module ID [{$mainModuleIds}] is empty.");
+            return;
+        }
+        // Initialize an empty array to hold unique signer IDs
+        $signersIdList = [];
+
+        // Ensure $mainModuleIds is an array
+        $mainModuleIds = is_array($mainModuleIds) ? $mainModuleIds : [$mainModuleIds];
+
+        // Load the signature bean and check if it exists
+        $signatureBean = BeanFactory::getBean('stic_Signatures', $signatureId);
+        if (empty($signatureBean)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature Bean for ID [{$signatureId}] is empty.");
+            return;
+        }
+
+        $mainModule = $signatureBean->main_module;
+        $signerPath = $signatureBean->signer_path;
+        $signerModule = explode(':', $signerPath)[0];
+        $signerPath = explode(':', $signerPath)[1];
+
+        // Check if the main module and signer module are valid
+        foreach ($mainModuleIds as $mainModuleId) {
+            $mainModuleBean = BeanFactory::getBean($mainModule, $mainModuleId);
+            if (empty($mainModuleBean)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main Module Bean for ID [{$mainModuleId}] is empty.");
+                continue;
+            }
+
+            $signers = $mainModuleBean->get_linked_beans($signerPath, $signerModule);
+            foreach ($signers as $signer) {
+                if (!in_array($signer->id, $signersIdList)) {
+                    $signersIdList[] = $signer->id;
+                }
+            }
+
+        }
+        return $signersIdList;
+    }
+
 }
