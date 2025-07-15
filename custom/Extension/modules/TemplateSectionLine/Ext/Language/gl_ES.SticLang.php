@@ -53,5 +53,7 @@ $mod_strings['LBL_HOMEPAGE_TITLE'] = 'Mis Líneas de sección de plantilla';
 $mod_strings['LNK_NEW_RECORD'] = 'Crear Línea de sección de plantilla';
 $mod_strings['LNK_LIST'] = 'Ver Líneas de sección de plantilla';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Buscar Líneas de sección de plantilla';
- 
+$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles do rexistro';
+
+$mod_strings['LBL_THUMBNAIL_IMAGE_C'] = 'Imagen de miniatura';
 $mod_strings['LBL_THUMBNAIL_HELP'] = 'Indica la ruta donde se encuentra el archivo con la imagen asociada a la línea de sección de plantilla. Para líneas de sección de plantillas propias de la entidad se debe acceder a un documento, acceder a la versión a través del subpanel de Versiones e indicar en este campo el ID de la versión precedido de la cadena de texto: upload/.';

@@ -53,5 +53,7 @@ $mod_strings['LBL_HOMEPAGE_TITLE'] = 'Les meves línies de secció de plantilla'
 $mod_strings['LNK_NEW_RECORD'] = 'Crear Línia de secció de plantilla';
 $mod_strings['LNK_LIST'] = 'Veure Línies de secció de plantilla';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Cerca Línies de secció de plantilla';
+$mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalls del registre';
 
+$mod_strings['LBL_THUMBNAIL_IMAGE_C'] = 'Imatge de miniatura';
 $mod_strings['LBL_THUMBNAIL_HELP'] = "Indica la ruta on es troba el fitxer amb la imatge associada a la línia de secció de plantilla. Per a línies de secció de plantilles pròpies de l'entitat cal accedir a un document, accedir a la versió a través del subpanell de Versions i indicar en aquest camp l'ID de la versió precedit de la cadena de text: upload/.";

@@ -68,6 +68,37 @@ $dictionary["TemplateSectionLine"]['fields']['assigned_user_link'] = array (
     'table' => 'users',
 );
 
+$dictionary["TemplateSectionLine"]['fields']['thumbnail_image_c'] = array (
+  'inline_edit' => '1',
+  'labelValue' => 'thumbnail image',
+  'required' => false,
+  'source' => 'custom_fields',
+  'name' => 'thumbnail_image_c',
+  'vname' => 'LBL_THUMBNAIL_IMAGE_C',
+  'type' => 'image',
+  'massupdate' => '0',
+  'default' => NULL,
+  'no_default' => false,
+  'comments' => '',
+  'help' => '',
+  'importable' => 'true',
+  'duplicate_merge' => 'disabled',
+  'duplicate_merge_dom_value' => '0',
+  'audited' => false,
+  'reportable' => true,
+  'unified_search' => false,
+  'merge_filter' => 'disabled',
+  'len' => 255,
+  'size' => '20',
+  'studio' => 'visible',
+  'dbType' => 'varchar',
+  'border' => '',
+  'width' => '120',
+  'height' => '',
+  'id' => 'TemplateSectionLinethumbnail_image_c',
+  'custom_module' => 'TemplateSectionLine',
+);
+
 $dictionary["TemplateSectionLine"]['relationships']['templateSectionLine_assigned_user'] = array (
   'lhs_module' => 'Users',
   'lhs_table' => 'users',

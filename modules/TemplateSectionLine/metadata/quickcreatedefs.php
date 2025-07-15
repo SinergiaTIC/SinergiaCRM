@@ -108,6 +108,13 @@ array(
         3 => array(
           0 => 'description',
         ),
+        4 => array(
+          0 => array (
+            'name' => 'thumbnail_image_c',
+            'studio' => 'visible',
+            'label' => 'LBL_THUMBNAIL_IMAGE_C',
+          ),
+        ),        
       ),
     ),
   ),
