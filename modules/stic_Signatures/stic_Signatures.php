@@ -112,6 +112,18 @@ class stic_Signatures extends Basic
             $this->name = "{$mainModule} - {$type} - {$this->pdf_template}";
         }
 
+        if($this->pdftemplate_id_c ?? false){
+            $PDFBean = Beanfactory::getBean('AOS_PDF_Templates', $this->pdftemplate_id_c);
+            if ($PDFBean) { 
+                $this->main_module = $PDFBean->type;
+
+            }
+        }
+
+        
+
+
+
         // Call the generic save() function from the SugarBean class
         parent::save();
     }

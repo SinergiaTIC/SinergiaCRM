@@ -43,7 +43,7 @@ class stic_SignaturesViewEdit extends ViewEdit
 
         // get emailable related modules and populate the dropdown
         require_once 'modules/stic_Signatures/Utils.php';
-        stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module);
+        stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module ?? null);
 
     }
 
@@ -56,6 +56,9 @@ class stic_SignaturesViewEdit extends ViewEdit
         // Write here you custom code
 
         echo getVersionedScript("modules/stic_Signatures/Utils.js");
+        
+
+
     }
 
 }

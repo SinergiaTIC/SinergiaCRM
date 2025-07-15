@@ -41,7 +41,13 @@ class stic_SignaturesViewDetail extends ViewDetail
 
         // get emailable related modules and populate the dropdown
         require_once 'modules/stic_Signatures/Utils.php';
-        stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module);
+        stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module ?? null);
+
+        if(empty($this->bean->signer_path)){
+            SugarApplication::redirect(
+                "index.php?module=stic_Signatures&action=EditView&return_module=stic_Signatures&return_action=DetailView&record={$this->bean->id}"
+            );
+        }
 
     }
 

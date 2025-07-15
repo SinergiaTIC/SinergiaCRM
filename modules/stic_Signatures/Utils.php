@@ -151,6 +151,7 @@ class stic_SignaturesUtils
         // this is used to select the path for extracting email addresses or phone data for signers
         require_once 'modules/stic_Signatures/Utils.php';
         $relatedModules = stic_SignaturesUtils::getRelatedEmailableModules($moduleName);
+        $app_list_strings['stic_signatures_signer_path_list'][''] = '';
         foreach ($relatedModules as $key => $value) {
             $app_list_strings['stic_signatures_signer_path_list'][$key] = $value;
         }

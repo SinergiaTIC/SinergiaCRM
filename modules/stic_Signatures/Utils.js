@@ -50,8 +50,13 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    setAutofill(["name"]);
+  setDisabledStatus('main_module',false)
+  // setDisabledStatus('signer_path',false)
 
+  
+  
+
+  
     
     break;
   case "detail":
