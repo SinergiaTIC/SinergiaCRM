@@ -405,6 +405,8 @@ switch (viewType()) {
 
     // Set autofill mark beside field label
     setAutofill(["name"]);
+    setAutofill(["total_amount"]);
+    setAutofill(["copayment_amount"]);
     document
       .getElementById("place_booking")
       .addEventListener("change", function () {
@@ -432,6 +434,14 @@ switch (viewType()) {
 
   case "list":
   case "detail":
+    const copaymentFieldListDetail = document.querySelector('[data-field="copayment_amount"]');
+    if (copaymentFieldListDetail) {
+      if ($("#place_booking").is(":checked")) {
+        copaymentFieldListDetail.style.display = ""; 
+      } else {
+        copaymentFieldListDetail.style.display = "none";
+      }
+    }    
     break;
   default:
     break;
@@ -934,27 +944,19 @@ function updateSelectedCentersList() {
         "</div>"
     );
   });
-  var startDate = getFieldValue("start_date");
-  var endDate = getFieldValue("end_date");
+
   $(".removeCenterButton")
   .off("click")
   .on("click", function () {
     var index = $(this).data("index");
     var centerToRemove = selectedCenters[index];
-
-    checkAndRemoveCenterResources(centerToRemove.centerId, function() {
-      selectedCenters.splice(index, 1);
-      updateSelectedCentersList();
-      
-      $("#resourceCount").text(
-        SUGAR.language.get("stic_Bookings", "LBL_CENTERS_MESSAGE") + getTotalResourceCount()
-      );
+    selectedCenters.splice(index, 1);
+    updateSelectedCentersList();
       
       if (selectedCenters.length === 0) {
         $(".filter-box").hide();
         $("#resourceSearchFields").hide();
       }
-    });
   });
 }
 function loadResourceTypes(centerId) {
@@ -973,21 +975,21 @@ function loadResourceTypes(centerId) {
         
         if (userTypeSelectize) {
           userTypeSelectize.clearOptions();
-          res.options.forEach(function(option) {
+          res.stic_resources_places_users_list.forEach(function(option) {
             userTypeSelectize.addOption({value: option.value, text: option.label});
           });
         }
         
         if (placeTypeSelectize) {
           placeTypeSelectize.clearOptions();
-          res.options2.forEach(function(option) {
+          res.stic_resources_places_type_list.forEach(function(option) {
             placeTypeSelectize.addOption({value: option.value, text: option.label});
           });
         }
         
         if (genderSelectize) {
           genderSelectize.clearOptions();
-          res.options3.forEach(function(option) {
+          res.stic_resources_places_gender_list.forEach(function(option) {
             genderSelectize.addOption({value: option.value, text: option.label});
           });
         }
@@ -1006,6 +1008,8 @@ function loadResourceTypes(centerId) {
     },
   });
 }
+
+
 function loadCenterResources(
   resourcePlaceUserType = "",
   resourcePlaceType = "",
@@ -1017,7 +1021,6 @@ function loadCenterResources(
   var startDate = getDateObject(getFieldValue("start_date"));
   var endDate = getDateObject(getFieldValue("end_date"));
   
-  // SOLUCIÓN: Obtener IDs de recursos existentes de forma más precisa
   var existingResourceIds = getCurrentResourceIds();
 
   $.ajax({
@@ -1224,82 +1227,7 @@ function deleteLastResourceGroup() {
     }
   }
 }
-function checkAndRemoveCenterResources(centerId, callback) {
-  var resourcesToCheck = [];
-  var resourcesToRemove = [];
 
-  for (var i = 0; i < resourceMaxCount; i++) {
-    var resourceId = $("#resource_id" + i).val();
-    if (resourceId && $("#resourceLine" + i).length) {
-      resourcesToCheck.push({
-        resourceId: resourceId,
-        lineIndex: i,
-      });
-    }
-  }
-
-  if (resourcesToCheck.length === 0) {
-    callback();
-    return;
-  }
-
-  var completedChecks = 0;
-  var totalChecks = resourcesToCheck.length;
-
-  resourcesToCheck.forEach(function (resource) {
-    $.ajax({
-      url: "index.php?module=stic_Bookings&action=isResourceFromCenter&sugar_body_only=true",
-      dataType: "json",
-      data: {
-        centerId: centerId,
-        resourceId: resource.resourceId,
-      },
-      success: function (response) {
-        completedChecks++;
-
-        if (response === "1" || response === 1) {
-          resourcesToRemove.push(resource.lineIndex);
-        }
-
-        if (completedChecks === totalChecks) {
-          if (resourcesToRemove.length > 0) {
-            resourcesToRemove.forEach(function (lineIndex) {
-              $("#resourceLine" + lineIndex).remove();
-
-              resourceGroups.forEach(function (group) {
-                var indexInGroup = group.resourceLines.indexOf(lineIndex);
-                if (indexInGroup > -1) {
-                  group.resourceLines.splice(indexInGroup, 1);
-                }
-              });
-            });
-
-            resourceGroups = resourceGroups.filter(function (group) {
-              return group.resourceLines.length > 0;
-            });
-
-            reorganizeResourceLines();
-
-            if (getTotalResourceCount() === 0) {
-              insertResourceLine();
-            }
-
-            alert(SUGAR.language.get("stic_Bookings","LBL_RESOURCES_REMOVED_FROM_CENTER"));
-          }
-
-          callback();
-        }
-      },
-      error: function(xhr, status, error) {
-        completedChecks++;
-
-        if (completedChecks === totalChecks) {
-          callback();
-        }
-      },
-    });
-  });
-}
 function reorganizeResourceLines() {
   var existingLines = [];
   var existingResources = [];

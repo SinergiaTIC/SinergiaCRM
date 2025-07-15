@@ -79,16 +79,6 @@ class stic_Bookings_Places_CalendarViewList extends ViewList
         <script>calendarView = $calendarViewJson;</script>
         SCRIPT;
 
-        // Pass the resources to the template and javascript, to be used in the CSS and in the filters
-        require_once "modules/stic_Bookings_Places_Calendar/Utils.php";
-        $resources = stic_Bookings_Places_CalendarUtils::getAllPlaces();
-        $this->ss->assign('MOD', $mod_strings);
-        $this->ss->assign('APP', $app_strings);
-        $this->ss->assign('RESOURCESGROUP', $resources['resourcesArrayByGroup'] ?? []);
-        $resourcesArrayJson = json_encode($resources['resourcesArray']??null);
-        echo <<<SCRIPT
-        <script>resourcesGroupArray = $resourcesArrayJson;</script>
-    SCRIPT;
         echo '<link rel="stylesheet" href="include/javascript/selectize/selectize.bootstrap3.css">';
         echo getVersionedScript("include/javascript/selectize/selectize.min.js");
     

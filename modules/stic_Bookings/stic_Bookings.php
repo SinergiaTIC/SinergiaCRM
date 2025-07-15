@@ -51,6 +51,11 @@ class stic_Bookings extends Basic
     public $parent_name;
     public $parent_type;
     public $parent_id;
+    public $total_amount;
+    public $copayment_amount;
+
+    // Flag to prevent infinite loop
+    private $isCalculatingAmounts = false;
 
     public function bean_implements($interface)
     {
@@ -122,51 +127,80 @@ class stic_Bookings extends Basic
             $this->end_date = $endDate;
         }
 
-        // Save the bean
-        parent::save($check_notify);
+        // Only call parent::save for the main save operation or if not explicitly processing relationships and amounts
+        if (!$this->isCalculatingAmounts) {
 
-        // If the save function is launched by save action in editview, relationships
-        // with resources must be managed. In other cases (inline edit, etc.) will do nothing.
-        if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'Save' && !isset($this->skip_amount_calculation)) {   
-            // Remove previous relationships
-            $oldRelatedResources = array();
-            $oldRelatedResources = $this->get_linked_beans('stic_resources_stic_bookings', 'stic_Resources');
-            foreach ($oldRelatedResources as $oldRelatedResource) {
-                $this->stic_resources_stic_bookings->delete($this->id, $oldRelatedResource->id);
+            $beforeTotalCopayment =$this->fetched_row['total_copayment'];
+            $beforeTotalAmount = $this->fetched_row['total_amount'];
+
+            if (empty($this->total_amount)) {
+                $this->field_defs['total_amount']['audited']=false;
+            }
+            if (empty($this->total_copayment)) {
+                $this->field_defs['total_copayment']['audited']=false;
             }
 
-            // Retrieve the resources selected in the EditViewFooter
-            $newRelatedResources = array();
-            if (isset($_REQUEST['resource_id']) && is_array($_REQUEST['resource_id'])) {
-                foreach ($_REQUEST['resource_id'] as $parent => $key) {
-                    if (empty($_REQUEST['deleted'][$parent])) {
-                        $newRelatedResources[] = $_REQUEST['resource_id'][$parent];
+            // This first parent::save ensures that the booking record itself is saved,
+            // and more importantly, if it's a new record, it gets an ID.
+            // This ID is crucial for establishing relationships below.
+            parent::save($check_notify);
+
+            // If the save function is launched by save action in editview,
+            // and we are not in a recursive save for amount calculation:
+            if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'Save') {   
+                // Set the flag to true to prevent re-entry into this block during the second save
+                $this->isCalculatingAmounts = true;
+
+                // Remove previous relationships
+                $oldRelatedResources = array();
+                $oldRelatedResources = $this->get_linked_beans('stic_resources_stic_bookings', 'stic_Resources');
+                foreach ($oldRelatedResources as $oldRelatedResource) {
+                    $this->stic_resources_stic_bookings->delete($this->id, $oldRelatedResource->id);
+                }
+
+                // Retrieve the resources selected in the EditViewFooter
+                $newRelatedResources = array();
+                if (isset($_REQUEST['resource_id']) && is_array($_REQUEST['resource_id'])) {
+                    foreach ($_REQUEST['resource_id'] as $parent => $key) {
+                        if (empty($_REQUEST['deleted'][$parent])) {
+                            $newRelatedResources[] = $_REQUEST['resource_id'][$parent];
+                        }
                     }
                 }
-            }
-            // Set current relationships
-            foreach ($newRelatedResources as $newRelatedResource) {
-                $this->stic_resources_stic_bookings->add($newRelatedResource);
-            }
-            $this->calculateAndUpdateTotalAmount();
-        }
+                // Set current relationships
+                foreach ($newRelatedResources as $newRelatedResource) {
+                    $this->stic_resources_stic_bookings->add($newRelatedResource);
+                }
 
+                // Now that relationships are set, calculate and update amounts.
+                $this->calculateAndUpdateTotalAmount($beforeTotalAmount,$beforeTotalCopayment);
+                
+                // Perform a second save to persist the updated total_amount/copayment_amount
+                // and ensure auditing. Since isCalculatingAmounts is true, this call
+                // will not re-enter the 'if action == Save' block.
+                parent::save($check_notify);
+
+
+                // Reset the flag after the entire process is complete
+                $this->isCalculatingAmounts = false;
+            }
+        }
+        
         // If return module is Booking's Calendar, redirect there
-        if ($_REQUEST['return_module'] == 'stic_Bookings_Calendar') {
+        if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'stic_Bookings_Calendar') {
             SugarApplication::redirect("index.php?module=stic_Bookings_Calendar&action=index&start_date=" . explode(' ', $this->start_date)[0]);
         }
         // If return module is Booking's Places Calendar, redirect there
-        if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'stic_Bookings_Calendar') {
-            SugarApplication::redirect("index.php?module=stic_Bookings_Calendar&action=index&start_date=".explode(' ', $this->start_date)[0]);
+        if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'stic_Bookings_Places_Calendar') {
+            SugarApplication::redirect("index.php?module=stic_Bookings_Places_Calendar&action=index&start_date=".explode(' ', $this->start_date)[0]);
         }
-
     }
 
     /**
-     * Calculate and update the total amount based on current resources and booking duration
-     * This method updates the database directly to avoid infinite loops
+     * Calculate and conditionally update the total amount and copayment based on current resources and booking duration.
+     * Amounts are only updated if the corresponding bean property is currently empty or null.
      */
-    private function calculateAndUpdateTotalAmount()
+    private function calculateAndUpdateTotalAmount($beforeTotalAmount,$beforeTotalCopayment)
     {
         global $db;
 
@@ -174,9 +208,12 @@ class stic_Bookings extends Basic
         $durationInfo = $this->getBookingDuration();
         
         if ($durationInfo['hours'] <= 0) {
-            $this->updateTotalAmountInDB(0);
-            if (isset($this->place_booking) && $this->place_booking == '1') {
-                $this->updateTotalCopaymentInDB(0);
+            // Only set to 0 if the field is currently empty
+            if (empty($this->total_amount)) {
+                $this->total_amount = 0;
+            }
+            if (isset($this->place_booking) && $this->place_booking == '1' && empty($this->copayment_amount)) {
+                $this->copayment_amount = 0;
             }
             return;
         }
@@ -204,14 +241,30 @@ class stic_Bookings extends Basic
                 $totalCopayment += $resourceCopayment;
             }
         }
+        $newId = create_guid();
+        $bookingId = $this->id;
+
+        // Only update total_amount if it's currently empty
+        if (empty($this->total_amount)) {
+            $this->total_amount = number_format($totalAmount, 2, ',', '');
+
+            $query = "INSERT INTO stic_bookings_audit
+                    (id, parent_id, date_created, created_by, field_name, data_type, before_value_string, after_value_string, before_value_text, after_value_text) VALUES
+                    ('$newId', '$bookingId', UTC_TIMESTAMP(), '1', 'total_amount','varchar','$beforeTotalAmount','$this->total_amount',NULL,NULL)";
     
-        // Update total_amount in database directly
-        $this->updateTotalAmountInDB($totalAmount);
+            $result2 = $db->query($query);
+        }
         
-        if ($isPlaceBooking) {
-            $this->updateTotalCopaymentInDB($totalCopayment);
+        // Only update copayment_amount if it's currently empty and it's a place booking
+        if ($isPlaceBooking && empty($this->copayment_amount)) {
+
+            $this->copayment_amount = $totalCopayment;
+
+            $query = "INSERT INTO stic_bookings_audit
+                    (id, parent_id, date_created, created_by, field_name, data_type, before_value_string, after_value_string, before_value_text, after_value_text) VALUES
+                    ('$newId', '$bookingId', UTC_TIMESTAMP(), '1', 'copayment_amount','varchar','$beforeTotalCopayment','$totalCopayment',NULL,NULL)";  
+            $result2 = $db->query($query);
         } 
-    
     }
 
     /**
@@ -222,7 +275,7 @@ class stic_Bookings extends Basic
         $hourlyRate = floatval($resource['hourly_rate'] ?? 0);
         $dailyRate = floatval($resource['daily_rate'] ?? 0);
         $occupiedRate = floatval($resource['amount_day_occupied'] ?? 0);
-        $copaymentRate = floatval($resource['amount_copayment'] ?? 0); // Usar el valor real del copago
+        $copaymentRate = floatval($resource['amount_copayment'] ?? 0);
 
         $isPlaceBooking = isset($this->place_booking) && $this->place_booking == '1';
     
@@ -323,39 +376,4 @@ class stic_Bookings extends Basic
             return ['hours' => 0, 'days' => 0];
         }
     }
-
-    /**
-     * Update total_amount field directly in database to avoid triggering save() again
-     */
-    private function updateTotalAmountInDB($amount)
-    {
-        global $db;
-        
-        $amount = floatval($amount);
-        $query = "UPDATE stic_bookings 
-                SET total_amount = {$amount} 
-                WHERE id = '{$this->id}'";
-        
-        $db->query($query);
-        
-        // Also update the current object
-        $this->total_amount = $amount;
-    }
-    /**
-     * Update total_amount field directly in database to avoid triggering save() again
-     */
-    private function updateTotalCopaymentInDB($copayment)
-    {
-        global $db;
-        
-        $copayment = floatval($copayment);
-        $query = "UPDATE stic_bookings 
-                SET copayment_amount = {$copayment} 
-                WHERE id = '{$this->id}'";
-        
-        $db->query($query);
-        
-        $this->copayment_amount = $copayment;
-    }
-
 }

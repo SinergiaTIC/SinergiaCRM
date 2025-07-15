@@ -106,6 +106,8 @@ class stic_BookingsController extends SugarController
                                       FROM stic_resources
                                       WHERE id = '$resourceId'";
                     
+                    $resourceQuery .= " AND type = 'place'"; 
+
                     $resourceQuery .= $resourcePlaceUserTypeCondition;
                     $resourceQuery .= $resourcePlaceTypeCondition;
                     $resourceQuery .= $resourceGenderCondition;
@@ -157,29 +159,7 @@ class stic_BookingsController extends SugarController
         echo json_encode(['success' => true, 'resources' => $resources]);
         return;
     }
-    public function action_isResourceFromCenter()
-    {
-        $db = DBManagerFactory::getInstance();
-    
-        $centerId = $db->quote($_REQUEST['centerId']);
-        $resourceId = $db->quote($_REQUEST['resourceId']);
-        
-        $query = "
-            SELECT COUNT(*) as count FROM stic_resources_stic_centers_c 
-            WHERE stic_resources_stic_centersstic_resources_idb = '$resourceId'
-            AND stic_resources_stic_centersstic_centers_ida = '$centerId'
-            AND deleted = 0
-        ";
-        
-        $result = $db->query($query);
-        $row = $db->fetchByAssoc($result);
-        
-        header('Content-Type: application/json');
-        $belongsToCenter = $row && $row['count'] > 0;
-        
-        echo json_encode($belongsToCenter ? "1" : "0");
-        sugar_cleanup(true);
-    }
+
     public function action_loadExistingResources()
     {
         $bookingId = $_REQUEST['bookingId'] ?? null;
@@ -327,20 +307,20 @@ class stic_BookingsController extends SugarController
 
         require_once 'modules/stic_Resources/vardefs.php';
         global $app_list_strings;
-        $options = $app_list_strings['stic_resources_places_users_list'] ?? [];
-        $options2 = $app_list_strings['stic_resources_places_type_list'] ?? [];
-        $options3 = $app_list_strings['stic_resources_places_gender_list'] ?? [];
+        $stic_resources_places_users_list = $app_list_strings['stic_resources_places_users_list'] ?? [];
+        $stic_resources_places_type_list = $app_list_strings['stic_resources_places_type_list'] ?? [];
+        $stic_resources_places_gender_list = $app_list_strings['stic_resources_places_gender_list'] ?? [];
 
-        $response = array('success' => true, 'options' => array(), 'options2' => array(), 'options3' => array());
+        $response = array('success' => true, 'stic_resources_places_users_list' => array(), 'stic_resources_places_type_list' => array(), 'stic_resources_places_gender_list' => array());
 
-        foreach ($options as $value => $label) {
-            $response['options'][] = array('value' => $value, 'label' => $label);
+        foreach ($stic_resources_places_users_list as $value => $label) {
+            $response['stic_resources_places_users_list'][] = array('value' => $value, 'label' => $label);
         }
-        foreach ($options2 as $value => $label) {
-            $response['options2'][] = array('value' => $value, 'label' => $label);
+        foreach ($stic_resources_places_type_list as $value => $label) {
+            $response['stic_resources_places_type_list'][] = array('value' => $value, 'label' => $label);
         }
-        foreach ($options3 as $value => $label) {
-            $response['options3'][] = array('value' => $value, 'label' => $label);
+        foreach ($stic_resources_places_gender_list as $value => $label) {
+            $response['stic_resources_places_gender_list'][] = array('value' => $value, 'label' => $label);
         }
 
         echo json_encode($response);
@@ -367,7 +347,7 @@ class stic_BookingsController extends SugarController
         $counter = 0;
         $uniqueName = $baseName;
         while (true) {
-            $existingBooking = $GLOBALS['db']->getOne("SELECT COUNT(*) FROM stic_bookings WHERE name = '{$uniqueName}' and deleted =0");
+            $existingBooking = $GLOBALS['db']->getOne("SELECT COUNT(*) FROM stic_bookings WHERE name = '{$uniqueName}'");
 
             if ($existingBooking == 0) {
                 break;
