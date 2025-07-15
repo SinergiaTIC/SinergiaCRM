@@ -94,7 +94,7 @@ class stic_SignaturesUtils
 
                     if ($module_arr['vname'] != 'LBL_DELETED') {
                         $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
-                        $module_path = $module_arr['module'] . ':' . ($module_arr['link'] ?? $module_arr['id_name']);
+                        $module_path = $module_arr['module'] . ':' . ($module_arr['id_name'] ?? $module_arr['link']);
                         $fmod_options_array[$module_path] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
                     }
                 }
@@ -196,10 +196,34 @@ class stic_SignaturesUtils
                 continue;
             }
 
+            // try to retrieve the linked beans based on relatinships
             $signers = $mainModuleBean->get_linked_beans($signerPath, $signerModule);
+            if (empty($signers)) {
+                $relatedId = $mainModuleBean->$signerPath;
+                // If no linked beans found, try to get the related ID directly (for relate fields)
+                if (!empty($relatedId)) {
+                    // Fallback to the main module bean if no linked beans found
+                    $signers[] = BeanFactory::getBean($signerModule, $relatedId);
+                }
+            }
+            if(empty($signers)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No signers found for Main Module ID [{$mainModuleId}] and Signer Path [{$signerPath}].");
+                continue;
+            }
+
+           
             foreach ($signers as $signer) {
                 if (!in_array($signer->id, $signersIdList)) {
-                    $signersIdList[] = $signer->id;
+                    $signersIdList[$signer->id] = [
+                        'module' => $signerModule,
+                        'sourceModule' => $mainModule,
+                        'sourceId' => $mainModuleId,
+                        'signerPath' => $signerPath,
+                        'id' => $signer->id,
+                        'name' => $signer->name,
+                        'email' => $signer->email1 ?? '',
+                        'phone' => $signer->phone ?? '',
+                    ];
                 }
             }
 
