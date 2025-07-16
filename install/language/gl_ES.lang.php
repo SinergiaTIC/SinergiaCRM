@@ -1,6 +1,6 @@
 <?php
 /**
- * ç
+ *
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
@@ -57,6 +57,7 @@ $mod_strings = array(
     'ERR_ADMIN_PASS_BLANK' => 'Provea un contrasinal para o usuario administrador de SuiteCRM. ',
 
     'ERR_CHECKSYS' => 'Detectáronse erros durante a verificación de compatibilidade. Para que a súa instalación de SuiteCRM funcione correctamente, por favor realice os pasos necesarios para corrixir os inconvintes listados máis abaixo, e volva a presionar o botón volver a verificar, ou volva a intentar realizar a instalación novamente.',
+    'ERR_CHECKSYS_CALL_TIME' => 'Allow Call Time Pass Reference is On (this should be set to Off in php.ini)',
     'ERR_CHECKSYS_CURL' => 'Non encontrado: o planificador de tarefas de SuiteCRM executaraase con funcionalidade limitada.',
     'ERR_CHECKSYS_IMAP' => 'Non encontrado: Correo Entrante e Campañas (Email) requiren a librería IMAP. non estarán funcionais.',
     'ERR_CHECKSYS_MEM_LIMIT_1' => ' (Cambie este valor a  ',
@@ -74,6 +75,7 @@ $mod_strings = array(
     'ERR_CHECKSYS_CONFIG_OVERRIDE_NOT_WRITABLE' => 'O arquivo config override existe pero non se pode escribir. Por favor realice os pasos necesarios para dar permisos de escritura. <br/>Dependendo do seu Sistema Operativo pode chegar a neccesitar cambiar os permisos executando chmod 766, ou con click dereito sobre o arquivo para acceder ao menú propiedades e desactivar a opción "só lectura".',
     'ERR_CHECKSYS_CUSTOM_NOT_WRITABLE' => 'O directorio Custom existe pero non se pode escribir. Por favor realice os pasos necesarios para dar permisos de escritura. <br/>Dependendo do seu Sistema Operativo pode chegar a neccesitar cambiar os permisos executando chmod 766, ou con click dereito sobre o arquivo para acceder ao menú propiedades e desactivar a opción "só lectura".',
     'ERR_CHECKSYS_FILES_NOT_WRITABLE' => "Os arquivos ou directorios listados máis abaixo non se poden escribir. Dependendo do seu Sistema Operativo, corrixir isto pode requirir que cambie os permisos dos arquivos ou directorio pai (chmod 755), ou click dereito na carpeta pai, desactivar a opción \"só lectura\" e aplicala a todas as subcarpetas. ",
+    'ERR_CHECKSYS_JSON_NOT_AVAILABLE' => "Functions associated with JSON Parser Libraries that are needed by the SuiteCRM application were not found. You might need to uncomment the extension in the php.ini file, or recompile with the right binary file, depending on your version of PHP. Please refer to your PHP Manual for more information.",
     'LBL_CHECKSYS_OVERRIDE_CONFIG' => 'Sobreescribir a configuración',
     'ERR_CHECKSYS_SAFE_MODE' => 'Safe Mode está activado (pode ser conveniente deshabilitarlo en php.ini)',
     'ERR_CHECKSYS_ZLIB' => 'ZLib non se encontrou: SuiteCRM alcanza grandes beneficios de performance coa compresión zlib.',
@@ -159,6 +161,7 @@ $mod_strings = array(
     'LBL_CHECKSYS_PHP_OK' => 'OK (ver ',
     'LBL_CHECKSYS_PHPVER' => 'Versión de PHP',
     'LBL_CHECKSYS_IISVER' => 'Versión de IIS',
+    'LBL_CHECKSYS_JSON' => 'JSON Parsing',
     'LBL_CHECKSYS_RECHECK' => 'Volver a Verificar',
     'LBL_CHECKSYS_STATUS' => 'Estado',
     'LBL_CHECKSYS_TITLE' => 'Aceptación de Verificación do Sistema',
@@ -181,7 +184,7 @@ $mod_strings = array(
     'LBL_DBCONF_DB_PASSWORD' => 'Contrasinal do Usuario de Base de Datos',
     'LBL_DBCONF_DB_PASSWORD2' => 'Volva a Ingresar Contrasinal do Usuario de Base de Datos',
     'LBL_DBCONF_DB_USER' => 'Nome de Usuario de Base de Datos',
-    'LBL_DBCONF_SUGAR_DB_USER' => 'Nome de Usuario de Base de Datos',
+    'LBL_DBCONF_SUITE_DB_USER' => 'SuiteCRM Database User',
     'LBL_DBCONF_DB_ADMIN_USER' => 'Nome de Usuario do Administrador de Base de Datos',
     'LBL_DBCONF_DB_ADMIN_PASSWORD' => 'Contrasinal do Administrador de Base de Datos',
     'LBL_DBCONF_COLLATION' => 'Ordenación',
@@ -231,7 +234,6 @@ $mod_strings = array(
     'LBL_LICENSE_CHKDB_HEADER' => 'Verificando as credenciais de BD.',
     'LBL_LICENSE_CHECK_PASSED' => 'O sistema cumpliu os requisitos.',
     'LBL_CREATE_CACHE' => 'Preparando para instalar...',
-    'LBL_CREATE_DEFAULT_ENC_KEY' => 'Creando clave de cifrado predeterminada...',
     'LBL_LICENSE_REDIRECT' => 'Redireccionando en ',
     'LBL_LICENSE_I_ACCEPT' => 'Acepto',
     'LBL_LICENSE_PRINTABLE' => ' Versión Imprimible ',
@@ -281,6 +283,7 @@ $mod_strings = array(
     'LBL_REG_CONF_1' => 'Por favor complete o breve formulario a continuación para recibir anuncios de produtos, novidades de capacitaciones, ofertas especiais e invitacións especiais a eventos de SuiteCRM. Non vendemos, alquilamos, compartimos nin distribuimos de ningunha forma a información recolectada aquí.',
     'LBL_REG_CONF_3' => 'Grazas por rexgistrarse. Faga click non botón Finalizar para ingresar a SuiteCRM. Necesitará ingresar por primeira vez utilizando o nome de usuario "admin" e o contrasinal que ingresou no paso 2.',
     'LBL_REG_TITLE' => 'Registración',
+
     'LBL_REQUIRED' => '* Campo Requirido',
 
     'LBL_SITECFG_ADMIN_Name' => 'Nome do Administrador de SuiteCRM',
@@ -397,7 +400,7 @@ $mod_strings = array(
         'subject' => 'Información da Nova Conta de Usuario',
         'type' => 'sistema',
         'description' => 'Esta plantilla é utilizada cando un Administrador de Sistema envía un novo contrasinal a un usuario.',
-        'body' => '<div><table border=\\"0\\" cellspacing=\\"0\\" cellpadding=\\"0\\" width="550" align=\\"\\&quot;\\&quot;center\\&quot;\\&quot;\\"><tbody><tr><td colspan=\\"2\\"><p>Aquí está o seu novo nome de usuario e contrasinal temporal:</p><p>Nome de Usuario : $contact_user_user_name </p><p>Contrasinal : $contact_user_user_hash </p><br><p>$config_site_url</p><br><p>Despois de ingresar utilizando o contrasinal de arriba, pode que se lle pida cambiar o contrasinal por un da súa propia elección.</p>   </td>         </tr><tr><td colspan=\\"2\\"></td>         </tr> </tbody></table> </div>',
+        'body' => '<div><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width="550" align=\"\&quot;\&quot;center\&quot;\&quot;\"><tbody><tr><td colspan=\"2\"><p>Aquí está o seu novo nome de usuario e contrasinal temporal:</p><p>Nome de Usuario : $contact_user_user_name </p><p>Contrasinal : $contact_user_user_hash </p><br><p>$config_site_url</p><br><p>Despois de ingresar utilizando o contrasinal de arriba, pode que se lle pida cambiar o contrasinal por un da súa propia elección.</p>   </td>         </tr><tr><td colspan=\"2\"></td>         </tr> </tbody></table> </div>',
         'txt_body' =>
             '
 Aquí está o seu novo nome de usuario e contrasinal temporal:
@@ -413,7 +416,7 @@ Despois de ingresar utilizando o contrasinal de arriba, pode que se lle pida cam
         'subject' => 'Reestablecer o seu contrasinal',
         'type' => 'sistema',
         'description' => "Esta plantilla é utilizada para enviarlle un enlace ao usuario que ao cliquearse reestablece o contrasinal da conta do usuario.",
-        'body' => '<div><table border=\\"0\\" cellspacing=\\"0\\" cellpadding=\\"0\\" width="550" align=\\"\\&quot;\\&quot;center\\&quot;\\&quot;\\"><tbody><tr><td colspan=\\"2\\"><p>Recentemente ($contact_user_pwd_last_changed) requiriu reestablecer o contrasinal da súa conta. </p><p>Faga click no seguinte enlace para reestablecer o seu contrasinal:</p><p> $contact_user_link_guid </p>  </td>         </tr><tr><td colspan=\\"2\\"></td>         </tr> </tbody></table> </div>',
+        'body' => '<div><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width="550" align=\"\&quot;\&quot;center\&quot;\&quot;\"><tbody><tr><td colspan=\"2\"><p>Recentemente ($contact_user_pwd_last_changed) requiriu reestablecer o contrasinal da súa conta. </p><p>Faga click no seguinte enlace para reestablecer o seu contrasinal:</p><p> $contact_user_link_guid </p>  </td>         </tr><tr><td colspan=\"2\"></td>         </tr> </tbody></table> </div>',
         'txt_body' =>
             '
 Recentemente ($contact_user_pwd_last_changed) requiriu reestablecer o contrasinal da súa conta.
@@ -429,7 +432,7 @@ $contact_user_link_guid',
         'subject' => 'Código de autenticación de dous factores',
         'type' => 'sistema',
         'description' => "Esta plantilla é usada para enviar ao usuario un código de autenticación de dous factores.",
-        'body' => '<div><table border=\\"0\\" cellspacing=\\"0\\" cellpadding=\\"0\\" width="550" align=\\"\\&quot;\\&quot;center\\&quot;\\&quot;\\"><tbody><tr><td colspan=\\"2\\"><p>código de autenticación de doble Factor é  <b>$code</b>.</p>  </td>         </tr><tr><td colspan=\\"2\\"></td>         </tr> </tbody></table> </div>',
+        'body' => '<div><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width="550" align=\"\&quot;\&quot;center\&quot;\&quot;\"><tbody><tr><td colspan=\"2\"><p>código de autenticación de doble Factor é  <b>$code</b>.</p>  </td>         </tr><tr><td colspan=\"2\"></td>         </tr> </tbody></table> </div>',
         'txt_body' =>
             'Código de autenticación de dous factores é $code.',
         'name' => 'Correo de autenticación de dous factores',
@@ -529,7 +532,7 @@ $contact_user_link_guid',
     'LBL_LICENCE_TOOLTIP' => 'Por favor acepte a licenza primeiro',
 
     'LBL_MORE_OPTIONS_TITLE' => 'Máis opcións',
-    'LBL_START' => 'Comezar',
+    'LBL_START' => '',
     'LBL_DB_CONN_ERR' => 'Erro de base de datos',
     'LBL_OLD_PHP' => 'Versión PHP antigüa detectada!',
     'LBL_OLD_PHP_MSG' => 'A versión de PHP recomendada para instalar SuiteCRM é %s <br />A versión mínima de PHP requirida é %s<br />Estás a usar a versión de PHP %s, que está en EOL: <a href="http://php.net/eol.php">http://php.net/eol.php</a>.<br />Por favor, considera actualizar a túa versión de PHP.',
