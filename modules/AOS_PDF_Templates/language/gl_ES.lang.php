@@ -51,7 +51,6 @@ $mod_strings = array(
     'LBL_MODIFIED' => 'Modificado Por',
     'LBL_MODIFIED_NAME' => 'Modificado Por Nome',
     'LBL_CREATED' => 'Creado Por',
-    'LBL_PDF_COMMENT' => 'Texto en PDF completo', //PR 3532 and 4337
     'LBL_DESCRIPTION' => 'Contido',
     'LBL_HEADER' => 'Encabezado',
     'LBL_FOOTER' => 'Pé de páxina',
@@ -100,6 +99,9 @@ $mod_strings = array(
     'LBL_DETAILVIEW_PANEL1' => 'Marxes',
     'LBL_PAGE_SIZE' => 'Tamaño de Páxina',
     'LBL_ORIENTATION' => 'Orientación',
+    // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates - 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
     'LBL_CHECKBOX_TRUE' => 'Verdadeiro',
     'LBL_CHECKBOX_FALSE' => 'Falso',
+    // END STIC-Custom
 );
