@@ -94,7 +94,7 @@ $mod_strings = array(
     'LBL_CREATED_BY' => 'Creat Per',
     'LBL_MODIFIED_BY' => 'Modificat Per',
     'LBL_SEND_ANYWAYS' => 'Aquest correu electrònic no te assumpte. Enviar/desar de totes maneres?',
-    'LBL_NOTE_INFORMATION' => 'Visió general de la nota', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_NOTE_INFORMATION' => 'Visió general de la nota', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_MY_NOTES_DASHLETNAME' => 'Les meves notes',
     'LBL_EDITLAYOUT' => 'Editar Diseny' /*for 508 compliance fix*/,
     //For export labels
