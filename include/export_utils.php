@@ -327,27 +327,27 @@ function export($type, $records = null, $members = false, $sample=false)
 
                         break;
 
-        // Fix Issue 9153 - Exporting DynamicDropdown fields return keys
-        case 'dynamicenum':
-        case 'enum':
-            // STIC-Custom 20250611 MHP - Use $fieldNameMapKey instead of $fields_array[$key]
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/674
-            // if (isset($focus->field_name_map[$fields_array[$key]]['options']) &&
-            //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) &&
-            //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value])
-            // ) {
-            //     $value = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value];
-            // }     
-            if (isset($focus->field_name_map[$fieldNameMapKey]['options']) &&
-                isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']]) &&
-                isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value])
-            ) {
-                $value = $app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value];
-            }
-            // END STIC-Custom 
+                    // Fix Issue 9153 - Exporting DynamicDropdown fields return keys
+                    case 'dynamicenum':
+                    case 'enum':
+                        // STIC-Custom 20250611 MHP - Use $fieldNameMapKey instead of $fields_array[$key]
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/674
+                        // if (isset($focus->field_name_map[$fields_array[$key]]['options']) &&
+                        //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) &&
+                        //     isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value])
+                        // ) {
+                        //     $value = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$value];
+                        // }     
+                        if (isset($focus->field_name_map[$fieldNameMapKey]['options']) &&
+                            isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']]) &&
+                            isset($app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value])
+                        ) {
+                            $value = $app_list_strings[$focus->field_name_map[$fieldNameMapKey]['options']][$value];
+                        }
+                        // END STIC-Custom 
 
-            break;
-                }
+                        break;
+                    }
                 }
 
                 // Keep as $key => $value for post-processing
