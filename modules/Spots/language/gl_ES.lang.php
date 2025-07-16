@@ -179,52 +179,6 @@ $mod_strings = array(
     'LBL_AN_QUOTES_QUARTER_CREATED' => 'Trimestre Creado',
     'LBL_AN_QUOTES_YEAR_CREATED' => 'Ano creada',
 
-    //Erro message when there are multiple values for the label
+    //Error message when there are multiple values for the label
     'LBL_AN_DUPLICATE_LABEL_FOR_SUBAREA' => 'Erro para determinar a etiqueta da zona pivote',
-
-    //Added to allow for the UI of the pivot to be language agnostic - PR 5452
-    'LBL_RENDERERS_TABLE' =>'Táboa',
-    'LBL_RENDERERS_TABLE_BARCHART' =>'Táboa e Gráfico',
-    'LBL_RENDERERS_HEATMAP' =>'Mapa térmico',
-    'LBL_RENDERERS_ROW_HEATMAP' =>'Fila do Mapa térmico',
-    'LBL_RENDERERS_COL_HEATMAP' =>'Columna do Mapa térmico',
-    'LBL_RENDERERS_LINE_CHART' =>'Gráfico de Liñas',
-    'LBL_RENDERERS_BAR_CHART' =>'Gráfico de Barras',
-    'LBL_RENDERERS_STACKED_BAR_CHART' =>'Barra apilada',
-    'LBL_RENDERERS_AREA_CHART' =>'Gráfica de área',
-    'LBL_RENDERERS_SCATTER_CHART' =>'Gráfico de dispersión',
-
-    'LBL_AGGREGATORS_COUNT' => 'Total',
-    'LBL_AGGREGATORS_COUNT_UNIQUE_VALUES' => 'Contar valores únicos',
-    'LBL_AGGREGATORS_LIST_UNIQUE_VALUES' => 'Lista de valores únicos',
-    'LBL_AGGREGATORS_SUM' => 'Suma',
-    'LBL_AGGREGATORS_INTEGER_SUM' => 'Suma de enteiros',
-    'LBL_AGGREGATORS_AVERAGE' => 'Promedio',
-    'LBL_AGGREGATORS_MINIMUM' => 'Minimo',
-    'LBL_AGGREGATORS_MAXIMUM' => 'Maximo',
-    'LBL_AGGREGATORS_SUM_OVER_SUM' => 'Suma sobre suma',
-    'LBL_AGGREGATORS_80%_UPPER_BOUND' => 'Límite superior de 80%',
-    'LBL_AGGREGATORS_80%_LOWER_BOUND' => 'Límite inferior de 80%',
-    'LBL_AGGREGATORS_SUM_AS_FRACTION_OF_TOTAL' => 'Suma como fracción do Total',
-    'LBL_AGGREGATORS_SUM_AS_FRACTION_OF_ROWS' => 'Suma como fracción de filas',
-    'LBL_AGGREGATORS_SUM_AS_FRACTION_OF_COLUMNS' => 'Suma como fracción de columnas',
-    'LBL_AGGREGATORS_COUNT_AS_FRACTION_OF_TOTAL' => 'Contar como fracción do Total',
-    'LBL_AGGREGATORS_COUNT_AS_FRACTION_OF_ROWS' => 'Conta como fracción de filas',
-    'LBL_AGGREGATORS_COUNT_AS_FRACTION_OF_COLUMNS' => 'Conta como fracción de columnas',
-
-    'LBL_LOCALE_STRINGS_RENDER_ERROR' => 'Produciuse un erro ao procesar os resultados da táboa dinámica.',
-    'LBL_LOCALE_STRINGS_COMPUTING_ERROR' => 'Produciuse un erro de cálculo dos resultados da táboa dinámica.',
-    'LBL_LOCALE_STRINGS_UI_RENDER_ERROR' => 'Produciuse un erro ao procesar a interfaz de PivotTable.',
-    'LBL_LOCALE_STRINGS_SELECT_ALL' => 'Seleccionar Todo',
-    'LBL_LOCALE_STRINGS_SELECT_NONE' => 'Non seleccionar ningún',
-    'LBL_LOCALE_STRINGS_TOO_MANY' => '(demasiados para a lista)',
-    'LBL_LOCALE_STRINGS_FILTER_RESULTS' => 'Resultados do filtro',
-    'LBL_LOCALE_STRINGS_TOTALS' => 'Totais',
-    'LBL_LOCALE_STRINGS_VS' => 'vs',
-    'LBL_LOCALE_STRINGS_BY' => 'por',
-    'LBL_LOCALE_STRINGS_OK' => 'Aceptar',
-
-    'LBL_ACTIVITIES_CALL'=>'Chamada',
-    'LBL_ACTIVITIES_MEETING'=>'Reunión',
-    'LBL_ACTIVITIES_TASK'=>'Tarefa',
 );
