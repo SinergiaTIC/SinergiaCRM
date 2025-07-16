@@ -41,7 +41,7 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-
+                
 $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
@@ -129,5 +129,5 @@ $mod_strings = array(
     // Email links
     'LBL_ACCEPT_LINK' => 'Aceptar',
     'LBL_DECLINE_LINK' => 'Rexeitar',
-
+    
 );
