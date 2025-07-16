@@ -54,7 +54,9 @@ $mod_strings = array(
     'DEFAULT_SYSTEM_SETTINGS' => 'Interfaz de Usuario',
     'DEFAULT_THEME' => 'Tema predeterminado',
     'DEFAULT_TIME_FORMAT' => 'Formato de hora predeterminado',
+
     'DISPLAY_RESPONSE_TIME' => 'Mostrar os tempos de resposta do servidor',
+
     'IMAGES' => 'Logos',
     'LBL_ALLOW_USER_TABS' => 'Permitir aos usuarios ocultar pestanas',
     'LBL_CONFIGURE_SETTINGS_TITLE' => 'Configuración do Sistema',
@@ -86,6 +88,7 @@ $mod_strings = array(
     'LBL_MODULE_TITLE' => 'Interfaz de Usuario',
     'LBL_NOTIFY_FROMADDRESS' => 'Enderezo do Remitente:',
     'LBL_NOTIFY_SUBJECT' => 'Asunto de correo:',
+
     'LBL_PROXY_AUTH' => '¿Autenticación?',
     'LBL_PROXY_HOST' => 'Servidor Proxy',
     'LBL_PROXY_ON_DESC' => 'Configura a enderezo do servidor proxy e a configuración da autenticación',
@@ -186,6 +189,7 @@ $mod_strings = array(
     'LBL_LOGGER_FILENAME' => 'Nome de Arquivo de Traza',
     'LBL_LOGGER_FILE_EXTENSION' => 'Extensión',
     'LBL_LOGGER_MAX_LOG_SIZE' => 'Tamaño máximo de traza',
+    'LBL_STACK_TRACE' => 'Enable stack trace',
     'LBL_LOGGER_DEFAULT_DATE_FORMAT' => 'Formato de data por defecto',
     'LBL_LOGGER_LOG_LEVEL' => 'Nivel de Traza',
     'LBL_LEAD_CONV_OPTION' => 'Opcións de conversión do cliente potencial',
@@ -198,121 +202,6 @@ $mod_strings = array(
     'LBL_IMPORT_MAX_RECORDS' => 'Importación - Número máximo de rexistros:',
     'LBL_IMPORT_MAX_RECORDS_HELP' => 'Especificar cantas filas se permiten dentro dos arquivos a importar.<br>Se o número de filas nun arquivo de importación supera este número, o usuario recibirá unha alerta.<br>Se non se introduce un valor tenrase un número ilimitado de filas.',
     'vCAL_HELP' => 'Utilice esta opción para determinar o número de meses de antelación sobre a data actual coa que se publica a información relativa ao estado de Dispoñible/Ocupado sobre chamadas e reunións.<BR>Para desactivar a publicación do estado Dispoñible/Ocupado, introduza "0".  o mínimo é 1 mes; o máximo 12 meses.',
-    'LBL_PDFMODULE_NAME' => 'Configuración PDF',
-    'SUITEPDF_BASIC_SETTINGS' => 'Propiedades do Documento',
-    'SUITEPDF_ADVANCED_SETTINGS' => 'Configuración Avanzada',
-    'SUITEPDF_LOGO_SETTINGS' => 'Imaxes',
-
-    'PDF_AUTHOR' => 'Autor',
-    'PDF_AUTHOR_INFO' => 'O Autor aparece nas propiedades do documento.',
-
-    'PDF_HEADER_LOGO' => 'Para Documentos PDF de Presupostos',
-    'PDF_HEADER_LOGO_INFO' => 'Esta imaxe aparece na cabeceira por defecto dos documentos PDF de presupostos.',
-
-    'PDF_NEW_HEADER_LOGO' => 'Seleccione unha nova Imaxe para as presupostos',
-    'PDF_NEW_HEADER_LOGO_INFO' => 'O formato de arquivo pode ser .jpg ou .png. (Só .jpg para EZPDF)<BR>O tamaño recomendado é 867x60 px.',
-
-    'PDF_SMALL_HEADER_LOGO' => 'Para Documentos PDF de Informes',
-    'PDF_SMALL_HEADER_LOGO_INFO' => 'Esta imaxe aparece na Cabeceira por defecto dos Documentos PDF de Informes.<br> Esta imaxe tamén aparece na esquina superior esquerda da aplicación SuiteCRM.',
-
-    'PDF_NEW_SMALL_HEADER_LOGO' => 'Seleccione unha nova imaxe para informes',
-    'PDF_NEW_SMALL_HEADER_LOGO_INFO' => 'O formato de arquivo pode ser .jpg ou .png. (Só .jpg para EZPDF)<BR>O tamaño recomendado é 212x40 px.',
-
-    'PDF_FILENAME' => 'Nome de Arquivo Por Defecto',
-    'PDF_FILENAME_INFO' => 'Nome de arquivo por defecto para os arquivos PDF xerados',
-
-    'PDF_TITLE' => 'Título',
-    'PDF_TITLE_INFO' => 'O título aparece nas propiedades do documento.',
-
-    'PDF_SUBJECT' => 'Asunto',
-    'PDF_SUBJECT_INFO' => 'O Asunto aparece nas propiedades do documento.',
-
-    'PDF_KEYWORDS' => 'Palabra(s) clave',
-    'PDF_KEYWORDS_INFO' => 'Asociar Palabras clave co documento, xeralmente na forma "palabra1 palabra2..."',
-
-    'PDF_COMPRESSION' => 'Compresión',
-    'PDF_COMPRESSION_INFO' => 'Activa ou desactiva a compresión de páxina. <br>Cando foi activada, a representación interna de cada páxina comprímese, levando a niveis de ratios de compresión de aprox. 2 para o documento resultante.',
-
-    'PDF_JPEG_QUALITY' => 'Calidade JPEG (1-100)',
-    'PDF_JPEG_QUALITY_INFO' => 'Establece a calidade de compresión JPEG por defecto (1-100)',
-
-    'PDF_PDF_VERSION' => 'Versión PDF',
-    'PDF_PDF_VERSION_INFO' => 'Establece a versión de PDF (consulte a referencia PDF para valores válidos).',
-
-    'PDF_PROTECTION' => 'Protección de Documento',
-    'PDF_PROTECTION_INFO' => 'Establece a protección de documento<br>- copiar: copiar texto e imaxes ao portapapeis<br>- imprimir: imprimir o documento<br>- modificar: modificar o documento (excepto as anotacións e formularios)<br>- anot.-forms.: engadir anotacións e formularios<br>Nota: a protección ante a modificación é para xente que posúe o produto Acrobat completo.',
-
-    'PDF_USER_PASSWORD' => 'Contrasinal de Usuario',
-    'PDF_USER_PASSWORD_INFO' => 'Se non establece ningún contrasinal, o documento abrirase como de costume. <br>Se establece un contrasinal de usuario, o visor PDF solicitarase antes de mostrar o documento. <br>Se o contrasinal mestre é diferente do de usuario poderá utilizalo para obter acceso completo.',
-
-    'PDF_OWNER_PASSWORD' => 'Contrasinal de Propietario',
-    'PDF_OWNER_PASSWORD_INFO' => 'Se non establece ningún contrasinal, o documento abrirase como de costume. <br>Se establece un contrasinal de usuario, o visor PDF solicitarase antes de mostrar o documento. <br>Se o contrasinal mestre é diferente do de usuario poderá utilizalo para obter acceso completo.',
-
-    'PDF_ACL_ACCESS' => 'Control de Acceso',
-    'PDF_ACL_ACCESS_INFO' => 'Control de Acceso por defecto para a xeración do PDF.',
-
-    'K_CELL_HEIGHT_RATIO' => 'Ratio de Altura da Celda',
-    'K_CELL_HEIGHT_RATIO_INFO' => 'Se a altura dunha celda é menor que (Altura da Fonte x Ratio de Altura da Celda), entón utilizarase (Altura da Fonte x Ratio de Altura da Celda) como a altura da celda.<br>(Altura da Fonte x Ratio de Altura da Celda) tamén se utiliza como a altura da celda cando non hai ningunha altura definida.',
-
-    'K_SMALL_RATIO' => 'Coeficiente para Fontes Pequenas',
-    'K_SMALL_RATIO_INFO' => 'Coeficiente de Reducción para fontes pequenas.',
-
-    'PDF_IMAGE_SCALE_RATIO' => 'Ratio de escalado de imaxe',
-    'PDF_IMAGE_SCALE_RATIO_INFO' => 'Ratio utilizado para escalar as imaxes',
-
-    'PDF_UNIT' => 'Unidade',
-    'PDF_UNIT_INFO' => 'unidade de medida do documento',
-    'PDF_GD_WARNING' => 'Non instalou a librería GD para PHP. Sen a librería GD, só se mostrarán os logos JPEG nos documentos PDF.',
-    'ERR_EZPDF_DISABLE' => 'Aviso : a clase EZPDF foi deshabilitada na táboa de configuración e está establecida como a clase para PDF. Por favor, "Garde" este formulario para establecer TCPDF como a Clase PDF e volva nun estado estable.',
-    'LBL_IMG_RESIZED' => "(redimensionado para ser mostrado)",
-
-
-    'LBL_FONTMANAGER_BUTTON' => 'Administrador de Fontes PDF',
-    'LBL_FONTMANAGER_TITLE' => 'Administrador de Fontes PDF',
-    'LBL_FONT_BOLD' => 'Negrita',
-    'LBL_FONT_ITALIC' => 'Cursiva',
-    'LBL_FONT_BOLDITALIC' => 'Negrita/Cursiva',
-    'LBL_FONT_REGULAR' => 'Normal',
-
-    'LBL_FONT_TYPE_CID0' => 'CID-0',
-    'LBL_FONT_TYPE_CORE' => 'Núcleo',
-    'LBL_FONT_TYPE_TRUETYPE' => 'TrueType',
-    'LBL_FONT_TYPE_TYPE1' => 'Tipo 1',
-    'LBL_FONT_TYPE_TRUETYPEU' => 'TrueTypeUnicode',
-
-    'LBL_FONT_LIST_NAME' => 'Nome',
-    'LBL_FONT_LIST_FILENAME' => 'Nome de arquivo',
-    'LBL_FONT_LIST_TYPE' => 'Tipo',
-    'LBL_FONT_LIST_STYLE' => 'Estilo',
-    'LBL_FONT_LIST_STYLE_INFO' => 'Estilo da fonte',
-    'LBL_FONT_LIST_ENC' => 'Codificación',
-    'LBL_FONT_LIST_EMBEDDED' => 'Incrustado',
-    'LBL_FONT_LIST_EMBEDDED_INFO' => 'Marque esta opción para incrustar a fonte no arquivo PDF',
-    'LBL_FONT_LIST_CIDINFO' => 'Información CID',
-    'LBL_FONT_LIST_CIDINFO_INFO' => 'Para exemplos e máis axuda: www.tcpdf.org',
-    'LBL_FONT_LIST_FILESIZE' => 'Tamaño de Fonte (KB)',
-    'LBL_ADD_FONT' => 'Engadir unha fonte',
-    'LBL_BACK' => 'Atrás',
-    'LBL_REMOVE' => 'Quitar',
-    'LBL_JS_CONFIRM_DELETE_FONT' => '¿Está seguro de que desexa eliminar esta fonte?',
-
-    'LBL_ADDFONT_TITLE' => 'Engadir unha Fonte PDF',
-    'LBL_PDF_ENCODING_TABLE' => 'Táboa de Codificación',
-    'LBL_PDF_ENCODING_TABLE_INFO' => 'Nome da táboa de codificación.<br>Esta opción é ignorada en Unicode TrueType, Unicode OpenType e fontes con símbolos.<br>A codificación define a asociación entre un código (de 0 a 255) e un carácter contido na fonte.<br>Os primeiros 128 son fixos e correspóndense con ASCII.',
-    'LBL_PDF_FONT_FILE' => 'Arquivo de Fonte',
-    'LBL_PDF_FONT_FILE_INFO' => 'arquivo .ttf ou .otf ou .pfb',
-    'LBL_PDF_METRIC_FILE' => 'Arquivo de Métrica',
-    'LBL_PDF_METRIC_FILE_INFO' => 'arquivo .afm ou .ufm',
-    'LBL_ADD_FONT_BUTTON' => 'Engadir',
-    'JS_ALERT_PDF_WRONG_EXTENSION' => 'Este arquivo non ten unha extensión de arquivo adecuada.',
-
-    'ERR_MISSING_CIDINFO' => 'O campo Información CID Information non pode estar baleiro.',
-    'LBL_ADDFONTRESULT_TITLE' => 'Resultado do proceso de adición de fonte',
-    'LBL_STATUS_FONT_SUCCESS' => 'ÉXITO : a fonte foi engadida a SuiteCRM.',
-    'LBL_STATUS_FONT_ERROR' => 'ERRO : a fonte non foi engadida. Mire no seguinte rexistro.',
-
-// Font manager
-    'ERR_PDF_NO_UPLOAD' => 'Erro durante a subida do arquivo de fonte ou de métricas.',
 
 // Wizard
     //Wizard Scenarios
@@ -338,10 +227,4 @@ $mod_strings = array(
     'LBL_WELCOME' => 'Benvido' /*for 508 compliance fix*/,
     'LBL_LOGO' => 'Logotipo' /*for 508 compliance fix*/,
     'LBL_ENABLE_HISTORY_CONTACTS_EMAILS' => 'Mostra os emails de contactos relacionados no subpanel History para módulos',
-
-    // Google auth PR 6146
-    'LBL_GOOGLE_AUTH_TITLE' => 'Autenticación de Google',
-    'LBL_GOOGLE_AUTH_JSON' => 'Arquivo JSON',
-    'LBL_GOOGLE_AUTH_JSON_HELP' => 'Cargar o arquivo JSON descargado desde consola dos desarrolladores de Google.',
-
 );
