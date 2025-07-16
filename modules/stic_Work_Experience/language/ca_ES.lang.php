@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings = array (
+$mod_strings = array(
   'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
   'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
   'LBL_ASSIGNED_TO' => 'Assignat a',
@@ -46,7 +46,7 @@ $mod_strings = array (
   'LBL_REMOVE' => 'Desvincula',
   'LBL_ASCENDING' => 'Ascendent',
   'LBL_DESCENDING' => 'Descendent',
-  'LBL_LIST_FORM_TITLE' => "Llista d'Experiències laborals",
+  'LBL_LIST_FORM_TITLE' => 'Llista d\'Experiències laborals',
   'LBL_MODULE_NAME' => 'Experiència laboral',
   'LBL_MODULE_TITLE' => 'Experiència laboral',
   'LBL_HOMEPAGE_TITLE' => 'Les meves Experiències laborals',
@@ -60,19 +60,19 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'Nova Experiència laboral',
   'LBL_POSITION' => 'Càrrec',
   'LBL_POSITION_TYPE' => 'Tipus de càrrec',
-  'LBL_START_DATE' => "Data d'inici",
+  'LBL_START_DATE' => 'Data d\'inici',
   'LBL_END_DATE' => 'Data de finalització',
   'LBL_CONTRACT_TYPE' => 'Tipus de contracte',
   'LBL_WORKDAY_TYPE' => 'Tipus de jornada',
   'LBL_SCHEDULE' => 'Horari',
   'LBL_SECTOR' => 'Sector',
   'LBL_SUBSECTOR' => 'Subsector',
-  'LBL_ACHIEVED' => "Aconseguit a través de l'entitat",
+  'LBL_ACHIEVED' => 'Aconseguit a través de l\'entitat',
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona',
   'LBL_STIC_WORK_EXPERIENCE_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organització',
   'LBL_STIC_WORK_EXPERIENCE_STIC_JOB_APPLICATIONS_FROM_STIC_JOB_APPLICATIONS_TITLE' => 'Candidatura',
-  'LBL_START_DATE_ERROR' => "La data d'inici ha de ser igual o anterior a la data de finalització.",
-  'LBL_END_DATE_ERROR' => "La data de finalització ha de ser igual o posterior a la data d'inici.",
+  'LBL_START_DATE_ERROR' => 'La data d\'inici ha de ser igual o anterior a la data de finalització.',
+  'LBL_END_DATE_ERROR' => 'La data de finalització ha de ser igual o posterior a la data d\'inici.',
 );
