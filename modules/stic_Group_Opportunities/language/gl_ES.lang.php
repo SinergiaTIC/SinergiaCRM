@@ -46,6 +46,7 @@ $mod_strings = array(
     'LBL_REMOVE' => 'Desvincular',
     'LBL_ASCENDING' => 'Ascendente',
     'LBL_DESCENDING' => 'Descendente',
+
     'LBL_LIST_FORM_TITLE' => 'Lista de Organizacións subvencionadas',
     'LBL_MODULE_NAME' => 'Organizacións subvencionadas',
     'LBL_MODULE_TITLE' => 'Organizacións subvencionadas',
@@ -68,7 +69,7 @@ $mod_strings = array(
     'LBL_VALIDATION_DATE' => 'Data de validación',
     'LBL_PRESENTATION_DATE' => 'Data de presentación',
     'LBL_RESOLUTION_DATE' => 'Data de resolución específica',
-    'LBL_RESOLUTION_DATE_DESC' => 'Data na que se confirma a participación da organización no proceso',
+    'LBL_RESOLUTION_DATE_DESC' => "Data na que se confirma a participación da organización no proceso",
     'LBL_ADVANCE_DATE' => 'Data de anticipo',
     'LBL_JUSTIFICATION_DATE' => 'Data de xustificación',
     'LBL_PAYMENT_DATE' => 'Data de pago',
