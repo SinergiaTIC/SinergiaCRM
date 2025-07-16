@@ -72,7 +72,7 @@ $mod_strings = array(
     'LBL_STIC_BOOKINGS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización que reserva',
     'LBL_STIC_BOOKINGS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona que reserva',
 
-    // Used for the adding resources section
+    // Adding resources section
     'LBL_RESOURCES' => 'Recursos',
     'LBL_RESOURCES_NAME' => 'Nombre',
     'LBL_RESOURCES_STATUS' => 'Estado',
@@ -84,7 +84,7 @@ $mod_strings = array(
     'LBL_RESOURCES_ADD' => 'Añadir recurso',
     'LBL_RESOURCES_ERROR' => 'Recurso en conflicto con otra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hay recursos que no están disponibles en esta fecha.',
-    'LBL_RESOURCES_STATUS_ERROR' => 'No se puede activar la reserva en estas fechas, hay recursos que no están disponibles.',
+    'LBL_RESOURCES_STATUS_ERROR' => "No se puede activar la reserva en estas fechas, hay recursos que no están disponibles.",
     'LBL_RESOURCES_END_DATE_ERROR' => 'La fecha de finalización debe ser posterior a la fecha de inicio.',
     'LBL_RESOURCES_START_DATE_ERROR' => 'La fecha de inicio debe ser anterior a la fecha de finalización.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'La reserva no tiene recursos asignados.',
@@ -96,5 +96,5 @@ $mod_strings = array(
     'LBL_RESOURCES_LIST' => 'Lista de recursos',
 
     // Tooltips help
-    'LBL_ALL_DAY_HELP' => 'Si la casilla está marcada la reserva se efectúa en días completos. Si está desmarcada pueden establecerse las horas de inicio y fin.',
+    'LBL_ALL_DAY_HELP' => "Si la casilla está marcada la reserva se efectúa en días completos. Si está desmarcada pueden establecerse las horas de inicio y fin.",
 );
