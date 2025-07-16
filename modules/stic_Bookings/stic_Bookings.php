@@ -125,31 +125,25 @@ class stic_Bookings extends Basic
             $endDate = $endDate->modify("next day");
             $endDate = $timedate->asUserDate($endDate, false, $current_user);
             $this->end_date = $endDate;
+        }         
+        // Retrieve the resources selected in the EditViewFooter
+         
+        $newRelatedResources = array();
+        if (isset($_REQUEST['resource_id']) && is_array($_REQUEST['resource_id'])) {
+            foreach ($_REQUEST['resource_id'] as $parent => $key) {
+                if (empty($_REQUEST['deleted'][$parent])) {
+                    $newRelatedResources[] = $_REQUEST['resource_id'][$parent];
+                }
+            }
         }
 
-        // Only call parent::save for the main save operation or if not explicitly processing relationships and amounts
-        if (!$this->isCalculatingAmounts) {
+        $this->calculateAndUpdateTotalAmount($newRelatedResources);
 
-            $beforeTotalCopayment =$this->fetched_row['total_copayment'];
-            $beforeTotalAmount = $this->fetched_row['total_amount'];
+        parent::save($check_notify);
 
-            if (empty($this->total_amount)) {
-                $this->field_defs['total_amount']['audited']=false;
-            }
-            if (empty($this->total_copayment)) {
-                $this->field_defs['total_copayment']['audited']=false;
-            }
-
-            // This first parent::save ensures that the booking record itself is saved,
-            // and more importantly, if it's a new record, it gets an ID.
-            // This ID is crucial for establishing relationships below.
-            parent::save($check_notify);
-
-            // If the save function is launched by save action in editview,
-            // and we are not in a recursive save for amount calculation:
-            if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'Save') {   
-                // Set the flag to true to prevent re-entry into this block during the second save
-                $this->isCalculatingAmounts = true;
+        // If the save function is launched by save action in editview, relationships 
+        // with resources must be managed. In other cases (inline edit, etc.) will do nothing.
+        if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'Save') {   
 
                 // Remove previous relationships
                 $oldRelatedResources = array();
@@ -158,34 +152,14 @@ class stic_Bookings extends Basic
                     $this->stic_resources_stic_bookings->delete($this->id, $oldRelatedResource->id);
                 }
 
-                // Retrieve the resources selected in the EditViewFooter
-                $newRelatedResources = array();
-                if (isset($_REQUEST['resource_id']) && is_array($_REQUEST['resource_id'])) {
-                    foreach ($_REQUEST['resource_id'] as $parent => $key) {
-                        if (empty($_REQUEST['deleted'][$parent])) {
-                            $newRelatedResources[] = $_REQUEST['resource_id'][$parent];
-                        }
-                    }
-                }
+
                 // Set current relationships
                 foreach ($newRelatedResources as $newRelatedResource) {
                     $this->stic_resources_stic_bookings->add($newRelatedResource);
                 }
 
-                // Now that relationships are set, calculate and update amounts.
-                $this->calculateAndUpdateTotalAmount($beforeTotalAmount,$beforeTotalCopayment);
-                
-                // Perform a second save to persist the updated total_amount/copayment_amount
-                // and ensure auditing. Since isCalculatingAmounts is true, this call
-                // will not re-enter the 'if action == Save' block.
-                parent::save($check_notify);
-
-
-                // Reset the flag after the entire process is complete
-                $this->isCalculatingAmounts = false;
-            }
         }
-        
+
         // If return module is Booking's Calendar, redirect there
         if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'stic_Bookings_Calendar') {
             SugarApplication::redirect("index.php?module=stic_Bookings_Calendar&action=index&start_date=" . explode(' ', $this->start_date)[0]);
@@ -200,7 +174,7 @@ class stic_Bookings extends Basic
      * Calculate and conditionally update the total amount and copayment based on current resources and booking duration.
      * Amounts are only updated if the corresponding bean property is currently empty or null.
      */
-    private function calculateAndUpdateTotalAmount($beforeTotalAmount,$beforeTotalCopayment)
+    private function calculateAndUpdateTotalAmount($newRelatedResources)
     {
         global $db;
 
@@ -218,53 +192,34 @@ class stic_Bookings extends Basic
             return;
         }
 
-        // Get current related resources with their rates
-        $query = "SELECT r.id, r.hourly_rate, r.daily_rate, r.amount_day_occupied, r.amount_day_occupied, r.amount_copayment 
-                FROM stic_resources r
-                INNER JOIN stic_resources_stic_bookings_c rb ON r.id = rb.stic_resources_stic_bookingsstic_resources_ida
-                WHERE rb.stic_resources_stic_bookingsstic_bookings_idb = '{$this->id}'
-                AND rb.deleted = 0 
-                AND r.deleted = 0";
-        
-        $result = $db->query($query);
         $totalAmount = 0;
         $totalCopayment = 0;
         $isPlaceBooking = isset($this->place_booking) && $this->place_booking == '1';
 
-        while ($row = $db->fetchByAssoc($result)) {
-            $resourceAmount = $this->calculateResourceAmount($row, $durationInfo);
-            $resourceTotalAmount = $resourceAmount['total_amount'];
-            $totalAmount += $resourceTotalAmount;
-    
-            if ($isPlaceBooking) {
-                $resourceCopayment = $resourceAmount['copayment_amount'];
-                $totalCopayment += $resourceCopayment;
+        foreach ($newRelatedResources as $id) {
+            $query = "SELECT hourly_rate, daily_rate,amount_day_occupied, amount_day_unoccupied, amount_copayment FROM stic_resources
+                      WHERE id = '{$db->quote($id)}' AND deleted = 0";
+            $result = $db->query($query);
+
+            while ($row = $db->fetchByAssoc($result)) {
+                $resourceAmount = $this->calculateResourceAmount($row, $durationInfo);
+                $resourceTotalAmount = $resourceAmount['total_amount'];
+                $totalAmount += $resourceTotalAmount;
+        
+                if ($isPlaceBooking) {
+                    $resourceCopayment = $resourceAmount['copayment_amount'];
+                    $totalCopayment += $resourceCopayment;
+                }
             }
         }
-        $newId = create_guid();
-        $bookingId = $this->id;
-
-        // Only update total_amount if it's currently empty
         if (empty($this->total_amount)) {
             $this->total_amount = number_format($totalAmount, 2, ',', '');
-
-            $query = "INSERT INTO stic_bookings_audit
-                    (id, parent_id, date_created, created_by, field_name, data_type, before_value_string, after_value_string, before_value_text, after_value_text) VALUES
-                    ('$newId', '$bookingId', UTC_TIMESTAMP(), '1', 'total_amount','varchar','$beforeTotalAmount','$this->total_amount',NULL,NULL)";
-    
-            $result2 = $db->query($query);
         }
-        
-        // Only update copayment_amount if it's currently empty and it's a place booking
         if ($isPlaceBooking && empty($this->copayment_amount)) {
 
             $this->copayment_amount = $totalCopayment;
-
-            $query = "INSERT INTO stic_bookings_audit
-                    (id, parent_id, date_created, created_by, field_name, data_type, before_value_string, after_value_string, before_value_text, after_value_text) VALUES
-                    ('$newId', '$bookingId', UTC_TIMESTAMP(), '1', 'copayment_amount','varchar','$beforeTotalCopayment','$totalCopayment',NULL,NULL)";  
-            $result2 = $db->query($query);
         } 
+
     }
 
     /**
@@ -337,16 +292,22 @@ class stic_Bookings extends Basic
      */
     private function getBookingDuration()
     {
+        global $timedate;
+
+        $userDateFormat = $timedate->get_user_date_format();
+        $phpDateFormat = str_replace(['dd', 'mm', 'yyyy', 'yy'], ['d', 'm', 'Y', 'y'], $userDateFormat);
+    
         if (empty($this->start_date) || empty($this->end_date)) {
             return ['hours' => 0, 'days' => 0];
         }
 
-        try {
+        try {                        
+
             $startDateTime = new DateTime($this->start_date);
             $endDateTime = new DateTime($this->end_date);
-            
+
             $interval = $startDateTime->diff($endDateTime);
-            
+
             // Calculate total hours
             $totalHours = $interval->days * 24 + $interval->h + ($interval->i / 60) + ($interval->s / 3600);
             
@@ -354,6 +315,11 @@ class stic_Bookings extends Basic
             $totalDays = 0;
             
             if (isset($this->all_day) && $this->all_day == '1') {
+                $startDateTime = DateTime::createFromFormat($phpDateFormat, $this->start_date);
+                $endDateTime = DateTime::createFromFormat($phpDateFormat, $this->end_date);
+    
+                $interval = $startDateTime->diff($endDateTime);
+        
                 // For all-day bookings, count calendar days
                 $totalDays = $interval->days;
                 

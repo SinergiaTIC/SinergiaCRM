@@ -76,6 +76,18 @@ $subpanel_layout = array(
             'width' => '10%',
             'default' => true,
         ),
+        'amount_day_occupied' => array(
+            'type' => 'decimal',
+            'vname' => 'LBL_AMOUNT_DAY_OCCUPIED',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'amount_copayment' => array(
+            'type' => 'decimal',
+            'vname' => 'LBL_AMOUNT_COPAYMENT',
+            'width' => '10%',
+            'default' => true,
+        ),   
         'assigned_user_name' => array(
             'link' => true,
             'type' => 'relate',

@@ -94,16 +94,28 @@ function loadCalendar() {
       threeDays: {
         type: "timeGridWeek",
         duration: { days: 3 },
-        buttonText: {
-          today: SUGAR.language.get("stic_Bookings_Calendar", "LBL_TODAY"),
-          month: SUGAR.language.get("stic_Bookings_Calendar", "LBL_MONTH"),
-          week: SUGAR.language.get("stic_Bookings_Calendar", "LBL_WEEK"),
-          day: SUGAR.language.get("stic_Bookings_Calendar", "LBL_DAY"),
-          list: SUGAR.language.get("stic_Bookings_Calendar", "LBL_LIST"),
-          mobile: SUGAR.language.get("stic_Bookings_Calendar", "LBL_MOBILE_BUTTON"),
-        },
+        buttonText: SUGAR.language.get(
+          "stic_Bookings_Calendar",
+          "LBL_MOBILE_BUTTON"
+        ),
       },
     },
+    // Choose init view
+    initialView:
+    window.innerWidth >= 767
+      ? calendarView
+        ? calendarView
+        : "dayGridMonth"
+      : "threeDays",
+      buttonText: {
+        today: SUGAR.language.get("stic_Bookings_Calendar", "LBL_TODAY"),
+        month: SUGAR.language.get("stic_Bookings_Calendar", "LBL_MONTH"),
+        week: SUGAR.language.get("stic_Bookings_Calendar", "LBL_WEEK"),
+        day: SUGAR.language.get("stic_Bookings_Calendar", "LBL_DAY"),
+        list: SUGAR.language.get("stic_Bookings_Calendar", "LBL_LIST"),
+        mobile: SUGAR.language.get("stic_Bookings_Calendar", "LBL_MOBILE_BUTTON"),
+      },
+  
     viewDidMount: function ({ view }) {
       if (updatedView) {
         $.ajax({
@@ -290,9 +302,6 @@ function loadCalendar() {
           );
           $(".fc-availabilityMode-button").addClass("fc-button-active");
           if (!$("#filter-resources").val().length) {
-            $("#filter-resources").before(
-              "<div class='filter-info-sign'><span id='info-availability' class='inline-help glyphicon glyphicon-info-sign'></span></div>"
-            );
             $("#info-availability").qtip({
               content: {
                 text: SUGAR.language.get(

@@ -135,7 +135,7 @@ $layout_defs[$module_name]["subpanel_setup"]['stic_journal_stic_centers'] = arra
         ),
     ),
 );
-
+// Resources subpanel
 $layout_defs[$module_name]["subpanel_setup"]['stic_resources_stic_centers'] = array(
     'order' => 100,
     'module' => 'stic_Resources',

@@ -104,10 +104,10 @@ class stic_BookingsController extends SugarController
                 if ($availability['resources_allowed']) {
                     $resourceQuery = "SELECT *
                                       FROM stic_resources
-                                      WHERE id = '$resourceId'";
-                    
-                    $resourceQuery .= " AND type = 'place'"; 
-
+                                      WHERE id = '$resourceId'
+                                      AND type = 'place'
+                                      AND deleted = 0";
+                
                     $resourceQuery .= $resourcePlaceUserTypeCondition;
                     $resourceQuery .= $resourcePlaceTypeCondition;
                     $resourceQuery .= $resourceGenderCondition;
