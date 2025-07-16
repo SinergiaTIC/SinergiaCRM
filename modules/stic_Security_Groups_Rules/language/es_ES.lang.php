@@ -70,8 +70,8 @@ $mod_strings = array(
     'LBL_ACTIVE_INFO' => 'Si la casilla está marcada, se aplicarán las reglas establecidas específicamente para este módulo. Si no lo está, se aplicarán las reglas generales de los Grupos de Seguridad.',
     'LBL_INHERIT_FROM_MODULES_INFO' => 'Indica de qué módulos se heredarán los Grupos de Seguridad de entre aquellos que estén relacionados con el módulo base. Esto permite excluir determinados módulos del proceso de herencia automática del registro padre.',
     'LBL_NON_INHERIT_FROM_SECURITY_GROUPS_INFO' => 'Indica qué Grupos de Seguridad no deben ser heredados por los registros del módulo base.',
-    'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => 'Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad del usuario que tenga asignado.',
-    'LBL_INHERIT_CREATOR_CUSTOM_INFO' => 'Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad del usuario que lo haya creado.',
-    'LBL_INHERIT_PARENT_CUSTOM_INFO' => 'Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad de los registros padre de todos los módulos con los que esté relacionado.',
+    'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => "Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad del usuario que tenga asignado.",
+    'LBL_INHERIT_CREATOR_CUSTOM_INFO' => "Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad del usuario que lo haya creado.",
+    'LBL_INHERIT_PARENT_CUSTOM_INFO' => "Si la casilla está marcada, cada registro del módulo base heredará los Grupos de Seguridad de los registros padre de todos los módulos con los que esté relacionado.",
     'LBL_DISABLED_MODULE_RULES_INFO' => 'Las reglas por módulos en los Grupos de Seguridad no están habilitadas, por lo que la configuración aquí definida no se aplicará. Puede habilitarlas <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">en esta página</a>.',
 );
