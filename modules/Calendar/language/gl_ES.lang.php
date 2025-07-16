@@ -113,8 +113,8 @@ $mod_strings = array(
     'LBL_ERROR_LOADING' => 'Erro ao cargar',
     'LBL_GOTO_DATE' => 'Ir a Data',
     'NOTICE_DURATION_TIME' => 'O tempo de duración debe ser maior que 0',
-    'LBL_STYLE_BASIC' => 'Básico', //Can be translated in all caps. This string will be used by SuiteP template menu actions
-    'LBL_STYLE_ADVANCED' => 'Avanzado', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_STYLE_BASIC' => 'Básico', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
+    'LBL_STYLE_ADVANCED' => 'Avanzado', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
 
     'LBL_NO_USER' => 'Ningún resultado para o campo: Asignado a',
     'LBL_SUBJECT' => 'Asunto',
