@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Calendario laboral - Revisión de los registros del día anterior', // Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NAME' => 'Calendario laboral - Revisión de los registros del día anterior', // This tag is required. Indicates the name of the function
     'TIME_TRACKER_INACTIVE_IN_USER'=> 'La funcionalidad de Registro horario no está activada en el usuario: ',
     'WORK_CALENDAR_INACTIVE_IN_USER'=> 'La funcionalidad de Calendario laboral no está activada en el usuario: ',
     'NO_RECORD_IN_TIME_TRACKER' => 'Al registro de calendario laboral teórico de tipo laborable no le corresponde ningún registro horario efectivo.',
