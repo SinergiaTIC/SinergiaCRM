@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Calendari laboral - Revisió dels registres del dia anterior', // Aquesta etiqueta és obligatòria. Indica el nom de la funció
-    'TIME_TRACKER_INACTIVE_IN_USER'=> "La funcionalitat de Registre horari no està activada a l'usuari: ",
-    'WORK_CALENDAR_INACTIVE_IN_USER'=> "La funcionalitat de Calendari laboral no està activada a l'usuari:",
+    'NAME' => 'Calendari laboral - Revisió dels registres del dia anterior', // This tag is required. Indicates the name of the function
+    'TIME_TRACKER_INACTIVE_IN_USER'=> 'La funcionalitat de Registre horari no està activada a l\'usuari: ',
+    'WORK_CALENDAR_INACTIVE_IN_USER'=> 'La funcionalitat de Calendari laboral no està activada a l\'usuari:',
     'NO_RECORD_IN_TIME_TRACKER' => 'Al registre de calendari laboral teòric de tipus laborable no li correspon cap registre horari efectiu.',
     'EMAIL_SUBJECT' => 'Calendari laboral - Revisió dels registres del dia anterior',
-    'EMAIL_BODY' => "S'ha trobat un error al validar aquest registre de Calendari laboral: ",
+    'EMAIL_BODY' => 'S\'ha trobat un error al validar aquest registre de Calendari laboral: ',
 );
