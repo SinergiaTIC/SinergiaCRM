@@ -62,7 +62,7 @@ $mod_strings = array(
     'LBL_PRIORITY' => 'Prioritat:',
     'LBL_DUE_DATE_AND_TIME' => 'Data i hora de venciment:',
     'LBL_START_DATE_AND_TIME' => 'Data i hora d\'inici:',
-    'LBL_START_DATE' => 'Data d&#39;inici:', // Excepció d'escapat 
+    'LBL_START_DATE' => 'Data d&#39;inici:',
     'LBL_LIST_START_DATE' => 'Data d\'inici',
     'LBL_START_TIME' => 'Hora d\'inici:',
     'DATE_FORMAT' => '(aaaa-mm-dd)',
@@ -88,7 +88,7 @@ $mod_strings = array(
     'LBL_PARENT_ID' => 'ID de Padre:',
     'LBL_CONTACT_PHONE' => 'Telèfon de Contacte:',
     'LBL_PARENT_TYPE' => 'Tipus de Padre:',
-    'LBL_TASK_INFORMATION' => 'Visió general de la tasca', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_TASK_INFORMATION' => 'Visió general de la tasca', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_EDITLAYOUT' => 'Editar Diseny' /*for 508 compliance fix*/,
     'LBL_HISTORY_SUBPANEL_TITLE' => 'Notes',
     //For export labels
