@@ -180,6 +180,9 @@ $mod_strings = array(
     'LBL_ABOUT_SUITE' => 'Quant a SuiteCRM',
     'LBL_PARTNERS' => 'Socis',
     'LBL_FEATURING' => 'Els mòduls AOS, AOW, AOR, AOP, AOE i Replanificació són de SalesAgility',
+    'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
+    'LBL_REMOVE_ALL_RECURRENCES' => 'Delete All Recurrences',
+    'LBL_CONFIRM_REMOVE' => 'Are you sure you want to remove the record?',
 
     'LBL_CONTRIBUTOR_SUITECRM' => 'SuiteCRM - CRM de codi obert per a tot el món',
     'LBL_CONTRIBUTOR_SECURITY_SUITE' => 'SecuritySuite de Jason Eggers',
