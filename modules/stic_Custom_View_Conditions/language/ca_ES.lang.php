@@ -22,7 +22,7 @@
  */
 
 $mod_strings = array(
-    // Camps del mòdul
+    // Module fields
     'LBL_CONDITION_ORDER' => 'Ordre',
     'LBL_FIELD' => 'Camp',
     'LBL_OPERATOR' => 'Operador',
@@ -30,6 +30,6 @@ $mod_strings = array(
     'LBL_VALUE' => 'Valor',
     'LBL_VALUE_TYPE' => 'Tipus del valor',
 
-    // Relacions i subpanells
+    // Relations and subpanels
     'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
 );
