@@ -79,11 +79,12 @@ $mod_strings = [
     'LBL_CLIENT_SECRET' => 'Secret del Client',
     'LBL_TOKEN_TYPE' => 'Tipus de Token',
     'LBL_EXPIRES_IN' => 'Caduca en',
-    'LBL_ACCESS_TOKEN' => "Token d'Accés",
+    'LBL_ACCESS_TOKEN' => 'Token d\'Accés',
     'LBL_REFRESH_TOKEN' => 'Token de Refresc',
     'LBL_PROVIDER' => 'Proveïdor',
 
     'LBL_AUTHENTICATE' => 'Autenticar',
+
 
     'LBL_EXTERNAL_OAUTH_PROVIDER' => 'Proveïdor',
     'LBL_EXTERNAL_OAUTH_PROVIDER_NAME' => 'Proveïdor',
