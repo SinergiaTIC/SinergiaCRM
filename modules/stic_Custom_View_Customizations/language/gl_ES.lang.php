@@ -22,7 +22,7 @@
  */
 
 $mod_strings = array(
-    // Cadeas comúns
+    // Common labels
     'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ASSIGNED_TO' => 'Asignado a',
@@ -49,7 +49,7 @@ $mod_strings = array(
     'LBL_ASCENDING' => 'Ascendente',
     'LBL_DESCENDING' => 'Descendente',
 
-    // Accións do módulo
+    // Module actions
     'LBL_LIST_FORM_TITLE' => 'Lista de Personalizacións',
     'LBL_MODULE_NAME' => 'Personalizacións',
     'LBL_MODULE_TITLE' => 'Personalizacións',
@@ -63,24 +63,24 @@ $mod_strings = array(
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_SUBPANEL_TITLE' => 'Personalizacións',
     'LBL_NEW_FORM_TITLE' => 'Nova Personalización',
 
-    // Campos do módulo
+    // Module fields
     'LBL_CUSTOMIZATION_ORDER' => 'Orde',
     'LBL_INIT' => 'Inicial',
     'LBL_CONDITIONS' => 'Condicións',
     'LBL_ACTIONS' => 'Accións',
     'LBL_STATUS' => 'Estado',
 
-    // Paneis das vistas
+    // View Panels
     'LBL_DEFAULT_PANEL' => 'Datos xerais',
     'LBL_CONDITION_PANEL' => 'Condicións',
     'LBL_ACTION_PANEL' => 'Accións',
 
-    // Relaciones y subpaneles
+    // Relations and subpanels
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE' => 'Vistas personalizadas',
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE' => 'Condicións',
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE' => 'Accións',
 
-    // Otras
+    // Other
     'LBL_ADD_CONDITION' => 'Agregar condición',
     'LBL_DELETE_CONDITION' => 'Eliminar condición',
     'LBL_ADD_ACTION' => 'Agregar acción',
