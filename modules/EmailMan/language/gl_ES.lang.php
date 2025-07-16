@@ -55,7 +55,7 @@ $mod_strings = array(
     'LBL_DEFAULT_LOCATION' => 'Por Defecto',
 
     'LBL_EMAIL_DEFAULT_DELETE_ATTACHMENTS' => 'Eliminar arquivos adxuntos e notas relacionadas xunto aos Emails borrados',
-    'LBL_EMAIL_WARNING_NOTIFICATIONS' => 'Correo electrónico para notificación de alertas', // PR 7610
+    'LBL_EMAIL_WARNING_NOTIFICATIONS' => 'Correo electrónico para notificación de alertas',
     'LBL_EMAIL_ENABLE_CONFIRM_OPT_IN' => 'Configuracións de Autorización',
     'LBL_EMAIL_ENABLE_SEND_OPT_IN' => 'Enviar mensaxe de autorización automaticamente',
     'LBL_EMAIL_CONFIRM_OPT_IN_TEMPLATE_ID' => 'Plantilla de e-mail de confirmación de autorización',
