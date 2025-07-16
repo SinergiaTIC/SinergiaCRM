@@ -22,6 +22,6 @@
  */
 $func_strings = array (
     'NAME' => 'Compromisos de pagament - Revisió de les dates de caducidat de les targetes',
-    'NO_ROWS' => "No hi ha targetes properes al seu venciment.",
+    'NO_ROWS' => 'No hi ha targetes properes al seu venciment.',
     'RESULT_INFO' => "La targeta d'aquest compromís de pagament recurrent està propera al seu venciment: @expiring_date@",
 );
