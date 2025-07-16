@@ -113,7 +113,7 @@ $mod_strings = array(
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ASSIGNED_TO_ID' => 'Usuario Asignado',
     'NOTICE_DURATION_TIME' => 'O tempo de duración debe ser maior que 0',
-    'LBL_CALL_INFORMATION' => 'Visión Global', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CALL_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_REMOVE' => 'Quitar',
     'LBL_ACCEPT_STATUS' => 'Aceptar estato',
     'LBL_ACCEPT_LINK' => 'Aceptar Link',
@@ -162,4 +162,5 @@ $mod_strings = array(
     'LBL_LIST_STATUS'=>'Estado',
     'LBL_LIST_DATE_MODIFIED'=>'Data de Modificación',
     'LBL_LIST_DUE_DATE'=>'Data de Vencemento',
+    'LBL_RESCHEDULED_BY'=>'by',
 );
