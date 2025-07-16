@@ -55,7 +55,7 @@ $mod_strings = array(
     // END Dashlet Categories
 
     'ERR_DELETE_RECORD' => 'Heu d\'especificar un número de registre per eliminar el compte.',
-    'LBL_ACCOUNT_INFORMATION' => 'Visió general del compte', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_ACCOUNT_INFORMATION' => 'Visió general del compte', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_ACCOUNT_NAME' => 'Nom:',
     'LBL_ACCOUNT' => 'Compte:',
     'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
@@ -161,4 +161,5 @@ $mod_strings = array(
     'LBL_AOS_CONTRACTS' => 'Contractes',
     'LBL_AOS_INVOICES' => 'Factures',
     'LBL_AOS_QUOTES' => 'Pressupostos',
+    'LBL_LIST_WEBSITE' => 'website',
 );
