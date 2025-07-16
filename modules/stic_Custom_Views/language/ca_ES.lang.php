@@ -22,7 +22,7 @@
  */
 
 $mod_strings = array(
-    // Cadenes comuns
+    // Common labels
     'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
     'LBL_ASSIGNED_TO' => 'Assignat a',
@@ -49,7 +49,7 @@ $mod_strings = array(
     'LBL_ASCENDING' => 'Ascendent',
     'LBL_DESCENDING' => 'Descendent',
 
-    // Accions del mòdul
+    // Module actions
     'LBL_LIST_FORM_TITLE' => 'Llista de Vistes personalitzades',
     'LBL_MODULE_NAME' => 'Vistes personalitzades',
     'LBL_MODULE_TITLE' => 'Vistes personalitzades',
@@ -63,29 +63,29 @@ $mod_strings = array(
     'LBL_STIC_CUSTOM_VIEWS_SUBPANEL_TITLE' => 'Vistes personalitzades',
     'LBL_NEW_FORM_TITLE' => 'Nova Vista personalitzada',
 
-    // Camps del mòdul
+    // Module fields
     'LBL_CUSTOMIZATION_NAME' => 'Nom intern',
     'LBL_VIEW_MODULE' => 'Mòdul',
     'LBL_VIEW_TYPE' => 'Vista',
-    'LBL_USER_TYPE' => "Tipus d'usuari",
-    'LBL_USER_TYPE_DESC' => "Tipus d'usuari al qual s'aplicarà la vista personalitzada",
+    'LBL_USER_TYPE' => 'Tipus d\'usuari',
+    'LBL_USER_TYPE_DESC' => 'Tipus d\'usuari al qual s\'aplicarà la vista personalitzada',
     'LBL_ROLES' => 'Rols',
-    'LBL_ROLES_DESC' => "Rols als quals s'aplicarà la vista personalitzada",
+    'LBL_ROLES_DESC' => 'Rols als quals s\'aplicarà la vista personalitzada',
     'LBL_SECURITY_GROUPS' => 'Grups de seguretat',
-    'LBL_SECURITY_GROUPS_DESC' => "Grups de seguretat als quals s'aplicarà la vista personalitzada",
+    'LBL_SECURITY_GROUPS_DESC' => 'Grups de seguretat als quals s\'aplicarà la vista personalitzada',
     'LBL_STATUS' => 'Estat',
     'LBL_ROLES_EXCLUDE' => 'Rols no aplicables',
-    'LBL_ROLES_EXCLUDE_DESC' => "Rols als quals no s'aplicarà la vista personalitzada",
+    'LBL_ROLES_EXCLUDE_DESC' => 'Rols als quals no s\'aplicarà la vista personalitzada',
     'LBL_SECURITY_GROUPS_EXCLUDE' => 'Grups de seguretat no aplicables',
-    'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => "Grups de seguretat als quals no s'aplicarà la vista personalitzada",
+    'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => 'Grups de seguretat als quals no s\'aplicarà la vista personalitzada',
 
-    // Panells de les vistes
+    // View Panels
     'LBL_DEFAULT_PANEL' => 'Dades generals',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
-    // Relacions i subpanells
+    // Relations and subpanels
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalitzacions',
 
-    // Altres
+    // Other
     'LBL_NAME_COPY_SUFFIX' => '(còpia)',
 );
