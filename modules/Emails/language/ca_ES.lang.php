@@ -5,7 +5,7 @@
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2019 SalesAgility Ltd.
+ * Copyright (C) 2011 - 2024 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -163,12 +163,13 @@ $mod_strings = array(
 
     'LBL_LIST_ASSIGNED' => 'Assignat',
     'LBL_LIST_CONTACT_NAME' => 'Nom Contacte',
-    'LBL_LIST_DATE_SENT' => 'Data Tramesa',
-    'LBL_LIST_DATE_SENT_RECEIVED' => 'Data Enviat/Rebut', // PR 6728
+    'LBL_LIST_DATE' => 'Date Sent',
+    'LBL_LIST_DATE_SENT_RECEIVED' => 'Data Enviat/Rebut',
     'LBL_LIST_FORM_DRAFTS_TITLE' => 'Borrador',
     'LBL_LIST_FORM_SENT_TITLE' => 'Correus electrònics enviats',
     'LBL_LIST_FORM_TITLE' => 'Llista de correus electrònics',
     'LBL_LIST_FROM_ADDR' => 'De',
+    //'LBL_LIST_RELATED_TO' => 'Recipient Type' (previous value)
     'LBL_LIST_RELATED_TO' => 'Relacionat amb',
     'LBL_LIST_SUBJECT' => 'Assumpte',
     'LBL_LIST_TO_ADDR' => 'Per a',
@@ -273,7 +274,6 @@ $mod_strings = array(
     'LBL_HAS_ATTACHMENT_INDICATOR' => 'Té adjunts',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Falta un camp requerit',
     'ERR_INVALID_REQUIRED_FIELDS' => 'Camp requerit no vàlid',
-    'LBL_FILTER_BY_RELATED_BEAN' => 'Només mostrar destinataris relacionats',
     'LBL_ADD_INBOUND_ACCOUNT' => 'Afegeix',
     'LBL_ADD_OUTBOUND_ACCOUNT' => 'Afegeix',
     'LBL_EMAIL_ACCOUNTS_INBOUND' => 'Propietats del compte de correu',
@@ -296,9 +296,7 @@ $mod_strings = array(
     'LBL_MAILBOX_TYPE_PERSONAL' => 'Personal',
     'LBL_MAILBOX_TYPE_GROUP' => 'Grup',
     'LBL_MAILBOX_TYPE_GROUP_FOLDER' => 'Grup - Auto-Importar',
-    'LBL_SEARCH_FOR' => 'Cercar per',
     'LBL_EMAIL_INBOUND_TYPE_HELP' => '<b> Personal </b>: Compte de correu accessible per vostè. Només vostè pot administrar i importar correus des d\'aquest compte. <br> <b> Grup </b>: Compte de correu accessible per membres d\'equips específics. Els membres d\'equips poden administrar i importar correus d\'aquest compte. <br> <b> Grup - auto-importació </b>: Compte de correu accessible per membres d\'equips específics. Els correus són importats com registres de forma automàtica.',
-    'LBL_ADDRESS_BOOK_SEARCH_HELP' => 'Introdueixi una adreça de correu electrònic, nom, cognom o nom del compte per a trobar destinataris.',
     'LBL_TEST_SETTINGS' => 'Comprovar Configuració',
     'LBL_EMPTY_EMAIL_BODY' => '<p><span style="color: #888888;"><em>Aquest missatge no té contingut</em></span></p>',
     'LBL_HAS_EMPTY_EMAIL_SUBJECT' => 'Si us plau, especifiqueu un assumpte',
@@ -326,9 +324,9 @@ $mod_strings = array(
     'LBL_GMAIL_SMTPPASS' => 'Contrasenya de Gmail:',
     'LBL_GMAIL_SMTPUSER' => 'Adreça de correu electrònic de Gmail:',
     'LBL_EXCHANGE_SMTPPASS' => 'Contrasenya de Exchange:',
-    'LBL_EXCHANGE_SMTPUSER' => 'Nom d&#39;usuari d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPPORT' => 'Port del servidor d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPSERVER' => 'Servidor d&#39;Exchange:', // Excepció d'escapat 
+    'LBL_EXCHANGE_SMTPUSER' => 'Nom d&#39;usuari d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPPORT' => 'Port del servidor d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPSERVER' => 'Servidor d&#39;Exchange:',
 
     'LBL_EDIT_LAYOUT' => 'Editar Diseny' /*for 508 compliance fix*/,
     'LBL_ATTACHMENT' => 'Adjunt' /*for 508 compliance fix*/,
@@ -387,7 +385,7 @@ $mod_strings = array(
 
     'LBL_LIST_DATE_MODIFIED' => 'Última Modificació',
     'LNK_IMPORT_CAMPAIGNS' => 'Importar Campanya',
-    
+
     // Email Validation Error messages. Typicaly for Email Validation:
     'ERR_FIELD_FROM_IS_NOT_SET' => 'El camp "De" no està definit.',
     'ERR_FIELD_FROM_IS_EMPTY' => 'El camp "De" està buit.',
@@ -411,4 +409,9 @@ $mod_strings = array(
     'ERR_FIELD_FROM_ADDR_NAME_INVALID_EMAIL_PART_TO_FIELD_FROM_ADDR' => 'Adreça del remitent i nom no corresponen amb l\'adreça d\'origen.',
     'ERR_FIELD_FROM_ADDR_NAME_INVALID_EMAIL_PART_TO_FIELD_FROMNAME' => 'Adreça del remitent i nom no corresponen amb el nom d\'origen.',
     'ERR_FIELD_FROM_ADDR_NAME_INVALID_EMAIL_PART_TO_FIELD_FROM_NAME' => 'Adreça del remitent i nom no corresponen amb el nom d\'origen.',
+
+    // Address book (not in current use)
+    'LBL_ADDRESS_BOOK_SEARCH_HELP' => 'Introdueixi una adreça de correu electrònic, nom, cognom o nom del compte per a trobar destinataris.',
+    'LBL_SEARCH_FOR' => 'Cercar per',
+    'LBL_FILTER_BY_RELATED_BEAN' => 'Només mostrar destinataris relacionats',
 );
