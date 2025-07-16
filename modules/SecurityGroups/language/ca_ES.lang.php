@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_ALL_MODULES' => 'Tots', //rost fix
+    'LBL_ALL_MODULES' => 'Tots',//rost fix
     'LBL_ASSIGNED_TO_ID' => 'ID Usuari Assignat',
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
     'LBL_ID' => 'ID',
@@ -78,22 +78,29 @@ $mod_strings = array(
     'LBL_ADDITIVE_DESC' => "L'usuari té els majors privilegis de tots els rols i grups assignats a ell.",
     'LBL_STRICT_RIGHTS' => 'Privilegis estrictes',
     'LBL_STRICT_RIGHTS_DESC' => "Si un usuari és membre de diversos grups s'apliquen només els privilegis del grup assignat al registre actual.",
-    'LBL_USER_ROLE_PRECEDENCE' => "Precedència del rol d'usuari",
-    'LBL_USER_ROLE_PRECEDENCE_DESC' => "Qualsevol rol assignat directament a l'usuari tindrà precedència sobre qualsevol rol de grup.",
-    'LBL_INHERIT_TITLE' => "Regles d'herència de grup",
-    'LBL_INHERIT_TITLE_DESC' => "Les regles d'herència de grups s'apliquen exclusivament en el moment de la creació del registre.",
-    'LBL_INHERIT_CREATOR' => "Hereta de l'usuari creador",
-    'LBL_INHERIT_CREATOR_DESC' => "El registre heretarà tots els grups de l'usuari que l'ha creat.",
+    'LBL_USER_ROLE_PRECEDENCE' => 'Precedència del rol d\'usuari',
+    'LBL_USER_ROLE_PRECEDENCE_DESC' => 'Qualsevol rol assignat directament a l\'usuari tindrà precedència sobre qualsevol rol de grup.',
+    'LBL_INHERIT_TITLE' => 'Regles d\'herència de grup',
+    // STIC custom - JCH - 20221130 - Add title description
+    // STIC#929
+    'LBL_INHERIT_TITLE_DESC' => 'Les regles d\'herència de grups s\'apliquen exclusivament en el moment de la creació del registre.',
+    // END STIC
+    'LBL_INHERIT_CREATOR' => 'Hereta de l\'usuari creador',
+    'LBL_INHERIT_CREATOR_DESC' => 'El registre heretarà tots els grups de l\'usuari que l\'ha creat.',
     'LBL_INHERIT_PARENT' => 'Hereta del registre pare',
     'LBL_INHERIT_PARENT_DESC' => 'El registre heretarà tots els grups de tots els registres amb els quals estigui relacionat.',
     'LBL_USER_POPUP' => 'Finestra de grups del nou usuari',
-    'LBL_USER_POPUP_DESC' => "Quan es creï un nou usuari mostra una finestra emergent per assignar l'usuari als grups que s'escaigui.",
-    'LBL_INHERIT_ASSIGNED' => "Hereta de l'usuari assignat",
-    'LBL_INHERIT_ASSIGNED_DESC' => "El registre heretarà tots els grups de l'usuari assignat.",
+    'LBL_USER_POPUP_DESC' => 'Quan es creï un nou usuari mostra una finestra emergent per assignar l\'usuari als grups que s\'escaigui.',
+    'LBL_INHERIT_ASSIGNED' => 'Hereta de l\'usuari assignat',
+    // STIC custom - JCH - 20221130 - Homogenize description
+    // STIC#929
+    // 'LBL_INHERIT_ASSIGNED_DESC' => 'The record will inherit all the groups of the user assigned to the record. Other groups assigned to the record will NOT be removed.',
+    'LBL_INHERIT_ASSIGNED_DESC' => 'El registre heretarà tots els grups de l\'usuari assignat.',
+    // END STIC
     'LBL_POPUP_SELECT' => 'Mostra el selector de grups',
-    'LBL_POPUP_SELECT_DESC' => "Quan un registre és creat per un usuari que està assignat a més d'un grup, es mostra un selector de grups en pantalla. En cas contrari, el registre hereta directament l'únic grup de l'usuari.",
-    'LBL_FILTER_USER_LIST' => "Filtra la llista d'usuaris",
-    'LBL_FILTER_USER_LIST_DESC' => 'Els usuaris no administradors només poden assignar registres als usuaris dels grups als quals pertanyen.',
+    'LBL_POPUP_SELECT_DESC' => 'Quan un registre és creat per un usuari que està assignat a més d\'un grup, es mostra un selector de grups en pantalla. En cas contrari, el registre hereta directament l\'únic grup de l\'usuari.',
+    'LBL_FILTER_USER_LIST' => 'Filtra la llista d\'usuaris',
+    'LBL_FILTER_USER_LIST_DESC' => "Els usuaris no administradors només poden assignar registres als usuaris dels grups als quals pertanyen.",
 
     'LBL_DEFAULT_GROUP_TITLE' => 'Grup per defecte per a nous registres',
     'LBL_ADD_BUTTON_LABEL' => 'Afegeix',
@@ -105,11 +112,11 @@ $mod_strings = array(
     'LBL_ASSIGN' => 'Assigna',
     'LBL_REMOVE' => 'Elimina',
     'LBL_ASSIGN_CONFIRM' => 'Esteu segur que voleu agregar a aquest grup de seguretat el(s)',
-    'LBL_REMOVE_CONFIRM' => "Esteu segur que voleu eliminar d\'aquest grup de seguretat el(s)", // excepció d'escapat
+    'LBL_REMOVE_CONFIRM' => 'Esteu segur que voleu eliminar d\'aquest grup de seguretat el(s)',
     'LBL_CONFIRM_END' => 'registre(s) seleccionat(s)?',
 
     'LBL_SECURITYGROUP_USER_FORM_TITLE' => 'Grup de Seguretat / Usuari',
-    'LBL_USER_NAME' => "Nom d'usuari",
+    'LBL_USER_NAME' => 'Nom d\'usuari',
     'LBL_SECURITYGROUP_NAME' => 'Nom del grup de seguretat',
     'LBL_HOMEPAGE_TITLE' => 'Missatges del grup',
     'LBL_TITLE' => 'Títol',
@@ -118,11 +125,11 @@ $mod_strings = array(
     'LBL_SELECT_GROUP_ERROR' => 'Seleccioneu un grup i torneu-ho a provar.',
 
     'LBL_GROUP_SELECT' => 'Seleccioneu els grups que han de tenir accés a aquest registre.',
-    'LBL_ERROR_DUPLICATE' => "Per causa d'un possible duplicat detectat per SuiteCRM haureu d'afegir manualment els grups de seguretat al registre creat.",
-    'LBL_ERROR_EXPORT_WHERE_CHANGED' => "L'actualització ha fallat perquè el filtre de cerca s'ha modificat. Torneu-ho a provar.", // PR 7999
+    'LBL_ERROR_DUPLICATE' => 'Per causa d\'un possible duplicat detectat per SuiteCRM haureu d\'afegir manualment els grups de seguretat al registre creat.',
+    'LBL_ERROR_EXPORT_WHERE_CHANGED' => 'L\'actualització ha fallat perquè el filtre de cerca s\'ha modificat. Torneu-ho a provar.',
 
     'LBL_INBOUND_EMAIL' => 'Compte de correu electrònic entrant',
-    'LBL_INBOUND_EMAIL_DESC' => "Permet només l'accés a un compte de correu electrònic si l'usuari pertany a un grup assignat al compte de correu.",
+    'LBL_INBOUND_EMAIL_DESC' => 'Permet només l\'accés a un compte de correu electrònic si l\'usuari pertany a un grup assignat al compte de correu.',
     'LBL_PRIMARY_GROUP' => 'Grup principal',
     'LBL_CHECKMARK' => 'Marca de verificació',
 
