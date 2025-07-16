@@ -94,7 +94,7 @@ $mod_strings = array(
     'LBL_CREATED_BY' => 'Creado Por',
     'LBL_MODIFIED_BY' => 'Modificado Por',
     'LBL_SEND_ANYWAYS' => 'Este correo no tiene asunto. ¿Enviar/guardar de todas formas?',
-    'LBL_NOTE_INFORMATION' => 'Visión Global', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_NOTE_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_MY_NOTES_DASHLETNAME' => 'Mis Notas',
     'LBL_EDITLAYOUT' => 'Editar Diseño' /*for 508 compliance fix*/,
     //For export labels
