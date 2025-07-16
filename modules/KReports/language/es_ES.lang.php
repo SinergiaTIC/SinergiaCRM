@@ -40,7 +40,7 @@ $mod_strings = array(
     'LBL_DEFAULT_NAME' => 'Nuevo Informe',
     'LBL_SEARCHING' => 'Buscando ...',
     'LBL_LONGTEXT_LABEL' => 'Descripción',
-    'LBL_DEFAULT_NAME' => 'Nuevo Informe',
+    'LBL_DEFAULT_NAME' => 'New Report',
     'LBL_CHART_NODATA' => 'No hay datos disponibles para mostrar',
     'LBL_REPORT_RELOAD' => 'Aplicar filtros',
     'LBL_LIST_LISTTYPE' => 'Lista de tipos',
@@ -195,7 +195,7 @@ $mod_strings = array(
     'LBL_OP_NEXT3MONTH' => 'en los próximos 3 meses',
     'LBL_OP_NEXT3MONTHDAILY' => 'en los próximos 3 meses diariamente', 
     'LBL_OP_NEXT6MONTH' => 'en los próximos 6 meses', 
-    'LBL_OP_NEXT6MONTHDAILY' => 'en los próximos 6 meses diariamente',
+    'LBL_OP_NEXT6MONTHDAILY' => 'en los próximos 6 meses diariamente', 
     'LBL_OP_LAST3MONTHDAILY' => 'en los últimos 3 meses diariamente', 
     'LBL_OP_LAST6MONTH' => 'en los últimos 6 meses', 
     'LBL_OP_LAST6MONTHDAILY' => 'en los últimos 6 meses diariamente',
@@ -323,7 +323,7 @@ $mod_strings = array(
     'LBL_FUNCTION_MIN' => 'Mínimo',
     'LBL_FUNCTION_MAX' => 'Máximo',
     'LBL_FUNCTION_GROUP_CONCAT' => 'Concatenar Grupo',
-    //2013-03-01 Sort function for Group Concat
+    //2013-03-01 Sort function for Group concat
     'LBL_FUNCTION_GROUP_CONASC' => 'Concatenar Grupo (asc)',
     'LBL_FUNCTION_GROUP_CONDSC' => 'Concatenar Grupo (desc)',
     // Value Types
@@ -418,7 +418,7 @@ $mod_strings = array(
     'LBL_CHARFIXEDVALUE' => 'Valor Fijo',
     'LBL_PLANNEREXPORTPOPUP_NODENAME' => 'NombreNodo',
     
-    // for the Viualization
+    // for the Visualization
     'LBL_VISUALIZATION' => 'visualizar',
     'LBL_VISUALIZATIONPLUGIN' => 'tipo',
     'LBL_VISUALIZATIONTOOLBAR_LAYOUT' => 'Apariencia',
@@ -619,12 +619,12 @@ $mod_strings = array(
     'LBL_RENDERER_TEXT' => 'Texto',
     'LBL_RENDERER_NONE' => 'Sin formato', 
     
-    // override Alignment
+    // Override alignment
     'LBL_OVERRIDEALIGNMENT' => 'Alineación',
     'LBL_ALIGNMENT_LEFT' => 'izquierda',
     'LBL_ALIGNMENT_RIGHT' => 'derecha',
-    'LBL_ALIGNMENT_CENTER' => 'centro',
-
+    'LBL_ALIGNMENT_CENTER' => 'centro', 
+    
     'LBL_REPORTTIMEOUT' => 'Timeout',
     'LBL_RT30' => '30 segundos',
     'LBL_RT60' => '1 minuto',
