@@ -73,4 +73,3 @@ $mod_strings = array(
     'LBL_PROCEED' => 'Continuar?',
     'LBL_STEP1_DIRECTIONS' => 'S\'han trobat registres que podrien estar duplicats. Quan es troben possibles duplicats, pot seleccionar aquells registres que desitja fusionar amb el registre actual.',
 );
-
