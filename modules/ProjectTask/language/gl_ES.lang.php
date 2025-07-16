@@ -79,6 +79,7 @@ $mod_strings = array(
     'LBL_ACTUAL_EFFORT' => 'Traballo Real (h):',
     'LBL_UTILIZATION' => 'Ocupación (%):',
     'LBL_DELETED' => 'Eliminada:',
+    'LBL_IMPORT_PROJECT_TASKS' => 'Import Project Tasks',
 
     'LBL_LIST_NAME' => 'Nome',
     'LBL_LIST_PARENT_NAME' => 'Proxecto',
