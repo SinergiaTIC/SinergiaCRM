@@ -1,11 +1,13 @@
 <?php
 /**
- *
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2019 SalesAgility Ltd.
+ * Copyright (C) 2011 - 2018 SalesAgility Ltd.
+ *
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -27,16 +29,20 @@
  * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
  * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
  *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ * 
  * The interactive user interfaces in modified source and object code versions
  * of this program must display Appropriate Legal Notices, as required under
  * Section 5 of the GNU Affero General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
- * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
+ * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo. 
+ * If the display of the logos is not reasonably feasible for technical reasons, 
+ * the Appropriate Legal Notices must display the words "Powered by SugarCRM", 
+ * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
  */
+
 
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
@@ -175,7 +181,11 @@ $mod_strings = array(
             'backBtn' => 'Volver á etapa anterior.',
             'studioHelp' => 'Use o <b>Studio</b> para personalizar os módulos instalados.',
             'moduleBtn' => 'Faga clic para editar este módulo.',
+            // STIC-Custom 20230807 MHP - Remove the reset module description since in SinergiaCRM we have hidden the Reset module button
+            // STIC#743
+            // 'moduleHelp' => 'The components that you can customize for the module appear here.<br><br>Click an icon to select the component to edit.<br><br>Click <b>Reset Module</b> to remove customizations and restore to original status.',
             'moduleHelp' => 'Os compoñentes do módulo que pode personalizar aparecen aquí.<br><br>Faga click nun icono para seleccionar o compoñente a editar.',
+            // END STIC-Custom
             'fieldsBtn' => 'Crear e personalizar os <b>Campos</b> que almacenan a información no módulo.',
             'labelsBtn' => 'Editar as <b> etiquetas </ b> para mostrar os valores deste módulo.',
             'relationshipsBtn' => 'Agregar novas <b>Relacións</b> do módulo ou ver as existentes.',
@@ -599,7 +609,7 @@ $mod_strings = array(
     'LBL_JS_VALIDATE_REL_LABEL' => 'Etiqueta - por favor, agregue a etiqueta que será mostrada sobre o subpanel',
 
 //CONFIRM
-    'LBL_CONFIRM_FIELD_DELETE' => 'Ao eliminar este campo personalizado, eliminará tanto o campo como todos os seus datos da base de datos. O campo xa non aparecerá en ningún dos deseño de módulo.\n\n¿Desexa continuar?',
+    'LBL_CONFIRM_FIELD_DELETE' => 'Ao eliminar este campo personalizado, eliminará tanto o campo como todos os seus datos da base de datos. O campo xa non aparecerá en ningún dos deseño de módulo.\\n\\n¿Desexa continuar?',
 
     'LBL_CONFIRM_RELATIONSHIP_DELETE' => '¿Está seguro de que desexa eliminar esta relación?',
     'LBL_CONFIRM_DONT_SAVE' => 'Hai cambios pendentes de ser gardados, ¿desexa gardalos agora?',
@@ -612,7 +622,6 @@ $mod_strings = array(
     'LBL_POPHELP_IMAGE_WIDTH' => 'Introduza un número para a Anchura, como medida en píxeles.<br> A imaxe subida será escalada a esta Anchura.',
     'LBL_POPHELP_IMAGE_HEIGHT' => 'Introduzca un número para la Altura, como medida en píxeles.<br> A imaxe subida será escalada a esta Altura.',
     'LBL_POPHELP_DUPLICATE_MERGE' => '<b>Habilitado</b>: O campo aparecerá na característica de Combinar Duplicados, pero non estará dispoñible para ser utilizado nas condicións de filtrado da característica Busca de Duplicados.<br><b>Deshabilitado</b>: O campo non aparecerá na característica Combinar Duplicados, e tampouco estará dispoñible para ser utilizado como condición de filtrado na característica de Busca de Duplicados.<br><b>En Filtro</b>: O campo aparecerá na característica de Combinar Duplicados, e tamén estará dispoñible na característica de Busca de Duplicados.<br><b>Filtro Seleccionado por Defecto</b>: O campo será utilizado na condición de filtrado por defecto da páxina de Busca de Duplicados, e tamén aparecerá na característica de Combinar Duplicados.<br><b>Só en Filtro</b>: O campo non aparecerá na característica Combinar Duplicados, pero estará dispoñible na característica de Busca de Duplicados.',
-    'LBL_POPHELP_FIELD_DATA_TYPE' => 'Seleccione o tipo de datos apropiado acorde co tipo de datos que será introducido no campo.',
 
 //Revert Module labels
     'LBL_RESET' => 'Restablecer',
