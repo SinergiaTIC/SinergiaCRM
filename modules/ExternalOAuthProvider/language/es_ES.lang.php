@@ -98,6 +98,7 @@ $mod_strings = [
     'LBL_MAPPING' => 'Configuraciones de Mapping',
     'LBL_OTHER' => 'Otros',
 
+
     'LNK_LIST_CREATE_NEW_PERSONAL' => 'Nuevo Proveedor OAuth Personal',
     'LNK_LIST_CREATE_NEW_GROUP' => 'Nuevo Proveedor OAuth de Grupo',
     'LNK_LIST_INBOUND_EMAILS' => 'Cuentas de Correo Electrónico Entrante',
