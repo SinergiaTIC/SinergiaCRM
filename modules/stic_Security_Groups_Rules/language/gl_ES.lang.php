@@ -70,8 +70,8 @@ $mod_strings = array(
     'LBL_ACTIVE_INFO' => 'Se a casilla está marcada, aplicaranse as regras establecidas especificamente para este módulo. Se non o está, aplicaranse as regras xerais dos Grupos de Seguridade.',
     'LBL_INHERIT_FROM_MODULES_INFO' => 'Indica de qué módulos se herdarán os Grupos de Seguridade de entre aquelos que estean relacionados co módulo base. Isto permite excluir determinados módulos do proceso de herdanza automática do rexistro pai.',
     'LBL_NON_INHERIT_FROM_SECURITY_GROUPS_INFO' => 'Indica qué Grupos de Seguridade non deben ser herdados polos rexistros do módulo base.',
-    'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => 'Se a casilla está marcada, cada rexistro do módulo base herdará os Grupos de Seguridadr do usuario que teña asignado.',
-    'LBL_INHERIT_CREATOR_CUSTOM_INFO' => 'Se a casilla está marcada, cada rexistro do módulo base herdará os Grupos de Seguridade do usuario que o creara.',
-    'LBL_INHERIT_PARENT_CUSTOM_INFO' => 'Se a casilla está marcada, cada rexistro do módulo base herdará os Grupos de Seguridade dos rexistros pai de todos os módulos cos que estea relacionado.',
+    'LBL_INHERIT_ASSIGNED_CUSTOM_INFO' => "Se a casilla está marcada, cada rexistro do módulo base herdará os Grupos de Seguridadr do usuario que teña asignado.",
+    'LBL_INHERIT_CREATOR_CUSTOM_INFO' => "Se a casilla está marcada, cada rexistro do módulo base herdará os Grupos de Seguridade do usuario que o creara.",
+    'LBL_INHERIT_PARENT_CUSTOM_INFO' => "Se a casilla está marcada, cada rexistro do módulo base herdará os Grupos de Seguridade dos rexistros pai de todos os módulos cos que estea relacionado.",
     'LBL_DISABLED_MODULE_RULES_INFO' => 'As regras por módulos nos Grupos de Seguridade non están habilitadas, polo que a configuración aquí definida non se aplicará. Pode habilitalas <a class="btn btn-info btn-xs" href="index.php?module=SecurityGroups&action=config&return_module=stic_Security_Groups_Rules&return_action=ListView" data-action-name="Security_Suite_Settings">nesta páxina</a>.',
 );
