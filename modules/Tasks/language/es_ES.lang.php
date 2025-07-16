@@ -88,7 +88,7 @@ $mod_strings = array(
     'LBL_PARENT_ID' => 'ID de Padre:',
     'LBL_CONTACT_PHONE' => 'Teléfono de Contacto:',
     'LBL_PARENT_TYPE' => 'Tipo de Padre:',
-    'LBL_TASK_INFORMATION' => 'Visión General', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_TASK_INFORMATION' => 'Visión General', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_EDITLAYOUT' => 'Editar diseño' /*for 508 compliance fix*/,
     'LBL_HISTORY_SUBPANEL_TITLE' => 'Notas',
     //For export labels
