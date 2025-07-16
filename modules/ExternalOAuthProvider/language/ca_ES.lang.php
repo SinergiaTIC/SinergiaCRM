@@ -80,16 +80,16 @@ $mod_strings = [
     'LBL_CLIENT_ID' => 'ID del Client',
     'LBL_CLIENT_SECRET' => 'Secret del Client',
     'LBL_SCOPE' => 'Àmbit',
-    'LBL_URL_AUTHORIZE' => "URL d'Autorització",
-    'LBL_AUTHORIZE_URL_OPTIONS' => "Opcions URL d'Autorització",
-    'LBL_URL_ACCESS_TOKEN' => "URL del Token d'Accés",
+    'LBL_URL_AUTHORIZE' => 'URL d\'Autorització',
+    'LBL_AUTHORIZE_URL_OPTIONS' => 'Opcions URL d\'Autorització',
+    'LBL_URL_ACCESS_TOKEN' => 'URL del Token d\'Accés',
     'LBL_EXTRA_PROVIDER_PARAMS' => 'Paràmetres Addicionals del Proveïdor',
     'LBL_GET_TOKEN_REQUEST_GRANT' => 'Tipus de Concessió de Sol·licitud de Token',
     'LBL_GET_TOKEN_REQUEST_OPTIONS' => 'Opcions de Sol·licitud de Token',
     'LBL_REFRESH_TOKEN_REQUEST_GRANT' => 'Tipus de Concessió de Sol·licitud de Token de Refresc',
     'LBL_REFRESH_TOKEN_REQUEST_OPTIONS' => 'Opcions de Sol·licitud de Token de Refresc',
 
-    'LBL_ACCESS_TOKEN_MAPPING' => "Mapping del Token d'Accés",
+    'LBL_ACCESS_TOKEN_MAPPING' => 'Mapping del Token d\'Accés',
     'LBL_EXPIRES_IN_MAPPING' => 'Mapping de Caducitat',
     'LBL_REFRESH_TOKEN_MAPPING' => 'Mapping del Token de Refresc',
     'LBL_TOKEN_TYPE_MAPPING' => 'Mapping del Tipus de Token',
@@ -97,6 +97,7 @@ $mod_strings = [
     'LBL_EXTRA' => 'Configuracions Addicionals',
     'LBL_MAPPING' => 'Configuracions de Mapping',
     'LBL_OTHER' => 'Altres',
+
 
     'LNK_LIST_CREATE_NEW_PERSONAL' => 'Nou Proveïdor OAuth Personal',
     'LNK_LIST_CREATE_NEW_GROUP' => 'Nou Proveïdor OAuth de Grup',
