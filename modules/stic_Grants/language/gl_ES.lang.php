@@ -20,6 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
 $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
@@ -74,8 +75,8 @@ $mod_strings = array(
     'LBL_STIC_GRANTS_PROJECT_FROM_PROJECT_TITLE' => 'Proxecto',
     'LBL_STIC_GRANTS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización orixe',
     'LBL_STIC_GRANTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoa',
-    'LBL_STIC_GRANTS_OPPORTUNITIES_FROM_OPPORTUNITIES_TITLE' => 'Subvención',
     'LBL_STIC_GRANTS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unidade Familiar',
+    'LBL_STIC_GRANTS_OPPORTUNITIES_FROM_OPPORTUNITIES_TITLE' => 'Subvención',
     'LBL_START_DATE_ERROR' => 'La fecha de alta debe ser igual o anterior a la fecha de baja.',
     'LBL_END_DATE_ERROR' => 'La fecha de baja debe ser igual o posterior a la fecha de alta.',
     'LBL_RENOVATION_DATE_ERROR' => 'La fecha de renovación debe ser igual o posterior a la fecha de alta.',
