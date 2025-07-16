@@ -101,7 +101,7 @@ $mod_strings = array(
     'LBL_ERROR_ON_MARKETING' => 'Falten camps obligatoris',
 
     'LBL_CAMPAIGN_ID' => 'ID Campanya',
-    'LBL_OUTBOUND_EMAIL_ACOUNT_ID' => 'ID de compte d&#39;E-mail sortint', // Excepció d'escapat 
+    'LBL_OUTBOUND_EMAIL_ACOUNT_ID' => 'ID de compte d&#39;E-mail sortint',
     'LBL_EMAIL_TEMPLATE' => 'Plantilla de correu electrònic',
     'LBL_PROSPECT_LISTS' => 'Llistes de Públic Objectiu',
 
