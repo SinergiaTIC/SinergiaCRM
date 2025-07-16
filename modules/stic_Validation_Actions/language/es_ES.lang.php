@@ -73,5 +73,5 @@ $mod_strings = array(
     'LBL_ACTION_ERRORS' => 'En las siguientes acciones de validación se ha producido un error y es probable que no hayan sido validados todos los registros:',
     'LBL_EXCEPTION' => 'Póngase en contacto con el administrador del sistema.',
     'LBL_SUCCESS' => 'Ya tiene a su disposición los resultados de las validaciones realizadas en el día',
-    'LBL_RESULTS_LINK' => 'Ir al listado con los resultados de validación del día',
+    'LBL_RESULTS_LINK' => 'Ir al listado con los resultados de validación del día',   
 );
