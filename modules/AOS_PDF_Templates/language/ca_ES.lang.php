@@ -51,7 +51,6 @@ $mod_strings = array(
     'LBL_MODIFIED' => 'Modificat per',
     'LBL_MODIFIED_NAME' => 'Modificat per',
     'LBL_CREATED' => 'Creat per',
-    'LBL_PDF_COMMENT' => 'Text complet en PDF', //PR 3532 and 4337
     'LBL_DESCRIPTION' => 'Cos',
     'LBL_HEADER' => 'Capçalera',
     'LBL_FOOTER' => 'Peu de pàgina',
@@ -100,6 +99,9 @@ $mod_strings = array(
     'LBL_DETAILVIEW_PANEL1' => 'Marges',
     'LBL_PAGE_SIZE' => 'Mida de la pàgina',
     'LBL_ORIENTATION' => 'Orientació',
+    // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates - 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
     'LBL_CHECKBOX_TRUE' => 'Cert',
     'LBL_CHECKBOX_FALSE' => 'Fals',
+    // END STIC-Custom
 );
