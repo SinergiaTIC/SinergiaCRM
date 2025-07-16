@@ -76,9 +76,9 @@ $mod_strings = array (
     'LBL_DEFAULT_PANEL' => 'Datos xerais',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
     'LBL_STIC_ASSESSMENTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persoa',
-    'LBL_STIC_GOALS_STIC_ASSESSMENTS_FROM_STIC_GOALS_TITLE'=>'Obxectivos',
+    'LBL_STIC_GOALS_STIC_ASSESSMENTS_FROM_STIC_GOALS_TITLE' => 'Obxectivos',
     'LBL_ASSESSMENT_DATE_ERROR' => 'A data da valoración debe ser anterior á data da próxima valoración.',
     'LBL_NEXT_DATE_ERROR' => 'A data da próxima valoración debe ser posterior á data da valoración.',
     'LBL_STIC_FAMILIES_STIC_ASSESSMENTS_FROM_STIC_FAMILIES_TITLE' => 'Unidade familiar',
-    'LBL_MUST_RELATE_TO_A_FAMILY_OR_A_CONTACT' => 'Hai que indicar unha persoa ou unha unidade familiar.',    
+    'LBL_MUST_RELATE_TO_A_FAMILY_OR_A_CONTACT' => 'Hai que indicar unha persoa ou unha unidade familiar.',
 );
