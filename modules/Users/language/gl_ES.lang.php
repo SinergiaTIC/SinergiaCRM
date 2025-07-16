@@ -171,7 +171,6 @@ $mod_strings = array(
     'LBL_SUBTHEME_OPTIONS_DAY' => 'Día',
     'LBL_SUBTHEME_OPTIONS_DUSK' => 'Crepúsculo',
     'LBL_SUBTHEME_OPTIONS_NIGHT' => 'Noite',
-    'LBL_SUBTHEME_OPTIONS_NOON' => 'Mediodía', // Theme for WCAG color contrast compliant. see issues 4776
     'LBL_SUBTHEME' => 'Estilo',
     'LBL_LDAP' => 'LDAP',
     'LBL_LDAP_AUTHENTICATION' => 'Autenticación LDAP',
@@ -381,7 +380,6 @@ $mod_strings = array(
     'LBL_WIZARD_FINISH_BUTTON' => 'Finalizar',
     'LBL_WIZARD_FINISH_TITLE' => '¡Xa está listo para usar SuiteCRM!',
     'LBL_WIZARD_FINISH' => 'Faga clic en <b>Finalizar</b> abaixo para gardar a configuración e para comezar a usar SuiteCRM. Para obter máis información sobre o uso de SuiteCRM: <br /><br /> <table cellpadding=0 cellspacing=0><tr><td><!--not_in_theme!--> Visita www.suitecrm.com<img src=include/images/suitecrm_login.png style="margin-right: 5px;"></td><td><a href="http://www.suitecrm.com/" target="_blank"><b>SuiteCRM</b></a></td></tr></table>',
-
     'LBL_WIZARD_FINISH1' => '¿Que queres facer agora?',
     'LBL_WIZARD_FINISH2' => 'Empezar a usar SuiteCRM',
     'LBL_WIZARD_FINISH3' => 'Importar datos ',
@@ -462,7 +460,6 @@ $mod_strings = array(
     'LBL_DESCRIPTION' => 'Descrición:',
     'LBL_EDIT_ALT_TEXT' => 'Editar Texto Plano',
     'LBL_SEND_IN_PLAIN_TEXT' => 'Enviar en Texto Plano',
-    'LBL_SEND_CONFIRM_OPT_IN' => 'Enviar mensaxe de autorización', // PR 4911
     'LBL_EMAIL_ATTACHMENT' => 'Adxunto de Email',
     'LBL_EMAIL_SELECTOR_SELECT' => 'Seleccionar',
     'LBL_EMAIL_SELECTOR_CLEAR' => 'Limpar',
@@ -608,7 +605,7 @@ $mod_strings = array(
     'LBL_EMAIL_FLAGGED' => 'Etiquetado:',
     'LBL_EMAIL_REPLY_TO_STATUS' => 'Estado de Responder A:',
     'LBL_TYPE' => 'Tipo:',
-    //#20680 EmailTemplate Ext.Message.show;
+    //#20680 EmialTemplate Ext.Message.show;
     'LBL_EMAILTEMPLATE_MESSAGE_SHOW_TITLE' => '¡Por favor, comprobe os seguinte!',
     'LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG' => 'Ao seleccionar esta plantilla o corpo do correo xa introducido será reemplazado. ¿Desexa continuar?',
     'LBL_EMAILTEMPLATE_MESSAGE_CLEAR_MSG' => 'Ao seleccionar "--Ningún--" limpiarase calquera información xa introducida no corpo do correo. ¿Desexa continuar?',
@@ -683,23 +680,12 @@ $mod_strings = array(
     'ERR_USER_FACTOR_SMTP_REQUIRED' => 'En primeiro lugar é necesario configurar o servidor SMTP.',
     'ERR_USER_FACTOR_CHANGE_DISABLED' => 'O usuario actual non é capaz de cambiar a configuración de autenticación de factor dous.',
     'LNK_IMPORT_CAMPAIGNS' => 'Importar Campaña',
-    'LBL_UNLOCK_USER' => 'Desbloquear usuario',  // PR 2897
-    'LBL_USER_UNLOCKED_MSG' => 'Usuario desbloqueado',  // PR 2897
-    'LBL_LANGUAGE' => 'Idioma', // PR 5721
     // for Google Token/Synchronization settings
     'LBL_GOOGLE_API_SETTINGS' => 'Sincronización da conta de Google',
     'LBL_GOOGLE_API_TOKEN' => 'Token da API de Google',
     'LBL_GOOGLE_API_TOKEN_HELP' => 'Usar isto para autorizar a SuiteCRM que accede ao seu calendario de Google. Isto é requirido para sincronización. Cando estea listo, por favor seleccione a casilla de verificación Habilitar a sincronización do calendario de Google.',
     'LBL_GOOGLE_API_TOKEN_BTN' => 'Obter Token',
     'LBL_GSYNC_CAL' => 'Habilitar a sincronización do calendario',
-    'LBL_GOOGLE_API_TOKEN_UNCONFIGURED' => 'Non configurado', // PR 6841
-    'LBL_GOOGLE_API_TOKEN_CONFIGURED' => 'Configurado', // PR 6841
-    'LBL_GOOGLE_API_TOKEN_DISABLED' => 'Deshabilitado', // PR 6841
-    'LBL_GOOGLE_API_TOKEN_INVALID' => 'Clave de autenticación inválida', // PR 6841
-    'LBL_GOOGLE_API_TOKEN_BTN_DISABLED' => 'Deshabilitado', // PR 6841
-    'LBL_GOOGLE_API_TOKEN_BTN_REAUTHORIZE' => 'Volver a autorizar', // PR 6841
-    'LBL_GOOGLE_API_TOKEN_BTN_AUTHORIZE' => 'Autorizar', // PR 6841
-    'LBL_GOOGLE_API_TOKEN_TEXT' => 'Token actual do API é', // PR 6841
     // END Google Token/Synchronization settings
 
     'LNK_LIST_OUTBOUND_EMAIL_ACCOUNTS' => 'Cuentas de Correo Electrónico Saliente',
