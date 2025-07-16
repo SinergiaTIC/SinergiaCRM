@@ -113,7 +113,7 @@ $mod_strings = array(
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
     'LBL_ASSIGNED_TO_ID' => 'Usuari Assignat',
     'NOTICE_DURATION_TIME' => 'El temps de durada te que ser major que 0',
-    'LBL_CALL_INFORMATION' => 'Visió general de la trucada', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CALL_INFORMATION' => 'Visió general de la trucada', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_REMOVE' => 'Eliminar',
     'LBL_ACCEPT_STATUS' => 'Estat d\'acceptació',
     'LBL_ACCEPT_LINK' => 'Enllaç d\'acceptació',
@@ -162,4 +162,5 @@ $mod_strings = array(
     'LBL_LIST_STATUS'=>'Estat',
     'LBL_LIST_DATE_MODIFIED'=>'Última Modificació',
     'LBL_LIST_DUE_DATE'=>'Data de Venciment',
+    'LBL_RESCHEDULED_BY'=>'by',
 );
