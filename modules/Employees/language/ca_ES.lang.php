@@ -152,6 +152,6 @@ $mod_strings = array(
     'LBL_SECURITYGROUPS' => 'Grups de Seguretat',
     'LBL_PROSPECT_LIST' => 'Públic Objectiu',
 
-    'LBL_FACTOR_AUTH_INTERFACE' => "Interfície d'Autenticació de Doble Factor:",
+    'LBL_FACTOR_AUTH_INTERFACE' => 'Interfície d\'Autenticació de Doble Factor:',
     'LBL_EDITOR_TYPE' => 'Editor',
 );
