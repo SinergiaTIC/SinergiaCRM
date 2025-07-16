@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array(
-    'NAME' => 'Remeses - Revisió de les relacions', // Aquesta etiqueta és obligatòria. Indica el nom de la funció
+    'NAME' => 'Remeses - Revisió de les relacions', // Required label. Contains function name
     'NO_ERRORS' => 'No s\'han trobat errors.',
     'ERROR_STATUS_1' => 'L\'estat del pagament ',
     'ERROR_STATUS_2' => ' és incoherent amb el de la remesa.',
