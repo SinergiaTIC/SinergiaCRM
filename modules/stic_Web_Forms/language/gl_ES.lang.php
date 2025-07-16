@@ -149,7 +149,7 @@ $mod_strings = array(
     'LBL_WEBFORMS_MAKE_CIF_REQUIRED' => 'Se se inclúen datos da organización, facer que o número de identificación sexa obrigatorio (útil para evitar duplicados)',
     'LBL_WEBFORMS_FIRST_HEADER' => 'Campos da primeira columna',
     'LBL_WEBFORMS_SECOND_HEADER' => 'Campos da segunda columna',
-    'LBL_WEBFORMS_GRID_TITLE' => 'Selección de campos do módulo:',
+    'LBL_WEBFORMS_GRID_TITLE' => "Selección de campos do módulo:",
     'LBL_WEBFORMS_REQUIRED_FIELDS' => 'Inclúa os campos obrigatorios: ',
     'LBL_WEBFORMS_SELECT_FIELDS' => 'Seleccione polo menos un campo',
     'LBL_WEBFORMS_HEADER' => 'Cabeceira do formulario',
@@ -228,6 +228,6 @@ $mod_strings = array(
     'LBL_BIZUM_ERROR_9676' => 'Bizum. O procesador rexeita a operación.',
     'LBL_BIZUM_ERROR_9677' => 'Bizum. Saldo dispoñible insuficiente.',
     'LBL_BIZUM_ERROR_9966' => 'Bizum devolveu un KO na autorización.',
-    'LBL_FIRST_PAYMENT_DATE_IS_BEFORE_TODAY' => 'A data do primeiro pago non pode ser anterior a día de hoxe.',
-    'LBL_RECAPTCHA_ERROR' => 'Erro na validación recaptcha ao enviar o formulario. Por favor contacte co administrador.',        
+    'LBL_FIRST_PAYMENT_DATE_IS_BEFORE_TODAY'=> 'A data do primeiro pago non pode ser anterior a día de hoxe.',
+    'LBL_RECAPTCHA_ERROR' => 'Erro na validación recaptcha ao enviar o formulario. Por favor contacte co administrador.',
 );
