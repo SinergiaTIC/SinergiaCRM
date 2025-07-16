@@ -223,7 +223,7 @@ $mod_strings = array(
     'LBL_ML_CANCEL' => 'Cancelar',
     'LBL_ML_COMMIT' => 'Procedir',
     'LBL_ML_DESCRIPTION' => 'Descripció',
-    'LBL_ML_INSTALLED' => "Data d\'Instalació", // Excepció d'escapat 
+    'LBL_ML_INSTALLED' => 'Data d\'Instalació',
     'LBL_ML_NAME' => 'Nom',
     'LBL_ML_PUBLISHED' => 'Data de Publicació',
     'LBL_ML_TYPE' => 'Tipus',
@@ -233,7 +233,7 @@ $mod_strings = array(
     //adding the string used in tracker. copying from homepage
     'LBL_CURRENT_PHP_VERSION' => 'La versió actual de php és: ',
     'LBL_RECOMMENDED_PHP_VERSION_1' => 'La versió de php recomanada és ',
-    'LBL_RECOMMENDED_PHP_VERSION_2' => ' o superior', // End of a sentence as in Recommended PHP version is version X.Y or above
+    'LBL_RECOMMENDED_PHP_VERSION_2' => ' o superior',  // End of a sentence as in Recommended PHP version is version X.Y or above
 
     'LBL_MODULE_NAME' => 'Assistent d\'actualitzacions ',
     'LBL_UPLOAD_SUCCESS' => 'Paquet d\'actualització pujat amb èxit. Faci clic a Següent per a realitzar una comprovació final.',
