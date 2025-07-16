@@ -73,4 +73,3 @@ $mod_strings = array(
     'LBL_PROCEED' => '¿Continuar?',
     'LBL_STEP1_DIRECTIONS' => 'Encontráronse rexistros con posibles duplicados. Cando se encontran posibles duplicados, pode seleccionar aqueles rexistros que desexa combinar co rexistro actual.',
 );
-
