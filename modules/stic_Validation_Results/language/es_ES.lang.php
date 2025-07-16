@@ -71,6 +71,6 @@ $mod_strings = array(
     'LBL_SCHEDULER_SCHEDULER_ID' => 'ID de Tarea programada',
     'LBL_SCHEDULER' => 'Tarea programada',
     'LBL_DEFAULT_PANEL' => 'Datos generales',
-    'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
+    'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',    
     'LBL_FLEX_RELATE' => 'Registro validado',
 );
