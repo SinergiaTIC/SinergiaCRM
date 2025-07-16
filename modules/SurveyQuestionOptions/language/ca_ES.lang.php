@@ -52,6 +52,7 @@ $mod_strings = array(
     'LBL_CREATED'                                                                          => 'Creat Per',
     'LBL_CREATED_ID'                                                                       => 'Creat per Id',
     'LBL_DESCRIPTION'                                                                      => 'Descripció',
+    'LBL_SORT_ORDER'                                                                       => 'Order',
     'LBL_DELETED'                                                                          => 'Eliminat',
     'LBL_NAME'                                                                             => 'Nom',
     'LBL_CREATED_USER'                                                                     => 'Creat Per Usuari',
