@@ -100,32 +100,32 @@ $mod_strings = array(
 
     'ERR_SMTP_SERVER_NOT_SET' => 'Aviso: No se ha configurado un servidor SMTP para correo saliente en "Configuración de correo". Es necesario configurarlo para enviar contraseñas a los usuarios.',
     'ERR_UW_ACCEPT_LICENSE' => 'Antes de proceder, debe aceptar el Acuerdo de Licencia',
-    'ERR_UW_CONFIG_FAILED' => 'Error generando archivo config.php.',
+    'ERR_UW_CONFIG_FAILED' => "Error generando archivo config.php.",
     'ERR_UW_COPY_FAILED' => 'No puedo copiarse el archivo',
     'ERR_UW_INVALID_VIEW' => 'Vista especificada no válida.',
-    'ERR_UW_NO_DEPENDENCY' => 'Las siguientes dependencias no han sido encontradas en el sistema.',
-    'ERR_UW_NO_FILES' => 'No se han especificado los archivos a copiar.',
-    'ERR_UW_NO_INSTALL_FILE' => 'Archivo de instalación no especificado.',
-    'ERR_UW_NO_LANG_DESC' => 'Descripción de idioma no especificada.',
-    'ERR_UW_NO_LANG' => 'Nombre de idioma no especificado.',
-    'ERR_UW_NO_MANIFEST' => 'El archivo zip no contiene un archivo manifest.php. No se puede continuar.',
-    'ERR_UW_NO_MODE' => 'Modo de operación no especificado.',
-    'ERR_UW_NO_TEMP_DIR' => 'Directorio temporal del que copiar archivos no especificado.',
+    'ERR_UW_NO_DEPENDENCY' => "Las siguientes dependencias no han sido encontradas en el sistema.",
+    'ERR_UW_NO_FILES' => "No se han especificado los archivos a copiar.",
+    'ERR_UW_NO_INSTALL_FILE' => "Archivo de instalación no especificado.",
+    'ERR_UW_NO_LANG_DESC' => "Descripción de idioma no especificada.",
+    'ERR_UW_NO_LANG' => "Nombre de idioma no especificado.",
+    'ERR_UW_NO_MANIFEST' => "El archivo zip no contiene un archivo manifest.php. No se puede continuar.",
+    'ERR_UW_NO_MODE' => "Modo de operación no especificado.",
+    'ERR_UW_NO_TEMP_DIR' => "Directorio temporal del que copiar archivos no especificado.",
     'ERR_UW_NO_UPDATE_RECORD' => 'No se ha podido localizar el registro de instalación de',
-    'ERR_UW_NO_UPLOAD_FILE' => 'Haga clic en Explorar para seleccionar un archivo a subir desde su sistema.<br>',
-    'ERR_UW_NO_VIEW' => 'Vista no definida. Vaya al inicio de Administración para navegar a esta página.',
-    'ERR_UW_NOT_ACCEPTIBLE_TYPE' => 'En esta página sólo puede subir paquetes con módulos, temas e idiomas.',
+    'ERR_UW_NO_UPLOAD_FILE' => "Haga clic en Explorar para seleccionar un archivo a subir desde su sistema.<br>",
+    'ERR_UW_NO_VIEW' => "Vista no definida. Vaya al inicio de Administración para navegar a esta página.",
+    'ERR_UW_NOT_ACCEPTIBLE_TYPE' => "En esta página sólo puede subir paquetes con módulos, temas e idiomas.",
     'ERR_UW_NOT_RECOGNIZED' => 'no está reconocido',
     'ERR_UW_NOT_VALID_UPLOAD' => 'Subida no válida.',
-    'ERR_UW_ONLY_PATCHES' => 'En esta página sólo puede subir parches.',
+    'ERR_UW_ONLY_PATCHES' => "En esta página sólo puede subir parches.",
     'ERR_UW_REMOVE_FAILED' => 'No ha podido quitarse el archivo',
-    'ERR_UW_UPDATE_CONFIG' => 'Error actualizando config.php con la información de la nueva versión.',
-    'ERR_UW_UPLOAD_ERROR' => 'Ha ocurrido un error en la subida del archivo, inténtelo de nuevo.',
+    'ERR_UW_UPDATE_CONFIG' => "Error actualizando config.php con la información de la nueva versión.",
+    'ERR_UW_UPLOAD_ERROR' => "Ha ocurrido un error en la subida del archivo, inténtelo de nuevo.",
     'ERROR_MANIFEST_TYPE' => 'El archivo de Manifiesto debe especificar el tipo de paquete.',
     'ERROR_PACKAGE_TYPE' => 'El archivo de Manifiesto especifica un tipo de paquete no reconocido',
     'ERROR_VERSION_INCOMPATIBLE' => 'El archivo subido no es compatible con esta versión de SuiteCRM:',
     'HDR_LOGIN_PANEL' => 'Introduzca sus credenciales de SuiteCRM.',
-    'HEARTBEAT_MESSAGE' => '<br />El mecanismo de Actualizaciones de SuiteCRM permite que su servidor compruebe si hay disponible alguna actualización para su versión de SuiteCRM.',
+    'HEARTBEAT_MESSAGE' => "<br />El mecanismo de Actualizaciones de SuiteCRM permite que su servidor compruebe si hay disponible alguna actualización para su versión de SuiteCRM.",
     'LBL_ACCEPT_TERMS' => 'Aceptar Términos y Condiciones',
     'LBL_ACCEPT' => 'Aceptar',
     'LBL_ADMINISTRATION_HOME_TITLE' => 'Sistema',
@@ -145,7 +145,7 @@ $mod_strings = array(
     'LBL_BACKUP_FILE_STORED' => 'La copia de seguridad se ha guardado con éxito en',
     'LBL_BACKUP_FILENAME_ERROR' => 'Debe especificar un nombre de archivo para la copia de seguridad.',
     'LBL_BACKUP_FILENAME' => 'Nombre de archivo:',
-    'LBL_BACKUP_INSTRUCTIONS_1' => "El propósito de esta herramienta es ayudarle a crear copias de seguridad de los archivos de aplicación de SuiteCRM. Las copias de seguridad de la base de datos deberían de realizarse regularmente. Por favor, consulte la documentación de su proveedor de base de datos para más información",
+    'LBL_BACKUP_INSTRUCTIONS_1' => 'El propósito de esta herramienta es ayudarle a crear copias de seguridad de los archivos de aplicación de SuiteCRM. Las copias de seguridad de la base de datos deberían de realizarse regularmente. Por favor, consulte la documentación de su proveedor de base de datos para más información',
     'LBL_BACKUP_INSTRUCTIONS_2' => 'Para realizar una copia de seguridad de los archivos de aplicación de SuiteCRM como un archivo zip, introduzca la siguiente información:',
     'LBL_BACKUP_RUN_BACKUP' => 'Iniciar copia de seguridad',
     'LBL_BACKUPS_TITLE' => 'Hacer una Copia de Seguridad de SuiteCRM',
@@ -293,7 +293,7 @@ $mod_strings = array(
     'LBL_LDAP_GROUP_ATTR' => 'Atributo de Grupo:',
     'LBL_LDAP_GROUP_ATTR_REQ_DN' => 'Con el DN del usuario:',
     'LBL_LDAP_GROUP_ATTR_REQ_DN_DESC' => 'Incluye el DN de Usuario con el Atributo de Usuario cuando revise su pertenencia al grupo',
-    'LBL_LDAP_USER_FILTER_DESC' => 'Cualquier parámetro de filtrado adicional a aplicar a la hora de autenticar usuarios. Por ejemplo:\nis_suitecrm_user=1 o (is_suitecrm_user=1)(is_sales=1)',
+    'LBL_LDAP_USER_FILTER_DESC' => 'Cualquier parámetro de filtrado adicional a aplicar a la hora de autenticar usuarios. Por ejemplo:\\nis_suitecrm_user=1 o (is_suitecrm_user=1)(is_sales=1)',
     'LBL_LDAP_LOGIN_ATTRIBUTE' => 'Atributo de Inicio de Sesión:',
     'LBL_LDAP_BIND_ATTRIBUTE' => 'Atributo de Conexión (Bind):',
     'LBL_LDAP_BIND_ATTRIBUTE_DESC' => 'Para Enlazar el nombre de usuario de LDAP<br>Ejemplos:&nbsp;<b>AD:</b>&nbsp;userPrincipalName,&nbsp;<b>openLDAP:</b>&nbsp;dn,&nbsp;<b>Mac&nbsp;OS&nbsp;X:</b>&nbsp;uid ',
@@ -513,7 +513,7 @@ $mod_strings = array(
     'LBL_REPAIRXSS_INSTRUCTIONS' => 'Seleccione un módulo para quitar potenciales cadenas XSS.  Seleccione "Todo" para revisar todos los módulos.<br>Presione ejecutar para iniciar el proceso de detección y eliminación.',
     'LBL_REPAIRXSS_REPAIRED' => 'Objetos reparados',
     'LBL_REPAIRXSS_TITLE' => 'Quita vulnerabilidades XSS de la Base de Datos',
-    
+
     'LBL_RESTORE_BUTTON_LABEL' => 'Restaurar',
     'LBL_RETURN' => 'Volver',
     'LBL_SEND_STAT' => '<b>Enviar Estadísticas de Uso Anónimas</b> - Si está seleccionado, SuiteCRM enviará estadísticas de forma anónima sobre su actualización a SuiteCRM.com cada vez que su sistema compruebe la existencia de actualizaciones. La información nos ayudará a entender como se utiliza la aplicación y mejorar el producto.',
@@ -678,6 +678,7 @@ $mod_strings = array(
     'ML_SUITE_DZ' => 'Zona de Desarrolladores de SuiteCRM',
     'ML_AVAIL_RESTRICTION' => 'Las restricciones y excepciones disponibles están detalladas en la',
     'ML_OVERRIDE_CORE_FILES' => 'No está permitido reemplazar el núcleo de los archivos de SuiteCRM',
+    'ML_INVALID_PHP_FILE' => 'Invalid file',
     'ML_PATH_MAY_NOT_CONTAIN' => 'La ruta del archivo no puede contener',
     'ML_INVALID_ACTION_IN_MANIFEST' => 'Acción no válida en su manifiesto:',
     'ML_NO_MANIFEST' => 'Este paquete no tiene un manifiesto',
@@ -782,6 +783,8 @@ $mod_strings = array(
     'LBL_SPRITES_ADDED' => 'Añadido sprite {0}',
     'LBL_SPRITES_EXCLUDING_FILE' => 'Excluyendo archivo: {0}',
 
+    'LBL_CANNOT_DISABLE_CURRENT_LANGUAGE' => 'The language being actively used cannot be disabled. Please change to another language in order to disable it.',
+
     //FTS
     'LBL_DELETE_FTS_DATA' => 'Borrar los datos existentes cuando el índice se lleva a cabo. Sólo los datos en los módulos seleccionados serán indexados.',
     'LBL_SAVE_SCHED_BUTTON' => 'Programar índice de todo el sistema',
@@ -805,12 +808,12 @@ $mod_strings = array(
     'LBL_JJWG_MAPS_ADMIN_ADDRESS_CACHE_DESC' => 'Proporciona acceso a la información de la caché de direcciones. Esto es sólo caché.',
 
     // Google Calendar
+    'LBL_GOOGLE_AUTH_TITLE' => 'Google Sync Settings',
     'LBL_GOOGLE_CALENDAR_SETTINGS_TITLE' => 'Configuración del Calendario de Google',
     'LBL_GOOGLE_CALENDAR_SETTINGS_DESC' => 'Configuración para ajustar tu calendario de Google',
     'LBL_GOOGLE_CALENDAR_SETTINGS_JSON' => 'Subir archivo de credenciales del API de Google',
     'LBL_GOOGLE_CALENDAR_SETTINGS_JSON_HELP' => 'Sube el archivo de credenciales JSON que descargaste de la Consola de desarrolladores de Google.',
     'LBL_GOOGLE_CALENDAR_GET_API_KEY' => 'Obtener las credenciales de la API',
-    'LBL_GOOGLE_CALENDAR_JSON_TEXT' => 'El archivo JSON es:', // PR 6841
 
     'LBL_DISPLAY_SIDEBAR' => 'Mostrar barra lateral',
     'LBL_COLOUR_ADMIN_PAGEHEADER' => 'Color encabezado',
@@ -858,6 +861,10 @@ $mod_strings = array(
     'LBL_AOP_CASE_CREATION_EMAIL_TEMPLATE' => 'Plantilla de caso creado',
     'LBL_AOP_CASE_CLOSURE_EMAIL_TEMPLATE' => 'Plantilla de caso cerrado',
     'LBL_AOP_JOOMLA_ACCOUNT_CREATION_EMAIL_TEMPLATE' => 'Plantilla de creación de cuenta del portal de soporte de Joomla',
+
+    'LBL_CASE_MACRO' => 'Case Macro',
+    'LBL_CASE_MACRO_DESC' => 'Set the macro which will be parsed and used to link imported email to a Case.',
+    'LBL_CASE_MACRO_DESC2' => 'Set this to any value, but preserve the <b>"%1"</b>.',
 
     'LBL_AOP_BUSINESS_HOURS_SETTINGS' => 'Horarios',
     'LBL_AOP_BUSINESS_HOURS_DESC' => "Restringir el flujo de trabajo para lanzar solo en ciertos días y horas",
@@ -962,8 +969,10 @@ $mod_strings = array(
     'LBL_ELASTIC_SEARCH_INDEX_SCHEDULE_PART' => 'Programar la indexación parcial',
     'LBL_ELASTIC_SEARCH_INDEX_SCHEDULE_FULL_SUCCESS' => 'Una indexación completa se ha programado y comenzará en los próximos 60 segundos. Los resultados de la búsqueda podrían ser incompletos hasta que finalice el proceso.',
     'LBL_ELASTIC_SEARCH_INDEX_SCHEDULE_FULL_FAIL' => 'No se pudo iniciar el índice completo.',
+    'LBL_ELASTIC_SEARCH_INDEX_SCHEDULE_FULL_FAIL_NO_SUCCESS' => 'Full indexing was not scheduled. Are you still logged in?',
     'LBL_ELASTIC_SEARCH_INDEX_SCHEDULE_PART_SUCCESS' => 'Una indexación parcial ha sido programada y comenzará en los próximos 60 segundos.',
     'LBL_ELASTIC_SEARCH_INDEX_SCHEDULE_PART_FAIL' => 'No se pudo iniciar índice parcial.',
+    'LBL_ELASTIC_SEARCH_INDEX_SCHEDULE_PART_FAIL_NO_SUCCESS' => 'Partial indexing was not scheduled. Are you still logged in?',
 
     // SearchWrapper Settings
     'LBL_SEARCH_INTERFACE' => 'Interfaz de búsqueda',
@@ -1002,7 +1011,7 @@ $mod_strings = array(
     'LBL_WORKFLOW_MANAGER' => 'Flujos de trabajo',
     'LBL_WORKFLOW_MANAGER_DESC' => 'Gestiona, añade, elimina o modifica procesos de flujo de trabajo',
 
-    
+
     'LBL_WARNING' => 'Aviso',
     'LBL_ERROR' => 'Error',
     'LBL_SUBMIT' => 'Enviar',
