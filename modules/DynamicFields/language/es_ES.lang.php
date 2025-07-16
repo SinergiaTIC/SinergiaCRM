@@ -87,7 +87,7 @@ $mod_strings = array(
     'LBL_LABEL' => 'Etiqueta',
     'LBL_DATA_TYPE' => 'Tipo de datos',
     'LBL_DEFAULT_VALUE' => 'Valor por defecto',
-    'ERR_RESERVED_FIELD_NAME' => 'Palabra reservada',
+    'ERR_RESERVED_FIELD_NAME' => "Palabra reservada",
     'ERR_SELECT_FIELD_TYPE' => 'Seleccione un tipo de campo.',
     'ERR_FIELD_NAME_ALREADY_EXISTS' => 'El nombre del campo ya existe.',
     'LBL_BTN_ADD' => 'Agregar',
@@ -102,5 +102,8 @@ $mod_strings = array(
     'COLUMN_TITLE_INLINE_EDIT_TEXT' => 'Edición en línea',
     'COLUMN_TITLE_PARENT_ENUM' => 'Campo de la lista desplegable principal',
     'LBL_INSERT_FIELD' => 'Insertar campo',
+	// STIC-Custom 20230919 MHP - Create dynamic tag for text 'Invalid logic'
+	// STIC #1221
     'LBL_INVALID_LOGIC' => 'Lógica no válida',
+    // END STIC-Custom
 );
