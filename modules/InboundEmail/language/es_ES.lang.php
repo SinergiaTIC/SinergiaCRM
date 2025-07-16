@@ -72,7 +72,7 @@ $mod_strings = array(
     'LBL_FILTER_DOMAIN' => 'No enviar Respuestas Automáticas a este Dominio',
     'LBL_FIND_SSL_WARN' => '<br>La comprobación de SSL puede durar bastante tiempo.  Por favor, tenga paciencia.<br>',
     'LBL_FROM_ADDR' => 'Dirección del Remitente',
-    'LBL_FROM_ADDR_DESC' => 'La dirección de correo electrónico puesta aquí no aparezca en el campo "De" dirección del correo electrónico del remitente debido a las restricciones impuestas por el proveedor de servicios de correo electrónico. En estas circunstancias, la dirección de correo electrónico que se define es la del servidor de correo saliente que esta configurado.',
+    'LBL_FROM_ADDR_DESC' => 'La dirección de correo electrónico puesta aquí no aparezca en el campo "De" dirección del correo electrónico del remitente debido a las restricciones impuestas por el proveedor de servicios de correo electrónico. En estas circunstancias, la dirección de correo electrónico que se define es la del servidor de correo saliente que esta configurado.', // as long as XTemplate doesn't support output escaping, transform quotes to html-entities right here (bug #48913)
     'LBL_FROM_NAME' => 'Nombre del remitente',
     'LBL_GROUP_QUEUE' => 'Asignar a Grupo',
     'LBL_HOME' => 'Inicio',
@@ -83,8 +83,8 @@ $mod_strings = array(
     'LBL_SERVER_ADDRESS' => 'Dirección del servidor',
     'LBL_LIST_STATUS' => 'Estado',
     'LBL_LOGIN' => 'Nombre de Usuario',
-    'LBL_MAILBOX_DEFAULT' => 'BANDEJA DE ENTRADA',
     'LBL_USERNAME' => 'Nombre de usuario',
+    'LBL_MAILBOX_DEFAULT' => 'BANDEJA DE ENTRADA',
     'LBL_MAILBOX_SSL' => 'Usar SSL',
     'LBL_MAILBOX_TYPE' => 'Acciones Posibles',
     'LBL_DISTRIBUTION_METHOD' => 'Método de Distribución',
@@ -145,7 +145,7 @@ $mod_strings = array(
     'LNK_LIST_CREATE_NEW_CASES_TYPE' => 'Nueva Cuenta de Correo para el manejo de casos',
     'LNK_LIST_CREATE_NEW_BOUNCE' => 'Nueva Cuenta de Gestión de Rebotes',
     'LNK_LIST_MAILBOXES' => 'Todas las Cuentas de Correo',
-    'LNK_LIST_OUTBOUND_EMAILS' => 'Cuentas de correo electrónico salientes',    
+    'LNK_LIST_OUTBOUND_EMAILS' => 'Cuentas de correo electrónico salientes',
     'LNK_LIST_SCHEDULER' => 'Planificadores',
     'LNK_SEED_QUEUES' => 'Crear Cabeza de Serie para Colas de Equipos',
     'LBL_GROUPFOLDER_ID' => 'Id de Carpeta de Grupo',
@@ -183,6 +183,7 @@ $mod_strings = array(
     'LBL_GROUP_CONFIGURATION' => 'Configuración del grupo',
 
     'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de seguridad',
+
 
     'LBL_OUTBOUND_EMAIL_ACCOUNT' => 'Cuenta de correo saliente',
     'LBL_OUTBOUND_EMAIL_ACCOUNT_ID' => 'ID de la cuenta de correo saliente',
