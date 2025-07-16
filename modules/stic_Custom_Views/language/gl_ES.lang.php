@@ -22,7 +22,7 @@
  */
 
 $mod_strings = array(
-    // Cadeas comúns
+    // Common labels
     'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ASSIGNED_TO' => 'Asignado a',
@@ -49,7 +49,7 @@ $mod_strings = array(
     'LBL_ASCENDING' => 'Ascendente',
     'LBL_DESCENDING' => 'Descendente',
 
-    // Acciones do módulo
+    // Module actions
     'LBL_LIST_FORM_TITLE' => 'Lista de Vistas personalizadas',
     'LBL_MODULE_NAME' => 'Vistas personalizadas',
     'LBL_MODULE_TITLE' => 'Vistas personalizadas',
@@ -63,7 +63,7 @@ $mod_strings = array(
     'LBL_STIC_CUSTOM_VIEWS_SUBPANEL_TITLE' => 'Vistas personalizadas',
     'LBL_NEW_FORM_TITLE' => 'Nova Vista personalizada',
 
-    // Campos do módulo
+    // Module fields
     'LBL_CUSTOMIZATION_NAME' => 'Nome interno',
     'LBL_VIEW_MODULE' => 'Módulo',
     'LBL_VIEW_TYPE' => 'Vista',
@@ -79,13 +79,13 @@ $mod_strings = array(
     'LBL_SECURITY_GROUPS_EXCLUDE' => 'Grupos de seguridade non aplicables',
     'LBL_SECURITY_GROUPS_EXCLUDE_DESC' => 'Grupos de seguridade aos que non se aplicará a vista personalizada',
 
-    // Paneles de las vistas
+    // View Panels
     'LBL_DEFAULT_PANEL' => 'Datos xerais',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
 
-    // Relaciones y subpaneles
+    // Relations and subpanels
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizacións',
 
-    // Otras
+    // Other
     'LBL_NAME_COPY_SUFFIX' => '(copia)',
 );
