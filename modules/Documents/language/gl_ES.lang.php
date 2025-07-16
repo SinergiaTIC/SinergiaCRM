@@ -130,7 +130,7 @@ $mod_strings = array(
 
     'DEF_CREATE_LOG' => 'Documento Creado',
 
-    //erro messages
+    //error messages
     'ERR_DOC_NAME' => 'Nome de Documento',
     'ERR_DOC_ACTIVE_DATE' => 'Data de Publicación',
     'ERR_FILENAME' => 'Nome de Arquivo',
@@ -147,7 +147,7 @@ $mod_strings = array(
     'LBL_LAST_REV_CREATE_DATE' => 'Data de Creación de Última Versión',
     'LBL_CONTRACTS' => 'Contratos',
     'LBL_CREATED_USER' => 'Usuario Creado',
-    'LBL_DOCUMENT_INFORMATION' => 'Visión Global', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_DOCUMENT_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_DOC_ID' => 'ID do documento',
     'LBL_DOC_TYPE' => 'Fonte',
     'LBL_DOC_TYPE_POPUP' => 'Seleccione unha orixe para que este documento sexa cargado <br> e do cal estará dispoñible.',
