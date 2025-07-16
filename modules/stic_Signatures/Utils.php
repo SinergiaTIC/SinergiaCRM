@@ -179,7 +179,7 @@ class stic_SignaturesUtils
         $mainModule = $signatureBean->main_module;
         $signerPath = $signatureBean->signer_path;
         $signerModule = explode(':', $signerPath)[0];
-        $signerPath = explode(':', $signerPath)[1];
+        $signerPath = explode(':', $signerPath)[1] ?? $signerPath;
 
         // Check if the main module and signer module are valid
         foreach ($mainModuleIds as $mainModuleId) {
@@ -189,18 +189,14 @@ class stic_SignaturesUtils
                 continue;
             }
 
-// TEST
-                require_once 'SticInclude/Utils.php';
-                $signers= SticUtils::getRelatedBeanObject($mainModuleBean, $signerPath);
+            if ($signerPath != $signerModule) {
+                // try to retrieve the linked beans based on relatinships
+                $signers = $mainModuleBean->get_linked_beans($signerPath, $signerModule);
+            } else {
+                // If the signerPath is the same as the signerModule, we can directly access the field
+                $signers = [$mainModuleBean];
+            }
 
-//TEST
-
-
-
-
-
-            // try to retrieve the linked beans based on relatinships
-            $signers = $mainModuleBean->get_linked_beans($signerPath, $signerModule);
             if (empty($signers)) {
                 $relatedId = $mainModuleBean->$signerPath;
                 // If no linked beans found, try to get the related ID directly (for relate fields)
@@ -209,12 +205,11 @@ class stic_SignaturesUtils
                     $signers[] = BeanFactory::getBean($signerModule, $relatedId);
                 }
             }
-            if(empty($signers)) {
+            if (empty($signers)) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No signers found for Main Module ID [{$mainModuleId}] and Signer Path [{$signerPath}].");
                 continue;
             }
 
-           
             foreach ($signers as $signer) {
                 if (!in_array($signer->id, $signersIdList)) {
                     $signersIdList[$signer->id] = [

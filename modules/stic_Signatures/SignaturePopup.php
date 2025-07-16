@@ -62,24 +62,24 @@ class SelectSignatureTemplate
     public static function getModuleTemplates($module)
     {
         $db = DBManagerFactory::getInstance();
-        $templates = array();
+        $signatures = array();
 
         $sql = "SELECT id,name FROM stic_signatures WHERE main_module = '" . $module . "' AND deleted = 0 AND status='open' ORDER BY name";
         $result = $db->query($sql);
         while ($row = $db->fetchByAssoc($result)) {
-            $templates[$row['id']] = $row['name'];
+            $signatures[$row['id']] = $row['name'];
         }
 
-        return $templates;
+        return $signatures;
     }
 
     public static function LVPopupHtml($module)
     {
         global $app_strings;
 
-        $templates = self::getModuleTemplates($module);
+        $signatures = self::getModuleTemplates($module);
 
-        if (!empty($templates)) {
+        if (!empty($signatures)) {
             echo '    
             
             <div id="popup-div-signature" class="modal fade" style="display: none;">
@@ -96,16 +96,16 @@ class SelectSignatureTemplate
                               <table width="100%" class="list view table-responsive" cellspacing="0" cellpadding="0" border="0">
                                  <tbody>';
             $iOddEven = 1;
-            foreach ($templates as $templateid => $template) {
+            foreach ($signatures as $signatureId => $signature) {
                 $iOddEvenCls = 'oddListRowS1';
                 if ($iOddEven % 2 == 0) {
                     $iOddEvenCls = 'evenListRowS1';
                 }
                 echo '<tr height="20" class="' . $iOddEvenCls . '" >
                                             <td width="17" valign="center"><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
-                    '\', \'index.php?templateID=' . $templateid . '&entryPoint=formLetter\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
+                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
                                             <td scope="row" align="left"><b><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
-                    '\', \'index.php?templateID=' . $templateid . '&entryPoint=formLetter\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');">' . $template . '</a></b></td></tr>';
+                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');">' . $signature . '</a></b></td></tr>';
                 $iOddEven++;
             }
             echo '</tbody></table>
@@ -145,36 +145,38 @@ class SelectSignatureTemplate
     {
         global $app_strings;
 
-        $templates = self::getModuleTemplates($module);
+        $signatures = self::getModuleTemplates($module);
 
-        if (!empty($templates)) {
+        if (!empty($signatures)) {
             echo '
             <div id="popup-div-signature" class="modal fade" style="display: none;">
                <div class="modal-dialog">
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>
+                        <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>('.
+                        $app_strings['LBL_SELECT_SIGNATURE_INFO'].')
+                        
                      </div>
                      <div class="modal-body">
                         <div style="padding: 5px 5px; overflow: auto; height: auto;">
-                           <form id="popupForm" action="index.php?entryPoint=formLetter" method="post">
+                           <form id="signatureForm" action="index.php?entryPoint=sticSignatureSignersSelect" method="post">
                               <table width="100%" class="list view table-responsive" cellspacing="0" cellpadding="0" border="0">
                                  <tbody>';
             $iOddEven = 1;
-            foreach ($templates as $templateid => $template) {
+            foreach ($signatures as $signatureId => $signature) {
                 $iOddEvenCls = 'oddListRowS1';
                 if ($iOddEven % 2 == 0) {
                     $iOddEvenCls = 'evenListRowS1';
                 }
-                $js = "$('#popup-div-signature').modal('hide');var form=document.getElementById('popupForm');if(form!=null){form.templateID.value='" . $templateid . "';form.submit();}else{alert('Error!');}";
+                $js = "$('#popup-div-signature').modal('hide');var form=document.getElementById('signatureForm');if(form!=null){console.log(form);form['signature-id'].value='" . $signatureId . "';form.submit();}else{alert('Error!');}";
                 echo '<tr height="20" class="' . $iOddEvenCls . '">
-                                        <td width="17" valign="center"><a href="#" onclick="' . $js . '"><img src="themes/suitep/images/stic-signatures.png" width="16" height="16" /></a></td>
-                                        <td scope="row" align="left"><b><a href="#" onclick="' . $js . '">' . $template . '</a></b></td></tr>';
+                                        <td width="17" valign="center"><a href="#" onclick="' . $js . '"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
+                                        <td scope="row" align="left"><b><a href="#" onclick="' . $js . '">' . $signature . '</a></b></td></tr>';
                 $iOddEven++;
             }
             echo '</tbody></table>
-                              <input type="hidden" name="templateID" value="" />
+                              <input type="hidden" name="signature-id" value="" />
                             <input type="hidden" name="module" value="' . $module . '" />
                             <input type="hidden" name="uid" value="' . clean_string($_REQUEST['record'],
                     'STANDARDSPACE') . '" />
@@ -186,7 +188,7 @@ class SelectSignatureTemplate
                </div>
             </div>
             <script>
-                function showPopup(){
+                function showPopupSignature(){
                     var ppd2=document.getElementById(\'popup-div-signature\');
                     if(ppd2!=null){
                         $("#popup-div-signature").modal("show",{backdrop: "static"});
