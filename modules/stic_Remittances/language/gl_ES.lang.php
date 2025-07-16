@@ -60,51 +60,51 @@ $mod_strings = array(
     'LBL_SEARCH_FORM_TITLE' => 'Buscar Remesas',
     'LBL_STIC_REMITTANCES_SUBPANEL_TITLE' => 'Remesas',
     'LBL_NEW_FORM_TITLE' => 'Nova Remesa',
+    'LBL_STIC_PAYMENTS_STIC_REMITTANCES_FROM_STIC_PAYMENTS_TITLE' => 'Pagos',
     'LBL_BANK_ACCOUNT' => 'Conta bancaria',
     'LBL_LOG' => 'Erros e advertencias no arquivo xerado',
     'LBL_TYPE' => 'Tipo',
-    'LBL_ISSUING_ORGANIZATION' => 'Organización emisora',
-    'LBL_STIC_PAYMENTS_STIC_REMITTANCES_FROM_STIC_PAYMENTS_TITLE' => 'Pagos',
     'LBL_CHARGE_DATE' => 'Data de cargo',
     'LBL_DEFAULT_PANEL' => 'Datos xerais',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
     'LBL_STATUS' => 'Estado',
+    'LBL_ISSUING_ORGANIZATION' => 'Organización emisora',
     'LBL_GENERATE_SEPA_DIRECT_DEBITS_SEPA' => 'Xerar remesa SEPA de recibos',
     'LBL_GENERATE_SEPA_CREDIT_TRANSFERS' => 'Xerar remesa SEPA de transferencias',
     'LBL_PROCESS_REDSYS_CARD_PAYMENTS' => 'Procesar pagos con tarxeta',
     'LBL_NO_BANK_ACCOUNT_ERROR' => 'A conta bancaria é obrigatoria se a remesa é de domiciliacións ou de transferencias.',
     'LBL_BANK_ACCOUNT_SHOULD_BE_EMPTY_ERROR' => 'Se se indica unha conta bancaria, a remesa debe ser de domiciliacións ou de transferencias.',
 
-    // Mensaxes SEPA comunes para recibos e transferencias
+    // Common SEPA messages for direct debits and transfers
     'LBL_SEPA_FIX_REMITTANCE_ERROR' => 'Comprobe',
     'LBL_SEPA_INVALID_ACCOUNT_NAME' => '<b>Organización</b> non válida no pago: ',
     'LBL_SEPA_INVALID_AMOUNT' => '<b>Importe</b> non válido no pago (e tal vez no seu compromiso de pago): ',
     'LBL_SEPA_INVALID_CONTACT_NAME' => '<b>Persoa</b> non válida no pago: ',
     'LBL_SEPA_INVALID_IBAN' => '<b>Conta bancaria</b> non válida no pago (e tal vez no seu compromiso de pago): ',
-    'LBL_SEPA_INVALID_LOAD_DATE' => 'O arquivo non se pode xerar porque a <b>data de cargo</b> da remesa é anterior ao día de hoxe.',
-    'LBL_SEPA_INVALID_MAIN_IBAN' => 'O arquivo non se pode xerar porque a <b>conta bancaria</b> da remesa non é válida. Seleccione unha conta válida da lista ou créea.',
+    'LBL_SEPA_INVALID_LOAD_DATE' => "O arquivo non se pode xerar porque a <b>data de cargo</b> da remesa é anterior ao día de hoxe.",
+    'LBL_SEPA_INVALID_MAIN_IBAN' => "O arquivo non se pode xerar porque a <b>conta bancaria</b> da remesa non é válida. Seleccione unha conta válida da lista ou créea.",
     'LBL_SEPA_INVALID_STATUS' => 'O estado do pago era <i>pagado</i>. Ao xerar o ficheiro pasará a <i>remesado</i>: ',
-    'LBL_SEPA_LOG_HEADER_PREFIX_NOT_GENERATED' => 'O ficheiro non se pode xerar sen corrixir previamente os seguintes erros:',
+    'LBL_SEPA_LOG_HEADER_PREFIX_NOT_GENERATED' => "O ficheiro non se pode xerar sen corrixir previamente os seguintes erros:",
     'LBL_SEPA_LOG_HEADER_PREFIX' => 'Último arquivo xerado:',
     'LBL_SEPA_REMITTANCE_OK' => 'Non se encontraron erros ao xerar o ficheiro da remesa.',
     'LBL_SEPA_WITHOUT_CONTACT_OR_ACCOUNT' => 'Non hai ningunha persoa ou organización relacionada no pago: ',
     'LBL_SEPA_XML_HAS_ERRORS' => 'O arquivo XML non se xerou porque existen erros que deben ser corrigidos.',
     'LBL_MISSING_SEPA_VARIABLES' => 'Algúns parámetros de configuración necesarios para a xeración de remesas están baleiros. Revíseos na área de administración do CRM antes de continuar:',
 
-    // Mensaxes SEPA para transferencias
-    'LBL_SEPA_CREDIT_INVALID_TYPE' => 'O ficheiro non se pode xerar porque o seu tipo debería ser <b>transferencias emitidas</b>.',
+    // SEPA transfers messages
+    'LBL_SEPA_CREDIT_INVALID_TYPE' => "O ficheiro non se pode xerar porque o seu tipo debería ser <b>transferencias emitidas</b>.",
 
-    // Mensaxes SEPA para recibos
+    // SEPA direct debits messages
     'LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT' => 'O pago non está relacionado con ningún compromiso de pago: ',
     'LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE' => 'A <b>data de sinatura</b> do compromiso de pago está baleira: ',
     'LBL_SEPA_DEBIT_INVALID_MANDATE' => 'O <b>mandato</b> do pago non é válido. Está baleiro, supera os 35 caracteres ou contén espazos en branco (verifique tamén o compromiso de pago): ',
     'LBL_SEPA_DEBIT_INVALID_NIF' => 'O <b>número de identificación</b> (NIF, NIE...) da persoa/organización está baleiro: ',
-    'LBL_SEPA_DEBIT_INVALID_TYPE' => 'O ficheiro non se pode xerar porque o seu tipo debería ser <b>recibos domiciliados</b>.',
+    'LBL_SEPA_DEBIT_INVALID_TYPE' => "O ficheiro non se pode xerar porque o seu tipo debería ser <b>recibos domiciliados</b>.",
 
-    // Mensaxes SEPA para devolución de recibos
-    'LBL_SEPA_RETURN_ERR_UPLOADING_FILE' => 'Erro: o ficheiro seleccionado non se pode cargar. Erro número ',
+    // SEPA direct debits returns messages
+    'LBL_SEPA_RETURN_ERR_UPLOADING_FILE' => "Erro: o ficheiro seleccionado non se pode cargar. Erro número ",
     'LBL_SEPA_RETURN_ERR_NO_RECEIPT' => 'Erro: o ficheiro de devolución non contén ningún recibo.',
-    'LBL_SEPA_RETURN_ERR_OPENING_FILE' => 'Erro: o ficheiro cargado non se pode abrir.',
+    'LBL_SEPA_RETURN_ERR_OPENING_FILE' => "Erro: o ficheiro cargado non se pode abrir.",
     'LBL_SEPA_RETURN_FILE_OK' => 'O ficheiro de devolución foi procesado con éxito.',
     'LBL_SEPA_RETURN_UNPAID_PAYMENT' => 'Pago marcado como impagado: ',
     'LBL_SEPA_RETURN_PAYMENT_NOT_FOUND_1' => 'Erro: non se atopou o pago: ID (',
@@ -115,7 +115,7 @@ $mod_strings = array(
     'LBL_SEPA_LOAD_RETURNS' => 'Cargar devolucións',
     'LBL_SEPA_RETURN_LOAD_FILE' => 'Cargue as devolucións',
 
-    // Mensajes Redsys para pagos recurrentes
+    // Redsys recurring payments messages
     'LBL_CARD_PAYMENTS_REMITTANCE_INVALID_TYPE' => 'A remesa non se pode procesar porque o seu tipo debería ser Tarxetas.',
     'LBL_CARD_PAYMENTS_TPV_INVALID_MODE' => 'O valor de TPV_TEST debe ser 0 ou 1.',
     'LBL_CARD_PAYMENTS_NONE_SUCCESS' => 'Ningún pago se procesou con éxito.',
@@ -128,6 +128,6 @@ $mod_strings = array(
     'LBL_CARD_PAYMENTS_REMITTANCE_INFO_FAILED' => 'Pagos con erro:',
     'LBL_CARD_PAYMENTS_PAYMENT_INVALID_METHOD' => 'Omitiuse o pago porque o medio pago non é tarxeta.',
 
-    // Outras cadeas
+    // Other strings
     'LBL_ERROR_QUERY_PAYMENTS_TO_REMITTANCE' => 'Erro ao agregar pagos a remesas',
 );
