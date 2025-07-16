@@ -72,7 +72,7 @@ $mod_strings = array(
     'LBL_FILTER_DOMAIN' => 'No enviar Respostes automàtiques al domini',
     'LBL_FIND_SSL_WARN' => '<br>La comprovació de SSL pot durar bastant temps. Si us plau, tingui paciència.<br>',
     'LBL_FROM_ADDR' => 'Adreça del remitent',
-    'LBL_FROM_ADDR_DESC' => 'L\'adreça de correu electrònic proporcionada pot no aparèixer en el camp "De" la secció de l\'adreça del correu enviat per les restriccions imposades pel proveïdor del servei de correu. Amb aquestes circumstàncies, l\'adreça de correu definida al servidor de correu de sortida serà el que s\'utilitzarà.',
+    'LBL_FROM_ADDR_DESC' => 'L\'adreça de correu electrònic proporcionada pot no aparèixer en el camp "De" la secció de l\'adreça del correu enviat per les restriccions imposades pel proveïdor del servei de correu. Amb aquestes circumstàncies, l\'adreça de correu definida al servidor de correu de sortida serà el que s\'utilitzarà.', // as long as XTemplate doesn't support output escaping, transform quotes to html-entities right here (bug #48913)
     'LBL_FROM_NAME' => 'Nom del remitent',
     'LBL_GROUP_QUEUE' => 'Assignar a Grup',
     'LBL_HOME' => 'Inici',
@@ -83,8 +83,8 @@ $mod_strings = array(
     'LBL_SERVER_ADDRESS' => 'Direcció del servidor',
     'LBL_LIST_STATUS' => 'Estat:',
     'LBL_LOGIN' => 'Nom d\'Usuari',
+    'LBL_USERNAME' => 'Nombre d\'usuari',
     'LBL_MAILBOX_DEFAULT' => 'SAFATA D\'ENTRADA',
-    'LBL_USERNAME' => "Nombre d'usuari",
     'LBL_MAILBOX_SSL' => 'Usar SSL',
     'LBL_MAILBOX_TYPE' => 'Accions Possibles',
     'LBL_DISTRIBUTION_METHOD' => 'Mètode de Distribució',
@@ -129,8 +129,8 @@ $mod_strings = array(
     'LBL_ASSIGN_TO_TEAM_DESC' => 'L\'equip seleccionat té accés al compte de correu. Si ha seleccionat una Carpeta de Grup, l\'equip assignat a la Carpeta de Grup reemplaçarà l\'equip seleccionat.',
     'LBL_SSL' => 'Usar SSL',
     'LBL_STATUS' => 'Estat',
+    'LBL_EMAIL_BODY_FILTERING' => 'Tipo de filtre de cos de correu electrònic',
     'LBL_SYSTEM_DEFAULT' => 'Per Defecte en el Sistema',
-    'LBL_EMAIL_BODY_FILTERING' => 'Tipo de filtre de cos de correu electrònic',    
     'LBL_TEST_BUTTON_TITLE' => 'Provar',
     'LBL_TEST_SETTINGS' => 'Provar Configuració',
     'LBL_TEST_CONNECTION_SETTINGS' => 'Probar la configuració de connexió',
@@ -175,49 +175,50 @@ $mod_strings = array(
     'LBL_SERVICE' => 'Servei',
     'LBL_STORED_OPTIONS' => 'Opcions emmagatzemades',
     'LBL_GROUP_ID' => 'Grup id',
+
     'LBL_OUTBOUND_CONFIGURATION' => 'Configuració de sortida',
     'LBL_CONNECTION_CONFIGURATION' => 'Configuració del servidor',
     'LBL_AUTO_REPLY_CONFIGURATION' => 'Configuració de resposta automàtica',
     'LBL_CASE_CONFIGURATION' => 'Configuració del cas',
     'LBL_GROUP_CONFIGURATION' => 'Configuració del grup',
-   
+
     'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grups de seguretat',
-   
-   
+
+
     'LBL_OUTBOUND_EMAIL_ACCOUNT' => 'Compte de correu electrònic de sortida',
     'LBL_OUTBOUND_EMAIL_ACCOUNT_ID' => 'Identificador del compte de correu electrònic de sortida',
     'LBL_OUTBOUND_EMAIL_ACCOUNT_NAME' => 'Compte de correu electrònic de sortida',
-   
+
     'LBL_AUTOREPLY_EMAIL_TEMPLATE' => 'Plantilla de correu electrònic de resposta automàtica',
     'LBL_AUTOREPLY_EMAIL_TEMPLATE_ID' => 'Identificador de plantilla de correu electrònic de resposta automàtica',
     'LBL_AUTOREPLY_EMAIL_TEMPLATE_NAME' => 'Plantilla de correu electrònic de resposta automàtica',
-   
+
     'LBL_CASE_EMAIL_TEMPLATE' => 'Plantilla de correu electrònic de cas',
     'LBL_CASE_EMAIL_TEMPLATE_ID' => 'Identificador de plantilla de correu electrònic de cas',
     'LBL_CASE_EMAIL_TEMPLATE_NAME' => 'Plantilla de correu electrònic de cas',
-   
+
     'LBL_PROTOCOL' => 'Protocol',
     'LBL_CONNECTION_STRING' => 'Cadena de connexió',
     'LBL_DISTRIB_METHOD' => 'Mètode de distribució',
     'LBL_DISTRIB_OPTIONS' => 'Opcions de distribució',
-   
+
     'LBL_DISTRIBUTION_USER' => 'Usuari de distribució',
-    'LBL_DISTRIBUTION_USER_ID' => "Identificador d'usuari de distribució",
+    'LBL_DISTRIBUTION_USER_ID' => 'Identificador d\'usuari de distribució',
     'LBL_DISTRIBUTION_USER_NAME' => 'Usuari de distribució',
-   
+
     'LBL_EXTERNAL_OAUTH_CONNECTION' => 'Connexió OAuth externa',
     'LBL_EXTERNAL_OAUTH_CONNECTION_ID' => 'Identificador de connexió OAuth extern',
     'LBL_EXTERNAL_OAUTH_CONNECTION_NAME' => 'Connexió OAuth externa',
     'LNK_EXTERNAL_OAUTH_CONNECTIONS' => 'Connexions OAuth externes',
-   
+
     'LBL_TYPE' => 'Tipus',
-    'LBL_AUTH_TYPE' => "Tipus d'autenticació",
+    'LBL_AUTH_TYPE' => 'Tipus d\'autenticació',
     'LBL_IS_DEFAULT' => 'Per defecte',
     'LBL_SIGNATURE' => 'Firma',
-   
+
     'LBL_OWNER_NAME' => 'Propietari',
-   
+
     'LBL_SET_AS_DEFAULT_BUTTON' => 'Estableix com a predeterminat',
-   
+
     'LBL_MOVE_MESSAGES_TO_TRASH_AFTER_IMPORT' => 'Mou els missatges a la paperera després de la importació?',
 );
