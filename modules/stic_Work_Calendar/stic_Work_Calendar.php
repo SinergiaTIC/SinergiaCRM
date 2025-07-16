@@ -116,8 +116,12 @@ class stic_Work_Calendar extends Basic
                     // Update the start date and time, the end date and time after adding one day, and the record name
                     $this->start_date = $timedate->asDb($auxStartDate, $current_user);  
                     $this->end_date = $timedate->asDb($auxStartDate->modify("next day"), $current_user);                         
+                } else {
+                    $endDate = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
+                    $endDate = $endDate->modify("next day");
+                    $this->end_date = $timedate->asDb($endDate, $current_user);  
                 }
-                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDate, 0, 10);            
+                $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDate, 0, 10);       
             }
 
             if ($_REQUEST["action"] != "Save") // MassUpdate, API, Import..
