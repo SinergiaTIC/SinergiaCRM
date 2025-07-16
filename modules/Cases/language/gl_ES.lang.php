@@ -105,7 +105,7 @@ $mod_strings = array(
     'LBL_CREATED_USER' => 'Usuario Creado',
     'LBL_MODIFIED_USER' => 'Usuario Modificado',
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Proxectos',
-    'LBL_CASE_INFORMATION' => 'Visión Global',  //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CASE_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
 
     // SNIP
     'LBL_UPDATE_TEXT' => 'Actualizacións - Texto', //Field for Case updates with text only
@@ -127,7 +127,5 @@ $mod_strings = array(
     'LBL_CONTACT_CREATED_BY_NAME' => 'Creado polo contacto',
     'LBL_CONTACT_CREATED_BY' => 'Creado por',
     'LBL_CASE_UPDATE_FORM' => 'Actualizacións - Formulario adxunto', //Form for attachments on case updates
-    'LBL_CREATOR_PORTAL' => 'URL do Portal', //PR 5426
-    'LBL_SUGGESTION' => 'Suxestión', //PR 5426
     'LBL_UNKNOWN_CONTACT' => 'Persoa descoñecida',
 );
