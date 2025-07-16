@@ -47,7 +47,7 @@ $mod_strings = array(
     'LBL_ASCENDING' => 'Ascendent',
     'LBL_DESCENDING' => 'Descendent',
 
-    'LBL_LIST_FORM_TITLE' => "Llista d'Organitzacions subvencionades",
+    'LBL_LIST_FORM_TITLE' => 'Llista d\'Organitzacions subvencionades',
     'LBL_MODULE_NAME' => 'Organitzacions subvencionades',
     'LBL_MODULE_TITLE' => 'Organitzacions subvencionades',
     'LBL_HOMEPAGE_TITLE' => 'Les meves Organitzacions subvencionades',
@@ -65,7 +65,7 @@ $mod_strings = array(
     'LBL_AMOUNT_REQUESTED' => 'Import sol·licitat',
     'LBL_AMOUNT_AWARDED' => 'Import concedit',
     'LBL_AMOUNT_RECEIVED' => 'Import rebut',
-    'LBL_START_DATE' => "Data d'alta",
+    'LBL_START_DATE' => 'Data d\'alta',
     'LBL_VALIDATION_DATE' => 'Data de validació',
     'LBL_PRESENTATION_DATE' => 'Data de presentació',
     'LBL_RESOLUTION_DATE' => 'Data de resolució específica',
