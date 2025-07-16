@@ -21,6 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Relacions Organitzacions - Revisió de les relacions',		// Aquesta etiqueta és obligatòria. Indica el nom de la funció
+    'NAME' => 'Relacions Organitzacions - Revisió de les relacions',		// Required label. Contains function name
     'NO_LINK' => 'No té cap organització vinculada o no és vàlida.',
 );
