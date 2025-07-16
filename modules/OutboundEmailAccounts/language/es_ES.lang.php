@@ -118,5 +118,5 @@ $mod_strings = array(
     'LBL_OWNER' => 'Propietario',
     'LBL_OWNER_NAME' => 'Propietario',
 
-    'LNK_EXTERNAL_OAUTH_CONNECTIONS' => 'Conexiones OAuth Externas',
+    'LNK_EXTERNAL_OAUTH_CONNECTIONS' => 'Conexiones OAuth Externas'
 );
