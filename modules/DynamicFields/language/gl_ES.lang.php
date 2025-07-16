@@ -102,5 +102,8 @@ $mod_strings = array(
     'COLUMN_TITLE_INLINE_EDIT_TEXT' => 'Edición en liña',
     'COLUMN_TITLE_PARENT_ENUM' => 'Lista Despregable Pai',
     'LBL_INSERT_FIELD' => 'Inserir campo',
+	// STIC-Custom 20230919 MHP - Create dynamic tag for text 'Invalid logic'
+	// STIC #1221
     'LBL_INVALID_LOGIC' => 'Lóxica non válida',
+    // END STIC-Custom
 );
