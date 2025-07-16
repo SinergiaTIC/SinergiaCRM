@@ -81,7 +81,10 @@ $mod_strings = array(
     'LBL_USER_ROLE_PRECEDENCE' => 'Precedencia do Rol de Usuario',
     'LBL_USER_ROLE_PRECEDENCE_DESC' => 'Se calquera rol é asignado ao usuario directamente, este tenrá precedencia sobre calquera rol de grupo.',
     'LBL_INHERIT_TITLE' => 'Regras de herdanza de Grupo',
+    // STIC custom - JCH - 20221130 - Add title description
+    // STIC#929
     'LBL_INHERIT_TITLE_DESC' => 'As regras de herdanza de grupos aplícanse exclusivamente no momento da creación do rexistro.',
+    // END STIC
     'LBL_INHERIT_CREATOR' => 'Herda do Usuario que o creo',
     'LBL_INHERIT_CREATOR_DESC' => 'O rexistro herdará todos os Grupos asignados ao usuario que o creou.',
     'LBL_INHERIT_PARENT' => 'Herda do rexistro pai',
@@ -89,7 +92,11 @@ $mod_strings = array(
     'LBL_USER_POPUP' => 'Ventá de Novo Usuario de Grupo',
     'LBL_USER_POPUP_DESC' => 'Cando se crea un novo Usuario, mostra unha ventá de SecurityGroups para asignar o usuario a Grupo(s).',
     'LBL_INHERIT_ASSIGNED' => 'Herdar de Usuario asignado',
+    // STIC custom - JCH - 20221130 - Homogenize description
+    // STIC#929
+    // 'LBL_INHERIT_ASSIGNED_DESC' => 'The record will inherit all the groups of the user assigned to the record. Other groups assigned to the record will NOT be removed.',
     'LBL_INHERIT_ASSIGNED_DESC' => 'O rexistro herdará todos os grupos do usuario asignado ao rexistro. Outros grupos asignados ao rexistro non serán removidos.',
+    // END STIC
     'LBL_POPUP_SELECT' => 'Utilice Creador Seleccionar grupo',
     'LBL_POPUP_SELECT_DESC' => 'Cando un rexistro se crea por un usuario en máis dun grupo mostran un panel de selección de grupos na pantalla de creación. Do contrario herdar ese grupo.',
     'LBL_FILTER_USER_LIST' => 'Lista de usuario do filtro',
@@ -119,7 +126,7 @@ $mod_strings = array(
 
     'LBL_GROUP_SELECT' => 'Seleccionar os grupos deben ter acceso a este rexistro',
     'LBL_ERROR_DUPLICATE' => 'Debido a un posible duplicado detectado por SuiteCRM vostede terá que agregar manualmente os grupos de seguridade do seu rexistro recén creado.',
-    'LBL_ERROR_EXPORT_WHERE_CHANGED' => 'A actualización fallou porque se modificou o filtro de busca. Inténtao de novo.', // PR 7999
+    'LBL_ERROR_EXPORT_WHERE_CHANGED' => 'A actualización fallou porque se modificou o filtro de busca. Inténtao de novo.',
 
     'LBL_INBOUND_EMAIL' => 'Conta de correo electrónico entrante',
     'LBL_INBOUND_EMAIL_DESC' => 'Só permitir o acceso a unha conta de correo electrónico se o usuario pertence a un grupo que se asigna á conta de correo.',
