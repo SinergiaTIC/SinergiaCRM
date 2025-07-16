@@ -89,12 +89,52 @@ $documentHtmlContent = '
         <section class="signature-area">
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Área de Firma</h2>
             <p class="text-sm text-gray-600 mb-3 text-center">
-                Por favor, dibuje su firma en el recuadro de abajo.
+                Por favor, dibuje su firma en el recuadro de abajo o use las opciones alternativas.
             </p>
+
+            <!-- Mensaje de instrucción para el scroll -->
+            <div id="scrollInstructionMessage" class="scroll-instruction-message bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg relative mb-4 text-center">
+                <span class="block sm:inline">Por favor, desplácese hasta el final del documento para habilitar el área de firma.</span>
+            </div>
+
             <canvas id="signatureCanvas" class="w-full"></canvas>
             <div class="action-buttons flex justify-center gap-4 mt-4">
                 <button id="clearSignatureBtn" class="btn-secondary">Limpiar</button>
                 <button id="saveSignatureBtn" class="btn-primary">Guardar Firma</button>
+            </div>
+
+            <div class="signature-alternatives w-full mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-xl font-bold mb-4 text-center text-gray-700">Opciones de Firma Alternativas</h3>
+
+                <!-- Firma por Texto -->
+                <div class="text-signature-option mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                    <h4 class="text-lg font-semibold mb-3 text-gray-800">1. Firma por Texto</h4>
+                    <div class="mb-3">
+                        <label for="textSignatureInput" class="block text-sm font-medium text-gray-700 mb-1">Escriba su nombre completo:</label>
+                        <input type="text" id="textSignatureInput" placeholder="Ej: Juan Pérez" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900">
+                    </div>
+                    <div class="mb-4">
+                        <label for="fontSelector" class="block text-sm font-medium text-gray-700 mb-1">Seleccione un estilo de fuente:</label>
+                        <select id="fontSelector" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900">
+                            <option value="Dancing Script">Dancing Script</option>
+                            <option value="Pacifico">Pacifico</option>
+                            <option value="Great Vibes">Great Vibes</option>
+                            <option value="Caveat">Caveat</option>
+                            <option value="Indie Flower">Indie Flower</option>
+                        </select>
+                    </div>
+                    <button id="renderTextSignatureBtn" class="btn-secondary w-full">Renderizar Firma de Texto</button>
+                </div>
+
+                <!-- Firma por Imagen -->
+                <div class="image-signature-option p-4 border border-gray-200 rounded-lg bg-gray-50">
+                    <h4 class="text-lg font-semibold mb-3 text-gray-800">2. Subir Firma como Imagen</h4>
+                    <div class="mb-3">
+                        <label for="imageSignatureInput" class="block text-sm font-medium text-gray-700 mb-1">Seleccione un archivo de imagen (PNG/JPG):</label>
+                        <input type="file" id="imageSignatureInput" accept="image/png, image/jpeg" class="w-full text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+                    <button id="uploadImageSignatureBtn" class="btn-secondary w-full">Subir Imagen de Firma</button>
+                </div>
             </div>
         </section>
 
@@ -104,16 +144,17 @@ $documentHtmlContent = '
             <div id="auditRecords" class="space-y-2">
                 <!-- Los registros de auditoría se cargarán aquí dinámicamente con JavaScript -->
                 <div class="audit-record bg-gray-50 rounded-md">
-                    <strong>[<?php echo date('d/m/Y H:i:s'); ?>]</strong> Documento cargado.
+                    <strong>[<?php echo date('d/m/Y H:i:s'); ?>]</strong> Documento cargado.<br>
                 </div>
                 <div class="audit-record bg-gray-50 rounded-md">
-                    <strong>[<?php echo date('d/m/Y H:i:s', strtotime('-5 minutes')); ?>]</strong> Usuario inició sesión.
+                    <strong>[<?php echo date('d/m/Y H:i:s', strtotime('-5 minutes')); ?>]</strong> Usuario inició sesión.<br>
                 </div>
             </div>
         </section>
     </div>
 
     <!-- Enlace al archivo JavaScript -->
+    
     <script src="modules/stic_Signatures/Sign/SticSign.js"></script>
 </body>
 </html>

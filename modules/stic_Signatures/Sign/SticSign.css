@@ -3,6 +3,9 @@
 
 /* Importa la fuente Inter de Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Importa las fuentes manuscritas para la firma de texto */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=Pacifico&family=Great+Vibes&family=Caveat&family=Indie+Flower&display=swap');
+
 
 /* Estilos base para el cuerpo y los elementos principales */
 body {
