@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Inscripcions - Revisió de les relacions',		// Aquesta etiqueta és obligatòria. Indica el nom de la funció
+    'NAME' => 'Inscripcions - Revisió de les relacions',		// Required label. Contains function name
     'NO_LINK' => 'No té cap persona, organització o interessat vinculat.',
     'NO_EVENT' => 'No té cap esdeveniment vinculat.',
 );
