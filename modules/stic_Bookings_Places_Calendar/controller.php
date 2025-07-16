@@ -66,6 +66,7 @@ class stic_Bookings_Places_CalendarController extends stic_Bookings_CalendarCont
             LEFT JOIN stic_centers sc ON srsc.stic_resources_stic_centersstic_centers_ida = sc.id
             WHERE sb.end_date >= '$start_date'
             AND sb.start_date <= '$end_date'
+            AND sr.type ='place'
             AND sb.status != 'cancelled'
             AND sb.deleted = 0
             AND sr.deleted = 0
