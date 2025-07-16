@@ -1,13 +1,11 @@
 <?php
 /**
+ *
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
- *
- * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
- * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ * Copyright (C) 2011 - 2019 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -29,18 +27,15 @@
  * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
  * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
  *
- * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- * 
  * The interactive user interfaces in modified source and object code versions
  * of this program must display Appropriate Legal Notices, as required under
  * Section 5 of the GNU Affero General Public License version 3.
  *
  * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
  * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo, "Supercharged by SuiteCRM" logo and “Nonprofitized by SinergiaCRM” logo. 
- * If the display of the logos is not reasonably feasible for technical reasons, 
- * the Appropriate Legal Notices must display the words "Powered by SugarCRM", 
- * "Supercharged by SuiteCRM" and “Nonprofitized by SinergiaCRM”. 
+ * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
+ * reasonably feasible for technical reasons, the Appropriate Legal Notices must
+ * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
  */
 
 if (!defined('sugarEntry') || !sugarEntry) {
@@ -59,7 +54,9 @@ $mod_strings = array(
     'DEFAULT_SYSTEM_SETTINGS' => 'Interfície d\'Usuari',
     'DEFAULT_THEME' => 'Tema predeterminat',
     'DEFAULT_TIME_FORMAT' => 'Format d\'hora predeterminat',
+
     'DISPLAY_RESPONSE_TIME' => 'Mostrar els temps de resposta del servidor',
+
     'IMAGES' => 'Logotips',
     'LBL_ALLOW_USER_TABS' => 'Permetre que els usuaris puguin ocultar pestanyes',
     'LBL_CONFIGURE_SETTINGS_TITLE' => 'Configuració del Sistema',
@@ -75,10 +72,10 @@ $mod_strings = array(
     'LBL_YAHOOMAIL_SMTPUSER' => 'Id de Yahoo! Mail:',
     'LBL_GMAIL_SMTPPASS' => 'Contrasenya de Gmail:',
     'LBL_GMAIL_SMTPUSER' => 'Adreça de correu electrònic de Gmail:',
-    'LBL_EXCHANGE_SMTPPASS' => 'Contrasenya d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPUSER' => 'Nom d&#39;usuari d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPPORT' => 'Port del servidor d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPSERVER' => 'Servidor d&#39;Exchange:', // Excepció d'escapat 
+    'LBL_EXCHANGE_SMTPPASS' => 'Contrasenya d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPUSER' => 'Nom d&#39;usuari d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPPORT' => 'Port del servidor d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPSERVER' => 'Servidor d&#39;Exchange:',
     'LBL_ALLOW_DEFAULT_SELECTION' => 'Permet als usuaris utilitzar aquesta compta per a correu electrònic de sortida:',
     'LBL_ALLOW_DEFAULT_SELECTION_HELP' => 'Quan aquesta opció està seleccionada, tots els usuaris podran enviar correus electrònics utilitzant la mateixa compta de correu de sortida per a l\'enviament de notificacions del sistema i avisos. Si la opció no està seleccionada, els usuaris poden utilitzar el servidor de correu de sortida després de proporcionar la informació de la seva pròpia compta.',
     'LBL_MAILMERGE' => 'Combinar Correspondència',
@@ -91,6 +88,7 @@ $mod_strings = array(
     'LBL_MODULE_TITLE' => 'Interfície d\'Usuari',
     'LBL_NOTIFY_FROMADDRESS' => 'Adreça "De":',
     'LBL_NOTIFY_SUBJECT' => 'Assumpte de correu electrònic:',
+
     'LBL_PROXY_AUTH' => 'Autentificació?',
     'LBL_PROXY_HOST' => 'Servidor Proxy',
     'LBL_PROXY_ON_DESC' => 'Configura l\'adreça del servidor proxy i la configuració de l\'autentificació',
@@ -98,7 +96,7 @@ $mod_strings = array(
     'LBL_PROXY_PASSWORD' => 'Clau de pas',
     'LBL_PROXY_PORT' => 'Port',
     'LBL_PROXY_TITLE' => 'Configuració del Proxy',
-    'LBL_PROXY_USERNAME' => "Nom d\'Usuari", // STIC-Custom 2020/08/07 - Escaping exception. Do not touch. STIC#49
+    'LBL_PROXY_USERNAME' => 'Nom d\'Usuari',
     'LBL_RESTORE_BUTTON_LABEL' => 'Restaurar',
     'LBL_SYSTEM_SETTINGS' => 'Configuració',
     'LBL_USE_REAL_NAMES' => 'Mostrar nom complet (no id usuari)',
@@ -193,6 +191,7 @@ Enllaçar al servidor LDAP utilitzant credencials d\'usuaris específiques. Es v
     'LBL_LOGGER_FILENAME' => 'Nom del fitxer de registre',
     'LBL_LOGGER_FILE_EXTENSION' => 'Extensió',
     'LBL_LOGGER_MAX_LOG_SIZE' => 'Mida màxima del registre',
+    'LBL_STACK_TRACE' => 'Enable stack trace',
     'LBL_LOGGER_DEFAULT_DATE_FORMAT' => 'Format de data per defecte',
     'LBL_LOGGER_LOG_LEVEL' => 'Nivell de registre',
     'LBL_LEAD_CONV_OPTION' => 'Opcions de conversa de client potencial',
@@ -205,122 +204,6 @@ Enllaçar al servidor LDAP utilitzant credencials d\'usuaris específiques. Es v
     'LBL_IMPORT_MAX_RECORDS' => 'Importar - Màxim nombre de registres:',
     'LBL_IMPORT_MAX_RECORDS_HELP' => 'Especificar quants registres es permeten dins dels arxius d\'importació.<br>Si el nombre de registres en un arxiu d\'importació excedeix aquest nombre, l\'usuari serà avisat.<br>Si no s\'entra cap nombre s\'acceptarà un nombre il·limitat de registres.',
     'vCAL_HELP' => 'Faci servir aquesta opció per determinar el número de mesos per endavant sobre la data actual amb la que es pública la informació relativa al estat de Disponible/Ocupat sobre trucades i reunions.</BR>Per desactivar la publicació del estat Disponible/Ocupat, posi "0".  El mínim es 1 mes; el màxim 12.',
-    'LBL_PDFMODULE_NAME' => 'Configuració PDF',
-    'SUITEPDF_BASIC_SETTINGS' => 'Propietats del document',
-    'SUITEPDF_ADVANCED_SETTINGS' => 'Configuració avançada',
-    'SUITEPDF_LOGO_SETTINGS' => 'Imatges',
-
-    'PDF_AUTHOR' => 'Autor',
-    'PDF_AUTHOR_INFO' => 'L\'autor apareix a les propietat del document.',
-
-    'PDF_HEADER_LOGO' => 'Per a documents PDF de pressupostos',
-    'PDF_HEADER_LOGO_INFO' => 'Aquesta imatge apareix a la capçalera per defecte dels documents PDF de pressupostos.',
-
-    'PDF_NEW_HEADER_LOGO' => 'Seleccioni una nova imatge per als pressupostos',
-    'PDF_NEW_HEADER_LOGO_INFO' => 'El format de l\'arxiu pot ser .jpg o .ong (Solament .jpg per EZPDF)<BR> La mida recomanada és 867x60 px.',
-
-    'PDF_SMALL_HEADER_LOGO' => 'Per a documents PDF d\'informes',
-    'PDF_SMALL_HEADER_LOGO_INFO' => 'Aquesta imatge apareix a la capçalera per defecte en els documents PDF d\'informes. <br> Aquesta imatge també apareix a la cantonada superior esquerra de l\'aplicació SuiteCRM.',
-
-    'PDF_NEW_SMALL_HEADER_LOGO' => 'Seleccionar nova imatge pels informes',
-    'PDF_NEW_SMALL_HEADER_LOGO_INFO' => 'El format de l\'arxiu por ser .jpg o .png (Solament .jpg per EZPDF)<BR>La grandaria recomanada es 212x40 px.',
-
-    'PDF_FILENAME' => 'Nom de fitxer per defecte',
-    'PDF_FILENAME_INFO' => 'Nom per defecte pels fitxers PDF generats',
-
-    'PDF_TITLE' => 'Títol',
-    'PDF_TITLE_INFO' => 'El títol apareix a les propietats del document.',
-
-    'PDF_SUBJECT' => 'Assumpte',
-    'PDF_SUBJECT_INFO' => 'L\'assumpte apareix a les propietats del document.',
-
-    'PDF_KEYWORDS' => 'Paraula/es clau',
-    'PDF_KEYWORDS_INFO' => 'Associar les paraules clau amb el document, generalment de la forma "paraula1 paraula2..."',
-
-    'PDF_COMPRESSION' => 'Compressió',
-    'PDF_COMPRESSION_INFO' => 'Activa o desactiva la compressió de pàgina. <br>Quan s\'activa, la representació interna de cada pàgina es comprimeix, arribant a ratis de compressió d\'aproximadament 2.',
-
-    'PDF_JPEG_QUALITY' => 'Qualitat JPEG (1-100)',
-    'PDF_JPEG_QUALITY_INFO' => 'Establir la qualitat de compressió JPEG per defecte (1-100)',
-
-    'PDF_PDF_VERSION' => 'Versió PDF',
-    'PDF_PDF_VERSION_INFO' => 'Establir la versió PDF (consulti la referència PDF per a valors vàlids).',
-
-    'PDF_PROTECTION' => 'Protecció del document',
-    'PDF_PROTECTION_INFO' => 'Estableix la protecció de document <br>- copiar: copiar text i imatges al porta-retalls <br>- imprimir: imprimir el document <br>- modificar: modificar el document (excepte les anotacions i formularis) <br>- anot.-forms: afegir anotacions i formularis <br> Nota: la protecció davant la modificació és per a gent que posseeix el producte Acrobat complet.',
-
-    'PDF_USER_PASSWORD' => 'Contrasenya d\'usuari',
-    'PDF_USER_PASSWORD_INFO' => 'Si no estableix cap contrasenya, el document s\'obrirà com de costum. <br> Si estableix una contrasenya d\'usuari, el visor PDF es la sol·licitarà abans de mostrar el document. <br> Si la contrasenya mestra és diferent de la de usuari podrà utilitzar-la per accedir complet.',
-
-    'PDF_OWNER_PASSWORD' => 'Contrasenya del propietari',
-    'PDF_OWNER_PASSWORD_INFO' => 'Si no estableix cap contrasenya, el document s\'obrirà com de costum. <br> Si estableix una contrasenya d\'usuari, el visor PDF es la sol·licitarà abans de mostrar el document. <br> Si la contrasenya mestra és diferent de la de usuari podrà utilitzar-la per accedir complet.',
-
-    'PDF_ACL_ACCESS' => 'Control d\'accés',
-    'PDF_ACL_ACCESS_INFO' => 'Control d\'accés per defecte per a la generació de PDFs.',
-
-    'K_CELL_HEIGHT_RATIO' => 'Rati d\'altura de la cel·la',
-    'K_CELL_HEIGHT_RATIO_INFO' => 'Si l\'alçada d\'una cel·la és més petita que (l\'alçada de la lletra pela ràtio de l\'alçada de la cel·la), llavors (l\'alçada de la lletra pela ràtio de l\'alçada de la cel·la) s\'utilitza com alçada de la cel·la.<br>
-(L\'alçada de la lletra pela ràtio de l\'alçada de la cel·la) també és utilitzada com a alçada de la cel·la quant l\'alçada no està definida.',
-
-    'K_SMALL_RATIO' => 'Factor de lletra petita',
-    'K_SMALL_RATIO_INFO' => 'Coeficient de reducció per a fonts petites.',
-
-    'PDF_IMAGE_SCALE_RATIO' => 'Ràtio d\'escalat d\'imatge',
-    'PDF_IMAGE_SCALE_RATIO_INFO' => 'Rati utilitzat per a escalar les imatges',
-
-    'PDF_UNIT' => 'Unitat',
-    'PDF_UNIT_INFO' => 'unitat de mesura del document',
-    'PDF_GD_WARNING' => 'No ha instal·lat la llibreria GD per a PHP. Sense la llibreria GD instal·lada, només es poden mostrar logos JPEG als documents PDF.',
-    'ERR_EZPDF_DISABLE' => 'Avís: La classe EZPDF està deshabilitada a la taula de configuració i està establerta com a classe PDF. Si us plau, "Desi" aquest formulari per a establir TCPDF com la classe PDF i torni a un estat estable.',
-    'LBL_IMG_RESIZED' => "(redimensionat per a ser mostrat)",
-
-
-    'LBL_FONTMANAGER_BUTTON' => 'Administrador de fonts PDF',
-    'LBL_FONTMANAGER_TITLE' => 'Administrador de fonts PDF',
-    'LBL_FONT_BOLD' => 'Negreta',
-    'LBL_FONT_ITALIC' => 'Cursiva',
-    'LBL_FONT_BOLDITALIC' => 'Negreta/Cursiva',
-    'LBL_FONT_REGULAR' => 'Normal',
-
-    'LBL_FONT_TYPE_CID0' => 'CID-0',
-    'LBL_FONT_TYPE_CORE' => 'Nucli',
-    'LBL_FONT_TYPE_TRUETYPE' => 'TrueType',
-    'LBL_FONT_TYPE_TYPE1' => 'Tipus1',
-    'LBL_FONT_TYPE_TRUETYPEU' => 'TrueTypeUnicode',
-
-    'LBL_FONT_LIST_NAME' => 'Nom',
-    'LBL_FONT_LIST_FILENAME' => 'Nom del fitxer',
-    'LBL_FONT_LIST_TYPE' => 'Tipus',
-    'LBL_FONT_LIST_STYLE' => 'Estil',
-    'LBL_FONT_LIST_STYLE_INFO' => 'Estil de la font',
-    'LBL_FONT_LIST_ENC' => 'Codificació',
-    'LBL_FONT_LIST_EMBEDDED' => 'Incrustat',
-    'LBL_FONT_LIST_EMBEDDED_INFO' => 'Marqui aquesta opció per incrustar la font al fitxer PDF',
-    'LBL_FONT_LIST_CIDINFO' => 'Informació CID',
-    'LBL_FONT_LIST_CIDINFO_INFO' => 'Per exemples i més ajuda: www.tcpdf.org',
-    'LBL_FONT_LIST_FILESIZE' => 'Mida de la font (KB)',
-    'LBL_ADD_FONT' => 'Afegir una font',
-    'LBL_BACK' => 'Enrere',
-    'LBL_REMOVE' => 'Eliminar',
-    'LBL_JS_CONFIRM_DELETE_FONT' => 'Està segur que vol eliminar aquesta font?',
-
-    'LBL_ADDFONT_TITLE' => 'Afegir una font PDF',
-    'LBL_PDF_ENCODING_TABLE' => 'Taula de codificació',
-    'LBL_PDF_ENCODING_TABLE_INFO' => 'Nom de la taula de codificació. <br> Aquesta opció s\'ignora per TrueType Unicode, OpenType Unicode i fonts de símbols.<br> La codificació defineix l\'associació entre un codi (de 0 a 255) i un caràcter continguda en la font.<br> A La primera 128 són fixos i corresponen a ASCII.',
-    'LBL_PDF_FONT_FILE' => 'Fitxer de la font',
-    'LBL_PDF_FONT_FILE_INFO' => 'fitxer .ttf o .otf o .pbf',
-    'LBL_PDF_METRIC_FILE' => 'Fitxer de mètrica',
-    'LBL_PDF_METRIC_FILE_INFO' => 'fitxer .afm o .ufm',
-    'LBL_ADD_FONT_BUTTON' => 'Afegir',
-    'JS_ALERT_PDF_WRONG_EXTENSION' => 'Aquest arxiu no té una extensió vàlida.',
-
-    'ERR_MISSING_CIDINFO' => 'El camp d\'informació CID no pot estar buit.',
-    'LBL_ADDFONTRESULT_TITLE' => 'Resultat del procés d\'afegir una font',
-    'LBL_STATUS_FONT_SUCCESS' => 'ÉXIT: La font s\'ha afegit a SuiteCRM.',
-    'LBL_STATUS_FONT_ERROR' => 'ERROR: La font no s\'ha afegit. Consulti el registre a continuació.',
-
-// Font manager
-    'ERR_PDF_NO_UPLOAD' => 'Error durant la pujada del fitxer de font o de mètriques.',
 
 // Wizard
     //Wizard Scenarios
@@ -346,10 +229,4 @@ Enllaçar al servidor LDAP utilitzant credencials d\'usuaris específiques. Es v
     'LBL_WELCOME' => 'Benvingut' /*for 508 compliance fix*/,
     'LBL_LOGO' => 'Logotip' /*for 508 compliance fix*/,
     'LBL_ENABLE_HISTORY_CONTACTS_EMAILS' => 'Mosta els correus electrònics relacionats a l\'historial subpanell per mòduls',
-
-    // Google auth PR 6146
-    'LBL_GOOGLE_AUTH_TITLE' => 'Autenticació de Google',
-    'LBL_GOOGLE_AUTH_JSON' => 'Fitxer JSON',
-    'LBL_GOOGLE_AUTH_JSON_HELP' => 'Carrega el fitxer JSON que has descarregat de la consola de desenvolupadors de Google.',
-
 );
