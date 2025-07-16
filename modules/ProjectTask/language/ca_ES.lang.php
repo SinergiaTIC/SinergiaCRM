@@ -79,6 +79,7 @@ $mod_strings = array(
     'LBL_ACTUAL_EFFORT' => 'Treball Real (h):',
     'LBL_UTILIZATION' => 'Ocupació (%):',
     'LBL_DELETED' => 'Eliminada:',
+    'LBL_IMPORT_PROJECT_TASKS' => 'Import Project Tasks',
 
     'LBL_LIST_NAME' => 'Nom',
     'LBL_LIST_PARENT_NAME' => 'Projecte',
@@ -115,5 +116,5 @@ $mod_strings = array(
     'LBL_RELATIONSHIP_TYPE' => 'Tipus de Relació',
 
     'LBL_ASCENDING' => 'Ascendent',
-    'LBL_DESCENDING' => 'Descendent',    
+    'LBL_DESCENDING' => 'Descendent',
 );
