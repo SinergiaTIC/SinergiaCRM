@@ -72,10 +72,9 @@ $mod_strings = array(
     'LBL_ANY_PHONE' => 'Cualquier teléfono:',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ASSIGNED_TO_ID' => 'Usuario Asignado:',
-    'LBL_BUSINESSCARD' => 'Convertir Cliente Potencial',
     'LBL_CITY' => 'Ciudad:',
     'LBL_CONTACT_ID' => 'ID Contacto',
-    'LBL_CONTACT_INFORMATION' => 'Visión Global', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CONTACT_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_CONTACT_NAME' => 'Nombre del cliente potencial:',
     'LBL_CONTACT_OPP_FORM_TITLE' => 'Cliente Potencial-Oportunidad:',
     'LBL_CONTACT_ROLE' => 'Rol:',
@@ -231,5 +230,4 @@ $mod_strings = array(
     'LBL_LOADING' => 'Cargando ...' /*for 508 compliance fix*/,
     'LBL_EDIT_INLINE' => 'Editar' /*for 508 compliance fix*/,
     'LBL_FP_EVENTS_LEADS_1_FROM_FP_EVENTS_TITLE' => 'Eventos',
-    'LBL_WWW' => 'WWW',
 );
