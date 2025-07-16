@@ -68,7 +68,7 @@ $mod_strings = array(
     'LBL_BIRTHDATE' => 'Fecha de nacimiento:',
     'LBL_CITY' => 'Ciudad:',
     'LBL_CAMPAIGN_ID' => 'ID Campaña',
-    'LBL_CONTACT_INFORMATION' => 'Visión Global',  //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CONTACT_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_CONTACT_NAME' => 'Nombre Contacto:',
     'LBL_CONTACT_OPP_FORM_TITLE' => 'Oportunidad-Contacto:',
     'LBL_CONTACT_ROLE' => 'Rol:',
@@ -211,15 +211,7 @@ $mod_strings = array(
     'LBL_PORTAL_USER_TYPE' => 'Tipo de usuario del portal',
     'LBL_PORTAL_ACCOUNT_DISABLED' => 'Cuenta deshabilitada',
     'LBL_JOOMLA_ACCOUNT_ID' => 'ID de cuenta de Joomla',
-   
-    'LBL_ERROR_NO_PORTAL_SELECTED' => 'No hay ningún portal seleccionado', // escaped single quotes required. PR 5426
-    'LBL_PLEASE_UPDATE_DEPRECATED_PORTAL_ERROR' => 'Se han configurado más de una URL de portal pero no se admiten múltiples portales. Actualice el componente del portal en el sitio: ',
-    'LBL_PLEASE_UPDATE_DEPRECATED_PORTAL_WARNING' => 'El componente portal es obsoleto, por favor actualice el componente portal en sitio: ',
 
-    'LBL_INVALID_USER_DATA' => 'Esta intentando crear un usuario portal sin nombre y/o sin dirección de correo electrónico. Por favor revise los detalles de contacto',
-    'LBL_NO_RELATED_JACCOUNT' => 'Intentando desactivar un usuario del CRM sin una cuenta relacionada Joomla Portal',
-    'LBL_UNABLE_READ_PORTAL_VERSION' => 'No se puede leer la version de AOP desde portal', // PR 5426
- 
     'LBL_AOS_CONTRACTS' => 'Contratos',
     'LBL_AOS_INVOICES' => 'Facturas',
     'LBL_AOS_QUOTES' => 'Presupuestos',
