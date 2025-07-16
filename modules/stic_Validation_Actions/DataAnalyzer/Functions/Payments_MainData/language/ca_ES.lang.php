@@ -21,9 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Pagaments - Revisió de les dades principals',		// Aquesta etiqueta és obligatòria. Indica el nom de la funció
-    'UPDATED_IBAN' => ' ha estat actualitzat per eliminar els caràcters no vàlids.',
+    'NAME' => 'Pagaments - Revisió de les dades principals',		// Required label. Contains function name
     'UPDATED_IBAN' => ' amb un valor incorrecte, s\'ha actualitzat automàticament.',
+    'UPDATED_IBAN' => ' with wrong value, it has been automatically updated.',
     'UPDATED_MANDATE' => ' estava buit o no era vàlid, s\'ha actualitzat automàticament.',
 	'NOVALID_MANDATE' => ' està buit o no és vàlid i no es pot recuperar des del compromís de pagament.',
 	'INHERIT_MANDATE' => ' estava buit o no era vàlid, s\'ha heretat des del compromís de pagament.',
