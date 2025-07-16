@@ -12,7 +12,7 @@ class stic_MessagesManController extends SugarController
      */
     public function action_force() {
         require_once('modules/stic_MessagesMan/Utils.php');
-        stic_MessagesManUtils::sendQueuedMessages(true);
+        stic_MessagesManUtils::sendQueuedMessages(false);
 
         header("Location: index.php?module=stic_MessagesMan&action=index");
     }

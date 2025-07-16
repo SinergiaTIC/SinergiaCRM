@@ -8,6 +8,7 @@
         <input type="hidden" name="action" id="action" value="{$MAP.ACTION}">
         <input type="hidden" name="return_module" id="return_module" value="{$MAP.RETURN_MODULE}">
         <input type="hidden" name="return_id" id="return_id" value="{$MAP.RETURN_ID}">
+        <input type="hidden" name="record" id="record" value="{$MAP.RETURN_ID}">
         <input type="hidden" name="return_action" id="return_action" value="{$MAP.RETURN_ACTION}">
         <input type="hidden" name="test" id="test" value="{$MAP.TEST}">
         <p>

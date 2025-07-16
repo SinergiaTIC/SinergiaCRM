@@ -442,7 +442,7 @@ class stic_MessagesMan extends SugarBean
             $this->saveLog('send error', $targetPhone, true);
             return false;
         }
-        $this->saveLog('targeted', $targetPhone, true);
+        $this->saveLog('targeted', $targetPhone, true, $test);
 
         return true;
     }
@@ -482,7 +482,7 @@ class stic_MessagesMan extends SugarBean
         return false;
     }
 
-    public function saveLog($activity_type, $targetPhone, $delete=false) {
+    public function saveLog($activity_type, $targetPhone, $delete=false, $test = false) {
         // TODOEPS: If attempts is not implemented, we can remove the $delete parameter
         global $timedate;
 
@@ -493,7 +493,9 @@ class stic_MessagesMan extends SugarBean
          $campaign_log->target_type = $this->related_type;
          $campaign_log->marketing_id = $this->marketing_id;
 
-         $campaign_log->more_information = $targetPhone;
+         if (!$test) {
+             $campaign_log->more_information = $targetPhone;
+         }
 
          $campaign_log->activity_type = $activity_type;
          $campaign_log->activity_date = $timedate->nowDb(); //$timedate->now(); //TODOEPS: Recuperar el temps amb segons

@@ -41,6 +41,7 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
+    debugger;
     setAutofill(["name"]);
     function toggle_message_for() {
       debugger;
@@ -61,6 +62,27 @@ switch (viewType()) {
     $(document).ready(function() {
       $("#select_all").on("click", toggle_message_for);
       toggle_message_for();
+      var baseURL = 'index.php';
+
+    // Create an object with all the parameters
+      var paramsPost = {
+        module: 'stic_Message_Marketing',
+        action: 'getDefaultSender',
+      };
+      debugger;
+        $.ajax({
+          url: baseURL,
+          type: 'POST',
+          data: paramsPost,
+          success: function(data) {
+            debugger;
+            let parsedData = JSON.parse(data);
+            $("#sender").val(parsedData.data.defaultSender)
+          },
+          error: function(xhr, status, error) {
+              // Your error handler here
+          }
+        });
     });
     if (viewType() == "quickcreate") {
       // Disabling the "Campaign" field relationship
@@ -68,6 +90,8 @@ switch (viewType()) {
       $("#btn_campaigns_stic_message_marketing_name").prop("disabled", "disabled");
       $("#btn_clr_campaigns_stic_message_marketing_name").prop("disabled", "disabled");
     }
+
+
     break;
 
   case "detail":

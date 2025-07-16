@@ -78,8 +78,10 @@ class stic_Message_MarketingController extends SugarController {
         require_once 'modules/stic_Message_Marketing/Utils.php';
         require_once 'modules/stic_MessagesMan/Utils.php';
         
-        $ids = $_REQUEST['mass'];
-        $test = $_REQUEST['test'];
+        $ids = $_REQUEST['mass'] ?? array();
+        $test = $_REQUEST['test'] ?? 'false';
+
+        $test = ($test === 'false') ? false : true;
 
         if ($test) {
             foreach($ids as $mmid) {
@@ -98,5 +100,19 @@ class stic_Message_MarketingController extends SugarController {
         // exit;
         // SugarApplication::redirect("index.php?module=Campaigns&action=index");
         // SugarApplication::redirect("index.php?module=Campaigns&action=DetailView&record={$_REQUEST['return_id']}");
+    }
+
+    public function action_getDefaultSender() {
+        require_once 'modules/stic_Settings/Utils.php';
+
+        $defaultMessageSender = stic_SettingsUtils::getSetting('MESSAGES_SENDER');
+
+        $response = array();
+        $response['code'] = 'OK';
+        $response['data']['defaultSender'] = $defaultMessageSender;
+
+        echo json_encode($response);
+        exit;
+
     }
 }
