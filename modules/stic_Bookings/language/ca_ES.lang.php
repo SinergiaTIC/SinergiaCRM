@@ -20,7 +20,6 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
 $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
@@ -66,7 +65,7 @@ $mod_strings = array(
     'LBL_CODE' => 'Codi',
     'LBL_STATUS' => 'Estat',
     'LBL_ALL_DAY' => 'Tot el dia',
-    'LBL_START_DATE' => "Data d&#39;inici",
+    'LBL_START_DATE' => 'Data d&#39;inici',
     'LBL_END_DATE' => 'Data de finalització',
     'LBL_FLEX_RELATE' => 'Relacionat amb',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE' => 'Recursos',
@@ -85,9 +84,9 @@ $mod_strings = array(
     'LBL_RESOURCES_ADD' => 'Afegeix un recurs',
     'LBL_RESOURCES_ERROR' => 'Recurs en conflicte amb una altra reserva',
     'LBL_RESOURCES_DATE_ERROR' => 'Hi ha recursos que no estan disponibles en aquesta data.',
-    'LBL_RESOURCES_STATUS_ERROR' => 'No es pot activar la reserva en aquestes dates, hi ha recursos que no estan disponibles.',
-    'LBL_RESOURCES_END_DATE_ERROR' => "La data de finalització ha de ser posterior a la data d'inici.",
-    'LBL_RESOURCES_START_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",
+    'LBL_RESOURCES_STATUS_ERROR' => "No es pot activar la reserva en aquestes dates, hi ha recursos que no estan disponibles.",
+    'LBL_RESOURCES_END_DATE_ERROR' => 'La data de finalització ha de ser posterior a la data d\'inici.',
+    'LBL_RESOURCES_START_DATE_ERROR' => 'La data d\'inici ha de ser anterior a la data de finalització.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'Aquesta reserva no té cap recurs assignat.',
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'Aquesta reserva no te cap recurs assignat. Voleu desar-la igualment?',
 
@@ -97,5 +96,5 @@ $mod_strings = array(
     'LBL_RESOURCES_LIST' => 'Llista de recursos',
 
     // Tooltips help
-    'LBL_ALL_DAY_HELP' => 'Si la casella està marcada la reserva es fa en dies complets. Si està desmarcada poden indicar-se les hores inicial i final.',
+    'LBL_ALL_DAY_HELP' => "Si la casella està marcada la reserva es fa en dies complets. Si està desmarcada poden indicar-se les hores inicial i final.",
 );
