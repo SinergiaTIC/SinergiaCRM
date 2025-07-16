@@ -1,6 +1,6 @@
 <?php
 /**
- * 
+ *
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
@@ -57,6 +57,7 @@ $mod_strings = array(
     'ERR_ADMIN_PASS_BLANK' => 'Introdueixi la contrasenya d\'admin de SuiteCRM. ',
 
     'ERR_CHECKSYS' => 'S\'han detectat errors durant les comprovacions de compatibilitat. Perquè la seva Instal·lació de SuiteCRM funcioni correctament, du a terme els següents passos per corregir els problemes llistats a continuació i faci clic al botó comprovar de nou, o iniciï de nou la instal·lació, si us plau.',
+    'ERR_CHECKSYS_CALL_TIME' => 'Allow Call Time Pass Reference is On (this should be set to Off in php.ini)',
     'ERR_CHECKSYS_CURL' => 'No trobat: El Planificador de SuiteCRM tindrà funcionalitat limitada.',
     'ERR_CHECKSYS_IMAP' => 'No trobat: Correu electrònic entrant i Campanyes (Correu electrònic) requereixen les biblioteques d\'IMAP. Cap no serà funcional .',
     'ERR_CHECKSYS_MEM_LIMIT_1' => ' (Estableixi-ho a ',
@@ -74,6 +75,7 @@ $mod_strings = array(
     'ERR_CHECKSYS_CONFIG_OVERRIDE_NOT_WRITABLE' => 'L\'arxiu ha de configuració és substituïble, però no es pot escriure. Si us plau, prengui les mesures necessàries perquè el permís d\'escriptura d\'arxius. Depenent del seu sistema operatiu, això podria requerir que vostè canviï els permisos amb chmod 766, o fer clic dret sobre el nom del fitxer per accedir a les propietats i desactivi l\'opció de només lectura.',
     'ERR_CHECKSYS_CUSTOM_NOT_WRITABLE' => 'El Directori Custom existeix però no és escribible. És possible que hagi de canviar els seus permisos (chmod 766) o fer clic amb el botó dret del ratolí sobre ell i desmarcar l\'opció de només lectura, depenent del seu Sistema Operatiu. Si us plau, dugui a terme els passos necessaris perquè l\'arxiu sigui escribible.',
     'ERR_CHECKSYS_FILES_NOT_WRITABLE' => "Els següents arxius o directoris no són escribibles o no existeixen i no poden ser creats. Depenent del seu Sistema Operatiu, corregir això requerirà canviar els permisos als arxius o en el seu directori pare (chmod 766), o fer clic amb el botó dret en el directori pare i desmarcar l'opció 'només lectura' i aplicar-la a totes les subcarpetes.",
+    'ERR_CHECKSYS_JSON_NOT_AVAILABLE' => "Functions associated with JSON Parser Libraries that are needed by the SuiteCRM application were not found. You might need to uncomment the extension in the php.ini file, or recompile with the right binary file, depending on your version of PHP. Please refer to your PHP Manual for more information.",
     'LBL_CHECKSYS_OVERRIDE_CONFIG' => 'Sobreescriure configuració',
     'ERR_CHECKSYS_SAFE_MODE' => 'La Manera Segura està activada (si us plau, deshabiliti\'l en php.ini)',
     'ERR_CHECKSYS_ZLIB' => 'No trobat: SuiteCRM obté grans beneficis de rendiment amb compressió zlib. ',
@@ -159,6 +161,7 @@ $mod_strings = array(
     'LBL_CHECKSYS_PHP_OK' => 'Correcte (veure ',
     'LBL_CHECKSYS_PHPVER' => 'Versió de PHP',
     'LBL_CHECKSYS_IISVER' => 'Versió d\'ISS',
+    'LBL_CHECKSYS_JSON' => 'JSON Parsing',
     'LBL_CHECKSYS_RECHECK' => 'Comprovar de nou',
     'LBL_CHECKSYS_STATUS' => 'Estat',
     'LBL_CHECKSYS_TITLE' => 'Acceptació de Comprovacions del Sistema',
@@ -181,7 +184,7 @@ $mod_strings = array(
     'LBL_DBCONF_DB_PASSWORD' => 'Contrasenya de l\'Usuari de Base de dades de SuiteCRM',
     'LBL_DBCONF_DB_PASSWORD2' => 'Introdueixi de nou la Clau de Pas de l\'Usuari de Base de dades de SuiteCRM',
     'LBL_DBCONF_DB_USER' => 'Usuari de la base de dades de SuiteCRM',
-    'LBL_DBCONF_SUGAR_DB_USER' => 'Usuari de la base de dades de SuiteCRM',
+    'LBL_DBCONF_SUITE_DB_USER' => 'SuiteCRM Database User',
     'LBL_DBCONF_DB_ADMIN_USER' => 'Nom d´usuari de l´Administrador de Base de Dades',
     'LBL_DBCONF_DB_ADMIN_PASSWORD' => 'Contrasenya del Administrador de Base de dades',
     'LBL_DBCONF_COLLATION' => 'Ordenació',
@@ -231,7 +234,6 @@ $mod_strings = array(
     'LBL_LICENSE_CHKDB_HEADER' => 'Validant les credencials de la base de dades.',
     'LBL_LICENSE_CHECK_PASSED' => 'El sistema ha passat les proves de compatibilitat.',
     'LBL_CREATE_CACHE' => 'Preparant per a instal·lar...',
-    'LBL_CREATE_DEFAULT_ENC_KEY' => 'Creant una clau de xifratge predeterminada...',
     'LBL_LICENSE_REDIRECT' => 'Redirigint a ',
     'LBL_LICENSE_I_ACCEPT' => 'Accepto',
     'LBL_LICENSE_PRINTABLE' => ' Vista imprimible ',
@@ -281,6 +283,7 @@ $mod_strings = array(
     'LBL_REG_CONF_1' => 'Completeu el següent formulari per rebre anuncis sobre el producte, notícies sobre formació, ofertes especials i invitacions especials a esdeveniments de SuiteCRM. No venem, lloguem, compartim, o distribuïm de cap altra manera a terceres parts la informació aquí recollida.',
     'LBL_REG_CONF_3' => 'Gràcies per registrar-se. Faci clic al botó Finalitzar per iniciar una sessió en SuiteCRM. Necessitarà iniciar la sessió per primera vegada utilitzant el nom d\'usuari "admin" i la contrasenya que va introduir al pas 2.',
     'LBL_REG_TITLE' => 'Registre',
+
     'LBL_REQUIRED' => '* Camp requerit',
 
     'LBL_SITECFG_ADMIN_Name' => 'Nom del Administrador de la Aplicació SuiteCRM',
@@ -412,7 +415,7 @@ Després de fer els canvis necessaris, es pot sotmetre a la comprovació del sis
         'subject' => 'Nova informació del compte',
         'type' => 'sistema',
         'description' => 'Aquesta plantilla s\'utilitza quan l\'administrador envia una contrasenya nova a un usuari.',
-        'body' => '<div><table border=\\"0\\" cellspacing=\\"0\\" cellpadding=\\"0\\" width="550" align=\\"\\&quot;\\&quot;center\\&quot;\\&quot;\\"><tbody><tr><td colspan=\\"2\\"><p>Aquí esta el seu compte d\'usuari i contrasenya temporal:</p><p>Nom d\'usuari: $contact_user_user_name </p><p>Contrasenya : $contact_user_user_hash </p><br><p>$config_site_url</p><br><p>Després d\'iniciar la sessió utilitzant la contrasenya de la part superior, pot ser requerit restablir la contrasenya amb una de la seva pròpia elecció</p>   </td>         </tr><tr><td colspan=\\"2\\"></td>         </tr> </tbody></table> </div>',
+        'body' => '<div><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width="550" align=\"\&quot;\&quot;center\&quot;\&quot;\"><tbody><tr><td colspan=\"2\"><p>Aquí esta el seu compte d\'usuari i contrasenya temporal:</p><p>Nom d\'usuari: $contact_user_user_name </p><p>Contrasenya : $contact_user_user_hash </p><br><p>$config_site_url</p><br><p>Després d\'iniciar la sessió utilitzant la contrasenya de la part superior, pot ser requerit restablir la contrasenya amb una de la seva pròpia elecció</p>   </td>         </tr><tr><td colspan=\"2\"></td>         </tr> </tbody></table> </div>',
         'txt_body' =>
             'Aquí està el seu compte d\'usuari i contrasenya temporal: 
 
@@ -428,7 +431,7 @@ Quan ainicieu la sessió amb la contrasenya anterior, pot ser necessari per rest
         'subject' => 'Restablir la contrasenya del compte',
         'type' => 'sistema',
         'description' => "Aquesta plantilla s'utilitza per enviar a un usuari l'enllaç per clicar,  per restaurar la contrasenya de compte de l'usuari.",
-        'body' => '<div><table border=\\"0\\" cellspacing=\\"0\\" cellpadding=\\"0\\" width="550" align=\\"\\&quot;\\&quot;center\\&quot;\\&quot;\\"><tbody><tr><td colspan=\\"2\\"><p>Recentment heu sol·licitat a $contact_user_pwd_last_changed per poder restablir la contrasenya del seu compte.</p> <p>Feu clic en el següent enllaç per restablir la contrasenya:</p><p> $contact_user_link_guid </p>  </td>         </tr><tr><td colspan=\\"2\\"></td>         </tr> </tbody></table> </div>',
+        'body' => '<div><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width="550" align=\"\&quot;\&quot;center\&quot;\&quot;\"><tbody><tr><td colspan=\"2\"><p>Recentment heu sol·licitat a $contact_user_pwd_last_changed per poder restablir la contrasenya del seu compte.</p> <p>Feu clic en el següent enllaç per restablir la contrasenya:</p><p> $contact_user_link_guid </p>  </td>         </tr><tr><td colspan=\"2\"></td>         </tr> </tbody></table> </div>',
         'txt_body' =>
             'Ha demanat recentment a $contact_user_pwd_last_changed per poder restablir la contrasenya.
 Feu clic en el següent enllaç per restablir la contrasenya: 
@@ -441,7 +444,7 @@ $contact_user_link_guid',
         'subject' => 'Codi d\'autenticació en dos passos - Two Factor Autentication',
         'type' => 'sistema',
         'description' => "Aquesta plantilla s'utilitza per enviar un codi d'usuari d'autenticació en dos passos.",
-        'body' => '<div><table border=\\"0\\" cellspacing=\\"0\\" cellpadding=\\"0\\" width="550" align=\\"\\&quot;\\&quot;center\\&quot;\\&quot;\\"><tbody><tr><td colspan=\\"2\\"><p>Two Factor Authentication code is <b>$code</b>.</p>  </td>         </tr><tr><td colspan=\\"2\\"></td>         </tr> </tbody></table> </div>',
+        'body' => '<div><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width="550" align=\"\&quot;\&quot;center\&quot;\&quot;\"><tbody><tr><td colspan=\"2\"><p>Two Factor Authentication code is <b>$code</b>.</p>  </td>         </tr><tr><td colspan=\"2\"></td>         </tr> </tbody></table> </div>',
         'txt_body' =>
             'El codi d\'autenticació en dos passos és $code.',
         'name' => 'Correu electrònic d\'autenticació en dos passos',
@@ -530,7 +533,7 @@ $contact_user_link_guid',
 
     'LBL_EMAIL_ADDRESS' => 'Adreça de correu electrònic:',
     'ERR_ADMIN_EMAIL' => 'L\'adreça de correu electrònic de l\'administrador és incorrecta.',
-    'ERR_SITE_URL' => "L'adreça URL del lloc és requerida.",
+    'ERR_SITE_URL' => 'L\'adreça URL del lloc és requerida.',
 
     'STAT_CONFIGURATION' => 'Configurant relacions...',
     'STAT_CREATE_DB' => 'Crear base de dades...',
@@ -541,7 +544,7 @@ $contact_user_link_guid',
     'LBL_LICENCE_TOOLTIP' => 'Si us plau, accepti la llicència primer',
 
     'LBL_MORE_OPTIONS_TITLE' => 'Més opcions',
-    'LBL_START' => 'Iniciar',
+    'LBL_START' => '',
     'LBL_DB_CONN_ERR' => 'Error en base de dades',
     'LBL_OLD_PHP' => 'Antiga versió de PHP detectat!',
     'LBL_OLD_PHP_MSG' => 'La versió de PHP recomanada per a instal·lar SuiteCRM és %s <br />La versió mínima de PHP requerida és %s<br />Estàs utilitzant la versió de PHP %s, que està EOL: <a href="http://php.net/eol.php">http://php.net/eol.php</a>.<br />Si us plau, considera actualitzar la teva versió de PHP.',
