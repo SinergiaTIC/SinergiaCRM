@@ -69,6 +69,6 @@ $mod_strings = array(
     'LNK_NEW_OAUTH2_IMPLICIT_CLIENT' => 'Nou Client implícit',
     'LNK_NEW_OAUTH2_AUTHORIZATION_CLIENT' => 'Nova autorització Client',
 
-    'LBL_ACCESS_TOKEN' => "Token d'accés",
+    'LBL_ACCESS_TOKEN' => 'Token d\'accés',
     'LBL_REFRESH_TOKEN' => 'Token de refresc',
 );
