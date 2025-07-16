@@ -99,6 +99,6 @@ $mod_strings = array(
     'LBL_LIST_ASSIGNED_TO_NAME' => 'Usuario Asignado',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
 
-    'LBL_BUG_INFORMATION' => 'Visión Global', //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_BUG_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
 
 );
