@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_ALL_MODULES' => 'Todos', //rost fix
+    'LBL_ALL_MODULES' => 'Todos',//rost fix
     'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ID' => 'ID',
@@ -75,13 +75,16 @@ $mod_strings = array(
 
     'LBL_CONFIGURE_SETTINGS' => 'Configurar',
     'LBL_ADDITIVE' => 'Privilegios agregados',
-    'LBL_ADDITIVE_DESC' => 'El usuario tiene la suma de privilegios de todos los roles y grupos asignados a él.',
+    'LBL_ADDITIVE_DESC' => "El usuario tiene la suma de privilegios de todos los roles y grupos asignados a él.",
     'LBL_STRICT_RIGHTS' => 'Privilegios estrictos',
-    'LBL_STRICT_RIGHTS_DESC' => 'Si un usuario es miembro de varios grupos, solamente se le aplicarán los privilegios del grupo asignado al registro en curso.',
+    'LBL_STRICT_RIGHTS_DESC' => "Si un usuario es miembro de varios grupos, solamente se le aplicarán los privilegios del grupo asignado al registro en curso.",
     'LBL_USER_ROLE_PRECEDENCE' => 'Prioridad del rol de usuario',
     'LBL_USER_ROLE_PRECEDENCE_DESC' => 'Cualquier rol asignado directamente al usuario tendrá prioridad sobre cualquier rol de grupo.',
     'LBL_INHERIT_TITLE' => 'Reglas de herencia de grupo',
+    // STIC custom - JCH - 20221130 - Add title description
+    // STIC#929
     'LBL_INHERIT_TITLE_DESC' => 'Las reglas de herencia de grupos se aplican exclusivamente en el momento de la creación del registro.',
+    // END STIC
     'LBL_INHERIT_CREATOR' => 'Heredar del usuario creador',
     'LBL_INHERIT_CREATOR_DESC' => 'El registro heredará todos los grupos del usuario que lo ha creado.',
     'LBL_INHERIT_PARENT' => 'Heredar del registro padre',
@@ -89,7 +92,11 @@ $mod_strings = array(
     'LBL_USER_POPUP' => 'Ventana de grupos del nuevo usuario',
     'LBL_USER_POPUP_DESC' => 'Al crear un nuevo usuario, muestra una ventana emergente para asignar el usuario a los grupos pertinentes.',
     'LBL_INHERIT_ASSIGNED' => 'Heredar del usuario asignado',
+    // STIC custom - JCH - 20221130 - Homogenize description
+    // STIC#929
+    // 'LBL_INHERIT_ASSIGNED_DESC' => 'The record will inherit all the groups of the user assigned to the record. Other groups assigned to the record will NOT be removed.',
     'LBL_INHERIT_ASSIGNED_DESC' => 'El registro heredará todos los grupos del usuario asignado.',
+    // END STIC
     'LBL_POPUP_SELECT' => 'Mostrar selector de grupos',
     'LBL_POPUP_SELECT_DESC' => 'Cuando un registro es creado por parte de un usuario que pertenece a más de un grupo, se  muestra un selector de grupos en pantalla. En caso contrario, el registro hereda directamente el único grupo del usuario.',
     'LBL_FILTER_USER_LIST' => 'Filtrar la lista de usuarios',
@@ -119,7 +126,7 @@ $mod_strings = array(
 
     'LBL_GROUP_SELECT' => 'Seleccione los grupos que deben tener acceso a este registro.',
     'LBL_ERROR_DUPLICATE' => 'Debido a un posible duplicado detectado por SuiteCRM usted tendrá que agregar manualmente los grupos de seguridad de su registro recién creado.',
-    'LBL_ERROR_EXPORT_WHERE_CHANGED' => 'La actualización falló porque se modificó el filtro de búsqueda. Inténtelo de nuevo.', // PR 7999
+    'LBL_ERROR_EXPORT_WHERE_CHANGED' => 'La actualización falló porque se modificó el filtro de búsqueda. Inténtelo de nuevo.',
 
     'LBL_INBOUND_EMAIL' => 'Cuenta de correo electrónico entrante',
     'LBL_INBOUND_EMAIL_DESC' => 'Bloquea las cuentas de correo electrónico entrante en el cliente de correo electrónico para mostrar solo aquellas que pertenecen al mismo grupo que el usuario actual.',
