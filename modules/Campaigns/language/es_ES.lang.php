@@ -106,7 +106,7 @@ $mod_strings = array(
     'LBL_TRACKED_URLS_SUBPANEL_TITLE' => 'URLs de Seguimiento',
     'LBL_CAMPAIGN_ACCOUNTS_SUBPANEL_TITLE' => 'Cuentas',
     'LBL_PROSPECT_LIST_SUBPANEL_TITLE' => 'Lista de Público Objetivo',
-    'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial', // PR 4606
+    'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
     'LBL_EMAIL_MARKETING_SUBPANEL_TITLE' => 'Marketing por Email',
     'LNK_NEW_EMAIL_TEMPLATE' => 'Nueva Plantilla de Email',
     'LNK_EMAIL_TEMPLATE_LIST' => 'Ver Plantillas de Email',
@@ -135,9 +135,6 @@ $mod_strings = array(
     'LBL_CAMPAIGN_LEAD_SUBPANEL_TITLE' => 'Clientes potenciales',
     'LBL_OPPORTUNITY_SUBPANEL_TITLE' => 'Oportunidades',
     'LBL_LOG_ENTRIES_CONTACT_TITLE' => 'Contactos creados',
-    'LBL_LOG_ENTRIES_BLOCKEDD_TITLE' => 'Destinatarios excluidos por dirección o dominio',
-    'LBL_SURVEYRESPONSES_CAMPAIGNS_FROM_SURVEYRESPONSES_TITLE' => 'Respuestas a encuestas',
-    'LBL_CAMPAIGN_SURVEY' => 'Encuesta',
 
     //error messages.
     'ERR_SENDING_NOW' => 'Los mensajes están siendo enviados, por favor inténtelo de nuevo más tarde.',
@@ -234,7 +231,7 @@ $mod_strings = array(
     'LBL_ADD_TRACKER' => 'Nuevo Seguimiento',
     'LBL_CREATE_TARGET' => 'Crear',
     'LBL_SELECT_TARGET' => 'Usar Lista de Público Objetivo existente',
-    'LBL_REMOVE' => 'Quitar', // PR 5451
+    'LBL_REMOVE' => 'Quitar',
     'LBL_START' => 'Iniciar',
     'LBL_TOTAL_ENTRIES' => 'Entradas',
     'LBL_CONFIRM_SEND_SAVE' => 'Está a punto de terminar y proceder con la página de Envío de Email de Campaña.  ¿Desea guardar los cambios y continuar?',
@@ -310,7 +307,7 @@ $mod_strings = array(
     'LBL_MAILBOX_CHECK1_GOOD' => 'Cuentas de correo con gestión de rebote detectadas:',
     'LBL_MAILBOX_CHECK1_BAD' => 'No se han detectado cuentas de correo con gestión de rebote.',
     'LBL_MAILBOX_CHECK2_GOOD' => 'Las opciones de E-mail han sido configuradas:',
-    'LBL_MAILBOX_CHECK2_BAD' => 'Por favor, configure la dirección de e-mail de su sistema. Las opciones no han sido configuradas o son inválidas. La dirección \\"De\\" no puede contener example.com.',
+    'LBL_MAILBOX_CHECK2_BAD' => 'Por favor, configure la dirección de e-mail de su sistema. Las opciones no han sido configuradas o son inválidas. La dirección \"De\" no puede contener example.com.',
     'LBL_SCHEDULER_CHECK_GOOD' => 'Se han detectado Planificadores',
     'LBL_SCHEDULER_CHECK_BAD' => 'No se han detectado Planificadores',
     'LBL_SCHEDULER_CHECK1_BAD' => 'No se ha configurado el Planificador para procesar los Emails Rebotados de Campaña.',
@@ -350,6 +347,7 @@ $mod_strings = array(
     //Campaign charts
     'LBL_CAMPAIGN_RETURN_ON_INVESTMENT' => 'Retorno de inversión de la campaña',
     'LBL_CAMPAIGN_RESPONSE_BY_RECIPIENT_ACTIVITY' => 'Respuesta a la campaña por actividad del destinatario',
+    'LBL_LOG_ENTRIES_BLOCKEDD_TITLE' => 'Destinatarios excluidos por dirección o dominio',
 
     'LBL_AMOUNT_IN' => 'Cantidad en',
 
@@ -378,7 +376,7 @@ $mod_strings = array(
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Oportunidades',
 
     'LBL_LEAD_FORM_WIZARD' => 'Asistente de Formularios para Clientes Potenciales',
-    'LBL_CAMPAIGN_INFORMATION' => 'Visión Global',  //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CAMPAIGN_INFORMATION' => 'Visión Global', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_EDIT_BUTTON' => 'Lanzar Asistente',
     'LBL_YEAR' => "Año",
     'LBL_DAY' => "Día",
@@ -419,6 +417,7 @@ $mod_strings = array(
     'LBL_ATTACHMENTS' => 'Adjuntos',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Falta campo requerido',
     'LBL_SUITE_DOCUMENT' => 'Documento',
+    'LBL_UPLOAD_FILE' => 'Upload File',
     'LBL_EMAIL_ATTACHMENT' => 'Adjunto de Email',
     'LBL_PROCESS_BOUNCED_EMAILS' => 'Proceso de Emails rebotados (bounces)',
     'LBL_PROCESS_CAMPAIGN_EMAILS' => 'Proceso de Emails de campaña',
@@ -444,8 +443,6 @@ $mod_strings = array(
     'LBL_STEP_INFO_MARKETING' => 'Seleccione las cuentas de correo electrónico.',
     'LBL_NO_SUBJECT' => 'La plantilla de correo electrónico seleccionado no tiene un asunto',
     'LBL_NO_HTML_BODY_CONTENTS' => 'La plantilla de correo electrónico seleccionada no tiene un cuerpo html',
-    'LBL_RELATIVE_IMG_SRC_IN_TPL' => 'La plantilla de correo electrónico seleccionada contiene url relativas de imagen', // PR 1646
-    'LBL_REL_IMG_LINKS' => 'La URL del sitio debe añadirse a los siguientes enlaces relativos de imagen:', // PR 1646
     'LBL_NO_SELECTED_TEMPLATE' => '¡No se eligió una plantilla!',
     'LBL_NO_BODY_CONTENTS' => 'La plantilla de correo electrónico seleccionada no tiene un cuerpo html',
     'LBL_ERROR_ON_MARKETING' => 'Falta(n) campo(s) obligatorio(s)',
@@ -468,7 +465,8 @@ $mod_strings = array(
     'LBL_CAMPAIGN_CHECKLIST' => 'Lista de chequeo de la Campaña',
 
     'LBL_EMAIL_MARKETING' => 'Marketing por Email',
-    'LBL_EMAIL_SUCCESS' => 'Éxito',
     'LBL_QUEUE_ITEMS' => 'Elementos en la fila',
     'LBL_PROSPECT_LISTS' => 'Listas de Público Objetivo',
+    'LBL_SURVEYRESPONSES_CAMPAIGNS_FROM_SURVEYRESPONSES_TITLE' => 'Respuestas a encuestas',
+    'LBL_CAMPAIGN_SURVEY' => "Encuesta",
 );
