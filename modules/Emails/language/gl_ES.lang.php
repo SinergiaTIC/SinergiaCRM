@@ -5,7 +5,7 @@
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2019 SalesAgility Ltd.
+ * Copyright (C) 2011 - 2024 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -163,12 +163,13 @@ $mod_strings = array(
 
     'LBL_LIST_ASSIGNED' => 'Asignado',
     'LBL_LIST_CONTACT_NAME' => 'Nome Contacto',
-    'LBL_LIST_DATE_SENT' => 'Data Envío',
-    'LBL_LIST_DATE_SENT_RECEIVED' => 'Data de Enviado/Recibido', // PR 6728
+    'LBL_LIST_DATE' => 'Date Sent',
+    'LBL_LIST_DATE_SENT_RECEIVED' => 'Data de Enviado/Recibido',
     'LBL_LIST_FORM_DRAFTS_TITLE' => 'Borrador',
     'LBL_LIST_FORM_SENT_TITLE' => 'Emails Enviados',
     'LBL_LIST_FORM_TITLE' => 'Lista de Emails',
     'LBL_LIST_FROM_ADDR' => 'De',
+    //'LBL_LIST_RELATED_TO' => 'Recipient Type' (previous value)
     'LBL_LIST_RELATED_TO' => 'Relacionado con',
     'LBL_LIST_SUBJECT' => 'Asunto',
     'LBL_LIST_TO_ADDR' => 'Para',
@@ -273,7 +274,6 @@ $mod_strings = array(
     'LBL_HAS_ATTACHMENT_INDICATOR' => 'Ten Adxuntos',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Falta campo requirido',
     'ERR_INVALID_REQUIRED_FIELDS' => 'Campo requirido non válido',
-    'LBL_FILTER_BY_RELATED_BEAN' => 'Só mostrar destinatarios relacionados',
     'LBL_ADD_INBOUND_ACCOUNT' => 'Engadir',
     'LBL_ADD_OUTBOUND_ACCOUNT' => 'Engadir',
     'LBL_EMAIL_ACCOUNTS_INBOUND' => 'Propiedades de Conta de Correo',
@@ -296,9 +296,7 @@ $mod_strings = array(
     'LBL_MAILBOX_TYPE_PERSONAL' => 'Persoal',
     'LBL_MAILBOX_TYPE_GROUP' => 'Grupo',
     'LBL_MAILBOX_TYPE_GROUP_FOLDER' => 'Grupo - Auto-Importación',
-    'LBL_SEARCH_FOR' => 'Buscar',
     'LBL_EMAIL_INBOUND_TYPE_HELP' => '<b>Persoal</b>: Conta de correo accesible por vostede. Só vostede pode administrar e importar correos desde esta conta.<br><b>Grupo</b>: Conta de correo accesible por membros de equipos específicos. Os membros de equipos poden administrar e importar correos desta conta.<br><b>Grupo - auto-importación</b>: Conta de correo accesible por membros de equipos específicos. Os correos son importados como rexistros de forma automática.',
-    'LBL_ADDRESS_BOOK_SEARCH_HELP' => 'Introduza un enderezo de correo, Nome, Apelido ou Nome de Conta para encontrar destinatarios.',
     'LBL_TEST_SETTINGS' => 'Probar Configuración',
     'LBL_EMPTY_EMAIL_BODY' => '<p><span style="color: #888888;"><em>Esta mensaxe non Ten Contido</em></span></p>',
     'LBL_HAS_EMPTY_EMAIL_SUBJECT' => 'Por favor especificar un asunto',
@@ -387,8 +385,8 @@ $mod_strings = array(
 
     'LBL_LIST_DATE_MODIFIED' => 'Última Modificación',
     'LNK_IMPORT_CAMPAIGNS' => 'Importar campaña',
-    
-    // Email Validation Erro messages. Typicaly for Email Validation:
+
+    // Email Validation Error messages. Typicaly for Email Validation:
     'ERR_FIELD_FROM_IS_NOT_SET' => 'O campo Desde non está establecido.',
     'ERR_FIELD_FROM_IS_EMPTY' => 'O campo Desde está baleiro.',
     'ERR_FIELD_FROM_IS_INVALID' => 'O campo Desde é inválido.',
@@ -411,4 +409,9 @@ $mod_strings = array(
     'ERR_FIELD_FROM_ADDR_NAME_INVALID_EMAIL_PART_TO_FIELD_FROM_ADDR' => 'O par enderezo Desde e nome non corresponden co enderezo de orixe.',
     'ERR_FIELD_FROM_ADDR_NAME_INVALID_EMAIL_PART_TO_FIELD_FROMNAME' => 'O par enderezo Desde e nome non corresponden co nome de correo electrónico de orixe.',
     'ERR_FIELD_FROM_ADDR_NAME_INVALID_EMAIL_PART_TO_FIELD_FROM_NAME' => 'O par enderezo Desde e nome non corresponden co nome de correo electrónico de orixe.',
+
+    // Address book (not in current use)
+    'LBL_ADDRESS_BOOK_SEARCH_HELP' => 'Introduza un enderezo de correo, Nome, Apelido ou Nome de Conta para encontrar destinatarios.',
+    'LBL_SEARCH_FOR' => 'Buscar',
+    'LBL_FILTER_BY_RELATED_BEAN' => 'Só mostrar destinatarios relacionados',
 );
