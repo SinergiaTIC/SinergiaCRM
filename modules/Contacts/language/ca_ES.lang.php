@@ -68,7 +68,7 @@ $mod_strings = array(
     'LBL_BIRTHDATE' => 'Data de naixement:',
     'LBL_CITY' => 'Ciutat:',
     'LBL_CAMPAIGN_ID' => 'ID Campanya',
-    'LBL_CONTACT_INFORMATION' => 'Visió general del contacte',  //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CONTACT_INFORMATION' => 'Visió general del contacte', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
     'LBL_CONTACT_NAME' => 'Nom Contacte:',
     'LBL_CONTACT_OPP_FORM_TITLE' => 'Oportunitat-Contacte:',
     'LBL_CONTACT_ROLE' => 'Rol:',
@@ -174,8 +174,8 @@ $mod_strings = array(
     'LBL_LEADS_SUBPANEL_TITLE' => 'Clients Potencials',
     'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Oportunitats',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
-    'LBL_COPY_ADDRESS_CHECKED_PRIMARY' => "Copia l'adreça principal",
-    'LBL_COPY_ADDRESS_CHECKED_ALT' => "Copia una altra adreça",
+    'LBL_COPY_ADDRESS_CHECKED_PRIMARY' => 'Copia l\'adreça principal',
+    'LBL_COPY_ADDRESS_CHECKED_ALT' => 'Copia una altra adreça',
 
     'LBL_CASES_SUBPANEL_TITLE' => 'Casos',
     'LBL_BUGS_SUBPANEL_TITLE' => 'Incidències',
@@ -211,15 +211,7 @@ $mod_strings = array(
     'LBL_PORTAL_USER_TYPE' => 'Tipus de portal d\'usuari',
     'LBL_PORTAL_ACCOUNT_DISABLED' => 'Compta desactivada',
     'LBL_JOOMLA_ACCOUNT_ID' => 'ID de compte de Joomla',
-   
-    'LBL_ERROR_NO_PORTAL_SELECTED' => 'No hi ha cap portal seleccionat', // escaped single quotes required. PR 5426
-    'LBL_PLEASE_UPDATE_DEPRECATED_PORTAL_ERROR' => 'S\'ha trobat més d\'un portal URL, però múltiples portals no son compatibles, si us plau actualitzi el portal component en lloc: ',
-    'LBL_PLEASE_UPDATE_DEPRECATED_PORTAL_WARNING' => 'Portal és obsolet, si us plau actualitzi el portal en lloc: ',
 
-    'LBL_INVALID_USER_DATA' => 'Esteu creant un usuari al portal sense nom i/o adreça de correu. Comproveu les dades de contacte.',
-    'LBL_NO_RELATED_JACCOUNT' => 'Esteu intentant desactivar un usuari de CRM sense compte relacionats al portal Joomla.',
-    'LBL_UNABLE_READ_PORTAL_VERSION' => 'No es pot llegir la versió AOP del portal', // PR 5426
- 
     'LBL_AOS_CONTRACTS' => 'Contractes',
     'LBL_AOS_INVOICES' => 'Factures',
     'LBL_AOS_QUOTES' => 'Pressupostos',
