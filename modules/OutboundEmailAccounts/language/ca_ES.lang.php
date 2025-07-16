@@ -75,7 +75,7 @@ $mod_strings = array(
     'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
     'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
     'LBL_NEW_FORM_TITLE' => 'Nou compte de correu electrònic sortint',
-    'LBL_USERNAME' => "Nom d'usuari",
+    'LBL_USERNAME' => 'Nom d\'usuari',
     'LBL_PASSWORD' => 'Contrasenya',
     'LBL_SMTP_SERVERNAME' => 'Nom del servidor SMTP',
     'LBL_SMTP_AUTH' => 'SMTP Auth',
@@ -88,7 +88,7 @@ $mod_strings = array(
     'LBL_SEND_TEST_EMAIL' => 'Envia un correu electrònic de prova',
 
     // for outbound email dialog
-    'LBL_MISSING_DEFAULT_OUTBOUND_SMTP_SETTINGS' => "No es pot enviar un correu electrònic de prova perquè l'administrador encara no ha configurat el compte per defecte de correu electrònic sortint.",
+    'LBL_MISSING_DEFAULT_OUTBOUND_SMTP_SETTINGS' => 'No es pot enviar un correu electrònic de prova perquè l\'administrador encara no ha configurat el compte per defecte de correu electrònic sortint.',
     'LBL_MAIL_SMTPAUTH_REQ' => 'Utilitzar autentificació SMTP?',
     'LBL_MAIL_SMTPPASS' => 'Contrasenya',
     'LBL_MAIL_SMTPPORT' => 'Port',
@@ -100,13 +100,13 @@ $mod_strings = array(
     'LBL_YAHOOMAIL_SMTPUSER' => 'Usuari de Yahoo! Mail:',
     'LBL_GMAIL_SMTPPASS' => 'Contrasenya de Gmail:',
     'LBL_GMAIL_SMTPUSER' => 'Usuari de Gmail:',
-    'LBL_EXCHANGE_SMTPPASS' => 'Contrasenya d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPUSER' => 'Usuari d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPPORT' => 'Port del servidor d&#39;Exchange:', // Excepció d'escapat 
-    'LBL_EXCHANGE_SMTPSERVER' => 'Servidor d&#39;Exchange:', // Excepció d'escapat 
+    'LBL_EXCHANGE_SMTPPASS' => 'Contrasenya d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPUSER' => 'Usuari d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPPORT' => 'Port del servidor d&#39;Exchange:',
+    'LBL_EXCHANGE_SMTPSERVER' => 'Servidor d&#39;Exchange:',
 
     'LBL_TYPE' => 'Tipus',
-    'LBL_MAIL_SENDTYPE' => "Mode d'enviament del correu electrònic",
+    'LBL_MAIL_SENDTYPE' => 'Mode d\'enviament del correu electrònic',
     'LBL_MAIL_SMTPSSL' => 'Mail SMTP/SSL',
     'LBL_SMTP_FROM_NAME' => 'Nom del remitent',
     'LBL_SMTP_FROM_ADDR' => 'Adreça del remitent',
@@ -118,5 +118,5 @@ $mod_strings = array(
     'LBL_OWNER' => 'Propietari',
     'LBL_OWNER_NAME' => 'Propietari',
 
-    'LNK_EXTERNAL_OAUTH_CONNECTIONS' => 'Connexions OAuth Externes',
+    'LNK_EXTERNAL_OAUTH_CONNECTIONS' => 'Connexions OAuth Externes'
 );
