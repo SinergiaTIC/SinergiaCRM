@@ -98,18 +98,20 @@ class stic_Work_Calendar extends Basic
                 // If it is a new record or the type before the modification was not an all-day one
                 if (!isset($this->fetched_row['type']) || !in_array($this->fetched_row['type'], self::ALL_DAY_TYPES)) 
                 {
-                    if ($_REQUEST["action"] != "Save") {
-                        // Set the time to 00:00:00 of the start date and time
-                        $auxStartDate = date('Y-m-d 00:00:00', strtotime($this->start_date));
-                    
+                    $auxStartDate = $startDateInTZ;
+                    if ($_REQUEST["action"] != "Save")
+                    {
                         // Convert $auxStartDate to UTC
                         $userTZ = $current_user->getPreference('timezone');
+                        $auxStartDate->setTimezone(new DateTimeZone($userTZ));
+
+                        // Set the time to 00:00:00 of the start date and time
+                        $auxStartDate = date('Y-m-d 00:00:00', strtotime($auxStartDate->format(TimeDate::DB_DATETIME_FORMAT)));
+
+                        // Convert $auxStartDate to UTC
                         $dateInUserTZ = new DateTime($auxStartDate, new DateTimeZone($userTZ));
                         $auxStartDate = $dateInUserTZ->setTimezone(new DateTimeZone('UTC'));
-                    } else {
-                        // The time now comes to 00:00:00 as it is updated in the user interface
-                        $auxStartDate = $startDateInTZ;
-                    } 
+                    }
 
                     // Update the start date and time, the end date and time after adding one day, and the record name
                     $this->start_date = $timedate->asDb($auxStartDate, $current_user);  
