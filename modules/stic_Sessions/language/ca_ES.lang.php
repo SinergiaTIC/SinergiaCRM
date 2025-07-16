@@ -20,7 +20,7 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings = array (
+$mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
     'LBL_ASSIGNED_TO' => 'Assignat a',
@@ -64,18 +64,18 @@ $mod_strings = array (
     'LBL_STIC_SESSIONS_STIC_EVENTS_FROM_STIC_EVENTS_TITLE' => 'Esdeveniment',
     'LBL_STIC_SESSIONS_DOCUMENTS_FROM_DOCUMENTS_TITLE' => 'Documents',
     'LBL_STIC_RESPONSIBLE' => 'Responsable',
-    'LBL_START_DATE' => "Data d&#39;inici", // Excepció d'escapat 
+    'LBL_START_DATE' => 'Data d&#39;inici',
     'LBL_END_DATE' => 'Data de finalització',
-    'LBL_TOTAL_ATTENDANCES' => "Total d'assistències",
+    'LBL_TOTAL_ATTENDANCES' => 'Total d\'assistències',
     'LBL_WEEKDAY' => 'Dia de la setmana',
     'LBL_DURATION' => 'Durada de la sessió',
     'LBL_COLOR' => 'Color',
     'LBL_VALIDATED_ATTENDANCES' => 'Assistències validades',
-    'LBL_ACTIVITY_TYPE' => "Tipus d'activitat",
+    'LBL_ACTIVITY_TYPE' => 'Tipus d\'activitat',
     'LBL_DEFAULT_PANEL' => 'Dades generals',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
-    'LBL_START_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",
-    'LBL_END_DATE_ERROR' => "La data de finalització ha de ser posterior a la data d'inici.",
+    'LBL_START_DATE_ERROR' => 'La data d\'inici ha de ser anterior a la data de finalització.',
+    'LBL_END_DATE_ERROR' => 'La data de finalització ha de ser posterior a la data d\'inici.',
     'LBL_NAME_INFO' => 'Qualsevol canvi realitzat al nom de la sessió es propagarà al nom de les assistències relacionades.',
-    'LBL_COLOR_INFO' => "Color amb què es mostrarà la sessió al Calendari d'Activitats.",
+    'LBL_COLOR_INFO' => 'Color amb què es mostrarà la sessió al Calendari d\'Activitats.',
 );
