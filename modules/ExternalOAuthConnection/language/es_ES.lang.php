@@ -85,6 +85,7 @@ $mod_strings = [
 
     'LBL_AUTHENTICATE' => 'Autenticar',
 
+
     'LBL_EXTERNAL_OAUTH_PROVIDER' => 'Proveedor',
     'LBL_EXTERNAL_OAUTH_PROVIDER_NAME' => 'Proveedor',
     'LBL_EXTERNAL_OAUTH_PROVIDER_ID' => 'ID del Proveedor',
