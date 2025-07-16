@@ -158,7 +158,7 @@ $mod_strings = array(
     'LBL_OVERRIDE_BUSINESS_HOURS' => 'Considerar días laborais',
 
     'LBL_IMPORT_PROJECTS' => 'Importar Proxectos',
-
+    
     'LBL_PROJECTS_SEARCH' => 'Buscar proxectos',
     'LBL_USERS_SEARCH' => 'Buscar usuarios',
     'LBL_CONTACTS_SEARCH' => 'Seleccionar contactos',
