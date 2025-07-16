@@ -105,7 +105,7 @@ $mod_strings = array(
     'LBL_CREATED_USER' => 'Usuari Creat',
     'LBL_MODIFIED_USER' => 'Usuari Modificat',
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projectes',
-    'LBL_CASE_INFORMATION' => 'Visió general del cas',  //Can be translated in all caps. This string will be used by SuiteP template menu actions
+    'LBL_CASE_INFORMATION' => 'Visió general del cas', //No need to be translated in all caps. Translation used just in menu action items when using the SuiteP template
 
     // SNIP
     'LBL_UPDATE_TEXT' => 'Actualitzar text', //Field for Case updates with text only
@@ -127,7 +127,5 @@ $mod_strings = array(
     'LBL_CONTACT_CREATED_BY_NAME' => 'Creat per contacte',
     'LBL_CONTACT_CREATED_BY' => 'Creat per',
     'LBL_CASE_UPDATE_FORM' => 'Actualitzar l\'adjunt', //Form for attachments on case updates
-    'LBL_CREATOR_PORTAL' => 'URL del Portal', //PR 5426
-    'LBL_SUGGESTION' => 'Suggeriment', //PR 5426
     'LBL_UNKNOWN_CONTACT' => 'Persona desconegut',
 );
