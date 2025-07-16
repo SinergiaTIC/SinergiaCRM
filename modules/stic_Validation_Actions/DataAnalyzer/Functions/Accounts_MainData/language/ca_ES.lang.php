@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array(
-    'NAME' => 'Organitzacions - Revisió de les dades principals', // Aquesta etiqueta és obligatòria. Indica el nom de la funció
+    'NAME' => 'Organitzacions - Revisió de les dades principals', // Required label. Contains function name
     'NO_VALID' => 'L\'identificador no és un NIF vàlid.',
     'UPDATED' => 'S\'ha netejat el camp per eliminar caràcters no vàlids:',
 );
