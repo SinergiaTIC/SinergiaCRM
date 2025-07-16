@@ -27,29 +27,25 @@ document.addEventListener('DOMContentLoaded', () => {
     let initialCanvasData = null; // Para almacenar el estado del canvas vacío
     let canvasEnabled = false; // Nuevo estado para controlar si el canvas está activo
 
-    // Fuentes manuscritas de Google Fonts
-    const handwrittenFonts = [
-        'Dancing Script',
-        'Pacifico',
-        'Great Vibes',
-        'Caveat',
-        'Indie Flower'
-    ];
+    // Fuentes manuscritas de Google Fonts (no es necesario cargarlas aquí si ya están en CSS)
+    // const handwrittenFonts = [
+    //     'Dancing Script',
+    //     'Pacifico',
+    //     'Great Vibes',
+    //     'Caveat',
+    //     'Indie Flower'
+    // ];
 
-    // Cargar las fuentes de Google Fonts dinámicamente
-    function loadGoogleFonts() {
-        handwrittenFonts.forEach(fontName => {
-            // Se asume que las fuentes ya están importadas en SticSign.css
-            // document.fonts.load() es útil si necesitas asegurarte de que están cargadas
-            // antes de dibujar, pero CSS @import ya las maneja para el navegador.
-            // Aquí solo aseguramos que el navegador las conozca para el canvas.
-            const font = new FontFace(fontName, `url(https://fonts.gstatic.com/s/${fontName.toLowerCase().replace(' ', '')}/vXX/${fontName.replace(' ', '')}.woff2)`);
-            font.load().then(() => {
-                document.fonts.add(font);
-                console.log(`${fontName} font loaded.`);
-            }).catch(error => console.error(`Failed to load font ${fontName}:`, error));
-        });
-    }
+    // La función loadGoogleFonts() se elimina ya que las fuentes se cargan vía CSS.
+    // function loadGoogleFonts() {
+    //     handwrittenFonts.forEach(fontName => {
+    //         const font = new FontFace(fontName, `url(https://fonts.gstatic.com/s/${fontName.toLowerCase().replace(' ', '')}/vXX/${fontName.replace(' ', '')}.woff2)`);
+    //         font.load().then(() => {
+    //             document.fonts.add(font);
+    //             console.log(`${fontName} font loaded.`);
+    //         }).catch(error => console.error(`Failed to load font ${fontName}:`, error));
+    //     });
+    // }
 
     // Función para habilitar el lienzo y los botones
     function enableSignatureArea() {
@@ -186,11 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
     signatureCanvas.addEventListener('mousedown', (e) => {
         if (!canvasEnabled) return; // No permitir dibujar si el canvas está deshabilitado
         isDrawing = true;
-        // Limpiar el canvas si el usuario empieza a dibujar manualmente después de una firma de texto/imagen
-        if (signatureCanvas.toDataURL('image/png') !== initialCanvasData) {
-            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-            addAuditRecord('Lienzo limpiado para nueva firma manual.');
-        }
+        // Se elimina la limpieza automática del canvas aquí para permitir múltiples trazos.
+        // El canvas solo se limpiará con el botón "Limpiar" o al usar las opciones de texto/imagen.
         [lastX, lastY] = [e.offsetX, e.offsetY];
         addAuditRecord('Inicio de dibujo de firma.');
     });
@@ -207,14 +200,14 @@ document.addEventListener('DOMContentLoaded', () => {
     signatureCanvas.addEventListener('mouseup', () => {
         if (isDrawing) {
             isDrawing = false;
-            addAuditRecord('Fin de dibujo de firma.');
+            addAuditRecord('Fin de trazo de firma.'); // Mensaje cambiado para reflejar fin de trazo, no de firma completa
         }
     });
 
     signatureCanvas.addEventListener('mouseout', () => {
         if (isDrawing) {
             isDrawing = false;
-            addAuditRecord('Dibujo de firma interrumpido (cursor fuera del lienzo).');
+            addAuditRecord('Trazo de firma interrumpido (cursor fuera del lienzo).'); // Mensaje cambiado
         }
     });
 
@@ -223,11 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!canvasEnabled) return; // No permitir dibujar si el canvas está deshabilitado
         e.preventDefault(); // Prevenir el desplazamiento de la página
         isDrawing = true;
-        // Limpiar el canvas si el usuario empieza a dibujar manualmente después de una firma de texto/imagen
-        if (signatureCanvas.toDataURL('image/png') !== initialCanvasData) {
-            ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-            addAuditRecord('Lienzo limpiado para nueva firma manual (táctil).');
-        }
+        // Se elimina la limpieza automática del canvas aquí para permitir múltiples trazos.
         const touch = e.touches[0];
         const rect = signatureCanvas.getBoundingClientRect();
         lastX = touch.clientX - rect.left;
@@ -253,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signatureCanvas.addEventListener('touchend', () => {
         if (isDrawing) {
             isDrawing = false;
-            addAuditRecord('Fin de dibujo de firma (táctil).');
+            addAuditRecord('Fin de trazo de firma (táctil).'); // Mensaje cambiado
         }
     });
 
@@ -338,15 +327,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Intentar cargar la fuente si no está ya cargada (aunque CSS @import debería manejarlo)
         document.fonts.ready.then(() => {
-            const fontSize = Math.min(signatureCanvas.width / (signatureText.length * 0.8), signatureCanvas.height * 0.6); // Ajustar tamaño de fuente
+            const canvasVisualWidth = signatureCanvas.offsetWidth;
+            const canvasVisualHeight = signatureCanvas.offsetHeight;
+
+            // Iniciar con un tamaño de fuente grande y reducirlo si es necesario
+            let fontSize = canvasVisualHeight * 0.8; // Intentar ocupar la mayor parte de la altura
             ctx.font = `${fontSize}px "${selectedFont}"`;
+            let textMetrics = ctx.measureText(signatureText);
+
+            // Calcular el factor de escala necesario para que el texto quepa en el ancho deseado
+            const targetWidth = canvasVisualWidth * 0.9; // 90% del ancho del canvas para padding
+            if (textMetrics.width > targetWidth) {
+                fontSize = (targetWidth / textMetrics.width) * fontSize;
+                ctx.font = `${fontSize}px "${selectedFont}"`; // Actualizar la fuente con el nuevo tamaño
+                textMetrics = ctx.measureText(signatureText); // Volver a medir con el nuevo tamaño
+            }
+
+            // Calcular la altura real del texto (aproximada, ya que textMetrics no da la altura exacta de la fuente)
+            // Una forma más precisa sería usar textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent
+            // pero esto puede variar entre navegadores y fuentes. Usaremos una estimación basada en fontSize.
+            const estimatedTextHeight = fontSize * 1.2; // Factor de ajuste para la altura real de la fuente
+
+            // Si la altura estimada es mayor que la altura máxima deseada
+            const targetHeight = canvasVisualHeight * 0.9; // 90% de la altura del canvas para padding
+            if (estimatedTextHeight > targetHeight) {
+                fontSize = (targetHeight / estimatedTextHeight) * fontSize;
+                ctx.font = `${fontSize}px "${selectedFont}"`; // Actualizar la fuente con el nuevo tamaño
+            }
+
             ctx.fillStyle = '#333'; // Color del texto
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
             // Calcular posición para centrar el texto
-            const x = signatureCanvas.width / (2 * window.devicePixelRatio);
-            const y = signatureCanvas.height / (2 * window.devicePixelRatio);
+            const x = canvasVisualWidth / 2;
+            const y = canvasVisualHeight / 2;
 
             ctx.fillText(signatureText, x, y);
             addAuditRecord(`Firma de texto "${signatureText}" generada con fuente "${selectedFont}".`);
@@ -354,12 +369,26 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error al cargar la fuente para la firma de texto:", error);
             addAuditRecord(`Error al generar firma de texto: fuente "${selectedFont}" no cargada.`);
             // Intentar dibujar con una fuente de respaldo
-            ctx.font = `${Math.min(signatureCanvas.width / (signatureText.length * 0.8), signatureCanvas.height * 0.6)}px sans-serif`;
+            const canvasVisualWidth = signatureCanvas.offsetWidth;
+            const canvasVisualHeight = signatureCanvas.offsetHeight;
+            let fontSize = canvasVisualHeight * 0.8;
+            ctx.font = `${fontSize}px sans-serif`;
+            let textMetrics = ctx.measureText(signatureText);
+            const maxWidth = canvasVisualWidth * 0.9;
+            if (textMetrics.width > maxWidth) {
+                fontSize = (maxWidth / textMetrics.width) * fontSize;
+            }
+            const estimatedTextHeight = fontSize * 1.2;
+            const targetHeight = canvasVisualHeight * 0.9;
+            if (estimatedTextHeight > targetHeight) {
+                fontSize = (targetHeight / estimatedTextHeight) * fontSize;
+            }
+            ctx.font = `${fontSize}px sans-serif`; // Aplicar el tamaño ajustado a la fuente de respaldo
             ctx.fillStyle = '#333';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            const x = signatureCanvas.width / (2 * window.devicePixelRatio);
-            const y = signatureCanvas.height / (2 * window.devicePixelRatio);
+            const x = canvasVisualWidth / 2;
+            const y = canvasVisualHeight / 2;
             ctx.fillText(signatureText, x, y);
         });
     });
@@ -384,22 +413,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.scale(window.devicePixelRatio, window.devicePixelRatio); // Aplicar escala
 
                 // Calcular dimensiones para ajustar la imagen al canvas manteniendo la proporción
-                const canvasAspectRatio = signatureCanvas.width / signatureCanvas.height;
+                const canvasVisualWidth = signatureCanvas.offsetWidth;
+                const canvasVisualHeight = signatureCanvas.offsetHeight;
+                const canvasAspectRatio = canvasVisualWidth / canvasVisualHeight;
                 const imgAspectRatio = img.width / img.height;
 
-                let drawWidth = signatureCanvas.width / window.devicePixelRatio;
-                let drawHeight = signatureCanvas.height / window.devicePixelRatio;
+                let drawWidth = canvasVisualWidth;
+                let drawHeight = canvasVisualHeight;
                 let offsetX = 0;
                 let offsetY = 0;
 
                 if (imgAspectRatio > canvasAspectRatio) {
                     // La imagen es más ancha que el canvas, ajustar al ancho del canvas
                     drawHeight = drawWidth / imgAspectRatio;
-                    offsetY = (signatureCanvas.height / window.devicePixelRatio - drawHeight) / 2;
+                    offsetY = (canvasVisualHeight - drawHeight) / 2;
                 } else {
                     // La imagen es más alta que el canvas, ajustar a la altura del canvas
                     drawWidth = drawHeight * imgAspectRatio;
-                    offsetX = (signatureCanvas.width / window.devicePixelRatio - drawWidth) / 2;
+                    offsetX = (canvasVisualWidth - drawWidth) / 2;
                 }
 
                 ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
@@ -438,7 +469,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cargar registros de auditoría al iniciar
     loadAuditRecords();
-    loadGoogleFonts(); // Cargar las fuentes al inicio
+    // La función loadGoogleFonts() se elimina ya que las fuentes se cargan vía CSS.
+    // loadGoogleFonts(); // Cargar las fuentes al inicio
 
     // Desactivar el canvas y los botones al inicio
     signatureCanvas.classList.add('canvas-disabled');

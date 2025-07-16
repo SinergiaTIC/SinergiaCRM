@@ -32,8 +32,9 @@ body {
     border: 1px solid #e2e8f0; /* Color de borde suave */
     border-radius: 0.75rem;
     padding: 1.5rem;
-    background-color: #fdfdfd;
+    background-color: #fdfdfd; /* Fondo base para el área, el contenido tendrá el blanco */
     line-height: 1.6;
+    /* box-shadow y background-color movidos a .document-scroll-content */
 }
 
 /* Estilos para el contenido del documento con scroll vertical */
@@ -41,6 +42,11 @@ body {
     max-height: 400px; /* Altura máxima fija para el documento */
     overflow-y: auto; /* Habilita el scroll vertical si el contenido excede la altura */
     padding-right: 1rem; /* Espacio para la barra de scroll */
+    background-color: #ffffff; /* Fondo blanco para el contenido del documento */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.30); /* Ligera sombra para el contenido */
+    border-radius: 0;
+    padding: 1rem; /* Padding interno para el contenido */
+    border: .5px solid #777; 
 }
 
 /* Estilos para el área de firma */
