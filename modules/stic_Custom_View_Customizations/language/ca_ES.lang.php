@@ -22,7 +22,7 @@
  */
 
 $mod_strings = array(
-    // Cadenes comuns
+    // Common labels
     'LBL_ASSIGNED_TO_ID' => 'Assignat a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Assignat a',
     'LBL_ASSIGNED_TO' => 'Assignat a',
@@ -49,8 +49,8 @@ $mod_strings = array(
     'LBL_ASCENDING' => 'Ascendent',
     'LBL_DESCENDING' => 'Descendent',
 
-    // Accions del mòdul
-    'LBL_LIST_FORM_TITLE' => "Llista de Personalitzacions",
+    // Module actions
+    'LBL_LIST_FORM_TITLE' => 'Llista de Personalitzacions',
     'LBL_MODULE_NAME' => 'Personalitzacions',
     'LBL_MODULE_TITLE' => 'Personalitzacions',
     'LBL_HOMEPAGE_TITLE' => 'Les meves Personalitzacions',
@@ -63,28 +63,28 @@ $mod_strings = array(
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_SUBPANEL_TITLE' => 'Personalitzacions',
     'LBL_NEW_FORM_TITLE' => 'Nova Personalització',
 
-    // Camps del mòdul
+    // Module fields
     'LBL_CUSTOMIZATION_ORDER' => 'Ordre',
     'LBL_INIT' => 'Inicial',
     'LBL_CONDITIONS' => 'Condicions',
     'LBL_ACTIONS' => 'Accions',
     'LBL_STATUS' => 'Estat',
 
-    // Panells de les vistes
+    // View Panels
     'LBL_DEFAULT_PANEL' => 'Dades generals',
     'LBL_CONDITION_PANEL' => 'Condicions',
     'LBL_ACTION_PANEL' => 'Accions',
 
-    // Relacions i subpanells
+    // Relations and subpanels
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEWS_TITLE' => 'Vistes personalitzades',
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_CONDITIONS_TITLE' => 'Condicions',
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_FROM_STIC_CUSTOM_VIEW_ACTIONS_TITLE' => 'Accions',
 
-    // Altres
+    // Other
     'LBL_ADD_CONDITION' => 'Afegeix una condició',
     'LBL_DELETE_CONDITION' => 'Elimina la condició',
     'LBL_ADD_ACTION' => 'Afegeix una acció',
-    'LBL_DELETE_ACTION' => "Elimina l'acció",
-    'LBL_DUPLICATE_ACTION' => "Duplica l'acció",
+    'LBL_DELETE_ACTION' => 'Elimina l\'acció',
+    'LBL_DUPLICATE_ACTION' => 'Duplica l\'acció',
     'LBL_NAME_COPY_SUFFIX' => '(còpia)',
 );
