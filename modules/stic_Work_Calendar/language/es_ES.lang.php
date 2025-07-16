@@ -61,20 +61,20 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'Nuevo Calendario laboral',
   'LBL_TYPE' => 'Tipo',
   'LBL_START_DATE' => 'Fecha y hora de inicio',
-  'LBL_END_DATE' => 'Fecha y hora de finalización',  
+  'LBL_END_DATE' => 'Fecha y hora de finalización',
   'LBL_START_DATE_ERROR' => 'La fecha y hora de inicio debe ser anterior a la fecha y hora de finalización.',
   'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
-  'LBL_END_DATE_EXCEEDS_24_HOURS' => 'La diferencia entre inicio y finalización debe de ser inferior a 24 horas.',
+  'LBL_END_DATE_EXCEEDS_24_HOURS' => 'La diferencia entre inicio y finalización debe de ser inferior a 24 horas.',  
   'LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS' => 'Existe por lo menos un registro de tipo incompatible con el actual para el mismo usuario y rango horario. Revíselo y aplique las modificaciones oportunas.',
   'LBL_ERROR_REQUEST_INCOMPATIBLE_TYPE' => 'Se ha producido un error al comprobar la existencia de registros de calendario laboral incompatibles con el registro que se está creando. Consulte con el administrador.',
   'LBL_ERROR_CODE_REQUEST_INCOMPATIBLE_TYPE' => 'Código de error: ',
   'LBL_DURATION' => 'Duración',
-  'LBL_WEEKDAY' => 'Día de la semana',
+  'LBL_WEEKDAY' => 'Día de la semana',  
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
   'LBL_ALL_DAY_HELP' => 'En caso de que el tipo de registro no sea ni laborable ni ausencia puntual, el registro afectará a todo el día y no será necesario indicar la hora de inicio ni la fecha y hora de finalización ya que se calcularán automáticamente.',
-
-  // Asistente de creación de registros de Calendario laboral
+  
+  // Work Calendar record creation wizard
   'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registros periódicos',
   'LBL_PERIODIC_WORK_CALENDAR_BUTTON' => 'Generar Calendario laboral',
   'LBL_CANCEL_BUTTON' => 'Cancelar',
@@ -92,22 +92,22 @@ $mod_strings = array (
   'LBL_PERIODIC_WORK_CALENDAR_TITLE' => 'Generar Calendario laboral',
   'LBL_WORK_CALENDAR_DURATION' => 'Duración del registro de Calendario laboral',
   'LBL_ERROR_IN_VALIDATION' => 'Hay un error en el valor indicado en el campo Fecha y hora de finalización.',
-  'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
-  
-  // Resumen del asistente de creación de registros de Calendario laboral
+  'LBL_END_DATE_ERROR' => 'The end date and time must be later than the start date and time.',
+
+  // Work Calendar record creation wizard summary
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'Resumen:',
-  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE_BY_USER' => 'Resumen por usuario',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE_BY_USER' => 'Resumen por usuario',  
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_PROCESSED' => 'Número de registros a crear',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_CREATED' => 'Número de registros creados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED' => 'Número de registros no creados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'Listado de registros no creados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'Los registros no han sido creados por solapamiento con otros registros existentes de tipos incompatibles.',
-  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT2' => 'A continuación se listan los registros no creados de los diferentes usuarios.',
+  'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_RECORDS_NOT_CREATED_TEXT2' => 'A continuación se listan los registros no creados de los diferentes usuarios.',  
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_CONTINUE_WITH_EMPLOYEES' => 'Continuar con los mismos Empleados seleccionados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_EMPLOYEES' => 'Ir a Empleados',
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_BUTTON_WOK_CALENDAR' => 'Ir a Calendario laboral',
 
-  // Asistente para modificar la hora de registros de Calendario laboral
+  // Wizard to modify the time of Work Calendar records
   'LBL_MASS_UPDATE_DATES_BUTTON_TITTLE' => 'Actualizar hora de inicio y de finalización',
   'LBL_MASS_UPDATE_DATES_TITTLE' => 'Actualización masiva de la hora de inicio y de finalización',
   'LBL_MASS_UPDATE_VALIDATION_IMPORTANT' => 'Importante:',
@@ -120,6 +120,6 @@ $mod_strings = array (
   'LBL_MASS_UPDATE_DATES_OPERADOR' => 'Operador',
   'LBL_MASS_UPDATE_DATES_HORAS' => 'Horas',
   'LBL_MASS_UPDATE_DATES_MINUTES' => 'Minutos',
-  'LBL_CANCEL_BUTTON' => 'Cancelar',
+  'LBL_CANCEL_BUTTON' => 'Cancel',
   'LBL_UPDATE_BUTTON' => 'Actualizar',
 );
