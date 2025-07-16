@@ -40,7 +40,7 @@ $mod_strings = array(
     'LBL_DEFAULT_NAME' => 'Nou informe',
     'LBL_SEARCHING' => 'Cercant...',
     'LBL_LONGTEXT_LABEL' => 'Descripció',
-    'LBL_DEFAULT_NAME' => 'Nou informe',
+    'LBL_DEFAULT_NAME' => 'New Report',
     'LBL_CHART_NODATA' => 'No hi ha dades per mostrar',
     'LBL_REPORT_RELOAD' => 'Aplica els filtres',
     'LBL_LIST_LISTTYPE' => 'Llista de tipus',
@@ -88,7 +88,7 @@ $mod_strings = array(
     'LBL_ENTER_SEARCH_TERM' => 'Entreu el terme de cerca',
     'LBL_LIST_MODULE' => 'Mòdul',
     'LBL_LIST_ASSIGNED_USER_NAME' => 'Usuari assignat',
-    'LBL_DEFINITIONS' => "Definició de l'informe",
+    'LBL_DEFINITIONS' => 'Definició de l\'informe',
     'LBL_MODULES' => 'Mòduls',
     'LBL_LISTFIELDS' => 'manipula',
     'LBL_PRESENTATION' => 'mostra',
@@ -195,7 +195,7 @@ $mod_strings = array(
     'LBL_OP_NEXT3MONTH' => 'en els propers 3 mesos',
     'LBL_OP_NEXT3MONTHDAILY' => 'en els propers 3 mesos diàriament', 
     'LBL_OP_NEXT6MONTH' => 'en els propers 6 mesos', 
-    'LBL_OP_NEXT6MONTHDAILY' => 'en els propers 6 mesos diàriament',
+    'LBL_OP_NEXT6MONTHDAILY' => 'en els propers 6 mesos diàriament', 
     'LBL_OP_LAST3MONTHDAILY' => 'en els darrers 3 mesos diàriament', 
     'LBL_OP_LAST6MONTH' => 'en els darrers 6 mesos', 
     'LBL_OP_LAST6MONTHDAILY' => 'en els darrers 6 mesos diàriament',
@@ -323,7 +323,7 @@ $mod_strings = array(
     'LBL_FUNCTION_MIN' => 'Mínim',
     'LBL_FUNCTION_MAX' => 'Màxim',
     'LBL_FUNCTION_GROUP_CONCAT' => 'Concatena el Grup',
-    //2013-03-01 Sort function for Group Concat
+    //2013-03-01 Sort function for Group concat
     'LBL_FUNCTION_GROUP_CONASC' => 'Concatena el Grup (asc)',
     'LBL_FUNCTION_GROUP_CONDSC' => 'Concatena el Grup (desc)',
     // Value Types
@@ -619,12 +619,12 @@ $mod_strings = array(
     'LBL_RENDERER_TEXT' => 'Text',
     'LBL_RENDERER_NONE' => 'Sense format', 
     
-    // override Alignment
+    // Override alignment
     'LBL_OVERRIDEALIGNMENT' => 'Alineació',
     'LBL_ALIGNMENT_LEFT' => 'esquerra',
     'LBL_ALIGNMENT_RIGHT' => 'dreta',
-    'LBL_ALIGNMENT_CENTER' => 'centre',
-
+    'LBL_ALIGNMENT_CENTER' => 'centre', 
+    
     'LBL_REPORTTIMEOUT' => 'Timeout',
     'LBL_RT30' => '30 segons',
     'LBL_RT60' => '1 minut',
@@ -639,9 +639,9 @@ $mod_strings = array(
     // STIC-Custom 20230710 AAM - Improving export to LPO
     // STIC#1010
     'LBL_TARGETLISTEXPORT_SELECTION' => 'Seleccioneu una llista de públic objectiu a la finestra emergent',
-    'LBL_TARGETLISTEXPORT_LOADING' => "Espereu mentre s'exporten les dades a la llista de públic objectiu...",
-    'LBL_TARGETLISTEXPORT_ALERT_TITLE' => "Seleccioneu un mode d'exportació:",
-    'LBL_TARGETLISTEXPORT_ALERT_DESCRIPTION' => "1) Acumulatiu: Es mantindrà el contingut original de la llista i s'hi afegiran els registres de l'informe que actualment no hi són.<br><br>2) Substitutiu: Es buidarà la llista existent i s'omplirà amb els registres de l'informe.<br><br>Nota: l'elecció del mode d'exportació només genera efectes en cas que el destí sigui una llista pre-existent. Si al pas següent escolliu crear una llista nova, el resultat serà el mateix independentment del mètode triat.",
+    'LBL_TARGETLISTEXPORT_LOADING' => 'Espereu mentre s\'exporten les dades a la llista de públic objectiu...',
+    'LBL_TARGETLISTEXPORT_ALERT_TITLE' => 'Seleccioneu un mode d\'exportació:',
+    'LBL_TARGETLISTEXPORT_ALERT_DESCRIPTION' => '1) Acumulatiu: Es mantindrà el contingut original de la llista i s\'hi afegiran els registres de l\'informe que actualment no hi són.<br><br>2) Substitutiu: Es buidarà la llista existent i s\'omplirà amb els registres de l\'informe.<br><br>Nota: l\'elecció del mode d\'exportació només genera efectes en cas que el destí sigui una llista pre-existent. Si al pas següent escolliu crear una llista nova, el resultat serà el mateix independentment del mètode triat.',
     'LBL_TARGETLISTEXPORT_ALERT_CUMULATIVE' => 'Acumulatiu',
     'LBL_TARGETLISTEXPORT_ALERT_REPLACEMENT' => 'Substitutiu',
     'LBL_TARGETLISTEXPORT_ALERT_CANCEL' => 'Cancel·la',
