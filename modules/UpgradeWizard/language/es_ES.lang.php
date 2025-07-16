@@ -233,7 +233,7 @@ $mod_strings = array(
     //adding the string used in tracker. copying from homepage
     'LBL_CURRENT_PHP_VERSION' => 'Su versión actual de PHP es: ',
     'LBL_RECOMMENDED_PHP_VERSION_1' => 'La version php recomendada es ',
-    'LBL_RECOMMENDED_PHP_VERSION_2' => ' o superior', // End of a sentence as in Recommended PHP version is version X.Y or above
+    'LBL_RECOMMENDED_PHP_VERSION_2' => ' o superior',  // End of a sentence as in Recommended PHP version is version X.Y or above
 
     'LBL_MODULE_NAME' => 'Asistente de Actualizaciones',
     'LBL_UPLOAD_SUCCESS' => 'Paquete de actualización subido con éxito. Haga clic en Siguiente para realizar una comprobación final.',
