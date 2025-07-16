@@ -21,6 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Relacions Organitzacions - Revisió de les dades principals',		// Aquesta etiqueta és obligatòria. Indica el nom de la funció
+    'NAME' => 'Relacions Organitzacions - Revisió de les dades principals',		// Required label. Contains function name
     'LEAVING_DATE' => 'La data de baixa és anterior a la data d\'alta.',
 );
