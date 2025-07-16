@@ -1,6 +1,8 @@
 <?php
+global $mod_strings;
 
 $bean = BeanFactory::getBean($_REQUEST['module']);
+
 if (!$bean) {
     $GLOBAL->log->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Invalid Module: " . $_REQUEST['module']);
     sugar_die("Invalid Module");
@@ -42,12 +44,34 @@ $stic_SignatureBean = BeanFactory::getBean('stic_Signatures', $signatureId);
 // Obtain destination signers
 $destSigners = stic_SignaturesUtils::getSignatureSigners($signatureId, $recordIds);
 
+// consultar directamente en la base de datos si ya existen registros de stic_Signers con el mismo signatureId
+$SQL = "SELECT ss.parent_id as id
+            FROM stic_signatures s
+            join stic_signatures_stic_signers_c ssssc on s.id =ssssc.stic_signatures_stic_signersstic_signatures_ida AND ssssc.deleted=0
+            join stic_signers ss on ss.id=ssssc.stic_signatures_stic_signersstic_signers_idb  AND ss.deleted=0
+            WHERE s.deleted=0
+            AND s.id='{$signatureId}'";
+$result = DBManagerFactory::getInstance()->query($SQL, true);
+$existingSigners = array();
+while ($row = DBManagerFactory::getInstance()->fetchByAssoc($result, false)) {
+    $existingSigners[] = $row['id'];
+}
+
+$okCounter = 0;
+$koCounter = 0;
+
 foreach ($destSigners as $destSignerId => $destSigner) {
 
     $destSignerBean = BeanFactory::getBean($destSigner['module'], $destSignerId);
     if (!$destSignerBean) {
         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Cant not obtain signer data");
+        $koCounter++;
         continue;
+    }
+    if (in_array($destSignerId, $existingSigners)) {
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Skipping existing signer with ID: " . $destSignerId);
+        $koCounter++;
+        continue; // Skip if the signer already exists
     }
 
     $stic_SignerBean = BeanFactory::newBean('stic_Signers');
@@ -61,28 +85,22 @@ foreach ($destSigners as $destSignerId => $destSigner) {
     $stic_SignerBean->status = 'pending';
     // $stic_SignerBean->unique_link = "{$destSignerId}:{$signatureId}"; no es necesario
 
-    
-
-
     $stic_SignerBean->save();
-    
-    
+
     // add relationships between stic_Signers & stic_Signatures records throw stic_signatures_stic_signers_c
     $stic_SignatureBean->load_relationship('stic_signatures_stic_signers');
     $stic_SignatureBean->stic_signatures_stic_signers->add($stic_SignerBean->id);
-    
+    $okCounter++;
+}
 
-    
+if ($okCounter != 0) {
+    SugarApplication::appendSuccessMessage("<p class='msg-success'><strong>{$okCounter}</strong> " . translate('LBL_SIGNERS_ADDED_MSG', 'stic_Signatures') . ".</p>");
+    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$okCounter} signers added successfully.");
+}
 
-
-    // Check if the bean has the signature field
-    if (isset($bean->signature)) {
-        $bean->signature = $signatureId;
-        $bean->save();
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature updated for Record ID: " . $recordId);
-    } else {
-        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature field not found in Record ID: " . $recordId);
-    }
+if ($koCounter != 0) {
+    SugarApplication::appendErrorMessage("<p class='msg-error'><strong>{$koCounter}</strong> " . translate('LBL_SIGNERS_NOT_ADDED_MSG', 'stic_Signatures') . ".</p>");
+    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$koCounter} signers could not be added because they already exist or an error occurred.");
 }
 
 SugarApplication::redirect('index.php?module=stic_Signatures&action=DetailView&record=' . $signatureId);

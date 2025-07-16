@@ -100,5 +100,7 @@ $mod_strings = array(
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "The activation date must be before the expiration date.",
-    'LBL_EXPIRATION_DATE_ERROR' => "The expiration date must be after the activation date."
+    'LBL_EXPIRATION_DATE_ERROR' => "The expiration date must be after the activation date.",
+    'LBL_SIGNERS_ADDED_MSG' => 'Signers added successfully',
+    'LBL_SIGNERS_NOT_ADDED_MSG' => 'Signers not added, already exist or an error occurred',
 );

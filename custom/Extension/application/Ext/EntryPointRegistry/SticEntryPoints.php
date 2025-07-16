@@ -45,3 +45,6 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
+
+// Signatures module
+$entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/stic_Signatures/SignatureSignersSelect.php', 'auth' => false);
