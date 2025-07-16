@@ -63,7 +63,7 @@ $mod_strings = array(
     'LBL_HOMEPAGE_TITLE' => 'Els meus Fluxos de treball',
     'LNK_NEW_RECORD' => 'Crea un Flux de treball',
     'LNK_LIST' => 'Mostra els Fluxos de treball',
-    'LNK_PROCESSED_LIST' => "Mostra l'auditoria de processos",
+    'LNK_PROCESSED_LIST' => 'Mostra l\'auditoria de processos',
     'LBL_SEARCH_FORM_TITLE' => 'Cerca Fluxos de treball',
     'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
     'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activitats',
@@ -77,5 +77,5 @@ $mod_strings = array(
     'LBL_ADD_ACTION' => 'Afegeix una acció',
     'LBL_MULTIPLE_RUNS' => 'Execucions reiterades',
     'LBL_RUN_WHEN' => 'Executa',
-    'LBL_RUN_ON_IMPORT' => "Executa a l'importar"
+    'LBL_RUN_ON_IMPORT' => 'Executa a l\'importar'
 );
