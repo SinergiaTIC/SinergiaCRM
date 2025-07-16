@@ -58,7 +58,7 @@ $mod_strings = array(
     'LIST_ROLES' => 'Mostra els Rols',
     'LBL_USERS_SUBPANEL_TITLE' => 'Usuaris',
     'LIST_ROLES_BY_USER' => 'Mostra els Rols per usuari',
-    'LBL_ROLES_SUBPANEL_TITLE' => "Rols d'usuari",
+    'LBL_ROLES_SUBPANEL_TITLE' => 'Rols d\'usuari',
     'LBL_SEARCH_FORM_TITLE' => 'Cerca',
     'LBL_ACTION_VIEW' => 'Veure',
     'LBL_ACTION_EDIT' => 'Editar',
@@ -68,6 +68,6 @@ $mod_strings = array(
     'LBL_ACTION_LIST' => 'Llistar',
     'LBL_ACTION_MASSUPDATE' => 'Actualització massiva',
     'LBL_ACTION_ACCESS' => 'Accés',
-    'LBL_ACTION_ADMIN' => "Tipus d'usuari",
+    'LBL_ACTION_ADMIN' => 'Tipus d\'usuari',
     'LBL_ACCESS_DEFAULT' => 'No establert',
 );
