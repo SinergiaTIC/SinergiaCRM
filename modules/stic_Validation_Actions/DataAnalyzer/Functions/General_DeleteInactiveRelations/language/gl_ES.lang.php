@@ -21,5 +21,5 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Xeral - Eliminar relacións obsoletas', // Required label. Contains function name
+    'NAME' => 'General - Delete outdated relationships', // Required label. Contains function name
  );
