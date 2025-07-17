@@ -22,15 +22,15 @@
  */
 
 $mod_strings = array(
-    // Module fields
-    'LBL_ACTION_ORDER' => 'Order',
-    'LBL_TYPE' => 'Element type',
-    'LBL_ELEMENT' => 'Element',
-    'LBL_ACTION' => 'Action',
-    'LBL_VALUE' => 'Value',
-    'LBL_VALUE_TYPE' => 'Value type',
-    'LBL_ELEMENT_SECTION' => 'Apply to',
+    // Campos del módulo
+    'LBL_ACTION_ORDER' => 'Orden',
+    'LBL_TYPE' => 'Tipo de elemento',
+    'LBL_ELEMENT' => 'Elemento',
+    'LBL_ACTION' => 'Acción',
+    'LBL_VALUE' => 'Valor',
+    'LBL_VALUE_TYPE' => 'Tipo del valor',
+    'LBL_ELEMENT_SECTION' => 'Aplicar a',
 
-    // Relations and subpanels
-    'LBL_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Customizations',
+    // Relaciones y subpaneles
+    'LBL_STIC_CUSTOM_VIEW_ACTIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizaciones',
 );
