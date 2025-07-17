@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['CampaignROIChartDashlet'] = array(
-    'LBL_TITLE' => 'Campaign ROI',
-    'LBL_DESCRIPTION' => 'ROI Chart',
-    'LBL_REFRESH' => 'Refresh Chart'
+    'LBL_TITLE' => 'ROI de Campaña',
+    'LBL_DESCRIPTION' => 'Gráfico de ROI',
+    'LBL_REFRESH' => 'Actualizar Gráfico'
 );
