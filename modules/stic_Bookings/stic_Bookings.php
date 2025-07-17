@@ -294,17 +294,20 @@ class stic_Bookings extends Basic
     {
         global $timedate;
 
-        $userDateFormat = $timedate->get_user_date_format();
-        $phpDateFormat = str_replace(['dd', 'mm', 'yyyy', 'yy'], ['d', 'm', 'Y', 'y'], $userDateFormat);
-    
         if (empty($this->start_date) || empty($this->end_date)) {
             return ['hours' => 0, 'days' => 0];
         }
 
-        try {                        
+        try {
+            $userDateFormat = $timedate->get_user_date_format();
+            $phpDateFormat = str_replace(['dd', 'mm', 'yyyy', 'yy'], ['d', 'm', 'Y', 'y'], $userDateFormat);
 
-            $startDateTime = new DateTime($this->start_date);
-            $endDateTime = new DateTime($this->end_date);
+            $startDateTime = $this->getFormattedDateTime($this->start_date, $phpDateFormat);
+            $endDateTime = $this->getFormattedDateTime($this->end_date, $phpDateFormat);
+
+            if ($startDateTime === false || $endDateTime === false) {
+                throw new Exception("Error al parsear fechas. start_date='{$this->start_date}', end_date='{$this->end_date}', formato esperado='{$phpDateFormat}'");
+            }
 
             $interval = $startDateTime->diff($endDateTime);
 
@@ -315,31 +318,45 @@ class stic_Bookings extends Basic
             $totalDays = 0;
             
             if (isset($this->all_day) && $this->all_day == '1') {
-                $startDateTime = DateTime::createFromFormat($phpDateFormat, $this->start_date);
-                $endDateTime = DateTime::createFromFormat($phpDateFormat, $this->end_date);
-    
-                $interval = $startDateTime->diff($endDateTime);
-        
-                // For all-day bookings, count calendar days
-                $totalDays = $interval->days;
-                
+
+                $startDateOnly = $this->getFormattedDateTime($this->start_date, $phpDateFormat);
+                $endDateOnly = $this->getFormattedDateTime($this->end_date, $phpDateFormat);
+
+                $startDateOnly->setTime(0, 0, 0);
+                $endDateOnly->setTime(0, 0, 0);
+
+                $dayInterval = $startDateOnly->diff($endDateOnly);
+                $totalDays = $dayInterval->days;
                 // If same day booking, it's still 1 day
                 if ($totalDays == 0) {
                     $totalDays = 1;
                 }
             } else {
                 // For regular bookings, calculate days based on 24-hour periods
-                $totalDays = round($totalHours / 24, 2);
+                $totalDays = $totalHours / 24;
             }
-            
             return [
                 'hours' => floatval($totalHours),
-                'days' => round($totalDays, 2)
+                'days' => $totalDays
             ];
-            
         } catch (Exception $e) {
             $GLOBALS['log']->error('Error calculating booking duration: ' . $e->getMessage());
             return ['hours' => 0, 'days' => 0];
         }
     }
+    private function getFormattedDateTime(string $dateString, string $userPhpDateFormat)
+    {
+        $dateTime = DateTime::createFromFormat($userPhpDateFormat, $dateString);
+
+        if ($dateTime === false) {
+            try {
+                $dateTime = new DateTime($dateString);
+            } catch (Exception $e) {
+                return false;
+            }
+        }
+
+        return $dateTime;
+    }
+
 }
