@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Payment commitments - Set active/inactive records', // This label is mandatory. Indicates the name of the function
-    'NO_ROWS' => 'All payment commitments have the right active/inactive status.',
-    'UPDATED' => 'The Active field has been updated.',
+    'NAME' => 'Compromisos de pago - Cálculo de registro activo/inactivo',		// Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_ROWS' => 'Todos los compromisos de pago tienen el estado activo/inactivo correcto.',
+    'UPDATED' => 'Se ha actualizado el campo Activo.',
 );
