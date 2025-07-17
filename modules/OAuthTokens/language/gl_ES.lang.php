@@ -43,20 +43,20 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_OAUTH_REQUEST' => "Solicitar token",
-    'LBL_OAUTH_AUTHORIZE' => "Autorizar Token",
-    'LBL_OAUTH_CONSUMERREQ' => "¿Autorizar token do consumidor <b>%s</b>?",
-    'LBL_ASSIGNED_TO_NAME' => 'Usuario',
+    'LBL_OAUTH_REQUEST' => "Request Token",
+    'LBL_OAUTH_AUTHORIZE' => "Authorize Token",
+    'LBL_OAUTH_CONSUMERREQ' => "Authorize token from consumer <b>%s</b>?",
+    'LBL_ASSIGNED_TO_NAME' => 'User',
     'LBL_ID' => 'ID',
-    'LBL_STATUS' => 'Estado',
-    'LBL_TS' => 'Marca de tempo',
-    'LBL_LIST_DELETE' => 'Eliminar token',
-    'LBL_CONSUMER' => 'Nome de consumidor',
-    'LBL_OAUTH_DISABLED' => 'Soporte a OAuth desactivado. A extensión PHP OAuth pode non estar instalada. Por favor, contacte co seu administrador.',
+    'LBL_STATUS' => 'Status',
+    'LBL_TS' => 'Timestamp',
+    'LBL_LIST_DELETE' => 'Delete Token',
+    'LBL_CONSUMER' => 'Consumer Name',
+    'LBL_OAUTH_DISABLED' => 'OAuth support not enabled. PHP oauth extension may be missing. Please contact your administrator.',
 
     'LBL_TOKEN_TS' => 'Token TS',
-    'LBL_CALLBACK_URL' => 'URL de Callback',
-    'LBL_SECRET' => 'Clave',
+    'LBL_CALLBACK_URL' => 'Callback URL',
+    'LBL_SECRET' => 'Secret',
     'LBL_TSTATE' => 'TState',
-    'LBL_VERIFY' => 'Verificar',
+    'LBL_VERIFY' => 'Verify',
 );
