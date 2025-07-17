@@ -5,7 +5,7 @@
  * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
  *
  * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2024 SalesAgility Ltd.
+ * Copyright (C) 2011 - 2019 SalesAgility Ltd.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
@@ -43,32 +43,32 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_ASSIGNED_TO_ID' => 'Assigned User Id',
-    'LBL_ASSIGNED_TO_NAME' => 'Assigned to',
+    'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
+    'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ID' => 'ID',
-    'LBL_DATE_ENTERED' => 'Date Created',
-    'LBL_DATE_MODIFIED' => 'Date Modified',
-    'LBL_MODIFIED' => 'Modified By',
-    'LBL_MODIFIED_NAME' => 'Modified By Name',
-    'LBL_CREATED' => 'Created By',
-    'LBL_DESCRIPTION' => 'Description',
-    'LBL_DELETED' => 'Deleted',
-    'LBL_NAME' => 'Name',
-    'LBL_CREATED_USER' => 'Created by User',
-    'LBL_MODIFIED_USER' => 'Modified by User',
-    'LBL_LIST_NAME' => 'Name',
-    'LBL_EDIT_BUTTON' => 'Edit',
-    'LBL_REMOVE' => 'Remove',
-    'LBL_LIST_FORM_TITLE' => 'Favorite List',
-    'LBL_MODULE_NAME' => 'Favorites',
-    'LBL_MODULE_TITLE' => 'Favorites',
-    'LBL_HOMEPAGE_TITLE' => 'My Favorites',
-    'LNK_NEW_RECORD' => 'Create Favorite',
-    'LNK_LIST' => 'View Favorites',
-    'LBL_SEARCH_FORM_TITLE' => 'Search Favorites',
-    'LBL_HISTORY_SUBPANEL_TITLE' => 'View History',
-    'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Activities',
-    'LBL_NEW_FORM_TITLE' => 'New Favorite',
-    'LBL_MARK_FAVORITE' => 'Mark as favorite',
-    'LBL_UNMARK_FAVORITE' => 'Unmark favorite',
+    'LBL_DATE_ENTERED' => 'Data de Creación',
+    'LBL_DATE_MODIFIED' => 'Data de Modificación',
+    'LBL_MODIFIED' => 'Modificado por',
+    'LBL_MODIFIED_NAME' => 'Modificado por Nome',
+    'LBL_CREATED' => 'Creado por',
+    'LBL_DESCRIPTION' => 'Descrición',
+    'LBL_DELETED' => 'Eliminado',
+    'LBL_NAME' => 'Nome',
+    'LBL_CREATED_USER' => 'Creado polo Usuario',
+    'LBL_MODIFIED_USER' => 'Modificado polo Usuario',
+    'LBL_LIST_NAME' => 'Nome',
+    'LBL_EDIT_BUTTON' => 'Editar',
+    'LBL_REMOVE' => 'Quitar',
+    'LBL_LIST_FORM_TITLE' => 'Lista de favoritos',
+    'LBL_MODULE_NAME' => 'Favoritos',
+    'LBL_MODULE_TITLE' => 'Favoritos',
+    'LBL_HOMEPAGE_TITLE' => 'Os Meus Favoritos',
+    'LNK_NEW_RECORD' => 'Crear Favorito',
+    'LNK_LIST' => 'Ver Favoritos',
+    'LBL_SEARCH_FORM_TITLE' => 'Buscar Favoritos',
+    'LBL_HISTORY_SUBPANEL_TITLE' => 'Ver Historial',
+    'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
+    'LBL_NEW_FORM_TITLE' => 'Novo Favorito',
+    'LBL_MARK_FAVORITE' => 'Marcar como Favorito',
+    'LBL_UNMARK_FAVORITE' => 'Desmarcar Favorito',    
 );
