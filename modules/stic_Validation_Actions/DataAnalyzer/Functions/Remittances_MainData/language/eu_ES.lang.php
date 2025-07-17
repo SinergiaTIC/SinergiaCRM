@@ -21,5 +21,5 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Remittances - Check main fields',		// Required label. Contains function name
+    'NAME' => 'Remesas - Revisión de los datos principales',		// Esta etiqueta es obligatoria. Indica el nombre de la función
 );
