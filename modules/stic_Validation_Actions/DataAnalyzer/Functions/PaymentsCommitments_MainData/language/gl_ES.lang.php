@@ -21,8 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Compromisos de pago - Revisión dos datos principais',		// Required label. Contains function name
-    'UPDATED_IBAN' => ' era erróneo, actualizouse automaticamente.',
+    'NAME' => 'Payment commitments - Check main fields',		// Required label. Contains function name
+    'UPDATED_IBAN' => ' has been updated to clean invalid chars',
     'UPDATED_IBAN' => ' was wrong, it has been automatically updated.',
-    'UPDATED_MANDATE' => ' estaba baleiro ou non era válido, actualizouse automaticamente para corrixilo.',    
+    'UPDATED_MANDATE' => ' was empty or invalid, it has been automatically updated.',    
 );
