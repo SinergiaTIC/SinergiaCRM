@@ -21,9 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Payments - Check relationships',		// Required label. Contains function name
-    'NO_ERRORS' => 'No rows to review found,',
-    'NO_LINK' => 'No valid linked account or contact found. Can\'t retrieve it from its payment commitment.',
-    'UPDATED_LINK' => 'No valid linked account or contact found. The payment has been updated from its payment commitment.',
-    'NO_FP' => 'It has no valid payment commitment linked.',
+    'NAME' => 'Pagos - Revisión das relacións',		// Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_ERRORS' => 'Non hai ningún compromiso de pago con relacións non válidas.',
+    'NO_LINK' => 'Non ten ningunha persoa nin organitzación vinculada ou non é válida e non se puido recuperar desde o compromiso de pago.',
+    'UPDATED_LINK' => 'Non tiña ningunha persoa nin organitzación vinculada ou non era válida; actualizouse desde o compromiso de pagamento..',
+    'NO_FP' => 'Non ten ningún compromiso de pago válido vinculado.',
 );
