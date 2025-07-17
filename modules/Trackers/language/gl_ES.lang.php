@@ -44,19 +44,19 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $mod_strings = array(
     //Column header mapping
-    'action' => 'Acción',
-    'date_modified' => 'Data de Última Acción',
+    'action' => 'Action',
+    'date_modified' => 'Date of Last Action',
     'item_id' => 'ID',
-    'item_summary' => 'Nome',
-    'module_name' => 'Nome de Módulo',
-    'users' => 'Usuarios',
+    'item_summary' => 'Name',
+    'module_name' => 'Module Name',
+    'users' => 'Users',
 
     //Administration related labels
-    'LBL_MODULE_NAME' => 'Monitorización',
+    'LBL_MODULE_NAME' => 'Trackers',
 
     // STIC-Custom 20250613 ART - Tracker Module
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/211
-    'LBL_ASCENDING' => 'Ascendente',
-    'LBL_DESCENDING' => 'Descendente',
+    'LBL_ASCENDING' => 'Ascending',
+    'LBL_DESCENDING' => 'Descending',
     // END STIC-Custom
 );
