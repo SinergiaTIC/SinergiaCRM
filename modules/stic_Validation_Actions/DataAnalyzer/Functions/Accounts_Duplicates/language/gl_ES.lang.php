@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Accounts - Duplicate search',		// Required label. Contains function name
-    'NO_DUPLICATED' => 'No duplicate rows found.',
-    'POSSIBLE_DUP' => 'Matching value in field ',
+    'NAME' => 'Organizacións - Busca de duplicados',		// Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_DUPLICATED' => 'Non se detectaron duplicados.',
+    'POSSIBLE_DUP' => 'Coinciden no campo ',
 );
