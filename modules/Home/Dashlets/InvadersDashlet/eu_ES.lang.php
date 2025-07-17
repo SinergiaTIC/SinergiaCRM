@@ -43,10 +43,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['InvadersDashlet'] = array(
-    'LBL_TITLE' => 'Invaders!',
-    'LBL_DESCRIPTION' => 'A little way to pass the time',
-    'LBL_DBLCLICK_HELP' => 'Use A and D to move, S to fire.',
-    'LBL_START' => 'Click To Start',
-    'LBL_GAME_OVER' => 'Game Over<br>(Click to play again)',
+    'LBL_TITLE' => 'Invasores!',
+    'LBL_DESCRIPTION' => 'Una pequeña forma de pasar el tiempo',
+    'LBL_DBLCLICK_HELP' => 'Use las teclas A y D para moverse, S para disparar.',
+    'LBL_START' => 'Haga Click para Comenzar',
+    'LBL_GAME_OVER' => 'Game Over<br>(Haga click para volver a comenzar)',
 
 );
