@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['ChartsDashlet'] = array(
-    'LBL_TITLE' => 'Charts',
-    'LBL_DESCRIPTION' => 'A dashlet to display charts',
-    'LBL_CONFIGURE_TITLE' => 'Title',
+    'LBL_TITLE' => 'Gráficos',
+    'LBL_DESCRIPTION' => 'Un Dashlet para visualizar gráficos',
+    'LBL_CONFIGURE_TITLE' => 'Título',
 );
