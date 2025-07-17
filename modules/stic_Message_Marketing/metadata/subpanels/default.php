@@ -63,7 +63,7 @@ $subpanel_layout = array (
       'vname' => 'LBL_TEMPLATE',
       'width' => '15%',
       'widget_class' => 'SubPanelDetailViewLink',
-      'target_record_key' => 'template_id_c',
+      'target_record_key' => 'template_id',
       'target_module' => 'EmailTemplates',
     ),
     'date_modified' => 
