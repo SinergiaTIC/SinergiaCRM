@@ -21,5 +21,5 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-  'NAME' => 'Nome da función',		// Required label. Contains function name
+  'NAME' => 'Function name',		// Required label. Contains function name
 );
