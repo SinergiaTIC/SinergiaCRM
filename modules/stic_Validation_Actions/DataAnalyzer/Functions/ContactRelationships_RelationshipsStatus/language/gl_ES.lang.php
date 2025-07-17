@@ -21,6 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Relacións Persoas - Revisión das relacións',		// Required label. Contains function name
-    'NO_LINK' => 'Non ten ningunha Persoa vinculada ou non és válida',
+    'NAME' => 'Contacts Relationships - Check relationships',		// Required label. Contains function name
+    'NO_LINK' => 'No valid linked contact found.',
 );
