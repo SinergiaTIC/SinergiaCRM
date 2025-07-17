@@ -21,8 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array(
-    'NAME' => 'Remittances - Check relationships', // Required label. Contains function name
-    'NO_ERRORS' => 'No errors found.',
-    'ERROR_STATUS_1' => 'The status of the payment ',
-    'ERROR_STATUS_2' => ' is not coherent with the status of its remittance.',
+    'NAME' => 'Remesas - Revisión de las relaciones', // Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_ERRORS' => 'No se han encontrado errores.',
+    'ERROR_STATUS_1' => 'El estado del pago ',
+    'ERROR_STATUS_2' => ' es incoherente con el de la remesa.',
 );
