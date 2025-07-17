@@ -44,29 +44,29 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $mod_strings = array(
 
-    'LBL_NAME' => 'Name',
-    'LBL_NUMBER' => 'Number:',
-    'LBL_STATUS' => 'Status:',
-    'LBL_PRIORITY' => 'Priority:',
-    'LBL_DESCRIPTION' => 'Description:',
-    'LBL_RESOLUTION' => 'Resolution',
-    'LBL_LAST_MODIFIED' => 'Last Modified',
-    'LBL_ASSIGNED_TO_ID' => 'Assigned To:',
-    'LBL_ASSIGNED_TO_NAME' => 'User:',
-    'LBL_WORK_LOG' => 'Work Log:',
-    'LBL_CREATED_BY' => 'Created by:',
-    'LBL_DATE_ENTERED' => 'Date Created:',
-    'LBL_DATE_MODIFIED' => 'Date Modified:',
-    'LBL_MODIFIED_BY' => 'Last Modified by:',
-    'LBL_ASSIGNED_USER' => 'Assigned User:',
-    'LBL_TYPE' => 'Type:',
-    'LBL_SUBJECT' => 'Subject:',
+    'LBL_NAME' => 'Nombre',
+    'LBL_NUMBER' => 'Número:',
+    'LBL_STATUS' => 'Estado:',
+    'LBL_PRIORITY' => 'Prioridad:',
+    'LBL_DESCRIPTION' => 'Descripción:',
+    'LBL_RESOLUTION' => 'Resolución',
+    'LBL_LAST_MODIFIED' => 'Última Modificación',
+    'LBL_ASSIGNED_TO_ID' => 'Asignado A:',
+    'LBL_ASSIGNED_TO_NAME' => 'Usuario:',
+    'LBL_WORK_LOG' => 'Registro de Actividad:',
+    'LBL_CREATED_BY' => 'Creado Por:',
+    'LBL_DATE_ENTERED' => 'Fecha de Creación:',
+    'LBL_DATE_MODIFIED' => 'Fecha de Modificación:',
+    'LBL_MODIFIED_BY' => 'Modificado Por:',
+    'LBL_ASSIGNED_USER' => 'Usuario Asignado:',
+    'LBL_TYPE' => 'Tipo:',
+    'LBL_SUBJECT' => 'Asunto:',
 
-    'LBL_EDIT_BUTTON' => 'Edit',
+    'LBL_EDIT_BUTTON' => 'Editar',
     // STIC-Custom 20240214 JBL - QuickEdit view
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
-    'LBL_QUICKEDIT_BUTTON' => '↙ Edit',
+    'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
     // END STIC-Custom
-    'LBL_REMOVE' => 'Remove',
+    'LBL_REMOVE' => 'Quitar',
 
 );
