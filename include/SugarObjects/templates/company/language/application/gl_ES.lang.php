@@ -46,16 +46,16 @@ $app_list_strings = array(
 
     strtolower($object_name) . '_type_dom' => array(
         '' => '',
-        'Analyst' => 'Analista',
-        'Competitor' => 'Competidor',
-        'Customer' => 'Cliente',
-        'Integrator' => 'Integrador',
-        'Investor' => 'Inversor',
-        'Partner' => 'Socio',
-        'Press' => 'Prensa',
-        'Prospect' => 'Prospecto',
-        'Reseller' => 'Revendedor',
-        'Other' => 'Outro',
+        'Analyst' => 'Analyst',
+        'Competitor' => 'Competitor',
+        'Customer' => 'Customer',
+        'Integrator' => 'Integrator',
+        'Investor' => 'Investor',
+        'Partner' => 'Partner',
+        'Press' => 'Press',
+        'Prospect' => 'Prospect',
+        'Reseller' => 'Reseller',
+        'Other' => 'Other',
     ),
 
 );
