@@ -21,10 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Calendario laboral - Revisión dos rexistros do día anterior', // This tag is required. Indicates the name of the function
-    'TIME_TRACKER_INACTIVE_IN_USER'=> 'A funcionalidade de Rexistro horario non está activada no usuario: ',
-    'WORK_CALENDAR_INACTIVE_IN_USER'=> 'A funcionalidade de Calendario laboral non está activada no usuario: ',
-    'NO_RECORD_IN_TIME_TRACKER' => 'Ao rexistro de calendario laboral teórico de tipo laborable non lle corresponde ningún rexistro horario efectivo.',
-    'EMAIL_SUBJECT' => 'Calendario laboral - Revisión dos rexistros do día anterior',
-    'EMAIL_BODY' => 'Atopouse un erro ao validar o seguinte rexistro de Calendario laboral: ',
+    'NAME' => 'Work calendar - Previous day records validation', // This tag is required. Indicates the name of the function
+    'TIME_TRACKER_INACTIVE_IN_USER'=> 'The Time tracking is not active for the user: ',
+    'WORK_CALENDAR_INACTIVE_IN_USER'=> 'The Work calendar is not active for the user: ',
+    'NO_RECORD_IN_TIME_TRACKER' => 'There is no time tracker record that corresponds to the work calendar record of working type.',
+    'EMAIL_SUBJECT' => 'Work calendar - Previous day records validation',
+    'EMAIL_BODY' => 'An error was found during the validation of this Work calendar record: ',
 );
