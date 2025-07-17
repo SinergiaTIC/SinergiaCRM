@@ -21,8 +21,8 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Interesados - Revisión dos datos principais',		// Required label. Contains function name
-    'NO_VALID_CIF' => 'Non é un CIF válido.',
-	'NO_VALID_NIF_NIE' => 'Non é un NIF/NIE válido.',
-	'UPDATED' => 'Limpouse o campo para eliminar caracteres non válidos.',
+    'NAME' => 'Leads - Check main fields',		// Required label. Contains function name
+    'NO_VALID_CIF' => 'Invalid CIF.',
+	'NO_VALID_NIF_NIE' => 'Invalid NIF/NIE.',
+	'UPDATED' => 'Field cleaned to remove invalid characters.',
 );
