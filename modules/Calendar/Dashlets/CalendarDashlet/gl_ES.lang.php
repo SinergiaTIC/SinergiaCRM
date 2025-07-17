@@ -43,14 +43,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['CalendarDashlet'] = array(
-    'LBL_TITLE' => 'My Calendar',
-    'LBL_DESCRIPTION' => 'Calendar dashlet',
-    'LBL_CONFIGURE_TITLE' => 'Title',
-    'LBL_CONFIGURE_VIEW' => 'View',
-    'LBL_SAVE_BUTTON_LABEL' => 'Save',
+    'LBL_TITLE' => 'Mi Calendario',
+    'LBL_DESCRIPTION' => 'Dashlet de Calendario',
+    'LBL_CONFIGURE_TITLE' => 'Titulo',
+    'LBL_CONFIGURE_VIEW' => 'Ver',
+    'LBL_SAVE_BUTTON_LABEL' => 'Guardar',
 
-    'LBL_VIEW_DAY' => 'Day',
-    'LBL_VIEW_WEEK' => 'Week',
-    'LBL_VIEW_MONTH' => 'Month',
+    'LBL_VIEW_DAY' => 'Dia',
+    'LBL_VIEW_WEEK' => 'Semana',
+    'LBL_VIEW_MONTH' => 'Mes',
 
 );
