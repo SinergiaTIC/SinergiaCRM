@@ -240,6 +240,7 @@ function initializeCalendar() {
       setTimeout(function () {
         $('.fc-filterButton-button')
           .html('<span class="glyphicon glyphicon-filter"></span> ');
+        updateCrossVisibility();
       }, 0);
     },
     firstDay: start_weekday,
@@ -321,6 +322,19 @@ function initializeCalendar() {
             background: transparent !important;
             border: none !important;
         }
+        .cross {
+          position: absolute;
+          right: -8px;
+          top: -8px;
+          background-color: #b5bc31;
+          color: white;
+          font-size: 10px;
+          padding: 2px 4px;
+        }
+            
+        .fc-filterButton-button {
+            position: relative;
+        }
     `;
   document.head.appendChild(style);
 
@@ -385,6 +399,12 @@ $(document).ready(function () {
   $("#btn-save-filters").click(function (e) {
     e.preventDefault();
     saveFilters();
+  });
+
+  $(document).on('click', '#cross_filters', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    handleCrossRemoveFilters();
   });
 });
 
@@ -453,11 +473,16 @@ function loadSavedFilters() {
 }
 
 function hasAppliedFilters() {
+  var centerValue = $("#stic_center_id").val();
+  var usersList = $("#stic_resources_places_users_list").val();
+  var typesList = $("#stic_resources_places_type_list").val();
+  var gendersList = $("#stic_resources_places_gender_list").val();
+  
   return (
-    $("#stic_center_id").val() !== "" ||
-    $("#stic_resources_places_users_list").val().length > 0 ||
-    $("#stic_resources_places_type_list").val().length > 0 ||
-    $("#stic_resources_places_gender_list").val().length > 0
+    (centerValue !== "" && centerValue !== null) ||
+    (Array.isArray(usersList) && usersList.length > 0) ||
+    (Array.isArray(typesList) && typesList.length > 0) ||
+    (Array.isArray(gendersList) && gendersList.length > 0)
   );
 }
 
@@ -468,6 +493,16 @@ function handleCrossRemoveFilters() {
   $("#stic_resources_places_type_list").val([]);
   $("#stic_resources_places_gender_list").val([]);
 
+  if ($("#stic_resources_places_users_list")[0] && $("#stic_resources_places_users_list")[0].selectize) {
+    $("#stic_resources_places_users_list")[0].selectize.clear();
+  }
+  if ($("#stic_resources_places_type_list")[0] && $("#stic_resources_places_type_list")[0].selectize) {
+    $("#stic_resources_places_type_list")[0].selectize.clear();
+  }
+  if ($("#stic_resources_places_gender_list")[0] && $("#stic_resources_places_gender_list")[0].selectize) {
+    $("#stic_resources_places_gender_list")[0].selectize.clear();
+  }
+
   saveFilters();
 
   updateCrossVisibility();
@@ -477,9 +512,26 @@ function handleCrossRemoveFilters() {
   }
 }
 function updateCrossVisibility() {
-  if (hasAppliedFilters()) {
-    $("#cross_filters").show();
-  } else {
-    $("#cross_filters").hide();
-  }
+  setTimeout(function() {
+    var filterButton = $('.fc-filterButton-button');
+
+    if (filterButton.length > 0) {
+      $('#cross_filters').remove();
+
+      if (hasAppliedFilters()) {
+        var crossHtml = '<span id="cross_filters" class="cross glyphicon glyphicon-remove"></span>';
+        filterButton.css('position', 'relative').append(crossHtml);
+
+        $('#cross_filters').on('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleCrossRemoveFilters();
+        });
+
+        $('#cross_filters').show();
+      }
+    } else {
+      setTimeout(updateCrossVisibility, 100);
+    }
+  }, 50);
 }
