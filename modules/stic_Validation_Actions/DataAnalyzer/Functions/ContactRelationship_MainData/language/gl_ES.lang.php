@@ -21,6 +21,6 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Relacións Persoas - Revisión dos datos principais',		// Required label. Contains function name
-    'LEAVING_DATE' => 'A data de baixa é anterior á data de alta.',
+    'NAME' => 'Contacts Relationships - Check main fields',		// Required label. Contains function name
+    'LEAVING_DATE' => 'End date is earlier than start date.',
 );
