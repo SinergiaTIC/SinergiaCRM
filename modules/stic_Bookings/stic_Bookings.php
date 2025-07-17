@@ -137,7 +137,7 @@ class stic_Bookings extends Basic
             }
         }
 
-        $this->calculateAndUpdateTotalAmount($newRelatedResources);
+        $this->calculateAndUpdateTotalAmount(array_unique($newRelatedResources));
 
         parent::save($check_notify);
 
