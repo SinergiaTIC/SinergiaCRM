@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $dashletStrings['OutcomeByMonthDashlet'] = array(
-    'LBL_TITLE' => 'Outcome by Month',
-    'LBL_DESCRIPTION' => 'Chart of the Monthly Outcomes',
-    'LBL_REFRESH' => 'Refresh Chart'
+    'LBL_TITLE' => 'Resultado por Mes',
+    'LBL_DESCRIPTION' => 'Gráfico del Resultado Mensual',
+    'LBL_REFRESH' => 'Actualizar Gráfico'
 );
