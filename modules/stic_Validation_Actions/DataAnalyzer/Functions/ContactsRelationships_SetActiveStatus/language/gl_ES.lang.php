@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array (
-    'NAME' => 'Relacións con Persoas - Cálculo de rexistro activo/inactivo', // This label is mandatory. Indicates the name of the function
-    'NO_ROWS' => 'Todas as relacións con persoas teñen o estado activo/inactivo correcto.',
-    'UPDATED' => 'Actualizouse o campo Activo.'
+    'NAME' => 'Contacts relationships - Set active/inactive records', // This label is mandatory. Indicates the name of the function
+    'NO_ROWS' => 'All contacts relationships have the right active/inactive status.',
+    'UPDATED' => 'The Active field has been updated.'
 );
