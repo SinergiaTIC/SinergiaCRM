@@ -23,13 +23,13 @@
 
 $mod_strings = array(
     // Module fields
-    'LBL_CONDITION_ORDER' => 'Orde',
-    'LBL_FIELD' => 'Campo',
-    'LBL_OPERATOR' => 'Operador',
-    'LBL_CONDITION_TYPE' => 'Tipo',
-    'LBL_VALUE' => 'Valor',
-    'LBL_VALUE_TYPE' => 'Tipo do valor',
+    'LBL_CONDITION_ORDER' => 'Order',
+    'LBL_FIELD' => 'Field',
+    'LBL_OPERATOR' => 'Operator',
+    'LBL_CONDITION_TYPE' => 'Type',
+    'LBL_VALUE' => 'Value',
+    'LBL_VALUE_TYPE' => 'Value type',
 
     // Relations and subpanels
-    'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Personalizacións',
+    'LBL_STIC_CUSTOM_VIEW_CONDITIONS_FROM_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_TITLE' => 'Customizations',
 );
