@@ -88,6 +88,7 @@ $(document).ready(function() {
   if (viewType() != "list") {
     $("#notification_prospect_list_ids").selectize({ plugins: ["remove_button"] });
 
+    debugger;
     if ($("#LBL_NOTIFICATION_NEW_INFO").length == 0) {
       $(
         "<div id='LBL_NOTIFICATION_NEW_INFO' class='msg-warning' style='text-align: center; margin: 1em auto;'>" +
@@ -137,10 +138,14 @@ function type_change() {
 }
 
 function mail_change() {
+  debugger;
   if (STIC && STIC.campaignEmails && STIC.campaignEmails.outbound) {
     var outbound = STIC.campaignEmails.outbound.find(item => item.id === $("#notification_outbound_email_id").val());
     $("#notification_from_name").val(outbound ? outbound.name : "");
     $("#notification_from_addr").val(outbound ? outbound.addr : "");
+    $("#notification_reply_to_name").val(outbound ? outbound.reply_name : "");
+    $("#notification_reply_to_addr").val(outbound ? outbound.reply_addr : "");
+
   }
 }
 

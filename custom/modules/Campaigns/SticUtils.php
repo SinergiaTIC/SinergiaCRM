@@ -244,7 +244,7 @@ class CampaignsUtils
         $html .= "outbound: [";
         foreach ($outboundEmails['list'] as $outboundEmail) {
             // Add each outbound email account to the JavaScript array
-            $html .= "{id: '{$outboundEmail->id}', name: '{$outboundEmail->smtp_from_name}', addr: '{$outboundEmail->smtp_from_addr}'},";
+            $html .= "{id: '{$outboundEmail->id}', name: '{$outboundEmail->smtp_from_name}', addr: '{$outboundEmail->smtp_from_addr}', reply_name: '{$outboundEmail->reply_to_name}', reply_addr: '{$outboundEmail->reply_to_addr}'},";
         }
         $html .= "],";
 
