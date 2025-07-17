@@ -43,21 +43,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_MODULE_TITLE' => 'My Saved Filters',
-    'LBL_SEARCH_FORM_TITLE' => 'My Saved Filters : Filter',
-    'LBL_LIST_FORM_TITLE' => 'My Saved Filters List',
-    'LBL_DELETE_CONFIRM' => 'Are you sure you want to delete the selected Saved Filter?',
-    'LBL_DELETE_BUTTON_TITLE' => 'Delete this Saved Filter',
-    'LBL_SAVE_BUTTON_TITLE' => 'Save the current filter',
-    'LBL_LIST_NAME' => 'Name',
-    'LBL_LIST_MODULE' => 'Module',
-    'LBL_ORDER_BY_COLUMNS' => 'Order by column:',
-    'LBL_DIRECTION' => 'Direction:',
-    'LBL_SAVE_SEARCH_AS' => 'Save filter as:',
-    'LBL_ASCENDING' => 'Ascending',
-    'LBL_DESCENDING' => 'Descending',
-    'LBL_MODIFY_CURRENT_FILTER' => 'Modify current filter',
+    'LBL_MODULE_TITLE' => 'Mis filtros guardados',
+    'LBL_SEARCH_FORM_TITLE' => 'Mi filtros guardados: filtro',
+    'LBL_LIST_FORM_TITLE' => 'Mi lista de filtros guardados',
+    'LBL_DELETE_CONFIRM' => '¿Está seguro de que desea eliminar el Filtro Guardado Seleccionado?',
+    'LBL_DELETE_BUTTON_TITLE' => 'Eliminar este filtro guardado',
+    'LBL_SAVE_BUTTON_TITLE' => 'Guardar el filtro actual',
+    'LBL_LIST_NAME' => 'Nombre',
+    'LBL_LIST_MODULE' => 'Módulo',
+    'LBL_ORDER_BY_COLUMNS' => 'Ordenar por columna:',
+    'LBL_DIRECTION' => 'Dirección:',
+    'LBL_SAVE_SEARCH_AS' => 'Guardar el filtro como:',
+    'LBL_ASCENDING' => 'Ascendente',
+    'LBL_DESCENDING' => 'Descendente',
+    'LBL_MODIFY_CURRENT_FILTER' => 'Modificar filtro actual',
 
-    'LBL_CREATED_BY' => 'Created By',
+    'LBL_CREATED_BY' => 'Creado Por',
 
 );
