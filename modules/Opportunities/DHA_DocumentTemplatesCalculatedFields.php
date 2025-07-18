@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/DHA_PlantillasDocumentos/DHA_DocumentTemplatesCalculatedFields_base.php');
 
 // El prefijo "Custom" en el nombre de la clase no es imprescindible, a menos que ya exista otra clase para el modulo en /modules y �sta tenga que descender de la que ya existe (el funcionamiento es igual que con otras clases de Sugar)
-class CustomOpportunities_DocumentTemplatesCalculatedFields extends DHA_DocumentTemplatesCalculatedFields {
+class Opportunities_DocumentTemplatesCalculatedFields extends DHA_DocumentTemplatesCalculatedFields {
 
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////
