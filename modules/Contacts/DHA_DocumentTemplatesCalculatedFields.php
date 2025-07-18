@@ -50,7 +50,10 @@ class Contacts_DocumentTemplatesCalculatedFields extends DHA_DocumentTemplatesCa
       $imageField = $this->imageField;
       $id = $this->bean->id . '_'.$imageField;
       $image_path_original = "upload://{$id}";
-      $mime_type = strtolower(mime_content_type($image_path_original));
+      $mime_type = '';
+      if(file_exists($image_path_original)) {
+         $mime_type = strtolower(mime_content_type($image_path_original));
+      }
       if (!in_array($mime_type, $mime_types)) {
          return '';
       }

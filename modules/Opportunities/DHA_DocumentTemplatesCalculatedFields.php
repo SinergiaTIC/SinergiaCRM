@@ -164,7 +164,7 @@ class Opportunities_DocumentTemplatesCalculatedFields extends DHA_DocumentTempla
       }      
       $this->SetCalcValue('last-meeting-name', $last_meeting_name); 
       $this->SetCalcValue('last-meeting-location', $last_meeting_location); 
-      $this->SetCalcValue('last-meeting-status', $app_list_strings['meeting_status_dom'][$last_meeting_status]);
+      $this->SetCalcValue('last-meeting-status', $app_list_strings['meeting_status_dom'][$last_meeting_status] ?? '');
       $this->SetCalcValue('last-meeting-date_start', $last_meeting_date_start); 
       $this->SetCalcValue('last-meeting-date_end', $last_meeting_date_end); 
       $this->SetCalcValue('last-meeting-duration_hours', $last_meeting_duration_hours);
