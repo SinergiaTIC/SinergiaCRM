@@ -292,24 +292,28 @@ class stic_Bookings extends Basic
      */
     private function getBookingDuration()
     {
-        global $timedate;
+        global $timedate, $current_user;
 
         if (empty($this->start_date) || empty($this->end_date)) {
             return ['hours' => 0, 'days' => 0];
         }
 
         try {
-            $userDateFormat = $timedate->get_user_date_format();
-            $phpDateFormat = str_replace(['dd', 'mm', 'yyyy', 'yy'], ['d', 'm', 'Y', 'y'], $userDateFormat);
-
-            $startDateTime = $this->getFormattedDateTime($this->start_date, $phpDateFormat);
-            $endDateTime = $this->getFormattedDateTime($this->end_date, $phpDateFormat);
-
-            if ($startDateTime === false || $endDateTime === false) {
-                throw new Exception("Error al parsear fechas. start_date='{$this->start_date}', end_date='{$this->end_date}', formato esperado='{$phpDateFormat}'");
+            $start = $this->start_date;
+            $end = $this->end_date;
+    
+            if ($userDate = $timedate->fromUserDate($start, false, $current_user)) {
+                $start = $userDate->asDBDate();
+            }
+    
+            if ($userDate = $timedate->fromUserDate($end, false, $current_user)) {
+                $end = $userDate->asDBDate();
             }
 
-            $interval = $startDateTime->diff($endDateTime);
+            $start = new DateTime($start);
+            $end = new DateTime($end);
+
+            $interval = $start->diff($end);
 
             // Calculate total hours
             $totalHours = $interval->days * 24 + $interval->h + ($interval->i / 60) + ($interval->s / 3600);
@@ -319,13 +323,7 @@ class stic_Bookings extends Basic
             
             if (isset($this->all_day) && $this->all_day == '1') {
 
-                $startDateOnly = $this->getFormattedDateTime($this->start_date, $phpDateFormat);
-                $endDateOnly = $this->getFormattedDateTime($this->end_date, $phpDateFormat);
-
-                $startDateOnly->setTime(0, 0, 0);
-                $endDateOnly->setTime(0, 0, 0);
-
-                $dayInterval = $startDateOnly->diff($endDateOnly);
+                $dayInterval = $start->diff($end);
                 $totalDays = $dayInterval->days;
                 // If same day booking, it's still 1 day
                 if ($totalDays == 0) {
@@ -344,19 +342,4 @@ class stic_Bookings extends Basic
             return ['hours' => 0, 'days' => 0];
         }
     }
-    private function getFormattedDateTime(string $dateString, string $userPhpDateFormat)
-    {
-        $dateTime = DateTime::createFromFormat($userPhpDateFormat, $dateString);
-
-        if ($dateTime === false) {
-            try {
-                $dateTime = new DateTime($dateString);
-            } catch (Exception $e) {
-                return false;
-            }
-        }
-
-        return $dateTime;
-    }
-
 }
