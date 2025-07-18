@@ -63,7 +63,7 @@ $mod_strings = array (
   'LBL_START_DATE' => 'Data e hora de inicio',
   'LBL_END_DATE' => 'Data e hora de finalización',  
   'LBL_START_DATE_ERROR' => 'A data e hora de inicio debe ser anterior á data e hora de finalización.',
-  'LBL_END_DATE_ERROR' => 'A data e hora de finalización debe ser posterior á data e hora de inicio.',
+  'LBL_END_DATE_ERROR' => 'A Data e hora de finalización debe ser posterior á Data e hora de inicio.',
   'LBL_END_DATE_EXCEEDS_24_HOURS' => 'A diferenza entre inicio e finalización debe de ser inferior a 24 horas.',
   'LBL_INCOMPATIBLE_TYPE_WITH_EXISTING_RECORDS' => 'Existe polo menos un rexistro de tipo incompatible co actual para o mesmo usuario e rango horario. Revíseo e aplique as modificacións oportunas.',
   'LBL_ERROR_REQUEST_INCOMPATIBLE_TYPE' => 'Produciuse un erro ao comprobar a existencia de rexistros de calendario laboral incompatibles co rexistro que se está creando. Consulte co administrador.',
@@ -92,7 +92,7 @@ $mod_strings = array (
   'LBL_PERIODIC_WORK_CALENDAR_TITLE' => 'Xerar Calendario laboral',
   'LBL_WORK_CALENDAR_DURATION' => 'Duración do rexistro de Calendario laboral',
   'LBL_ERROR_IN_VALIDATION' => 'Hai un erro no valor indicado no campo Data e hora de finalización.',
-  'LBL_END_DATE_ERROR' => 'A Data e hora de finalización debe ser posterior á Data e hora de inicio.',
+  'LBL_END_DATE_ERROR' => 'La fecha y hora de finalización debe ser posterior a la fecha y hora de inicio.',
   
   // Resumen del asistente de creación de registros de Calendario laboral
   'LBL_PERIODIC_WORK_CALENDAR_SUMMARY_TITLE' => 'Resumo:',
