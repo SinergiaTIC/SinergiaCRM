@@ -22,7 +22,7 @@
  */
 
 $mod_strings = array(
-    // Campos do módulo
+    // Campos del módulo
     'LBL_CONDITION_ORDER' => 'Orde',
     'LBL_FIELD' => 'Campo',
     'LBL_OPERATOR' => 'Operador',
