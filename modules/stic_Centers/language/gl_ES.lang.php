@@ -64,7 +64,6 @@ $mod_strings = array (
   'LBL_TYPE' => 'Tipo',
   'LBL_PLACES' => 'Prazas',
   'LBL_ADAPTED' => 'Adaptado',
-  'LBL_ACCOUNT' => 'Organización',
   'LBL_STIC_CENTERS_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
   'LBL_PANEL_POSTAL_ADDRESS' => 'Dirección postal',
