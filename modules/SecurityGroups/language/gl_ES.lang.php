@@ -43,7 +43,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings = array(
-    'LBL_ALL_MODULES' => 'Todos',//rost fix
+    'LBL_ALL_MODULES' => 'Todos', //rost fix
     'LBL_ASSIGNED_TO_ID' => 'Id de usuario asignado',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ID' => 'ID',
@@ -75,9 +75,9 @@ $mod_strings = array(
 
     'LBL_CONFIGURE_SETTINGS' => 'Configurar',
     'LBL_ADDITIVE' => 'Privilexios agregados',
-    'LBL_ADDITIVE_DESC' => "O Usuario ten os maiores privilexios de todos os roles e grupos asignados a el.",
+    'LBL_ADDITIVE_DESC' => 'O Usuario ten os maiores privilexios de todos os roles e grupos asignados a el.',
     'LBL_STRICT_RIGHTS' => 'Privilexios terminante',
-    'LBL_STRICT_RIGHTS_DESC' => "Se un usuario é un membro de varios grupos soamente as dereitas respectivas do grupo asignado ao rexistro en curso se utilizan.",
+    'LBL_STRICT_RIGHTS_DESC' => 'Se un usuario é un membro de varios grupos soamente as dereitas respectivas do grupo asignado ao rexistro en curso se utilizan.',
     'LBL_USER_ROLE_PRECEDENCE' => 'Precedencia do Rol de Usuario',
     'LBL_USER_ROLE_PRECEDENCE_DESC' => 'Se calquera rol é asignado ao usuario directamente, este tenrá precedencia sobre calquera rol de grupo.',
     'LBL_INHERIT_TITLE' => 'Regras de herdanza de Grupo',
