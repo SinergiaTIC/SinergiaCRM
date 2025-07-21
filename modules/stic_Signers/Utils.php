@@ -89,7 +89,7 @@ public static function sendToSign($signerId)
                                 </tr>
                             </table>
                             
-                            <p style=\"margin-top: 20px; font-size: 12px; color: #777;\">Si tienes problemas para acceder al enlace, cópialo y pégalo en tu navegador: <br> <a href=\"{$signURL}\" target=\"_blank\" style=\"color: #007BFF; text-decoration: underline;\">{$signURL}</a></p>
+                            <p style=\"margin-top: 20px; font-size: 12px; color: #777;\">{$mod_strings['LBL_SIGNER_EMAIL_LINK_PROBLEM']}: <br> <a href=\"{$signURL}\" target=\"_blank\" style=\"color: #007BFF; text-decoration: underline;\">{$signURL}</a></p>
 
                             </body>
                         </html>";

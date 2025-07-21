@@ -99,4 +99,5 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_ERROR' => 'Error al enviar el correo electrónico al firmante', 
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente al firmante', 
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Ir al documento',
+    'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Si tienes problemas para acceder al enlace, cópialo y pégalo en tu navegador',
 );
