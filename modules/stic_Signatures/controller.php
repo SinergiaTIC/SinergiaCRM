@@ -30,11 +30,24 @@ class stic_SignaturesController extends SugarController
         $signerId = '00000b06-3aa0-2b29-db5c-6879efaf8c9d';
         $html= stic_SignaturesUtils::getParsedTemplate($signerId);
         die($html);
-        
-
-
-
+    
     }
+
+    public function action_getPreview()
+    {
+        require_once 'modules/stic_Signatures/Utils.php';
+        $signerId = $_REQUEST['signerId'] ?? '';
+        $html = stic_SignaturesUtils::getParsedTemplate($signerId);
+        if (!empty($html)) {
+            echo $html;
+        } else {
+            echo '<p class="text-red-500 border-red-500 text-center">No se encontró contenido para el firmante especificado.</p>';
+        }
+        die();
+    }
+
+
+
 
 
     public function action_getRelationships()

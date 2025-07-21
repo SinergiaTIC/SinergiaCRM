@@ -29,7 +29,7 @@ class stic_SignaturePortal extends SugarView
         $stic_SignaturePortalUtils = new stic_SignaturePortalUtils();
 
         // Get signatureBean
-        $signatureBean = $stic_SignaturePortalUtils->signatureBean;
+        $signatureBean = $stic_SignaturePortalUtils->signatureBean ?? null;
 
         // Get authentication mode
         $authMode=$signatureBean->auth_method ?? 'unique_link';

@@ -21,12 +21,17 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-require_once 'include/MVC/View/views/view.detail.php';
+require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
 
-class stic_SignaturesViewDetail extends ViewDetail
+class stic_SignersViewList extends ViewList
 {
 
+    public function __construct()
+    {
+        parent::__construct();
+
+    }
 
     public function preDisplay()
     {
@@ -34,15 +39,7 @@ class stic_SignaturesViewDetail extends ViewDetail
 
         SticViews::preDisplay($this);
 
-        // get emailable related modules and populate the dropdown
-        require_once 'modules/stic_Signatures/Utils.php';
-        stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module ?? null);
-
-        if(empty($this->bean->signer_path)){
-            SugarApplication::redirect(
-                "index.php?module=stic_Signatures&action=EditView&return_module=stic_Signatures&return_action=DetailView&record={$this->bean->id}"
-            );
-        }
+        // Write here you custom code
 
     }
 
@@ -51,8 +48,7 @@ class stic_SignaturesViewDetail extends ViewDetail
         parent::display();
 
         SticViews::display($this);
-
-        echo getVersionedScript("modules/stic_Signatures/Utils.js");
+        echo getVersionedScript("modules/stic_Signers/Utils.js");
 
         // Write here you custom code
     }

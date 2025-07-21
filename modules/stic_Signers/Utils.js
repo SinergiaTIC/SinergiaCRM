@@ -21,7 +21,7 @@
  */
 /* HEADER */
 // Set module name
-var module = "stic_Signatures";
+var module = "stic_Signers";
 
 /* INCLUDES */
 // Load moment.js to use in validations
@@ -29,18 +29,10 @@ loadScript("include/javascript/moment.min.js");
 
 /* VALIDATION DEPENDENCIES */
 var validationDependencies = {
-  activation_date: "activation_date",
-  expiration_date: "expiration_date",
+  
 };
 
 /* VALIDATION CALLBACKS */
-addToValidateCallback(getFormName(), "activation_date", "date", false, SUGAR.language.get(module, "LBL_ACTIVATION_DATE_ERROR"), function () {
-  return checkStartAndEndDatesCoherence("activation_date", "expiration_date", true);
-});
-
-addToValidateCallback(getFormName(), "expiration_date", "date", false, SUGAR.language.get(module, "LBL_EXPIRATION_DATE_ERROR"), function () {
-  return checkStartAndEndDatesCoherence("activation_date", "expiration_date", true);
-});
 
 /* VIEWS CUSTOM CODE */
 
@@ -50,14 +42,7 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-  setDisabledStatus('main_module',false)
-  // setDisabledStatus('signer_path',false)
 
-  
-  
-
-  
-    
     break;
   case "detail":
     
@@ -73,3 +58,26 @@ switch (viewType()) {
 
 
 
+function previewSignature() {
+  // Get the form name
+  var signerId = STIC.record.id;
+
+  // get html preview
+  $.ajax({
+      url: location.href.slice(0, location.href.indexOf(location.search)),
+      type: "POST",
+      data: {
+        module: "stic_Signatures",
+        action: "getPreview",
+        signerId: signerId,
+      },
+      success: function(response) {
+        $("#preview-container").html(response);
+      },
+      error: function(xhr, status, error) {
+        console.error("Request error:", status, error);
+      }
+    });
+  
+  
+}

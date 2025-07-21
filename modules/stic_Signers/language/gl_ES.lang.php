@@ -91,4 +91,6 @@ $mod_strings = array(
     'LBL_SIGNATURE_IMAGE' => 'Imaxe da sinatura',
     'LBL_VARIABLES' => 'Variables',
     'LBL_REJECTION_REASON' => 'Motivo de rexeitamento',
+
+    'LBL_SIGNER_PREVIEW' => 'Vista previa do firmante',
 );

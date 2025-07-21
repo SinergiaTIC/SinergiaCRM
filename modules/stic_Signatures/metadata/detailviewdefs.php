@@ -49,7 +49,7 @@ array (
           'panelDefault' => 'expanded',
         ),
       ),
-     
+      'syncDetailEditViews' => true,
     ),
     'panels' => 
     array (
@@ -57,14 +57,10 @@ array (
       array (
         0 => 
         array (
-         
-        ),
-        1 => 
-        array (
           0 => 'name',
           1 => 'assigned_user_name',
         ),
-        2 => 
+        1 => 
         array (
           0 => 
           array (
@@ -79,7 +75,7 @@ array (
             'label' => 'LBL_MAIN_MODULE',
           ),
         ),
-        3 => 
+        2 => 
         array (
           0 => 
           array (
@@ -94,7 +90,7 @@ array (
             'label' => 'LBL_ON_BEHALF_OF',
           ),
         ),
-        4 => 
+        3 => 
         array (
           0 => 
           array (
@@ -108,7 +104,7 @@ array (
             'label' => 'LBL_MINIMUM_SIGNATURES',
           ),
         ),
-        5 => 
+        4 => 
         array (
           0 => 
           array (
@@ -123,7 +119,7 @@ array (
             'label' => 'LBL_PDF_AUDIT_PAGE',
           ),
         ),
-        6 => 
+        5 => 
         array (
           0 => 
           array (
@@ -136,7 +132,7 @@ array (
             'label' => 'LBL_EXPIRATION_DATE',
           ),
         ),
-        7 => 
+        6 => 
         array (
           0 => 
           array (
@@ -150,7 +146,7 @@ array (
             'label' => 'LBL_EMAIL_TEMPLATE',
           ),
         ),
-        8 => 
+        7 => 
         array (
           0 => 
           array (
@@ -163,7 +159,7 @@ array (
             'label' => 'LBL_REMINDER_FREQUENCY',
           ),
         ),
-        9 => 
+        8 => 
         array (
           0 => 
           array (
@@ -177,7 +173,7 @@ array (
             'label' => 'LBL_PDF_DOCUMENT',
           ),
         ),
-        10 => 
+        9 => 
         array (
           0 => 'description',
         ),
