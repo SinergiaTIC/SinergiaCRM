@@ -20,40 +20,16 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-require_once 'include/MVC/View/views/view.detail.php';
-require_once 'SticInclude/Views.php';
-
-class stic_SignersViewDetail extends ViewDetail
+class stic_SignersController extends SugarController
 {
-
-    public function __construct()
+public function action_sendToSign()
     {
-        parent::__construct();
-
+        require_once 'modules/stic_Signers/Utils.php';
+        $signerId = $_REQUEST['signerId'] ?? '';
+        if (!empty($signerId)) {
+            stic_SignersUtils::sendToSign($signerId);
+            
+        } 
+        die();
     }
-
-    public function preDisplay()
-    {
-        parent::preDisplay();
-
-        SticViews::preDisplay($this);
-
-        echo getVersionedScript("SticInclude/js/Utils.js");    
-        
-    }
-
-    public function display()
-    {
-        parent::display();
-
-        SticViews::display($this);
-
-        
-        echo getVersionedScript("modules/stic_Signers/Utils.js");
-
-
-        // Write here you custom code
-    }
-
 }

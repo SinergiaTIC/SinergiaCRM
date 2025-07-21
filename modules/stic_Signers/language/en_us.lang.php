@@ -93,4 +93,11 @@ $mod_strings = array(
     'LBL_REJECTION_REASON' => 'Rejection reason',
 
     'LBL_SIGNER_PREVIEW' => 'Signer Preview',
+    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Send to sign by email',
+    'LBL_SIGNER_EMAIL_SUBJECT' => 'You have a document to sign',
+    'LBL_SIGNER_EMAIL_BODY' => 'Please click the following link to sign the document:',
+    'LBL_SIGNER_EMAIL_ERROR' => 'Error sending email to signer',
+    'LBL_SIGNER_EMAIL_SUCCESS' => 'Email sent successfully to signer',
+    'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Go to document',
+
 );

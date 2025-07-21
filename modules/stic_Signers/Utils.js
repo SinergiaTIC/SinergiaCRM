@@ -29,7 +29,7 @@ loadScript("include/javascript/moment.min.js");
 
 /* VALIDATION DEPENDENCIES */
 var validationDependencies = {
-  
+
 };
 
 /* VALIDATION CALLBACKS */
@@ -45,10 +45,17 @@ switch (viewType()) {
 
     break;
   case "detail":
-    
+    var buttons = {
+      sendToSign: {
+        id: "bt_send_to_sign",
+        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL"),
+        onclick: "window.location='index.php?module=stic_Signers&action=sendToSign&signerId=" + STIC.record.id + "'"
+      }
+    }
+    createDetailViewButton(buttons.sendToSign);
     break;
   case "list":
-    
+
     break;
   default:
     break;
@@ -64,20 +71,20 @@ function previewSignature() {
 
   // get html preview
   $.ajax({
-      url: location.href.slice(0, location.href.indexOf(location.search)),
-      type: "POST",
-      data: {
-        module: "stic_Signatures",
-        action: "getPreview",
-        signerId: signerId,
-      },
-      success: function(response) {
-        $("#preview-container").html(response);
-      },
-      error: function(xhr, status, error) {
-        console.error("Request error:", status, error);
-      }
-    });
-  
-  
+    url: location.href.slice(0, location.href.indexOf(location.search)),
+    type: "POST",
+    data: {
+      module: "stic_Signatures",
+      action: "getPreview",
+      signerId: signerId,
+    },
+    success: function (response) {
+      $("#preview-container").html(response);
+    },
+    error: function (xhr, status, error) {
+      console.error("Request error:", status, error);
+    }
+  });
+
+
 }

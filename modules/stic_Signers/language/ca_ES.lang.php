@@ -93,4 +93,10 @@ $mod_strings = array(
     'LBL_REJECTION_REASON' => 'Motiu de rebuig',
 
     'LBL_SIGNER_PREVIEW' => 'Vista prèvia del firmant',
+    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Enviar per signar per correu electrònic',
+    'LBL_SIGNER_EMAIL_SUBJECT' => 'Té un document per signar',
+    'LBL_SIGNER_EMAIL_BODY' => 'Si us plau, faci clic en l\'enllaç següent per signar el document:',
+    'LBL_SIGNER_EMAIL_ERROR' => 'Error al enviar el correu electrònic al firmant',
+    'LBL_SIGNER_EMAIL_SUCCESS' => 'Correu electrònic enviat correctament al firmant',
+    'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Anar al document',
 );

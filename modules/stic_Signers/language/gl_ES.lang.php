@@ -93,4 +93,10 @@ $mod_strings = array(
     'LBL_REJECTION_REASON' => 'Motivo de rexeitamento',
 
     'LBL_SIGNER_PREVIEW' => 'Vista previa do firmante',
+    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Enviar para firmar por correo electrónico',
+    'LBL_SIGNER_EMAIL_SUBJECT' => 'Ten un documento para firmar',
+    'LBL_SIGNER_EMAIL_BODY' => 'Por favor, faga clic na seguinte ligazón para firmar o documento:',
+    'LBL_SIGNER_EMAIL_ERROR' => 'Erro ao enviar o correo electrónico ao firmante', 
+    'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente ao firmante', 
+    'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Ir ao documento',
 );
