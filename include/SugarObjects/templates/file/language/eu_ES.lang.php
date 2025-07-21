@@ -52,7 +52,7 @@ $mod_strings = array(
     //vardef labels
     'LBL_NAME' => 'Nombre de Documento',
     'LBL_DESCRIPTION' => 'Descripción',
-    'LBL_ASSIGNED_TO' => 'Asignado a:',
+    'LBL_ASSIGNED_TO' => 'Esleitutako:',
     'LBL_CATEGORY' => 'Categoría',
     'LBL_SUBCATEGORY' => 'Subcategoría',
     'LBL_STATUS' => 'Estado',
