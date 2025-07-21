@@ -62,143 +62,143 @@ class templateParser
         global $app_strings, $sugar_config, $locale, $current_user;
         $repl_arr = array();
         $isValidator = new SuiteValidator();
+        if (is_object($focus) && isset($focus->field_defs)) {
+            foreach ($focus->field_defs as $field_def) {
+                if (isset($field_def['name']) && $field_def['name'] != '') {
+                    $fieldName = $field_def['name'];
 
-        foreach ($focus->field_defs as $field_def) {
-            if (isset($field_def['name']) && $field_def['name'] != '') {
-                $fieldName = $field_def['name'];
-
-                // STIC Custom - JCH - 202210006 - Check if field is really empty
-                // STIC#880
-                // if (empty($focus->$fieldName)) {
-                if (!isset($focus->$fieldName) || $focus->$fieldName == '' ) {
-                // END STIC-Custom
-                    $repl_arr[$key . '_' . $fieldName] = '';
-                    continue;
-                }
-
-                if ($field_def['type'] == 'currency') {
-                    // STIC-Custom 20250131 ART - Distinguish Type of Discount
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/575
-                    // $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false));
-                    // If it comes from aos_products_quotes and is product_discount
-                    if ($key == 'aos_products_quotes' && ($field_def["name"] == 'product_discount' || $field_def["name"] ==  'service_discount')) { 
-                        if ($focus->discount == 'Percentage') {
-                            $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false)) . $app_strings['LBL_PERCENTAGE_SYMBOL'];
-                        } else {
-                            $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false)) . '€';
-                        }
-                    } else {
-                        $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false));
-                    }
+                    // STIC Custom - JCH - 202210006 - Check if field is really empty
+                    // STIC#880
+                    // if (empty($focus->$fieldName)) {
+                    if (!isset($focus->$fieldName) || $focus->$fieldName == '' ) {
                     // END STIC-Custom
-                } elseif (($field_def['type'] == 'radioenum' || $field_def['type'] == 'enum' || $field_def['type'] == 'dynamicenum') && isset($field_def['options'])) {
-                    $repl_arr[$key . "_" . $fieldName] = translate($field_def['options'], $focus->module_dir, $focus->$fieldName);
-                } elseif ($field_def['type'] == 'multienum' && isset($field_def['options'])) {
-                    $mVals = unencodeMultienum($focus->{$fieldName});
-                    $translatedVals = array();
+                        $repl_arr[$key . '_' . $fieldName] = '';
+                        continue;
+                    }
 
-                    foreach ($mVals as $mVal) {
-                        // STIC Custom 20250312 JBL - Avoid Warning: Array to string conversion
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-                        // $translatedVals[] = translate($field_def['options'], $focus->module_dir, $mVal);
-                        $translated = translate($field_def['options'], $focus->module_dir, $mVal);
-                        if (is_array($translated)) {
-                            $translated = implode(", ", $translated);
+                    if ($field_def['type'] == 'currency') {
+                        // STIC-Custom 20250131 ART - Distinguish Type of Discount
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/575
+                        // $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false));
+                        // If it comes from aos_products_quotes and is product_discount
+                        if ($key == 'aos_products_quotes' && ($field_def["name"] == 'product_discount' || $field_def["name"] ==  'service_discount')) { 
+                            if ($focus->discount == 'Percentage') {
+                                $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false)) . $app_strings['LBL_PERCENTAGE_SYMBOL'];
+                            } else {
+                                $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false)) . '€';
+                            }
+                        } else {
+                            $repl_arr[$key . "_" . $fieldName] = currency_format_number($focus->$fieldName, $params = array('currency_symbol' => false));
                         }
-                        $translatedVals[] = $translated;
-                        // END STIC Custom
-                    }
-
-                    $repl_arr[$key . "_" . $fieldName] = implode(", ", $translatedVals);
-                } //Fix for Windows Server as it needed to be converted to a string.
-                elseif ($field_def['type'] == 'int') {
-                    $repl_arr[$key . "_" . $fieldName] = (string)$focus->$fieldName;
-                } elseif ($field_def['type'] == 'bool') {
-                    if ($focus->{$fieldName} == "1") {
-                        // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
-                        // $repl_arr[$key . "_" . $fieldName] = "true";
-                        $repl_arr[$key . "_" . $fieldName] = translate('LBL_CHECKBOX_TRUE', 'AOS_PDF_Templates');
-                    } else {
-                        // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates - 
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
-                        // $repl_arr[$key . "_" . $fieldName] = "false";
-                        $repl_arr[$key . "_" . $fieldName] = translate('LBL_CHECKBOX_FALSE', 'AOS_PDF_Templates');
                         // END STIC-Custom
-                    }
-                } elseif ($field_def['type'] == 'image') {
-                    $secureLink = $sugar_config['site_url'] . '/' . "public/" . $focus->id . '_' . $fieldName;
-                    $file_location = $sugar_config['upload_dir'] . '/' . $focus->id . '_' . $fieldName;
-                    // create a copy with correct extension by mime type
-                    if (!file_exists('public')) {
-                        sugar_mkdir('public', 0777);
-                    }
-                    if (!copy($file_location, "public/{$focus->id}".  '_' . $fieldName)) {
-                        $secureLink = $sugar_config['site_url'] . '/'. $file_location;
-                    }
+                    } elseif (($field_def['type'] == 'radioenum' || $field_def['type'] == 'enum' || $field_def['type'] == 'dynamicenum') && isset($field_def['options'])) {
+                        $repl_arr[$key . "_" . $fieldName] = translate($field_def['options'], $focus->module_dir, $focus->$fieldName);
+                    } elseif ($field_def['type'] == 'multienum' && isset($field_def['options'])) {
+                        $mVals = unencodeMultienum($focus->{$fieldName});
+                        $translatedVals = array();
 
-                    if (empty($focus->{$fieldName})) {
-                        $repl_arr[$key . "_" . $fieldName] = "";
-                    } else {
-                        $link = $secureLink;
-                        $repl_arr[$key . "_" . $fieldName] = '<img src="' . $link . '" width="' . $field_def['width'] . '" height="' . $field_def['height'] . '"/>';
-                    }
-                } elseif ($field_def['type'] == 'wysiwyg') {
-                    $repl_arr[$key . "_" . $field_def['name']] = html_entity_decode((string) $focus->$field_def['name'],
-                        ENT_COMPAT, 'UTF-8');
-                    $repl_arr[$key . "_" . $fieldName] = html_entity_decode((string) $focus->{$fieldName},
-                        ENT_COMPAT, 'UTF-8');
-                } elseif ($field_def['type'] == 'decimal' || $field_def['type'] == 'float') {
-                    // STIC Custom 20250414 ART - SticUtils function for UserPreferences decimals formatting
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
-                    require_once 'SticInclude/Utils.php';
-                    // END STIC Custom
+                        foreach ($mVals as $mVal) {
+                            // STIC Custom 20250312 JBL - Avoid Warning: Array to string conversion
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                            // $translatedVals[] = translate($field_def['options'], $focus->module_dir, $mVal);
+                            $translated = translate($field_def['options'], $focus->module_dir, $mVal);
+                            if (is_array($translated)) {
+                                $translated = implode(", ", $translated);
+                            }
+                            $translatedVals[] = $translated;
+                            // END STIC Custom
+                        }
 
-                    // STIC Custom 20250215 JBL - Remove Warning: Undefined array key access
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-                    // if ($_REQUEST['entryPoint'] == 'formLetter') {
-                    if (!empty($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'formLetter') {
-                    // END STIC Custom
-                    
-                    // STIC Custom 20250414 ART - SticUtils function for UserPreferences decimals formatting
+                        $repl_arr[$key . "_" . $fieldName] = implode(", ", $translatedVals);
+                    } //Fix for Windows Server as it needed to be converted to a string.
+                    elseif ($field_def['type'] == 'int') {
+                        $repl_arr[$key . "_" . $fieldName] = (string)$focus->$fieldName;
+                    } elseif ($field_def['type'] == 'bool') {
+                        if ($focus->{$fieldName} == "1") {
+                            // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
+                            // $repl_arr[$key . "_" . $fieldName] = "true";
+                            $repl_arr[$key . "_" . $fieldName] = translate('LBL_CHECKBOX_TRUE', 'AOS_PDF_Templates');
+                        } else {
+                            // STIC-Custom 20241125 ART - Translated checkbox values in PDF Templates - 
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/486
+                            // $repl_arr[$key . "_" . $fieldName] = "false";
+                            $repl_arr[$key . "_" . $fieldName] = translate('LBL_CHECKBOX_FALSE', 'AOS_PDF_Templates');
+                            // END STIC-Custom
+                        }
+                    } elseif ($field_def['type'] == 'image') {
+                        $secureLink = $sugar_config['site_url'] . '/' . "public/" . $focus->id . '_' . $fieldName;
+                        $file_location = $sugar_config['upload_dir'] . '/' . $focus->id . '_' . $fieldName;
+                        // create a copy with correct extension by mime type
+                        if (!file_exists('public')) {
+                            sugar_mkdir('public', 0777);
+                        }
+                        if (!copy($file_location, "public/{$focus->id}".  '_' . $fieldName)) {
+                            $secureLink = $sugar_config['site_url'] . '/'. $file_location;
+                        }
+
+                        if (empty($focus->{$fieldName})) {
+                            $repl_arr[$key . "_" . $fieldName] = "";
+                        } else {
+                            $link = $secureLink;
+                            $repl_arr[$key . "_" . $fieldName] = '<img src="' . $link . '" width="' . $field_def['width'] . '" height="' . $field_def['height'] . '"/>';
+                        }
+                    } elseif ($field_def['type'] == 'wysiwyg') {
+                        $repl_arr[$key . "_" . $field_def['name']] = html_entity_decode((string) $focus->$field_def['name'],
+                            ENT_COMPAT, 'UTF-8');
+                        $repl_arr[$key . "_" . $fieldName] = html_entity_decode((string) $focus->{$fieldName},
+                            ENT_COMPAT, 'UTF-8');
+                    } elseif ($field_def['type'] == 'decimal' || $field_def['type'] == 'float') {
+                        // STIC Custom 20250414 ART - SticUtils function for UserPreferences decimals formatting
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                        require_once 'SticInclude/Utils.php';
+                        // END STIC Custom
+
+                        // STIC Custom 20250215 JBL - Remove Warning: Undefined array key access
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+                        // if ($_REQUEST['entryPoint'] == 'formLetter') {
+                        if (!empty($_REQUEST['entryPoint']) && $_REQUEST['entryPoint'] == 'formLetter') {
+                        // END STIC Custom
+                        
+                        // STIC Custom 20250414 ART - SticUtils function for UserPreferences decimals formatting
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                        //     $value = formatDecimalInConfigSettings($focus->$fieldName, true);
+                        // } else {
+                        //     $value = formatDecimalInConfigSettings($focus->$fieldName, false);
+                        // }
+                            $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, true);
+                        } else {
+                            $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, false);
+                        }
+                        // END STIC Custom
+                        $repl_arr[$key . "_" . $fieldName] = $value;
+                    // STIC Custom 20250424 JBL - Añadimos funcionalidad Addon campo de Firma
                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
-                    //     $value = formatDecimalInConfigSettings($focus->$fieldName, true);
-                    // } else {
-                    //     $value = formatDecimalInConfigSettings($focus->$fieldName, false);
-                    // }
-                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, true);
-                    } else {
-                        $value = SticUtils::formatDecimalInConfigSettings($focus->$fieldName, false);
-                    }
+                    } elseif ($field_def['type'] == 'Signature') {
+                        $repl_arr[$key . "_" . $fieldName] = '<img src="' . $focus->$fieldName . '" width="'.$field_def['width'].'" height="'.$field_def['height'].'">';
                     // END STIC Custom
-                    $repl_arr[$key . "_" . $fieldName] = $value;
-                // STIC Custom 20250424 JBL - Añadimos funcionalidad Addon campo de Firma
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
-                } elseif ($field_def['type'] == 'Signature') {
-                    $repl_arr[$key . "_" . $fieldName] = '<img src="' . $focus->$fieldName . '" width="'.$field_def['width'].'" height="'.$field_def['height'].'">';
-                // END STIC Custom
-                // STIC-Custom 20221013 AAM - Parsing date/datetime fields when the bean is being modified
-                // STIC#883
-                } elseif ((isset($field_def['dbType']) && $field_def['dbType'] == 'date') || 
-                          (isset($field_def['dbType']) && $field_def['dbType'] == 'datetime') || 
-                          (!isset($field_def['dbType']) && isset($field_def['type']) &&  ($field_def['type'] == 'date' || $field_def['type'] == 'datetime'))) {                    
-                    global $disable_date_format;
-                    if($focus->$fieldName && ($focus->fetched_row || $disable_date_format)) {
-                        $oldValueDisableDateFormat = $disable_date_format;
-                        $disable_date_format = false;
-                        $value = self::getUserDateDatetimeFormat($focus->$fieldName);
-                        $repl_arr[$key . "_" . $fieldName] = $value; 
-                        $disable_date_format = $oldValueDisableDateFormat;
+                    // STIC-Custom 20221013 AAM - Parsing date/datetime fields when the bean is being modified
+                    // STIC#883
+                    } elseif ((isset($field_def['dbType']) && $field_def['dbType'] == 'date') || 
+                            (isset($field_def['dbType']) && $field_def['dbType'] == 'datetime') || 
+                            (!isset($field_def['dbType']) && isset($field_def['type']) &&  ($field_def['type'] == 'date' || $field_def['type'] == 'datetime'))) {                    
+                        global $disable_date_format;
+                        if($focus->$fieldName && ($focus->fetched_row || $disable_date_format)) {
+                            $oldValueDisableDateFormat = $disable_date_format;
+                            $disable_date_format = false;
+                            $value = self::getUserDateDatetimeFormat($focus->$fieldName);
+                            $repl_arr[$key . "_" . $fieldName] = $value; 
+                            $disable_date_format = $oldValueDisableDateFormat;
+                        } else {
+                            $repl_arr[$key . "_" . $fieldName] = $focus->{$fieldName};
+                        }
+                    // END STIC
                     } else {
                         $repl_arr[$key . "_" . $fieldName] = $focus->{$fieldName};
                     }
-                // END STIC
-                } else {
-                    $repl_arr[$key . "_" . $fieldName] = $focus->{$fieldName};
                 }
-            }
-        } // end foreach()
-
+            } // end foreach()
+        }
         krsort($repl_arr);
         reset($repl_arr);
 
