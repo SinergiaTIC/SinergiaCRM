@@ -23,12 +23,29 @@
 class stic_SignaturesController extends SugarController
 {
 
+
+    public function action_parseTemplate(){
+        
+        require_once 'modules/stic_Signatures/Utils.php';
+        $signerId = '00000b06-3aa0-2b29-db5c-6879efaf8c9d';
+        $html= stic_SignaturesUtils::getParsedTemplate($signerId);
+        die($html);
+        
+
+
+
+    }
+
+
     public function action_getRelationships()
     {
         require_once 'modules/stic_Signatures/Utils.php';
         var_dump(stic_SignaturesUtils::getModuleRelationships($_REQUEST['getmodule'], $_REQUEST['format'] ?? 'raw'));
         die();
     }
+
+
+
 
 
     public function action_getSignatureSigners()

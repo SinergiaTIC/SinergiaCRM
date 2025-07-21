@@ -229,4 +229,134 @@ class stic_SignaturesUtils
         return $signersIdList;
     }
 
+    /*     * Retrieves the parsed template for a given signer ID.
+     *
+     * @param string $signerId The ID of the signer.
+     * @return string The parsed HTML template.
+     */
+    public static function getParsedTemplate($signerId)
+    {
+        
+        require_once 'SticInclude/Utils.php';
+
+        // Use common functions for PDF generation
+        require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
+        
+        $signerId = $signerId; // '00000b06-3aa0-2b29-db5c-6879efaf8c9d';
+        $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        $pdfTemplateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c);
+        $sourceModuleBean = BeanFactory::getBean($signatureBean->main_module, $signerBean->record_id);
+            
+   
+        require_once 'modules/AOS_PDF_Templates/templateParser.php';
+
+        // Retrieving the record and template beans
+        $bean = $sourceModuleBean;
+        if (!$bean) {
+            sugar_die("Invalid Record");
+        }
+
+        $templateBean = $pdfTemplateBean;
+        if (!$templateBean) {
+            sugar_die("Invalid Template");
+        }
+
+        // Define the patterns used to clean the template HTML code
+        $search = array('/<script[^>]*?>.*?<\/script>/si', // Strip out javascript
+            '/<[\/\!]*?[^<>]*?>/si', // Strip out HTML tags
+            '/([\r\n])[\s]+/', // Strip out white space
+            '/&(quot|#34);/i', // Replace HTML entities
+            '/&(amp|#38);/i',
+            '/&(lt|#60);/i',
+            '/&(gt|#62);/i',
+            '/&(nbsp|#160);/i',
+            '/&(iexcl|#161);/i',
+            '/<address[^>]*?>/si',
+            '/&(apos|#0*39);/',
+            '/&#(\d+);/',
+        );
+
+        $replace = array('',
+            '',
+            '\1',
+            '"',
+            '&',
+            '<',
+            '>',
+            ' ',
+            chr(161),
+            '<br>',
+            "'",
+            'chr(%1)',
+        );
+
+        // Clean the template content
+        $header = preg_replace($search, $replace, $templateBean->pdfheader);
+        $footer = preg_replace($search, $replace, $templateBean->pdffooter);
+        $text = preg_replace($search, $replace, $templateBean->description);
+        $text = str_replace("<p><pagebreak /></p>", "<pagebreak />", $text);
+        $text = preg_replace_callback(
+            '/\{DATE\s+(.*?)\}/',
+            function ($matches) {
+                return date($matches[1]);
+            },
+            $text
+        );
+
+        if (str_starts_with($_REQUEST['module'], "AOS_")) {
+            $variableName = strtolower($bean->module_dir);
+            $lineItemsGroups = array();
+            $lineItems = array();
+
+            $sql = "SELECT pg.id, pg.product_id, pg.group_id FROM aos_products_quotes pg LEFT JOIN aos_line_item_groups lig ON pg.group_id = lig.id WHERE pg.parent_type = '" . $bean->object_name . "' AND pg.parent_id = '" . $bean->id . "' AND pg.deleted = 0 ORDER BY lig.number ASC, pg.number ASC";
+            $res = $bean->db->query($sql);
+            while ($row = $bean->db->fetchByAssoc($res)) {
+                $lineItemsGroups[$row['group_id']][$row['id']] = $row['product_id'];
+                $lineItems[$row['id']] = $row['product_id'];
+            }
+
+            //backward compatibility
+            if (isset($bean->billing_account_id)) {
+                $object_arr['Accounts'] = $bean->billing_account_id;
+            }
+            if (isset($bean->billing_contact_id)) {
+                $object_arr['Contacts'] = $bean->billing_contact_id;
+            }
+            if (isset($bean->assigned_user_id)) {
+                $object_arr['Users'] = $bean->assigned_user_id;
+            }
+            if (isset($bean->currency_id)) {
+                $object_arr['Currencies'] = $bean->currency_id;
+            }
+
+            $text = str_replace("\$aos_quotes", "\$" . $variableName, $text);
+            $text = str_replace("\$aos_invoices", "\$" . $variableName, $text);
+            $text = str_replace("\$total_amt", "\$" . $variableName . "_total_amt", $text);
+            $text = str_replace("\$discount_amount", "\$" . $variableName . "_discount_amount", $text);
+            $text = str_replace("\$subtotal_amount", "\$" . $variableName . "_subtotal_amount", $text);
+            $text = str_replace("\$tax_amount", "\$" . $variableName . "_tax_amount", $text);
+            $text = str_replace("\$shipping_amount", "\$" . $variableName . "_shipping_amount", $text);
+            $text = str_replace("\$total_amount", "\$" . $variableName . "_total_amount", $text);
+
+            $text = populate_group_lines($text, $lineItemsGroups, $lineItems);
+        }
+
+        // The parse_template function requires an array of beans
+        $beanArray = array();
+        $beanArray[$bean->module_dir] = $bean->id;
+
+        // Parse the template using the record's data
+        $converted = templateParser::parse_template($text, $beanArray);
+        $header = templateParser::parse_template($header, $beanArray);
+        $footer = templateParser::parse_template($footer, $beanArray);
+
+        // Replace last break lines by html tags
+        $printable = str_replace("\n", "<br />", $converted);
+
+
+        return "{$header}{$converted}{$footer}";
+
+    }
+
 }
