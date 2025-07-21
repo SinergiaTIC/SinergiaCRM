@@ -50,10 +50,10 @@ class SelectSignatureTemplate
         global $app_strings, $sugar_config;
         if (preg_match('/^6\./', (string) $sugar_config['sugar_version'])) {
             $script = '<a href="#" class="menuItem" onmouseover="hiliteItem(this,\'yes\');
-" onmouseout="unhiliteItem(this);" onclick="showPopup()">' . $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] . '</a>';
+" onmouseout="unhiliteItem(this);" onclick="showPopupSignatures()">' . $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] . '</a>';
         } else {
             $script = ' <input class="button" type="button" value="' .
-                $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] . '" ' . 'onClick="showPopup();">';
+                $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] . '" ' . 'onClick="showPopupSignatures();">';
         }
 
         return $script;
@@ -116,7 +116,7 @@ class SelectSignatureTemplate
                </div>
             </div>
             <script>
-                function showPopup(){
+                function showPopupSignatures(){
                     if(sugarListView.get_checks_count() < 1)
                     {
                         alert(\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');
@@ -134,7 +134,7 @@ class SelectSignatureTemplate
             </script>';
         } else {
             echo '<script>
-                function showPopup(){
+                function showPopupSignatures(){
                 alert(\'' . $app_strings['LBL_NO_TEMPLATE'] . '\');        
                 }
             </script>';
@@ -199,7 +199,7 @@ class SelectSignatureTemplate
             </script>';
         } else {
             echo '<script>
-                function showPopup(){
+                function showPopupSignature(){
                 alert(\'' . $app_strings['LBL_NO_TEMPLATE'] . '\');        
                 }
             </script>';
