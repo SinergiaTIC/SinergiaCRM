@@ -236,19 +236,19 @@ class stic_SignaturesUtils
      */
     public static function getParsedTemplate($signerId)
     {
-        
+
         require_once 'SticInclude/Utils.php';
 
         // Use common functions for PDF generation
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
-        
+
         $signerId = $signerId; // '00000b06-3aa0-2b29-db5c-6879efaf8c9d';
         $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
-        $pdfTemplateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c);
-        $sourceModuleBean = BeanFactory::getBean($signatureBean->main_module, $signerBean->record_id);
-            
-   
+
+        $pdfTemplateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c ?? ''); 
+        $sourceModuleBean = BeanFactory::getBean($signatureBean->main_module ?? '', $signerBean->record_id ?? '');
+
         require_once 'modules/AOS_PDF_Templates/templateParser.php';
 
         // Retrieving the record and template beans
@@ -353,7 +353,6 @@ class stic_SignaturesUtils
 
         // Replace last break lines by html tags
         $printable = str_replace("\n", "<br />", $converted);
-
 
         return "{$header}{$converted}{$footer}";
 
