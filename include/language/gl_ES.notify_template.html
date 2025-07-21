@@ -44,10 +44,7 @@
 <!-- BEGIN: Quote -->
 <p><b>{ASSIGNER}</b> ha asignado una cotización a <b>{ASSIGNED_USER}</b>.</p>
 <p>
-Asunto: {QUOTE_SUBJECT}<br />
-Estado: {QUOTE_STATUS}<br />
-Fecha esperada de cierre: {QUOTE_CLOSEDATE}<br />
-Descripción: {QUOTE_DESCRIPTION}
+  
 </p>
 <p>Puede <a href={URL}>revisar este presupuesto</a>.</p>
 <!-- END: Quote -->
@@ -58,7 +55,7 @@ Descripción: {QUOTE_DESCRIPTION}
 <!-- BEGIN: Account -->
 <p>Cuenta SuiteCRM - {ACCOUNT_NAME}</p>
 <p>
-<b>{ASSIGNER}</b> ha asignado una Cuenta a <b>{ASSIGNED_USER}</b>.
+  
 </p>
 <p>Puede <a href={URL}>revisar esta cuenta</a>.</p>
 <!-- END: Account -->
@@ -69,7 +66,7 @@ Descripción: {QUOTE_DESCRIPTION}
 <!-- BEGIN: Case -->
 <p>Usted puede <a href={URL}>revisar esta Cuenta</a>.</p>
 <p>
-SuiteCRM Caso - {CASE_SUBJECT}
+   
 </p>
 <p><b>{ASSIGNER}</b> ha asignado un Caso a <b>{ASSIGNED_USER}</b>.</p>
 <!-- END: Case -->
@@ -80,7 +77,7 @@ SuiteCRM Caso - {CASE_SUBJECT}
 <!-- BEGIN: Task -->
 <p><b>{ASSIGNER}</b> ha asignado una tarea a <b>{ASSIGNED_USER}</b>.</p>
 <p>
-Usted puede <a href={URL}>revisar este Caso</a>.
+    
 </p>
 <p>SuiteCRM Tarea - {TASK_SUBJECT}</p>
 <!-- END: Task -->
@@ -92,11 +89,11 @@ Usted puede <a href={URL}>revisar este Caso</a>.
 <p>Para: {MEETING_TO}</p>
 <p><b>{ASSIGNER}</b> lo ha invitado a una reunión.</p>
 <p>
-Usted puede <a href={URL}>revisar esta Tarea</a>.
+   
 </p>
 <p>
 <!-- BEGIN: Meeting_External_API -->
-SuiteCRM Reunión - {MEETING_SUBJECT}
+ 
 </p>
 <!-- END: Meeting_External_API -->
 <p>Descripción: {MEETING_DESCRIPTION}<br />
@@ -113,7 +110,7 @@ SuiteCRM Reunión - {MEETING_SUBJECT}
 <!-- BEGIN: MeetingSpecial -->
 <p><a href={ACCEPT_URL}&accept_status=accept>Aceptar esta reunión</a>.</p>
 <p>
-<a href={ACCEPT_URL}&accept_status=tentative>Aceptar provisionalmente esta reunión</a>.
+     
 </p>
 <p><a href={ACCEPT_URL}&accept_status=decline>Declinar esta reunión</a>.</p>
 <!-- END: MeetingSpecial -->
@@ -123,7 +120,7 @@ SuiteCRM Reunión - {MEETING_SUBJECT}
 <!-- END: MeetingSpecial_Subject -->
 <!-- BEGIN: MeetingReminder -->
 <p>
-    <b>{ASSIGNER}</b> ha asignado una Reunión a <b>{ASSIGNED_USER}</b>.
+      
 </p>
 <!-- END: MeetingReminder -->
 
@@ -133,7 +130,7 @@ SuiteCRM Reunión - {MEETING_SUBJECT}
 <!-- BEGIN: Email -->
 <p><b>{ASSIGNER}</b> ha asignado un correo electrónico a <b>{ASSIGNED_USER}</b>.</p>
 <p>
-Puedes <a href={URL}>revisar esta Reunión</a>.
+ 
 </p>
 <p>Puede <a href={URL}>revisar este correo electrónico</a>.</p>
 <!-- END: Email -->
@@ -144,7 +141,7 @@ Puedes <a href={URL}>revisar esta Reunión</a>.
 <!-- BEGIN: Contact -->
 <p>SuiteCRM Correo Electrónico - {EMAIL_SUBJECT}</p>
 <p>
-<b>{ASSIGNER}</b> ha asignado un Email a <b>{ASSIGNED_USER}</b>.
+ 
 </p>
 <p>Puede <a href={URL}>revisar este contacto</a>.</p>
 <!-- END: Contact -->
@@ -155,7 +152,7 @@ Puedes <a href={URL}>revisar esta Reunión</a>.
 <!-- BEGIN: Lead -->
 <p>SuiteCRM Contacto - {CONTACT_NAME}</p>
 <p>
-<b>{ASSIGNER}</b> ha asignado un Contacto a <b>{ASSIGNED_USER}</b>.
+  
 </p>
 <p>Puede <a href={URL}>revisar este cliente potencial</a>.</p>
 <!-- END: Lead -->
@@ -166,11 +163,7 @@ Puedes <a href={URL}>revisar esta Reunión</a>.
 <!-- BEGIN: Opportunity -->
 <p>Puedes <a href={URL}>revisar este Contacto</a>.</p>
 <p>
-Nombre: {OPPORTUNITY_NAME}<br />
-Importe: {OPPORTUNITY_AMOUNT}<br />
-Fecha esperada de cierre: {OPPORTUNITY_CLOSEDATE}<br />
-Etapa de ventas: {OPPORTUNITY_STAGE}<br />
-Descripción: {OPPORTUNITY_DESCRIPTION}
+   
 </p>
 <p><b>{ASSIGNER}</b> ha asignado un Cliente Potencial a <b>{ASSIGNED_USER}</b>.</p>
 <!-- END: Opportunity -->
@@ -181,7 +174,7 @@ Descripción: {OPPORTUNITY_DESCRIPTION}
 <!-- BEGIN: Bug -->
 <p><b>{ASSIGNER}</b> ha asignado una incidencia a <b>{ASSIGNED_USER}</b>.</p>
 <p>
-Puedes <a href={URL}>revisar el Cliente Potencial</a>.
+         
 </p>
 <p>Oportunidad SuiteCRM - {OPPORTUNITY_NAME}</p>
 <!-- END: Bug -->
@@ -201,11 +194,7 @@ Puedes <a href={URL}>revisar el Cliente Potencial</a>.
 <p>Error SuiteCRM - {BUG_SUBJECT}</p>
 <p><b>{ASSIGNER}</b> ha asignado un Error a <b>{ASSIGNED_USER}</b>.</p>
 <p>
-Asunto: {CALL_SUBJECT}<br />
-Estado: {CALL_STATUS}<br />
-Fecha de inicio: {CALL_STARTDATE}<br />
-Duración: {CALL_HOURS}h, {CALL_MINUTES}m<br />
-Descripción: {CALL_DESCRIPTION}<br />
+    <br />
 </p>
 <p>---</p>
 <p>Puedes <a href={URL}>revisar esta incidencia</a>.</p>
@@ -219,11 +208,7 @@ Descripción: {CALL_DESCRIPTION}<br />
 <!-- BEGIN: CallSpecial -->
 <p>Llamada SuiteCRM - {CALL_SUBJECT}</p>
 <p>
-Asunto: {CALL_SUBJECT}<br />
-Estado: {CALL_STATUS}<br />
-Fecha de inicio: {CALL_STARTDATE}<br />
-Duración: {CALL_HOURS}h, {CALL_MINUTES}m<br />
-Descripción: {CALL_DESCRIPTION}
+    
 </p>
 <p><b>{ASSIGNER}</b> te ha invitado a una Llamada</p>
 <!-- END: CallSpecial -->
@@ -233,9 +218,7 @@ Descripción: {CALL_DESCRIPTION}
 <!-- END: CallReminder_Subject -->
 <!-- BEGIN: CallReminder -->
 <p>
-    Asunto: {CALL_SUBJECT}<br />
-    Fecha de inicio: {CALL_STARTDATE}<br />
-    Creada por: {CALL_CREATED_BY}
+     
 </p>
 <!-- END: CallReminder -->
 
@@ -245,7 +228,7 @@ Descripción: {CALL_DESCRIPTION}
 <!-- BEGIN: Campaign -->
 <p><a href={ACCEPT_URL}&accept_status=accept>Aceptar esta llamada</a>.</p>
 <p>
-<a href={ACCEPT_URL}&accept_status=tentative>Aceptar provisionalmente esta llamada</a>.
+   
 </p>
 <p><a href={ACCEPT_URL}&accept_status=decline>Rechazar esta llamada</a>.</p>
 <!-- END: Campaign -->
@@ -257,7 +240,7 @@ Descripción: {CALL_DESCRIPTION}
 {NOTIFICATION_MESSAGE}
 
 <p>
-<b>{ASSIGNER}</b> ha asignado una Llamada a <b>{ASSIGNED_USER}</b>.
+  
 </p>
 <p>Puede <a href={URL}>revisar este documento de la base de conocimiento</a>.</p>
 <!-- END: KBDocument -->
