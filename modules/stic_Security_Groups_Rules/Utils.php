@@ -299,11 +299,11 @@ class stic_Security_Groups_RulesUtils
               INNER JOIN securitygroups ON
                 securitygroups_users.securitygroup_id = securitygroups.id
                 AND securitygroups.deleted = 0
-                AND securitygroups.noninheritable = 0
+                AND (securitygroups.noninheritable = 0 OR securitygroups.noninheritable IS NULL)
               WHERE
                 securitygroups_users.user_id = '{$userId}'
                 AND securitygroups_users.deleted = 0
-                AND securitygroups_users.noninheritable = 0
+                AND (securitygroups_users.noninheritable = 0 OR securitygroups_users.noninheritable IS NULL)
               ORDER BY
                 securitygroups.name ASC";
 
