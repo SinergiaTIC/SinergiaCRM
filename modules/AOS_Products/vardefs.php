@@ -278,11 +278,25 @@ $dictionary['AOS_Products'] = array(
             array(
                 'name' => 'product_image',
                 'vname' => 'LBL_PRODUCT_IMAGE',
-                'type' => 'varchar',
-                'len' => '255',
+                // STIC Custom 20250722 JBL - Tratar Imagen de producto como imagen
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+                // 'type' => 'varchar',
+                // 'len' => '255',
+                // 'reportable' => true,
+                // 'inline_edit' => false,
+                // 'comment' => 'File name associated with the note (attachment)'
+                'type' => 'image',
+                'massupdate' => false,
+                'comments' => '',
+                'help' => '',
+                'importable' => false,
                 'reportable' => true,
-                'inline_edit' => false,
-                'comment' => 'File name associated with the note (attachment)'
+                'len' => 255,
+                'dbType' => 'varchar',
+                'width' => '160',
+                'height' => '160',
+                'studio' => array('listview' => true),
+                // END STIC Custom
             ),
         'file_url' =>
             array(

@@ -213,7 +213,11 @@ array(
                 0 => array(
                     0 => array(
                         'name' => 'product_image',
-                        'customCode' => '{$PRODUCT_IMAGE}',
+                        // STIC Custom 20250722 JBL - Tratar Imagen de producto como imagen
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+                        // 'customCode' => '{$PRODUCT_IMAGE}',
+                        'label' => 'LBL_PRODUCT_IMAGE',
+                        // END STIC Custom
                     ),
                     1 => array(
                         'name' => 'assigned_user_name',
