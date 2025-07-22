@@ -225,15 +225,15 @@ switch (viewType()) {
     }
     $("#all_day", "form").on("change", function () {
       if ($("#all_day", "form").is(":checked")) {
-        previousStartDateHours = $("#start_date_hours").val();
-        previousStartDateMinutes = $("#start_date_minutes").val();
-        previousEndDateHours = $("#end_date_hours").val();
-        previousEndDateMinutes = $("#end_date_minutes").val();
+        manualStartDateHours = $("#start_date_hours").val();
+        manualStartDateMinutes = $("#start_date_minutes").val();
+        manualEndDateHours = $("#end_date_hours").val();
+        manualEndDateMinutes = $("#end_date_minutes").val();
 
-        previousPlannedStartHours = $("#planned_start_date_hours").val();
-        previousPlannedStartMinutes = $("#planned_start_date_minutes").val();
-        previousPlannedEndHours = $("#planned_end_date_hours").val();
-        previousPlannedEndMinutes = $("#planned_end_date_minutes").val();
+        manualPlannedStartHours = $("#planned_start_date_hours").val();
+        manualPlannedStartMinutes = $("#planned_start_date_minutes").val();
+        manualPlannedEndHours = $("#planned_end_date_hours").val();
+        manualPlannedEndMinutes = $("#planned_end_date_minutes").val();
 
         $("#start_date_hours").val("00");
         $("#start_date_minutes").val("00");
@@ -261,15 +261,15 @@ switch (viewType()) {
         $("#planned_start_date_time_section").parent().hide();
         $("#planned_end_date_time_section").parent().hide();
       } else {
-        $("#start_date_hours").val(previousStartDateHours);
-        $("#start_date_minutes").val(previousStartDateMinutes);
-        $("#end_date_hours").val(previousEndDateHours);
-        $("#end_date_minutes").val(previousEndDateMinutes);
+        $("#start_date_hours").val(manualStartDateHours);
+        $("#start_date_minutes").val(manualStartDateMinutes);
+        $("#end_date_hours").val(manualEndDateHours);
+        $("#end_date_minutes").val(manualEndDateMinutes);
 
-        $("#planned_start_date_hours").val(previousPlannedStartHours);
-        $("#planned_start_date_minutes").val(previousPlannedStartMinutes);
-        $("#planned_end_date_hours").val(previousPlannedEndHours);
-        $("#planned_end_date_minutes").val(previousPlannedEndMinutes);
+        $("#planned_start_date_hours").val(manualPlannedStartHours);
+        $("#planned_start_date_minutes").val(manualPlannedStartMinutes);
+        $("#planned_end_date_hours").val(manualPlannedEndHours);
+        $("#planned_end_date_minutes").val(manualPlannedEndMinutes);
 
         $("#start_date_hours").change();
         $("#start_date_minutes").change();
