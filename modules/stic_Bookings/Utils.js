@@ -159,10 +159,14 @@ switch (viewType()) {
     $("#resetResourcesButton").click(function () {
       deleteLastResourceGroup();
     });
-    previousStartDateHours = "10";
-    previousStartDateMinutes = "00";
-    previousEndDateHours = "10";
-    previousEndDateMinutes = "30";
+    manualStartDateHours = "10";
+    manualStartDateMinutes = "00";
+    manualEndDateHours = "10";
+    manualEndDateMinutes = "30";
+    manualPlannedStartHours = "10";
+    manualPlannedStartMinutes = "00";
+    manualPlannedEndHours = "10";
+    manualPlannedEndMinutes = "30";
 
     // With all_day loadCenterResourcesButtoned the DateTime fields shouldn't display the time section
     // and the end_date should display one day less
@@ -224,6 +228,7 @@ switch (viewType()) {
       }
     }
     $("#all_day", "form").on("change", function () {
+      debugger;
       if ($("#all_day", "form").is(":checked")) {
         manualStartDateHours = $("#start_date_hours").val();
         manualStartDateMinutes = $("#start_date_minutes").val();

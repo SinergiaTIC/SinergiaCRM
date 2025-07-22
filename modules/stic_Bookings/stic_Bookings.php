@@ -126,6 +126,16 @@ class stic_Bookings extends Basic
             $endDate = $timedate->asUserDate($endDate, false, $current_user);
             $this->end_date = $endDate;
         }         
+        if (isset($this->all_day) && $this->all_day == '1' && !empty($_REQUEST['planned_start_date']) && !empty($_REQUEST['planned_end_date']) && (!isset($this->processed) || !$this->processed)) {
+            $startDate = $timedate->fromUser($_REQUEST['planned_start_date'], $current_user);
+            $startDate = $startDate->get_day_begin();
+            $startDate = $timedate->asUserDate($startDate, false, $current_user);
+            $this->planned_start_date = $startDate;
+            $endDate = $timedate->fromUser($_REQUEST['planned_end_date'], $current_user);
+            $endDate = $endDate->modify("next day");
+            $endDate = $timedate->asUserDate($endDate, false, $current_user);
+            $this->planned_end_date = $endDate;
+        }         
         // Retrieve the resources selected in the EditViewFooter
          
         $newRelatedResources = array();
