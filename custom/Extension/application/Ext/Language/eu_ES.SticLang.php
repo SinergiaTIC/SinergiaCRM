@@ -43,12 +43,12 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos los nombres de otra
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Se creará un registro horario con la siguiente información:';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Se cerrará el último registro horario abierto de hoy:'; 
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'con la siguiente información:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nombre: ';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Izen: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = 'Fecha y hora de inicio: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Fecha y hora de finalización: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleado: ';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentarios (opcional): ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Aceptar';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Onartu';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancelar';
 
 // Aviso de actualización de SinergiaCRM
