@@ -279,7 +279,7 @@ $dictionary['AOS_Products'] = array(
                 'name' => 'product_image',
                 'vname' => 'LBL_PRODUCT_IMAGE',
                 // STIC Custom 20250722 JBL - Tratar Imagen de producto como imagen
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/???
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/740
                 // 'type' => 'varchar',
                 // 'len' => '255',
                 // 'reportable' => true,
