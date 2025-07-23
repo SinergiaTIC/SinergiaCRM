@@ -14,7 +14,7 @@ class AOS_ProductsViewEdit extends ViewEdit
 
 
 
-    // STIC Custom 20250722 JBL - Tratar Imagen de producto como imagen
+    // STIC Custom 20250722 JBL - Treat product image as image
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/740
     // public function display()
     // {
