@@ -7,3 +7,5 @@ files:
     translation: /%original_path%/%locale_with_underscore%.KReporterCore.php
   - source: '*es_ES.MailMergeReports.php*'
     translation: /%original_path%/%locale_with_underscore%.MailMergeReports.php
+  - source: /SticInstall/sql/es/*.sql
+    translation: /SticInstall/sql/%two_letters_code%/%original_file_name%
