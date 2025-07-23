@@ -21,40 +21,57 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+/**
+ * This class extends the default SugarCRM ViewDetail to provide custom
+ * functionality for the stic_Signatures module's detail view.
+ * It includes logic for populating signer path lists and redirection.
+ */
 require_once 'include/MVC/View/views/view.detail.php';
 require_once 'SticInclude/Views.php';
 
 class stic_SignaturesViewDetail extends ViewDetail
 {
-
-
+    /**
+     * Executes logic before displaying the detail view.
+     * This method is overridden to include custom pre-display operations
+     * such as populating signer path lists and handling redirection if `signer_path` is empty.
+     *
+     * @return void
+     */
     public function preDisplay()
     {
         parent::preDisplay();
 
         SticViews::preDisplay($this);
 
-        // get emailable related modules and populate the dropdown
+        // Get emailable related modules and populate the dropdown
         require_once 'modules/stic_Signatures/Utils.php';
         stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module ?? null);
 
-        if(empty($this->bean->signer_path)){
+        // Redirect to EditView if signer_path is empty
+        if (empty($this->bean->signer_path)) {
             SugarApplication::redirect(
                 "index.php?module=stic_Signatures&action=EditView&return_module=stic_Signatures&return_action=DetailView&record={$this->bean->id}"
             );
         }
-
     }
 
+    /**
+     * Renders the detail view.
+     * This method is overridden to include custom display operations
+     * such as calling SticViews::display and including a versioned JavaScript script.
+     *
+     * @return void
+     */
     public function display()
     {
         parent::display();
 
         SticViews::display($this);
 
+        // Include the versioned JavaScript utility file
         echo getVersionedScript("modules/stic_Signatures/Utils.js");
 
-        // Write here you custom code
+        // Write here your custom code
     }
-
 }

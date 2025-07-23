@@ -21,12 +21,23 @@
 * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 */
 
+/**
+ * Utility class for handling electronic signature portal operations.
+ * This class manages the retrieval of signer, signature, PDF template, and source module beans,
+ * and provides functionality to get HTML content for signing.
+ */
 class stic_SignaturePortalUtils
 {
-
     private $signerId = '';
-    private $signerBean, $signatureBean, $pdfTemplateBean, $sourceModuleBean;
+    private $signerBean;
+    private $signatureBean;
+    private $pdfTemplateBean;
+    private $sourceModuleBean;
 
+    /**
+     * Constructor for stic_SignaturePortalUtils.
+     * Initializes signer, signature, PDF template, and source module beans based on the provided signer ID.
+     */
     public function __construct()
     {
         require_once 'SticInclude/Utils.php';
@@ -39,21 +50,22 @@ class stic_SignaturePortalUtils
         $this->signatureBean = SticUtils::getRelatedBeanObject($this->signerBean, 'stic_signatures_stic_signers');
         $this->pdfTemplateBean = BeanFactory::getBean('AOS_PDF_Templates', $this->signatureBean->pdftemplate_id_c ?? '');
         $this->sourceModuleBean = BeanFactory::getBean($this->signatureBean->main_module ?? '', $this->signerBean->record_id ?? '');
-
     }
 
+    /**
+     * Retrieves the parsed HTML content for the current signer.
+     *
+     * @return string The HTML content to be displayed for signing, or an error message if not found.
+     */
     public function getHtmlFromSigner()
     {
         require_once 'modules/stic_Signatures/Utils.php';
         $html = stic_SignaturesUtils::getParsedTemplate($this->signerId);
         if (!empty($html)) {
             return $html;
-
         } else {
             $GLOBALS['log']->error("There is no HTML content for the signer with ID: {$this->signerId}");
-            $html = '<p class="text-red-500 border-red-500 text-center">No se encontró contenido para el firmante especificado.</p>';
+            return '<p class="text-red-500 border-red-500 text-center">No se encontró contenido para el firmante especificado.</p>';
         }
-
     }
-
 }

@@ -21,6 +21,12 @@
 * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 */
 
+/**
+ * This class provides functionalities related to selecting signature templates.
+ * It includes methods to generate HTML for displaying signature selection popups
+ * in both List View (LV) and Detail View (DV) contexts, and to retrieve available
+ * signature templates for a given module.
+ */
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -28,6 +34,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 #[\AllowDynamicProperties]
 class SelectSignatureTemplate
 {
+    /**
+     * Generates the Smarty script for displaying the "Add to Signature Process" button/link
+     * based on the SugarCRM version.
+     *
+     * @return string The HTML string for the button or link.
+     */
     public static function LVSmarty()
     {
         global $app_strings, $sugar_config;
@@ -42,6 +54,12 @@ class SelectSignatureTemplate
         return $script;
     }
 
+    /**
+     * Retrieves a list of open signature templates for a given module.
+     *
+     * @param string $module The name of the module.
+     * @return array An associative array where keys are signature IDs and values are signature names.
+     */
     public static function getModuleTemplates($module)
     {
         $db = DBManagerFactory::getInstance();
@@ -56,6 +74,12 @@ class SelectSignatureTemplate
         return $signatures;
     }
 
+    /**
+     * Generates the HTML for the signature selection popup in a List View context.
+     *
+     * @param string $module The name of the module from which the popup is initiated.
+     * @return void Echoes the HTML directly.
+     */
     public static function LVPopupHtml($module)
     {
         global $app_strings;
@@ -124,6 +148,12 @@ class SelectSignatureTemplate
         }
     }
 
+    /**
+     * Generates the HTML for the signature selection popup in a Detail View context.
+     *
+     * @param string $module The name of the module from which the popup is initiated.
+     * @return void Echoes the HTML directly.
+     */
     public static function DVPopupHtml($module)
     {
         global $app_strings;

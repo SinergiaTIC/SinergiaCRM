@@ -21,22 +21,24 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+/**
+ * Utility class for managing signature-related functionalities in SinergiaCRM.
+ * This includes retrieving module relationships, handling emailable modules,
+ * populating signer path lists, identifying signature signers, and parsing PDF templates.
+ */
 class stic_SignaturesUtils
 {
-
-/**
- * Retrieves the relationships and fields for a given SuiteCRM module.
- *
- * This function fetches a module's own reportable fields and also
- * identifies and lists reportable fields from related modules.
- * The field names are formatted as '$[table_name]:[field_name]' or
- * '$[relationship_name]:[field_name]' for clarity in reporting or display.
- *
- * @param string $moduleName The name of the module (e.g., 'Accounts', 'Contacts').
- * @param string $format The format of the output, either 'raw' or 'json'.
- * @return array An associative array or string containing module relationships and field options.
- */
-
+    /**
+     * Retrieves the relationships and fields for a given SuiteCRM module.
+     * This function fetches a module's own reportable fields and also
+     * identifies and lists reportable fields from related modules.
+     * The field names are formatted as '$[table_name]:[field_name]' or
+     * '$[relationship_name]:[field_name]' for clarity in reporting or display.
+     *
+     * @param string $moduleName The name of the module (e.g., 'Accounts', 'Contacts').
+     * @param string $format The format of the output, either 'raw' (associative array) or 'json'.
+     * @return array|string An associative array or JSON string containing module relationships and field options.
+     */
     public static function getModuleRelationships($moduleName, $format = 'raw')
     {
         global $beanList;
@@ -63,7 +65,7 @@ class stic_SignaturesUtils
 
         $options = $options_array;
 
-        // Agregar el módulo principal al array de opciones
+        // Add the main module to the options array
         $mod_options_array[$module->module_dir] = translate('LBL_MODULE_NAME', $module->module_dir);
 
         $firstOptions = $options;
@@ -75,17 +77,17 @@ class stic_SignaturesUtils
             if (isset($module_arr['type']) && $module_arr['type'] == 'relate' && isset($module_arr['source']) && $module_arr['source'] == 'non-db') {
                 $options_array = ['' => ''];
 
-                if (isset($module_arr['module']) && $module_arr['module'] != '' && $module_arr['module'] != 'EmailAddress') {
+                if (isset($module_arr['module']) && $module_arr['module'] !== '' && $module_arr['module'] !== 'EmailAddress') {
                     $relate_module_class_name = $beanList[$module_arr['module']];
 
+                    $relate_module = null;
                     if (!is_null($relate_module_class_name)) {
                         $relate_module = new $relate_module_class_name();
-
                     }
 
                     $options = $options_array;
 
-                    if ($module_arr['vname'] != 'LBL_DELETED') {
+                    if ($module_arr['vname'] !== 'LBL_DELETED') {
                         $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
                         $module_path = $module_arr['module'] . ':' . ($module_arr['id_name'] ?? $module_arr['link']);
                         $fmod_options_array[$module_path] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
@@ -100,7 +102,7 @@ class stic_SignaturesUtils
 
         $moduleOptions = $mod_options_array;
 
-        if ($format == 'json') {
+        if ($format === 'json') {
             // Convert to JSON format if requested
             $moduleOptions = json_encode($moduleOptions);
             echo $moduleOptions;
@@ -109,10 +111,10 @@ class stic_SignaturesUtils
             // Otherwise, return as an associative array
             return $moduleOptions;
         }
-
     }
 
-    /* * Retrieves related modules that are emailable (i.e., modules that can have email addresses).
+    /**
+     * Retrieves related modules that are emailable (i.e., modules that can have email addresses).
      *
      * @param string $mainModule The main module to check for related emailable modules.
      * @return array An associative array of related emailable modules with their labels.
@@ -137,11 +139,18 @@ class stic_SignaturesUtils
         return $emailableModules;
     }
 
+    /**
+     * Populates the global `app_list_strings` with emailable related modules
+     * for the 'signer_path' dropdown.
+     *
+     * @param string $moduleName The name of the module for which to get emailable related modules.
+     * @return void
+     */
     public static function populateSignerPathListString($moduleName)
     {
         global $app_list_strings;
-        // get emailable related modules and populate the dropdown
-        // this is used to select the path for extracting email addresses or phone data for signers
+        // Get emailable related modules and populate the dropdown
+        // This is used to select the path for extracting email addresses or phone data for signers
         require_once 'modules/stic_Signatures/Utils.php';
         $relatedModules = stic_SignaturesUtils::getRelatedEmailableModules($moduleName);
         $app_list_strings['stic_signatures_signer_path_list'][''] = '';
@@ -155,13 +164,13 @@ class stic_SignaturesUtils
      *
      * @param string $signatureId The ID of the signature.
      * @param array|string $mainModuleIds An array or single value of main module IDs.
-     * @return array An array of signer IDs.
+     * @return array An array of signer data.
      */
     public static function getSignatureSigners($signatureId, $mainModuleIds)
     {
         if (empty($signatureId) || empty($mainModuleIds)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature [{$signatureId}] or Main Module ID [{$mainModuleIds}] is empty.");
-            return;
+            return [];
         }
         // Initialize an empty array to hold unique signer IDs
         $signersIdList = [];
@@ -173,7 +182,7 @@ class stic_SignaturesUtils
         $signatureBean = BeanFactory::getBean('stic_Signatures', $signatureId);
         if (empty($signatureBean)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature Bean for ID [{$signatureId}] is empty.");
-            return;
+            return [];
         }
 
         $mainModule = $signatureBean->main_module;
@@ -189,29 +198,33 @@ class stic_SignaturesUtils
                 continue;
             }
 
-            if ($signerPath != $signerModule) {
-                // try to retrieve the linked beans based on relatinships
+            $signers = [];
+            if ($signerPath !== $signerModule) {
+                // Try to retrieve the linked beans based on relationships
                 $signers = $mainModuleBean->get_linked_beans($signerPath, $signerModule);
             } else {
-                // If the signerPath is the same as the signerModule, we can directly access the field
+                // If the signerPath is the same as the signerModule, we can directly access the bean
+                // This means the signer *is* the main module bean itself.
                 $signers = [$mainModuleBean];
             }
 
-            if (empty($signers)) {
+            // Fallback for relate fields where get_linked_beans might not apply directly
+            if (empty($signers) && !empty($mainModuleBean->$signerPath)) {
                 $relatedId = $mainModuleBean->$signerPath;
-                // If no linked beans found, try to get the related ID directly (for relate fields)
-                if (!empty($relatedId)) {
-                    // Fallback to the main module bean if no linked beans found
-                    $signers[] = BeanFactory::getBean($signerModule, $relatedId);
+                $relatedBean = BeanFactory::getBean($signerModule, $relatedId);
+                if (!empty($relatedBean)) {
+                    $signers[] = $relatedBean;
                 }
             }
+
             if (empty($signers)) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No signers found for Main Module ID [{$mainModuleId}] and Signer Path [{$signerPath}].");
                 continue;
             }
 
             foreach ($signers as $signer) {
-                if (!in_array($signer->id, $signersIdList)) {
+                // Ensure signer ID is unique in the list
+                if (!isset($signersIdList[$signer->id])) {
                     $signersIdList[$signer->id] = [
                         'module' => $signerModule,
                         'sourceModule' => $mainModule,
@@ -220,53 +233,64 @@ class stic_SignaturesUtils
                         'id' => $signer->id,
                         'name' => $signer->name,
                         'email' => $signer->email1 ?? '',
-                        'phone' => $signer->phone ?? '',
+                        'phone' => $signer->phone_work ?? $signer->phone_mobile ?? '', // Prioritize work phone, then mobile
                     ];
                 }
             }
-
         }
         return $signersIdList;
     }
 
-    /*     * Retrieves the parsed template for a given signer ID.
+    /**
+     * Retrieves the parsed HTML template for a given signer ID.
+     * This function fetches the PDF template associated with the signature,
+     * populates it with data from the source module related to the signer,
+     * and returns the resulting HTML.
      *
      * @param string $signerId The ID of the signer.
-     * @return string The parsed HTML template.
+     * @return string The parsed HTML template, or an error message if beans are invalid.
      */
     public static function getParsedTemplate($signerId)
     {
-
         require_once 'SticInclude/Utils.php';
-
         // Use common functions for PDF generation
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
 
-        $signerId = $signerId; // '00000b06-3aa0-2b29-db5c-6879efaf8c9d';
         $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
-        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        // Ensure signerBean exists
+        if (!$signerBean || empty($signerBean->id)) {
+            sugar_die("Invalid Signer ID provided: {$signerId}");
+        }
 
-        $pdfTemplateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c ?? ''); 
+        $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
+        // Ensure signatureBean exists
+        if (!$signatureBean || empty($signatureBean->id)) {
+            sugar_die("Invalid Signature Bean related to Signer ID: {$signerId}");
+        }
+
+        $pdfTemplateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c ?? '');
+        // Ensure pdfTemplateBean exists
+        if (!$pdfTemplateBean || empty($pdfTemplateBean->id)) {
+            sugar_die("Invalid PDF Template Bean related to Signature ID: {$signatureBean->id}");
+        }
+
         $sourceModuleBean = BeanFactory::getBean($signatureBean->main_module ?? '', $signerBean->record_id ?? '');
+        // Ensure sourceModuleBean exists
+        if (!$sourceModuleBean || empty($sourceModuleBean->id)) {
+            sugar_die("Invalid Source Module Bean related to Signer ID: {$signerId} (Module: {$signatureBean->main_module}, Record ID: {$signerBean->record_id})");
+        }
 
         require_once 'modules/AOS_PDF_Templates/templateParser.php';
 
-        // Retrieving the record and template beans
         $bean = $sourceModuleBean;
-        if (!$bean) {
-            sugar_die("Invalid Record");
-        }
-
         $templateBean = $pdfTemplateBean;
-        if (!$templateBean) {
-            sugar_die("Invalid Template");
-        }
 
         // Define the patterns used to clean the template HTML code
-        $search = array('/<script[^>]*?>.*?<\/script>/si', // Strip out javascript
-            '/<[\/\!]*?[^<>]*?>/si', // Strip out HTML tags
-            '/([\r\n])[\s]+/', // Strip out white space
-            '/&(quot|#34);/i', // Replace HTML entities
+        $search = array(
+            '/<script[^>]*?>.*?<\/script>/si', // Strip out javascript
+            '/<[\/\!]*?[^<>]*?>/si',            // Strip out HTML tags
+            '/([\r\n])[\s]+/',                 // Strip out white space
+            '/&(quot|#34);/i',                 // Replace HTML entities
             '/&(amp|#38);/i',
             '/&(lt|#60);/i',
             '/&(gt|#62);/i',
@@ -277,7 +301,8 @@ class stic_SignaturesUtils
             '/&#(\d+);/',
         );
 
-        $replace = array('',
+        $replace = array(
+            '',
             '',
             '\1',
             '"',
@@ -296,6 +321,7 @@ class stic_SignaturesUtils
         $footer = preg_replace($search, $replace, $templateBean->pdffooter);
         $text = preg_replace($search, $replace, $templateBean->description);
         $text = str_replace("<p><pagebreak /></p>", "<pagebreak />", $text);
+        // Replace {DATE} placeholder with current date formatted as specified in the template
         $text = preg_replace_callback(
             '/\{DATE\s+(.*?)\}/',
             function ($matches) {
@@ -304,6 +330,7 @@ class stic_SignaturesUtils
             $text
         );
 
+        // Handle AOS (Advanced OpenSales) specific modules for line items
         if (str_starts_with($_REQUEST['module'], "AOS_")) {
             $variableName = strtolower($bean->module_dir);
             $lineItemsGroups = array();
@@ -316,7 +343,7 @@ class stic_SignaturesUtils
                 $lineItems[$row['id']] = $row['product_id'];
             }
 
-            //backward compatibility
+            // Backward compatibility for related beans in AOS modules
             if (isset($bean->billing_account_id)) {
                 $object_arr['Accounts'] = $bean->billing_account_id;
             }
@@ -330,6 +357,7 @@ class stic_SignaturesUtils
                 $object_arr['Currencies'] = $bean->currency_id;
             }
 
+            // Replace specific AOS variables with dynamic ones
             $text = str_replace("\$aos_quotes", "\$" . $variableName, $text);
             $text = str_replace("\$aos_invoices", "\$" . $variableName, $text);
             $text = str_replace("\$total_amt", "\$" . $variableName . "_total_amt", $text);
@@ -339,6 +367,7 @@ class stic_SignaturesUtils
             $text = str_replace("\$shipping_amount", "\$" . $variableName . "_shipping_amount", $text);
             $text = str_replace("\$total_amount", "\$" . $variableName . "_total_amount", $text);
 
+            // Populate group lines (products/services) in the template
             $text = populate_group_lines($text, $lineItemsGroups, $lineItems);
         }
 
@@ -351,11 +380,10 @@ class stic_SignaturesUtils
         $header = templateParser::parse_template($header, $beanArray);
         $footer = templateParser::parse_template($footer, $beanArray);
 
-        // Replace last break lines by html tags
+        // Replace last break lines by HTML tags (this line seems redundant if HTML tags are stripped earlier,
+        // but it implies converting remaining newlines to <br /> for display purposes after parsing)
         $printable = str_replace("\n", "<br />", $converted);
 
         return "{$header}{$converted}{$footer}";
-
     }
-
 }

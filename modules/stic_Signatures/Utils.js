@@ -19,6 +19,12 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+/*
+ * This script handles client-side validations and custom behaviors for the stic_Signatures module.
+ * It includes date coherence checks and field manipulation based on the current view type.
+ */
+
 /* HEADER */
 // Set module name
 var module = "stic_Signatures";
@@ -34,10 +40,18 @@ var validationDependencies = {
 };
 
 /* VALIDATION CALLBACKS */
+/**
+ * Adds a validation callback for the 'activation_date' field to ensure date coherence.
+ * It checks that the activation date is not after the expiration date.
+ */
 addToValidateCallback(getFormName(), "activation_date", "date", false, SUGAR.language.get(module, "LBL_ACTIVATION_DATE_ERROR"), function () {
   return checkStartAndEndDatesCoherence("activation_date", "expiration_date", true);
 });
 
+/**
+ * Adds a validation callback for the 'expiration_date' field to ensure date coherence.
+ * It checks that the expiration date is not before the activation date.
+ */
 addToValidateCallback(getFormName(), "expiration_date", "date", false, SUGAR.language.get(module, "LBL_EXPIRATION_DATE_ERROR"), function () {
   return checkStartAndEndDatesCoherence("activation_date", "expiration_date", true);
 });
@@ -46,30 +60,22 @@ addToValidateCallback(getFormName(), "expiration_date", "date", false, SUGAR.lan
 
 /* AUX. FUNCTIONS */
 
+// Apply custom logic based on the current view type (edit, quickcreate, detail, list, etc.)
 switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-  setDisabledStatus('main_module',false)
-  // setDisabledStatus('signer_path',false)
-
-  
-  
-
-  
-    
+    // Enable the 'main_module' field for editing
+    setDisabledStatus('main_module', false);
+    // setDisabledStatus('signer_path',false) // This line is commented out in the original, keeping it commented.
     break;
   case "detail":
-    
+    // No specific custom logic for detail view in this section.
     break;
   case "list":
-    
+    // No specific custom logic for list view in this section.
     break;
   default:
+    // No specific custom logic for other view types.
     break;
 }
-
-
-
-
-

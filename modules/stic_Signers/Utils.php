@@ -21,24 +21,37 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+/**
+ * Utility class for handling operations related to stic_Signers module.
+ * This includes functionality for sending signature requests via email.
+ */
 class stic_SignersUtils
 {
-
-public static function sendToSign($signerId)
+    /**
+     * Sends a signature request email to the specified signer.
+     * This function retrieves signer details, constructs an email with a unique
+     * signing link, and sends it using SugarCRM's mailer.
+     *
+     * @param string $signerId The ID of the signer to whom the email should be sent.
+     * @throws Exception If the signer ID is empty or the destination email address is invalid.
+     * @return void
+     */
+    public static function sendToSign($signerId)
     {
         global $sugar_config, $current_user, $mod_strings;
-        // Logic to send the signer to sign
-        // This is a placeholder for the actual implementation
-        // You can add your logic here to handle the sending process
+
+        // Validate signer ID
         if (empty($signerId)) {
             throw new Exception("Signer ID cannot be empty.");
         }
 
+        // Retrieve the signer bean
         $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
 
+        // Get the destination email address for the signer
         $destAddress = $signerBean->email_address ?? '';
 
-        // Prepare mail
+        // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
         $emailObj = new Email();
         $defaults = $emailObj->getSystemDefaultEmail();
@@ -59,16 +72,21 @@ public static function sendToSign($signerId)
         $mail->FromName = $fromName;
 
         // Add recipient
-        if (!$destAddress) {
+        if (empty($destAddress)) {
+            // If no destination address, return false (or handle error appropriately)
             echo json_encode(false);
             die();
         }
         $mail->AddAddress($destAddress);
 
-        // Set the subject
+        // Set the email subject
         $subject = $mod_strings['LBL_SIGNER_EMAIL_SUBJECT'];
         $mail->Subject = $subject;
+
+        // Construct the unique signing URL
         $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
+
+        // Prepare the complete HTML body of the email
         $completeHTML = "<html>
                             <head>
                                 <title>{$subject}</title>
@@ -97,21 +115,16 @@ public static function sendToSign($signerId)
         $mail->isHtml(true);
         $mail->prepForOutbound();
 
+        // Attempt to send the email and log the result
         if (!$mail->Send()) {
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  There was an error sending the email.");
             SugarApplication::appendErrorMessage("<p class='msg-error'>" . $mod_strings['LBL_SIGNER_EMAIL_ERROR'] . ".</p>");
-            
-        } else{
-            SugarApplication::appendSuccessMessage("<p class='msg-success'><strong>{$okCounter}</strong> " . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": There was an error sending the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo);
+        } else {
+            SugarApplication::appendSuccessMessage("<p class='msg-success'>" . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Email sent successfully to {$destAddress}.");
-
         }
-        SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerId );
-        
 
+        // Redirect back to the signer's detail view
+        SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerId);
     }
-
-
-
-
 }

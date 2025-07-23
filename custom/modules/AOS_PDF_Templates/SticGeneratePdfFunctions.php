@@ -22,10 +22,19 @@
  */
 
 /**
- * These functions are used in PDF generation and also in the electronic signature process.
- * For this reason, they are kept in a separate file from SticGeneratePdf.php, allowing them to be reused in other contexts.
+ * This file contains functions used for PDF generation and electronic signature processes.
+ * These functions are kept separate from SticGeneratePdf.php to allow for reuse in other contexts.
  */
 
+/**
+ * Populates group lines in a given text template with data from line item groups.
+ *
+ * @param string $text The text template to populate.
+ * @param array $lineItemsGroups An array of line item groups.
+ * @param array $lineItems An array of individual line items.
+ * @param string $element The HTML element name used for grouping (e.g., 'table').
+ * @return string The populated text template.
+ */
 function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 'table')
 {
     $firstValue = '';
@@ -36,7 +45,6 @@ function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 't
 
     $startElement = '<' . $element;
     $endElement = '</' . $element . '>';
-
 
     $groups = BeanFactory::newBean('AOS_Line_Item_Groups');
     foreach ($groups->field_defs as $name => $arr) {
@@ -55,7 +63,7 @@ function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 't
         }
     }
     if ($firstValue !== '' && $lastValue !== '') {
-        //Converting Text
+        // Converting Text
         $parts = explode($firstValue, $text);
         $text = $parts[0];
         $parts = explode($lastValue, $parts[1]);
@@ -66,18 +74,17 @@ function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 't
         }
 
         if (count($lineItemsGroups) != 0) {
-            //Read line start <tr> value
+            // Read line start <tr> value
             $tcount = strrpos($text, $startElement);
             $lsValue = substr($text, $tcount);
             $tcount = strpos($lsValue, ">") + 1;
             $lsValue = substr($lsValue, 0, $tcount);
 
-
-            //Read line end values
+            // Read line end values
             $tcount = strpos($parts[1], $endElement) + strlen($endElement);
             $leValue = substr($parts[1], 0, $tcount);
 
-            //Converting Line Items
+            // Converting Line Items
             $obb = array();
 
             $tdTemp = explode($lsValue, $text);
@@ -110,10 +117,17 @@ function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 't
         $text = populate_service_lines($text, $lineItems);
     }
 
-
     return $text;
 }
 
+/**
+ * Populates product lines in a given text template with data from line items.
+ *
+ * @param string $text The text template to populate.
+ * @param array $lineItems An array of line items, where keys are IDs and values are product IDs.
+ * @param string $element The HTML element name used for lines (e.g., 'tr').
+ * @return string The populated text template.
+ */
 function populate_product_lines($text, $lineItems, $element = 'tr')
 {
     $firstValue = '';
@@ -125,7 +139,7 @@ function populate_product_lines($text, $lineItems, $element = 'tr')
     $startElement = '<' . $element;
     $endElement = '</' . $element . '>';
 
-    //Find first and last valid line values
+    // Find first and last valid line values for products quotes
     $product_quote = BeanFactory::newBean('AOS_Products_Quotes');
     foreach ($product_quote->field_defs as $name => $arr) {
         if (!((isset($arr['dbType']) && strtolower($arr['dbType']) == 'id') || $arr['type'] == 'id' || $arr['type'] == 'link')) {
@@ -144,6 +158,7 @@ function populate_product_lines($text, $lineItems, $element = 'tr')
         }
     }
 
+    // Find first and last valid line values for products
     $product = BeanFactory::newBean('AOS_Products');
     foreach ($product->field_defs as $name => $arr) {
         if (!((isset($arr['dbType']) && strtolower($arr['dbType']) == 'id') || $arr['type'] == 'id' || $arr['type'] == 'link')) {
@@ -151,8 +166,6 @@ function populate_product_lines($text, $lineItems, $element = 'tr')
             if ($curNum) {
                 if ($curNum < $firstNum || $firstNum == 0) {
                     $firstValue = '$aos_products_' . $name;
-
-
                     $firstNum = $curNum;
                 }
                 if ($curNum > $lastNum) {
@@ -164,12 +177,11 @@ function populate_product_lines($text, $lineItems, $element = 'tr')
     }
 
     if ($firstValue !== '' && $lastValue !== '') {
-
-        //Converting Text
+        // Converting Text
         $tparts = explode($firstValue, $text);
         $temp = $tparts[0];
 
-        //check if there is only one line item
+        // Check if there is only one line item
         if ($firstNum == $lastNum) {
             $linePart = $firstValue;
         } else {
@@ -177,13 +189,12 @@ function populate_product_lines($text, $lineItems, $element = 'tr')
             $linePart = $firstValue . $tparts[0] . $lastValue;
         }
 
-
         $tcount = strrpos($temp, $startElement);
         $lsValue = substr($temp, $tcount);
         $tcount = strpos($lsValue, ">") + 1;
         $lsValue = substr($lsValue, 0, $tcount);
 
-        //Read line end values
+        // Read line end values
         $tcount = strpos($tparts[1], $endElement) + strlen($endElement);
         $leValue = substr($tparts[1], 0, $tcount);
         $tdTemp = explode($lsValue, $temp);
@@ -192,7 +203,7 @@ function populate_product_lines($text, $lineItems, $element = 'tr')
         $parts = explode($linePart, $text);
         $text = $parts[0];
 
-        //Converting Line Items
+        // Converting Line Items
         if (count($lineItems) != 0) {
             foreach ($lineItems as $id => $productId) {
                 if ($productId != null && $productId != '0') {
@@ -210,6 +221,14 @@ function populate_product_lines($text, $lineItems, $element = 'tr')
     return $text;
 }
 
+/**
+ * Populates service lines in a given text template with data from line items.
+ *
+ * @param string $text The text template to populate.
+ * @param array $lineItems An array of line items, where keys are IDs and values are product IDs.
+ * @param string $element The HTML element name used for lines (e.g., 'tr').
+ * @return string The populated text template.
+ */
 function populate_service_lines($text, $lineItems, $element = 'tr')
 {
     $firstValue = '';
@@ -223,7 +242,7 @@ function populate_service_lines($text, $lineItems, $element = 'tr')
 
     $text = str_replace("\$aos_services_quotes_service", "\$aos_services_quotes_product", $text);
 
-    //Find first and last valid line values
+    // Find first and last valid line values for products quotes
     $product_quote = BeanFactory::newBean('AOS_Products_Quotes');
     foreach ($product_quote->field_defs as $name => $arr) {
         if (!((isset($arr['dbType']) && strtolower($arr['dbType']) == 'id') || $arr['type'] == 'id' || $arr['type'] == 'link')) {
@@ -244,11 +263,11 @@ function populate_service_lines($text, $lineItems, $element = 'tr')
         $text = str_replace("\$aos_products", "\$aos_null", $text);
         $text = str_replace("\$aos_services", "\$aos_products", $text);
 
-        //Converting Text
+        // Converting Text
         $tparts = explode($firstValue, $text);
         $temp = $tparts[0];
 
-        //check if there is only one line item
+        // Check if there is only one line item
         if ($firstNum == $lastNum) {
             $linePart = $firstValue;
         } else {
@@ -261,7 +280,7 @@ function populate_service_lines($text, $lineItems, $element = 'tr')
         $tcount = strpos($lsValue, ">") + 1;
         $lsValue = substr($lsValue, 0, $tcount);
 
-        //Read line end values
+        // Read line end values
         $tcount = strpos($tparts[1], $endElement) + strlen($endElement);
         $leValue = substr($tparts[1], 0, $tcount);
         $tdTemp = explode($lsValue, $temp);
@@ -270,7 +289,7 @@ function populate_service_lines($text, $lineItems, $element = 'tr')
         $parts = explode($linePart, $text);
         $text = $parts[0];
 
-        //Converting Line Items
+        // Converting Line Items
         if (count($lineItems) != 0) {
             foreach ($lineItems as $id => $productId) {
                 if ($productId == null || $productId == '0') {

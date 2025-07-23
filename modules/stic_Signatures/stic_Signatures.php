@@ -21,6 +21,12 @@
 * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 */
 
+/**
+ * Represents the stic_Signatures module in SinergiaCRM.
+ * This class extends SugarCRM's Basic class and defines the structure and
+ * custom logic for signature records, including automatic naming and
+ * linking with PDF templates.
+ */
 class stic_Signatures extends Basic
 {
     public $new_schema = true;
@@ -29,6 +35,7 @@ class stic_Signatures extends Basic
     public $table_name = 'stic_signatures';
     public $importable = true;
 
+    // Properties corresponding to database fields
     public $id;
     public $name;
     public $date_entered;
@@ -46,7 +53,7 @@ class stic_Signatures extends Basic
     public $assigned_user_link;
     public $SecurityGroups;
     public $status;
-    public $module;
+    public $main_module; // Corrected from 'module' to 'main_module' based on usage
     public $signer_path;
     public $auth_method;
     public $type;
@@ -65,50 +72,51 @@ class stic_Signatures extends Basic
     public $on_behalf_of;
     public $pdf_document;
 
+    /**
+     * Checks if the bean implements a specific interface.
+     *
+     * @param string $interface The name of the interface to check.
+     * @return bool True if the bean implements the interface, false otherwise.
+     */
     public function bean_implements($interface)
     {
         switch ($interface) {
             case 'ACL':
                 return true;
         }
-
         return false;
     }
 
     /**
-     * Overriding SugarBean save function to insert additional logic:
-     * Build the name of the journal using the name of the center, the date and the type
+     * Overrides the SugarBean save function to insert additional logic.
+     * Automatically generates the `name` field if it's empty, combining
+     * the main module, type, and PDF template name. It also updates the
+     * `main_module` based on the selected PDF template's type.
      *
-     * @param boolean $check_notify
+     * @param boolean $check_notify Whether to check for notifications.
      * @return void
      */
     public function save($check_notify = false)
     {
-
         include_once 'SticInclude/Utils.php';
         global $app_list_strings;
 
         // Create name if empty
         if (empty($this->name)) {
-            $mainModule = $app_list_strings['moduleList'][$this->main_module];
-            $type = $app_list_strings['stic_signatures_types_list'][$this->type];
-            $this->name = "{$mainModule} - {$type} - {$this->pdf_template}";
+            $mainModuleName = $app_list_strings['moduleList'][$this->main_module] ?? $this->main_module; // Use existing if list entry not found
+            $typeLabel = $app_list_strings['stic_signatures_types_list'][$this->type] ?? $this->type; // Use existing if list entry not found
+            $this->name = "{$mainModuleName} - {$typeLabel} - {$this->pdf_template}";
         }
 
-        if($this->pdftemplate_id_c ?? false){
-            $PDFBean = Beanfactory::getBean('AOS_PDF_Templates', $this->pdftemplate_id_c);
-            if ($PDFBean) { 
+        // If a PDF template is linked, set the main_module based on the PDF template's type
+        if (!empty($this->pdftemplate_id_c)) {
+            $PDFBean = BeanFactory::getBean('AOS_PDF_Templates', $this->pdftemplate_id_c);
+            if ($PDFBean) {
                 $this->main_module = $PDFBean->type;
-
             }
         }
 
-        
-
-
-
-        // Call the generic save() function from the SugarBean class
-        parent::save();
+        // Call the generic save() function from the the parent (SugarBean) class
+        parent::save($check_notify);
     }
-
 }

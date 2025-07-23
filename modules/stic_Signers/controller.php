@@ -20,16 +20,29 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+
+/**
+ * Controller for the stic_Signers module.
+ * This class handles actions related to signer management, such as sending signature requests.
+ */
 class stic_SignersController extends SugarController
 {
-public function action_sendToSign()
+    /**
+     * Handles the 'sendToSign' action.
+     * This action retrieves the signer ID from the request and
+     * calls the utility function to send the signature request email.
+     *
+     * @return void
+     */
+    public function action_sendToSign()
     {
         require_once 'modules/stic_Signers/Utils.php';
         $signerId = $_REQUEST['signerId'] ?? '';
         if (!empty($signerId)) {
+            // Call the utility function to send the signature email
             stic_SignersUtils::sendToSign($signerId);
-            
-        } 
+        }
+        // Terminate script execution after sending or if signerId is empty
         die();
     }
 }

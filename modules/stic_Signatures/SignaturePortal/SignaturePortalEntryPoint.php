@@ -21,17 +21,24 @@
 * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 */
 
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/**
+ * This script serves as the entry point for the electronic signature portal.
+ * It initializes and displays the signature portal view.
+ */
 
-// Incluye los archivos necesarios para cargar la clase de la vista
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+// Include necessary files to load the view class
 require_once('include/MVC/View/SugarView.php');
-require_once('modules/stic_Signatures/views/view.signatureportal.php'); // Asegúrate de que esta ruta sea correcta
+require_once('modules/stic_Signatures/views/view.signatureportal.php'); // Ensure this path is correct
 
-// Inicia una instancia de la clase de la vista
+// Initialize an instance of the view class
 $view = new stic_SignaturePortal();
 
-// Llama al método display() de la vista
+// Call the display() method of the view
 $view->display();
 
-// Termina la ejecución del script para asegurar que no se cargue nada adicional del framework de SuiteCRM
+// Terminate script execution to ensure no additional SuiteCRM framework elements are loaded
 sugar_die('');

@@ -20,94 +20,93 @@
 * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 */
 
-/* SticSign.css */
-/* Este archivo contiene los estilos CSS para el portal de firmas. */
+/*
+ * SticSign.css - This file contains CSS styles for the signature portal.
+ */
 
-/* Importa la fuente Inter de Google Fonts */
+/* Import Inter font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-/* Importa las fuentes manuscritas para la firma de texto */
+/* Import handwritten fonts for text signature */
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script&family=Pacifico&family=Great+Vibes&family=Caveat&family=Indie+Flower&display=swap');
 
 
-/* Estilos base para el cuerpo y los elementos principales */
+/* Base styles for the body and main elements */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f0f2f5; /* Un gris claro suave */
+    background-color: #f0f2f5; /* A soft light gray */
     color: #333;
 }
 
-/* Estilos para el contenedor principal del portal */
+/* Styles for the main portal container */
 .stic-container {
     max-width: 900px;
     margin: 2rem auto;
     padding: 1.5rem;
     background-color: #ffffff;
-    border-radius: 1rem; /* Bordes más redondeados */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    border-radius: 1rem; /* More rounded borders */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
     display: flex;
     flex-direction: column;
-    gap: 2rem; /* Espacio entre secciones */
+    gap: 2rem; /* Space between sections */
 }
 
-/* Estilos para el área del documento */
+/* Styles for the document area */
 .document-area {
-    border: 1px solid #e2e8f0; /* Color de borde suave */
+    border: 1px solid #e2e8f0; /* Soft border color */
     border-radius: 0.75rem;
     padding: 1.5rem;
-    background-color: #fdfdfd; /* Fondo base para el área, el contenido tendrá el blanco */
+    background-color: #fdfdfd; /* Base background for the area, content will have white */
     line-height: 1.6;
-    /* box-shadow y background-color movidos a .document-scroll-content */
+    /* box-shadow and background-color moved to .document-scroll-content */
 }
 
-/* Estilos para el contenido del documento con scroll vertical */
+/* Styles for scrollable document content */
 .document-scroll-content {
-    max-height: 400px; /* Altura máxima fija para el documento */
-    overflow-y: auto; /* Habilita el scroll vertical si el contenido excede la altura */
-    padding-right: 1rem; /* Espacio para la barra de scroll */
-    background-color: #ffffff; /* Fondo blanco para el contenido del documento */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.30); /* Ligera sombra para el contenido */
+    max-height: 400px; /* Fixed maximum height for the document */
+    overflow-y: auto; /* Enables vertical scroll if content exceeds height */
+    padding-right: 1rem; /* Space for the scrollbar */
+    background-color: #ffffff; /* White background for document content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.30); /* Slight shadow for the content */
     border-radius: 0;
-    padding: 1rem; /* Padding interno para el contenido */
-    border: .5px solid #777; 
+    padding: 1rem; /* Internal padding for the content */
+    border: .5px solid #777;
 }
 
-/* Estilos para el área de firma */
+/* Styles for the signature area */
 .signature-area {
-    /* Añadido para centrar el contenido (canvas y botones) */
+    /* Added to center content (canvas and buttons) */
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra horizontalmente los elementos hijos */
-
-    border: 1px solid #e2e8f0; /* Color de borde suave */
+    align-items: center; /* Horizontally centers child elements */
+    border: 1px solid #e2e8f0; /* Soft border color */
     border-radius: 0.75rem;
     padding: 1.5rem;
     background-color: #fdfdfd;
     line-height: 1.6;
 }
 
-/* Estilos para el lienzo de firma */
+/* Styles for the signature canvas */
 #signatureCanvas {
-    border: 2px dashed #93c5fd; /* Borde punteado azul claro */
+    border: 2px dashed #93c5fd; /* Light blue dashed border */
     background-color: #ffffff;
-    touch-action: none; /* Previene el desplazamiento del navegador al dibujar */
-    max-width: 100%; /* Asegura que no desborde el contenedor */
-    max-height: 250px; /* Altura máxima CSS para el lienzo */
+    touch-action: none; /* Prevents browser scrolling when drawing */
+    max-width: 100%; /* Ensures it doesn't overflow the container */
+    max-height: 250px; /* Maximum CSS height for the canvas */
     border-radius: 0.75rem;
-    cursor: crosshair; /* Cursor que indica que se puede dibujar */
-    display: block; /* Asegura que el margen auto funcione para centrar si es necesario */
-    margin: 0 auto; /* Centra el canvas si su ancho es menor que el 100% */
-    transition: opacity 0.3s ease-in-out, cursor 0.3s ease-in-out; /* Transición suave para el estado disabled */
+    cursor: crosshair; /* Cursor indicating drawing is possible */
+    display: block; /* Ensures auto margin works for centering if needed */
+    margin: 0 auto; /* Centers the canvas if its width is less than 100% */
+    transition: opacity 0.3s ease-in-out, cursor 0.3s ease-in-out; /* Smooth transition for disabled state */
 }
 
-/* Estilo para el lienzo cuando está deshabilitado */
+/* Style for the canvas when disabled */
 #signatureCanvas.canvas-disabled {
-    opacity: 0.5; /* Reduce la opacidad para indicar que está desactivado */
-    cursor: not-allowed; /* Cambia el cursor para indicar que no se puede interactuar */
-    pointer-events: none; /* Deshabilita todos los eventos de ratón/táctiles */
+    opacity: 0.5; /* Reduces opacity to indicate it's disabled */
+    cursor: not-allowed; /* Changes cursor to indicate no interaction is possible */
+    pointer-events: none; /* Disables all mouse/touch events */
 }
 
-
-/* Estilos para los botones de acción */
+/* Styles for action buttons */
 .action-buttons button {
     padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
@@ -121,27 +120,27 @@ body {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* Estilos específicos para el botón principal (Guardar Firma) */
+/* Specific styles for the primary button (Save Signature) */
 .btn-primary {
-    background-color: #3b82f6; /* Azul vibrante */
+    background-color: #3b82f6; /* Vibrant blue */
     color: #ffffff;
 }
 
 .btn-primary:hover {
-    background-color: #2563eb; /* Azul más oscuro al pasar el ratón */
+    background-color: #2563eb; /* Darker blue on hover */
 }
 
-/* Estilos específicos para el botón secundario (Limpiar) */
+/* Specific styles for the secondary button (Clear) */
 .btn-secondary {
-    background-color: #e2e8f0; /* Gris claro */
-    color: #4a5568; /* Texto gris oscuro */
+    background-color: #e2e8f0; /* Light gray */
+    color: #4a5568; /* Dark gray text */
 }
 
 .btn-secondary:hover {
-    background-color: #cbd5e0; /* Gris ligeramente más oscuro al pasar el ratón */
+    background-color: #cbd5e0; /* Slightly darker gray on hover */
 }
 
-/* Estilos para los botones cuando están deshabilitados */
+/* Styles for disabled buttons */
 .action-buttons button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -149,15 +148,14 @@ body {
     transform: none;
 }
 
-
-/* Estilos para el área de auditoría */
+/* Styles for the audit trail area */
 .audit-trail-area {
     border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
     padding: 1.5rem;
     background-color: #fdfdfd;
-    min-height: 150px; /* Altura mínima para el área de auditoría */
-    overflow-y: auto; /* Permite desplazamiento si hay muchos registros */
+    min-height: 150px; /* Minimum height for the audit area */
+    overflow-y: auto; /* Allows scrolling if there are many records */
 }
 
 .audit-record {
@@ -171,7 +169,7 @@ body {
     border-bottom: none;
 }
 
-/* Estilos para mensajes modales (éxito/advertencia) */
+/* Styles for modal messages (success/warning) */
 .fixed.inset-0 {
     position: fixed;
     top: 0;
@@ -180,25 +178,25 @@ body {
     bottom: 0;
 }
 
-/* Media queries para responsividad (Tailwind maneja la mayoría, pero para ajustes finos) */
+/* Media queries for responsiveness (Tailwind handles most, but for fine adjustments) */
 @media (max-width: 768px) {
     .stic-container {
         margin: 1rem;
         padding: 1rem;
         border-radius: 0.75rem;
     }
-    .document-area, .audit-trail-area, .signature-area { /* Incluir signature-area aquí también */
+    .document-area, .audit-trail-area, .signature-area { /* Include signature-area here as well */
         padding: 1rem;
         border-radius: 0.5rem;
     }
     .action-buttons {
-        flex-direction: column; /* Apila los botones en móviles */
+        flex-direction: column; /* Stack buttons on mobile */
         gap: 0.75rem;
     }
     .action-buttons button {
-        width: 100%; /* Botones de ancho completo */
+        width: 100%; /* Full-width buttons */
     }
     .document-scroll-content {
-        max-height: 300px; /* Ajustar altura en móviles si es necesario */
+        max-height: 300px; /* Adjust height on mobile if necessary */
     }
 }

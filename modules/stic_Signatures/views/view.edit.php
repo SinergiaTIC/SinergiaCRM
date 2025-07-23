@@ -21,13 +21,21 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+/**
+ * This class extends the default SugarCRM ViewEdit to provide custom
+ * functionality for the stic_Signatures module's edit view.
+ * It includes logic for populating signer path lists.
+ */
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 
 #[\AllowDynamicProperties]
 class stic_SignaturesViewEdit extends ViewEdit
 {
-
+    /**
+     * Constructor for stic_SignaturesViewEdit.
+     * Initializes the parent constructor and sets properties for subpanel and quick create template usage.
+     */
     public function __construct()
     {
         parent::__construct();
@@ -35,30 +43,38 @@ class stic_SignaturesViewEdit extends ViewEdit
         $this->useModuleQuickCreateTemplate = true;
     }
 
+    /**
+     * Executes logic before displaying the edit view.
+     * This method is overridden to include custom pre-display operations
+     * such as populating signer path lists.
+     *
+     * @return void
+     */
     public function preDisplay()
     {
         parent::preDisplay();
 
         SticViews::preDisplay($this);
 
-        // get emailable related modules and populate the dropdown
+        // Get emailable related modules and populate the dropdown
         require_once 'modules/stic_Signatures/Utils.php';
         stic_SignaturesUtils::populateSignerPathListString($this->bean->main_module ?? null);
-
     }
 
+    /**
+     * Renders the edit view.
+     * This method is overridden to include custom display operations
+     * such as calling SticViews::display and including a versioned JavaScript script.
+     *
+     * @return void
+     */
     public function display()
     {
         parent::display();
 
         SticViews::display($this);
 
-        // Write here you custom code
-
+        // Write here your custom code
         echo getVersionedScript("modules/stic_Signatures/Utils.js");
-        
-
-
     }
-
 }

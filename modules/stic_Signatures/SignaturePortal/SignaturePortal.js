@@ -20,172 +20,161 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-// Este archivo contiene la lógica JavaScript para el lienzo de firma
-// y la gestión (simulada) de registros de auditoría.
+/*
+ * This file contains the JavaScript logic for the signature canvas
+ * and the (simulated) management of audit records.
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Configuración del Lienzo de Firma ---
+    // --- Signature Canvas Configuration ---
     const signatureCanvas = document.getElementById('signatureCanvas');
     const ctx = signatureCanvas.getContext('2d');
     const clearSignatureBtn = document.getElementById('clearSignatureBtn');
     const saveSignatureBtn = document.getElementById('saveSignatureBtn');
     const auditRecordsDiv = document.getElementById('auditRecords');
-    const documentContentDiv = document.getElementById('documentContent'); // Referencia al div del contenido del documento
-    const scrollInstructionMessage = document.getElementById('scrollInstructionMessage'); // Nuevo: Mensaje de instrucción de scroll
+    const documentContentDiv = document.getElementById('documentContent');
+    const scrollInstructionMessage = document.getElementById('scrollInstructionMessage');
 
-    // Nuevos elementos para la firma de texto
+    // Elements for text signature
     const textSignatureInput = document.getElementById('textSignatureInput');
     const fontSelector = document.getElementById('fontSelector');
     const renderTextSignatureBtn = document.getElementById('renderTextSignatureBtn');
 
-    // Nuevos elementos para la firma por imagen
+    // Elements for image signature
     const imageSignatureInput = document.getElementById('imageSignatureInput');
     const uploadImageSignatureBtn = document.getElementById('uploadImageSignatureBtn');
 
     let isDrawing = false;
     let lastX = 0;
     let lastY = 0;
-    let initialCanvasData = null; // Para almacenar el estado del canvas vacío
-    let canvasEnabled = false; // Nuevo estado para controlar si el canvas está activo
+    let initialCanvasData = null; // Stores the state of the empty canvas
+    let canvasEnabled = false; // Controls if the canvas is active
 
-    // Fuentes manuscritas de Google Fonts (no es necesario cargarlas aquí si ya están en CSS)
-    // const handwrittenFonts = [
-    //     'Dancing Script',
-    //     'Pacifico',
-    //     'Great Vibes',
-    //     'Caveat',
-    //     'Indie Flower'
-    // ];
-
-    // La función loadGoogleFonts() se elimina ya que las fuentes se cargan vía CSS.
-    // function loadGoogleFonts() {
-    //     handwrittenFonts.forEach(fontName => {
-    //         const font = new FontFace(fontName, `url(https://fonts.gstatic.com/s/${fontName.toLowerCase().replace(' ', '')}/vXX/${fontName.replace(' ', '')}.woff2)`);
-    //         font.load().then(() => {
-    //             document.fonts.add(font);
-    //             console.log(`${fontName} font loaded.`);
-    //         }).catch(error => console.error(`Failed to load font ${fontName}:`, error));
-    //     });
-    // }
-
-    // Función para habilitar el lienzo y los botones
+    /**
+     * Enables the signature canvas and related buttons.
+     */
     function enableSignatureArea() {
         if (!canvasEnabled) {
             canvasEnabled = true;
             signatureCanvas.classList.remove('canvas-disabled');
             clearSignatureBtn.disabled = false;
             saveSignatureBtn.disabled = false;
-            // Habilitar también los nuevos elementos
             textSignatureInput.disabled = false;
             fontSelector.disabled = false;
             renderTextSignatureBtn.disabled = false;
             imageSignatureInput.disabled = false;
             uploadImageSignatureBtn.disabled = false;
 
-            // Ocultar el mensaje de instrucción de scroll
+            // Hide the scroll instruction message
             scrollInstructionMessage.style.display = 'none';
 
-            addAuditRecord('Lienzo de firma y opciones alternativas activadas (documento leído).');
-            // Opcional: Remover el listener de scroll una vez que el canvas está activado
+            addAuditRecord('Signature canvas and alternative options activated (document read).');
+            // Optionally: Remove the scroll listener once the canvas is activated
             documentContentDiv.removeEventListener('scroll', checkScrollPosition);
         }
     }
 
-    // Función para verificar la posición del scroll
+    /**
+     * Checks the scroll position of the document content to enable the signature area.
+     */
     function checkScrollPosition() {
-        // Si el usuario ha llegado al final del scroll del documento
-        // Se añade un pequeño margen de 1px para evitar problemas de redondeo
+        // If the user has scrolled to the end of the document
+        // A small margin of 1px is added to avoid rounding issues
         if (documentContentDiv.scrollTop + documentContentDiv.clientHeight >= documentContentDiv.scrollHeight - 1) {
             enableSignatureArea();
         }
     }
 
-    // Ajustar el tamaño del lienzo para que sea nítido en pantallas de alta densidad
-    // y sea responsivo, manteniendo la proporción 16:9 y una altura máxima de 250px.
+    /**
+     * Adjusts the canvas size for sharp rendering on high-density screens
+     * and makes it responsive, maintaining a 16:9 aspect ratio and a maximum height of 250px.
+     */
     function resizeCanvas() {
-        // Crear un canvas temporal para guardar el dibujo actual antes de redimensionar
+        // Create a temporary canvas to save the current drawing before resizing
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
-        // Asegurarse de que el canvas temporal tenga las mismas dimensiones intrínsecas
-        // que el canvas principal antes de redimensionar para capturar correctamente.
+        // Ensure the temporary canvas has the same intrinsic dimensions
+        // as the main canvas before resizing for proper capture.
         tempCanvas.width = signatureCanvas.width;
         tempCanvas.height = signatureCanvas.height;
-        // Dibujar el contenido actual del canvas principal en el temporal
+        // Draw the current content of the main canvas onto the temporary one
         tempCtx.drawImage(signatureCanvas, 0, 0);
 
         const parentElement = signatureCanvas.parentElement;
-        const parentWidth = parentElement.offsetWidth; // Ancho disponible del contenedor
-        const maxHeightCSS = 250; // Altura máxima deseada en CSS pixels
+        const parentWidth = parentElement.offsetWidth; // Available width of the container
+        const maxHeightCSS = 250; // Desired maximum height in CSS pixels
 
         let calculatedWidthCSS = parentWidth;
-        let calculatedHeightCSS = calculatedWidthCSS * (9 / 16); // Altura inicial basada en 16:9 del ancho completo
+        let calculatedHeightCSS = calculatedWidthCSS * (9 / 16); // Initial height based on 16:9 of full width
 
-        // Si la altura calculada excede la altura máxima, ajustamos
+        // If the calculated height exceeds the maximum height, adjust
         if (calculatedHeightCSS > maxHeightCSS) {
             calculatedHeightCSS = maxHeightCSS;
-            calculatedWidthCSS = maxHeightCSS * (16 / 9); // Recalcular ancho para mantener 16:9 con la altura máxima
+            calculatedWidthCSS = maxHeightCSS * (16 / 9); // Recalculate width to maintain 16:9 with max height
         }
 
-        // Asegurarse de que el ancho calculado no exceda el ancho del padre
+        // Ensure the calculated width does not exceed the parent's width
         if (calculatedWidthCSS > parentWidth) {
             calculatedWidthCSS = parentWidth;
             calculatedHeightCSS = calculatedWidthCSS * (9 / 16);
         }
 
-        // Aplicar las dimensiones calculadas al estilo CSS del canvas
+        // Apply the calculated dimensions to the canvas's CSS style
         signatureCanvas.style.width = `${calculatedWidthCSS}px`;
         signatureCanvas.style.height = `${calculatedHeightCSS}px`;
 
-        // Establecer las dimensiones intrínsecas (resolución de dibujo) del canvas
-        // Multiplicar por devicePixelRatio para asegurar nitidez en pantallas de alta densidad (Retina)
+        // Set the intrinsic dimensions (drawing resolution) of the canvas
+        // Multiply by devicePixelRatio for sharpness on high-density (Retina) screens
         signatureCanvas.width = calculatedWidthCSS * window.devicePixelRatio;
         signatureCanvas.height = calculatedHeightCSS * window.devicePixelRatio;
 
-        // Limpiar el contexto y restablecer la transformación antes de aplicar la nueva escala
-        // Esto es crucial para evitar problemas de escalado acumulativos o dibujos borrosos.
+        // Clear the context and reset the transformation before applying the new scale
+        // This is crucial to avoid cumulative scaling issues or blurry drawings.
         ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-        ctx.setTransform(1, 0, 0, 1, 0, 0); // Restablecer la matriz de transformación a la identidad
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio); // Aplicar el nuevo escalado
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset the transformation matrix to identity
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio); // Apply the new scaling
 
-        // Restaurar el dibujo desde el canvas temporal al canvas principal redimensionado
-        // Es importante dibujar usando las dimensiones *de visualización* (calculatedWidthCSS, calculatedHeightCSS)
-        // para que el dibujo se escale correctamente al nuevo tamaño del canvas.
+        // Restore the drawing from the temporary canvas to the resized main canvas
+        // It's important to draw using the *display* dimensions (calculatedWidthCSS, calculatedHeightCSS)
+        // so that the drawing scales correctly to the canvas's new size.
         ctx.drawImage(tempCanvas, 0, 0, calculatedWidthCSS, calculatedHeightCSS);
 
-        // Restablecer las propiedades de estilo del contexto después de escalar
-        ctx.lineCap = 'round';     // Extremos de línea redondeados
-        ctx.lineJoin = 'round';    // Uniones de línea redondeadas
-        ctx.lineWidth = 3;         // Ancho de línea para la firma
-        ctx.strokeStyle = '#333';  // Color de la firma
+        // Reset context style properties after scaling
+        ctx.lineCap = 'round';     // Rounded line ends
+        ctx.lineJoin = 'round';    // Rounded line joins
+        ctx.lineWidth = 3;         // Line width for the signature
+        ctx.strokeStyle = '#333';  // Signature color
 
-        // Capturar la Data URL de un lienzo vacío solo la primera vez que se inicializa
-        // o cuando se limpia explícitamente. Esto se usa para comparar si el lienzo está realmente vacío.
-        if (initialCanvasData === null || initialCanvasData === 'reset') { // 'reset' para forzar recaptura en resize
-            // Para obtener una Data URL de un canvas *realmente* vacío,
-            // lo limpiamos temporalmente, obtenemos la URL, y luego restauramos el contenido.
+        // Capture the Data URL of an empty canvas only the first time it's initialized
+        // or when explicitly cleared. This is used to compare if the canvas is truly empty.
+        if (initialCanvasData === null || initialCanvasData === 'reset') { // 'reset' to force recapture on resize
+            // To get a Data URL of a *truly* empty canvas,
+            // we temporarily clear it, get the URL, and then restore the content.
             const originalImageData = ctx.getImageData(0, 0, signatureCanvas.width, signatureCanvas.height);
             ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
             initialCanvasData = signatureCanvas.toDataURL('image/png');
-            ctx.putImageData(originalImageData, 0, 0); // Restaurar el contenido original
+            ctx.putImageData(originalImageData, 0, 0); // Restore original content
         }
     }
 
-    // Inicializar el tamaño del lienzo al cargar la página y capturar el estado vacío inicial
+    // Initialize canvas size on page load and capture initial empty state
     resizeCanvas();
 
-    // Reajustar el tamaño del lienzo si la ventana cambia de tamaño
+    // Adjust canvas size if the window is resized
     window.addEventListener('resize', () => {
-        initialCanvasData = 'reset'; // Marcar para recapturar el estado vacío después del resize
+        initialCanvasData = 'reset'; // Mark to recapture empty state after resize
         resizeCanvas();
-        // Después de redimensionar, el scroll puede cambiar, así que volvemos a verificar
+        // After resizing, scroll position might change, so re-check
         checkScrollPosition();
     });
 
-
-    // Función para añadir un registro al área de auditoría
+    /**
+     * Adds an audit record to the audit trail area.
+     * @param {string} message The message to record.
+     */
     function addAuditRecord(message) {
         const now = new Date();
-        const timestamp = now.toLocaleString('es-ES', {
+        const timestamp = now.toLocaleString('en-US', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -196,21 +185,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const recordDiv = document.createElement('div');
         recordDiv.className = 'audit-record bg-gray-50 rounded-md';
         recordDiv.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
-        auditRecordsDiv.prepend(recordDiv); // Añadir al principio para ver los más recientes
+        auditRecordsDiv.prepend(recordDiv); // Add to the beginning to see the most recent
     }
 
-    // --- Lógica de Dibujo para Ratón ---
+    // --- Drawing Logic for Mouse ---
     signatureCanvas.addEventListener('mousedown', (e) => {
-        if (!canvasEnabled) return; // No permitir dibujar si el canvas está deshabilitado
+        if (!canvasEnabled) return; // Do not allow drawing if canvas is disabled
         isDrawing = true;
-        // Se elimina la limpieza automática del canvas aquí para permitir múltiples trazos.
-        // El canvas solo se limpiará con el botón "Limpiar" o al usar las opciones de texto/imagen.
+        // Automatic canvas clearing is removed here to allow multiple strokes.
+        // The canvas will only be cleared with the "Clear" button or when using text/image options.
         [lastX, lastY] = [e.offsetX, e.offsetY];
-        addAuditRecord('Inicio de dibujo de firma.');
+        addAuditRecord('Signature drawing started.');
     });
 
     signatureCanvas.addEventListener('mousemove', (e) => {
-        if (!isDrawing || !canvasEnabled) return; // No permitir dibujar si el canvas está deshabilitado
+        if (!isDrawing || !canvasEnabled) return; // Do not allow drawing if canvas is disabled
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(e.offsetX, e.offsetY);
@@ -221,33 +210,33 @@ document.addEventListener('DOMContentLoaded', () => {
     signatureCanvas.addEventListener('mouseup', () => {
         if (isDrawing) {
             isDrawing = false;
-            addAuditRecord('Fin de trazo de firma.'); // Mensaje cambiado para reflejar fin de trazo, no de firma completa
+            addAuditRecord('Signature stroke finished.'); // Message changed to reflect end of stroke, not full signature
         }
     });
 
     signatureCanvas.addEventListener('mouseout', () => {
         if (isDrawing) {
             isDrawing = false;
-            addAuditRecord('Trazo de firma interrumpido (cursor fuera del lienzo).'); // Mensaje cambiado
+            addAuditRecord('Signature stroke interrupted (cursor left canvas).'); // Message changed
         }
     });
 
-    // --- Lógica de Dibujo para Táctil (Móviles) ---
+    // --- Drawing Logic for Touch (Mobile) ---
     signatureCanvas.addEventListener('touchstart', (e) => {
-        if (!canvasEnabled) return; // No permitir dibujar si el canvas está deshabilitado
-        e.preventDefault(); // Prevenir el desplazamiento de la página
+        if (!canvasEnabled) return; // Do not allow drawing if canvas is disabled
+        e.preventDefault(); // Prevent page scrolling
         isDrawing = true;
-        // Se elimina la limpieza automática del canvas aquí para permitir múltiples trazos.
+        // Automatic canvas clearing is removed here to allow multiple strokes.
         const touch = e.touches[0];
         const rect = signatureCanvas.getBoundingClientRect();
         lastX = touch.clientX - rect.left;
         lastY = touch.clientY - rect.top;
-        addAuditRecord('Inicio de dibujo de firma (táctil).');
+        addAuditRecord('Signature drawing started (touch).');
     }, { passive: false });
 
     signatureCanvas.addEventListener('touchmove', (e) => {
-        if (!isDrawing || !canvasEnabled) return; // No permitir dibujar si el canvas está deshabilitado
-        e.preventDefault(); // Prevenir el desplazamiento de la página
+        if (!isDrawing || !canvasEnabled) return; // Do not allow drawing if canvas is disabled
+        e.preventDefault(); // Prevent page scrolling
         const touch = e.touches[0];
         const rect = signatureCanvas.getBoundingClientRect();
         const currentX = touch.clientX - rect.left;
@@ -263,33 +252,33 @@ document.addEventListener('DOMContentLoaded', () => {
     signatureCanvas.addEventListener('touchend', () => {
         if (isDrawing) {
             isDrawing = false;
-            addAuditRecord('Fin de trazo de firma (táctil).'); // Mensaje cambiado
+            addAuditRecord('Signature stroke finished (touch).'); // Message changed
         }
     });
 
-    // --- Funciones de Botones ---
+    // --- Button Functions ---
     clearSignatureBtn.addEventListener('click', () => {
-        if (!canvasEnabled) return; // No permitir acción si el canvas está deshabilitado
+        if (!canvasEnabled) return; // Do not allow action if canvas is disabled
         ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-        initialCanvasData = signatureCanvas.toDataURL('image/png'); // Recapturar el estado vacío
-        addAuditRecord('Firma limpiada del lienzo.');
+        initialCanvasData = signatureCanvas.toDataURL('image/png'); // Recapture empty state
+        addAuditRecord('Signature cleared from canvas.');
     });
 
     saveSignatureBtn.addEventListener('click', () => {
-        if (!canvasEnabled) return; // No permitir acción si el canvas está deshabilitado
+        if (!canvasEnabled) return; // Do not allow action if canvas is disabled
         const currentCanvasData = signatureCanvas.toDataURL('image/png');
 
         if (currentCanvasData !== initialCanvasData) {
-            console.log('Firma guardada (simulado):', currentCanvasData);
-            addAuditRecord('Firma capturada y lista para ser enviada al servidor.');
+            console.log('Signature saved (simulated):', currentCanvasData);
+            addAuditRecord('Signature captured and ready to be sent to the server.');
 
             const successMessage = document.createElement('div');
             successMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
             successMessage.innerHTML = `
                 <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                    <h3 class="text-xl font-bold text-green-600 mb-3">¡Firma Guardada!</h3>
-                    <p class="text-gray-700 mb-4">La firma ha sido capturada exitosamente.</p>
-                    <button id="closeMessageBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                    <h3 class="text-xl font-bold text-green-600 mb-3">Signature Saved!</h3>
+                    <p class="text-gray-700 mb-4">The signature has been successfully captured.</p>
+                    <button id="closeMessageBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Close</button>
                 </div>
             `;
             document.body.appendChild(successMessage);
@@ -303,9 +292,9 @@ document.addEventListener('DOMContentLoaded', () => {
             warningMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
             warningMessage.innerHTML = `
                 <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                    <h3 class="text-xl font-bold text-yellow-600 mb-3">Atención</h3>
-                    <p class="text-gray-700 mb-4">Por favor, dibuje su firma o use una de las opciones alternativas antes de guardarla.</p>
-                    <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                    <h3 class="text-xl font-bold text-yellow-600 mb-3">Attention</h3>
+                    <p class="text-gray-700 mb-4">Please draw your signature or use one of the alternative options before saving.</p>
+                    <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Close</button>
                 </div>
             `;
             document.body.appendChild(warningMessage);
@@ -313,11 +302,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('closeWarningBtn').addEventListener('click', () => {
                 warningMessage.remove();
             });
-            addAuditRecord('Intento de guardar firma en lienzo vacío.');
+            addAuditRecord('Attempted to save signature on empty canvas.');
         }
     });
 
-    // --- Funcionalidad de Firma por Texto ---
+    // --- Text Signature Functionality ---
     renderTextSignatureBtn.addEventListener('click', () => {
         if (!canvasEnabled) return;
         const signatureText = textSignatureInput.value.trim();
@@ -328,9 +317,9 @@ document.addEventListener('DOMContentLoaded', () => {
             warningMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
             warningMessage.innerHTML = `
                 <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                    <h3 class="text-xl font-bold text-yellow-600 mb-3">Atención</h3>
-                    <p class="text-gray-700 mb-4">Por favor, escriba su nombre para generar la firma de texto.</p>
-                    <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                    <h3 class="text-xl font-bold text-yellow-600 mb-3">Attention</h3>
+                    <p class="text-gray-700 mb-4">Please enter your name to generate the text signature.</p>
+                    <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Close</button>
                 </div>
             `;
             document.body.appendChild(warningMessage);
@@ -338,58 +327,58 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('closeWarningBtn').addEventListener('click', () => {
                 warningMessage.remove();
             });
-            addAuditRecord('Intento de generar firma de texto con campo vacío.');
+            addAuditRecord('Attempted to generate text signature with empty field.');
             return;
         }
 
-        ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); // Limpiar canvas
-        ctx.setTransform(1, 0, 0, 1, 0, 0); // Resetear transformación antes de dibujar texto
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio); // Aplicar escala para nitidez
+        ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); // Clear canvas
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transformation before drawing text
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio); // Apply scale for sharpness
 
-        // Intentar cargar la fuente si no está ya cargada (aunque CSS @import debería manejarlo)
+        // Try to load the font if not already loaded (though CSS @import should handle it)
         document.fonts.ready.then(() => {
             const canvasVisualWidth = signatureCanvas.offsetWidth;
             const canvasVisualHeight = signatureCanvas.offsetHeight;
 
-            // Iniciar con un tamaño de fuente grande y reducirlo si es necesario
-            let fontSize = canvasVisualHeight * 0.8; // Intentar ocupar la mayor parte de la altura
+            // Start with a large font size and reduce if necessary
+            let fontSize = canvasVisualHeight * 0.8; // Try to occupy most of the height
             ctx.font = `${fontSize}px "${selectedFont}"`;
             let textMetrics = ctx.measureText(signatureText);
 
-            // Calcular el factor de escala necesario para que el texto quepa en el ancho deseado
-            const targetWidth = canvasVisualWidth * 0.9; // 90% del ancho del canvas para padding
+            // Calculate the necessary scaling factor for the text to fit the desired width
+            const targetWidth = canvasVisualWidth * 0.9; // 90% of canvas width for padding
             if (textMetrics.width > targetWidth) {
                 fontSize = (targetWidth / textMetrics.width) * fontSize;
-                ctx.font = `${fontSize}px "${selectedFont}"`; // Actualizar la fuente con el nuevo tamaño
-                textMetrics = ctx.measureText(signatureText); // Volver a medir con el nuevo tamaño
+                ctx.font = `${fontSize}px "${selectedFont}"`; // Update font with new size
+                textMetrics = ctx.measureText(signatureText); // Remeasure with new size
             }
 
-            // Calcular la altura real del texto (aproximada, ya que textMetrics no da la altura exacta de la fuente)
-            // Una forma más precisa sería usar textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent
-            // pero esto puede variar entre navegadores y fuentes. Usaremos una estimación basada en fontSize.
-            const estimatedTextHeight = fontSize * 1.2; // Factor de ajuste para la altura real de la fuente
+            // Calculate the actual text height (approximate, as textMetrics doesn't give exact font height)
+            // A more precise way would be to use textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent
+            // but this can vary between browsers and fonts. We will use an estimation based on fontSize.
+            const estimatedTextHeight = fontSize * 1.2; // Adjustment factor for actual font height
 
-            // Si la altura estimada es mayor que la altura máxima deseada
-            const targetHeight = canvasVisualHeight * 0.9; // 90% de la altura del canvas para padding
+            // If the estimated height is greater than the desired maximum height
+            const targetHeight = canvasVisualHeight * 0.9; // 90% of canvas height for padding
             if (estimatedTextHeight > targetHeight) {
                 fontSize = (targetHeight / estimatedTextHeight) * fontSize;
-                ctx.font = `${fontSize}px "${selectedFont}"`; // Actualizar la fuente con el nuevo tamaño
+                ctx.font = `${fontSize}px "${selectedFont}"`; // Update font with new size
             }
 
-            ctx.fillStyle = '#333'; // Color del texto
+            ctx.fillStyle = '#333'; // Text color
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // Calcular posición para centrar el texto
+            // Calculate position to center the text
             const x = canvasVisualWidth / 2;
             const y = canvasVisualHeight / 2;
 
             ctx.fillText(signatureText, x, y);
-            addAuditRecord(`Firma de texto "${signatureText}" generada con fuente "${selectedFont}".`);
+            addAuditRecord(`Text signature "${signatureText}" generated with font "${selectedFont}".`);
         }).catch(error => {
-            console.error("Error al cargar la fuente para la firma de texto:", error);
-            addAuditRecord(`Error al generar firma de texto: fuente "${selectedFont}" no cargada.`);
-            // Intentar dibujar con una fuente de respaldo
+            console.error("Error loading font for text signature:", error);
+            addAuditRecord(`Error generating text signature: font "${selectedFont}" not loaded.`);
+            // Try to draw with a fallback font
             const canvasVisualWidth = signatureCanvas.offsetWidth;
             const canvasVisualHeight = signatureCanvas.offsetHeight;
             let fontSize = canvasVisualHeight * 0.8;
@@ -404,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (estimatedTextHeight > targetHeight) {
                 fontSize = (targetHeight / estimatedTextHeight) * fontSize;
             }
-            ctx.font = `${fontSize}px sans-serif`; // Aplicar el tamaño ajustado a la fuente de respaldo
+            ctx.font = `${fontSize}px sans-serif`; // Apply adjusted size to fallback font
             ctx.fillStyle = '#333';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -414,10 +403,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Funcionalidad de Subir Firma como Imagen ---
+    // --- Upload Image Signature Functionality ---
     imageSignatureInput.addEventListener('change', (e) => {
         if (!canvasEnabled) {
-            imageSignatureInput.value = ''; // Limpiar input si no está habilitado
+            imageSignatureInput.value = ''; // Clear input if not enabled
             return;
         }
         const file = e.target.files[0];
@@ -429,11 +418,11 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             const img = new Image();
             img.onload = () => {
-                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); // Limpiar canvas
-                ctx.setTransform(1, 0, 0, 1, 0, 0); // Resetear transformación
-                ctx.scale(window.devicePixelRatio, window.devicePixelRatio); // Aplicar escala
+                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); // Clear canvas
+                ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transformation
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio); // Apply scale
 
-                // Calcular dimensiones para ajustar la imagen al canvas manteniendo la proporción
+                // Calculate dimensions to fit the image to the canvas while maintaining aspect ratio
                 const canvasVisualWidth = signatureCanvas.offsetWidth;
                 const canvasVisualHeight = signatureCanvas.offsetHeight;
                 const canvasAspectRatio = canvasVisualWidth / canvasVisualHeight;
@@ -445,28 +434,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 let offsetY = 0;
 
                 if (imgAspectRatio > canvasAspectRatio) {
-                    // La imagen es más ancha que el canvas, ajustar al ancho del canvas
+                    // Image is wider than canvas, adjust to canvas width
                     drawHeight = drawWidth / imgAspectRatio;
                     offsetY = (canvasVisualHeight - drawHeight) / 2;
                 } else {
-                    // La imagen es más alta que el canvas, ajustar a la altura del canvas
+                    // Image is taller than canvas, adjust to canvas height
                     drawWidth = drawHeight * imgAspectRatio;
                     offsetX = (canvasVisualWidth - drawWidth) / 2;
                 }
 
                 ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-                addAuditRecord('Firma de imagen cargada y renderizada en el lienzo.');
+                addAuditRecord('Image signature loaded and rendered on the canvas.');
             };
             img.onerror = () => {
-                console.error('Error al cargar la imagen de firma.');
-                addAuditRecord('Error: No se pudo cargar la imagen de firma.');
+                console.error('Error loading signature image.');
+                addAuditRecord('Error: Could not load signature image.');
                 const errorMessage = document.createElement('div');
                 errorMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
                 errorMessage.innerHTML = `
                     <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
                         <h3 class="text-xl font-bold text-red-600 mb-3">Error</h3>
-                        <p class="text-gray-700 mb-4">No se pudo cargar la imagen. Asegúrese de que sea un archivo PNG o JPG válido.</p>
-                        <button id="closeErrorBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                        <p class="text-gray-700 mb-4">Could not load the image. Please ensure it is a valid PNG or JPG file.</p>
+                        <button id="closeErrorBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Close</button>
                     </div>
                 `;
                 document.body.appendChild(errorMessage);
@@ -480,36 +469,33 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
-    // --- Carga de Registros de Auditoría (Simulado) ---
+    // --- Load Audit Records (Simulated) ---
     function loadAuditRecords() {
         setTimeout(() => {
-            addAuditRecord('Documento listo para firma.');
-            addAuditRecord('¡Bienvenido al portal de firmas!');
+            addAuditRecord('Document ready for signature.');
+            addAuditRecord('Welcome to the signature portal!');
         }, 500);
     }
 
-    // Cargar registros de auditoría al iniciar
+    // Load audit records on initialization
     loadAuditRecords();
-    // La función loadGoogleFonts() se elimina ya que las fuentes se cargan vía CSS.
-    // loadGoogleFonts(); // Cargar las fuentes al inicio
 
-    // Desactivar el canvas y los botones al inicio
+    // Disable canvas and buttons initially
     signatureCanvas.classList.add('canvas-disabled');
     clearSignatureBtn.disabled = true;
     saveSignatureBtn.disabled = true;
-    // Desactivar también los nuevos elementos
     textSignatureInput.disabled = true;
     fontSelector.disabled = true;
     renderTextSignatureBtn.disabled = true;
     imageSignatureInput.disabled = true;
     uploadImageSignatureBtn.disabled = true;
 
-    addAuditRecord('Lienzo de firma y opciones alternativas inicialmente desactivadas.');
+    addAuditRecord('Signature canvas and alternative options initially disabled.');
 
-    // Añadir el listener de scroll al contenido del documento
+    // Add scroll listener to document content
     documentContentDiv.addEventListener('scroll', checkScrollPosition);
 
-    // Verificar la posición del scroll al cargar la página por si el contenido es corto
-    // y el scroll ya está al final.
+    // Check scroll position on page load in case content is short
+    // and scroll is already at the bottom.
     checkScrollPosition();
 });
