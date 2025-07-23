@@ -62,7 +62,10 @@ class templateParser
         global $app_strings, $sugar_config, $locale, $current_user;
         $repl_arr = array();
         $isValidator = new SuiteValidator();
+        // STIC Custom 20250723 JCH - Attempt to read property "field_defs" on false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/726 
         if (is_object($focus) && isset($focus->field_defs)) {
+        // END STIC Custom
             foreach ($focus->field_defs as $field_def) {
                 if (isset($field_def['name']) && $field_def['name'] != '') {
                     $fieldName = $field_def['name'];
@@ -198,7 +201,10 @@ class templateParser
                     }
                 }
             } // end foreach()
+        // STIC Custom 20250723 JCH - Attempt to read property "field_defs" on false
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/726 
         }
+        // END STIC Custom
         krsort($repl_arr);
         reset($repl_arr);
 
