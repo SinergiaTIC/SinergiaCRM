@@ -48,3 +48,4 @@ $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/Co
 
 // Signatures module
 $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/stic_Signatures/SignatureSignersSelect.php', 'auth' => false);
+$entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
