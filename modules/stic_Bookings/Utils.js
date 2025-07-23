@@ -228,7 +228,6 @@ switch (viewType()) {
       }
     }
     $("#all_day", "form").on("change", function () {
-      debugger;
       if ($("#all_day", "form").is(":checked")) {
         manualStartDateHours = $("#start_date_hours").val();
         manualStartDateMinutes = $("#start_date_minutes").val();
