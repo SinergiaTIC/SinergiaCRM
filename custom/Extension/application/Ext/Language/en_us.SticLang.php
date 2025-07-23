@@ -31,6 +31,9 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "The field valid
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Add Accounts and Contacts to Target List';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Incorpora synchronization';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Send PDF by email';
+$app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Add to signature process';
+$app_strings['LBL_SELECT_SIGNATURE'] = 'Select a signature process';
+$app_strings['LBL_SELECT_SIGNATURE_INFO'] = 'Only open signature processes are shown';
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Validate import';
 $app_strings['LBL_PRINT_AS_PDF'] = 'Generate PDF document';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = 'An error has occurred';
@@ -141,6 +144,9 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Actions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Customizations';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Conditions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Granted accounts';
+$app_list_strings['moduleList']['stic_Signature_Log'] = 'Signature log';
+$app_list_strings['moduleList']['stic_Signatures'] = 'Signatures';
+$app_list_strings['moduleList']['stic_Signers'] = 'Signers';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
 $app_list_strings['moduleListSingular']['Leads'] = 'Lead';
@@ -185,6 +191,9 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Action';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Customization';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condition';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Granted account';
+$app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Signature Log';
+$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Signature';
+$app_list_strings['moduleListSingular']['stic_Signers'] = 'Signer';
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['parent_type_display']['Leads'] = 'Leads';
@@ -3632,3 +3641,30 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'System';
+
+// Signatures: Status
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Draft';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Open';
+$app_list_strings['stic_signatures_status_list']['complete'] = 'Complete';
+$app_list_strings['stic_signatures_status_list']['expired'] = 'Expired';
+
+// Signatures: Auth methods
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Unique Link';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = 'One-Time Password';
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Phone';
+$app_list_strings['stic_signatures_auth_methods_list']['id_number'] = 'Identification Number';
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Date of Birth';
+
+// Signatures: Types of signatures
+$app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+$app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (Custom)';
+$app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternative';
+
+// Firmantes: Estados
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pending';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Signed';
+$app_list_strings['stic_signers_status_list']['rejected'] = 'Rejected';
+$app_list_strings['stic_signers_status_list']['expired'] = 'Expired';

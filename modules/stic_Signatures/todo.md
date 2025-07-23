@@ -1,0 +1,2 @@
+- La lista de firmas en la ventana emergente debe filtrar por grupos de seguridad.
+- El módulo Usuario no aparece en la listade móduslo para plantillas PDF 
