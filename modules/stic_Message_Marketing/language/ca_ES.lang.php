@@ -76,4 +76,6 @@ $mod_strings = array (
     'LBL_SEND_PHONE_MESSAGES' => 'Campanya: Enviar missatges de telèfon',
     'LBL_UNEXPECTED_ERROR' => "Error inesperat. Si us plau, contacti amb l'administrador.",
     'LBL_UNEXPECTED_ERROR_CLEAN' => "Error inesperat: Si us plau, revisi la cua de missatges i contacti amb l'administrador.",
+
+    'LBL_MUST_SELECT_ALL_OR_CHOSEN_LISTS' => 'Ha de seleccionar les llistes de públic objectiu',
 );

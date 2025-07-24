@@ -73,4 +73,6 @@ $mod_strings = array (
   'LBL_SEND_PHONE_MESSAGES' => 'Campaign: Send phone messages',
   'LBL_UNEXPECTED_ERROR' => "Unexpected Error. Please, contact the administrator",
   'LBL_UNEXPECTED_ERROR_CLEAN' => "Unexpected error: Please, check the messages queue and contact the administrator.",
+
+  'LBL_MUST_SELECT_ALL_OR_CHOSEN_LISTS' => 'Must choose the Target Lists',
 );

@@ -22,17 +22,33 @@
 /* HEADER */
 // Set module name
 var module = "stic_Message_Marketing";
+var inputsWithErrors2 = new Array();
 
+// debugger;
+// addToValidateCallback(
+//   getFormName(),
+//   "select_all",
+//   "bool",
+//   false,
+//   SUGAR.language.get(module, "LBL_MUST_SELECT_ALL_OR_CHOSEN_LISTS"),
+//   function() {
+//     debugger;
+//     console.log('papapapap');
+    
+//       return JSON.parse(checkAllOrSelectedLists());
+//   }
+// );
 
 addToValidateCallback(
-  getFormName(),
-  "stic_payment_commitments_contacts_name",
-  "related",
-  false,
-  SUGAR.language.get(module, "LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT"),
-  function() {
-      return JSON.parse(checkPCContactOrAccount());
-  }
+    getFormName(),
+    "prospect_lists",
+    "enum",
+    false,
+    SUGAR.language.get(module, "LBL_MUST_SELECT_ALL_OR_CHOSEN_LISTS"),
+    function() {
+      console.log('popoopopopo');
+        return JSON.parse(checkAllOrSelectedLists());
+    }
 );
 
 
@@ -69,7 +85,6 @@ switch (viewType()) {
         module: 'stic_Message_Marketing',
         action: 'getDefaultSender',
       };
-      debugger;
         $.ajax({
           url: baseURL,
           type: 'POST',
@@ -104,22 +119,16 @@ switch (viewType()) {
     break;
 }
 
-/* AUX FUNCTIONS */
 /**
  * Check if there is a person or a account or both
  */
-function checkSelectAllOrProspectListSelected() {
-  if (viewType() == "edit") {
-      contact = getFieldValue("stic_payment_commitments_contactscontacts_ida");
-      account = getFieldValue("stic_payment_commitments_accountsaccounts_ida");
-  } else {
-      // For inline edit we can only check this fields
-      contact = getFieldValue("stic_payment_commitments_contacts_name");
-      account = getFieldValue("stic_payment_commitments_accounts_name");
-  }
+function checkAllOrSelectedLists() {
+    checkFlag = $("#select_all").is(':checked');
+    numListsSelected = $("#prospect_lists").find(':selected').length;
 
-  if ((contact != "" && account != "") || (contact == "" && account == "")) {
-      return false;
-  }
-  return true;
+    if (checkFlag || numListsSelected > 0) {
+        return true;
+    }
+    return false;
 }
+
