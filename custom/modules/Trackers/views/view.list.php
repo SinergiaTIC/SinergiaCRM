@@ -21,10 +21,32 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!isset($hook_array) || !is_array($hook_array)) {
-    $hook_array = array();
+require_once 'include/MVC/View/views/view.list.php';
+require_once 'SticInclude/Views.php';
+
+class CustomTrackersViewList extends ViewList
+{
+
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        $this->lv = new ListViewSmarty();
+        // Don't Mass Update the list
+        $this->lv->showMassupdateFields = false;
+        // Hide Quick Edit Pencil
+        $this->lv->quickViewLinks = false;
+        // Don't Delete any record from the list
+        $this->lv->delete = false;
+
+        // Sort by date_modified in DESC if there are no params
+        if (empty($this->params['orderBy'])) {
+            $this->params['orderBy'] = 'date_modified';
+            $this->params['overrideOrder'] = true;
+            if (empty($this->params['sortOrder'])) {
+                $this->params['sortOrder'] = 'DESC';
+            }
+        }
+
+    }
 }
-if (!isset($hook_array['after_ui_frame']) || !is_array($hook_array['after_ui_frame'])) {
-    $hook_array['after_ui_frame'] = array();
-}
-$hook_array['after_ui_frame'][] = Array(1, 'stic_Custom_Views processor', 'modules/stic_Custom_Views/processor/LogicHooksCode.php','stic_Custom_Views_ProcessorLogicHooks', 'after_ui_frame'); 

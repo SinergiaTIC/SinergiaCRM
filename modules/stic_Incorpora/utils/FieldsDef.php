@@ -357,11 +357,15 @@ $contactDef = array(
         1 => 'date',
         'required' => true,
     ),
-    'inc_nationality_c' => array(
-        0 => 'beneficiarioNacionalidad',
-        1 => 'transformedList',
-        2 => 'stic_incorpora_nationality_list',
+    'inc_country_origin_c' => array(
+        0 => 'beneficiarioPais',
         'required' => true,
+    ),
+    'inc_nationality_c' => array(
+        0 => 'beneficiarioNacionalidadMultiseleccion',
+        1 => 'multienum',
+        'required' => true,
+        'altaMultienum' => true,
     ),
     'inc_communications_language_c' => array(
         0 => 'beneficiarioIdiomaComunicaciones',
@@ -449,6 +453,7 @@ $contactDef = array(
     'inc_economic_benefits_c' => array(
         0 => 'beneficiarioPrestacionEconomica',
         1 => 'multienum',
+        'altaMultienum' => true,
     ),
     'inc_max_commuting_time_c' => array(
         0 => 'beneficiarioTiempoViajeAsumible',

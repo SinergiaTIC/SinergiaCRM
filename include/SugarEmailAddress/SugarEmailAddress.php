@@ -496,7 +496,11 @@ class SugarEmailAddress extends SugarBean
                   WHERE 
                     id = {$_id} AND
                     deleted = 0";
-            $result = $db->query($query);
+            // STIC CUSTOM - 20250519 - JCH - DONT RUN QUERY
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/647
+            // $result = $db->query($query); 
+            // STIC CUSTOM
+
             if (!$result) {
                 $GLOBALS['log']->warn("Undefined behavior: Missing error information about email save (1)");
             }
@@ -702,6 +706,10 @@ class SugarEmailAddress extends SugarBean
         if (!empty($this->addresses)) {
             // insert new relationships and create email address record, if they don't exist
             foreach ($this->addresses as $address) {
+                // STIC-Custom 20241002 MHP - Set the createdAuditRecords flag to false to continue auditing the rest of the emails in the record
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/277
+                $this->createdAuditRecords = false;
+                // END STIC-Custom
                 if (!empty($address['email_address'])) {
                     $guid = create_guid();
                     $emailId = isset($address['email_address_id'])
@@ -745,6 +753,10 @@ class SugarEmailAddress extends SugarBean
                     }
                 }
             }
+            // STIC-Custom 20241002 MHP - Set the createdAuditRecords flag to true once changes to all emails in the record have been audited
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/277   
+            $this->createdAuditRecords = true;
+            // END STIC-Custom            
         }
 
         //delete link to dropped email address.
