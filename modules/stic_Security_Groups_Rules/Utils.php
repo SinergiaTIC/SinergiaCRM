@@ -239,7 +239,7 @@ class stic_Security_Groups_RulesUtils
                                                LEFT JOIN securitygroups ON securitygroups_records.securitygroup_id = securitygroups.id
                                                WHERE securitygroups_records.record_id = '{$relatedRecordID}'
                                                AND securitygroups_records.deleted = 0
-                                               AND securitygroups.noninheritable = 0
+                                               AND (securitygroups.noninheritable = 0 OR securitygroups.noninheritable IS NULL)
                                                AND securitygroups.deleted=0");
 
         foreach ($queryResult as $row) {
