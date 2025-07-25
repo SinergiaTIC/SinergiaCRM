@@ -1384,6 +1384,7 @@
   };
 
   $.fn.EmailsComposeView.onTemplateChange = function (args) {
+    debugger;
     var confirmed = function (args) {
       var args = JSON.parse(args);
       var form = $('[name="' + args.form_name + '"]');
