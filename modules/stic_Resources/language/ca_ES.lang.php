@@ -82,7 +82,7 @@ $mod_strings = array(
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Import diari per plaça desocupada',
     'LBL_AMOUNT_COPAYMENT' => 'Import diari de copagament',
    
-    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No es pot canviar el tipus de recurs perquè té reserves associades',
+    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No es pot canviar el tipus de recurs perquè té reserves associades.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Cal que indiqueu un centre',
     'LBL_PLACES' => 'Places',
 );
