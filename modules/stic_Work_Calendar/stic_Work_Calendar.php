@@ -124,7 +124,7 @@ class stic_Work_Calendar extends Basic
                 $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDateInUserFormat, 0, 10);       
             }
 
-            if ($_REQUEST["action"] != "Save") // MassUpdate, API, Import..
+            if ($_REQUEST["action"] != "Save" && $_REQUEST["action"] != "runMassUpdateDates") // MassUpdate, API, Import..
             {
                 // Reactivate disable date_format to work with the rest of the date type fields
                 $GLOBALS['disable_date_format'] = true;
