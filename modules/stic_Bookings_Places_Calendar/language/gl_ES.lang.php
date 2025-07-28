@@ -6,13 +6,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $mod_strings = array(
 
-    'LBL_SAVE_BUTTON' => 'Save',
-    'LBL_DELETE_BUTTON' => 'Delete',
-    'LBL_APPLY_BUTTON' => 'Apply',
-    'LBL_CANCEL_BUTTON' => 'Cancel',
-    'LBL_ACTION_VIEW_BOOKINGS_PLACES_CALENDAR' => 'View Bookings Places Calendar',
-    'LBL_MOBILE_BUTTON' => 'Mobile',
-    'LBL_FILTERS' => 'Filters',
+    'LBL_SAVE_BUTTON' => 'Guardar',
+    'LBL_DELETE_BUTTON' => 'Eliminar',
+    'LBL_APPLY_BUTTON' => 'Aplicar',
+    'LBL_CANCEL_BUTTON' => 'Cancelar',
+    'LBL_ACTION_VIEW_BOOKINGS_PLACES_CALENDAR' => 'Ver el Calendario de Plazas',
+    'LBL_MOBILE_BUTTON' => 'Móvil',
+    'LBL_FILTERS' => 'Filtros',
     
     'LBL_FILTERS_STIC_CENTER' => 'Centro',
     'LBL_FILTERS_STIC_PLACE_GENDER' => 'Xénero',
