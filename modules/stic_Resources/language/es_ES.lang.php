@@ -50,7 +50,7 @@ $mod_strings = array(
     'LBL_MODULE_NAME' => 'Recursos',
     'LBL_MODULE_TITLE' => 'Recursos',
     'LBL_HOMEPAGE_TITLE' => 'Mis Recursos',
-    'LNK_NEW_RECORD' => 'Crear un Recurso/Plaza',
+    'LNK_NEW_RECORD' => 'Crear un Recurso',
     'LNK_LIST' => 'Ver Recursos',
     'LNK_LIST2' => 'Ver Plazas',
     'LNK_IMPORT_STIC_RESOURCES' => 'Importar Recursos',
@@ -82,7 +82,7 @@ $mod_strings = array(
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Importe diario por plaza desocupada',
     'LBL_AMOUNT_COPAYMENT' => 'Importe diario de copago',
 
-    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No se puede cambiar el tipo de recurso porque tiene reservas asociadas',
+    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No se puede cambiar el tipo de recurso porque tiene reservas asociadas.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
     'LBL_PLACES' => 'Plazas',
 );
