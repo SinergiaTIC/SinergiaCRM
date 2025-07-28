@@ -50,7 +50,7 @@ $mod_strings = array(
     'LBL_MODULE_NAME' => 'Resources',
     'LBL_MODULE_TITLE' => 'Resources',
     'LBL_HOMEPAGE_TITLE' => 'My Resources',
-    'LNK_NEW_RECORD' => 'Create a Resource/Place',
+    'LNK_NEW_RECORD' => 'Create a Resource',
     'LNK_LIST' => 'View Resources',
     'LNK_LIST2' => 'View Places',
     'LNK_IMPORT_STIC_RESOURCES' => 'Import Resources',
@@ -82,7 +82,7 @@ $mod_strings = array(
     'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Daily amount per unoccupied place',
     'LBL_AMOUNT_COPAYMENT' => 'Copayment daily amount',
    
-    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'The resource type cannot be changed because it has associated bookings',
+    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'The resource type cannot be changed because it has related bookings.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'A center is required',
     'LBL_PLACES' => 'Places',
 );
