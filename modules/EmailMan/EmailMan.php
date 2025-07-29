@@ -949,16 +949,20 @@ class EmailMan extends SugarBean
                 return true;
             }
 
-            //test for duplicate email address by marketing id.
-            $dup_query = "select id from campaign_log where more_information='" . $this->db->quote($module->email1) . "' and marketing_id='" . $this->marketing_id . "'";
-            $dup = $this->db->query($dup_query);
-            $dup_row = $this->db->fetchByAssoc($dup);
-            if (!empty($dup_row)) {
-                //we have seen this email address before
-                $this->set_as_sent($module->email1, true, null, null, 'blocked');
-                return true;
+            // STIC-Custom 20250728 MHP - Do not block test sending even if a real marketing email has been sent.
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/714/
+            if (!$testmode) {
+                //test for duplicate email address by marketing id.
+                $dup_query = "select id from campaign_log where more_information='" . $this->db->quote($module->email1) . "' and marketing_id='" . $this->marketing_id . "'";
+                $dup = $this->db->query($dup_query);
+                $dup_row = $this->db->fetchByAssoc($dup);
+                if (!empty($dup_row)) {
+                    //we have seen this email address before
+                    $this->set_as_sent($module->email1, true, null, null, 'blocked');
+                    return true;
+                }
             }
-
+            // END STIC-Custom 
 
             //fetch email marketing.
             if (empty($this->current_emailmarketing) || ! isset($this->current_emailmarketing)) {
