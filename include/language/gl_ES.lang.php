@@ -464,7 +464,7 @@ $app_list_strings = array(
     'project_task_status_options' => array(
         'Not Started' => 'Non Iniciada',
         'In Progress' => 'En Progreso',
-        'Completed' => 'Completeda',
+        'Completed' => 'Completada',
         'Pending Input' => 'Pendente de Información',
         'Deferred' => 'Retrasada',
     ),
@@ -2026,8 +2026,6 @@ $app_strings = array(
 
     'LBL_NO_IMAGE' => 'Sen Imaxe',
 
-    'LBL_MODULE' => 'Módulo',
-
     //adding a label for address copy from left
     'LBL_COPY_ADDRESS_FROM_LEFT' => 'Copiar enderezo da esquerda:',
     'LBL_SAVE_AND_CONTINUE' => 'Gardar e Continuar',
@@ -2044,16 +2042,16 @@ $app_strings = array(
     'ERR_UNDEFINED_METRIC' => 'Erro: non se pode establecer o valor de métrica definido',
     'ERR_STORE_FILE_MISSING' => 'Erro: non se pode encontrar o arquivo da aplicación da tenda',
 
-    'LBL_MONITOR_ID' => 'Monitor de Id',
-    'LBL_USER_ID' => 'ID Usuario',
-    'LBL_MODULE_NAME' => 'Nome de Módulo',
-    'LBL_ITEM_ID' => 'Ítem Id',
-    'LBL_ITEM_SUMMARY' => 'Ítem resumo',
+    'LBL_MONITOR_ID' => 'Id do Monitor',
+    'LBL_USER_ID' => 'Id do Usuario',
+    'LBL_MODULE' => 'Módulo',
+    'LBL_ITEM_ID' => 'Id do Elemento',
+    'LBL_ITEM_SUMMARY' => 'Resumo do Elemento',
     'LBL_ACTION' => 'Acción',
-    'LBL_SESSION_ID' => 'Sesión Id',
+    'LBL_SESSION_ID' => 'Id da Sesión',
     'LBL_BREADCRUMBSTACK_CREATED' => 'BreadCrumbStack creado polo usuario id {0}',
     'LBL_VISIBLE' => 'Dato visible',
-    'LBL_DATE_LAST_ACTION' => 'Data de última acción',
+    'LBL_DATE_LAST_ACTION' => 'Data',
 
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'non antes de',
@@ -2095,7 +2093,7 @@ $app_strings = array(
     'LBL_DESCRIPTION' => 'Descrición',
 
     'LBL_YESTERDAY' => 'onte',
-    'LBL_NOW' => 'ahora',
+    'LBL_NOW' => 'agora',
     'LBL_TODAY' => 'hoxe',
     'LBL_TOMORROW' => 'mañá',
     'LBL_NEXT_WEEK' => 'a semana que ven',
@@ -3847,13 +3845,13 @@ $app_strings['LBL_SEARCH_PREV'] = 'Anterior';
 $app_strings['LBL_SEARCH_NEXT'] = 'Seguinte';
 $app_strings['LBL_SEARCH_PAGE'] = 'Páxina ';
 $app_strings['LBL_SEARCH_OF'] = ' de '; // Usage: Page 1 of 5
-$app_strings['LBL_USE_ADVANCED_SEARCH'] = 'Utilizar la búsqueda avanzada';
-$app_strings['LBL_USE_BASIC_SEARCH'] = 'Utilizar la búsqueda básica';
+$app_strings['LBL_USE_ADVANCED_SEARCH'] = 'Utilizar a búsqueda avanzada';
+$app_strings['LBL_USE_BASIC_SEARCH'] = 'Utilizar a búsqueda básica';
 
 // PDF Engines
 $app_strings['LBL_LEGACY_MPDF_ENGINE'] = 'Motor MPDF obsoleto';
 $app_strings['LBL_TCPDF_ENGINE'] = 'Motor TCPDF';
 
-$app_strings['ERR_INVALID_FILE_NAME'] = 'El nombre del fichero no es válido:';
-$app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'Solo puede contener caracteres alfanuméricos, el punto (.), el guion (-) o el guion bajo (_).';
-$app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'El nombre del fichero de importación no es válido';
+$app_strings['ERR_INVALID_FILE_NAME'] = 'O nome do ficheiro non é válido:';
+$app_strings['LBL_LOGGER_VALID_FILENAME_CHARACTERS'] = 'Só pode conter caracteres alfanuméricos, o punto (.), o guion (-) ou o guion baixo (_).';
+$app_strings['LBL_LOGGER_INVALID_FILENAME'] = 'O nome do ficheiro de importación non é válido';

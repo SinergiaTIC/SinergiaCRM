@@ -438,9 +438,16 @@ class ImapClient
      * Closes connection stream.
      */
     protected function closeSocket()
-    {
-        @fclose($this->fp);
-        $this->fp = null;
+    {   
+        // STIC-Custom 20250512 MHP - Uncaught TypeError: fclose(): Argument #1 ($stream) must be of type resource, null given
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+        // @fclose($this->fp);   
+        // $this->fp = null;
+        if ($this->fp != null) {
+            @fclose($this->fp);   
+            $this->fp = null;
+        }
+        // END STIC-Custom
     }
 
     /**

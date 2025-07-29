@@ -89,9 +89,11 @@ $mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = 'Expandir árbore';
 $mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = 'Contraer árbore';
 
 // Cadenas de SuiteCRM modificadas
-$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Configurar a agrupación de subpaneis';
+$mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupación de subpaneis';
 $mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configurar o xeito en que se agrupan os subpaneis na vista de detalle';
 
 // Otras cadenas
+$mod_strings['LBL_TRACKERS_TITLE'] = 'Monitorización';
+$mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Registro de las sesiones de usuario y de las acciones sobre registros.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Accións de Administración';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de correo que se enviará ao crear un usuario.';

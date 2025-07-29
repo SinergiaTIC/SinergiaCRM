@@ -747,12 +747,36 @@ class User extends Person implements EmailInterface
 
         // Init a couple of vars for later use
         $saveUserWithoutPassword = false;
-        $saveUserAndPassword = false;
+        // STIC Custom - 20250512 - JCH - Prepare for LDAP Customization
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/638
+        // $saveUserAndPassword = false;
+
+        // // We won't be validating the password in these two cases:
+        // // 1- The user didn't fill the required password fields, or one of them
+        // // 2- None of the password fields are set, therefore we might be in a MassUpdate or Import action.
+        // if ((
+        //         isset($_POST['old_password']) && $_POST['old_password'] == '' &&
+        //         isset($_POST['new_password']) && $_POST['new_password'] == '' &&
+        //         isset($_POST['confirm_new_password']) && $_POST['confirm_new_password'] == ''
+        //     ) || (
+        //         !isset($_POST['old_password']) || 
+        //         !isset($_POST['new_password']) || 
+        //         !isset($_POST['confirm_new_password'])
+        //     )
+        // ) 
+        
+        // STIC-Custom EPS 20250528 Error importing users
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/662
+        // $saveUserAndPassword = $_REQUEST['LDAP_user'] ?: false;
+        $ldapUser = $_REQUEST['LDAP_user'] ?? null;
+        $saveUserAndPassword = $ldapUser ?: false;
+        // END STIC-Custom 
 
         // We won't be validating the password in these two cases:
         // 1- The user didn't fill the required password fields, or one of them
         // 2- None of the password fields are set, therefore we might be in a MassUpdate or Import action.
         if ((
+                !$saveUserAndPassword &&
                 isset($_POST['old_password']) && $_POST['old_password'] == '' &&
                 isset($_POST['new_password']) && $_POST['new_password'] == '' &&
                 isset($_POST['confirm_new_password']) && $_POST['confirm_new_password'] == ''
@@ -762,6 +786,7 @@ class User extends Person implements EmailInterface
                 !isset($_POST['confirm_new_password'])
             )
         ) 
+        // END STIC Custom
         {
             $saveUserWithoutPassword = true;
         // If the required password fields are set and aren't empty, we proceed on validating
@@ -856,43 +881,78 @@ class User extends Person implements EmailInterface
             if (isset($_POST['mailmerge_on']) && !empty($_POST['mailmerge_on'])) {
                 $this->setPreference('mailmerge_on', 'on', 0, 'global');
             } else {
-                $this->setPreference('mailmerge_on', 'off', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('mailmerge_on', 'off', 0, 'global');
+                $mailMerge = $this->getCurrentPreference('mailmerge_on');
+                $this->setPreference('mailmerge_on', $mailMerge ?? 'off', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['user_swap_last_viewed'])) {
                 $this->setPreference('swap_last_viewed', $_POST['user_swap_last_viewed'], 0, 'global');
             } else {
-                $this->setPreference('swap_last_viewed', '', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('swap_last_viewed', '', 0, 'global');
+                $lastViewedSwap = $this->getCurrentPreference('swap_last_viewed');
+                $this->setPreference('swap_last_viewed', $lastViewedSwap ?? '', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['user_swap_shortcuts'])) {
                 $this->setPreference('swap_shortcuts', $_POST['user_swap_shortcuts'], 0, 'global');
             } else {
-                $this->setPreference('swap_shortcuts', '', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('swap_shortcuts', '', 0, 'global');
+                $swapShortcuts = $this->getCurrentPreference('swap_shortcuts');
+                $this->setPreference('swap_shortcuts', $swapShortcuts ?? '', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['use_group_tabs'])) {
                 $this->setPreference('navigation_paradigm', $_POST['use_group_tabs'], 0, 'global');
             } else {
-                $this->setPreference('navigation_paradigm', $GLOBALS['sugar_config']['default_navigation_paradigm'], 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315                
+                // $this->setPreference('navigation_paradigm', $GLOBALS['sugar_config']['default_navigation_paradigm'], 0, 'global');
+                $groupTabs = $this->getCurrentPreference('navigation_paradigm');
+                $this->setPreference('navigation_paradigm', $groupTabs ?? $GLOBALS['sugar_config']['default_navigation_paradigm'], 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['sort_modules_by_name'])) {
                 $this->setPreference('sort_modules_by_name', $_POST['sort_modules_by_name'], 0, 'global');
             } else {
-                $this->setPreference('sort_modules_by_name', '', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('sort_modules_by_name', '', 0, 'global');
+                $modulesByName = $this->getCurrentPreference('sort_modules_by_name');
+                $this->setPreference('sort_modules_by_name', $modulesByName ?? '', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['user_subpanel_tabs'])) {
                 $this->setPreference('subpanel_tabs', $_POST['user_subpanel_tabs'], 0, 'global');
             } else {
-                $this->setPreference('subpanel_tabs', '', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('subpanel_tabs', '', 0, 'global');
+                $subpanelTabs = $this->getCurrentPreference('subpanel_tabs');
+                $this->setPreference('subpanel_tabs', $subpanelTabs ?? '', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['user_count_collapsed_subpanels'])) {
                 $this->setPreference('count_collapsed_subpanels', $_POST['user_count_collapsed_subpanels'], 0, 'global');
             } else {
-                $this->setPreference('count_collapsed_subpanels', '', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('count_collapsed_subpanels', '', 0, 'global');
+                $countCollapsedSubpanel = $this->getCurrentPreference('count_collapsed_subpanels');
+                $this->setPreference('count_collapsed_subpanels', $countCollapsedSubpanel ?? '', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['user_theme'])) {
@@ -903,7 +963,12 @@ class User extends Person implements EmailInterface
             if (isset($_POST['user_module_favicon'])) {
                 $this->setPreference('module_favicon', $_POST['user_module_favicon'], 0, 'global');
             } else {
-                $this->setPreference('module_favicon', '', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('module_favicon', '', 0, 'global');
+                $moduleFavicon = $this->getCurrentPreference('module_favicon');
+                $this->setPreference('module_favicon', $moduleFavicon ?? '', 0, 'global');
+                // END STIC Custom
             }
 
             $tabs = new TabController();
@@ -926,7 +991,12 @@ class User extends Person implements EmailInterface
             if (isset($_POST['no_opps'])) {
                 $this->setPreference('no_opps', $_POST['no_opps'], 0, 'global');
             } else {
-                $this->setPreference('no_opps', 'off', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('no_opps', 'off', 0, 'global');
+                $noOpps = $this->getCurrentPreference('no_opps');
+                $this->setPreference('no_opps', $noOpps ?? 'off', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['reminder_time'])) {
@@ -945,12 +1015,22 @@ class User extends Person implements EmailInterface
             if (isset($_POST['timezone'])) {
                 $this->setPreference('timezone', $_POST['timezone'], 0, 'global');
             } else {
-                $this->setPreference('timezone', 'UTC', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('timezone', 'UTC', 0, 'global');
+                $timezone = $this->getCurrentPreference('timezone');
+                $this->setPreference('timezone', $timezone, 0, 'global');
+                // END STIC Custom
             }
             if (isset($_POST['ut'])) {
                 $this->setPreference('ut', '0', 0, 'global');
             } else {
-                $this->setPreference('ut', '1', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('ut', '1', 0, 'global');
+                $ut = $this->getCurrentPreference('ut');
+                $this->setPreference('ut', $ut ?? '1', 0, 'global');
+                // END STIC Custom
             }
             if (isset($_POST['currency'])) {
                 $this->setPreference('currency', $_POST['currency'], 0, 'global');
@@ -1019,20 +1099,35 @@ class User extends Person implements EmailInterface
                 $this->setPreference('use_real_names', 'on', 0, 'global');
             } elseif (!isset($_POST['use_real_names']) && !isset($_POST['from_dcmenu'])) {
                 // Make sure we're on the full form and not the QuickCreate.
-                $this->setPreference('use_real_names', 'off', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('use_real_names', 'off', 0, 'global');
+                $useRealNames = $this->getCurrentPreference('use_real_names');
+                $this->setPreference('use_real_names', $useRealNames ?? 'off', 0, 'global');
+                // END STIC Custom
             }
 
             if (isset($_POST['mail_smtpauth_req'])) {
                 $this->setPreference('mail_smtpauth_req', $_POST['mail_smtpauth_req'], 0, 'global');
             } else {
-                $this->setPreference('mail_smtpauth_req', '', 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('mail_smtpauth_req', '', 0, 'global');
+                $smtpAuthRequired = $this->getCurrentPreference('mail_smtpauth_req');
+                $this->setPreference('mail_smtpauth_req', $smtpAuthRequired ?? '', 0, 'global');
+                // END STIC Custom
             }
 
             // SSL-enabled SMTP connection
             if (isset($_POST['mail_smtpssl'])) {
                 $this->setPreference('mail_smtpssl', 1, 0, 'global');
             } else {
-                $this->setPreference('mail_smtpssl', 0, 0, 'global');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('mail_smtpssl', 0, 0, 'global');
+                $smtpSsl = $this->getCurrentPreference('mail_smtpssl');
+                $this->setPreference('mail_smtpssl', $smtpSsl ?? 0, 0, 'global');
+                // END STIC Custom
             }
             ///////////////////////////////////////////////////////////////////////////
             ////    PDF SETTINGS
@@ -1088,7 +1183,12 @@ class User extends Person implements EmailInterface
             if (isset($_POST['gsync_cal'])) {
                 $this->setPreference('syncGCal', 1, 0, 'GoogleSync');
             } else {
-                $this->setPreference('syncGCal', 0, 0, 'GoogleSync');
+                // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+                // $this->setPreference('syncGCal', 0, 0, 'GoogleSync');
+                $syncGCal = $this->getCurrentPreference('syncGCal');
+                $this->setPreference('syncGCal', $syncGCal ?? 0, 0, 'GoogleSync');
+                // END STIC Custom
             }
             if ($this->user_hash === null) {
                 $newUser = true;
@@ -2733,6 +2833,13 @@ EOQ;
         }
 
     }
+
+    // STIC Custom 20250520 JBL - Fix Reset User Preferences 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
+    protected function getCurrentPreference(string $key) {
+        return $_SESSION[$this->user_name.'_PREFERENCES']['global'][$key] ?? $this->getPreference($key);
+    }
+    // END STIC Custom
 
     /**
      * @return bool
