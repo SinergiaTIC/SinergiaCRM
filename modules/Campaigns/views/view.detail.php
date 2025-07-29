@@ -133,7 +133,8 @@ class CampaignsViewDetail extends ViewDetail
                 /* BEGIN - SECURITY GROUPS */
                     && $name != 'securitygroups'
                 /* END - SECURITY GROUPS */
-                // STIC-Custom EPS 20241105 MEssage Marketing
+                // STIC-Custom EPS 20241105 Message Marketing
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/473
                     && $name != 'campaigns_stic_message_marketing'
                 //END STIC-Custom
                 ) {

@@ -84,3 +84,6 @@ $mod_strings['LBL_STIC_MESSAGES_MARKETING_CAMPAIGNS_TITLE'] = "Marketing por men
 $mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = "Marketing por mensaje";
 $mod_strings['LBL_SEND_MESSAGES'] = "Enviar Mensajes";
 $mod_strings['LBL_SEND_MESSAGES_TEST'] = "Enviar Mensajesde prueba";
+
+$mod_strings['LBL_MESSAGE_QUEUE_TITLE'] = 'Cola de correo electrónico';
+$mod_strings['LBL_STIC_MESSAGE_QUEUE_TITLE'] = 'Cola de mensajes';
