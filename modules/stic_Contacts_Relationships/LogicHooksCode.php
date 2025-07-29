@@ -67,10 +67,12 @@ class stic_Contacts_RelationshipsLogicHooks
                 case 'after_relationship_add':
                     if ($arguments['related_id']) {
                         $contactBean = BeanFactory::getBean('Contacts', $arguments['related_id']);
-                        include_once 'modules/stic_Contacts_Relationships/Utils.php';
-                        stic_Contacts_RelationshipsUtils::setRelationshipType($contactBean->id);
-                        // Related with STIC#744 
-                        $contactBean->retrieve();                        
+                        if ($contactBean !== false) {
+                            include_once 'modules/stic_Contacts_Relationships/Utils.php';
+                            stic_Contacts_RelationshipsUtils::setRelationshipType($contactBean->id);
+                            // Related with STIC#744 
+                            $contactBean->retrieve();
+                        }                    
                     }
                     else {
                         $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': ' . 'The related Contact Id is empty');

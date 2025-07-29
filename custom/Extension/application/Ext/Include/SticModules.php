@@ -61,6 +61,7 @@ $moduleList[] = 'stic_Journal';
 $moduleList[] = 'stic_Training';
 $moduleList[] = 'stic_Work_Experience';
 $moduleList[] = 'stic_Skills';
+$moduleList[] = 'stic_Group_Opportunities';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -182,6 +183,7 @@ $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
 $adminOnlyList['stic_Custom_Views'] = array('all' => 1);
+$adminOnlyList['Trackers'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events
 $modInvisList[] = 'FP_events';

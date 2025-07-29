@@ -50,5 +50,9 @@ class EmailException extends Exception
 {
     public const NO_DEFAULT_FROM_ADDR = 10;
     public const NO_DEFAULT_FROM_EMAIL = 20;
+    // STIC Custom 20250519 JBL - Fix Undefined constant
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
+    public const NO_DEFAULT_FROM_NAME = 25;
+    // END STIC Custom
     public const NO_PROBLEM_MSG_FOUND = 30;
 }

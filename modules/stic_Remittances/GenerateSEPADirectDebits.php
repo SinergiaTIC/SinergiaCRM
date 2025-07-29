@@ -129,7 +129,11 @@ function generateSEPADirectDebits($remittance)
             and pr.deleted = 0
             and p.deleted = 0";
     $result = $db->query($sqlPayments);
-
+        
+    // Error and warning messages
+    $errorMsg = '';
+    $warningMsg = '';
+    
     // We process the payments obtained and prepare them for the remittance
     while ($paymentResult = $db->fetchByAssoc($result)) {
 
@@ -179,10 +183,6 @@ function generateSEPADirectDebits($remittance)
         // 1) That the person / organization exists and has a name / surname
         $debtorName = '';
         
-        // Error and warning messages
-        $errorMsg = '';
-        $warningMsg = '';
-
         // If the debtor is a person
         if ($contact) {
             $debtorName = SticUtils::cleanText(trim($contact['first_name'] . ' ' . $contact['last_name']));
@@ -227,7 +227,7 @@ function generateSEPADirectDebits($remittance)
         empty($PCRow['id']) ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_PAYMENT_COMMITMENT'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 6) That the date of signature of the mandate exists (and PC exists)
-        $signatureDate = $PCRow['signature_date'];
+        $signatureDate = $PCRow['signature_date'] ?? null;
         !empty($PCRow['id']) && (empty($signatureDate) || $signatureDate == '') ? $errorMsg .= '<p class="msg-error">' . $mod_strings['LBL_SEPA_DEBIT_INVALID_SIGNATURE_DATE'] . " " . stic_RemittancesUtils::goToEdit('stic_Payments', $paymentResult['id'], $paymentResult['name']) : '';
 
         // 7) That the status is not "paid"
@@ -290,18 +290,14 @@ function generateSEPADirectDebits($remittance)
 
         // Set 'remitted' status in all payments included in the remittance
         $db->query("UPDATE
-                        stic_payments
+                        stic_payments sp
+                    JOIN stic_payments_stic_remittances_c spsrc ON
+                        sp.id = spsrc.stic_payments_stic_remittancesstic_payments_idb
                     SET
-                        status = 'remitted'
+                        sp.status = 'remitted'
                     WHERE
-                        id IN (
-                        select
-                            spsrc.stic_payments_stic_remittancesstic_payments_idb
-                        FROM
-                            stic_payments_stic_remittances_c spsrc
-                        WHERE
-                            spsrc.stic_payments_stic_remittancesstic_remittances_ida = '{$remittance->bean->id}'
-                            AND spsrc.deleted = 0)"
+                        spsrc.stic_payments_stic_remittancesstic_remittances_ida = '{$remittance->bean->id}'
+                        AND spsrc.deleted = 0;"
         );
 
         // Remittance data
