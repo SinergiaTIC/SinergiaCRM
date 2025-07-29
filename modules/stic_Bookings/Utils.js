@@ -111,19 +111,17 @@ addToValidateCallback(
   "resource_name0",
   "text",
   false,
-  SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR"),
-  function () {
-    return true; 
-  }
-);
-addToValidateCallback(
-  getFormName(),
-  "resource_name0",
-  "text",
-  false,
   SUGAR.language.get(module, "LBL_RESOURCES_TYPE_MIX_ERROR"),
   function () {
-    return checkBookingResourceTypes();
+    if (!resourceLineWithData(resourceMaxCount)) {
+      return confirm(SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG"));
+    } else {
+      var typesValid = checkBookingResourceTypes();
+      if (!typesValid) {
+        this.error_message = SUGAR.language.get(module, "LBL_RESOURCES_TYPE_MIX_ERROR");
+      }
+      return typesValid;
+    }
   }
 );
 

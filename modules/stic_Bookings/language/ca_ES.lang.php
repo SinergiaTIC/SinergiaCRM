@@ -104,6 +104,7 @@ $mod_strings = array(
     'LBL_RESOURCES_PLANNED_END_DATE_ERROR' => "La data prevista de finalització ha de ser posterior a la data prevista d'inici.",
     'LBL_RESOURCES_PLANNED_START_DATE_ERROR' => "La data prevista d'inici ha de ser anterior a la data prevista de finalització.",
     'LBL_RESOURCES_EMPTY_RESOURCES_ERROR' => 'Aquesta reserva no té cap recurs assignat.',
+    'LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG' => 'Aquesta reserva no te cap recurs assignat. Voleu desar-la igualment?',
     'LBL_RESOURCES_TYPE_MIX_ERROR' => 'La reserva no es pot desar: reviseu-ne el tipus i els recursos seleccionats.',
     'LBL_CONFIRM_CHANGE_BOOKING_TYPE' => "Si canvieu el tipus de reserva s'esborraran tots els recursos actualment seleccionats. Segur que voleu continuar?",
     'LBL_NO_NEW_RESOURCES' => 'No hi ha places per afegir.',
