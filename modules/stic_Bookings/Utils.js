@@ -111,16 +111,17 @@ addToValidateCallback(
   "resource_name0",
   "text",
   false,
-  SUGAR.language.get(module, "LBL_RESOURCES_TYPE_MIX_ERROR"),
+  SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR"),
   function () {
     if (!resourceLineWithData(resourceMaxCount)) {
       return confirm(SUGAR.language.get(module, "LBL_RESOURCES_EMPTY_RESOURCES_ERROR_DIALOG"));
     } else {
       var typesValid = checkBookingResourceTypes();
       if (!typesValid) {
-        this.error_message = SUGAR.language.get(module, "LBL_RESOURCES_TYPE_MIX_ERROR");
+        alert(SUGAR.language.get(module, "LBL_RESOURCES_TYPE_MIX_ERROR"));
+        return false;
       }
-      return typesValid;
+      return true;
     }
   }
 );
@@ -1328,7 +1329,7 @@ function checkBookingResourceTypes() {
     var resourceType = getResourceTypeAjax(resourceIds[i]);
     if (resourceType === 'place') {
       containsPlace = true;
-    } else if (resourceType !== null && resourceType !== '') {
+    } else {
       containsOther = true;
     }
   }
