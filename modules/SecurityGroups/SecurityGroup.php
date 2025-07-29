@@ -146,14 +146,32 @@ class SecurityGroup extends SecurityGroup_sugar
         global $sugar_config;
         $db = DBManagerFactory::getInstance();
         $quotedId = $db->quote($id);
+        // STIC Custom 20240102 EPS - Remove button on securityGroups subpanels
+        // STIC#xxxx
+        if ($module === 'SecurityGroups') {
+            $stdModulesJoin = '';
+        }
+        else {
+            $stdModulesJoin = 
+                'inner join securitygroups_records on securitygroups.id = securitygroups_records.securitygroup_id'
+                . ' and securitygroups_records.deleted = 0 '
+                . "  and securitygroups_records.record_id = '$quotedId' "
+                . "  and securitygroups_records.module = '$module' ";
+        }
+        // STIC Custom END
+
         $query = 'select count(securitygroups.id) as results from securitygroups '
             . 'inner join securitygroups_users on securitygroups.id = securitygroups_users.securitygroup_id'
             . ' and securitygroups_users.deleted = 0 '
             . "  and securitygroups_users.user_id = '$current_user->id' "
-            . 'inner join securitygroups_records on securitygroups.id = securitygroups_records.securitygroup_id'
-            . ' and securitygroups_records.deleted = 0 '
-            . "  and securitygroups_records.record_id = '$quotedId' "
-            . "  and securitygroups_records.module = '$module' ";
+            // STIC Custom 20240102 EPS - Remove button on securityGroups subpanels
+            // STIC#xxxx
+            . $stdModulesJoin;
+            // . 'inner join securitygroups_records on securitygroups.id = securitygroups_records.securitygroup_id'
+            // . ' and securitygroups_records.deleted = 0 '
+            // . "  and securitygroups_records.record_id = '$quotedId' "
+            // . "  and securitygroups_records.module = '$module' ";
+            // STIC Custom END
         if (!empty($action)
             && isset($sugar_config['securitysuite_strict_rights'])
             && $sugar_config['securitysuite_strict_rights'] == true
