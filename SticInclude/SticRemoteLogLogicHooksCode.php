@@ -119,8 +119,8 @@ class SticRemoteLogLogicHooks
                         'user_admin' => is_admin($current_user),
                     ],
                     'curl_options' => [
-                        CURLOPT_CONNECTTIMEOUT_MS => 500,
-                        CURLOPT_TIMEOUT_MS => 600,
+                        CURLOPT_CONNECTTIMEOUT_MS => 10,
+                        CURLOPT_TIMEOUT_MS => 20,
                     ]
                 ])
             ])
