@@ -21,23 +21,14 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-global $module_menu;
-if (ACLController::checkAccess('Campaigns', 'edit', true)) {
-    array_unshift($module_menu, array(
-        "index.php?module=Campaigns&action=EditView&return_module=Campaigns&return_action=index",
-        $mod_strings['LNK_NEW_CAMPAIGN'], "Create Classic Campaign")
-    );
+
+global $mod_strings;
+       
+if (ACLController::checkAccess('TemplateSectionLine', 'edit', true)) {
+    $module_menu[]=array("index.php?module=TemplateSectionLine&action=EditView&return_module=TemplateSectionLine&return_action=index", $mod_strings['LNK_NEW_RECORD'],"Create", 'TemplateSectionLine');
 }
 
-if(ACLController::checkAccess('TemplateSectionLine', 'edit', true)) {
-    $module_menu[] = array(
-        'index.php?module=TemplateSectionLine&action=EditView&return_module=TemplateSectionLine&return_action=DetailView', 
-        $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'], 'View_Create_Email_Templates', 'TemplateSectionLine');
+if (ACLController::checkAccess('TemplateSectionLine', 'list', true)) {
+    $module_menu[]=array("index.php?module=TemplateSectionLine&action=index&return_module=TemplateSectionLine&return_action=DetailView", $mod_strings['LNK_LIST'],"List", 'TemplateSectionLine');
 }
 
-if (ACLController::checkAccess('Campaigns', 'edit', true)) {
-    $module_menu[] = array(
-        "index.php?module=stic_Web_Forms&action=assistant&webFormClass=Donation&return_module=Campaigns&return_action=index",
-        translate('LBL_STIC_WEB_FORMS_DONATION', 'stic_Web_Forms'), "Create_stic_Web_Forms", 'Campaigns',
-    );
-}

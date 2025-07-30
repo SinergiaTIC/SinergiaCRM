@@ -1,0 +1,2 @@
+INSERT INTO `fields_meta_data` 
+VALUES('TemplateSectionLinethumbnail_image_c', 'thumbnail_image_c', 'LBL_THUMBNAIL_IMAGE', '', '', 'TemplateSectionLine', 'image', 255, 0, NULL, NOW(), 0, 0, 0, 0, 1, 'true', '', '120', '', '');

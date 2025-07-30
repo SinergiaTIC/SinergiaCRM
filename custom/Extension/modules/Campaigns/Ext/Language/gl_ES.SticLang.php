@@ -79,3 +79,6 @@ $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Conta de correo que s
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo onde recibir as mensaxes de erro que se poidan producir tralo envío. Pódese configurar no apartado 'Correo electrónico entrante' da área de Administración.";
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.";
+
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = "Nueva línea de sección de plantilla";
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = "Convertir enlaces del mensaje en seguimientos";

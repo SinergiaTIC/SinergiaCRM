@@ -49,4 +49,19 @@ class TemplateSectionLine extends TemplateSectionLine_sugar
     {
         parent::__construct();
     }
+
+    /**
+     * Override bean's save function to calculate the valor of the some fields
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = true)
+    {
+        if (!empty($this->thumbnail_image_c)) {
+            $this->thumbnail = "upload/{$this->id}_thumbnail_image_c";
+        }
+
+        parent::save();
+    }
 }

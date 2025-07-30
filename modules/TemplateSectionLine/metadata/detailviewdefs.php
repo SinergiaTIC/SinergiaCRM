@@ -30,34 +30,72 @@ array(
           'field' => '30',
         ),
       ),
-      'useTabs' => false,
+      'useTabs' => true,
       'tabDefs' =>
       array(
         'DEFAULT' =>
         array(
-          'newTab' => false,
+          'newTab' => true,
           'panelDefault' => 'expanded',
         ),
+        'LBL_STIC_PANEL_RECORD_DETAILS' => array(
+          'newTab' => true,
+          'panelDefault' => 'expanded',
+        ),        
       ),
     ),
     'panels' =>
     array(
-      'default' =>
-      array(
-        0 =>
-        array(
+      'default' => array(
+        0 => array(
           0 => 'name',
-          1 =>
-          array(
+          1 => 'assigned_user_name',          
+        ),
+        1 => array(
+          0 => array(
             'name' => 'grp',
             'label' => 'LBL_GRP',
           ),
+          1 => array(
+            'name' => 'ord',
+            'label' => 'LBL_ORD',
+          ),
         ),
-        1 =>
-        array(
+        3 => array(
           0 => 'description',
         ),
+        4 => array(
+          0 => array (
+            'name' => 'thumbnail_image_c',
+            'studio' => 'visible',
+            'label' => 'LBL_THUMBNAIL_IMAGE_C',
+          ),
+        ),        
       ),
+      'LBL_STIC_PANEL_RECORD_DETAILS' => array(
+        0 => array(
+          0 => array(
+            'name' => 'created_by_name',
+            'label' => 'LBL_CREATED',
+          ),
+          1 => array(
+            'name' => 'date_entered',
+            'customCode' => '{$fields.date_entered.value}',
+            'label' => 'LBL_DATE_ENTERED',
+          ),
+        ),
+        1 => array(
+          0 => array(
+            'name' => 'modified_by_name',
+            'label' => 'LBL_MODIFIED_NAME',
+          ),
+          1 => array(
+            'name' => 'date_modified',
+            'customCode' => '{$fields.date_modified.value}',
+            'label' => 'LBL_DATE_MODIFIED',
+          ),
+        ),
+      ),    
     ),
   ),
 );
