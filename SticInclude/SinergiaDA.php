@@ -628,7 +628,7 @@ class ExternalReporting
                         // Create listViewName for use in metadata & view creation
                         $listViewName = substr(join('_', [$tableName, $fieldV['name'], $listName]), 0, 58);
 
-                        $fieldSrc = " IFNULL(CAST({$fieldPrefix}.{$fieldV['name']} AS CHAR),'') AS {$fieldName}";
+                        $fieldSrc = " IFNULL({$fieldPrefix}.{$fieldV['name']} ,'') AS {$fieldName}";
 
                         $createdListView = $this->createEnumView($listName, $listViewName);
 
@@ -887,11 +887,11 @@ class ExternalReporting
                     } else {
                         $qualifiedLabel = "{$txModuleName} ({$value['label']})";
                     }
-
+                    
                     $this->addMetadataRecord(
                         'sda_def_tables',
                         [
-                            'table' => "{$this->viewPrefix}_{$tableName}_{$key}",
+                            'table' =>$this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$key}", 64),
                             'label' => $qualifiedLabel,
                             'description' => addslashes($qualifiedLabel),
                         ]
@@ -990,9 +990,9 @@ class ExternalReporting
                     } else {
                         $mode = 'VIEW';
                     }
-
+                    $objectName = $this->truncateStringMiddle($viewName.'_'.$key, 64);
                     // Create the SQL instruction with some modifications for each autorelationship view
-                    $createViewQuery[] = "CREATE OR REPLACE {$mode} {$viewName}_{$key} AS
+                    $createViewQuery[] = "CREATE OR REPLACE {$mode} {$objectName} AS
                     SELECT   {$createViewQueryFields} {$value['parentIdfieldSrc']}
                     {$createViewQueryFrom}
                     {$createViewQueryLeftJoins} {$value['innerJoin']}
@@ -1262,8 +1262,7 @@ class ExternalReporting
                     ];
                 } else {
                     // if an auto relationship
-                    $targetTable = "{$this->viewPrefix}_{$field['table']}_{$field['link']}";
-                    $label = "{$tableLabel} ({$field['rLabel']})|{$tableLabel}";
+                    $targetTable = $this->truncateStringMiddle("{$this->viewPrefix}_{$field['table']}_{$field['link']}",64);
                     $label = "{$tableLabel}|{$tableLabel} ({$field['rLabel']})";
 
                     // Add metadata record
@@ -2176,11 +2175,11 @@ class ExternalReporting
     {
         $db = DBManagerFactory::getInstance();
         foreach ($autoRelationships as $relationship) {
-            $this->info .= "<li>{$relationship['source_table']} -> {$relationship['target_table']}</li>";
+            $this->info .= "<li>" . ($relationship['source_table'] ?? 'N/A') . " -> " . ($relationship['target_table'] ?? 'N/A') . "</li>";
             $query = "SELECT * FROM sda_def_columns WHERE `table` = '{$this->viewPrefix}_{$relationship['table']}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
-                $row['table'] = "{$this->viewPrefix}_{$relationship['table']}_{$relationship['link']}";
+                $row['table'] = $this->truncateStringMiddle("{$this->viewPrefix}_{$relationship['table']}_{$relationship['link']}",64);
                 $this->addMetadataRecord('sda_def_columns', $row);
             }
         }
@@ -2206,11 +2205,62 @@ class ExternalReporting
             $query = "SELECT * FROM sda_def_permissions WHERE `table` = '{$this->viewPrefix}_{$table}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
-                $row['table'] = "{$this->viewPrefix}_{$table}_{$relationship}";
+                $row['table'] = $this->truncateStringMiddle("{$this->viewPrefix}_{$table}_{$relationship}");
                 $row['id'] = null;
                 $this->addMetadataRecord('sda_def_permissions', $row);
             }
         }
+    }
+
+
+    /**
+     * Truncates a string from the middle if it exceeds a maximum length,
+     * inserting the number of removed characters in the center.
+     *
+     * @param string $string The string to process.
+     * @param int $maxLength The maximum number of allowed characters (default 64).
+     * @return string The truncated string, or the original if it doesn't exceed the limit.
+     */
+    public function truncateStringMiddle(string $string, int $maxLength = 64): string
+    {
+        // Check if the string length exceeds the maximum allowed length.
+        if (strlen($string) > $maxLength) {
+            $originalLength = strlen($string);
+            $charsRemoved = $originalLength - $maxLength; // Calculate characters to remove.
+
+            // Create the replacement string, e.g., "_123_".
+            $replacement = '_' . $charsRemoved . '_';
+            $replacementLen = strlen($replacement);
+
+            // Calculate how much actual string content we can keep.
+            $contentLength = $maxLength - $replacementLen;
+
+            // Handle edge case: if the replacement string itself is longer than maxLength.
+            if ($contentLength < 0) {
+                // Truncate and add ellipsis, as there's no space for original content or number.
+                // Using "_" instead of "..." for consistency with the new format.
+                return substr($string, 0, $maxLength - 1) . '_';
+            } else {
+                // Calculate half length for the start and end parts.
+                $halfLen = floor($contentLength / 2);
+
+                // Extract the start and end parts of the original string.
+                $start = substr($string, 0, $halfLen);
+                $end = substr($string, $originalLength - ($contentLength - $halfLen));
+
+                // Reconstruct the string with the replacement in the middle.
+                $truncatedString = $start . $replacement . $end;
+
+                // Final adjustment: if the number itself made the string too long (rare).
+                if (strlen($truncatedString) > $maxLength) {
+                    return substr($truncatedString, 0, $maxLength);
+                }
+
+                return $truncatedString;
+            }
+        }
+        // Return the original string if no truncation is needed.
+        return $string;
     }
 
 }
@@ -2284,3 +2334,6 @@ function groupHasAccess($group_name, $userId, $category, $action, $type = 'modul
     // ACL_ALLOW_GROUP should be defined elsewhere in the system
     return $highestAccess >= ACL_ALLOW_GROUP;
 }
+
+
+
