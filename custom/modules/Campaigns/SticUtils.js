@@ -283,6 +283,8 @@ function updateViewNotificationType(isNotification) {
     $form.find('[data-field="parent_name"]').hide();
     $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
     $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
+    removeFromValidate(getFormName(), 'notification_from_addr');
+    removeFromValidate(getFormName(), 'notification_reply_to_addr');
   }
 }
 
