@@ -277,7 +277,6 @@ function updateViewNotificationType(isNotification) {
     $form.find("#parent_type").val("");
     $form.find("#parent_name").val("");
     $form.find("#parent_id").val("");
-    $form.find("#status").val("");
     $form.find('[data-field="status"]').show();
     $form.find('[data-field="end_date"]').show();
     $form.find('[data-field="parent_name"]').hide();
