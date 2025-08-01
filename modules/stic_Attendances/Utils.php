@@ -144,9 +144,17 @@ class stic_AttendancesUtils
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Creating attendance: ' . ($row['attendance_name'] ?? 'undefined'). ' for session: ' . $row['session_id'] . ' and registration: ' . $row['registration_id']);
             $attendance = BeanFactory::newBean('stic_Attendances');
 
+            // Set attendance name, avoiding to duplicate event name
+            $sessionNameStart = trim(explode('|', $row['session_name'])[0]);
+            if (strpos($row['registration_name'], $sessionNameStart) !== false) {
+                $cleanSessionName = str_replace($sessionNameStart, '', $row['session_name']);
+                $cleanSessionName = trim(str_replace('|', '', $cleanSessionName));
+            } else {
+                $cleanSessionName = $row['session_name'];
+            }
+            $attendance->name = $row['registration_name'] . ' | ' . $cleanSessionName;
             // Set basic data
             $attendance->assigned_user_id = $row['session_assigned_user_id'];
-            $attendance->name = $row['registration_name'] . ' | ' . $timedate->to_display_date_time($row['start_date'], true, true) . 'h';
             $attendance->start_date = $row['start_date'];
 
             // Prepare duration if it is null
