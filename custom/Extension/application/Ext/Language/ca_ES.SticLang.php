@@ -140,6 +140,7 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['moduleList']['InboundEmail'] = 'Comptes de correu electrònic entrant';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';

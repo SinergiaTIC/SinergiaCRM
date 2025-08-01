@@ -140,6 +140,7 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Acciones';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizaciones';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condiciones';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['moduleList']['InboundEmail'] = 'Cuentas de correo electrónico entrante';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
