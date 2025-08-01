@@ -575,8 +575,12 @@ class ImapClient
     {
         if ($type == 'CRAM-MD5' || $type == 'DIGEST-MD5') {
             if ($type == 'DIGEST-MD5' && !class_exists('Auth_SASL')) {
-                return $this->setError(self::ERROR_BYE,
-                    "The Auth_SASL package is required for DIGEST-MD5 authentication");
+                // STIC-Custom 20250724 ART - Bounce Email Error With Roundcube
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // return $this->setError(self::ERROR_BYE,
+                //     "The Auth_SASL package is required for DIGEST-MD5 authentication");
+                $type = 'CRAM-MD5';
+                // END STIC Custom
             }
 
             $this->putLine($this->nextTag() . " AUTHENTICATE $type");
