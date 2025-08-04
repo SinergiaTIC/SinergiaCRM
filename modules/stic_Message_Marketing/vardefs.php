@@ -27,13 +27,13 @@ $dictionary['stic_Message_Marketing'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
-  'campaign_id' => array(
-    'name' => 'campaign_id',
-    'vname' => 'LBL_CAMPAIGN_ID',
-    'type' => 'id',
-    'isnull' => true,
-    'required'=>false,
-    ),
+  // 'campaign_id' => array(
+  //   'name' => 'campaign_id',
+  //   'vname' => 'LBL_CAMPAIGN_ID',
+  //   'type' => 'id',
+  //   'isnull' => true,
+  //   'required'=>false,
+  //   ),
     'sender' =>
     array(
       'required' => false,

@@ -512,6 +512,43 @@ class Campaign extends SugarBean
         $listquery= $man->create_queue_items_query('', str_replace(array("WHERE","where"), "", (string) $query_array['where']), null, $query_array);
         return $listquery;
     }
+
+    // STIC-Custom 20241105 EPS - Add custom function to retrieve messages pending on queue
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/473
+    public function get_message_queue_items(...$args)
+    {
+        $mkt_id ='';
+
+        // $this->load_relationship('campaigns_stic_message_marketing');
+        // $query_array = $this->campaigns_stic_message_marketing->getQuery(array('return_as_array' => true));
+
+        $query_array = array(
+            'where' => "WHERE stic_messagesman.campaign_id = '$this->id'"
+        );
+
+        //if one of the arguments is marketing ID, then we need to filter by it
+        foreach ($args as $arg) {
+            if (isset($arg['EMAIL_MARKETING_ID_VALUE'])) {
+                $mkt_id = $arg['EMAIL_MARKETING_ID_VALUE'];
+            }
+
+            if (isset($arg['group_by'])) {
+                $query_array['group_by'] = $arg['group_by'];
+            }
+        }
+
+        //add filtering by marketing id, if it exists, and if where key is not empty
+        if (!empty($mkt_id) && !empty($query_array['where'])) {
+            $query_array['where'] = $query_array['where']. " AND marketing_id ='$mkt_id' ";
+        }
+
+        //get select query from email man
+        $man = BeanFactory::newBean('stic_MessagesMan');
+        $listquery= $man->create_queue_items_query('', str_replace(array("WHERE","where"), "", (string) $query_array['where']), null, $query_array);
+        return $listquery;
+    }
+    // END STIC-Custom 
+
     //	function get_prospect_list_entries() {
     //		$this->load_relationship('prospectlists');
     //		$query_array = $this->prospectlists->getQuery(true);
