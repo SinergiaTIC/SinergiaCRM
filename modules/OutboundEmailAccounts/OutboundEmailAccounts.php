@@ -199,21 +199,21 @@ class OutboundEmailAccounts extends OutboundEmailAccounts_sugar
             $showGroupRecords = "($tableName.type IS NULL) OR ($tableName.type != 'user' ) OR ";
 
             // STIC-Custom 2050314 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-            // Checks if the user can use non-personal accounts and if not, checks list permission instead of applying the has_group_action_acls_defined() function
+            // Checks if the user can use non-personal outbound mail accounts by checking if they have any roles with list permission instead of using the has_group_action_acls_defined() function
             // $hasActionAclsDefined = has_group_action_acls_defined('OutboundEmailAccounts', 'list');
-            $hasActionAclsDefined = ACLController::checkAccess('OutboundEmailAccounts', 'list');
-            if($hasActionAclsDefined === false) 
-            {
+            require_once 'SticInclude/Utils.php';
+            $hasActionAclsDefined = SticUtils::hasRolePermission($current_user->id, 'OutboundEmailAccounts', 'list');
+            if($hasActionAclsDefined === false) {
                 $showGroupRecords = '';
-
+            } else {
                 // Check "allow_default_outbound" propierty to list or not the system outbound account
                 global $db;
                 $res = $db->query("SELECT * FROM config WHERE name = 'allow_default_outbound'");
                 $row = $db->fetchByAssoc($res);
-                $notify_allow_default_outbound = isset($row['value']) ? $row['value'] != 0 : false;
-
-                if ($notify_allow_default_outbound) {
-                    $showGroupRecords = "($tableName.type = 'system') OR ";
+                $canUseSystem = isset($row['value']) ? $row['value'] != 0 : false;
+    
+                if (!$canUseSystem) {
+                    $showGroupRecords = "($tableName.type IS NULL) OR (($tableName.type != 'user' ) AND ($tableName.type != 'system')) OR ";
                 }
             }
             // END STIC-Custom

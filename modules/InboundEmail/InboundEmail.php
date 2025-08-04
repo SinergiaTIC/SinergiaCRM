@@ -6833,10 +6833,11 @@ class InboundEmail extends SugarBean
 
             $showGroupRecords = "($tableName.is_personal IS NULL) OR ($tableName.is_personal = 0) OR ";
             
-            // STIC-Custom 2050328 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/477
-            // Checks if the user can use non-personal accounts and if not, checks the roles instead of applying the has_group_action_acls_defined() function
+            // STIC-Custom 2050328 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/616
+            // Checks if the user can use non-personal accounts through their role permissions instead of applying the has_group_action_acls_defined() function
             // $hasActionAclsDefined = has_group_action_acls_defined('InboundEmail', 'list');
-            $hasActionAclsDefined = ACLController::checkAccess('InboundEmail', 'list');
+            require_once 'SticInclude/Utils.php';
+            $hasActionAclsDefined = SticUtils::hasRolePermission($current_user->id, 'InboundEmail', 'list');
             // END STIC-Custom
 
             if($hasActionAclsDefined === false) {
