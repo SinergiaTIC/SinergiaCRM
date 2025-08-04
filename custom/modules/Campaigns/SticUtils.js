@@ -250,7 +250,8 @@ function updateViewNotificationType(isNotification) {
   setRequired(isNotification, "notification_prospect_list_ids");
   setRequired(isNotification, "notification_template_id");
   setRequired(isNotification, "notification_from_name");
-  setRequired(isNotification, "notification_from_addr");
+  addRequiredMark("notification_from_addr");
+  
 
   var $form = $("form#" + getFormName());
 
@@ -270,16 +271,34 @@ function updateViewNotificationType(isNotification) {
         $form.find("#start_date").val(moment().format(formatDate));
       }
     }
+    if ($('#notification_from_addr').length > 0 && $('#notification_reply_to_addr').length > 0) {
+      /* VALIDATION CALLBACKS */
+      addToValidate(
+        getFormName(), 
+        'notification_from_addr',
+        'email', 
+        true,
+        SUGAR.language.get('app_strings', 'ERR_INVALID_EMAIL_ADDRESS')
+      );
+      addToValidate(
+        getFormName(),
+        'notification_reply_to_addr',
+        'email',
+        false,
+        SUGAR.language.get('app_strings', 'ERR_INVALID_EMAIL_ADDRESS')
+      );
+    }
   } else {
     $form.find("#parent_type").val("");
     $form.find("#parent_name").val("");
     $form.find("#parent_id").val("");
-    $form.find("#status").val("");
     $form.find('[data-field="status"]').show();
     $form.find('[data-field="end_date"]').show();
     $form.find('[data-field="parent_name"]').hide();
     $form.find(".panel-body[data-id='LBL_NOTIFICATION_INFORMATION_PANEL']").parent().hide();
     $form.find("[data-label='LBL_NAVIGATION_MENU_GEN2']").show();
+    removeFromValidate(getFormName(), 'notification_from_addr');
+    removeFromValidate(getFormName(), 'notification_reply_to_addr');
   }
 }
 
