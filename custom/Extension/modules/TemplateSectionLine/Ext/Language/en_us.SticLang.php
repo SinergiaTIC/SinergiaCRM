@@ -55,5 +55,8 @@ $mod_strings['LNK_LIST'] = 'View Template Section Lines';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Search Template Section Lines';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
 
-$mod_strings['LBL_THUMBNAIL_IMAGE_C'] = 'Thumbnail image';
-$mod_strings['LBL_THUMBNAIL_HELP'] = 'Indicates the path where the file with the image associated with the template section line is located. For entity-specific template section lines, you must access a document, access the version through the Versions subpanel, and indicate the version ID in this field preceded by the text string: upload/.';
+$mod_strings['LBL_THUMBNAIL_NAME'] = 'Short name for thumbnail';
+$mod_strings['LBL_THUMBNAIL_NAME_HELP'] = "The text in this field will be used as the content of the image that is created when the download button is pressed. The image can be used as a thumbnail for this record and will be displayed in the Mozaik editor's thumbnail list.";
+$mod_strings['LBL_THUMBNAIL_NAME_DOWNLOAD_BUTTON'] = 'Download short number as image';
+$mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_DOWNLOAD'] = 'Indicate a value in the field: ';
+$mod_strings['LBL_THUMBNAIL_IMAGE'] = 'Thumbnail image';

@@ -55,5 +55,8 @@ $mod_strings['LNK_LIST'] = 'Ver Líneas de sección de plantilla';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Buscar Líneas de sección de plantilla';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
 
-$mod_strings['LBL_THUMBNAIL_IMAGE_C'] = 'Imagen de miniatura';
-$mod_strings['LBL_THUMBNAIL_HELP'] = 'Indica la ruta donde se encuentra el archivo con la imagen asociada a la línea de sección de plantilla. Para líneas de sección de plantilla propias de la entidad se debe acceder a un documento, acceder a la versión a través del subpanel de Versiones e indicar en este campo el ID de la versión precedido de la cadena de texto: upload/.';
+$mod_strings['LBL_THUMBNAIL_NAME'] = 'Nombre corto para miniatura';
+$mod_strings['LBL_THUMBNAIL_NAME_HELP'] = 'El texto de este campo será utilizado como contenido de la imagen que se crea al pulsar el botón de descarga. La imagen puede ser utilizada como miniatura de este registro y será mostrada en el listado de miniaturas del editor Mozaik.';
+$mod_strings['LBL_THUMBNAIL_NAME_DOWNLOAD_BUTTON'] = 'Descargar nombre corto como imagen';
+$mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_DOWNLOAD'] = 'Indica un valor en el campo: ';
+$mod_strings['LBL_THUMBNAIL_IMAGE'] = 'Imagen de miniatura';

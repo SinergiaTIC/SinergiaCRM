@@ -68,13 +68,34 @@ $dictionary["TemplateSectionLine"]['fields']['assigned_user_link'] = array (
     'table' => 'users',
 );
 
+$dictionary["TemplateSectionLine"]['fields']['thumbnail_name_c'] = array (
+  'required' => true,
+  'name' => 'thumbnail_name_c',
+  'vname' => 'LBL_THUMBNAIL_NAME',
+  'type' => 'varchar',
+  'source' => 'custom_fields',
+  'massupdate' => 0,
+  'no_default' => false,
+  'comments' => '',
+  'help' => '',
+  'popupHelp' => 'LBL_THUMBNAIL_NAME_HELP',
+  'importable' => 'true',
+  'duplicate_merge' => 'disabled',
+  'duplicate_merge_dom_value' => '0',
+  'audited' => false,
+  'inline_edit' => true,
+  'reportable' => true,
+  'unified_search' => false,
+  'merge_filter' => 'disabled',
+  'len' => '40',
+  'size' => '40',
+);
+
 $dictionary["TemplateSectionLine"]['fields']['thumbnail_image_c'] = array (
-  'inline_edit' => '1',
-  'labelValue' => 'thumbnail image',
   'required' => false,
   'source' => 'custom_fields',
   'name' => 'thumbnail_image_c',
-  'vname' => 'LBL_THUMBNAIL_IMAGE_C',
+  'vname' => 'LBL_THUMBNAIL_IMAGE',
   'type' => 'image',
   'massupdate' => '0',
   'default' => NULL,
@@ -85,6 +106,7 @@ $dictionary["TemplateSectionLine"]['fields']['thumbnail_image_c'] = array (
   'duplicate_merge' => 'disabled',
   'duplicate_merge_dom_value' => '0',
   'audited' => false,
+  'inline_edit' => '1',
   'reportable' => true,
   'unified_search' => false,
   'merge_filter' => 'disabled',
@@ -111,5 +133,4 @@ $dictionary["TemplateSectionLine"]['relationships']['templateSectionLine_assigne
 
 $dictionary["TemplateSectionLine"]['fields']['description']['editor'] = 'html';
 $dictionary["TemplateSectionLine"]['fields']['thumbnail']['default'] = 'upload/';
-$dictionary["TemplateSectionLine"]['fields']['thumbnail']['popupHelp'] = 'LBL_THUMBNAIL_HELP';
 
