@@ -417,6 +417,7 @@ class stic_MessagesMan extends SugarBean
             }
         }
 
+        // TODOEPS: El re-emplaçar variables ja es fa al save del missatge
         // Recuperamos el template (si lo hay)
         $emailTemplate = BeanFactory::getBean('EmailTemplates', $templateId);
         $txt = $emailTemplate->body;
@@ -439,7 +440,7 @@ class stic_MessagesMan extends SugarBean
 
         if ($messageBean->status != 'sent') {
             // TODOEPS
-            $this->saveLog('send error', $targetPhone, true);
+            $this->saveLog('send error', $targetPhone, true, $test);
             return false;
         }
         $this->saveLog('targeted', $targetPhone, true, $test);

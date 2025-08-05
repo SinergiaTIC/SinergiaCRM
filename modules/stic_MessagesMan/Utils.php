@@ -58,7 +58,7 @@ class stic_MessagesManUtils {
         // TODOEPS: test
         if ($test) {
             $select_query = " 
-                SELECT stic_messagesman.*, stic_message_marketing.template_id_c, stic_message_marketing.type, stic_message_marketing.sender 
+                SELECT stic_messagesman.*, stic_message_marketing.template_id, stic_message_marketing.type, stic_message_marketing.sender 
                 FROM stic_messagesman 
                 join stic_message_marketing on stic_message_marketing.id = stic_messagesman.marketing_id  ";
             $select_query .= " join prospect_list_campaigns plc on stic_messagesman.campaign_id = plc.campaign_id";
@@ -72,7 +72,7 @@ class stic_MessagesManUtils {
 
         }else {
             $select_query = " 
-                SELECT stic_messagesman.*, stic_message_marketing.template_id_c, stic_message_marketing.type, stic_message_marketing.sender 
+                SELECT stic_messagesman.*, stic_message_marketing.template_id, stic_message_marketing.type, stic_message_marketing.sender 
                  FROM stic_messagesman 
                  join stic_message_marketing on stic_message_marketing.id = stic_messagesman.marketing_id  ";
             $select_query .= " WHERE send_date_time <= " . $db->now();
@@ -85,6 +85,7 @@ class stic_MessagesManUtils {
         DBManager::setQueryLimit(0);
         $result = $db->query($select_query);
 
+        // TODOEPS: Això no és un error. Simplement no hi ha res a forçar....enlloc de FATAL, DEBUG?
         if(!$result) {
             $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
             return false;
@@ -107,7 +108,7 @@ class stic_MessagesManUtils {
         }
 
         $sender = $row['sender'] ? $row['sender'] : stic_SettingsUtils::getSetting('MESSAGES_SENDER');
-        $templateId = $row['template_id_c'];
+        $templateId = $row['template_id'];
         $type = $row['type'];
         $return = $messageman->sendMessage($sender, $templateId, $type, $test);
 

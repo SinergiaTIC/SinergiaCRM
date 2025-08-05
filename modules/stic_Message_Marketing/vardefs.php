@@ -143,7 +143,7 @@ $dictionary['stic_Message_Marketing'] = array(
     'size' => '20',
   ),
   'template' => array (
-    'required' => false,
+    'required' => true,
     'source' => 'non-db',
     'name' => 'template',
     'vname' => 'LBL_TEMPLATE',
