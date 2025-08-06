@@ -116,14 +116,14 @@ array(
         ),
         4 => array(
           0 => array (
-            'name' => 'thumbnail_name_c',
-            'label' => 'LBL_THUMBNAIL_NAME',
-          ),
-          1 => array (
             'name' => 'thumbnail_image_c',
             'studio' => 'visible',
             'label' => 'LBL_THUMBNAIL_IMAGE',
           ),
+          1 => array (
+            'name' => 'thumbnail_name_c',
+            'label' => 'LBL_THUMBNAIL_NAME',
+          ),          
         ),  
       ),
     ),

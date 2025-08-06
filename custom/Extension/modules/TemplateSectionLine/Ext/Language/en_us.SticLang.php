@@ -55,8 +55,10 @@ $mod_strings['LNK_LIST'] = 'View Template Section Lines';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Search Template Section Lines';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
 
-$mod_strings['LBL_THUMBNAIL_NAME'] = 'Short name for thumbnail';
-$mod_strings['LBL_THUMBNAIL_NAME_HELP'] = "The text in this field will be used as the content of the image that is created when the download button is pressed. The image can be used as a thumbnail for this record and will be displayed in the Mozaik editor's thumbnail list.";
-$mod_strings['LBL_THUMBNAIL_NAME_DOWNLOAD_BUTTON'] = 'Download short number as image';
-$mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_DOWNLOAD'] = 'Indicate a value in the field: ';
 $mod_strings['LBL_THUMBNAIL_IMAGE'] = 'Thumbnail image';
+$mod_strings['LBL_THUMBNAIL_IMAGE_HELP'] = 'This image will be displayed in the thumbnail image list in the left sidebar of the Mozaik text editor. You can upload a user-created image or create one automatically via the Create Image button with the content of the Thumbnail Short Name field. If creating the image manually, the following properties are recommended: Format: PNG or JPG, Height: 50px and Width: 225px.';
+$mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_BUTTON'] = 'Create an image with the value of the field: Thumbnail short name.';
+$mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_CONFIRM'] = 'Do you confirm that you want to replace the pre-loaded image with the new one that will be created?';
+$mod_strings['LBL_THUMBNAIL_NAME'] = 'Short name for thumbnail';
+$mod_strings['LBL_THUMBNAIL_NAME_HELP'] = 'The text in this field, limited to 40 characters, can be used as the content of the image created when the create image button is pressed.';
+$mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_CREATE_IMAGE'] = 'Indicate a value in the field: ';
