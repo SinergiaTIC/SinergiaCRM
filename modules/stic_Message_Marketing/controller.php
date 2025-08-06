@@ -46,8 +46,9 @@ class stic_Message_MarketingController extends SugarController {
             $campaign->retrieve($campaign_id);
         }
 
+        // TODOEPS: No s'està recuperant la llista de LPOs
         $query = "
-            SELECT smm.id, smm.name, smm.status 
+            SELECT smm.id, smm.name, smm.status, smm.select_all, smm.prospect_lists 
             FROM stic_message_marketing smm 
             join campaigns_stic_message_marketing_c csmmc on smm.id = csmmc.campaigns_stic_message_marketingmessage_idb 
             where smm.deleted = 0
@@ -59,10 +60,12 @@ class stic_Message_MarketingController extends SugarController {
 
         $mmlist = array();
         while ($row = $db->fetchByAssoc($result)) {
+            $prospectLists = $this->getProspectLists($campaign_id, $row['select_all'], $row['prospect_lists']);
+            $prospectListsString = implode(', ', $prospectLists);
             $mmlist[$row['id']] = array(
                 'name' => $row['name'], 
                 'status' => $row['status'],
-                'lists' => array(),
+                'lists' => $prospectListsString,
             );
         }
 
@@ -72,6 +75,60 @@ class stic_Message_MarketingController extends SugarController {
         $this->view_object_map['RETURN_ID'] = $campaign_id;
         $this->view_object_map['TEST'] = $_REQUEST['test'];
         // $this->mapStepNavigation('results'); //next action to be run
+    }
+
+    protected function getProspectLists($campaignId, $selectAll, $prospectListsString) {
+        if ($selectAll) {
+            return $this->getCampaignLists($campaignId);
+        }
+        else {
+            // $prospectLists= trim($prospectListsString, '^');
+            // $prospectLists = explode('^,^', $prospectListsString);
+            $prospectListsString = str_replace('^', '\'', $prospectListsString);
+            return $this->getProspectListsNames($prospectListsString);
+        }
+    }
+
+    protected function getCampaignLists($campaignId) {
+        $db = DBManagerFactory::getInstance();
+
+        $query = "
+            SELECT pl.name
+            FROM prospect_list_campaigns plc
+            join prospect_lists pl on pl.id = plc.prospect_list_id
+            where plc.campaign_id = '$campaignId'
+            and pl.list_type in ('default', 'test')
+            and plc.deleted = 0
+            and pl.deleted = 0";
+
+        $result = $db->query($query);
+
+        $prospectListsArray = array();
+        while ($row = $db->fetchByAssoc($result)) {
+            $prospectListsArray[] = $row['name'];
+        }  
+
+        return $prospectListsArray;
+    }
+
+    protected function getProspectListsNames($prospectListsString) {
+        $db = DBManagerFactory::getInstance();
+
+        $query = "
+            SELECT pl.name
+            FROM prospect_lists pl 
+            WHERE id in ($prospectListsString)
+            AND deleted = 0
+            ";
+
+        $result = $db->query($query);
+
+        $prospectListsArray = array();
+        while ($row = $db->fetchByAssoc($result)) {
+            $prospectListsArray[] = $row['name'];
+        }  
+
+        return $prospectListsArray;
     }
 
     public function action_sendMessages() {
