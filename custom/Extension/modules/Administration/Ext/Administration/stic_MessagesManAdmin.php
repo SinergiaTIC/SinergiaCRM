@@ -25,9 +25,9 @@ $admin_option_defs = array();
 
 // Create menu element
 // $admin_option_defs['Administration']['stic_settings'] = array(
-$admin_option_defs = array(
-    // 'stic_Settings',
-    'Administration',
+
+$admin_option_defs['Administration']['stic_MessagesMan'] = array(
+    'stic_MessagesMan',
     'LBL_STIC_MESSAGES_QUEUE_LINK_TITLE',
     'LBL_STIC_MESSAGES_QUEUE_DESCRIPTION',
     './index.php?module=stic_MessagesMan&action=index',
@@ -35,6 +35,15 @@ $admin_option_defs = array(
 );
 
 
-// $admin_group_header['LBL_STUDIO_TITLE'][] = array_replace_recursive($admin_option_defs, $admin_group_header['LBL_SINERGIACRM_TAB_TITLE'][3]);
-// $admin_group_header['LBL_STUDIO_TITLE'][] = $admin_option_defs;
-$admin_group_header[1][3]['Administration'][] = $admin_option_defs;
+if (!isset($admin_group_header['LBL_SINERGIACRM_TAB_TITLE']) || !isset($admin_group_header['LBL_SINERGIACRM_TAB_TITLE'][3])) {
+    $admin_group_header['LBL_SINERGIACRM_TAB_TITLE'] = array(
+        'LBL_SINERGIACRM_TAB_TITLE',
+        '',
+        false,
+        $admin_option_defs,
+        'LBL_SINERGIACRM_TAB_DESCRIPTION',
+
+    );
+} else {
+    $admin_group_header['LBL_SINERGIACRM_TAB_TITLE'][3] = array_replace_recursive($admin_option_defs, $admin_group_header['LBL_SINERGIACRM_TAB_TITLE'][3]);
+}
