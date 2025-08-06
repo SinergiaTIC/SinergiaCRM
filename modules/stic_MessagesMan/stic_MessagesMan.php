@@ -420,10 +420,10 @@ class stic_MessagesMan extends SugarBean
         // TODOEPS: El re-emplaçar variables ja es fa al save del missatge
         // Recuperamos el template (si lo hay)
         $emailTemplate = BeanFactory::getBean('EmailTemplates', $templateId);
-        $txt = $emailTemplate->body;
+        // $txt = $emailTemplate->body;
 
         $messageBean = BeanFactory::newBean('stic_Messages');
-        $txt = $messageBean->replaceTemplateVariables($txt, $bean);
+        // $txt = $messageBean->replaceTemplateVariables($txt, $bean);
 
         $messageBean->sender = $sender;
         $messageBean->template_id_c = $templateId;
@@ -431,11 +431,11 @@ class stic_MessagesMan extends SugarBean
         $messageBean->type = $type;
         $messageBean->direction = 'outbound';
         $messageBean->phone = $targetPhone;
-        $messageBean->message = $txt;
+        $messageBean->message = $emailTemplate->body;
         $name = $messageBean->fillName($bean->module_name, $bean->id);
         $messageBean->name = $name;
-        $messageBean->parent_type = $relatedType;
-        $messageBean->parent_id = $relatedId;
+        $messageBean->parent_type = $this->related_type;
+        $messageBean->parent_id = $this->related_id;
         $messageBean->save();
 
         if ($messageBean->status != 'sent') {
