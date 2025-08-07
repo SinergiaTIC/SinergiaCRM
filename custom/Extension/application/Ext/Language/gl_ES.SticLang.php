@@ -86,7 +86,7 @@ $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Envío masivo de correos
-$app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'El envío sólo se aplicará a los registros de la página actual. Para envíos masivos se recomienda utilizar el módulo Campañas.';
+$app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicará aos rexistros da páxina actual. Para envíos masivos recoméndase utilizar o módulo Campañas.';
 
 // Módulos propios de SinergiaCRM e módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizacións';
@@ -139,7 +139,9 @@ $app_list_strings['moduleList']['stic_Custom_Views'] = 'Vistas personalizadas';
 $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accións';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalizacións';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicións';
-$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
+$app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
+$app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -185,8 +187,9 @@ $app_list_strings['moduleListSingular']['stic_Custom_Views'] = 'Vista personaliz
 $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acción';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalización';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condición';
-
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
+$app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
+$app_list_strings['moduleListSingular']['stic_Places'] = 'Plaza';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -224,7 +227,9 @@ $app_list_strings['parent_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['parent_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
-$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
+$app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
+$app_list_strings['parent_type_display']['stic_Places'] = 'Plazas';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
@@ -263,7 +268,9 @@ $app_list_strings['record_type_display']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
-$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
+$app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
+$app_list_strings['record_type_display']['stic_Places'] = 'Plazas';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
@@ -302,7 +309,9 @@ $app_list_strings['record_type_display_notes']['stic_Journal'] = 'Diario';
 $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formación';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiencia laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
-$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
+$app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
+$app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizacións subvencionadas';
+$app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
@@ -424,6 +433,7 @@ $app_list_strings['stic_catalonia_counties_list']['garraf'] = 'Garraf';
 $app_list_strings['stic_catalonia_counties_list']['garrigues'] = 'Garrigues';
 $app_list_strings['stic_catalonia_counties_list']['garrotxa'] = 'Garrotxa';
 $app_list_strings['stic_catalonia_counties_list']['girones'] = 'Gironès';
+$app_list_strings['stic_catalonia_counties_list']['lluçanes'] = 'Lluçanès';
 $app_list_strings['stic_catalonia_counties_list']['maresme'] = 'Maresme';
 $app_list_strings['stic_catalonia_counties_list']['moianes'] = 'Moianès';
 $app_list_strings['stic_catalonia_counties_list']['montsia'] = 'Montsià';
@@ -517,6 +527,7 @@ $app_list_strings['stic_languages_list'][''] = '';
 $app_list_strings['stic_languages_list']['catalan'] = 'Catalán';
 $app_list_strings['stic_languages_list']['spanish'] = 'Castelán';
 $app_list_strings['stic_languages_list']['galician'] = 'Galego';
+$app_list_strings['stic_languages_list']['basque'] = 'Vasco';
 
 // Canales de campañas
 $app_list_strings['stic_campaign_channels_list'][''] = '';
@@ -1221,7 +1232,7 @@ $app_list_strings['stic_incorpora_addr_street_type_list']['6'] = 'Estrada';
 $app_list_strings['stic_incorpora_addr_street_type_list']['7'] = 'Casa';
 $app_list_strings['stic_incorpora_addr_street_type_list']['8'] = 'Edificio';
 $app_list_strings['stic_incorpora_addr_street_type_list']['9'] = 'Gran Vía';
-$app_list_strings['stic_incorpora_addr_street_type_list']['OUTROS'] = 'Outros';
+$app_list_strings['stic_incorpora_addr_street_type_list']['OTROS'] = 'Outros';
 $app_list_strings['stic_incorpora_agreement_signed_with_list'][''] = '';
 $app_list_strings['stic_incorpora_agreement_signed_with_list']['CAIXA'] = 'la caixa';
 $app_list_strings['stic_incorpora_agreement_signed_with_list']['ENT_SOCIAL'] = 'Entidade social';
@@ -1805,7 +1816,7 @@ $app_list_strings['stic_incorpora_cno_n1_list']['o'] = 'O - Traballadores non cu
 $app_list_strings['stic_incorpora_cno_n1_list']['p'] = 'P - Peóns da agricultura, pesca, construción, industrias manufactureras e transportes';
 $app_list_strings['stic_incorpora_cno_n1_list']['q'] = 'Q - Ocupacións militares';
 $app_list_strings['stic_incorpora_cno_n2_list'][''] = '';
-$app_list_strings['stic_incorpora_cno_n2_list']['q_0'] = 'Ocupacións militares';
+$app_list_strings['stic_incorpora_cno_n2_list']['q_00'] = 'Ocupacións militares';
 $app_list_strings['stic_incorpora_cno_n2_list']['a_11'] = 'Membros do poder executivo e dos corpos lexislativos, directivos da Administración Pública e organizacións de interese social, directores executivos';
 $app_list_strings['stic_incorpora_cno_n2_list']['a_12'] = 'Directores de departamentos administrativos e comerciais';
 $app_list_strings['stic_incorpora_cno_n2_list']['a_13'] = 'Directores de produción e operacións';
@@ -2051,7 +2062,7 @@ $app_list_strings['stic_incorpora_collection_origin_list']['GRUPO'] = 'Grupo Inc
 $app_list_strings['stic_incorpora_collection_origin_list']['INFOJOBS'] = 'Infojobs';
 $app_list_strings['stic_incorpora_collection_origin_list']['OFI'] = 'Oficina "la caixa"';
 $app_list_strings['stic_incorpora_collection_origin_list']['OTRO_GRUP'] = 'Outro Grupo Incorpora';
-$app_list_strings['stic_incorpora_collection_origin_list']['OUTROS'] = 'Outros';
+$app_list_strings['stic_incorpora_collection_origin_list']['OTROS'] = 'Outros';
 $app_list_strings['stic_incorpora_collection_origin_list']['PIMEC'] = 'PIMEC';
 $app_list_strings['stic_incorpora_collection_origin_list']['PTO_CORP'] = 'Punto Corporativo';
 $app_list_strings['stic_incorpora_collection_origin_list']['WEB'] = 'Web Incorpora';
@@ -2096,7 +2107,7 @@ $app_list_strings['stic_incorpora_company_status_list']['VISITADA'] = 'Visitada'
 $app_list_strings['stic_incorpora_company_status_list']['VINCULADA'] = 'Vinculada';
 $app_list_strings['stic_incorpora_company_status_list']['INFORMADA'] = 'Informada';
 $app_list_strings['stic_incorpora_company_status_list']['CONTRAT'] = 'Contratante';
-$app_list_strings['stic_incorpora_company_status_list']['BAIXA'] = 'Dada de baixa';
+$app_list_strings['stic_incorpora_company_status_list']['BAJA'] = 'Dada de baixa';
 $app_list_strings['stic_incorpora_company_territory_scope_list'][''] = '';
 $app_list_strings['stic_incorpora_company_territory_scope_list']['CCAA'] = 'CCAA';
 $app_list_strings['stic_incorpora_company_territory_scope_list']['INTERNAC'] = 'Internacional';
@@ -2354,11 +2365,11 @@ $app_list_strings['stic_incorpora_country_list']["382"] = 'ZIMBABWE';
 $app_list_strings['stic_incorpora_country_list']["000"] = 'ESTADO NON DETERMINADO';
 $app_list_strings['stic_incorpora_derivation_list'][''] = '';
 $app_list_strings['stic_incorpora_derivation_list']['ADECCO'] = 'Fundación Adecco';
-$app_list_strings['stic_incorpora_derivation_list']['BCCAIXA'] = 'Proyecto Impulsa';
+$app_list_strings['stic_incorpora_derivation_list']['BCCAIXA'] = 'Proxecto Impulsa';
 $app_list_strings['stic_incorpora_derivation_list']['COE'] = 'Comité Olímpico Español';
 $app_list_strings['stic_incorpora_derivation_list']['DISJOB'] = 'DISJOB';
-$app_list_strings['stic_incorpora_derivation_list']['ENF_AVAN'] = 'Enfermedades avanzadas';
-$app_list_strings['stic_incorpora_derivation_list']['ENTIDAD'] = 'Entidad Social';
+$app_list_strings['stic_incorpora_derivation_list']['ENF_AVAN'] = 'Enfermidades avanzadas';
+$app_list_strings['stic_incorpora_derivation_list']['ENTIDAD'] = 'Entidade Social';
 $app_list_strings['stic_incorpora_derivation_list']['FAMILIA'] = 'Familiaries, amigos/as';
 $app_list_strings['stic_incorpora_derivation_list']['FUNDACION'] = 'Fundación Bancaria "la Caixa"';
 $app_list_strings['stic_incorpora_derivation_list']['INT_INTER'] = 'Intervención Comunitaria Intercultural';
@@ -2367,20 +2378,20 @@ $app_list_strings['stic_incorpora_derivation_list']['MEDIO_AMB'] = 'Medio Ambien
 $app_list_strings['stic_incorpora_derivation_list']['MUTUNI'] = 'Mutua Universal';
 $app_list_strings['stic_incorpora_derivation_list']['OFC09900'] = 'Oficina CaixaBank 09900';
 $app_list_strings['stic_incorpora_derivation_list']['OFICINA'] = 'CaixaBank';
-$app_list_strings['stic_incorpora_derivation_list']['OTROS'] = 'Otros';
-$app_list_strings['stic_incorpora_derivation_list']['OTROS_FUND'] = 'Otros programas de Fundación Bancaria "la Caixa"';
-$app_list_strings['stic_incorpora_derivation_list']['PROCON'] = 'Proyecto Confianza';
-$app_list_strings['stic_incorpora_derivation_list']['PROG_PRIV'] = 'Programas Sociales Privados';
+$app_list_strings['stic_incorpora_derivation_list']['OTROS'] = 'Outros';
+$app_list_strings['stic_incorpora_derivation_list']['OTROS_FUND'] = 'Outros programas de Fundación Bancaria "la Caixa"';
+$app_list_strings['stic_incorpora_derivation_list']['PROCON'] = 'Proxecto Confianza';
+$app_list_strings['stic_incorpora_derivation_list']['PROG_PRIV'] = 'Programas Sociais Privados';
 $app_list_strings['stic_incorpora_derivation_list']['PROPIA'] = 'Iniciativa propia';
 $app_list_strings['stic_incorpora_derivation_list']['PRO_INF'] = 'Caixaproinfancia';
 $app_list_strings['stic_incorpora_derivation_list']['REINCORP'] = 'ReIncorpora';
-$app_list_strings['stic_incorpora_derivation_list']['SERV_OTROS'] = 'Otros servicios municipales y de la Administración';
-$app_list_strings['stic_incorpora_derivation_list']['SERV_SOCIA'] = 'Servicios Sociales';
+$app_list_strings['stic_incorpora_derivation_list']['SERV_OTROS'] = 'Outros servizos municipais e da Administración';
+$app_list_strings['stic_incorpora_derivation_list']['SERV_SOCIA'] = 'Servizos Sociais';
 $app_list_strings['stic_incorpora_derivation_list']['TOL_CERO'] = 'Violencia: Tolerancia Cero';
 $app_list_strings['stic_incorpora_disability_benefit_list'][''] = '';
 $app_list_strings['stic_incorpora_disability_benefit_list']['GRAN_INVAL'] = 'Gran invalidez';
 $app_list_strings['stic_incorpora_disability_benefit_list']['NO'] = 'Non';
-$app_list_strings['stic_incorpora_disability_benefit_list']['OUTROS'] = 'Outras';
+$app_list_strings['stic_incorpora_disability_benefit_list']['OTROS'] = 'Outras';
 $app_list_strings['stic_incorpora_disability_benefit_list']['P_PROF_HAB'] = 'Incapacidade permanente parcial para a profesión habitual';
 $app_list_strings['stic_incorpora_disability_benefit_list']['PERM_ABS'] = 'Incapacidade permanente absoluta';
 $app_list_strings['stic_incorpora_disability_benefit_list']['T_PROF_HAB'] = 'Incapacidade permanente total para a profesión habitual';
@@ -2389,22 +2400,22 @@ $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_33_les
 $app_list_strings['stic_incorpora_disability_degree_list']['greater_equal_65'] = '>=65%';
 $app_list_strings['stic_incorpora_disability_degree_list']['less_33'] = '<33%';
 $app_list_strings['stic_incorpora_economic_benefit_list'][''] = '';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'No';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non';
 $app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Prestaciones y subsidios por desocupación';
 $app_list_strings['stic_incorpora_economic_benefit_list']['CESE_ACT'] = 'Prestación por cese de actividad de trabajadores autónomos';
 $app_list_strings['stic_incorpora_economic_benefit_list']['SEG_SOCIAL'] = 'Prestaciones económicas de la Seguridad Social';
 $app_list_strings['stic_incorpora_economic_benefit_list']['PRES_IMV'] = 'Ingreso Mínimo Vital';
 $app_list_strings['stic_incorpora_economic_benefit_list']['AU_IMV'] = 'Autonómica asimilable al Ingreso Mínimo Vital';
 $app_list_strings['stic_incorpora_economic_benefit_list']['CONTRIB'] = 'Contributiva (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desempleo (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['DESEMPLEO'] = 'Subsidio de desemprego (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['GRAN_INVAL'] = 'Gran invalidez (Obsoleto)';
 $app_list_strings['stic_incorpora_economic_benefit_list']['INVALIDEZ'] = 'Invalidez (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'No (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['NO_CONTRIB'] = 'No contributiva (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['OTROS'] = 'Otras (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['P_PROF_HAB'] = 'Incapacidad permanente parcial para la profesión habitual (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['PERM_ABS'] = 'Incapacidad permanente absoluta (Obsoleto)';
-$app_list_strings['stic_incorpora_economic_benefit_list']['T_PROF_HAB'] = 'Incapacidad permanente total para la profesión habitual (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO'] = 'Non (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['NO_CONTRIB'] = 'Non contributiva (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['OTROS'] = 'Outras (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['P_PROF_HAB'] = 'Incapacidade permanente parcial para a profesión habitual (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['PERM_ABS'] = 'Incapacidade permanente absoluta (Obsoleto)';
+$app_list_strings['stic_incorpora_economic_benefit_list']['T_PROF_HAB'] = 'Incapacidade permanente total para a profesión habitual (Obsoleto)';
 $app_list_strings['stic_incorpora_education_languages_list'][''] = '';
 $app_list_strings['stic_incorpora_education_languages_list']['10'] = 'Castelán';
 $app_list_strings['stic_incorpora_education_languages_list']['11'] = 'Catalán';
@@ -2473,7 +2484,7 @@ $app_list_strings['stic_incorpora_offer_origin_list']['GRUPO'] = 'Grupo Incorpor
 $app_list_strings['stic_incorpora_offer_origin_list']['INFOJOBS'] = 'Infojobs';
 $app_list_strings['stic_incorpora_offer_origin_list']['OFI'] = 'Oficina "La caixa"';
 $app_list_strings['stic_incorpora_offer_origin_list']['OTRO_GRUP'] = 'Outro Grupo Incorpora';
-$app_list_strings['stic_incorpora_offer_origin_list']['OUTROS'] = 'Outros';
+$app_list_strings['stic_incorpora_offer_origin_list']['OTROS'] = 'Outros';
 $app_list_strings['stic_incorpora_offer_origin_list']['PIMEC'] = 'PIMEC';
 $app_list_strings['stic_incorpora_offer_origin_list']['PTO_CORP'] = 'Punto Corporativo';
 $app_list_strings['stic_incorpora_offer_origin_list']['WEB'] = 'Web Incorpora';
@@ -3137,7 +3148,7 @@ $app_list_strings['stic_incorpora_working_day_list']['FIN_SEM'] = 'Fin de semana
 $app_list_strings['stic_incorpora_working_day_list']['MAÑANAS'] = 'Mañá';
 $app_list_strings['stic_incorpora_working_day_list']['MAÑYTARDE'] = 'Mañás e tardes';
 $app_list_strings['stic_incorpora_working_day_list']['NOCHE'] = 'Noite';
-$app_list_strings['stic_incorpora_working_day_list']['OUTROS'] = 'Outros';
+$app_list_strings['stic_incorpora_working_day_list']['OTROS'] = 'Outros';
 $app_list_strings['stic_incorpora_working_day_list']['TARDE'] = 'Tarde';
 $app_list_strings['stic_incorpora_yesno_list'][''] = '';
 $app_list_strings['stic_incorpora_yesno_list']['NO'] = 'Non';
@@ -3159,6 +3170,7 @@ $app_list_strings['stic_resources_types_list']['office_materials'] = 'Material d
 $app_list_strings['stic_resources_types_list']['electronics'] = 'Electrónica';
 $app_list_strings['stic_resources_types_list']['technical_equipment'] = 'Equipamento técnico';
 $app_list_strings['stic_resources_types_list']['accessory'] = 'Accesorios';
+$app_list_strings['stic_resources_types_list']['place'] = 'Plaza';
 $app_list_strings['stic_resources_types_list']['other'] = 'Outros';
 
 // Recursos: Estados
@@ -3167,6 +3179,23 @@ $app_list_strings['stic_resources_status_list']['active'] = 'Activo';
 $app_list_strings['stic_resources_status_list']['inactive'] = 'Inactivo';
 $app_list_strings['stic_resources_status_list']['unavailable'] = 'Non dispoñible';
 $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'Non dispoñible temporalmente';
+
+// Recursos: Tipos de plazas
+$app_list_strings['stic_resources_places_type_list'][''] = '';
+$app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
+$app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocupación';
+
+// Recursos: Tipos de usuarios
+$app_list_strings['stic_resources_places_users_list'][''] = '';
+$app_list_strings['stic_resources_places_users_list']['adults'] = 'Adultos';
+$app_list_strings['stic_resources_places_users_list']['families'] = 'Familias';
+$app_list_strings['stic_resources_places_users_list']['minors'] = 'Menores';
+
+// Recursos: Tipos de géneros de las plazas
+$app_list_strings['stic_resources_places_gender_list'][''] = '';
+$app_list_strings['stic_resources_places_gender_list']['men'] = 'Hombres';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Mujeres';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
 
 // Reservas: Estados
 $app_list_strings['stic_bookings_status_list'][''] = '';
@@ -3553,11 +3582,21 @@ $app_list_strings['stic_group_opportunities_status_list']['granted'] = 'Concedid
 $app_list_strings['stic_group_opportunities_status_list']['not_granted'] = 'Non concedida';
 
 // Organizaciones subvencionadas: Estado de la documentación
-$app_list_strings['stic_group_opportunities_doc_status_list']['not_required'] = 'No necesaria';
+$app_list_strings['stic_group_opportunities_doc_status_list']['not_required'] = 'Non necesaria';
 $app_list_strings['stic_group_opportunities_doc_status_list']['requested'] = 'Solicitada';
 $app_list_strings['stic_group_opportunities_doc_status_list']['delivered'] = 'Entregada';
 $app_list_strings['stic_group_opportunities_doc_status_list']['validated'] = 'Validada';
 
+// Monitorización: Acciones
+$app_list_strings['trackers_actions_list']['save'] = 'Registro creado';
+$app_list_strings['trackers_actions_list']['detailview'] = 'Registro accedido';
+$app_list_strings['trackers_actions_list']['editview'] = 'Registro en edición';
+$app_list_strings['trackers_actions_list']['listview'] = 'Registros listados';
+$app_list_strings['trackers_actions_list']['update'] = 'Registro modificado';
+$app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
+$app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
+$app_list_strings['trackers_actions_list']['login_failed'] = 'Inicio de sesión erróneo';
+$app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
 
 // Modificaciones del core de SuiteCRM
 
@@ -3587,7 +3626,7 @@ $app_list_strings['opportunity_relationship_type_dom']['Other'] = 'Outros';
 // Registro de Campañas: Tipo de actividade
 $app_list_strings['campainglog_activity_type_dom'][''] = '';
 $app_list_strings['campainglog_activity_type_dom']['targeted'] = 'Mensaxe enviado';
-$app_list_strings['campainglog_activity_type_dom']['send erro'] = 'Mensaxe non enviado (outras causas)';
+$app_list_strings['campainglog_activity_type_dom']['send error'] = 'Mensaxe non enviado (outras causas)';
 $app_list_strings['campainglog_activity_type_dom']['invalid email'] = 'Mensaxe non enviado (enderezo non válido)';
 $app_list_strings['campainglog_activity_type_dom']['link'] = 'Enlace clicado';
 $app_list_strings['campainglog_activity_type_dom']['viewed'] = 'Mensaxe visto';
@@ -3646,10 +3685,10 @@ $app_list_strings['campaign_type_dom']['Web'] = 'Web';
 $app_list_strings['campaign_type_dom']['Radio'] = 'Radio';
 $app_list_strings['campaign_type_dom']['Television'] = 'Televisión';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Boletín de noticias';
-$app_list_strings['campaign_type_dom']['Survey'] = 'Encuesta';
+$app_list_strings['campaign_type_dom']['Survey'] = 'Enquisa';
 $app_list_strings['campaign_type_dom']['Notification'] = 'Notificación';
 
-// Plantillas de email: Tipos de plantilla
+// Plantillas de correo: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
 $app_list_strings['emailTemplates_type_list_no_workflow']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Notificación';
