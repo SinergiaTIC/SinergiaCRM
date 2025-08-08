@@ -50,76 +50,7 @@
     const LBL_SHOWOPTIONS = '{sugar_translate module="Users" label="LBL_SHOWOPTIONS"}';
     const LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}';
 </script>
-{literal}
-<script>
-    let googleSignInClientId = {/literal}JSON.parse('{$LOGIN_TOKEN}'); {literal}
 
-    $(document).ready(function() {
-        if (
-            googleSignInClientId &&
-            googleSignInClientId.google_auth_enabled === true &&
-            typeof googleSignInClientId.google_auth_client_id === 'string' &&
-            googleSignInClientId.google_auth_client_id.trim() !== ''
-        ) {
-            const script = document.createElement('script');
-            script.src = "https://accounts.google.com/gsi/client";
-            script.async = true;
-            script.defer = true;
-            script.onload = initGoogleSignIn; 
-            document.head.appendChild(script);
-        }
-    });
-
-    function initGoogleSignIn() {
-        $('head').append('<meta name="google-signin-client_id" content="' + googleSignInClientId.google_auth_client_id + '" />');
-
-
-        $('form').find('input[type="submit"]').after(
-            googleSignInClientId.google_auth_only_form ? 
-            createGoogleElements() : 
-            `<div>OR</div>${createGoogleElements()}`
-        );
-
-        setupGoogleButton();
-    }
-
-    function handleCredentialResponse(response) {
-        if (!response || !response.credential) {
-            console.error(SUGAR.language.get('Users', "LBL_GOOGLE_AUTH_ERR_INVALID_TOKEN"));
-            document.getElementById('post_error').textContent = SUGAR.language.get('Users', "LBL_GOOGLE_AUTH_ERR_INVALID_TOKEN");
-            return;
-        }
-        let id_token = response.credential;
-        $('#google_credentials').val(id_token);
-        const form = document.getElementById('form');
-        form.submit();
-    }
-
-    function createGoogleElements() {
-        return `
-            <div id="g_id_onload"></div>
-            <div id="buttonDiv"></div>
-            <input type="hidden" id="google_credentials" name="google_credentials" />
-        `;
-    }
-
-    function setupGoogleButton() {
-        google.accounts.id.initialize({
-            client_id: googleSignInClientId.google_auth_client_id,
-            callback: handleCredentialResponse,
-        });
-
-        google.accounts.id.renderButton(document.getElementById("buttonDiv"), {
-            theme: "outline",
-            size: "large",
-        });
-
-        google.accounts.id.prompt();
-    }
-
-
-</script>
-{/literal}
 <!-- Start login container -->
 
 <div class="p_login">
@@ -189,6 +120,7 @@
                  onclick='toggleDisplay("forgot_password_dialog");'>
                 <a href='javascript:void(0)'>{sugar_translate module="Users" label="LBL_LOGIN_FORGOT_PASSWORD"}</a>
             </div>
+            {$LOGIN_PROVIDERS}
         </form>
         
         <form class="form-signin passform" role="form" action="index.php" method="post" name="DetailView" name="fp_form" id="fp_form" autocomplete="off">

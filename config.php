@@ -653,10 +653,30 @@ $sugar_config = array(
     'tracker_prune_interval' => 90,
     // END STIC Custom
 
-    // STIC-Custom 20250807 AAM - Google Sign In Params
-    'authenticationClass' => 'GoogleAuthenticate',
-    'google_auth_enabled' => true,
-    'google_auth_client_id' => 'taltal',
-    'google_auth_only_form' => false,
+    // STIC-Custom 20250808 - AAM Adding Oauth Signin
+    // PR
+    'authentication_oauth_show_basic' => false,
+    'authentication_oauth_providers' => array(
+        'Google' => array(
+            'enabled' => false,
+            'auth_client_id' => '',
+            'auth_client_secret' => '',
+            'auth_redirect_uri' => '',
+            'auth_scopes' => array(
+                'https://www.googleapis.com/auth/userinfo.email',
+                'https://www.googleapis.com/auth/userinfo.profile',
+            ),
+            'auth_grant_type' => 'authorization_code',
+            'auth_response_type' => 'code',
+            'auth_access_type' => 'offline',
+            'auth_prompt' => 'select_account',
+            'auth_include_granted_scopes' => true,
+            'auth_form_only' => false,
+            'auth_only_form' => true,
+        ),
+        'Microsoft' => array(
+            
+        ),
+    ),
     // END STIC
 );

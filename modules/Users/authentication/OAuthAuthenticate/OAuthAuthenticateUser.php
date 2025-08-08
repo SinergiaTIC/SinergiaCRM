@@ -50,7 +50,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php');
 
 #[\AllowDynamicProperties]
-class GoogleAuthenticateUser extends SugarAuthenticateUser
+class OAuthAuthenticateUser extends SugarAuthenticateUser
 {
 
 }
