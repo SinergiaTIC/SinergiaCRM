@@ -240,7 +240,7 @@ class stic_BookingsController extends SugarController
         
         return $value;
     }
-    private function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId)
+    public function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId)
     {
         global $current_user;
 
@@ -476,5 +476,27 @@ class stic_BookingsController extends SugarController
         
         return " AND (" . implode(" OR ", $filters) . ")";
     }
+    public function action_save() {
+        // Check if this is a periodic booking submission
+        if (isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {
+            // This is a periodic booking submission
+            require_once 'modules/stic_Bookings/Utils.php';
+            stic_BookingsUtils::createPeriodicBookingsRecords();
+            return; // The Utils method will handle redirection
+        } else {
+            // Regular booking save - use parent method
+            parent::action_save();
+        }
+    }
     
+    
+    /**
+     * Renders the summary view with the results of the periodic creation of work calendar records
+     * @return void
+     */
+    public function action_bookingsAssistantSummary() {
+        $this->view = "bookingsassistantsummary";
+    }
+
+
 }

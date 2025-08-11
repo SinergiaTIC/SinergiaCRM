@@ -48,7 +48,35 @@ class stic_BookingsViewEdit extends ViewEdit
             if ($_REQUEST['allDay'] == "true") {
                 $this->bean->all_day = true;
             }
-        } 
+        } else {
+            // If all_day is checked then remove the hours and minutes
+            // and apply timezone to the dates
+            if (isset($this->bean->all_day) && $this->bean->all_day == '1') {
+                $startDate = explode(' ', $this->bean->fetched_row['start_date']);
+                if ($startDate[1] > "12:00") {
+                    $startDate = new DateTime($startDate[0]);
+                    $startDate = $startDate->modify("next day");
+                    $startDateDate = $timedate->asUserDate($startDate, false, $current_user);
+                    $this->bean->start_date = $startDateDate . ' 00:00';
+                } else {
+                    $startDate = new DateTime($startDate[0]);
+                    $startDate = $timedate->asUserDate($startDate, false, $current_user);
+                    $this->bean->start_date = $startDate . ' 00:00';
+                }
+
+                $endDate = explode(' ', $this->bean->fetched_row['end_date']);
+                if ($endDate[1] > "12:00") {
+                    $endDate = new DateTime($endDate[0]);
+                    $endDate = $endDate->modify("next day");
+                    $endDate = $timedate->asUserDate($endDate, false, $current_user);
+                    $this->bean->end_date = $endDate . ' 00:00';
+                } else {
+                    $endDate = new DateTime($endDate[0]);
+                    $endDate = $timedate->asUserDate($endDate, false, $current_user);
+                    $this->bean->end_date = $endDate . ' 00:00';
+                }
+            }
+        }
 
         parent::preDisplay();
 
@@ -68,8 +96,41 @@ class stic_BookingsViewEdit extends ViewEdit
         $config_resource_fields = require 'modules/stic_Bookings/configResourceFields.php';
         $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
     
+
+        global $sugar_config, $current_language, $app_list_strings, $current_user;
+
+        $repeat_intervals = array();
+        for ($i = 1; $i <= 30; $i++) {
+            $repeat_intervals[$i] = $i;
+        }
+
+        $repeat_hours = array("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23");
+
+        // Set minute interval as defined in $sugar_config
+        $m = 0;
+        $minutesInterval = 1;
+        $repeat_minutes = array('00');
+        do {
+            $m = $m + $minutesInterval;
+            $repeat_minutes[] = str_pad($m, 2, '0', STR_PAD_LEFT);
+        } while ($m < (60 - $minutesInterval));
+
+        $fdow = $current_user->get_first_day_of_week();
+        $dow = array();
+        for ($i = $fdow; $i < $fdow + 7; $i++) {
+            $day_index = $i % 7;
+            $dow[] = array("index" => $day_index, "label" => $app_list_strings['dom_cal_day_short'][$day_index + 1]);
+        }
+
+
         // Add the resources template
         $this->ev->defs['templateMeta']['form']['footerTpl'] = 'modules/stic_Bookings/tpls/EditViewFooter.tpl';
+        $this->ss->assign('REQUEST', $_REQUEST);
+        $this->ss->assign('APPLIST', $app_list_strings);
+        $this->ss->assign('repeat_intervals', $repeat_intervals);
+        $this->ss->assign('repeat_hours', $repeat_hours);
+        $this->ss->assign('repeat_minutes', $repeat_minutes);
+        $this->ss->assign('dow', $dow);
 
         $relationshipName = 'stic_resources_stic_bookings';
 

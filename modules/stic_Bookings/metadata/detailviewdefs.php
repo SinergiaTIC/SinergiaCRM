@@ -68,8 +68,7 @@ array(
                     ),
                     1 => array(
                     ),
-                ),
-                2 => array(
+                ),                2 => array(
                     0 => array(
                         'name' => 'stic_bookings_contacts_name',
                     ),
@@ -127,17 +126,10 @@ array(
                     ),
                 ),
                 8 => array(
-                    0 => array(
-                        'name' => 'total_amount',
-                        'label' => 'LBL_TOTAL_AMOUNT',
-                    ),
-                    1 => array(
-                        'name' => 'copayment_amount',
-                        'label' => 'LBL_TOTAL_COPAYMENT_AMOUNT',
-                    ),
+                    0 => 'description',
                 ),
                 9 => array(
-                    0 => 'description',
+                    0 => 'repeat_type',
                 ),
             ),
             'lbl_detailview_panel1' => array(

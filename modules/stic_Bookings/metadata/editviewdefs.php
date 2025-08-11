@@ -111,16 +111,10 @@ array(
                     0 => 'description',
                 ),
                 8 => array(
-                    0 => array(
-                        'name' => 'total_amount',
-                        'label' => 'LBL_TOTAL_AMOUNT',
-                    ),
+                    0 => 'repeat_type',
                     1 => array(
-                        'name' => 'copayment_amount',
-                        'label' => 'LBL_TOTAL_COPAYMENT_AMOUNT',
                     ),
                 ),
-
             ),
         ),
     ),
