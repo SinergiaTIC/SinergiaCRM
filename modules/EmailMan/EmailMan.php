@@ -1060,13 +1060,18 @@ class EmailMan extends SugarBean
 
             require_once __DIR__ . '/../EmailTemplates/EmailTemplateParser.php';
 
+            // STIC-Custom 20250811 MHP - 
+            // Create the href of the link that allows the user to view the email content in the browser
+            $targetId = $this->getTargetId();
             $template_data = (new EmailTemplateParser(
                 $this->current_emailtemplate,
                 $this->current_campaign,
                 $module,
                 $sugar_config['site_url'],
-                $this->getTargetId()
+                $targetId
             ))->parseVariables();
+            $renderTemplateLink = $sugar_config['site_url'] . '/index.php?entryPoint=renderEmailTemplate&emailMarketingId=' . $this->marketing_id . '&module=' . $module->module_dir . '&recordId=' . $module->id . '&targetId=' .  $targetId . '&trackingURL=' . $this->tracking_url;
+            // END STIC-Custom
 
             //add email address to this list.
             $macro_nv['sugar_to_email_address'] = $module->email1;
@@ -1099,6 +1104,10 @@ class EmailMan extends SugarBean
                 $this->description_html = '';
                 $mail->IsHTML(false);
                 $mail->Body = $template_data['body'];
+                // STIC-Custom 20250811 MHP - 
+                // Add the text and link that allows the user to view the email content in the browser.
+                $mail->Body .= "\n\n{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1']} {$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2']} " . $renderTemplateLink;
+                // END STIC-Custom       
             } else {
                 $mail->Body = wordwrap($template_data['body_html'], 900);
                 //BEGIN:this code will trigger for only campaigns pending before upgrade to 4.2.0.
@@ -1131,6 +1140,10 @@ class EmailMan extends SugarBean
                 if ($this->has_optout_links == false) {
                     $mail->AltBody .= "\n\n\n{$mod_strings['TXT_REMOVE_ME_ALT']} " . $this->tracking_url . "index.php?entryPoint=removeme&identifier={$this->getTargetId()}";
                 }
+                // STIC-Custom 20250811 MHP - 
+                // Add the text and link that allows the user to view the email content in the browser.
+                $mail->Body .= "<br /><span style='font-size:0.8em'>{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1']} <a href='".$renderTemplateLink . "'>{$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2']}</a></span>";
+                // END STIC-Custom                 
             }
 
             // cn: bug 4684, handle attachments in email templates.

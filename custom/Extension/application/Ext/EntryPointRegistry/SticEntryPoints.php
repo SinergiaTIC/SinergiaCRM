@@ -45,3 +45,6 @@ $entry_point_registry['sticCustomCSS'] = array('file' => 'SticInclude/SticCustom
 // Overrides Removeme from Campaing in order to get confirmation
 $entry_point_registry['removemeConfirmed'] = $entry_point_registry['removeme'];
 $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/ConfirmRemoveMe.php', 'auth' => false);
+
+// Render Email Template
+$entry_point_registry['renderEmailTemplate'] = array('file' => 'custom/modules/EmailTemplates/RenderEmailTemplate.php', 'auth' => false);
