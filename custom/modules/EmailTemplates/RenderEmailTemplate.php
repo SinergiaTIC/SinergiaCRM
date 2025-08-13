@@ -25,20 +25,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $GLOBALS['log']->debug('Entrypoint File: RenderEmailTemplate.php: Generating the HTML of an email template.');
+$modStrings = return_module_language($current_language, 'EmailTemplates');
 
 // Validate if the email marketing ID parameter has been indicated
 if (empty($_REQUEST['emailMarketingId'])) {
-    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": You must provide the required parameter: Email Marketing ID.");
-    die("You must provide the required parameters. Contact the administrator or the support team.");
+    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $modStrings['ERROR_NO_EMAIL_MARKETING_ID']);
+    die($modStrings['ERROR_NO_EMAIL_MARKETING_ID']);
 }
 
 // Get the email marketing indicated as a parameter
 $emailMarketing = BeanFactory::getBean('EmailMarketing', $_REQUEST['emailMarketingId']);
 
 // Validate if the ID matches any CRM record
-if (empty($emailMarketing)) {
-    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": The indicated marketing email must have a related email template.");
-    die("The indicated email marketing Id does not match any record in the CRM.");
+if (empty($emailMarketing->id)) {
+    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  " . $modStrings['ERROR_NO_EMAIL_MARKETING']);
+    die($modStrings['ERROR_NO_EMAIL_MARKETING']);
 }
 
 // Get the campaign related to the marketing email
@@ -53,8 +54,8 @@ if (!empty($emailMarketing->template_id)) {
 
 // Validate if the marketing email had an associated email template and campaign
 if (empty($campaign) || empty($emailTemplate)) {
-    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": The indicated marketing email must have a related email template.");
-    die("The indicated marketing email must have a related campaign and related email template.");
+    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $modStrings['ERROR_NO_EMAIL_TEMPLATE_OR_NO_CAMPAIGN']);
+    die($modStrings['ERROR_NO_EMAIL_TEMPLATE_OR_NO_CAMPAIGN']);
 }
 
 // Get objects related with optional parameters
