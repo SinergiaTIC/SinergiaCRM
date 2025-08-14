@@ -238,7 +238,6 @@
 
         function initializeConsolidatedSummary() {
             if (!consolidatedSummaryData || consolidatedSummaryData.length === 0) {
-                console.log('No hay datos de resumen para mostrar');
                 return;
             }
             
@@ -266,18 +265,9 @@
             const endIndex = startIndex + pageSize;
             const pageRecords = records.slice(startIndex, endIndex);
             pageRecords.forEach(record => {
+
                 const recordRow = document.createElement('div');
                 recordRow.className = 'record-row';
-                
-                const startDateSpan = document.createElement('span');
-                startDateSpan.className = 'row';
-                startDateSpan.textContent = formatDate(record.startDate) || '';
-                recordRow.appendChild(startDateSpan);
-                
-                const endDateSpan = document.createElement('span');
-                endDateSpan.className = 'row';
-                endDateSpan.textContent = formatDate(record.endDate) || '';
-                recordRow.appendChild(endDateSpan);
 
                 const bookingSpan = document.createElement('span');
                 bookingSpan.className = 'row';
@@ -291,6 +281,17 @@
                     bookingSpan.textContent = record.bookingName;
                 }
                 recordRow.appendChild(bookingSpan);
+
+                const startDateSpan = document.createElement('span');
+                startDateSpan.className = 'row';
+                startDateSpan.textContent = formatDate(record.startDate) || '';
+                recordRow.appendChild(startDateSpan);
+                
+                const endDateSpan = document.createElement('span');
+                endDateSpan.className = 'row';
+                endDateSpan.textContent = formatDate(record.endDate) || '';
+                recordRow.appendChild(endDateSpan);
+
                                 
                 const requestedResourcesSpan = document.createElement('span');
                 requestedResourcesSpan.className = 'row';

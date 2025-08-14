@@ -56,15 +56,27 @@ class stic_BookingsUtils
         $parentType = $_REQUEST['parent_type'] ?? '';
         $bookingId = $_REQUEST['record'] ?? '0';
 
-        // Format dates and calculate duration
         $until = str_replace('/', '-', $until);
         $until = date('Y-m-d H:i:s', strtotime($until));
-        $startDay = str_replace('/', '-', $startDay);
-        $startDay = date('Y-m-d H:i:s', strtotime($startDay));
-        $finalDay = str_replace('/', '-', $finalDay);
-        $finalDay = date('Y-m-d H:i:s', strtotime($finalDay));
+        
+        // startDay y finalDay según all_day
+        if (!empty($all_day) && $all_day == 1) {
+            $startDay = str_replace('/', '-', $startDay);
+            $startDay = date('Y-m-d 00:00:00', strtotime($startDay));
+        
+            $finalDay = str_replace('/', '-', $finalDay);
+            $finalDay = date('Y-m-d 23:59:59', strtotime($finalDay));
+        } else {
+            $startDay = str_replace('/', '-', $startDay);
+            $startDay = date('Y-m-d H:i:s', strtotime($startDay));
+        
+            $finalDay = str_replace('/', '-', $finalDay);
+            $finalDay = date('Y-m-d H:i:s', strtotime($finalDay));
+        }
+        
+        // Calcular duración
         $duration = strtotime($finalDay) - strtotime($startDay);
-
+        
         // Calculate recurring dates
         $date = [];
         if ($repeat_type == '') {
@@ -307,6 +319,7 @@ class stic_BookingsUtils
             }
         }
 
+        // Nueva estructura para resources - por cada recurso individual
         $summary['resources'] = array();
         foreach ($resourceIds as $resourceId) {
             $summary['resources'][$resourceId] = array(
@@ -320,34 +333,39 @@ class stic_BookingsUtils
         }
 
         $all_booking_attempts = array();
+        $controller = new stic_BookingsController();
 
         // Create booking records
         for ($i = 0; $i < $counter; $i++) {
             $summary['global']['totalRecordsProcessed']++;
 
-            if ($finalDay != '') {
-                $finalDay = strtotime($aux[$i]) + $duration;
-                $finalDay = date('Y-m-d H:i:s', $finalDay);
-            }
+            // Se calcula la fecha final de cada reserva periódica
+            $current_endDate = date('Y-m-d H:i:s', strtotime($aux[$i]) + $duration);
 
             // Check availability for each resource individually
             $resourceAvailability = array();
+            $allResourcesAvailable = true;
+
             foreach ($resourceIds as $resourceId) {
-                $controller = new stic_BookingsController();
-                $availability = $controller->checkResourceAvailability($resourceId, $aux[$i], $finalDay, $bookingId);
+                // Se pasa la fecha de inicio y final calculadas para esta iteración
+                $availability = $controller->checkResourceAvailability($resourceId, $aux[$i], $current_endDate, $bookingId);
                 $resourceAvailability[$resourceId] = $availability['resources_allowed'];
-                
-                // Update processed count for each resource
-                $summary['resources'][$resourceId]['numRecordsProcessed']++;
+
+                if (!$availability['resources_allowed']) {
+                    $allResourcesAvailable = false;
+                    break;
+                }
             }
 
-            // Check if ALL resources are available
-            $allResourcesAvailable = !in_array(false, $resourceAvailability);
+            // Update processed count for each resource
+            foreach ($resourceIds as $resourceId) {
+                $summary['resources'][$resourceId]['numRecordsProcessed']++;
+            }
 
             // Prepare date information for both created and not created records
             $startDate = $timedate->fromDbFormat($aux[$i], TimeDate::DB_DATETIME_FORMAT);
             $startDate = $timedate->asUser($startDate, $current_user);
-            $endDateObj = $timedate->fromDbFormat($finalDay, TimeDate::DB_DATETIME_FORMAT);
+            $endDateObj = $timedate->fromDbFormat($current_endDate, TimeDate::DB_DATETIME_FORMAT);
             $endDateDisplay = $timedate->asUser($endDateObj, $current_user);
 
             if ($allResourcesAvailable) {
@@ -380,7 +398,7 @@ class stic_BookingsUtils
                 }
 
                 $bookingBean->start_date = $aux[$i];
-                $bookingBean->end_date = $finalDay;
+                $bookingBean->end_date = $current_endDate;
                 $bookingBean->all_day = $all_day;
                 $bookingBean->status = $status;
                 $bookingBean->repeat_type = $repeat_type;
