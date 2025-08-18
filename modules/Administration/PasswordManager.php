@@ -214,4 +214,8 @@ $sugar_smarty->assign("TMPL_DRPDWN_LOST", $TMPL_DRPDWN_LOST);
 $sugar_smarty->assign("TMPL_DRPDWN_GENERATE", $TMPL_DRPDWN_GENERATE);
 $sugar_smarty->assign("TMPL_DRPDWN_FACTOR", $TMPL_DRPDWN_FACTOR);
 
+require('include/utils/authentication_oauth_providers_utils.php');
+$sugar_smarty->assign("OAUTH_AUTHENTICATION_PROVIDERS", displayAdminAuthenticationOAuthProviders());
+
+
 $sugar_smarty->display('modules/Administration/PasswordManager.tpl');

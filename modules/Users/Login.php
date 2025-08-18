@@ -164,7 +164,7 @@ $sugar_smarty->assign('CAPTCHA', displayRecaptcha());
 
 // External Login Providers
 require_once __DIR__.'/../../include/utils/authentication_oauth_providers_utils.php';
-$sugar_smarty->assign('LOGIN_PROVIDERS', displayAuthenticateOAuthProviders());
+$sugar_smarty->assign('OAUTH_AUTHENTICATION', displayAuthenticationOAuthAuthentication());
 
 if (file_exists('custom/themes/' . SugarThemeRegistry::current() . '/login.tpl')) {
     $sugar_smarty->display('custom/themes/' . SugarThemeRegistry::current() . '/login.tpl');

@@ -89,68 +89,66 @@ class OAuthAuthenticate extends SugarAuthenticate
 
     }
 
-    public static function getEnabledOAuthProviders () 
-    {
-        global $sugar_config;
-
-        $providers = [];
-        if (isset($sugar_config['authentication_oauth_providers']) && is_array($sugar_config['authentication_oauth_providers'])) {
-            foreach ($sugar_config['authentication_oauth_providers'] as $provider => $settings) {
-                if (isset($settings['enabled']) && $settings['enabled'] == true) {
-                    $providers[] = $provider;
-                }
-            }
-        }
-        return $providers;
-    }
-
     public function getLoginParams()
     {
+        $utilsClass = $this->utilsClass;
+        if ($utilsClass) {
+            return $utilsClass::getLoginParams($this->getSettingsProvider());
+        }
+        return [];
+    }
+
+    protected function getSettingsProvider() {
         global $sugar_config;
         $provider = $this->provider;
-        if ($sugar_config['authentication_oauth_providers'] ?? false) {
-            $oauthProviders = $sugar_config['authentication_oauth_providers'];
-            if (isset($oauthProviders[$provider]) && $oauthProviders[$provider]['enabled'] == true) {
-                $utilsClass = $this->utilsClass;
-                if ($utilsClass) {
-                    return $utilsClass::getLoginParams($sugar_config['authentication_oauth_providers'][$provider]);
-                }
-                return [];
+        if ($sugar_config['authenticationOauthProviders'] ?? false) {
+            $oauthProviders = $sugar_config['authenticationOauthProviders'];
+            if (isset($oauthProviders[$provider]) && isset($oauthProviders[$provider]['enabled']) && ($oauthProviders[$provider]['enabled'] == true || $oauthProviders[$provider]['enabled'] == 'on')) {
+                return $sugar_config['authenticationOauthProviders'][$provider];
             }
         }
         return [];
     }
 
+    public function getAdminTemplate(&$ss) {
+        global $current_language;
+        $provider = $this->provider;
+
+        $templateFile = get_custom_file_if_exists('modules/Users/authentication/OAuthAuthenticate/Providers/' . $provider . '/' .$provider.'AdminTemplate.tpl');
+
+        if (file_exists((string)$templateFile)) {
+            $GLOBALS['log']->info("Found template: {$templateFile}\n");
+            $ss->assign('OAUTH_LANG', return_module_language($current_language, 'Users'));
+            $ss->assign('OAUTH_CONFIG', $this->utilsClass::getAdminParams($this->getSettingsProvider()));
+            return $ss->fetch($templateFile);
+        } else {
+            $GLOBALS['log']->info("WARNING: Template file not found at {$templateFile}\n");
+        }
+    }
+
     public function getLoginTemplate(&$ss)
     {
-        $utilsClass = $this->utilsClass;
-        if ($utilsClass) {
-            return $utilsClass::getLoginTemplate($ss);
+        global $current_language;
+        $provider = $this->provider;
+        $loginTemplate = get_custom_file_if_exists('modules/Users/authentication/OAuthAuthenticate/Providers/'.$provider.'/'.$provider.'LoginTemplate.tpl');
+        if (file_exists((string) $loginTemplate)) {
+            $ss->assign('OAUTH_PARAMS', json_encode($this->getLoginParams()));
+            $ss->assign('OAUTH_LANG', return_module_language($current_language, 'Users'));
+            return $ss->fetch($loginTemplate);
+        } else {
+            return '';
         }
-        return '';
     }
 
     public function loginAuthenticate($username, $password, $fallback=false, $PARAMS = array())
     {
-        global $mod_strings, $sugar_config;
+        global $mod_strings;
         unset($_SESSION['login_error']);
         unset($_REQUEST['login_token']);
 
-        if (isset($_REQUEST['oauth_provider'])) {
-            switch ($_REQUEST['oauth_provider']) {
-                case 'Google':
-                    $this->provider = 'Google';
-                    break;
-                case 'facebook':
-                    $this->provider = 'Facebook';
-                    break;
-                case 'twitter':
-                    $this->provider = 'Twitter';
-                    break;
-                default:
-                    $_SESSION['login_error'] = $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_PROVIDER'];
-                    return false;
-            }
+        if (isset($_REQUEST['oauth_provider']) && !empty($_REQUEST['oauth_provider'])) {
+            $this->provider = $_REQUEST['oauth_provider'];
+
             $this->__construct($this->provider);
             $payload = $this->utilsClass::verifyToken();
 
@@ -160,10 +158,8 @@ class OAuthAuthenticate extends SugarAuthenticate
                 $userBean = BeanFactory::newBean('Users');
 	            $userBean->retrieve_by_email_address($payload['email']);
 
-                $result = array('code' => 0);
-	
                 if(empty($userBean->id)) {
-                    $_SESSION['login_error'] = $mod_strings['LBL_GOOGLE_AUTH_ERR_INVALID_EMAIL_1'] . $email . $mod_strings['LBL_GOOGLE_AUTH_ERR_INVALID_EMAIL_2'];
+                    $_SESSION['login_error'] = $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] . $email . $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'];
                     return false;
                 }
                 $this->userAuthenticate->loadUserOnSession($userBean->id);
@@ -171,7 +167,7 @@ class OAuthAuthenticate extends SugarAuthenticate
 	            $this->postLoginAuthenticate();
 
             } else {
-                $_SESSION['login_error'] = $mod_strings['LBL_GOOGLE_AUTH_ERR_INVALID_TOKEN'];
+                $_SESSION['login_error'] = $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_TOKEN'];
                 return false;
             }
         } else {

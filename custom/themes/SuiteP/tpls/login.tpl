@@ -120,7 +120,7 @@
                  onclick='toggleDisplay("forgot_password_dialog");'>
                 <a href='javascript:void(0)'>{sugar_translate module="Users" label="LBL_LOGIN_FORGOT_PASSWORD"}</a>
             </div>
-            {$LOGIN_PROVIDERS}
+            {$OAUTH_AUTHENTICATION}
         </form>
         
         <form class="form-signin passform" role="form" action="index.php" method="post" name="DetailView" name="fp_form" id="fp_form" autocomplete="off">

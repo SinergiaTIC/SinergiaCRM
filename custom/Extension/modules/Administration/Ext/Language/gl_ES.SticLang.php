@@ -97,3 +97,6 @@ $mod_strings['LBL_TRACKERS_TITLE'] = 'Monitorización';
 $mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Registro de las sesiones de usuario y de las acciones sobre registros.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Accións de Administración';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de correo que se enviará ao crear un usuario.';
+
+// OAuth authentication
+$mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth Authentication';

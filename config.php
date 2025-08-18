@@ -655,27 +655,19 @@ $sugar_config = array(
 
     // STIC-Custom 20250808 - AAM Adding Oauth Signin
     // PR
-    'authentication_oauth_show_basic' => false,
-    'authentication_oauth_providers' => array(
+    'authenticationOauthProviders' => array(
         'Google' => array(
             'enabled' => false,
-            'auth_client_id' => '',
-            'auth_client_secret' => '',
-            'auth_redirect_uri' => '',
-            'auth_scopes' => array(
-                'https://www.googleapis.com/auth/userinfo.email',
-                'https://www.googleapis.com/auth/userinfo.profile',
-            ),
-            'auth_grant_type' => 'authorization_code',
-            'auth_response_type' => 'code',
-            'auth_access_type' => 'offline',
-            'auth_prompt' => 'select_account',
-            'auth_include_granted_scopes' => true,
-            'auth_form_only' => false,
-            'auth_only_form' => true,
+            'clientId' => '',
+            'clientSecret' => '',
+            'scopes' => '',
         ),
         'Microsoft' => array(
-            
+            'enabled' => false,
+            'clientId' => '',
+            'tenantId' => '',
+            'scopes' => '',
+            'redirectUri' => '',
         ),
     ),
     // END STIC

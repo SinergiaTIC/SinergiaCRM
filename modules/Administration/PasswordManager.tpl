@@ -518,6 +518,19 @@
             </tr>
          </table>
          <!-- end SAML -->
+		 
+					</td>
+				</tr>
+			</table>
+			<table id = 'oauth_table' width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
+				<tr>
+					<td>
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<th align="left" scope="row" colspan='3'><h4>{$MOD.LBL_OAUTH_AUTHENTICATION_TITLE}</h4></th>
+							</tr>
+							{$OAUTH_AUTHENTICATION_PROVIDERS}
+						</table>
 					</td>
 				</tr>
 			</table>
