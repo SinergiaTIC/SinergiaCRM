@@ -37,11 +37,23 @@ class stic_BookingsViewBookingsAssistantSummary extends SugarView
         SticViews::display($this);
         
         global $sugar_config;
-        $this->ss->assign('DATA', $_SESSION['summary']['global']);
-        $this->ss->assign('CONSOLIDATED_SUMMARY', json_encode($_SESSION['consolidated_summary']));
-        $this->ss->assign('RECORDS_PER_PAGE', $sugar_config['list_max_entries_per_page']);
-        $this->ss->display('modules/stic_Bookings/tpls/bookingsAssistantSummary.tpl'); //call tpl file
+
+        // AÑADIR esta comprobación antes de asignar los datos a la plantilla
+        if (isset($_SESSION['summary']) && isset($_SESSION['consolidated_summary'])) {
+            $this->ss->assign('DATA', $_SESSION['summary']['global']);
+            $this->ss->assign('CONSOLIDATED_SUMMARY', json_encode($_SESSION['consolidated_summary']));
+        } else {
+            // En caso de que no existan, asignar valores por defecto para evitar el error
+            $this->ss->assign('DATA', ['totalRecordsProcessed' => 0, 'totalRecordsCreated' => 0, 'totalRecordsNotCreated' => 0]);
+            $this->ss->assign('CONSOLIDATED_SUMMARY', json_encode([]));
+        }
         
-        unset($_SESSION['summary']);
+        $this->ss->assign('RECORDS_PER_PAGE', $sugar_config['list_max_entries_per_page']);
+        $this->ss->display('modules/stic_Bookings/tpls/bookingsAssistantSummary.tpl');
+        
+        // Si la página se carga de nuevo después de la confirmación o si la variable ya no es necesaria, se puede eliminar.
+        // Sin embargo, si quieres que el resumen se siga mostrando, no la elimines aquí.
+        // unset($_SESSION['summary']); 
     }
+
 }

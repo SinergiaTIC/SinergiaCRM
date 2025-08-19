@@ -174,7 +174,7 @@
                     <span class='row'>Booking</span>
                     <span class='row'>{$MOD.LBL_START_DATE}</span>
                     <span class='row'>{$MOD.LBL_END_DATE}</span>
-                    <span class='row'>Recursos Solicitados</span>
+                    <span class='row'>{$MOD.LBL_RESOURCES}</span>
                 </div>
                 <div id="createdRecordsList">
                     </div>
@@ -197,11 +197,11 @@
                 <span>{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT2}</span>
                 <br /><br />
                 
-                <div style="font-weight:bold"> 
+                <div style="font-weight:bold">                    
+                    <span class='row'>{$MOD.LBL_UNAVAILABLE_RESOURCES}</span>
                     <span class='row'>{$MOD.LBL_START_DATE}</span>
                     <span class='row'>{$MOD.LBL_END_DATE}</span>
-                    <span class='row'>Recursos Solicitados</span>
-                    <span class='row'>{$MOD.LBL_UNAVAILABLE_RESOURCES}</span>
+                    <span class='row'>{$MOD.LBL_RESOURCES}</span>
                 </div>
                 <div id="notCreatedRecordsList">
                     </div>
@@ -210,6 +210,17 @@
                 </div>
         </div>
     </div>
+</div>
+
+<div style="display: flex; gap: 1em; margin-bottom: 2em;">
+    <form action="index.php?module=stic_Bookings&action=confirmPeriodicBookings" method="POST" style="margin: 0;">
+        <input type="hidden" name="confirm" value="1">
+        <button type="submit" class="button">{$MOD.LNK_CREATE_PERIODIC_RECORDS}</button>
+    </form>
+
+    <a href="index.php?module=stic_Bookings&action=EditView&return_module=stic_Bookings&return_action=DetailView">
+        <button type="button" class="button">{$MOD.LBL_CANCEL_BUTTON}</button>
+    </a>
 </div>
 
 <br /><br />    
@@ -319,7 +330,12 @@
             pageRecords.forEach(record => {
                 const recordRow = document.createElement('div');
                 recordRow.className = 'record-row';
-                
+
+                const unavailableSpan = document.createElement('span');
+                unavailableSpan.className = 'row unavailable-resources';
+                unavailableSpan.textContent = formatUnavailableResources(record.unavailableResources);
+                recordRow.appendChild(unavailableSpan);
+
                 const startDateSpan = document.createElement('span');
                 startDateSpan.className = 'row';
                 startDateSpan.textContent = formatDate(record.startDate) || '';
@@ -335,19 +351,11 @@
                 requestedResourcesSpan.textContent = record.allRequestedResources.join(', ');
                 recordRow.appendChild(requestedResourcesSpan);
 
-                // Recursos no disponibles
-                const unavailableSpan = document.createElement('span');
-                unavailableSpan.className = 'row unavailable-resources';
-                unavailableSpan.textContent = formatUnavailableResources(record.unavailableResources);
-                recordRow.appendChild(unavailableSpan);
-                
                 recordsList.appendChild(recordRow);
             });
-            // Renderizar paginación
             renderPagination('notCreated', page, records.length);
         }
 
-        // Crear la paginación
         function renderPagination(type, currentPageNum, totalRecords) {
             const paginationContainer = document.getElementById(type + 'Pagination');
             paginationContainer.innerHTML = '';

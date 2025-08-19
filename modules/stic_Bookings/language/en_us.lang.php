@@ -138,12 +138,13 @@ $mod_strings = array(
     'LBL_SAVE_BUTTON' => 'Save',
     'LBL_TIME_START' => '1st record final date and hour',
     'LBL_TIME_FINAL' => '1st record start date and hour',
+    'LBL_UNAVAILABLE_RESOURCES' => 'Unavailable resources',
     'LBL_ERROR_IN_VALIDATION' => 'Error in the value indicated in the End date and time field.',
     'LBL_END_DATE_ERROR' => 'The end date and time must be later than the start date and time.',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Summary:',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE_BY_RESOURCE' => 'Summary by resource',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Number of records to create',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_CREATED' => 'Number of records created',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Number of records processed',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_CREATED' => 'Number of records to create',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED' => 'Number of records not created',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'List of records not created',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'Records have not been created due to overlapping with some other existing records of incompatible types.',
@@ -151,7 +152,7 @@ $mod_strings = array(
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Go to Booking calendar',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => 'Go to Places calendar',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Go to Bookings',
-
+    
     // Additional details
     'LBL_RESOURCE_NAME' => 'Resource',
     'LBL_RESOURCE_COUNT' => 'Total Resources',

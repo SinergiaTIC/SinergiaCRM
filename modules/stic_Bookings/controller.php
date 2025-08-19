@@ -476,19 +476,23 @@ class stic_BookingsController extends SugarController
         
         return " AND (" . implode(" OR ", $filters) . ")";
     }
+
     public function action_save() {
-        // Check if this is a periodic booking submission
         if (isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {
-            // This is a periodic booking submission
+            // Change: Instead of creating the records, prepare the data and store it in a session variable
             require_once 'modules/stic_Bookings/Utils.php';
-            stic_BookingsUtils::createPeriodicBookingsRecords();
-            return; // The Utils method will handle redirection
+            // This new function will prepare the data without saving it
+            stic_BookingsUtils::preparePeriodicBookingsForConfirmation(); 
+            
+            // Redirect to the summary view for confirmation
+            header("Location: index.php?module=stic_Bookings&action=bookingsAssistantSummary");
+            exit(); 
         } else {
             // Regular booking save - use parent method
             parent::action_save();
         }
     }
-    
+        
     
     /**
      * Renders the summary view with the results of the periodic creation of work calendar records
@@ -498,5 +502,23 @@ class stic_BookingsController extends SugarController
         $this->view = "bookingsassistantsummary";
     }
 
+    public function action_confirmPeriodicBookings() {
+        if (isset($_SESSION['bookings_to_confirm']) && !empty($_SESSION['bookings_to_confirm'])) {
+            // Llama a la función de guardado
+            require_once 'modules/stic_Bookings/Utils.php';
+            
+            // La función de guardado debería devolver el resumen final o actualizarlo en la sesión
+            $final_summary = stic_BookingsUtils::savePeriodicBookingsFromConfirmation(); 
+            
+            // Actualizar la sesión con el resumen final si es necesario
+            // $_SESSION['summary'] = $final_summary; 
+            
+            // Limpiar la variable de confirmación
+            unset($_SESSION['bookings_to_confirm']);
+        }
+        header("Location: index.php?module=stic_Bookings&action=index");
+        exit();
+    }
+    
 
 }
