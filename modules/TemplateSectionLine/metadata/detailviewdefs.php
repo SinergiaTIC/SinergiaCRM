@@ -62,7 +62,7 @@ array(
           ),
         ),
         3 => array(
-          0 => 'description',
+          0 => 'htmlcode_c',
         ),
         4 => array(
           0 => array (

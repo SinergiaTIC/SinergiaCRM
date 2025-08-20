@@ -55,6 +55,7 @@ $mod_strings['LNK_LIST'] = 'View Template Section Lines';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Search Template Section Lines';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
 
+$mod_strings['LBL_HTMLCODE'] = 'HTML Code';
 $mod_strings['LBL_THUMBNAIL_IMAGE'] = 'Thumbnail image';
 $mod_strings['LBL_THUMBNAIL_IMAGE_HELP'] = 'This image will be displayed in the thumbnail image list in the left sidebar of the Mozaik text editor. You can upload a user-created image or create one automatically via the Create Image button with the content of the Thumbnail Short Name field. If creating the image manually, the following properties are recommended: Format: PNG or JPG, Height: 50px and Width: 225px.';
 $mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_BUTTON'] = 'Create an image with the value of the field: Thumbnail short name.';

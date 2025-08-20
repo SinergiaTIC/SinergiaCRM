@@ -68,6 +68,36 @@ $dictionary["TemplateSectionLine"]['fields']['assigned_user_link'] = array (
     'table' => 'users',
 );
 
+$dictionary["TemplateSectionLine"]['fields']['htmlcode_c'] = array (
+  'required' => false,
+  'source' => 'custom_fields',
+  'name' => 'htmlcode_c',
+  'vname' => 'LBL_HTMLCODE',
+  'type' => 'wysiwyg',
+  'dbType' => 'text',  
+  'massupdate' => '0',
+  'default' => NULL,
+  'no_default' => false,
+  'comments' => '',
+  'help' => '',
+  'importable' => 'true',
+  'duplicate_merge' => 'disabled',
+  'duplicate_merge_dom_value' => '0',
+  'audited' => false,
+  'inline_edit' => true,
+  'reportable' => true,
+  'unified_search' => false,
+  'merge_filter' => 'disabled',
+  'len' => '255',
+  'size' => '20',
+  'editorOptions' => array(
+    'height' => 500,
+  ),
+  'studio' => 'visible',  
+  'id' => 'TemplateSectionLinehtmlcode_c',
+  'custom_module' => 'TemplateSectionLine',  
+);
+
 $dictionary["TemplateSectionLine"]['fields']['thumbnail_image_c'] = array (
   'required' => false,
   'source' => 'custom_fields',

@@ -55,6 +55,7 @@ $mod_strings['LNK_LIST'] = 'Ver Líneas de sección de plantilla';
 $mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Buscar Líneas de sección de plantilla';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
 
+$mod_strings['LBL_HTMLCODE'] = 'Código HTML';
 $mod_strings['LBL_THUMBNAIL_IMAGE'] = 'Imagen de miniatura';
 $mod_strings['LBL_THUMBNAIL_IMAGE_HELP'] = 'Esta imagen será mostrada en el listado de imágenes de miniaturas del menu lateral izquierdo del editor de texto Mozaik. Se puede subir una imagen creada por el usuario o crear una automáticamente a través del botón de Crear Imagen con el contenido del campo Nombre corto para miniatura. En caso de crear la imagen manualmente se recomiendan las siguientes propiedades: Formato: PNG o JPG,  Alto: 50px y Ancho: 225px.';
 $mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_BUTTON'] = 'Crear una imagen con el valor del campo: Nombre corto de miniatura.';
