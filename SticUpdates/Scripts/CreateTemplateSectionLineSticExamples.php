@@ -125,7 +125,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/01_ImagenDeCabecera_225px.png', '', 1, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/01_ImagenDeCabecera_225px.png', '', 1, '1');
         SQL
         ,
         <<<SQL
@@ -137,7 +137,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/02_Logo_225px.png', '', 2, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/02_Logo_225px.png', '', 2, '1');
         SQL
         ,
         <<<SQL
@@ -151,7 +151,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/03_Encabezado_H1_225px.png', '', 3, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/03_Encabezado_H1_225px.png', '', 3, '1');
         SQL
         ,
         <<<SQL
@@ -163,7 +163,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/04_Encabezado_H3_225px.png', '', 4, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/04_Encabezado_H3_225px.png', '', 4, '1');
         SQL
         ,
         <<<SQL
@@ -177,7 +177,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/05_Texto.png', '', 5, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/05_Texto.png', '', 5, '1');
         SQL
         ,
         <<<SQL
@@ -191,7 +191,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/06_Commentario_225px.png', '', 6, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/06_Commentario_225px.png', '', 6, '1');
         SQL
         ,
         <<<SQL
@@ -203,7 +203,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/07_Aviso_225px.png', '', 7, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/07_Aviso_225px.png', '', 7, '1');
         SQL
         ,
         <<<SQL
@@ -215,7 +215,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/08_Video_225px.png', '', 8, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/08_Video_225px.png', '', 8, '1');
         SQL
         ,
         <<<SQL
@@ -227,7 +227,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/09_Boton_225px.png', '', 9, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/09_Boton_225px.png', '', 9, '1');
         SQL
         ,
         <<<SQL
@@ -235,7 +235,7 @@ if ($db instanceof DBManager)
         <br /><br />
             <hr />
         <br /><br />
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/10_Separador_225px.png', '', 10, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/10_Separador_225px.png', '', 10, '1');
         SQL
         ,
         <<<SQL
@@ -254,7 +254,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/11_Pie_Redes_Sociales_225px.png', '', 11, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/11_Pie_Redes_Sociales_225px.png', '', 11, '1');
         SQL
         ,
         <<<SQL
@@ -266,7 +266,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/12_Pie_Texto_Baja_225px.png', '', 12, NULL, NULL, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/12_Pie_Texto_Baja_225px.png', '', 12, '1');
         SQL
     );
 
