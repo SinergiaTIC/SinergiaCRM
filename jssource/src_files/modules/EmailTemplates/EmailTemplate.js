@@ -435,12 +435,7 @@ function EmailTrackerController(action, campaignId) {
 		if(!trackerURL) {
 			errors.push({field: 'tracker_url', message: SUGAR.language.translate('Campaigns', 'ERR_REQUIRED_TRACKER_URL')});
 		}
-		// STIC-Custom 20250423 MHP - 
-		// Avoid running hideFieldErrorMessages() in the edit view of an email template
-		if (!document.forms.EditView || document.forms.EditView.module.value != 'EmailTemplates') {
-			hideFieldErrorMessages();
-		}
-		// END STIC-Custom
+		hideFieldErrorMessages();
 		window.parent.$('.ui-dialog-content:visible').dialog('close');
 
 		$.post('index.php?entryPoint=campaignTrackerSave', {
@@ -460,12 +455,7 @@ function EmailTrackerController(action, campaignId) {
 				$('select[name="tracker_url"]').val('{' + trackerName + '}');
 				$('#url_text').val('{' + trackerName + '}');
 			}
-			// STIC-Custom 20250423 MHP - 
-			// Avoid running hideFieldErrorMessages() in the edit view of an email template
-			if (!document.forms.EditView || document.forms.EditView.module.value != 'EmailTemplates') {
-				setTrackerUrlSelectVisibility();
-			}
-			// END STIC-Custom
+			setTrackerUrlSelectVisibility();
 		});
 	}
 
@@ -547,7 +537,7 @@ function EmailTrackerController(action, campaignId) {
 						create();
 
 						// Change the link href in the message text
-						fullHtml = fullHtml.replace(url, "{" + linkName + "}");
+						fullHtml = fullHtml.replaceAll(url, "{" + linkName + "}");
 					}
 				});
 				// Save the content with the modified links in the HTML editor
