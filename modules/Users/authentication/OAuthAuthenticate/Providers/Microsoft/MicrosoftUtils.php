@@ -16,7 +16,7 @@ class MicrosoftUtils
             'enabled' => $providerSettings['enabled'] ?? false,
             'clientId' => $providerSettings['clientId'] ?? '',
             'tenantId' => $providerSettings['tenantId'] ?? '',
-            'scopes' => $providerSettings['scopes'] ?? 'openid profile email User.Read',
+            'scopes' => $providerSettings['scopes'] ?: 'openid profile email User.Read',
             'redirectUri' => $providerSettings['redirectUri'] ?: $sugar_config['site_url'].'/index.php?module=Users&action=Login',
         ];
     }

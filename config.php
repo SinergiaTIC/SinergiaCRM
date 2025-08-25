@@ -653,22 +653,4 @@ $sugar_config = array(
     'tracker_prune_interval' => 90,
     // END STIC Custom
 
-    // STIC-Custom 20250808 - AAM Adding Oauth Signin
-    // PR
-    'authenticationOauthProviders' => array(
-        'Google' => array(
-            'enabled' => false,
-            'clientId' => '',
-            'clientSecret' => '',
-            'scopes' => '',
-        ),
-        'Microsoft' => array(
-            'enabled' => false,
-            'clientId' => '',
-            'tenantId' => '',
-            'scopes' => '',
-            'redirectUri' => '',
-        ),
-    ),
-    // END STIC
 );

@@ -8,7 +8,7 @@
                     </th>
                 </tr>
                 <tr>
-                    <td>{$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_ENABLE}
+                    <td width="25%" scope="row" valign='middle'>{$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_ENABLE}
                         {sugar_help text=$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP}
                     </td>
                     {if $OAUTH_CONFIG.enabled == 'true'}
@@ -22,8 +22,8 @@
                             type="checkbox" value='true' {$oauth_google_enabled_checked}>
                     </td>
                 </tr>
-                <tr>
-                    <td>{$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID}
+                <tr name='google_params'>
+                    <td class="conditional-required">{$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID}
                         {sugar_help text=$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP}
                     </td>
                     <td>
@@ -32,8 +32,8 @@
                     </td>
 
                 </tr>
-                <tr>
-                    <td>{$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET}
+                <tr name='google_params'>
+                    <td class="conditional-required">{$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET}
                         {sugar_help text=$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP}
                     </td>
                     <td>
@@ -41,16 +41,46 @@
                             value="{$OAUTH_CONFIG.clientSecret}">
                     </td>
                 </tr>
-                <tr>
-                    <td>{$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_SCOPES}
-                        {sugar_help text=$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_SCOPES_HELP}
-                    </td>
-                    <td>
-                        <input name="authenticationOauthProviders_Google_scopes" id="authenticationOauthProviders_Google_scopes" size='100' type="text"
-                            value="{$OAUTH_CONFIG.scopes}">
-                    </td>
-                </tr>
             </table>
         </td>
     </tr>
 </table>
+{literal}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    function toggleGoogleParams() {
+        const checkbox = document.getElementById("Google_enabled_checkbox");
+        const clientId = document.getElementById("authenticationOauthProviders_Google_clientId");
+        const clientSecret = document.getElementById("authenticationOauthProviders_Google_clientSecret");
+        const rows = document.querySelectorAll("tr[name='google_params']");
+
+        rows.forEach(row => {
+            if (row.contains(checkbox)) {
+                row.style.display = "";
+                return;
+            }
+
+            if (checkbox.checked) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        // addToValidate SuiteCRM aren't working in this context. So we use require HTML5 attribute
+        if (checkbox.checked) {
+            clientId.setAttribute("required", "required");
+            clientSecret.setAttribute("required", "required");
+        } else {
+            clientId.removeAttribute("required");
+            clientSecret.removeAttribute("required");
+        }
+    }
+
+    toggleGoogleParams();
+
+    document.getElementById("Google_enabled_checkbox")
+        .addEventListener("change", toggleGoogleParams);
+});
+</script>
+{/literal}

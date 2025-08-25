@@ -535,10 +535,8 @@
 					{if !empty($config.authenticationClass)
 						&& $config.authenticationClass == 'OAuthAuthenticate'}
 						{assign var='oauth_auth_enabled_checked' value='CHECKED'}
-						{assign var='oauth_auth_display' value='inline'}
 					{else}
 						{assign var='oauth_auth_enabled_checked' value=''}
-						{assign var='oauth_auth_display' value='none'}
 					{/if}
 					<td>
 						<input name="authenticationClass" id="oauth_auth_enabled" class="checkbox"

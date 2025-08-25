@@ -17,27 +17,31 @@ function displayAdminAuthenticationOAuthProviders() {
     return $providersContent;
 }
 
-function displayAuthenticationOAuthAuthentication() {
-    if ($providers = getEnabledOAuthProviders()) {
-        $providersContentTemplate = new Sugar_Smarty();
-        $providersContent = "<div id='oauth_providers' name='oauth_providers' class='oauth-providers-container'><span id='label_oauth_providers'>".translate('LBL_OAUTH_AUTH_LOGIN_CONTAINER', "Users")."</span>";
-        $providersContent .= "<input type='hidden' id='oauth_provider' name='oauth_provider' />";
+function displayLoginOAuthAuthentication() {
+    global $sugar_config;
+    if (!$oAuthClass = getOAuthProviderClass()) {
+        return false;
+    }
+    if (isset($sugar_config['authenticationClass']) && $sugar_config['authenticationClass'] == 'OAuthAuthenticate') {
+        if ($providers = getEnabledOAuthProviders()) {
+            $providersContentTemplate = new Sugar_Smarty();
+            $providersContent = "<div id='oauth_providers' name='oauth_providers' class='oauth-providers-container'><span id='label_oauth_providers'>".translate('LBL_OAUTH_AUTH_LOGIN_CONTAINER', "Users")."</span>";
+            $providersContent .= "<input type='hidden' id='oauth_provider' name='oauth_provider' />";
 
-        if (!$oAuthClass = getOAuthProviderClass()) {
-            return false;
-        }
+            
 
-        foreach($providers as $provider) {
-            $providerOAuthClass = new $oAuthClass($provider);
-            $providersContent .= $providerOAuthClass->getLoginTemplate($providersContentTemplate);
-        }
+            foreach($providers as $provider) {
+                $providerOAuthClass = new $oAuthClass($provider);
+                $providersContent .= $providerOAuthClass->getLoginTemplate($providersContentTemplate);
+            }
 
-        // TODO ADD optin to hide basic form
-        if (!empty($providersContent)) {
-            // return '';
+            // TODO ADD optin to hide basic form
+            if (!empty($providersContent)) {
+                // return '';
+            }
+            $providersContent .= "</div>";
+            return $providersContent;
         }
-        $providersContent .= "</div>";
-        return $providersContent;
     }
     return '';
 }
@@ -58,11 +62,10 @@ function getOAuthProviderClass () {
 function getEnabledOAuthProviders () 
 {
     global $sugar_config;
-
     $providers = [];
     if (isset($sugar_config['authenticationOauthProviders']) && is_array($sugar_config['authenticationOauthProviders'])) {
         foreach ($sugar_config['authenticationOauthProviders'] as $provider => $settings) {
-            if (isset($settings['enabled']) && $settings['enabled'] == true) {
+            if (isset($settings['enabled']) && $settings['enabled'] == 'true') {
                 $providers[] = $provider;
             }
         }
