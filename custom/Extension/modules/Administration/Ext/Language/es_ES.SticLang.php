@@ -99,6 +99,6 @@ $mod_strings['LBL_ADMIN_ACTIONS'] = 'Acciones de Administración';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de correo que se usará cuando el sistema genere la contraseña de un nuevo usuario.';
 
 // OAuth authentication
-$mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth Authentication';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth Authentication';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Enable OAuth Authentication HELP';
+$mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Si activa esta opción, los usuarios podrán autenticarse mediante OAuth, además de usar el sistema de autenticación estándar de SinergiaCRM. Tenga en cuenta que, una vez activada esta opción, los usuarios que no tengan configurada la autenticación OAuth no podrán iniciar sesión.';

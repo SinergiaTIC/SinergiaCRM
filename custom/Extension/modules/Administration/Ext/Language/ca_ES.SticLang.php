@@ -99,6 +99,6 @@ $mod_strings['LBL_ADMIN_ACTIONS'] = "Accions d'Administració";
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = "Indiqueu la plantilla de correu que es farà servir quan el sistema generi la contrasenya d'un nou usuari.";
 
 // OAuth authentication
-$mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth Authentication';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth Authentication';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Enable OAuth Authentication HELP';
+$mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticació OAuth';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticació OAuth';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Si activeu aquesta opció, els usuaris podran autenticar-se mitjançant OAuth 2.0, a més de fer-ho amb usuari i contrasenya. Per a més informació, consulteu la <a href="https://docs.sinergiacrm.org/en/latest/administering/system-configuration/oauth-authentication.html" target="_blank">documentació</a>.';

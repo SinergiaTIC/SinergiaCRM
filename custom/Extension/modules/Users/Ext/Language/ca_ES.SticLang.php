@@ -51,35 +51,27 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 // Assistent de creació de registres de Calendari laboral
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Genera el Calendari laboral';
 
-// OAuth Authentication
-$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<br>----------<br>Or login with provider:<br>----------<br>';
-$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'The email address ';
-$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' does not belong to any CRM user. Please contact an administrator';
+// Autenticació OAuth
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<br>----------<br>O inicia sessió amb un proveïdor:<br>----------<br>';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = "L'adreça de correu electrònic ";
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = " no pertany a cap usuari del CRM. Si us plau, contacti amb un administrador";
 
-// OAuth Authentication - Google
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Login with Google';
+// Autenticació OAuth - Google
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Inicia sessió amb Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_TITLE'] = 'Google';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE'] = 'Enable Google Authentication';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = 'Enable Google Authentication HELP';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'Client ID';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = 'Client ID HELP';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Client Secret';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = 'Client Secret HELP';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_REDIRECT_URI'] = 'Redirect URI';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_REDIRECT_URI_HELP'] = 'Redirect URI HELP';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_SCOPES'] = 'Scopes';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_SCOPES_HELP'] = 'Scopes HELP';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE'] = "Habilita l'autenticació amb Google";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = "Aquesta opció habilita l'autenticació amb Google. Més informació a: https://developers.google.com/identity/protocols/oauth2";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'ID de client';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = "ID de l'aplicació registrada a Google API Console. Més informació a: https://developers.google.com/identity/protocols/oauth2";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Secret de client';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = "Secret de l'aplicació registrada a Google API Console. Més informació a: https://developers.google.com/identity/protocols/oauth2";
 
-// OAuth Authentication - Microsoft
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT'] = 'Login with Microsoft';
+// Autenticació OAuth - Microsoft
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT'] = 'Inicia sessió amb Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TITLE'] = 'Microsoft';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = 'Enable Microsoft Authentication';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = 'Enable Microsoft Authentication HELP';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'Client ID';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = 'Client ID HELP';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'Tenant ID';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = 'Tenant ID HELP';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'Redirect URI';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = 'Redirect URI HELP';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Scopes';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = 'Scopes HELP';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = "Habilita l'autenticació amb Microsoft";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "Aquesta opció habilita l'autenticació amb Microsoft. Més informació a: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'ID de client';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID de l'aplicació registrada al Microsoft Azure Portal. Més informació a: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de llogater';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID de llogater de l'aplicació registrada al Microsoft Azure Portal. Més informació a: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow";
