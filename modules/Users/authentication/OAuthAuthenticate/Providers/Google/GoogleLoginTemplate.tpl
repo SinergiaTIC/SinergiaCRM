@@ -108,8 +108,6 @@
             type: "standard",
         });
 
-        document.getElementById("google-btn-placeholder")?.remove();
-
         google.accounts.id.prompt();
     }
 </script>

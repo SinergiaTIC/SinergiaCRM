@@ -52,6 +52,7 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generate Work calendar';
 
 // OAuth Authentication
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<br>----------<br>Or login with provider:<br>----------<br>';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'The email address ';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' does not belong to any CRM user. Please contact an administrator';
 

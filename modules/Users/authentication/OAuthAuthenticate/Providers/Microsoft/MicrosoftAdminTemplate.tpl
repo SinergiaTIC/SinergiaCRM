@@ -1,4 +1,4 @@
-<table id='microsoft_table' width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
+<table id='microsoft_table' name="oauth_auth_provider" width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
     <tr>
         <td>
             <table width="100%" border="0" cellspacing="1" cellpadding="0">
@@ -17,6 +17,7 @@
                         {assign var='oauth_microsoft_enabled_checked' value=''}
                     {/if}
                     <td>
+                        <input name="authenticationOauthProviders_Microsoft_enabled" type="hidden" value='false'>
                         <input name="authenticationOauthProviders_Microsoft_enabled" id="Microsoft_enabled_checkbox" class="checkbox"
                             type="checkbox" value='true' {$oauth_microsoft_enabled_checked}>
                     </td>

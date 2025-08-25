@@ -1,14 +1,13 @@
 <?php
 
 function displayAdminAuthenticationOAuthProviders() {
-    global $current_language;
-
     if (!$oAuthClass = getOAuthProviderClass()) {
         return false;
     }
 
     $providersContentTemplate = new Sugar_Smarty();
     $providersContent = "";
+    // $providersContent .= $oAuthClass::getOAuthAdminTemplate($providersContentTemplate);
 
     
     foreach (getAvailableOauthProviders() as $provider) {
@@ -19,26 +18,28 @@ function displayAdminAuthenticationOAuthProviders() {
 }
 
 function displayAuthenticationOAuthAuthentication() {
-    $providersContentTemplate = new Sugar_Smarty();
-    $providersContent = "<div id='oauth_providers'><span id='label_oauth_providers'>OR</span>";
-    $providersContent = "<input type='hidden' id='oauth_provider' name='oauth_provider' />";
+    if ($providers = getEnabledOAuthProviders()) {
+        $providersContentTemplate = new Sugar_Smarty();
+        $providersContent = "<div id='oauth_providers' name='oauth_providers' class='oauth-providers-container'><span id='label_oauth_providers'>".translate('LBL_OAUTH_AUTH_LOGIN_CONTAINER', "Users")."</span>";
+        $providersContent .= "<input type='hidden' id='oauth_provider' name='oauth_provider' />";
 
-    if (!$oAuthClass = getOAuthProviderClass()) {
-        return false;
-    }
-    $providers = getEnabledOAuthProviders();
+        if (!$oAuthClass = getOAuthProviderClass()) {
+            return false;
+        }
 
-    foreach($providers as $provider) {
-        $providerOAuthClass = new $oAuthClass($provider);
-        $providersContent .= $providerOAuthClass->getLoginTemplate($providersContentTemplate);
-    }
+        foreach($providers as $provider) {
+            $providerOAuthClass = new $oAuthClass($provider);
+            $providersContent .= $providerOAuthClass->getLoginTemplate($providersContentTemplate);
+        }
 
-    // TODO ADD optin to hide basic form
-    if (!empty($providersContent)) {
-        // return '';
+        // TODO ADD optin to hide basic form
+        if (!empty($providersContent)) {
+            // return '';
+        }
+        $providersContent .= "</div>";
+        return $providersContent;
     }
-    $providersContent .= "</div>";
-    return $providersContent;
+    return '';
 }
 
 function getOAuthProviderClass () {

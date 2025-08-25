@@ -100,3 +100,5 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de corr
 
 // OAuth authentication
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth Authentication';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth Authentication';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Enable OAuth Authentication HELP';

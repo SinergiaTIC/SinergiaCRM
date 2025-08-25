@@ -89,6 +89,22 @@ class OAuthAuthenticate extends SugarAuthenticate
 
     }
 
+    public static function getOAuthAdminTemplate($ss)
+    {
+        global $current_language, $sugar_config;
+
+        $templateFile = get_custom_file_if_exists('modules/Users/authentication/OAuthAuthenticate/OAuthAdminTemplate.tpl');
+
+        if (file_exists((string)$templateFile)) {
+            $GLOBALS['log']->info("Found template: {$templateFile}\n");
+            $ss->assign('OAUTH_LANG', return_module_language($current_language, 'Users'));
+            $ss->assign('AUTHENTICATION_CLASS', $sugar_config['authenticationClass'] ?? 'SugarAuthenticate');
+            return $ss->fetch($templateFile);
+        } else {
+            $GLOBALS['log']->info("WARNING: Template file not found at {$templateFile}\n");
+        }
+    }
+
     public function getLoginParams()
     {
         $utilsClass = $this->utilsClass;
