@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Utils for OAuth authentication. 
+ */
+/**
+ * Display all available OAuth providers in admin configuration page.
+ */
 function displayAdminAuthenticationOAuthProviders() {
     if (!$oAuthClass = getOAuthProviderClass()) {
         return false;
@@ -7,8 +12,6 @@ function displayAdminAuthenticationOAuthProviders() {
 
     $providersContentTemplate = new Sugar_Smarty();
     $providersContent = "";
-    // $providersContent .= $oAuthClass::getOAuthAdminTemplate($providersContentTemplate);
-
     
     foreach (getAvailableOauthProviders() as $provider) {
         $providerOAuthClass = new $oAuthClass($provider);
@@ -17,6 +20,9 @@ function displayAdminAuthenticationOAuthProviders() {
     return $providersContent;
 }
 
+/**
+ * Display all enabled OAuth providers in login page.
+ */
 function displayLoginOAuthAuthentication() {
     global $sugar_config;
     if (!$oAuthClass = getOAuthProviderClass()) {
@@ -46,6 +52,9 @@ function displayLoginOAuthAuthentication() {
     return '';
 }
 
+/**
+ * Get OAuthAuthenticate class name, depending if custom or core implementation exists.
+ */
 function getOAuthProviderClass () {
     if (file_exists('custom/modules/Users/authentication/OAuthAuthenticate/OAuthAuthenticate.php')) {
         require_once('custom/modules/Users/authentication/OAuthAuthenticate/OAuthAuthenticate.php');
@@ -58,7 +67,9 @@ function getOAuthProviderClass () {
     }
 }
 
-
+/**
+ * Get enabled OAuth providers from config.php
+ */
 function getEnabledOAuthProviders () 
 {
     global $sugar_config;
@@ -73,6 +84,9 @@ function getEnabledOAuthProviders ()
     return $providers;
 }
 
+/**
+ * Get all available OAuth providers (core + custom)
+ */
 function getAvailableOauthProviders() {
     $corePath   = 'modules/Users/authentication/OAuthAuthenticate/Providers';
     $customPath = 'custom/modules/Users/authentication/OAuthAuthenticate/Providers';

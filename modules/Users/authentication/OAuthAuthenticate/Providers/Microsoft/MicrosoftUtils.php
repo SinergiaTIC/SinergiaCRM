@@ -1,13 +1,41 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 
-// Make sure to include your Composer autoloader, e.g., require_once 'vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\JWK;
-
 use GuzzleHttp\Client as GuzzleClient;
 
+/**
+ * Utilities for Microsoft OAuth authentication.
+ */
 class MicrosoftUtils
 {
+    /**
+     * Get the login parameters for Microsoft authentication.
+     * 
+     * @param array $sugar_config The configuration array.
+     * @return array The login parameters for Microsoft authentication.
+     */
     public static function getLoginParams($providerSettings)
     {
         global $sugar_config;
@@ -21,6 +49,12 @@ class MicrosoftUtils
         ];
     }
 
+    /**
+     * Get the admin parameters for Microsoft authentication.
+     * 
+     * @param array $sugar_config The configuration array.
+     * @return array The admin parameters for Microsoft authentication.
+     */
     public static function getAdminParams($providerSettings) {
         $backendParams = [
             // 'clientSecret' => $providerSettings['clientSecret'] ?? '',
@@ -48,7 +82,7 @@ class MicrosoftUtils
         $idToken = $_REQUEST['microsoft_credentials'];
 
         try {
-            // ## Step 1: Get Microsoft's public signing keys
+            // Get Microsoft's public signing keys
             // The keys are at a URL found in Microsoft's OpenID Connect discovery document.
             $discoveryUrl = "https://login.microsoftonline.com/{$tenantId}/v2.0/.well-known/openid-configuration";
             
@@ -60,11 +94,11 @@ class MicrosoftUtils
             $jwksResponse = $httpClient->get($jwksUri);
             $jwks = json_decode($jwksResponse->getBody()->getContents(), true);
 
-            // ## Step 2: Decode the ID token
+            // Decode the ID token
             // The library finds the correct key, verifies the signature, and checks standard claims like expiration ('exp').
             $decodedToken = JWT::decode($idToken, JWK::parseKeySet($jwks, 'RS256'));
 
-            // ## Step 3: Manually verify critical claims
+            // Manually verify critical claims
             // Issuer ('iss'): Confirms the token was issued by Microsoft for your tenant.
             $expectedIssuer = "https://login.microsoftonline.com/{$tenantId}/v2.0";
             if ($decodedToken->iss !== $expectedIssuer) {
