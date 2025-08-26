@@ -126,4 +126,6 @@ $mod_strings = array (
   'LBL_AMOUNT' => 'Importe',
   'LBL_DESTINATION_ACCOUNT' => 'Cuenta de destino',
   'LBL_ACCOUNTING_ACCOUNT' => 'Cuenta contable',
+
+  'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Productos financieros',
 );
