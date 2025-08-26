@@ -2510,6 +2510,41 @@ $dictionary["Contact"]["fields"]["stic_skills_contacts"] = array(
     'vname' => 'LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE',
 );
 
+// Financial Products Relationships
+$dictionary["Contact"]["fields"]["stic_financial_products_contacts"] = array (
+    'name' => 'stic_financial_products_contacts',
+    'type' => 'link',
+    'relationship' => 'stic_financial_products_contacts',
+    'source' => 'non-db',
+    'module' => 'stic_Financial_Products',
+    'bean_name' => 'stic_Financial_Products',
+    'vname' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE',
+    'id_name' => 'stic_financial_products_contactsstic_financial_products_ida',
+);
+
+$dictionary["Contact"]["fields"]["stic_financial_products_contacts_name"] = array (
+    'name' => 'stic_financial_products_contacts_name',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'vname' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE',
+    'save' => true,
+    'id_name' => 'stic_financial_products_contactsstic_financial_products_ida',
+    'link' => 'stic_financial_products_contacts',
+    'table' => 'stic_financial_products',
+    'module' => 'stic_Financial_Products',
+    'rname' => 'name',
+);
+
+$dictionary["Contact"]["fields"]["stic_financial_products_contactsstic_financial_products_ida"] = array (
+    'name' => 'stic_financial_products_contactsstic_financial_products_ida',
+    'type' => 'link',
+    'relationship' => 'stic_financial_products_contacts',
+    'source' => 'non-db',
+    'reportable' => false,
+    'side' => 'right',
+    'vname' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE',
+);
+
 // Modified properties in native fields
 $dictionary['Contact']['fields']['first_name']['massupdate'] = 0;
 $dictionary['Contact']['fields']['first_name']['merge_filter'] = 'selected';

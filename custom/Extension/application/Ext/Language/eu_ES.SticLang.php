@@ -72,6 +72,7 @@ $app_strings['LBL_GROUPTAB_EXPLOITATION'] = 'Explotación';
 $app_strings['LBL_GROUPTAB_DC_PERSONALINFO'] = 'Información personal';
 $app_strings['LBL_GROUPTAB_DC_WORKPLAN'] = 'Plan de trabajo';
 $app_strings['LBL_GROUPTAB_DC_MEDICATION'] = 'Medicación';
+$app_strings['LBL_GROUPTAB_FINANCIAL_MANAGEMENT'] = 'Financial Management';
 
 // Subtema propio de SinergiaCRM
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
@@ -142,6 +143,8 @@ $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condiciones';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
+$app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
+$app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -190,6 +193,8 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condic
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaza';
+$app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacción';
+$app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producto financiero';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -230,6 +235,8 @@ $app_list_strings['parent_type_display']['stic_Skills'] = 'Competencias';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Plazas';
+$app_list_strings['parent_type_display']['stic_Transactions'] = 'Transacciones';
+$app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productos financieros';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display']['Contacts'] = 'Personas';
@@ -271,6 +278,8 @@ $app_list_strings['record_type_display']['stic_Skills'] = 'Competencias';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['record_type_display']['stic_Places'] = 'Plazas';
+$app_list_strings['record_type_display']['stic_Transactions'] = 'Transacciones';
+$app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productos financieros';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Personas';
@@ -312,6 +321,8 @@ $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competencias';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Plazas';
+$app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacciones';
+$app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productos financieros';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvenciones';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
@@ -3695,3 +3706,32 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+
+// Productos financieros: Tipos de productos
+$app_list_strings['stic_financial_products_product_types_list']['checking_account'] = 'Cuenta corriente';
+$app_list_strings['stic_financial_products_product_types_list']['savings_account'] = 'De ahorro';
+$app_list_strings['stic_financial_products_product_types_list']['investment_fund'] = 'Fondo de inversión';
+$app_list_strings['stic_financial_products_product_types_list']['insurance'] = 'Seguros';
+$app_list_strings['stic_financial_products_product_types_list']['stocks'] = 'Acciones';
+$app_list_strings['stic_financial_products_product_types_list']['bonds'] = 'Bonos';
+$app_list_strings['stic_financial_products_product_types_list']['others'] = 'Otros';
+
+// Transacciones: Categoría
+$app_list_strings['stic_transactions_category_dom'][''] = '';
+$app_list_strings['stic_transactions_category_dom']['Marketing'] = 'Marketing';
+$app_list_strings['stic_transactions_category_dom']['Knowledege Base'] = 'Base de Conocimiento';
+$app_list_strings['stic_transactions_category_dom']['Sales'] = 'Ventas';
+
+// Transacciones: Subcategoría
+$app_list_strings['stic_transactions_subcategory_dom'][''] = '';
+$app_list_strings['stic_transactions_subcategory_dom']['Marketing Collateral'] = 'Impresos de Marketing';
+$app_list_strings['stic_transactions_subcategory_dom']['Product Brochures'] = 'Folletos de Producto';
+$app_list_strings['stic_transactions_subcategory_dom']['FAQ'] = 'FAQ';
+
+// Transacciones: Estado
+$app_list_strings['stic_transactions_status_dom']['Active'] = 'Activo';
+$app_list_strings['stic_transactions_status_dom']['Draft'] = 'Borrador';
+$app_list_strings['stic_transactions_status_dom']['FAQ'] = 'FAQ';
+$app_list_strings['stic_transactions_status_dom']['Expired'] = 'Caducado';
+$app_list_strings['stic_transactions_status_dom']['Under Review'] = 'En Revisión';
+$app_list_strings['stic_transactions_status_dom']['Pending'] = 'Pendiente';
