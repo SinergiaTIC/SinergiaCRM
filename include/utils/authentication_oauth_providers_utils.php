@@ -1,4 +1,6 @@
 <?php
+// STIC-Custom AAM 20250825 - Adding OAuth Authentication providers
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/552
 /**
  * Utils for OAuth authentication. 
  */
@@ -98,3 +100,5 @@ function getAvailableOauthProviders() {
     // Merge and remove duplicates
     return array_values(array_unique(array_merge($coreProviders, $customProviders)));
 }
+
+// END STIC-Custom

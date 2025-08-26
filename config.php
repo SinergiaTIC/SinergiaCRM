@@ -651,4 +651,23 @@ $sugar_config = array(
     // Delete from the tracker table the records of the days prior to the ones configured in config
     'tracker_prune_interval' => 90,
     // END STIC Custom
+
+    // STIC-Custom AAM 20250825 - Adding OAuth Authentication providers
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/552
+    'authenticationOauthProviders' => array(
+        'Google' =>
+            array(
+                'enabled' => 'false',
+                'clientId' => '',
+                'clientSecret' => '',
+            ),
+        'Microsoft' => array(
+                'enabled' => 'false',
+                'clientId' => '',
+                'tenantId' => '',
+                'redirectUri' => '',
+                'scopes' => '',
+            ),
+    )
+    // END STIC-Custom
 );

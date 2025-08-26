@@ -52,7 +52,7 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Genera el Calendari laboral';
 
 // Autenticació OAuth
-$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<br>----------<br>O inicia sessió amb un proveïdor:<br>----------<br>';
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>O inicia sessió amb un proveïdor:</h3>';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = "L'adreça de correu electrònic ";
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = " no pertany a cap usuari del CRM. Si us plau, contacti amb un administrador";
 

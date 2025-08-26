@@ -52,7 +52,7 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generar Calendario laboral';
 
 // Autenticación OAuth
-$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<br>----------<br>O inicia sesión con un proveedor:<br>----------<br>';
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>O inicia sesión con un proveedor:</h3>';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'La dirección de correo electrónico ';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' no pertenece a ningún usuario del CRM. Por favor, contacte a un administrador';
 
@@ -73,8 +73,8 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = 'Habilitar autenticación con 
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = 'Esta opción habilita la autenticación con Microsoft. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'ID de cliente';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = 'ID de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de inquilino';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = 'ID de inquilino de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de tenant';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = 'ID de tenant de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'URI de redirección';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = 'URI de redirección de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Ámbitos';
