@@ -83,5 +83,8 @@ $mod_strings = array (
   'LBL_BANK' => 'Entidad Bancaria',
   'LBL_ACCOUNT_HOLDERS' => 'Titulares',
   'LBL_OPENING_DATE' => 'Fecha de Apertura',
-  'LBL_PRODUCT_TYPE' => 'product type',
+  'LBL_PRODUCT_TYPE' => 'Tipo de producto',
+
+  'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transacciones',
+  'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Personas tuteladas',
 );
