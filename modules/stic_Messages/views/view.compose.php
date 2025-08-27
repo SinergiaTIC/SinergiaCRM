@@ -69,7 +69,7 @@ class stic_MessagesViewCompose extends ViewEdit
         $this->ev->ss->assign('IS_MODAL', isset($_REQUEST['in_popup']) ? $_REQUEST['in_popup'] : false);
 
         $this->bean->parent_type = $_REQUEST['relatedModule'];
-	    $this->bean->parent_id = $_REQUEST['relatedId'];
+	    $this->bean->parent_id = $_REQUEST['relatedId'] ?? null;
 
         global $sugar_config;
         $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
