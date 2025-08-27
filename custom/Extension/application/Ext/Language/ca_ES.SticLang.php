@@ -72,7 +72,7 @@ $app_strings['LBL_GROUPTAB_EXPLOITATION'] = 'Explotació';
 $app_strings['LBL_GROUPTAB_DC_PERSONALINFO'] = 'Informació personal';
 $app_strings['LBL_GROUPTAB_DC_WORKPLAN'] = 'Pla de treball';
 $app_strings['LBL_GROUPTAB_DC_MEDICATION'] = 'Medicació';
-$app_strings['LBL_GROUPTAB_FINANCIAL_MANAGEMENT'] = 'Financial Management';
+$app_strings['LBL_GROUPTAB_FINANCIAL_MANAGEMENT'] = 'Gestió financera';
 
 // Subtema propi de SinergiaCRM
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
