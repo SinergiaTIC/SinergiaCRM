@@ -116,6 +116,13 @@ array(
                         ),
                     ),
                 ),
+                6 => array(
+                    0 => array(
+                        'name' => 'response',
+                        'studio' => 'visible',
+                        'label' => 'LBL_RESPONSE',
+                    ),
+                ),
             ),
         ),
     ),

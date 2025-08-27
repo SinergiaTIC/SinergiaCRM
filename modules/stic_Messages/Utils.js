@@ -52,6 +52,9 @@ switch (viewType()) {
       }
     };
     createDetailViewButton(buttons.retry);
+    if ($("#status").val() != 'error') {
+      $('div[data-field="response"]').hide();
+    }
     break;
 
   case "list":
