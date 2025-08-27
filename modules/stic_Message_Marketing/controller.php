@@ -46,7 +46,6 @@ class stic_Message_MarketingController extends SugarController {
             $campaign->retrieve($campaign_id);
         }
 
-        // TODOEPS: No s'està recuperant la llista de LPOs
         $query = "
             SELECT smm.id, smm.name, smm.status, smm.select_all, smm.prospect_lists 
             FROM stic_message_marketing smm 

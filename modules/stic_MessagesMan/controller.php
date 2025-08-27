@@ -17,33 +17,7 @@ class stic_MessagesManController extends SugarController
         header("Location: index.php?module=stic_MessagesMan&action=index");
     }
 
-    // TODOEPS: Això ha d'estar aquí? rep una row com paràmetre
-    // protected function sendMessage($row) {
-    //     require_once 'modules/stic_Settings/Utils.php';
-
-    //     $messageman = BeanFactory::newBean('stic_MessagesMan');
-    //     foreach ($row as $name => $value) {
-    //         $messageman->$name = $value;
-    //     }
-
-    //     if (!empty($messageman->marketing_id)) {
-    //         $marketingBean = BeanFactory::getBean('stic_Message_Marketing', $messageman->marketing_id);
-    //         $sender = $marketingBean->sender;
-    //     }
-    //     else {
-    //         $sender = stic_SettingsUtils::getSetting('MESSAGES_SENDER');
-    //     }
-    //     $templateId = $row['template_id_c'];
-    //     $type = $row['type'];
-    //     $return = $messageman->sendMessage($sender, $templateId, $type);
-
-    //     // TODOEPS: Process return value... must remove from list?increment send_attemps?
-    //     if (!$return) {
-    //         $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
-    //     }
-    // }
-
-    public function xxx() {
+     public function xxx() {
         $startTime = microtime(true);
         $startMemoryUsage = memory_get_usage();
 
