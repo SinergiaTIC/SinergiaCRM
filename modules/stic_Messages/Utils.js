@@ -52,6 +52,7 @@ switch (viewType()) {
       }
     };
     createDetailViewButton(buttons.retry);
+    // Field response is only showed when an error is present
     if ($("#status").val() != 'error') {
       $('div[data-field="response"]').hide();
     }
