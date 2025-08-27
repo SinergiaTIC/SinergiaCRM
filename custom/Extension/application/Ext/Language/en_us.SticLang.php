@@ -3682,6 +3682,14 @@ $app_list_strings['stic_financial_products_product_types_list']['stocks'] = 'Acc
 $app_list_strings['stic_financial_products_product_types_list']['bonds'] = 'Bonos';
 $app_list_strings['stic_financial_products_product_types_list']['others'] = 'Otros';
 
+// Transactions: Type of transaction
+$app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Income';
+$app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Expense';
+$app_list_strings['stic_transactions_transaction_types_list']['transfer'] = 'Transfer';
+$app_list_strings['stic_transactions_transaction_types_list']['withholding'] = 'Withholding';
+$app_list_strings['stic_transactions_transaction_types_list']['refund_cancellation'] = 'Refund/Cancellation';
+$app_list_strings['stic_transactions_transaction_types_list']['other'] = 'Other';
+
 // Transactions: Category
 $app_list_strings['stic_transactions_category_dom'][''] = '';
 $app_list_strings['stic_transactions_category_dom']['Marketing'] = 'Marketing';

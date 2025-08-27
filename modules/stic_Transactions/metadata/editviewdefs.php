@@ -135,6 +135,11 @@ $viewdefs[$module_name]['EditView'] = array(
         5 => 
         array (
           0 => 'assigned_user_name',
+          1 => 
+          array (
+            'name' => 'transaction_type',
+            'label' => 'LBL_TRANSACTION_TYPE',
+          ),
         ),
         6 => 
         array (

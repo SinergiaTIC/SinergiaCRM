@@ -147,6 +147,11 @@ $viewdefs[$module_name]['DetailView'] = array(
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO',
           ),
+          1 => 
+          array (
+            'name' => 'transaction_type',
+            'label' => 'LBL_TRANSACTION_TYPE',
+          ),
         ),
         6 => 
         array (
