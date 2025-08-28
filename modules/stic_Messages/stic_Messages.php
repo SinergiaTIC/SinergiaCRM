@@ -105,6 +105,7 @@ class stic_Messages extends Basic
                 if ($response['code'] === self::OK) {
                     $this->status = 'sent';
                     $this->response = $response['message'] ?? '';
+                    $this->sent_date = $GLOBALS['timedate']->nowDb();
                 }
                 else {
                     $this->status = 'error';

@@ -77,8 +77,8 @@ class actionSendMessage extends actionBase
         }
 
         $html .= '<td id="name_label" scope="row" valign="top"><label>' . translate(
-            "LBL_EMAIL_TEMPLATE",
-            "AOW_Actions"
+            "LBL_TEMPLATE",
+            "stic_Messages"
         ) . ':<span class="required">*</span></label></td>';
         $html .= "<td valign='top'>";
         $html .= "<select name='aow_actions_param[".$line."][email_template]' id='aow_actions_param_email_template".$line."' onchange='show_edit_template_link(this,".$line.");' >".get_select_options_with_id($email_templates_arr, $params['email_template'])."</select>";

@@ -44,6 +44,13 @@ array(
             1 => 'parent_type',
             ),
     ),
+    'SENT_DATE' => array(
+        'type' => 'datetime',
+        'studio' => 'visible',
+        'label' => 'LBL_SENT_DATE',
+        'width' => '7%',
+        'default' => true,
+    ),
     'TYPE' => array(
         'type' => 'enum',
         'studio' => 'visible',

@@ -65,9 +65,8 @@ array(
                         'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
                     ),
                     1 => array(
-                        'name' => 'date_entered',
-                        'customCode' => '{$fields.date_entered.value}',
-                        'label' => 'LBL_DATE_ENTERED',
+                        'name' => 'sent_date',
+                        'label' => 'LBL_SENT_DATE',
                     ),
                 ),
                 2 => array(
@@ -114,6 +113,13 @@ array(
                       'displayParams' => array(
                         'initial_filter' => "&type_advanced[]=sms"
                         ),
+                    ),
+                ),
+                6 => array(
+                    0 => array(
+                        'name' => 'response',
+                        'studio' => 'visible',
+                        'label' => 'LBL_RESPONSE',
                     ),
                 ),
             ),
