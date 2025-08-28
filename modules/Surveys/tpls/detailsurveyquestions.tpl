@@ -11,6 +11,9 @@
             <th>
                 {$MOD.LBL_SURVEY_TYPE}
             </th>
+            <th>
+                {$MOD.LBL_SURVEY_REQUIRED}
+            </th>
         </tr>
         {foreach from=$questions item=question}
             <tr>
@@ -22,6 +25,11 @@
                 </td>
                 <td>
                     {$question.type}
+                </td>
+                <td>
+                    {if $question.required}
+                        <span style="color:red;">*</span>
+                    {/if}
                 </td>
             </tr>
         {/foreach}

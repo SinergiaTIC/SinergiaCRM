@@ -111,6 +111,32 @@ EOF;
     <script src="include/javascript/jquery/jquery-ui-min.js"></script>
     <script src="modules/Surveys/javascript/datetimepicker/jquery-ui-timepicker-addon.js"></script>
     <script src="modules/Surveys/javascript/rating/rating.min.js"></script>
+    <?php
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'Surveys');
+        $app_strings = return_application_language($current_language);
+
+        $keys = [
+            'LBL_SURVEY_REQUIRED_FIELD',
+            // 'LBL_SURVEY_INVALID_VALUE',
+            'LBL_SURVEY_SELECT_AT_LEAST_ONE',
+            // 'LBL_SURVEY_SELECT_AT_LEAST_N',
+            // 'LBL_SURVEY_SELECT_AT_MOST_ONE',
+            // 'LBL_SURVEY_SELECT_AT_MOST_N',
+        ];
+
+        // Construeix diccionari amb fallback
+        $dict = [];
+        foreach ($keys as $k) {
+            $dict[$k] = $mod_strings[$k] ?? ($app_strings[$k] ?? $k);
+        }
+    ?>  
+    <script>
+        // Diccionari disponible al navegador per a public survey
+        window.SURVEY_I18N = <?php echo json_encode($dict, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP); ?>;
+        window.SURVEY_I18N_MODULE = 'Surveys';
+    </script>
+    <script src="modules/Surveys/javascript/survey-validation.js"></script>
     <script>
 
       $(function () {
@@ -137,6 +163,14 @@ EOF;
         $('.starRating').rating();
       });
     </script>
+    <style>
+        .starRating input[type="radio"] {
+            position: absolute !important;
+            left: -9999px !important;
+            display: inline !important;  /* evitar el display:none */
+            opacity: 0;                  /* invisible però focusable */
+        }
+    </style>
     </body>
     </html>
 
@@ -148,7 +182,7 @@ function displaySurvey($survey, $contactId, $trackerId)
     <!-- STIC-Custom 20241126 - JBL - Disable Submit when clicked -->
     <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/490 -->
     <!-- <form method="post"> -->
-    <form method="post" onsubmit="disableSubmitButton(this)">
+    <form method="post" id="survey-form">
     <!-- END STIC-Custom -->
         <input type="hidden" name="entryPoint" value="surveySubmit">
         <input type="hidden" name="id" value="<?= $survey->id ?>">
@@ -180,13 +214,15 @@ function displaySurvey($survey, $contactId, $trackerId)
 
 function displayQuestion($survey, $question)
 {
+    $required = (!empty($question->required) && $question->required === '1') ? '<span style="color:red;">*</span>' : '';
+    $inputRequired = (!empty($question->required) && $question->required === '1') ? 'required' : '';
     ?>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title"><label for="question<?= $question->id ?>"><?= $question->name; ?></label></h3>
+            <h3 class="panel-title"><label for="question<?= $question->id ?>"><?= $question->name; ?> <?= $required; ?></label></h3>
         </div>
         <div class="panel-body">
-            <div class="form-group">
+            <div class="form-group question">
                 <?php
                 $options = array();
     foreach ($question->get_linked_beans(
@@ -206,7 +242,7 @@ function displayQuestion($survey, $question)
                             $question->id .
                             "' name='question[" .
                             $question->id .
-                            "]'></textarea>";
+                            "]' ".$inputRequired."></textarea>";
                         break;
                     case "Checkbox":
                         echo "<div class='checkbox'><label>";
@@ -214,7 +250,7 @@ function displayQuestion($survey, $question)
                             $question->id .
                             "' name='question[" .
                             $question->id .
-                            "]' type='checkbox'/>";
+                            "]' type='checkbox' data-required-group='" . $question->id . "' ". $inputRequired ."/>";
                         echo "</label></div>";
                         break;
                     case "Radio":
@@ -227,7 +263,7 @@ function displayQuestion($survey, $question)
                                 $question->id .
                                 "]' value='" .
                                 $option['id'] .
-                                "' type='radio'/>";
+                                "' type='radio' data-required-group='" . $question->id . "'  ".$inputRequired."/>";
                             echo $option['name'];
                             echo "</label>";
                             echo "</div>";
@@ -236,10 +272,14 @@ function displayQuestion($survey, $question)
                     case "Dropdown":
                     case "Multiselect":
                         $multi = $question->type == 'Multiselect' ? ' multiple="true" ' : '';
+                        $selectedMulti = $question->type == 'Multiselect' ? '' : ' selected';
                         $name =
                             $question->type == 'Multiselect' ? "question[" . $question->id . "][]" :
                                 "question[" . $question->id . "]";
-                        echo "<select class=\"form-control\" id='question" . $question->id . "' name='$name' $multi>";
+                        echo "<select class=\"form-control\" id='question" . $question->id . "' name='$name' $inputRequired $multi>";
+                        if ($question->type !== 'Multiselect') {
+                            echo "<option value='' selected disabled>Selecciona</option>";
+                        }
                         foreach ($options as $option) {
                             echo "<option value='" . $option['id'] . "'>" . $option['name'] . "</option>";
                         }
@@ -273,15 +313,17 @@ function displayQuestion($survey, $question)
 
 function displayTextField($question)
 {
+    $required = (!empty($question->required) && $question->required === '1') ? 'required' : '';
     echo "<input class=\"form-control\" id='question" .
         $question->id .
         "' name='question[" .
         $question->id .
-        "]' type='text'/>";
+        "]' type='text' ".$required."/>";
 }
 
 function displayScaleField($question)
 {
+    $required = (!empty($question->required) && $question->required === '1') ? 'required' : '';
     echo "<table class='table'><tr>";
     $scaleMax = 10;
     for ($x = 1; $x <= $scaleMax; $x++) {
@@ -295,7 +337,7 @@ function displayScaleField($question)
             $question->id .
             "]' value='" .
             $x .
-            "' type='radio'/></td>";
+            "' type='radio' data-required-group='" . $question->id . "' ".$required."/></td>";
     }
     echo "</tr></table>";
 }
@@ -303,6 +345,7 @@ function displayScaleField($question)
 function displayRatingField($question)
 {
     $ratingMax = 5;
+    $required = (!empty($question->required) && $question->required === '1') ? 'required' : '';
     echo "<div class='starRating'>";
     for ($x = 1; $x <= $ratingMax; $x++) {
         echo "<input class='rating' id='question" .
@@ -311,13 +354,14 @@ function displayRatingField($question)
             $question->id .
             "]' value='" .
             $x .
-            "' type='radio'/>";
+            "' type='radio' ". $required ." data-required-group='" . $question->id . "'/>";
     }
     echo "</div>";
 }
 
 function displayMatrixField($survey, $question, $options)
 {
+    $required = (!empty($question->required) && $question->required === '1') ? 'required' : '';
     $matrixOptions = $survey->getMatrixOptions();
     echo "<table width='75%'>";
     echo "<tr>";
@@ -343,7 +387,7 @@ function displayMatrixField($survey, $question, $options)
                 "]' 
 value='" .
                 $x .
-                "' type='radio'/></td>";
+                "' type='radio' ".$required."/></td>";
         }
         echo "</tr>";
     }
@@ -352,23 +396,25 @@ value='" .
 
 function displayDateTimeField($question)
 {
+    $required = (!empty($question->required) && $question->required === '1') ? 'required' : '';
     echo "<div class=\"input-group\">";
     echo "<input class=\"form-control datetimefield\" id='question" .
         $question->id .
         "' name='question[" .
         $question->id .
-        "]' type='text'/>";
+        "]' type='text' ".$required."/>";
     echo "<div class=\"input-group-addon ui-datetimepicker-trigger\"><span class=\"suitepicon suitepicon-module-calendar\"></span></div></div>";
 }
 
 function displayDateField($question)
 {
+    $required = (!empty($question->required) && $question->required === '1') ? 'required' : '';
     echo "<div class=\"input-group\">";
     echo "<input class=\"form-control datefield\" id='question" .
         $question->id .
         "' name='question[" .
         $question->id .
-        "]' type='text'/>";
+        "]' type='text' ".$required."/>";
     echo "<div class=\"input-group-addon ui-datepicker-trigger\"><span class=\"suitepicon suitepicon-module-calendar\"></span></div></div>";
 }
 

@@ -91,6 +91,18 @@ $dictionary['SurveyQuestions'] = array(
             'studio'                    => 'visible',
             'dependency'                => false,
         ),
+        'required'                      => array(
+            'required'                  => false,
+            'name'                      => 'required',
+            'vname'                     => 'LBL_REQUIRED',
+            'type'                      => 'bool',
+            'default'                   => 0,
+            'audited'                   => false,
+            'reportable'                => true,
+            'massupdate'                => 0,
+            'duplicate_merge'           => 'disabled',
+            'studio'                    => 'visible',
+        ),
         'happiness_question'                      => array(
             'required' => false,
             'name'     => 'happiness_question',

@@ -62,6 +62,7 @@ function survey_questions_display_edit(Surveys $focus, $field, $value, $view)
         $question['id'] = $questionBean->id;
         $question['name'] = $questionBean->name;
         $question['type'] = $questionBean->type;
+        $question['required'] = $questionBean->required;
         $question['sort_order'] = $questionBean->sort_order;
         $question['options'] = array();
         foreach ($questionBean->get_linked_beans(
