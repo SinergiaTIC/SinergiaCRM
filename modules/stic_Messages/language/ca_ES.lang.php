@@ -78,4 +78,5 @@ $mod_strings = array (
   'LBL_ERROR' => 'ERROR',
   'LBL_CHECK_STATUS' => "Missatges enviats. Comprova'n l'estat",
   'LBL_ALREADY_SENT' => 'Missatge ja enviat',
+  'LBL_SENT_DATE' => "Data d'enviament",
 );

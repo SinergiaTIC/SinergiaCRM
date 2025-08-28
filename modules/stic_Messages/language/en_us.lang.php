@@ -78,4 +78,5 @@ $mod_strings = array (
   'LBL_ERROR' => 'ERROR',
   'LBL_CHECK_STATUS' => 'Messages sent. Check status',
   'LBL_ALREADY_SENT' => 'Message already sent',
+  'LBL_SENT_DATE' => 'Sent date',
 );

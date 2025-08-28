@@ -245,7 +245,26 @@ $dictionary['stic_Messages'] = array(
             'studio' => 'visible',
             'dependency' => false,
         ),
-          
+        'sent_date' => array(
+            'required' => 0,
+            'name' => 'sent_date',
+            'vname' => 'LBL_SENT_DATE',
+            'duplicate_merge' => 'disabled',
+            'merge_filter' => 'disabled',
+            'type' => 'datetime',
+            'massupdate' => 0,
+            'no_default' => 0,
+            'comments' => '',
+            'help' => '',
+            'importable' => 'true',
+            'audited' => 0,
+            'reportable' => 1,
+            'unified_search' => 0,
+            'size' => '20',
+            'options' => 'date_range_search_dom',
+            'enable_range_search' => 1,
+            'inline_edit' => 0,
+        ),
     ),
     'indices' => array(
         array(
