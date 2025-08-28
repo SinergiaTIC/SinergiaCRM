@@ -37,6 +37,13 @@ array(
                 'default' => true,
                 'name' => 'parent_name',
             ),
+            'sent_date' => array(
+                'type' => 'datetime',
+                'label' => 'LBL_SENT_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'sent_date',
+            ),
             'type' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
@@ -68,18 +75,15 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'date_entered' => array(
-                'type' => 'datetime',
-                'label' => 'LBL_DATE_ENTERED',
+            'template' => array(
+                'type' => 'relate',
+                'studio' => 'visible',
+                'label' => 'LBL_TEMPLATE',
+                'id' => 'template_id_c',
+                'link' => true,
                 'width' => '10%',
                 'default' => true,
-                'name' => 'date_entered',
-            ),
-            'sender' =>array(
-                'name' => 'sender',
-                'label' => 'LBL_SENDER',
-                'default' => true,
-                'width' => '10%',
+                'name' => 'template',
             ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
@@ -122,6 +126,13 @@ array(
                 'default' => true,
                 'name' => 'parent_name',
             ),
+            'sent_date' => array(
+                'type' => 'datetime',
+                'label' => 'LBL_SENT_DATE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'sent_date',
+            ),
             'type' => array(
                 'type' => 'enum',
                 'studio' => 'visible',
@@ -152,6 +163,16 @@ array(
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
+            ),
+            'template' => array(
+                'type' => 'relate',
+                'studio' => 'visible',
+                'label' => 'LBL_TEMPLATE',
+                'id' => 'template_id_c',
+                'link' => true,
+                'width' => '10%',
+                'default' => true,
+                'name' => 'template',
             ),
             'date_entered' => array(
                 'type' => 'datetime',
