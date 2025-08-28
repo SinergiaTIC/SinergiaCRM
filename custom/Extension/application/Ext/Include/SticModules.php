@@ -64,6 +64,12 @@ $moduleList[] = 'stic_Skills';
 $moduleList[] = 'stic_Bookings_Places_Calendar';
 $moduleList[] = 'stic_Places';
 $moduleList[] = 'stic_Group_Opportunities';
+$moduleList[] = 'stic_Advanced_Web_Forms';
+// $moduleList[] = 'stic_Advanced_Web_Forms_Responses';
+// $moduleList[] = 'stic_Advanced_Web_Forms_Links';
+// $moduleList[] = 'stic_Advanced_Web_Forms_DataBlocks';
+// $moduleList[] = 'stic_Advanced_Web_Forms_Actions';
+// $moduleList[] = 'stic_Advanced_Web_Forms_Sections';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -113,6 +119,12 @@ $beanList['stic_Custom_View_Actions'] = 'stic_Custom_View_Actions';
 $beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
 $beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
 $beanList['stic_Places'] = 'stic_Places';
+$beanList['stic_Advanced_Web_Forms'] = 'stic_Advanced_Web_Forms';
+$beanList['stic_Advanced_Web_Forms_Responses'] = 'stic_Advanced_Web_Forms_Responses';
+$beanList['stic_Advanced_Web_Forms_Links'] = 'stic_Advanced_Web_Forms_Links';
+$beanList['stic_Advanced_Web_Forms_DataBlocks'] = 'stic_Advanced_Web_Forms_DataBlocks';
+$beanList['stic_Advanced_Web_Forms_Actions'] = 'stic_Advanced_Web_Forms_Actions';
+$beanList['stic_Advanced_Web_Forms_Sections'] = 'stic_Advanced_Web_Forms_Sections';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -161,6 +173,12 @@ $beanFiles['stic_Custom_View_Actions'] = 'modules/stic_Custom_View_Actions/stic_
 $beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_Group_Opportunities.php';
 $beanFiles['stic_Bookings_Places_Calendar'] = 'modules/stic_Bookings_Places_Calendar/stic_Bookings_Places_Calendar.php';
 $beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
+$beanFiles['stic_Advanced_Web_Forms'] = 'modules/stic_Advanced_Web_Forms/stic_Advanced_Web_Forms.php';
+$beanFiles['stic_Advanced_Web_Forms_Responses'] = 'modules/stic_Advanced_Web_Forms_Responses/stic_Advanced_Web_Forms_Responses.php';
+$beanFiles['stic_Advanced_Web_Forms_Links'] = 'modules/stic_Advanced_Web_Forms_Links/stic_Advanced_Web_Forms_Links.php';
+$beanFiles['stic_Advanced_Web_Forms_DataBlocks'] = 'modules/stic_Advanced_Web_Forms_DataBlocks/stic_Advanced_Web_Forms_DataBlocks.php';
+$beanFiles['stic_Advanced_Web_Forms_Actions'] = 'modules/stic_Advanced_Web_Forms_Actions/stic_Advanced_Web_Forms_Actions.php';
+$beanFiles['stic_Advanced_Web_Forms_Sections'] = 'modules/stic_Advanced_Web_Forms_Sections/stic_Advanced_Web_Forms_Sections.php';
 
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
@@ -175,11 +193,21 @@ $modInvisList[] = 'stic_Custom_Views';
 $modInvisList[] = 'stic_Custom_View_Customizations';
 $modInvisList[] = 'stic_Custom_View_Conditions';
 $modInvisList[] = 'stic_Custom_View_Actions';
+$modInvisList[] = 'stic_Advanced_Web_Forms_Responses';
+$modInvisList[] = 'stic_Advanced_Web_Forms_Links';
+$modInvisList[] = 'stic_Advanced_Web_Forms_DataBlocks';
+$modInvisList[] = 'stic_Advanced_Web_Forms_Actions';
+$modInvisList[] = 'stic_Advanced_Web_Forms_Sections';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
 $modules_exempt_from_availability_check['stic_Incorpora'] = 'stic_Incorpora';
 $modules_exempt_from_availability_check['stic_Custom_View_Customizations'] = 'stic_Custom_View_Customizations';
+$modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Responses'] = 'stic_Advanced_Web_Forms_Responses';
+$modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Links'] = 'stic_Advanced_Web_Forms_Links';
+$modules_exempt_from_availability_check['stic_Advanced_Web_Forms_DataBlocks'] = 'stic_Advanced_Web_Forms_DataBlocks';
+$modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Actions'] = 'stic_Advanced_Web_Forms_Actions';
+$modules_exempt_from_availability_check['stic_Advanced_Web_Forms_Sections'] = 'stic_Advanced_Web_Forms_Sections';
 
 // Modules that have been hidden with $modInvisList, but must be available in reporting
 // $report_include_modules['stic_XXXXXXXXXX'] = 'stic_XXXXXXXXXX'; // sample value

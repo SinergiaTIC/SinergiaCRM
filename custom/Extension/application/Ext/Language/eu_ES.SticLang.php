@@ -142,6 +142,12 @@ $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condiciones';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organizaciones subvencionadas';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_DataBlocks'] = 'Bloques de Datos de Formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Responses'] = 'Respuestas a formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Links'] = 'Vínculos de Formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Sections'] = 'Secciones de Formularios';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms'] = 'Formularios Web Avanzados';
+$app_list_strings['moduleList']['stic_Advanced_Web_Forms_Actions'] = 'Acciones de Formularios';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -190,6 +196,12 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condic
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organización subvencionada';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendario de Plazas';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaza';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_DataBlocks'] = 'Bloque de Datos de Formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Responses'] = 'Respuesta a formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Links'] = 'Vínculo de Formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Sections'] = 'Sección de Formulario';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms'] = 'Formulario Web Avanzado';
+$app_list_strings['moduleListSingular']['stic_Advanced_Web_Forms_Actions'] = 'Acción de Formulario';
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
 $app_list_strings['parent_type_display']['Leads'] = 'Interesados';
@@ -3695,3 +3707,38 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['notification'] = 'Not
 $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
+
+// Modos de proceso de los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_processing_mode_list']['sync'] = 'Síncrono';
+$app_list_strings['stic_advanced_web_forms_processing_mode_list']['async'] = 'Asíncrono';
+
+// Estado del proceso de respuestas a los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_status_list']['pending'] = 'Pendiente';
+$app_list_strings['stic_advanced_web_forms_status_list']['processing'] = 'Procesando';
+$app_list_strings['stic_advanced_web_forms_status_list']['processed'] = 'Procesada';
+$app_list_strings['stic_advanced_web_forms_status_list']['error'] = 'Error';
+
+// Acción realizada con un registro por una respuestas a un Formulario Web Avanzado
+$app_list_strings['stic_advanced_web_forms_links_record_action_list']['created'] = 'Creado';
+$app_list_strings['stic_advanced_web_forms_links_record_action_list']['updated'] = 'Actualizado';
+$app_list_strings['stic_advanced_web_forms_links_record_action_list']['enriched'] = 'Ampliado';
+$app_list_strings['stic_advanced_web_forms_links_record_action_list']['skipped'] = 'Ignorado';
+
+// Acción a realizar con un registro del CRM si se detecta existente
+$app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['update'] = 'Actualizar';
+$app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['enrich'] = 'Ampliar';
+$app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['skip'] = 'Ignorar';
+$app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['error'] = 'Error';
+
+// Tipos de acciones para los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_action_type_list']['ui'] = 'Interfaz';
+$app_list_strings['stic_advanced_web_forms_action_type_list']['data_provider'] = 'Proveedora de datos';
+$app_list_strings['stic_advanced_web_forms_action_type_list']['hook'] = 'Servidor';
+$app_list_strings['stic_advanced_web_forms_action_type_list']['hook_terminal'] = 'Terminal';
+$app_list_strings['stic_advanced_web_forms_action_type_list']['hook_deferred'] = 'En espera';
+$app_list_strings['stic_advanced_web_forms_action_type_list']['group'] = 'Agrupada';
+
+// Tipos de secciones (UI) en los Formularios Web Avanzados
+$app_list_strings['stic_advanced_web_forms_sections_type_list']['panel'] = 'Panel';
+$app_list_strings['stic_advanced_web_forms_sections_type_list']['tab'] = 'Pestaña';
+$app_list_strings['stic_advanced_web_forms_sections_type_list']['accordion'] = 'Acordeón';

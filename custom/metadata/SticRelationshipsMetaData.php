@@ -7284,3 +7284,591 @@ $dictionary["stic_resources_stic_centers"] = array (
       ),
     ),
   );
+  $dictionary["stic_advanced_web_forms_stic_advanced_web_forms_responses"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_stic_advanced_web_forms_responses' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms',
+        'lhs_table' => 'stic_advanced_web_forms',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Responses',
+        'rhs_table' => 'stic_advanced_web_forms_responses',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_f193responses_c',
+        'join_key_lhs' => 'stic_aa0eb_forms_ida',
+        'join_key_rhs' => 'stic_21b0sponses_idb',
+      ),
+    ),
+    'table' => 'stic_f193responses_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_aa0eb_forms_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_21b0sponses_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_69c1s_responsesspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_69c1s_responses_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_aa0eb_forms_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_69c1s_responses_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_21b0sponses_idb',
+        ),
+      ),
+    ),
+  );
+  $dictionary["stic_advanced_web_forms_responses_stic_advanced_web_forms_links"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_responses_stic_advanced_web_forms_links' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms_Responses',
+        'lhs_table' => 'stic_advanced_web_forms_responses',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Links',
+        'rhs_table' => 'stic_advanced_web_forms_links',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_2b5arms_links_c',
+        'join_key_lhs' => 'stic_e755sponses_ida',
+        'join_key_rhs' => 'stic_fe09s_links_idb',
+      ),
+    ),
+    'table' => 'stic_2b5arms_links_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_e755sponses_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_fe09s_links_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_1c31forms_linksspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_1c31forms_links_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_e755sponses_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_1c31forms_links_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_fe09s_links_idb',
+        ),
+      ),
+    ),
+  );
+  $dictionary["stic_advanced_web_forms_stic_advanced_web_forms_datablocks"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_stic_advanced_web_forms_datablocks' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms',
+        'lhs_table' => 'stic_advanced_web_forms',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_DataBlocks',
+        'rhs_table' => 'stic_advanced_web_forms_datablocks',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_f604atablocks_c',
+        'join_key_lhs' => 'stic_36c0b_forms_ida',
+        'join_key_rhs' => 'stic_3e79ablocks_idb',
+      ),
+    ),
+    'table' => 'stic_f604atablocks_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_36c0b_forms_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_3e79ablocks_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_2860_datablocksspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_2860_datablocks_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_36c0b_forms_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_2860_datablocks_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_3e79ablocks_idb',
+        ),
+      ),
+    ),
+  );
+  $dictionary["stic_advanced_web_forms_stic_advanced_web_forms_actions"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_stic_advanced_web_forms_actions' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms',
+        'lhs_table' => 'stic_advanced_web_forms',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Actions',
+        'rhs_table' => 'stic_advanced_web_forms_actions',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_1c73s_actions_c',
+        'join_key_lhs' => 'stic_0be4b_forms_ida',
+        'join_key_rhs' => 'stic_37ebactions_idb',
+      ),
+    ),
+    'table' => 'stic_1c73s_actions_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_0be4b_forms_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_37ebactions_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_172erms_actionsspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_172erms_actions_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_0be4b_forms_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_172erms_actions_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_37ebactions_idb',
+        ),
+      ),
+    ),
+  );
+  $dictionary["stic_advanced_web_forms_datablocks_stic_advanced_web_forms_actions"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_datablocks_stic_advanced_web_forms_actions' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms_DataBlocks',
+        'lhs_table' => 'stic_advanced_web_forms_datablocks',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Actions',
+        'rhs_table' => 'stic_advanced_web_forms_actions',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_a9b3s_actions_c',
+        'join_key_lhs' => 'stic_6646ablocks_ida',
+        'join_key_rhs' => 'stic_f8eaactions_idb',
+      ),
+    ),
+    'table' => 'stic_a9b3s_actions_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_6646ablocks_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_f8eaactions_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_39d0rms_actionsspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_39d0rms_actions_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_6646ablocks_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_39d0rms_actions_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_f8eaactions_idb',
+        ),
+      ),
+    ),
+  );
+  $dictionary["stic_advanced_web_forms_stic_advanced_web_forms_sections"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_stic_advanced_web_forms_sections' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms',
+        'lhs_table' => 'stic_advanced_web_forms',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Sections',
+        'rhs_table' => 'stic_advanced_web_forms_sections',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_32e7_sections_c',
+        'join_key_lhs' => 'stic_655ab_forms_ida',
+        'join_key_rhs' => 'stic_d8e6ections_idb',
+      ),
+    ),
+    'table' => 'stic_32e7_sections_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_655ab_forms_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_d8e6ections_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_e791ms_sectionsspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_e791ms_sections_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_655ab_forms_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_e791ms_sections_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_d8e6ections_idb',
+        ),
+      ),
+    ),
+  );
+  $dictionary["stic_advanced_web_forms_sections_stic_advanced_web_forms_sections"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => 
+    array (
+      'stic_advanced_web_forms_sections_stic_advanced_web_forms_sections' => 
+      array (
+        'lhs_module' => 'stic_Advanced_Web_Forms_Sections',
+        'lhs_table' => 'stic_advanced_web_forms_sections',
+        'lhs_key' => 'id',
+        'rhs_module' => 'stic_Advanced_Web_Forms_Sections',
+        'rhs_table' => 'stic_advanced_web_forms_sections',
+        'rhs_key' => 'id',
+        'relationship_type' => 'many-to-many',
+        'join_table' => 'stic_f78f_sections_c',
+        'join_key_lhs' => 'stic_17bfections_ida',
+        'join_key_rhs' => 'stic_d442ections_idb',
+      ),
+    ),
+    'table' => 'stic_f78f_sections_c',
+    'fields' => 
+    array (
+      0 => 
+      array (
+        'name' => 'id',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      1 => 
+      array (
+        'name' => 'date_modified',
+        'type' => 'datetime',
+      ),
+      2 => 
+      array (
+        'name' => 'deleted',
+        'type' => 'bool',
+        'len' => '1',
+        'default' => '0',
+        'required' => true,
+      ),
+      3 => 
+      array (
+        'name' => 'stic_17bfections_ida',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+      4 => 
+      array (
+        'name' => 'stic_d442ections_idb',
+        'type' => 'varchar',
+        'len' => 36,
+      ),
+    ),
+    'indices' => 
+    array (
+      0 => 
+      array (
+        'name' => 'stic_26bams_sectionsspk',
+        'type' => 'primary',
+        'fields' => 
+        array (
+          0 => 'id',
+        ),
+      ),
+      1 => 
+      array (
+        'name' => 'stic_26bams_sections_ida1',
+        'type' => 'index',
+        'fields' => 
+        array (
+          0 => 'stic_17bfections_ida',
+        ),
+      ),
+      2 => 
+      array (
+        'name' => 'stic_26bams_sections_alt',
+        'type' => 'alternate_key',
+        'fields' => 
+        array (
+          0 => 'stic_d442ections_idb',
+        ),
+      ),
+    ),
+  );
