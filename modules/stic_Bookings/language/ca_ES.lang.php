@@ -63,6 +63,7 @@ $mod_strings = array(
     'LBL_MODULE_NAME_SINGULAR' => 'Reserva',
 
     'LBL_CODE' => 'Codi',
+    'LBL_RECURSIVE_CODE' => 'Codi de reserva periòdica',
     'LBL_STATUS' => 'Estat',
     'LBL_ALL_DAY' => 'Tot el dia',
     'LBL_PLACE_BOOKING' => 'Reserva de places',
@@ -123,7 +124,32 @@ $mod_strings = array(
     'LBL_NUMBER_OF_PLACES' => 'Nombre de places: ',
     'LBL_TOTAL_AMOUNT' => 'Tarifa total',
     'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa de copagament',
-    
+    'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registres periòdics',
+
+    //Repeat section
+    'LBL_CANCEL_BUTTON' => 'Cancel·lar',
+    'LBL_REPEAT_DOW' => 'Dia de la setmana',
+    'LBL_REPEAT_END_AFTER' => 'Després de',
+    'LBL_REPEAT_END_BY' => 'Fins',
+    'LBL_REPEAT_END' => 'Fi',
+    'LBL_REPEAT_INTERVAL' => 'Interval',
+    'LBL_REPEAT_OCCURRENCES' => 'dies',
+    'LBL_REPEAT_TYPE' => 'Repetir',
+    'LBL_REPEAT_UNTIL' => 'Repetir fins',
+    'LBL_SAVE_BUTTON' => 'Desar',
+    'LBL_UNAVAILABLE_RESOURCES' => 'Recursos no disponibles',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Resum:',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE_BY_RESOURCE' => 'Resum per recurs',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Nombre de registres processats',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_CREATED' => 'Nombre de registres a crear',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED' => 'Nombre de registres no creats',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'Llistat de registres no creats',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT' => "No s\'han creat registres a causa de solapaments amb altres registres existents de tipus incompatibles.",
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT2' => 'A continuació es llisten els registres no creats per als diferents usuaris.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Anar al calendari de reserves',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => "Anar al calendari d\'espais",
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Anar a reserves',
+
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurs',
     'LBL_RESOURCE_COUNT' => 'Recursos totals',

@@ -309,6 +309,15 @@ class stic_BookingsUtils
             );
         }
 
+        $firstBookingCode = null;
+        if ($repeat_type) {
+            $query = "SELECT code FROM stic_bookings ORDER BY code DESC LIMIT 1";
+            $result = $db->query($query, true);
+            $row = $db->fetchByAssoc($result);
+            $lastNum = $row['code'] ?? 0;
+            $firstBookingCode = str_pad($lastNum + 1, 5, "0", STR_PAD_LEFT);
+        }
+    
         $all_booking_attempts = array();
         $bookingsToConfirm = array(); 
         $controller = new stic_BookingsController();
@@ -407,6 +416,7 @@ class stic_BookingsUtils
                 'resourceIds' => $resourceIds,
                 'allResourcesAvailable' => $allResourcesAvailable,
                 'name' => $bookingName,
+                'recursive_code' => $firstBookingCode,
                 'resource_names' => array_values($resourceNames)
             );
 
@@ -513,6 +523,7 @@ class stic_BookingsUtils
                 $bookingBean->repeat_type = $booking_info['repeat_type'];
                 $bookingBean->place_booking = $booking_info['place_booking'];
                 $bookingBean->description = $booking_info['description'];
+                $bookingBean->recursive_code = $booking_info['recursive_code'];
 
                 if (!empty($booking_info['parent_id']) && !empty($booking_info['parent_type'])) {
                     $bookingBean->parent_id = $booking_info['parent_id'];

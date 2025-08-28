@@ -42,6 +42,7 @@ $mod_strings = array(
     'LBL_DELETED' => 'Eliminado',
     'LBL_NAME' => 'Nombre',
     'LBL_LIST_NAME' => 'Nombre',
+    'LBL_LIST_CLOSE' => 'Cerrar',
     'LBL_EDIT_BUTTON' => 'Editar',
     'LBL_REMOVE' => 'Desvincular',
     'LBL_ASCENDING' => 'Ascendente',

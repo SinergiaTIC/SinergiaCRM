@@ -63,6 +63,7 @@ $mod_strings = array(
     'LBL_MODULE_NAME_SINGULAR' => 'Reserva',
 
     'LBL_CODE' => 'Código',
+    'LBL_RECURSIVE_CODE' => 'Código reserva recurrente',
     'LBL_STATUS' => 'Estado',
     'LBL_ALL_DAY' => 'Todo o día',
     'LBL_PLACE_BOOKING' => 'Reserrva de plazas',
@@ -77,7 +78,7 @@ $mod_strings = array(
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unidad familiar que reserva',
     'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromiso de pago',
 
-    // Cadenas de la sección "Añadir recursos"
+    // Used for the adding resources section
     'LBL_RESOURCES' => 'Recursos',
     'LBL_PLACES' => 'Plazas',
     'LBL_RESOURCES_NAME' => 'Nome',
@@ -123,6 +124,31 @@ $mod_strings = array(
     'LBL_NUMBER_OF_PLACES' => 'Número de plazas: ',
     'LBL_TOTAL_AMOUNT' => 'Tarifa total',
     'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa copago',
+    
+    //Repeat section
+    'LNK_CREATE_PERIODIC_RECORDS' => 'Crear registros periódicos',
+    'LBL_CANCEL_BUTTON' => 'Cancelar',
+    'LBL_REPEAT_DOW' => 'Día de la semana',
+    'LBL_REPEAT_END_AFTER' => 'Después de',
+    'LBL_REPEAT_END_BY' => 'Hasta',
+    'LBL_REPEAT_END' => 'Fin',
+    'LBL_REPEAT_INTERVAL' => 'Intervalo',
+    'LBL_REPEAT_OCCURRENCES' => 'días',
+    'LBL_REPEAT_TYPE' => 'Repetir',
+    'LBL_REPEAT_UNTIL' => 'Repetir hasta',
+    'LBL_SAVE_BUTTON' => 'Guardar',
+    'LBL_UNAVAILABLE_RESOURCES' => 'Recursos no disponibles',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Resumen:',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE_BY_RESOURCE' => 'Resumen por recurso',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Número de registros procesados',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_CREATED' => 'Número de registros a crear',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED' => 'Número de registros no creados',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TITLE' => 'Listado de registros no creados',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT' => 'No se han creado registros debido a solapamientos con otros registros existentes de tipos incompatibles.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT2' => 'A continuación se listan los registros no creados para los distintos usuarios.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Ir al calendario de reservas',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => 'Ir al calendario de espacios',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Ir a reservas',    
 
     // Additional details
     'LBL_RESOURCE_NAME' => 'Recurso',

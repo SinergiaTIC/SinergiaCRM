@@ -67,8 +67,10 @@ array(
                         'name' => 'code',
                     ),
                     1 => array(
+                        'name' => 'recursive_code',
                     ),
-                ),                2 => array(
+                ),
+                2 => array(
                     0 => array(
                         'name' => 'stic_bookings_contacts_name',
                     ),
