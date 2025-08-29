@@ -50,3 +50,12 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 
 // Assistent de creació de registres de Calendari laboral
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Genera el Calendari laboral';
+
+// Suplantació d'Usuaris
+$mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Suplantar Usuari';
+$mod_strings['LBL_IMPERSONATE_ALERT_TITLE'] = '<strong>Suplantació activa</strong><br>';
+$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'Actualment estàs suplantant a aquest usuari: ';
+$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>Per tornar al teu usuari original fes click <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
+$mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuari original';
+$mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuari suplantat';
+$mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalitzar suplantació';

@@ -3596,6 +3596,8 @@ $app_list_strings['trackers_actions_list']['deleted'] = 'Record deleted';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'User login';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Login failed';
 $app_list_strings['trackers_actions_list']['logout'] = 'User logout';
+$app_list_strings['trackers_actions_list']['impersonate_start'] = 'Start Impersonate';
+$app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Stop Impersonate';
 
 // SuiteCRM Core modifications
 

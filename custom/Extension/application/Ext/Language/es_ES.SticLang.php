@@ -3597,6 +3597,8 @@ $app_list_strings['trackers_actions_list']['deleted'] = 'Registro eliminado';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuario conectado';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inicio de sesión erróneo';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuario desconectado';
+$app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inicio suplantación';
+$app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fin suplantación';
 
 // Modificaciones del core de SuiteCRM
 
