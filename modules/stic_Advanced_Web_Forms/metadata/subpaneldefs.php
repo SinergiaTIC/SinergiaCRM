@@ -12,88 +12,24 @@ $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'add_subpanel_data' => 'securitygroup_id',
     'title_key' => 'LBL_SECURITYGROUPS_SUBPANEL_TITLE',
 );
-$layout_defs["stic_Advanced_Web_Forms"]["subpanel_setup"]['stic_172erms_actions'] = array (
-    'order' => 100,
-    'module' => 'stic_Advanced_Web_Forms_Actions',
-    'subpanel_name' => 'default',
-    'sort_order' => 'asc',
-    'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_ACTIONS_FROM_STIC_ADVANCED_WEB_FORMS_ACTIONS_TITLE',
-    'get_subpanel_data' => 'stic_172erms_actions',
-    'top_buttons' => 
+$layout_defs["stic_Advanced_Web_Forms"]["subpanel_setup"]['stic_69c1s_responses'] = array (
+  'order' => 100,
+  'module' => 'stic_Advanced_Web_Forms_Responses',
+  'subpanel_name' => 'default',
+  'sort_order' => 'asc',
+  'sort_by' => 'id',
+  'title_key' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE',
+  'get_subpanel_data' => 'stic_69c1s_responses',
+  'top_buttons' => 
+  array (
+    0 => 
     array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
     ),
-  );
-  $layout_defs["stic_Advanced_Web_Forms"]["subpanel_setup"]['stic_2860_datablocks'] = array (
-    'order' => 100,
-    'module' => 'stic_Advanced_Web_Forms_DataBlocks',
-    'subpanel_name' => 'default',
-    'sort_order' => 'asc',
-    'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_DATABLOCKS_FROM_STIC_ADVANCED_WEB_FORMS_DATABLOCKS_TITLE',
-    'get_subpanel_data' => 'stic_2860_datablocks',
-    'top_buttons' => 
+    1 => 
     array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
+      'widget_class' => 'SubPanelTopSelectButton',
+      'mode' => 'MultiSelect',
     ),
-  );
-  $layout_defs["stic_Advanced_Web_Forms"]["subpanel_setup"]['stic_69c1s_responses'] = array (
-    'order' => 100,
-    'module' => 'stic_Advanced_Web_Forms_Responses',
-    'subpanel_name' => 'default',
-    'sort_order' => 'asc',
-    'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE',
-    'get_subpanel_data' => 'stic_69c1s_responses',
-    'top_buttons' => 
-    array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
-    ),
-  );
-  $layout_defs["stic_Advanced_Web_Forms"]["subpanel_setup"]['stic_e791ms_sections'] = array (
-    'order' => 100,
-    'module' => 'stic_Advanced_Web_Forms_Sections',
-    'subpanel_name' => 'default',
-    'sort_order' => 'asc',
-    'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_SECTIONS_FROM_STIC_ADVANCED_WEB_FORMS_SECTIONS_TITLE',
-    'get_subpanel_data' => 'stic_e791ms_sections',
-    'top_buttons' => 
-    array (
-      0 => 
-      array (
-        'widget_class' => 'SubPanelTopButtonQuickCreate',
-      ),
-      1 => 
-      array (
-        'widget_class' => 'SubPanelTopSelectButton',
-        'mode' => 'MultiSelect',
-      ),
-    ),
-  );
-  
+  ),
+);  

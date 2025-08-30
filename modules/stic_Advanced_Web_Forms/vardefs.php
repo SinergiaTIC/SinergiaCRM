@@ -302,26 +302,6 @@ $dictionary['stic_Advanced_Web_Forms'] = array(
     'unified_search' => true,
 );
 
-$dictionary["stic_Advanced_Web_Forms"]["fields"]["stic_172erms_actions"] = array (
-  'name' => 'stic_172erms_actions',
-  'type' => 'link',
-  'relationship' => 'stic_advanced_web_forms_stic_advanced_web_forms_actions',
-  'source' => 'non-db',
-  'module' => 'stic_Advanced_Web_Forms_Actions',
-  'bean_name' => false,
-  'side' => 'right',
-  'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_ACTIONS_FROM_STIC_ADVANCED_WEB_FORMS_ACTIONS_TITLE',
-);
-$dictionary["stic_Advanced_Web_Forms"]["fields"]["stic_2860_datablocks"] = array (
-  'name' => 'stic_2860_datablocks',
-  'type' => 'link',
-  'relationship' => 'stic_advanced_web_forms_stic_advanced_web_forms_datablocks',
-  'source' => 'non-db',
-  'module' => 'stic_Advanced_Web_Forms_DataBlocks',
-  'bean_name' => false,
-  'side' => 'right',
-  'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_DATABLOCKS_FROM_STIC_ADVANCED_WEB_FORMS_DATABLOCKS_TITLE',
-);
 $dictionary["stic_Advanced_Web_Forms"]["fields"]["stic_69c1s_responses"] = array (
   'name' => 'stic_69c1s_responses',
   'type' => 'link',
@@ -331,16 +311,6 @@ $dictionary["stic_Advanced_Web_Forms"]["fields"]["stic_69c1s_responses"] = array
   'bean_name' => false,
   'side' => 'right',
   'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE',
-);
-$dictionary["stic_Advanced_Web_Forms"]["fields"]["stic_e791ms_sections"] = array (
-  'name' => 'stic_e791ms_sections',
-  'type' => 'link',
-  'relationship' => 'stic_advanced_web_forms_stic_advanced_web_forms_sections',
-  'source' => 'non-db',
-  'module' => 'stic_Advanced_Web_Forms_Sections',
-  'bean_name' => false,
-  'side' => 'right',
-  'vname' => 'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_SECTIONS_FROM_STIC_ADVANCED_WEB_FORMS_SECTIONS_TITLE',
 );
 
 if (!class_exists('VardefManager')) {
