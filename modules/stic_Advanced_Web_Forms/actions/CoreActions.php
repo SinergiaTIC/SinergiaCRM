@@ -25,26 +25,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/Definitions/stic_AWF_ActionParameter.php";
-include_once __DIR__."/Definitions/stic_AWF_ActionResult.php";
-include_once __DIR__."/Definitions/stic_AWF_WebhookResult.php";
-include_once __DIR__."/Definitions/stic_AWF_ActionModifiedBean.php";
+include_once __DIR__."../core/actions/stic_AWF_ActionParameter.php";
+include_once __DIR__."../core/actions/stic_AWF_ActionResult.php";
+include_once __DIR__."../core/actions/stic_AWF_WebhookResult.php";
+include_once __DIR__."../core/actions/stic_AWF_ActionModifiedBean.php";
 
-include_once __DIR__."/Definitions/stic_AWF_ActionInterface.php";
-include_once __DIR__."/Definitions/stic_AWF_Executable_ActionInterface.php";
-include_once __DIR__."/Definitions/stic_AWF_Scoped_ActionInterface.php";
-
-
-include_once __DIR__."/Definitions/UI/stic_AWF_UI_ActionInterface.php";
+include_once __DIR__."../core/actions/stic_AWF_ActionInterface.php";
+include_once __DIR__."../core/actions/stic_AWF_Executable_ActionInterface.php";
+include_once __DIR__."../core/actions/stic_AWF_Scoped_ActionInterface.php";
 
 
-include_once __DIR__."/Definitions/DataProvider/stic_AWF_DataProvider_ActionInterface.php";
+include_once __DIR__."../core/actions/UI/stic_AWF_UI_ActionInterface.php";
 
 
-include_once __DIR__."/Definitions/Hook/stic_AWF_Hook_ActionInterface.php";
-include_once __DIR__."/Definitions/Hook/stic_AWF_Hook_Bean_ActionInterface.php";
-include_once __DIR__."/Definitions/Hook/stic_AWF_Deferred_ActionInterface.php";
-include_once __DIR__."/Definitions/Hook/stic_AWF_Deferred_ManualReviewInterface.php";
+include_once __DIR__."../core/actions/DataProvider/stic_AWF_DataProvider_ActionInterface.php";
 
 
-include_once __DIR__."/Definitions/Group/stic_AWF_Group_ActionInterface.php";
+include_once __DIR__."../core/actions/Hook/stic_AWF_Hook_ActionInterface.php";
+include_once __DIR__."../core/actions/Hook/stic_AWF_Hook_Bean_ActionInterface.php";
+include_once __DIR__."../core/actions/Hook/stic_AWF_Deferred_ActionInterface.php";
+include_once __DIR__."../core/actions/Hook/stic_AWF_Deferred_ManualReviewInterface.php";
+
+
+include_once __DIR__."../core/actions/Group/stic_AWF_Group_ActionInterface.php";

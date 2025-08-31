@@ -80,12 +80,17 @@ $mod_strings = array (
   'LBL_STATUS' => 'Estado',
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Modo de procesamiento',
+  'LBL_CONFIGURATION' => 'Configuración',
   'LBL_CUSTOM_CSS' => 'css personalizado',
   'LBL_CUSTOM_JS' => 'js personalizado',
   'LBL_CUSTOM_HEADER_HTML' => 'Cabecera personalizada',
   'LBL_CUSTOM_FOOTER_HTML' => 'Pie personalizado',
   'LBL_HTML' => 'código html',
   'LBL_ADDITIONAL_INFO' => 'Información adicional',
+ 
+  'LBL_WIZARD_PREVIOUS' => '<< Anterior',
+  'LBL_WIZARD_NEXT' => 'Siguiente >>',
+  'LBL_WIZARD_FINISH' => 'Finalizar',
 
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
 );

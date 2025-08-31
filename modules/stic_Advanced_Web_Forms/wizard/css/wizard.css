@@ -1,0 +1,5 @@
+.wizard-nav .button[disabled], 
+.wizard-nav .button[disabled]:hover {
+    background-color: #828282 !important;
+    cursor: not-allowed;
+}
