@@ -51,11 +51,11 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';
 // Asistente de creación de registros de Calendario laboral
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generar Calendario laboral';
 
-// Suplantación de Usuarios
-$mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Suplantar Usuario';
+// Suplantación de usuarios
+$mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Suplantar usuario';
 $mod_strings['LBL_IMPERSONATE_ALERT_TITLE'] = '<strong>Suplantación activa</strong><br>';
-$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'Actualmente estás suplantando a este usuario: ';
-$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>Para volver a tu usuario original haz click <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
+$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'En este momento está suplantando a este usuario: ';
+$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>Para volver a su propio usuario haga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuario original';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuario suplantado';
 $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalizar suplantación';
