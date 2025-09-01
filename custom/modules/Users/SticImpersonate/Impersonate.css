@@ -1,4 +1,3 @@
-<?php
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -20,25 +19,37 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
-if (!isset($hook_array) || !is_array($hook_array)) {
-    $hook_array = array();
+ 
+.impersonate-indicator {
+    padding-left: 5px;
 }
-if (!isset($hook_array['after_ui_frame']) || !is_array($hook_array['after_ui_frame'])) {
-    $hook_array['after_ui_frame'] = array();
-}
-$hook_array['after_ui_frame'][] = Array(1, 'stic_Custom_Views processor', 'modules/stic_Custom_Views/processor/LogicHooksCode.php','stic_Custom_Views_ProcessorLogicHooks', 'after_ui_frame'); 
 
-if (!isset($hook_array['server_round_trip']) || !is_array($hook_array['server_round_trip'])) {
-    $hook_array['server_round_trip'] = array();
+.impersonate-indicator-icon {
+    background-color: red !important;
+    color:red;
+    animation: blink 1.5s linear infinite;
 }
-$hook_array['server_round_trip'][] = Array(1, 'SticRemoteLog Hook', 'SticInclude/SticRemoteLogLogicHooksCode.php','SticRemoteLogLogicHooks', 'server_round_trip'); 
 
-$hook_array['after_ui_frame'] = array();
-$hook_array['after_ui_frame'][] = array(
-    1,
-    'Impersonate UI Injection',
-    'custom/modules/Users/SticImpersonate/LogicHooksCode.php',
-    'ImpersonateLogicHooks',
-    'after_ui_frame'
-);
+@keyframes blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.2;
+    }
+}
+
+.impersonation-dropdown {
+  right: 0;
+  left: auto;
+}
+
+.impersonate-indicator:hover .impersonation-dropdown {
+  display: block;
+}
+
+#stop-impersonation-btn {
+  color: white !important;
+  background-color: red !important;
+  border-color: red !important;
+}
