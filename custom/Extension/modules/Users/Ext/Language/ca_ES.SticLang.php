@@ -52,26 +52,26 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Genera el Calendari laboral';
 
 // Autenticació OAuth
-$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>O inicia sessió amb un proveïdor:</h3>';
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Inici de sessió alternatiu</h3>';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = "L'adreça de correu electrònic ";
-$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = " no pertany a cap usuari del CRM. Si us plau, contacti amb un administrador";
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = " no pertany a cap usuari de SinergiaCRM. Si creieu que és un error, contacteu amb un administrador.";
 
 // Autenticació OAuth - Google
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Inicia sessió amb Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_TITLE'] = 'Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE'] = "Habilita l'autenticació amb Google";
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = "Aquesta opció habilita l'autenticació amb Google. Més informació a: https://developers.google.com/identity/protocols/oauth2";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = "Aquesta opció habilita l'autenticació amb Google. <a href="""https://developers.google.com/identity/protocols/oauth2""">Més informació</a>";
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'ID de client';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = "ID de l'aplicació registrada a Google API Console. Més informació a: https://developers.google.com/identity/protocols/oauth2";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = "ID de l'aplicació registrada a Google API Console. <a href="""https://developers.google.com/identity/protocols/oauth2""">Més informació</a>";
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Secret de client';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = "Secret de l'aplicació registrada a Google API Console. Més informació a: https://developers.google.com/identity/protocols/oauth2";
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = "Secret de l'aplicació registrada a Google API Console. <a href="""https://developers.google.com/identity/protocols/oauth2""">Més informació</a>";
 
 // Autenticació OAuth - Microsoft
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT'] = 'Inicia sessió amb Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TITLE'] = 'Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = "Habilita l'autenticació amb Microsoft";
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "Aquesta opció habilita l'autenticació amb Microsoft. Més informació a: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "Aquesta opció habilita l'autenticació amb Microsoft. <a href="""https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow""">Més informació</a>";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'ID de client';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID de l'aplicació registrada al Microsoft Azure Portal. Més informació a: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID de l'aplicació registrada a Microsoft Azure Portal. <a href="""https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow""">Més informació</a>";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de llogater';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID de llogater de l'aplicació registrada al Microsoft Azure Portal. Més informació a: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID del llogater de l'aplicació registrada a Microsoft Azure Portal. <a href="""https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow""">Més informació</a>";
