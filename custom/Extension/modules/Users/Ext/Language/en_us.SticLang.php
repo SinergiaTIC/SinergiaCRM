@@ -52,27 +52,27 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generate Work calendar';
 
 // OAuth Authentication
-$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Or login with provider:</h3>';
+$mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Alternative login</h3>';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'The email address ';
-$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' does not belong to any CRM user. Please contact an administrator';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' does not belong to any SinergiaCRM user. If you believe this is an error, please contact an administrator.';
 
 // OAuth Authentication - Google
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Login with Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_TITLE'] = 'Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE'] = 'Enable Google Authentication';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = 'This option enables Google Authentication HELP. More information at: https://developers.google.com/identity/protocols/oauth2';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = 'This option enables Google Authentication. More information at: https://developers.google.com/identity/protocols/oauth2';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'Client ID';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = 'ID of the application registered in Google API Console. More information at: https://developers.google.com/identity/protocols/oauth2';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Client Secret';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = 'Application ID registered in Google API Console. More information at: https://developers.google.com/identity/protocols/oauth2';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Client secret';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = 'Secret of the application registered in Google API Console. More information at: https://developers.google.com/identity/protocols/oauth2';
 
 // OAuth Authentication - Microsoft
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT'] = 'Login with Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TITLE'] = 'Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = 'Enable Microsoft Authentication';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = 'This option enables Microsoft Authentication HELP. More information at: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = 'This option enables Microsoft Authentication. More information at: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'Client ID';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = 'ID of the application registered in Microsoft Azure Portal. More information at: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = 'Application ID registered in Microsoft Azure Portal. More information at: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'Tenant ID';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = 'Tenant ID of the application registered in Microsoft Azure Portal. More information at: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'Redirect URI';
