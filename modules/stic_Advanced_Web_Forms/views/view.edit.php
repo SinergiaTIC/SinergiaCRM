@@ -37,9 +37,7 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
 
         SticViews::preDisplay($this);
 
-        // Uncomment:
         echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
-        
         echo '<script src="//unpkg.com/alpinejs" defer></script>';
 
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/wizard.js");

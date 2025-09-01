@@ -1,114 +1,120 @@
 <h2 x-text="modStrings.LBL_WIZARD_TITLE_STEP1"></h2>
 
 <div class="wizard-step">
-    <form name="wizard-step1-form">
-        <div class="row edit-view-row">
-            <!-- Name -->
-            <div class="col-xs-12 col-sm-6 edit-view-row-item" data-field="name">
-                <div class="col-xs-12 col-sm-4 label" data-label="LBL_NAME">
-                    <label for="name" x-text="modStrings.LBL_NAME + ':'"></label>
-                    <span class="required">*</span>
-                </div>
-                <div class="col-xs-12 col-sm-8 edit-view-field " type="name" field="name">
-                    <input type="text" name="name" id="name" size="30" maxlength="255" x-model="bean.name">
-                </div>
-            </div>
+  <form id="wizard-step1-form">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4">
+      <!-- Name -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+        <div class="sm:col-span-1">
+          <label for="name" x-text="modStrings.LBL_NAME + ':'"></label>
+          <span class="required">*</span>
+        </div>
+        <div class="sm:col-span-3 pr-12">
+          <input class="w-full max-w-9/10" required type="text" id="name" x-model="bean.name" />
+        </div>
+      </div>
 
-            <!-- Assigned user -->
-            <div class="col-xs-12 col-sm-6 edit-view-row-item" data-field="assigned_user_name">
-                <div class="col-xs-12 col-sm-4 label" data-label="LBL_ASSIGNED_TO_NAME">
-                    <label for="assigned_user_name" x-text="modStrings.LBL_ASSIGNED_TO_NAME + ':'"></label>
-                </div>
-                <div class="col-xs-12 col-sm-8 edit-view-field  yui-ac" type="relate" field="assigned_user_name">
-                    <input type="text" name="assigned_user_name" class="sqsEnabled yui-ac-input" tabindex="0" id="assigned_user_name"
-                        x-model="bean.assigned_user_name" autocomplete="off">
-                    <input type="hidden" name="assigned_user_id" id="assigned_user_id" x-model="bean.assigned_user_id">
-                    <span class="id-ff multiple">
-                    <button type="button" name="btn_assigned_user_name" id="btn_assigned_user_name" tabindex="0" 
-                            class="button firstChild" 
-                            @click="open_popup('Users', 600, 400, '', true, false, {
+      <!-- Assigned user -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+        <div class="sm:col-span-1">
+          <label for="assigned_user_name" x-text="modStrings.LBL_ASSIGNED_TO_NAME + ':'"></label>
+        </div>
+        <div class="sm:col-span-3 pr-12">
+          <input
+            class="w-full max-w-7/10"
+            type="text"
+            id="assigned_user_name"
+            x-model="bean.assigned_user_name"
+            autocomplete="off"
+          />
+          <input type="hidden" id="assigned_user_id" x-model="bean.assigned_user_id" />
+          <button
+            class="btn"
+            type="button"
+            @click="open_popup('Users', 600, 400, '', true, false, {
                                 'call_back_function':'set_wizard_assigned_user',
                                 'field_to_name_array': { 'id':'assigned_user_id', 'user_name':'assigned_user_name' }
-                            },'single', true);">
-                            <span class="suitepicon suitepicon-action-select"></span>
-                    </button>
-                    <button type="button" name="btn_clr_assigned_user_name" id="btn_clr_assigned_user_name" tabindex="0"
-                            class="button lastChild"
-                            @click="bean.assigned_user_id='';bean.assigned_user_name='';">
-                        <span class="suitepicon suitepicon-action-clear"></span>
-                    </button>
-                </div>
-            </div>
+                               },'single', true);"
+          >
+            <span class="suitepicon suitepicon-action-select"></span>
+          </button>
+          <button class="btn" type="button" @click="bean.assigned_user_id='';bean.assigned_user_name='';">
+            <span class="suitepicon suitepicon-action-clear"></span>
+          </button>
         </div>
-        
-        <div class="row edit-view-row">
-            <!-- Base Module -->
-            <div class="col-xs-12 col-sm-6 edit-view-row-item" data-field="base_module">
-                <div class="col-xs-12 col-sm-4 label" data-label="LBL_BASE_MODULE">
-                    <label for="base_module" x-text="modStrings.LBL_BASE_MODULE + ':'"></label>
-                    <span class="required">*</span>
-                </div>
-                <div class="col-xs-12 col-sm-8 edit-view-field " type="enum" field="base_module">
-                    <select name="base_module" id="base_module" 
-                            x-model="bean.base_module"
-                            x-init="$nextTick(() => $el.value = bean.base_module)">
-                        <option value=""></option>
-                        <template x-for="[elKey, elLabel] in Object.entries(appListStrings.moduleList)" :key="elKey">
-                            <option :value="elKey" x-text="elLabel"></option>
-                        </template>
-                    </select>
-                </div>
-            </div>
+      </div>
 
-            <!-- Generate url -->
-            <div class="col-xs-12 col-sm-6 edit-view-row-item" data-field="generate_url">
-                <div class="col-xs-12 col-sm-4 label" data-label="LBL_GENERATE_URL">
-                    <label for="generate_url" x-text="modStrings.LBL_GENERATE_URL + ':'"></label>
-                </div>
-                <div class="col-xs-12 col-sm-8 edit-view-field " type="bool" field="generate_url">
-                    <input type="checkbox" id="generate_url" name="generate_url" x-model="bean.generate_url">
-                </div>
-            </div>
+      <!-- Base Module -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+        <div class="sm:col-span-1">
+          <label for="base_module" x-text="modStrings.LBL_BASE_MODULE + ':'"></label>
+          <span class="required">*</span>
         </div>
-        <div class="row edit-view-row">
-            <!-- Processing mode -->
-            <div class="col-xs-12 col-sm-6 edit-view-row-item" data-field="processing_mode">
-                <div class="col-xs-12 col-sm-4 label" data-label="LBL_PROCESSING_MODE">
-                    <label for="processing_mode" x-text="modStrings.LBL_PROCESSING_MODE + ':'"></label>
-                    <span class="required">*</span>
-                </div>
-                <div class="col-xs-12 col-sm-8 edit-view-field " type="enum" field="processing_mode">
-                    <select name="processing_mode" id="processing_mode"
-                        x-model="bean.processing_mode"
-                        x-init="$nextTick(() => $el.value = bean.processing_mode)">
-                        <template x-for="[elKey, elLabel] in Object.entries(appListStrings.stic_advanced_web_forms_processing_mode_list)" :key="elKey">
-                            <option :value="elKey" x-text="elLabel"></option>
-                        </template>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Description -->
-            <div class="col-xs-12 col-sm-6 edit-view-row-item" data-field="description">
-                <div class="col-xs-12 col-sm-4 label" data-label="LBL_DESCRIPTION">
-                    <label for="description" x-text="modStrings.LBL_DESCRIPTION + ':'"></label>
-                </div>
-                <div class="col-xs-12 col-sm-8 edit-view-field " type="text" field="description" colspan="3">
-                    <textarea id="description" name="description" rows="2" cols="80" title="" tabindex="0"
-                              x-model="bean.description"
-                              style="overflow: hidden; overflow-wrap: break-word; resize: horizontal; height: 69px;">
-                    </textarea>
-                </div>
-            </div>
+        <div class="sm:col-span-3 pr-12">
+          <select
+            class="border w-full"
+            id="base_module"
+            required
+            x-model="bean.base_module"
+            x-init="$nextTick(() => $el.value = bean.base_module)"
+          >
+            <option value=""></option>
+            <template x-for="[elKey, elLabel] in Object.entries(appListStrings.moduleList)" :key="elKey">
+              <option :value="elKey" x-text="elLabel"></option>
+            </template>
+          </select>
         </div>
+      </div>
 
-        <p x-text="'Name: ' + bean.name"></p>
-        <p x-text="'Assigned: ' + bean.assigned_user_name + ' - ' + bean.assigned_user_id"></p>
-        <p x-text="'Base Module: ' + bean.base_module"></p>
-        <p x-text="'Generate Url: ' + bean.generate_url"></p>
-        <p x-text="'Processing Mode: ' + bean.processing_mode"></p>
-        <p x-text="'Description: ' + bean.description"></p>
-    </form>
+      <!-- Generate url -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+        <div class="sm:col-span-1">
+          <label for="generate_url" x-text="modStrings.LBL_GENERATE_URL + ':'"></label>
+        </div>
+        <div class="sm:col-span-3 pr-12">
+          <input class="w-full" type="checkbox" id="generate_url" x-model="bean.generate_url" />
+        </div>
+      </div>
+
+      <!-- Processing mode -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+        <div class="sm:col-span-1">
+          <label for="processing_mode" x-text="modStrings.LBL_PROCESSING_MODE + ':'"></label>
+          <span class="required">*</span>
+        </div>
+        <div class="sm:col-span-3 pr-12">
+          <select
+            id="processing_mode"
+            class="w-full border"
+            x-model="bean.processing_mode"
+            x-init="$nextTick(() => $el.value = bean.processing_mode)"
+          >
+            <template
+              x-for="[elKey, elLabel] in Object.entries(appListStrings.stic_advanced_web_forms_processing_mode_list)"
+              :key="elKey"
+            >
+              <option :value="elKey" x-text="elLabel"></option>
+            </template>
+          </select>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-8 gap-2 items-center">
+        <div class="sm:col-span-1">
+          <label for="description" x-text="modStrings.LBL_DESCRIPTION + ':'"></label>
+        </div>
+        <div class="sm:col-span-7">
+          <textarea class="w-full" id="description" x-model="bean.description"> </textarea>
+        </div>
+      </div>
+    </div>
+
+    <p x-text="'Name: ' + bean.name"></p>
+    <p x-text="'Assigned: ' + bean.assigned_user_name + ' - ' + bean.assigned_user_id"></p>
+    <p x-text="'Base Module: ' + bean.base_module"></p>
+    <p x-text="'Generate Url: ' + bean.generate_url"></p>
+    <p x-text="'Processing Mode: ' + bean.processing_mode"></p>
+    <p x-text="'Description: ' + bean.description"></p>
+  </form>
 </div>
-
-

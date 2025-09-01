@@ -13,7 +13,8 @@
         </template>
     </div>
 
-    <div id="wizard-step-container"></div>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-10"
+         id="wizard-step-container"></div>
 
     <div class="wizard-nav">
         <button type="button" class="button" @click="prevStep()" x-bind:disabled="!enablePrevStep()" x-text="modStrings.LBL_WIZARD_PREVIOUS"></button>
