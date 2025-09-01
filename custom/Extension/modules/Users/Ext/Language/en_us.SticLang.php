@@ -51,11 +51,11 @@ $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Email addresses list";
 // Work Calendar record creation wizard
 $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generate Work calendar';
 
-// Impersonate Users
-$mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Impersonate User';
-$mod_strings['LBL_IMPERSONATE_ALERT_TITLE'] = '<strong>Impersonation Active</strong><br>';
-$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'You are currently impersonating the following user: ';
-$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>To return to your original user, please click <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">here.</a>';
-$mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Original User';
-$mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Impersonated User';
+// Impersonating users
+$mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Impersonate the user';
+$mod_strings['LBL_IMPERSONATE_ALERT_TITLE'] = '<strong>Active impersonation</strong><br>';
+$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'You are currently impersonating the user: ';
+$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>To return to your own user, please click <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">here.</a>';
+$mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Original user';
+$mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Impersonated user';
 $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Stop impersonation';
