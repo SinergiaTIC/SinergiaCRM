@@ -21,5 +21,5 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1'] = 'If the email body is not displaying correctly in the email client, click the following link and it will be displayed directly in the browser.';
-$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2'] = 'displayed directly in the browser.';
+$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT1'] = 'To view the content in your browser, click';
+$mod_strings['VIEW_BODY_EMAIL_IN_BROWSER_TEXT2'] = 'here.';
