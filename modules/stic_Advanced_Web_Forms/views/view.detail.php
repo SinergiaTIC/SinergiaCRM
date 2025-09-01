@@ -38,7 +38,8 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
 
         SticViews::preDisplay($this);
 
-        // Write here you custom code
+        echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
+        echo '<script src="//unpkg.com/alpinejs" defer></script>';
     }
 
     public function display()
@@ -47,17 +48,10 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
 
         SticViews::display($this);
 
-        // Write here you custom code
-
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/wizard.js");
         echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/wizard/css/wizard.css") ."'>";
-        echo "<script src='modules/stic_Advanced_Web_Forms/wizard/js/alpinejs.min.js' defer></script>";
 
         // DetailView: Same as EditView, but readOnly
-
-        // Set bean to wizard. Access in tpl: {$bean.name}
-        $this->ss->assign('bean', $this->bean->toArray()); 
-        $this->ss->assign('configJson', $this->bean->configuration); 
         $this->ss->assign('readOnly', true); 
         $this->ss->assign('title', $this->getModuleTitle(false));
 

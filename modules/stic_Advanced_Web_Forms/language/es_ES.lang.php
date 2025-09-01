@@ -92,5 +92,10 @@ $mod_strings = array (
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
   'LBL_WIZARD_FINISH' => 'Finalizar',
 
+  'LBL_WIZARD_TITLE_STEP1' => 'Información general',
+  'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
+  'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
+  'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
+
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
 );
