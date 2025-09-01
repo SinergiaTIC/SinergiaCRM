@@ -61,6 +61,8 @@ $moduleList[] = 'stic_Journal';
 $moduleList[] = 'stic_Training';
 $moduleList[] = 'stic_Work_Experience';
 $moduleList[] = 'stic_Skills';
+$moduleList[] = 'stic_Bookings_Places_Calendar';
+$moduleList[] = 'stic_Places';
 $moduleList[] = 'stic_Group_Opportunities';
 $moduleList[] = 'stic_Signatures';
 $moduleList[] = 'stic_Signers';
@@ -115,6 +117,8 @@ $beanList['stic_Group_Opportunities'] = 'stic_Group_Opportunities';
 $beanList['stic_Signatures'] = 'stic_Signatures';
 $beanList['stic_Signers'] = 'stic_Signers';
 $beanList['stic_Signature_Log'] = 'stic_Signature_Log';
+$beanList['stic_Bookings_Places_Calendar'] = 'stic_Bookings_Places_Calendar';
+$beanList['stic_Places'] = 'stic_Places';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -164,6 +168,9 @@ $beanFiles['stic_Group_Opportunities'] = 'modules/stic_Group_Opportunities/stic_
 $beanFiles['stic_Signatures'] = 'modules/stic_Signatures/stic_Signatures.php';
 $beanFiles['stic_Signers'] = 'modules/stic_Signers/stic_Signers.php';
 $beanFiles['stic_Signature_Log'] = 'modules/stic_Signature_Log/stic_Signature_Log.php';  
+$beanFiles['stic_Bookings_Places_Calendar'] = 'modules/stic_Bookings_Places_Calendar/stic_Bookings_Places_Calendar.php';
+$beanFiles['stic_Places'] = 'modules/stic_Resources/stic_Resources.php';
+
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';

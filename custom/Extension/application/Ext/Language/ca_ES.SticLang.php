@@ -143,6 +143,8 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
+$app_list_strings['moduleList']['stic_Places'] = 'Places';
 $app_list_strings['moduleList']['stic_Signature_Log'] = 'Registre de firmes';
 $app_list_strings['moduleList']['stic_Signatures'] = 'Firmes';
 $app_list_strings['moduleList']['stic_Signers'] = 'Firmants';
@@ -192,6 +194,8 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acció';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalització';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condició';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organització subvencionada';
+$app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
+$app_list_strings['moduleListSingular']['stic_Places'] = 'Plaça';
 $app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Registre de firmes';
 $app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firme';
 $app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmant';
@@ -233,6 +237,8 @@ $app_list_strings['parent_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
+$app_list_strings['parent_type_display']['stic_Places'] = 'Places';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -272,6 +278,8 @@ $app_list_strings['record_type_display']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
+$app_list_strings['record_type_display']['stic_Places'] = 'Places';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -311,6 +319,8 @@ $app_list_strings['record_type_display_notes']['stic_Training'] = 'Formació';
 $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experiència laboral';
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
+$app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
@@ -520,6 +530,7 @@ $app_list_strings['stic_genders_list'][''] = '';
 $app_list_strings['stic_genders_list']['male'] = 'Masculí';
 $app_list_strings['stic_genders_list']['female'] = 'Femení';
 $app_list_strings['stic_genders_list']['other'] = 'Altres';
+$app_list_strings['stic_languages_list']['basque'] = 'Basc';
 
 // Idiomes
 $app_list_strings['stic_languages_list'][''] = '';
@@ -3168,6 +3179,7 @@ $app_list_strings['stic_resources_types_list']['office_materials'] = "Material d
 $app_list_strings['stic_resources_types_list']['electronics'] = 'Electrònica';
 $app_list_strings['stic_resources_types_list']['technical_equipment'] = 'Equipament tècnic';
 $app_list_strings['stic_resources_types_list']['accessory'] = 'Accessoris';
+$app_list_strings['stic_resources_types_list']['place'] = 'Plaça';
 $app_list_strings['stic_resources_types_list']['other'] = 'Altres';
 
 // Recursos: Estats
@@ -3176,6 +3188,23 @@ $app_list_strings['stic_resources_status_list']['active'] = 'Actiu';
 $app_list_strings['stic_resources_status_list']['inactive'] = 'Inactiu';
 $app_list_strings['stic_resources_status_list']['unavailable'] = 'No disponible';
 $app_list_strings['stic_resources_status_list']['temporarily_unavailable'] = 'No disponible temporalment';
+
+// Recursos: Tipus de places
+$app_list_strings['stic_resources_places_type_list'][''] = '';
+$app_list_strings['stic_resources_places_type_list']['regular'] = 'Regular';
+$app_list_strings['stic_resources_places_type_list']['overcrowded'] = 'Sobreocupació';
+
+// Recursos: Tipus d'usuaris
+$app_list_strings['stic_resources_places_users_list'][''] = '';
+$app_list_strings['stic_resources_places_users_list']['adults'] = 'Adults';
+$app_list_strings['stic_resources_places_users_list']['families'] = 'Famílies';
+$app_list_strings['stic_resources_places_users_list']['minors'] = 'Menors';
+
+// Recursos: Tipus de gèneres de les places
+$app_list_strings['stic_resources_places_gender_list'][''] = '';
+$app_list_strings['stic_resources_places_gender_list']['men'] = 'Homes';
+$app_list_strings['stic_resources_places_gender_list']['women'] = 'Dones';
+$app_list_strings['stic_resources_places_gender_list']['mixed'] = 'Mixta';
 
 // Reserves: Estats
 $app_list_strings['stic_bookings_status_list'][''] = '';
