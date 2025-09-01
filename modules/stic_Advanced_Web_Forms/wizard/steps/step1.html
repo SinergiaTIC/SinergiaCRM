@@ -1,7 +1,7 @@
 <h2 x-text="modStrings.LBL_WIZARD_TITLE_STEP1"></h2>
 
 <div class="wizard-step">
-  <form id="wizard-step1-form">
+  <form class="border-b border-gray-300 pb-6" id="wizard-step1-form">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-4">
       <!-- Name -->
       <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
@@ -109,12 +109,12 @@
         </div>
       </div>
     </div>
-
-    <p x-text="'Name: ' + bean.name"></p>
-    <p x-text="'Assigned: ' + bean.assigned_user_name + ' - ' + bean.assigned_user_id"></p>
-    <p x-text="'Base Module: ' + bean.base_module"></p>
-    <p x-text="'Generate Url: ' + bean.generate_url"></p>
-    <p x-text="'Processing Mode: ' + bean.processing_mode"></p>
-    <p x-text="'Description: ' + bean.description"></p>
   </form>
+
+  <p x-text="'Name: ' + bean.name"></p>
+  <p x-text="'Assigned: ' + bean.assigned_user_name + ' - ' + bean.assigned_user_id"></p>
+  <p x-text="'Base Module: ' + bean.base_module"></p>
+  <p x-text="'Generate Url: ' + bean.generate_url"></p>
+  <p x-text="'Processing Mode: ' + bean.processing_mode"></p>
+  <p x-text="'Description: ' + bean.description"></p>
 </div>

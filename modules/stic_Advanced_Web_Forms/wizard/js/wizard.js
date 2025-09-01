@@ -7,7 +7,7 @@ function wizardForm(readOnly) {
         isReadOnly: readOnly,
     
         bean: STIC.record || {},
-        config: this.configuration || {},
+        config: JSON.parse(this.bean?.config_json || '{}'),
     
         modStrings: SUGAR.language.languages.stic_Advanced_Web_Forms,
         appStrings: SUGAR.language.languages.app_strings,
@@ -50,7 +50,7 @@ function wizardForm(readOnly) {
                 fetch('index.php?module=stic_Advanced_Web_Forms&action=saveDraft', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({beanData: this.beanData, config: this.config, step: this.step})
+                    body: JSON.stringify({bean: this.bean, config: this.config, step: this.step})
                 });
             }
         },

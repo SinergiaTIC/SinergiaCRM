@@ -47,4 +47,42 @@ class stic_Advanced_Web_FormsController extends SugarController
     //     }
     //     parent::process();
     // }
+
+    public function action_saveDraft()
+    {
+        // Ensure return json 
+        header('Content-Type: application/json');
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data || empty($data['bean']['id'])) {
+            echo json_encode(['success' => false, 'message' => 'Missing or invalid data']);
+            sugar_cleanup(true);
+        }
+
+        // Load the bean
+        $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $data['bean']['id']);
+        if (!$bean) {
+            echo json_encode(['success' => false, 'message' => 'Record not found']);
+            sugar_cleanup(true);
+        }
+
+        // Update all fields in vardef
+        foreach ($bean->field_defs as $fieldName => $def) {
+            if (isset($data['bean'][$fieldName])) {
+                // Except critical fields
+                if (in_array($fieldName, ['id','date_entered','date_modified','deleted'])) {
+                    continue;
+                }
+                $bean->$fieldName = $data['bean'][$fieldName];
+            }
+        }
+
+        // Update config_json with new config
+        $bean->config_json = json_encode($data['config']);
+        // $bean->status = 'draft';
+        $bean->save();
+
+        echo json_encode(['success' => true, 'id' => $bean->id, 'step' => $data['step'] ?? null]);
+        sugar_cleanup(true);
+    }
 }
