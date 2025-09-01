@@ -54,8 +54,8 @@ $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Genera el Calendari laboral
 // Suplantació d'usuaris
 $mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = "Suplanta l'usuari";
 $mod_strings['LBL_IMPERSONATE_ALERT_TITLE'] = '<strong>Suplantació activa</strong><br>';
-$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'Ara mateix estàs suplantant aquest usuari: ';
-$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>Per tornar al teu usuari fes clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
+$mod_strings['LBL_IMPERSONATE_ALERT_DESCRIPTION'] = 'Ara mateix esteu suplantant aquest usuari: ';
+$mod_strings['LBL_IMPERSONATE_ALERT_STOP_DESCRIPTION'] = '<br>Per tornar al vostre usuari feu clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí.</a>';
 $mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuari original';
 $mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuari suplantat';
 $mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalitza la suplantació';
