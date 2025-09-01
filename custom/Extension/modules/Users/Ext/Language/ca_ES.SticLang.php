@@ -73,5 +73,5 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = "Habilita l'autenticació amb 
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "Aquesta opció habilita l'autenticació amb Microsoft. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow'>Més informació</a>";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'ID de client';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID de l'aplicació registrada a Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow'>Més informació</a>";
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de llogater';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID del llogater de l'aplicació registrada a Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow'>Més informació</a>";
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de tenant';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID de tenant de l'aplicació registrada a Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow'>Més informació</a>";
