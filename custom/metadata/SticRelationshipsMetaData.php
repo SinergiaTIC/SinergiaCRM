@@ -7291,16 +7291,16 @@ $dictionary["stic_resources_stic_centers"] = array (
     array (
       'stic_financial_products_contacts' => 
       array (
-        'lhs_module' => 'stic_Financial_Products',
-        'lhs_table' => 'stic_financial_products',
+        'lhs_module' => 'Contacts',
+        'lhs_table' => 'contacts',
         'lhs_key' => 'id',
-        'rhs_module' => 'Contacts',
-        'rhs_table' => 'contacts',
+        'rhs_module' => 'stic_Financial_Products',
+        'rhs_table' => 'stic_financial_products',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
         'join_table' => 'stic_financial_products_contacts_c',
-        'join_key_lhs' => 'stic_financial_products_contactsstic_financial_products_ida',
-        'join_key_rhs' => 'stic_financial_products_contactscontacts_idb',
+        'join_key_lhs' => 'stic_financial_products_contactscontacts_ida',
+        'join_key_rhs' => 'stic_financial_products_contactsstic_financial_products_idb',
       ),
     ),
     'table' => 'stic_financial_products_contacts_c',
@@ -7327,13 +7327,13 @@ $dictionary["stic_resources_stic_centers"] = array (
       ),
       3 => 
       array (
-        'name' => 'stic_financial_products_contactsstic_financial_products_ida',
+        'name' => 'stic_financial_products_contactscontacts_ida',
         'type' => 'varchar',
         'len' => 36,
       ),
       4 => 
       array (
-        'name' => 'stic_financial_products_contactscontacts_idb',
+        'name' => 'stic_financial_products_contactsstic_financial_products_idb',
         'type' => 'varchar',
         'len' => 36,
       ),
@@ -7355,7 +7355,7 @@ $dictionary["stic_resources_stic_centers"] = array (
         'type' => 'index',
         'fields' => 
         array (
-          0 => 'stic_financial_products_contactsstic_financial_products_ida',
+          0 => 'stic_financial_products_contactscontacts_ida',
         ),
       ),
       2 => 
@@ -7364,28 +7364,28 @@ $dictionary["stic_resources_stic_centers"] = array (
         'type' => 'alternate_key',
         'fields' => 
         array (
-          0 => 'stic_financial_products_contactscontacts_idb',
+          0 => 'stic_financial_products_contactsstic_financial_products_idb',
         ),
       ),
     ),
   );
-  
+
   $dictionary["stic_transactions_stic_financial_products"] = array (
     'true_relationship_type' => 'one-to-many',
     'relationships' => 
     array (
       'stic_transactions_stic_financial_products' => 
       array (
-        'lhs_module' => 'stic_Transactions',
-        'lhs_table' => 'stic_transactions',
+        'lhs_module' => 'stic_Financial_Products',
+        'lhs_table' => 'stic_financial_products',
         'lhs_key' => 'id',
-        'rhs_module' => 'stic_Financial_Products',
-        'rhs_table' => 'stic_financial_products',
+        'rhs_module' => 'stic_Transactions',
+        'rhs_table' => 'stic_transactions',
         'rhs_key' => 'id',
         'relationship_type' => 'many-to-many',
         'join_table' => 'stic_transactions_stic_financial_products_c',
-        'join_key_lhs' => 'stic_transactions_stic_financial_productsstic_transactions_ida',
-        'join_key_rhs' => 'stic_transc9a2roducts_idb',
+        'join_key_lhs' => 'stic_trans4a5broducts_ida',
+        'join_key_rhs' => 'stic_transactions_stic_financial_productsstic_transactions_idb',
       ),
     ),
     'table' => 'stic_transactions_stic_financial_products_c',
@@ -7412,13 +7412,13 @@ $dictionary["stic_resources_stic_centers"] = array (
       ),
       3 => 
       array (
-        'name' => 'stic_transactions_stic_financial_productsstic_transactions_ida',
+        'name' => 'stic_trans4a5broducts_ida',
         'type' => 'varchar',
         'len' => 36,
       ),
       4 => 
       array (
-        'name' => 'stic_transc9a2roducts_idb',
+        'name' => 'stic_transactions_stic_financial_productsstic_transactions_idb',
         'type' => 'varchar',
         'len' => 36,
       ),
@@ -7440,7 +7440,7 @@ $dictionary["stic_resources_stic_centers"] = array (
         'type' => 'index',
         'fields' => 
         array (
-          0 => 'stic_transactions_stic_financial_productsstic_transactions_ida',
+          0 => 'stic_trans4a5broducts_ida',
         ),
       ),
       2 => 
@@ -7449,7 +7449,7 @@ $dictionary["stic_resources_stic_centers"] = array (
         'type' => 'alternate_key',
         'fields' => 
         array (
-          0 => 'stic_transc9a2roducts_idb',
+          0 => 'stic_transactions_stic_financial_productsstic_transactions_idb',
         ),
       ),
     ),

@@ -75,11 +75,14 @@ class stic_Transactions extends File
     public $status_id;
     public $status;
     public $show_preview;
-    public $payment_method;
-    public $date_transaction;
+    public $transaction_date;
+    public $transaction_type;
     public $amount;
+    public $payment_method;
     public $destination_account;
     public $accounting_account;
+    public $category;
+    public $subcategory;
 	
     public function bean_implements($interface)
     {

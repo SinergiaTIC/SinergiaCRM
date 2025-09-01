@@ -13,15 +13,15 @@ $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'title_key' => 'LBL_SECURITYGROUPS_SUBPANEL_TITLE',
 );
 
-// Contacts Subpanel
-$layout_defs["stic_Financial_Products"]["subpanel_setup"]['stic_financial_products_contacts'] = array (
+// Transactions Subpanel
+$layout_defs[$module_name]['subpanel_setup']['stic_transactions_stic_financial_products'] = array (
     'order' => 100,
-    'module' => 'Contacts',
+    'module' => 'stic_Transactions',
     'subpanel_name' => 'default',
     'sort_order' => 'asc',
     'sort_by' => 'id',
-    'title_key' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE',
-    'get_subpanel_data' => 'stic_financial_products_contacts',
+    'title_key' => 'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE',
+    'get_subpanel_data' => 'stic_transactions_stic_financial_products',
     'top_buttons' => 
     array (
       0 => 
@@ -34,4 +34,4 @@ $layout_defs["stic_Financial_Products"]["subpanel_setup"]['stic_financial_produc
         'mode' => 'MultiSelect',
       ),
     ),
-);
+  );

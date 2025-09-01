@@ -45,17 +45,23 @@ array (
           0 => 
           array (
             'name' => 'active',
+            'studio' => 'visible',
             'label' => 'LBL_ACTIVE',
           ),
           1 => 
           array (
-            'name' => 'opening_date',
-            'label' => 'LBL_OPENING_DATE',
+            'name' => 'stic_financial_products_contacts_name',
           ),
         ),
         2 => 
         array (
           0 => 
+          array (
+            'name' => 'product_type',
+            'studio' => 'visible',
+            'label' => 'LBL_PRODUCT_TYPE',
+          ),
+          1 => 
           array (
             'name' => 'iban',
             'label' => 'LBL_IBAN',
@@ -65,8 +71,22 @@ array (
         array (
           0 => 
           array (
-            'name' => 'opening_balance',
-            'label' => 'LBL_OPENING_BALANCE',
+            'name' => 'opening_date',
+            'label' => 'LBL_OPENING_DATE',
+          ),
+          1 => 
+          array (
+            'name' => 'balance_error',
+            'studio' => 'visible',
+            'label' => 'LBL_BALANCE_ERROR',
+          ),
+        ),
+        4 => 
+        array (
+          0 => 
+          array (
+            'name' => 'initial_balance',
+            'label' => 'LBL_INITIAL_BALANCE',
           ),
           1 => 
           array (
@@ -74,42 +94,20 @@ array (
             'label' => 'LBL_CURRENT_BALANCE',
           ),
         ),
-        4 => 
-        array (
-          0 => 
-          array (
-            'name' => 'balance_error',
-            'label' => 'LBL_BALANCE_ERROR',
-          ),
-          1 => 
-          array (
-            'name' => 'product_type',
-            'studio' => 'visible',
-            'label' => 'LBL_PRODUCT_TYPE',
-          ),
-        ),
         5 => 
         array (
           0 => 
           array (
-            'name' => 'bank',
-            'label' => 'LBL_BANK',
+            'name' => 'bank_entity',
+            'label' => 'LBL_BANK_ENTITY',
           ),
           1 => 
           array (
-            'name' => 'stic_transactions_stic_financial_products_name',
+            'name' => 'bank_account_holders',
+            'label' => 'LBL_BANK_ACCOUNT_HOLDERS',
           ),
         ),
         6 => 
-        array (
-          0 => 
-          array (
-            'name' => 'account_holders',
-            'label' => 'LBL_ACCOUNT_HOLDERS',
-          ),
-          1 => '',
-        ),
-        7 => 
         array (
           0 => 'description',
         ),

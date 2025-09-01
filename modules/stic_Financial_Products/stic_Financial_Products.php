@@ -65,13 +65,13 @@ class stic_Financial_Products extends Basic
     public $SecurityGroups;
     public $active;
     public $iban;
-    public $opening_balance;
+    public $opening_date;
+    public $initial_balance;
     public $current_balance;
     public $balance_error;
-    public $bank;
-    public $account_holders;
-    public $opening_date;
     public $product_type;
+    public $bank_entity;
+    public $bank_account_holders;
 	
     public function bean_implements($interface)
     {
