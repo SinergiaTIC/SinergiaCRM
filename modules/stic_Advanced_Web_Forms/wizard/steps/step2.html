@@ -1,5 +1,17 @@
-<h2 x-text="modStrings.LBL_WIZARD_TITLE_STEP2"></h2>
+<!-- Sidebar -->
+<nav class="col-3 col-md-2 bg-light border-end">
+  <h3 class="text-muted" x-text="modStrings.LBL_MODULES"></h3>
+  <div
+    id="tree-container"
+    x-init="$nextTick(() => {initializeModuleTree($('#tree-container'));});"
+  ></div>
+</nav>
 
-<div class="wizard-step">
-
-</div>
+<!-- Panell principal -->
+<main class="col-9 col-md-10 d-flex flex-column">
+  <h3 class="mb-2" x-text="modStrings.LBL_DATABLOCKS"></h3>
+  <div class="flex-fill border rounded p-2 bg-white">
+    <!-- Aquí contingut del wizard -->
+    <p>[Contingut o contenidor general]</p>
+  </div>
+</main>

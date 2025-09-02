@@ -85,4 +85,17 @@ class stic_Advanced_Web_FormsController extends SugarController
         echo json_encode(['success' => true, 'id' => $bean->id, 'step' => $data['step'] ?? null]);
         sugar_cleanup(true);
     }
+
+    /**
+     * Handles the 'getModuleInformation' action to retrieve module relationships and fields.
+     */
+    public function action_getModuleInformation()
+    {
+        // Ensure return json 
+        header('Content-Type: application/json');
+
+        require_once "modules/stic_Advanced_Web_Forms/Utils.php";
+        echo json_encode(getModuleInformation($_REQUEST['getmodule']));
+        sugar_cleanup(true);
+    }
 }

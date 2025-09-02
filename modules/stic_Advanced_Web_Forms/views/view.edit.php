@@ -37,9 +37,20 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
 
         SticViews::preDisplay($this);
 
-        echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
+        // Tailwindcss
+        // echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
+
+        // Bootstrap (modified with scoped classes: do not crash current layout!)
+        echo "<link rel='stylesheet' href='modules/stic_Advanced_Web_Forms/wizard/css/bootstrap.scoped.min.css'>";
+
+        // Alpinejs
         echo '<script src="//unpkg.com/alpinejs" defer></script>';
 
+        // jstree
+        echo '<link rel="stylesheet" href="SticInclude/vendor/jstree/themes/default/style.min.css" />';
+        echo getVersionedScript("SticInclude/vendor/jstree/jstree.min.js");
+
+        // Wizard
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/wizard.js");
         echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/wizard/css/wizard.css") ."'>";
     }

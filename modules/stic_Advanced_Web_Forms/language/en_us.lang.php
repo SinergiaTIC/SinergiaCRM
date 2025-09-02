@@ -97,5 +97,20 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
 
+  'LBL_DATABLOCKS' => 'Bloques de datos',
+  'LBL_DATABLOCK' => 'Bloque de datos',
+  'LBL_MODULES' => 'Módulos',
+  'LBL_MODULE' => 'Módulo',
+  'LBL_FIELDS' => 'Campos',
+  'LBL_FIELD' => 'Campo',
+  'LBL_ACTIONS' => 'Acciones',
+  'LBL_ACTION' => 'Acción',
+  'LBL_PARAMETERS' => 'Parámetros',
+  'LBL_PARAMETER' => 'Parámetro',
+  'LBL_SECTIONS' => 'Secciones',
+  'LBL_SECTION' => 'Sección',
+
+  'LBL_INTERNAL_NAME' => 'Nombre interno',
+
   'LBL_STIC_ADVANCED_WEB_FORMS_STIC_ADVANCED_WEB_FORMS_RESPONSES_FROM_STIC_ADVANCED_WEB_FORMS_RESPONSES_TITLE' => 'Respuestas a formularios',
 );

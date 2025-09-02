@@ -4,7 +4,7 @@
 {/if}
 
 
-<div x-data="wizardForm(null,null,{$readOnly})" x-init="init()">
+<div id="stic_AWF_editor" x-data="wizardForm(null,null,{$readOnly})" x-init="init()">
     <div class="wizard-nav">
         <button type="button" class="button" @click="prevStep()" x-bind:disabled="!enablePrevStep()" x-text="modStrings.LBL_WIZARD_PREVIOUS"></button>
         <button type="button" class="button" @click="nextStep()" x-bind:disabled="!enableNextStep()" x-text="modStrings.LBL_WIZARD_NEXT"></button>
@@ -13,8 +13,10 @@
         </template>
     </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6 mb-10"
-         id="wizard-step-container"></div>
+    <h2 id='wizard-section-title'></h2>
+    <div class="card container-fluid wizard-container">
+        <div class="card-body row h-100" id="wizard-step-container"></div>
+    </div>
 
     <div class="wizard-nav">
         <button type="button" class="button" @click="prevStep()" x-bind:disabled="!enablePrevStep()" x-text="modStrings.LBL_WIZARD_PREVIOUS"></button>
