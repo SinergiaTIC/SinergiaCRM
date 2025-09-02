@@ -14,8 +14,6 @@ function wizardForm(readOnly) {
         appStrings: SUGAR.language.languages.app_strings,
         appListStrings: SUGAR.language.languages.app_list_strings,
 
-        cachedModules: {},
-    
         async init() {
             window.alpineComponent = this;
             this.loadStep();
@@ -90,51 +88,47 @@ function initializeModuleTree($tree) {
     }
     $tree.empty();
 
-    let rootModule_id = window.alpineComponent.bean.base_module;
-    let rootModule_name = window.alpineComponent.appListStrings.moduleList[rootModule_id];
+    let rootModule_name = window.alpineComponent.bean.base_module;
+    let rootModule_text = window.alpineComponent.appListStrings.moduleList[rootModule_name];
 
     // Prepare the root node. It will only contain the main module.
     // Its children (related modules) will be loaded on first expansion.
-    var rootNode = {
-        id: rootModule_id,
-        text: rootModule_name,
+    let rootNode = {
+        id: rootModule_name,
+        text: rootModule_text,
         children: true, // Indicates that it CAN have children, which Jstree will lazy load.
         state: { opened: false }, // Ensures the root node is initially closed.
-        data: { moduleName: rootModule_id }
+        data: { moduleName: rootModule_name }
     };
     
     // Initialize jstree on the designated div.
     $tree.jstree({
         'core': {
             'data': function (node, cb) {
-                debugger;
                 // If node.id is '#', Jstree is asking for first-level nodes (tree root).
                 if (node.id === '#') {
                     cb.call(this, [rootNode]);
                 } else {
                     // An existing node has been expanded, and Jstree is asking for its children.
-                    var relatedModules = getModuleInformation(node.data.moduleName, 'modules');
-                    var childrenNodes = [];
-                    // Convert the object of related modules to an array of Jstree nodes.
-                    for (var key in relatedModules) {
-                        if (relatedModules.hasOwnProperty(key)) {
-                            // Filter out the child node if its ID is identical to the parent's ID.
-                            if (key === node.id) {
-                                // console.warn("Jstree: Duplicate child ID detected matching parent ID. Ignoring node:", key);
-                                continue;
-                            }
-
-                            var actualChildModuleName = key.split(':')[0];
-                            childrenNodes.push({
-                                id: key,
-                                text: relatedModules[key],
-                                children: true, // Indicates this child can also have its own sub-children.
-                                data: { moduleName: actualChildModuleName }
-                            });
-                        }
+                    /* 
+                        Result: [ name, text, 
+                                fields: [name, text, type, required, inViews],
+                                relationships: [name, text, fieldName, relationship, moduleName, moduleText] ]
+                    */
+                    let moduleInfo = getModuleInformation(node.data.moduleName);
+                    if (!moduleInfo) {
+                        return;
                     }
-                    // console.log("Formatted child nodes for Jstree:", childrenNodes);
-                    
+                    let childrenNodes = [];
+                    // Convert the object of related modules to an array of Jstree nodes.
+                    for (let key in moduleInfo["relationships"]) {
+                        childrenNodes.push({
+                            id: node.id + "." + key,
+                            text: moduleInfo["relationships"][key]['text'] + " (" + moduleInfo["relationships"][key]['moduleText'] + ")",
+                            children: true, 
+                            data: { moduleName: moduleInfo["relationships"][key]['moduleName'] }
+                        });
+                    }
                     cb.call(this, childrenNodes);
                 }
             },
@@ -145,100 +139,90 @@ function initializeModuleTree($tree) {
             }
         },
         'plugins': ["wholerow"] // Makes the entire row clickable.
-    })
-    .on('select_node.jstree', function (e, data) {
-        var selectedNode = data.node;
-        var moduleName = selectedNode.data.moduleName; // Base module name.
-        var nodeId = selectedNode.id; // Full node ID (e.g., 'Accounts:link_name:timestamp').
-        var nodeText = selectedNode.text; // Visible node text (e.g., 'Accounts : Contact').
-
-        // console.log("Jstree node selected:", nodeId, "Module:", moduleName);
-
-        // Populate the fields list for the selected module.
-        renderFieldsList(moduleName, nodeText);
-
-        // Update the breadcrumbs for the selected node.
-        updateBreadcrumbs(nodeId, nodeText);
-        
-        // If the node is not a leaf (can be expanded).
-        if (!jstreeInstance.is_leaf(selectedNode)) {
-            // If it's closed, open it (which will trigger children loading).
-            if (!jstreeInstance.is_open(selectedNode)) {
-                // console.log("Opening node:", selectedNode.id);
-                jstreeInstance.open_node(selectedNode.id);
-            } else { 
-                // If it's already open, close it.
-                // console.log("Closing node:", selectedNode.id);
-                jstreeInstance.close_node(selectedNode.id);
-            }
-        } else {
-            // console.log("Leaf node, no expansion/collapse needed.");
-        }
-    })
-    .on('ready.jstree', function() {
-        // Store the jstree instance.
-        jstreeInstance = $('#tree-container').jstree(true);
-    })
-    // Debugging events for load/open operations (commented out for production).
-    .on('after_open.jstree', function(e, data) {
-        // console.log("Node OPENED:", data.node.id, "Children loaded:", data.node.children ? data.node.children.length : 0);
-    })
-    .on('load_node.jstree', function(e, data) {
-        // console.log("Node LOADED (data obtained):", data.node.id, "Children obtained:", data.node.children ? data.node.children.length : 0);
-        if (data.node.children && data.node.children.length === 0 && data.node.id !== '#') {
-            // console.warn("Node loaded without children. Arrow might disappear.");
-        }
     });
+    // .on('select_node.jstree', function (e, data) {
+    //     var selectedNode = data.node;
+    //     var moduleName = selectedNode.data.moduleName; // Base module name.
+    //     var nodeId = selectedNode.id; // Full node ID (e.g., 'Accounts:link_name:timestamp').
+    //     var nodeText = selectedNode.text; // Visible node text (e.g., 'Accounts : Contact').
+
+    //     // console.log("Jstree node selected:", nodeId, "Module:", moduleName);
+
+    //     // Populate the fields list for the selected module.
+    //     renderFieldsList(moduleName, nodeText);
+
+    //     // Update the breadcrumbs for the selected node.
+    //     updateBreadcrumbs(nodeId, nodeText);
+        
+    //     // If the node is not a leaf (can be expanded).
+    //     if (!jstreeInstance.is_leaf(selectedNode)) {
+    //         // If it's closed, open it (which will trigger children loading).
+    //         if (!jstreeInstance.is_open(selectedNode)) {
+    //             // console.log("Opening node:", selectedNode.id);
+    //             jstreeInstance.open_node(selectedNode.id);
+    //         } else { 
+    //             // If it's already open, close it.
+    //             // console.log("Closing node:", selectedNode.id);
+    //             jstreeInstance.close_node(selectedNode.id);
+    //         }
+    //     } else {
+    //         // console.log("Leaf node, no expansion/collapse needed.");
+    //     }
+    // })
+    // .on('ready.jstree', function() {
+    //     // Store the jstree instance.
+    //     jstreeInstance = $('#tree-container').jstree(true);
+    // })
+    // // Debugging events for load/open operations (commented out for production).
+    // .on('after_open.jstree', function(e, data) {
+    //     // console.log("Node OPENED:", data.node.id, "Children loaded:", data.node.children ? data.node.children.length : 0);
+    // })
+    // .on('load_node.jstree', function(e, data) {
+    //     // console.log("Node LOADED (data obtained):", data.node.id, "Children obtained:", data.node.children ? data.node.children.length : 0);
+    //     if (data.node.children && data.node.children.length === 0 && data.node.id !== '#') {
+    //         // console.warn("Node loaded without children. Arrow might disappear.");
+    //     }
+    // });
 }
 
-/**
- * Retrieves a list of modules or fields related to the specified module via AJAX.
- * @param {string} module The module to retrieve relationships for.
- * @param {string} [modulesOrFields='modules'] Specifies whether to retrieve 'modules' or 'fields'.
- * @returns {object} An object of module names or field options.
- */
-function getModuleInformation(module, modulesOrFields = 'modules') {
-    var list = {};
+// Global variable to store cached modules information
+var cachedModules = {};
+
+
+function getModuleInformation(module) {
     if (!module) {
-        return list;
+        return null;
+    }
+    
+    if (!cachedModules.hasOwnProperty(module)) {
+        $.ajax({
+            url: location.href.slice(0, location.href.indexOf(location.search)),
+            type: "POST",
+            async: false,
+            dataType: "json",
+            data: {
+                module: "stic_Advanced_Web_Forms",
+                action: "getModuleInformation",
+                getmodule: module,
+                format: "json",
+            },
+            success: function (response) { 
+                cachedModules[module] = response; 
+            },
+            error: function (xhr, status, error) {
+                console.error("Error retrieving Information for module: " + module, status, error);
+            }
+        });
     }
 
-    $.ajax({
-        url: location.href.slice(0, location.href.indexOf(location.search)),
-        type: "POST",
-        async: false,
-        dataType: "json",
-        data: {
-            module: "stic_Advanced_Web_Forms",
-            action: "getModuleInformation",
-            getmodule: module,
-            format: "json",
-        },
-        success: function (response) {
-            // Process the JSON response.
-            if (response) {
-                if (modulesOrFields === 'fields' && response.option) {
-                    list = response.option;
-                } else if (modulesOrFields === 'modules' && response.module) {
-                    list = response.module;
-                } else {
-                    // console.error("Failed to retrieve " + modulesOrFields + " list. Response:", response);
-                }
-            } else {
-                // console.error("Empty response when retrieving " + modulesOrFields + " list for module: " + moduleName);
-            }
-        },
-        error: function (xhr, status, error) {
-            // console.error("Error retrieving " + modulesOrFields + " list for module: " + moduleName, status, error);
-            // Check for specific var_dump error from PHP.
-            if (xhr.responseText.includes("var_dump")) { //
-                // console.error("ERROR! AJAX response contains 'var_dump'. Remove var_dump and die() from action_getRelationships in controller.php.");
-            }
-        }
-    });
+    if (cachedModules.hasOwnProperty(module)) {
+        return cachedModules[module];
+    }
 
-    return list;
+    return null;
 }
+
+
 
 /**
  * Renders the list of fields for the specified module in the side panel.
