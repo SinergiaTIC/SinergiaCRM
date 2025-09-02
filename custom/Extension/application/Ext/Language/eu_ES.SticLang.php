@@ -3712,23 +3712,23 @@ $app_list_strings['stic_financial_products_product_types_list']['checking_accoun
 $app_list_strings['stic_financial_products_product_types_list']['savings_account'] = 'De ahorro';
 $app_list_strings['stic_financial_products_product_types_list']['investment_fund'] = 'Fondo de inversión';
 $app_list_strings['stic_financial_products_product_types_list']['insurance'] = 'Seguros';
+$app_list_strings['stic_financial_products_product_types_list']['prepaid_card'] = 'Tarjeta prepago';
 $app_list_strings['stic_financial_products_product_types_list']['stocks'] = 'Acciones';
-$app_list_strings['stic_financial_products_product_types_list']['bonds'] = 'Bonos';
 $app_list_strings['stic_financial_products_product_types_list']['others'] = 'Otros';
 
-// Transactions: Type of transaction
+// Transacciones: Tipo de movimiento
 $app_list_strings['stic_transactions_transaction_types_list']['income'] = 'Ingreso';
 $app_list_strings['stic_transactions_transaction_types_list']['expense'] = 'Gasto';
 $app_list_strings['stic_transactions_transaction_types_list']['withdrawal'] = 'Retirada';
 $app_list_strings['stic_transactions_transaction_types_list']['deposit'] = 'Depósito';
 
-// Transactions: Status
+// Transacciones: Estado
 $app_list_strings['stic_transactions_status_list']['completed'] = 'Completado';
 $app_list_strings['stic_transactions_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_transactions_status_list']['failed'] = 'Fallido';
 $app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputado';
 
-// Transactions: Category
+// Transacciones: Categoría
 $app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sueldo';
 $app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversiones';
 $app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regalos';
@@ -3739,9 +3739,12 @@ $app_list_strings['stic_transactions_categories_list']['expense_food'] = 'Alimen
 $app_list_strings['stic_transactions_categories_list']['expense_services'] = 'Servicios';
 $app_list_strings['stic_transactions_categories_list']['withdrawal_withdrawal'] = 'Retirada';
 $app_list_strings['stic_transactions_categories_list']['deposit_deposit'] = 'Depósito';
-$app_list_strings['stic_transactions_categories_list']['other'] = 'Otro';
+$app_list_strings['stic_transactions_categories_list']['income_other'] = 'Otros';
+$app_list_strings['stic_transactions_categories_list']['expense_other'] = 'Otros';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Otros';
+$app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Otros';
 
-// Transactions: Subcategory
+// Transacciones: Subcategoría
 $app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sueldo';
 $app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bonos';
 $app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividendos';
