@@ -1,3 +1,8 @@
+<script type="text/javascript" language="JavaScript">
+    STIC.enabledStudioModules = {$enabledStudioModules};
+    STIC.enabledModules = {$enabledModules};
+</script>
+
 {$title}
 <div class="clear"></div>
 

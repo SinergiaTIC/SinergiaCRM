@@ -13,6 +13,8 @@ function wizardForm(readOnly) {
         modStrings: SUGAR.language.languages.stic_Advanced_Web_Forms,
         appStrings: SUGAR.language.languages.app_strings,
         appListStrings: SUGAR.language.languages.app_list_strings,
+        enabledStudioModules: STIC.enabledStudioModules,
+        enabledModules: STIC.enabledModules,
 
         treeSelectedNode: {},
 
@@ -106,17 +108,38 @@ function initializeModuleTree($tree) {
 
     // Prepare the root node. It will only contain the main module.
     // Its children (related modules) will be loaded on first expansion.
-    let rootNode = {
-        id: rootModule_name,
-        text: rootModule_text,
-        children: true, // Indicates that it CAN have children, which Jstree will lazy load.
-        state: { opened: false }, // Ensures the root node is initially closed.
-        data: { 
-            moduleName: rootModule_name,
-            path: [rootModule_name],
-            pathText: [rootModule_text],
-        }
-    };
+    // let rootNode = {
+    //     id: rootModule_name,
+    //     text: rootModule_text,
+    //     children: true, // Indicates that it CAN have children, which Jstree will lazy load.
+    //     state: { opened: false }, // Ensures the root node is initially closed.
+    //     data: { 
+    //         moduleName: rootModule_name,
+    //         path: [rootModule_name],
+    //         pathText: [rootModule_text],
+    //     }
+    // };
+
+    let rootNodes = [];
+    for (const [moduleName, module] of Object.entries(window.alpineComponent.enabledStudioModules)) {
+        rootNodes.push({
+            id: moduleName,
+            text: module.text,
+            children: true, // Indicates that it CAN have children, which Jstree will lazy load.
+            state: { opened: false }, // Ensures the root node is initially closed.
+            data: { 
+                moduleName: moduleName,
+                path: [moduleName],
+                pathText: [module.text],
+            }
+        });
+    }
+    rootNodes.sort(function(a,b) {
+        if (a.text > b.text) return 1;
+        if (a.text < b.text) return -1;
+        return 0;
+    });
+
     
     // Initialize jstree on the designated div.
     $tree.jstree({
@@ -124,7 +147,8 @@ function initializeModuleTree($tree) {
             data: function (node, cb) {
                 // If node.id is '#', Jstree is asking for first-level nodes (tree root).
                 if (node.id === '#') {
-                    cb.call(this, [rootNode]);
+                    //cb.call(this, [rootNode]);
+                    cb.call(this, rootNodes);
                 } else {
                     // An existing node has been expanded, and Jstree is asking for its children.
                     /* 
@@ -132,13 +156,17 @@ function initializeModuleTree($tree) {
                                 fields: [name, text, type, required, inViews],
                                 relationships: [name, text, fieldName, relationship, moduleName, moduleText] ]
                     */
-                    let moduleInfo = getModuleInformation(node.data.moduleName);
+                    let moduleInfo = getModuleInformation(node.data?.moduleName);
                     if (!moduleInfo) {
                         return;
                     }
                     let childrenNodes = [];
                     // Convert the object of related modules to an array of Jstree nodes.
                     for (let key in moduleInfo.relationships) {
+                        // Skip fields related to disabled modules
+                        if (!window.alpineComponent.enabledModules.hasOwnProperty(moduleInfo.relationships[key].moduleName)) {
+                            continue;
+                        }
                         let newPath = [...node.data.path]
                         newPath.push(moduleInfo.relationships[key].moduleName);
                         
@@ -157,6 +185,13 @@ function initializeModuleTree($tree) {
                             }
                         });
                     }
+                    childrenNodes.sort(function(a,b) {
+                        if (a.data.pathText > b.data.pathText) return 1;
+                        if (a.data.pathText < b.data.pathText) return -1;
+                        if (a.text > b.text) return 1;
+                        if (a.text < b.text) return -1;
+                        return 0;
+                    });                
                     cb.call(this, childrenNodes);
                 }
             },
@@ -175,6 +210,7 @@ function initializeModuleTree($tree) {
     })
     .on('select_node.jstree', function (e, data) {
         window.alpineComponent.treeSelectedNode = data.node;
+        getModuleInformation(data.node.data?.moduleName);
     });
     // // Debugging events for load/open operations (commented out for production).
     // .on('after_open.jstree', function(e, data) {
@@ -193,7 +229,8 @@ var cachedModules = {};
 
 
 function getModuleInformation(moduleName) {
-    if (!moduleName) {
+    // Do not get info of not enabled modules
+    if (!moduleName || !window.alpineComponent.enabledModules.hasOwnProperty(moduleName)) {
         return null;
     }
     
@@ -225,174 +262,3 @@ function getModuleInformation(moduleName) {
 }
 
 
-
-/**
- * Renders the list of fields for the specified module in the side panel.
- * Includes a module name header and a searchable, sortable list of fields.
- * @param {string} moduleName The name of the module to retrieve fields for.
- * @param {string} moduleDisplayText The text to display for the module name (e.g., "Sessions', 'Accounts : Contact').
- */
-function renderFieldsList(moduleName, moduleDisplayText) {
-    var $fieldsContainer = $('#stic_fields_list_container'); //
-    $fieldsContainer.empty(); // Clear previous content.
-
-    // Display a message if no module is selected.
-    if (!moduleName) { //
-        $fieldsContainer.append($('<p id="stic_no_module_selected_msg" style="padding: 10px;">Select a module to view its fields.</p>')); //
-        return; //
-    }
-
-    // Add bold header with the selected module's display name.
-    var $moduleNameHeader = $('<div id="stic_fields_module_header" style="padding: 5px; font-weight: bold; border-bottom: 1px solid #eee;"></div>'); //
-    $moduleNameHeader.text(moduleDisplayText); //
-    $fieldsContainer.append($moduleNameHeader); //
-
-    // Get fields for the module.
-    var fieldsObject = getModuleInformation(moduleName, 'fields'); //
-    var fieldsArray = []; //
-
-    // Convert fields object to an array for sorting.
-    for (var key in fieldsObject) { //
-        if (fieldsObject.hasOwnProperty(key) && key !== "") { //
-            fieldsArray.push({ id: key, text: fieldsObject[key] }); //
-        }
-    }
-
-    // Sort fields alphabetically by their display text (case and accent insensitive).
-    fieldsArray.sort(function(a, b) { //
-        var textA = normalizeString(a.text); //
-        var textB = normalizeString(b.text); //
-        if (textA < textB) { //
-            return -1; //
-        }
-        if (textA > textB) { //
-            return 1; //
-        }
-        return 0; //
-    });
-
-    // Add search input.
-    var $searchContainer = $('<div id="stic_fields_search_container" style="padding: 5px; border-bottom: 1px solid #eee;"></div>'); //
-    var $searchInput = $('<input type="text" id="stic_field_search_input" placeholder="Search field..." style="width: calc(100% - 10px); padding: 5px; border: 1px solid #ccc; border-radius: 3px;">'); //
-    $searchContainer.append($searchInput); //
-    $fieldsContainer.append($searchContainer); //
-
-    // Create the unordered list for fields, with scroll if content overflows.
-    var $ul = $('<ul id="stic_fields_list_ul"></ul>').css({
-        'list-style': 'none', //
-        'padding': '0', //
-        'margin': '0', //
-        'max-height': 'calc(100% - 80px)', // Adjust height for header and search input.
-        'overflow-y': 'auto' // Enable vertical scrolling.
-    });
-    $fieldsContainer.append($ul); //
-
-    /**
-     * Displays a filtered list of fields in the UL element.
-     * @param {Array<object>} filteredFields The array of field objects to display.
-     */
-    function displayFields(filteredFields) {
-        $ul.empty(); // Clear existing list items.
-        if (filteredFields.length === 0) { //
-            $ul.append($('<li id="stic_no_fields_found_msg" style="padding: 5px;">No fields found.</li>')); //
-            return; //
-        }
-        // Append each field as a list item.
-        filteredFields.forEach(function(field) { //
-            var $li = $('<li class="stic-field-list-item"></li>').css({
-                'padding': '5px 0', //
-                'cursor': 'pointer', //
-                'border-bottom': '1px dotted #eee' //
-            });
-            $li.text(field.text); //
-            
-            // Attach click event to insert field into TinyMCE editor.
-            $li.data('fieldKey', field.id); // Store field key.
-            $li.data('fieldDisplayText', field.text); // Store display text for span content
-            $li.on('click', function() { //
-                var fieldId = $(this).data('fieldKey'); // e.g., $stic_payment_commitments:banking_concept
-                var fieldDisplayText = $(this).data('fieldDisplayText'); // e.g., "Concepto Bancario"
-
-                // ** MODIFICACIÓN CLAVE AQUÍ: Construir el ID del span con la ruta técnica **
-                var pathTechnicalParts = [];
-                // Process each ID in moduleBreadcrumbPath for the 'link:' parts.
-                // moduleBreadcrumbPath contains IDs with timestamps if applicable.
-                for (var i = 0; i < moduleBreadcrumbPath.length; i++) {
-                    var currentPathId = moduleBreadcrumbPath[i];
-                    // Remove timestamp from the current ID
-                    if (/:(\d+)$/.test(currentPathId)) { 
-                        currentPathId = currentPathId.substring(0, currentPathId.lastIndexOf(':')); 
-                    }
-                    // Add 'link:' prefix
-                    pathTechnicalParts.push('link:' + currentPathId);
-                }
-
-                // Add the field part with 'field:' prefix
-                var cleanFieldId = fieldId.startsWith('$') ? fieldId.substring(1) : fieldId;
-                pathTechnicalParts.push('field:' + cleanFieldId);
-
-                // Join all parts with '::'
-                var fullTechnicalPath = pathTechnicalParts.join('::');
-
-                // Construct the HTML span element.
-                // The 'id' attribute needs to be a valid HTML ID (no '$' or '::').
-                // We'll create a sanitised ID for the HTML 'id' attribute.
-                var sanitizedSpanId = fullTechnicalPath.replace(/[^a-zA-Z0-9_-]/g, '_');
-                if (/^\d/.test(sanitizedSpanId)) {
-                    sanitizedSpanId = 'id_' + sanitizedSpanId;
-                }
-                
-                // The visible content is the field's display text wrapped in {}.
-                // The 'title' attribute will show the full technical path.
-                var contentToInsert = '<span style="border:.2px dotted #f49b0c;background-color:#fcd17b" class="field" id="' + sanitizedSpanId + '" title="' + fullTechnicalPath + '">{' + fieldDisplayText + '}</span>&nbsp;'; // Added &nbsp;
-                
-                if (tinyMCEEditorInstance && contentToInsert) { 
-                    tinyMCEEditorInstance.insertContent(contentToInsert); 
-                    // ** MODIFICACIÓN CLAVE: Posicionar el cursor después del span **
-                    var editor = tinyMCEEditorInstance;
-                    editor.once('SetContent', function() { // Ensure span is rendered before moving cursor
-                        var content = editor.getContent();
-                        var lastSpanIndex = content.lastIndexOf('<span class="field"');
-                        if (lastSpanIndex !== -1) {
-                            var tempDiv = document.createElement('div');
-                            tempDiv.innerHTML = content.substring(0, lastSpanIndex);
-                            var textNodeCount = tempDiv.textContent.length;
-                            
-                            // Re-insert content to ensure TinyMCE's internal DOM is consistent
-                            // This also helps with cursor positioning.
-                            editor.setContent(content); 
-
-                            // Get the last inserted span using its ID
-                            var insertedSpan = editor.dom.select('#' + sanitizedSpanId)[0];
-                            if (insertedSpan) {
-                                // Create a new text node after the span to place the cursor
-                                var textNode = editor.dom.doc.createTextNode('\u00a0'); // Non-breaking space
-                                editor.dom.insertAfter(textNode, insertedSpan);
-                                
-                                // Set the caret position
-                                var range = editor.dom.createRng();
-                                range.setStartAfter(textNode);
-                                range.collapse(true);
-                                editor.selection.setRng(range);
-                            }
-                        }
-                    });
-                }
-            });
-            
-            $ul.append($li); 
-        });
-    }
-
-    // Display all fields initially.
-    displayFields(fieldsArray); 
-
-    // Add keyup event listener to the search input for live filtering.
-    $searchInput.on('keyup', function() { 
-        var searchTerm = normalizeString($(this).val()); 
-        var filtered = fieldsArray.filter(function(field) { 
-            return normalizeString(field.text).includes(searchTerm); 
-        });
-        displayFields(filtered); 
-    });
-}

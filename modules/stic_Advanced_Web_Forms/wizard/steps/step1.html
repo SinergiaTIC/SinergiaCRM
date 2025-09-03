@@ -56,8 +56,8 @@
           });"
         >
           <option value=""></option>
-          <template x-for="[elKey, elLabel] in Object.entries(appListStrings.moduleList)" :key="elKey">
-            <option :value="elKey" x-text="elLabel"></option>
+          <template x-for="[elKey, el] in Object.entries(enabledStudioModules)" :key="elKey">
+            <option :value="elKey" x-text="el.text"></option>
           </template>
         </select>
       </div>
