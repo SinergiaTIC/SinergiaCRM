@@ -415,12 +415,6 @@ $dictionary['stic_Bookings'] = array(
             'table' => 'stic_families',
             'module' => 'stic_Families',
             'rname' => 'name',
-            'db_concat_fields' => array(
-                0 => 'first_name',
-                1 => 'last_name',
-            ),
-            'massupdate' => 1,
-            'inline_edit' => 1,
         ),
         'stic_bookings_stic_familiesstic_families_ida' => array(
             'name' => 'stic_bookings_stic_familiesstic_families_ida',
