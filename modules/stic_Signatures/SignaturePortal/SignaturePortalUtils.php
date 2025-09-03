@@ -52,6 +52,21 @@ class stic_SignaturePortalUtils
         $this->sourceModuleBean = BeanFactory::getBean($this->signatureBean->main_module ?? '', $this->signerBean->record_id ?? '');
     }
 
+    /* *
+     * Retrieves the beans associated with the current signer.
+     *
+     * @return array An associative array containing the signer, signature, PDF template, and source module beans.
+     */
+    public function getSignatureBeans()
+    {
+        return [
+            'signer' => $this->signerBean,
+            'signature' => $this->signatureBean,
+            'pdfTemplate' => $this->pdfTemplateBean,
+            'sourceModule' => $this->sourceModuleBean,
+        ];
+    }
+
     /**
      * Retrieves the parsed HTML content for the current signer.
      *

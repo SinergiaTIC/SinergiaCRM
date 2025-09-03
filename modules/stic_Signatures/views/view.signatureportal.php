@@ -60,11 +60,17 @@ class stic_SignaturePortal extends SugarView
         ';
 
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+        
         // Create an instance of the utility class
         $stic_SignaturePortalUtils = new stic_SignaturePortalUtils();
 
-        // Get signatureBean
-        $signatureBean = $stic_SignaturePortalUtils->signatureBean ?? null;
+        // Get beans
+        $signatureBean = $stic_SignaturePortalUtils->getSignatureBeans()['signature'];  
+        $signerBean = $stic_SignaturePortalUtils->getSignatureBeans()['signer'];
+        $pdfTemplateBean = $stic_SignaturePortalUtils->getSignatureBeans()['pdfTemplate'];
+        $sourceModuleBean = $stic_SignaturePortalUtils->getSignatureBeans()['sourceModule'];
+
+        
 
         // Get authentication mode
         $authMode = $signatureBean->auth_method ?? 'unique_link';
@@ -77,6 +83,14 @@ class stic_SignaturePortal extends SugarView
             case 'unique_link':
                 $passed = true;
                 break;
+            case 'otp':
+                $this->ss->assign('OTP_REQUIRED', true);
+                //  $stic_SignaturePortalUtils->validateOtp();
+                // if ($passed === false) {
+                //     $errorMsg = 'El código OTP proporcionado no es válido o ha expirado.';
+                //     $this->ss->assign('ERROR_MSG', $errorMsg);
+                // }
+                break;
             default:
                 $errorMsg = 'El modo de autenticación no es válido.';
                 $this->ss->assign('ERROR_MSG', $errorMsg);
@@ -86,6 +100,7 @@ class stic_SignaturePortal extends SugarView
         // Get parsed template HTML content only if authentication passed
         if ($passed === true) {
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
+            $this->ss->assign('SHOW_PORTAL', true);
         }
 
         // Assign variables to Smarty
