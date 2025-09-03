@@ -146,21 +146,47 @@ function getModuleInformation($moduleName)
 }
 
 /**
- * Get all Modules that: Are enabled (in Administration) and are visible in Studio
+ * Get all modules enabled in Administration
+ * Result: [name: ModuleName, text: TranslatedModuleName]
  */
-function getInitialModules()
+function getEnabledModules()
 {
     // Get Enabled Modules
     require_once("modules/MySettings/TabController.php");
     $controller = new TabController();
     $tabs = $controller->get_tabs_system();
-    $enabled= $tabs[0];
+    
+    $enabled = [];
+    foreach ($tabs[0] as $key=>$value) {
+        $enabled[$key] = ["name" => $key, "text" => translate($key)];
+    }
+
+    if (!isset($enabled["Users"])) {
+        $enabled["Users"] = ["name" => "Users", "text" => translate("Users")];
+    }
+
+    // Sort modules by text
+    uasort($enabled, function($a, $b) {
+        return strcmp($a['text'], $b['text']);
+    });
+
+    return $enabled;
+}
+
+/**
+ * Get all Modules that: Are enabled (in Administration) and are visible in Studio
+ * Result: [moduleName: [name: ModuleName, icon: StudioIcon, text: TranslatedModuleName]]
+ */
+function getInitialModules()
+{
+    // Get Enabled Modules
+    $enabled = getEnabledModules();
 
     // Get Modules in Studio
     require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
     $sb = new StudioBrowser();
     $nodes = $sb->getNodes();
-    $modules = array();
+    $modules = [];
 
     foreach ($nodes as $module) {
         if(isset($enabled[$module['module']])) {
@@ -179,22 +205,3 @@ function getInitialModules()
     return $modules;
 }
 
-function getEnabledModules()
-{
-    // Get Enabled Modules
-    require_once("modules/MySettings/TabController.php");
-    $controller = new TabController();
-    $tabs = $controller->get_tabs_system();
-    
-    $enabled= array();
-    foreach ($tabs[0] as $key=>$value) {
-        $enabled[$key] = array("name" => $key, 'text' => translate($key));
-    }
-
-    // Sort modules by text
-    uasort($enabled, function($a, $b) {
-        return strcmp($a['text'], $b['text']);
-    });
-
-    return $enabled;
-}
