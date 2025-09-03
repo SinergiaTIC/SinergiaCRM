@@ -58,8 +58,11 @@ array (
         2 => 
         array (
           0 => 'description',
-          1 => '',
         ),
+        3 => 
+        array (
+          0 => 'configuration',
+        ),        
       ),
     ),
   ),

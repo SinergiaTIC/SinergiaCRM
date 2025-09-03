@@ -1,17 +1,25 @@
 <!-- Sidebar -->
-<nav class="col-3 col-md-2 bg-light border-end">
+<nav class="wizard-sidebar bg-light border-end p-2 flex-shrink-0">
   <h3 class="text-muted" x-text="modStrings.LBL_MODULES"></h3>
-  <div
-    id="tree-container"
-    x-init="$nextTick(() => {initializeModuleTree($('#tree-container'));});"
-  ></div>
+  <div class="wizard-tree" id="tree-container" x-init="$nextTick(() => {initializeModuleTree($('#tree-container'));});"></div>
 </nav>
 
 <!-- Panell principal -->
-<main class="col-9 col-md-10 d-flex flex-column">
+<main class="wizard-main flex-fill d-flex flex-column p-3">
   <h3 class="mb-2" x-text="modStrings.LBL_DATABLOCKS"></h3>
   <div class="flex-fill border rounded p-2 bg-white">
     <!-- Aquí contingut del wizard -->
     <p>[Contingut o contenidor general]</p>
+    <div class="row">
+      <label>Id: </label> <span x-text="treeSelectedNode.id"></span>
+    </div>
+    <div class="row">
+      <label>Path: </label> <span x-text="treeSelectedNode.data?.pathText.join(' » ')"></span>
+    </div>
+
+    <div>
+      <p x-text="'Config DataBlocks: ' + JSON.stringify(configDataBlocks)"></p>
+      <p x-text="'Config (bean): ' + bean.config_json"></p>
+    </div>    
   </div>
 </main>

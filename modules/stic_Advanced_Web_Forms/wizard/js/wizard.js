@@ -8,14 +8,25 @@ function wizardForm(readOnly) {
         isReadOnly: readOnly,
     
         bean: STIC.record || {},
-        config: JSON.parse(this.bean?.config_json || '{}'),
+        configDataBlocks: {},
     
         modStrings: SUGAR.language.languages.stic_Advanced_Web_Forms,
         appStrings: SUGAR.language.languages.app_strings,
         appListStrings: SUGAR.language.languages.app_list_strings,
 
+        treeSelectedNode: {},
+
         async init() {
+            // Set Context accessible
             window.alpineComponent = this;
+
+            // Split configs
+            let allConfig = JSON.parse(this.bean?.config_json || '{}');
+            if (allConfig.hasOwnProperty("dataBlocks")) {
+                this.configDataBlocks = allConfig.dataBlocks;
+            }
+
+            // Load current Step
             this.loadStep();
         },
     
@@ -49,13 +60,15 @@ function wizardForm(readOnly) {
         },
     
         autoSave() {
-            if (!this.isReadOnly) {
-                fetch('index.php?module=stic_Advanced_Web_Forms&action=saveDraft', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({bean: this.bean, config: this.config, step: this.step})
-                });
+            // Join Configs
+            let config = {
+                dataBlocks: this.configDataBlocks,
             }
+            fetch('index.php?module=stic_Advanced_Web_Forms&action=saveDraft', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({bean: this.bean, config: config, step: this.step})
+            });
         },
     
         finish() {
@@ -98,13 +111,17 @@ function initializeModuleTree($tree) {
         text: rootModule_text,
         children: true, // Indicates that it CAN have children, which Jstree will lazy load.
         state: { opened: false }, // Ensures the root node is initially closed.
-        data: { moduleName: rootModule_name }
+        data: { 
+            moduleName: rootModule_name,
+            path: [rootModule_name],
+            pathText: [rootModule_text],
+        }
     };
     
     // Initialize jstree on the designated div.
     $tree.jstree({
-        'core': {
-            'data': function (node, cb) {
+        core: {
+            data: function (node, cb) {
                 // If node.id is '#', Jstree is asking for first-level nodes (tree root).
                 if (node.id === '#') {
                     cb.call(this, [rootNode]);
@@ -122,57 +139,43 @@ function initializeModuleTree($tree) {
                     let childrenNodes = [];
                     // Convert the object of related modules to an array of Jstree nodes.
                     for (let key in moduleInfo.relationships) {
+                        let newPath = [...node.data.path]
+                        newPath.push(moduleInfo.relationships[key].moduleName);
+                        
+                        let newPathText = [...node.data.pathText];
+                        newPathText.push(moduleInfo.relationships[key].text);
+
+                        let isLoop = node.data.path.includes(moduleInfo.relationships[key].moduleName);
                         childrenNodes.push({
-                            id: node.id + "." + key,
-                            text: moduleInfo.relationships[key].text + " (" + moduleInfo.relationships[key].moduleText + ")",
-                            children: node.data.moduleName != moduleInfo.relationships[key].moduleName, 
-                            data: { moduleName: moduleInfo.relationships[key].moduleName }
+                            id: node.id + "-" + key,
+                            text: moduleInfo.relationships[key].text + " <sup>(" + moduleInfo.relationships[key].moduleText + ")</sup>",
+                            children: !isLoop,
+                            data: { 
+                                moduleName: moduleInfo.relationships[key].moduleName,
+                                path: newPath,
+                                pathText: newPathText,
+                            }
                         });
                     }
                     cb.call(this, childrenNodes);
                 }
             },
-            'check_callback': true, // Allows modifying the tree (e.g., adding/removing nodes).
-            'themes': {
-                'icons': false, // Disable node icons.
-                'responsive': false, // Disable responsive themes.
+            check_callback: true, // Allows modifying the tree (e.g., adding/removing nodes).
+            themes: {
+                icons: false, // Disable node icons.
+                responsive: false, // Disable responsive themes.
+                dots: true,
             }
         },
-        'plugins': ["wholerow"] // Makes the entire row clickable.
+        plugins: ["wholerow"] // Makes the entire row clickable.
     })    
     .on('ready.jstree', function() {
         // Store the jstree instance.
         jstreeInstance = $('#tree-container').jstree(true);
+    })
+    .on('select_node.jstree', function (e, data) {
+        window.alpineComponent.treeSelectedNode = data.node;
     });
-    // .on('select_node.jstree', function (e, data) {
-    //     var selectedNode = data.node;
-    //     var moduleName = selectedNode.data.moduleName; // Base module name.
-    //     var nodeId = selectedNode.id; // Full node ID (e.g., 'Accounts:link_name:timestamp').
-    //     var nodeText = selectedNode.text; // Visible node text (e.g., 'Accounts : Contact').
-
-    //     // console.log("Jstree node selected:", nodeId, "Module:", moduleName);
-
-    //     // Populate the fields list for the selected module.
-    //     renderFieldsList(moduleName, nodeText);
-
-    //     // Update the breadcrumbs for the selected node.
-    //     updateBreadcrumbs(nodeId, nodeText);
-        
-    //     // If the node is not a leaf (can be expanded).
-    //     if (!jstreeInstance.is_leaf(selectedNode)) {
-    //         // If it's closed, open it (which will trigger children loading).
-    //         if (!jstreeInstance.is_open(selectedNode)) {
-    //             // console.log("Opening node:", selectedNode.id);
-    //             jstreeInstance.open_node(selectedNode.id);
-    //         } else { 
-    //             // If it's already open, close it.
-    //             // console.log("Closing node:", selectedNode.id);
-    //             jstreeInstance.close_node(selectedNode.id);
-    //         }
-    //     } else {
-    //         // console.log("Leaf node, no expansion/collapse needed.");
-    //     }
-    // })
     // // Debugging events for load/open operations (commented out for production).
     // .on('after_open.jstree', function(e, data) {
     //     // console.log("Node OPENED:", data.node.id, "Children loaded:", data.node.children ? data.node.children.length : 0);

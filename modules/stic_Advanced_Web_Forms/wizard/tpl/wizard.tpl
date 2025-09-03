@@ -1,8 +1,5 @@
-{if !$readOnly}
-    {$title}
-    <div class="clear"></div>
-{/if}
-
+{$title}
+<div class="clear"></div>
 
 <div id="stic_AWF_editor" x-data="wizardForm(null,null,{$readOnly})" x-init="init()">
     <div class="wizard-nav">
@@ -15,7 +12,7 @@
 
     <h2 id='wizard-section-title'></h2>
     <div class="card container-fluid wizard-container">
-        <div class="card-body row h-100" id="wizard-step-container"></div>
+        <div class="card-body d-flex h-100" id="wizard-step-container"></div>
     </div>
 
     <div class="wizard-nav">

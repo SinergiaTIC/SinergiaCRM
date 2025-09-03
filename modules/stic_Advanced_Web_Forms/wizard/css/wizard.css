@@ -50,12 +50,26 @@ textarea, .selectize-control {
     box-shadow:0 0 0 .25rem rgba(13,110,253,.25)
 }
 
-#tree-container {
-    height: 80vh;
-    overflow-y: auto;
-    overflow-x: auto;
-}
-
 .jstree-icon {
     background-image: none !important;
 }
+
+.wizard-sidebar {
+    display: flex;
+    flex-direction: column;
+    resize: horizontal; 
+    overflow: hidden; 
+    width: 250px; 
+    min-width: 150px; 
+    max-width: 600px
+}
+
+.wizard-main {
+    overflow: auto; 
+}
+
+.wizard-tree {
+    flex: 1;
+    overflow: auto;
+}
+  

@@ -1,4 +1,4 @@
-<form id="wizard-step1-form">
+<form id="wizard-step1-form" style="width: 100%;">
   <div class="container"> 
     <div class="row">
       <!-- Name -->
@@ -97,13 +97,16 @@
       </div>
     </div>
   </div>
+
+  <div>
+    <p x-text="'Name: ' + bean.name"></p>
+    <p x-text="'Assigned: ' + bean.assigned_user_name + ' - ' + bean.assigned_user_id"></p>
+    <p x-text="'Base Module: ' + bean.base_module"></p>
+    <p x-text="'Generate Url: ' + bean.generate_url"></p>
+    <p x-text="'Processing Mode: ' + bean.processing_mode"></p>
+    <p x-text="'Description: ' + bean.description"></p>
+    <p x-text="'Config: ' + bean.config_json"></p>
+  </div>
 </form>
 
-<div>
-  <p x-text="'Name: ' + bean.name"></p>
-  <p x-text="'Assigned: ' + bean.assigned_user_name + ' - ' + bean.assigned_user_id"></p>
-  <p x-text="'Base Module: ' + bean.base_module"></p>
-  <p x-text="'Generate Url: ' + bean.generate_url"></p>
-  <p x-text="'Processing Mode: ' + bean.processing_mode"></p>
-  <p x-text="'Description: ' + bean.description"></p>
-</div>
+

@@ -61,7 +61,6 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
 
         SticViews::display($this);
 
-        $this->ss->assign('readOnly', false); 
         $this->ss->assign('title', $this->getModuleTitle(false));
 
         echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/wizard/tpl/wizard.tpl');
