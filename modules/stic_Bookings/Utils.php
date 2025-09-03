@@ -33,465 +33,518 @@ class stic_BookingsUtils
         require_once 'modules/stic_Bookings/controller.php';
         global $sugar_config, $app_list_strings, $current_user, $timedate, $db;
 
-        // Get the data from the form
-        $repeat_type = $_REQUEST['repeat_type'] ?: null;
-        $interval = isset($_REQUEST['repeat_interval']) ? $_REQUEST['repeat_interval'] : '1';
-        $count = isset($_REQUEST['repeat_count']) ? $_REQUEST['repeat_count'] : null;
-        $until = isset($_REQUEST['repeat_until']) ? $_REQUEST['repeat_until'] : null;
-        $startDay = $_REQUEST['start_date'];
-        $finalDay = $_REQUEST['end_date'];
-        $all_day = isset($_REQUEST['all_day']) ? $_REQUEST['all_day'] : '0';
-        $place_booking = isset($_REQUEST['place_booking']) ? $_REQUEST['place_booking'] : '0';
-        $status = isset($_REQUEST['status']) ? $_REQUEST['status'] : null;
-        $until = isset($_REQUEST['repeat_until']) ? $_REQUEST['repeat_until'] : null;
-        $name = $_REQUEST['name'];
-        $description = $_REQUEST['description'] ?? '';
-        $resourceIds = isset($_REQUEST['resource_id']) ? $_REQUEST['resource_id'] : array();
-        $parentId = $_REQUEST['parent_id'] ?? '';
-        $parentType = $_REQUEST['parent_type'] ?? '';
-        $bookingId = $_REQUEST['record'] ?? '0';
-
-        $until = str_replace('/', '-', $until);
-        $until = date('Y-m-d H:i:s', strtotime($until));
-        
-        if (!empty($all_day) && $all_day == 1) {
-            $startDay = str_replace('/', '-', $startDay);
-            $startDay = date('Y-m-d 00:00:00', strtotime($startDay));
-        
-            $finalDay = str_replace('/', '-', $finalDay);
-            $finalDay = date('Y-m-d 23:59:59', strtotime($finalDay));
-        } else {
-            $startDay = str_replace('/', '-', $startDay);
-            $startDay = date('Y-m-d H:i:s', strtotime($startDay));
-        
-            $finalDay = str_replace('/', '-', $finalDay);
-            $finalDay = date('Y-m-d H:i:s', strtotime($finalDay));
-        }
-        
+        $requestData = $_REQUEST;
+        $repeat_type = $requestData['repeat_type'] ?? null;
+        $startDay = self::formatDates($requestData);
+        $finalDay = self::formatDates($requestData, false);
         $duration = strtotime($finalDay) - strtotime($startDay);
+        $date = self::generateBookingDates($requestData, $startDay);
+        $aux = self::convertDatesToDbFormat($date, $timedate, $current_user);
+
+        $firstBookingCode = self::getLatestBookingCode($db, $repeat_type);
+        $bookingAttempts = self::processBookingAttempts($date, $duration, $requestData, $aux, $firstBookingCode, $timedate, $current_user, $db);
+
+        $_SESSION['bookings_to_confirm'] = $bookingAttempts['bookingsToConfirm'];
+        $_SESSION['consolidated_summary'] = array_values($bookingAttempts['allBookingAttempts']);
+        $_SESSION['summary'] = $bookingAttempts['summary'];
+    }
+
+    /**
+     * Formats the start and end dates from the request.
+     * @param array $requestData The $_REQUEST array.
+     * @param bool $isStart Flag to indicate if it's the start date.
+     * @return string Formatted date string.
+     */
+    private static function formatDates($requestData, $isStart = true)
+    {
+        $date = $isStart ? ($requestData['start_date'] ?? null) : ($requestData['end_date'] ?? null);
+        $date = str_replace('/', '-', $date);
+
+        if (!empty($requestData['all_day']) && $requestData['all_day'] == 1) {
+            return date('Y-m-d ' . ($isStart ? '00:00:00' : '23:59:59'), strtotime($date));
+        } else {
+            return date('Y-m-d H:i:s', strtotime($date));
+        }
+    }
+    
+    /**
+     * Generates an array of booking dates based on the repeat type.
+     * @param array $requestData The $_REQUEST array.
+     * @param string $startDay The start date of the first booking.
+     * @return array An array of booking date strings.
+     */
+    private static function generateBookingDates($requestData, $startDay)
+    {
+        $repeat_type = $requestData['repeat_type'] ?? null;
+        $interval = $requestData['repeat_interval'] ?? '1';
+        $count = $requestData['repeat_count'] ?? null;
+        $until = $requestData['repeat_until'] ?? null;
+
+        if ($until) {
+            $until = date('Y-m-d H:i:s', strtotime(str_replace('/', '-', $until)));
+        }
+
+        switch ($repeat_type) {
+            case 'Daily':
+                return self::generateDailyDates($startDay, $interval, $count, $until);
+            case 'Weekly':
+                return self::generateWeeklyDates($startDay, $interval, $count, $until, $requestData);
+            case 'Monthly':
+                return self::generateMonthlyDates($startDay, $interval, $count, $until);
+            case 'Yearly':
+                return self::generateYearlyDates($startDay, $interval, $count, $until);
+            default:
+                return [];
+        }
+    }
+
+    /**
+     * Generates daily booking dates.
+     */
+    private static function generateDailyDates($startDay, $interval, $count, $until)
+    {
+        $dates = [];
+        $currentDay = $startDay;
+        $i = 0;
+        if ($count != '' && $count != '0') {
+            while ($i < $count) {
+                $dates[] = $currentDay;
+                $currentDay = date('Y-m-d H:i:s', strtotime($currentDay . " + $interval days"));
+                $i++;
+            }
+        } else if ($until != '') {
+            while (strtotime(date("Y-m-d", strtotime($currentDay))) <= strtotime($until)) {
+                $dates[] = $currentDay;
+                $currentDay = date('Y-m-d H:i:s', strtotime($currentDay . " + $interval days"));
+            }
+        }
+        return $dates;
+    }
+
+    /**
+     * Generates weekly booking dates.
+     */
+    private static function generateWeeklyDates($startDay, $interval, $count, $until, $requestData)
+    {
+        $dates = [];
+        $dow = self::getDaysOfWeekFromRequest($requestData);
+        $times = array_sum($dow);
+
+        if ($times === 0) {
+            // No specific days selected, repeat weekly
+            $currentWeek = $startDay;
+            $i = 0;
+            if ($count != '' && $count != '0') {
+                while ($i < $count) {
+                    $dates[] = $currentWeek;
+                    $currentWeek = date('Y-m-d H:i:s', strtotime($currentWeek . " + $interval weeks"));
+                    $i++;
+                }
+            } else if ($until != '') {
+                while (strtotime(date("Y-m-d", strtotime($currentWeek))) <= strtotime($until)) {
+                    $dates[] = $currentWeek;
+                    $currentWeek = date('Y-m-d H:i:s', strtotime($currentWeek . " + $interval weeks"));
+                }
+            }
+            return $dates;
+        }
+
+        $currentDate = $startDay;
+        $i = 0;
+
+        while (true) {
+            if (($count != '' && $count != '0' && $i >= $count) || ($until != '' && strtotime($currentDate) > strtotime($until))) {
+                break;
+            }
+
+            for ($day = 1; $day <= 7; $day++) {
+                if ($dow[$day] == 1) {
+                    $dayOfWeek = date('N', strtotime($currentDate));
+                    $diff = $day - $dayOfWeek;
+                    if ($diff < 0) {
+                        $diff += 7;
+                    }
+
+                    $newDate = date('Y-m-d H:i:s', strtotime($currentDate . " + $diff days"));
+
+                    if (($count != '' && $count != '0')) {
+                        if ($i < $count) {
+                            $dates[] = $newDate;
+                            $i++;
+                        }
+                    } else if (($until != '')) {
+                        if (strtotime(date("Y-m-d", strtotime($newDate))) <= strtotime($until)) {
+                            $dates[] = $newDate;
+                        }
+                    }
+                }
+            }
+            $currentDate = date('Y-m-d H:i:s', strtotime($currentDate . " + $interval weeks"));
+        }
+        return $dates;
+    }
+
+    /**
+     * Helper function to get the days of the week from the request.
+     */
+    private static function getDaysOfWeekFromRequest($requestData)
+    {
+        $dow = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $dow[$i] = ($requestData['repeat_dow_' . $i] ?? '') == 'on' ? 1 : 0;
+        }
+        $dow[7] = ($requestData['repeat_dow_0'] ?? '') == 'on' ? 1 : 0; // Sunday
+        return $dow;
+    }
+
+    /**
+     * Generates monthly booking dates.
+     */
+    private static function generateMonthlyDates($startDay, $interval, $count, $until)
+    {
+        $dates = [];
+        $currentMonth = $startDay;
+        $i = 0;
+        if ($count != '' && $count != '0') {
+            while ($i < $count) {
+                $dates[] = $currentMonth;
+                $currentMonth = date('Y-m-d H:i:s', strtotime($currentMonth . " + $interval months"));
+                $i++;
+            }
+        } else if ($until != '') {
+            while (strtotime(date("Y-m-d", strtotime($currentMonth))) <= strtotime($until)) {
+                $dates[] = $currentMonth;
+                $currentMonth = date('Y-m-d H:i:s', strtotime($currentMonth . " + $interval months"));
+            }
+        }
+        return $dates;
+    }
+
+    /**
+     * Generates yearly booking dates.
+     */
+    private static function generateYearlyDates($startDay, $interval, $count, $until)
+    {
+        $dates = [];
+        $currentYear = $startDay;
+        $i = 0;
+        if ($count != '' && $count != '0') {
+            while ($i < $count) {
+                $dates[] = $currentYear;
+                $currentYear = date('Y-m-d H:i:s', strtotime($currentYear . " + $interval years"));
+                $i++;
+            }
+        } else if ($until != '') {
+            while (strtotime(date("Y-m-d", strtotime($currentYear))) <= strtotime($until)) {
+                $dates[] = $currentYear;
+                $currentYear = date('Y-m-d H:i:s', strtotime($currentYear . " + $interval years"));
+            }
+        }
+        return $dates;
+    }
+
+    /**
+     * Converts a list of dates to the database format.
+     */
+    private static function convertDatesToDbFormat($dates, $timedate, $currentUser)
+    {
+        $aux = [];
+        foreach ($dates as $date) {
+            $aux[] = $timedate->to_db($timedate->to_display_date_time($date, true, false, $currentUser));
+        }
+        return $aux;
+    }
+
+    /**
+     * Gets the latest booking code from the database.
+     */
+    private static function getLatestBookingCode($db, $repeatType)
+    {
+        if (!$repeatType) {
+            return null;
+        }
+        $query = "SELECT code FROM stic_bookings ORDER BY code DESC LIMIT 1";
+        $result = $db->query($query, true);
+        $row = $db->fetchByAssoc($result);
+        $lastNum = $row['code'] ?? 0;
+        return str_pad($lastNum + 1, 5, "0", STR_PAD_LEFT);
+    }
+    
+    /**
+     * Processes each booking attempt to check resource availability and prepare summary data.
+     */
+    private static function processBookingAttempts($dates, $duration, $requestData, $aux, $firstBookingCode, $timedate, $currentUser, $db)
+    {
+        $controller = new stic_BookingsController();
+        $resourceIds = $requestData['resource_id'] ?? [];
+        $resourceNames = self::getResourceNames($resourceIds, 'stic_Resources');
+
+        $summary = [
+            'global' => ['totalRecordsProcessed' => 0, 'totalRecordsCreated' => 0, 'totalRecordsNotCreated' => 0],
+            'resources' => self::initializeResourceSummary($resourceIds, $resourceNames),
+        ];
         
-        $date = [];
-        if ($repeat_type == 'Daily') {
-            $firstDay = $startDay;
-            if ($count != '' && $count != '0') {
-                for ($i = 0; $i < $count; $i++) {
-                    $date[$i] = $firstDay;
-                    $firstDay = date('Y-m-d H:i:s', strtotime($firstDay . " + $interval days"));
-                }
-            } else if ($until != '') {
-                $first_d = date("Y-m-d", strtotime($firstDay));
-                for ($i = 0; strtotime($first_d) <= strtotime($until); $i++) {
-                    $date[$i] = $firstDay;
-                    $firstDay = date('Y-m-d H:i:s', strtotime($firstDay . " + $interval days"));
-                    $first_d = date("Y-m-d", strtotime($firstDay));
-                }
-            }
-        }
-        if ($repeat_type == 'Monthly') {
-            $firstMonth = $startDay;
-            if ($count != '' && $count != '0') {
-                for ($i = 0; $i < $count; $i++) {
-                    $date[$i] = $firstMonth;
-                    $firstMonth = date('Y-m-d H:i:s', strtotime($firstMonth . " + $interval months"));
-                }
-            } else if ($until != '') {
-                $firstM = date("Y-m-d", strtotime($firstMonth));
-                for ($i = 0; strtotime($firstM) <= strtotime($until); $i++) {
-                    $date[$i] = $firstMonth;
-                    $firstMonth = date('Y-m-d H:i:s', strtotime($firstMonth . " + $interval months"));
-                    $firstM = date("Y-m-d", strtotime($firstMonth));
-                }
-            }
-        }
-        if ($repeat_type == 'Yearly') {
-            $firstYear = $startDay;
-            if ($count != '' && $count != '0') {
-                for ($i = 0; $i < $count; $i++) {
-                    $date[$i] = $firstYear;
-                    $firstYear = date('Y-m-d H:i:s', strtotime($firstYear . " + $interval years"));
-                }
-            } else if ($until != '') {
-                $firstY = date("Y-m-d", strtotime($firstYear));
-                for ($i = 0; strtotime($firstY) <= strtotime($until); $i++) {
-                    $date[$i] = $firstYear;
-                    $firstYear = date('Y-m-d H:i:s', strtotime($firstYear . " + $interval years"));
-                    $firstY = date("Y-m-d", strtotime($firstYear));
-                }
-            }
-        }
-        if ($repeat_type == 'Weekly') {
-            $times = 0;
-            for ($i = 1; $i < 7; $i++) {
-                $dow[$i] = $_REQUEST['repeat_dow_' . $i] ?? '';
-                if ($dow[$i] == 'on') {
-                    $times = $times + 1;
-                    $dow[$i] = 1;
-                } else {
-                    $dow[$i] = 0;
-                }
-            }
-            $zero = 0;
-            $dow[7] = $_REQUEST['repeat_dow_' . $zero] ?? '';
-            if ($dow[7] == 'on') {
-                $times = $times + 1;
-                $dow[7] = 1;
+        $allBookingAttempts = [];
+        $bookingsToConfirm = [];
+        $availableResourcesInThisBatch = [];
+        $code = self::getLatestBookingCodeForName($db);
+        $bookingCounter = 0;
+
+        foreach ($dates as $i => $date) {
+            $summary['global']['totalRecordsProcessed']++;
+            $currentStartDatePhp = $date;
+            $currentEndDatePhp = date('Y-m-d H:i:s', strtotime($currentStartDatePhp) + $duration);
+            $availability = self::checkResourcesAvailability($controller, $resourceIds, $currentStartDatePhp, $currentEndDatePhp, $requestData['record'] ?? '0', $availableResourcesInThisBatch);
+
+            if ($availability['allResourcesAvailable']) {
+                self::updateBatchAvailability($availableResourcesInThisBatch, $resourceIds, $currentStartDatePhp, $currentEndDatePhp);
+                $bookingCounter++;
+                $bookingName = self::generateBookingName($requestData['name'] ?? '', $code, $bookingCounter);
+                $code++;
+                $bookingRecord = self::createBookingRecord($aux[$i], $duration, $requestData, $resourceIds, $resourceNames, $availability['allResourcesAvailable'], $bookingName, $firstBookingCode, $timedate, $currentUser);
+                $bookingsToConfirm[] = $bookingRecord;
+                self::updateSummaryForCreatedBooking($summary, $resourceIds, $bookingName, $resourceNames, $aux[$i], $duration, $timedate, $currentUser);
+                self::updateAllBookingAttempts($allBookingAttempts, $aux[$i], $duration, $bookingName, $resourceNames, $timedate, $currentUser, 'created');
             } else {
-                $dow[7] = 0;
-            }
-
-            if ($times > '0') {
-                $days = array('1', '2', '3', '4', '5', '6', '7');
-                $firstWeek = $startDay;
-                $week = 1;
-                $i = 0;
-                if ($count != '' && $count != '0') {
-                    while ($i < $count) {
-                        if ($week == '1') {
-                            $firstDate = $firstWeek;
-                            $weekDay = $days[date('w', strtotime($firstDate))];
-                            $weekDay2 = $weekDay;
-                            if ($weekDay == '1') {
-                                $weekDay = '7';
-                            } else {
-                                $weekDay = $weekDay - 1;
-                            }
-                            for ($x = $weekDay; $x < 8; $x++) {
-                                if ($dow[$x] == 1) {
-                                    $adder = $x - $weekDay;
-                                    $firstWeek = date('Y-m-d H:i:s', strtotime($firstDate . " + $adder days"));
-                                    $date[$i] = $firstWeek;
-                                    $i = $i + 1;
-                                    if ($i == $count) {
-                                        $x = 8;
-                                    }
-                                }
-                            }
-                            $week = '2';
-                            if ($interval > 1) {
-                                $x = $interval - 1;
-                            } else {
-                                $x = '0';
-                            }
-                            if ($weekDay2 == '1') {
-                                $weekDay2 = '8';
-                                $x = 0;
-                            }
-                            $differenceDay = 8 - $weekDay2;
-                            $firstWeek = date('Y-m-d H:i:s', strtotime($startDay . " + $x weeks + $differenceDay days"));
-                        }
-
-                        if ($week == '2' && $i < $count) {
-                            $newWeek = $firstWeek;
-                            for ($x = 1; $x < 8; $x++) {
-                                if ($dow[$x] == 1) {
-                                    $addDays = $x;
-                                    $firstWeek = date('Y-m-d H:i:s', strtotime($newWeek . " + $addDays days"));
-                                    $date[$i] = $firstWeek;
-                                    $i = $i + 1;
-                                    if ($i == $count) {
-                                        $x = 8;
-                                    }
-                                }
-                            }
-                            $firstWeek = date('Y-m-d H:i:s', strtotime($newWeek . " + $interval weeks"));
-                        }
-                    }
-                } else if ($until != '') {
-                    $firstWeek = $startDay;
-                    $week = 1;
-                    $i = 0;
-
-                    while (strtotime($firstWeek) <= strtotime($until)) {
-                        if ($week == '1') {
-                            $startDay = $timedate->asDb($timedate->fromString($startDay), $current_user);
-                            $finalDay = $timedate->asDb($timedate->fromString($finalDay), $current_user);
-                            $firstDate = $firstWeek;
-                            $weekDay = $days[date('w', strtotime($firstDate))];
-                            $weekDay2 = $weekDay;
-                            if ($weekDay == '1') {
-                                $weekDay = '7';
-                            } else {
-                                $weekDay = $weekDay - 1;
-                            }
-                            for ($x = $weekDay; $x < 8; $x++) {
-                                if ($dow[$x] == 1) {
-                                    $adder = $x - $weekDay;
-                                    $firstWeek = date('Y-m-d H:i:s', strtotime($firstDate . " + $adder days"));
-                                    $date[$i] = $firstWeek;
-                                    $i = $i + 1;
-                                    if (strtotime($firstWeek) == strtotime($until)) {
-                                        $x = 8;
-                                    }
-                                }
-                            }
-                            $week = '2';
-                            if ($interval > 1) {
-                                $x = $interval - 1;
-                            } else {
-                                $x = '0';
-                            }
-                            if ($weekDay2 == '1') {
-                                $weekDay2 = '8';
-                                $x = 0;
-                            }
-                            $differenceDay = 8 - $weekDay2;
-                            $firstWeek = date('Y-m-d H:i:s', strtotime($firstDate . " + $x weeks + $differenceDay days"));
-                        }
-                        if ($week == '2' && strtotime($firstWeek) <= strtotime($until)) {
-                            $newWeek = $firstWeek;
-                            for ($x = 1; $x < 8; $x++) {
-                                if ($dow[$x] == 1) {
-                                    $addDays = $x;
-                                    $firstWeek = date('Y-m-d H:i:s', strtotime($newWeek . " + $addDays days"));
-
-                                    if ($until >= substr($firstWeek, 0, 10)) {
-                                        $date[$i] = $firstWeek;
-                                    }
-
-                                    $i = $i + 1;
-                                    if (strtotime($firstWeek) == strtotime($until)) {
-                                        $x = 8;
-                                    }
-                                }
-                            }
-
-                            $firstWeek = date('Y-m-d H:i:s', strtotime($newWeek . " + $interval weeks"));
-                        }
-                    }
-                }
-            } else {
-                $firstWeek = $startDay;
-                if ($count != '' && $count != '0') {
-                    for ($i = 0; $i < $count; $i++) {
-                        $date[$i] = $firstWeek;
-                        $firstWeek = date('Y-m-d H:i:s', strtotime($firstWeek . " + $interval weeks"));
-                    }
-                } else if ($until != '') {
-                    $firstW = date("Y-m-d", strtotime($firstWeek));
-                    for ($i = 0; strtotime($firstW) <= strtotime($until); $i++) {
-                        $date[$i] = $firstWeek;
-                        $firstWeek = date('Y-m-d H:i:s', strtotime($firstWeek . " + $interval weeks"));
-                        $firstW = date("Y-m-d", strtotime($firstWeek));
-                    }
-                }
+                self::updateSummaryForUnavailableBooking($summary, $resourceIds, $resourceNames, $availability['resourceAvailability'], $aux[$i], $duration, $timedate, $currentUser);
+                self::updateAllBookingAttempts($allBookingAttempts, $aux[$i], $duration, '', $resourceNames, $timedate, $currentUser, 'not_created', $availability['resourceAvailability']);
             }
         }
-
-        $aux = array();
-        $counter = count($date);
-        for ($i = 0; $i < $counter; $i++) {
-            $aux[$i] = $timedate->to_db($timedate->to_display_date_time($date[$i], true, false, $current_user));
-        }
-
-        $summary['global'] = array(
-            'totalRecordsProcessed' => 0,
-            'totalRecordsCreated' => 0,
-            'totalRecordsNotCreated' => 0,
-        );
-
-        $resourceNames = array();
+        
+        return [
+            'bookingsToConfirm' => $bookingsToConfirm,
+            'allBookingAttempts' => $allBookingAttempts,
+            'summary' => $summary
+        ];
+    }
+    
+    /**
+     * Gets resource names from their IDs.
+     */
+    private static function getResourceNames($resourceIds, $module)
+    {
+        $names = [];
         foreach ($resourceIds as $resourceId) {
-            $resource = BeanFactory::getBean('stic_Resources', $resourceId);
+            $resource = BeanFactory::getBean($module, $resourceId);
             if ($resource) {
-                $resourceNames[$resourceId] = $resource->name;
+                $names[$resourceId] = $resource->name;
             }
         }
+        return $names;
+    }
 
-        $summary['resources'] = array();
+    /**
+     * Initializes the resource summary array.
+     */
+    private static function initializeResourceSummary($resourceIds, $resourceNames)
+    {
+        $resources = [];
         foreach ($resourceIds as $resourceId) {
-            $summary['resources'][$resourceId] = array(
+            $resources[$resourceId] = [
                 'name' => $resourceNames[$resourceId] ?? "Recurso {$resourceId}",
                 'numRecordsProcessed' => 0,
                 'numRecordsCreated' => 0,
                 'numRecordsNotCreated' => 0,
-                'recordsCreated' => array(),
-                'recordsNotCreated' => array(),
-            );
+                'recordsCreated' => [],
+                'recordsNotCreated' => [],
+            ];
+        }
+        return $resources;
+    }
+
+    /**
+     * Checks availability of resources for a specific time slot.
+     */
+    private static function checkResourcesAvailability($controller, $resourceIds, $startDate, $endDate, $bookingId, &$availableResourcesInThisBatch)
+    {
+        $resourceAvailability = [];
+        $allResourcesAvailable = true;
+
+        foreach ($resourceIds as $resourceId) {
+            $availabilityDb = $controller->checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
+            $availabilityBatch = self::checkBatchAvailability($availableResourcesInThisBatch, $resourceId, $startDate, $endDate);
+            
+            $isResourceAvailable = $availabilityDb['resources_allowed'] && $availabilityBatch;
+            $resourceAvailability[$resourceId] = $isResourceAvailable;
+
+            if (!$isResourceAvailable) {
+                $allResourcesAvailable = false;
+                break;
+            }
+        }
+        return ['allResourcesAvailable' => $allResourcesAvailable, 'resourceAvailability' => $resourceAvailability];
+    }
+
+    /**
+     * Checks if a resource is available in the current batch of bookings.
+     */
+    private static function checkBatchAvailability($availableResourcesInThisBatch, $resourceId, $startDate, $endDate)
+    {
+        if (!isset($availableResourcesInThisBatch[$resourceId])) {
+            return true;
         }
 
-        $firstBookingCode = null;
-        if ($repeat_type) {
-            $query = "SELECT code FROM stic_bookings ORDER BY code DESC LIMIT 1";
-            $result = $db->query($query, true);
-            $row = $db->fetchByAssoc($result);
-            $lastNum = $row['code'] ?? 0;
-            $firstBookingCode = str_pad($lastNum + 1, 5, "0", STR_PAD_LEFT);
+        foreach ($availableResourcesInThisBatch[$resourceId] as $bookingTime) {
+            $start = $bookingTime['start'];
+            $end = $bookingTime['end'];
+            if (strtotime($startDate) < strtotime($end) && strtotime($endDate) > strtotime($start)) {
+                return false;
+            }
         }
-    
-        $all_booking_attempts = array();
-        $bookingsToConfirm = array(); 
-        $controller = new stic_BookingsController();
+        return true;
+    }
 
-        $code = null;
-        $bookingCounter = 0; 
-        
-        $availableResourcesInThisBatch = [];
-
-        for ($i = 0; $i < $counter; $i++) {
-            $summary['global']['totalRecordsProcessed']++;
-
-            $current_start_date_php = $date[$i];
-            $current_end_date_php = date('Y-m-d H:i:s', strtotime($current_start_date_php) + $duration);
-            
-            $resourceAvailability = array();
-            $allResourcesAvailable = true;
-
-            foreach ($resourceIds as $resourceId) {
-                $availabilityDb = $controller->checkResourceAvailability($resourceId, $current_start_date_php, $current_end_date_php, $bookingId);
-                
-                $availabilityBatch = true;
-                if (isset($availableResourcesInThisBatch[$resourceId])) {
-                    foreach ($availableResourcesInThisBatch[$resourceId] as $bookingTime) {
-                        $start = $bookingTime['start'];
-                        $end = $bookingTime['end'];
-                        
-                        if (strtotime($current_start_date_php) < strtotime($end) && strtotime($current_end_date_php) > strtotime($start)) {
-                            $availabilityBatch = false;
-                            break;
-                        }
-                    }
-                }
-                
-                $isResourceAvailable = $availabilityDb['resources_allowed'] && $availabilityBatch;
-                $resourceAvailability[$resourceId] = $isResourceAvailable;
-
-                if (!$isResourceAvailable) {
-                    $allResourcesAvailable = false;
-                    break;
-                }
+    /**
+     * Updates the batch availability data.
+     */
+    private static function updateBatchAvailability(&$availableResourcesInThisBatch, $resourceIds, $startDate, $endDate)
+    {
+        foreach ($resourceIds as $resourceId) {
+            if (!isset($availableResourcesInThisBatch[$resourceId])) {
+                $availableResourcesInThisBatch[$resourceId] = [];
             }
-            
-            if ($allResourcesAvailable) {
-                foreach ($resourceIds as $resourceId) {
-                    if (!isset($availableResourcesInThisBatch[$resourceId])) {
-                        $availableResourcesInThisBatch[$resourceId] = [];
-                    }
-                    $availableResourcesInThisBatch[$resourceId][] = ['start' => $current_start_date_php, 'end' => $current_end_date_php];
-                }
+            $availableResourcesInThisBatch[$resourceId][] = ['start' => $startDate, 'end' => $endDate];
+        }
+    }
+
+    /**
+     * Generates the booking name.
+     */
+    private static function generateBookingName($name, $code, $counter)
+    {
+        if (empty($name)) {
+            $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Bookings');
+            return $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . str_pad($code, 5, "0", STR_PAD_LEFT) . ' (' . $counter . ')';
+        }
+        return $name . ' (' . $counter . ')';
+    }
+
+    /**
+     * Gets the latest booking code for naming.
+     */
+    private static function getLatestBookingCodeForName($db)
+    {
+        $query = "SELECT code FROM stic_bookings ORDER BY code DESC LIMIT 1";
+        $result = $db->query($query, true);
+        $row = $db->fetchByAssoc($result);
+        return $row['code'] ?? 0;
+    }
+
+    /**
+     * Creates a booking record array for the session.
+     */
+    private static function createBookingRecord($startDateDb, $duration, $requestData, $resourceIds, $resourceNames, $allResourcesAvailable, $bookingName, $firstBookingCode, $timedate, $currentUser)
+    {
+        $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
+        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
+
+        return [
+            'start_date_db' => $startDateDb,
+            'end_date_db' => date('Y-m-d H:i:s', strtotime($startDateDb) + $duration),
+            'start_date_display' => $timedate->asUser($startDateObj, $currentUser),
+            'end_date_display' => $timedate->asUser($endDateObj, $currentUser),
+            'all_day' => $requestData['all_day'] ?? '0',
+            'status' => $requestData['status'] ?? null,
+            'repeat_type' => $requestData['repeat_type'] ?? null,
+            'place_booking' => $requestData['place_booking'] ?? '0',
+            'description' => $requestData['description'] ?? '',
+            'parent_id' => $requestData['parent_id'] ?? '',
+            'parent_type' => $requestData['parent_type'] ?? '',
+            'resourceIds' => $resourceIds,
+            'allResourcesAvailable' => $allResourcesAvailable,
+            'name' => $bookingName,
+            'recursive_code' => $firstBookingCode,
+            'resource_names' => array_values($resourceNames)
+        ];
+    }
+
+    /**
+     * Updates the summary for a successfully created booking.
+     */
+    private static function updateSummaryForCreatedBooking(&$summary, $resourceIds, $bookingName, $resourceNames, $startDateDb, $duration, $timedate, $currentUser)
+    {
+        $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
+        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
+        $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
+        $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
+
+        $summary['global']['totalRecordsCreated']++;
+        foreach ($resourceIds as $resourceId) {
+            $summary['resources'][$resourceId]['numRecordsCreated']++;
+            $summary['resources'][$resourceId]['recordsCreated'][] = [
+                'bookingName' => $bookingName,
+                'resourceName' => $resourceNames[$resourceId],
+                'startDate' => $startDateDisplay,
+                'endDate' => $endDateDisplay,
+                'status' => $_REQUEST['status'] ?? null,
+                'allRequestedResources' => array_values($resourceNames),
+            ];
+        }
+    }
+
+    /**
+     * Updates the summary for a booking that could not be created.
+     */
+    private static function updateSummaryForUnavailableBooking(&$summary, $resourceIds, $resourceNames, $resourceAvailability, $startDateDb, $duration, $timedate, $currentUser)
+    {
+        $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
+        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
+        $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
+        $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
+
+        $summary['global']['totalRecordsNotCreated']++;
+        $unavailableResources = [];
+        foreach ($resourceAvailability as $resId => $available) {
+            if (!$available) {
+                $unavailableResources[] = $resourceNames[$resId];
             }
-
-            $startDate = $timedate->fromDbFormat($aux[$i], TimeDate::DB_DATETIME_FORMAT);
-            $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($aux[$i]) + $duration), TimeDate::DB_DATETIME_FORMAT);
-
-            if ($startDate === false || $endDateObj === false) {
-                 continue;
-            }
-             
-            $startDateDisplay = $timedate->asUser($startDate, $current_user);
-            $endDateDisplay = $timedate->asUser($endDateObj, $current_user);
-            
-            $bookingName = '';
-            if ($allResourcesAvailable) {
-                $bookingCounter++;
-                if (empty($name)) {
-                    if (!$code) {
-                        $query = "SELECT code FROM stic_bookings ORDER BY code DESC LIMIT 1";
-                        $result = $db->query($query, true);
-                        $row = $db->fetchByAssoc($result);
-                        $lastNum = $row['code'] ?? 0;
-                        $code = $lastNum;
-                    }
-                    $code++;
-                    $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Bookings');
-                    $bookingName = $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . str_pad($code, 5, "0", STR_PAD_LEFT) . ' (' . $bookingCounter . ')';
-                } else {
-                    $bookingName = $name . ' (' . $bookingCounter . ')';
-                }
-            } else {
-                $bookingName = empty($name) ? 'Booking no disponible' : $name;
-            }
-            
-            $bookingRecord = array(
-                'start_date_db' => $aux[$i],
-                'end_date_db' => date('Y-m-d H:i:s', strtotime($aux[$i]) + $duration),
-                'start_date_display' => $startDateDisplay,
-                'end_date_display' => $endDateDisplay,
-                'all_day' => $all_day,
-                'status' => $status,
-                'repeat_type' => $repeat_type,
-                'place_booking' => $place_booking,
-                'description' => $description,
-                'parent_id' => $parentId,
-                'parent_type' => $parentType,
-                'resourceIds' => $resourceIds,
-                'allResourcesAvailable' => $allResourcesAvailable,
-                'name' => $bookingName,
-                'recursive_code' => $firstBookingCode,
-                'resource_names' => array_values($resourceNames)
-            );
-
-            if ($allResourcesAvailable) {
-                $summary['global']['totalRecordsCreated']++;
-
-                foreach ($resourceIds as $resourceId) {
-                    $summary['resources'][$resourceId]['numRecordsCreated']++;
-                    $summary['resources'][$resourceId]['recordsCreated'][] = array(
-                        'bookingName' => $bookingName,
-                        'resourceName' => $resourceNames[$resourceId],
-                        'startDate' => $startDateDisplay,
-                        'endDate' => $endDateDisplay,
-                        'status' => $status,
-                        'allRequestedResources' => array_values($resourceNames),
-                    );
-                }
-
-                $recordKey = $startDateDisplay . '_' . $endDateDisplay;
-                $all_booking_attempts[$recordKey] = array(
-                    'status' => 'created',
-                    'bookingName' => $bookingName,
-                    'startDate' => $startDateDisplay,
-                    'endDate' => $endDateDisplay,
-                    'allRequestedResources' => array_values($resourceNames),
-                );
-                
-            } else {
-                $summary['global']['totalRecordsNotCreated']++;
-
-                foreach ($resourceIds as $resourceId) {
-                    $isThisResourceAvailable = $resourceAvailability[$resourceId];
-                    
-                    if (!$isThisResourceAvailable) {
-                        $summary['resources'][$resourceId]['numRecordsNotCreated']++;
-                        
-                        $unavailableResources = array();
-                        foreach ($resourceAvailability as $resId => $available) {
-                            if (!$available) {
-                                $unavailableResources[] = $resourceNames[$resId];
-                            }
-                        }
-
-                        $summary['resources'][$resourceId]['recordsNotCreated'][] = array(
-                            'resourceName' => $resourceNames[$resourceId],
-                            'startDate' => $startDateDisplay,
-                            'endDate' => $endDateDisplay,
-                            'unavailableResources' => $unavailableResources,
-                            'allRequestedResources' => array_values($resourceNames),
-                            'thisResourceAvailable' => $isThisResourceAvailable,
-                        );
-                    }
-                }
-                $recordKey = $startDateDisplay . '_' . $endDateDisplay;
-                $unavailableResources = array();
-                foreach ($resourceAvailability as $resId => $available) {
-                    if (!$available) {
-                        $unavailableResources[] = $resourceNames[$resId];
-                    }
-                }
-                $all_booking_attempts[$recordKey] = array(
-                    'status' => 'not_created',
+        }
+        foreach ($resourceIds as $resourceId) {
+            if (!$resourceAvailability[$resourceId]) {
+                $summary['resources'][$resourceId]['numRecordsNotCreated']++;
+                $summary['resources'][$resourceId]['recordsNotCreated'][] = [
+                    'resourceName' => $resourceNames[$resourceId],
                     'startDate' => $startDateDisplay,
                     'endDate' => $endDateDisplay,
                     'unavailableResources' => $unavailableResources,
                     'allRequestedResources' => array_values($resourceNames),
-                );
+                    'thisResourceAvailable' => $resourceAvailability[$resourceId],
+                ];
             }
-            
-            $bookingsToConfirm[] = $bookingRecord;
+        }
+    }
+
+    /**
+     * Updates the consolidated list of all booking attempts.
+     */
+    private static function updateAllBookingAttempts(&$allBookingAttempts, $startDateDb, $duration, $bookingName, $resourceNames, $timedate, $currentUser, $status, $resourceAvailability = [])
+    {
+        $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
+        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
+        $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
+        $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
+        $recordKey = $startDateDisplay . '_' . $endDateDisplay;
+
+        $attempt = [
+            'status' => $status,
+            'startDate' => $startDateDisplay,
+            'endDate' => $endDateDisplay,
+            'allRequestedResources' => array_values($resourceNames),
+        ];
+
+        if ($status === 'created') {
+            $attempt['bookingName'] = $bookingName;
+        } else {
+            $unavailableResources = [];
+            foreach ($resourceAvailability as $resId => $available) {
+                if (!$available) {
+                    $unavailableResources[] = $resourceNames[$resId];
+                }
+            }
+            $attempt['unavailableResources'] = $unavailableResources;
         }
 
-        $_SESSION['bookings_to_confirm'] = $bookingsToConfirm;
-        $_SESSION['consolidated_summary'] = array_values($all_booking_attempts);
-        $_SESSION['summary'] = $summary;
+        $allBookingAttempts[$recordKey] = $attempt;
     }
 
     /**

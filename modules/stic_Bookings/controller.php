@@ -479,6 +479,7 @@ class stic_BookingsController extends SugarController
 
     public function action_save() {
         if (isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {
+            $_SESSION['last_booking_request'] = $_REQUEST; 
             // Change: Instead of creating the records, prepare the data and store it in a session variable
             require_once 'modules/stic_Bookings/Utils.php';
             // This new function will prepare the data without saving it
@@ -504,16 +505,10 @@ class stic_BookingsController extends SugarController
 
     public function action_confirmPeriodicBookings() {
         if (isset($_SESSION['bookings_to_confirm']) && !empty($_SESSION['bookings_to_confirm'])) {
-            // Llama a la función de guardado
             require_once 'modules/stic_Bookings/Utils.php';
             
-            // La función de guardado debería devolver el resumen final o actualizarlo en la sesión
             $final_summary = stic_BookingsUtils::savePeriodicBookingsFromConfirmation(); 
-            
-            // Actualizar la sesión con el resumen final si es necesario
-            // $_SESSION['summary'] = $final_summary; 
-            
-            // Limpiar la variable de confirmación
+                        
             unset($_SESSION['bookings_to_confirm']);
         }
         header("Location: index.php?module=stic_Bookings&action=index");

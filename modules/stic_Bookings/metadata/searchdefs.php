@@ -35,6 +35,11 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
+            'recursive_code' => array(
+                'name' => 'recursive_code',
+                'default' => true,
+                'width' => '10%',
+            ),
             'place_booking' => array(
                 'name' => 'place_booking',
                 'type' => 'bool',
@@ -114,6 +119,11 @@ array(
             ),
             'code' => array(
                 'name' => 'code',
+                'default' => true,
+                'width' => '10%',
+            ),
+            'recursive_code' => array(
+                'name' => 'recursive_code',
                 'default' => true,
                 'width' => '10%',
             ),

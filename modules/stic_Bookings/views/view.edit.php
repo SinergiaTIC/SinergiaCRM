@@ -38,6 +38,28 @@ class stic_BookingsViewEdit extends ViewEdit
     {
         global $timedate, $current_user;
 
+        if (isset($_REQUEST['loadFromSession']) && $_REQUEST['loadFromSession'] === 'true' && isset($_SESSION['last_booking_request'])) {
+            $lastRequest = $_SESSION['last_booking_request'];
+    
+            foreach ($lastRequest as $key => $value) {
+                $this->bean->$key = $value;
+            }
+    
+            if (isset($lastRequest['resource_id']) && is_array($lastRequest['resource_id'])) {
+                $resourceIds = $lastRequest['resource_id'];
+                $this->bean->load_relationship('stic_resources_stic_bookings');
+                
+                foreach ($resourceIds as $resourceId) {
+                    $resourceBean = BeanFactory::getBean('stic_Resources', $resourceId);
+                    if ($resourceBean) {
+                        $this->bean->stic_resources_stic_bookings->addBean($resourceBean);
+                    }
+                }
+            }            
+            unset($_SESSION['last_booking_request']);
+        }
+        
+
         // If the Bookings' EditView is launched from the Bookings' Calendar, retrieve start and end dates from there
         if (isset($_REQUEST['return_module'], $_REQUEST['start'], $_REQUEST['end']) && $_REQUEST['return_module'] == 'stic_Bookings_Calendar' && $_REQUEST['start'] && $_REQUEST['end']) {
             // Parse the dates received from the calendar

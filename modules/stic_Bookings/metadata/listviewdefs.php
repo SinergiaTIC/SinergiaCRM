@@ -74,6 +74,11 @@ array(
         'id' => 'ASSIGNED_USER_ID',
         'default' => true,
     ),
+    'RECURSIVE_CODE' => array(
+        'label' => 'LBL_RECURSIVE_CODE',
+        'width' => '10%',
+        'default' => false,
+    ),
     'ALL_DAY' => array(
         'type' => 'bool',
         'label' => 'LBL_ALL_DAY',

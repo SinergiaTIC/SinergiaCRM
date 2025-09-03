@@ -20,71 +20,70 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  *}
 <input type="hidden" id="periodic_action" name="periodic_action" value="createPeriodicBookingsRecords">
-
-
 <input type="hidden" name="repeat_parent_id">
-<div id="repeat_options" style="display: none;">
+
+<div class="right-aligned-container">
+  <div id="repeat_options" style="display: none;">
     <table class="BookingRepeatForm" width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr id="repeat_interval_row">
-            <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_INTERVAL}:</td>
-            <td width="37.5%" valign="top">
+            <td valign="top" scope="row">{$MOD.LBL_REPEAT_INTERVAL}:</td>
+            <td valign="top">
                 <select name="repeat_interval">{html_options options=$repeat_intervals selected="1"}</select>
                 <span id="repeat-interval-text"></span>
             </td>
         </tr>
-    <tr id="repeat_end_row">
-        <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_END}:</td>
-        <td width="37.5%" valign="top">
-            <div>
-                <input type="radio" name="repeat_end_type" value="count" id="repeat_count_radio" checked
-                    onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
-                {$MOD.LBL_REPEAT_END_AFTER}
-                <input type="number" size="3" name="repeat_count" value="1"> {$MOD.LBL_REPEAT_OCCURRENCES}
-            </div>
+        <tr id="repeat_end_row">
+            <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_END}:</td>
+            <td width="37.5%" valign="top">
+                <div>
+                    <input type="radio" name="repeat_end_type" value="count" id="repeat_count_radio" checked
+                        onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
+                    {$MOD.LBL_REPEAT_END_AFTER}
+                    <input type="number" size="3" name="repeat_count" value="1"> {$MOD.LBL_REPEAT_OCCURRENCES}
+                </div>
 
-            <div>
-                <input type="radio" name="repeat_end_type" id="repeat_until_radio" value="until"
-                    onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
-                {$MOD.LBL_REPEAT_END_BY}
-                <input type="text" class="date_input" size="11" maxlength="10" id="repeat_until_input"
-                    name="repeat_until" value="" disabled>
-                <img border="0" src="index.php?entryPoint=getImage&imageName=jscalendar.gif"
-                    alt="{$APP.LBL_ENTER_DATE}" id="repeat_until_trigger" align="absmiddle"
-                    style="display: none;">
+                <div>
+                    <input type="radio" name="repeat_end_type" id="repeat_until_radio" value="until"
+                        onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
+                    {$MOD.LBL_REPEAT_END_BY}
+                    <input type="text" class="date_input" size="11" maxlength="10" id="repeat_until_input"
+                        name="repeat_until" value="" disabled>
+                    <img border="0" src="index.php?entryPoint=getImage&imageName=jscalendar.gif"
+                        alt="{$APP.LBL_ENTER_DATE}" id="repeat_until_trigger" align="absmiddle"
+                        style="display: none;">
 
-                <script type="text/javascript">
-                    {literal}
-                        Calendar.setup({
-                            inputField: "repeat_until_input",
-                            ifFormat: "%d/%m/%Y",
-                            daFormat: "%d/%m/%Y",
-                            button: "repeat_until_trigger",
-                            singleClick: true,
-                            dateStr: "",
-                            step: 1,
-                            startWeekday: {/literal}{$CALENDAR_FDOW|default:'1'}{literal},
-                            weekNumbers: false
-                        });
-                    {/literal}
-                </script>
-            </div>
-        </td>
-    </tr>
-
-    <tr id="repeat_dow_row">
-        <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_DOW}:</td>
-        <td width="37.5%" valign="top">
-            {foreach name=dow from=$dow key=i item=d}
-                {$d.label} <input type="checkbox" name="repeat_dow_{$d.index}" id="repeat_dow_{$d.index}"
-                    style="margin-right: 10px;">
-            {/foreach}
-        </td>
-    </tr>
-</table>
+                    <script type="text/javascript">
+                        {literal}
+                            Calendar.setup({
+                                inputField: "repeat_until_input",
+                                ifFormat: "%d/%m/%Y",
+                                daFormat: "%d/%m/%Y",
+                                button: "repeat_until_trigger",
+                                singleClick: true,
+                                dateStr: "",
+                                step: 1,
+                                startWeekday: {/literal}{$CALENDAR_FDOW|default:'1'}{literal},
+                                weekNumbers: false
+                            });
+                        {/literal}
+                    </script>
+                </div>
+            </td>
+        </tr>
+        <tr id="repeat_dow_row">
+            <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_DOW}:</td>
+            <td width="37.5%" valign="top">
+                {foreach name=dow from=$dow key=i item=d}
+                    {$d.label} <input type="checkbox" name="repeat_dow_{$d.index}" id="repeat_dow_{$d.index}"
+                        style="margin-right: 10px;">
+                {/foreach}
+            </td>
+        </tr>
+    </table>
+  </div>
 </div>
-<h2 id="resourcesTitle">{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">{$MOD.LBL_CENTERS_BUTTON}</button>
-</h2>
 
+<h2 id="resourcesTitle">{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">{$MOD.LBL_CENTERS_BUTTON}</button></h2>
 <div class="filter-box">
     <div id="resourceSearchFields" class="filter-content">
         <div id="selectedCentersContainer">
@@ -164,7 +163,28 @@ $(document).ready(function() {
     });
 });
 </script>
-    <style>
+<style>
+        .BookingRepeatForm {
+            width: 60% !important;
+            table-layout: fixed;
+        }
+
+        .BookingRepeatForm td:first-child {
+            width: 25% !important;
+            white-space: nowrap;
+            padding-right: 15px;
+            text-align: left;
+        }
+
+        .BookingRepeatForm td:not(:first-child) {
+            width: 75% !important;
+        }
+
+        .right-aligned-container {
+            margin-left: 35px;
+            width: 100%;
+        }
+
         .resource-table .resouce_data_group>input {
             width: calc(100% - 85px);
         }
@@ -238,7 +258,7 @@ $(document).ready(function() {
         .filter-actions {
             display: flex;
             align-items: center;
-            gap: 8px; /* espaciado entre botones */
+            gap: 8px;
             margin-top: 5px;
         }
         
@@ -258,9 +278,9 @@ $(document).ready(function() {
             font-size: 13px;
         }
 
-#selectedCentersContainer {
-    margin-bottom: 10px;
-}
+        #selectedCentersContainer {
+            margin-bottom: 10px;
+        }
 </style>
 
 <script>
@@ -278,14 +298,10 @@ var previousStartDateHours = "09";
 var previousStartDateMinutes = "00";
 var previousEndDateHours = "18";
 var previousEndDateMinutes = "00";
-/**
 
-Función para manejar el tipo de repetición
-*/
 window.toggle_repeat_type = function() {
 var repeatVal = document.getElementById('repeat_type').value;
 
-// Validación
 if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
   validate['EditView'] = undefined;
 }
@@ -312,10 +328,7 @@ if (intervalTextElm && typeof SUGAR.language.languages.app_list_strings['repeat_
   intervalTextElm.innerHTML = SUGAR.language.languages.app_list_strings['repeat_intervals'][repeatVal];
 }
 };
-/**
 
-Función para manejar el final de la repetición
-*/
 window.toggle_repeat_end = function() {
 var repeatCountRadio = document.getElementById("repeat_count_radio");
 var repeatUntilRadio = document.getElementById("repeat_until_radio");
@@ -362,10 +375,6 @@ if (editContainer) {
   }
 }
 };
-/**
-
-Función para calcular y mostrar la duración
-*/
 function setHoursInfo() {
 try {
 var startDayInput = document.getElementById('start_date_date');
@@ -375,7 +384,7 @@ var startMinute = document.querySelector('[name=start_date_minutes]');
 var finalHour = document.querySelector('[name=end_date_hours]');
 var finalMinute = document.querySelector('[name=end_date_minutes]');
 if (!startDayInput || !finalDayInput || !startHour || !startMinute || !finalHour || !finalMinute) {
-return;  // Exit if elements don't exist
+return;
 }
 // Parse date parts
 var start = startDayInput.value + '/' + startHour.value + '/' + startMinute.value;
@@ -648,7 +657,6 @@ e.preventDefault();
     }).appendTo(form);
   }
     
-  // Submit the form
   form.submit();
 });
 }

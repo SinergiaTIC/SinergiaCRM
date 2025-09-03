@@ -218,7 +218,7 @@
         <button type="submit" class="button">{$MOD.LNK_CREATE_PERIODIC_RECORDS}</button>
     </form>
 
-    <a href="index.php?module=stic_Bookings&action=EditView&return_module=stic_Bookings&return_action=DetailView">
+    <a href="index.php?module=stic_Bookings&action=EditView&loadFromSession=true">
         <button type="button" class="button">{$MOD.LBL_CANCEL_BUTTON}</button>
     </a>
 </div>
