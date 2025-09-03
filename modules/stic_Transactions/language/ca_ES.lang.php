@@ -133,6 +133,7 @@ $mod_strings = array (
   'LBL_PAYMENT_METHOD' => 'Mitjà de pagament',
   'LBL_DESTINATION_ACCOUNT' => 'Compte de destinació',
   'LBL_ACCOUNTING_ACCOUNT' => 'Compte comptable',
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Producte financer',
 );

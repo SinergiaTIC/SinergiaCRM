@@ -44,58 +44,148 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $module_name = 'stic_Transactions';
 $OBJECT_NAME = 'STIC_TRANSACTIONS';
-$listViewDefs[$module_name] = array(
-
-    'DOCUMENT_NAME' => array(
-        'width' => '40',
-        'label' => 'LBL_NAME',
-        'link' => true,
-        'default' => true
-    ),
-    // STIC-Custom 20240715 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/62
-    // Add the file name and options to download and view the file in a new tab in the subpanel of a new module of type File        
-    'UPLOADFILE' => 
+$listViewDefs [$module_name] = 
+array (
+  'DOCUMENT_NAME' => 
+  array (
+    'width' => '40%',
+    'label' => 'LBL_NAME',
+    'link' => true,
+    'default' => true,
+  ),
+  'TRANSACTION_DATE' => 
+  array (
+    'type' => 'date',
+    'label' => 'LBL_TRANSACTION_DATE',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'UPLOADFILE' => 
+  array (
+    'type' => 'file',
+    'label' => 'LBL_FILE_UPLOAD',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_NAME' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE',
+    'id' => 'STIC_TRANS4A5BRODUCTS_IDA',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'STATUS' => 
+  array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_STATUS',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'TRANSACTION_TYPE' => 
+  array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_TRANSACTION_TYPE',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'CATEGORY' => 
+  array (
+    'type' => 'dynamicenum',
+    'studio' => 'visible',
+    'label' => 'LBL_CATEGORY',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'SUBCATEGORY' => 
+  array (
+    'type' => 'dynamicenum',
+    'studio' => 'visible',
+    'label' => 'LBL_SUBCATEGORY',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'AMOUNT' => 
+  array (
+    'type' => 'decimal',
+    'label' => 'LBL_AMOUNT',
+    'width' => '10%',
+    'default' => true,
+  ),
+  'PAYMENT_METHOD' => 
+  array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_PAYMENT_METHOD',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'DESTINATION_ACCOUNT' => 
+  array (
+    'type' => 'varchar',
+    'label' => 'LBL_DESTINATION_ACCOUNT',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'ACCOUNTING_ACCOUNT' => 
+  array (
+    'type' => 'varchar',
+    'label' => 'LBL_ACCOUNTING_ACCOUNT',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'DESCRIPTION' => 
+  array (
+    'type' => 'text',
+    'label' => 'LBL_DESCRIPTION',
+    'sortable' => false,
+    'width' => '10%',
+    'default' => false,
+  ),
+  'ASSIGNED_USER_NAME' => 
+  array (
+    'link' => true,
+    'type' => 'relate',
+    'label' => 'LBL_ASSIGNED_TO_NAME',
+    'id' => 'ASSIGNED_USER_ID',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'DATE_ENTERED' => 
+  array (
+    'type' => 'datetime',
+    'label' => 'LBL_DATE_ENTERED',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'CREATED_BY_NAME' => 
+  array (
+    'width' => '2%',
+    'label' => 'LBL_LIST_LAST_REV_CREATOR',
+    'default' => false,
+    'sortable' => false,
+  ),
+  'DATE_MODIFIED' => 
+  array (
+    'type' => 'datetime',
+    'label' => 'LBL_DATE_MODIFIED',
+    'width' => '10%',
+    'default' => false,
+  ),
+  'MODIFIED_BY_NAME' => 
+  array (
+    'width' => '10%',
+    'label' => 'LBL_MODIFIED_USER',
+    'module' => 'Users',
+    'id' => 'USERS_ID',
+    'default' => false,
+    'sortable' => false,
+    'related_fields' => 
     array (
-      'type' => 'file',
-      'label' => 'LBL_FILE_UPLOAD',
-      'width' => '10%',
-      'default' => true,
+      0 => 'modified_user_id',
     ),
-    // END STIC-Custom    
-    'MODIFIED_BY_NAME' => array(
-        'width' => '10',
-        'label' => 'LBL_MODIFIED_USER',
-        'module' => 'Users',
-        'id' => 'USERS_ID',
-        'default' => false,
-        'sortable' => false,
-        'related_fields' => array('modified_user_id')
-    ),
-    'CATEGORY_ID' => array(
-        'width' => '40',
-        'label' => 'LBL_LIST_CATEGORY',
-        'default' => true
-    ),
-    'SUBCATEGORY_ID' => array(
-        'width' => '40',
-        'label' => 'LBL_LIST_SUBCATEGORY',
-        'default' => true
-    ),
-    'CREATED_BY_NAME' => array(
-        'width' => '2',
-        'label' => 'LBL_LIST_LAST_REV_CREATOR',
-        'default' => true,
-        'sortable' => false
-    ),
-
-    'ACTIVE_DATE' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_ACTIVE_DATE',
-        'default' => true
-    ),
-    'EXP_DATE' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_EXP_DATE',
-        'default' => true
-    ),
+  ),
 );

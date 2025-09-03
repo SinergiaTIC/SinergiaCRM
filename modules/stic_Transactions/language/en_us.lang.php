@@ -133,6 +133,7 @@ $mod_strings = array (
   'LBL_PAYMENT_METHOD' => 'Payment method',
   'LBL_DESTINATION_ACCOUNT' => 'Destination account',
   'LBL_ACCOUNTING_ACCOUNT' => 'Accounting account',
+  'LBL_PANEL_RECORD_DETAILS' => 'Record details',
 
   'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE' => 'Financial product',
 );

@@ -46,7 +46,7 @@ class stic_Transactions extends File
     public $module_dir = 'stic_Transactions';
     public $object_name = 'stic_Transactions';
     public $table_name = 'stic_transactions';
-    public $importable = false;
+    public $importable = true;
 
     public $id;
     public $date_entered;
@@ -93,6 +93,28 @@ class stic_Transactions extends File
         }
 
         return false;
+    }
+
+    /**
+     * Overriding SugarBean save function to insert additional logic:
+     * Build the name of the transaction using the type, the date and the destination account
+     *
+     * @param boolean $check_notify
+     * @return void
+     */
+    public function save($check_notify = false) {
+        
+        include_once 'SticInclude/Utils.php';
+        global $app_list_strings;
+
+        if(!empty($this->destination_account)) {
+            $this->document_name = $app_list_strings['stic_transactions_transaction_types_list'][$this->transaction_type] . ' - ' . $this->transaction_date . ' - ' . $this->destination_account;
+        } else {
+            $this->document_name = $app_list_strings['stic_transactions_transaction_types_list'][$this->transaction_type] . ' - ' . $this->transaction_date . ' - ' . $this->amount;
+        }
+        
+        // Call the generic save() function from the SugarBean class
+        parent::save();
     }
 	
 }

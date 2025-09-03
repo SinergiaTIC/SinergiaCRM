@@ -76,6 +76,12 @@ $subpanel_layout = array(
         //     'vname' => 'LBL_DOC_ACTIVE_DATE',
         //     'width' => '45%',
         // ),        
+        'document_name' => array(
+            'name' => 'document_name',
+            'vname' => 'LBL_NAME',
+            'width' => '45%',
+            'widget_class' => 'SubPanelDetailViewLink',
+        ),
         'object_image' => array(
             'vname' => 'LBL_OBJECT_IMAGE',            
             'widget_class' => 'SubPanelIcon',
@@ -89,38 +95,46 @@ $subpanel_layout = array(
         ),
         'filename' => array(
             'name' => 'filename',
-            'vname' => 'LBL_LIST_DOCUMENT_NAME',
-            'width' => '20%',
-            'sortable'=>false,
-            'widget_class' => 'SubPanelDetailViewLink',   
-          ),
-        'document_name' => array(
-            'name' => 'document_name',
-            'vname' => 'LBL_FILENAME',
+            'vname' => 'LBL_FILE_UPLOAD',
             'widget_class' => 'SubPanelFileDownloadViewLink',
-            'width' => '45%',
+            'width' => '20%',
+            'sortable'=> false,
         ),
-        'status_id' => array(
-          'type' => 'enum',
-          'vname' => 'LBL_DOC_STATUS',
-          'width' => '10%',
+        'transaction_date' => array(
+            'name' => 'transaction_date',
+            'vname' => 'LBL_TRANSACTION_DATE',
+            'width' => '10%',
         ),
-        'active_date' => array(
-            'name' => 'active_date',
-            'vname' => 'LBL_DOC_ACTIVE_DATE',
-            'width' => '45%',
+        'status' => array(
+            'name' => 'status',
+            'vname' => 'LBL_STATUS',
+            'width' => '10%',
         ),
-        'assigned_user_name' => 
-        array (
-          'link' => true,
-          'type' => 'relate',
-          'vname' => 'LBL_ASSIGNED_TO_NAME',
-          'id' => 'ASSIGNED_USER_ID',
-          'width' => '10%',
-          'widget_class' => 'SubPanelDetailViewLink',
-          'target_module' => 'Users',
-          'target_record_key' => 'assigned_user_id',
-        ),        
+        'transaction_type' => array(
+            'name' => 'transaction_type',
+            'vname' => 'LBL_TRANSACTION_TYPE',
+            'width' => '10%',
+        ),
+        'category' => array(
+            'name' => 'category',
+            'vname' => 'LBL_CATEGORY',
+            'width' => '10%',
+        ),
+        'subcategory' => array(
+            'name' => 'subcategory',
+            'vname' => 'LBL_SUBCATEGORY',
+            'width' => '10%',
+        ),
+        'amount' => array(
+            'name' => 'amount',
+            'vname' => 'LBL_AMOUNT',
+            'width' => '10%',
+        ),
+        'payment_method' => array(
+            'name' => 'payment_method',
+            'vname' => 'LBL_PAYMENT_METHOD',
+            'width' => '10%',
+        ),
         // END STIC-Custom
         'edit_button' => array(
             'vname' => 'LBL_EDIT_BUTTON',
