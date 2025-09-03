@@ -67,6 +67,61 @@ class stic_SignaturePortalUtils
         ];
     }
 
+    
+    /**
+     * Sends an OTP code to the signer via email, forcing a new code to be sent.
+     *
+     * @param object $signerBean The signer bean object.
+     * @param string $method The method of sending the OTP (default is 'email').
+     * @return array An associative array indicating success or failure and relevant messages.
+     */
+    public static function forceSendOtpToSigner($signerBean, $method = 'email',  $forceSend = true)
+    {
+        return self::sendOtpToSigner($signerBean, $method, true);
+    }
+    
+    /**
+     * Sends an OTP code to the signer via email.
+     * If the last sent OTP has not expired, it will not send another one unless $forceSend is true.
+     *
+     * @param object $signerBean The signer bean object.
+     * @param string $method The method of sending the OTP (default is 'email').
+     * @param bool $forceSend Whether to force sending a new OTP even if the last one hasn't expired.
+     * @return array An associative array indicating success or failure and relevant messages.
+     */
+    public static function sendOtpToSigner($signerBean, $method = 'email',  $forceSend = false)
+    {
+        
+        $otpDatetime = $signerBean->db->getOne("SELECT verification_code_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
+        
+      
+        
+        // if OTP was sent and not expired yet, do not send another one
+        if(!$forceSend && !empty($signerBean->verification_code_expiration) && $otpDatetime > date('Y-m-d H:i:s')) {
+            return ['success' => false, 'message' => 'OTP code already sent and not expired yet'];
+        }
+        
+        
+        if($method !== 'email') {
+            return false; // Only email method is supported for now
+        }
+        $email = $signerBean->email_address;
+        
+        $maskedEmail = preg_replace('/(?<=.).(?=[^@]*?@)/', '*', $email);
+        $otpCode = rand(100000, 999999);
+        $signerBean->verification_code = $otpCode;
+        $signerBean->verification_code_expiration = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+        $signerBean->save();
+        // send email
+        require_once 'modules/stic_Signers/Utils.php';
+        if(stic_SignersUtils::sendOTPToSign($signerBean) === true) {
+            return ['success' => true, 'maskedEmail' => "{$maskedEmail}"];
+        } else {
+            return ['success' => false];
+        }
+    }
+
+
     /**
      * Retrieves the parsed HTML content for the current signer.
      *

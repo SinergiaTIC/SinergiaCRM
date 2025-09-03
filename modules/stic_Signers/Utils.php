@@ -127,4 +127,83 @@ class stic_SignersUtils
         // Redirect back to the signer's detail view
         SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerId);
     }
+
+    public static function sendOTPToSign($signerBean)
+    {
+        global $sugar_config, $current_user, $mod_strings;
+        $signerId = $signerBean->id;
+        $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+        // Validate signer ID
+        if (empty($signerId)) {
+            throw new Exception("Signer ID cannot be empty.");
+        }
+
+        // Retrieve the signer bean
+        $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+
+        // Get the destination email address for the signer
+        $destAddress = $signerBean->email_address ?? '';
+
+        // Prepare mailer
+        require_once 'include/SugarPHPMailer.php';
+        $emailObj = new Email();
+        $defaults = $emailObj->getSystemDefaultEmail();
+        $mail = new SugarPHPMailer();
+        $mail->setMailerForSystem();
+
+        // Set From and FromName
+        $fromEmail = $current_user->email1;
+        if (!$fromEmail) {
+            $fromEmail = $defaults['email'];
+        }
+        $mail->From = $fromEmail;
+
+        $fromName = $current_user->name;
+        if (!$fromName) {
+            $fromName = $defaults['name'];
+        }
+        $mail->FromName = $fromName;
+
+        // Add recipient
+        if (empty($destAddress)) {
+            // If no destination address, return false (or handle error appropriately)
+            echo json_encode(false);
+            die();
+        }
+        $mail->AddAddress($destAddress);
+
+        // Set the email subject
+        $subject = $signerStrings['LBL_SIGNER_EMAIL_OTP_SUBJECT'];
+        $mail->Subject = $subject;
+
+        // // Construct the unique signing URL
+        // $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
+
+        // Prepare the complete HTML body of the email
+        $completeHTML = "<html>
+                            <head>
+                                <title>{$subject}</title>
+                            </head>
+                            <body style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333;\">
+                            
+                            <h2>El código de verificación es {$signerBean->verification_code}</h2>
+                            <p style=\"margin-top: 20px;\">Este código es válido por 10 minutos.</p>
+                            <p style=\"margin-top: 20px;\">Para completar el proceso, por favor, vuelve al portal de firmas e introduce el código en el campo correspondiente
+                            </body>
+                        </html>";
+        $mail->Body = from_html($completeHTML);
+        $mail->isHtml(true);
+        $mail->prepForOutbound();
+
+        // Attempt to send the email and log the result
+        if (!$mail->Send()) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": There was an error sending OTP the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo);
+            return false;
+        } else {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": OTP Email sent successfully to {$destAddress}.");
+            return true;
+        }
+
+        
+    }
 }

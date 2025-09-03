@@ -83,4 +83,7 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente al firmante', 
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Ir al documento',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Si tienes problemas para acceder al enlace, cópialo y pégalo en tu navegador',
+    'LBL_SIGNER_EMAIL_OTP_SUBJECT' => 'Tu código OTP para firmar el documento',
+    'LBL_OTP_SENT_SUCCESS' => 'El código OTP ha sido enviado a la dirección de correo electrónico del firmante.',
+    'LBL_OTP_SENT_ERROR' => 'Error al enviar el código OTP al correo electrónico del firmante. Por favor, inténtalo de nuevo.',
 );

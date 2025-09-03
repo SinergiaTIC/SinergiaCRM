@@ -54,23 +54,27 @@ class stic_SignaturePortal extends SugarView
         global $smarty;
         global $mod_strings; // Load module-specific language strings if available
         global $app_strings; // General application language strings
+        global $sugar_config;
+
+        require_once 'modules/stic_Settings/Utils.php';
 
         $documentHtmlContent = '
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Acuerdo de Confidencialidad</h2>
         ';
 
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
-        
+
         // Create an instance of the utility class
         $stic_SignaturePortalUtils = new stic_SignaturePortalUtils();
 
         // Get beans
-        $signatureBean = $stic_SignaturePortalUtils->getSignatureBeans()['signature'];  
+        $signatureBean = $stic_SignaturePortalUtils->getSignatureBeans()['signature'];
         $signerBean = $stic_SignaturePortalUtils->getSignatureBeans()['signer'];
         $pdfTemplateBean = $stic_SignaturePortalUtils->getSignatureBeans()['pdfTemplate'];
         $sourceModuleBean = $stic_SignaturePortalUtils->getSignatureBeans()['sourceModule'];
 
-        
+         $this->ss->assign('SIGNER_ID', $signerBean->id);
+
 
         // Get authentication mode
         $authMode = $signatureBean->auth_method ?? 'unique_link';
@@ -85,11 +89,18 @@ class stic_SignaturePortal extends SugarView
                 break;
             case 'otp':
                 $this->ss->assign('OTP_REQUIRED', true);
-                //  $stic_SignaturePortalUtils->validateOtp();
-                // if ($passed === false) {
-                //     $errorMsg = 'El código OTP proporcionado no es válido o ha expirado.';
-                //     $this->ss->assign('ERROR_MSG', $errorMsg);
-                // }
+                require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+                $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+                // Send OTP
+                $sendResult = stic_SignaturePortalUtils::sendOtpToSigner($signerBean);
+                if (($sendResult['success'] ?? null) === true) {
+                    $this->ss->assign('OTP_SENT_SUCCESS', $signerStrings['LBL_OTP_SENT_SUCCESS']);
+                    $this->ss->assign('OTP_MASKED_EMAIL', $sendResult['maskedEmail']);
+                } else {
+                    $this->ss->assign('OTP_SENT_ERROR', $signerStrings['LBL_OTP_SENT_ERROR']);
+                }
+
+
                 break;
             default:
                 $errorMsg = 'El modo de autenticación no es válido.';
@@ -103,6 +114,13 @@ class stic_SignaturePortal extends SugarView
             $this->ss->assign('SHOW_PORTAL', true);
         }
 
+        // Customizations for header
+        $color = stic_SettingsUtils::getSetting('GENERAL_CUSTOM_THEME_COLOR') ?? '#b5bc31';
+        $nameTitle = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME') ?? 'SinergiaCRM';
+        $this->ss->assign('HEADER_COLOR', $color);
+        $this->ss->assign('LOGO_URL', "{$sugar_config['site_url']}/custom/themes/default/images/company_logo.png");
+        $this->ss->assign('ORGANIZATION_NAME', $nameTitle);
+
         // Assign variables to Smarty
         $this->ss->assign('DOCUMENT_HTML_CONTENT', $documentHtmlContent);
         $this->ss->assign('CURRENT_DATE_TIME', date('d/m/Y H:i:s'));
@@ -113,6 +131,7 @@ class stic_SignaturePortal extends SugarView
         // Ensure files exist in the correct directories.
         $this->ss->assign('STYLESHEETS', '<link rel="stylesheet" href="modules/stic_Signatures/SignaturePortal/SignaturePortal.css">');
         $this->ss->assign('JAVASCRIPT', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortal.js"></script>');
+        $this->ss->assign('JAVASCRIPT_OTP', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortalOtp.js"></script>');
         $this->ss->assign('TAILWIND_SCRIPT', '
             <script src="https://cdn.tailwindcss.com"></script>
             <script>

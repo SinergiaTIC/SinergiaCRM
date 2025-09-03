@@ -107,4 +107,16 @@ class stic_SignaturesController extends SugarController
         var_dump($signerPathList);
         die();
     }
+
+    public function action_resendOtpCode()
+    {
+        require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+        $signerId = $_REQUEST['signerId'] ?? '';
+        $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+        $result = stic_SignaturePortalUtils:: forceSendOtpToSigner($signerBean, 'email', true);
+        echo json_encode($result);
+        die();
+    }
+
+
 }
