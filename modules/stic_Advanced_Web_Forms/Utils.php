@@ -18,7 +18,7 @@ function getModuleInformation($moduleName)
     /*
         Result: [ 
             name, text, 
-            fields: [name, text, type, required, inViews],
+            fields: [name, text, type, required, options, inViews],
             relationships: [name, text, fieldName, relationship, moduleName, moduleText]
         ]
     */
@@ -73,6 +73,7 @@ function getModuleInformation($moduleName)
             'text' => rtrim(translate($arr['vname'] ?? '', $moduleName)),
             'type' => $arr['type'],
             'required' => isset($arr['required']) && $arr['required'],
+            'options' => $arr['options'] ?? '',
             'inViews' => false
         ];
 

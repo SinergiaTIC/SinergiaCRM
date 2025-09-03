@@ -10,17 +10,17 @@
       id="switch_TreeAllModules"
       checked
       x-on:change="treeToggleAllModules"
-    />
+    />>
     <label class="form-check-label" for="switch_TreeAllModules">[Todos los módulos]</label>
   </div>
-  <div id="jstree-loading" style="display: flex; justify-content: center; align-items: center; height: 200px;">
+  <div id="jstree-loading" style="display: flex; justify-content: center; align-items: center; height: 200px">
     <div class="spinner-border text-secondary" role="status"></div>
-</div>
+  </div>
   <div
     class="wizard-tree"
     id="jstree-container"
     x-init="$nextTick(() => {initializeModuleTree($('#jstree-container'));});"
-    style="display: none;"
+    style="display: none"
   ></div>
 </nav>
 
@@ -29,13 +29,130 @@
   <h3 class="mb-2" x-text="modStrings.LBL_DATABLOCKS"></h3>
   <div class="flex-fill border rounded p-2 bg-white">
     <!-- Aquí contingut del wizard -->
-    <p>[Contingut o contenidor general]</p>
-    <div class="row"><label>Id: </label> <span x-text="treeSelectedNode.id"></span></div>
-    <div class="row"><label>Path: </label> <span x-text="treeSelectedNode.data?.pathText.join(' » ')"></span></div>
 
-    <div>
-      <p x-text="'Config DataBlocks: ' + JSON.stringify(configDataBlocks)"></p>
-      <p x-text="'Config (bean): ' + bean.config_json"></p>
+    <h3 class="card-title" x-text="treeSelectedRelatedModule.pathText?.join(' » ')"></h3>
+    <div class="card p-4">
+      <div x-data="{ activePanel: 'panel1' }">
+        <div class="mb-3">
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="panelRadio"
+              id="radio1"
+              value="panel1"
+              x-model="activePanel"
+            />
+            <label class="form-check-label" for="radio1">[Datos generales]</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="panelRadio"
+              id="radio2"
+              value="panel2"
+              x-model="activePanel"
+            />
+            <label class="form-check-label" for="radio2">[Campos]</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="panelRadio"
+              id="radio3"
+              value="panel3"
+              x-model="activePanel"
+            />
+            <label class="form-check-label" for="radio3">[Relaciones]</label>
+          </div>
+        </div>
+        <div x-show="activePanel === 'panel1'" class="p-3 border rounded overflow-auto">
+          <h4 class="card-title" x-text="treeSelectedRelatedModule.name"></h4>
+          <template x-for="(value, key) in treeSelectedRelatedModule">
+            <template x-if="key!='fields' && key!='relationships'">
+              <template x-if="value!=''">
+                <p x-text="key + ': ' + value"></p>
+              </template>
+            </template>
+          </template>
+        </div>
+        <div x-show="activePanel === 'panel2'" class="p-3 border rounded overflow-auto">
+          <h4
+            class="card-title"
+            x-text="(treeSelectedRelatedModule.isRelation?treeSelectedRelatedModule.moduleDestName:treeSelectedRelatedModule.name) + ' - Fields'"
+          ></h4>
+          <div x-data="{ hideInView: false, hideNonRequired: false }">
+            <div class="form-check form-switch mb-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="inViewToggleSwitch"
+                x-model="hideInView"
+              />
+              <label class="form-check-label" for="inViewToggleSwitch">[Ocultar no in View]</label>
+            </div>
+            <div class="form-check form-switch mb-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="nonRequiredToggleSwitch"
+                x-model="hideNonRequired"
+              />
+              <label class="form-check-label" for="nonRequiredToggleSwitch">[Ocultar no required]</label>
+            </div>
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <template x-for="header in Object.keys(treeSelectedRelatedModule.fields[0] || {})">
+                    <th x-text="header"></th>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(value, key) in treeSelectedRelatedModule.fields">
+                  <tr x-show="(!hideNonRequired || treeSelectedRelatedModule.fields[key].required) && (!hideInView || treeSelectedRelatedModule.fields[key].inViews)">
+                    <template x-for="(elem_value, elem_key) in treeSelectedRelatedModule.fields[key]">
+                      <td x-text="elem_value"></td>
+                    </template>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div x-show="activePanel === 'panel3'" class="p-3 border rounded overflow-auto">
+          <h4
+            class="card-title"
+            x-text="(treeSelectedRelatedModule.isRelation?treeSelectedRelatedModule.moduleDestName:treeSelectedRelatedModule.name) + ' - Relationships'"
+          ></h4>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <template x-for="header in Object.keys(treeSelectedRelatedModule.relationships[0] || {})">
+                  <th x-text="header"></th>
+                </template>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(value, key) in treeSelectedRelatedModule.relationships">
+                <tr>
+                  <template x-for="(elem_value, elem_key) in treeSelectedRelatedModule.relationships[key]">
+                    <td x-text="elem_value"></td>
+                  </template>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- <div>
+        <p x-text="'Config DataBlocks: ' + JSON.stringify(configDataBlocks)"></p>
+        <p x-text="'Config (bean): ' + bean.config_json"></p>
+      </div> -->
     </div>
   </div>
 </main>

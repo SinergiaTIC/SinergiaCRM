@@ -41,7 +41,8 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         // echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
 
         // Bootstrap (modified with scoped classes: do not crash current layout!)
-        echo "<link rel='stylesheet' href='modules/stic_Advanced_Web_Forms/wizard/css/bootstrap.scoped.min.css'>";
+        echo "<link rel='stylesheet' href='SticInclude/vendor/bootstrap/bootstrap.scoped.min.css'>";
+        echo '<script src="SticInclude/vendor/bootstrap/bootstrap.min.js"></script>';
 
         // Alpinejs
         echo '<script src="//unpkg.com/alpinejs" defer></script>';

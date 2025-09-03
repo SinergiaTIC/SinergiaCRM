@@ -20,8 +20,13 @@ function wizardForm(readOnly) {
         // [name: ModuleName, text: TranslatedModuleName]
         enabledModules: STIC.enabledModules,
 
-        treeSelectedNode: {},
         treeShowAllModules: false,
+        /*
+        [id, text, isRelation, relationName, relationText, moduleName, moduleText, path, pathText, 
+         fields: [name, text, type, required, options, inViews],
+         relationships: [name, text, fieldName, relationship, moduleName, moduleText] ]
+        */
+        treeSelectedRelatedModule: {},
 
         async init() {
             // Set Context accessible
@@ -118,7 +123,11 @@ function initializeModuleTree($tree) {
         children: true, // It CAN have children
         state: { opened: false }, // Ensures the root node is initially closed.
         data: { 
+            isRelation: false,
+            relationName: '',
+            relationText: '',
             moduleName: baseModuleName,
+            moduleText: baseModuleText,
             path: [baseModuleName],
             pathText: [baseModuleText],
         }
@@ -133,8 +142,12 @@ function initializeModuleTree($tree) {
             text: module.text,
             children: true, // It CAN have children
             state: { opened: false }, // Ensures the root node is initially closed.
-            data: { 
+            data: {
+                isRelation: false,
+                relationName: '',
+                relationText: '',
                 moduleName: moduleName,
+                moduleText: module.text,
                 path: [moduleName],
                 pathText: [module.text],
             }
@@ -151,11 +164,6 @@ function initializeModuleTree($tree) {
                     cb.call(this, rootNodes);
                 } else {
                     // An existing node has been expanded, and Jstree is asking for its children.
-                    /* 
-                        Result: [ name, text, 
-                                fields: [name, text, type, required, inViews],
-                                relationships: [name, text, fieldName, relationship, moduleName, moduleText] ]
-                    */
                     let moduleInfo = getModuleInformation(node.data?.moduleName);
                     if (!moduleInfo) {
                         return;
@@ -173,7 +181,7 @@ function initializeModuleTree($tree) {
                         }
 
                         let newPath = [...node.data.path]
-                        newPath.push(moduleName);
+                        newPath.push(key);
                         
                         let newPathText = [...node.data.pathText];
                         newPathText.push(relationText);
@@ -182,10 +190,13 @@ function initializeModuleTree($tree) {
                         childrenNodes.push({
                             id: node.id + "-" + key,
                             text: relationText + " <sup>(" + moduleText + ")</sup>",
-                            icon: window.alpineComponent.enabledStudioModules[moduleName].icon,
                             children: !isLoop,
-                            data: { 
+                            data: {
+                                isRelation: true,
+                                relationName: key,
+                                relationText: relationText,
                                 moduleName: moduleName,
+                                moduleText: moduleText,
                                 path: newPath,
                                 pathText: newPathText,
                             }
@@ -218,7 +229,47 @@ function initializeModuleTree($tree) {
         $(this).show();
     })
     .on('select_node.jstree', function (e, data) {
-        window.alpineComponent.treeSelectedNode = data.node;
+        let moduleInfo = getModuleInformation(data.node.data.moduleName);
+        let name = '';
+        let text = '';
+        let moduleSourceName = '';
+        let moduleSourceText = '';
+        let moduleDestName = '';
+        let moduleDestText = '';
+        if(data.node.data.isRelation) {
+            name = data.node.data.relationName;
+            text = data.node.data.relationText;
+            let i = data.node.data.path.length-2;
+            moduleSourceName = data.node.data.path[i];
+            moduleSourceText = data.node.data.pathText[i];
+            moduleDestName = data.node.data.moduleName;
+            moduleDestText = data.node.data.moduleText;
+        } else {
+            name = data.node.data.moduleName;
+            text = data.node.data.moduleText;
+        }
+        let fields = [];
+        for (const [key, value] of Object.entries(moduleInfo.fields)) {
+            fields.push(value);
+        }
+        let relationships = [];
+        for (const [key, value] of Object.entries(moduleInfo.relationships)) {
+            relationships.push(value);
+        }
+        window.alpineComponent.treeSelectedRelatedModule = {
+            id: data.node.id,
+            name: name,
+            text: text,
+            isRelation: data.node.data.isRelation,
+            moduleDestName: moduleDestName,
+            moduleDestText: moduleDestText,
+            moduleSourceName: moduleSourceName,
+            moduleSourceText: moduleSourceText,
+            path: data.node.data.path,
+            pathText: data.node.data.pathText,
+            fields: fields,
+            relationships: relationships,
+        };
         getModuleInformation(data.node.data?.moduleName);
     });
     // // Debugging events for load/open operations (commented out for production).
@@ -234,6 +285,11 @@ function initializeModuleTree($tree) {
 }
 
 // Global variable to store cached modules information
+/*
+Result: [ name, text, 
+        fields: [name, text, type, required, options, inViews],
+        relationships: [name, text, fieldName, relationship, moduleName, moduleText] ]
+*/
 var cachedModules = {};
 
 function getModuleInformation(moduleName) {
