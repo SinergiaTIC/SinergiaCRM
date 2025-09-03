@@ -96,6 +96,7 @@ class stic_Advanced_Web_FormsController extends SugarController
 
         require_once "modules/stic_Advanced_Web_Forms/Utils.php";
         echo json_encode(getModuleInformation($_REQUEST['getmodule']));
+
         sugar_cleanup(true);
     }
 }

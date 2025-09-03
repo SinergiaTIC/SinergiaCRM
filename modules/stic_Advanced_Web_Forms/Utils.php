@@ -54,13 +54,13 @@ function getModuleInformation($moduleName)
         }
  
         // Exclude currency, date_entered, date_modified, modified_user, created_by, deleted fields
-        if ($name === 'currency_name' || $name === 'currency_symbol' ||
-            $name === 'date_entered' || $name === 'date_modified' ||
-            $name === 'modified_user_id' || $name === 'modified_by_name' ||
-            $name === 'created_by' || $name === 'created_by_name' ||
-            $name === 'deleted') {
-            continue;
-        }
+        // if ($name === 'currency_name' || $name === 'currency_symbol' ||
+        //     $name === 'date_entered' || $name === 'date_modified' ||
+        //     $name === 'modified_user_id' || $name === 'modified_by_name' ||
+        //     $name === 'created_by' || $name === 'created_by_name' ||
+        //     $name === 'deleted') {
+        //     continue;
+        // }
 
         // Exclude non procesable field types
         if ($arr['type'] == "wysiwyg" || $arr['type'] == "iframe" || $arr['type'] == "image" || $arr['type'] == "parent") {

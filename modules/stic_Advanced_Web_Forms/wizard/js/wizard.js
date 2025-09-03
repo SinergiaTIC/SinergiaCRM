@@ -121,12 +121,12 @@ function initializeModuleTree($tree) {
                     }
                     let childrenNodes = [];
                     // Convert the object of related modules to an array of Jstree nodes.
-                    for (let key in moduleInfo["relationships"]) {
+                    for (let key in moduleInfo.relationships) {
                         childrenNodes.push({
                             id: node.id + "." + key,
-                            text: moduleInfo["relationships"][key]['text'] + " (" + moduleInfo["relationships"][key]['moduleText'] + ")",
-                            children: true, 
-                            data: { moduleName: moduleInfo["relationships"][key]['moduleName'] }
+                            text: moduleInfo.relationships[key].text + " (" + moduleInfo.relationships[key].moduleText + ")",
+                            children: node.data.moduleName != moduleInfo.relationships[key].moduleName, 
+                            data: { moduleName: moduleInfo.relationships[key].moduleName }
                         });
                     }
                     cb.call(this, childrenNodes);
@@ -139,6 +139,10 @@ function initializeModuleTree($tree) {
             }
         },
         'plugins': ["wholerow"] // Makes the entire row clickable.
+    })    
+    .on('ready.jstree', function() {
+        // Store the jstree instance.
+        jstreeInstance = $('#tree-container').jstree(true);
     });
     // .on('select_node.jstree', function (e, data) {
     //     var selectedNode = data.node;
@@ -169,10 +173,6 @@ function initializeModuleTree($tree) {
     //         // console.log("Leaf node, no expansion/collapse needed.");
     //     }
     // })
-    // .on('ready.jstree', function() {
-    //     // Store the jstree instance.
-    //     jstreeInstance = $('#tree-container').jstree(true);
-    // })
     // // Debugging events for load/open operations (commented out for production).
     // .on('after_open.jstree', function(e, data) {
     //     // console.log("Node OPENED:", data.node.id, "Children loaded:", data.node.children ? data.node.children.length : 0);
@@ -189,34 +189,33 @@ function initializeModuleTree($tree) {
 var cachedModules = {};
 
 
-function getModuleInformation(module) {
-    if (!module) {
+function getModuleInformation(moduleName) {
+    if (!moduleName) {
         return null;
     }
     
-    if (!cachedModules.hasOwnProperty(module)) {
+    if (!cachedModules.hasOwnProperty(moduleName)) {
         $.ajax({
-            url: location.href.slice(0, location.href.indexOf(location.search)),
+            url: "index.php", //location.href.slice(0, location.href.indexOf(location.search)),
             type: "POST",
             async: false,
             dataType: "json",
             data: {
                 module: "stic_Advanced_Web_Forms",
                 action: "getModuleInformation",
-                getmodule: module,
-                format: "json",
+                getmodule: moduleName,
             },
             success: function (response) { 
-                cachedModules[module] = response; 
+                cachedModules[moduleName] = response; 
             },
             error: function (xhr, status, error) {
-                console.error("Error retrieving Information for module: " + module, status, error);
+                console.error("Error retrieving Information for module: '" + moduleName + "'", status, error);
             }
         });
     }
 
-    if (cachedModules.hasOwnProperty(module)) {
-        return cachedModules[module];
+    if (cachedModules.hasOwnProperty(moduleName)) {
+        return cachedModules[moduleName];
     }
 
     return null;
