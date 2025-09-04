@@ -50,3 +50,12 @@ if(ACLController::checkAccess('stic_Transactions', 'edit', true)){
 if(ACLController::checkAccess('stic_Transactions', 'list', true)){
     $module_menu[]=array('index.php?module=stic_Transactions&action=index&return_module=stic_Transactions&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_Transactions');
 }
+
+if (ACLController::checkAccess('stic_Transactions', 'import', true)) {
+    $module_menu[] = array('index.php?module=Import&action=Step1&import_module=stic_Transactions&return_module=sstic_Transactions&return_action=index', $app_strings['LBL_IMPORT'], 'Import', 'stic_Transactions');
+}
+
+// Add button for Norma 43
+if (ACLController::checkAccess('stic_Transactions', 'list', true)) {
+    $module_menu[] = array('index.php?module=stic_Transactions&action=loadFile', $mod_strings['LBL_NORMA_43'], '', 'stic_Transactions');
+}

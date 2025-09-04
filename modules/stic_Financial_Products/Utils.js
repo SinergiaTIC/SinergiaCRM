@@ -1,4 +1,3 @@
-<?php
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -20,29 +19,26 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
+/* HEADER */
+// Set module name
+var module = "stic_Financial_Products";
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+/* VIEWS CUSTOM CODE */
+switch (viewType()) {
+  case "edit":
+  case "quickcreate":
+  case "popup":
+    $(document).ready(function() {
+      setAutofill(["name"]);
+    });
+    break;
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Financial_Products/stic_Financial_Products.php');
+  case "detail":
+    break;
 
-class stic_Financial_ProductsDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
-    {
-        global $current_user, $app_strings;
-        require('modules/stic_Financial_Products/metadata/dashletviewdefs.php');
+  case "list":
+    break;
 
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Financial_Products');
-        }
-
-        $this->searchFields = $dashletData['stic_Financial_ProductsDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Financial_ProductsDashlet']['columns'];
-
-        $this->seedBean = new stic_Financial_Products();        
-    }
+  default:
+    break;
 }

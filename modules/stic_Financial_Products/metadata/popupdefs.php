@@ -1,18 +1,12 @@
 <?php
 /**
- *
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -24,34 +18,204 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA.
  *
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- *
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
- * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
 if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
+  die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_Financial_Products';
-$object_name = 'stic_Financial_Products';
-$_module_name = 'stic_financial_products';
 $popupMeta = array(
-    'moduleMain' => $module_name,
-    'varName' => $object_name,
-    'orderBy' => $_module_name . '.name',
-    'whereClauses' => array(
-        'name' => $_module_name . '.name',
+  'moduleMain' => 'stic_Financial_Products',
+  'varName' => 'stic_Financial_Products',
+  'orderBy' => 'stic_financial_products.name',
+  'whereClauses' => array(
+    'name' => 'stic_financial_products.name',
+    'opening_date' => 'stic_financial_products.opening_date',
+    'active' => 'stic_financial_products.active',
+    'stic_financial_products_contacts_name' => 'stic_financial_products.stic_financial_products_contacts_name',
+    'product_type' => 'stic_financial_products.product_type',
+    'balance_error' => 'stic_financial_products.balance_error',
+    'initial_balance' => 'stic_financial_products.initial_balance',
+    'current_balance' => 'stic_financial_products.current_balance',
+    'bank_entity' => 'stic_financial_products.bank_entity',
+    'iban' => 'stic_financial_products.iban',
+    'bank_account_holders' => 'stic_financial_products.bank_account_holders',
+    'assigned_user_name' => 'stic_financial_products.assigned_user_name',
+  ),
+  'searchInputs' => array(
+    1 => 'name',
+    5 => 'opening_date',
+    6 => 'active',
+    7 => 'stic_financial_products_contacts_name',
+    8 => 'product_type',
+    9 => 'balance_error',
+    10 => 'initial_balance',
+    11 => 'current_balance',
+    12 => 'bank_entity',
+    13 => 'iban',
+    14 => 'bank_account_holders',
+    16 => 'assigned_user_name',
+  ),
+  'searchdefs' => array(
+    'name' =>
+    array(
+      'name' => 'name',
+      'width' => '10%',
     ),
-    'searchInputs' => array($_module_name . '_number', 'name', 'priority', 'status'),
-
+    'opening_date' =>
+    array(
+      'type' => 'date',
+      'label' => 'LBL_OPENING_DATE',
+      'width' => '10%',
+      'name' => 'opening_date',
+    ),
+    'active' =>
+    array(
+      'type' => 'enum',
+      'studio' => 'visible',
+      'label' => 'LBL_ACTIVE',
+      'width' => '10%',
+      'name' => 'active',
+    ),
+    'stic_financial_products_contacts_name' =>
+    array(
+      'type' => 'relate',
+      'link' => true,
+      'label' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE',
+      'id' => 'STIC_FINANCIAL_PRODUCTS_CONTACTSCONTACTS_IDA',
+      'width' => '10%',
+      'name' => 'stic_financial_products_contacts_name',
+    ),
+    'product_type' =>
+    array(
+      'type' => 'enum',
+      'studio' => 'visible',
+      'label' => 'LBL_PRODUCT_TYPE',
+      'width' => '10%',
+      'name' => 'product_type',
+    ),
+    'balance_error' =>
+    array(
+      'type' => 'enum',
+      'studio' => 'visible',
+      'label' => 'LBL_BALANCE_ERROR',
+      'width' => '10%',
+      'name' => 'balance_error',
+    ),
+    'initial_balance' =>
+    array(
+      'type' => 'decimal',
+      'label' => 'LBL_INITIAL_BALANCE',
+      'width' => '10%',
+      'name' => 'initial_balance',
+    ),
+    'current_balance' =>
+    array(
+      'type' => 'decimal',
+      'label' => 'LBL_CURRENT_BALANCE',
+      'width' => '10%',
+      'name' => 'current_balance',
+    ),
+    'bank_entity' =>
+    array(
+      'type' => 'varchar',
+      'label' => 'LBL_BANK_ENTITY',
+      'width' => '10%',
+      'name' => 'bank_entity',
+    ),
+    'iban' =>
+    array(
+      'type' => 'varchar',
+      'label' => 'LBL_IBAN',
+      'width' => '10%',
+      'name' => 'iban',
+    ),
+    'bank_account_holders' =>
+    array(
+      'type' => 'varchar',
+      'label' => 'LBL_BANK_ACCOUNT_HOLDERS',
+      'width' => '10%',
+      'name' => 'bank_account_holders',
+    ),
+    'assigned_user_name' =>
+    array(
+      'link' => true,
+      'type' => 'relate',
+      'label' => 'LBL_ASSIGNED_TO_NAME',
+      'id' => 'ASSIGNED_USER_ID',
+      'width' => '10%',
+      'name' => 'assigned_user_name',
+    ),
+  ),
+  'listviewdefs' => array(
+    'NAME' =>
+    array(
+      'width' => '32%',
+      'label' => 'LBL_NAME',
+      'default' => true,
+      'link' => true,
+      'name' => 'name',
+    ),
+    'OPENING_DATE' =>
+    array(
+      'type' => 'date',
+      'label' => 'LBL_OPENING_DATE',
+      'width' => '10%',
+      'default' => true,
+      'name' => 'opening_date',
+    ),
+    'STIC_FINANCIAL_PRODUCTS_CONTACTS_NAME' =>
+    array(
+      'type' => 'relate',
+      'link' => true,
+      'label' => 'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE',
+      'id' => 'STIC_FINANCIAL_PRODUCTS_CONTACTSCONTACTS_IDA',
+      'width' => '10%',
+      'default' => true,
+      'name' => 'stic_financial_products_contacts_name',
+    ),
+    'PRODUCT_TYPE' =>
+    array(
+      'type' => 'enum',
+      'studio' => 'visible',
+      'label' => 'LBL_PRODUCT_TYPE',
+      'width' => '10%',
+      'default' => true,
+      'name' => 'product_type',
+    ),
+    'BANK_ENTITY' =>
+    array(
+      'type' => 'varchar',
+      'label' => 'LBL_BANK_ENTITY',
+      'width' => '10%',
+      'default' => true,
+      'name' => 'bank_entity',
+    ),
+    'IBAN' =>
+    array(
+      'type' => 'varchar',
+      'label' => 'LBL_IBAN',
+      'width' => '10%',
+      'default' => true,
+      'name' => 'iban',
+    ),
+    'CURRENT_BALANCE' =>
+    array(
+      'type' => 'decimal',
+      'label' => 'LBL_CURRENT_BALANCE',
+      'width' => '10%',
+      'default' => true,
+      'name' => 'current_balance',
+    ),
+    'ASSIGNED_USER_NAME' =>
+    array(
+      'width' => '9%',
+      'label' => 'LBL_ASSIGNED_TO_NAME',
+      'module' => 'Employees',
+      'id' => 'ASSIGNED_USER_ID',
+      'default' => true,
+      'name' => 'assigned_user_name',
+    ),
+  ),
 );

@@ -20,29 +20,21 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Financial_Products/stic_Financial_Products.php');
+require_once 'include/SugarObjects/forms/FormBase.php';
 
-class stic_Financial_ProductsDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
+class stic_Financial_ProductsFormBase extends FormBase
+{
+    public $moduleName = 'stic_Financial_Products';
+    public $objectName = 'stic_Financial_Products';
+    public function handleSave($prefix, $redirect = true, $useRequired = false)
     {
-        global $current_user, $app_strings;
-        require('modules/stic_Financial_Products/metadata/dashletviewdefs.php');
-
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Financial_Products');
-        }
-
-        $this->searchFields = $dashletData['stic_Financial_ProductsDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Financial_ProductsDashlet']['columns'];
-
-        $this->seedBean = new stic_Financial_Products();        
+        require_once 'include/formbase.php';
+        $focus = new stic_Financial_Products();
+        $focus = populateFromPost($prefix, $focus);
+        $focus->save();
     }
 }

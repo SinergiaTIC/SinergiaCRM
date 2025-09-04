@@ -112,6 +112,8 @@ class stic_Transactions extends File
         } else {
             $this->document_name = $app_list_strings['stic_transactions_transaction_types_list'][$this->transaction_type] . ' - ' . $this->transaction_date . ' - ' . $this->amount;
         }
+
+        $this->name = $this->document_name;
         
         // Call the generic save() function from the SugarBean class
         parent::save();

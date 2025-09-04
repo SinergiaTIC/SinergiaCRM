@@ -21,28 +21,17 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+class stic_TransactionsController extends SugarController {
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Financial_Products/stic_Financial_Products.php');
-
-class stic_Financial_ProductsDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
-    {
-        global $current_user, $app_strings;
-        require('modules/stic_Financial_Products/metadata/dashletviewdefs.php');
-
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Financial_Products');
-        }
-
-        $this->searchFields = $dashletData['stic_Financial_ProductsDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Financial_ProductsDashlet']['columns'];
-
-        $this->seedBean = new stic_Financial_Products();        
+    // Acción que procesa el fichero
+    public function action_loadNorma43() {
+        require_once 'modules/stic_Transactions/importNorma43.php';
+        Norma43::importNorma43();
     }
+
+    // Acción para mostrar el formulario de carga
+    public function action_loadFile() {
+        $this->view = 'load_file';
+    }
+
 }

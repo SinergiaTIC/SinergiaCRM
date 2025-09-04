@@ -21,28 +21,38 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
+require_once 'include/MVC/View/views/view.edit.php';
+require_once 'SticInclude/Views.php';
 
-require_once('include/Dashlets/DashletGeneric.php');
-require_once('modules/stic_Financial_Products/stic_Financial_Products.php');
+#[\AllowDynamicProperties]
+class stic_Financial_ProductsViewEdit extends ViewEdit
+{
 
-class stic_Financial_ProductsDashlet extends DashletGeneric {
-    function __construct($id, $def = null)
+    public function __construct()
     {
-        global $current_user, $app_strings;
-        require('modules/stic_Financial_Products/metadata/dashletviewdefs.php');
-
-        parent::__construct($id, $def);
-
-        if (empty($def['title'])) {
-            $this->title = translate('LBL_HOMEPAGE_TITLE', 'stic_Financial_Products');
-        }
-
-        $this->searchFields = $dashletData['stic_Financial_ProductsDashlet']['searchFields'];
-        $this->columns = $dashletData['stic_Financial_ProductsDashlet']['columns'];
-
-        $this->seedBean = new stic_Financial_Products();        
+        parent::__construct();
+        $this->useForSubpanel = true;
+        $this->useModuleQuickCreateTemplate = true;
     }
+
+    public function preDisplay()
+    {
+        parent::preDisplay();
+
+        SticViews::preDisplay($this);
+
+        // Write here you custom code
+
+    }
+
+    public function display()
+    {
+        parent::display();
+
+        SticViews::display($this);
+
+        // Write here you custom code
+        echo getVersionedScript("modules/stic_Financial_Products/Utils.js");
+    }
+
 }
