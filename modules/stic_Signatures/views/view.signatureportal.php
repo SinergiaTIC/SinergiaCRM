@@ -91,7 +91,10 @@ class stic_SignaturePortal extends SugarView
                 if ($stic_SignaturePortalUtils::verifyOtpCode($signerBean, $_REQUEST['otp-code'] ?? '')) {
                     $passed = true;
                 } else {
-
+                    if (isset($_REQUEST['otp-code'])) {
+                        $errorMsg = 'El código OTP proporcionado no es válido. Por favor, inténtalo de nuevo.';
+                        $this->ss->assign('OTP_ERROR_MSG', $errorMsg);
+                    }
                     $this->ss->assign('OTP_REQUIRED', true);
                     require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
                     $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
