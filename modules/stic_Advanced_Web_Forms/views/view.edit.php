@@ -53,6 +53,7 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
 
         // Wizard
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/wizard.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/wizard.components.js");
         echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/wizard/css/wizard.css") ."'>";
     }
 

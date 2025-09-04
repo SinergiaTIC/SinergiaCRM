@@ -48,8 +48,8 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
 
         SticViews::display($this);
 
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/wizard.js");
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/wizard/css/wizard.css") ."'>";
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/common/wizard.js");
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/wizard/common/wizard.css") ."'>";
 
         // DetailView: Same as EditView, but readOnly
         $this->ss->assign('readOnly', true); 

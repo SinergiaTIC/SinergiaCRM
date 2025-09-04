@@ -3,14 +3,12 @@
     <div class="row">
       <!-- Name -->
       <div class="col-6">
-        <label class="form-label" class="form-label" for="name" x-text="modStrings.LBL_NAME + ':'"></label>
-        <span class="required">*</span>
-        <input class="form-control" required type="text" id="name" x-model="bean.name" />
+        <div x-init="insertComponent_formFieldText($el, 'name', 'bean.name', 'LBL_NAME', true)"></div>
       </div>
 
       <!-- Assigned user -->
       <div class="col-6">
-        <label class="form-label" for="assigned_user_name" x-text="modStrings.LBL_ASSIGNED_TO_NAME + ':'"></label>
+        <label class="form-label" for="assigned_user_name" x-text="translate('LBL_ASSIGNED_TO_NAME') + ':'"></label>
         <div class="input-group">
           <input
             class="form-control"
@@ -40,51 +38,19 @@
     <div class="row">
       <!-- Base Module -->
       <div class="col-6">
-        <label class="form-label" for="base_module" x-text="modStrings.LBL_BASE_MODULE + ':'"></label>
-        <span class="required">*</span>
-        <select
-          class="form-select"
-          id="base_module"
-          required
-          x-model="bean.base_module"
-          x-init="$nextTick(() => {
-            let select = $('#base_module').selectize({
-              placeholder: '',
-              onChange: (value) => { bean.base_module = value }
-            })[0].selectize;
-            select.setValue(bean.base_module);
-          });"
-        >
-          <option value=""></option>
-          <template x-for="[elKey, el] in Object.entries(enabledStudioModules)" :key="elKey">
-            <option :value="elKey" x-text="el.text"></option>
-          </template>
-        </select>
+        <div x-init="insertComponent_formFieldSelectize($el, 'base_module', 'bean.base_module', 'LBL_BASE_MODULE', 'enabledStudioModules', 'text', true, false)"></div>
       </div>
+
       <!-- Processing mode -->
       <div class="col-6">
-        <label class="form-label" for="processing_mode" x-text="modStrings.LBL_PROCESSING_MODE + ':'"></label>
-        <span class="required">*</span>
-        <select
-          class="form-select"
-          id="processing_mode"
-          x-model="bean.processing_mode"
-          x-init="$nextTick(() => $el.value = bean.processing_mode)"
-        >
-          <template
-            x-for="[elKey, elLabel] in Object.entries(appListStrings.stic_advanced_web_forms_processing_mode_list)"
-            :key="elKey"
-          >
-            <option :value="elKey" x-text="elLabel"></option>
-          </template>
-        </select>
+        <div x-init="insertComponent_formFieldSelectize($el, 'processing_mode', 'bean.processing_mode', 'LBL_PROCESSING_MODE', 'appListStrings.stic_advanced_web_forms_processing_mode_list', '', false, false)"></div>
       </div>
     </div>
 
     <div class="row">
       <!-- Generate url -->
       <div class="col-6">
-        <label class="form-check-label" for="generate_url" x-text="modStrings.LBL_GENERATE_URL + ':'"></label>
+        <label class="form-check-label" for="generate_url" x-text="translate('LBL_GENERATE_URL') + ':'"></label>
         <input class="form-check-input" type="checkbox" id="generate_url" x-model="bean.generate_url" />
       </div>        
     </div>
@@ -92,7 +58,7 @@
     <!-- Description -->
     <div class="row">
       <div class="col-12">
-        <label class="form-label" for="description" x-text="modStrings.LBL_DESCRIPTION + ':'"></label>
+        <label class="form-label" for="description" x-text="translate('LBL_DESCRIPTION') + ':'"></label>
         <textarea class="form-control" id="description" x-model="bean.description"> </textarea>
       </div>
     </div>

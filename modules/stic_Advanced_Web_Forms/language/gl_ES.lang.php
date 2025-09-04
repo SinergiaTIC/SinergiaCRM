@@ -97,6 +97,7 @@ $mod_strings = array (
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
 
+  'LBL_SHOW_ALL_MODULES' => 'Mostrar todos los módulos',
   'LBL_DATABLOCKS' => 'Bloques de datos',
   'LBL_DATABLOCK' => 'Bloque de datos',
   'LBL_MODULES' => 'Módulos',

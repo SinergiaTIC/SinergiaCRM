@@ -10,8 +10,6 @@ function wizardForm(readOnly) {
         bean: STIC.record || {},
         configDataBlocks: {},
     
-        modStrings: SUGAR.language.languages.stic_Advanced_Web_Forms,
-        appStrings: SUGAR.language.languages.app_strings,
         appListStrings: SUGAR.language.languages.app_list_strings,
 
         // [moduleName: [name: ModuleName, icon: StudioIcon, text: TranslatedModuleName]]
@@ -20,11 +18,12 @@ function wizardForm(readOnly) {
         // [name: ModuleName, text: TranslatedModuleName]
         enabledModules: STIC.enabledModules,
 
-        treeShowAllModules: false,
         /*
-        [id, text, isRelation, relationName, relationText, moduleName, moduleText, path, pathText, 
-         fields: [name, text, type, required, options, inViews],
-         relationships: [name, text, fieldName, relationship, moduleName, moduleText] ]
+        RelatedModule: {
+          id, text, isRelation, relationName, relationText, moduleName, moduleText, path, pathText,
+          fields: [name: {name, text, type, required, options, inViews}],
+          relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}] 
+        }
         */
         treeSelectedRelatedModule: {},
 
@@ -46,7 +45,7 @@ function wizardForm(readOnly) {
             if(this.step <= this.totalSteps && this.steps.length < this.step+1) {
                 this.steps[this.step] = await (await fetch(`modules/stic_Advanced_Web_Forms/wizard/steps/step${this.step}.html`)).text();
             }
-            this.stepTitle = this.modStrings["LBL_WIZARD_TITLE_STEP" + this.step];
+            this.stepTitle = translate("LBL_WIZARD_TITLE_STEP" + this.step);
             document.getElementById('wizard-step-container').innerHTML = this.steps[this.step];
             $("#wizard-section-title").text(this.stepTitle + " (" + this.step + "/" + this.totalSteps + ")");
         },
@@ -93,6 +92,10 @@ function wizardForm(readOnly) {
             }
         }
     };
+}
+
+function translate(label) {
+    return SUGAR.language.languages.stic_Advanced_Web_Forms[label]??SUGAR.language.languages.app_strings[label]??label;
 }
 
 function set_wizard_assigned_user(popup_reply_data) {
@@ -248,14 +251,7 @@ function initializeModuleTree($tree) {
             name = data.node.data.moduleName;
             text = data.node.data.moduleText;
         }
-        let fields = [];
-        for (const [key, value] of Object.entries(moduleInfo.fields)) {
-            fields.push(value);
-        }
-        let relationships = [];
-        for (const [key, value] of Object.entries(moduleInfo.relationships)) {
-            relationships.push(value);
-        }
+
         window.alpineComponent.treeSelectedRelatedModule = {
             id: data.node.id,
             name: name,
@@ -267,10 +263,9 @@ function initializeModuleTree($tree) {
             moduleSourceText: moduleSourceText,
             path: data.node.data.path,
             pathText: data.node.data.pathText,
-            fields: fields,
-            relationships: relationships,
+            fields: moduleInfo.fields, 
+            relationships: moduleInfo.relationships,
         };
-        getModuleInformation(data.node.data?.moduleName);
     });
     // // Debugging events for load/open operations (commented out for production).
     // .on('after_open.jstree', function(e, data) {
@@ -286,9 +281,11 @@ function initializeModuleTree($tree) {
 
 // Global variable to store cached modules information
 /*
-Result: [ name, text, 
-        fields: [name, text, type, required, options, inViews],
-        relationships: [name, text, fieldName, relationship, moduleName, moduleText] ]
+module: {
+          name, text, 
+          fields: [name: {name, text, type, required, options, inViews}],
+          relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}] 
+        }
 */
 var cachedModules = {};
 
@@ -325,8 +322,10 @@ function getModuleInformation(moduleName) {
     return null;
 }
 
-function treeToggleAllModules(){
-    if (!window.alpineComponent.treeShowAllModules){
+function treeToggleAllModules(treeShowAllModules){
+    if (treeShowAllModules){
+        jstreeInstance.show_all();
+    } else {
         // Hide all root nodes except window.alpineComponent.bean.base_module
         const rootNodes = jstreeInstance.get_json('#', { flat: false });
         rootNodes.forEach(node => {
@@ -334,7 +333,5 @@ function treeToggleAllModules(){
                 jstreeInstance.hide_node(node.id);
             }
         });
-    } else {
-        jstreeInstance.show_all();
-    }
+    } 
 }

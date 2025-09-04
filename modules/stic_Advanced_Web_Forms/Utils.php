@@ -16,11 +16,10 @@ function getModuleInformation($moduleName)
     global $beanList, $app_list_strings;
 
     /*
-        Result: [ 
-            name, text, 
-            fields: [name, text, type, required, options, inViews],
-            relationships: [name, text, fieldName, relationship, moduleName, moduleText]
-        ]
+        Result: name => [ name, text, 
+                          fields: name => [name, text, type, required, options, inViews],
+                          relationships: name => [name, text, fieldName, relationship, moduleName, moduleText]
+                        ]
     */
     $result_array = [
         'name' => $moduleName,
