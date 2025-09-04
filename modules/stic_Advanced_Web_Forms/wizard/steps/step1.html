@@ -1,9 +1,15 @@
-<form id="wizard-step1-form" style="width: 100%;">
-  <div class="container"> 
+<form id="wizard-step1-form" style="width: 100%">
+  <div class="container">
     <div class="row">
       <!-- Name -->
       <div class="col-6">
-        <div x-init="insertComponent_formFieldText($el, 'name', 'bean.name', 'LBL_NAME', true)"></div>
+        <div
+          id="name"
+          data-model="bean.name"
+          data-label="LBL_NAME"
+          required
+          x-init="insertComponent_formFieldText($el)"
+        ></div>
       </div>
 
       <!-- Assigned user -->
@@ -38,12 +44,26 @@
     <div class="row">
       <!-- Base Module -->
       <div class="col-6">
-        <div x-init="insertComponent_formFieldSelectize($el, 'base_module', 'bean.base_module', 'LBL_BASE_MODULE', 'enabledStudioModules', 'text', true, false)"></div>
+        <div
+          id="base_module"
+          data-model="bean.base_module"
+          data-label="LBL_BASE_MODULE"
+          data-map="enabledStudioModules"
+          data-map-property="text"
+          required
+          x-init="insertComponent_formFieldSelectize($el)"
+        ></div>
       </div>
 
       <!-- Processing mode -->
       <div class="col-6">
-        <div x-init="insertComponent_formFieldSelectize($el, 'processing_mode', 'bean.processing_mode', 'LBL_PROCESSING_MODE', 'appListStrings.stic_advanced_web_forms_processing_mode_list', '', false, false)"></div>
+        <div
+          id="processing_mode"
+          data-model="bean.processing_mode"
+          data-label="LBL_PROCESSING_MODE"
+          data-map="appListStrings.stic_advanced_web_forms_processing_mode_list"
+          x-init="insertComponent_formFieldSelectize($el)"
+        ></div>
       </div>
     </div>
 
@@ -52,7 +72,7 @@
       <div class="col-6">
         <label class="form-check-label" for="generate_url" x-text="translate('LBL_GENERATE_URL') + ':'"></label>
         <input class="form-check-input" type="checkbox" id="generate_url" x-model="bean.generate_url" />
-      </div>        
+      </div>
     </div>
 
     <!-- Description -->
@@ -74,5 +94,3 @@
     <p x-text="'Config: ' + bean.config_json"></p>
   </div>
 </form>
-
-

@@ -11,7 +11,7 @@
       checked
       x-on:change="treeToggleAllModules(treeShowAllModules)"
     />
-    <label class="form-check-label" for="switch_TreeAllModules" x-text="modString.LBL_SHOW_ALL_MODULES"></label>
+    <label class="form-check-label" for="switch_TreeAllModules" x-text="translate('LBL_SHOW_ALL_MODULES')"></label>
   </div>
   <div id="jstree-loading" style="display: flex; justify-content: center; align-items: center; height: 200px">
     <div class="spinner-border text-secondary" role="status"></div>
@@ -81,6 +81,7 @@
               <label class="form-check-label" for="radio3">[Relationships]</label>
             </div>
           </div>
+          <!-- General Data -->
           <div x-show="activePanel === 'panel1'" class="p-3 border rounded overflow-auto">
             <h4 class="card-title" x-text="treeSelectedRelatedModule.name"></h4>
             <template x-for="(value, key) in treeSelectedRelatedModule">
@@ -91,6 +92,7 @@
               </template>
             </template>
           </div>
+          <!-- Fields -->
           <div x-show="activePanel === 'panel2'" class="p-3 border rounded overflow-auto">
             <h4
               class="card-title"
@@ -121,7 +123,10 @@
                 <thead>
                   <tr>
                     <template
-                      x-for="header in Object.keys(treeSelectedRelatedModule.fields && treeSelectedRelatedModule.fields[0] ? treeSelectedRelatedModule.fields[0]: {})"
+                      x-for="header in Object.keys(treeSelectedRelatedModule.fields && 
+                                                   treeSelectedRelatedModule.fields[Object.keys(treeSelectedRelatedModule.fields)[0]] 
+                                                   ? treeSelectedRelatedModule.fields[Object.keys(treeSelectedRelatedModule.fields)[0]]
+                                                   : {})"
                     >
                       <th x-text="header"></th>
                     </template>
@@ -141,6 +146,7 @@
               </table>
             </div>
           </div>
+          <!-- Relationships -->
           <div x-show="activePanel === 'panel3'" class="p-3 border rounded overflow-auto">
             <h4
               class="card-title"
@@ -150,7 +156,10 @@
               <thead>
                 <tr>
                   <template
-                    x-for="header in Object.keys(treeSelectedRelatedModule.relationships && treeSelectedRelatedModule.relationships[0] ? treeSelectedRelatedModule.relationships[0]: {})"
+                    x-for="header in Object.keys(treeSelectedRelatedModule.relationships && 
+                                                 treeSelectedRelatedModule.relationships[Object.keys(treeSelectedRelatedModule.relationships)[0]] 
+                                                 ? treeSelectedRelatedModule.relationships[Object.keys(treeSelectedRelatedModule.relationships)[0]]
+                                                 : {})"
                   >
                     <th x-text="header"></th>
                   </template>

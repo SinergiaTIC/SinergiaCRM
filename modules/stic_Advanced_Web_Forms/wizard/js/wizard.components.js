@@ -11,48 +11,47 @@ function insertComponent($container, htmlString) {
   Alpine.initTree($container);
 }
 
-function insertComponent_formFieldText($el, id, modelStr, label, isRequired) {
-  var htmlString = `
+function insertComponent_formFieldText($el) {
+  let id = `${$el.id}_field`;
+  let model = $el.dataset.model ?? "";
+  let label = $el.dataset.label ?? "";
+  let isRequired = $el.hasAttribute("required");
+
+  var htmlString = "";
+  if (label != "") {
+    htmlString += `
     <label class="form-label" for="${id}" x-text="translate('${label}') + ':'"></label>`;
+  }
   if (isRequired) {
     htmlString += `
     <span class="required">*</span>`;
   }
   htmlString += `
-    <input class="form-control" type="text" id="${id}" x-model="${modelStr}" />
+    <input class="form-control" type="text" id="${id}" x-model="${model}" />
   `;
   insertComponent($el, htmlString);
 }
 
-/**
- * Inserts a Selectize combo box
- * @param {Element} $el Element where will insert the component
- * @param {string} id The id of the component
- * @param {string} model The model to map data
- * @param {string} label The name of the label
- * @param {string} mapList The name of the object with values to show as options
- * @param {string} propertyToOptions The property of the object to show values (empty if no property)
- * @param {bool} isRequired Set the field as required
- * @param {bool} multiSelect Set as multiselection
- */
-function insertComponent_formFieldSelectize(
-  $el,
-  id,
-  model,
-  label,
-  mapList,
-  propertyToOptions,
-  isRequired,
-  multiSelect
-) {
-  var htmlString = `
+function insertComponent_formFieldSelectize($el) {
+  let id = `${$el.id}_field`;
+  let model = $el.dataset.model ?? "";
+  let label = $el.dataset.label ?? "";
+  let map = $el.dataset.map ?? "";
+  let mapProperty = $el.dataset.mapProperty ?? "";
+  let multiselect = $el.dataset.multiselect ?? "";
+  let isRequired = $el.hasAttribute("data-multiselect");
+
+  var htmlString = "";
+  if (label != "") {
+    htmlString += `
     <label class="form-label" for="${id}" x-text="translate('${label}') + ':'"></label>`;
+  }
   if (isRequired) {
     htmlString += `
     <span class="required">*</span>`;
   }
   let required = isRequired ? " required" : "";
-  let prop = propertyToOptions != "" ? `.${propertyToOptions}` : "";
+  let prop = mapProperty != "" ? `.${mapProperty}` : "";
   htmlString += `
     <select class="form-select" id="${id}" ${required} x-model="${model}"
       x-init="$nextTick(() => {
@@ -60,7 +59,7 @@ function insertComponent_formFieldSelectize(
         select.setValue(${model});
       });">
       <option value=""></option>
-      <template x-for="[elKey, el] in Object.entries(${mapList})" :key="elKey">
+      <template x-for="[elKey, el] in Object.entries(${map})" :key="elKey">
         <option :value="elKey" x-text="el${prop}"></option>
       </template>
     </select>
