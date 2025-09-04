@@ -120,6 +120,8 @@ $mod_strings = array (
   'LBL_MASS_UPDATE_DATES_OPERADOR' => 'Operador',
   'LBL_MASS_UPDATE_DATES_HORAS' => 'Horas',
   'LBL_MASS_UPDATE_DATES_MINUTES' => 'Minutos',
+  'LBL_OPERATOR_REQUIRED' => 'Debe indicar un operador en al menos uno de los campos.',
+  'LBL_HOUR_OR_MINUTES_REQUIRED' => 'Debe indicar los campos de hora y minutos.',
   'LBL_CANCEL_BUTTON' => 'Cancelar',
   'LBL_UPDATE_BUTTON' => 'Actualizar',
 );
