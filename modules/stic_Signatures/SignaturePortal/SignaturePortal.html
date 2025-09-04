@@ -18,7 +18,7 @@
                 <img src="{$LOGO_URL}" alt="Logo de la organización" class="h-10 w-auto">
                 {/if}
                 { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
-                <h1 class="text-white text-2xl font-bold tracking-tight hidden sm:block">
+                <h1 class="text-white text-2xl font-bold tracking-tight hidden sm:block">Portal de firmas -
                     {$ORGANIZATION_NAME}
                 </h1>
                 {/if}
@@ -132,15 +132,13 @@
 
                 { if $OTP_REQUIRED === true && $SHOW_PORTAL !== true }
                 <section class="otp-area max-w-md mx-auto">
-                    <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Verificación OTP</h2>
+                    <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Código de verificación</h2>
                     <p class="text-sm text-gray-600 mb-3 text-center">
-                        Por favor, ingrese el código OTP de 6 dígitos que le fue enviado para continuar al correo
-                        {$OTP_MASKED_EMAIL}.
+                        Por favor, para continuar indique el código de verificación de un solo uso de 6 dígitos ha sido
+                        enviado a su correo <strong>{$OTP_MASKED_EMAIL}</strong>.
                     </p>
                     <form id="otpForm" method="post" action="">
                         <div class="mb-4">
-                            <label for="otpInput" class="block text-sm font-medium text-gray-700 mb-1">Código
-                                OTP:</label>
                             <div class="flex justify-center space-x-2">
                                 <input type="text" id="otp-1" name="otp_code_1" maxlength="1" required
                                     class="otp-input w-10 h-10 text-center border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-xl font-bold">
@@ -156,11 +154,16 @@
                                     class="otp-input w-10 h-10 text-center border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900 text-xl font-bold">
                             </div>
                         </div>
-                        <button type="submit" class="btn-primary w-full">Verificar OTP</button>
+                        <div class="flex justify-center items-center">
+                            <button type="submit"
+                                class="py-3 px-6 mt-4 lg:mt-0 lg:ml-6 text-white font-semibold bg-blue-500 hover:bg-blue-700 rounded shadow">
+                                Comprobar código
+                            </button>
+                        </div>
                     </form>
                     <div class="mt-4 text-center">
                         <button id="resend-otp-btn" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-                            ¿No ha recibido el código? Reenviar OTP
+                            ¿No ha recibido el código? Reenviar
                         </button>
                     </div>
                 </section>

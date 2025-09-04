@@ -108,15 +108,42 @@ class stic_SignaturesController extends SugarController
         die();
     }
 
+    /**
+     * Action to resend an OTP code to the signer via email.
+     * This action forces the sending of a new OTP code, even if the previous one hasn't expired.
+     *
+     * @return void
+     */
     public function action_resendOtpCode()
     {
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
         $signerId = $_REQUEST['signerId'] ?? '';
         $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
-        $result = stic_SignaturePortalUtils:: forceSendOtpToSigner($signerBean, 'email', true);
+        $result = stic_SignaturePortalUtils::forceSendOtpToSigner($signerBean, 'email', true);
         echo json_encode($result);
         die();
     }
 
+    // /**
+    //  * Action to check the OTP code entered by the signer.
+    //  * It verifies the provided OTP code against the one stored in the database
+    //  * and checks if it has expired.
+    //  *
+    //  * @return void
+    //  */
+    // public function action_verifyOtpCode()
+    // {
+        // require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+        // $signerId = $_REQUEST['signerId'] ?? '';
+        // $otpCode = $_REQUEST['otpCode'] ?? '';
+        // $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
+        // $expireDatetime = $signerBean->db->getOne("SELECT verification_code_expiration FROM stic_signers WHERE id = '{$signerId}'");
+        // if ($signerBean->verification_code === $otpCode && $expireDatetime >= date('Y-m-d H:i:s')) {
+            // echo json_encode(true);
+        // } else {
+            // echo json_encode(false);
+        // }
+        // die();
+    // }
 
 }

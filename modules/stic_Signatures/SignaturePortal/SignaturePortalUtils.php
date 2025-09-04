@@ -138,4 +138,16 @@ class stic_SignaturePortalUtils
             return '<p class="text-red-500 border-red-500 text-center">No se encontró contenido para el firmante especificado.</p>';
         }
     }
+
+    
+    public static function verifyOtpCode($signerBean, $otpCode)
+    {
+        
+        $expireDatetime = $signerBean->db->getOne("SELECT verification_code_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
+        if ($signerBean->verification_code === $otpCode && $expireDatetime >= date('Y-m-d H:i:s')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

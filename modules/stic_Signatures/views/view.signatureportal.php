@@ -73,8 +73,7 @@ class stic_SignaturePortal extends SugarView
         $pdfTemplateBean = $stic_SignaturePortalUtils->getSignatureBeans()['pdfTemplate'];
         $sourceModuleBean = $stic_SignaturePortalUtils->getSignatureBeans()['sourceModule'];
 
-         $this->ss->assign('SIGNER_ID', $signerBean->id);
-
+        $this->ss->assign('SIGNER_ID', $signerBean->id);
 
         // Get authentication mode
         $authMode = $signatureBean->auth_method ?? 'unique_link';
@@ -88,19 +87,24 @@ class stic_SignaturePortal extends SugarView
                 $passed = true;
                 break;
             case 'otp':
-                $this->ss->assign('OTP_REQUIRED', true);
-                require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
-                $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
-                // Send OTP
-                $sendResult = stic_SignaturePortalUtils::sendOtpToSigner($signerBean);
-                if (($sendResult['success'] ?? null) === true) {
-                    $this->ss->assign('OTP_SENT_SUCCESS', $signerStrings['LBL_OTP_SENT_SUCCESS']);
-                    $this->ss->assign('OTP_MASKED_EMAIL', $sendResult['maskedEmail']);
+                // Check if OTP code is provided in REQUEST and valid
+                if ($stic_SignaturePortalUtils::verifyOtpCode($signerBean, $_REQUEST['otp-code'] ?? '')) {
+                    $passed = true;
                 } else {
-                    $this->ss->assign('OTP_SENT_ERROR', $signerStrings['LBL_OTP_SENT_ERROR']);
+
+                    $this->ss->assign('OTP_REQUIRED', true);
+                    require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+                    $signerStrings = return_module_language($GLOBALS['current_language'], 'stic_Signers');
+                    // Send OTP
+                    $sendResult = stic_SignaturePortalUtils::sendOtpToSigner($signerBean);
+                    if (($sendResult['success'] ?? null) === true) {
+                        $this->ss->assign('OTP_SENT_SUCCESS', $signerStrings['LBL_OTP_SENT_SUCCESS']);
+                        $this->ss->assign('OTP_MASKED_EMAIL', $sendResult['maskedEmail']);
+                    } else {
+                        $this->ss->assign('OTP_SENT_ERROR', $signerStrings['LBL_OTP_SENT_ERROR']);
+                    }
+
                 }
-
-
                 break;
             default:
                 $errorMsg = 'El modo de autenticación no es válido.';
