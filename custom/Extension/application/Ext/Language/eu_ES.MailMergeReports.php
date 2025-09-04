@@ -23,7 +23,7 @@
 
 $app_list_strings['moduleList']['DHA_PlantillasDocumentos'] = 'Mail Merge Reports';
 
-$app_strings['LBL_YES'] = 'Sí';
+$app_strings['LBL_YES'] = 'Bai';
 $app_strings['LBL_NO'] = 'No';
 $app_strings['LBL_CURRENCY_ID'] = 'ID de Moneda';
 $app_strings['LBL_CURRENCY_NAME'] = 'Nombre de Moneda';
