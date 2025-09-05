@@ -166,7 +166,6 @@ var sticControls = class sticControls {
     let xShowRow = showRow != "" ? `x-show="${showRow}"` : "";
     let attribute = $el.dataset.attribute ?? "";
 
-    debugger;
     let html = `
     <table id="${id}" class="table table-bordered table-striped" ${attribute}>
       <thead>
@@ -217,4 +216,5 @@ var sticControls = class sticControls {
   static elemTableObjects($el) {
     this._insertComponent($el, this._tableObjects($el));
   }
+
 };

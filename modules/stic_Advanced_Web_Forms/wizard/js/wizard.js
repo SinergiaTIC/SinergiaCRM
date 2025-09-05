@@ -28,8 +28,8 @@ function wizardForm(readOnly) {
       treeSelectedRelatedModule: {},
       treeShowAllModules: false,
       showDetailsData: false,
-      detailsActivePanel: 'panel1',
-      detailsFieldHideNotInView: false, 
+      detailsActivePanel: "panel1",
+      detailsFieldHideNotInView: false,
       detailsFieldHideNotRequired: false,
     },
     step3: {},
@@ -140,7 +140,7 @@ function initializeModuleTree($tree) {
   let baseModuleText = window.alpineComponent.enabledModules[baseModuleName].text;
   rootNodes.push({
     id: baseModuleName,
-    text: baseModuleText,
+    text: getTreeNodeText(baseModuleName, baseModuleText),
     children: true, // It CAN have children
     state: { opened: false }, // Ensures the root node is initially closed.
     data: {
@@ -160,7 +160,7 @@ function initializeModuleTree($tree) {
     }
     rootNodes.push({
       id: moduleName,
-      text: module.text,
+      text: getTreeNodeText(moduleName, module.text),
       children: true, // It CAN have children
       state: { opened: false }, // Ensures the root node is initially closed.
       data: {
@@ -209,9 +209,10 @@ function initializeModuleTree($tree) {
               newPathText.push(relationText);
 
               let isLoop = node.data.path.includes(moduleName);
+              let nodeId = node.id + "-" + key;
               childrenNodes.push({
-                id: node.id + "-" + key,
-                text: relationText + " <sup>(" + moduleText + ")</sup>",
+                id: nodeId,
+                text: getTreeNodeText(nodeId, moduleText, relationText),
                 children: !isLoop,
                 data: {
                   isRelation: true,
@@ -240,7 +241,7 @@ function initializeModuleTree($tree) {
           dots: true,
         },
       },
-      plugins: ["wholerow"], // "contextmenu"
+      plugins: ["wholerow"], //"contextmenu"
     })
     .on("ready.jstree", function () {
       // Store the jstree instance.
@@ -251,40 +252,7 @@ function initializeModuleTree($tree) {
       $(this).show();
     })
     .on("select_node.jstree", function (e, data) {
-      let moduleInfo = getModuleInformation(data.node.data.moduleName);
-      let name = "";
-      let text = "";
-      let moduleSourceName = "";
-      let moduleSourceText = "";
-      let moduleDestName = "";
-      let moduleDestText = "";
-      if (data.node.data.isRelation) {
-        name = data.node.data.relationName;
-        text = data.node.data.relationText;
-        let i = data.node.data.path.length - 2;
-        moduleSourceName = data.node.data.path[i];
-        moduleSourceText = data.node.data.pathText[i];
-        moduleDestName = data.node.data.moduleName;
-        moduleDestText = data.node.data.moduleText;
-      } else {
-        name = data.node.data.moduleName;
-        text = data.node.data.moduleText;
-      }
-
-      window.alpineComponent.step2.treeSelectedRelatedModule = {
-        id: data.node.id,
-        name: name,
-        text: text,
-        isRelation: data.node.data.isRelation,
-        moduleDestName: moduleDestName,
-        moduleDestText: moduleDestText,
-        moduleSourceName: moduleSourceName,
-        moduleSourceText: moduleSourceText,
-        path: data.node.data.path,
-        pathText: data.node.data.pathText,
-        fields: moduleInfo.fields,
-        relationships: moduleInfo.relationships,
-      };
+      window.alpineComponent.step2.treeSelectedRelatedModule = getRelatedModuleByTreeNode(data.node);
     });
   // // Debugging events for load/open operations (commented out for production).
   // .on('after_open.jstree', function(e, data) {
@@ -296,6 +264,57 @@ function initializeModuleTree($tree) {
   //         // console.warn("Node loaded without children. Arrow might disappear.");
   //     }
   // });
+}
+
+function getTreeNodeText(nodeId, moduleText, relationText ="") {
+  var str = "";
+  if (relationText == "") {
+    // Is a module
+    str += moduleText;
+  } else {
+    // Is a relationship
+    str += `${relationText}<sup>(${moduleText})</sup>`;
+  }
+  str += `<button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="addDataBlockByTreeNode(jstreeInstance.get_node('${nodeId}'));">+</button>`;
+
+  return str;
+}
+
+function getRelatedModuleByTreeNode(node) {
+  let moduleInfo = getModuleInformation(node.data.moduleName);
+  let name = "";
+  let text = "";
+  let moduleSourceName = "";
+  let moduleSourceText = "";
+  let moduleDestName = "";
+  let moduleDestText = "";
+  if (node.data.isRelation) {
+    name = node.data.relationName;
+    text = node.data.relationText;
+    let i = node.data.path.length - 2;
+    moduleSourceName = node.data.path[i];
+    moduleSourceText = node.data.pathText[i];
+    moduleDestName = node.data.moduleName;
+    moduleDestText = node.data.moduleText;
+  } else {
+    name = node.data.moduleName;
+    text = node.data.moduleText;
+  }
+
+  return {
+    id: node.id,
+    name: name,
+    text: text,
+    isRelation: node.data.isRelation,
+    moduleDestName: moduleDestName,
+    moduleDestText: moduleDestText,
+    moduleSourceName: moduleSourceName,
+    moduleSourceText: moduleSourceText,
+    path: node.data.path,
+    pathText: node.data.pathText,
+    fields: moduleInfo.fields,
+    relationships: moduleInfo.relationships,
+  };
 }
 
 // Global variable to store cached modules information
@@ -351,4 +370,9 @@ function treeToggleAllModules(treeShowAllModules) {
       }
     });
   }
+}
+
+function addDataBlockByTreeNode(node) {
+  let relatedModule = getRelatedModuleByTreeNode(node);
+  alert("Element afegit: " + relatedModule.pathText);
 }
