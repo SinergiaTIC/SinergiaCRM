@@ -122,6 +122,8 @@ class stic_SignersUtils
         } else {
             SugarApplication::appendSuccessMessage("<p class='msg-success'>" . $mod_strings['LBL_SIGNER_EMAIL_SUCCESS'] . ".</p>");
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Email sent successfully to {$destAddress}.");
+            require_once 'modules/stic_Signature_Log/Utils.php';
+            stic_SignatureLogUtils::logSignatureAction('EMAIL_SENT',$signerId,'SIGNER', $destAddress);
         }
 
         // Redirect back to the signer's detail view
@@ -201,6 +203,9 @@ class stic_SignersUtils
             return false;
         } else {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": OTP Email sent successfully to {$destAddress}.");
+            require_once 'modules/stic_Signature_Log/Utils.php';
+            stic_SignatureLogUtils::logSignatureAction('OTP_SENT',$signerId,'SIGNER', $destAddress);
+                            
             return true;
         }
 
