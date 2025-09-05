@@ -18,14 +18,22 @@ function wizardForm(readOnly) {
     // [name: ModuleName, text: TranslatedModuleName]
     enabledModules: STIC.enabledModules,
 
-    /*
-        RelatedModule: {
-          id, text, isRelation, relationName, relationText, moduleName, moduleText, path, pathText,
-          fields: [name: {name, text, type, required, options, inViews}],
-          relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}] 
-        }
-        */
-    treeSelectedRelatedModule: {},
+    step1: {},
+    step2: {
+      // RelatedModule: {
+      //   id, text, isRelation, relationName, relationText, moduleName, moduleText, path, pathText,
+      //   fields: [name: {name, text, type, required, options, inViews}],
+      //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
+      // }
+      treeSelectedRelatedModule: {},
+      treeShowAllModules: false,
+      showDetailsData: false,
+      detailsActivePanel: 'panel1',
+      detailsFieldHideNotInView: false, 
+      detailsFieldHideNotRequired: false,
+    },
+    step3: {},
+    step4: {},
 
     async init() {
       // Set Context accessible
@@ -263,7 +271,7 @@ function initializeModuleTree($tree) {
         text = data.node.data.moduleText;
       }
 
-      window.alpineComponent.treeSelectedRelatedModule = {
+      window.alpineComponent.step2.treeSelectedRelatedModule = {
         id: data.node.id,
         name: name,
         text: text,
@@ -291,13 +299,11 @@ function initializeModuleTree($tree) {
 }
 
 // Global variable to store cached modules information
-/*
-module: {
-          name, text, 
-          fields: [name: {name, text, type, required, options, inViews}],
-          relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}] 
-        }
-*/
+// module: {
+//           name, text,
+//           fields: [name: {name, text, type, required, options, inViews}],
+//           relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
+//         }
 var cachedModules = {};
 
 function getModuleInformation(moduleName) {

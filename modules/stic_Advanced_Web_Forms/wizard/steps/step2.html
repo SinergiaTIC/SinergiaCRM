@@ -1,15 +1,15 @@
 <!-- Sidebar -->
-<nav class="wizard-sidebar bg-light border-end p-2 flex-shrink-0" x-data="{ treeShowAllModules: false }">
+<!--       data-attribute="x-on:change='treeToggleAllModules(step2.treeShowAllModules)'" -->
+<nav class="wizard-sidebar bg-light border-end p-2 flex-shrink-0">
   <h3 class="text-muted" x-text="translate('LBL_MODULES')"></h3>
-  <div class="text-muted form-check form-switch">
-    <div
-      id="switch_TreeAllModules1"
-      data-model="treeShowAllModules"
-      data-label="LBL_SHOW_ALL_MODULES"
-      data-attribute="x-on:change='treeToggleAllModules(treeShowAllModules)'"
-      x-init="sticControls.fieldCheckbox($el);"
-    ></div>
-  </div>
+  <div
+    class="text-muted form-check form-switch"
+    id="switch_TreeAllModules"
+    data-model="step2.treeShowAllModules"
+    data-label="LBL_SHOW_ALL_MODULES"
+    data-attribute="x-on:change='treeToggleAllModules(step2.treeShowAllModules)'"
+    x-init="sticControls.fieldCheckbox($el);"
+  ></div>
   <div id="jstree-loading" style="display: flex; justify-content: center; align-items: center; height: 200px">
     <div class="spinner-border text-secondary" role="status"></div>
   </div>
@@ -29,154 +29,97 @@
     <div class="card p-4"></div>
 
     <!-- Selected item Details [DEBUG] -->
-    <div class="text-muted mt-5" x-data="{ showDetailsData: false }">
-      <div class="form-check form-switch mb-3">
+    <div
+      class="text-muted form-check form-switch mb-3 mt-5"
+      id="showDetailsDataToggleSwitch"
+      data-model="step2.showDetailsData"
+      data-label-text="[Mostrar Detalles]"
+      x-init="sticControls.fieldCheckbox($el);"
+    ></div>
+    <div class="card p-4" x-show="step2.showDetailsData">
+      <h3 class="card-title" x-text="step2.treeSelectedRelatedModule.pathText?.join(' » ')"></h3>
+      <div class="mb-3">
         <div
-        id="showDetailsDataToggleSwitch"
-        data-model="treeShowAllModules"
-        data-label-text="[Mostrar Detalles]"
-        x-init="sticControls.fieldCheckbox($el);"
-      ></div>
+          class="form-check form-check-inline"
+          id="detailsSelPanel1"
+          data-model="step2.detailsActivePanel"
+          data-value="panel1"
+          data-label-text="[General Data]"
+          x-init="sticControls.fieldRadio($el);"
+        ></div>
+        <div
+          class="form-check form-check-inline"
+          id="detailsSelPanel2"
+          data-model="step2.detailsActivePanel"
+          data-value="panel2"
+          data-label-text="[Fields]"
+          x-init="sticControls.fieldRadio($el);"
+        ></div>
+        <div
+          class="form-check form-check-inline"
+          id="detailsSelPanel3"
+          data-model="step2.detailsActivePanel"
+          data-value="panel3"
+          data-label-text="[Relationships]"
+          x-init="sticControls.fieldRadio($el);"
+        ></div>
       </div>
-      <div class="card p-4" x-show="showDetailsData">
-        <h3 class="card-title" x-text="treeSelectedRelatedModule.pathText?.join(' » ')"></h3>
-        <div x-data="{ activePanel: 'panel1' }">
-          <div class="mb-3">
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="panelRadio"
-                id="radio1"
-                value="panel1"
-                x-model="activePanel"
-              />
-              <label class="form-check-label" for="radio1">[General Data]</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="panelRadio"
-                id="radio2"
-                value="panel2"
-                x-model="activePanel"
-              />
-              <label class="form-check-label" for="radio2">[Fields]</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input
-                class="form-check-input"
-                type="radio"
-                name="panelRadio"
-                id="radio3"
-                value="panel3"
-                x-model="activePanel"
-              />
-              <label class="form-check-label" for="radio3">[Relationships]</label>
-            </div>
-          </div>
-          <!-- General Data -->
-          <div x-show="activePanel === 'panel1'" class="p-3 border rounded overflow-auto">
-            <h4 class="card-title" x-text="treeSelectedRelatedModule.name"></h4>
-            <template x-for="(value, key) in treeSelectedRelatedModule">
-              <template x-if="key!='fields' && key!='relationships'">
-                <template x-if="value!=''">
-                  <p x-text="key + ': ' + value"></p>
-                </template>
-              </template>
+      <!-- General Data -->
+      <div x-show="step2.detailsActivePanel === 'panel1'" class="p-3 border rounded overflow-auto">
+        <h4 class="card-title" x-text="step2.treeSelectedRelatedModule.name"></h4>
+        <template x-for="(value, key) in step2.treeSelectedRelatedModule">
+          <template x-if="key!='fields' && key!='relationships'">
+            <template x-if="value!=''">
+              <p x-text="key + ': ' + value"></p>
             </template>
-          </div>
-          <!-- Fields -->
-          <div x-show="activePanel === 'panel2'" class="p-3 border rounded overflow-auto">
-            <h4
-              class="card-title"
-              x-text="(treeSelectedRelatedModule.isRelation?treeSelectedRelatedModule.moduleDestName:treeSelectedRelatedModule.name) + ' - Fields'"
-            ></h4>
-            <div x-data="{ hideInView: false, hideNonRequired: false }">
-              <div class="form-check form-switch mb-3">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="inViewToggleSwitch"
-                  x-model="hideInView"
-                />
-                <label class="form-check-label" for="inViewToggleSwitch">[Ocultar no in View]</label>
-              </div>
-              <div class="form-check form-switch mb-3">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="nonRequiredToggleSwitch"
-                  x-model="hideNonRequired"
-                />
-                <label class="form-check-label" for="nonRequiredToggleSwitch">[Ocultar no required]</label>
-              </div>
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <template
-                      x-for="header in Object.keys(treeSelectedRelatedModule.fields && 
-                                                   treeSelectedRelatedModule.fields[Object.keys(treeSelectedRelatedModule.fields)[0]] 
-                                                   ? treeSelectedRelatedModule.fields[Object.keys(treeSelectedRelatedModule.fields)[0]]
-                                                   : {})"
-                    >
-                      <th x-text="header"></th>
-                    </template>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template x-for="(value, key) in treeSelectedRelatedModule.fields">
-                    <tr
-                      x-show="(!hideNonRequired || treeSelectedRelatedModule.fields[key].required) && (!hideInView || treeSelectedRelatedModule.fields[key].inViews)"
-                    >
-                      <template x-for="(elem_value, elem_key) in treeSelectedRelatedModule.fields[key]">
-                        <td x-text="elem_value"></td>
-                      </template>
-                    </tr>
-                  </template>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <!-- Relationships -->
-          <div x-show="activePanel === 'panel3'" class="p-3 border rounded overflow-auto">
-            <h4
-              class="card-title"
-              x-text="(treeSelectedRelatedModule.isRelation?treeSelectedRelatedModule.moduleDestName:treeSelectedRelatedModule.name) + ' - Relationships'"
-            ></h4>
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <template
-                    x-for="header in Object.keys(treeSelectedRelatedModule.relationships && 
-                                                 treeSelectedRelatedModule.relationships[Object.keys(treeSelectedRelatedModule.relationships)[0]] 
-                                                 ? treeSelectedRelatedModule.relationships[Object.keys(treeSelectedRelatedModule.relationships)[0]]
-                                                 : {})"
-                  >
-                    <th x-text="header"></th>
-                  </template>
-                </tr>
-              </thead>
-              <tbody>
-                <template x-for="(value, key) in treeSelectedRelatedModule.relationships">
-                  <tr>
-                    <template x-for="(elem_value, elem_key) in treeSelectedRelatedModule.relationships[key]">
-                      <td x-text="elem_value"></td>
-                    </template>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- <div>
+          </template>
+        </template>
+      </div>
+      <!-- Fields -->
+      <div x-show="step2.detailsActivePanel === 'panel2'" class="p-3 border rounded overflow-auto">
+        <h4
+          class="card-title"
+          x-text="(step2.treeSelectedRelatedModule.isRelation?step2.treeSelectedRelatedModule.moduleDestName:step2.treeSelectedRelatedModule.name) + ' - Fields'"
+        ></h4>
+        <div
+          class="form-check form-switch form-check-inline"
+          id="detailsFieldsInViewToggleSwitch"
+          data-model="step2.detailsFieldHideNotInView"
+          data-label-text="[Ocultar no in View]"
+          x-init="sticControls.fieldCheckbox($el);"
+        ></div>
+        <div
+          class="form-check form-switch form-check-inline"
+          id="detailsFieldsRequiredToggleSwitch"
+          data-model="step2.detailsFieldHideNotRequired"
+          data-label-text="[Ocultar no required]"
+          x-init="sticControls.fieldCheckbox($el);"
+        ></div>
+        <div
+          class="mt-3"
+          id="detailsFieldsTable"
+          data-objects="step2.treeSelectedRelatedModule.fields"
+          data-show-row="(!step2.detailsFieldHideNotRequired || step2.treeSelectedRelatedModule.fields[key].required) && (!step2.detailsFieldHideNotInView || step2.treeSelectedRelatedModule.fields[key].inViews)"
+          x-init="sticControls.elemTableObjects($el);"
+        ></div>
+      </div>
+      <!-- Relationships -->
+      <div x-show="step2.detailsActivePanel === 'panel3'" class="p-3 border rounded overflow-auto">
+        <h4
+          class="card-title"
+          x-text="(step2.treeSelectedRelatedModule.isRelation?step2.treeSelectedRelatedModule.moduleDestName:step2.treeSelectedRelatedModule.name) + ' - Relationships'"
+        ></h4>
+        <div
+          class="mt-3"
+          id="detailsRelationshipsTable"
+          data-objects="step2.treeSelectedRelatedModule.relationships"
+          x-init="sticControls.elemTableObjects($el);"
+        ></div>
+      </div>
+      <!-- <div>
         <p x-text="'Config DataBlocks: ' + JSON.stringify(configDataBlocks)"></p>
         <p x-text="'Config (bean): ' + bean.config_json"></p>
       </div> -->
-      </div>
     </div>
   </div>
 </main>
