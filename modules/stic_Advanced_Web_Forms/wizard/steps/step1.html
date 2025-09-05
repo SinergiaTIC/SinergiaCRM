@@ -3,17 +3,19 @@
     <div class="row">
       <!-- Name -->
       <div class="col-6">
-        <div
-          id="name"
-          data-model="bean.name"
-          data-label="LBL_NAME"
-          required
-          x-init="insertComponent_formFieldText($el)"
-        ></div>
+        <div id="name" data-model="bean.name" data-label="LBL_NAME" required x-init="sticControls.fieldText($el)"></div>
       </div>
 
       <!-- Assigned user -->
       <div class="col-6">
+        <!-- <div
+          id="assigned_user_name"
+          data-model="bean.assigned_user_name"
+          data-label="LBL_ASSIGNED_TO_NAME"
+          data-module="field_to_name_array"
+          data-mode="single o multiselect"
+          x-init="sticControls.fieldPopup($el)"
+        ></div> -->
         <label class="form-label" for="assigned_user_name" x-text="translate('LBL_ASSIGNED_TO_NAME') + ':'"></label>
         <div class="input-group">
           <input
@@ -24,6 +26,7 @@
             autocomplete="off"
           />
           <input type="hidden" id="assigned_user_id" x-model="bean.assigned_user_id" />
+          <!-- single / multiselect -->
           <button
             class="btn"
             type="button"
@@ -51,7 +54,7 @@
           data-map="enabledStudioModules"
           data-map-property="text"
           required
-          x-init="insertComponent_formFieldSelectize($el)"
+          x-init="sticControls.fieldSelect($el)"
         ></div>
       </div>
 
@@ -62,7 +65,7 @@
           data-model="bean.processing_mode"
           data-label="LBL_PROCESSING_MODE"
           data-map="appListStrings.stic_advanced_web_forms_processing_mode_list"
-          x-init="insertComponent_formFieldSelectize($el)"
+          x-init="sticControls.fieldSelect($el)"
         ></div>
       </div>
     </div>
@@ -70,16 +73,26 @@
     <div class="row">
       <!-- Generate url -->
       <div class="col-6">
-        <label class="form-check-label" for="generate_url" x-text="translate('LBL_GENERATE_URL') + ':'"></label>
-        <input class="form-check-input" type="checkbox" id="generate_url" x-model="bean.generate_url" />
+        <div
+          id="generate_url"
+          data-model="bean.generate_url"
+          data-label="LBL_GENERATE_URL"
+          x-init="sticControls.fieldCheckbox($el)"
+        ></div>
       </div>
     </div>
 
     <!-- Description -->
     <div class="row">
       <div class="col-12">
-        <label class="form-label" for="description" x-text="translate('LBL_DESCRIPTION') + ':'"></label>
-        <textarea class="form-control" id="description" x-model="bean.description"> </textarea>
+        <div
+        id="description"
+        data-model="bean.description"
+        data-label="LBL_DESCRIPTION"
+        x-init="sticControls.fieldTextarea($el)"
+      ></div>
+        <!-- <label class="form-label" for="description" x-text="translate('LBL_DESCRIPTION') + ':'"></label>
+        <textarea class="form-control" id="description" x-model="bean.description"> </textarea> -->
       </div>
     </div>
   </div>
