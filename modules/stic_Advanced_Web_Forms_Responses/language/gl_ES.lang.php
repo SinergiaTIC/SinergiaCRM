@@ -75,6 +75,10 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
   'LBL_STIC_ADVANCED_WEB_FORMS_RESPONSES_SUBPANEL_TITLE' => 'Respuestas a formularios',
   'LBL_NEW_FORM_TITLE' => 'Novo Respuestas a formularios',
+  
+  'LBL_REMOTE_IP' => 'IP remota',
+  'LBL_FORM_URL' => 'Url del formulario',
+  'LBL_USER_AGENT' => 'Navegador y Sistema Operativo',
   'LBL_RAW_PAYLOAD' => 'Respuesta recibida',
   'LBL_RESPONSE_HASH' => 'Hash de la respuesta',
   'LBL_STATUS' => 'Estado',
