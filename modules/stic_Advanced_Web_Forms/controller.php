@@ -54,13 +54,21 @@ class stic_Advanced_Web_FormsController extends SugarController
         header('Content-Type: application/json');
 
         $data = json_decode(file_get_contents('php://input'), true);
-        if (!$data || empty($data['bean']['id'])) {
+        if (!$data) {
             echo json_encode(['success' => false, 'message' => 'Missing or invalid data']);
             sugar_cleanup(true);
         }
 
-        // Load the bean
-        $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $data['bean']['id']);
+        $bean = null;
+        if (empty($data['bean']['id'])) {
+            // Create the bean
+            $bean = BeanFactory::newBean('stic_Advanced_Web_Forms');
+            $bean->id = $data['bean']['id'];
+        } else {
+            // Load the bean
+            $bean = BeanFactory::getBean('stic_Advanced_Web_Forms', $data['bean']['id']);
+        }
+
         if (!$bean) {
             echo json_encode(['success' => false, 'message' => 'Record not found']);
             sugar_cleanup(true);
@@ -78,7 +86,7 @@ class stic_Advanced_Web_FormsController extends SugarController
         }
 
         // Update config_json with new config
-        $bean->config_json = json_encode($data['config']);
+        $bean->configuration = json_encode($data['config']);
         // $bean->status = 'draft';
         $bean->save();
 

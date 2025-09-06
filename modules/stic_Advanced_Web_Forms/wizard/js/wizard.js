@@ -8,7 +8,28 @@ function wizardForm(readOnly) {
     isReadOnly: readOnly,
 
     bean: STIC.record || {},
-    configDataBlocks: {},
+
+    // {
+    //  data_blocks: [{ name, text, editable_text, order, fixed_order, module, required,
+    //                  fields: [{ name, label, required, required_in_form,
+    //                             validations: [{ type }] ???
+    //                          }],
+    //                  duplicate_detection: {fields: [<field_name>], on_duplicate}
+    //               }],
+    //   flows: [{ name,
+    //             actions: [{ order, action_name,
+    //                         params: [{name, source, value}]
+    //                      }]
+    //          }],
+    //   layout: [{ type, name,
+    //              display: {type, title},
+    //              elements: [{ type, block, name }]
+    //           }]
+    // }
+    formConfig: {},
+    formConfig_json() {
+      return JSON.stringify(this.formConfig);
+    },
 
     appListStrings: SUGAR.language.languages.app_list_strings,
 
@@ -21,7 +42,7 @@ function wizardForm(readOnly) {
     step1: {},
     step2: {
       // RelatedModule: {
-      //   id, text, isRelation, relationName, relationText, moduleName, moduleText, path, pathText,
+      //   name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
       //   fields: [name: {name, text, type, required, options, inViews}],
       //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
       // }
@@ -39,14 +60,60 @@ function wizardForm(readOnly) {
       // Set Context accessible
       window.alpineComponent = this;
 
-      // Split configs
-      let allConfig = JSON.parse(this.bean?.config_json || "{}");
-      if (allConfig.hasOwnProperty("dataBlocks")) {
-        this.configDataBlocks = allConfig.dataBlocks;
-      }
+      // Set config object
+      // IEPA!! this.bean?.configuration està amb \\&quot;...
+      // this.formConfig = JSON.parse(this.bean?.configuration || "{}");
+      this.initializeFormConfig();
 
       // Load current Step
       this.loadStep();
+    },
+
+    initializeFormConfig() {
+      if (!("data_blocks" in this.formConfig)) {
+        this.formConfig.data_blocks = [];
+      }
+      // Detached DataBlock
+      if (this.formConfig.data_blocks.length == 0) {
+        // DataBlocks: [{
+        //   name, text, editable_text, order, fixed_order, module, required,
+        //   fields: [{ name, label, required, required_in_form, validations: [{ type }] }],
+        //   duplicate_detection: {fields: [<field_name>], on_duplicate}
+        // }]
+        this.formConfig.data_blocks.push({
+          name: "_Detached",
+          text: translate("LBL_DATABLOCK_DETACHED"),
+          editable_text: false,
+          order: 0,
+          fixed_order: true,
+          module: "",
+          required: true,
+          fields: [],
+          duplicate_detection: { fields: [], on_duplicate: "skip" },
+        });
+      }
+
+      if (!("flows" in this.formConfig)) {
+        this.formConfig.flows = [];
+      }
+      // Default flows
+      if (this.formConfig.flows.length === 0) {
+        // { name, text, actions: [{ order, action_name, params: [{name, source, value}] }
+        this.formConfig.flows.push({
+          name: "Main",
+          text: translate("LBL_FLOW_MAIN"),
+          actions: [],
+        });
+        this.formConfig.flows.push({
+          name: "OnError",
+          text: translate("LBL_FLOW_ONERROR"),
+          actions: [],
+        });
+      }
+
+      if (!("layout" in this.formConfig)) {
+        this.formConfig.layout = [];
+      }
     },
 
     async loadStep() {
@@ -86,16 +153,28 @@ function wizardForm(readOnly) {
       }
     },
 
-    autoSave() {
-      // Join Configs
-      let config = {
-        dataBlocks: this.configDataBlocks,
-      };
-      fetch("index.php?module=stic_Advanced_Web_Forms&action=saveDraft", {
+    async autoSave() {
+      const response = await fetch("index.php?module=stic_Advanced_Web_Forms&action=saveDraft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bean: this.bean, config: config, step: this.step }),
+        body: JSON.stringify({ bean: this.bean, config: this.formConfig_json(), step: this.step }),
       });
+
+      // Check for http errors
+      if (response.ok) {
+        // Read response body as text (SuiteCRM add html code to every action response)
+        const responseText = await response.text();
+        const lines = responseText.split("\n").filter((line) => line.trim() !== "");
+
+        // Get the last line of the array: The json with the data from server
+        const lastLine = lines[lines.length - 1];
+        const data = JSON.parse(lastLine);
+
+        if (data.success) {
+          // Update local data
+          this.bean.id = data.id;
+        }
+      }
     },
 
     finish() {
@@ -266,7 +345,7 @@ function initializeModuleTree($tree) {
   // });
 }
 
-function getTreeNodeText(nodeId, moduleText, relationText ="") {
+function getTreeNodeText(nodeId, moduleText, relationText = "") {
   var str = "";
   if (relationText == "") {
     // Is a module
@@ -280,6 +359,11 @@ function getTreeNodeText(nodeId, moduleText, relationText ="") {
   return str;
 }
 
+// RelatedModule: {
+//   name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
+//   fields: [name: {name, text, type, required, options, inViews}],
+//   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
+// }
 function getRelatedModuleByTreeNode(node) {
   let moduleInfo = getModuleInformation(node.data.moduleName);
   let name = "";
@@ -373,6 +457,83 @@ function treeToggleAllModules(treeShowAllModules) {
 }
 
 function addDataBlockByTreeNode(node) {
+  // RelatedModule: {
+  //   name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
+  //   fields: [name: {name, text, type, required, options, inViews}],
+  //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
+  // }
   let relatedModule = getRelatedModuleByTreeNode(node);
-  alert("Element afegit: " + relatedModule.pathText);
+
+  // DataBlocks: [{
+  //   name, text, editable_text, order, fixed_order, module, required,
+  //   fields: [{ name, label, required, required_in_form, validations: [{ type }] }],
+  //   duplicate_detection: {fields: [<field_name>], on_duplicate}
+  // }]
+  let dataBlocks = window.alpineComponent.formConfig.data_blocks;
+
+  let found = false;
+  let index = 0;
+
+  // Check Name
+  let name = relatedModule.path.join(":");
+  let newName = name;
+  do {
+    newName = index > 0 ? `${name}(${index})` : name;
+    for (let i = 0; i < dataBlocks.length; i++) {
+      found = dataBlocks[i].name == newName;
+      if (found) {
+        index++;
+        break;
+      }
+    }
+  } while (found);
+  name = newName;
+
+  found = false;
+  index = 0;
+
+  // Check Text
+  let text = relatedModule.text;
+  let newText = text;
+  do {
+    newText = index > 0 ? `${text} (${index})` : text;
+    for (let i = 0; i < dataBlocks.length; i++) {
+      found = dataBlocks[i].text == newText;
+      if (found) {
+        index++;
+        break;
+      }
+    }
+  } while (found);
+  text = newText;
+
+  // Get required fields
+  let initialFields = [];
+  let checkFields = [];
+  for (const [key, value] of Object.entries(relatedModule.fields)) {
+    if (value.required ?? false) {
+      initialFields.push({
+        name: key,
+        label: value.text,
+        required: true,
+        required_in_form: true,
+      });
+      checkFields.push(key);
+    }
+  }
+
+  dataBlocks.push({
+    name: name,
+    text: text,
+    editable_text: true,
+    order: dataBlocks.length,
+    fixed_order: false,
+    module: relatedModule.isRelation ? relatedModule.moduleDestName : relatedModule.name,
+    required: false,
+    fields: initialFields,
+    duplicate_detection: {
+      fields: checkFields,
+      on_duplicate: "enrich",
+    },
+  });
 }
