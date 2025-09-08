@@ -10,7 +10,7 @@ function wizardForm(readOnly) {
     bean: STIC.record || {},
 
     // {
-    //  data_blocks: [{ name, text, editable_text, order, fixed_order, module, required,
+    //  data_blocks: [{ name, path, text, editable_text, order, fixed_order, module, required,
     //                  fields: [{ name, label, required, required_in_form,
     //                             validations: [{ type }] ???
     //                          }],
@@ -42,16 +42,12 @@ function wizardForm(readOnly) {
     step1: {},
     step2: {
       // RelatedModule: {
-      //   name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
+      //   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
       //   fields: [name: {name, text, type, required, options, inViews}],
       //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
       // }
       treeSelectedRelatedModule: {},
       treeShowAllModules: false,
-      showDetailsData: false,
-      detailsActivePanel: "panel1",
-      detailsFieldHideNotInView: false,
-      detailsFieldHideNotRequired: false,
     },
     step3: {},
     step4: {},
@@ -76,12 +72,13 @@ function wizardForm(readOnly) {
       // Detached DataBlock
       if (this.formConfig.data_blocks.length == 0) {
         // DataBlocks: [{
-        //   name, text, editable_text, order, fixed_order, module, required,
+        //   name, path, text, editable_text, order, fixed_order, module, required,
         //   fields: [{ name, label, required, required_in_form, validations: [{ type }] }],
         //   duplicate_detection: {fields: [<field_name>], on_duplicate}
         // }]
         this.formConfig.data_blocks.push({
           name: "_Detached",
+          path: [],
           text: translate("LBL_DATABLOCK_DETACHED"),
           editable_text: false,
           order: 0,
@@ -89,7 +86,7 @@ function wizardForm(readOnly) {
           module: "",
           required: true,
           fields: [],
-          duplicate_detection: { fields: [], on_duplicate: "skip" },
+          duplicate_detection: {},
         });
       }
 
@@ -327,6 +324,10 @@ function initializeModuleTree($tree) {
       jstreeInstance = $("#jstree-container").jstree(true);
       treeToggleAllModules();
 
+      // Ensure base module is in DataBlock
+      let baseModuleName = window.alpineComponent.bean.base_module;
+      addDataBlockByTreeNode(jstreeInstance.get_node(baseModuleName), false);
+
       $("#jstree-loading").hide();
       $(this).show();
     })
@@ -360,7 +361,7 @@ function getTreeNodeText(nodeId, moduleText, relationText = "") {
 }
 
 // RelatedModule: {
-//   name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
+//   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
 //   fields: [name: {name, text, type, required, options, inViews}],
 //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
 // }
@@ -456,7 +457,7 @@ function treeToggleAllModules(treeShowAllModules) {
   }
 }
 
-function addDataBlockByTreeNode(node) {
+function addDataBlockByTreeNode(node, createIfExists = true) {
   // RelatedModule: {
   //   name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
   //   fields: [name: {name, text, type, required, options, inViews}],
@@ -465,20 +466,36 @@ function addDataBlockByTreeNode(node) {
   let relatedModule = getRelatedModuleByTreeNode(node);
 
   // DataBlocks: [{
-  //   name, text, editable_text, order, fixed_order, module, required,
+  //   name, path, text, editable_text, order, fixed_order, module, required,
   //   fields: [{ name, label, required, required_in_form, validations: [{ type }] }],
   //   duplicate_detection: {fields: [<field_name>], on_duplicate}
   // }]
   let dataBlocks = window.alpineComponent.formConfig.data_blocks;
 
+  // Check if can be added
+  if (!createIfExists) {
+    let currentPath = relatedModule.path.join("/");
+    for (let i = 0; i < dataBlocks.length; i++) {
+      if (dataBlocks[i].path.join("/") == currentPath) {
+        return;
+      }
+    }
+  }
+
+  // Add Parent node if not exists
+  if (relatedModule.path.length > 1) {
+    const parentId = relatedModule.path.slice(0, -1).join("-");
+    addDataBlockByTreeNode(jstreeInstance.get_node(parentId), false); // Do not force DataBlock creation
+  }
+
   let found = false;
   let index = 0;
 
   // Check Name
-  let name = relatedModule.path.join(":");
+  let name = relatedModule.path.join("-");//relatedModule.name;
   let newName = name;
   do {
-    newName = index > 0 ? `${name}(${index})` : name;
+    newName = index > 0 ? `${name}-${index}` : name;
     for (let i = 0; i < dataBlocks.length; i++) {
       found = dataBlocks[i].name == newName;
       if (found) {
@@ -493,7 +510,7 @@ function addDataBlockByTreeNode(node) {
   index = 0;
 
   // Check Text
-  let text = relatedModule.text;
+  let text = relatedModule.pathText.join(" > "); //relatedModule.text;
   let newText = text;
   do {
     newText = index > 0 ? `${text} (${index})` : text;
@@ -524,6 +541,7 @@ function addDataBlockByTreeNode(node) {
 
   dataBlocks.push({
     name: name,
+    path: relatedModule.path,
     text: text,
     editable_text: true,
     order: dataBlocks.length,

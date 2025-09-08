@@ -1,29 +1,4 @@
 var sticControls = class sticControls {
-  static _addAttributes($el) {
-    let attributes = $el.dataset.attribute ?? "";
-    if (attributes == "") {
-      return;
-    }
-
-    let id = this._getId($el);
-    let element = document.getElementById(id);
-
-    // All attributes with values between ', or ", or withot value (boolean)
-    const regex = /(\w+)(?:='([^']*)'|="([^"]*)"|$)/g;
-    let match;
-
-    while ((match = regex.exec(attributes)) !== null) {
-      const key = match[1];
-      let value = match[2] || match[3];
-
-      if (value === undefined) {
-        // No value: is a boolean
-        element.setAttribute(key, true);
-      } else {
-        element.setAttribute(key, value);
-      }
-    }
-  }
   static _insertComponent($el, htmlString) {
     if (!$el || !htmlString) {
       console.error("Container or html not defined");
@@ -35,9 +10,23 @@ var sticControls = class sticControls {
 
     // Initialize Alpine.js over new content
     Alpine.initTree($el);
-    // this._addAttributes($el);
   }
-  static _getId($el, suffix="_ctrl") {
+  static _addSectionsToComponent($el) {
+    let id = this._getId($el);
+
+    // Sections: [{ headerText, selected, contentId }]
+    let sections = JSON.parse($el.dataset.sections ?? "[]");
+    for (let i = 0; i < sections.length; i++) {
+      let contentId = sections[i].contentId;
+      let containerId = `${id}_Body_${i}`;
+
+      document.getElementById(containerId).appendChild(document.getElementById(contentId));
+    }
+
+    // Initialize Alpine.js over new content
+    Alpine.initTree($el);
+  }
+  static _getId($el, suffix = "_ctrl") {
     return `${$el.id}${suffix}`;
   }
 
@@ -142,8 +131,7 @@ var sticControls = class sticControls {
     let fieldToNameArrayStr = fieldToNameArray != "" ? `'field_to_name_array':${fieldToNameArray}` : "";
     let mode = $el.dataset.mode ?? "single"; // single / MultiSelect
 
-    let html = 
-    `
+    let html = `
     <div class="input-group">
       <input class="form-control" type="text" id="${idName}" x-model="${modelName}" autocomplete="off" />
       <input type="hidden" id="${idId}" x-model="${modelId}" />
@@ -155,6 +143,64 @@ var sticControls = class sticControls {
         <span class="suitepicon suitepicon-action-clear"></span>
       </button>
     </div>
+    `;
+    return html;
+  }
+
+  static _tableArray($el) {
+    let id = this._getId($el);
+    let model = $el.dataset.model ?? "";
+    let attribute = $el.dataset.attribute ?? "";
+
+    let html = `
+    <table id="${id}" class="table table-bordered table-striped" ${attribute}>
+      <tbody>
+      <template x-for="(element, index) in ${model}">
+        <tr>
+          <td x-text="index + ':'"></td>
+          <td>
+            <template x-if="Array.isArray(element) && element.length > 0">
+              <div id="${id}_" data-model="${model}[index]" x-init="sticControls.elemTableArray($el);"></div>
+            </template>
+            <template x-if="typeof element === 'object' && element !== null && !Array.isArray(element)">
+              <div id="${id}_" data-model="${model}[index]" x-init="sticControls.elemTableObject($el);"></div>
+            </template>
+            <template x-if="!Array.isArray(element) && typeof element !== 'object' && element !== null">
+              <span x-text="element"></span>
+            </template>
+          </td>
+        </tr>
+      </template>
+      </tbody>
+    </table>
+    `;
+    return html;
+  }
+
+  static _listObject($el) {
+    let id = this._getId($el);
+    let model = $el.dataset.model ?? "";
+    let attribute = $el.dataset.attribute ?? "";
+
+    let html = `
+    <dl id="${id}" ${attribute}>
+      <template x-for="(value, key) in ${model}">
+        <div class="row">
+          <dt class="col-sm-3" x-text="key+':'"></dt>
+          <dd class="col-sm-9">
+            <template x-if="Array.isArray(value) && value.length > 0">
+              <div id="${id}_" data-model="${model}[key]" x-init="sticControls.elemTableArray($el);"></div>
+            </template>
+            <template x-if="typeof value === 'object' && value !== null && !Array.isArray(value)">
+              <div id="${id}_" data-model="${model}[key]" x-init="sticControls.elemListObject($el);"></div>
+            </template>
+            <template x-if="!Array.isArray(value) && typeof value !== 'object' && value !== null">
+              <span x-text="value"></span>
+            </template>          
+          </dd>
+        </div>
+      </template>
+    </dl>
     `;
     return html;
   }
@@ -179,13 +225,116 @@ var sticControls = class sticControls {
         <template x-for="(value, key) in ${objects}">
           <tr ${xShowRow}>
             <template x-for="(elem_value, elem_key) in ${objects}[key]">
-              <td x-text="elem_value"></td>
+              <td>
+                <template x-if="Array.isArray(elem_value) && elem_value.length > 0">
+                <div id="${id}_" data-model="${objects}[key][elem_key]" x-init="sticControls.elemTableArray($el);"></div>
+                </template>
+                <template x-if="typeof elem_value === 'object' && elem_value !== null && !Array.isArray(elem_value)">
+                  <div id="${id}_" data-model="${objects}[key][elem_key]" x-init="sticControls.elemTableObject($el);"></div>
+                </template>
+                <template x-if="!Array.isArray(elem_value) && typeof elem_value !== 'object' && elem_value !== null">
+                  <span x-text="elem_value"></span>
+                </template>
+              </td>
             </template>
           </tr>
         </template>
       </tbody>
     </table>
     `;
+    return html;
+  }
+
+  static _spanOrEdit($el) {
+    let id = this._getId($el);
+    let model = $el.dataset.model ?? "";
+    let condition = $el.dataset.condition ?? "true";
+    let attribute = $el.dataset.attribute ?? "";
+
+    let html = `
+    <div x-data="{editing:false}">
+      <div x-show="!editing">
+        <span class="me-2" x-text="${model}" @dblclick="editing=${condition};" ${attribute}></span>
+        <template x-if="${condition}">
+          <span class="btn suitepicon suitepicon-action-edit" @click="editing=true;"></span>
+        </template>
+      </div>
+      <div x-show="editing" x-effect="if(editing){ $nextTick(() => $refs['${id}'].focus()) }">
+        <input id="${id}" x-ref="${id}" type="text" x-model="${model}" @blur="editing=false;" @keydown.enter="editing=false;" @keydown.esc="editing=false;"/>
+      </div>
+    </div>
+    `;
+    return html;
+  }
+
+  static _accordion($el) {
+    let id = this._getId($el);
+
+    // Sections: [{ headerText, selected, contentId }]
+    let sections = JSON.parse($el.dataset.sections ?? "[]");
+    let attribute = $el.dataset.attribute ?? "";
+    let open = `${id}open`;
+
+    let html = `
+    <div class="accordion" id="${id}" ${attribute}>`;
+    for (let i = 0; i < sections.length; i++) {
+      let headerText = sections[i].headerText;
+      let opened = sections[i].selected ? "true" : "false";
+      html += `
+      <div class="accordion-item" x-data="{ ${open}: ${opened} }">
+        <div
+          id="${id}_Header_${i}"
+          class="btn accordion-header accordion-button collapsed"
+          @click="${open} = !${open};"
+          :aria-expanded="${open}"
+          aria-controls="${id}_Content_${i}"
+          data-bs-toggle="collapse"
+          data-bs-target="#${id}_Content_${i}"
+          x-text="${headerText}"
+        ></div>
+        <div
+          id="${id}_Content_${i}"
+          class="accordion-collapse collapse"
+          aria-labelledby="${id}_Header_${i}"
+        >
+          <div id="${id}_Body_${i}" class="accordion-body"> </div>
+        </div>
+      </div>
+      `;
+    }
+
+    html += `
+    </div>`;
+    return html;
+  }
+
+  static _tabs($el) {
+    let id = this._getId($el);
+
+    // Sections: [{ headerText, selected, contentId }]
+    let sections = JSON.parse($el.dataset.sections ?? "[]");
+    let attribute = $el.dataset.attribute ?? "";
+    let selected = `${id}selected`;
+
+    let html = `
+    <div x-data="{ ${selected}: '0' }">
+      <div class="stic-tabs" id="${id}"  ${attribute}>`;
+    for (let i = 0; i < sections.length; i++) {
+      let headerText = sections[i].headerText;
+      html += `
+        <div id="${id}_HeaderTab_${i}" class="stic-tab">
+          <input class="form-check-input" type="radio" id="${id}_Header_${i}" x-model="${selected}" value="${i}"/>
+          <label class="form-label" for="${id}_Header_${i}" x-text="${headerText}"></label>
+        </div>`;
+    }
+    html += `
+      </div>`;
+    for (let i = 0; i < sections.length; i++) {
+      html+= `
+      <div id="${id}_Body_${i}" class="stic-tabcontent overflow-auto" x-show="${selected} == '${i}'"> </div>`;
+    }
+    html += `
+    </div>`;
     return html;
   }
 
@@ -202,11 +351,11 @@ var sticControls = class sticControls {
   }
 
   static fieldCheckbox($el) {
-    this._insertComponent($el, this._label($el, false) + this._checkbox($el));
+    this._insertComponent($el, this._checkbox($el) + this._label($el, false));
   }
 
   static fieldRadio($el) {
-    this._insertComponent($el, this._label($el, false) + this._radio($el));
+    this._insertComponent($el, this._radio($el) + this._label($el, false));
   }
 
   static fieldPopup($el) {
@@ -217,4 +366,29 @@ var sticControls = class sticControls {
     this._insertComponent($el, this._tableObjects($el));
   }
 
+  static elemListObject($el) {
+    this._insertComponent($el, this._listObject($el));
+  }
+
+  static elemTableArray($el) {
+    this._insertComponent($el, this._tableArray($el));
+  }
+
+  static elemTableObject($el) {
+    this.elemTableArray($el);
+  }
+
+  static editableText($el) {
+    this._insertComponent($el, this._spanOrEdit($el));
+  }
+
+  static accordion($el) {
+    this._insertComponent($el, this._accordion($el));
+    this._addSectionsToComponent($el);
+  }
+
+  static tabs($el) {
+    this._insertComponent($el, this._tabs($el));
+    this._addSectionsToComponent($el);
+  }
 };

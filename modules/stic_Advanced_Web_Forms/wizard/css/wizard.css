@@ -72,4 +72,83 @@ textarea, .selectize-control {
     flex: 1;
     overflow: auto;
 }
-  
+
+.suitepicon {
+    color: inherit;
+}
+
+h3, h4 {
+    font-weight: inherit;
+}
+
+.card-title {
+    font-weight: bold;
+}
+
+.accordion-button {
+    font-size: inherit;
+    font-weight: bold;
+    color: inherit;
+    background-color: #e9ecef;
+}
+
+.accordion-button:not(.collapsed) {
+    font-weight: bolder;
+    color: inherit;
+    background-color: #dee2e6;
+}
+
+/* TABS */
+/* Amaguem els radio buttons originals */
+.stic-tab input {
+    display: none;
+}
+
+/* Estil per a les etiquetes, que seran les nostres "pestanyes" */
+.stic-tab label {
+    /* Propietats bàsiques per semblar un botó */
+    display: block;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 0.25rem 0.25rem 0 0; /* Arrodoniment superior */
+    
+    /* Estil inactiu */
+    background-color: #dee2e6; /* #f8f9fa Gris clar, típic de pestanyes inactives */
+    color: #495057;
+    border-color: #dee2e6 #dee2e6 #fff;
+    margin-bottom: -1px; /* Per a que es solapi amb el contenidor del panell */
+    margin-right: 1px;
+    margin-left: 1px;
+}
+
+/* Estil quan la pestanya està seleccionada (el radio button està "checked") */
+.stic-tab input:checked + label {
+    /* Estil actiu */
+    background-color: #fff;
+    /* border-color: #dee2e6 #dee2e6 #fff; */
+    border-color: #0d6efd #dee2e6 #fff;
+    border-top-width: 2px;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Efecte visual quan es passa el ratolí per sobre */
+.stic-tab label:hover {
+    background-color: #e9ecef;
+    border-color: #e9ecef #e9ecef #dee2e6;
+}
+
+/* Estils per al contenidor dels radio buttons */
+.stic-tabs {
+    border-bottom: 1px solid #dee2e6;
+    display: flex; /* Per assegurar que les pestanyes estiguin en una sola línia */
+    margin-bottom: 0 !important; /* Per a que el panell de sota s'enganxi */
+}
+
+/* Estil per al contenidor del panell de contingut */
+.stic-tabcontent {
+    border: 1px solid #dee2e6;
+    border-top: none; /* Sense la vora superior, ja que l'etiqueta la tapa */
+    padding: 1rem;
+}

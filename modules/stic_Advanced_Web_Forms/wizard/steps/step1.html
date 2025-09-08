@@ -73,13 +73,18 @@
     </div>
   </div>
 
-  <div>
-    <p x-text="'Name: ' + bean.name"></p>
-    <p x-text="'Assigned: ' + bean.assigned_user_name + ' - ' + bean.assigned_user_id"></p>
-    <p x-text="'Base Module: ' + bean.base_module"></p>
-    <p x-text="'Generate Url: ' + bean.generate_url"></p>
-    <p x-text="'Processing Mode: ' + bean.processing_mode"></p>
-    <p x-text="'Description: ' + bean.description"></p>
-    <p x-text="'Config: ' + formConfig_json()"></p>
+  <div x-data="{ showDetailsData:false }">
+    <!-- Bean Details [DEBUG] -->
+    <div
+      class="text-muted form-check form-switch mb-3 mt-5"
+      id="showDetailsBeanToggleSwitch"
+      data-model="showDetailsData"
+      data-label-text="[Mostrar Bean]"
+      x-init="sticControls.fieldCheckbox($el);"
+    ></div>
+    <div class="card p-4" x-show="showDetailsData">
+      <h3 class="card-title" x-text="'Bean: ' + bean.name"></h3>
+      <div class="overflow-auto" id="detailsBean" data-model="bean" x-init="sticControls.elemTableObject($el);"></div>
+    </div>
   </div>
 </form>

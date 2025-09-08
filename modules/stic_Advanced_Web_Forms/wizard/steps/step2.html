@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <!--       data-attribute="x-on:change='treeToggleAllModules(step2.treeShowAllModules)'" -->
 <nav class="wizard-sidebar bg-light border-end p-2 flex-shrink-0">
-  <h3 class="text-muted" x-text="translate('LBL_MODULES')"></h3>
+  <h3 x-text="translate('LBL_MODULES')"></h3>
   <div
     class="text-muted form-check form-switch"
     id="switch_TreeAllModules"
@@ -27,106 +27,150 @@
   <div class="flex-fill border rounded p-2 bg-white">
     <!-- Main Content -->
     <div class="card p-4">
-      <div
-        class="mt-3"
-        id="dataBlocksTable"
-        data-objects="formConfig.data_blocks"
-        x-init="sticControls.elemTableObjects($el);"
-      ></div>
+      <template x-for="(item, key) in formConfig.data_blocks">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="card-title">
+              <h4
+                :id="'dataBlockTitleEdit-'+item.name"
+                data-model="formConfig.data_blocks[key].text"
+                data-condition="formConfig.data_blocks[key].editable_text"
+                x-init="sticControls.editableText($el);"
+              ></h4>
+              <template x-if="item.module">
+                <h5 class="text-muted" x-text="getModuleInformation(item.module).text + ' (' + item.name + ')'"></h5>
+              </template>
+            </div>
+
+            <div class="card-text">
+              <div :id="'dataBlockFields'+item.name">[Los campos del Bloque de datos]</div>
+              <template x-if="item.module">
+                <div :id="'dataBlockDuplicates'+item.name">[Seleccionar duplicados y acción]</div>
+              </template>
+
+              <template x-if="item.module">
+                <div
+                  :id="'dataDef_'+item.name"
+                  :data-sections="JSON.stringify([
+                                    {headerText:`translate('LBL_FIELDS') + ' (${item.fields.length})'`, selected:true, contentId:'dataBlockFields'+item.name},
+                                    {headerText:`translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.name}
+                                  ]);"
+                  x-init="sticControls.accordion($el)"
+                ></div>
+              </template>
+              <template x-if="!item.module">
+                <div
+                  :id="'dataDef_'+item.name"
+                  :data-sections="JSON.stringify([
+                                    {headerText:`translate('LBL_FIELDS') + ' (${item.fields.length})'`, selected:true, contentId:'dataBlockFields'+item.name},
+                                  ]);"
+                  x-init="sticControls.accordion($el)"
+                ></div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
 
-    <!-- Selected item Details [DEBUG] -->
+    <!-- Details Data [DEBUG] -->
+    <div x-data="{ showDetails: false}">
     <div
       class="text-muted form-check form-switch mb-3 mt-5"
       id="showDetailsDataToggleSwitch"
-      data-model="step2.showDetailsData"
+      data-model="showDetails"
       data-label-text="[Mostrar Detalles]"
       x-init="sticControls.fieldCheckbox($el);"
     ></div>
-    <div class="card p-4" x-show="step2.showDetailsData">
-      <h3 class="card-title" x-text="step2.treeSelectedRelatedModule.pathText?.join(' » ')"></h3>
-      <div class="mb-3">
+    <div class="card p-4" x-show="showDetails">
+      <!-- Data Blocks -->
+      <div id="detailsDataBlocks">
         <div
-          class="form-check form-check-inline"
-          id="detailsSelPanel1"
-          data-model="step2.detailsActivePanel"
-          data-value="panel1"
-          data-label-text="[General Data]"
-          x-init="sticControls.fieldRadio($el);"
-        ></div>
-        <div
-          class="form-check form-check-inline"
-          id="detailsSelPanel2"
-          data-model="step2.detailsActivePanel"
-          data-value="panel2"
-          data-label-text="[Fields]"
-          x-init="sticControls.fieldRadio($el);"
-        ></div>
-        <div
-          class="form-check form-check-inline"
-          id="detailsSelPanel3"
-          data-model="step2.detailsActivePanel"
-          data-value="panel3"
-          data-label-text="[Relationships]"
-          x-init="sticControls.fieldRadio($el);"
+          class="mt-3"
+          id="dataBlocksTable"
+          data-objects="formConfig.data_blocks"
+          x-init="sticControls.elemTableObjects($el);"
         ></div>
       </div>
-      <!-- General Data -->
-      <div x-show="step2.detailsActivePanel === 'panel1'" class="p-3 border rounded overflow-auto">
-        <h4 class="card-title" x-text="step2.treeSelectedRelatedModule.name"></h4>
-        <template x-for="(value, key) in step2.treeSelectedRelatedModule">
-          <template x-if="key!='fields' && key!='relationships'">
-            <template x-if="value!=''">
-              <p x-text="key + ': ' + value"></p>
+
+      <!-- Selected Node -->
+      <div id="detailsNode">
+        <h3 class="card-title" x-text="step2.treeSelectedRelatedModule.pathText?.join(' » ')"></h3>
+        <!-- General Data -->
+        <div id="detailsNodeGeneralData">
+          <h4 class="card-title mb-4" x-text="step2.treeSelectedRelatedModule.name + ' - General Data'"></h4>
+          <template x-for="(value, key) in step2.treeSelectedRelatedModule">
+            <template x-if="key!='fields' && key!='relationships'">
+              <template x-if="value!=''">
+                <p x-text="key + ': ' + value"></p>
+              </template>
             </template>
           </template>
-        </template>
+        </div>
+        <!-- Fields -->
+        <div id="detailsNodeFields" x-data="{ hideNotInView: false, hideNotRequired: false}">
+          <h4
+            class="card-title mb-4"
+            x-text="(step2.treeSelectedRelatedModule.isRelation?step2.treeSelectedRelatedModule.moduleDestName:step2.treeSelectedRelatedModule.name) + ' - Fields'"
+          ></h4>
+          <div
+            class="form-check form-switch form-check-inline"
+            id="detailsFieldsInViewToggleSwitch"
+            data-model="hideNotInView"
+            data-label-text="[Ocultar no in View]"
+            x-init="sticControls.fieldCheckbox($el);"
+          ></div>
+          <div
+            class="form-check form-switch form-check-inline"
+            id="detailsFieldsRequiredToggleSwitch"
+            data-model="hideNotRequired"
+            data-label-text="[Ocultar no required]"
+            x-init="sticControls.fieldCheckbox($el);"
+          ></div>
+          <div
+            class="mt-3"
+            id="detailsFieldsTable"
+            data-objects="step2.treeSelectedRelatedModule.fields"
+            data-show-row="(!hideNotRequired || step2.treeSelectedRelatedModule.fields[key].required) && (!hideNotInView || step2.treeSelectedRelatedModule.fields[key].inViews)"
+            x-init="sticControls.elemTableObjects($el);"
+          ></div>
+        </div>
+        <!-- Relationships -->
+        <div id="detailsNodeRelationships">
+          <h4
+            class="card-title mb-4"
+            x-text="(step2.treeSelectedRelatedModule.isRelation?step2.treeSelectedRelatedModule.moduleDestName:step2.treeSelectedRelatedModule.name) + ' - Relationships'"
+          ></h4>
+          <div
+            class="mt-3"
+            id="detailsRelationshipsTable"
+            data-objects="step2.treeSelectedRelatedModule.relationships"
+            x-init="sticControls.elemTableObjects($el);"
+          ></div>
+        </div>
+
+        <!-- Tab Headers -->
+        <div
+          id="detailsNode"
+          :data-sections="JSON.stringify([
+                          {headerText:`'[Datos Generales]'`, selected:true, contentId:'detailsNodeGeneralData'},
+                          {headerText:`'[Campos]'`, selected:false, contentId:'detailsNodeFields'},
+                          {headerText:`'[Relaciones]'`, selected:false, contentId:'detailsNodeRelationships'},
+                        ]);"
+          x-init="sticControls.tabs($el)"
+        ></div>
       </div>
-      <!-- Fields -->
-      <div x-show="step2.detailsActivePanel === 'panel2'" class="p-3 border rounded overflow-auto">
-        <h4
-          class="card-title"
-          x-text="(step2.treeSelectedRelatedModule.isRelation?step2.treeSelectedRelatedModule.moduleDestName:step2.treeSelectedRelatedModule.name) + ' - Fields'"
-        ></h4>
-        <div
-          class="form-check form-switch form-check-inline"
-          id="detailsFieldsInViewToggleSwitch"
-          data-model="step2.detailsFieldHideNotInView"
-          data-label-text="[Ocultar no in View]"
-          x-init="sticControls.fieldCheckbox($el);"
-        ></div>
-        <div
-          class="form-check form-switch form-check-inline"
-          id="detailsFieldsRequiredToggleSwitch"
-          data-model="step2.detailsFieldHideNotRequired"
-          data-label-text="[Ocultar no required]"
-          x-init="sticControls.fieldCheckbox($el);"
-        ></div>
-        <div
-          class="mt-3"
-          id="detailsFieldsTable"
-          data-objects="step2.treeSelectedRelatedModule.fields"
-          data-show-row="(!step2.detailsFieldHideNotRequired || step2.treeSelectedRelatedModule.fields[key].required) && (!step2.detailsFieldHideNotInView || step2.treeSelectedRelatedModule.fields[key].inViews)"
-          x-init="sticControls.elemTableObjects($el);"
-        ></div>
-      </div>
-      <!-- Relationships -->
-      <div x-show="step2.detailsActivePanel === 'panel3'" class="p-3 border rounded overflow-auto">
-        <h4
-          class="card-title"
-          x-text="(step2.treeSelectedRelatedModule.isRelation?step2.treeSelectedRelatedModule.moduleDestName:step2.treeSelectedRelatedModule.name) + ' - Relationships'"
-        ></h4>
-        <div
-          class="mt-3"
-          id="detailsRelationshipsTable"
-          data-objects="step2.treeSelectedRelatedModule.relationships"
-          x-init="sticControls.elemTableObjects($el);"
-        ></div>
-      </div>
-      <!-- <div>
-        <p x-text="'Config DataBlocks: ' + JSON.stringify(configDataBlocks)"></p>
-        <p x-text="'Config (bean): ' + bean.config_json"></p>
-      </div> -->
+
+      <!-- Tab Headers -->
+      <div
+        id="details"
+        :data-sections="JSON.stringify([
+                          {headerText:`'[Bloques de datos]'`, selected:true, contentId:'detailsDataBlocks'},
+                          {headerText:`'[Nodo seleccionado]'`, selected:false, contentId:'detailsNode'},
+                        ]);"
+        x-init="sticControls.tabs($el)"
+      ></div>
+    </div>
     </div>
   </div>
 </main>

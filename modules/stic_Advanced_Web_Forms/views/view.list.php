@@ -48,7 +48,7 @@ class stic_Advanced_Web_FormsViewList extends ViewList
 
         SticViews::display($this);
 
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/Utils.js");
+        // echo getVersionedScript("modules/stic_Advanced_Web_Forms/Utils.js");
 
         // Write here you custom code
     }

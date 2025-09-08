@@ -105,6 +105,7 @@ $mod_strings = array (
   'LBL_MODULE' => 'Módulo',
   'LBL_FIELDS' => 'Campos',
   'LBL_FIELD' => 'Campo',
+  'LBL_DUPLICATE_CHECK' => 'Detección de duplicados',
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
   'LBL_ACTIONS' => 'Acciones',
