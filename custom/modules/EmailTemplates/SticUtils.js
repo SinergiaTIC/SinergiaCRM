@@ -22,7 +22,6 @@
  */
 
 // Set module name
-debugger;
 var module = "EmailTemplates";
 
 /* VIEWS CUSTOM CODE */
@@ -30,9 +29,17 @@ switch (viewType()) {
     case "edit":
     case "quickcreate":
     case "popup":    
+    
         $(document).ready(function() {
             function toggleHtmlVisibility() {
-                var selectedValue = $("[name=type").val();
+              
+                var selectedValue = $("[name=type");
+                if (selectedValue.length === 2) {
+                  selectedValue = $("[name=type").eq(1).val();
+                }
+                else {
+                  selectedValue = $("[name=type").val();
+                }
                 
                 if (selectedValue === 'sms') {
                     // $('#myDiv').hide();
