@@ -168,6 +168,7 @@ class stic_SignaturesUtils
      */
     public static function getSignatureSigners($signatureId, $mainModuleIds)
     {
+        global $app_list_strings;
         if (empty($signatureId) || empty($mainModuleIds)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Signature [{$signatureId}] or Main Module ID [{$mainModuleIds}] is empty.");
             return [];
@@ -211,9 +212,14 @@ class stic_SignaturesUtils
             // Fallback for relate fields where get_linked_beans might not apply directly
             if (empty($signers) && !empty($mainModuleBean->$signerPath)) {
                 $relatedId = $mainModuleBean->$signerPath;
-                $relatedBean = BeanFactory::getBean($signerModule, $relatedId);
+
+                $relatedBean = is_string($relatedId) ? BeanFactory::getBean($signerModule, $relatedId) : '';
                 if (!empty($relatedBean)) {
                     $signers[] = $relatedBean;
+                } else{
+                        SugarApplication::appendErrorMessage("<p class='msg-error'> ". translate('LBL_SIGNERS_NOT_ADDED_NOT_EXISTS', 'stic_Signatures')." : [" . $app_list_strings['moduleListSingular'][$mainModuleBean->object_name]. "-{$mainModuleBean->name}]</p>");
+
+
                 }
             }
 
@@ -288,9 +294,9 @@ class stic_SignaturesUtils
         // Define the patterns used to clean the template HTML code
         $search = array(
             '/<script[^>]*?>.*?<\/script>/si', // Strip out javascript
-            '/<[\/\!]*?[^<>]*?>/si',            // Strip out HTML tags
-            '/([\r\n])[\s]+/',                 // Strip out white space
-            '/&(quot|#34);/i',                 // Replace HTML entities
+            '/<[\/\!]*?[^<>]*?>/si', // Strip out HTML tags
+            '/([\r\n])[\s]+/', // Strip out white space
+            '/&(quot|#34);/i', // Replace HTML entities
             '/&(amp|#38);/i',
             '/&(lt|#60);/i',
             '/&(gt|#62);/i',

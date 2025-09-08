@@ -86,4 +86,5 @@ $mod_strings = array(
     'LBL EXPIRATION_DATE_ERROR' => "La data de finalització ha de ser posterior a la data d'inici.",
     'LBL_SIGNERS_ADDED_MSG' => 'Firmants afegits correctament',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmants no afegits, ja existeixen o s\'ha produït un error',
+    'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' =>  'Es omet el següent registre perquè no s\'han trobat firmants',
 );
