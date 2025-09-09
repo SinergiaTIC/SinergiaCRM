@@ -80,7 +80,7 @@ $mod_strings = array(
     'LBL_EDITVIEW_PANEL2' => 'Plantilla',
     'LBL_ON_BEHALF_OF' => 'En representació',
     'LBL_PDF_DOCUMENT' => 'Documento PDF',
-    'LBL_SIGN_MODE' => 'Mode de signatura',
+    'LBL_SIGNATURE_MODE' => 'Mode de signatura',
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "La data d'inici ha de ser anterior a la data de finalització.",

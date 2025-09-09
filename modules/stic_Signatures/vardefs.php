@@ -144,10 +144,10 @@ $dictionary['stic_Signatures'] = array(
             'studio' => 'visible',
             'dependency' => false,
         ),
-        'sign_mode' => array(
+        'signature_mode' => array(
             'required' => true,
-            'name' => 'sign_mode',
-            'vname' => 'LBL_SIGN_MODE',
+            'name' => 'signature_mode',
+            'vname' => 'LBL_SIGNATURE_MODE',
             'type' => 'enum',
             'massupdate' => 0,
             'no_default' => false,

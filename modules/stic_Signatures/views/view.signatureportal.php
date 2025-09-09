@@ -75,6 +75,9 @@ class stic_SignaturePortal extends SugarView
 
         $this->ss->assign('SIGNER_ID', $signerBean->id);
 
+
+        $this ->ss->assign('SIGNATURE_MODE', $signatureBean->signature_mode ?? 'handwritten');
+
         // Get authentication mode
         $authMode = $signatureBean->auth_method ?? 'unique_link';
 

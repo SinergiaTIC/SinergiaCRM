@@ -49,21 +49,19 @@
                     <div id="documentContent" class="prose max-w-none document-scroll-content">
                         {$DOCUMENT_HTML_CONTENT}
                     </div>
+                    <div id="scrollInstructionMessage"
+                        class="scroll-instruction-message bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg relative mt-6 text-center">
+                        <span class="block sm:inline">Por favor, desplácese hasta el final del documento para habilitar
+                            el área de firma.</span>
+                    </div>
                 </section>
 
+                { if $SIGNATURE_MODE === 'handwritten' }
                 <section class="signature-area">
                     <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Área de Firma</h2>
                     <p class="text-sm text-gray-600 mb-3 text-center">
                         Por favor, dibuje su firma en el recuadro de abajo o use las opciones alternativas.
                     </p>
-
-                    <div id="scrollInstructionMessage"
-                        class="scroll-instruction-message bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg relative mb-4 text-center">
-                        <span class="block sm:inline">Por favor, desplácese hasta el final del documento para habilitar
-                            el
-                            área
-                            de firma.</span>
-                    </div>
 
                     <canvas id="signatureCanvas" class="w-full"></canvas>
                     <div class="action-buttons flex justify-center gap-4 mt-4">
@@ -115,6 +113,21 @@
                         </div>
                     </div>
                 </section>
+                { /if }
+                
+                { if $SIGNATURE_MODE === 'button' }
+                <section id="buttonAcceptationArea">
+                    <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Área de Aceptación</h2>
+                    <p class="text-sm text-gray-600 mb-3 text-center">
+                        Para aceptar el documento, haga clic en el botón de abajo.
+                    </p>
+
+                    <div class="action-buttons flex justify-center mt-4" disabled>
+                        <button id="acceptDocumentBtn" class="btn-primary w-full max-w-sm" disabled>Aceptar y Firmar
+                            Documento</button>
+                    </div>
+                </section>
+                { /if }
 
                 <section class="audit-trail-area">
                     <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Registros de Auditoría</h2>

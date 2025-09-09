@@ -46,7 +46,7 @@ array(
                     1 => array(
                         'name' => 'signature_image',
                         'studio' => 'visible',
-                        'customCode' => '<img src="{$fields.signature_image.value}" alt="Signature Image" style="max-width:250px; max-height:100px;">',
+                        'customCode' => '{if $fields.signature_image.value != \'\'}<img src="{$fields.signature_image.value}" alt="Signature Image" style="max-width:250px; max-height:100px;">{/if}',
                         'label' => 'LBL_SIGNATURE_IMAGE',
                     ),
                 ),

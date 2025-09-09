@@ -80,7 +80,7 @@ $mod_strings = array(
     'LBL_EDITVIEW_PANEL2' => 'Modelo',
     'LBL_ON_BEHALF_OF' => 'En representación',
     'LBL_PDF_DOCUMENT' => 'Documento PDF',
-    'LBL_SIGN_MODE' => 'Modo de sinatura',
+    'LBL_SIGNATURE_MODE' => 'Modo de sinatura',
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "A data de activación debe ser anterior á data de expiración.",

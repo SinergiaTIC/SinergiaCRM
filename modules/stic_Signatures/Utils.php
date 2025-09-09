@@ -412,10 +412,38 @@ class stic_SignaturesUtils
             } else {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
-                stic_SignatureLogUtils::logSignatureAction('SIGNED', $signerBean->id, 'SIGNER' );
+                stic_SignatureLogUtils::logSignatureAction('SIGNED_HANDWRITTEN_MODE', $signerBean->id, 'SIGNER' );
                 return ['success' => true, 'message' => 'Signature data saved successfully.'];
             }
         }
         return ['success' => false, 'message' => 'Error saving signature data.'];
+    }
+
+
+    /**
+     * Accepts the document for a given signer in button mode.
+     *
+     * @param array $data An associative array containing 'signerId'.
+     * @return array An associative array indicating success or failure and relevant messages.
+     */
+    public static function acceptDocument($data = '')
+    {
+        $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
+
+        if ($signerBean && !empty($signerBean->id)) {
+            $signerBean->status = 'signed';
+            $signerBean->signature_image = ''; // No signature image in button mode
+            $signerBean->signature_date = gmdate("Y-m-d H:i:s");
+            if (!$signerBean->save()) {
+                return ['success' => false, 'message' => 'Failed to accept document.'];
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to accept document for Signer ID: {$signerBean->id}");
+            } else {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
+                require_once 'modules/stic_Signature_Log/Utils.php';
+                stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER' );
+                return ['success' => true, 'message' => 'Document accepted successfully.'];
+            }
+        }
+        return ['success' => false, 'message' => 'Error accepting document.'];
     }
 }
