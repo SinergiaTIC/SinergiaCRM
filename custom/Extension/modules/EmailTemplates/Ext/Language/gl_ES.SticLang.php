@@ -21,6 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$mod_strings['ERROR_NO_EMAIL_MARKETING_ID'] = 'Debe proporcionar los parámetros requeridos. Contacte con el administrador o el equipo de soporte.';
-$mod_strings['ERROR_NO_EMAIL_MARKETING'] = 'El ID de marketing por correo electrónico indicado no coincide con ningún registro en el CRM.';
-$mod_strings['ERROR_NO_EMAIL_TEMPLATE_OR_NO_CAMPAIGN'] = 'El correo electrónico de marketing indicado debe tener una campaña relacionada y una plantilla de correo electrónico relacionada.';
+$mod_strings['ERROR_USER_INTERFACE'] = 'Ha ocurrido un error y el contenido no se puede mostrar.';

@@ -29,8 +29,8 @@ $modStrings = return_module_language($current_language, 'EmailTemplates');
 
 // Validate if the email marketing ID parameter has been indicated
 if (empty($_REQUEST['emailMarketingId'])) {
-    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $modStrings['ERROR_NO_EMAIL_MARKETING_ID']);
-    die($modStrings['ERROR_NO_EMAIL_MARKETING_ID']);
+    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": You must provide the required parameters. Contact your administrator or support team.");
+    die($modStrings['ERROR_USER_INTERFACE']);
 }
 
 // Get the email marketing indicated as a parameter
@@ -38,8 +38,8 @@ $emailMarketing = BeanFactory::getBean('EmailMarketing', $_REQUEST['emailMarketi
 
 // Validate if the ID matches any CRM record
 if (empty($emailMarketing->id)) {
-    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  " . $modStrings['ERROR_NO_EMAIL_MARKETING']);
-    die($modStrings['ERROR_NO_EMAIL_MARKETING']);
+    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  The email marketing ID entered does not match any records in the CRM.");
+    die($modStrings['ERROR_USER_INTERFACE']);
 }
 
 // Get the campaign related to the marketing email
@@ -54,8 +54,8 @@ if (!empty($emailMarketing->template_id)) {
 
 // Validate if the marketing email had an associated email template and campaign
 if (empty($campaign) || empty($emailTemplate)) {
-    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $modStrings['ERROR_NO_EMAIL_TEMPLATE_OR_NO_CAMPAIGN']);
-    die($modStrings['ERROR_NO_EMAIL_TEMPLATE_OR_NO_CAMPAIGN']);
+    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": The entered marketing email must have a related campaign and a related email template.");
+    die($modStrings['ERROR_USER_INTERFACE']);
 }
 
 // Get objects related with optional parameters
@@ -98,6 +98,5 @@ $removeme_url_template = $trackingURL . 'index.php?entryPoint=removeme&identifie
 $template_data = $emailTemplate->parse_tracker_urls($template_data, $tracker_url_template, $tracker_urls, $removeme_url_template);
 
 // Render HTML
-// echo html_entity_decode($template_data->template->body_html, ENT_QUOTES, 'UTF-8');
 echo html_entity_decode($template_data['body_html'], ENT_QUOTES, 'UTF-8');
 die();

@@ -21,6 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
- $mod_strings['ERROR_NO_EMAIL_MARKETING_ID'] = 'You must provide the required parameters. Contact your administrator or support team.';
- $mod_strings['ERROR_NO_EMAIL_MARKETING'] = 'The email marketing ID entered does not match any records in the CRM.';
- $mod_strings['ERROR_NO_EMAIL_TEMPLATE_OR_NO_CAMPAIGN'] = 'The entered marketing email must have a related campaign and a related email template.';
+$mod_strings['ERROR_USER_INTERFACE'] = 'An error has occurred and the content cannot be displayed.';
