@@ -21,4 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$mod_strings['ERROR_USER_INTERFACE'] = 'Ha passat un error i el contingut no es pot mostrar.';
+$mod_strings['ERROR_USER_INTERFACE'] = "S'ha produït un error i el contingut no es pot mostrar.";
