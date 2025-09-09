@@ -38,7 +38,7 @@
                 data-condition="item.editable_text"
                 x-init="sticControls.editableText($el);"
               ></h4>
-              <template x-if="!item.required">
+              <template x-if="'required' in item && typeof item.required === 'function' && !item.required()">
                 <span class="btn suitepicon suitepicon-action-delete" @click="deleteDataBlock(key);"></span>
               </template>
               </div>

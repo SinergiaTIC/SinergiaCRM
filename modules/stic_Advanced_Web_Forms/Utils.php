@@ -126,6 +126,10 @@ function getModuleInformation($moduleName)
     foreach ($result_array['relationships'] as $rel_name => $rel_arr) {
         $destModuleName = $rel_arr['moduleName'];
 
+        // IEPA!! Peta amb stic_sessions!
+        if (!file_exists("modules/$destModuleName/metadata/subpaneldefs.php")){
+            continue;
+        }
         // Load Subpanel definition (module destination)
         require_once "modules/$destModuleName/metadata/subpaneldefs.php";
 
