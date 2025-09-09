@@ -103,10 +103,12 @@ function getModuleInformation($moduleName)
             'relationship' => '',
             'moduleName' => $relate_module_name,
             'moduleText' => $app_list_strings['moduleList'][$relate_module_name],
+            'subpanelName' => '',
+            'subpanelText' => '',
         ];
     }
 
-    // Complete relationship information
+    // Complete relationship information: Field
     foreach ($result_array['relationships'] as $rel_name => $rel_arr) {
         if (!isset($link_defs[$rel_name])) {
             continue;
@@ -114,7 +116,37 @@ function getModuleInformation($moduleName)
         $link_def = $link_defs[$rel_name];
         $result_array['relationships'][$rel_name]['text'] = rtrim(translate($link_def['vname'] ?? '', $moduleName));
         $result_array['relationships'][$rel_name]['relationship'] = $link_def['relationship'] ?? '';
+
+        // Set retationship name as options in field
+        $field_name = $result_array['relationships'][$rel_name]['fieldName'];
+        $result_array['fields'][$field_name]['options'] = $result_array['relationships'][$rel_name]['name'];
     }
+
+    // Complete relationship information: Subpanel (in other module)
+    foreach ($result_array['relationships'] as $rel_name => $rel_arr) {
+        $destModuleName = $rel_arr['moduleName'];
+
+        // Load Subpanel definition (module destination)
+        require_once "modules/$destModuleName/metadata/subpaneldefs.php";
+
+        // Load vardefs (module destination)
+        $destModule = new $beanList[$destModuleName]();
+        // $destLink_defs = [];
+        // foreach ($destModule->field_defs as $name => $arr) {
+
+        if (!empty($layout_defs[$destModuleName]['subpanel_setup'])) {
+            foreach ($layout_defs[$destModuleName]['subpanel_setup'] as $subpanelKey => $subpanelDef) {
+                if (($subpanelDef['module'] ?? '') == $moduleName) {
+                    $linkField = $subpanelDef['get_subpanel_data'] ?? null;
+                    if ($linkField && !empty($destModule->field_defs[$linkField])) {
+                        $result_array['relationships'][$rel_name]['subpanelName'] = $destModule->field_defs[$linkField]['name'];
+                        $result_array['relationships'][$rel_name]['subpanelText'] = rtrim(translate($destModule->field_defs[$linkField]['vname'] ?? '', $destModuleName));                        
+                    }
+                }
+            }
+        }      
+    }
+
 
     // Complete field info with inViews (is in detailview or editview)
     require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';

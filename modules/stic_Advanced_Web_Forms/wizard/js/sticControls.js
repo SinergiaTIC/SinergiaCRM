@@ -273,7 +273,7 @@ var sticControls = class sticControls {
     // Sections: [{ headerText, selected, contentId }]
     let sections = JSON.parse($el.dataset.sections ?? "[]");
     let attribute = $el.dataset.attribute ?? "";
-    let open = `${id}open`;
+    let open = `${id.replace(/-/g, '')}open`;
 
     let html = `
     <div class="accordion" id="${id}" ${attribute}>`;
@@ -297,7 +297,7 @@ var sticControls = class sticControls {
           class="accordion-collapse collapse"
           aria-labelledby="${id}_Header_${i}"
         >
-          <div id="${id}_Body_${i}" class="accordion-body"> </div>
+          <div id="${id}_Body_${i}" class="accordion-body overflow-auto"> </div>
         </div>
       </div>
       `;
@@ -314,7 +314,7 @@ var sticControls = class sticControls {
     // Sections: [{ headerText, selected, contentId }]
     let sections = JSON.parse($el.dataset.sections ?? "[]");
     let attribute = $el.dataset.attribute ?? "";
-    let selected = `${id}selected`;
+    let selected = `${id.replace(/-/g, '')}selected`;
 
     let html = `
     <div x-data="{ ${selected}: '0' }">

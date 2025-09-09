@@ -10,9 +10,9 @@ function wizardForm(readOnly) {
     bean: STIC.record || {},
 
     // {
-    //  data_blocks: [{ name, path, text, editable_text, order, fixed_order, module, required,
-    //                  fields: [{ name, label, required, required_in_form,
-    //                             validations: [{ type }] ???
+    //  data_blocks: [{ name, path, text, editable_text, order, fixed_order, module, required, is_relation, parent_data_block
+    //                  fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
+    //                             show_in_form, value_type, value, value_text, validations: [{ type }]
     //                          }],
     //                  duplicate_detection: {fields: [<field_name>], on_duplicate}
     //               }],
@@ -72,22 +72,18 @@ function wizardForm(readOnly) {
       // Detached DataBlock
       if (this.formConfig.data_blocks.length == 0) {
         // DataBlocks: [{
-        //   name, path, text, editable_text, order, fixed_order, module, required,
-        //   fields: [{ name, label, required, required_in_form, validations: [{ type }] }],
+        //   name, path, text, editable_text, order, fixed_order, module, required, is_relation, parent_data_block
+        //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
+        //              show_in_form, value_type, value, value_text, validations: [{ type }] }],
         //   duplicate_detection: {fields: [<field_name>], on_duplicate}
         // }]
-        this.formConfig.data_blocks.push({
-          name: "_Detached",
-          path: [],
-          text: translate("LBL_DATABLOCK_DETACHED"),
-          editable_text: false,
-          order: 0,
-          fixed_order: true,
-          module: "",
-          required: true,
-          fields: [],
-          duplicate_detection: {},
-        });
+
+        let dataBlock = getDataBlock("_Detached", translate("LBL_DATABLOCK_DETACHED"));
+        dataBlock.editable_text = false;
+        dataBlock.order = 0;
+        dataBlock.fixed_order = true;
+        dataBlock.required = true;
+        this.formConfig.data_blocks.push(dataBlock);
       }
 
       if (!("flows" in this.formConfig)) {
@@ -326,7 +322,8 @@ function initializeModuleTree($tree) {
 
       // Ensure base module is in DataBlock
       let baseModuleName = window.alpineComponent.bean.base_module;
-      addDataBlockByTreeNode(jstreeInstance.get_node(baseModuleName), false);
+      let baseDataBlock = addDataBlockByTreeNode(jstreeInstance.get_node(baseModuleName), false);
+      baseDataBlock.required = true;
 
       $("#jstree-loading").hide();
       $(this).show();
@@ -466,8 +463,9 @@ function addDataBlockByTreeNode(node, createIfExists = true) {
   let relatedModule = getRelatedModuleByTreeNode(node);
 
   // DataBlocks: [{
-  //   name, path, text, editable_text, order, fixed_order, module, required,
-  //   fields: [{ name, label, required, required_in_form, validations: [{ type }] }],
+  //   name, path, text, editable_text, order, fixed_order, module, required, is_relation, parent_data_block
+  //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
+  //              show_in_form, value_type, value, value_text, validations: [{ type }] }],
   //   duplicate_detection: {fields: [<field_name>], on_duplicate}
   // }]
   let dataBlocks = window.alpineComponent.formConfig.data_blocks;
@@ -477,22 +475,16 @@ function addDataBlockByTreeNode(node, createIfExists = true) {
     let currentPath = relatedModule.path.join("/");
     for (let i = 0; i < dataBlocks.length; i++) {
       if (dataBlocks[i].path.join("/") == currentPath) {
-        return;
+        return dataBlocks[i];
       }
     }
-  }
-
-  // Add Parent node if not exists
-  if (relatedModule.path.length > 1) {
-    const parentId = relatedModule.path.slice(0, -1).join("-");
-    addDataBlockByTreeNode(jstreeInstance.get_node(parentId), false); // Do not force DataBlock creation
   }
 
   let found = false;
   let index = 0;
 
   // Check Name
-  let name = relatedModule.path.join("-");//relatedModule.name;
+  let name = relatedModule.path.join("-"); //relatedModule.name;
   let newName = name;
   do {
     newName = index > 0 ? `${name}-${index}` : name;
@@ -524,34 +516,171 @@ function addDataBlockByTreeNode(node, createIfExists = true) {
   } while (found);
   text = newText;
 
+  // Add parent related field to child
+  let parentBlockName = "";
+  // If is a relationship: set parent relation field with this DataBlock
+  if (relatedModule.isRelation) {
+    const parentPath = relatedModule.path.slice(0, -1);
+    const parentPathStr = parentPath.join("/");
+    const parentNodeId = parentPath.join("-");
+    const parentNode = jstreeInstance.get_node(parentNodeId);
+
+    let parentRelatedModule = getRelatedModuleByTreeNode(parentNode);
+    let parentField = parentRelatedModule.fields[parentRelatedModule.relationships[relatedModule.name].fieldName];
+
+    let dataBlockField = convertRelatedFieldToDataBlockField(parentField);
+    dataBlockField.required = true;
+    dataBlockField.value_type = "dataBlock"; // IEPA!! Les relacions poden ser dataBlock o id
+    dataBlockField.value = name;
+    dataBlockField.value_text = text;
+
+    do {
+      // Find latest (nearest) parent DataBlock and add relation field information (do not update an existant)
+      for (let i = dataBlocks.length - 1; i >= 0; i--) {
+        if (dataBlocks[i].path.join("/") == parentPathStr) {
+          if (addOrUpdateDataBlockRelatedField(dataBlocks[i], dataBlockField, false)) {
+            dataBlocks[i].required = true; // Set not deletable
+            parentBlockName = dataBlocks[i].name;
+            break;
+          }
+        }
+      }
+      // If no free parent found: Add a new Parent and repeat
+      if (parentBlockName == "") {
+        addDataBlockByTreeNode(parentNode);
+      }
+    } while (parentBlockName == "");
+  }
+
   // Get required fields
   let initialFields = [];
   let checkFields = [];
   for (const [key, value] of Object.entries(relatedModule.fields)) {
     if (value.required ?? false) {
-      initialFields.push({
-        name: key,
-        label: value.text,
-        required: true,
-        required_in_form: true,
-      });
+      initialFields.push(convertRelatedFieldToDataBlockField(value));
       checkFields.push(key);
     }
   }
 
-  dataBlocks.push({
+  let dataBlock = getDataBlock(name, text);
+  dataBlock.path = relatedModule.path;
+  dataBlock.module = relatedModule.isRelation ? relatedModule.moduleDestName : relatedModule.name;
+  dataBlock.is_relation = relatedModule.isRelation;
+  dataBlock.parent_data_block = parentBlockName;
+  dataBlock.fields = initialFields;
+  dataBlock.duplicate_detection = {
+    fields: checkFields,
+    on_duplicate: "enrich",
+  };
+
+  dataBlocks.push(dataBlock);
+
+  return dataBlock;
+}
+
+function deleteDataBlock(index) {
+  let dataBlocks = window.alpineComponent.formConfig.data_blocks;
+  let dataBlock = dataBlocks[index];
+  debugger;
+
+  if (dataBlock.is_relation) {
+    // Find parent_data_block and remove related value from relation field
+    const parentIndex = dataBlocks.findIndex((db) => db.name === dataBlock.parent_data_block);
+    let parentDataBlock = dataBlocks[parentIndex];
+    const parentNodeId = parentDataBlock.path.join("-");
+    const parentNode = jstreeInstance.get_node(parentNodeId);
+
+    let parentRelatedModule = getRelatedModuleByTreeNode(parentNode);
+    let relationName = dataBlock.path[dataBlock.path.length - 1];
+    let parentFieldDef = parentRelatedModule.fields[parentRelatedModule.relationships[relationName].fieldName];
+
+    let parentDataBlockFieldIndex = parentDataBlock.fields.findIndex((field) => field.name === parentFieldDef.name);
+
+    // If field is not required in definition: Delete field
+    // If field is required in definition: Delete value
+    if (parentFieldDef.required) {
+      // Is required: Do not delete Field, reset values
+      parentDataBlock.fields[parentDataBlockFieldIndex].value_type = "";
+      parentDataBlock.fields[parentDataBlockFieldIndex].value = "";
+      parentDataBlock.fields[parentDataBlockFieldIndex].value_text = "";
+    } else {
+      // Is not required: Can be deleted
+      parentDataBlock.fields.splice(parentDataBlockFieldIndex, 1);
+    }
+
+    let parentRequired = false;
+    for (let i = 0; i < parentDataBlock.fields.length; i++) {
+      if (parentDataBlock.fields[i].type == "relate" && parentDataBlock.fields[i].value_type == "dataBlock") {
+        parentRequired = true;
+        break;
+      }
+    }
+    parentDataBlock.required = parentRequired;
+  }
+
+  // Remove datablock
+  dataBlocks.splice(index, 1);
+}
+
+function convertRelatedFieldToDataBlockField(relatedField) {
+  // DataBlocks: [{
+  //   name, path, text, editable_text, order, fixed_order, module, required, is_relation, parent_data_block
+  //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
+  //              show_in_form, value_type, value, value_text, validations: [{ type }] }],
+  //   duplicate_detection: {fields: [<field_name>], on_duplicate},
+  //   related: [{ name, text, module, field, block }] // IEPA!! Sobra is_relation i parent_data_block
+  // }]
+  let dataField = {
+    name: relatedField.name,
+    label: relatedField.text,
+    required: relatedField.required ?? false,
+    required_in_form: relatedField.required ?? false,
+    type: relatedField.type,
+    type_in_form: "",
+    subtype_in_form: "",
+    show_in_form: relatedField.required ?? false,
+    value_type: "",
+    value: "",
+    value_text: "",
+  };
+  return dataField;
+}
+
+function getDataBlock(name, text) {
+  // DataBlocks: [{
+  //   name, path, text, editable_text, order, fixed_order, module, required, is_relation, parent_data_block
+  //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
+  //              show_in_form, value_type, value, value_text, validations: [{ type }] }],
+  //   duplicate_detection: {fields: [<field_name>], on_duplicate}
+  // }]
+  return {
     name: name,
-    path: relatedModule.path,
+    path: [],
     text: text,
     editable_text: true,
-    order: dataBlocks.length,
+    order: window.alpineComponent.formConfig.data_blocks.length,
     fixed_order: false,
-    module: relatedModule.isRelation ? relatedModule.moduleDestName : relatedModule.name,
+    module: "",
     required: false,
-    fields: initialFields,
-    duplicate_detection: {
-      fields: checkFields,
-      on_duplicate: "enrich",
-    },
-  });
+    is_relation: false,
+    parent_data_block: "",
+    fields: [],
+    duplicate_detection: {},
+  };
+}
+
+function addOrUpdateDataBlockRelatedField(dataBlock, newField) {
+  // Find field in current fields
+  const index = dataBlock.fields.findIndex((field) => field.name === newField.name);
+  if (index !== -1) {
+    if (dataBlock.fields[index].value == "") {
+      // Update field only if do not have value
+      dataBlock.fields[index] = Object.assign(dataBlock.fields[index], newField);
+      return true;
+    }
+  } else {
+    dataBlock.fields.push(newField);
+    return true;
+  }
+  return false;
 }

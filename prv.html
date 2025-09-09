@@ -165,3 +165,28 @@
   </body>
 </html>
 
+
+
+
+<div class="accordion" id="dataDef__Detached_ctrl" >
+  <div class="accordion-item" x-data="{ dataDef__Detached_ctrlopen: true }">
+    <div
+      id="dataDef__Detached_ctrl_Header_0"
+      class="btn accordion-header accordion-button collapsed"
+      @click="dataDef__Detached_ctrlopen = !dataDef__Detached_ctrlopen;"
+      :aria-expanded="dataDef__Detached_ctrlopen"
+      aria-controls="dataDef__Detached_ctrl_Content_0"
+      data-bs-toggle="collapse"
+      data-bs-target="#dataDef__Detached_ctrl_Content_0"
+      x-text="translate('LBL_FIELDS') + ' (' + formConfig.data_blocks[key].fields.length +')'"
+    ></div>
+    <div
+      id="dataDef__Detached_ctrl_Content_0"
+      class="accordion-collapse collapse"
+      aria-labelledby="dataDef__Detached_ctrl_Header_0"
+    >
+      <div id="dataDef__Detached_ctrl_Body_0" class="accordion-body"> </div>
+    </div>
+  </div>
+  
+</div>
