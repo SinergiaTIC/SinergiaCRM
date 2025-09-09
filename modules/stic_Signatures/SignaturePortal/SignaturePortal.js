@@ -265,45 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     saveSignatureBtn.addEventListener('click', () => {
-        if (!canvasEnabled) return; // Do not allow action if canvas is disabled
-        const currentCanvasData = signatureCanvas.toDataURL('image/png');
 
-        if (currentCanvasData !== initialCanvasData) {
-            console.log('Signature saved (simulated):', currentCanvasData);
-            addAuditRecord('Signature captured and ready to be sent to the server.');
+        saveSignature();
 
-            const successMessage = document.createElement('div');
-            successMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            successMessage.innerHTML = `
-                <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                    <h3 class="text-xl font-bold text-green-600 mb-3">Signature Saved!</h3>
-                    <p class="text-gray-700 mb-4">The signature has been successfully captured.</p>
-                    <button id="closeMessageBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Close</button>
-                </div>
-            `;
-            document.body.appendChild(successMessage);
-
-            document.getElementById('closeMessageBtn').addEventListener('click', () => {
-                successMessage.remove();
-            });
-
-        } else {
-            const warningMessage = document.createElement('div');
-            warningMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-            warningMessage.innerHTML = `
-                <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                    <h3 class="text-xl font-bold text-yellow-600 mb-3">Attention</h3>
-                    <p class="text-gray-700 mb-4">Please draw your signature or use one of the alternative options before saving.</p>
-                    <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Close</button>
-                </div>
-            `;
-            document.body.appendChild(warningMessage);
-
-            document.getElementById('closeWarningBtn').addEventListener('click', () => {
-                warningMessage.remove();
-            });
-            addAuditRecord('Attempted to save signature on empty canvas.');
-        }
     });
 
     // --- Text Signature Functionality ---
@@ -498,4 +462,95 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check scroll position on page load in case content is short
     // and scroll is already at the bottom.
     checkScrollPosition();
+
+
+    function saveSignature() {
+        if (!canvasEnabled) return; // Do not allow action if canvas is disabled
+        const currentCanvasData = signatureCanvas.toDataURL('image/png');
+        console.log('Initial Canvas Data:', currentCanvasData);
+
+
+        if (currentCanvasData !== initialCanvasData) {
+
+
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const url = 'index.php';
+            const signerId = urlParams.get('signerId');
+
+
+            const data = {
+                module: "stic_Signatures",
+                action: "saveSignature",
+                signerId: signerId,
+                signatureData: currentCanvasData,
+
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data),
+            }).then(response => {
+
+                // Manage the response
+                if (!response.ok) {
+                    throw new Error('Error de red o del servidor');
+                }
+                return response.json();
+                // Parsea la respuesta como JSON
+            }
+            ).then(data => {
+                console.log('Signature data sent successfully:', data);
+                const successMessage = document.createElement('div');
+                successMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                successMessage.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
+                    <h3 class="text-xl font-bold text-green-600 mb-3">Firma guardada</h3>
+                    <p class="text-gray-700 mb-4">La firma se ha guardado correctamente.</p>
+                    <button id="closeMessageBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                </div>
+            `;
+                document.body.appendChild(successMessage);
+
+                document.getElementById('closeMessageBtn').addEventListener('click', () => {
+                    successMessage.remove();
+                });
+
+
+
+
+
+            }
+            ).catch(error => {
+                console.error('Error sending signature data:', error);
+                const warningMessage = document.createElement('div');
+                warningMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                warningMessage.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
+                    <h3 class="text-xl font-bold text-yellow-600 mb-3">Attention</h3>
+                    <p class="text-gray-700 mb-4">Please draw your signature or use one of the alternative options before saving.</p>
+                    <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Close</button>
+                </div>
+            `;
+                document.body.appendChild(warningMessage);
+
+                document.getElementById('closeWarningBtn').addEventListener('click', () => {
+                    warningMessage.remove();
+                });
+                addAuditRecord('Attempted to save signature on empty canvas.');
+            }
+            );
+
+
+
+            addAuditRecord('Signature captured and ready to be sent to the server.');
+
+
+
+        }
+    }
+
 });

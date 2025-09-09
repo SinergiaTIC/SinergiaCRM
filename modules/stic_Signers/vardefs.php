@@ -1,25 +1,25 @@
 <?php
 /**
-* This file is part of SinergiaCRM.
-* SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
-* Copyright (C) 2013 - 2023 SinergiaTIC Association
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Affero General Public License version 3 as published by the
-* Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Affero General Public License along with
-* this program; if not, see http://www.gnu.org/licenses or write to the Free
-* Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-* 02110-1301 USA.
-*
-* You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
-*/
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 
 $dictionary['stic_Signers'] = array(
     'table' => 'stic_signers',
@@ -266,7 +266,7 @@ $dictionary['stic_Signers'] = array(
             'len' => '255',
             'size' => '20',
         ),
-         'verification_code_expiration' => array(
+        'verification_code_expiration' => array(
             'required' => false,
             'name' => 'verification_code_expiration',
             'vname' => 'LBL_VERIFICATION_CODE_EXPIRATION',
@@ -291,7 +291,7 @@ $dictionary['stic_Signers'] = array(
             'required' => false,
             'name' => 'signature_image',
             'vname' => 'LBL_SIGNATURE_IMAGE',
-            'type' => 'image',
+            'type' => 'text',
             'massupdate' => 0,
             'no_default' => false,
             'comments' => '',
@@ -300,14 +300,13 @@ $dictionary['stic_Signers'] = array(
             'duplicate_merge' => 'disabled',
             'duplicate_merge_dom_value' => 0,
             'audited' => false,
-            'inline_edit' => true,
+            'inline_edit' => false,
             'reportable' => true,
             'unified_search' => false,
             'merge_filter' => 'disabled',
-            'len' => 255,
             'size' => '20',
             'studio' => 'visible',
-            'dbType' => 'varchar',
+            'dbType' => 'text',
             'border' => '',
             'width' => '120',
             'height' => '',

@@ -216,9 +216,8 @@ class stic_SignaturesUtils
                 $relatedBean = is_string($relatedId) ? BeanFactory::getBean($signerModule, $relatedId) : '';
                 if (!empty($relatedBean)) {
                     $signers[] = $relatedBean;
-                } else{
-                        SugarApplication::appendErrorMessage("<p class='msg-error'> ". translate('LBL_SIGNERS_NOT_ADDED_NOT_EXISTS', 'stic_Signatures')." : [" . $app_list_strings['moduleListSingular'][$mainModuleBean->object_name]. "-{$mainModuleBean->name}]</p>");
-
+                } else {
+                    SugarApplication::appendErrorMessage("<p class='msg-error'> " . translate('LBL_SIGNERS_NOT_ADDED_NOT_EXISTS', 'stic_Signatures') . " : [" . $app_list_strings['moduleListSingular'][$mainModuleBean->object_name] . "-{$mainModuleBean->name}]</p>");
 
                 }
             }
@@ -391,5 +390,32 @@ class stic_SignaturesUtils
         $printable = str_replace("\n", "<br />", $converted);
 
         return "{$header}{$converted}{$footer}";
+    }
+
+    /**
+     * Saves the signature data for a given signer.
+     *
+     * @param array $data An associative array containing 'signerId' and 'signatureData'.
+     * @return array An associative array indicating success or failure and relevant messages.
+     */
+    public static function saveSignature($data = '')
+    {
+        $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
+
+        if ($signerBean && !empty($signerBean->id)) {
+            $signerBean->signature_image = $data['signatureData'];
+            $signerBean->status = 'signed';
+            $signerBean->signature_date = gmdate("Y-m-d H:i:s");
+            if (!$signerBean->save()) {
+                return ['success' => false, 'message' => 'Failed to save signature data.'];
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to save signature data for Signer ID: {$signerBean->id}");
+            } else {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
+                require_once 'modules/stic_Signature_Log/Utils.php';
+                stic_SignatureLogUtils::logSignatureAction('SIGNED', $signerBean->id, 'SIGNER' );
+                return ['success' => true, 'message' => 'Signature data saved successfully.'];
+            }
+        }
+        return ['success' => false, 'message' => 'Error saving signature data.'];
     }
 }

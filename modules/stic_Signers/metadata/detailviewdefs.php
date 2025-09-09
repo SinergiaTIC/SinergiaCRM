@@ -1,5 +1,4 @@
 <?php
-global $app_strings ;
 $module_name = 'stic_Signers';
 $viewdefs[$module_name] =
 array(
@@ -36,6 +35,22 @@ array(
         'panels' => array(
             'default' => array(
                 0 => array(
+                    0 => 'name',
+                    1 => 'assigned_user_name',
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'signature_date',
+                        'label' => 'LBL_SIGNATURE_DATE',
+                    ),
+                    1 => array(
+                        'name' => 'signature_image',
+                        'studio' => 'visible',
+                        'customCode' => '<img src="{$fields.signature_image.value}" alt="Signature Image" style="max-width:250px; max-height:100px;">',
+                        'label' => 'LBL_SIGNATURE_IMAGE',
+                    ),
+                ),
+                2 => array(
                     0 => '',
                     1 => array(
                         'name' => 'parent_name',
@@ -43,22 +58,16 @@ array(
                         'label' => 'LBL_FLEX_RELATE',
                     ),
                 ),
-                1 => array(
-                    0 => 'name',
-                    1 => 'assigned_user_name',
-                ),
-                2 => array(
+                3 => array(
                     0 => 'description',
                     1 => array(
                         'name' => 'stic_signatures_stic_signers_name',
                     ),
-
                 ),
-                3 => array(
-                    
+                4 => array(
                     0 => array(
                         'name' => 'preview',
-                        'customCode' => "<div id='preview-container'><button class='button' type='button' href='#' onclick='previewSignature();'><i class='glyphicon glyphicon-eye-open'></i> {$app_strings['LBL_SHOW']}</button></div>",
+                        'customCode' => '<div id=\'preview-container\'><button class=\'button\' type=\'button\' href=\'#\' onclick=\'previewSignature();\'><i class=\'glyphicon glyphicon-eye-open\'></i> Mostrar</button></div>',
                         'label' => 'LBL_SIGNER_PREVIEW',
                     ),
                 ),

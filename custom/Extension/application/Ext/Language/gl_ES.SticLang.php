@@ -3725,6 +3725,10 @@ $app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
 $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (Personalizada)';
 $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
 
+// Firmas: Modos de firma
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Botón';
+
 // Firmantes: Estados
 $app_list_strings['stic_signers_status_list'][''] = '';
 $app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';

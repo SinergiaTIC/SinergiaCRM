@@ -80,6 +80,7 @@ $mod_strings = array(
     'LBL_PDF_DOCUMENT' => 'Pdf document',
     'LBL_EDITVIEW_PANEL1' => 'Pdf Settings',
     'LBL_EDITVIEW_PANEL2' => 'Template',
+    'LBL_SIGN_MODE' => 'Sign mode',
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "The activation date must be before the expiration date.",

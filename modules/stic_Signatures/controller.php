@@ -124,26 +124,20 @@ class stic_SignaturesController extends SugarController
         die();
     }
 
-    // /**
-    //  * Action to check the OTP code entered by the signer.
-    //  * It verifies the provided OTP code against the one stored in the database
-    //  * and checks if it has expired.
-    //  *
-    //  * @return void
-    //  */
-    // public function action_verifyOtpCode()
-    // {
-        // require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
-        // $signerId = $_REQUEST['signerId'] ?? '';
-        // $otpCode = $_REQUEST['otpCode'] ?? '';
-        // $signerBean = BeanFactory::getBean('stic_Signers', $signerId);
-        // $expireDatetime = $signerBean->db->getOne("SELECT verification_code_expiration FROM stic_signers WHERE id = '{$signerId}'");
-        // if ($signerBean->verification_code === $otpCode && $expireDatetime >= date('Y-m-d H:i:s')) {
-            // echo json_encode(true);
-        // } else {
-            // echo json_encode(false);
-        // }
-        // die();
-    // }
+    public function action_saveSignature()
+    {
+        require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+        require_once 'modules/stic_Signatures/Utils.php';
+        if (!empty($_REQUEST['signerId']) && !empty($_REQUEST['signatureData'])) {
+            $result = stic_SignaturesUtils::saveSignature($_REQUEST);
+        } else {
+            $result = [
+                'success' => false,
+                'message' => 'No data provided',
+            ];
+        }
+        echo json_encode($result);
+        die();
+    }
 
 }
