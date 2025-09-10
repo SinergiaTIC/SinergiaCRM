@@ -103,8 +103,8 @@ function getModuleInformation($moduleName)
             'relationship' => '',
             'moduleName' => $relate_module_name,
             'moduleText' => $app_list_strings['moduleList'][$relate_module_name],
-            'subpanelName' => '',
-            'subpanelText' => '',
+            // 'subpanelName' => '',
+            // 'subpanelText' => '',
         ];
     }
 
@@ -122,34 +122,34 @@ function getModuleInformation($moduleName)
         $result_array['fields'][$field_name]['options'] = $result_array['relationships'][$rel_name]['name'];
     }
 
-    // Complete relationship information: Subpanel (in other module)
-    foreach ($result_array['relationships'] as $rel_name => $rel_arr) {
-        $destModuleName = $rel_arr['moduleName'];
+    // // Complete relationship information: Subpanel (in other module)
+    // foreach ($result_array['relationships'] as $rel_name => $rel_arr) {
+    //     $destModuleName = $rel_arr['moduleName'];
 
-        // IEPA!! Peta amb stic_sessions!
-        if (!file_exists("modules/$destModuleName/metadata/subpaneldefs.php")){
-            continue;
-        }
-        // Load Subpanel definition (module destination)
-        require_once "modules/$destModuleName/metadata/subpaneldefs.php";
+    //     // IEPA!! Peta amb stic_sessions!
+    //     if (!file_exists("modules/$destModuleName/metadata/subpaneldefs.php")){
+    //         continue;
+    //     }
+    //     // Load Subpanel definition (module destination)
+    //     require_once "modules/$destModuleName/metadata/subpaneldefs.php";
 
-        // Load vardefs (module destination)
-        $destModule = new $beanList[$destModuleName]();
-        // $destLink_defs = [];
-        // foreach ($destModule->field_defs as $name => $arr) {
+    //     // Load vardefs (module destination)
+    //     $destModule = new $beanList[$destModuleName]();
+    //     // $destLink_defs = [];
+    //     // foreach ($destModule->field_defs as $name => $arr) {
 
-        if (!empty($layout_defs[$destModuleName]['subpanel_setup'])) {
-            foreach ($layout_defs[$destModuleName]['subpanel_setup'] as $subpanelKey => $subpanelDef) {
-                if (($subpanelDef['module'] ?? '') == $moduleName) {
-                    $linkField = $subpanelDef['get_subpanel_data'] ?? null;
-                    if ($linkField && !empty($destModule->field_defs[$linkField])) {
-                        $result_array['relationships'][$rel_name]['subpanelName'] = $destModule->field_defs[$linkField]['name'];
-                        $result_array['relationships'][$rel_name]['subpanelText'] = rtrim(translate($destModule->field_defs[$linkField]['vname'] ?? '', $destModuleName));                        
-                    }
-                }
-            }
-        }      
-    }
+    //     if (!empty($layout_defs[$destModuleName]['subpanel_setup'])) {
+    //         foreach ($layout_defs[$destModuleName]['subpanel_setup'] as $subpanelKey => $subpanelDef) {
+    //             if (($subpanelDef['module'] ?? '') == $moduleName) {
+    //                 $linkField = $subpanelDef['get_subpanel_data'] ?? null;
+    //                 if ($linkField && !empty($destModule->field_defs[$linkField])) {
+    //                     $result_array['relationships'][$rel_name]['subpanelName'] = $destModule->field_defs[$linkField]['name'];
+    //                     $result_array['relationships'][$rel_name]['subpanelText'] = rtrim(translate($destModule->field_defs[$linkField]['vname'] ?? '', $destModuleName));                        
+    //                 }
+    //             }
+    //         }
+    //     }      
+    // }
 
 
     // Complete field info with inViews (is in detailview or editview)
@@ -187,6 +187,8 @@ function getModuleInformation($moduleName)
  */
 function getEnabledModules()
 {
+    global $app_list_strings;
+
     // Get Enabled Modules
     require_once("modules/MySettings/TabController.php");
     $controller = new TabController();
@@ -194,11 +196,16 @@ function getEnabledModules()
     
     $enabled = [];
     foreach ($tabs[0] as $key=>$value) {
-        $enabled[$key] = ["name" => $key, "text" => translate($key)];
+        $text = translate($key);
+        $textSingular = $app_list_strings['moduleListSingular'][$key] ?? $text;
+        $enabled[$key] = ["name" => $key, "text" => $text, "textSingular" => $textSingular];
     }
 
     if (!isset($enabled["Users"])) {
-        $enabled["Users"] = ["name" => "Users", "text" => translate("Users")];
+        $key = "Users";
+        $text = translate($key);
+        $textSingular = $app_list_strings['moduleListSingular'][$key] ?? $text;
+        $enabled[$key] = ["name" => $key, "text" => $text, "textSingular" => $textSingular];
     }
 
     // Sort modules by text
@@ -215,6 +222,8 @@ function getEnabledModules()
  */
 function getInitialModules()
 {
+    global $app_list_strings;
+
     // Get Enabled Modules
     $enabled = getEnabledModules();
 
@@ -226,10 +235,16 @@ function getInitialModules()
 
     foreach ($nodes as $module) {
         if(isset($enabled[$module['module']])) {
+            $name = $module['module'];
+            $icon = $module['icon'];
+            $text = $module['name'];
+            $textSingular = $app_list_strings['moduleListSingular'][$name] ?? $text;
+
             $modules[$module['module']] = [
-                'name' => $module['module'],
-                'icon' => $module['icon'],
-                'text' => $module['name']
+                'name' => $name,
+                'icon' => $icon,
+                'text' => $text,
+                'textSingular' => $textSingular,
             ];
         }
     }

@@ -36,8 +36,7 @@ function wizardForm(readOnly) {
     //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
     //              show_in_form, value_type, value, value_text }],
     //   duplicate_detection: {fields: [<field_name>], on_duplicate},
-    //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name,
-    //                     dest_name, dest_text, dest_data_block_name }]
+    //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name, dest_data_block_name }]
 
     // }]
     formConfig: {},
@@ -47,10 +46,10 @@ function wizardForm(readOnly) {
 
     appListStrings: SUGAR.language.languages.app_list_strings,
 
-    // [moduleName: [name: ModuleName, icon: StudioIcon, text: TranslatedModuleName]]
+    // [moduleName: [name: ModuleName, icon: StudioIcon, text: TranslatedModuleName, textSingular: TranslatedModuleNameSingular]]
     enabledStudioModules: STIC.enabledStudioModules,
 
-    // [name: ModuleName, text: TranslatedModuleName]
+    // [name: ModuleName, text: TranslatedModuleName, textSingular: TranslatedModuleNameSingular]
     enabledModules: STIC.enabledModules,
 
     step1: {},
@@ -62,6 +61,8 @@ function wizardForm(readOnly) {
       // }
       treeSelectedRelatedModule: {},
       treeShowAllModules: false,
+      relationshipsInDataBlocks: [],
+      modulesInDataBlocks: [],
     },
     step3: {},
     step4: {},
@@ -216,10 +217,10 @@ function initializeModuleTree($tree) {
   let rootNodes = [];
   // First node: base_module
   let baseModuleName = window.alpineComponent.bean.base_module;
-  let baseModuleText = window.alpineComponent.enabledModules[baseModuleName].text;
+  let baseModuleText = window.alpineComponent.enabledModules[baseModuleName].textSingular;
   rootNodes.push({
     id: baseModuleName,
-    text: getTreeNodeText(baseModuleName, baseModuleText),
+    text: getTreeNodeText(baseModuleName, baseModuleName, baseModuleText),
     children: true, // It CAN have children
     state: { opened: false }, // Ensures the root node is initially closed.
     data: {
@@ -239,7 +240,7 @@ function initializeModuleTree($tree) {
     }
     rootNodes.push({
       id: moduleName,
-      text: getTreeNodeText(moduleName, module.text),
+      text: getTreeNodeText(moduleName, moduleName, module.textSingular),
       children: true, // It CAN have children
       state: { opened: false }, // Ensures the root node is initially closed.
       data: {
@@ -247,9 +248,9 @@ function initializeModuleTree($tree) {
         relationName: "",
         relationText: "",
         moduleName: moduleName,
-        moduleText: module.text,
+        moduleText: module.textSingular,
         path: [moduleName],
-        pathText: [module.text],
+        pathText: [module.textSingular],
       },
     });
   }
@@ -291,7 +292,7 @@ function initializeModuleTree($tree) {
               let nodeId = node.id + "-" + key;
               childrenNodes.push({
                 id: nodeId,
-                text: getTreeNodeText(nodeId, moduleText, relationText),
+                text: getTreeNodeText(nodeId, moduleName, moduleText, key, relationText),
                 children: !isLoop,
                 data: {
                   isRelation: true,
@@ -340,24 +341,32 @@ function initializeModuleTree($tree) {
     });
 }
 
-function getTreeNodeText(nodeId, moduleText, relationText = "") {
-  var str = "";
-  if (relationText == "") {
-    // Is a module
-    str += moduleText;
-  } else {
-    // Is a relationship
-    str += `${relationText}<sup>(${moduleText})</sup>`;
+function getTreeNodeText(nodeId, moduleName, moduleText, relationName = "", relationText = "") {
+  if (relationName != "" && relationText == "") {
+    relationText = moduleText;
   }
-  str += `<button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="addDataBlockByTreeNode(jstreeInstance.get_node('${nodeId}'));">+</button>`;
 
-  return str;
+  let text = relationName == "" ? `${moduleText}` : `${relationText} <sup>(${moduleText})</sup>`;
+  let checkSelected =
+    relationName == ""
+      ? `step2.modulesInDataBlocks.findIndex((m) => m == '${moduleName}') != -1`
+      : `step2.relationshipsInDataBlocks.findIndex((r) => r.name == '${relationName}') != -1`;
+
+  let html = `
+  <div class="stic-tree-item" :class="{ selected: ${checkSelected} }">
+    ${text}
+    <template x-if="!(${checkSelected})">
+      <button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="addDataBlockByTreeNode(jstreeInstance.get_node('${nodeId}'));">+</button>
+    </template>
+  </div>
+  `;
+  return html;
 }
 
 // RelatedModule: {
 //   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
 //   fields: [name: {name, text, type, required, options, inViews}],
-//   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText, subpanelName, subpanelText}]
+//   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
 // }
 function getRelatedModuleByTreeNode(node) {
   let moduleInfo = getModuleInformation(node.data.moduleName);
@@ -404,7 +413,7 @@ function getRelatedModuleByTreeNode(node) {
 // module: {
 //           name, text,
 //           fields: [name: {name, text, type, required, options, inViews}],
-//           relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText, subpanelName, subpanelText}]
+//           relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
 //         }
 var cachedModules = {};
 function getModuleInformation(moduleName) {
@@ -455,7 +464,6 @@ function treeToggleAllModules(treeShowAllModules) {
 }
 
 function addDataBlockByTreeNode(node) {
-  debugger;
   // Ensure parent node is added
   let parentDataBlock = null;
   let parentRelatedModule = null;
@@ -468,7 +476,7 @@ function addDataBlockByTreeNode(node) {
   // RelatedModule: {
   //   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
   //   fields: [name: {name, text, type, required, options, inViews}],
-  //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText, subpanelName, subpanelText}]
+  //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
   // }
   let relatedModule = getRelatedModuleByTreeNode(node);
 
@@ -477,15 +485,14 @@ function addDataBlockByTreeNode(node) {
   //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
   //              show_in_form, value_type, value, value_text }],
   //   duplicate_detection: {fields: [<field_name>], on_duplicate},
-  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name,
-  //                     dest_name, dest_text, dest_data_block_name }]
+  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name, dest_data_block_name }]
   // }]
   let dataBlocks = window.alpineComponent.formConfig.data_blocks;
 
   // Only a DataBlock per Module
   let name = relatedModule.moduleDestName;
   let text = relatedModule.moduleDestText;
-  let dataBlockIndex = dataBlocks.findIndex((db) => db.name === name);
+  let dataBlockIndex = dataBlocks.findIndex((d) => d.name === name);
   let dataBlock = null;
 
   if (dataBlockIndex != -1) {
@@ -498,13 +505,7 @@ function addDataBlockByTreeNode(node) {
     let newText = text;
     do {
       newText = index > 0 ? `${text} (${index})` : text;
-      for (let i = 0; i < dataBlocks.length; i++) {
-        found = dataBlocks[i].text == newText;
-        if (found) {
-          index++;
-          break;
-        }
-      }
+      found = dataBlocks.findIndex((d) => d.text === newText) != -1;
     } while (found);
     text = newText;
 
@@ -525,6 +526,11 @@ function addDataBlockByTreeNode(node) {
     dataBlock.duplicate_detection.fields = checkFields;
 
     dataBlocks.push(dataBlock);
+
+    // Add module in modulesInDataBlocks
+    if (window.alpineComponent.step2.modulesInDataBlocks.findIndex((m) => m == dataBlock.module) == -1) {
+      window.alpineComponent.step2.modulesInDataBlocks.push(dataBlock.module);
+    }
   }
 
   // Add Relation information to DataBlocks and Field in Parent
@@ -538,8 +544,6 @@ function addDataBlockByTreeNode(node) {
       source_text: relationshipInfo.text,
       source_data_block_name: parentDataBlock.name,
       source_field_name: relationshipInfo.fieldName,
-      dest_name: relationshipInfo.subpanelName,
-      dest_text: relationshipInfo.subpanelText,
       dest_data_block_name: name,
     };
     let relationshipDest = {
@@ -548,8 +552,6 @@ function addDataBlockByTreeNode(node) {
       source_text: relationshipInfo.text,
       source_data_block_name: parentDataBlock.name,
       source_field_name: relationshipInfo.fieldName,
-      dest_name: relationshipInfo.subpanelName,
-      dest_text: relationshipInfo.subpanelText,
       dest_data_block_name: name,
     };
 
@@ -579,6 +581,13 @@ function addDataBlockByTreeNode(node) {
     } else {
       parentDataBlock.fields.push(relField);
     }
+
+    // Add relation in relationshipsInDataBlocks
+    if (
+      window.alpineComponent.step2.relationshipsInDataBlocks.findIndex((r) => r.name == relationshipInfo.name) == -1
+    ) {
+      window.alpineComponent.step2.relationshipsInDataBlocks.push(relationshipInfo);
+    }
   }
 
   return dataBlock;
@@ -590,11 +599,11 @@ function deleteDataBlock(indexToDelete) {
   //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
   //              show_in_form, value_type, value, value_text }],
   //   duplicate_detection: {fields: [<field_name>], on_duplicate},
-  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name,
-  //                     dest_name, dest_text, dest_data_block_name }]
+  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name, dest_data_block_name }]
   // }]
   let dataBlocks = window.alpineComponent.formConfig.data_blocks;
   let dataBlock = dataBlocks[indexToDelete];
+  let index = -1;
 
   if (dataBlock.required()) {
     return false;
@@ -602,9 +611,10 @@ function deleteDataBlock(indexToDelete) {
   for (let i = 0; i < dataBlock.relationships.length; i++) {
     // There are no "is_source" relationships: Is destination
     // Find Origin DataBlock
-    let index = dataBlocks.findIndex((d) => d.name == dataBlock.relationships[i].source_data_block_name);
+    index = dataBlocks.findIndex((d) => d.name == dataBlock.relationships[i].source_data_block_name);
     if (index != -1) {
       let dataBlockOrig = dataBlocks[index];
+      let relationshipName = dataBlock.relationships[i].source_name;
 
       // Remove relationship in origin
       index = dataBlockOrig.relationships.findIndex((r) => r.source_name == dataBlock.relationships[i].source_name);
@@ -618,7 +628,7 @@ function deleteDataBlock(indexToDelete) {
         // module: {
         //           name, text,
         //           fields: [name: {name, text, type, required, options, inViews}],
-        //           relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText, subpanelName, subpanelText}]
+        //           relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
         //         }
         let fieldOrig = dataBlockOrig.fields[index];
         let moduleDef = getModuleInformation(dataBlockOrig.module);
@@ -633,9 +643,21 @@ function deleteDataBlock(indexToDelete) {
           dataBlockOrig.fields.splice(index, 1);
         }
       }
+
+      // Remove relation from relationshipsInDataBlocks
+      index = window.alpineComponent.step2.relationshipsInDataBlocks.findIndex((r) => r.name == relationshipName);
+      if (index != -1) {
+        window.alpineComponent.step2.relationshipsInDataBlocks.splice(index, 1);
+      }
     }
   }
   dataBlocks.splice(indexToDelete, 1);
+
+  // Remove module from modulesInDataBlocks
+  index = window.alpineComponent.step2.modulesInDataBlocks.findIndex((m) => m == dataBlock.module);
+  if (index != -1) {
+    window.alpineComponent.step2.modulesInDataBlocks.splice(index, 1);
+  }
 
   return true;
 }
@@ -646,8 +668,7 @@ function convertRelatedFieldToDataBlockField(relatedField) {
   //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
   //              show_in_form, value_type, value, value_text }],
   //   duplicate_detection: {fields: [<field_name>], on_duplicate},
-  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name,
-  //                     dest_name, dest_text, dest_data_block_name }]
+  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name, dest_data_block_name }]
   // }]
   let dataField = {
     name: relatedField.name,
@@ -671,8 +692,7 @@ function newDataBlock(name, text) {
   //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
   //              show_in_form, value_type, value, value_text }],
   //   duplicate_detection: {fields: [<field_name>], on_duplicate},
-  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name,
-  //                     dest_name, dest_text, dest_data_block_name }]
+  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name, dest_data_block_name }]
   // }]
   return {
     name: name,

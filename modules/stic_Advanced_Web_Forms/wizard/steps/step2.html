@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <!--       data-attribute="x-on:change='treeToggleAllModules(step2.treeShowAllModules)'" -->
 <nav class="wizard-sidebar bg-light border-end p-2 flex-shrink-0">
-  <h3 x-text="translate('LBL_MODULES')"></h3>
+  <h3 x-text="translate('LBL_RELATIONSHIPS')"></h3>
   <div
     class="text-muted form-check form-switch"
     id="switch_TreeAllModules"
@@ -26,12 +26,11 @@
   <h3 class="mb-2" x-text="translate('LBL_DATABLOCKS')"></h3>
   <div class="flex-fill border rounded p-2 bg-white">
     <!-- Main Content -->
-    <div class="card p-4">
-      <template x-for="(item, key) in formConfig.data_blocks">
-        <div class="card mb-4" :x-data="{item: item, key: key}">
-          <div class="card-body">
-            <div class="card-title">
-              <div class="d-flex justify-content-between">
+    <template x-for="(item, key) in formConfig.data_blocks">
+      <div class="card" :x-data="{item: item, key: key}">
+        <div class="card-body">
+          <div class="card-title">
+            <div class="d-flex justify-content-between">
               <h4
                 :id="'dataBlockTitleEdit-'+item.name"
                 data-model="item.text"
@@ -41,60 +40,59 @@
               <template x-if="'required' in item && typeof item.required === 'function' && !item.required()">
                 <span class="btn suitepicon suitepicon-action-delete" @click="deleteDataBlock(key);"></span>
               </template>
-              </div>
-              <template x-if="item.module">
-                <h5 class="text-muted" x-text="getModuleInformation(item.module).text + ' (' + item.name + ')'"></h5>
-              </template>
             </div>
+            <template x-if="item.module">
+              <h5 class="text-muted" x-text="getModuleInformation(item.module).text + ' (' + item.name + ')'"></h5>
+            </template>
+          </div>
 
-            <div class="card-text">
-              <!-- Definición de campos -->
-              <div :id="'dataBlockFields'+item.name">
-                [Los campos del Bloque de datos]
+          <div class="card-text">
+            <!-- Definición de campos -->
+            <div :id="'dataBlockFields'+item.name">
+              [Los campos del Bloque de datos]
+              <div
+                class="mt-3"
+                :id="'dataFieldsTable'+item.name"
+                :data-objects="'item.fields'"
+                x-init="sticControls.elemTableObjects($el);"
+              ></div>
+            </div>
+            <template x-if="item.module">
+              <!-- Definición de duplicados -->
+              <div :id="'dataBlockDuplicates'+item.name">
+                [Seleccionar duplicados y acción]
                 <div
                   class="mt-3"
-                  :id="'dataFieldsTable'+item.name"
-                  :data-objects="'item.fields'"
-                  x-init="sticControls.elemTableObjects($el);"
+                  :id="'dataDuplicateTable'+item.name"
+                  :data-model="'item.duplicate_detection'"
+                  x-init="sticControls.elemTableObject($el);"
                 ></div>
               </div>
-              <template x-if="item.module">
-                <!-- Definición de duplicados -->
-                <div :id="'dataBlockDuplicates'+item.name">
-                  [Seleccionar duplicados y acción]
-                  <div
-                    class="mt-3"
-                    :id="'dataDuplicateTable'+item.name"
-                    :data-model="'item.duplicate_detection'"
-                    x-init="sticControls.elemTableObject($el);"
-                  ></div>
-                </div>
-              </template>
+            </template>
 
-              <template x-if="item.module">
-                <div
-                  :id="'dataDef_'+item.name"
-                  :data-sections="JSON.stringify([
+            <template x-if="item.module">
+              <div
+                :id="'dataDef_'+item.name"
+                :data-sections="JSON.stringify([
                                     {headerText:`translate('LBL_FIELDS') + ' (' + item.fields.length +')'`, selected:true, contentId:'dataBlockFields'+item.name},
                                     {headerText:`translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.name}
                                   ]);"
-                  x-init="sticControls.accordion($el)"
-                ></div>
-              </template>
-              <template x-if="!item.module">
-                <div
-                  :id="'dataDef_'+item.name"
-                  :data-sections="JSON.stringify([
+                x-init="sticControls.accordion($el)"
+              ></div>
+            </template>
+            <template x-if="!item.module">
+              <div
+                :id="'dataDef_'+item.name"
+                :data-sections="JSON.stringify([
                                     {headerText:`translate('LBL_FIELDS') + ' (' + item.fields.length +')'`, selected:true, contentId:'dataBlockFields'+item.name},
                                   ]);"
-                  x-init="sticControls.accordion($el)"
-                ></div>
-              </template>
-            </div>
+                x-init="sticControls.accordion($el)"
+              ></div>
+            </template>
           </div>
         </div>
-      </template>
-    </div>
+      </div>
+    </template>
 
     <!-- Details Data [DEBUG] -->
     <div x-data="{ showDetails: false}">
@@ -105,7 +103,27 @@
         data-label-text="[Mostrar Detalles]"
         x-init="sticControls.fieldCheckbox($el);"
       ></div>
-      <div class="card p-4" x-show="showDetails">
+      <div class="card p-2" x-show="showDetails">
+        <!-- Relationships in Data Blocks -->
+        <div id="detailsRelDataBlocks">
+          <div
+            class="mt-3"
+            id="relDataBlocksTable"
+            data-model="step2.relationshipsInDataBlocks"
+            x-init="sticControls.elemTableArray($el);"
+          ></div>
+        </div>
+
+        <!-- Modules in Data Blocks -->
+        <div id="detailsModulesDataBlocks">
+          <div
+            class="mt-3"
+            id="modulesDataBlocksTable"
+            data-model="step2.modulesInDataBlocks"
+            x-init="sticControls.elemTableArray($el);"
+          ></div>
+        </div>
+
         <!-- Data Blocks -->
         <div id="detailsDataBlocks">
           <div
@@ -188,7 +206,9 @@
         <div
           id="details"
           :data-sections="JSON.stringify([
-                          {headerText:`'[Bloques de datos]'`, selected:true, contentId:'detailsDataBlocks'},
+                          {headerText:`'[Relaciones en Bloques de datos]'`, selected:true, contentId:'detailsRelDataBlocks'},
+                          {headerText:`'[Módulos en Bloques de datos]'`, selected:false, contentId:'detailsModulesDataBlocks'},
+                          {headerText:`'[Bloques de datos]'`, selected:false, contentId:'detailsDataBlocks'},
                           {headerText:`'[Nodo seleccionado]'`, selected:false, contentId:'detailsNode'},
                         ]);"
           x-init="sticControls.tabs($el)"

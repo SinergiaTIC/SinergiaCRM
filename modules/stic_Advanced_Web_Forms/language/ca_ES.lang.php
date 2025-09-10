@@ -101,6 +101,7 @@ $mod_strings = array (
   'LBL_DATABLOCKS' => 'Bloques de datos',
   'LBL_DATABLOCK' => 'Bloque de datos',
   'LBL_DATABLOCK_DETACHED' => 'Datos no enlazados',
+  'LBL_RELATIONSHIPS' => 'Releciones',
   'LBL_MODULES' => 'Módulos',
   'LBL_MODULE' => 'Módulo',
   'LBL_FIELDS' => 'Campos',

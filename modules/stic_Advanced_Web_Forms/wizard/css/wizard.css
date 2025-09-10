@@ -1,154 +1,174 @@
 #wizard-section-title {
-    text-transform: uppercase;
-    margin-top: 1rem;
+  text-transform: uppercase;
+  margin-top: 1rem;
 }
 
 .wizard-container {
-    height: 700px;
-    overflow-y: auto;
-    margin: 0 0 1em 0;
+  height: 700px;
+  overflow-y: auto;
+  margin: 0 0 1em 0;
 }
 
-.wizard-nav .button[disabled], 
+.wizard-nav .button[disabled],
 .wizard-nav .button[disabled]:hover {
-    background-color: #828282 !important;
-    cursor: not-allowed;
+  background-color: #828282 !important;
+  cursor: not-allowed;
 }
 
 .input-group .btn {
-    margin: 0 0 0 3px !important;
+  margin: 0 0 0 3px !important;
 }
 
 .row {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-select, textarea {
-    max-width: 100% !important;
+select,
+textarea {
+  max-width: 100% !important;
 }
 
-textarea, .selectize-control {
-    width: 100% !important;
+textarea,
+.selectize-control {
+  width: 100% !important;
 }
 
-.form-control, .form-select {
-    line-height: 20px;
-    min-height: 34px;
-    padding: 5px;
-    font-size: 1em;
+.form-control,
+.form-select {
+  line-height: 20px;
+  min-height: 34px;
+  padding: 5px;
+  font-size: 1em;
 }
 
 .form-select.selectize-control {
-    height: auto !important;
-    border: none;
-    padding: 0;
+  height: auto !important;
+  border: none;
+  padding: 0;
 }
 
 .selectize-input.focus {
-    border-color:#86b7fe !important;
-    outline:0;
-    box-shadow:0 0 0 .25rem rgba(13,110,253,.25)
+  border-color: #86b7fe !important;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 .jstree-icon {
-    background-image: none !important;
+  background-image: none !important;
 }
 
 .wizard-sidebar {
-    display: flex;
-    flex-direction: column;
-    resize: horizontal; 
-    overflow: hidden; 
-    width: 250px; 
-    min-width: 150px; 
-    max-width: 600px
+  display: flex;
+  flex-direction: column;
+  resize: horizontal;
+  overflow: hidden;
+  width: 250px;
+  min-width: 150px;
+  max-width: 600px;
 }
 
 .wizard-main {
-    overflow: auto; 
+  overflow: auto;
 }
 
 .wizard-tree {
-    flex: 1;
-    overflow: auto;
+  flex: 1;
+  overflow: auto;
 }
 
 .suitepicon {
-    color: inherit;
+  color: inherit;
 }
 
-h3, h4 {
-    font-weight: inherit;
+h3,
+h4 {
+  font-weight: inherit;
 }
 
+.card {
+  margin-bottom: 5px;
+}
 .card-title {
-    font-weight: bold;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.card-body {
+  padding: 5px;
+}
+
+.stic-tree-item.selected {
+  font-weight: bold;
 }
 
 .accordion-button {
-    font-size: inherit;
-    font-weight: bold;
-    color: inherit;
-    background-color: #e9ecef;
+  font-size: inherit;
+  font-weight: bold;
+  color: inherit;
+  background-color: #e9ecef;
+  padding: 5px;
 }
 
 .accordion-button:not(.collapsed) {
-    font-weight: bolder;
-    color: inherit;
-    background-color: #dee2e6;
+  font-weight: bolder;
+  color: inherit;
+  background-color: #dee2e6;
+}
+
+.accordion-body {
+  padding: 5px;
 }
 
 /* TABS */
 /* Amaguem els radio buttons originals */
 .stic-tab input {
-    display: none;
+  display: none;
 }
 
 /* Estil per a les etiquetes, que seran les nostres "pestanyes" */
 .stic-tab label {
-    /* Propietats bàsiques per semblar un botó */
-    display: block;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 0.25rem 0.25rem 0 0; /* Arrodoniment superior */
-    
-    /* Estil inactiu */
-    background-color: #dee2e6; /* #f8f9fa Gris clar, típic de pestanyes inactives */
-    color: #495057;
-    border-color: #dee2e6 #dee2e6 #fff;
-    margin-bottom: -1px; /* Per a que es solapi amb el contenidor del panell */
-    margin-right: 1px;
-    margin-left: 1px;
+  /* Propietats bàsiques per semblar un botó */
+  display: block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 0.25rem 0.25rem 0 0; /* Arrodoniment superior */
+
+  /* Estil inactiu */
+  background-color: #dee2e6; /* #f8f9fa Gris clar, típic de pestanyes inactives */
+  color: #495057;
+  border-color: #dee2e6 #dee2e6 #fff;
+  margin-bottom: -1px; /* Per a que es solapi amb el contenidor del panell */
+  margin-right: 1px;
+  margin-left: 1px;
 }
 
 /* Estil quan la pestanya està seleccionada (el radio button està "checked") */
 .stic-tab input:checked + label {
-    /* Estil actiu */
-    background-color: #fff;
-    /* border-color: #dee2e6 #dee2e6 #fff; */
-    border-color: #0d6efd #dee2e6 #fff;
-    border-top-width: 2px;
-    color: #495057;
-    font-weight: 500;
+  /* Estil actiu */
+  background-color: #fff;
+  /* border-color: #dee2e6 #dee2e6 #fff; */
+  border-color: #0d6efd #dee2e6 #fff;
+  border-top-width: 2px;
+  color: #495057;
+  font-weight: 500;
 }
 
 /* Efecte visual quan es passa el ratolí per sobre */
 .stic-tab label:hover {
-    background-color: #e9ecef;
-    border-color: #e9ecef #e9ecef #dee2e6;
+  background-color: #e9ecef;
+  border-color: #e9ecef #e9ecef #dee2e6;
 }
 
 /* Estils per al contenidor dels radio buttons */
 .stic-tabs {
-    border-bottom: 1px solid #dee2e6;
-    display: flex; /* Per assegurar que les pestanyes estiguin en una sola línia */
-    margin-bottom: 0 !important; /* Per a que el panell de sota s'enganxi */
+  border-bottom: 1px solid #dee2e6;
+  display: flex; /* Per assegurar que les pestanyes estiguin en una sola línia */
+  margin-bottom: 0 !important; /* Per a que el panell de sota s'enganxi */
 }
 
 /* Estil per al contenidor del panell de contingut */
 .stic-tabcontent {
-    border: 1px solid #dee2e6;
-    border-top: none; /* Sense la vora superior, ja que l'etiqueta la tapa */
-    padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-top: none; /* Sense la vora superior, ja que l'etiqueta la tapa */
+  padding: 1rem;
 }
