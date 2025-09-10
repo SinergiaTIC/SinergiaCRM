@@ -1,4 +1,4 @@
-var sticControls = class sticControls {
+class sticControls {
   static _insertComponent($el, htmlString) {
     if (!$el || !htmlString) {
       console.error("Container or html not defined");
@@ -12,7 +12,7 @@ var sticControls = class sticControls {
     Alpine.initTree($el);
   }
   static _addSectionsToComponent($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
 
     // Sections: [{ headerText, selected, contentId }]
     let sections = JSON.parse($el.dataset.sections ?? "[]");
@@ -31,7 +31,7 @@ var sticControls = class sticControls {
   }
 
   static _label($el, addColon = true) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let label = $el.dataset.label ?? "";
     let labelText = label != "" ? `translate('${label}')` : `'${$el.dataset.labelText}'` ?? "";
     if (labelText != "") {
@@ -52,7 +52,7 @@ var sticControls = class sticControls {
   }
 
   static _text($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let value = $el.dataset.value ?? "";
     let isRequired = $el.hasAttribute("required");
@@ -64,7 +64,7 @@ var sticControls = class sticControls {
   }
 
   static _textarea($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let value = $el.dataset.value ?? "";
     let isRequired = $el.hasAttribute("required");
@@ -76,7 +76,7 @@ var sticControls = class sticControls {
   }
 
   static _checkbox($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let value = $el.dataset.value ?? "";
     let attribute = $el.dataset.attribute ?? "";
@@ -86,7 +86,7 @@ var sticControls = class sticControls {
   }
 
   static _radio($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let value = $el.dataset.value ?? "";
     let attribute = $el.dataset.attribute ?? "";
@@ -96,7 +96,7 @@ var sticControls = class sticControls {
   }
 
   static _select($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let value = $el.dataset.value ?? "";
     let isRequired = $el.hasAttribute("required");
@@ -104,11 +104,11 @@ var sticControls = class sticControls {
     let map = $el.dataset.map ?? "";
     let mapProperty = $el.dataset.mapProperty ?? "";
     let prop = mapProperty != "" ? `.${mapProperty}` : "";
-    let multiselect = $el.dataset.multiselect ?? "";
+    let multiple = $el.hasAttribute("data-multiple") ? "multiple='multiple'" : "";
     let attribute = $el.dataset.attribute ?? "";
 
     return `
-    <select class="form-select" id="${id}" ${required} x-model="${model}" value="${value}" ${attribute}
+    <select class="form-select" id="${id}" ${required} ${multiple} x-model="${model}" value="${value}" ${attribute}
       x-init="$nextTick(() => {
         let select = $('#${id}').selectize({ placeholder: '', onChange: (value) => { ${model} = value }})[0].selectize;
         select.setValue(${model});
@@ -120,8 +120,8 @@ var sticControls = class sticControls {
   }
 
   static _popup($el) {
-    let idName = this._getId($el);
-    let idId = this._getId($el, "_id");
+    let idName = sticControls._getId($el);
+    let idId = sticControls._getId($el, "_id");
     let modelName = $el.dataset.modelName ?? "";
     let modelId = $el.dataset.modelId ?? "";
     let module = $el.dataset.module ?? "";
@@ -148,7 +148,7 @@ var sticControls = class sticControls {
   }
 
   static _tableArray($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let attribute = $el.dataset.attribute ?? "";
 
@@ -178,7 +178,7 @@ var sticControls = class sticControls {
   }
 
   static _listObject($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let attribute = $el.dataset.attribute ?? "";
 
@@ -206,7 +206,7 @@ var sticControls = class sticControls {
   }
 
   static _tableObjects($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let objects = $el.dataset.objects ?? "";
     let showRow = $el.dataset.showRow ?? "";
     let xShowRow = showRow != "" ? `x-show="${showRow}"` : "";
@@ -246,7 +246,7 @@ var sticControls = class sticControls {
   }
 
   static _spanOrEdit($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
     let model = $el.dataset.model ?? "";
     let condition = $el.dataset.condition ?? "true";
     let attribute = $el.dataset.attribute ?? "";
@@ -268,12 +268,12 @@ var sticControls = class sticControls {
   }
 
   static _accordion($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
 
     // Sections: [{ headerText, selected, contentId }]
     let sections = JSON.parse($el.dataset.sections ?? "[]");
     let attribute = $el.dataset.attribute ?? "";
-    let open = `${id.replace(/-/g, '')}open`;
+    let open = `${id.replace(/-/g, "")}open`;
 
     let html = `
     <div class="accordion" id="${id}" ${attribute}>`;
@@ -297,7 +297,7 @@ var sticControls = class sticControls {
           class="accordion-collapse collapse"
           aria-labelledby="${id}_Header_${i}"
         >
-          <div id="${id}_Body_${i}" class="accordion-body overflow-auto"> </div>
+          <div id="${id}_Body_${i}" class="accordion-body"> </div>
         </div>
       </div>
       `;
@@ -309,12 +309,12 @@ var sticControls = class sticControls {
   }
 
   static _tabs($el) {
-    let id = this._getId($el);
+    let id = sticControls._getId($el);
 
     // Sections: [{ headerText, selected, contentId }]
     let sections = JSON.parse($el.dataset.sections ?? "[]");
     let attribute = $el.dataset.attribute ?? "";
-    let selected = `${id.replace(/-/g, '')}selected`;
+    let selected = `${id.replace(/-/g, "")}selected`;
 
     let html = `
     <div x-data="{ ${selected}: '0' }">
@@ -330,7 +330,7 @@ var sticControls = class sticControls {
     html += `
       </div>`;
     for (let i = 0; i < sections.length; i++) {
-      html+= `
+      html += `
       <div id="${id}_Body_${i}" class="stic-tabcontent overflow-auto" x-show="${selected} == '${i}'"> </div>`;
     }
     html += `
@@ -339,56 +339,56 @@ var sticControls = class sticControls {
   }
 
   static fieldText($el) {
-    this._insertComponent($el, this._label($el) + this._required($el) + this._text($el));
+    sticControls._insertComponent($el, sticControls._label($el) + sticControls._required($el) + sticControls._text($el));
   }
 
   static fieldTextarea($el) {
-    this._insertComponent($el, this._label($el) + this._required($el) + this._textarea($el));
+    sticControls._insertComponent($el, sticControls._label($el) + sticControls._required($el) + sticControls._textarea($el));
   }
 
   static fieldSelect($el) {
-    this._insertComponent($el, this._label($el) + this._required($el) + this._select($el));
+    sticControls._insertComponent($el, sticControls._label($el) + sticControls._required($el) + sticControls._select($el));
   }
 
   static fieldCheckbox($el) {
-    this._insertComponent($el, this._checkbox($el) + this._label($el, false));
+    sticControls._insertComponent($el, sticControls._checkbox($el) + sticControls._label($el, false));
   }
 
   static fieldRadio($el) {
-    this._insertComponent($el, this._radio($el) + this._label($el, false));
+    sticControls._insertComponent($el, sticControls._radio($el) + sticControls._label($el, false));
   }
 
   static fieldPopup($el) {
-    this._insertComponent($el, this._label($el, false) + this._popup($el));
+    sticControls._insertComponent($el, sticControls._label($el, false) + sticControls._popup($el));
   }
 
   static elemTableObjects($el) {
-    this._insertComponent($el, this._tableObjects($el));
+    sticControls._insertComponent($el, sticControls._tableObjects($el));
   }
 
   static elemListObject($el) {
-    this._insertComponent($el, this._listObject($el));
+    sticControls._insertComponent($el, sticControls._listObject($el));
   }
 
   static elemTableArray($el) {
-    this._insertComponent($el, this._tableArray($el));
+    sticControls._insertComponent($el, sticControls._tableArray($el));
   }
 
   static elemTableObject($el) {
-    this.elemTableArray($el);
+    sticControls.elemTableArray($el);
   }
 
   static editableText($el) {
-    this._insertComponent($el, this._spanOrEdit($el));
+    sticControls._insertComponent($el, sticControls._spanOrEdit($el));
   }
 
   static accordion($el) {
-    this._insertComponent($el, this._accordion($el));
-    this._addSectionsToComponent($el);
+    sticControls._insertComponent($el, sticControls._accordion($el));
+    sticControls._addSectionsToComponent($el);
   }
 
   static tabs($el) {
-    this._insertComponent($el, this._tabs($el));
-    this._addSectionsToComponent($el);
+    sticControls._insertComponent($el, sticControls._tabs($el));
+    sticControls._addSectionsToComponent($el);
   }
 };

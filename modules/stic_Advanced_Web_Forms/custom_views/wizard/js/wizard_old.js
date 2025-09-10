@@ -448,6 +448,10 @@ function getModuleInformation(moduleName) {
 
   return null;
 }
+// [{name, text, type, required, options, inViews}]
+function getModuleFields(moduleName) {
+  return Object.values(getModuleInformation(moduleName).fields);
+}
 
 function treeToggleAllModules(treeShowAllModules) {
   if (treeShowAllModules) {
@@ -573,6 +577,7 @@ function addDataBlockByTreeNode(node) {
     relField.value_type = "dataBlock"; // IEPA!! Les relacions poden ser dataBlock o id
     relField.value = name;
     relField.value_text = text;
+    relField.show_in_form = false;
 
     // Find field in current fields
     index = parentDataBlock.fields.findIndex((field) => field.name === relationshipSource.source_field_name);
@@ -638,6 +643,7 @@ function deleteDataBlock(indexToDelete) {
           fieldOrig.value_type = "";
           fieldOrig.value = "";
           fieldOrig.value_text = "";
+          fieldOrig.show_in_form = true;
         } else {
           // Is not required: Can be deleted
           dataBlockOrig.fields.splice(index, 1);

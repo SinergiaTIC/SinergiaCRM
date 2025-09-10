@@ -55,7 +55,7 @@ class stic_Advanced_Web_FormsViewDetail extends ViewDetail
         $this->ss->assign('readOnly', true); 
         $this->ss->assign('title', $this->getModuleTitle(false));
 
-        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/wizard/tpl/wizard.tpl');
+        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');
     }
 
 }

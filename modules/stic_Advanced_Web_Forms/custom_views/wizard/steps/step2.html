@@ -47,35 +47,81 @@
           </div>
 
           <div class="card-text">
-            <!-- Definición de campos -->
+            <!-- Fields Definition -->
             <div :id="'dataBlockFields'+item.name">
               [Los campos del Bloque de datos]
-              <div
-                class="mt-3"
-                :id="'dataFieldsTable'+item.name"
-                :data-objects="'item.fields'"
-                x-init="sticControls.elemTableObjects($el);"
-              ></div>
+              <!-- Fields Details -->
+              <div x-data="{ showDataFieldsTable: false}">
+                <div
+                  class="text-muted form-check form-switch mt-3"
+                  :id="'dataFieldsDetails'+item.name"
+                  data-model="showDataFieldsTable"
+                  data-label-text="[Mostrar Detalle]"
+                  x-init="sticControls.fieldCheckbox($el);"
+                ></div>
+                <div class="card p-2 overflow-auto" x-show="showDataFieldsTable">
+                  <div
+                    class="mt-3"
+                    :id="'dataFieldsTable'+item.name"
+                    :data-objects="'item.fields'"
+                    x-init="sticControls.elemTableObjects($el);"
+                  ></div>
+                </div>
+              </div>
             </div>
             <template x-if="item.module">
-              <!-- Definición de duplicados -->
+              <!-- Duplicate Definition -->
               <div :id="'dataBlockDuplicates'+item.name">
-                [Seleccionar duplicados y acción]
-                <div
-                  class="mt-3"
-                  :id="'dataDuplicateTable'+item.name"
-                  :data-model="'item.duplicate_detection'"
-                  x-init="sticControls.elemTableObject($el);"
-                ></div>
+                <div class="row">
+                  <!-- Action -->
+                  <div
+                    class="col-3"
+                    :id="'duplicateAction'+item.name"
+                    :data-model="'item.duplicate_detection.on_duplicate'"
+                    data-label="LBL_ONDUPLICATE_ACTION"
+                    data-map="appListStrings.stic_advanced_web_forms_datablocks_duplicate_action_list"
+                    x-init="sticControls.fieldSelect($el)"
+                  ></div>
+                  <!-- Fields -->
+                  <div
+                    class="col-9"
+                    :id="'duplicateFields'+item.name"
+                    :data-model="'item.duplicate_detection.fields'"
+                    data-label="LBL_DUPLICATE_FIELDS"
+                    :data-map="`getModuleInformation('${item.module}').fields`"
+                    data-map-property="text"
+                    data-multiple
+                    x-init="sticControls.fieldSelect($el)"
+                  ></div>
+                </div>
+                <!-- Duplicate Details -->
+                <div x-data="{ showDataDuplicateTable: false}">
+                  <div
+                    class="text-muted form-check form-switch mt-3"
+                    :id="'dataDuplicateDetails'+item.name"
+                    data-model="showDataDuplicateTable"
+                    data-label-text="[Mostrar Detalle]"
+                    x-init="sticControls.fieldCheckbox($el);"
+                  ></div>
+                  <div class="card p-2 overflow-auto" x-show="showDataDuplicateTable">
+                    <div
+                      class="mt-3"
+                      :id="'dataDuplicateTable'+item.name"
+                      :data-model="'item.duplicate_detection'"
+                      x-init="sticControls.elemTableObject($el);"
+                    ></div>
+                  </div>
+                </div>
               </div>
             </template>
 
+            <!-- Accordion Headers -->
             <template x-if="item.module">
               <div
                 :id="'dataDef_'+item.name"
                 :data-sections="JSON.stringify([
-                                    {headerText:`translate('LBL_FIELDS') + ' (' + item.fields.length +')'`, selected:true, contentId:'dataBlockFields'+item.name},
-                                    {headerText:`translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.name}
+                                    {headerText:`translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.name},
+                                    {headerText:`translate('LBL_DUPLICATE_CHECK') + ' ('+item.duplicate_detection.fields.length+' - '+item.duplicate_detection.on_duplicate+')'`, selected:false, contentId:'dataBlockDuplicates'+item.name}
                                   ]);"
                 x-init="sticControls.accordion($el)"
               ></div>

@@ -51,10 +51,14 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         echo '<link rel="stylesheet" href="SticInclude/vendor/jstree/themes/default/style.min.css" />';
         echo getVersionedScript("SticInclude/vendor/jstree/jstree.min.js");
 
+        // AWF 
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/config.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/utils.js");
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/sticControls.js");
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/css/sticControls.css") ."'>";
+
         // Wizard
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/wizard.js");
-        echo getVersionedScript("modules/stic_Advanced_Web_Forms/wizard/js/sticControls.js");
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/wizard/css/wizard.css") ."'>";
+        echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/wizard/js/wizard.js");
     }
 
     public function display()
@@ -69,7 +73,7 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         $this->ss->assign('enabledStudioModules', json_encode(getInitialModules()));
         $this->ss->assign('enabledModules', json_encode(getEnabledModules()));
 
-        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/wizard/tpl/wizard.tpl');
+        echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');
     }
 
 }
