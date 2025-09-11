@@ -128,6 +128,17 @@ if ($sourceBean->module_dir === 'Contacts') {
     $object_arr['Accounts'] = $sourceBean->account_id;
 }
 
+
+
+
+// Replace the signature placeholder with the actual signature image. 
+// As the image image placeholder is recovery encoded from the database, the pattern must be encoded too.
+$stringToreplace = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
+$replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
+
+$templateBean->description = str_replace($stringToreplace, $replaceWith, (string) $templateBean->description);
+
+
 $search = array(
     '@<script[^>]*?>.*?</script>@si', // Strip out javascript
     '@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
@@ -155,9 +166,9 @@ $replace = array(
 );
 
 // Use signature image in PDF  
-$text = str_replace('themes/SuiteP/images/SignaturePlaceholder.png', $signerBean->signature_image, $templateBean->description);
 
-$text = preg_replace($search, $replace, (string) $text);
+
+$text = preg_replace($search, $replace, (string) $templateBean->description );
 $text = preg_replace_callback(
     '/{DATE\s+(.*?)}/',
     function ($matches) {
