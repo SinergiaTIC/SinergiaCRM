@@ -320,7 +320,7 @@ HTML;
                     text: SUGAR.language.languages.app_list_strings.moduleListSingular.stic_Signatures, 
                     image : 'themes/SuiteP/images/insert-signature.png', 
                     onclick : function() {
-                        ed.execCommand('mceInsertContent', false, '<span class="signature" title="Aqui se mostrára la firma" style="background-color:#f7d18f;border: 1px dotted orange; display: inline-flex; width: 150px; height: 75px; padding: 2px 5px; box-sizing: border-box; vertical-align: top;">'+SUGAR.language.languages.app_list_strings.moduleListSingular.stic_Signatures+'</span>');
+                        ed.execCommand('mceInsertContent', false, '<img class="signature" width="200px" src="themes/SuiteP/images/SignaturePlaceholder.png">');
                     }
                 });
 
