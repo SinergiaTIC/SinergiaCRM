@@ -165,8 +165,6 @@ $replace = array(
     '<br>',
 );
 
-// Use signature image in PDF  
-
 
 $text = preg_replace($search, $replace, (string) $templateBean->description );
 $text = preg_replace_callback(
