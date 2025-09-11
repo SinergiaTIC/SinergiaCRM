@@ -144,6 +144,10 @@ class stic_BookingsViewEdit extends ViewEdit
             $dow[] = array("index" => $day_index, "label" => $app_list_strings['dom_cal_day_short'][$day_index + 1]);
         }
 
+        $typeFieldDisabled = false;
+        if (!empty($this->bean->id) && !empty($this->bean->code)) {
+            $typeFieldDisabled = true;
+        }
 
         // Add the resources template
         $this->ev->defs['templateMeta']['form']['footerTpl'] = 'modules/stic_Bookings/tpls/EditViewFooter.tpl';
@@ -164,6 +168,7 @@ class stic_BookingsViewEdit extends ViewEdit
         echo "<script>
             var config_resource_fields = $config_resource_fields_json;
             var config_place_fields = $config_place_fields_json;
+            var typeFieldDisabled = " . ($typeFieldDisabled ? 'true' : 'false') . ";
         </script>";
         
         echo '<link rel="stylesheet" href="include/javascript/selectize/selectize.bootstrap3.css">';
@@ -219,11 +224,66 @@ class stic_BookingsViewEdit extends ViewEdit
                 $this->bean->place_booking = true; 
             }
         }
+        if (isset($_REQUEST['errorMessage'])) {
+            $message = urldecode($_REQUEST['errorMessage']);
+            echo <<<SCRIPT
+            <script>
+                $(document).ready(function() {
+                    alert('{$message}');
+                });
+            </script>
+SCRIPT;
+        }
+
         parent::display();
 
         SticViews::display($this);
         echo getVersionedScript("SticInclude/vendor/jqColorPicker/jqColorPicker.min.js");
         echo getVersionedScript("modules/stic_Bookings/Utils.js");
+        
+        if ($typeFieldDisabled) {
+            echo <<<SCRIPT
+            <script>
+            $(document).ready(function() {
+                // Disable the repeat_type field dropdown
+                $('#repeat_type').prop('disabled', true);
+                $('#repeat_type').addClass('readonly');
+                
+                // Add visual indication that field is readonly
+                $('#repeat_type').css({
+                    'background-color': '#f5f5f5',
+                    'color': '#666',
+                    'cursor': 'not-allowed'
+                });
+                
+                // Disable all repeat options section
+                $('#repeat_options input, #repeat_options select').prop('disabled', true);
+                $('#repeat_options input, #repeat_options select').css({
+                    'background-color': '#f5f5f5',
+                    'color': '#666',
+                    'cursor': 'not-allowed'
+                });
+                
+                // Disable checkboxes in repeat_dow section
+                $('[name^="repeat_dow_"]').prop('disabled', true);
+                $('[name^="repeat_dow_"]').css('cursor', 'not-allowed');
+                
+                // Disable calendar trigger for repeat_until
+                $('#repeat_until_trigger').css({
+                    'opacity': '0.5',
+                    'cursor': 'not-allowed'
+                }).off('click');
+                
+                // Add a hidden input to preserve the current repeat_type value
+                var repeatTypeValue = $('#repeat_type').val();
+                if (repeatTypeValue) {
+                    $('#repeat_type').after('<input type="hidden" name="repeat_type" value="' + repeatTypeValue + '" />');
+                }
+                
+            });
+            </script>
+SCRIPT;
+        }
     }
 
     // Prepare resources data to be displayed in the editview

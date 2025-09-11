@@ -390,25 +390,27 @@ class stic_BookingsController extends SugarController
         }
     }
 
-
     public function action_save() {
         if (isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {
+            $resource_type_validation = $this->checkResourceTypes();
+            if (!$resource_type_validation['success']) {
+                $message = urlencode($resource_type_validation['message']);
+
+                $_SESSION['last_booking_request'] = $_REQUEST;
+                header("Location: index.php?module=stic_Bookings&action=EditView&loadFromSession=true&errorMessage={$message}");
+                exit();
+            }
+
             $_SESSION['last_booking_request'] = $_REQUEST; 
-            // Change: Instead of creating the records, prepare the data and store it in a session variable
             require_once 'modules/stic_Bookings/Utils.php';
-            // This new function will prepare the data without saving it
             stic_BookingsUtils::preparePeriodicBookingsForConfirmation(); 
             
-            // Redirect to the summary view for confirmation
             header("Location: index.php?module=stic_Bookings&action=bookingsAssistantSummary");
             exit(); 
         } else {
-            // Regular booking save - use parent method
             parent::action_save();
         }
-    }
-        
-    
+    }    
     /**
      * Renders the summary view with the results of the periodic creation of work calendar records
      * @return void
@@ -429,5 +431,49 @@ class stic_BookingsController extends SugarController
         exit();
     }
     
+    /**
+     * @return array
+     */
+    private function checkResourceTypes()
+    {
+        global $db, $mod_strings;
 
+        $resourceIds = $_REQUEST['resource_id'] ?? [];
+        if (empty($resourceIds) || !is_array($resourceIds)) {
+            return ['success' => true];
+        }
+
+        $containsPlace = false;
+        $containsOther = false;
+        $isPlaceBooking = isset($_REQUEST['place_booking']) && $_REQUEST['place_booking'] == '1';
+
+        $escapedIds = array_map([$db, 'quoted'], $resourceIds);
+        $idsString = implode(',', $escapedIds);
+        $query = "SELECT id, type FROM stic_resources WHERE id IN ({$idsString}) AND deleted = 0";
+        $result = $db->query($query);
+        
+        if ($result) {
+            while ($row = $db->fetchByAssoc($result)) {
+                if ($row['type'] === 'place') {
+                    $containsPlace = true;
+                } else {
+                    $containsOther = true;
+                }
+            }
+        }
+        
+        if ($isPlaceBooking && $containsOther) {
+            return ['success' => false, 'message' => $mod_strings['LBL_RESOURCES_TYPE_MIX_ERROR']];
+        }
+
+        if (!$isPlaceBooking && $containsPlace) {
+            return ['success' => false, 'message' => $mod_strings['LBL_RESOURCES_TYPE_MIX_ERROR']];
+        }
+
+        if ($containsPlace && $containsOther) {
+            return ['success' => false, 'message' => $mod_strings['LBL_RESOURCES_TYPE_MIX_ERROR']];
+        }
+
+        return ['success' => true];
+    }
 }
