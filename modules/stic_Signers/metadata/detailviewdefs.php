@@ -75,10 +75,15 @@ array(
                 4 => array(
                     0 => array(
                         'name' => 'pdf_document',
+                        'customCode' => '{if $fields.pdf_document.value != \'\'}<a href="index.php?entryPoint=sticDownloadSignedPdf&signerId={$fields.id.value}" >Descargar documento firmado</a>{else}<span>No hay documento firmado</span>{/if}',
                         'studio' => 'visible',
                         'label' => 'LBL_PDF_DOCUMENT',
                     ),
-                    1 => '',
+                    1 => array(
+                        'name' => 'pdf_doc_c',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PDF_DOC',
+                    ),
                 ),
                 5 => array(
                     0 => 'description',

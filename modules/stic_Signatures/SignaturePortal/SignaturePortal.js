@@ -418,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: new URLSearchParams(data),
                 }).then(response => {
                     if (!response.ok) throw new Error('Network or server error');
+                    console.log('Response status:', response);
                     return response.json();
                 }).then(data => {
                     console.log('Signature data sent successfully:', data);

@@ -410,15 +410,18 @@ class stic_SignaturesUtils
                 return ['success' => false, 'message' => 'Failed to save signature data.'];
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to save signature data for Signer ID: {$signerBean->id}");
             } else {
+                require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
+                // Generate the signed PDF after saving the signature
+                sticGenerateSignedPdf::generateSignedPdf($signerBean->id);
+
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
-                stic_SignatureLogUtils::logSignatureAction('SIGNED_HANDWRITTEN_MODE', $signerBean->id, 'SIGNER' );
+                stic_SignatureLogUtils::logSignatureAction('SIGNED_HANDWRITTEN_MODE', $signerBean->id, 'SIGNER');
                 return ['success' => true, 'message' => 'Signature data saved successfully.'];
             }
         }
         return ['success' => false, 'message' => 'Error saving signature data.'];
     }
-
 
     /**
      * Accepts the document for a given signer in button mode.
@@ -440,7 +443,7 @@ class stic_SignaturesUtils
             } else {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
-                stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER' );
+                stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER');
                 return ['success' => true, 'message' => 'Document accepted successfully.'];
             }
         }
