@@ -40,35 +40,50 @@ array(
                 ),
                 1 => array(
                     0 => array(
-                        'name' => 'signature_date',
-                        'label' => 'LBL_SIGNATURE_DATE',
+                        'name' => 'parent_name',
+                        'studio' => 'visible',
+                        'label' => 'LBL_FLEX_RELATE',
                     ),
                     1 => array(
+                        'name' => 'status',
+                        'studio' => 'visible',
+                        'label' => 'LBL_STATUS',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
                         'name' => 'signature_image',
                         'studio' => 'visible',
                         'customCode' => '{if $fields.signature_image.value != \'\'}<img src="{$fields.signature_image.value}" alt="Signature Image" style="max-width:250px; max-height:100px;">{/if}',
                         'label' => 'LBL_SIGNATURE_IMAGE',
                     ),
-                ),
-                2 => array(
-                    0 => '',
                     1 => array(
-                        'name' => 'parent_name',
-                        'studio' => 'visible',
-                        'label' => 'LBL_FLEX_RELATE',
+                        'name' => 'signature_date',
+                        'label' => 'LBL_SIGNATURE_DATE',
                     ),
                 ),
                 3 => array(
-                    0 => 'description',
+                    0 => array(
+                        'name' => 'phone',
+                        'label' => 'LBL_PHONE',
+                    ),
                     1 => array(
-                        'name' => 'stic_signatures_stic_signers_name',
+                        'name' => 'email_address',
+                        'label' => 'LBL_EMAIL_ADDRESS',
                     ),
                 ),
                 4 => array(
                     0 => array(
-                        'name' => 'preview',
-                        'customCode' => '<div id=\'preview-container\'><button class=\'button\' type=\'button\' href=\'#\' onclick=\'previewSignature();\'><i class=\'glyphicon glyphicon-eye-open\'></i> Mostrar</button></div>',
-                        'label' => 'LBL_SIGNER_PREVIEW',
+                        'name' => 'pdf_document',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PDF_DOCUMENT',
+                    ),
+                    1 => '',
+                ),
+                5 => array(
+                    0 => 'description',
+                    1 => array(
+                        'name' => 'stic_signatures_stic_signers_name',
                     ),
                 ),
             ),
