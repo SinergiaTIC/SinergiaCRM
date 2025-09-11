@@ -170,7 +170,7 @@ $(document).ready(function() {
         }
 
         .BookingRepeatForm td:first-child {
-            width: 25% !important;
+            width: 26% !important;
             white-space: nowrap;
             padding-right: 15px;
             text-align: left;
