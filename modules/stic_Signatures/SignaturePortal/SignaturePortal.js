@@ -418,7 +418,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: new URLSearchParams(data),
                 }).then(response => {
                     if (!response.ok) throw new Error('Network or server error');
-                    console.log('Response status:', response);
                     return response.json();
                 }).then(data => {
                     console.log('Signature data sent successfully:', data);
@@ -431,10 +430,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button id="closeMessageBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
                         </div>
                     `;
+                    
                     document.body.appendChild(successMessage);
                     document.getElementById('closeMessageBtn').addEventListener('click', () => {
                         successMessage.remove();
+                        window.location.reload();
                     });
+
                 }).catch(error => {
                     console.error('Error sending signature data:', error);
                     const warningMessage = document.createElement('div');

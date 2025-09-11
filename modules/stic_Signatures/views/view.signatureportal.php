@@ -75,6 +75,15 @@ class stic_SignaturePortal extends SugarView
 
         $this->ss->assign('SIGNER_ID', $signerBean->id);
 
+        $this->ss->assign('STATUS', $signerBean->status);
+
+        // Assign signed PDF URL and download URL if signed
+        if ($signerBean->status === 'signed') {
+            $signedPdfUrl = $sugar_config['site_url'] .'/'. $sugar_config['upload_dir'] . '/' . $signerBean->id . '_signed.pdf';
+            $dowwnloadPdfUrl = "{$sugar_config['site_url']}/index.php?entryPoint=sticDownloadSignedPdf&signerId={$signerBean->id}";
+            $this->ss->assign('SIGNED_PDF_URL', $signedPdfUrl);
+            $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
+        }
 
         $this ->ss->assign('SIGNATURE_MODE', $signatureBean->signature_mode ?? 'handwritten');
 

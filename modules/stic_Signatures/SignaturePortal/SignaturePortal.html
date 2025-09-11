@@ -42,8 +42,8 @@
             </section>
             {else}
             <div class="stic-container">
-
                 { if $SHOW_PORTAL === true }
+                { if $STATUS === 'pending' }
                 <section class="document-area">
                     <h1 class="text-3xl font-extrabold mb-6 text-center text-blue-700">Documento para Firma</h1>
                     <div id="documentContent" class="prose max-w-none document-scroll-content">
@@ -114,7 +114,7 @@
                     </div>
                 </section>
                 { /if }
-                
+
                 { if $SIGNATURE_MODE === 'button' }
                 <section id="buttonAcceptationArea">
                     <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Área de Aceptación</h2>
@@ -128,6 +128,22 @@
                     </div>
                 </section>
                 { /if }
+                { /if }
+                
+               
+                { if $STATUS === 'signed' }
+                <section class="signed-area text-center">
+                    <h1 class="text-3xl font-extrabold mb-6 text-center text-green-700">Documento Firmado</h1>
+                    <!-- <p class="text-lg text-gray-800 mb-6">
+                        El documento ha sido firmado con éxito. Gracias por su colaboración.
+                    </p> -->
+                    <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=Fit" class="w-full h-[600px] border border-gray-300 rounded-md mb-6"
+                        title="Documento Firmado"></iframe>
+                    <a href="{$DOWNLOAD_URL}" class="btn-primary" target="_blank" rel="noopener noreferrer">Descargar
+                        Documento Firmado</a>
+                </section>
+                { /if }
+
 
                 <section class="audit-trail-area">
                     <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Registros de Auditoría</h2>
@@ -146,7 +162,7 @@
                 { if $OTP_REQUIRED === true && $SHOW_PORTAL !== true }
                 <section class="otp-area max-w-md mx-auto">
                     <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Código de verificación</h2>
-                    { if isset($OTP_ERROR_MSG) && !empty($OTP_ERROR_MSG) } 
+                    { if isset($OTP_ERROR_MSG) && !empty($OTP_ERROR_MSG) }
                     <p class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
                         <strong>Error:</strong> {$OTP_ERROR_MSG}
                     </p>
