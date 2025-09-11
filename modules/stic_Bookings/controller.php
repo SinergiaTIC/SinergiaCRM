@@ -40,7 +40,9 @@ class stic_BookingsController extends SugarController
         $bookingId = $_REQUEST['bookingId'] ?? null;
         $resourceRequestId = $_REQUEST['resourceId'];
 
-        $result = $this->checkResourceAvailability($resourceRequestId, $startDate, $endDate, $bookingId);
+        require_once 'modules/stic_Bookings/Utils.php';
+
+        $result = stic_BookingsUtils::checkResourceAvailability($resourceRequestId, $startDate, $endDate, $bookingId);
 
         echo json_encode($result);
         return;
@@ -60,6 +62,8 @@ class stic_BookingsController extends SugarController
         $existingResourceIds = isset($_REQUEST['existingResourceIds']) ? $_REQUEST['existingResourceIds'] : '';
         $existingResourceIdsArray = !empty($existingResourceIds) ? explode(',', $existingResourceIds) : [];
 
+        require_once 'modules/stic_Bookings/Utils.php';
+
         if (empty($centerIds)) {
             echo json_encode(['success' => false]);
             return;
@@ -72,9 +76,9 @@ class stic_BookingsController extends SugarController
         $resources = [];
 
 
-        $resourceGenderCondition = $this->createFilterCondition($resourceGender, 'gender', $db);
-        $resourcePlaceTypeCondition = $this->createFilterCondition($resourcePlaceType, 'place_type', $db);
-        $resourcePlaceUserTypeCondition = $this->createFilterCondition($resourcePlaceUserType, 'user_type', $db);
+        $resourceGenderCondition = stic_BookingsUtils::createFilterCondition($resourceGender, 'gender', $db);
+        $resourcePlaceTypeCondition = stic_BookingsUtils::createFilterCondition($resourcePlaceType, 'place_type', $db);
+        $resourcePlaceUserTypeCondition = stic_BookingsUtils::createFilterCondition($resourcePlaceUserType, 'user_type', $db);
 
         
         $resourceNameCondition = '';
@@ -98,8 +102,9 @@ class stic_BookingsController extends SugarController
                 if (in_array($resourceId, $existingResourceIdsArray)) {
                     continue; 
                 }
-    
-                $availability = $this->checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
+
+
+                $availability = stic_BookingsUtils::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
                 
                 if ($availability['resources_allowed']) {
                     $resourceQuery = "SELECT *
@@ -239,67 +244,6 @@ class stic_BookingsController extends SugarController
         }
         
         return $value;
-    }
-    public function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId)
-    {
-        global $current_user;
-
-        $resourcesIds = array();
-        if ($resourceId) {
-            // If a single resource id is provided, will only check that resource
-            $resourcesIds[] = $resourceId;
-        } else if ($bookingId) {
-            // If a single resource id is not provided, will check all resources attached to the booking
-            $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
-            if ($booking && $booking->load_relationship('stic_resources_stic_bookings')) {
-                foreach ($booking->stic_resources_stic_bookings->getBeans() as $resourceBean) {
-                        $resourcesIds[] = $resourceBean->id;
-                }
-            }
-        }
-        if (empty($resourcesIds)) {
-            return array('success' => true, 'resources_allowed' => true);
-        }
-    
-        $db = DBManagerFactory::getInstance();
-        $tzone = $current_user->getPreference('timezone');
-        $dateTimeZone = new DateTimeZone($tzone);
-
-        $timeZoneOffsetHourStartDate = $startDate ? $dateTimeZone->getOffset(new DateTime($startDate)) / 3600 : 0;
-        $timeZoneOffsetHourEndDate = $endDate ? $dateTimeZone->getOffset(new DateTime($endDate)) / 3600 : 0;
-
-        // Check if there are other bookings in the period that include the required resource(s)
-        foreach ($resourcesIds as $resourceId) {
-            $query = "SELECT
-                COUNT(stic_bookings.id) AS bookingsCount
-                FROM stic_bookings
-                JOIN stic_resources_stic_bookings_c
-                    ON stic_resources_stic_bookings_c.stic_resources_stic_bookingsstic_bookings_idb=stic_bookings.id
-                WHERE stic_resources_stic_bookings_c.deleted=0
-                    AND stic_bookings.deleted=0
-                    AND stic_resources_stic_bookings_c.stic_resources_stic_bookingsstic_resources_ida='" . $resourceId . "'
-                    AND stic_bookings.id != '" . $bookingId . "'
-                    AND stic_bookings.status != 'cancelled'";
-
-            if ($startDate && $endDate) {
-                $query .= " AND TIMESTAMPDIFF(SECOND, DATE_ADD(stic_bookings.start_date, INTERVAL " . $timeZoneOffsetHourStartDate . " HOUR),'" . $endDate . "') > 0
-                            AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', DATE_ADD(stic_bookings.end_date, INTERVAL " . $timeZoneOffsetHourEndDate . " HOUR)) > 0 ";
-            }
-
-            if ($res = $db->query($query)) {
-                $row = $db->fetchByAssoc($res);
-                if ($row['bookingsCount'] > 0) {
-                    // Requested resource(s) is(are) not available
-                    return array('success' => true, 'resources_allowed' => false);
-                }
-            } else {
-                // Action unsuccessfully completed
-                return array('success' => false, 'resources_allowed' => $res);
-            }
-        }
-
-        // Requested resource(s) is(are) available
-        return array('success' => true, 'resources_allowed' => true);
     }
     public function action_getResourceTypes()
     {
@@ -446,36 +390,6 @@ class stic_BookingsController extends SugarController
         }
     }
 
-    public function createFilterCondition($filterValue, $columnName, $db) {
-        if (empty($filterValue)) {
-            return '';
-        }
-        
-        $filters = [];
-        $hasNonEmpty = false;
-        
-        $filterArray = is_array($filterValue) ? $filterValue : [$filterValue];
-        
-        foreach ($filterArray as $value) {
-            if (trim($value) === '') {
-                $filters[] = "$columnName = ''";
-            } else {
-                $valueSafe = $db->quote($value);
-                $filters[] = "$columnName = ".$db->quoted($valueSafe)."";
-                $hasNonEmpty = true;
-            }
-        }
-        
-        if (empty($filters)) {
-            return '';
-        }
-        
-        if ($hasNonEmpty && !in_array("$columnName = ''", $filters)) {
-            $filters[] = "$columnName = ''";
-        }
-        
-        return " AND (" . implode(" OR ", $filters) . ")";
-    }
 
     public function action_save() {
         if (isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {

@@ -127,7 +127,11 @@ class stic_BookingsUtils
     private static function generateWeeklyDates($startDay, $interval, $count, $until, $requestData)
     {
         $dates = [];
-        $dow = self::getDaysOfWeekFromRequest($requestData);
+        $dow = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $dow[$i] = ($requestData['repeat_dow_' . $i] ?? '') == 'on' ? 1 : 0;
+        }
+        $dow[7] = ($requestData['repeat_dow_0'] ?? '') == 'on' ? 1 : 0; // Sunday
         $times = array_sum($dow);
 
         if ($times === 0) {
@@ -182,19 +186,6 @@ class stic_BookingsUtils
             $currentDate = date('Y-m-d H:i:s', strtotime($currentDate . " + $interval weeks"));
         }
         return $dates;
-    }
-
-    /**
-     * Helper function to get the days of the week from the request.
-     */
-    private static function getDaysOfWeekFromRequest($requestData)
-    {
-        $dow = [];
-        for ($i = 1; $i <= 6; $i++) {
-            $dow[$i] = ($requestData['repeat_dow_' . $i] ?? '') == 'on' ? 1 : 0;
-        }
-        $dow[7] = ($requestData['repeat_dow_0'] ?? '') == 'on' ? 1 : 0; // Sunday
-        return $dow;
     }
 
     /**
@@ -277,8 +268,13 @@ class stic_BookingsUtils
     {
         $controller = new stic_BookingsController();
         $resourceIds = $requestData['resource_id'] ?? [];
-        $resourceNames = self::getResourceNames($resourceIds, 'stic_Resources');
-
+        $resourceNames = [];
+        foreach ($resourceIds as $resourceId) {
+            $resource = BeanFactory::getBean('stic_Resources', $resourceId);
+            if ($resource) {
+                $names[$resourceId] = $resource->name;
+            }
+        }
         $summary = [
             'global' => ['totalRecordsProcessed' => 0, 'totalRecordsCreated' => 0, 'totalRecordsNotCreated' => 0],
             'resources' => self::initializeResourceSummary($resourceIds, $resourceNames),
@@ -299,7 +295,15 @@ class stic_BookingsUtils
             if ($availability['allResourcesAvailable']) {
                 self::updateBatchAvailability($availableResourcesInThisBatch, $resourceIds, $currentStartDatePhp, $currentEndDatePhp);
                 $bookingCounter++;
-                $bookingName = self::generateBookingName($requestData['name'] ?? '', $code, $bookingCounter);
+                
+                if (empty($requestData['name'] ?? '')) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Bookings');
+                    $bookingName= $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . str_pad($firstBookingCode, 5, "0", STR_PAD_LEFT) . ' (' . $bookingCounter . ')';
+                } else {
+                    $bookingName =  $requestData['name'] . ' (' . $bookingCounter . ')';
+                }
+        
+                
                 $code++;
                 $bookingRecord = self::createBookingRecord($aux[$i], $duration, $requestData, $resourceIds, $resourceNames, $availability['allResourcesAvailable'], $bookingName, $firstBookingCode, $timedate, $currentUser);
                 $bookingsToConfirm[] = $bookingRecord;
@@ -318,21 +322,6 @@ class stic_BookingsUtils
         ];
     }
     
-    /**
-     * Gets resource names from their IDs.
-     */
-    private static function getResourceNames($resourceIds, $module)
-    {
-        $names = [];
-        foreach ($resourceIds as $resourceId) {
-            $resource = BeanFactory::getBean($module, $resourceId);
-            if ($resource) {
-                $names[$resourceId] = $resource->name;
-            }
-        }
-        return $names;
-    }
-
     /**
      * Initializes the resource summary array.
      */
@@ -361,7 +350,7 @@ class stic_BookingsUtils
         $allResourcesAvailable = true;
 
         foreach ($resourceIds as $resourceId) {
-            $availabilityDb = $controller->checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
+            $availabilityDb =self::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
             $availabilityBatch = self::checkBatchAvailability($availableResourcesInThisBatch, $resourceId, $startDate, $endDate);
             
             $isResourceAvailable = $availabilityDb['resources_allowed'] && $availabilityBatch;
@@ -405,18 +394,6 @@ class stic_BookingsUtils
             }
             $availableResourcesInThisBatch[$resourceId][] = ['start' => $startDate, 'end' => $endDate];
         }
-    }
-
-    /**
-     * Generates the booking name.
-     */
-    private static function generateBookingName($name, $code, $counter)
-    {
-        if (empty($name)) {
-            $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Bookings');
-            return $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . str_pad($code, 5, "0", STR_PAD_LEFT) . ' (' . $counter . ')';
-        }
-        return $name . ' (' . $counter . ')';
     }
 
     /**
@@ -584,7 +561,6 @@ class stic_BookingsUtils
                 }
 
                 $bookingBean->assigned_user_id = $current_user->id;
-                $createdBookingId = $bookingBean->save();
                 
                 if ($bookingBean->load_relationship('stic_resources_stic_bookings')) {
                     foreach ($booking_info['resourceIds'] as $resourceId) {
@@ -622,4 +598,97 @@ class stic_BookingsUtils
         header("Location: index.php?module=stic_Bookings&action=bookingsAssistantSummary");
         exit();
     }
+
+
+    public static function checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId)
+    {
+        global $current_user;
+
+        $resourcesIds = array();
+        if ($resourceId) {
+            // If a single resource id is provided, will only check that resource
+            $resourcesIds[] = $resourceId;
+        } else if ($bookingId) {
+            // If a single resource id is not provided, will check all resources attached to the booking
+            $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
+            if ($booking && $booking->load_relationship('stic_resources_stic_bookings')) {
+                foreach ($booking->stic_resources_stic_bookings->getBeans() as $resourceBean) {
+                        $resourcesIds[] = $resourceBean->id;
+                }
+            }
+        }
+        if (empty($resourcesIds)) {
+            return array('success' => true, 'resources_allowed' => true);
+        }
+    
+        $db = DBManagerFactory::getInstance();
+        $tzone = $current_user->getPreference('timezone');
+        $dateTimeZone = new DateTimeZone($tzone);
+
+        $timeZoneOffsetHourStartDate = $startDate ? $dateTimeZone->getOffset(new DateTime($startDate)) / 3600 : 0;
+        $timeZoneOffsetHourEndDate = $endDate ? $dateTimeZone->getOffset(new DateTime($endDate)) / 3600 : 0;
+
+        // Check if there are other bookings in the period that include the required resource(s)
+        foreach ($resourcesIds as $resourceId) {
+            $query = "SELECT
+                COUNT(stic_bookings.id) AS bookingsCount
+                FROM stic_bookings
+                JOIN stic_resources_stic_bookings_c
+                    ON stic_resources_stic_bookings_c.stic_resources_stic_bookingsstic_bookings_idb=stic_bookings.id
+                WHERE stic_resources_stic_bookings_c.deleted=0
+                    AND stic_bookings.deleted=0
+                    AND stic_resources_stic_bookings_c.stic_resources_stic_bookingsstic_resources_ida='" . $resourceId . "'
+                    AND stic_bookings.id != '" . $bookingId . "'
+                    AND stic_bookings.status != 'cancelled'";
+
+            if ($startDate && $endDate) {
+                $query .= " AND TIMESTAMPDIFF(SECOND, DATE_ADD(stic_bookings.start_date, INTERVAL " . $timeZoneOffsetHourStartDate . " HOUR),'" . $endDate . "') > 0
+                            AND TIMESTAMPDIFF(SECOND, '" . $startDate . "', DATE_ADD(stic_bookings.end_date, INTERVAL " . $timeZoneOffsetHourEndDate . " HOUR)) > 0 ";
+            }
+
+            if ($res = $db->query($query)) {
+                $row = $db->fetchByAssoc($res);
+                if ($row['bookingsCount'] > 0) {
+
+                    return array('success' => true, 'resources_allowed' => false);
+                }
+            } else {
+                return array('success' => false, 'resources_allowed' => $res);
+            }
+        }
+
+        return array('success' => true, 'resources_allowed' => true);
+    }
+    public static function createFilterCondition($filterValue, $columnName, $db) {
+        if (empty($filterValue)) {
+            return '';
+        }
+        
+        $filters = [];
+        $hasNonEmpty = false;
+        
+        $filterArray = is_array($filterValue) ? $filterValue : [$filterValue];
+        
+        foreach ($filterArray as $value) {
+            if (trim($value) === '') {
+                $filters[] = "$columnName = ''";
+            } else {
+                $valueSafe = $db->quote($value);
+                $filters[] = "$columnName = ".$db->quoted($valueSafe)."";
+                $hasNonEmpty = true;
+            }
+        }
+        
+        if (empty($filters)) {
+            return '';
+        }
+        
+        if ($hasNonEmpty && !in_array("$columnName = ''", $filters)) {
+            $filters[] = "$columnName = ''";
+        }
+        
+        return " AND (" . implode(" OR ", $filters) . ")";
+    }
+
+
 }
