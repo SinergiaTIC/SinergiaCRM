@@ -94,6 +94,11 @@ if (!empty($_REQUEST['members'])) {
 ///////////////////////////////////////////////////////////////////////////////
 ////	BUILD THE EXPORT FILE
 
+// Stic-Custom MHP 20250912 - 
+// Add a suffix that prevents files with possible names already existing in the file system from being exported, 
+// since in this case the browser adds a space between the name and the suffix it generates, which causes an error when importing the file.
+$filename .= '_' . date("ymd_His");
+// END Stic-Custom 
 ob_clean();
 printCSV($content, $filename);
 sugar_cleanup(true);
