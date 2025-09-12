@@ -94,9 +94,8 @@ if (!empty($_REQUEST['members'])) {
 ///////////////////////////////////////////////////////////////////////////////
 ////	BUILD THE EXPORT FILE
 
-// Stic-Custom MHP 20250912 - 
-// Add a suffix that prevents files with possible names already existing in the file system from being exported, 
-// since in this case the browser adds a space between the name and the suffix it generates, which causes an error when importing the file.
+// Stic-Custom MHP 20250912 - https://github.com/SinergiaTIC/SinergiaCRM/pull/789
+// Add a suffix to the name of the exported file to prevent the export process from generating files with the same name as a previous export.
 $filename .= '_' . date("ymd_His");
 // END Stic-Custom 
 ob_clean();
