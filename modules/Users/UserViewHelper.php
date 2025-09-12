@@ -309,7 +309,11 @@ class UserViewHelper
         }
 
         // If new regular user without system generated password or new portal user
-        if (((isset($enable_syst_generate_pwd) && !$enable_syst_generate_pwd && $this->usertype != 'GROUP') || $this->usertype == 'PORTAL_ONLY') && empty($this->bean->id)) {
+        // STIC CUSTOM - JCH - 2019-08-28 - Do not require password if external_auth_only is set
+        // 
+        // if (((isset($enable_syst_generate_pwd) && !$enable_syst_generate_pwd && $this->usertype != 'GROUP') || $this->usertype == 'PORTAL_ONLY') && empty($this->bean->id)) {
+        if (((isset($enable_syst_generate_pwd) && !$enable_syst_generate_pwd && $this->usertype != 'GROUP') || $this->usertype == 'PORTAL_ONLY') && empty($this->bean->id) && !$this->bean->external_auth_only) {
+        // END STIC CUSTOM
             $this->ss->assign('REQUIRED_PASSWORD', '1');
         } else {
             $this->ss->assign('REQUIRED_PASSWORD', '0');
