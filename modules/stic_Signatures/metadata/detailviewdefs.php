@@ -30,20 +30,20 @@ array (
           'field' => '30',
         ),
       ),
-      'useTabs' => true,
+      'useTabs' => false,
       'tabDefs' => 
       array (
-        'DEFAULT' => 
+        'LBL_STEP1_PANEL' => 
         array (
-          'newTab' => true,
+          'newTab' => false,
           'panelDefault' => 'expanded',
         ),
-        'LBL_EDITVIEW_PANEL2' => 
+        'LBL_STEP2_PANEL' => 
         array (
-          'newTab' => true,
+          'newTab' => false,
           'panelDefault' => 'expanded',
         ),
-        'LBL_EDITVIEW_PANEL1' => 
+        'LBL_STEP3_PANEL' => 
         array (
           'newTab' => false,
           'panelDefault' => 'expanded',
@@ -53,7 +53,39 @@ array (
     ),
     'panels' => 
     array (
-      'default' => 
+      'lbl_step1_panel' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'name' => 'pdf_template',
+            'studio' => 'visible',
+            'label' => 'LBL_PDF_TEMPLATE',
+          ),
+        ),
+      ),
+      'lbl_step2_panel' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'name' => 'main_module',
+            'studio' => 'visible',
+            'label' => 'LBL_MAIN_MODULE',
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array (
+            'name' => 'signer_path',
+            'label' => 'LBL_SIGNER_PATH',
+          ),
+        ),
+      ),
+      'lbl_step3_panel' => 
       array (
         0 => 
         array (
@@ -64,31 +96,26 @@ array (
         array (
           0 => 
           array (
-            'name' => 'type',
-            'studio' => 'visible',
-            'label' => 'LBL_TYPE',
-          ),
-          1 => 
-          array (
-            'name' => 'main_module',
-            'studio' => 'visible',
-            'label' => 'LBL_MAIN_MODULE',
-          ),
-        ),
-        2 => 
-        array (
-          0 => 
-          array (
             'name' => 'status',
             'studio' => 'visible',
             'label' => 'LBL_STATUS',
           ),
           1 => 
           array (
-            'name' => 'on_behalf_of',
+            'name' => 'type',
             'studio' => 'visible',
-            'label' => 'LBL_ON_BEHALF_OF',
+            'label' => 'LBL_TYPE',
           ),
+        ),
+        2 => 
+        array (
+          0 => 
+          array (
+            'name' => 'signature_mode',
+            'studio' => 'visible',
+            'label' => 'LBL_SIGNATURE_MODE',
+          ),
+          1 => '',
         ),
         3 => 
         array (
@@ -139,27 +166,32 @@ array (
             'name' => 'end_date',
             'label' => 'LBL_END_DATE',
           ),
-          1 => 
-          array (
-            'name' => 'email_template',
-            'studio' => 'visible',
-            'label' => 'LBL_EMAIL_TEMPLATE',
-          ),
+          1 => '',
         ),
         7 => 
         array (
           0 => 
           array (
-            'name' => 'signer_path',
-            'label' => 'LBL_SIGNER_PATH',
+            'name' => 'email_template',
+            'studio' => 'visible',
+            'label' => 'LBL_EMAIL_TEMPLATE',
           ),
           1 => 
+          array (
+            'name' => 'on_behalf_of',
+            'studio' => 'visible',
+            'label' => 'LBL_ON_BEHALF_OF',
+          ),
+        ),
+        8 => 
+        array (
+          0 => 
           array (
             'name' => 'reminder_frequency',
             'label' => 'LBL_REMINDER_FREQUENCY',
           ),
         ),
-        8 => 
+        9 => 
         array (
           0 => 
           array (
@@ -173,85 +205,9 @@ array (
             'label' => 'LBL_PDF_DOCUMENT',
           ),
         ),
-        9 => 
+        10 => 
         array (
           0 => 'description',
-        ),
-      ),
-      'lbl_editview_panel2' => 
-      array (
-        0 => 
-        array (
-          0 => 
-          array (
-            'name' => 'header',
-            'label' => 'LBL_HEADER',
-          ),
-        ),
-        1 => 
-        array (
-          0 => 
-          array (
-            'name' => 'footer',
-            'label' => 'LBL_FOOTER',
-          ),
-        ),
-      ),
-      'lbl_editview_panel1' => 
-      array (
-        0 => 
-        array (
-          0 => 
-          array (
-            'name' => 'page_size',
-            'studio' => 'visible',
-            'label' => 'LBL_PAGE_SIZE',
-          ),
-          1 => 
-          array (
-            'name' => 'orientation',
-            'studio' => 'visible',
-            'label' => 'LBL_ORIENTATION',
-          ),
-        ),
-        1 => 
-        array (
-          0 => 
-          array (
-            'name' => 'margin_left',
-            'label' => 'LBL_MARGIN_LEFT',
-          ),
-          1 => 
-          array (
-            'name' => 'margin_right',
-            'label' => 'LBL_MARGIN_RIGHT',
-          ),
-        ),
-        2 => 
-        array (
-          0 => 
-          array (
-            'name' => 'margin_top',
-            'label' => 'LBL_MARGIN_TOP',
-          ),
-          1 => 
-          array (
-            'name' => 'margin_bottom',
-            'label' => 'LBL_MARGIN_BOTTOM',
-          ),
-        ),
-        3 => 
-        array (
-          0 => 
-          array (
-            'name' => 'margin_header',
-            'label' => 'LBL_MARGIN_HEADER',
-          ),
-          1 => 
-          array (
-            'name' => 'margin_footer',
-            'label' => 'LBL_MARGIN_FOOTER',
-          ),
         ),
       ),
     ),

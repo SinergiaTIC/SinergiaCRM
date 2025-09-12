@@ -1,25 +1,25 @@
 <?php
 /**
-* This file is part of SinergiaCRM.
-* SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
-* Copyright (C) 2013 - 2023 SinergiaTIC Association
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Affero General Public License version 3 as published by the
-* Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Affero General Public License along with
-* this program; if not, see http://www.gnu.org/licenses or write to the Free
-* Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-* 02110-1301 USA.
-*
-* You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
-*/
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 
 /**
  * Represents the stic_Signatures module in SinergiaCRM.
@@ -103,9 +103,8 @@ class stic_Signatures extends Basic
 
         // Create name if empty
         if (empty($this->name)) {
-            $mainModuleName = $app_list_strings['moduleList'][$this->main_module] ?? $this->main_module; // Use existing if list entry not found
-            $typeLabel = $app_list_strings['stic_signatures_types_list'][$this->type] ?? $this->type; // Use existing if list entry not found
-            $this->name = "{$mainModuleName} - {$typeLabel} - {$this->pdf_template}";
+            $moduleName = $app_list_strings['moduleListSingular'][$this->object_name];
+            $this->name = "{$moduleName} - {$this->pdf_template}";
         }
 
         // If a PDF template is linked, set the main_module based on the PDF template's type

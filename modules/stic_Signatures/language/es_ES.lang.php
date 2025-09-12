@@ -81,6 +81,9 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF' => 'En representación',
     'LBL_PDF_DOCUMENT' => 'Documento PDF',
     'LBL_SIGNATURE_MODE' => 'Modo de firma',
+    'LBL_STEP1_PANEL' => '<b>PASO 1:</b> Seleccione plantilla PDF',
+    'LBL_STEP2_PANEL' => '<b>PASO 2:</b> Seleccione la ruta hacia la persona firmante',
+    'LBL_STEP3_PANEL' => '<b>PASO 3:</b> Configure el resto de datos del proceso de firma',
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "La fecha de activación debe ser anterior a la fecha de expiración.",
@@ -88,4 +91,7 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Firmantes añadidos correctamente',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos, ya existen o se ha producido un error',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes',
+
+
+    'LBL_NO_SIGNERS_ERROR' => 'No se han encontrado firmantes. Añade al menos un firmante para continuar.',
 );

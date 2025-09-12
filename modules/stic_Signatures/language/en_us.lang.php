@@ -81,6 +81,9 @@ $mod_strings = array(
     'LBL_EDITVIEW_PANEL1' => 'Pdf Settings',
     'LBL_EDITVIEW_PANEL2' => 'Template',
     'LBL_SIGNATURE_MODE' => 'Sign mode',
+    'LBL_STEP1_PANEL' => '<b> STEP 1:</b> Select PDF template',
+    'LBL_STEP2_PANEL' => '<b> STEP 2:</b> Select signer path',
+    'LBL_STEP3_PANEL' => '<b> STEP 3:</b> Configure the rest of the signing process data',
 
     // Messages
     'LBL_ACTIVATION_DATE_ERROR' => "The activation date must be before the expiration date.",

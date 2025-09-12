@@ -67,7 +67,20 @@ switch (viewType()) {
   case "popup":
     // Enable the 'main_module' field for editing
     setDisabledStatus('main_module', false);
-    // setDisabledStatus('signer_path',false) // This line is commented out in the original, keeping it commented.
+    setAutofill(["name"]);
+    
+    // Initially hide step 2 and step 3 panels
+    if (typeof STIC.record.name == 'undefined') {
+      $('[data-id=LBL_STEP2_PANEL]').parent('.panel').hide()
+      $('[data-id=LBL_STEP3_PANEL]').parent('.panel').hide()
+    }
+    if (STIC.record.signer_path == '') {
+      //$('[data-id=LBL_STEP2_PANEL]').parent('.panel').hide()
+      $('[data-id=LBL_STEP3_PANEL]').parent('.panel').hide()
+    }
+
+
+
     break;
   case "detail":
     // No specific custom logic for detail view in this section.
