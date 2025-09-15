@@ -70,7 +70,6 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         $this->ss->assign('title', $this->getModuleTitle(false));
 
         require_once "modules/stic_Advanced_Web_Forms/Utils.php";
-        $this->ss->assign('enabledStudioModules', json_encode(getInitialModules()));
         $this->ss->assign('enabledModules', json_encode(getEnabledModules()));
 
         echo $this->ss->fetch('modules/stic_Advanced_Web_Forms/custom_views/wizard/tpl/wizard.tpl');

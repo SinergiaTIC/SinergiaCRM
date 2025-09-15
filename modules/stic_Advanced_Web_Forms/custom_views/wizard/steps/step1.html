@@ -33,7 +33,7 @@
         id="base_module"
         data-model="bean.base_module"
         data-label="LBL_BASE_MODULE"
-        data-map="enabledStudioModules"
+        data-map="STIC.enabledModules"
         data-map-property="text"
         required
         x-init="sticControls.fieldSelect($el)"
@@ -45,7 +45,7 @@
         id="processing_mode"
         data-model="bean.processing_mode"
         data-label="LBL_PROCESSING_MODE"
-        data-map="appListStrings.stic_advanced_web_forms_processing_mode_list"
+        :data-map="utils.getList('stic_advanced_web_forms_processing_mode_list', true)"
         x-init="sticControls.fieldSelect($el)"
       ></div>
     </div>

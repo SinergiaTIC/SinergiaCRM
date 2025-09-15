@@ -1,5 +1,4 @@
 <script type="text/javascript" language="JavaScript">
-    STIC.enabledStudioModules = {$enabledStudioModules};
     STIC.enabledModules = {$enabledModules};
 </script>
 
@@ -8,9 +7,9 @@
 
 <div id="stic_panel" x-data="wizardForm(null,null,{$readOnly})" x-init="initWizard()">
     <div class="wizard-nav">
-        <button type="button" class="button" @click="Navigation.prev()" x-bind:disabled="!Navigation.enabled('prev')" x-text="utils.translate('LBL_WIZARD_PREVIOUS')"></button>
-        <button type="button" class="button" @click="Navigation.next()" x-bind:disabled="!Navigation.enabled('next')" x-text="utils.translate('LBL_WIZARD_NEXT')"></button>
-        <button type="button" class="button" @click="Navigation.finish()" x-text="utils.translate('LBL_WIZARD_FINISH')"></button>
+        <button type="button" class="button" @click="WizardNavigation.prev()" x-bind:disabled="!WizardNavigation.enabled('prev')" x-text="utils.translate('LBL_WIZARD_PREVIOUS')"></button>
+        <button type="button" class="button" @click="WizardNavigation.next()" x-bind:disabled="!WizardNavigation.enabled('next')" x-text="utils.translate('LBL_WIZARD_NEXT')"></button>
+        <button type="button" class="button" @click="WizardNavigation.finish()" x-text="utils.translate('LBL_WIZARD_FINISH')"></button>
     </div>
 
     <h2 id='wizard-section-title'></h2>
@@ -19,9 +18,9 @@
     </div>
 
     <div class="wizard-nav">
-        <button type="button" class="button" @click="Navigation.prev()" x-bind:disabled="!Navigation.enabled('prev')" x-text="utils.translate('LBL_WIZARD_PREVIOUS')"></button>
-        <button type="button" class="button" @click="Navigation.next()" x-bind:disabled="!Navigation.enabled('next')" x-text="utils.translate('LBL_WIZARD_NEXT')"></button>
-        <button type="button" class="button" @click="Navigation.finish()" x-text="utils.translate('LBL_WIZARD_FINISH')"></button>
+        <button type="button" class="button" @click="WizardNavigation.prev()" x-bind:disabled="!WizardNavigation.enabled('prev')" x-text="utils.translate('LBL_WIZARD_PREVIOUS')"></button>
+        <button type="button" class="button" @click="WizardNavigation.next()" x-bind:disabled="!WizardNavigation.enabled('next')" x-text="utils.translate('LBL_WIZARD_NEXT')"></button>
+        <button type="button" class="button" @click="WizardNavigation.finish()" x-text="utils.translate('LBL_WIZARD_FINISH')"></button>
     </div>
 
 </div>

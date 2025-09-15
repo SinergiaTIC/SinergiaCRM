@@ -33,7 +33,7 @@ class sticControls {
   static _label($el, addColon = true) {
     let id = sticControls._getId($el);
     let label = $el.dataset.label ?? "";
-    let labelText = label != "" ? `translate('${label}')` : `'${$el.dataset.labelText}'` ?? "";
+    let labelText = label != "" ? `utils.translate('${label}')` : `'${$el.dataset.labelText}'` ?? "";
     if (labelText != "") {
       if (addColon) {
         labelText += "+':'";

@@ -86,7 +86,7 @@ class stic_Advanced_Web_FormsController extends SugarController
         }
 
         // Update config_json with new config
-        $bean->configuration = json_encode($data['config']);
+        $bean->configuration = $data['config'];
         // $bean->status = 'draft';
         $bean->save();
 
@@ -103,7 +103,9 @@ class stic_Advanced_Web_FormsController extends SugarController
         header('Content-Type: application/json');
 
         require_once "modules/stic_Advanced_Web_Forms/Utils.php";
-        echo json_encode(getModuleInformation($_REQUEST['getmodule']));
+        $result = getModuleInformation($_REQUEST['getmodule'], json_decode(html_entity_decode($_REQUEST['getavailablemodules']),true));
+        $resultStr = json_encode($result, JSON_UNESCAPED_UNICODE);
+        echo $resultStr;
 
         sugar_cleanup(true);
     }

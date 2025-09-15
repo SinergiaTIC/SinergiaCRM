@@ -1,4 +1,48 @@
-class Navigation {
+function wizardForm(readOnly) {
+  return {
+    navigation: {
+      step: 1,
+      totalSteps: 4,
+    },
+
+    bean: STIC.record || {},
+    formConfig: {},
+
+    // [name, text, textSingular, inStudio, icon]
+    step1: {},
+    step2: {
+      // RelatedModule: {
+      //   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
+      //   fields: [name: {name, text, type, required, options, inViews}],
+      //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
+      // }
+      loadingTree: true,
+      treeShowAllModules: false,
+      treeSelectedData: null,
+
+      relationshipsInDataBlocks: [],
+      modulesInDataBlocks: [],
+    },
+    step3: {},
+    step4: {},
+
+    async initWizard() {
+      // Set Context accessible
+      window.alpineComponent = this;
+
+      // Set config object
+      let jsonString = "{}";
+      if (this.bean?.configuration) {
+        jsonString = utils.decodeHTMLString(this.bean.configuration);
+      }
+      this.formConfig = AWF_Configuration.fromJSON(jsonString);
+
+      // Load current Step
+      WizardNavigation.loadStep();
+    },
+  };
+}
+class WizardNavigation {
   static cacheSteps = [];
 
   static async loadStep() {
@@ -9,8 +53,8 @@ class Navigation {
       return;
     }
 
-    if (!(step in Navigation.cacheSteps)) {
-      Navigation.cacheSteps[step] = await (
+    if (!(step in WizardNavigation.cacheSteps)) {
+      WizardNavigation.cacheSteps[step] = await (
         await fetch(`modules/stic_Advanced_Web_Forms/custom_views/wizard/steps/step${step}.html`)
       ).text();
     }
@@ -18,7 +62,7 @@ class Navigation {
     $("#wizard-section-title").text(utils.translate(`LBL_WIZARD_TITLE_STEP${step}`) + ` (${step}/${totalSteps})`);
 
     let $el = document.getElementById("wizard-step-container");
-    $el.innerHTML = Navigation.cacheSteps[step];
+    $el.innerHTML = WizardNavigation.cacheSteps[step];
 
     // Initialize Alpine.js over new content
     Alpine.initTree($el);
@@ -37,22 +81,22 @@ class Navigation {
   }
 
   static prev() {
-    if (Navigation.enabled("prev")) {
+    if (WizardNavigation.enabled("prev")) {
       window.alpineComponent.navigation.step--;
-      Navigation.loadStep();
+      WizardNavigation.loadStep();
     }
   }
 
   static next() {
-    if (Navigation.enabled("next")) {
+    if (WizardNavigation.enabled("next")) {
       let allOk = true;
       document.querySelectorAll("#wizard-step-container form").forEach(function (f) {
         allOk &= f.reportValidity();
       });
       if (allOk) {
         window.alpineComponent.navigation.step++;
-        Navigation.autoSave();
-        Navigation.loadStep();
+        WizardNavigation.autoSave();
+        WizardNavigation.loadStep();
       }
     }
   }
@@ -63,7 +107,7 @@ class Navigation {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         bean: window.alpineComponent.bean,
-        config: window.alpineComponent.formConfig_json(),
+        config: window.alpineComponent.formConfig.toJSONString(),
         step: window.alpineComponent.navigation.step,
       }),
     });
@@ -92,7 +136,7 @@ class Navigation {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           bean: window.alpineComponent.bean,
-          config: window.alpineComponent.formConfig_json(),
+          config: window.alpineComponent.formConfig.toJSONString(),
           step: window.alpineComponent.navigation.step,
         }),
       }).then(() => location.reload());
@@ -100,531 +144,240 @@ class Navigation {
   }
 }
 
-function wizardForm(readOnly) {
-  return {
-    navigation: {
-      step: 1,
-      totalSteps: 4,
-    },
+class TreeNavigator {
+  // Global variable to store the jstree instance.
+  static _jstreeInstance = null;
 
-    bean: STIC.record || {},
+  static _getModuleNode(moduleName, isBaseModule = false) {
+    let data = {
+      nodeId: moduleName,
+      parentNodeId: '',
+      text: STIC.enabledModules[moduleName].textSingular,
+      isBaseModule: isBaseModule,
+      isRelationship: false,
+      moduleName: moduleName,
+      relationship: {},
+      modules: [moduleName],
+    };
 
-    // {
-    //  data_blocks: [{ name, path, text, editable_text, order, fixed_order, module, required, is_relation, parent_data_block
-    //                  fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
-    //                             show_in_form, value_type, value, value_text, validations: [{ type }]
-    //                          }],
-    //                  duplicate_detection: {fields: [<field_name>], on_duplicate}
-    //               }],
-    //   flows: [{ name,
-    //             actions: [{ order, action_name,
-    //                         params: [{name, source, value}]
-    //                      }]
-    //          }],
-    //   layout: [{ type, name,
-    //              display: {type, title},
-    //              elements: [{ type, block, name }]
-    //           }]
-    // }
+    return {
+      id: moduleName,
+      text: TreeNavigator._getTreeNodeText(data),
+      children: true, // It CAN have children
+      state: { opened: false }, // Ensures the root node is initially closed.
+      data: data,
+    };
+  }
 
-    // DataBlocks: [{
-    //   name, text, editable_text, order, fixed_order, module, required,
-    //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
-    //              show_in_form, value_type, value, value_text }],
-    //   duplicate_detection: {fields: [<field_name>], on_duplicate},
-    //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name, dest_data_block_name }]
+  static _getRootNodes(baseModuleName) {
+    let rootNodes = [];
+    // First node: base_module
+    let baseNode = TreeNavigator._getModuleNode(baseModuleName, true);
+    rootNodes.push(baseNode);
 
-    // }]
-    formConfig: {},
-    formConfig_json() {
-      return JSON.stringify(this.formConfig);
-    },
-
-    appListStrings: SUGAR.language.languages.app_list_strings,
-
-    // [moduleName: [name: ModuleName, icon: StudioIcon, text: TranslatedModuleName, textSingular: TranslatedModuleNameSingular]]
-    enabledStudioModules: STIC.enabledStudioModules,
-
-    // [name: ModuleName, text: TranslatedModuleName, textSingular: TranslatedModuleNameSingular]
-    enabledModules: STIC.enabledModules,
-
-    step1: {},
-    step2: {
-      // RelatedModule: {
-      //   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
-      //   fields: [name: {name, text, type, required, options, inViews}],
-      //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
-      // }
-      treeSelectedRelatedModule: {},
-      treeShowAllModules: false,
-      relationshipsInDataBlocks: [],
-      modulesInDataBlocks: [],
-    },
-    step3: {},
-    step4: {},
-
-    async initWizard() {
-      // Set Context accessible
-      window.alpineComponent = this;
-
-      // Set config object
-      // IEPA!! this.bean?.configuration està amb \\&quot;...
-      // this.formConfig = JSON.parse(this.bean?.configuration || "{}");
-      this.initializeFormConfig();
-
-      // Load current Step
-      Navigation.loadStep();
-    },
-
-    initializeFormConfig() {
-      if (!("data_blocks" in this.formConfig)) {
-        this.formConfig.data_blocks = [];
+    for (const [moduleName, module] of Object.entries(STIC.enabledModules)) {
+      if (moduleName == baseModuleName) {
+        continue;
       }
-      // Detached DataBlock
-      if (this.formConfig.data_blocks.length == 0) {
-        let dataBlock = newDataBlock("_Detached", translate("LBL_DATABLOCK_DETACHED"));
-        dataBlock.editable_text = false;
-        dataBlock.order = 0;
-        dataBlock.fixed_order = true;
-        dataBlock.required = true;
-        this.formConfig.data_blocks.push(dataBlock);
-      }
+      rootNodes.push(TreeNavigator._getModuleNode(moduleName));
+    }
+    return rootNodes;
+  }
 
-      if (!("flows" in this.formConfig)) {
-        this.formConfig.flows = [];
-      }
-      // Default flows
-      if (this.formConfig.flows.length === 0) {
-        // { name, text, actions: [{ order, action_name, params: [{name, source, value}] }
-        this.formConfig.flows.push({
-          name: "Main",
-          text: translate("LBL_FLOW_MAIN"),
-          actions: [],
-        });
-        this.formConfig.flows.push({
-          name: "OnError",
-          text: translate("LBL_FLOW_ONERROR"),
-          actions: [],
-        });
-      }
+  static _getRelationNode(node, relationship) {
+    // Relationship: {name, text, module_orig, field_orig, relationship, module_dest}
 
-      if (!("layout" in this.formConfig)) {
-        this.formConfig.layout = [];
+    const parentNodeModuleName = node.data.moduleName;
+    let moduleName = "";
+    if (parentNodeModuleName == relationship.module_orig) {
+      moduleName = relationship.module_dest;
+    } else if (parentNodeModuleName == relationship.module_dest) {
+      moduleName = relationship.module_orig;
+    }
+
+    let id = `${node.id}-${relationship.name}`;
+    let isLoop = id.includes(`-${relationship.name}-`) || node.data.modules.includes(moduleName);
+
+    let data = {
+      nodeId: id,
+      parentNodeId: node.id,
+      text: relationship.text,
+      isBaseModule: false,
+      isRelationship: true,
+      moduleName: moduleName,
+      relationship: relationship,
+      modules: [...node.data.modules, moduleName],
+    };
+
+    return {
+      id: id,
+      text: TreeNavigator._getTreeNodeText(data),
+      children: !isLoop, // It CAN have children
+      state: { opened: false }, // Ensures the root node is initially closed.
+      data: data,
+    };
+  }
+  static _getChildrenNodes(node) {
+    /*
+     * Result: [name, text, textSingular, inStudio, icon, fields:[Field], relationships:[Relationship]]
+     *   Field: {
+     *     name, text, type, required, options, inViews
+     *   }
+     *   Relationship: {
+     *     name, text, module_orig, field_orig, relationship, module_dest
+     *   }
+     */
+    let parentModule = utils.getModuleInformation(node.data.moduleName);
+    let childrenNodes = [];
+    for (let key in parentModule.relationships) {
+      childrenNodes.push(TreeNavigator._getRelationNode(node, parentModule.relationships[key]));
+    }
+    childrenNodes.sort(function (a, b) {
+      // if (a.data.pathText > b.data.pathText) return 1;
+      // if (a.data.pathText < b.data.pathText) return -1;
+      if (a.text > b.text) return 1;
+      if (a.text < b.text) return -1;
+      return 0;
+    });
+
+    return childrenNodes;
+  }
+
+  static _getTreeNodeText(data) {
+    let html = "";
+    let module = null;
+
+    if (data.isRelationship) {
+      if (data.moduleName == data.relationship.module_dest) {
+        module = STIC.enabledModules[data.relationship.module_dest];
+      } else {
+        module = STIC.enabledModules[data.relationship.module_orig];
       }
-    },
-  };
+      html += `${data.relationship.text} <sup>(${module.text})</sup>`;
+    } else {
+      module = STIC.enabledModules[data.moduleName];
+      html += `${module.textSingular}`;
+    }
+
+    html += `<button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="TreeNavigator.addDataBlockFromTreeNode(TreeNavigator._jstreeInstance.get_node('${data.nodeId}').data);">+</button>`;
+
+    // let checkSelected =
+    // relationName == ""
+    //   ? `step2.modulesInDataBlocks.findIndex((m) => m == '${moduleName}') != -1`
+    //   : `step2.relationshipsInDataBlocks.findIndex((r) => r.name == '${relationName}') != -1`;
+
+    // let html = `
+    // <div class="stic-tree-item" :class="{ selected: ${checkSelected} }">
+    //   ${text}
+    //   <template x-if="!(${checkSelected})">
+    //     <button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="addDataBlockByTreeNode(jstreeInstance.get_node('${nodeId}'));">+</button>
+    //   </template>
+    // </div>
+    // `;
+    return html;
+  }
+
+  static initializeModuleTree($tree) {
+    // Destroy existing jstree instance and clear the container.
+    if (TreeNavigator._jstreeInstance) {
+      TreeNavigator._jstreeInstance.destroy();
+    }
+
+    if ($tree == null || $tree.length == 0) {
+      return;
+    }
+    window.alpineComponent.step2.loadingTree = true;
+
+    $tree.empty();
+
+    // Initialize jstree on the designated div.
+    $tree
+      .jstree({
+        core: {
+          data: function (node, cb) {
+            // If node.id is '#', Jstree is asking for first-level nodes (tree root).
+            if (node.id === "#") {
+              let rootNodes = TreeNavigator._getRootNodes(window.alpineComponent.bean.base_module);
+              cb.call(this, rootNodes);
+            } else {
+              // An existing node has been expanded, and Jstree is asking for its children.
+              let childrenNodes = TreeNavigator._getChildrenNodes(node);
+              cb.call(this, childrenNodes);
+            }
+          },
+          check_callback: true, // Allows modifying the tree (e.g., adding/removing nodes).
+          themes: {
+            icons: false,
+            dots: true,
+          },
+        },
+        plugins: ["wholerow"], //"contextmenu"
+      })
+      .on("ready.jstree", function () {
+        // Store the jstree instance.
+        TreeNavigator._jstreeInstance = $("#jstree-container").jstree(true);
+        TreeNavigator.toggleAllModules();
+
+        window.alpineComponent.step2.treeSelectedData = null;
+        // Ensure base module is in DataBlock
+        // let baseModuleName = window.alpineComponent.bean.base_module;
+        // let baseDataBlock = addDataBlockByTreeNode(TreeNavigator._jstreeInstance.get_node(baseModuleName), false);
+        // baseDataBlock.required = true;
+
+        window.alpineComponent.step2.loadingTree = false;
+      })
+      .on("select_node.jstree", function (e, data) {
+        window.alpineComponent.step2.treeSelectedData = data.node.data;
+      });
+  }
+
+  static toggleAllModules(treeShowAllModules) {
+    if (!TreeNavigator._jstreeInstance) {
+      return;
+    }
+    if (treeShowAllModules) {
+      TreeNavigator._jstreeInstance.show_all();
+    } else {
+      // Hide all root nodes except window.alpineComponent.bean.base_module
+      const rootNodes = TreeNavigator._jstreeInstance.get_json("#", { flat: false });
+      rootNodes.forEach((node) => {
+        if (!node.data.isBaseModule) {
+          TreeNavigator._jstreeInstance.hide_node(node.id);
+        }
+      });
+    }
+  }
+
+  static addDataBlockFromTreeNode(data, force = false) {
+    debugger;
+    // Ensure parent node is added
+    if (data.parentNodeId != '') {
+      TreeNavigator.addDataBlockFromTreeNode(TreeNavigator._jstreeInstance.get_node(data.parentNodeId).data);
+    }
+
+    if (!data.isRelationship) {
+      window.alpineComponent.formConfig.addDataBlockModule(data.moduleName, force);
+    }
+    else {
+      window.alpineComponent.formConfig.addDataBlockRelationship(data.relationship, force);
+    }
+  }
 }
 
 // Access configuration examples:
 // window.alpineComponent.formConfig
 // window.alpineComponent.bean.base_module
 
-function translate(label) {
-  return 'IEPA!' + (
-    SUGAR.language.languages.stic_Advanced_Web_Forms[label] ?? SUGAR.language.languages.app_strings[label] ?? label
-  );
-}
-
 function set_wizard_assigned_user(popup_reply_data) {
   window.alpineComponent.bean.assigned_user_id = popup_reply_data.name_to_value_array.assigned_user_id;
   window.alpineComponent.bean.assigned_user_name = popup_reply_data.name_to_value_array.assigned_user_name;
 }
 
-// Global variable to store the jstree instance.
-var jstreeInstance = null;
-function initializeModuleTree($tree) {
-  // Destroy existing jstree instance and clear the container.
-  if (jstreeInstance) {
-    jstreeInstance.destroy();
-  }
-  if ($tree == null || $tree.length == 0) {
-    return;
-  }
-  $tree.empty();
-
-  let rootNodes = [];
-  // First node: base_module
-  let baseModuleName = window.alpineComponent.bean.base_module;
-  let baseModuleText = window.alpineComponent.enabledModules[baseModuleName].textSingular;
-  rootNodes.push({
-    id: baseModuleName,
-    text: getTreeNodeText(baseModuleName, baseModuleName, baseModuleText),
-    children: true, // It CAN have children
-    state: { opened: false }, // Ensures the root node is initially closed.
-    data: {
-      isRelation: false,
-      relationName: "",
-      relationText: "",
-      moduleName: baseModuleName,
-      moduleText: baseModuleText,
-      path: [baseModuleName],
-      pathText: [baseModuleText],
-    },
-  });
-
-  for (const [moduleName, module] of Object.entries(window.alpineComponent.enabledStudioModules)) {
-    if (moduleName == baseModuleName) {
-      continue;
-    }
-    rootNodes.push({
-      id: moduleName,
-      text: getTreeNodeText(moduleName, moduleName, module.textSingular),
-      children: true, // It CAN have children
-      state: { opened: false }, // Ensures the root node is initially closed.
-      data: {
-        isRelation: false,
-        relationName: "",
-        relationText: "",
-        moduleName: moduleName,
-        moduleText: module.textSingular,
-        path: [moduleName],
-        pathText: [module.textSingular],
-      },
-    });
-  }
-
-  // Initialize jstree on the designated div.
-  $tree
-    .jstree({
-      core: {
-        data: function (node, cb) {
-          // If node.id is '#', Jstree is asking for first-level nodes (tree root).
-          if (node.id === "#") {
-            //cb.call(this, [rootNode]);
-            cb.call(this, rootNodes);
-          } else {
-            // An existing node has been expanded, and Jstree is asking for its children.
-            let moduleInfo = getModuleInformation(node.data?.moduleName);
-            if (!moduleInfo) {
-              return;
-            }
-            let childrenNodes = [];
-            // Convert the object of related modules to an array of Jstree nodes.
-            for (let key in moduleInfo.relationships) {
-              let moduleName = moduleInfo.relationships[key].moduleName;
-              let moduleText = moduleInfo.relationships[key].moduleText;
-              let relationText = moduleInfo.relationships[key].text;
-
-              // Skip fields related to disabled modules
-              if (!window.alpineComponent.enabledModules.hasOwnProperty(moduleName)) {
-                continue;
-              }
-
-              let newPath = [...node.data.path];
-              newPath.push(key);
-
-              let newPathText = [...node.data.pathText];
-              newPathText.push(relationText);
-
-              let isLoop = node.data.path.includes(moduleName);
-              let nodeId = node.id + "-" + key;
-              childrenNodes.push({
-                id: nodeId,
-                text: getTreeNodeText(nodeId, moduleName, moduleText, key, relationText),
-                children: !isLoop,
-                data: {
-                  isRelation: true,
-                  relationName: key,
-                  relationText: relationText,
-                  moduleName: moduleName,
-                  moduleText: moduleText,
-                  path: newPath,
-                  pathText: newPathText,
-                },
-              });
-            }
-            childrenNodes.sort(function (a, b) {
-              if (a.data.pathText > b.data.pathText) return 1;
-              if (a.data.pathText < b.data.pathText) return -1;
-              if (a.text > b.text) return 1;
-              if (a.text < b.text) return -1;
-              return 0;
-            });
-            cb.call(this, childrenNodes);
-          }
-        },
-        check_callback: true, // Allows modifying the tree (e.g., adding/removing nodes).
-        themes: {
-          icons: false,
-          dots: true,
-        },
-      },
-      plugins: ["wholerow"], //"contextmenu"
-    })
-    .on("ready.jstree", function () {
-      // Store the jstree instance.
-      jstreeInstance = $("#jstree-container").jstree(true);
-      treeToggleAllModules();
-
-      // Ensure base module is in DataBlock
-      let baseModuleName = window.alpineComponent.bean.base_module;
-      let baseDataBlock = addDataBlockByTreeNode(jstreeInstance.get_node(baseModuleName), false);
-      baseDataBlock.required = true;
-
-      $("#jstree-loading").hide();
-      $(this).show();
-    })
-    .on("select_node.jstree", function (e, data) {
-      window.alpineComponent.step2.treeSelectedRelatedModule = getRelatedModuleByTreeNode(data.node);
-    });
-}
-
-function getTreeNodeText(nodeId, moduleName, moduleText, relationName = "", relationText = "") {
-  if (relationName != "" && relationText == "") {
-    relationText = moduleText;
-  }
-
-  let text = relationName == "" ? `${moduleText}` : `${relationText} <sup>(${moduleText})</sup>`;
-  let checkSelected =
-    relationName == ""
-      ? `step2.modulesInDataBlocks.findIndex((m) => m == '${moduleName}') != -1`
-      : `step2.relationshipsInDataBlocks.findIndex((r) => r.name == '${relationName}') != -1`;
-
-  let html = `
-  <div class="stic-tree-item" :class="{ selected: ${checkSelected} }">
-    ${text}
-    <template x-if="!(${checkSelected})">
-      <button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="addDataBlockByTreeNode(jstreeInstance.get_node('${nodeId}'));">+</button>
-    </template>
-  </div>
-  `;
-  return html;
-}
-
-// RelatedModule: {
-//   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
-//   fields: [name: {name, text, type, required, options, inViews}],
-//   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
-// }
-function getRelatedModuleByTreeNode(node) {
-  let moduleInfo = getModuleInformation(node.data.moduleName);
-  let name = "";
-  let text = "";
-  let moduleSourceName = "";
-  let moduleSourceText = "";
-  let moduleDestName = "";
-  let moduleDestText = "";
-  if (node.data.isRelation) {
-    name = node.data.relationName;
-    text = node.data.relationText;
-    let i = node.data.path.length - 2;
-    moduleSourceName = node.data.path[i];
-    moduleSourceText = node.data.pathText[i];
-    moduleDestName = node.data.moduleName;
-    moduleDestText = node.data.moduleText;
-  } else {
-    name = node.data.moduleName;
-    text = node.data.moduleText;
-    moduleSourceName = node.data.moduleName;
-    moduleSourceText = node.data.moduleName;
-    moduleDestName = node.data.moduleName;
-    moduleDestText = node.data.moduleText;
-  }
-
-  return {
-    id: node.id,
-    name: name,
-    text: text,
-    isRelation: node.data.isRelation,
-    moduleDestName: moduleDestName,
-    moduleDestText: moduleDestText,
-    moduleSourceName: moduleSourceName,
-    moduleSourceText: moduleSourceText,
-    path: node.data.path,
-    pathText: node.data.pathText,
-    fields: moduleInfo.fields,
-    relationships: moduleInfo.relationships,
-  };
-}
-
-// Global variable to store cached modules information
-// module: {
-//           name, text,
-//           fields: [name: {name, text, type, required, options, inViews}],
-//           relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
-//         }
-var cachedModules = {};
-function getModuleInformation(moduleName) {
-  // Do not get info of not enabled modules
-  if (!moduleName || !window.alpineComponent.enabledModules.hasOwnProperty(moduleName)) {
-    return null;
-  }
-
-  if (!cachedModules.hasOwnProperty(moduleName)) {
-    $.ajax({
-      url: "index.php", //location.href.slice(0, location.href.indexOf(location.search)),
-      type: "POST",
-      async: false,
-      dataType: "json",
-      data: {
-        module: "stic_Advanced_Web_Forms",
-        action: "getModuleInformation",
-        getmodule: moduleName,
-      },
-      success: function (response) {
-        cachedModules[moduleName] = response;
-      },
-      error: function (xhr, status, error) {
-        console.error("Error retrieving Information for module: '" + moduleName + "'", status, error);
-      },
-    });
-  }
-
-  if (cachedModules.hasOwnProperty(moduleName)) {
-    return cachedModules[moduleName];
-  }
-
-  return null;
-}
 // [{name, text, type, required, options, inViews}]
 function getModuleFields(moduleName) {
-  return Object.values(getModuleInformation(moduleName).fields);
+  return Object.values(utils.getModuleInformation(moduleName).fields);
 }
 
-function treeToggleAllModules(treeShowAllModules) {
-  if (treeShowAllModules) {
-    jstreeInstance.show_all();
-  } else {
-    // Hide all root nodes except window.alpineComponent.bean.base_module
-    const rootNodes = jstreeInstance.get_json("#", { flat: false });
-    rootNodes.forEach((node) => {
-      if (node.id !== window.alpineComponent.bean.base_module) {
-        jstreeInstance.hide_node(node.id);
-      }
-    });
-  }
-}
-
-function addDataBlockByTreeNode(node) {
-  // Ensure parent node is added
-  let parentDataBlock = null;
-  let parentRelatedModule = null;
-  if (node.data.path.length > 1) {
-    let parentNode = jstreeInstance.get_node(node.parent);
-    parentDataBlock = addDataBlockByTreeNode(parentNode);
-    parentRelatedModule = getRelatedModuleByTreeNode(parentNode);
-  }
-
-  // RelatedModule: {
-  //   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
-  //   fields: [name: {name, text, type, required, options, inViews}],
-  //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
-  // }
-  let relatedModule = getRelatedModuleByTreeNode(node);
-
-  // DataBlocks: [{
-  //   name, text, editable_text, order, fixed_order, module, required(),
-  //   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form,
-  //              show_in_form, value_type, value, value_text }],
-  //   duplicate_detection: {fields: [<field_name>], on_duplicate},
-  //   relationships: [{ is_source, source_name, source_text, source_data_block_name, source_field_name, dest_data_block_name }]
-  // }]
-  let dataBlocks = window.alpineComponent.formConfig.data_blocks;
-
-  // Only a DataBlock per Module
-  let name = relatedModule.moduleDestName;
-  let text = relatedModule.moduleDestText;
-  let dataBlockIndex = dataBlocks.findIndex((d) => d.name === name);
-  let dataBlock = null;
-
-  if (dataBlockIndex != -1) {
-    dataBlock = dataBlocks[dataBlockIndex];
-  } else {
-    let found = false;
-    let index = 0;
-
-    // Check new DataBlock Text
-    let newText = text;
-    do {
-      newText = index > 0 ? `${text} (${index})` : text;
-      found = dataBlocks.findIndex((d) => d.text === newText) != -1;
-    } while (found);
-    text = newText;
-
-    // Get required fields
-    let initialFields = [];
-    let checkFields = [];
-    for (const [key, value] of Object.entries(relatedModule.fields)) {
-      if (value.required ?? false) {
-        initialFields.push(convertRelatedFieldToDataBlockField(value));
-        checkFields.push(key);
-      }
-    }
-
-    // Insert dataBlock to array
-    dataBlock = newDataBlock(name, text);
-    dataBlock.module = relatedModule.moduleDestName;
-    dataBlock.fields = initialFields;
-    dataBlock.duplicate_detection.fields = checkFields;
-
-    dataBlocks.push(dataBlock);
-
-    // Add module in modulesInDataBlocks
-    if (window.alpineComponent.step2.modulesInDataBlocks.findIndex((m) => m == dataBlock.module) == -1) {
-      window.alpineComponent.step2.modulesInDataBlocks.push(dataBlock.module);
-    }
-  }
-
-  // Add Relation information to DataBlocks and Field in Parent
-  if (relatedModule.isRelation && parentDataBlock != null && parentRelatedModule != null) {
-    // Find relationship (defined in parent)
-    let relationshipInfo = parentRelatedModule.relationships[relatedModule.name];
-
-    let relationshipSource = {
-      is_source: true,
-      source_name: relationshipInfo.name,
-      source_text: relationshipInfo.text,
-      source_data_block_name: parentDataBlock.name,
-      source_field_name: relationshipInfo.fieldName,
-      dest_data_block_name: name,
-    };
-    let relationshipDest = {
-      is_source: false,
-      source_name: relationshipInfo.name,
-      source_text: relationshipInfo.text,
-      source_data_block_name: parentDataBlock.name,
-      source_field_name: relationshipInfo.fieldName,
-      dest_data_block_name: name,
-    };
-
-    // Add relation in parent side
-    let index = parentDataBlock.relationships.findIndex((d) => d.name === relationshipSource.name);
-    if (index == -1) {
-      parentDataBlock.relationships.push(relationshipSource);
-    }
-
-    // Add relation in dest side
-    index = dataBlock.relationships.findIndex((d) => d.name === relationshipDest.name);
-    if (index == -1) {
-      dataBlock.relationships.push(relationshipDest);
-    }
-
-    // Add Field in parent side
-    let relField = convertRelatedFieldToDataBlockField(parentRelatedModule.fields[relationshipInfo.fieldName]);
-    relField.required = true;
-    relField.value_type = "dataBlock"; // IEPA!! Les relacions poden ser dataBlock o id
-    relField.value = name;
-    relField.value_text = text;
-    relField.show_in_form = false;
-
-    // Find field in current fields
-    index = parentDataBlock.fields.findIndex((field) => field.name === relationshipSource.source_field_name);
-    if (index !== -1) {
-      parentDataBlock.fields[index] = Object.assign(parentDataBlock.fields[index], relField);
-    } else {
-      parentDataBlock.fields.push(relField);
-    }
-
-    // Add relation in relationshipsInDataBlocks
-    if (
-      window.alpineComponent.step2.relationshipsInDataBlocks.findIndex((r) => r.name == relationshipInfo.name) == -1
-    ) {
-      window.alpineComponent.step2.relationshipsInDataBlocks.push(relationshipInfo);
-    }
-  }
-
-  return dataBlock;
-}
 
 function deleteDataBlock(indexToDelete) {
   // DataBlocks: [{
@@ -664,7 +417,7 @@ function deleteDataBlock(indexToDelete) {
         //           relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
         //         }
         let fieldOrig = dataBlockOrig.fields[index];
-        let moduleDef = getModuleInformation(dataBlockOrig.module);
+        let moduleDef = utils.getModuleInformation(dataBlockOrig.module);
         let fieldDef = moduleDef.fields[fieldOrig.name];
         if (fieldDef.required) {
           // Is required: Do not delete Field, reset values

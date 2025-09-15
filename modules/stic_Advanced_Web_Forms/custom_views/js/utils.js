@@ -1,9 +1,83 @@
 class utils {
+  /**
+   * Translate current label to current user language
+   * @param {string} label The label to be translated
+   * @returns Translated label
+   */
   static translate(label) {
-    debugger;
     return (
       SUGAR.language.languages.stic_Advanced_Web_Forms[label] ?? SUGAR.language.languages.app_strings[label] ?? label
     );
   }
 
+  /**
+   * Decode string with html entities (&quot; &lbrace; ...)
+   * @param {string} string The string with HTML entities
+   * @returns Decoded string
+   */
+  static decodeHTMLString(string) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(`<!doctype html><body>${string}`, "text/html");
+    return doc.body.textContent;
+  }
+
+  /**
+   * Gets the defined list in app_list_strings
+   * @param {string} listName The list name
+   * @param {bool} asString If the list must be returned as the name of the list
+   * @returns The list or the entire list name
+   */
+  static getList(listName, asString = false) {
+    if (asString) {
+      return `SUGAR.language.languages.app_list_strings.${listName}`;
+    }
+    return SUGAR.language.languages.app_list_strings[listName];
+  }
+
+  static _cachedModules = {};
+  /**
+   * Retrieves fields and relationships of given Module
+   * @param {string} moduleName The name of the module
+   * @returns Module Information
+   * Result: [name, text, textSingular, inStudio, icon, fields:[Field], relationships:[Relationship]]
+   *   Field: {
+   *     name, text, type, required, options, inViews
+   *   }
+   *   Relationship: {
+   *     name, text, module_orig, field_orig, relationship, module_dest
+   *   }
+   */
+  static getModuleInformation(moduleName) {
+    // Do not get info of not enabled modules
+    if (!moduleName || !STIC.enabledModules.hasOwnProperty(moduleName)) {
+      return null;
+    }
+
+    if (!utils._cachedModules.hasOwnProperty(moduleName)) {
+      $.ajax({
+        url: "index.php",
+        type: "POST",
+        async: false,
+        dataType: "json",
+        data: {
+          module: "stic_Advanced_Web_Forms",
+          action: "getModuleInformation",
+          getmodule: moduleName,
+          getavailablemodules: JSON.stringify(STIC.enabledModules),
+        },
+        success: function (response) {
+          utils._cachedModules[moduleName] = response;
+        },
+        error: function (xhr, status, error) {
+          console.error("Error retrieving Information for module: '" + moduleName + "'", status, error, xhr.responseText);
+        },
+      });
+    }
+
+    if (utils._cachedModules.hasOwnProperty(moduleName)) {
+      return utils._cachedModules[moduleName];
+    }
+
+    return null;
+  }
 }
