@@ -349,7 +349,6 @@ class TreeNavigator {
   }
 
   static addDataBlockFromTreeNode(data, force = false) {
-    debugger;
     // Ensure parent node is added
     if (data.parentNodeId != '') {
       TreeNavigator.addDataBlockFromTreeNode(TreeNavigator._jstreeInstance.get_node(data.parentNodeId).data);

@@ -88,12 +88,13 @@ function getModuleInformation($moduleName, $availableModules){
                     // name, text, type, required, options, inViews
                     $result['fields'][$fieldName] = [
                         'name' => $fieldName,
-                        'text' => trim(translate($arr['vname'] ?? '', $moduleOrigName)),
+                        'text' => rtrim(trim(translate($arr['vname'] ?? '', $moduleOrigName)), ":"),
                         'type' => $arr['type'],
                         'required' => isset($arr['required']) && $arr['required'],
                         'options' => $arr['options'] ?? '',
                         'inViews' => false
                     ];
+
                 }
 
                 // Relationships: type:'relate' with 'non-db' and 'link' and is set 'module' as available (dest) module
@@ -136,16 +137,19 @@ function getModuleInformation($moduleName, $availableModules){
 
         // Set relationship information
         $label = $link_def['vname'] ?? '';
-        $rel_text = trim(translate($label, $module_orig));
+        $rel_text = rtrim(trim(translate($label, $module_orig)), ":");
         if ($label == $rel_text) {
-            $rel_text = trim(translate($label, $module_dest));
+            $rel_text = rtrim(trim(translate($label, $module_dest)), ":");
         }
         // Fix relationship text
         $module_text = trim(translate($moduleName));
         $module_singularText = trim($app_list_strings['moduleListSingular'][$moduleName]);
         $otherModule = ($moduleName == $module_orig) ? $module_dest : $module_orig;
         $otherModule_text = trim(translate($otherModule));
-        $otherModule_singularText = trim($app_list_strings['moduleListSingular'][$otherModule]);
+        $otherModule_singularText = $otherModule_text; 
+        if(isset($app_list_strings['moduleListSingular'][$otherModule])) {
+            $otherModule_singularText = trim($app_list_strings['moduleListSingular'][$otherModule]);
+        }
         if (strtolower(($rel_text)) == strtolower($module_text) ||
             strtolower(($rel_text)) == strtolower($module_singularText) ||
             strtolower(($rel_text)) == strtolower($otherModule_text) ) {

@@ -105,6 +105,7 @@ class sticControls {
     let mapProperty = $el.dataset.mapProperty ?? "";
     let prop = mapProperty != "" ? `.${mapProperty}` : "";
     let multiple = $el.hasAttribute("data-multiple") ? "multiple='multiple'" : "";
+    let blur = $el.dataset.blur ?? "";
     let attribute = $el.dataset.attribute ?? "";
 
     return `

@@ -27,6 +27,10 @@ class AWF_DataBlock {
     this.duplicate_detection = new AWF_DuplicateDetection(data.duplicate_detection || {});
   }
 
+  getModule() {
+    return utils.getModuleInformation(this.name);
+  }
+
   addFieldFromModuleField(moduleField) {
     // Field: { name, text, type, required, options, inViews}
 
@@ -51,11 +55,21 @@ class AWF_DataBlock {
     let field = this.addFieldFromModuleField(moduleField);
     field.required_in_form = true;
     
-    if (!this.duplicate_detection.fields.find((f) => f === field.name)) {
+    if (!this.duplicate_detection.fields.find(f => f === field.name)) {
       this.duplicate_detection.fields.push(field.name);
     }
 
     return field;
+  }
+
+  checkDuplicateDetectionFields(){
+    alert("IEPA!!");
+    this.duplicate_detection.fields.forEach(d => {
+      if (!this.fields.find(f => f.name === d)) {
+        let field = this.addFieldFromModuleField(this.getModule().fields[d]);
+        field.required_in_form = true;
+      }
+    });
   }
 }
 
@@ -282,7 +296,6 @@ class AWF_Configuration {
     return dataBlock;
   }
   addDataBlockRelationship(relationship) {
-    debugger;
     // Relationship: {name, text, module_orig, field_orig, relationship, module_dest}
 
     // Find or create DataBlock for related modules
