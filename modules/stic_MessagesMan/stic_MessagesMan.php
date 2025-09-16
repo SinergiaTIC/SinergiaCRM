@@ -105,32 +105,6 @@ class stic_MessagesMan extends SugarBean
     /** @var string */
     public $related_type;
 
-    // TODOEPS: Campos necesarios?
-    // /** @var  EmailTemplate $current_emailtemplate */
-    // public $current_emailtemplate;
-
-    // /** @var bool $related_confirm_opt_in*/
-    // public $related_confirm_opt_in;
-
-    // /** @var bool  $test*/
-    // public $test = false;
-
-    // /** @var array  $notes_array*/
-    // public $notes_array = array();
-
-    // /** @var array $verified_email_marketing_ids */
-    // public $verified_email_marketing_ids = array();
-
-    // /** @var bool $new_schema */
-    // public $new_schema = true;
-
-    // /**
-    //  * last opt in warning stored
-    //  *
-    //  * @var bool
-    //  */
-    // protected $optInWarn;
-
     /**
      * @var string
      */
@@ -332,69 +306,6 @@ class stic_MessagesMan extends SugarBean
         return $query;
     }
 
-  
-
-    // TODOEPS: Revisar si es necesaria
-    /**
-     * @return array
-     */
-    // public function get_list_view_data()
-    // {
-    //     global $locale, $current_user;
-    //     $temp_array = parent::get_list_view_array();
-
-    //     $related_type = isset($temp_array['RELATED_TYPE']) ? $temp_array['RELATED_TYPE'] : null;
-
-    //     if (!isset($temp_array['RELATED_ID'])) {
-    //         LoggerManager::getLogger()->warn('EmailMan List view array has not related id for list view data');
-    //         $tempArrayRelatedId = null;
-    //     } else {
-    //         $tempArrayRelatedId = $temp_array['RELATED_ID'];
-    //     }
-
-    //     $related_id = $tempArrayRelatedId;
-    //     $is_person = SugarModule::get($related_type)->moduleImplements('Person');
-
-    //     if ($is_person) {
-    //         $query = "SELECT first_name, last_name FROM " . strtolower($related_type) . " WHERE id ='" . $related_id . "'";
-    //     } else {
-    //         $query = "SELECT name FROM " . strtolower($related_type) . " WHERE id ='" . $related_id . "'";
-    //     }
-
-    //     $result = $this->db->query($query);
-    //     $row = $this->db->fetchByAssoc($result);
-
-    //     if ($row) {
-    //         $temp_array['RECIPIENT_NAME'] = $is_person ? $locale->getLocaleFormattedName(
-    //             $row['first_name'],
-    //             $row['last_name'],
-    //             ''
-    //         ) : $row['name'];
-    //     }
-
-    //     //also store the recipient_email address
-    //     $query = "SELECT addr.email_address FROM email_addresses addr,email_addr_bean_rel eb WHERE eb.deleted=0 AND addr.id=eb.email_address_id AND bean_id ='" . $related_id . "' AND primary_address = '1'";
-
-    //     $result = $this->db->query($query);
-    //     $row = $this->db->fetchByAssoc($result);
-    //     if ($row) {
-    //         $temp_array['RECIPIENT_EMAIL'] = $row['email_address'];
-    //     }
-
-    //     if (!isset($temp_array['RECIPIENT_EMAIL'])) {
-    //         LoggerManager::getLogger()->warn('EmailMan List view array has not recipient email for list view data');
-    //         $temArrayRecipientEmail = null;
-    //     } else {
-    //         $temArrayRecipientEmail = $temp_array['RECIPIENT_EMAIL'];
-    //     }
-
-    //     $this->email1 = $temArrayRecipientEmail;
-    //     $temp_array['EMAIL1_LINK'] = $current_user->getEmailLink('email1', $this, '', '', 'ListView');
-
-    //     return $temp_array;
-    // }
-
-
     public function sendMessage($sender, $templateId, $type, $test = false) {
         require_once 'modules/stic_Messages/Utils.php';
         require_once 'modules/stic_Settings/Utils.php';
@@ -417,13 +328,9 @@ class stic_MessagesMan extends SugarBean
             }
         }
 
-        // TODOEPS: El re-emplaçar variables ja es fa al save del missatge
         // Recuperamos el template (si lo hay)
         $emailTemplate = BeanFactory::getBean('EmailTemplates', $templateId);
-        // $txt = $emailTemplate->body;
-
         $messageBean = BeanFactory::newBean('stic_Messages');
-        // $txt = $messageBean->replaceTemplateVariables($txt, $bean);
 
         $messageBean->sender = $sender;
         $messageBean->template_id_c = $templateId;
@@ -439,7 +346,6 @@ class stic_MessagesMan extends SugarBean
         $messageBean->save();
 
         if ($messageBean->status != 'sent') {
-            // TODOEPS
             $this->saveLog('send error', $targetPhone, true, $test);
             return false;
         }
@@ -484,7 +390,6 @@ class stic_MessagesMan extends SugarBean
     }
 
     public function saveLog($activity_type, $targetPhone, $delete=false, $test = false) {
-        // TODOEPS: If attempts is not implemented, we can remove the $delete parameter
         global $timedate;
 
          //create new campaign log record.
@@ -499,14 +404,13 @@ class stic_MessagesMan extends SugarBean
          }
 
          $campaign_log->activity_type = $activity_type;
-         $campaign_log->activity_date = $timedate->nowDb(); //$timedate->now(); //TODOEPS: Recuperar el temps amb segons
+         $campaign_log->activity_date = $timedate->nowDb(); 
          $campaign_log->list_id = $this->list_id;
          $campaign_log->related_id = $this->related_id;
          $campaign_log->related_type = $this->related_type;
         //  $campaign_log->resend_type = $resend_type;
          $campaign_log->save();
 
-         // TODOEPS: Remove comments once tested finalized 
          if($delete) {
             $this->id = (int)$this->id;
             $query = "DELETE FROM stic_messagesman WHERE id = {$this->id}";

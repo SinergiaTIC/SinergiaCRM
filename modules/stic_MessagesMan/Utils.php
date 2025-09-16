@@ -28,7 +28,6 @@
 
 class stic_MessagesManUtils {
     public static function sendQueuedMessages($test = false) {
-        // TODOEPS: Max messages per run? If implemented, do it as a STIC config value?
         require_once('modules/stic_Settings/Utils.php');
         $max_messages_per_run = stic_SettingsUtils::getSetting('seven_messages_bulk');
 
@@ -40,7 +39,6 @@ class stic_MessagesManUtils {
         $timedate = TimeDate::getInstance();
         $messagesMan = BeanFactory::newBean('stic_MessagesMan');
 
-        // TODOEPS: test
         if ($test) {
             $select_query = " 
                 SELECT stic_messagesman.*, stic_message_marketing.template_id, stic_message_marketing.type, stic_message_marketing.sender 
@@ -95,11 +93,6 @@ class stic_MessagesManUtils {
         $sender = $row['sender'] ? $row['sender'] : stic_SettingsUtils::getSetting('MESSAGES_SENDER');
         $templateId = $row['template_id'];
         $type = $row['type'];
-        $return = $messageman->sendMessage($sender, $templateId, $type, $test);
-
-        // TODOEPS: Process return value... must remove from list? increment send_attemps?
-        if (!$return) {
-            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
-        }
+        $messageman->sendMessage($sender, $templateId, $type, $test);
     }
 }
