@@ -130,7 +130,8 @@ class stic_SignaturePortalUtils
     public function getHtmlFromSigner()
     {
         require_once 'modules/stic_Signatures/Utils.php';
-        $html = stic_SignaturesUtils::getParsedTemplate($this->signerId);
+        $parsedText = stic_SignaturesUtils::getParsedTemplate($this->signerId);
+        $html = "{$parsedText['header']}{$parsedText['converted']}{$parsedText['footer']}";
         if (!empty($html)) {
             return $html;
         } else {

@@ -419,9 +419,9 @@ class stic_SignaturesUtils
         // but it implies converting remaining newlines to <br /> for display purposes after parsing)
         $printable = str_replace("\n", "<br />", $converted);
 
-        return "{$header}{$converted}{$footer}";
+        // return "{$header}{$converted}{$footer}";
+        return ['header' => $header, 'converted' => $converted, 'footer' => $footer];
     }
-
     /**
      * Saves the signature data for a given signer.
      *

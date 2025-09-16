@@ -48,7 +48,7 @@ class sticGenerateSignedPdf
     {
         global $sugar_config, $current_user;
 
-        require_once 'modules/AOS_PDF_Templates/templateParser.php';
+        // require_once 'modules/AOS_PDF_Templates/templateParser.php';
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
         require_once 'modules/stic_Signatures/Utils.php';
         require_once 'modules/stic_Signers/Utils.php';
@@ -133,8 +133,8 @@ class sticGenerateSignedPdf
             $object_arr['Accounts'] = $sourceBean->account_id;
         }
 
-// Replace the signature placeholder with the actual signature image.
-// As the image image placeholder is recovery encoded from the database, the pattern must be encoded too.
+        // Replace the signature placeholder with the actual signature image.
+        // As the image image placeholder is recovery encoded from the database, the pattern must be encoded too.
         $stringToreplace = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
         $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
 
@@ -214,15 +214,16 @@ class sticGenerateSignedPdf
 
             $text = populate_group_lines($text, $lineItemsGroups, $lineItems);
         }
-// END STIC-Custom 20240125
+        // END STIC-Custom 20240125
 
         $header = preg_replace($search, $replace, (string) $templateBean->pdfheader);
         $footer = preg_replace($search, $replace, (string) $templateBean->pdffooter);
 
-        $converted = templateParser::parse_template($text, $object_arr);
+        $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id);
+        $converted = $parsedText['converted'];
+        $header = $parsedText['header'];
+        $footer = $parsedText['footer'];
 
-        $header = templateParser::parse_template($header, $object_arr);
-        $footer = templateParser::parse_template($footer, $object_arr);
 
         $printable = str_replace("\n", "<br />", (string) $converted);
 
