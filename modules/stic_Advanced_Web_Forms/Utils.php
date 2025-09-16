@@ -143,7 +143,10 @@ function getModuleInformation($moduleName, $availableModules){
         }
         // Fix relationship text
         $module_text = trim(translate($moduleName));
-        $module_singularText = trim($app_list_strings['moduleListSingular'][$moduleName]);
+        $module_singularText = $module_text;
+        if(isset($app_list_strings['moduleListSingular'][$moduleName])) {
+            $module_singularText = trim($app_list_strings['moduleListSingular'][$moduleName]);
+        }
         $otherModule = ($moduleName == $module_orig) ? $module_dest : $module_orig;
         $otherModule_text = trim(translate($otherModule));
         $otherModule_singularText = $otherModule_text; 

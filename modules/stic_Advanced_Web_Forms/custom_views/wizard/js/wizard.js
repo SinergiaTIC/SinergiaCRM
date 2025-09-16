@@ -20,6 +20,8 @@ function wizardForm(readOnly) {
       treeShowAllModules: false,
       treeSelectedData: null,
 
+      // IEPA!!
+      // TODO: Remove!!!
       relationshipsInDataBlocks: [],
       modulesInDataBlocks: [],
     },
@@ -324,6 +326,7 @@ class TreeNavigator {
         // let baseDataBlock = addDataBlockByTreeNode(TreeNavigator._jstreeInstance.get_node(baseModuleName), false);
         // baseDataBlock.required = true;
 
+        TreeNavigator._jstreeInstance.select_node(window.alpineComponent.bean.base_module);
         window.alpineComponent.step2.loadingTree = false;
       })
       .on("select_node.jstree", function (e, data) {

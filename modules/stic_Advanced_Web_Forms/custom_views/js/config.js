@@ -62,8 +62,11 @@ class AWF_DataBlock {
     return field;
   }
 
+  checkDataBlock(){
+    this.checkDuplicateDetectionFields();
+  }
+
   checkDuplicateDetectionFields(){
-    alert("IEPA!!");
     this.duplicate_detection.fields.forEach(d => {
       if (!this.fields.find(f => f.name === d)) {
         let field = this.addFieldFromModuleField(this.getModule().fields[d]);

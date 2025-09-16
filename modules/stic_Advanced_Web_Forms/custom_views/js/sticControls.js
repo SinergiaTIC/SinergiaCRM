@@ -104,20 +104,24 @@ class sticControls {
     let map = $el.dataset.map ?? "";
     let mapProperty = $el.dataset.mapProperty ?? "";
     let prop = mapProperty != "" ? `.${mapProperty}` : "";
+    let mapValue = $el.dataset.mapValue ?? "";
+    let val = mapValue != "" ? `.${mapValue}` : "Key";
     let multiple = $el.hasAttribute("data-multiple") ? "multiple='multiple'" : "";
-    let blur = $el.dataset.blur ?? "";
     let attribute = $el.dataset.attribute ?? "";
 
-    return `
+    let html = ``;
+    html += `
     <select class="form-select" id="${id}" ${required} ${multiple} x-model="${model}" value="${value}" ${attribute}
       x-init="$nextTick(() => {
         let select = $('#${id}').selectize({ placeholder: '', onChange: (value) => { ${model} = value }})[0].selectize;
         select.setValue(${model});
       });">
       <template x-for="[elKey, el] in Object.entries(${map})" :key="elKey">
-        <option :value="elKey" x-text="el${prop}"></option>
+        <option :value="el${val}" x-text="el${prop}"></option>
       </template>
     </select>`;
+
+    return html;
   }
 
   static _popup($el) {
