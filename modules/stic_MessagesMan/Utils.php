@@ -28,32 +28,17 @@
 
 class stic_MessagesManUtils {
     public static function sendQueuedMessages($test = false) {
-        $admin = BeanFactory::newBean('Administration');
-        $admin->retrieveSettings();
         // TODOEPS: Max messages per run? If implemented, do it as a STIC config value?
-        if (isset($admin->settings['massemailer_campaign_messages_per_run'])) {
-            $max_messages_per_run = $admin->settings['massemailer_campaign_messages_per_run'];
-        }
+        require_once('modules/stic_Settings/Utils.php');
+        $max_messages_per_run = stic_SettingsUtils::getSetting('seven_messages_bulk');
+
         if (empty($max_messages_per_run)) {
             $max_messages_per_run = 500; //default
         }
 
-        // TODOEPS: test mode?
-        // Preparation in case we decide to implement a test mode for sending messages
-        // $test = false;
-        // if (isset($_REQUEST['mode']) && $_REQUEST['mode'] == 'test') {
-        //     $test = true;
-        // }
-        // if ($test) {
-        // }
-        // else {}
-
         $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
         $messagesMan = BeanFactory::newBean('stic_MessagesMan');
-
-        // TODOEPS: retries en enviament de missatges?
-
 
         // TODOEPS: test
         if ($test) {
@@ -69,6 +54,7 @@ class stic_MessagesManUtils {
             $select_query .= " AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " . $db->convert($db->quoted($timedate->fromString("-1 day")->asDb()), "datetime") . ")) ";
         
             $select_query .= " ORDER BY send_date_time ASC,user_id, list_id";
+            $select_query .= " LIMIT $max_messages_per_run";
 
         }else {
             $select_query = " 
@@ -80,18 +66,17 @@ class stic_MessagesManUtils {
             $select_query .= " AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " . $db->convert($db->quoted($timedate->fromString("-1 day")->asDb()), "datetime") . ")) ";
         
             $select_query .= " ORDER BY send_date_time ASC,user_id, list_id";
+            $select_query .= " LIMIT $max_messages_per_run";
         }
 
         DBManager::setQueryLimit(0);
         $result = $db->query($select_query);
 
-        // TODOEPS: Això no és un error. Simplement no hi ha res a forçar....enlloc de FATAL, DEBUG?
         if(!$result) {
-            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
+            $GLOBALS['log']->debug('No messages to send' . __METHOD__ . __LINE__ ,);
             return false;
         }
         while ($row = $db->fetchByAssoc($result)) {
-            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ , $row['id']);
             self::sendMessage($row, $test);
         }
         return true; // Everything OK
