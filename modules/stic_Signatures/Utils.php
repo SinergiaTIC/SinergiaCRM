@@ -222,11 +222,21 @@ class stic_SignaturesUtils
                 }
             }
 
+            // Check if authorized signer option is enabled. In these cases, we need to fetch authorized signers
+            // and replace the current signers list with autorized signers
+            $useAuthorizedSigner = $signatureBean->on_behalf_of ?? false;
+            if ($useAuthorizedSigner == true && $signerModule === 'Contacts') {
+                // If using authorized signers, fetch them and merge with existing signers
+                $signers = self::getAuthorizedSigner($signers[0]->id);
+            }
+
+            // If no signers found, log an error and continue to the next main module ID
             if (empty($signers)) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No signers found for Main Module ID [{$mainModuleId}] and Signer Path [{$signerPath}].");
                 continue;
             }
 
+            // Process each signer and add to the unique list
             foreach ($signers as $signer) {
                 // Ensure signer ID is unique in the list
                 if (!isset($signersIdList[$signer->id])) {
@@ -448,5 +458,43 @@ class stic_SignaturesUtils
             }
         }
         return ['success' => false, 'message' => 'Error accepting document.'];
+    }
+
+    /**
+     * Retrieves authorized signers associated with a given contact ID.
+     *
+     * @param string $contactId The ID of the contact.
+     * @return array An array of authorized signer beans.
+     */
+    public static function getAuthorizedSigner($contactId)
+    {
+        // Initialize an empty array to hold authorized signers
+        $authorizedSigners = [];
+
+        // Load the contact bean
+        if (is_string($contactId) && !empty($contactId)) {
+            $contactBean = BeanFactory::getBean('Contacts', $contactId);
+        }
+        // Ensure contactBean exists
+        if ($contactBean && !empty($contactBean->id)) {
+            $environment = $contactBean->get_linked_beans(
+                'stic_personal_environment_contacts',
+                'stic_Personal_Environment',
+                '',
+                0,
+                0,
+                0,
+                'authorized_signer = 1');
+
+            // Loop through each environment and collect authorized signers
+            foreach ($environment as $env) {
+                foreach ($env->get_linked_beans('stic_personal_environment_contacts_1', 'Contacts') as $authSigner) {
+                    $authorizedSigners[] = $authSigner;
+                }
+            }
+        } else {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Contact Bean for ID [{$contactId}] is empty.");
+        }
+        return $authorizedSigners;
     }
 }
