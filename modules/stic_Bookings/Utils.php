@@ -127,11 +127,7 @@ class stic_BookingsUtils
     private static function generateWeeklyDates($startDay, $interval, $count, $until, $requestData)
     {
         $dates = [];
-        $dow = [];
-        for ($i = 1; $i <= 6; $i++) {
-            $dow[$i] = ($requestData['repeat_dow_' . $i] ?? '') == 'on' ? 1 : 0;
-        }
-        $dow[7] = ($requestData['repeat_dow_0'] ?? '') == 'on' ? 1 : 0; // Sunday
+        $dow = self::getDaysOfWeekFromRequest($requestData);
         $times = array_sum($dow);
 
         if ($times === 0) {
@@ -186,6 +182,19 @@ class stic_BookingsUtils
             $currentDate = date('Y-m-d H:i:s', strtotime($currentDate . " + $interval weeks"));
         }
         return $dates;
+    }
+
+    /**
+     * Helper function to get the days of the week from the request.
+     */
+    private static function getDaysOfWeekFromRequest($requestData)
+    {
+        $dow = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $dow[$i] = ($requestData['repeat_dow_' . $i] ?? '') == 'on' ? 1 : 0;
+        }
+        $dow[7] = ($requestData['repeat_dow_0'] ?? '') == 'on' ? 1 : 0; // Sunday
+        return $dow;
     }
 
     /**
@@ -268,13 +277,8 @@ class stic_BookingsUtils
     {
         $controller = new stic_BookingsController();
         $resourceIds = $requestData['resource_id'] ?? [];
-        $resourceNames = [];
-        foreach ($resourceIds as $resourceId) {
-            $resource = BeanFactory::getBean('stic_Resources', $resourceId);
-            if ($resource) {
-                $names[$resourceId] = $resource->name;
-            }
-        }
+        $resourceNames = self::getResourceNames($resourceIds, 'stic_Resources');
+
         $summary = [
             'global' => ['totalRecordsProcessed' => 0, 'totalRecordsCreated' => 0, 'totalRecordsNotCreated' => 0],
             'resources' => self::initializeResourceSummary($resourceIds, $resourceNames),
@@ -295,16 +299,8 @@ class stic_BookingsUtils
             if ($availability['allResourcesAvailable']) {
                 self::updateBatchAvailability($availableResourcesInThisBatch, $resourceIds, $currentStartDatePhp, $currentEndDatePhp);
                 $bookingCounter++;
-                
-                if (empty($requestData['name'] ?? '')) {
-                    $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Bookings');
-                    $bookingName= $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . str_pad($firstBookingCode, 5, "0", STR_PAD_LEFT) . ' (' . $bookingCounter . ')';
-                } else {
-                    $bookingName =  $requestData['name'] . ' (' . $bookingCounter . ')';
-                }
-        
-                
                 $code++;
+                $bookingName = self::generateBookingName($requestData['name'] ?? '', $firstBookingCode, $bookingCounter);
                 $bookingRecord = self::createBookingRecord($aux[$i], $duration, $requestData, $resourceIds, $resourceNames, $availability['allResourcesAvailable'], $bookingName, $firstBookingCode, $timedate, $currentUser);
                 $bookingsToConfirm[] = $bookingRecord;
                 self::updateSummaryForCreatedBooking($summary, $resourceIds, $bookingName, $resourceNames, $aux[$i], $duration, $timedate, $currentUser);
@@ -322,6 +318,21 @@ class stic_BookingsUtils
         ];
     }
     
+    /**
+     * Gets resource names from their IDs.
+     */
+    private static function getResourceNames($resourceIds, $module)
+    {
+        $names = [];
+        foreach ($resourceIds as $resourceId) {
+            $resource = BeanFactory::getBean($module, $resourceId);
+            if ($resource) {
+                $names[$resourceId] = $resource->name;
+            }
+        }
+        return $names;
+    }
+
     /**
      * Initializes the resource summary array.
      */
@@ -350,7 +361,7 @@ class stic_BookingsUtils
         $allResourcesAvailable = true;
 
         foreach ($resourceIds as $resourceId) {
-            $availabilityDb =self::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
+            $availabilityDb = self::checkResourceAvailability($resourceId, $startDate, $endDate, $bookingId);
             $availabilityBatch = self::checkBatchAvailability($availableResourcesInThisBatch, $resourceId, $startDate, $endDate);
             
             $isResourceAvailable = $availabilityDb['resources_allowed'] && $availabilityBatch;
@@ -394,6 +405,18 @@ class stic_BookingsUtils
             }
             $availableResourcesInThisBatch[$resourceId][] = ['start' => $startDate, 'end' => $endDate];
         }
+    }
+
+    /**
+     * Generates the booking name.
+     */
+    private static function generateBookingName($name, $code, $counter)
+    {
+        if (empty($name)) {
+            $mod_strings = return_module_language($GLOBALS['current_language'], 'stic_Bookings');
+            return $mod_strings['LBL_MODULE_NAME_SINGULAR'] . ' ' . str_pad($code, 5, "0", STR_PAD_LEFT) . ' (' . $counter . ')';
+        }
+        return $name . ' (' . $counter . ')';
     }
 
     /**
@@ -561,6 +584,7 @@ class stic_BookingsUtils
                 }
 
                 $bookingBean->assigned_user_id = $current_user->id;
+                $bookingBean->save();
                 
                 if ($bookingBean->load_relationship('stic_resources_stic_bookings')) {
                     foreach ($booking_info['resourceIds'] as $resourceId) {
