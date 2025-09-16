@@ -24,21 +24,6 @@
 var module = "stic_Message_Marketing";
 var inputsWithErrors2 = new Array();
 
-// debugger;
-// addToValidateCallback(
-//   getFormName(),
-//   "select_all",
-//   "bool",
-//   false,
-//   SUGAR.language.get(module, "LBL_MUST_SELECT_ALL_OR_CHOSEN_LISTS"),
-//   function() {
-//     debugger;
-//     console.log('papapapap');
-    
-//       return JSON.parse(checkAllOrSelectedLists());
-//   }
-// );
-
 addToValidateCallback(
     getFormName(),
     "prospect_lists",
@@ -57,24 +42,18 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    debugger;
     setAutofill(["name"]);
     function toggle_message_for() {
-      debugger;
         const isChecked = $("#select_all").is(":checked");
-        // multiSelect = document.getElementById('prospect_lists');
         multiSelect = $("#prospect_lists");
         if (isChecked) {
           multiSelect.prop("disabled", "disabled");
           multiSelect.css("background-color", "#bcbcbc");
         } else {
-          // multiSelect.disabled = false;
           multiSelect.prop("disabled", "");
           multiSelect.css("background-color", "");
         }
     }
-    // $("select_all").click(function(){ myFunction(); });
-    debugger;
     $(document).ready(function() {
       $("#select_all").on("click", toggle_message_for);
       toggle_message_for();
@@ -90,12 +69,11 @@ switch (viewType()) {
           type: 'POST',
           data: paramsPost,
           success: function(data) {
-            debugger;
             let parsedData = JSON.parse(data);
             $("#sender").val(parsedData.data.defaultSender)
           },
           error: function(xhr, status, error) {
-              // Your error handler here
+              // No error treatment required as it is only retrieving a default string
           }
         });
     });
