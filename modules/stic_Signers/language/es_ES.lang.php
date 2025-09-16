@@ -74,6 +74,8 @@ $mod_strings = array(
     'LBL_SIGNATURE_IMAGE' => 'Imagen de la firma',
     'LBL_VARIABLES' => 'Variables',
     'LBL_REJECTION_REASON' => 'Motivo de rechazo',
+    'LBL_ON_BEHALF_OF_ID' => 'Autorizado a firmar en nombre de (ID)',
+
 
     'LBL_SIGNER_PREVIEW' => 'Vista previa de la firma',
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Enviar para firmar por correo electrónico',

@@ -80,9 +80,9 @@ array(
                         'label' => 'LBL_PDF_DOCUMENT',
                     ),
                     1 => array(
-                        'name' => 'pdf_doc_c',
+                        'name' => 'on_behalf_of_id',
                         'studio' => 'visible',
-                        'label' => 'LBL_PDF_DOC',
+                        'label' => 'LBL_ON_BEHALF_OF_ID',
                     ),
                 ),
                 5 => array(
