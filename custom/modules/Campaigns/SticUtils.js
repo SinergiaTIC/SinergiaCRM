@@ -73,20 +73,6 @@ switch (viewType()) {
 
   case "detail":
     $recordId = $("#formDetailView input[type=hidden][name=record]").val();
-    var buttons = {
-      sendMessagesTest: {
-        id: "bt_direct_debit",
-        title: SUGAR.language.get("Campaigns", "LBL_SEND_MESSAGES_TEST"),
-        onclick: "window.location='index.php?module=stic_Message_Marketing&action=selectMessageMarketing&test=true&record=" + $recordId + "'"
-      },
-      sendMessages: {
-        id: "bt_direct_debit",
-        title: SUGAR.language.get("Campaigns", "LBL_SEND_MESSAGES"),
-        onclick: "window.location='index.php?module=stic_Message_Marketing&action=selectMessageMarketing&test=false&record=" + $recordId + "'"
-      },
-    };
-    createDetailViewButton(buttons.sendMessagesTest);
-    createDetailViewButton(buttons.sendMessages);
     $(document).ready(function() {
       initilizeDetailView();
     });

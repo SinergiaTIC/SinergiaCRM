@@ -72,7 +72,7 @@ class stic_Message_MarketingController extends SugarController {
         $this->view_object_map['MMLIST'] = $mmlist;
         $this->view_object_map['RETURN_MODULE'] = 'Campaigns';
         $this->view_object_map['RETURN_ID'] = $campaign_id;
-        $this->view_object_map['TEST'] = $_REQUEST['test'];
+        $this->view_object_map['TEST'] = $_REQUEST['test'] ?? 'false';
         // $this->mapStepNavigation('results'); //next action to be run
     }
 
