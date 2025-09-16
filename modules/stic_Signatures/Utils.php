@@ -225,9 +225,10 @@ class stic_SignaturesUtils
             // Check if authorized signer option is enabled. In these cases, we need to fetch authorized signers
             // and replace the current signers list with autorized signers
             $useAuthorizedSigner = $signatureBean->on_behalf_of ?? false;
+            $onBehalfOfId = $signers[0]->id ?? '';
             if ($useAuthorizedSigner == true && $signerModule === 'Contacts') {
                 // If using authorized signers, fetch them and merge with existing signers
-                $signers = self::getAuthorizedSigner($signers[0]->id);
+                $signers = self::getAuthorizedSigner($onBehalfOfId);
             }
 
             // If no signers found, log an error and continue to the next main module ID
@@ -245,6 +246,7 @@ class stic_SignaturesUtils
                         'sourceModule' => $mainModule,
                         'sourceId' => $mainModuleId,
                         'signerPath' => $signerPath,
+                        'onBehalfOfId' => $onBehalfOfId,
                         'id' => $signer->id,
                         'name' => $signer->name,
                         'email' => $signer->email1 ?? '',
@@ -293,6 +295,14 @@ class stic_SignaturesUtils
         // Ensure sourceModuleBean exists
         if (!$sourceModuleBean || empty($sourceModuleBean->id)) {
             sugar_die("Invalid Source Module Bean related to Signer ID: {$signerId} (Module: {$signatureBean->main_module}, Record ID: {$signerBean->record_id})");
+        }
+
+        if ($signerBean->parent_type === 'Contacts' && $signatureBean->on_behalf_of == 1) {
+            foreach (self::getAuthorizedSigner($signerBean->on_behalf_of_id ?? '') as $auth) {
+                if ($signerBean->parent_id == $auth->id) {
+                    $authorizedSourceModuleArray = ['Contacts' => $auth->id];
+                }
+            }
         }
 
         require_once 'modules/AOS_PDF_Templates/templateParser.php';
@@ -394,6 +404,16 @@ class stic_SignaturesUtils
         $converted = templateParser::parse_template($text, $beanArray);
         $header = templateParser::parse_template($header, $beanArray);
         $footer = templateParser::parse_template($footer, $beanArray);
+
+        // Replace $authorized_ marks with $contacts_, to re-parse later
+        $converted = str_replace('$authorized_', '$contacts_', $converted);
+        $header = str_replace('$authorized_', '$contacts_', $header);
+        $footer = str_replace('$authorized_', '$contacts_', $footer);
+
+        // Second parse, using authorized contact data
+        $converted = templateParser::parse_template($converted, $authorizedSourceModuleArray);
+        $header = templateParser::parse_template($header, $authorizedSourceModuleArray);
+        $footer = templateParser::parse_template($footer, $authorizedSourceModuleArray);
 
         // Replace last break lines by HTML tags (this line seems redundant if HTML tags are stripped earlier,
         // but it implies converting remaining newlines to <br /> for display purposes after parsing)
