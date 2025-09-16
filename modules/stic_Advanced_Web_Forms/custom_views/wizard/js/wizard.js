@@ -198,7 +198,7 @@ class TreeNavigator {
     }
 
     let id = `${node.id}-${relationship.name}`;
-    let isLoop = id.includes(`-${relationship.name}-`) || node.data.modules.includes(moduleName);
+    // let isLoop = id.includes(`-${relationship.name}-`) || node.data.modules.includes(moduleName);
 
     let data = {
       nodeId: id,
@@ -214,7 +214,7 @@ class TreeNavigator {
     return {
       id: id,
       text: TreeNavigator._getTreeNodeText(data),
-      children: !isLoop, // It CAN have children
+      children: true, //!isLoop, // It CAN have children
       state: { opened: false }, // Ensures the root node is initially closed.
       data: data,
     };
@@ -261,21 +261,8 @@ class TreeNavigator {
       html += `${module.textSingular}`;
     }
 
-    html += `<button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="TreeNavigator.addDataBlockFromTreeNode(TreeNavigator._jstreeInstance.get_node('${data.nodeId}').data);">+</button>`;
+    // html += `<button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="DataBlocksHelper.addDataBlockFromTreeNode(TreeNavigator._jstreeInstance.get_node('${data.nodeId}').data);">+</button>`;
 
-    // let checkSelected =
-    // relationName == ""
-    //   ? `step2.modulesInDataBlocks.findIndex((m) => m == '${moduleName}') != -1`
-    //   : `step2.relationshipsInDataBlocks.findIndex((r) => r.name == '${relationName}') != -1`;
-
-    // let html = `
-    // <div class="stic-tree-item" :class="{ selected: ${checkSelected} }">
-    //   ${text}
-    //   <template x-if="!(${checkSelected})">
-    //     <button type='button' class='btn btn-sm ms-3 p-0 ps-2 pe-2' @click="addDataBlockByTreeNode(jstreeInstance.get_node('${nodeId}'));">+</button>
-    //   </template>
-    // </div>
-    // `;
     return html;
   }
 
@@ -350,11 +337,13 @@ class TreeNavigator {
       });
     }
   }
+}
 
+class DataBlocksHelper {
   static addDataBlockFromTreeNode(data, force = false) {
     // Ensure parent node is added
     if (data.parentNodeId != '') {
-      TreeNavigator.addDataBlockFromTreeNode(TreeNavigator._jstreeInstance.get_node(data.parentNodeId).data);
+      DataBlocksHelper.addDataBlockFromTreeNode(TreeNavigator._jstreeInstance.get_node(data.parentNodeId).data);
     }
 
     if (!data.isRelationship) {
@@ -363,6 +352,19 @@ class TreeNavigator {
     else {
       window.alpineComponent.formConfig.addDataBlockRelationship(data.relationship, force);
     }
+  }
+
+  static getTitleText(data) {
+    let title = ``;
+    // if (data.isRelationship) {
+    //   // name, text, module_orig, field_orig, relationship, module_dest
+    //   STIC.enabledModules[moduleName].textSingular
+    //   title += `${data.text} (${utils.trans})`
+
+    // } else {
+
+    // }
+    return title;
   }
 }
 

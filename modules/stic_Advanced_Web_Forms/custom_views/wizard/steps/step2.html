@@ -27,28 +27,35 @@
 </nav>
 
 <!-- Main Panel -->
-<main class="wizard-main flex-fill d-flex flex-column p-3">
-  <div class="border rounded p-4 mb-5">
+<main class="wizard-main flex-fill d-flex flex-column">
+  <div class="border-bottom p-4 mb-2 bg-light">
     <!-- <h3 class="mb-2" x-text="'[Elemento seleccionado]'"></h3> -->
     <template x-if="step2.treeSelectedData && step2.treeSelectedData.isRelationship">
-      <h3
-        x-text="`${utils.translate('LBL_RELATIONSHIP')}: ${step2.treeSelectedData.text} (${step2.treeSelectedData.relationship.module_orig} » ${step2.treeSelectedData.relationship.module_dest})`"
-      ></h3>
-      <!-- <h4 x-text="`${step2.treeSelectedData.modules.join(' - ')}`"></h4> -->
+      <div>
+        <h3 x-text="`${step2.treeSelectedData.text} (${utils.translate('LBL_RELATIONSHIP')})`"></h3>
+        [Seleccione los Bloques de datos a relacionar]
+        <span
+          x-text="`${STIC.enabledModules[step2.treeSelectedData.relationship.module_orig].textSingular}:`"
+        ></span>
+        <span
+          x-text="`${STIC.enabledModules[step2.treeSelectedData.relationship.module_dest].textSingular}:`"
+        ></span>
+        <button type="button" class="btn float-end" @click="DataBlocksHelper.addDataBlockFromTreeNode(step2.treeSelectedData);">
+          [Relacionar Bloques de Datos]
+        </button>
+      </div>
     </template>
     <template x-if="step2.treeSelectedData && !step2.treeSelectedData.isRelationship">
-      <h3 x-text="`${utils.translate('LBL_MODULE')}: ${step2.treeSelectedData.text}`"></h3>
+      <div>
+        <h3 x-text="`${step2.treeSelectedData.text} (${utils.translate('LBL_MODULE')})`"></h3>
+        <button type="button" class="btn float-end" @click="DataBlocksHelper.addDataBlockFromTreeNode(step2.treeSelectedData);">
+          [Añadir Bloque de Datos]
+        </button>
+      </div>
     </template>
-    <button
-      type="button"
-      class="btn"
-      @click="TreeNavigator.addDataBlockFromTreeNode(step2.treeSelectedData);"
-    >
-      [Añadir Bloque de Datos]
-    </button>
   </div>
-  <div>
-    <h3 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')"></h3>
+  <div class="border rounded p-3">
+    <h3 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')+':'"></h3>
     <div class="flex-fill border rounded p-2">
       <!-- Main Content -->
       <template x-for="(item, key) in formConfig.data_blocks">
