@@ -273,12 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
                     warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                     warningMessage.innerHTML = `
-                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
-                            <p class="text-secondary mb-4">Por favor, escriba su nombre para generar la firma de texto.</p>
-                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
-                        </div>
-                    `;
+                <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                    <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
+                    <p class="text-secondary mb-4">Por favor, escriba su nombre para generar la firma de texto.</p>
+                    <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                </div>
+            `;
                     document.body.appendChild(warningMessage);
                     document.getElementById('closeWarningBtn').addEventListener('click', () => {
                         warningMessage.remove();
@@ -290,55 +290,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                document.fonts.ready.then(() => {
-                    const canvasNativeWidth = signatureCanvas.width;
-                    const canvasNativeHeight = signatureCanvas.height;
-                    let fontSize = canvasNativeHeight * 0.8;
-                    ctx.font = `${fontSize}px "${selectedFont}"`;
-                    let textMetrics = ctx.measureText(signatureText);
-                    const targetWidth = canvasNativeWidth * 0.9;
-                    if (textMetrics.width > targetWidth) {
-                        fontSize = (targetWidth / textMetrics.width) * fontSize;
-                        ctx.font = `${fontSize}px "${selectedFont}"`;
-                    }
-                    const estimatedTextHeight = fontSize * 1.2;
-                    const targetHeight = canvasNativeHeight * 0.9;
-                    if (estimatedTextHeight > targetHeight) {
-                        fontSize = (targetHeight / estimatedTextHeight) * fontSize;
-                    }
-                    ctx.fillStyle = '#333';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    const x = canvasNativeWidth / 2;
-                    const y = canvasNativeHeight / 2;
-                    ctx.fillText(signatureText, x, y);
-                    addAuditRecord(`Text signature "${signatureText}" generated with font "${selectedFont}".`);
-                }).catch(error => {
-                    console.error("Error loading font for text signature:", error);
-                    addAuditRecord(`Error generating text signature: font "${selectedFont}" not loaded.`);
-                    // Fallback to sans-serif
-                    const canvasNativeWidth = signatureCanvas.width;
-                    const canvasNativeHeight = signatureCanvas.height;
-                    let fontSize = canvasNativeHeight * 0.8;
-                    ctx.font = `${fontSize}px sans-serif`;
-                    let textMetrics = ctx.measureText(signatureText);
-                    const maxWidth = canvasNativeWidth * 0.9;
-                    if (textMetrics.width > maxWidth) {
-                        fontSize = (maxWidth / textMetrics.width) * fontSize;
-                    }
-                    const estimatedTextHeight = fontSize * 1.2;
-                    const targetHeight = canvasNativeHeight * 0.9;
-                    if (estimatedTextHeight > targetHeight) {
-                        fontSize = (targetHeight / estimatedTextHeight) * fontSize;
-                    }
-                    ctx.font = `${fontSize}px sans-serif`;
-                    ctx.fillStyle = '#333';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    const x = canvasNativeWidth / 2;
-                    const y = canvasNativeHeight / 2;
-                    ctx.fillText(signatureText, x, y);
-                });
+                // Ya no es necesario esperar por document.fonts.ready, se aplica directamente
+                const canvasNativeWidth = signatureCanvas.width;
+                const canvasNativeHeight = signatureCanvas.height;
+                let fontSize = canvasNativeHeight * 0.8;
+                ctx.font = `${fontSize}px "${selectedFont}", sans-serif`; // Fallback font in case of loading issues
+                let textMetrics = ctx.measureText(signatureText);
+                const targetWidth = canvasNativeWidth * 0.9;
+                if (textMetrics.width > targetWidth) {
+                    fontSize = (targetWidth / textMetrics.width) * fontSize;
+                    ctx.font = `${fontSize}px "${selectedFont}", sans-serif`;
+                }
+                const estimatedTextHeight = fontSize * 1.2;
+                const targetHeight = canvasNativeHeight * 0.9;
+                if (estimatedTextHeight > targetHeight) {
+                    fontSize = (targetHeight / estimatedTextHeight) * fontSize;
+                }
+                ctx.font = `${fontSize}px "${selectedFont}", sans-serif`;
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const x = canvasNativeWidth / 2;
+                const y = canvasNativeHeight / 2;
+                ctx.fillText(signatureText, x, y);
+
+                addAuditRecord(`Text signature "${signatureText}" generated with font "${selectedFont}".`);
             });
         }
 
@@ -436,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                         </div>
                     `;
-                    
+
                     document.body.appendChild(successMessage);
                     document.getElementById('closeMessageBtn').addEventListener('click', () => {
                         successMessage.remove();

@@ -40,6 +40,7 @@ body {
 /* Styles for the main portal container */
 .stic-container {
     max-width: 900px;
+    min-height: 600px;
     margin: 2rem auto;
     padding: 1.5rem;
     background-color: #ffffff;
@@ -49,6 +50,12 @@ body {
     flex-direction: column;
     gap: 2rem; /* Space between sections */
 }
+
+section.signed-area iframe {
+    min-height: 500px;
+    width: 100%;
+}
+
 
 /* Styles for the document area */
 .document-area {
