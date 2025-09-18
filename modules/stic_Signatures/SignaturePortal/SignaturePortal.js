@@ -232,6 +232,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+
+
         // --- Text Signature Functionality ---
         if (renderTextSignatureBtn) {
             renderTextSignatureBtn.addEventListener('click', () => {
@@ -405,67 +407,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         }
-    }
 
-    // --- Lógica para el modo "button" ---
+
+
+
+    }
     if (acceptDocumentBtn) {
         acceptDocumentBtn.addEventListener('click', () => {
             if (!isAcceptanceAreaEnabled) return;
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const url = 'index.php';
-            const signerId = urlParams.get('signerId');
-            const data = {
-                module: "stic_Signatures",
-                action: "acceptDocument", // Nueva acción para aceptación por botón
-                signerId: signerId,
-            };
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams(data),
-            }).then(response => {
-                if (!response.ok) throw new Error('Network or server error');
-                return response.json();
-            }).then(data => {
-                console.log('Acceptance data sent successfully:', data);
-                const successMessage = document.createElement('div');
-                successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                successMessage.innerHTML = `
-                    <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                        <h3 class="fs-4 fw-bold text-success mb-3">Aceptación registrada</h3>
-                        <p class="text-secondary mb-4">Su aceptación del documento ha sido registrada correctamente.</p>
-                        <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
-                    </div>
-                `;
-                document.body.appendChild(successMessage);
-                document.getElementById('closeMessageBtn').addEventListener('click', () => {
-                    successMessage.remove();
-                });
-            }).catch(error => {
-                console.error('Error sending acceptance data:', error);
-                const errorMessage = document.createElement('div');
-                errorMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                errorMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                errorMessage.innerHTML = `
-                    <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
-                        <h3 class="fs-4 fw-bold text-danger mb-3">Error</h3>
-                        <p class="text-secondary mb-4">No se pudo registrar la aceptación del documento. Por favor, inténtelo de nuevo.</p>
-                        <button id="closeErrorBtn" class="btn btn-primary fw-semibold">Cerrar</button>
-                    </div>
-                `;
-                document.body.appendChild(errorMessage);
-                document.getElementById('closeErrorBtn').addEventListener('click', () => {
-                    errorMessage.remove();
-                });
-            });
+            acceptDocument();
         });
     }
+    // acceptDocument action
+    function acceptDocument() {
+        
+        // if (currentCanvasData !== initialCanvasData) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const url = 'index.php';
+        const signerId = urlParams.get('signerId');
+        const data = {
+            module: "stic_Signatures",
+            action: "acceptDocument",
+            signerId: signerId,
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(data),
+        }).then(response => {
+            if (!response.ok) throw new Error('Network or server error');
+            return response.json();
+        }).then(data => {
+            console.log('Signature data sent successfully:', data);
+            const successMessage = document.createElement('div');
+            successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+            successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            successMessage.innerHTML = `
+                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                            <h3 class="fs-4 fw-bold text-success mb-3">Firma guardada</h3>
+                            <p class="text-secondary mb-4">Se ha registrado correctamente la aceptación del documento.</p>
+                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                        </div>
+                    `;
 
+            document.body.appendChild(successMessage);
+            document.getElementById('closeMessageBtn').addEventListener('click', () => {
+                successMessage.remove();
+                window.location.reload();
+            });
+
+        }).catch(error => {
+            console.error('Error sending acceptation data:', error);
+            const warningMessage = document.createElement('div');
+            warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+            warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            warningMessage.innerHTML = `
+                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
+                            <p class="text-secondary mb-4">Ha habido un error al registrar la aceptación del documento.</p>
+                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                        </div>
+                    `;
+            document.body.appendChild(warningMessage);
+            document.getElementById('closeWarningBtn').addEventListener('click', () => {
+                warningMessage.remove();
+            });
+        });
+        // }
+    }
+    
     // Initialize all common elements
     if (documentContentDiv) {
         documentContentDiv.addEventListener('scroll', checkScrollPosition);

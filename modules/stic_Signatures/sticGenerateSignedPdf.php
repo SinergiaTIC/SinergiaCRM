@@ -44,7 +44,7 @@ use SuiteCRM\PDF\PDFWrapper;
 class sticGenerateSignedPdf
 {
 
-    public static function generateSignedPdf()
+    public static function generateSignedPdf($signedMode = 'handwritten')
     {
         global $sugar_config, $current_user;
 
@@ -136,7 +136,23 @@ class sticGenerateSignedPdf
         // Replace the signature placeholder with the actual signature image.
         // As the image image placeholder is recovery encoded from the database, the pattern must be encoded too.
         $stringToreplace = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
-        $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
+
+        /**
+         * 
+         */
+        switch ($signedMode) {
+            case 'handwritten':
+                $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
+                break;
+            case 'accept':
+                $acceptString="Documento aceptado por: <br>{$signerBean->parent_name}<br>{$signerBean->email_address} <br>{$signerBean->signature_date}";
+                $replaceWith = htmlspecialchars('<span style="display:inline-block;width: 200px; height: 100px; font-size: small; font-style: italic; font-family: monospace;background-color: #f0f0f0;"><small>'.$acceptString.'</small></span>');
+
+                break;
+            default:
+                # code...
+                break;
+        }
 
         $templateBean->description = str_replace($stringToreplace, $replaceWith, (string) $templateBean->description);
 
@@ -224,7 +240,6 @@ class sticGenerateSignedPdf
         $header = $parsedText['header'];
         $footer = $parsedText['footer'];
 
-
         $printable = str_replace("\n", "<br />", (string) $converted);
 
         try {
@@ -241,7 +256,6 @@ class sticGenerateSignedPdf
             // Almacenar la referencia del archivo en el base de datos
             $signerBean->pdf_document = $fileName;
             $signerBean->save();
-
 
         } catch (PDFException $e) {
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());

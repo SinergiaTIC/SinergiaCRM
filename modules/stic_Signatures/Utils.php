@@ -471,6 +471,9 @@ class stic_SignaturesUtils
                 return ['success' => false, 'message' => 'Failed to accept document.'];
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to accept document for Signer ID: {$signerBean->id}");
             } else {
+                require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
+                // Generate the signed PDF after saving the signature
+                sticGenerateSignedPdf::generateSignedPdf('accept');
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
                 stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER');
