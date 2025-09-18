@@ -117,7 +117,18 @@ HTML;
 
     public function getIncludeHTML()
     {
+        // STIC-Custom 20250918 MHP - Load the language of the logged-in user
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+        // $html = <<<HTML
+        global $current_user, $sugar_config;
+        $userLang = $current_user->getPreference('language');
+        if (empty($userLang)) {
+            $userLang = $sugar_config['default_language'];
+        }  
+        $userLang = explode("_", $userLang)[0];
         $html = <<<HTML
+<script>var userLang = "{$userLang}";</script>
+<!-- END STIC-Custom -->        
 <link rel="stylesheet" href="{$this->mozaikPath}/jquery.mozaik.css">
 <script src='{$this->mozaikPath}/jquery.mozaik.js'></script>
 HTML;

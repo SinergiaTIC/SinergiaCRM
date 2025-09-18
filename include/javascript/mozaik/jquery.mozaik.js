@@ -160,17 +160,32 @@ var plgBackground = {
                 'insertdatetime media nonbreaking save table contextmenu directionality',
                 'emoticons template paste textcolor colorpicker textpattern imagetools'
             ],
-            toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
-            // STIC-Custom 20220221 - Adding fontselect option
-            // STIC#188
-            // toolbar2: 'print preview media | forecolor backcolor | image | emoticons | table | link | fontsizeselect',
-            toolbar2: 'print preview media | forecolor backcolor | image | emoticons | table | link | fontselect | fontsizeselect',
+            // STIC-Custom 20250918 MHP - https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+            // Do not convert absolute URLs to relative URLs in the Mozaik editor so that images can be uploaded when creating the message and adding the TinyMCE STIC configuration.
+            toolbar1: "code undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
+            toolbar2: "print preview media | forecolor backcolor | image | emoticons | table | link | fontselect fontsizeselect",
+            resize: "both",
+            code_dialog_height: 600,
+            code_dialog_width: 650,
+            plugins: [
+              "fullpage advlist autolink lists link image charmap print preview hr anchor pagebreak",
+              "searchreplace wordcount visualblocks visualchars code fullscreen",
+              "insertdatetime media nonbreaking save table contextmenu directionality",
+              "emoticons template paste textcolor colorpicker textpattern imagetools",
+            ],
+            extended_valid_elements: "style,html[xmlns],style[dir|lang|media|title|type],hr[class|width|size|noshade],@[class|style]",
+            custom_elements: "style,link,~link",
+            content_style:"@import url('https://fonts.googleapis.com/css2?family=Open+Sans');",
+            font_formats:"Andale Mono=andale mono,times;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier;Georgia=georgia,palatino;Helvetica=helvetica;Impact=impact,chicago;Open Sans=Open Sans, sans-serif;Symbol=symbol;Tahoma=tahoma, sans-serif;Terminal=terminal,monaco;Times New Roman=times new roman,times;Trebuchet MS=trebuchet ms,geneva;Verdana=verdana,geneva;Webdings=webdings;Wingdings=wingdings,zapf dingbats",
+            entity_encoding: 'raw',
+            convert_urls: false,
+            relative_urls: false,
+            remove_script_host: false,
+            language: userLang,
+            language_url: 'SticInclude/vendor/tinymce/langs/' + userLang + '.js',            
+            // END Stic-Custom
             table_toolbar: "",
             image_advtab: true,
-            // STIC-Custom 20250918 MHP - Do not convert absolute URLs to relative URLs in the Mozaik editor
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/714
-            convert_urls: false,
-            // END Stic-Custom
             textcolor_map: [
                 "000000", "Black",
                 "993300", "Burnt orange",
