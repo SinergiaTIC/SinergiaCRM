@@ -91,7 +91,8 @@ body {
     background-color: #ffffff;
     touch-action: none; /* Prevents browser scrolling when drawing */
     max-width: 100%; /* Ensures it doesn't overflow the container */
-    max-height: 250px; /* Maximum CSS height for the canvas */
+    height: 250px; /* Set fixed height for the canvas */
+    width: auto; /* Allow the width to be determined by the aspect ratio */
     border-radius: 0.75rem;
     cursor: crosshair; /* Cursor indicating drawing is possible */
     display: block; /* Ensures auto margin works for centering if needed */

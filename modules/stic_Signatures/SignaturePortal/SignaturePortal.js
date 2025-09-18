@@ -128,22 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
          * and makes it responsive.
          */
         function resizeCanvas() {
-            const parentElement = signatureCanvas.parentElement;
-            const parentWidth = parentElement.offsetWidth;
-            const maxHeightCSS = 250;
-
-            let calculatedWidthCSS = parentWidth;
-            let calculatedHeightCSS = calculatedWidthCSS * (9 / 16);
-
-            if (calculatedHeightCSS > maxHeightCSS) {
-                calculatedHeightCSS = maxHeightCSS;
-                calculatedWidthCSS = maxHeightCSS * (16 / 9);
-            }
-
-            if (calculatedWidthCSS > parentWidth) {
-                calculatedWidthCSS = parentWidth;
-                calculatedHeightCSS = calculatedWidthCSS * (9 / 16);
-            }
+            // Fija la altura del canvas
+            const calculatedHeightCSS = 250;
+            const aspectRatio = 16 / 9;
+            const calculatedWidthCSS = calculatedHeightCSS * aspectRatio;
 
             signatureCanvas.style.width = `${calculatedWidthCSS}px`;
             signatureCanvas.style.height = `${calculatedHeightCSS}px`;
@@ -175,21 +163,41 @@ document.addEventListener('DOMContentLoaded', () => {
             checkScrollPosition();
         });
 
+        // Helper function to get correct coordinates
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (evt.clientX - rect.left) * (canvas.width / rect.width),
+                y: (evt.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function getTouchPos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = evt.touches[0];
+            return {
+                x: (touch.clientX - rect.left) * (canvas.width / rect.width),
+                y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
         // --- Drawing Logic for Mouse ---
         signatureCanvas.addEventListener('mousedown', (e) => {
             if (!isAcceptanceAreaEnabled) return;
             isDrawing = true;
-            [lastX, lastY] = [e.offsetX, e.offsetY];
+            const pos = getMousePos(signatureCanvas, e);
+            [lastX, lastY] = [pos.x, pos.y];
             addAuditRecord('Signature drawing started.');
         });
 
         signatureCanvas.addEventListener('mousemove', (e) => {
             if (!isDrawing || !isAcceptanceAreaEnabled) return;
+            const pos = getMousePos(signatureCanvas, e);
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
-            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
-            [lastX, lastY] = [e.offsetX, e.offsetY];
+            [lastX, lastY] = [pos.x, pos.y];
         });
 
         signatureCanvas.addEventListener('mouseup', () => {
@@ -211,20 +219,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isAcceptanceAreaEnabled) return;
             e.preventDefault();
             isDrawing = true;
-            const touch = e.touches[0];
-            const rect = signatureCanvas.getBoundingClientRect();
-            lastX = touch.clientX - rect.left;
-            lastY = touch.clientY - rect.top;
+            const pos = getTouchPos(signatureCanvas, e);
+            lastX = pos.x;
+            lastY = pos.y;
             addAuditRecord('Signature drawing started (touch).');
         }, { passive: false });
 
         signatureCanvas.addEventListener('touchmove', (e) => {
             if (!isDrawing || !isAcceptanceAreaEnabled) return;
             e.preventDefault();
-            const touch = e.touches[0];
-            const rect = signatureCanvas.getBoundingClientRect();
-            const currentX = touch.clientX - rect.left;
-            const currentY = touch.clientY - rect.top;
+            const pos = getTouchPos(signatureCanvas, e);
+            const currentX = pos.x;
+            const currentY = pos.y;
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(currentX, currentY);
@@ -264,12 +270,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (signatureText === '') {
                     const warningMessage = document.createElement('div');
-                    warningMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                    warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                    warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                     warningMessage.innerHTML = `
-                        <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                            <h3 class="text-xl font-bold text-yellow-600 mb-3">Atención</h3>
-                            <p class="text-gray-700 mb-4">Por favor, escriba su nombre para generar la firma de texto.</p>
-                            <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
+                            <p class="text-secondary mb-4">Por favor, escriba su nombre para generar la firma de texto.</p>
+                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                         </div>
                     `;
                     document.body.appendChild(warningMessage);
@@ -282,47 +289,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
-                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
                 document.fonts.ready.then(() => {
-                    const canvasVisualWidth = signatureCanvas.offsetWidth;
-                    const canvasVisualHeight = signatureCanvas.offsetHeight;
-                    let fontSize = canvasVisualHeight * 0.8;
+                    const canvasNativeWidth = signatureCanvas.width;
+                    const canvasNativeHeight = signatureCanvas.height;
+                    let fontSize = canvasNativeHeight * 0.8;
                     ctx.font = `${fontSize}px "${selectedFont}"`;
                     let textMetrics = ctx.measureText(signatureText);
-                    const targetWidth = canvasVisualWidth * 0.9;
+                    const targetWidth = canvasNativeWidth * 0.9;
                     if (textMetrics.width > targetWidth) {
                         fontSize = (targetWidth / textMetrics.width) * fontSize;
                         ctx.font = `${fontSize}px "${selectedFont}"`;
                     }
                     const estimatedTextHeight = fontSize * 1.2;
-                    const targetHeight = canvasVisualHeight * 0.9;
+                    const targetHeight = canvasNativeHeight * 0.9;
                     if (estimatedTextHeight > targetHeight) {
                         fontSize = (targetHeight / estimatedTextHeight) * fontSize;
-                        ctx.font = `${fontSize}px "${selectedFont}"`;
                     }
                     ctx.fillStyle = '#333';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    const x = canvasVisualWidth / 2;
-                    const y = canvasVisualHeight / 2;
+                    const x = canvasNativeWidth / 2;
+                    const y = canvasNativeHeight / 2;
                     ctx.fillText(signatureText, x, y);
                     addAuditRecord(`Text signature "${signatureText}" generated with font "${selectedFont}".`);
                 }).catch(error => {
                     console.error("Error loading font for text signature:", error);
                     addAuditRecord(`Error generating text signature: font "${selectedFont}" not loaded.`);
                     // Fallback to sans-serif
-                    const canvasVisualWidth = signatureCanvas.offsetWidth;
-                    const canvasVisualHeight = signatureCanvas.offsetHeight;
-                    let fontSize = canvasVisualHeight * 0.8;
+                    const canvasNativeWidth = signatureCanvas.width;
+                    const canvasNativeHeight = signatureCanvas.height;
+                    let fontSize = canvasNativeHeight * 0.8;
                     ctx.font = `${fontSize}px sans-serif`;
                     let textMetrics = ctx.measureText(signatureText);
-                    const maxWidth = canvasVisualWidth * 0.9;
+                    const maxWidth = canvasNativeWidth * 0.9;
                     if (textMetrics.width > maxWidth) {
                         fontSize = (maxWidth / textMetrics.width) * fontSize;
                     }
                     const estimatedTextHeight = fontSize * 1.2;
-                    const targetHeight = canvasVisualHeight * 0.9;
+                    const targetHeight = canvasNativeHeight * 0.9;
                     if (estimatedTextHeight > targetHeight) {
                         fontSize = (targetHeight / estimatedTextHeight) * fontSize;
                     }
@@ -330,8 +335,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.fillStyle = '#333';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    const x = canvasVisualWidth / 2;
-                    const y = canvasVisualHeight / 2;
+                    const x = canvasNativeWidth / 2;
+                    const y = canvasNativeHeight / 2;
                     ctx.fillText(signatureText, x, y);
                 });
             });
@@ -353,23 +358,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     img.onload = () => {
                         ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
                         ctx.setTransform(1, 0, 0, 1, 0, 0);
-                        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
-                        const canvasVisualWidth = signatureCanvas.offsetWidth;
-                        const canvasVisualHeight = signatureCanvas.offsetHeight;
-                        const canvasAspectRatio = canvasVisualWidth / canvasVisualHeight;
+                        const canvasNativeWidth = signatureCanvas.width;
+                        const canvasNativeHeight = signatureCanvas.height;
+                        const canvasAspectRatio = canvasNativeWidth / canvasNativeHeight;
                         const imgAspectRatio = img.width / img.height;
-                        let drawWidth = canvasVisualWidth;
-                        let drawHeight = canvasVisualHeight;
+                        let drawWidth = canvasNativeWidth;
+                        let drawHeight = canvasNativeHeight;
                         let offsetX = 0;
                         let offsetY = 0;
 
                         if (imgAspectRatio > canvasAspectRatio) {
                             drawHeight = drawWidth / imgAspectRatio;
-                            offsetY = (canvasVisualHeight - drawHeight) / 2;
+                            offsetY = (canvasNativeHeight - drawHeight) / 2;
                         } else {
                             drawWidth = drawHeight * imgAspectRatio;
-                            offsetX = (canvasVisualWidth - drawWidth) / 2;
+                            offsetX = (canvasNativeWidth - drawWidth) / 2;
                         }
                         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
                         addAuditRecord('Image signature loaded and rendered on the canvas.');
@@ -378,12 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.error('Error loading signature image.');
                         addAuditRecord('Error: Could not load signature image.');
                         const errorMessage = document.createElement('div');
-                        errorMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                        errorMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                        errorMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                         errorMessage.innerHTML = `
-                            <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                                <h3 class="text-xl font-bold text-red-600 mb-3">Error</h3>
-                                <p class="text-gray-700 mb-4">No se pudo cargar la imagen. Por favor, asegúrese de que es un archivo PNG o JPG válido.</p>
-                                <button id="closeErrorBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                            <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                                <h3 class="fs-4 fw-bold text-danger mb-3">Error</h3>
+                                <p class="text-secondary mb-4">No se pudo cargar la imagen. Por favor, asegúrese de que es un archivo PNG o JPG válido.</p>
+                                <button id="closeErrorBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                             </div>
                         `;
                         document.body.appendChild(errorMessage);
@@ -422,12 +427,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).then(data => {
                     console.log('Signature data sent successfully:', data);
                     const successMessage = document.createElement('div');
-                    successMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                    successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                    successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                     successMessage.innerHTML = `
-                        <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                            <h3 class="text-xl font-bold text-green-600 mb-3">Firma guardada</h3>
-                            <p class="text-gray-700 mb-4">La firma se ha guardado correctamente.</p>
-                            <button id="closeMessageBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                            <h3 class="fs-4 fw-bold text-success mb-3">Firma guardada</h3>
+                            <p class="text-secondary mb-4">La firma se ha guardado correctamente.</p>
+                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                         </div>
                     `;
                     
@@ -440,12 +446,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).catch(error => {
                     console.error('Error sending signature data:', error);
                     const warningMessage = document.createElement('div');
-                    warningMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                    warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                    warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                     warningMessage.innerHTML = `
-                        <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                            <h3 class="text-xl font-bold text-yellow-600 mb-3">Atención</h3>
-                            <p class="text-gray-700 mb-4">Por favor, dibuje su firma o use una opción alternativa antes de guardar.</p>
-                            <button id="closeWarningBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
+                            <p class="text-secondary mb-4">Por favor, dibuje su firma o use una opción alternativa antes de guardar.</p>
+                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                         </div>
                     `;
                     document.body.appendChild(warningMessage);
@@ -488,12 +495,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Acceptance data sent successfully:', data);
                 addAuditRecord('Document accepted via button click.');
                 const successMessage = document.createElement('div');
-                successMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 successMessage.innerHTML = `
-                    <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                        <h3 class="text-xl font-bold text-green-600 mb-3">Aceptación registrada</h3>
-                        <p class="text-gray-700 mb-4">Su aceptación del documento ha sido registrada correctamente.</p>
-                        <button id="closeMessageBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                    <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                        <h3 class="fs-4 fw-bold text-success mb-3">Aceptación registrada</h3>
+                        <p class="text-secondary mb-4">Su aceptación del documento ha sido registrada correctamente.</p>
+                        <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                     </div>
                 `;
                 document.body.appendChild(successMessage);
@@ -503,12 +511,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(error => {
                 console.error('Error sending acceptance data:', error);
                 const errorMessage = document.createElement('div');
-                errorMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                errorMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                errorMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
                 errorMessage.innerHTML = `
-                    <div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm mx-4">
-                        <h3 class="text-xl font-bold text-red-600 mb-3">Error</h3>
-                        <p class="text-gray-700 mb-4">No se pudo registrar la aceptación del documento. Por favor, inténtelo de nuevo.</p>
-                        <button id="closeErrorBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Cerrar</button>
+                    <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                        <h3 class="fs-4 fw-bold text-danger mb-3">Error</h3>
+                        <p class="text-secondary mb-4">No se pudo registrar la aceptación del documento. Por favor, inténtelo de nuevo.</p>
+                        <button id="closeErrorBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                     </div>
                 `;
                 document.body.appendChild(errorMessage);

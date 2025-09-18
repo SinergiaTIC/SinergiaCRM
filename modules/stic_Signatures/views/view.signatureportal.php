@@ -131,6 +131,8 @@ class stic_SignaturePortal extends SugarView
         if ($passed === true) {
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
             $this->ss->assign('SHOW_PORTAL', true);
+            $this->ss->assign('SIGNER_NAME', $signerBean->parent_name);
+            
 
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OPEN_PORTAL_BEFORE_SIGN', $signerBean->id, 'SIGNER');
@@ -151,23 +153,11 @@ class stic_SignaturePortal extends SugarView
         // Include CSS and JS
         // It's best to load assets this way for proper SuiteCRM management.
         // Ensure files exist in the correct directories.
+        $this->ss->assign('BOOTSTRAP_CSS', '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">');
+        $this->ss->assign('BOOTSTRAP_JS', '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>');
         $this->ss->assign('STYLESHEETS', '<link rel="stylesheet" href="modules/stic_Signatures/SignaturePortal/SignaturePortal.css">');
         $this->ss->assign('JAVASCRIPT', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortal.js"></script>');
         $this->ss->assign('JAVASCRIPT_OTP', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortalOtp.js"></script>');
-        $this->ss->assign('TAILWIND_SCRIPT', '
-            <script src="https://cdn.tailwindcss.com"></script>
-            <script>
-                tailwind.config = {
-                    theme: {
-                        extend: {
-                            fontFamily: {
-                                sans: [\'Inter\', \'sans-serif\'],
-                            },
-                        }
-                    }
-                }
-            </script>
-        ');
 
         // Load the Smarty template
         // The path should be relative to the SuiteCRM base directory
