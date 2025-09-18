@@ -167,6 +167,10 @@ var plgBackground = {
             toolbar2: 'print preview media | forecolor backcolor | image | emoticons | table | link | fontselect | fontsizeselect',
             table_toolbar: "",
             image_advtab: true,
+            // STIC-Custom 20250918 MHP - Do not convert absolute URLs to relative URLs in the Mozaik editor
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+            convert_urls: false,
+            // END Stic-Custom
             textcolor_map: [
                 "000000", "Black",
                 "993300", "Burnt orange",
