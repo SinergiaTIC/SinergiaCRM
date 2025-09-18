@@ -87,7 +87,7 @@ class stic_Messages extends Basic
         }
 
         // If message is not in draft, only direction and related to can be changed
-        if ($this->fetched_row['status'] !== 'draft') {
+        if ($this->fetched_row['status'] !== 'draft' && !empty($this->id)) {
             $this->template = $this->fetched_row['template'];
             $this->message = $this->fetched_row['message'];
             $this->type = $this->fetched_row['type'];
