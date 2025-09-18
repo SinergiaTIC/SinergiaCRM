@@ -478,12 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // }
     }
     
-    // Initialize all common elements
-    if (documentContentDiv) {
-        documentContentDiv.addEventListener('scroll', checkScrollPosition);
-        checkScrollPosition();
-    }
-
+    
     // Disable areas initially if they exist
     if (signatureCanvas) {
         signatureCanvas.classList.add('canvas-disabled');
@@ -496,4 +491,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (acceptDocumentBtn) {
         acceptDocumentBtn.disabled = true;
     }
+    
+    // Initialize all common elements
+    if (documentContentDiv) {
+        documentContentDiv.addEventListener('scroll', checkScrollPosition);
+        checkScrollPosition();
+    }
+
+
 });
