@@ -31,11 +31,48 @@ switch (viewType()) {
       setAutofill(["name"]);
     });
     state = $('#status').val();
-    if (state !== 'draft') {
+    if (state !== 'draft' && $('input[name="record"]').val()) {
       $('#status').prop('disabled', true);
       $('#status').attr('readonly', true);
       $('#status').css('background', '#F8F8F8');
       $('#status').css('border-color', '#E2E7EB');
+      
+      $('#type').prop('disabled', true);
+      $('#type').attr('readonly', true);
+      $('#type').css('background', '#F8F8F8');
+      $('#type').css('border-color', '#E2E7EB');
+
+      $('#sender').prop('disabled', true);
+      $('#sender').attr('readonly', true);
+      $('#sender').css('background', '#F8F8F8');
+      $('#sender').css('border-color', '#E2E7EB');
+      
+      $('#phone').prop('disabled', true);
+      $('#phone').attr('readonly', true);
+      $('#phone').css('background', '#F8F8F8');
+      $('#phone').css('border-color', '#E2E7EB');
+
+      $('#message').prop('disabled', true);
+      $('#message').attr('readonly', true);
+      $('#message').css('background', '#F8F8F8');
+      $('#message').css('border-color', '#E2E7EB');
+
+      $('#template').prop('disabled', true);
+      $('#template').attr('readonly', true);
+      $('#template').css('background', '#F8F8F8');
+      $('#template').css('border-color', '#E2E7EB');
+      
+      $('#btn_clr_template').prop('disabled', true);
+      $('#btn_clr_template').attr('readonly', true);
+      $('#btn_clr_template').css('background', '#F8F8F8');
+      $('#btn_clr_template').css('border-color', '#E2E7EB');
+
+      $('#btn_template').prop('disabled', true);
+      $('#btn_template').attr('readonly', true);
+      $('#btn_template').css('background', '#F8F8F8');
+      $('#btn_template').css('border-color', '#E2E7EB');
+
+
     }
     break;
 

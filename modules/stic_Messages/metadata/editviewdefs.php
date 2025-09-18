@@ -67,6 +67,37 @@ array(
                 ),
                 2 => array(
                     0 => array(
+                        'name' => 'sender',
+                        'comment' => 'Sender',
+                        'label' => 'LBL_SENDER',
+                    ),
+                    1 => array(
+                        'name' => 'phone',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PHONE',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
+                        'name' => 'message',
+                        'comment' => 'Full text of the message',
+                        'label' => 'LBL_MESSAGE',
+                    ),
+                ),
+                4 => array(
+                    0 => array(
+                        'name' => 'type',
+                        'studio' => 'visible',
+                        'label' => 'LBL_TYPE',
+                    ),
+                    1 => array(
+                        'name' => 'direction',
+                        'studio' => 'visible',
+                        'label' => 'LBL_DIRECTION',
+                    ),
+                ),
+                5 => array(
+                    0 => array(
                         'name' => 'status',
                         'studio' => 'visible',
                         'label' => 'LBL_STATUS',
