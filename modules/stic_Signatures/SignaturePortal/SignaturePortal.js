@@ -52,27 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let isAcceptanceAreaEnabled = false;
 
     /**
-     * Adds an audit record to the audit trail area.
-     * @param {string} message The message to record.
-     */
-    function addAuditRecord(message) {
-        if (!auditRecordsDiv) return;
-        const now = new Date();
-        const timestamp = now.toLocaleString('en-US', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
-        const recordDiv = document.createElement('div');
-        recordDiv.className = 'audit-record bg-gray-50 rounded-md';
-        recordDiv.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
-        auditRecordsDiv.prepend(recordDiv);
-    }
-
-    /**
      * Enables the signature or acceptance area after the user scrolls to the bottom.
      */
     function enableAcceptanceArea() {
@@ -92,10 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (fontSelector) fontSelector.disabled = false;
                 if (renderTextSignatureBtn) renderTextSignatureBtn.disabled = false;
                 if (imageSignatureInput) imageSignatureInput.disabled = false;
-                addAuditRecord('Signature canvas and alternative options activated (document read).');
             } else if (acceptDocumentBtn) {
                 acceptDocumentBtn.disabled = false;
-                addAuditRecord('Acceptance button activated (document read).');
             }
 
             // Remove the scroll listener once the area is activated
@@ -187,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
             isDrawing = true;
             const pos = getMousePos(signatureCanvas, e);
             [lastX, lastY] = [pos.x, pos.y];
-            addAuditRecord('Signature drawing started.');
         });
 
         signatureCanvas.addEventListener('mousemove', (e) => {
@@ -203,14 +179,12 @@ document.addEventListener('DOMContentLoaded', () => {
         signatureCanvas.addEventListener('mouseup', () => {
             if (isDrawing) {
                 isDrawing = false;
-                addAuditRecord('Signature stroke finished.');
             }
         });
 
         signatureCanvas.addEventListener('mouseout', () => {
             if (isDrawing) {
                 isDrawing = false;
-                addAuditRecord('Signature stroke interrupted (cursor left canvas).');
             }
         });
 
@@ -222,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const pos = getTouchPos(signatureCanvas, e);
             lastX = pos.x;
             lastY = pos.y;
-            addAuditRecord('Signature drawing started (touch).');
         }, { passive: false });
 
         signatureCanvas.addEventListener('touchmove', (e) => {
@@ -241,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         signatureCanvas.addEventListener('touchend', () => {
             if (isDrawing) {
                 isDrawing = false;
-                addAuditRecord('Signature stroke finished (touch).');
             }
         });
 
@@ -251,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isAcceptanceAreaEnabled) return;
                 ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
                 initialCanvasData = signatureCanvas.toDataURL('image/png');
-                addAuditRecord('Signature cleared from canvas.');
             });
         }
         if (saveSignatureBtn) {
@@ -283,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('closeWarningBtn').addEventListener('click', () => {
                         warningMessage.remove();
                     });
-                    addAuditRecord('Attempted to generate text signature with empty field.');
                     return;
                 }
 
@@ -314,7 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const y = canvasNativeHeight / 2;
                 ctx.fillText(signatureText, x, y);
 
-                addAuditRecord(`Text signature "${signatureText}" generated with font "${selectedFont}".`);
             });
         }
 
@@ -352,11 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             offsetX = (canvasNativeWidth - drawWidth) / 2;
                         }
                         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-                        addAuditRecord('Image signature loaded and rendered on the canvas.');
                     };
                     img.onerror = () => {
                         console.error('Error loading signature image.');
-                        addAuditRecord('Error: Could not load signature image.');
                         const errorMessage = document.createElement('div');
                         errorMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
                         errorMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
@@ -435,11 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('closeWarningBtn').addEventListener('click', () => {
                         warningMessage.remove();
                     });
-                    addAuditRecord('Attempted to save signature on empty canvas.');
                 });
-                addAuditRecord('Signature captured and ready to be sent to the server.');
-            } else {
-                addAuditRecord('Attempted to save an empty canvas.');
             }
         }
     }
@@ -469,7 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             }).then(data => {
                 console.log('Acceptance data sent successfully:', data);
-                addAuditRecord('Document accepted via button click.');
                 const successMessage = document.createElement('div');
                 successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
                 successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
@@ -521,13 +483,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (imageSignatureInput) imageSignatureInput.disabled = true;
     } else if (acceptDocumentBtn) {
         acceptDocumentBtn.disabled = true;
-    }
-
-    // Load initial audit records
-    addAuditRecord('Document content loaded.');
-    if (signatureCanvas) {
-        addAuditRecord('Signature canvas and alternative options initially disabled.');
-    } else if (acceptDocumentBtn) {
-        addAuditRecord('Acceptance button initially disabled.');
     }
 });
