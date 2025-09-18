@@ -138,16 +138,16 @@ class sticGenerateSignedPdf
         $stringToreplace = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
 
         /**
-         * 
+         *
          */
         switch ($signedMode) {
             case 'handwritten':
                 $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
                 break;
             case 'accept':
-                $acceptString="Documento aceptado por: <br>{$signerBean->parent_name}<br>{$signerBean->email_address} <br>{$signerBean->signature_date}";
-                $replaceWith = htmlspecialchars('<span style="display:inline-block;width: 200px; height: 100px; font-size: small; font-style: italic; font-family: monospace;background-color: #f0f0f0;"><small>'.$acceptString.'</small></span>');
-
+                $textArray = ['Documento aceptado por:', $signerBean->parent_name, $signerBean->email_address, $signerBean->signature_date];
+                $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
+                $replaceWith = htmlspecialchars('<img class="signature" src="' . $acceptImage . '" width="200"></div>');
                 break;
             default:
                 # code...

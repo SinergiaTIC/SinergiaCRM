@@ -520,4 +520,85 @@ class stic_SignaturesUtils
         }
         return $authorizedSigners;
     }
+
+    /**PENDIENTE DOCUMENTAR */
+    public static function generateAcceptImage($lines = ['No text received'])
+    {
+        // Ruta a la imagen de fondo en SuiteCRM
+        $background_image_path = 'themes/SuiteP/images/SignaturePlaceholder.png';
+
+        // Ruta a la fuente TrueType
+        $font_path = 'themes/SuiteP/fonts/Lato-BoldItalic.ttf';
+
+        // Inicia el almacenamiento en búfer de la salida
+        ob_start();
+
+        // Verifica si la imagen de fondo existe
+        if (!file_exists($background_image_path)) {
+            // Si la imagen de fondo no existe, crea una imagen simple de error
+            $width = 200;
+            $height = 50;
+            $image = imagecreatetruecolor($width, $height);
+            $bg_color = imagecolorallocate($image, 255, 200, 200); // Fondo rojo claro para indicar error
+            imagefill($image, 0, 0, $bg_color);
+            $text_color = imagecolorallocate($image, 255, 0, 0); // Texto rojo
+            imagestring($image, 3, 10, 10, "Error: Fondo no encontrado!", $text_color);
+            imagestring($image, 3, 10, 30, $text, $text_color);
+        } else {
+            // Carga la imagen de fondo
+            $image = imagecreatefrompng($background_image_path);
+
+            // Obtiene las dimensiones de la imagen de fondo
+            $width = imagesx($image);
+            $height = imagesy($image);
+
+            // Crea un nuevo color semitransparente (gris claro con 50% de opacidad)
+            $attenuated_color = imagecolorallocatealpha($image, 255, 255, 255, 20);
+
+            // Dibuja un rectángulo con el color semitransparente sobre toda la imagen
+            imagefilledrectangle($image, 0, 0, $width, $height, $attenuated_color);
+
+            // Asigna un color para el texto (azul oscuro)
+            $text_color = imagecolorallocate($image, 0, 51, 102);
+
+            // Dibuja el texto en la imagen de fondo atenuada si la fuente existe
+            if (!file_exists($font_path)) {
+                // Si la fuente no existe, usa la fuente por defecto de GD
+                imagestring($image, 5, 5, 15, $text, $text_color);
+            } else {
+                // Divide el texto en un array de líneas
+                $font_size = 10;
+                $angle = 0;
+                $line_height = $font_size * 1.2;
+                $total_height = count($lines) * $line_height;
+
+                // Calcula la posición vertical inicial para el centrado
+                $y_pos = ($height / 2) - ($total_height / 2) + $font_size;
+
+                // Dibuja cada línea del texto
+                foreach ($lines as $line) {
+                    // Calcula el ancho del texto de la línea actual para centrarla horizontalmente
+                    $bbox = imagettfbbox($font_size, $angle, $font_path, $line);
+                    $text_width = $bbox[2] - $bbox[0];
+                    $x_pos = 5;
+
+                    // Dibuja la línea en la imagen
+                    imagettftext($image, $font_size, $angle, $x_pos, $y_pos, $text_color, $font_path, $line);
+
+                    // Mueve la posición Y para la siguiente línea
+                    $y_pos += $line_height;
+                }
+            }
+        }
+
+        // Genera la imagen PNG en el búfer
+        imagepng($image);
+        // Captura el contenido del búfer
+        $imgData = ob_get_clean();
+        // Libera la memoria de la imagen
+        imagedestroy($image);
+
+        // Retorna la cadena de datos en formato Base64
+        return 'data:image/png;base64,' . base64_encode($imgData);
+    }
 }
