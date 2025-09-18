@@ -138,8 +138,7 @@ class stic_MessagesController extends SugarController
         SugarApplication::redirect("index.php?module=stic_Messages&action=index");
     }
 
-    public function action_ComposeView()
-    {
+    public function action_ComposeView() {
         $this->view = 'compose';
         // For viewing the Compose as modal from other modules we need to load the stic_Messages language strings
         if (isset($_REQUEST['in_popup']) && $_REQUEST['in_popup']) {
@@ -216,8 +215,7 @@ class stic_MessagesController extends SugarController
         exit;
     }
 
-    protected function action_getPhoneField()
-    {
+    protected function action_getPhoneField() {
         $module = $_REQUEST['aow_module'];
         $aow_field = $_REQUEST['aow_newfieldname'];
 

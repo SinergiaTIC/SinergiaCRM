@@ -86,6 +86,15 @@ class stic_Messages extends Basic
             $this->fillName();
         }
 
+        // If message is not in draft, only direction and related to can be changed
+        if ($this->fetched_row['status'] !== 'draft') {
+            $this->template = $this->fetched_row['template'];
+            $this->message = $this->fetched_row['message'];
+            $this->type = $this->fetched_row['type'];
+            $this->phone = $this->fetched_row['phone'];
+        }
+
+
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
 
         if (empty($this->message) && !empty($this->template_id_c)) {
