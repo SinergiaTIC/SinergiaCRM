@@ -72,6 +72,7 @@ switch (viewType()) {
     break;
 
   case "detail":
+    $recordId = $("#formDetailView input[type=hidden][name=record]").val();
     $(document).ready(function() {
       initilizeDetailView();
     });

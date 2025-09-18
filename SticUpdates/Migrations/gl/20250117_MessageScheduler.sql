@@ -1,0 +1,2 @@
+INSERT IGNORE INTO schedulers (id, deleted, date_entered, date_modified, created_by, modified_user_id, name, job, date_time_start, date_time_end, job_interval, time_from, time_to, last_run, status, catch_up) VALUES
+('96c34b2d-d499-11ef-af33-0242ac120003', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Envio planificado de mensajes a teléfono', 'function::sticSendPhoneMessages', NOW(), NULL, '*::2-6::*::*::*', NULL, NULL, NULL, 'Active', 0);
