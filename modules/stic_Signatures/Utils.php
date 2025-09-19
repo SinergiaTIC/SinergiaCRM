@@ -442,7 +442,7 @@ class stic_SignaturesUtils
             } else {
                 require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
                 // Generate the signed PDF after saving the signature
-                sticGenerateSignedPdf::generateSignedPdf($signerBean->id);
+                sticGenerateSignedPdf::generateSignedPdf('handwritten');
 
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
@@ -521,21 +521,27 @@ class stic_SignaturesUtils
         return $authorizedSigners;
     }
 
-    /**PENDIENTE DOCUMENTAR */
+    /**
+     * Generates an acceptance image with provided text lines.
+     * This image is used to represent acceptance in button mode signatures.
+     *
+     * @param array $lines An array of text lines to include in the acceptance image.
+     * @return string A Base64-encoded PNG image string.
+     */
     public static function generateAcceptImage($lines = ['No text received'])
     {
-        // Ruta a la imagen de fondo en SuiteCRM
+        // Path to the background image used for the acceptance image
         $background_image_path = 'themes/SuiteP/images/SignaturePlaceholder.png';
 
-        // Ruta a la fuente TrueType
-        $font_path = 'themes/SuiteP/fonts/Lato-BoldItalic.ttf';
+        // Path to the font file used for rendering text
+        $font_path = 'themes/SuiteP/fonts/Lato-Italic.ttf';
 
-        // Inicia el almacenamiento en búfer de la salida
+        // Start output buffering to capture image data
         ob_start();
 
-        // Verifica si la imagen de fondo existe
+        // Check if the background image exists
         if (!file_exists($background_image_path)) {
-            // Si la imagen de fondo no existe, crea una imagen simple de error
+            // If the background image does not exist, create a simple placeholder image with an error message 
             $width = 200;
             $height = 50;
             $image = imagecreatetruecolor($width, $height);
@@ -543,46 +549,44 @@ class stic_SignaturesUtils
             imagefill($image, 0, 0, $bg_color);
             $text_color = imagecolorallocate($image, 255, 0, 0); // Texto rojo
             imagestring($image, 3, 10, 10, "Error: Fondo no encontrado!", $text_color);
-            imagestring($image, 3, 10, 30, $text, $text_color);
+            imagestring($image, 3, 10, 30, join(' ',$lines), $text_color);
         } else {
-            // Carga la imagen de fondo
+            //  create the image from the background PNG file
             $image = imagecreatefrompng($background_image_path);
 
-            // Obtiene las dimensiones de la imagen de fondo
+            // get image dimensions
             $width = imagesx($image);
             $height = imagesy($image);
 
-            // Crea un nuevo color semitransparente (gris claro con 50% de opacidad)
+            // create a semi-transparent overlay
             $attenuated_color = imagecolorallocatealpha($image, 255, 255, 255, 20);
 
-            // Dibuja un rectángulo con el color semitransparente sobre toda la imagen
+            // fill the image with the semi-transparent overlay
             imagefilledrectangle($image, 0, 0, $width, $height, $attenuated_color);
 
-            // Asigna un color para el texto (azul oscuro)
+            // set the text color (dark blue)
             $text_color = imagecolorallocate($image, 0, 51, 102);
 
-            // Dibuja el texto en la imagen de fondo atenuada si la fuente existe
+            // Check if the font file exists
             if (!file_exists($font_path)) {
-                // Si la fuente no existe, usa la fuente por defecto de GD
-                imagestring($image, 5, 5, 15, $text, $text_color);
+                // If the font file does not exist, use a built-in font
+                imagestring($image, 5, 5, 15, join(' ',$lines), $text_color);
             } else {
-                // Divide el texto en un array de líneas
-                $font_size = 10;
+                // If the font file exists, use TrueType fonts for better quality
+                $font_size = 9;
                 $angle = 0;
                 $line_height = $font_size * 1.2;
                 $total_height = count($lines) * $line_height;
 
-                // Calcula la posición vertical inicial para el centrado
+                // Calculate the starting Y position to vertically center the text block
                 $y_pos = ($height / 2) - ($total_height / 2) + $font_size;
 
-                // Dibuja cada línea del texto
+                //  Draw each line of text
                 foreach ($lines as $line) {
-                    // Calcula el ancho del texto de la línea actual para centrarla horizontalmente
-                    $bbox = imagettfbbox($font_size, $angle, $font_path, $line);
-                    $text_width = $bbox[2] - $bbox[0];
+                    // set the X position to start drawing text (left-aligned with some padding)
                     $x_pos = 5;
 
-                    // Dibuja la línea en la imagen
+                    // Render the text on the image
                     imagettftext($image, $font_size, $angle, $x_pos, $y_pos, $text_color, $font_path, $line);
 
                     // Mueve la posición Y para la siguiente línea
@@ -591,14 +595,14 @@ class stic_SignaturesUtils
             }
         }
 
-        // Genera la imagen PNG en el búfer
+        // Output the image as PNG to the output buffer
         imagepng($image);
-        // Captura el contenido del búfer
+        // Get the image data from the output buffer
         $imgData = ob_get_clean();
-        // Libera la memoria de la imagen
+        // Free up memory
         imagedestroy($image);
 
-        // Retorna la cadena de datos en formato Base64
+        // Return the Base64-encoded image data 
         return 'data:image/png;base64,' . base64_encode($imgData);
     }
 }

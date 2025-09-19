@@ -137,15 +137,26 @@ class sticGenerateSignedPdf
         // As the image image placeholder is recovery encoded from the database, the pattern must be encoded too.
         $stringToreplace = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
 
-        /**
-         *
-         */
+        // Set time in user format and UTC for use later
+        $userTime = new Datetime()->format('Y-m-d H:i:s (\U\T\C P)');
+        $utcTime = new Datetime('UTC')->format('Y-m-d H:i:s P');
+
+        // Depending on the signed mode, prepare the replacement HTML
+        $replaceWith = '';
         switch ($signedMode) {
             case 'handwritten':
                 $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
                 break;
             case 'accept':
-                $textArray = ['Documento aceptado por:', $signerBean->parent_name, $signerBean->email_address, $signerBean->signature_date];
+
+                $textArray = [
+                    'Documento aceptado por:',
+                    $signerBean->parent_name, 
+                    $signerBean->email_address, 
+                    $userTime, 
+                    // $utcTime
+                ];
+
                 $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
                 $replaceWith = htmlspecialchars('<img class="signature" src="' . $acceptImage . '" width="200"></div>');
                 break;
