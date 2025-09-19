@@ -155,9 +155,10 @@ class stic_MessagesUtils {
      */
     public static function get_stic_messages($type) {
         $beanId = $_REQUEST['record'];
+        $statusList = $type['status'];
         $return_array['select'] = 'SELECT stic_messages.id ';
         $return_array['from'] = ' FROM stic_messages ';
-        $return_array['where'] = " WHERE stic_messages.parent_id = '{$beanId}'";
+        $return_array['where'] = " WHERE stic_messages.parent_id = '{$beanId}' and stic_messages.status IN ({$statusList})";
     
         if (isset($type) && ! empty($type['return_as_array'])) {
             return $return_array;
