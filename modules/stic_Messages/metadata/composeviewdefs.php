@@ -36,10 +36,10 @@ array(
                     'field' => '30',
                 ),
             ),
-            'useTabs' => false,
+            'useTabs' => true,
             'tabDefs' => array(
                 'LBL_DEFAULT_PANEL' => array(
-                    'newTab' => false,
+                    'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
             ),
