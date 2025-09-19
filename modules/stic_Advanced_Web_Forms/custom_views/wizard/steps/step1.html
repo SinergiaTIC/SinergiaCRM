@@ -2,14 +2,7 @@
   <div class="container">
     <div class="row">
       <!-- Name -->
-      <div
-        class="col-6"
-        id="name"
-        data-model="bean.name"
-        data-label="LBL_NAME"
-        required
-        x-init="sticControls.fieldText($el)"
-      ></div>
+      <stic-field-text class="col-6" x-model="bean.name" label="LBL_NAME" required></stic-field-text>
 
       <!-- Assigned user -->
       <div
@@ -28,60 +21,48 @@
 
     <div class="row">
       <!-- Base Module -->
-      <div
+      <stic-field-select
         class="col-6"
-        id="base_module"
-        data-model="bean.base_module"
-        data-label="LBL_BASE_MODULE"
-        data-map="STIC.enabledModules"
-        data-map-property="text"
+        x-model="bean.base_module"
+        label="LBL_BASE_MODULE"
+        map="STIC.enabledModules"
+        map-text="text"
         required
-        x-init="sticControls.fieldSelect($el)"
-      ></div>
+      ></stic-field-select>
 
       <!-- Processing mode -->
-      <div
+      <stic-field-select
         class="col-6"
-        id="processing_mode"
-        data-model="bean.processing_mode"
-        data-label="LBL_PROCESSING_MODE"
-        :data-map="utils.getList('stic_advanced_web_forms_processing_mode_list', true)"
-        x-init="sticControls.fieldSelect($el)"
-      ></div>
+        x-model="bean.processing_mode"
+        label="LBL_PROCESSING_MODE"
+        map="utils.getList('stic_advanced_web_forms_processing_mode_list', false)"
+        map-text="text"
+        map-value="id"
+      ></stic-field-select>
     </div>
 
     <div class="row">
       <!-- Generate url -->
-      <div
-        class="col-6 form-check form-switch"
-        id="generate_url"
-        data-model="bean.generate_url"
-        data-label="LBL_GENERATE_URL"
-        x-init="sticControls.fieldCheckbox($el)"
-      ></div>
+      <stic-field-checkbox
+        class="col-6 form-switch"
+        x-model="bean.generate_url"
+        label="LBL_GENERATE_URL"
+      ></stic-field-checkbox>
     </div>
 
     <!-- Description -->
     <div class="row">
-      <div
-        class="col-12"
-        id="description"
-        data-model="bean.description"
-        data-label="LBL_DESCRIPTION"
-        x-init="sticControls.fieldTextarea($el)"
-      ></div>
+      <stic-field-textarea class="col-12" x-model="bean.description" label="LBL_DESCRIPTION"></stic-field-textarea>
     </div>
   </div>
 
   <div x-data="{ showDetailsData:false }">
     <!-- Bean Details [DEBUG] -->
-    <div
-      class="text-muted form-check form-switch mb-3 mt-5"
-      id="showDetailsBeanToggleSwitch"
-      data-model="showDetailsData"
-      data-label-text="[Mostrar Bean]"
-      x-init="sticControls.fieldCheckbox($el);"
-    ></div>
+    <stic-field-checkbox
+      class="text-muted form-switch"
+      x-model="showDetailsData"
+      label="[Mostrar Bean]"
+    ></stic-field-checkbox>
     <div class="card p-2" x-show="showDetailsData">
       <h3 class="card-title" x-text="'Bean: ' + bean.name"></h3>
       <div class="overflow-auto" id="detailsBean" data-model="bean" x-init="sticControls.elemTableObject($el);"></div>

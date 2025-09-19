@@ -11,6 +11,19 @@ class utils {
   }
 
   /**
+   * Trenslate current label to current user language to put it in a label for a field
+   * @param {string} label The label to be translated
+   * @returns Translated label
+   */
+  static translateForFieldLabel(label) {
+    let translated = utils.translate(label).trim();
+    if (!translated.endsWith(":")) {
+      translated += ":";
+    }
+    return translated;
+  }
+
+  /**
    * Decode string with html entities (&quot; &lbrace; ...)
    * @param {string} string The string with HTML entities
    * @returns Decoded string
@@ -31,7 +44,7 @@ class utils {
     if (asString) {
       return `SUGAR.language.languages.app_list_strings.${listName}`;
     }
-    return SUGAR.language.languages.app_list_strings[listName];
+    return Object.entries(SUGAR.language.languages.app_list_strings[listName]).map(([k, v]) => ({ id: k, text: v }));
   }
 
   static _cachedModules = {};
@@ -69,7 +82,12 @@ class utils {
           utils._cachedModules[moduleName] = response;
         },
         error: function (xhr, status, error) {
-          console.error("Error retrieving Information for module: '" + moduleName + "'", status, error, xhr.responseText);
+          console.error(
+            "Error retrieving Information for module: '" + moduleName + "'",
+            status,
+            error,
+            xhr.responseText
+          );
         },
       });
     }
@@ -79,5 +97,9 @@ class utils {
     }
 
     return null;
+  }
+
+  static newId(prefix = "") {
+    return prefix + Date.now().toString(36) + Math.random().toString(36).substring(2);
   }
 }

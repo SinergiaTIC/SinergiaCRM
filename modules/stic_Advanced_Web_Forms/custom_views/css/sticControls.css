@@ -1,3 +1,10 @@
+.w-32px {
+  width: 32px;
+}
+.mb-1px {
+  margin-bottom: 1px;
+}
+
 #wizard-section-title {
   text-transform: uppercase;
   margin-top: 1rem;
@@ -13,6 +20,35 @@
 .wizard-nav .button[disabled]:hover {
   background-color: #828282 !important;
   cursor: not-allowed;
+}
+
+/* [required] + label::after {
+  content: " *";
+  color: red;
+} */
+
+label.field-required::after {
+  content: " *";
+  color: red;
+}
+
+
+/* input:invalid,
+select:invalid {
+  background-color: #ffe6e6;
+  border-color: red;
+}
+
+input:invalid + label,
+select:invalid + label {
+  color: red;
+} */
+
+.form-switch {
+  padding-left: calc(var(--bs-gutter-x) * .5);
+}
+.form-switch .form-check-input {
+  margin-left: inherit;
 }
 
 .input-group .btn {
@@ -52,9 +88,24 @@ textarea,
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
+.selectize-dropdown .selected {
+  color: inherit;
+  font-weight: bold;
+}
 
 .jstree-icon {
   background-image: none !important;
+}
+
+.btn {
+  height: 32px;
+}
+
+.btn[disabled] {
+  text-transform: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
 }
 
 .wizard-sidebar {
@@ -65,10 +116,6 @@ textarea,
   width: 250px;
   min-width: 150px;
   max-width: 600px;
-}
-
-.wizard-main {
-  overflow: auto;
 }
 
 .wizard-tree {

@@ -37,9 +37,6 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
 
         SticViews::preDisplay($this);
 
-        // Tailwindcss
-        // echo '<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>';
-
         // Bootstrap (modified with scoped classes: do not crash current layout!)
         echo "<link rel='stylesheet' href='SticInclude/vendor/bootstrap/css/bootstrap.scoped.min.css'>";
         echo '<script src="SticInclude/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>';
@@ -55,7 +52,8 @@ class stic_Advanced_Web_FormsViewEdit extends ViewEdit
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/config.js");
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/utils.js");
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/js/sticControls.js");
-        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/css/sticControls.css") ."'>";
+        echo "<script src='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/js/sticTemplates.js"). "' defer></script>";
+        echo "<link rel='stylesheet' href='". getVersionedPath("modules/stic_Advanced_Web_Forms/custom_views/css/sticControls.css"). "'>";
 
         // Wizard
         echo getVersionedScript("modules/stic_Advanced_Web_Forms/custom_views/wizard/js/wizard.js");

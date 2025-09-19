@@ -1,6 +1,6 @@
 /**
  * DataBlock: {
- *   name, text, editable_text, module, required,
+ *   id, name, text, editable_text, module, required,
  *   fields: [{ name, label, required, required_in_form, type, type_in_form, subtype_in_form, 
  *               show_in_form, value_type, value, value_text }],
  *    duplicate_detection: {fields: [<field_name>], on_duplicate},
@@ -10,13 +10,14 @@ class AWF_DataBlock {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      name: "",                // Nombre interno (identificador) del Bloque de Datos
-      text: "",                // Texto a mostrar para el Bloque de Datos
-      editable_text: true,     // Indica si el texto se puede modificar
-      module: "",              // Nombre del módulo
-      required: false,         // Indica si es obligado (interno, no se puede eliminar)
-      fields: [],              // Campos del Bloque de Datos
-      duplicate_detection: {}, // Definición de detección de duplicados
+      id: utils.newId("awfdb"), // Id del Bloque de datos
+      name: "",                 // Nombre interno (identificador en UI) del Bloque de Datos
+      text: "",                 // Texto a mostrar para el Bloque de Datos
+      editable_text: true,      // Indica si el texto se puede modificar
+      module: "",               // Nombre del módulo
+      required: false,          // Indica si es obligado (interno, no se puede eliminar)
+      fields: [],               // Campos del Bloque de Datos
+      duplicate_detection: {},  // Definición de detección de duplicados
     });
 
     // 2. Overwrite with provided data
@@ -257,8 +258,40 @@ class AWF_Configuration {
   }
   _ensureDefaultLayout() {}
 
+  suggestDataBlockName(moduleName) {
+    let module = utils.getModuleInformation(moduleName);
+    if (module == null) {
+      return "";
+    }
 
-  addDataBlockModule(moduleName, force = false) {
+    let text = module.textSingular;
+    let index = 0;
+    while(this.data_blocks.some((b) => b.text === text || b.name === name)) {
+      index++;
+      text = `${module.textSingular} ${index}`;
+    }
+    return text;
+  }
+
+  static cleanName(name){
+    // Convertim to lowercase and normalize accents
+    name = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    // Replace any non valid char
+    let nameClean = name.replace(/[^a-z0-9-]/g, "_");
+
+    // Remove repeated _ or at the end
+    nameClean = nameClean.replace(/_+/g, "_").replace(/_$/g, "");
+
+    // If first char is a numbrem add a preffix
+    if (nameClean.match(/^[0-9]/)) {
+      nameClean = "_" + nameClean;
+    }
+
+    return nameClean;
+  }
+
+  addDataBlockModule(moduleName, force = false, text = "") {
     let module = utils.getModuleInformation(moduleName);
 
     // Find DataBlock for module
@@ -271,13 +304,15 @@ class AWF_Configuration {
     }
 
     // Create DataBlock for module
-    let text = module.textSingular;
-    let name = module.name;
+    if (text =="") {
+      text = module.textSingular;
+    }
+    let name = AWF_Configuration.cleanName(text);
     let index = 0;
     while(this.data_blocks.some((b) => b.text === text || b.name === name)) {
       index++;
-      name = `${module.name}_${index}`;
       text = `${module.textSingular} ${index}`;
+      name = AWF_Configuration.cleanName(text);
     }
 
     dataBlock = new AWF_DataBlock({
@@ -314,5 +349,57 @@ class AWF_Configuration {
     dataField_orig.value_text = dataBlock_dest.text;
 
     return dataBlock_dest;
+  }
+
+  getAllDataBlockRelationships() {
+    // Relationship: {name, text, module_orig, field_orig, relationship, module_dest}
+    // DataBlockRelationship: {name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest}
+    let relationships = [];
+    let relsToReview = [];
+    this.data_blocks.forEach(d => {
+      if (d.module) {
+        Object.values(utils.getModuleInformation(d.module).relationships).forEach(r => {
+          // All available relationships for every DataBlock
+          r.datablock = d.id;
+          r.module = r.module_orig == d.module ? r.module_dest : r.module_orig;
+          r.textExtended = `${r.text} (${STIC.enabledModules[r.module].text})`;
+          r.datablock_orig = "";
+          r.datablock_dest = "";
+          if (r.module_orig == d.module) {
+            // Find field orig if is set as DataBlock
+            let field = d.fields.find(f => f.value_type == "datablock");
+            if (field) {
+              // Fill Orig -> Dest info
+              r.datablock_orig = d.id;
+              r.datablock_dest = field.value;
+              relsToReview.push({
+                datablock: r.dataBlock,
+                relationship: r.relationship,
+              })
+            }
+          }
+          relationships.push(r);
+        });
+
+        relsToReview.forEach(v => {
+          let rOrig = relationships.find(r => r.datablock == v.datablock && r.relationship == v.relationship && r.datablock_orig != "");
+          if (rOrig) {
+            // There is Orig -> Dest info: Find Dest and Fill info in  Dest <- Orig
+            let rDest = relationships.find(r => r.datablock == rOrig.datablock_dest && r.relationship == rOrig.relationship);
+            if (rDest) {
+              rDest.datablock_orig = rOrig.datablock_orig;
+              rDest.datablock_dest = rOrig.datablock_dest;
+            }
+          }
+        })
+      }
+    });
+    return relationships;
+  }
+
+  getAvailableRelationships(datablockId) {
+    return this.getAllDataBlockRelationships()
+      .filter(r => r.datablock == datablockId && r.datablock_orig == "" && r.datablock_dest == "")
+      .sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
   }
 }
