@@ -31,12 +31,15 @@ switch (viewType()) {
       setAutofill(["name"]);
     });
     state = $('#status').val();
-    if (state !== 'draft' && $('input[name="record"]').val()) {
+    if ($('input[name="record"]').val()) {
+      // Status can only be changed through actions
       $('#status').prop('disabled', true);
       $('#status').attr('readonly', true);
       $('#status').css('background', '#F8F8F8');
       $('#status').css('border-color', '#E2E7EB');
-      
+    }
+    if (state !== 'draft' && $('input[name="record"]').val()) {
+      // Some fields canonly be edited when message is in draft
       $('#type').prop('disabled', true);
       $('#type').attr('readonly', true);
       $('#type').css('background', '#F8F8F8');
