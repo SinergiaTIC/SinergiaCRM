@@ -83,7 +83,7 @@ array(
       'default' => true,
       'studio' => 'visible',
       'label' => 'LBL_TEMPLATE',
-      'id' => 'TEMPLATE_ID',
+      'id' => 'TEMPLATE_ID_C',
       'link' => true,
       'width' => '7%',
     ),
