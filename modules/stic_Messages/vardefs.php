@@ -117,6 +117,7 @@ $dictionary['stic_Messages'] = array(
             'vname' => 'LBL_SENDER',
             'type' => 'varchar',
             'len' => '255',
+            'required' => true,
             'comment' => 'The name used as sender in the message',
             'merge_filter' => 'enabled',
             'inline_edit' => false,
