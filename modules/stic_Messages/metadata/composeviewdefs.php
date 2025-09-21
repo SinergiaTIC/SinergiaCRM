@@ -101,13 +101,14 @@ array(
                         'label' => 'LBL_STATUS',
                     ),
                     1 => array (
-                      'name' => 'template',
+                      'name' => 'template_id',
                       'studio' => 'visible',
                       'label' => 'LBL_TEMPLATE',
-                      'displayParams' => array(
-                        'call_back_function' => '$.fn.stic_MessagesComposeView.onTemplateSelect',
-                        'initial_filter' => "&type_advanced[]=sms"
-                        ),
+                    // TODOEPS
+                    //   'displayParams' => array(
+                    //     'call_back_function' => '$.fn.stic_MessagesComposeView.onTemplateSelect',
+                    //     'initial_filter' => "&type_advanced[]=sms"
+                    //     ),
                     ),
                 ),
             ),

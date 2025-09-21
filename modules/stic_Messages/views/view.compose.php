@@ -29,6 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 require_once('modules/stic_Settings/Utils.php');
+require_once 'modules/stic_Messages/Utils.php';
 class stic_MessagesViewCompose extends ViewEdit
 {
 
@@ -63,6 +64,9 @@ class stic_MessagesViewCompose extends ViewEdit
     {
         parent::preDisplay();
         SticViews::preDisplay($this);
+
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
+
         $this->ev->ss->assign('RETURN_MODULE', isset($_REQUEST['return_module']) ? $_REQUEST['return_module'] : '');
         $this->ev->ss->assign('RETURN_ACTION', isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] : '');
         $this->ev->ss->assign('RETURN_ID', isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '');
@@ -89,8 +93,8 @@ class stic_MessagesViewCompose extends ViewEdit
 
         SticViews::display($this);
 
-        echo getVersionedScript("modules/stic_Messages/Utils.js");
         echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
+        echo getVersionedScript("modules/stic_Messages/Utils.js");
         // echo getVersionedScript("cache/include/javascript/sugar_grp_yui_widgets.js");
         
         // Write here you custom code

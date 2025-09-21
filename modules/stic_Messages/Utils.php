@@ -188,4 +188,18 @@ class stic_MessagesUtils {
         echo "<script type='text/javascript'>function getMessagesActive() {return {$active};} function getMessagesLimit() {return {$messagesLimit};} </script>";
         echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
     }
+
+    public static function fillDynamicListMessageTemplate()
+    {
+        $emailTemplatesFocus = BeanFactory::newBean('EmailTemplates');
+        $emailTemplates = $emailTemplatesFocus->get_list("name", "email_templates.type='sms'", 0, -99, -99);
+
+        $dynamic_email_template_list = array("" => translate("LBL_NONE", "app_strings"));
+
+        foreach ($emailTemplates['list'] as $emailTemplate) {
+            $dynamic_email_template_list[$emailTemplate->id] = $emailTemplate->name;
+        }
+
+        $GLOBALS['app_list_strings']['dynamic_message_template_list'] = $dynamic_email_template_list;
+    }
 }

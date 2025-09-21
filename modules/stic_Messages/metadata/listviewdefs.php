@@ -77,15 +77,22 @@ array(
         'label' => 'LBL_PHONE',
         'default' => true
     ),
-    'TEMPLATE' => 
-    array (
-      'type' => 'relate',
-      'default' => true,
-      'studio' => 'visible',
-      'label' => 'LBL_TEMPLATE',
-      'id' => 'TEMPLATE_ID_C',
-      'link' => true,
-      'width' => '7%',
+    // 'TEMPLATE' => 
+    // array (
+    //   'type' => 'relate',
+    //   'default' => true,
+    //   'studio' => 'visible',
+    //   'label' => 'LBL_TEMPLATE',
+    //   'id' => 'TEMPLATE_ID',
+    //   'link' => true,
+    //   'width' => '7%',
+    // ),
+    'TEMPLATE_ID' => array(
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_TEMPLATE',
+        'width' => '7%',
+        'default' => true,
     ),
     'SENDER' => array(
         'width' => '10%',

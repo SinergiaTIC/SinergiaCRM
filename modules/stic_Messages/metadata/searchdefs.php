@@ -75,16 +75,16 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'template' => array(
-                'type' => 'relate',
-                'studio' => 'visible',
-                'label' => 'LBL_TEMPLATE',
-                'id' => 'template_id_c',
-                'link' => true,
-                'width' => '10%',
-                'default' => true,
-                'name' => 'template',
-            ),
+            // 'template' => array(
+            //     'type' => 'relate',
+            //     'studio' => 'visible',
+            //     'label' => 'LBL_TEMPLATE',
+            //     'id' => 'template_id',
+            //     'link' => true,
+            //     'width' => '10%',
+            //     'default' => true,
+            //     'name' => 'template',
+            // ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',
@@ -164,16 +164,16 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'template' => array(
-                'type' => 'relate',
-                'studio' => 'visible',
-                'label' => 'LBL_TEMPLATE',
-                'id' => 'template_id_c',
-                'link' => true,
-                'width' => '10%',
-                'default' => true,
-                'name' => 'template',
-            ),
+            // 'template' => array(
+            //     'type' => 'relate',
+            //     'studio' => 'visible',
+            //     'label' => 'LBL_TEMPLATE',
+            //     'id' => 'template_id',
+            //     'link' => true,
+            //     'width' => '10%',
+            //     'default' => true,
+            //     'name' => 'template',
+            // ),
             'date_entered' => array(
                 'type' => 'datetime',
                 'label' => 'LBL_DATE_ENTERED',
@@ -223,13 +223,5 @@ array(
                 'width' => '10%',
             ),
         ),
-    ),
-    'templateMeta' => array(
-        'maxColumns' => '3',
-        'maxColumnsBasic' => '4',
-        'widths' => array(
-            'label' => '10',
-            'field' => '30',
-        ),
-    ),
+    )
 );

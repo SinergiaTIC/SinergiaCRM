@@ -55,7 +55,7 @@ class stic_Messages extends Basic
     public $phone;
     public $sender;
     public $message;
-    public $template_id_c;
+    public $template_id;
     public $parent_type;
     public $parent_id;
     public $status;
@@ -97,8 +97,8 @@ class stic_Messages extends Basic
 
         $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
 
-        if (empty($this->message) && !empty($this->template_id_c)) {
-            $template = BeanFactory::getBean('EmailTemplates', $this->template_id_c);
+        if (empty($this->message) && !empty($this->template_id)) {
+            $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
             $this->message = $template->body;
         }
 
@@ -145,8 +145,8 @@ class stic_Messages extends Basic
             $relatedObjectName = $relatedObject->name;
         }
         $templateName = '';
-        if (!empty($this->template_id_c)){
-            $template = BeanFactory::getBean('EmailTemplates', $this->template_id_c);
+        if (!empty($this->template_id)){
+            $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
             $templateName = ' - ' . $template->name;
         }
 
