@@ -402,4 +402,20 @@ class AWF_Configuration {
       .filter(r => r.datablock == datablockId && r.datablock_orig == "" && r.datablock_dest == "")
       .sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
   }
+
+  getRelationshipModule(datablockId, relationshipName) {
+    return this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName)?.module;
+  }
+
+  getAvailableDataBlocksForRelationship(datablockId, relationshipName) {
+    let rel = this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName);
+    if (!rel) {
+      return [];
+    }
+
+    let dataBlocks = [{ id: -1, text: utils.translate("[< Nuevo Bloque de Datos >]") }];
+    this.data_blocks.filter(d => d.module == rel.module).forEach(db => {
+      dataBlocks.push({id: db.id, text: db.text});
+    });    
+  }
 }

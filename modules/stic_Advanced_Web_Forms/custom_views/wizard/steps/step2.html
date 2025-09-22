@@ -16,7 +16,7 @@
       <stic-field-select
         class="col-3"
         x-model="newDataBlock.module"
-        label="LBL_BASE_MODULE"
+        label="LBL_MODULE"
         map="STIC.enabledModules"
         map-text="text"
       ></stic-field-select>
@@ -96,14 +96,6 @@
                 <div :id="'dataBlockDuplicates'+item.id">
                   <div class="row">
                     <!-- Action -->
-                    <!-- <stic-field-select
-                      class="col-3"
-                      x-model="item.duplicate_detection.on_duplicate"
-                      label="LBL_ONDUPLICATE_ACTION"
-                      map="utils.getList('stic_advanced_web_forms_datablocks_duplicate_action_list', false)"
-                      map-text="text"
-                      map-value="id"
-                    ></stic-field-select> -->
                     <div
                       class="col-3"
                       :id="'duplicateAction'+item.id"
@@ -136,7 +128,7 @@
                   <!-- Relationship Details -->
                   <div
                     class="border-bottom ps-3 pt-3 mb-2 bg-light"
-                    x-data="{creatingRelDataBlock:false, newDataBlock:{module:'', text:''}}"
+                    x-data="{creatingRelDataBlock:false, relationshipName:'', newDataBlock:{module:'', text:''}}"
                   >
                     <div class="row">
                       <button
@@ -154,23 +146,36 @@
                       <div
                         class="col-3"
                         :id="'dataBlockRels'+item.id+'New_SelRel'"
-                        data-model="newDataBlock.module"
+                        data-model="relationshipName"
                         data-label="LBL_RELATIONSHIP"
                         :data-map="`formConfig.getAvailableRelationships('${item.id}')`"
                         data-map-property="textExtended"
-                        data-map-value="relationship"
+                        data-map-value="name"
                         x-init="sticControls.fieldSelect($el)"
                       ></div>
-                      <stic-field-text
+                      <!-- Data Blocks -->
+                      <div
                         class="col-3"
-                        x-model="newDataBlock.text"
-                        label="LBL_DATABLOCK"
-                        x-effect="newDataBlock.text=formConfig.suggestDataBlockName(newDataBlock.module)"
-                      ></stic-field-text>
+                        :id="'dataBlockRels'+item.id+'New_SelDb'"
+                        data-model="newDataBlock"
+                        data-label="[Escoger Bloque de datos]"
+                        :data-map="`formConfig.getAvailableDataBlocksForRelationship('${item.id}', relationshipName)`"
+                        data-map-property="text"
+                        data-map-value="id"
+                        x-init="sticControls.fieldSelect($el)"
+                      ></div>
+                      <div
+                        class="col-3"
+                        :id="'dataBlockRels'+item.id+'New_DbName'"
+                        data-model="newDataBlock.text"
+                        data-label="[Nuevo Bloque de datos]"
+                        data-attribute = "x-effect='newRelatedDataBlock.text=formConfig.suggestDataBlockName(newDataBlock.module)'"
+                        x-init="sticControls.fieldText($el)"
+                      ></div>
                       <button
                         type="button"
                         class="btn w-32px mb-1px"
-                        @click="formConfig.addDataBlockModule(newDataBlock.module, true, newDataBlock.text); creatingRelDataBlock = false;"
+                        @click="formConfig.addDataBlockModule(newRelatedDataBlock.module, true, newRelatedDataBlock.text); creatingRelDataBlock = false;"
                       >
                         <span class="suitepicon suitepicon-action-confirm"></span>
                       </button>

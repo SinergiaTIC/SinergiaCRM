@@ -132,7 +132,6 @@ class SticFieldCheckbox extends HTMLElement {
   connectedCallback() {
     const idBase = this.getAttribute("id") || utils.newId("fc-");
 
-    debugger;
     // Clone template
     const clone = tplSticFieldCheckbox.content.cloneNode(true);
     const wrapper = clone.firstElementChild;
@@ -369,5 +368,4 @@ class SticFieldSelectDynamic extends HTMLElement {
   }
 }
 customElements.define("stic-field-select-dynamic", SticFieldSelectDynamic);
-
 
