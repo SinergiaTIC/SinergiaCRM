@@ -163,7 +163,10 @@ $layout_defs['Leads'] = array(
                         'name' => 'collection',
                         'label' => 'LBL_COLLECTION_TYPE',
                         'type' => 'enum',
-                        'options' => $GLOBALS['app_list_strings']['collection_temp_list'],
+                        // STIC Custom 20240909 EPS - SMS Messages
+                        // 'options' => $GLOBALS['app_list_strings']['collection_temp_list'],
+                        'options' => $GLOBALS['app_list_strings']['stic_history'],
+                        // END STIC Custom
                         'default' => true,
                         'width' => '10%',
                     ),

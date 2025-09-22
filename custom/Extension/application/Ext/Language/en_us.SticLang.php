@@ -3708,3 +3708,11 @@ $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Event';
 $app_list_strings['emailTemplates_type_list']['system'] = 'System';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+
+// Elements added to History panel
+$app_list_strings['collection_temp_list']['Tasks'] = 'Tasks';
+$app_list_strings['collection_temp_list']['Meetings'] = 'Meetings';
+$app_list_strings['collection_temp_list']['Calls'] = 'Calls';
+$app_list_strings['collection_temp_list']['Notes'] = 'Notes';
+$app_list_strings['collection_temp_list']['Emails'] = 'Emails';
+$app_list_strings['collection_temp_list']['stic_messages'] = 'Messages';

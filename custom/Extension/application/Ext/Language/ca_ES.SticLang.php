@@ -3742,3 +3742,11 @@ $app_list_strings['emailTemplates_type_list']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+
+// Elements added to History panel
+$app_list_strings['stic_history']['Tasks'] = 'Tasques';
+$app_list_strings['stic_history']['Meetings'] = 'Reunions';
+$app_list_strings['stic_history']['Calls'] = 'Trucades';
+$app_list_strings['stic_history']['Notes'] = 'Notes';
+$app_list_strings['stic_history']['Emails'] = 'Correus electrònics';
+$app_list_strings['stic_history']['stic_Messages'] = 'Missatges';
