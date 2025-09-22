@@ -23,7 +23,7 @@
 
 require_once 'include/MVC/View/views/view.detail.php';
 require_once 'SticInclude/Views.php';
-
+require_once 'modules/stic_Messages/Utils.php';
 class stic_MessagesViewDetail extends ViewDetail
 {
 
