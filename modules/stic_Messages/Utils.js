@@ -302,7 +302,6 @@ function refresh_email_template_list(template_id, template_name) {
 
 function template_change() {
   console.log('template_chage #' + $("#template_id").val() +'#');
-  debugger;
   if ($("#template_id").val() == "") {
     $("#template_id_edit_link").hide();
   } else {
