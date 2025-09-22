@@ -125,39 +125,6 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
 
 
   // $.fn.stic_MessagesComposeView.onTemplateSelect = function (args) {
-  onTemplateSelect = function (args) {
-    var confirmed = function (args) {
-      var args = JSON.parse(args);
-      $.post('index.php?entryPoint=emailTemplateData', {
-        // emailTemplateId: args.name_to_value_array.template_id_c
-        // emailTemplateId: args.name_to_value_array.template_id
-        emailTemplateId: $("#template_id").val()
-      }, function (jsonResponse) {
-        var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
-      });
-      set_return(args);
-    };
-
-    var mb = messageBox();
-    mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
-    mb.setBody(SUGAR.language.translate('stic_Messages', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
-    mb.css('z-index', 26000);
-    mb.show();
-
-    var args = JSON.stringify(args);
-
-    mb.on('ok', function () {
-      "use strict";
-      confirmed(args);
-      mb.remove();
-    });
-
-    mb.on('cancel', function () {
-      "use strict";
-      mb.remove();
-    });
-  };
 
   $.fn.stic_MessagesComposeView.onTemplateChange = function (args) {
     var confirmed = function (args) {
@@ -354,8 +321,5 @@ $(function () {
   myButtons.on("click", saveMessage);
 
 
-  addEditCreateTemplateLinks();
-  $("#template_id").on("change paste keyup", template_change);
-  $("#template_id").on("change paste keyup", onTemplateSelect);
-  template_change();
+
 });

@@ -39,6 +39,7 @@ class stic_MessagesViewEdit extends ViewEdit
         parent::preDisplay();
 
         SticViews::preDisplay($this);
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
 
         // Write here you custom code
 

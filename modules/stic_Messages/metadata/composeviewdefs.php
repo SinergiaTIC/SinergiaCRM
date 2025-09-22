@@ -104,11 +104,6 @@ array(
                       'name' => 'template_id',
                       'studio' => 'visible',
                       'label' => 'LBL_TEMPLATE',
-                    // TODOEPS
-                    //   'displayParams' => array(
-                    //     'call_back_function' => '$.fn.stic_MessagesComposeView.onTemplateSelect',
-                    //     'initial_filter' => "&type_advanced[]=sms"
-                    //     ),
                     ),
                 ),
             ),

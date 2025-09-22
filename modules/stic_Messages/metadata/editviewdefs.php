@@ -57,12 +57,9 @@ array(
                         'label' => 'LBL_LIST_RELATED_TO',
                     ),
                     1 => array (
-                      'name' => 'template',
+                      'name' => 'template_id',
                       'studio' => 'visible',
                       'label' => 'LBL_TEMPLATE',
-                      'displayParams' => array(
-                        'initial_filter' => "&type_advanced[]=sms"
-                        ),
                     ),
                 ),
                 2 => array(

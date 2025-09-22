@@ -33,7 +33,19 @@ require_once("modules/AOW_WorkFlow/aow_utils.php");
 
 class stic_MessagesController extends SugarController
 {
+    // We remap EditView action when no id is present (new record) to use the ComposeView
+    protected function remapAction()
+    {
+        if (!empty($this->action_remap[$this->do_action])) {
+            $this->action = $this->action_remap[$this->do_action];
+            $this->do_action = $this->action;
+        }
 
+        if ($this->do_action == 'EditView' && empty($this->bean->id)) {
+            $this->action = 'ComposeView';
+            $this->do_action = 'ComposeView';
+        }
+    }
 
     public function action_Save() {
         if (isset($_REQUEST['mass_ids']) && $_REQUEST['mass_ids'] !== '') {
