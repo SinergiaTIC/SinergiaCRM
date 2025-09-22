@@ -74,7 +74,6 @@ switch (viewType()) {
       break;
   
     case "detail":
-      debugger;
       // Set autofill mark beside field label
       if ($('#text_only').prop('checked')) {
         toggle_textarea(this);
