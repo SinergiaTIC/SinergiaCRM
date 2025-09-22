@@ -97,7 +97,11 @@ EOF;
     <div class="container">
         <div class="row">
             <div class="col-md-offset-3 col-md-6">
-                <img src="<?php echo $companyLogoURL ?>"/>
+                <!-- STIC-Custom 20250922 - JBL - Adapt image size -->
+                <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/??? -->
+                <!-- <img src="<?php echo $companyLogoURL ?>"/> -->
+                <img class="center-block" style="max-width: 450px; max-height: 250px;" src="<?php echo $companyLogoURL ?>"/>
+                <!-- END STIC-Custom -->
             </div>
         </div>
         <div class="row well">
