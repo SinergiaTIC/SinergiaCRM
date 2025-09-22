@@ -94,20 +94,28 @@ class stic_Messages extends Basic
             $this->phone = $this->fetched_row['phone'];
         }
 
-
-        $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
-
+        // If there is nothing in the message field, assume the template body
         if (empty($this->message) && !empty($this->template_id)) {
             $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
             $this->message = $template->body;
         }
 
-        $processedText = $this->replaceTemplateVariables($this->message, $bean);
-        $this->message = $processedText;
+        // Only if we are in mass update, assume the body of the template as the message, otherwise the user may have modified the text
+        if ($this->status === 'draft' && ($_REQUEST['massupdate']??false) && $this->template_id !== $this->fetched_row['template']) {
+            $template = BeanFactory::getBean('EmailTemplates', $this->template_id);
+            $this->message = $template->body;
+        }
+
+        if ($this->status === 'sent') {
+            $bean = BeanFactory::getBean($this->parent_type, $this->parent_id);
+    
+            $processedText = $this->replaceTemplateVariables($this->message, $bean);
+            $this->message = $processedText;
+        }
 
         $this->assigned_user_id = $current_user->id;
 
-        // If Message is being created or status chenged to "sent"
+        // If Message is being created or status changed to "sent"
         if (($this->id === null && $this->status === 'sent') || ($this->status === 'sent' && $this->fetched_row['status'] !== 'sent')) {
             if (!empty($this->phone)){
                 $response = $this->sendMessage();
