@@ -44,6 +44,13 @@ use SuiteCRM\PDF\PDFWrapper;
 class sticGenerateSignedPdf
 {
 
+    /** Generates a signed PDF for a given signer ID and saves it to the file system.
+     * The generated PDF file name is stored in the 'pdf_document' field of the signer record.
+     *
+     * @param string $signedMode The mode of signing, either 'handwritten' or 'accept'.
+     *                           Defaults to 'handwritten'.
+     * @return void
+     */
     public static function generateSignedPdf($signedMode = 'handwritten')
     {
         global $sugar_config, $current_user;
@@ -112,7 +119,7 @@ class sticGenerateSignedPdf
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
         }
 
-// Retrieve the record bean
+        // Retrieve the record bean
         $sourceBean = BeanFactory::getBean($sourceModule, $sourceId);
         if (!$sourceBean) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Invalid Record ID: {$sourceId} for Module: {$sourceModule}");
@@ -151,9 +158,9 @@ class sticGenerateSignedPdf
 
                 $textArray = [
                     'Documento aceptado por:',
-                    $signerBean->parent_name, 
-                    $signerBean->email_address, 
-                    $userTime, 
+                    $signerBean->parent_name,
+                    $signerBean->email_address,
+                    $userTime,
                     // $utcTime
                 ];
 
@@ -166,6 +173,15 @@ class sticGenerateSignedPdf
         }
 
         $templateBean->description = str_replace($stringToreplace, $replaceWith, (string) $templateBean->description);
+
+        // if $signature->pdf_audit_page_c is set, add a new page to the PDF with the audit information
+        if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page) {
+            // start with new page html mark
+            $auditHtml = '<p style="page-break-before: always;">&nbsp;</p>';
+            $auditHtml .= file_get_contents('modules/stic_Signatures/AuditPageTemplate.html');
+
+            $templateBean->description .= htmlspecialchars($auditHtml);
+        }
 
         $search = array(
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
