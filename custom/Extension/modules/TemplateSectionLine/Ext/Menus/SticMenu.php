@@ -32,3 +32,9 @@ if (ACLController::checkAccess('TemplateSectionLine', 'list', true)) {
     $module_menu[]=array("index.php?module=TemplateSectionLine&action=index&return_module=TemplateSectionLine&return_action=DetailView", $mod_strings['LNK_LIST'],"List", 'TemplateSectionLine');
 }
 
+if (ACLController::checkAccess('Campaigns', 'list', true)) {
+    $module_menu[]=	array(
+        "index.php?module=Campaigns&action=index&return_module=Campaigns&return_action=index",
+        $mod_strings['LNK_CAMPAIGN_LIST'],"List", 'Campaigns'
+    );
+}

@@ -63,3 +63,5 @@ $mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_CONFIRM'] = 'Confirma substituir 
 $mod_strings['LBL_THUMBNAIL_NAME'] = 'Nom curt per a miniatura';
 $mod_strings['LBL_THUMBNAIL_NAME_HELP'] = "El text d'aquest camp, limitat a 40 caràcters, podrà ser utilitzat com a contingut de la imatge que es crea en prémer el botó de crear imatge.";
 $mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_CREATE_IMAGE'] = 'Indica un valor al camp: ';
+
+$mod_strings['LNK_CAMPAIGN_LIST'] = 'Campanyes';
