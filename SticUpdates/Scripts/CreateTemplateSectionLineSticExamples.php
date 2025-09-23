@@ -297,10 +297,14 @@ if ($db instanceof DBManager)
         ,
         <<<SQL
         INSERT INTO templatesectionline VALUES('000009b2-a259-4b41-df58-68a31fdc03aa', '{$recordsName[12]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
-        <table style="background-color:#FFFFFF;">
+        <table style="background-color:#FFFFFF; width:100%;">
             <tbody>
                 <tr>
-                    <td style="font-size:16px;padding:20px;border-radius:50px;background-color:#b4bc32;"><a style="font-weight:bold;text-decoration:none;color:#ffffff;" title="Lorem Ipsum">{$htmlTexts[4]}</a></td>
+                    <td align="center">
+                        <a href="#" style="display:inline-block; font-size:16px; padding:20px; border-radius:50px; background-color:#b4bc32; font-weight:bold; text-decoration:none; color:#ffffff;">
+                            {$htmlTexts[4]}
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
