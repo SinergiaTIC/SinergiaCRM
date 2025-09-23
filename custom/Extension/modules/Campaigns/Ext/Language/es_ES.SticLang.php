@@ -78,8 +78,8 @@ $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "La plantilla de correo elec
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Cuenta de correo que se utilizará para enviar la notificación. Se puede configurar en el apartado 'Correo electrónico saliente' del área de Adminstración.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo donde recibir los mensajes de error que se puedan producir tras el envío. Se puede configurar en el apartado 'Correo electrónico entrante' del área de Administración.";
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.";
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Al guardar la notificación los correos a enviar se añadirán automáticamente a la cola de envío.';
 
-$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = "Nueva línea de sección de plantilla";
-$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = "Ver líneas de sección de plantilla";
-$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = "Convertir enlaces del mensaje en seguimientos";
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'Nueva línea de sección de plantilla';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'Ver líneas de sección de plantilla';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convertir enlaces del mensaje en URL de seguimiento';
