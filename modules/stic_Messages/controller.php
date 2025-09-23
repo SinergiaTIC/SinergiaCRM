@@ -109,7 +109,7 @@ class stic_MessagesController extends SugarController
                     $detail = $mod_strings['LBL_MESSAGE_NOT_SENT'];
                     break;
                 case 'draft':
-                    $title = $mod_strings['LBL_EMAIL_SUCCESS'];
+                    $title = $app_strings['LBL_EMAIL_SUCCESS'];
                     $detail = $mod_strings['LBL_MESSAGE_SAVED'];
                     break;
                 default:
