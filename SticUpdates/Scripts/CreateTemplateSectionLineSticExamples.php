@@ -9,24 +9,6 @@ $db = DBManagerFactory::getInstance();
 
 if ($db instanceof DBManager) 
 {
-    // Delete STIC template section lines
-    $GLOBALS['log']->debug("Deleting STIC example records from the template section lines module.");
-    $query = "
-        DELETE FROM templatesectionline WHERE id IN (
-            '00000caa-7105-eef5-ad4a-68a414181198',
-            '00000946-dbcc-c8ba-9c16-68a41426bf4e',
-            '00000050-98e6-6f0d-04c0-68a4143f6d6c',
-            '0000006d-a721-a6c5-9df6-68a414b67f90',
-            '00000fbe-4fbd-9659-bd90-68a31e6c9225',
-            '000004dd-964f-9c67-1993-68a3289ad277',
-            '00000fc7-4281-5d09-45f3-68a415cd2a79',
-            '00000f55-0165-c6f0-d49e-68a31f58ce3f',
-            '000009b2-a259-4b41-df58-68a31fdc03aa',
-            '0000021e-291a-84c6-8641-68a323ea5043',
-            '00000138-07eb-c36d-1c5f-68a325bf884c',
-            '00000ec2-1b97-6474-0aa2-68a3254bbb85'
-        )";
-
     if ($db->query($query)) {
         $GLOBALS['log']->debug("Deleted template section lines successfully.");
     } else {
@@ -34,6 +16,7 @@ if ($db instanceof DBManager)
     }
 
     $site_url = $sugar_config['site_url'];
+    $site_url = 'https://manuelsuite.sinergiacrm.org';
     $default_language = $sugar_config['default_language'];
     switch ($default_language) 
     {
@@ -48,11 +31,15 @@ if ($db instanceof DBManager)
                 'Ejemplo 05 - Texto',
                 'Ejemplo 06 - Comentario',
                 'Ejemplo 07 - Aviso',
-                'Ejemplo 08 - Video',
-                'Ejemplo 09 - Botón',
-                'Ejemplo 10 - Separador',
-                'Ejemplo 11 - Pie - Redes sociales',
-                'Ejemplo 12 - Pie - Enlace de Baja'        
+                'Ejemplo 08 - Imagen a la izquierda',
+                'Ejemplo 09 - Imagen a la derecha',
+                'Ejemplo 10 - Dos columnas con imagen',
+                'Ejemplo 11 - Tres columnas con imagen',
+                'Ejemplo 12 - Video',
+                'Ejemplo 13 - Botón',
+                'Ejemplo 14 - Separador',
+                'Ejemplo 15 - Pie - Redes sociales',
+                'Ejemplo 16 - Pie - Enlace de Baja'        
             );
             $htmlTexts = array (
                 'Cabecera H1',
@@ -73,11 +60,15 @@ if ($db instanceof DBManager)
                 'Exemple 05 - Text', 
                 'Exemple 06 - Comentari', 
                 'Exemple 07 - Avís', 
-                'Exemple 08 - Video', 
-                'Exemple 09 - Botó', 
-                'Exemple 10 - Separador', 
-                'Exemple 11 - Peu - Xarxes socials', 
-                'Exemple 12 - Peu - Enllaç de Baixa' 
+                "Exemple 08 - Imatge a l'esquerra", 
+                'Exemple 09 - Imatge a la dreta', 
+                'Exemple 10 - Dues columnes amb imatge', 
+                'Exemple 11 - Tres columnes amb imatge',                
+                'Exemple 12 - Video', 
+                'Exemple 13 - Botó', 
+                'Exemple 14 - Separador', 
+                'Exemple 15 - Peu - Xarxes socials', 
+                'Exemple 16 - Peu - Enllaç de Baixa' 
             );
             $htmlTexts = array ( 
                 'Capçalera H1', 
@@ -98,11 +89,15 @@ if ($db instanceof DBManager)
                 'Example 05 - Text',
                 'Example 06 - Comment',
                 'Example 07 - Notice',
-                'Example 08 - Video',
-                'Example 09 - Button',
-                'Example 10 - Separator',
-                'Example 11 - Footer - Social Media',
-                'Example 12 - Footer - Unsubscribe Link'
+                'Example 08 - Image on the left',
+                'Example 09 - Image on the right',
+                'Example 10 - Two columns with an image',
+                'Example 11 - Three columns with an image',                
+                'Example 12 - Video',
+                'Example 13 - Button',
+                'Example 14 - Separator',
+                'Example 15 - Footer - Social Media',
+                'Example 16 - Footer - Unsubscribe Link'
             );
             $htmlTexts = array (
                 'H1 Header',
@@ -207,7 +202,90 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000f55-0165-c6f0-d49e-68a31f58ce3f', '{$recordsName[7]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        INSERT INTO templatesectionline VALUES('d3b49c38-eeba-b910-2590-5b4069caaac1', '{$recordsName[7]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        <table width="100%" style="background-color:white">
+            <tbody>
+                <tr>
+                    <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                    </td>
+                    <td align="center" style="padding:10px;">
+                        <h2>Lorem ipsum</h2>                    
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/08_ImagenALaIzquierda_225px.png', '', 8, '1');
+        SQL
+        ,
+        <<<SQL
+        INSERT INTO templatesectionline VALUES('dba65685-d26f-6ecd-802c-5b406983c9b5', '{$recordsName[8]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        <table width="100%" style="background-color:white">
+            <tbody>
+                <tr>
+                    <td align="center" style="padding:10px;">
+                        <h2>Lorem ipsum</h2>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>
+                    </td>
+                    <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/09_ImagenALaDerecha_225px.png', '', 9, '1');
+        SQL
+        ,
+        <<<SQL
+        INSERT INTO templatesectionline VALUES('52cdc554-bd90-f8f9-e2e0-66d718ae8fe9', '{$recordsName[9]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        <table width="100%" style="background-color:white">
+            <tbody>
+                <tr>
+                    <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <h3>Lorem ipsum 1</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
+                    </td>
+                    <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <h3>Lorem ipsum 2</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/10_DosColumnasConImagen_225px.png', '', 10, '1');
+        SQL
+        ,
+        <<<SQL
+        INSERT INTO templatesectionline VALUES('9f118e85-13f2-baa9-4ee3-66d80c674dea', '{$recordsName[10]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        <table width="100%" style="background-color:white">
+            <tbody>
+                <tr>
+                    <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <h3>Lorem ipsum 1</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
+                    </td>
+                    <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <h3>Lorem ipsum 2</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
+                    </td>
+                    <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <h3>Lorem ipsum 3</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
+                    </td>                
+                </tr>
+            </tbody>
+        </table>
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/11_TresColumnasConImagen_225px.png', '', 11, '1');
+        SQL
+        ,
+        <<<SQL
+        INSERT INTO templatesectionline VALUES('00000f55-0165-c6f0-d49e-68a31f58ce3f', '{$recordsName[11]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -215,11 +293,11 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/08_Video_225px.png', '', 8, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/12_Video_225px.png', '', 12, '1');
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('000009b2-a259-4b41-df58-68a31fdc03aa', '{$recordsName[8]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        INSERT INTO templatesectionline VALUES('000009b2-a259-4b41-df58-68a31fdc03aa', '{$recordsName[12]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;">
             <tbody>
                 <tr>
@@ -227,19 +305,19 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/09_Boton_225px.png', '', 9, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/13_Boton_225px.png', '', 13, '1');
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('0000021e-291a-84c6-8641-68a323ea5043', '{$recordsName[9]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        INSERT INTO templatesectionline VALUES('0000021e-291a-84c6-8641-68a323ea5043', '{$recordsName[13]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <br /><br />
             <hr />
         <br /><br />
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/10_Separador_225px.png', '', 10, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/14_Separador_225px.png', '', 14, '1');
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000138-07eb-c36d-1c5f-68a325bf884c', '{$recordsName[10]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        INSERT INTO templatesectionline VALUES('00000138-07eb-c36d-1c5f-68a325bf884c', '{$recordsName[14]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -254,11 +332,11 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/11_Pie_Redes_Sociales_225px.png', '', 11, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/15_Pie_Redes_Sociales_225px.png', '', 15, '1');
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000ec2-1b97-6474-0aa2-68a3254bbb85', '{$recordsName[11]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        INSERT INTO templatesectionline VALUES('00000ec2-1b97-6474-0aa2-68a3254bbb85', '{$recordsName[15]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -266,7 +344,7 @@ if ($db instanceof DBManager)
                 </tr>
             </tbody>
         </table>
-        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/12_Pie_Texto_Baja_225px.png', '', 12, '1');
+        ', 0, 'custom/modules/TemplateSectionLine/stic_images_files/Thumbnails/16_Pie_Texto_Baja_225px.png', '', 16, '1');
         SQL
     );
 
