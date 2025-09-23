@@ -86,13 +86,21 @@ switch (sticViewType) {
     }
     addEditCreateTemplateLinks();
     $("#template_id").on("change paste keyup", template_change);
-    template_change();
+    if ($("#template_id").val() == "") {
+      $("#template_id_edit_link").hide();
+    } else {
+      $("#template_id_edit_link").show();
+    }
     break;
 
   case "compose":
     addEditCreateTemplateLinks();
     $("#template_id").on("change paste keyup", template_change);
-    template_change();
+    if ($("#template_id").val() == "") {
+      $("#template_id_edit_link").hide();
+    } else {
+      $("#template_id_edit_link").show();
+    }
     break;
   case "detail":
     // Get record Id 
