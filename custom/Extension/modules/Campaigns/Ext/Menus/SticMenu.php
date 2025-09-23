@@ -29,11 +29,18 @@ if (ACLController::checkAccess('Campaigns', 'edit', true)) {
     );
 }
 
-if(ACLController::checkAccess('TemplateSectionLine', 'edit', true)) {
-    $module_menu[] = array(
-        'index.php?module=TemplateSectionLine&action=EditView&return_module=TemplateSectionLine&return_action=DetailView', 
-        $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'], 'View_Create_Email_Templates', 'TemplateSectionLine');
-}
+    if(ACLController::checkAccess('TemplateSectionLine', 'edit', true)) {
+        $module_menu[] = array(
+            'index.php?module=TemplateSectionLine&action=EditView&return_module=TemplateSectionLine&return_action=DetailView', 
+            $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'], 'Create', 'TemplateSectionLine'
+        );
+    }
+    if (ACLController::checkAccess('TemplateSectionLine', 'list', true)) {
+        $module_menu[] = array(
+            "index.php?module=TemplateSectionLine&action=index",
+            $mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'],"List", 'TemplateSectionLine'
+        );
+    }
 
 if (ACLController::checkAccess('Campaigns', 'edit', true)) {
     $module_menu[] = array(

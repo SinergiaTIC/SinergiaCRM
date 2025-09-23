@@ -81,4 +81,5 @@ $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Buzón de correo onde 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.";
 
 $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = "Nueva línea de sección de plantilla";
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = "Ver líneas de sección de plantilla";
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = "Convertir enlaces del mensaje en seguimientos";

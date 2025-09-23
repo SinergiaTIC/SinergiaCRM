@@ -81,4 +81,5 @@ $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Bústia de correu on r
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "En desar la notificació els correus a enviar s'afegiran automàticament a la cua d'enviament.";
 
 $mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = "Nova línia de secció de plantilla";
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = "Veure línies de secció de plantilla";
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = "Convertir enlaces del mensaje en seguimients";
