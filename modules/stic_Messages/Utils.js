@@ -24,8 +24,9 @@
 var module = "stic_Messages";
 /* VIEWS CUSTOM CODE */
 
+debugger;
 var sticViewType = viewType();
-if ($("select[name='parent_type']").length > 0) {
+if (sticViewType == 'detail' && $("select[name='parent_type']").length > 0) {
   sticViewType = 'compose';
 }
 
@@ -37,14 +38,14 @@ switch (sticViewType) {
       setAutofill(["name"]);
     });
     state = $('#status').val();
-    if ($('input[name="record"]').val()) {
+    if ($('#EditView input[name="record"]').val()) {
       // Status can only be changed through actions
       $('#status').prop('disabled', true);
       $('#status').attr('readonly', true);
       $('#status').css('background', '#F8F8F8');
       $('#status').css('border-color', '#E2E7EB');
     }
-    if (state !== 'draft' && $('input[name="record"]').val()) {
+    if (state !== 'draft' && $('#EditView input[name="record"]').val()) {
       // Some fields canonly be edited when message is in draft
       $('#type').prop('disabled', true);
       $('#type').attr('readonly', true);
@@ -66,10 +67,10 @@ switch (sticViewType) {
       $('#message').css('background', '#F8F8F8');
       $('#message').css('border-color', '#E2E7EB');
 
-      $('#template').prop('disabled', true);
-      $('#template').attr('readonly', true);
-      $('#template').css('background', '#F8F8F8');
-      $('#template').css('border-color', '#E2E7EB');
+      $('#template_id').prop('disabled', true);
+      $('#template_id').attr('readonly', true);
+      $('#template_id').css('background', '#F8F8F8');
+      $('#template_id').css('border-color', '#E2E7EB');
       
       $('#btn_clr_template').prop('disabled', true);
       $('#btn_clr_template').attr('readonly', true);
