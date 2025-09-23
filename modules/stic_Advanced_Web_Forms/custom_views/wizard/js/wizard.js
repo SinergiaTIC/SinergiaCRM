@@ -16,12 +16,12 @@ function wizardForm(readOnly) {
       //   fields: [name: {name, text, type, required, options, inViews}],
       //   relationships: [name: {name, text, fieldName, relationship, moduleName, moduleText}]
       // }
-      loadingTree: true,
-      treeShowAllModules: false,
-      treeSelectedData: null,
 
       // IEPA!!
       // TODO: Remove!!!
+      loadingTree: true,
+      treeShowAllModules: false,
+      treeSelectedData: null,
       relationshipsInDataBlocks: [],
       modulesInDataBlocks: [],
     },
@@ -146,47 +146,6 @@ class WizardNavigation {
   }
 }
 
-class DataBlockEditor {
-  static addRelationDataBlockEditor($container, datablockId) {
-    debugger;
-    $container.innerHTML = '';
-
-    let html = "";
-    // Relationship
-    //formConfig.getAvailableRelationships(datablockId)
-    html += `
-    <div>
-      <label id="RelDataBlockEditor_Rel_label" for="RelDataBlockEditor_Rel_select" class="form-label">
-        ${utils.translateForFieldLabel('LBL_RELATIONSHIP')}
-      </label>
-      <select id="RelDataBlockEditor_Rel_select" class="form-select">
-      `;
-      window.alpineComponent.formConfig.getAvailableRelationships(datablockId).forEach(r => {
-      html += `
-        <option value="${r.name}">${r.textExtended}</option>
-      `;
-    });
-    html+= `
-      </select>
-    </div>
-    `;
-
-    /*
-        <div
-                        class="col-3"
-                        :id="'dataBlockRels'+item.id+'New_SelRel'"
-                        data-model="relationshipName"
-                        data-label="LBL_RELATIONSHIP"
-                        :data-map="``"
-                        data-map-property="textExtended"
-                        data-map-value="name"
-                        x-init="sticControls.fieldSelect($el)"
-                      ></div>
-    */
-    $container.innerHTML = html;
-  }
-}
-
 // Access configuration examples:
 // window.alpineComponent.formConfig
 // window.alpineComponent.bean.base_module
@@ -196,6 +155,8 @@ function set_wizard_assigned_user(popup_reply_data) {
   window.alpineComponent.bean.assigned_user_name = popup_reply_data.name_to_value_array.assigned_user_name;
 }
 
+// IEPA!!
+// TODO: Remove!!!
 function deleteDataBlock(indexToDelete) {
   // DataBlocks: [{
   //   name, text, editable_text, order, fixed_order, module, required(),

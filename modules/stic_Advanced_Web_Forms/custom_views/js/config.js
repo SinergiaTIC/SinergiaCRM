@@ -28,12 +28,26 @@ class AWF_DataBlock {
     this.duplicate_detection = new AWF_DuplicateDetection(data.duplicate_detection || {});
   }
 
-  getModule() {
-    return utils.getModuleInformation(this.name);
+  /**
+   * Gets the module information of the current DataBlock
+   * @returns {object} ModuleInformation 
+   * ModuleInformation: [name, text, textSingular, inStudio, icon, fields:[FieldInformation], relationships:[RelationshipInformation]]
+   *   FieldInformation: { name, text, type, required, options, inViews }
+   *   RelationshipInformation: { name, text, module_orig, field_orig, relationship, module_dest }
+   */
+  getModuleInformation() {
+    return utils.getModuleInformation(this.module);
   }
 
+
+  /**
+   * Add a Field to the DataBlock, from a FieldInformation (the summarized field definition in vardefs)
+   * @param {object} moduleField: FieldInformation
+   * @returns {AWF_Field} the field added to DataBlock
+   * FieldInformation: { name, text, type, required, options, inViews }
+   */
   addFieldFromModuleField(moduleField) {
-    // Field: { name, text, type, required, options, inViews}
+    // FieldInformation: { name, text, type, required, options, inViews }
 
     let field = this.fields.find((f) => f.name === moduleField.name);
     if (!field) {
@@ -52,6 +66,12 @@ class AWF_DataBlock {
     return field;
   }
 
+  /**
+   * Add a Field with DuplicateDetection to the DataBlock, from a FieldInformation (the summarized field definition in vardefs)
+   * @param {object} moduleField FieldInformation
+   * @returns {AWF_Field} the field added to DataBlock
+   * FieldInformation: { name, text, type, required, options, inViews }
+   */
   addDuplicateDetectionFromModuleField(moduleField) {
     let field = this.addFieldFromModuleField(moduleField);
     field.required_in_form = true;
@@ -63,14 +83,20 @@ class AWF_DataBlock {
     return field;
   }
 
+  /**
+   * Checks current DataBlock
+   */
   checkDataBlock(){
     this.checkDuplicateDetectionFields();
   }
 
+  /**
+   * Checks current DataBlock with DuplicateDetection directives
+   */
   checkDuplicateDetectionFields(){
     this.duplicate_detection.fields.forEach(d => {
       if (!this.fields.find(f => f.name === d)) {
-        let field = this.addFieldFromModuleField(this.getModule().fields[d]);
+        let field = this.addFieldFromModuleField(this.getModuleInformation().fields[d]);
         field.required_in_form = true;
       }
     });
@@ -258,7 +284,12 @@ class AWF_Configuration {
   }
   _ensureDefaultLayout() {}
 
-  suggestDataBlockName(moduleName) {
+  /**
+   * Gets a suggested text for a new DataBlock for a module
+   * @param {string} moduleName The module
+   * @returns {string} The suggested text for a new DataBlock
+   */
+  suggestDataBlockText(moduleName) {
     let module = utils.getModuleInformation(moduleName);
     if (module == null) {
       return "";
@@ -273,8 +304,13 @@ class AWF_Configuration {
     return text;
   }
 
+  /**
+   * Gets a new string cleaned to be used as internal name of any element
+   * @param {string} name 
+   * @returns {string}
+   */
   static cleanName(name){
-    // Convertim to lowercase and normalize accents
+    // Convert to lowercase and normalize accents
     name = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     // Replace any non valid char
@@ -283,7 +319,7 @@ class AWF_Configuration {
     // Remove repeated _ or at the end
     nameClean = nameClean.replace(/_+/g, "_").replace(/_$/g, "");
 
-    // If first char is a numbrem add a preffix
+    // If first char is a number add a preffix
     if (nameClean.match(/^[0-9]/)) {
       nameClean = "_" + nameClean;
     }
@@ -291,6 +327,13 @@ class AWF_Configuration {
     return nameClean;
   }
 
+  /**
+   * Gets a new DataBlock for specified module
+   * @param {string} moduleName Module
+   * @param {boolean} force 
+   * @param {string} text 
+   * @returns {AWF_DataBlock}
+   */
   addDataBlockModule(moduleName, force = false, text = "") {
     let module = utils.getModuleInformation(moduleName);
 
@@ -333,29 +376,79 @@ class AWF_Configuration {
 
     return dataBlock;
   }
-  addDataBlockRelationship(relationship) {
-    // Relationship: {name, text, module_orig, field_orig, relationship, module_dest}
 
-    // Find or create DataBlock for related modules
-    let dataBlock_orig = this.addDataBlockModule(relationship.module_orig);
-    let dataBlock_dest = this.addDataBlockModule(relationship.module_dest);
+  /**
+   * 
+   * @param {string} datablockId 
+   * @param {string} relationshipName 
+   * @param {string} relatedDatablockId 
+   * @param {string} newDataBlockText 
+   * @returns 
+   */
+  addDataBlockRelationship(datablockId, relationshipName, relatedDatablockId, newDataBlockText) {
+    // DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
 
-    // Set field value in orig
-    let module_orig = utils.getModuleInformation(relationship.module_orig);
-    let dataField_orig = dataBlock_orig.addFieldFromModuleField(module_orig.fields[relationship.field_orig]);
+    // Find Relationship
+    let rel = this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName);
+    if (!rel) {
+      return null;
+    }
+
+    // Find Datablock
+    let dataBlock = this.data_blocks.find(d => d.id == datablockId);
+    if (!dataBlock) {
+      return null;
+    }
+
+    // Find related Datablock
+    let relDatablock = null;
+    if (relatedDatablockId != -1) {
+      // Use existant related Datablock
+      relDatablock = this.data_blocks.find(d => d.id == relatedDatablockId);
+    } else {
+      // Create new related Datablock
+      relDatablock = this.addDataBlockModule(rel.module, true, newDataBlockText);
+    }
+    if (!relDatablock) {
+      return null;
+    }
+
+    // Set field value in origin
+    let dataBlock_orig = dataBlock;
+    let dataBlock_dest = relDatablock;
+    if (dataBlock_orig.module != rel.module_orig) {
+      dataBlock_orig = relDatablock;
+      dataBlock_dest = dataBlock;
+    }
+    let module_orig = utils.getModuleInformation(rel.module_orig);
+
+    /**
+     * Field: { 
+     *    name, label, required, required_in_form, type, in_form, 
+     *    type_in_form, value_type, value_options: [{value, text}], value, value_text 
+     *  }
+     */
+    let dataField_orig = dataBlock_orig.addFieldFromModuleField(module_orig.fields[rel.field_orig]);
     dataField_orig.in_form = false;
     dataField_orig.value_type = "dataBlock";
-    dataField_orig.value = dataBlock_dest.name;
+    dataField_orig.value = dataBlock_dest.id;
     dataField_orig.value_text = dataBlock_dest.text;
 
-    return dataBlock_dest;
+    return dataBlock;
   }
 
+  /**
+   * Get all defined Relationships in all modules represented in data_blocks array
+   * @returns {array} array with all DataBlock relationships
+   * DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
+   */
   getAllDataBlockRelationships() {
     // Relationship: {name, text, module_orig, field_orig, relationship, module_dest}
     // DataBlockRelationship: {name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest}
     let relationships = [];
     let relsToReview = [];
+    // IEPA!!!
+    // Sembla que no omple bé datablock_orig i datablock_dest o no els filtra!!!!!
     this.data_blocks.forEach(d => {
       if (d.module) {
         Object.values(utils.getModuleInformation(d.module).relationships).forEach(r => {
@@ -397,25 +490,47 @@ class AWF_Configuration {
     return relationships;
   }
 
+  /**
+   * Gets all DataBlock relationships related to current DataBlock
+   * @param {string} datablockId 
+   * @returns {array} array with DataBlock relationships related to current DataBlock
+   * DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
+   */
   getAvailableRelationships(datablockId) {
     return this.getAllDataBlockRelationships()
       .filter(r => r.datablock == datablockId && r.datablock_orig == "" && r.datablock_dest == "")
       .sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
   }
 
+  /**
+   * Gets the module related with relationship in current DataBlock
+   * @param {string} datablockId 
+   * @param {string} relationshipName 
+   * @returns {string} The module name
+   */
   getRelationshipModule(datablockId, relationshipName) {
     return this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName)?.module;
   }
 
+  /**
+   * Get all available DataBlocks that can be related with current DataBlock in the relationship
+   * @param {string} datablockId 
+   * @param {string} relationshipName 
+   * @returns {array}
+   * AvailableDataBlock: { id, text }
+   */
   getAvailableDataBlocksForRelationship(datablockId, relationshipName) {
     let rel = this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName);
     if (!rel) {
       return [];
     }
 
-    let dataBlocks = [{ id: -1, text: utils.translate("[< Nuevo Bloque de Datos >]") }];
+    let dataBlocks = [];
     this.data_blocks.filter(d => d.module == rel.module).forEach(db => {
       dataBlocks.push({id: db.id, text: db.text});
-    });    
+    });
+    dataBlocks.push({ id: -1, text: utils.translate("[< Nuevo Bloque de Datos >]") });
+
+    return dataBlocks;
   }
 }

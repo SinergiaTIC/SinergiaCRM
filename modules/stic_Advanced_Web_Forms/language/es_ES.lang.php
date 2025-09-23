@@ -99,6 +99,7 @@ $mod_strings = array (
   'LBL_SHOW_ALL_MODULES' => 'Mostrar todos los módulos',
   'LBL_DATABLOCKS' => 'Bloques de datos',
   'LBL_DATABLOCK' => 'Bloque de datos',
+  'LBL_NEW_DATABLOCK_NAME' => 'Nuevo Bloque de datos',
   'LBL_DATABLOCK_DETACHED' => 'Datos no enlazados',
   'LBL_RELATIONSHIPS' => 'Relaciones',
   'LBL_RELATIONSHIP' => 'Relación',
@@ -117,7 +118,6 @@ $mod_strings = array (
   'LBL_PARAMETER' => 'Parámetro',
   'LBL_SECTIONS' => 'Secciones',
   'LBL_SECTION' => 'Sección',
-
 
   'LBL_INTERNAL_NAME' => 'Nombre interno',
   
