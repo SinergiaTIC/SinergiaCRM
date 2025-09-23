@@ -75,7 +75,6 @@ $mod_strings = array (
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
   'LBL_STIC_ADVANCED_WEB_FORMS_SUBPANEL_TITLE' => 'Formularios Web Avanzados',
   'LBL_NEW_FORM_TITLE' => 'Nuevo Formularios Web Avanzados',
-  'LBL_BASE_MODULE' => 'Módulo base',
   'LBL_GENERATE_URL' => 'Generar URL',
   'LBL_STATUS' => 'Estado',
   'LBL_PUBLIC_URL' => 'URL',

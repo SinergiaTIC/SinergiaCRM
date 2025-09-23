@@ -45,6 +45,20 @@ class SticFieldText extends HTMLElement {
     if (this.hasAttribute("required")) {
       input.setAttribute("required", "");
     }
+    if(this.hasAttribute("keydown.enter")) {
+      input.addEventListener('keydown',(e) => {
+        if (e.key==='Enter'){
+          Alpine.evaluate(document.getElementById('stic_panel'), this.getAttribute("keydown.enter"));
+        }
+      });
+    }
+    if(this.hasAttribute("keydown.esc")) {
+      input.addEventListener('keydown',(e) => {
+        if (e.key==='Escape'){
+          Alpine.evaluate(document.getElementById('stic_panel'), this.getAttribute("keydown.esc"));
+        }
+      });
+    }
 
     // Other attributes
     const reserved = ["id", "label", "help", "x-model"];

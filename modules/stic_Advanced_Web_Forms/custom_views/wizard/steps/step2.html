@@ -3,7 +3,7 @@
   <!-- Add DataBlock from Module -->
   <div
     class="border-bottom ps-3 pt-3 mb-2 bg-light"
-    x-data="{creatingDataBlock:false, newDataBlock:{module:'', text:''}}"
+    x-data="{creatingDataBlock:!formConfig.data_blocks.some(b => b.module!=''), newDataBlock:{module:'', text:''}}"
   >
     <div class="row">
       <button type="button" class="btn w-auto" x-show="!creatingDataBlock" @click="creatingDataBlock=true;">
@@ -26,15 +26,23 @@
         x-model="newDataBlock.text"
         label="LBL_DATABLOCK"
         x-effect="newDataBlock.text=formConfig.suggestDataBlockName(newDataBlock.module)"
+        keydown.enter="$('#addDataBlockModuleButton').click();"
+        keydown.esc="$('#cancelAddDataBlockModuleButton').click();"
       ></stic-field-text>
       <button
         type="button"
         class="btn w-32px mb-1px"
+        id="addDataBlockModuleButton"
         @click="formConfig.addDataBlockModule(newDataBlock.module, true, newDataBlock.text); creatingDataBlock = false;"
       >
         <span class="suitepicon suitepicon-action-confirm"></span>
       </button>
-      <button type="button" class="btn w-32px mb-1px" @click="creatingDataBlock = false;">
+      <button
+        type="button"
+        class="btn w-32px mb-1px"
+        id="cancelAddDataBlockModuleButton"
+        @click="creatingDataBlock = false;"
+      >
         <span class="suitepicon suitepicon-action-clear"></span>
       </button>
     </div>
@@ -42,7 +50,11 @@
   <!-- Data Blocks -->
   <div>
     <h3 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')+':'"></h3>
-    <div class="flex-fill border rounded p-2 overflow-auto">
+    <div class="flex-fill border rounded p-2 overflow-auto" x-data ="{
+      createRelDataBlock(itemId){
+        DataBlockEditor.addRelationDataBlockEditor($('#dataBlockRelsEdit' + itemId), itemId);
+      }
+    }">
       <!-- Main Content -->
       <template x-for="(item, key) in formConfig.data_blocks">
         <div class="card" :x-data="{item: item, key: key}">
@@ -131,19 +143,27 @@
                     x-data="{creatingRelDataBlock:false, relationshipName:'', newDataBlock:{module:'', text:''}}"
                   >
                     <div class="row">
-                      <button
+                      <!-- <button
                         type="button"
                         class="btn w-auto"
                         x-show="!creatingRelDataBlock"
                         @click="creatingRelDataBlock=true;"
                       >
                         [Añadir Relación con otro Bloque de Datos]
-                      </button>
+                      </button> -->
+                      <button
+                      type="button"
+                      class="btn w-auto"
+                      x-show="!creatingRelDataBlock"
+                      @click="creatingRelDataBlock=true; createRelDataBlock(item.id);"
+                    >
+                      [Añadir Relación con otro Bloque de Datos]
+                    </button>
                       <h4 x-show="creatingRelDataBlock">[Añadir Relación con otro Bloque de Datos]</h4>
                     </div>
-                    <div class="row align-items-end" x-show="creatingRelDataBlock">
+                    <div :id="'dataBlockRelsEdit'+item.id" class="row align-items-end" x-show="creatingRelDataBlock">
                       <!-- Relationship -->
-                      <div
+                      <!-- <div
                         class="col-3"
                         :id="'dataBlockRels'+item.id+'New_SelRel'"
                         data-model="relationshipName"
@@ -152,9 +172,9 @@
                         data-map-property="textExtended"
                         data-map-value="name"
                         x-init="sticControls.fieldSelect($el)"
-                      ></div>
+                      ></div> -->
                       <!-- Data Blocks -->
-                      <div
+                      <!-- <div
                         class="col-3"
                         :id="'dataBlockRels'+item.id+'New_SelDb'"
                         data-model="newDataBlock"
@@ -163,16 +183,16 @@
                         data-map-property="text"
                         data-map-value="id"
                         x-init="sticControls.fieldSelect($el)"
-                      ></div>
-                      <div
+                      ></div> -->
+                      <!-- <div
                         class="col-3"
                         :id="'dataBlockRels'+item.id+'New_DbName'"
                         data-model="newDataBlock.text"
                         data-label="[Nuevo Bloque de datos]"
-                        data-attribute = "x-effect='newRelatedDataBlock.text=formConfig.suggestDataBlockName(newDataBlock.module)'"
+                        data-attribute="x-effect='newRelatedDataBlock.text=formConfig.suggestDataBlockName(newDataBlock.module)'"
                         x-init="sticControls.fieldText($el)"
-                      ></div>
-                      <button
+                      ></div> -->
+                      <!-- <button
                         type="button"
                         class="btn w-32px mb-1px"
                         @click="formConfig.addDataBlockModule(newRelatedDataBlock.module, true, newRelatedDataBlock.text); creatingRelDataBlock = false;"
@@ -181,7 +201,7 @@
                       </button>
                       <button type="button" class="btn w-32px mb-1px" @click="creatingRelDataBlock = false;">
                         <span class="suitepicon suitepicon-action-clear"></span>
-                      </button>
+                      </button> -->
                     </div>
                   </div>
                 </div>

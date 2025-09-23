@@ -44,30 +44,6 @@ $dictionary['stic_Advanced_Web_Forms'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array (
-  'base_module' => 
-  array (
-    'required' => true,
-    'name' => 'base_module',
-    'vname' => 'LBL_BASE_MODULE',
-    'type' => 'enum',
-    'massupdate' => 0,
-    'no_default' => false,
-    'comments' => '',
-    'help' => '',
-    'importable' => 'true',
-    'duplicate_merge' => 'disabled',
-    'duplicate_merge_dom_value' => '0',
-    'audited' => false,
-    'inline_edit' => '',
-    'reportable' => true,
-    'unified_search' => false,
-    'merge_filter' => 'disabled',
-    'len' => 100,
-    'size' => '20',
-    'options' => 'moduleList',
-    'studio' => 'visible',
-    'dependency' => false,
-  ),
   'generate_url' => 
   array (
     'required' => false,
