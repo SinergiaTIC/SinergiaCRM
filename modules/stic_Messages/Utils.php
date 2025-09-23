@@ -160,6 +160,7 @@ class stic_MessagesUtils {
         $return_array['select'] = 'SELECT stic_messages.id ';
         $return_array['from'] = ' FROM stic_messages ';
         $return_array['where'] = " WHERE stic_messages.parent_id = '{$beanId}' {$statusCond}";
+        $return_array['join'] = " ";
     
         if (isset($type) && ! empty($type['return_as_array'])) {
             return $return_array;

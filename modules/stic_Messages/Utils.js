@@ -23,7 +23,13 @@
 // Set module name
 var module = "stic_Messages";
 /* VIEWS CUSTOM CODE */
-switch (viewType()) {
+
+var sticViewType = viewType();
+if ($("select[name='parent_type']").length > 0) {
+  sticViewType = 'compose';
+}
+
+switch (sticViewType) {
   case "edit":
   case "quickcreate":
   case "popup":
@@ -79,10 +85,14 @@ switch (viewType()) {
     }
     addEditCreateTemplateLinks();
     $("#template_id").on("change paste keyup", template_change);
-    $("#template_id").on("change paste keyup", onTemplateSelect);
     template_change();
     break;
 
+  case "compose":
+    addEditCreateTemplateLinks();
+    $("#template_id").on("change paste keyup", template_change);
+    template_change();
+    break;
   case "detail":
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
@@ -260,18 +270,8 @@ function addEditCreateTemplateLinks() {
 }
 
 function open_email_template_form() {
-  // var inboundId = $("#notification_outbound_email_id").val();
-  // var parent_type = "";
-  // if ($("#parent_type").length>0) {
-  //   parent_type = $("#parent_type").val();
-  // } else if(typeof currentModule !== 'undefined') {
-  //   parent_type = currentModule;
-  // } 
-  // URL = "index.php?module=EmailTemplates&action=EditView&type=notification&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
-  // URL += "&show_js=1";
   URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
   URL += "&inboundEmail=false&show_js=1";
-  // URL += "&show_js=1";
 
   windowName = 'email_template';
   windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
@@ -284,21 +284,12 @@ function open_email_template_form() {
 }
 
 function edit_email_template_form() {
-  // var inboundId = $("#notification_outbound_email_id").val();
-  // var parent_type = "";
-  // if ($("#parent_type").length>0) {
-  //   parent_type = $("#parent_type").val();
-  // } else if(typeof currentModule !== 'undefined') {
-  //   parent_type = currentModule;
-  // } 
-  // URL = "index.php?module=EmailTemplates&action=EditView&type=notification&inboundEmail=" + inboundId + "&parent_type=" + parent_type;
   URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
 
   var field = document.getElementById('template_id');
   if (field.options[field.selectedIndex].value != 'undefined') {
       URL += "&record=" + field.options[field.selectedIndex].value;
   }
-  // URL += "&show_js=1";
   URL += "&inboundEmail=null&show_js=1";
 
   windowName = 'email_template';
@@ -341,5 +332,43 @@ function template_change() {
   } else {
     $("#template_id_edit_link").show();
   }
+  if ($("#template_id").val()) {
+    updateMessageBox();
+  }
 }
+
+function updateMessageBox (args) {
+    var confirmed = function (args) {
+      var args = JSON.parse(args);
+
+      $.post('index.php?entryPoint=emailTemplateData', {
+        emailTemplateId: $('#template_id').val()
+      }, function (jsonResponse) {
+        var response = JSON.parse(jsonResponse);
+        $("#message").val(response.data.body);
+      });
+      set_return(args);
+    };
+
+    var mb = messageBox();
+    mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
+    mb.setBody(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
+    mb.css('z-index', 26000);
+    mb.show();
+
+    mb.on('ok', function () {
+      "use strict";
+      var id=$('#emails_email_templates_idb').val();
+      var name=$('#emails_email_templates_name').val();
+      args = JSON.stringify({"form_name":"ComposeView","name_to_value_array":{"emails_email_templates_idb": id,"emails_email_templates_name": name}})
+      confirmed(args);
+      mb.remove();
+    });
+
+    mb.on('cancel', function () {
+      "use strict";
+      mb.remove();
+    });
+  }
+
 

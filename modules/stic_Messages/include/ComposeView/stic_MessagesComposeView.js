@@ -126,40 +126,7 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
 
   // $.fn.stic_MessagesComposeView.onTemplateSelect = function (args) {
 
-  $.fn.stic_MessagesComposeView.onTemplateChange = function (args) {
-    var confirmed = function (args) {
-      var args = JSON.parse(args);
-
-      $.post('index.php?entryPoint=emailTemplateData', {
-        emailTemplateId: $('#template_id_c').val()
-      }, function (jsonResponse) {
-        var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
-      });
-      set_return(args);
-    };
-
-    var mb = messageBox();
-    mb.setTitle(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_EMAIL_TEMPLATE_TITLE'));
-    mb.setBody(SUGAR.language.translate('Emails', 'LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'));
-    mb.css('z-index', 26000);
-    mb.show();
-
-    mb.on('ok', function () {
-      "use strict";
-      var id=$('#emails_email_templates_idb').val();
-      var name=$('#emails_email_templates_name').val();
-      args = JSON.stringify({"form_name":"ComposeView","name_to_value_array":{"emails_email_templates_idb": id,"emails_email_templates_name": name}})
-      confirmed(args);
-      mb.remove();
-    });
-
-    mb.on('cancel', function () {
-      "use strict";
-      mb.remove();
-    });
-  }
-
+  
   $.fn.stic_MessagesComposeView.onParentSelect = function (args) {
     set_return(args);
     if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {

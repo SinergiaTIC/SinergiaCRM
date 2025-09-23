@@ -166,9 +166,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           if (typeof namesList !== 'undefined') {
             $('#namesList').val(namesList);
           }
-          $( "#template" ).change(function() {
-              $.fn.stic_MessagesComposeView.onTemplateChange()
-            });
         },
         error: function(xhr, status, error) {
             // Your error handler here
