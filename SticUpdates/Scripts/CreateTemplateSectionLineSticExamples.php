@@ -206,7 +206,7 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
                     </td>
                     <td align="center" style="padding:10px;">
                         <h2>Lorem ipsum</h2>                    
@@ -228,7 +228,7 @@ if ($db instanceof DBManager)
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
                     </td>
                 </tr>
             </tbody>
@@ -242,12 +242,12 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
                         <h3>Lorem ipsum 1</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
                         <h3>Lorem ipsum 2</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
@@ -263,17 +263,17 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
                         <h3>Lorem ipsum 1</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
                         <h3>Lorem ipsum 2</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/logo_200px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
                         <h3>Lorem ipsum 3</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>                
