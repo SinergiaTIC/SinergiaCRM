@@ -57,11 +57,11 @@ $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
 
 $mod_strings['LBL_HTMLCODE'] = 'Código HTML';
 $mod_strings['LBL_THUMBNAIL_IMAGE'] = 'Imagen de miniatura';
-$mod_strings['LBL_THUMBNAIL_IMAGE_HELP'] = 'Esta imagen será mostrada en el listado de imágenes de miniaturas del menu lateral izquierdo del editor de texto Mozaik. Se puede subir una imagen creada por el usuario o crear una automáticamente a través del botón de Crear Imagen con el contenido del campo Nombre corto para miniatura. En caso de crear la imagen manualmente se recomiendan las siguientes propiedades: Formato: PNG o JPG,  Alto: 50px y Ancho: 225px.';
-$mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_BUTTON'] = 'Crear una imagen con el valor del campo: Nombre corto de miniatura.';
-$mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_CONFIRM'] = '¿Confirma sustituir la imagen precargada por la nueva que se va a crear?.';
-$mod_strings['LBL_THUMBNAIL_NAME'] = 'Nombre corto para miniatura';
-$mod_strings['LBL_THUMBNAIL_NAME_HELP'] = 'El texto de este campo, limitado a 40 caracteres, podrá ser utilizado como contenido de la imagen que se crea al pulsar el botón de crear imagen.';
-$mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_CREATE_IMAGE'] = 'Indica un valor en el campo: ';
+$mod_strings['LBL_THUMBNAIL_IMAGE_HELP'] = 'Esta imagen se mostrará en el listado de miniaturas que aparece a la izquierda del editor de plantillas Mozaik. Se puede subir una imagen externa o crear una automáticamente pulsando el botón "Crear una imagen". Si se sube una externa, se recomienda formato PNG o JPG y unas dimensiones de 225 x 50 píxeles. Si se crea automáticamente, se mostrará el texto del campo "Nombre corto para la miniatura".';
+$mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_BUTTON'] = 'Crear una imagen';
+$mod_strings['LBL_THUMBNAIL_IMAGE_CREATE_IMAGE_CONFIRM'] = '¿Seguro que quiere sustituir la imagen precargada por la nueva que se va a crear?';
+$mod_strings['LBL_THUMBNAIL_NAME'] = 'Nombre corto para la miniatura';
+$mod_strings['LBL_THUMBNAIL_NAME_HELP'] = 'El texto de este campo, limitado a 40 caracteres, será utilizado como contenido de la imagen creada automáticamente.';
+$mod_strings['LBL_THUMBNAIL_NAME_REQUIRED_TO_CREATE_IMAGE'] = 'Rellene el campo ';
 
 $mod_strings['LNK_CAMPAIGN_LIST'] = 'Campañas';
