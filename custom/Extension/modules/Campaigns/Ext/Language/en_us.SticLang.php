@@ -74,8 +74,8 @@ $mod_strings['LBL_NOTIFICATION_TEMPLATE_ID_HELP'] = "The email template must be 
 $mod_strings['LBL_NOTIFICATION_OUTBOUND_EMAIL_ID_HELP'] = "Email account that will be used to send the notification. It can be configured in the 'Outbound email' section of the Administration area.";
 $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive error messages that may occur after sending. It can be configured in the 'Inbound email' section of the Administration area.";
 
-$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = "When saving the notification the emails to be sent will be automatically added to the sending queue.";
+$mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving the notification the emails to be sent will be automatically added to the sending queue.';
 
-$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = "New template section line";
-$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = "View template section lines";
-$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = "Convert message links to trackers";
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'New template section line';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'View template section lines';
+$mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convert message links to trackers';
