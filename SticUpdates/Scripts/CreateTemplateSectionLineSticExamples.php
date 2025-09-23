@@ -16,7 +16,6 @@ if ($db instanceof DBManager)
     }
 
     $site_url = $sugar_config['site_url'];
-    $site_url = 'https://manuelsuite.sinergiacrm.org';
     $default_language = $sugar_config['default_language'];
     switch ($default_language) 
     {
