@@ -20,4 +20,4 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_CAMPAIGNS_SEND_QUEUED_HELP'] = "Es recomana no forçar l'enviament de correu sense deixar un període de temps considerable entre l'enviament forçat anterior i l'actual pel fet que si el servei de correu és lent podria duplicar-se l'enviament a alguna de les adreces de correu receptores.";
+$mod_strings['LBL_CAMPAIGNS_SEND_QUEUED_HELP'] = "Es recomana no forçar l'enviament de correu sense deixar un període de temps suficient entre l'enviament forçat anterior i l'actual, atès que si el servei de correu és lent podria duplicar-se l'enviament a determinats destinataris.";
