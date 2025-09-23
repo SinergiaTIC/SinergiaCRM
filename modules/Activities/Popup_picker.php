@@ -389,6 +389,40 @@ class Popup_Picker
             }
         } // end Notes
 
+        // STIC Custom 20240909 EPS - SMS Messages
+        // Retrieve messages for summary
+        require_once 'modules/stic_Messages/Utils.php';
+        $messagesSql = stic_MessagesUtils::get_stic_messages_summary();
+        $db = DBManagerFactory::getInstance();
+        $result = $db->query($messagesSql);
+        if (!$result) {
+            $GLOBALS['log']->fatal('###EPS###' . __METHOD__ . __LINE__ ,);
+        }
+        else {
+            while($row = $result->fetch_assoc()) {
+
+                if ($row['status'] === 'sent') {
+                    $ts = $timedate->fromDb($row['sent_date']);
+                }
+                else {
+                    $ts = $timedate->fromDb($row['date_modified']);
+                }
+
+                $summary_list[] = array('name' => $row['name'],
+                    'id' => $row['id'],
+                    'type' => "stic_Messages",
+                    'direction' => '',
+                    'module' => "stic_Messages",
+                    'status' => $app_list_strings['stic_messages_status_list'][$row['status']],
+                    'parent_id' => $row['parent_id'],
+                    'parent_type' => $row['parent_type'],
+                    'parent_name' => $row['parent_name'],
+                    'sort_value' => $ts,
+                );
+            }
+        }
+        // END STIC Custom
+
 
         if (count($summary_list) > 0) {
             array_multisort(array_column($summary_list, 'sort_value'), SORT_DESC, $summary_list);
@@ -404,6 +438,8 @@ class Popup_Picker
                     $emails_list[] = $list;
                 } elseif ($list['module'] === 'Notes') {
                     $notes_list[] = $list;
+                } elseif ($list['module'] === 'stic_Messages') {
+                    $messages_list[] = $list;
                 }
             }
         }
@@ -422,6 +458,7 @@ class Popup_Picker
         $template->assign('callsList', $calls_list);
         $template->assign('emailsList', $emails_list);
         $template->assign('notesList', $notes_list);
+        $template->assign('messagesList', $messages_list);
         $ieCompatMode = false;
         if (isset($sugar_config['meta_tags']) && isset($sugar_config['meta_tags']['ieCompatMode'])) {
             $ieCompatMode = $sugar_config['meta_tags']['ieCompatMode'];
