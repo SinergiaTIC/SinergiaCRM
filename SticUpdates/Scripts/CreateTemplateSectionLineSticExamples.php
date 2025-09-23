@@ -351,12 +351,26 @@ if ($db instanceof DBManager)
         SQL
     );
 
+    // Create the records in templatesectionline
     foreach($insertQueries as $key => $insertQuery) {
         if ($db->query($insertQuery)) {
-            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has been insertd or created in the TemplateSectionLine module.");
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has been insert or created in the TemplateSectionLine module.");
         } else {
-            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has not been insertd or created in the TemplateSectionLine module.");
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The example record 'Example " . $key + 1 . "' has not been insert or created in the TemplateSectionLine module.");
         }
+    }
+
+    // Copy the Description field from all records to the htmlcode_c field
+    $query = "SELECT id, description FROM templatesectionline WHERE deleted = 0;";
+    $res = $db->query($query);
+    
+    while ($row = $db->fetchByAssoc($res)) {
+        $insertQuery = 'INSERT INTO templatesectionline_cstm (id_c, htmlcode_c) VALUES("' . $row['id'] . '", "' . $row['description'] . '")';
+        if ($db->query($insertQuery)) {
+            $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $rows['id'] . "' has been copied in the htmlcode_c field.");
+        } else {
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $rows['id'] . "' has not been copied in the htmlcode_c field.");
+        }        
     }
 } else {
     $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.': DBManager is not set');
