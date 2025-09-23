@@ -131,7 +131,7 @@ array(
                     0 => 'description',
                 ),
                 9 => array(
-                    0 => 'repeat_type',
+                    0 => 'recursive_booking',
                 ),
             ),
             'lbl_detailview_panel1' => array(

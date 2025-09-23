@@ -35,14 +35,28 @@ class stic_BookingsUtils
 
         $requestData = $_REQUEST;
         $repeat_type = $requestData['repeat_type'] ?? null;
-        $startDay = self::formatDates($requestData);
-        $finalDay = self::formatDates($requestData, false);
-        $duration = strtotime($finalDay) - strtotime($startDay);
-        $date = self::generateBookingDates($requestData, $startDay);
-        $aux = self::convertDatesToDbFormat($date, $timedate, $current_user);
+        $isAllDay = !empty($requestData['all_day']) && $requestData['all_day'] == 1;
 
+        $startDay = self::formatDate($requestData['start_date'] ?? null, $isAllDay, true);
+        $finalDay = self::formatDate($requestData['end_date'] ?? null, $isAllDay, false);
+        
+        if (!$startDay || !$finalDay) {
+            $GLOBALS['log']->error("Error: Unable to format start or end dates");
+            return;
+        }
+        
+        $duration = strtotime($finalDay) - strtotime($startDay);
+        $dates = self::generateBookingDates($requestData, $startDay);
+        
+        if (empty($dates)) {
+            $GLOBALS['log']->error("Error: No dates generated for booking");
+            return;
+        }
+        
+        $aux = self::convertDatesToDbFormat($dates, $timedate, $current_user);
+    
         $firstBookingCode = self::getLatestBookingCode($db, $repeat_type);
-        $bookingAttempts = self::processBookingAttempts($date, $duration, $requestData, $aux, $firstBookingCode, $timedate, $current_user, $db);
+        $bookingAttempts = self::processBookingAttempts($dates, $duration, $requestData, $aux, $firstBookingCode, $timedate, $current_user, $db);
 
         $_SESSION['bookings_to_confirm'] = $bookingAttempts['bookingsToConfirm'];
         $_SESSION['consolidated_summary'] = array_values($bookingAttempts['allBookingAttempts']);
@@ -55,18 +69,29 @@ class stic_BookingsUtils
      * @param bool $isStart Flag to indicate if it's the start date.
      * @return string Formatted date string.
      */
-    private static function formatDates($requestData, $isStart = true)
+    private static function formatDate($date, $isAllDay = false, $isStart = true)
     {
-        $date = $isStart ? ($requestData['start_date'] ?? null) : ($requestData['end_date'] ?? null);
+        if (empty($date)) {
+            return null;
+        }
+        
+        // Replace slashes with dashes for consistent parsing
         $date = str_replace('/', '-', $date);
-
-        if (!empty($requestData['all_day']) && $requestData['all_day'] == 1) {
-            return date('Y-m-d ' . ($isStart ? '00:00:00' : '23:59:59'), strtotime($date));
+        
+        // Validate the date format
+        $timestamp = strtotime($date);
+        if ($timestamp === false) {
+            $GLOBALS['log']->error("Invalid date format: $date");
+            return null;
+        }
+    
+        if ($isAllDay) {
+            return date('Y-m-d ' . ($isStart ? '00:00:00' : '23:59:59'), $timestamp);
         } else {
-            return date('Y-m-d H:i:s', strtotime($date));
+            return date('Y-m-d H:i:s', $timestamp);
         }
     }
-    
+        
     /**
      * Generates an array of booking dates based on the repeat type.
      * @param array $requestData The $_REQUEST array.
@@ -248,9 +273,22 @@ class stic_BookingsUtils
      */
     private static function convertDatesToDbFormat($dates, $timedate, $currentUser)
     {
+        if (!is_array($dates) || empty($dates)) {
+            $GLOBALS['log']->error("convertDatesToDbFormat: dates parameter is not a valid array");
+            return [];
+        }
+        
         $aux = [];
         foreach ($dates as $date) {
-            $aux[] = $timedate->to_db($timedate->to_display_date_time($date, true, false, $currentUser));
+            if (empty($date)) {
+                $GLOBALS['log']->warn("Skipping empty date in convertDatesToDbFormat");
+                continue;
+            }
+            
+            $convertedDate = $timedate->to_db($timedate->to_display_date_time($date, true, false, $currentUser));
+            if ($convertedDate) {
+                $aux[] = $convertedDate;
+            }
         }
         return $aux;
     }
@@ -435,16 +473,29 @@ class stic_BookingsUtils
      */
     private static function createBookingRecord($startDateDb, $duration, $requestData, $resourceIds, $resourceNames, $allResourcesAvailable, $bookingName, $firstBookingCode, $timedate, $currentUser)
     {
+        if (empty($startDateDb)) {
+            $GLOBALS['log']->error("createBookingRecord: startDateDb is empty");
+            return null;
+        }
+        
+        $endDateDb = date('Y-m-d H:i:s', strtotime($startDateDb) + $duration);
+        
         $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
-        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
-
+        $endDateObj = $timedate->fromDbFormat($endDateDb, TimeDate::DB_DATETIME_FORMAT);
+        
+        if (!$startDateObj || !$endDateObj) {
+            $GLOBALS['log']->error("Error converting dates to DateTime objects");
+            return null;
+        }
+    
         return [
             'start_date_db' => $startDateDb,
-            'end_date_db' => date('Y-m-d H:i:s', strtotime($startDateDb) + $duration),
+            'end_date_db' => $endDateDb,
             'start_date_display' => $timedate->asUser($startDateObj, $currentUser),
             'end_date_display' => $timedate->asUser($endDateObj, $currentUser),
             'all_day' => $requestData['all_day'] ?? '0',
             'status' => $requestData['status'] ?? null,
+            'recursive_booking' => $requestData['recursive_booking'] ?? null,
             'repeat_type' => $requestData['repeat_type'] ?? null,
             'place_booking' => $requestData['place_booking'] ?? '0',
             'description' => $requestData['description'] ?? '',
@@ -463,8 +514,19 @@ class stic_BookingsUtils
      */
     private static function updateSummaryForCreatedBooking(&$summary, $resourceIds, $bookingName, $resourceNames, $startDateDb, $duration, $timedate, $currentUser)
     {
+        if (empty($startDateDb)) {
+            return;
+        }
+        
+        $endDateDb = date('Y-m-d H:i:s', strtotime($startDateDb) + $duration);
         $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
-        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
+        $endDateObj = $timedate->fromDbFormat($endDateDb, TimeDate::DB_DATETIME_FORMAT);
+        
+        if (!$startDateObj || !$endDateObj) {
+            $GLOBALS['log']->error("Error converting dates in updateSummaryForCreatedBooking");
+            return;
+        }
+        
         $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
         $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
 
@@ -487,8 +549,19 @@ class stic_BookingsUtils
      */
     private static function updateSummaryForUnavailableBooking(&$summary, $resourceIds, $resourceNames, $resourceAvailability, $startDateDb, $duration, $timedate, $currentUser)
     {
+        if (empty($startDateDb)) {
+            return;
+        }
+        
+        $endDateDb = date('Y-m-d H:i:s', strtotime($startDateDb) + $duration);
         $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
-        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
+        $endDateObj = $timedate->fromDbFormat($endDateDb, TimeDate::DB_DATETIME_FORMAT);
+        
+        if (!$startDateObj || !$endDateObj) {
+            $GLOBALS['log']->error("Error converting dates in updateSummaryForUnavailableBooking");
+            return;
+        }
+        
         $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
         $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
 
@@ -519,8 +592,19 @@ class stic_BookingsUtils
      */
     private static function updateAllBookingAttempts(&$allBookingAttempts, $startDateDb, $duration, $bookingName, $resourceNames, $timedate, $currentUser, $status, $resourceAvailability = [])
     {
+        if (empty($startDateDb)) {
+            return;
+        }
+        
+        $endDateDb = date('Y-m-d H:i:s', strtotime($startDateDb) + $duration);
         $startDateObj = $timedate->fromDbFormat($startDateDb, TimeDate::DB_DATETIME_FORMAT);
-        $endDateObj = $timedate->fromDbFormat(date('Y-m-d H:i:s', strtotime($startDateDb) + $duration), TimeDate::DB_DATETIME_FORMAT);
+        $endDateObj = $timedate->fromDbFormat($endDateDb, TimeDate::DB_DATETIME_FORMAT);
+        
+        if (!$startDateObj || !$endDateObj) {
+            $GLOBALS['log']->error("Error converting dates in updateAllBookingAttempts");
+            return;
+        }
+        
         $startDateDisplay = $timedate->asUser($startDateObj, $currentUser);
         $endDateDisplay = $timedate->asUser($endDateObj, $currentUser);
         $recordKey = $startDateDisplay . '_' . $endDateDisplay;
@@ -573,6 +657,7 @@ class stic_BookingsUtils
                 $bookingBean->end_date = $booking_info['end_date_db'];
                 $bookingBean->all_day = $booking_info['all_day'];
                 $bookingBean->status = $booking_info['status'];
+                $bookingBean->recursive_booking = $booking_info['recursive_booking'];
                 $bookingBean->repeat_type = $booking_info['repeat_type'];
                 $bookingBean->place_booking = $booking_info['place_booking'];
                 $bookingBean->description = $booking_info['description'];

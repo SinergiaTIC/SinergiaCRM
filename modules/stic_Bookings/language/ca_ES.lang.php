@@ -67,6 +67,7 @@ $mod_strings = array(
     'LBL_STATUS' => 'Estat',
     'LBL_ALL_DAY' => 'Tot el dia',
     'LBL_PLACE_BOOKING' => 'Reserva de places',
+    'LBL_RECURSIVE_BOOKING' => 'Reserva periòdica',
     'LBL_START_DATE' => "Data d&#39;inici",
     'LBL_END_DATE' => 'Data de finalització',
     'LBL_PLANNED_START_DATE' => "Data prevista d&#39;inici",

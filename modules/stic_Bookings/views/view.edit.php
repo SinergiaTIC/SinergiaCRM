@@ -37,9 +37,12 @@ class stic_BookingsViewEdit extends ViewEdit
     public function preDisplay()
     {
         global $timedate, $current_user;
-
+    
+        $isLoadingFromSession = false;
+        
         if (isset($_REQUEST['loadFromSession']) && $_REQUEST['loadFromSession'] === 'true' && isset($_SESSION['last_booking_request'])) {
             $lastRequest = $_SESSION['last_booking_request'];
+            $isLoadingFromSession = true;
     
             foreach ($lastRequest as $key => $value) {
                 $this->bean->$key = $value;
@@ -55,7 +58,32 @@ class stic_BookingsViewEdit extends ViewEdit
                         $this->bean->stic_resources_stic_bookings->addBean($resourceBean);
                     }
                 }
-            }            
+            }
+            
+            // Store repeat field values to pass to template
+            $this->repeatFieldValues = array();
+            if (isset($lastRequest['repeat_type'])) {
+                $this->repeatFieldValues['repeat_type'] = $lastRequest['repeat_type'];
+            }
+            if (isset($lastRequest['repeat_interval'])) {
+                $this->repeatFieldValues['repeat_interval'] = $lastRequest['repeat_interval'];
+            }
+            if (isset($lastRequest['repeat_count'])) {
+                $this->repeatFieldValues['repeat_count'] = $lastRequest['repeat_count'];
+            }
+            if (isset($lastRequest['repeat_until'])) {
+                $this->repeatFieldValues['repeat_until'] = $lastRequest['repeat_until'];
+            }
+            if (isset($lastRequest['repeat_end_type'])) {
+                $this->repeatFieldValues['repeat_end_type'] = $lastRequest['repeat_end_type'];
+            }
+            $this->repeatFieldValues['repeat_dow'] = array();
+            for ($i = 0; $i <= 6; $i++) {
+                if (isset($lastRequest['repeat_dow_' . $i])) {
+                    $this->repeatFieldValues['repeat_dow'][$i] = $lastRequest['repeat_dow_' . $i];
+                }
+            }
+            
             unset($_SESSION['last_booking_request']);
         }
         
@@ -74,28 +102,102 @@ class stic_BookingsViewEdit extends ViewEdit
             // If all_day is checked then remove the hours and minutes
             // and apply timezone to the dates
             if (isset($this->bean->all_day) && $this->bean->all_day == '1') {
-                $startDate = explode(' ', $this->bean->fetched_row['start_date']);
-                if ($startDate[1] > "12:00") {
-                    $startDate = new DateTime($startDate[0]);
-                    $startDate = $startDate->modify("next day");
-                    $startDateDate = $timedate->asUserDate($startDate, false, $current_user);
-                    $this->bean->start_date = $startDateDate . ' 00:00';
+                
+                // Use the appropriate source for dates based on whether we're loading from session
+                $sourceStartDate = '';
+                $sourceEndDate = '';
+                
+                if ($isLoadingFromSession) {
+                    // When loading from session, use the bean properties directly
+                    $sourceStartDate = $this->bean->start_date ?? '';
+                    $sourceEndDate = $this->bean->end_date ?? '';
                 } else {
-                    $startDate = new DateTime($startDate[0]);
-                    $startDate = $timedate->asUserDate($startDate, false, $current_user);
-                    $this->bean->start_date = $startDate . ' 00:00';
+                    // When not loading from session, use fetched_row as before
+                    $sourceStartDate = $this->bean->fetched_row['start_date'] ?? '';
+                    $sourceEndDate = $this->bean->fetched_row['end_date'] ?? '';
                 }
-
-                $endDate = explode(' ', $this->bean->fetched_row['end_date']);
-                if ($endDate[1] > "12:00") {
-                    $endDate = new DateTime($endDate[0]);
-                    $endDate = $endDate->modify("next day");
-                    $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                    $this->bean->end_date = $endDate . ' 00:00';
+                
+                // Process start_date
+                if (!empty($sourceStartDate)) {
+                    $startDateParts = explode(' ', $sourceStartDate);
+                    // Ensure we have the date part
+                    if (isset($startDateParts[0])) {
+                        if ($isLoadingFromSession) {
+                            // When loading from session, preserve the exact date format the user entered
+                            // Don't attempt any conversion as the date is already in the user's preferred format
+                            $this->bean->start_date = $startDateParts[0] . ' 00:00';
+                        } else {
+                            // When not loading from session, use the original logic
+                            $startDate = new DateTime($startDateParts[0]);
+                            $startDateDisplay = $timedate->asUserDate($startDate, false, $current_user);
+                            $this->bean->start_date = $startDateDisplay . ' 00:00';
+                        }
+                    } else {
+                        // If explode failed or doesn't have expected format, use current date
+                        $this->bean->start_date = date('Y-m-d') . ' 00:00';
+                    }
                 } else {
-                    $endDate = new DateTime($endDate[0]);
-                    $endDate = $timedate->asUserDate($endDate, false, $current_user);
-                    $this->bean->end_date = $endDate . ' 00:00';
+                    // If start_date is empty, use current date
+                    $this->bean->start_date = date('Y-m-d') . ' 00:00';
+                }
+    
+                // Process end_date
+                if (!empty($sourceEndDate)) {
+                    $endDateParts = explode(' ', $sourceEndDate);
+                    // Ensure we have the date part
+                    if (isset($endDateParts[0])) {
+                        if ($isLoadingFromSession) {
+                            // When loading from session, preserve the exact date format the user entered
+                            // Don't attempt any conversion as the date is already in the user's preferred format
+                            
+                            // TEMPORAL FIX: If this is end_date and all_day, it seems to be off by one day
+                            // so let's add one day to compensate
+                            if (isset($this->bean->all_day) && $this->bean->all_day == '1') {
+                                try {
+                                    // Parse the date using the same format it came in
+                                    $originalFormat = $endDateParts[0];
+                                    
+                                    // Try to determine if it's DD/MM/YYYY or MM/DD/YYYY format
+                                    $parts = explode('/', $originalFormat);
+                                    if (count($parts) == 3) {
+                                        // Create date object and add one day
+                                        $dateObj = DateTime::createFromFormat('d/m/Y', $originalFormat);
+                                        if (!$dateObj) {
+                                            $dateObj = DateTime::createFromFormat('m/d/Y', $originalFormat);
+                                        }
+                                        if ($dateObj) {
+                                            $dateObj->modify('+1 day');
+                                            // Return in the same format as input
+                                            if (DateTime::createFromFormat('d/m/Y', $originalFormat)) {
+                                                $this->bean->end_date = $dateObj->format('d/m/Y') . ' 23:59';
+                                            } else {
+                                                $this->bean->end_date = $dateObj->format('m/d/Y') . ' 23:59';
+                                            }
+                                        } else {
+                                            $this->bean->end_date = $endDateParts[0] . ' 23:59';
+                                        }
+                                    } else {
+                                        $this->bean->end_date = $endDateParts[0] . ' 23:59';
+                                    }
+                                } catch (Exception $e) {
+                                    $this->bean->end_date = $endDateParts[0] . ' 23:59';
+                                }
+                            } else {
+                                $this->bean->end_date = $endDateParts[0] . ' 23:59';
+                            }
+                        } else {
+                            // When not loading from session, use the original logic
+                            $endDate = new DateTime($endDateParts[0]);
+                            $endDateDisplay = $timedate->asUserDate($endDate, false, $current_user);
+                            $this->bean->end_date = $endDateDisplay . ' 23:59';
+                        }
+                    } else {
+                        // If explode failed or doesn't have expected format, use current date
+                        $this->bean->end_date = date('Y-m-d') . ' 23:59';
+                    }
+                } else {
+                    // If end_date is empty, use current date
+                    $this->bean->end_date = date('Y-m-d') . ' 23:59';
                 }
             }
         }
@@ -104,7 +206,6 @@ class stic_BookingsViewEdit extends ViewEdit
 
         SticViews::preDisplay($this);
 
-        // Write here you custom code
 
     }
 
@@ -149,7 +250,6 @@ class stic_BookingsViewEdit extends ViewEdit
             $typeFieldDisabled = true;
         }
 
-        // Add the resources template
         $this->ev->defs['templateMeta']['form']['footerTpl'] = 'modules/stic_Bookings/tpls/EditViewFooter.tpl';
         $this->ss->assign('REQUEST', $_REQUEST);
         $this->ss->assign('APPLIST', $app_list_strings);
@@ -157,7 +257,23 @@ class stic_BookingsViewEdit extends ViewEdit
         $this->ss->assign('repeat_hours', $repeat_hours);
         $this->ss->assign('repeat_minutes', $repeat_minutes);
         $this->ss->assign('dow', $dow);
-
+        
+        // NEW CODE: Assign repeat field values if they exist from session reload
+        if (isset($this->repeatFieldValues)) {
+            // Assign selected values for form fields
+            $this->ss->assign('selected_repeat_type', $this->repeatFieldValues['repeat_type'] ?? '');
+            $this->ss->assign('selected_repeat_interval', $this->repeatFieldValues['repeat_interval'] ?? '1');
+            $this->ss->assign('selected_repeat_count', $this->repeatFieldValues['repeat_count'] ?? '1');
+            $this->ss->assign('selected_repeat_until', $this->repeatFieldValues['repeat_until'] ?? '');
+            $this->ss->assign('selected_repeat_end_type', $this->repeatFieldValues['repeat_end_type'] ?? 'count');
+            $this->ss->assign('selected_repeat_dow', $this->repeatFieldValues['repeat_dow'] ?? array());
+            
+            // Set flag to show we're loading from session
+            $this->ss->assign('is_session_reload', true);
+        } else {
+            $this->ss->assign('is_session_reload', false);
+        }
+        
         $relationshipName = 'stic_resources_stic_bookings';
 
         $config_resource_fields_json = json_encode(array_keys($config_resource_fields));
@@ -220,7 +336,7 @@ class stic_BookingsViewEdit extends ViewEdit
                     break;
                 }
             }
-            if ($isPlaceBooking) {
+            if ($isPlaceBooking && !$_REQUEST['loadFromSession']) {
                 $this->bean->place_booking = true; 
             }
         }
@@ -238,6 +354,30 @@ SCRIPT;
         parent::display();
 
         SticViews::display($this);
+
+        $loadFromSession = isset($_REQUEST['loadFromSession']) && $_REQUEST['loadFromSession'] === 'true';
+        $recursiveBookingEnabled = $this->bean->recursive_booking ?? false;
+        
+        if ($loadFromSession && $recursiveBookingEnabled) {
+            echo <<<SCRIPT
+            <script>
+            $(document).ready(function() {
+                $('#repeat_options').show();
+                
+                if (typeof toggle_repeat_type === 'function') {
+                    toggle_repeat_type();
+                } else {
+                    $('#repeat_type').change();
+                }
+                
+                if (!typeFieldDisabled) {
+                    $('#recursive_booking').prop('checked', true);
+                }
+            });
+            </script>
+SCRIPT;
+        }
+
         echo getVersionedScript("SticInclude/vendor/jqColorPicker/jqColorPicker.min.js");
         echo getVersionedScript("modules/stic_Bookings/Utils.js");
         
@@ -245,6 +385,10 @@ SCRIPT;
             echo <<<SCRIPT
             <script>
             $(document).ready(function() {
+                // Disable the recursive_booking checkbox
+                $('#recursive_booking').prop('disabled', true);
+                $('#recursive_booking').css('cursor', 'not-allowed');
+                
                 // Disable the repeat_type field dropdown
                 $('#repeat_type').prop('disabled', true);
                 $('#repeat_type').addClass('readonly');
@@ -273,6 +417,10 @@ SCRIPT;
                     'opacity': '0.5',
                     'cursor': 'not-allowed'
                 }).off('click');
+                
+                // Add a hidden input to preserve the current repeat_booking value
+                var repeatBookingValue = $('#recursive_booking').is(':checked') ? '1' : '0';
+                $('#recursive_booking').after('<input type="hidden" name="recursive_booking" value="' + repeatBookingValue + '" />');
                 
                 // Add a hidden input to preserve the current repeat_type value
                 var repeatTypeValue = $('#repeat_type').val();

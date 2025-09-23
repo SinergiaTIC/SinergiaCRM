@@ -391,7 +391,9 @@ class stic_BookingsController extends SugarController
     }
 
     public function action_save() {
-        if (isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {
+        if (isset($_REQUEST['recursive_booking']) && $_REQUEST['recursive_booking'] == '1' && 
+            isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {
+            
             $resource_type_validation = $this->checkResourceTypes();
             if (!$resource_type_validation['success']) {
                 $message = urlencode($resource_type_validation['message']);
@@ -410,7 +412,8 @@ class stic_BookingsController extends SugarController
         } else {
             parent::action_save();
         }
-    }    
+    }
+
     /**
      * Renders the summary view with the results of the periodic creation of work calendar records
      * @return void

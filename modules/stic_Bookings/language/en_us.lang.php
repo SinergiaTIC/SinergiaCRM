@@ -67,6 +67,7 @@ $mod_strings = array(
     'LBL_STATUS' => 'Status',
     'LBL_ALL_DAY' => 'All day',
     'LBL_PLACE_BOOKING' => 'Place booking',
+    'LBL_RECURSIVE_BOOKING' => 'Recursive booking',
     'LBL_START_DATE' => 'Start date',
     'LBL_END_DATE' => 'End date',
     'LBL_PLANNED_START_DATE' => 'Planned start date',

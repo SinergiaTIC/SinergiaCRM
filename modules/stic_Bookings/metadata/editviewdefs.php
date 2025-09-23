@@ -111,7 +111,7 @@ array(
                     0 => 'description',
                 ),
                 8 => array(
-                    0 => 'repeat_type',
+                    0 => 'recursive_booking',
                     1 => array(
                     ),
                 ),

@@ -1,3 +1,4 @@
+
 {*
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -24,11 +25,23 @@
 
 <div class="right-aligned-container">
   <div id="repeat_options" style="display: none;">
+    <h2 id="resourcesTitle">{$MOD.LBL_RECURSIVE_BOOKING}</h2>
     <table class="BookingRepeatForm" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
+            <td width="37.5%" valign="top">
+                <select name="repeat_type" id="repeat_type" onchange="toggle_repeat_type();">
+                    {html_options options=$APPLIST.repeat_type_dom selected=$selected_repeat_type|default:''}
+                </select>
+            </td>
+        </tr>
+
         <tr id="repeat_interval_row">
             <td valign="top" scope="row">{$MOD.LBL_REPEAT_INTERVAL}:</td>
             <td valign="top">
-                <select name="repeat_interval">{html_options options=$repeat_intervals selected="1"}</select>
+                <select name="repeat_interval">
+                    {html_options options=$repeat_intervals selected=$selected_repeat_interval|default:'1'}
+                </select>
                 <span id="repeat-interval-text"></span>
             </td>
         </tr>
@@ -36,21 +49,24 @@
             <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_END}:</td>
             <td width="37.5%" valign="top">
                 <div>
-                    <input type="radio" name="repeat_end_type" value="count" id="repeat_count_radio" checked
-                        onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
+                    <input type="radio" name="repeat_end_type" value="count" id="repeat_count_radio" 
+                           {if $selected_repeat_end_type eq 'count' or $selected_repeat_end_type eq '' or not $selected_repeat_end_type}checked{/if}
+                           onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
                     {$MOD.LBL_REPEAT_END_AFTER}
-                    <input type="number" size="3" name="repeat_count" value="1"> {$MOD.LBL_REPEAT_OCCURRENCES}
+                    <input type="number" size="3" name="repeat_count" value="{$selected_repeat_count|default:'1'}"> {$MOD.LBL_REPEAT_OCCURRENCES}
                 </div>
 
                 <div>
                     <input type="radio" name="repeat_end_type" id="repeat_until_radio" value="until"
-                        onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
+                           {if $selected_repeat_end_type eq 'until'}checked{/if}
+                           onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
                     {$MOD.LBL_REPEAT_END_BY}
                     <input type="text" class="date_input" size="11" maxlength="10" id="repeat_until_input"
-                        name="repeat_until" value="" disabled>
+                           name="repeat_until" value="{$selected_repeat_until|default:''}" 
+                           {if $selected_repeat_end_type neq 'until'}disabled{/if}>
                     <img border="0" src="index.php?entryPoint=getImage&imageName=jscalendar.gif"
-                        alt="{$APP.LBL_ENTER_DATE}" id="repeat_until_trigger" align="absmiddle"
-                        style="display: none;">
+                         alt="{$APP.LBL_ENTER_DATE}" id="repeat_until_trigger" align="absmiddle"
+                         {if $selected_repeat_end_type neq 'until'}style="display: none;"{else}style="display: inline;"{/if}>
 
                     <script type="text/javascript">
                         {literal}
@@ -75,6 +91,7 @@
             <td width="37.5%" valign="top">
                 {foreach name=dow from=$dow key=i item=d}
                     {$d.label} <input type="checkbox" name="repeat_dow_{$d.index}" id="repeat_dow_{$d.index}"
+                        {if isset($selected_repeat_dow[$d.index]) and $selected_repeat_dow[$d.index]}checked{/if}
                         style="margin-right: 10px;">
                 {/foreach}
             </td>
@@ -161,6 +178,28 @@ $(document).ready(function() {
         allowEmptyOption: false,
         create: false
     });
+    
+    {/literal}
+    {if $is_session_reload}
+    {literal}
+    console.log('Loading from session with repeat data');
+    
+    if (!typeFieldDisabled) {
+        $('#recursive_booking').prop('checked', true);
+    }
+    
+    $('#repeat_options').show();
+    
+    if (typeof toggle_repeat_type === 'function') {
+        toggle_repeat_type();
+    }
+    
+    if (typeof toggle_repeat_end === 'function') {
+        toggle_repeat_end();
+    }
+    {/literal}
+    {/if}
+    {literal}
 });
 </script>
 <style>
@@ -284,141 +323,195 @@ $(document).ready(function() {
 </style>
 
 <script>
+
+    // Function to toggle repeat options based on repeat_booking checkbox
+    window.toggle_repeat_booking = function() {
+        var repeatBookingCheckbox = document.getElementById('recursive_booking');
+        var repeatOptionsDiv = document.getElementById('repeat_options');
+        
+        if (!repeatBookingCheckbox || !repeatOptionsDiv) {
+            return;
+        }
+        
+        if (repeatBookingCheckbox.checked) {
+            repeatOptionsDiv.style.display = '';
+            // Reset repeat_type to empty so user must select one (unless loading from session)
+            var repeatType = document.getElementById('repeat_type');
+            if (repeatType && !repeatType.value) {
+                repeatType.value = '';
+                toggle_repeat_type();
+            } else if (repeatType && repeatType.value) {
+                toggle_repeat_type();
+            }
+        } else {
+            repeatOptionsDiv.style.display = 'none';
+            // Clear repeat_type value when hiding
+            var repeatType = document.getElementById('repeat_type');
+            if (repeatType) {
+                repeatType.value = '';
+            }
+            // Clear validation if hiding options
+            if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
+                removeFromValidate('EditView', 'repeat_type');
+                removeFromValidate('EditView', 'repeat_count');
+                removeFromValidate('EditView', 'repeat_until');
+            }
+        }
+    };
+
+
+    window.toggle_repeat_type = function() {
+        var repeatVal = document.getElementById('repeat_type').value;
+
+        if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
+            validate['EditView'] = undefined;
+        }
+
+        // Show/hide interval and end rows based on repeat type
+        var repeatIntervalRow = document.getElementById("repeat_interval_row");
+        var repeatEndRow = document.getElementById("repeat_end_row");
+        var repeatDowRow = document.getElementById("repeat_dow_row");
+        
+        if (repeatVal == "") {
+            // Hide all repeat detail rows when no type is selected
+            if (repeatIntervalRow) repeatIntervalRow.style.display = "none";
+            if (repeatEndRow) repeatEndRow.style.display = "none";
+            if (repeatDowRow) repeatDowRow.style.display = "none";
+        } else {
+            // Show interval and end rows for any valid repeat type
+            if (repeatIntervalRow) repeatIntervalRow.style.display = "";
+            if (repeatEndRow) repeatEndRow.style.display = "";
+            toggle_repeat_end();
+            
+            // Show/hide DOW row specifically for Weekly repeat type
+            if (repeatVal == "Weekly") {
+                if (repeatDowRow) repeatDowRow.style.display = "";
+            } else {
+                if (repeatDowRow) repeatDowRow.style.display = "none";
+            }
+        }
+
+        // Set interval text
+        var intervalTextElm = document.getElementById('repeat-interval-text');
+        if (intervalTextElm && typeof SUGAR.language.languages.app_list_strings['repeat_intervals'] != 'undefined') {
+            intervalTextElm.innerHTML = SUGAR.language.languages.app_list_strings['repeat_intervals'][repeatVal];
+        }
+    };
+
+    window.toggle_repeat_end = function() {
+    var repeatCountRadio = document.getElementById("repeat_count_radio");
+    var repeatUntilRadio = document.getElementById("repeat_until_radio");
+    var repeatUntilInput = document.getElementById("repeat_until_input");
+    var repeatCountInput = document.querySelector("input[name='repeat_count']");
+    var repeatUntilTrigger = document.getElementById("repeat_until_trigger");
+
+    if (!repeatCountRadio || !repeatUntilRadio || !repeatUntilInput || !repeatCountInput || !repeatUntilTrigger) {
+      return; // Exit if elements don't exist
+    }
+
+    if (repeatCountRadio.checked) {
+      // Enable count, disable until
+      repeatUntilInput.disabled = true;
+      repeatCountInput.disabled = false;
+      repeatUntilTrigger.style.display = "none";
+
+      if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
+        removeFromValidate('EditView', 'repeat_until');
+      }
+      if (typeof addToValidateMoreThan === 'function') {
+        addToValidateMoreThan('EditView', 'repeat_count', 'int', true, '{/literal}{$MOD.LBL_REPEAT_COUNT}{literal}', 1);
+      }
+    } else if (repeatUntilRadio.checked) {
+      // Enable until, disable count
+      repeatCountInput.disabled = true;
+      repeatUntilInput.disabled = false;
+      repeatUntilTrigger.style.display = "";
+
+      if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
+        removeFromValidate('EditView', 'repeat_count');
+      }
+      if (typeof addToValidate === 'function') {
+        addToValidate('EditView', 'repeat_until', 'date', true, '{/literal}{$MOD.LBL_REPEAT_UNTIL}{literal}');
+      }
+    }
+
+    // Prevent an issue when a calendar date picker is hidden under a dialog
+    var editContainer = document.getElementById('cal-edit_c');
+    if (editContainer) {
+      var pickerContainer = document.getElementById('container_repeat_until_trigger_c');
+      if (pickerContainer) {
+        pickerContainer.style.zIndex = editContainer.style.zIndex + 1;
+      }
+    }
+    };
+
+function setHoursInfo() {
+  try {
+  var startDayInput = document.getElementById('start_date_date');
+  var finalDayInput = document.getElementById('end_date_date');
+  var startHour = document.querySelector('[name=start_date_hours]');
+  var startMinute = document.querySelector('[name=start_date_minutes]');
+  var finalHour = document.querySelector('[name=end_date_hours]');
+  var finalMinute = document.querySelector('[name=end_date_minutes]');
+  if (!startDayInput || !finalDayInput || !startHour || !startMinute || !finalHour || !finalMinute) {
+  return;
+  }
+  // Parse date parts
+  var start = startDayInput.value + '/' + startHour.value + '/' + startMinute.value;
+  var final = finalDayInput.value + '/' + finalHour.value + '/' + finalMinute.value;
+  start = start.split('/');
+  final = final.split('/');
+  // Create date objects - adapted to DD/MM/YYYY format
+  var startDate = new Date(
+  parseInt(start[2]), // year
+  parseInt(start[1]) - 1, // month (0-indexed)
+  parseInt(start[0]), // day
+  parseInt(start[3]), // hour
+  parseInt(start[4])  // minute
+  );
+  var finalDate = new Date(
+  parseInt(final[2]), // year
+  parseInt(final[1]) - 1, // month (0-indexed)
+  parseInt(final[0]), // day
+  parseInt(final[3]), // hour
+  parseInt(final[4])  // minute
+  );
+
+  var minutes = Math.round(difference / 60000);
+  var hours = Math.floor((parseInt(minutes) / 60));
+  minutes = (parseInt(minutes) % 60);
+  hours = parseInt(hours) < 10 ? '0' + hours : hours;
+  minutes = parseInt(minutes) < 10 ? '0' + minutes : minutes;
+  } catch (e) {
+  console.error("Error calculating hours info:", e);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   // Make sure all the form elements exist before trying to access them
-  var repeatType = document.getElementById('repeat_type');
-  var repeatOptions = document.getElementById('repeat_options');
-  var form = document.getElementById('EditView');
-// Define tipos de eventos de todo el día
-var allDayTypes = ['vacation', 'holiday', 'personal', 'sick', 'leave'];
-var type = document.getElementById("type");
-// Storage for previous values
-var previousType = type ? type.value : '';
-var previousStartDateHours = "09";
-var previousStartDateMinutes = "00";
-var previousEndDateHours = "18";
-var previousEndDateMinutes = "00";
-
-window.toggle_repeat_type = function() {
-var repeatVal = document.getElementById('repeat_type').value;
-
-if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
-  validate['EditView'] = undefined;
-}
-
-// Show/hide interval and end rows based on repeat type
-if (repeatVal == "") {
-  document.getElementById("repeat_options").style.display = "none";
-} else {
-  document.getElementById("repeat_options").style.display = "";
-  toggle_repeat_end();
-}
-
-// Show/hide DOW row for Weekly repeat type
-var repeat_dow_row = document.getElementById("repeat_dow_row");
-if (repeatVal == "Weekly") {
-  repeat_dow_row.style.display = "";
-} else {
-  repeat_dow_row.style.display = "none";
-}
-
-// Set interval text
-var intervalTextElm = document.getElementById('repeat-interval-text');
-if (intervalTextElm && typeof SUGAR.language.languages.app_list_strings['repeat_intervals'] != 'undefined') {
-  intervalTextElm.innerHTML = SUGAR.language.languages.app_list_strings['repeat_intervals'][repeatVal];
-}
-};
-
-window.toggle_repeat_end = function() {
-var repeatCountRadio = document.getElementById("repeat_count_radio");
-var repeatUntilRadio = document.getElementById("repeat_until_radio");
-var repeatUntilInput = document.getElementById("repeat_until_input");
-var repeatCountInput = document.querySelector("input[name='repeat_count']");
-var repeatUntilTrigger = document.getElementById("repeat_until_trigger");
-
-if (!repeatCountRadio || !repeatUntilRadio || !repeatUntilInput || !repeatCountInput || !repeatUntilTrigger) {
-  return; // Exit if elements don't exist
-}
-
-if (repeatCountRadio.checked) {
-  // Enable count, disable until
-  repeatUntilInput.disabled = true;
-  repeatCountInput.disabled = false;
-  repeatUntilTrigger.style.display = "none";
-
-  if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
-    removeFromValidate('EditView', 'repeat_until');
-  }
-  if (typeof addToValidateMoreThan === 'function') {
-    addToValidateMoreThan('EditView', 'repeat_count', 'int', true, '{/literal}{$MOD.LBL_REPEAT_COUNT}{literal}', 1);
-  }
-} else if (repeatUntilRadio.checked) {
-  // Enable until, disable count
-  repeatCountInput.disabled = true;
-  repeatUntilInput.disabled = false;
-  repeatUntilTrigger.style.display = "";
-
-  if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
-    removeFromValidate('EditView', 'repeat_count');
-  }
-  if (typeof addToValidate === 'function') {
-    addToValidate('EditView', 'repeat_until', 'date', true, '{/literal}{$MOD.LBL_REPEAT_UNTIL}{literal}');
-  }
-}
-
-// Prevent an issue when a calendar date picker is hidden under a dialog
-var editContainer = document.getElementById('cal-edit_c');
-if (editContainer) {
-  var pickerContainer = document.getElementById('container_repeat_until_trigger_c');
-  if (pickerContainer) {
-    pickerContainer.style.zIndex = editContainer.style.zIndex + 1;
-  }
-}
-};
-function setHoursInfo() {
-try {
-var startDayInput = document.getElementById('start_date_date');
-var finalDayInput = document.getElementById('end_date_date');
-var startHour = document.querySelector('[name=start_date_hours]');
-var startMinute = document.querySelector('[name=start_date_minutes]');
-var finalHour = document.querySelector('[name=end_date_hours]');
-var finalMinute = document.querySelector('[name=end_date_minutes]');
-if (!startDayInput || !finalDayInput || !startHour || !startMinute || !finalHour || !finalMinute) {
-return;
-}
-// Parse date parts
-var start = startDayInput.value + '/' + startHour.value + '/' + startMinute.value;
-var final = finalDayInput.value + '/' + finalHour.value + '/' + finalMinute.value;
-start = start.split('/');
-final = final.split('/');
-// Create date objects - adapted to DD/MM/YYYY format
-var startDate = new Date(
-parseInt(start[2]), // year
-parseInt(start[1]) - 1, // month (0-indexed)
-parseInt(start[0]), // day
-parseInt(start[3]), // hour
-parseInt(start[4])  // minute
-);
-var finalDate = new Date(
-parseInt(final[2]), // year
-parseInt(final[1]) - 1, // month (0-indexed)
-parseInt(final[0]), // day
-parseInt(final[3]), // hour
-parseInt(final[4])  // minute
-);
-
-var minutes = Math.round(difference / 60000);
-var hours = Math.floor((parseInt(minutes) / 60));
-minutes = (parseInt(minutes) % 60);
-hours = parseInt(hours) < 10 ? '0' + hours : hours;
-minutes = parseInt(minutes) < 10 ? '0' + minutes : minutes;
-} catch (e) {
-console.error("Error calculating hours info:", e);
-}
-}
+    var repeatBookingCheckbox = document.getElementById('recursive_booking');
+    if (repeatBookingCheckbox) {
+        repeatBookingCheckbox.addEventListener('change', toggle_repeat_booking);
+        
+        toggle_repeat_booking();
+    }
+    
+    var repeatType = document.getElementById('repeat_type');
+    if (repeatType) {
+        repeatType.addEventListener('change', toggle_repeat_type);
+        toggle_repeat_type();
+    }
+    
+    var repeatOptions = document.getElementById('repeat_options');
+    var form = document.getElementById('EditView');
+    var type = document.getElementById("type");
+    var previousType = type ? type.value : '';
+    var previousStartDateHours = "09";
+    var previousStartDateMinutes = "00";
+    var previousEndDateHours = "18";
+    var previousEndDateMinutes = "00";
 
 /**
-
 Handler for changes to the event type
 */
 if (type) {
@@ -543,36 +636,37 @@ setHoursInfo();
 });
 // Form submission handling with resource collection
 if (form) {
-form.addEventListener('submit', function(e) {
-e.preventDefault();
-  // Check if this is a periodic booking
-  var repeatType = document.getElementById('repeat_type');
-  var isPeriodic = repeatType && repeatType.value && repeatType.value !== "" && repeatType.value.toLowerCase() !== "none";
-  
-  // Process resource lines
-  var resourceLines = document.querySelectorAll('#resourceLine tr.resource_row');
-  if (resourceLines.length > 0) {
-    resourceLines.forEach(function(row, index) {
-      var resourceId = row.getAttribute('data-id');
-      var resourceName = row.querySelector('.resource_name input').value;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+      // Check if this is a periodic booking
+      var repeatBookingCheckbox = document.getElementById('recursive_booking');
+      var repeatType = document.getElementById('repeat_type');
+      var isPeriodic = repeatBookingCheckbox && repeatBookingCheckbox.checked  && repeatType && repeatType.value && repeatType.value !== "" && repeatType.value.toLowerCase() !== "none";
       
-      // Add hidden inputs for each resource
-      if (!document.getElementById('resource_id_' + index)) {
-        var hiddenIdInput = document.createElement('input');
-        hiddenIdInput.type = 'hidden';
-        hiddenIdInput.name = 'resource_ids[]';
-        hiddenIdInput.id = 'resource_id_' + index;
-        hiddenIdInput.value = resourceId;
-        form.appendChild(hiddenIdInput);
-        
-        var hiddenNameInput = document.createElement('input');
-        hiddenNameInput.type = 'hidden';
-        hiddenNameInput.name = 'resource_names[]';
-        hiddenNameInput.id = 'resource_name_' + index;
-        hiddenNameInput.value = resourceName;
-        form.appendChild(hiddenNameInput);
-      }
-    });
+      // Process resource lines
+      var resourceLines = document.querySelectorAll('#resourceLine tr.resource_row');
+      if (resourceLines.length > 0) {
+        resourceLines.forEach(function(row, index) {
+          var resourceId = row.getAttribute('data-id');
+          var resourceName = row.querySelector('.resource_name input').value;
+          
+          // Add hidden inputs for each resource
+          if (!document.getElementById('resource_id_' + index)) {
+            var hiddenIdInput = document.createElement('input');
+            hiddenIdInput.type = 'hidden';
+            hiddenIdInput.name = 'resource_ids[]';
+            hiddenIdInput.id = 'resource_id_' + index;
+            hiddenIdInput.value = resourceId;
+            form.appendChild(hiddenIdInput);
+            
+            var hiddenNameInput = document.createElement('input');
+            hiddenNameInput.type = 'hidden';
+            hiddenNameInput.name = 'resource_names[]';
+            hiddenNameInput.id = 'resource_name_' + index;
+            hiddenNameInput.value = resourceName;
+            form.appendChild(hiddenNameInput);
+          }
+        });
   }
   
   // Handle periodic booking form fields
