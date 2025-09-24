@@ -159,17 +159,20 @@ function checkStatus() {
 YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
 
 function parentIdChanged() {
-  let parentName = $('#parent_name').val();
+  console.log('parentIdChanged');
+  debugger;
+  
   let parentId = $('#parent_id').val();
   let parentType = $('#parent_type').val();
-  // We check the name and not the id because when removed manually the name, the id is not automatically cleared
-  if (parentName != null && parentName != '' ) {
+
+  if ((parentId !== null && parentId !== '')) {
     getParentAsync(parentId, parentType, applyParent);
   }
 
 }
 
 function applyParent(parentData) {
+  debugger;
   if(parentData!= null) {
     $('#phone').val(parentData['phone']);
   }
@@ -185,6 +188,7 @@ function getParentAsync(parentId, parentType, callbackFunction) {
       "parentType": parentType
     },
     success: function(resultado) {
+      debugger;
       if (resultado.code == 'OK') {
         callbackFunction(resultado.data);
       }
