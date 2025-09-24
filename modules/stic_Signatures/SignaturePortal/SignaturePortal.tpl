@@ -13,23 +13,26 @@
 
 <body class="bg-light font-sans antialiased text-dark">
 
-    <header class="p-4 p-sm-6 shadow-sm" style="background-color: {$HEADER_COLOR};">
-        <div class="container-fluid d-flex align-items-center justify-content-center justify-content-sm-between">
-            <div class="d-flex align-items-center space-x-4">
+    <header class="p-4 p-sm-6 shadow-sm d-flex flex-column" style="background-color: {$HEADER_COLOR};">
+        <div class="container-fluid d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
+            <div class="w-50 w-sm-40 text-center mb-2 mb-sm-0" style="max-height: 50%;">
                 { if isset($LOGO_URL) && !empty($LOGO_URL) }
-                <img src="{$LOGO_URL}" alt="Logo de la organización" class="h-10 w-auto">
+                <img src="{$LOGO_URL}" alt="Logo de la organización" class="w-auto" style="max-height: 50px;">
                 {/if}
-                { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
-                <h1 class="text-white text-2xl font-weight-bold tracking-tight d-none d-sm-block">Portal de firmas -
-                    {$ORGANIZATION_NAME}
-                </h1>
+            </div>
+            <div class="w-100 w-sm-50 d-flex flex-column  align-items-sm-start text-center">
+                <h2 class="text-white text-base font-weight-bold tracking-tight mb-0">Portal de firmas</h2>
+                    { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
+                <h3 class="text-white font-weight-bold tracking-tight mt-1 mb-0">
+                        {$ORGANIZATION_NAME}
+                </h3>
                 {/if}
             </div>
         </div>
     </header>
     <main class="flex-grow">
         { if isset($ERROR_MSG) && !empty($ERROR_MSG) }
-        <div class="stic-container container mt-4">
+        <div class="stic-container container mt-4 mx-auto">
             <section class="error-area">
                 <h1 class="text-3xl font-weight-bold mb-4 text-center text-danger">Error</h1>
                 <div class="alert alert-danger" role="alert">
@@ -43,7 +46,7 @@
                 </div>
             </section>
             {else}
-            <div class="stic-container container mt-4">
+            <div class="stic-container container mt-4 max-w-md mx-auto">
                 { if $SHOW_PORTAL === true }
                 { if $STATUS === 'pending' }
                 <section class="document-area">
@@ -157,17 +160,19 @@
                         <h3 class="text-xl font-weight-semibold mb-3 text-dark">Acciones del Firmante</h3>
                         <ul class="list-group">
                             { foreach from=$SIGNER_LOG item=logEntry }
-                            <li class="list-group-item" {if !empty($logEntry.description)}title="{$logEntry.description}" { /if }>
+                            <li class="list-group-item">
                                 <strong>{$logEntry.date}</strong> - {$logEntry.action}
                                 { if !empty($logEntry.description) }
-                                <i class="fw-bold text-primary bi bi-info-circle float-end"></i>
+                                
+                                <div class="text-secondary small ">
+                                    {$logEntry.description}
+                                </div>
                                 {/if}
                             </li>
                             { /foreach }
                         </ul>
                     </div>
                     { /if }
-
                 </section>
                 { /if }
 
