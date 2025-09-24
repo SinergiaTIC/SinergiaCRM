@@ -15,15 +15,15 @@
 
     <header class="p-4 p-sm-6 shadow-sm d-flex flex-column" style="background-color: {$HEADER_COLOR};">
         <div class="container-fluid d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-            <div class="w-50 w-sm-40 text-center mb-2 mb-sm-0" style="max-height: 50%;">
+            <div class="w-100 w-sm-100 text-center mb-2 mb-sm-0" style="max-height: 50%;">
                 { if isset($LOGO_URL) && !empty($LOGO_URL) }
                 <img src="{$LOGO_URL}" alt="Logo de la organización" class="w-auto" style="max-height: 50px;">
                 {/if}
             </div>
             <div class="w-100 w-sm-50 d-flex flex-column  align-items-sm-start text-center">
-                <h2 class="text-white text-base font-weight-bold tracking-tight mb-0">Portal de firmas</h2>
+                <h2 class="text-white fs-5 text-base font-weight-bold tracking-tight mb-0">Portal de firmas</h2>
                     { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
-                <h3 class="text-white font-weight-bold tracking-tight mt-1 mb-0">
+                <h3 class="text-white fs-6 font-weight-bold tracking-tight mt-1 mb-0">
                         {$ORGANIZATION_NAME}
                 </h3>
                 {/if}
