@@ -473,7 +473,7 @@ class stic_SignaturesUtils
             } else {
                 require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
                 // Generate the signed PDF after saving the signature
-                sticGenerateSignedPdf::generateSignedPdf('accept');
+                sticGenerateSignedPdf::generateSignedPdf('button');
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
                 stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER');

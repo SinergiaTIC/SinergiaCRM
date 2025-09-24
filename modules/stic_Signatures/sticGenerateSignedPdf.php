@@ -47,20 +47,20 @@ class sticGenerateSignedPdf
     /** Generates a signed PDF for a given signer ID and saves it to the file system.
      * The generated PDF file name is stored in the 'pdf_document' field of the signer record.
      *
-     * @param string $signedMode The mode of signing, either 'handwritten' or 'accept'.
+     * @param string $signedMode The mode of signing, either 'handwritten' or 'button'.
      *                           Defaults to 'handwritten'.
      * @return void
      */
     public static function generateSignedPdf($signedMode = 'handwritten')
     {
-        global $sugar_config, $current_user;
+        global $sugar_config, $app_list_strings, $mod_strings;
 
         // require_once 'modules/AOS_PDF_Templates/templateParser.php';
         require_once 'custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php';
         require_once 'modules/stic_Signatures/Utils.php';
         require_once 'modules/stic_Signers/Utils.php';
 
-// Check required parameters
+        // Check required parameters
         if (!isset($_REQUEST['signerId']) || empty($_REQUEST['signerId'])) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " No signerId received");
             sugar_die('No signerId received');
@@ -87,8 +87,6 @@ class sticGenerateSignedPdf
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature ID: {$signatureBean->id} has no associated record");
             sugar_die("Signature has no associated record");
         }
-
-// $sourceBean = BeanFactory::getBean($_REQUEST['module']);
 
         $templateBean = BeanFactory::getBean('AOS_PDF_Templates', $signatureBean->pdftemplate_id_c);
 
@@ -154,7 +152,7 @@ class sticGenerateSignedPdf
             case 'handwritten':
                 $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
                 break;
-            case 'accept':
+            case 'button':
 
                 $textArray = [
                     'Documento aceptado por:',
@@ -177,7 +175,23 @@ class sticGenerateSignedPdf
         // if $signature->pdf_audit_page_c is set, add a new page to the PDF with the audit information
         if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page) {
             // start with new page html mark
+
+            $sugar_smarty = new Sugar_Smarty();
+            $sugar_smarty->assign('DOCUMENT_NAME', $templateBean->name);
+            $sugar_smarty->assign('SIGNER_NAME', $signerBean->parent_name);
+            $sugar_smarty->assign('SIGNER_EMAIL', $signerBean->email_address);
+            $sugar_smarty->assign('SIGNER_PHONE', $signerBean->phone);
+            $sugar_smarty->assign('SIGNER_USER_TIME', $userTime);
+            $sugar_smarty->assign('SIGNER_MODE', $app_list_strings['stic_signatures_modes_list'][$signedMode]);
+            $sugar_smarty->assign('SIGNER_STATUS', $app_list_strings['stic_signers_status_list'][$signerBean->status]);
+            
+            $sugar_smarty->assign('BROWSER', $signerBean->browser);
+            $sugar_smarty->assign('MOD_STRINGS', $mod_strings);
+            $sugar_smarty->assign('APP_STRINGS', $app_list_strings);
+
             $auditHtml = '<p style="page-break-before: always;">&nbsp;</p>';
+            $auditHtml .= $sugar_smarty->fetch('modules/stic_Signatures/AuditPageTemplate.tpl');
+
             $auditHtml .= file_get_contents('modules/stic_Signatures/AuditPageTemplate.html');
 
             $templateBean->description .= htmlspecialchars($auditHtml);
