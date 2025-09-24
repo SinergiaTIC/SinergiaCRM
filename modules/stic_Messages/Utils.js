@@ -37,7 +37,6 @@ switch (sticViewType) {
       setAutofill(["name"]);
     });
     state = $('#status').val();
-    debugger;
     if ($('#EditView input[name="record"]').val()) {
       // Status can only be changed through actions
       $('#status').prop('disabled', true);
