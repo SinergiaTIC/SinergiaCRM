@@ -166,7 +166,7 @@ class stic_MessagesController extends SugarController
     }
 
     public function action_ComposeView() {
-        $this->view = 'compose';
+        $this->view = 'edit';
         // For viewing the Compose as modal from other modules we need to load the stic_Messages language strings
         if (isset($_REQUEST['in_popup']) && $_REQUEST['in_popup']) {
             if (!is_file('cache/jsLanguage/stic_Messages/' . $GLOBALS['current_language'] . '.js')) {

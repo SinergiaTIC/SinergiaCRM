@@ -24,6 +24,7 @@
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
 require_once 'modules/stic_Messages/Utils.php';
+require_once('modules/stic_Settings/Utils.php');
 class stic_MessagesViewEdit extends ViewEdit
 {
 
@@ -32,7 +33,19 @@ class stic_MessagesViewEdit extends ViewEdit
         parent::__construct();
         $this->useForSubpanel = true;
         $this->useModuleQuickCreateTemplate = true;
+
+        // $this->type = 'compose';
+        if(!empty($_GET['in_popup'])&& $_GET['in_popup'] == '1' ||
+           !empty($_POST['in_popup'])&& $_POST['in_popup'] == '1'){
+            $this->options['show_title'] = false;
+            $this->options['show_header'] = false;
+            $this->options['show_footer'] = false;
+            $this->options['show_javascript'] = false;
+            $this->options['show_subpanels'] = false;
+            $this->options['show_search'] = false;
+        }
     }
+
 
     public function preDisplay()
     {
@@ -41,6 +54,13 @@ class stic_MessagesViewEdit extends ViewEdit
         SticViews::preDisplay($this);
         stic_MessagesUtils::fillDynamicListMessageTemplate();
 
+        $this->ev->ss->assign('IS_MODAL', isset($_REQUEST['in_popup']) ? $_REQUEST['in_popup'] : false);
+
+        $this->bean->parent_type = !empty($this->bean->parent_type) ? $this->bean->parent_type : ($_REQUEST['relatedModule']??'');
+	    $this->bean->parent_id = !empty($this->bean->parent_id)? $this->bean->parent_id : ($_REQUEST['relatedId'] ?? null);
+        $this->bean->fill_in_additional_parent_fields();
+
+        $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
         // Write here you custom code
 
     }
@@ -51,6 +71,7 @@ class stic_MessagesViewEdit extends ViewEdit
 
         SticViews::display($this);
 
+        echo getVersionedScript("modules/stic_Messages/include/ComposeView/stic_MessagesComposeView.js");
         echo getVersionedScript("modules/stic_Messages/Utils.js");
 
         // Write here you custom code

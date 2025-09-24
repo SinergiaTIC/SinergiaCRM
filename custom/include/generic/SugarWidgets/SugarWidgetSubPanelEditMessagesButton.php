@@ -53,18 +53,19 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
         $accesskey = $app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'];
 
         $phone = stic_MessagesUtils::getPhoneForMessage($bean);
+        $name = stic_MessagesUtils::getNameFieldNameForMessage($bean->module_name);
 
         $jsonData = json_encode([
             'return_action' => 'DetailView',
         ]);
         $jsonData = str_replace("'", "\\'", $jsonData);
-
         $form = "<input type='button' name='button' id='custom_modal_button' class='button' 
             title='{$button}' value='{$button}' accesskey='{$accesskey}'
             onclick='openMessagesModal(this); return false;'
                  data-phone='{$phone}'
                  data-module='{$bean->module_name}'
                  data-record-id='{$bean->id}'
+                 data-name='{$bean->name}'
                  >";
 
         return $form;

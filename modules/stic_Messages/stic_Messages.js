@@ -89,31 +89,21 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         select_entire_list: $("[name='select_entire_list']").val()
     };
     
-    // Add the ids to the params object
-    // Assuming 'ids' is a string like '&id=123&id=456'
-    // ids.split(',').forEach(function(item) {
-    //     if (item) {
-    //         var parts = item.split('=');
-    //         if (parts.length === 2) {
-    //             paramsPost[parts[0]] = parts[1];
-    //         }
-    //     }
-    // });
-    
     // Make the POST request
     $.ajax({
         url: baseURL,
         type: 'POST',
         data: paramsPost,
         success: function(data) {
-        var panelBody = $('<div>').append(data).find('#EditView').parent();
-
+        var panelBody = $('<div class="content">').append(data).find('#EditView').parent();
         var dataPhone = $(source).attr('data-phone');
+        var dataName = $(source).attr('data-name');
 
         // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
           var dataRecordId = $(source).attr('data-record-id');
         if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
           panelBody.find('#phone').val(dataPhone);
+          panelBody.find('#parent_name').val(dataName);
         }
         else {
           // Mass send messages
@@ -152,7 +142,9 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           phoneElement.css('border-color', '#E2E7EB');
 
           // panelBody.find('#phone').attr('disabled', true);
-          panelBody.find('#mass_ids').val(idsList);
+          // $("#EditView .dcQuickEdit td.buttons").append("<input type='hidden' name='mass_ids' id='mass_ids' value='{$idsList}'>");
+          panelBody.find('.dcQuickEdit td.buttons').append("<input type='hidden' name='mass_ids' id='mass_ids' value='"+idsList+"'>");
+          // panelBody.find('#mass_ids').val(idsList);
         }
 
           SUGAR.ajaxUI.hideLoadingPanel();
@@ -180,6 +172,7 @@ $(function() {
     const attr = 'sms-button'
 
     const recordId = $("input[name=record]")[0].value;
+    const toName = trim($(".module-title-text").text());
 
     if (getMessagesActive()) {
       for (const phone of [...document.querySelectorAll('[type=phone]')]) {
@@ -189,7 +182,7 @@ $(function() {
           if (to === '') continue
       
           phone.insertAdjacentHTML('beforeend',
-              `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-phone='${to}' onclick='openMessagesModal(this)'></span>`)
+              `<span class="suitepicon suitepicon-module-stic-messages suitepiconInView" data-record-id= '${recordId}' data-record-module= '${module}' data-name='${toName}' data-phone='${to}' onclick='openMessagesModal(this)'></span>`)
           phone.setAttribute(attr, 'true')
       }
     }

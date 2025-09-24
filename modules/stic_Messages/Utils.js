@@ -24,10 +24,9 @@
 var module = "stic_Messages";
 /* VIEWS CUSTOM CODE */
 
-debugger;
-var sticViewType = viewType();
-if (sticViewType == 'detail' && $("select[name='parent_type']").length > 0) {
-  sticViewType = 'compose';
+var sticViewType = originView = viewType();
+if ((sticViewType == 'detail' || sticViewType == 'list') && $("select[name='parent_type']").length > 0) {
+  sticViewType = 'edit';
 }
 
 switch (sticViewType) {
@@ -38,6 +37,7 @@ switch (sticViewType) {
       setAutofill(["name"]);
     });
     state = $('#status').val();
+    debugger;
     if ($('#EditView input[name="record"]').val()) {
       // Status can only be changed through actions
       $('#status').prop('disabled', true);
@@ -84,6 +84,24 @@ switch (sticViewType) {
 
 
     }
+
+    if($("#mass_ids").val()) {
+      $('#parent_name').prop('disabled', true);
+      $('#parent_name').attr('readonly', true);
+      $('#parent_name').css('background', '#F8F8F8');
+      $('#parent_name').css('border-color', '#E2E7EB');
+
+      $('#parent_type').prop('disabled', true);
+      $('#parent_type').attr('readonly', true);
+      $('#parent_type').css('background', '#F8F8F8');
+      $('#parent_type').css('border-color', '#E2E7EB');
+
+      $('#btn_parent_name').prop('disabled', true);
+      $('#btn_parent_name').css('background-color', '#F8F8F8 !important');
+      $('#btn_clr_parent_name').prop('disabled', true);
+      $('#btn_clr_parent_name').css('background-color', '#F8F8F8 !important');
+    }
+
     addEditCreateTemplateLinks();
     $("#template_id").on("change paste keyup", template_change);
     if ($("#template_id").val() == "") {
@@ -93,15 +111,6 @@ switch (sticViewType) {
     }
     break;
 
-  case "compose":
-    addEditCreateTemplateLinks();
-    $("#template_id").on("change paste keyup", template_change);
-    if ($("#template_id").val() == "") {
-      $("#template_id_edit_link").hide();
-    } else {
-      $("#template_id_edit_link").show();
-    }
-    break;
   case "detail":
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();

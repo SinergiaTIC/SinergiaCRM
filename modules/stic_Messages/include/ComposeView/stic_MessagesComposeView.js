@@ -124,9 +124,6 @@ if (!$("#mass_ids") || $("#mass_ids").val() == ''){
   };
 
 
-  // $.fn.stic_MessagesComposeView.onTemplateSelect = function (args) {
-
-  
   $.fn.stic_MessagesComposeView.onParentSelect = function (args) {
     set_return(args);
     if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
@@ -232,6 +229,7 @@ $(function () {
         return indexed_array;
       }
       var formData = getFormDataAsObject($("#EditView"));
+      formData.action='SavePopUp';
       $.ajax({
         url: "index.php?module=stic_Messages&action=savePopUp",
         type: "post",
@@ -259,8 +257,10 @@ $(function () {
         },
         error: function () {
           showMessageBox(
-            $("#errorMessage").val(),
-            $("#errorMessageText").val(),
+            // $("#errorMessage").val(),
+            // $("#errorMessageText").val(),
+            SUGAR.language.get('stic_Messages', 'LBL_ERROR'),
+            SUGAR.language.get('stic_Messages', 'LBL_MESSAGE_NOT_SENT'),
             function () {
               var baseUrl = window.location.href.split("?")[0];
               var returnModule = $('#EditView [name="return_module"]').val();
