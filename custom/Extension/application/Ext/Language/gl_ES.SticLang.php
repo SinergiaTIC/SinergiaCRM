@@ -3747,4 +3747,4 @@ $app_list_strings['stic_history']['Meetings'] = 'Reunións';
 $app_list_strings['stic_history']['Calls'] = 'Chamadas';
 $app_list_strings['stic_history']['Notes'] = 'Notas';
 $app_list_strings['stic_history']['Emails'] = 'Correos';
-$app_list_strings['stic_history']['stic_messages'] = 'Mensajes';
+$app_list_strings['stic_history']['stic_Messages'] = 'Mensajes';
