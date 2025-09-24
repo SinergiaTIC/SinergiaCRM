@@ -11,6 +11,17 @@ function wizardForm(readOnly) {
     // [name, text, textSingular, inStudio, icon]
     step1: {},
     step2: {
+      allDatablockRelationships: {},
+      loadDatablockRelationships() {
+        this.allDatablockRelationships = window.alpineComponent.formConfig.getAllDataBlockRelationships();
+      },
+      usedDatablockRelationships(datablockId) {
+        return this.allDatablockRelationships[datablockId].filter(r => r.datablock_orig != '' && r.datablock_dest != '');
+      },
+      unusedDatablockRelationships(datablockId) {
+        return this.allDatablockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
+      },
+
       // RelatedModule: {
       //   id, name, text, isRelation, moduleDestName, moduleDestText, moduleSourceName, moduleSourceText, path, pathText,
       //   fields: [name: {name, text, type, required, options, inViews}],

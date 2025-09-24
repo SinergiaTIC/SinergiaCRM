@@ -389,7 +389,7 @@ class AWF_Configuration {
     // DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
 
     // Find Relationship
-    let rel = this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName);
+    let rel = this.getAllDataBlockRelationships()[datablockId].find(r => r.name == relationshipName);
     if (!rel) {
       return null;
     }
@@ -439,16 +439,17 @@ class AWF_Configuration {
 
   /**
    * Get all defined Relationships in all modules represented in data_blocks array
-   * @returns {array} array with all DataBlock relationships
+   * @returns {object} map with all DataBlock relationships, indexed by DataBlock id
    * DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
    */
   getAllDataBlockRelationships() {
     // Relationship: {name, text, module_orig, field_orig, relationship, module_dest}
     // DataBlockRelationship: {name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest}
-    let relationships = [];
+    let allRelationships = {};
     let relsToReview = [];
     this.data_blocks.forEach(d => {
       if (d.module) {
+        allRelationships[d.id] = [];
         Object.values(utils.getModuleInformation(d.module).relationships).forEach(r => {
           // All available relationships for every DataBlock
           r.datablock = d.id;
@@ -469,23 +470,29 @@ class AWF_Configuration {
               })
             }
           }
-          relationships.push(r);
+          allRelationships[d.id].push(r);
         });
       }
     });
+
+    // Fill Orig->Dest in Dest 
     relsToReview.forEach(v => {
-      debugger;
-      let rOrig = relationships.find(r => r.datablock == v.datablock && r.relationship == v.relationship && r.datablock_orig != "");
+      let rOrig = allRelationships[v.datablock].find(r => r.relationship == v.relationship && r.datablock_orig != "");
       if (rOrig) {
         // There is Orig -> Dest info: Find Dest and Fill info in  Dest <- Orig
-        let rDest = relationships.find(r => r.datablock == rOrig.datablock_dest && r.relationship == rOrig.relationship);
+        let rDest = allRelationships[rOrig.datablock_dest].find(r => r.relationship == rOrig.relationship);
         if (rDest) {
           rDest.datablock_orig = rOrig.datablock_orig;
           rDest.datablock_dest = rOrig.datablock_dest;
         }
       }
     });
-    return relationships;
+
+    // Sort relationships
+    Object.keys(allRelationships).forEach(k => {
+      allRelationships[k].sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
+    });
+    return allRelationships;
   }
 
   /**
@@ -495,15 +502,13 @@ class AWF_Configuration {
    * DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
    */
   getAvailableRelationships(datablockId) {
-    return this.getAllDataBlockRelationships()
-      .filter(r => r.datablock == datablockId && r.datablock_orig == "" && r.datablock_dest == "")
-      .sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
+    return this.getAllDataBlockRelationships()[datablockId]
+      .filter(r => r.datablock_orig == "" && r.datablock_dest == "");
   }
 
   getDatablockRelationships(datablockId) {
-    return this.getAllDataBlockRelationships()
-      .filter(r => r.datablock == datablockId && r.datablock_orig != "" && r.datablock_dest != "")
-      .sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
+    return this.getAllDataBlockRelationships()[datablockId]
+      .filter(r => r.datablock_orig != "" && r.datablock_dest != "");
   }
 
 
@@ -514,7 +519,7 @@ class AWF_Configuration {
    * @returns {string} The module name
    */
   getRelationshipModule(datablockId, relationshipName) {
-    return this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName)?.module;
+    return this.getAllDataBlockRelationships()[datablockId].find(r => r.name==relationshipName)?.module;
   }
 
   /**
@@ -525,13 +530,13 @@ class AWF_Configuration {
    * AvailableDataBlock: { id, text }
    */
   getAvailableDataBlocksForRelationship(datablockId, relationshipName) {
-    let rel = this.getAllDataBlockRelationships().find(r => r.datablock == datablockId && r.name==relationshipName);
-    if (!rel) {
+    let module = this.getRelationshipModule(datablockId, relationshipName);
+    if (!module) {
       return [];
     }
 
     let dataBlocks = [];
-    this.data_blocks.filter(d => d.module == rel.module).forEach(db => {
+    this.data_blocks.filter(d => d.module == module).forEach(db => {
       dataBlocks.push({id: db.id, text: db.text});
     });
     dataBlocks.push({ id: -1, text: utils.translate("[< Nuevo Bloque de Datos >]") });
