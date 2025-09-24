@@ -157,10 +157,10 @@
                         <h3 class="text-xl font-weight-semibold mb-3 text-dark">Acciones del Firmante</h3>
                         <ul class="list-group">
                             { foreach from=$SIGNER_LOG item=logEntry }
-                            <li class="list-group-item">
+                            <li class="list-group-item" {if !empty($logEntry.description)}title="{$logEntry.description}" { /if }>
                                 <strong>{$logEntry.date}</strong> - {$logEntry.action}
                                 { if !empty($logEntry.description) }
-                                <i class="fw-bold text-primary bi bi-info-circle float-end" title="{$logEntry.description}"></i>
+                                <i class="fw-bold text-primary bi bi-info-circle float-end"></i>
                                 {/if}
                             </li>
                             { /foreach }

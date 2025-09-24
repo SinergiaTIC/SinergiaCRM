@@ -131,7 +131,7 @@ class stic_SignaturePortal extends SugarView
                 break;
         }
 
-        // Get parsed template HTML content only if authentication passed
+        // If authentication passed, get document HTML content
         if ($passed === true) {
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
             $this->ss->assign('SHOW_PORTAL', true);
