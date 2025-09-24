@@ -201,10 +201,16 @@
       <div id="detailsDataBlocks">
         <div class="mt-3" id="dataBlocksTable" data-objects="formConfig.data_blocks" x-init="sticControls.elemTableObjects($el);"></div>
       </div>
+      <!-- Relationships -->
+      <div id="detailsRelationships">
+        <div class="mt-3" id="relationshipsTable" data-objects="step2.allDatablockRelationships" data-model="step2.allDatablockRelationships" 
+        x-init="sticControls.elemListObject($el);"></div>
+      </div>
       <!-- Tab Headers -->
       <div id="details"
            :data-sections="JSON.stringify([
                             {headerText:`'[Bloques de datos]'`, selected:true, contentId:'detailsDataBlocks'},
+                            {headerText:`'[Relaciones]'`, selected:false, contentId:'detailsRelationships'},
                           ]);"
            x-init="sticControls.tabs($el)"></div>
     </div>
