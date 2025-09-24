@@ -35,79 +35,74 @@ switch (sticViewType) {
   case "popup":
     $(document).ready(function() {
       setAutofill(["name"]);
+      debugger;
+      state = $('#status').val();
+      addEditCreateTemplateLinks();
+      if ($('#EditView input[name="record"]').val()) {
+        // Status can only be changed through actions
+        $('#status').prop('disabled', true);
+        $('#status').attr('readonly', true);
+        $('#status').css('background', '#F8F8F8');
+        $('#status').css('border-color', '#E2E7EB');
+      }
+      if (state !== 'draft' && $('#EditView input[name="record"]').val()) {
+        // Some fields canonly be edited when message is in draft
+        $('#type').prop('disabled', true);
+        $('#type').attr('readonly', true);
+        $('#type').css('background', '#F8F8F8');
+        $('#type').css('border-color', '#E2E7EB');
+
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+        
+        $('#phone').prop('disabled', true);
+        $('#phone').attr('readonly', true);
+        $('#phone').css('background', '#F8F8F8');
+        $('#phone').css('border-color', '#E2E7EB');
+
+        $('#message').prop('disabled', true);
+        $('#message').attr('readonly', true);
+        $('#message').css('background', '#F8F8F8');
+        $('#message').css('border-color', '#E2E7EB');
+
+        $('#template_id').prop('disabled', true);
+        $('#template_id').attr('readonly', true);
+        $('#template_id').css('background', '#F8F8F8');
+        $('#template_id').css('border-color', '#E2E7EB');
+
+        $("#template_id_edit_link").addClass("ui-state-disabled");
+        $("#template_id_create_link").addClass("ui-state-disabled");
+
+
+      }
+
+      if($("#mass_ids").val()) {
+        $('#parent_name').prop('disabled', true);
+        $('#parent_name').attr('readonly', true);
+        $('#parent_name').css('background', '#F8F8F8');
+        $('#parent_name').css('border-color', '#E2E7EB');
+
+        $('#parent_type').prop('disabled', true);
+        $('#parent_type').attr('readonly', true);
+        $('#parent_type').css('background', '#F8F8F8');
+        $('#parent_type').css('border-color', '#E2E7EB');
+
+        $('#btn_parent_name').prop('disabled', true);
+        $('#btn_parent_name').css('background-color', '#F8F8F8 !important');
+        $('#btn_clr_parent_name').prop('disabled', true);
+        $('#btn_clr_parent_name').css('background-color', '#F8F8F8 !important');
+      }
+
+      $("#template_id").on("change paste keyup", template_change);
+      if ($("#template_id").val() == "") {
+        $("#template_id_edit_link").hide();
+      } else {
+        $("#template_id_edit_link").show();
+      }
     });
-    state = $('#status').val();
-    if ($('#EditView input[name="record"]').val()) {
-      // Status can only be changed through actions
-      $('#status').prop('disabled', true);
-      $('#status').attr('readonly', true);
-      $('#status').css('background', '#F8F8F8');
-      $('#status').css('border-color', '#E2E7EB');
-    }
-    if (state !== 'draft' && $('#EditView input[name="record"]').val()) {
-      // Some fields canonly be edited when message is in draft
-      $('#type').prop('disabled', true);
-      $('#type').attr('readonly', true);
-      $('#type').css('background', '#F8F8F8');
-      $('#type').css('border-color', '#E2E7EB');
 
-      $('#sender').prop('disabled', true);
-      $('#sender').attr('readonly', true);
-      $('#sender').css('background', '#F8F8F8');
-      $('#sender').css('border-color', '#E2E7EB');
-      
-      $('#phone').prop('disabled', true);
-      $('#phone').attr('readonly', true);
-      $('#phone').css('background', '#F8F8F8');
-      $('#phone').css('border-color', '#E2E7EB');
-
-      $('#message').prop('disabled', true);
-      $('#message').attr('readonly', true);
-      $('#message').css('background', '#F8F8F8');
-      $('#message').css('border-color', '#E2E7EB');
-
-      $('#template_id').prop('disabled', true);
-      $('#template_id').attr('readonly', true);
-      $('#template_id').css('background', '#F8F8F8');
-      $('#template_id').css('border-color', '#E2E7EB');
-      
-      $('#btn_clr_template').prop('disabled', true);
-      $('#btn_clr_template').attr('readonly', true);
-      $('#btn_clr_template').css('background', '#F8F8F8');
-      $('#btn_clr_template').css('border-color', '#E2E7EB');
-
-      $('#btn_template').prop('disabled', true);
-      $('#btn_template').attr('readonly', true);
-      $('#btn_template').css('background', '#F8F8F8');
-      $('#btn_template').css('border-color', '#E2E7EB');
-
-
-    }
-
-    if($("#mass_ids").val()) {
-      $('#parent_name').prop('disabled', true);
-      $('#parent_name').attr('readonly', true);
-      $('#parent_name').css('background', '#F8F8F8');
-      $('#parent_name').css('border-color', '#E2E7EB');
-
-      $('#parent_type').prop('disabled', true);
-      $('#parent_type').attr('readonly', true);
-      $('#parent_type').css('background', '#F8F8F8');
-      $('#parent_type').css('border-color', '#E2E7EB');
-
-      $('#btn_parent_name').prop('disabled', true);
-      $('#btn_parent_name').css('background-color', '#F8F8F8 !important');
-      $('#btn_clr_parent_name').prop('disabled', true);
-      $('#btn_clr_parent_name').css('background-color', '#F8F8F8 !important');
-    }
-
-    addEditCreateTemplateLinks();
-    $("#template_id").on("change paste keyup", template_change);
-    if ($("#template_id").val() == "") {
-      $("#template_id_edit_link").hide();
-    } else {
-      $("#template_id_edit_link").show();
-    }
     break;
 
   case "detail":
