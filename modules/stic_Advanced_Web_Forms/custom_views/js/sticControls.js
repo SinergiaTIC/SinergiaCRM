@@ -113,8 +113,8 @@ class sticControls {
     html += `
     <select class="form-select" id="${id}" ${required} ${multiple} x-model="${model}" value="${value}" ${attribute}
       x-init="$nextTick(() => {
-        let select = $('#${id}').selectize({ placeholder: '', dropdownParent: 'body', onChange: (value) => { ${model} = value }})[0].selectize;
-        select.setValue(${model});
+        let select = $('#${id}').selectize({ placeholder: '', dropdownParent: 'body', onChange: (value) => { ${model} = value }})[0]?.selectize;
+        select?.setValue(${model});
       });">
       <template x-for="[elKey, el] in Object.entries(${map})" :key="elKey">
         <option :value="el${val}" x-text="el${prop}"></option>

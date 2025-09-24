@@ -233,8 +233,8 @@ class SticFieldSelect extends HTMLElement {
     select.setAttribute(
       "x-init",
       `$nextTick(() => {
-        let select = $('#${idBase}_select').selectize({ placeholder: '', dropdownParent: 'body', onChange: (value) => { ${model} = value }})[0].selectize;
-        select.setValue(${model});
+        let select = $('#${idBase}_select').selectize({ placeholder: '', dropdownParent: 'body', onChange: (value) => { ${model} = value }})[0]?.selectize;
+        select?.setValue(${model});
       });`
     );
   

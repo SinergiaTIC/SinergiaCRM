@@ -61,7 +61,7 @@
                 <!-- Fields Details -->
                 <div x-data="{ showDataFieldsTable: false}">
                   <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
-                       data-model="showDataFieldsTable" data-label-text="[Mostrar Detalle]" x-init="sticControls.fieldCheckbox($el);"></div>
+                       data-model="showDataFieldsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
                   <div class="card p-2 overflow-auto" x-show="showDataFieldsTable">
                     <div class="mt-3" :id="`dataFieldsTable${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
                   </div>
@@ -82,12 +82,18 @@
                   </div>
                 </div>
               </template>
-              <!-- Relationship Definition -->
+              <!-- Relationships Definition -->
               <template x-if="item.module">
                 <div :id="`dataBlockRels${item.id}`">
                   [Las relaciones del Bloque de datos]
-                  <div class="mt-3" :id="`dataBlockRelsTable${item.id}`" 
-                       :data-objects="`step2.usedDatablockRelationships('${item.id}')`" x-init="sticControls.elemTableObjects($el);">
+                   <!-- Relationships Details -->
+                  <div x-data="{ showRelationshipsTable: false}">
+                    <div class="text-muted form-check form-switch mt-3" :id="`dataRelationshipsDetails${item.id}`" 
+                         data-model="showRelationshipsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                    <div class="card p-2 overflow-auto" x-show="showRelationshipsTable">
+                      <div class="mt-3" :id="`dataBlockRelsTable${item.id}`" 
+                           :data-objects="`step2.usedDatablockRelationships('${item.id}')`" x-init="sticControls.elemTableObjects($el);"></div>
+                    </div>
                   </div>
                   <!-- Add Relationship -->
                   <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
@@ -109,7 +115,7 @@
                     },
                     async handleRelationChange() {
                       this.availableDataBlocks = formConfig.getAvailableDataBlocksForRelationship(item.id, this.selectedRelName);
-                      this.selectedDataBlockId = this.availableDataBlocks[0].id;
+                      this.selectedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
                       this.handleDataBlockChange();
                     },
                     async handleDataBlockChange() {
