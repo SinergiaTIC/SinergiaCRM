@@ -3701,3 +3701,14 @@ $app_list_strings['stic_signers_status_list']['pending'] = 'Pending';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Signed';
 $app_list_strings['stic_signers_status_list']['rejected'] = 'Rejected';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Expired';
+
+// Signature logs: Actions
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Document signed with button'; 
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document signed with handwritten signature';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Signer added to the signature process';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT'] = 'One-Time Password sent to signer';
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] =  'One-Time Password verified by signer';
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] =  'Email sent to signer';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] =  'Signer accessed the signing portal before signing';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Signed document downloaded by signer';

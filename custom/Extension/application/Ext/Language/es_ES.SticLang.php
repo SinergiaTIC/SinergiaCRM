@@ -3735,3 +3735,14 @@ $app_list_strings['stic_signers_status_list']['pending'] = 'Pendiente';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmado';
 $app_list_strings['stic_signers_status_list']['rejected'] = 'Rechazado';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Vencido';
+
+// Registo de firmas: acciones
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] = 'Documento aceptado mediante botón de aceptación';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Documento firmado con firma manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] = 'Firmante añadido a la firma';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT'] = 'Código de un solo uso enviado al firmante';
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Código de un solo uso verificado por el firmante';
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correo electrónico enviado al firmante';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Acceso al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Documento firmado descargado por el firmante';

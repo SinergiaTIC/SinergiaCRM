@@ -3735,3 +3735,14 @@ $app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
 $app_list_strings['stic_signers_status_list']['signed'] = 'Firmat';
 $app_list_strings['stic_signers_status_list']['rejected'] = 'Rebutjat';
 $app_list_strings['stic_signers_status_list']['expired'] = 'Vençut';
+
+// Registre de Signatures: Accions
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] =  'Document signat mitjançant botó';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document signat mitjançant signatura manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] =  'Signant afegit a la signatura';
+$app_list_strings['stic_signature_log_actions']['OTP_SENT'] = 'Codi de un sol ús enviat al signant';
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Codi de un sol ús verificat pel signant';
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correu electrònic enviat al signant';
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Portal de signatura obert pel signant';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF signat descarregat pel signant';
