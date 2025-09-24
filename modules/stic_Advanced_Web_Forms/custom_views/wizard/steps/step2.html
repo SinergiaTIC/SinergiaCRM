@@ -82,9 +82,17 @@
               </template>
               <!-- Relationship Definition -->
               <template x-if="item.module">
-                <div :id="'dataBlockRels'+item.id">
+                <div :id="'dataBlockRels'+item.id" x-data="{
+                  datablockRelationships: [],
+                  async loadDatablockRelationships() {
+                      this.datablockRelationships = formConfig.getDatablockRelationships(item.id);
+                    },
+                }">
                   [Las relaciones del Bloque de datos]
-                  <!-- Relationship Details -->
+                  <div class="mt-3" :id="'dataBlockRelsTable'+item.id" data-objects="datablockRelationships" 
+                       x-init="loadDatablockRelationships(); sticControls.elemTableObjects($el);"></div>
+
+                  <!-- Add Relationship -->
                   <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
                     creatingRelDataBlock: false, 
                     availableRels: [],

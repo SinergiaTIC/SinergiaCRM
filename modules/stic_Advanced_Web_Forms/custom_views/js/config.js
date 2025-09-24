@@ -447,8 +447,6 @@ class AWF_Configuration {
     // DataBlockRelationship: {name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest}
     let relationships = [];
     let relsToReview = [];
-    // IEPA!!!
-    // Sembla que no omple bé datablock_orig i datablock_dest o no els filtra!!!!!
     this.data_blocks.forEach(d => {
       if (d.module) {
         Object.values(utils.getModuleInformation(d.module).relationships).forEach(r => {
@@ -460,31 +458,31 @@ class AWF_Configuration {
           r.datablock_dest = "";
           if (r.module_orig == d.module) {
             // Find field orig if is set as DataBlock
-            let field = d.fields.find(f => f.value_type == "datablock");
+            let field = d.fields.find(f => f.name == r.field_orig && f.value_type == "dataBlock");
             if (field) {
               // Fill Orig -> Dest info
               r.datablock_orig = d.id;
               r.datablock_dest = field.value;
               relsToReview.push({
-                datablock: r.dataBlock,
+                datablock: r.datablock,
                 relationship: r.relationship,
               })
             }
           }
           relationships.push(r);
         });
-
-        relsToReview.forEach(v => {
-          let rOrig = relationships.find(r => r.datablock == v.datablock && r.relationship == v.relationship && r.datablock_orig != "");
-          if (rOrig) {
-            // There is Orig -> Dest info: Find Dest and Fill info in  Dest <- Orig
-            let rDest = relationships.find(r => r.datablock == rOrig.datablock_dest && r.relationship == rOrig.relationship);
-            if (rDest) {
-              rDest.datablock_orig = rOrig.datablock_orig;
-              rDest.datablock_dest = rOrig.datablock_dest;
-            }
-          }
-        })
+      }
+    });
+    relsToReview.forEach(v => {
+      debugger;
+      let rOrig = relationships.find(r => r.datablock == v.datablock && r.relationship == v.relationship && r.datablock_orig != "");
+      if (rOrig) {
+        // There is Orig -> Dest info: Find Dest and Fill info in  Dest <- Orig
+        let rDest = relationships.find(r => r.datablock == rOrig.datablock_dest && r.relationship == rOrig.relationship);
+        if (rDest) {
+          rDest.datablock_orig = rOrig.datablock_orig;
+          rDest.datablock_dest = rOrig.datablock_dest;
+        }
       }
     });
     return relationships;
@@ -501,6 +499,13 @@ class AWF_Configuration {
       .filter(r => r.datablock == datablockId && r.datablock_orig == "" && r.datablock_dest == "")
       .sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
   }
+
+  getDatablockRelationships(datablockId) {
+    return this.getAllDataBlockRelationships()
+      .filter(r => r.datablock == datablockId && r.datablock_orig != "" && r.datablock_dest != "")
+      .sort((a, b) => { return String(a.text).localeCompare(String(b.text)); });
+  }
+
 
   /**
    * Gets the module related with relationship in current DataBlock
