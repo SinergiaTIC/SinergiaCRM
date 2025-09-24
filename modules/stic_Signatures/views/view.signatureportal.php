@@ -53,7 +53,7 @@ class stic_SignaturePortal extends SugarView
     {
         global $smarty;
         global $mod_strings; // Load module-specific language strings if available
-        global $app_strings; // General application language strings
+        global $app_list_strings; // General application language strings
         global $sugar_config;
 
         require_once 'modules/stic_Settings/Utils.php';
@@ -70,8 +70,12 @@ class stic_SignaturePortal extends SugarView
         // Get beans
         $signatureBean = $stic_SignaturePortalUtils->getSignatureBeans()['signature'];
         $signerBean = $stic_SignaturePortalUtils->getSignatureBeans()['signer'];
-        $pdfTemplateBean = $stic_SignaturePortalUtils->getSignatureBeans()['pdfTemplate'];
-        $sourceModuleBean = $stic_SignaturePortalUtils->getSignatureBeans()['sourceModule'];
+        // $pdfTemplateBean = $stic_SignaturePortalUtils->getSignatureBeans()['pdfTemplate'];
+        // $sourceModuleBean = $stic_SignaturePortalUtils->getSignatureBeans()['sourceModule'];
+
+        $this->ss->assign('MOD', $mod_strings);
+        $this->ss->assign('APP', $app_strings);
+        $this->ss->assign('APP_LIST_STRINGS', $app_list_strings);
 
         $this->ss->assign('SIGNER_ID', $signerBean->id);
 
@@ -79,13 +83,13 @@ class stic_SignaturePortal extends SugarView
 
         // Assign signed PDF URL and download URL if signed
         if ($signerBean->status === 'signed') {
-            $signedPdfUrl = $sugar_config['site_url'] .'/'. $sugar_config['upload_dir'] . '/' . $signerBean->id . '_signed.pdf';
+            $signedPdfUrl = $sugar_config['site_url'] . '/' . $sugar_config['upload_dir'] . '/' . $signerBean->id . '_signed.pdf';
             $dowwnloadPdfUrl = "{$sugar_config['site_url']}/index.php?entryPoint=sticDownloadSignedPdf&signerId={$signerBean->id}";
             $this->ss->assign('SIGNED_PDF_URL', $signedPdfUrl);
             $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
         }
 
-        $this ->ss->assign('SIGNATURE_MODE', $signatureBean->signature_mode ?? 'handwritten');
+        $this->ss->assign('SIGNATURE_MODE', $signatureBean->signature_mode ?? 'handwritten');
 
         // Get authentication mode
         $authMode = $signatureBean->auth_method ?? 'unique_link';
@@ -132,12 +136,21 @@ class stic_SignaturePortal extends SugarView
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
             $this->ss->assign('SHOW_PORTAL', true);
             $this->ss->assign('SIGNER_NAME', $signerBean->parent_name);
-            
 
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OPEN_PORTAL_BEFORE_SIGN', $signerBean->id, 'SIGNER');
-        }
 
+            // Fetch and assign logs related to the signer
+            $signerLog = stic_SignatureLogUtils::getSignatureLogActions($signerBean->id, 'SIGNER',['OPEN_PORTAL_BEFORE_SIGN']);
+            if (!empty($signerLog)) {
+                    foreach ($signerLog as $index => $logEntry) {
+                    $signerLog[$index]['action']=$app_list_strings['stic_signature_log_actions'][$logEntry['action']] ?? $logEntry['action'];
+                    $signerLog[$index]['date']= (new DateTime($logEntry['date'], new DateTimeZone('UTC')))->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('d/m/Y H:i:s');
+                }
+                $this->ss->assign('SIGNER_LOG', $signerLog);
+                $this->ss->assign('SHOW_LOGS', true);
+            }
+        }
         // Customizations for header
         $color = stic_SettingsUtils::getSetting('GENERAL_CUSTOM_THEME_COLOR') ?? '#b5bc31';
         $nameTitle = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME') ?? 'SinergiaCRM';
@@ -155,12 +168,15 @@ class stic_SignaturePortal extends SugarView
         // Ensure files exist in the correct directories.
         $this->ss->assign('BOOTSTRAP_CSS', '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">');
         $this->ss->assign('BOOTSTRAP_JS', '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>');
+        $this->ss->assign('BOOTSTRAP_ICONS', '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+');
+
         $this->ss->assign('STYLESHEETS', '<link rel="stylesheet" href="modules/stic_Signatures/SignaturePortal/SignaturePortal.css">');
         $this->ss->assign('JAVASCRIPT', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortal.js"></script>');
         $this->ss->assign('JAVASCRIPT_OTP', '<script src="modules/stic_Signatures/SignaturePortal/SignaturePortalOtp.js"></script>');
 
         // Load the Smarty template
         // The path should be relative to the SuiteCRM base directory
-        echo $this->ss->fetch('modules/stic_Signatures/SignaturePortal/SignaturePortal.html');
+        echo $this->ss->fetch('modules/stic_Signatures/SignaturePortal/SignaturePortal.tpl');
     }
 }

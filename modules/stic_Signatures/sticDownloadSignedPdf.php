@@ -50,6 +50,11 @@ if (!file_exists($filePath) || !is_readable($filePath)) {
     sugar_die('File not found or is not accessible.');
 }
 
+require_once 'modules/stic_Signature_Log/Utils.php';
+stic_SignatureLogUtils::logSignatureAction('SIGNED_PDF_DOWNLOADED', $signerBean->id, 'SIGNER', "Signed PDF downloaded for signer {$signerBean->name} (ID: {$signerBean->name})");
+
+
+
 // Set headers for file download
 header('Content-Description: File Transfer');
 header('Content-Type: application/pdf');

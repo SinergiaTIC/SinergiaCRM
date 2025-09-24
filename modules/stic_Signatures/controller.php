@@ -167,4 +167,17 @@ class stic_SignaturesController extends SugarController
         echo json_encode($result);
         die();
     }
+
+
+    public function action_getLogs()
+    {
+        require_once 'modules/stic_Signature_Log/Utils.php';
+        $id = $_REQUEST['id'] ?? '';
+        $idType = $_REQUEST['idType'] ?? '';
+        $logs = stic_SignatureLogUtils::getSignatureLogActions($id, $idType);
+     var_dump($logs);
+        die();
+    }
+
+    
 }

@@ -7,6 +7,7 @@
     <title>SticSign - Portal de Firmas Electrónicas</title>
     {$BOOTSTRAP_CSS}
     {$BOOTSTRAP_JS}
+    {$BOOTSTRAP_ICONS}
     {$STYLESHEETS}
 </head>
 
@@ -52,7 +53,8 @@
                     </div>
                     <div id="scrollInstructionMessage"
                         class="scroll-instruction-message alert alert-info mt-3 text-center">
-                        <span class="d-block d-sm-inline">Por favor, desplácese hasta el final del documento para habilitar
+                        <span class="d-block d-sm-inline">Por favor, desplácese hasta el final del documento para
+                            habilitar
                             el área de firma.</span>
                     </div>
                 </section>
@@ -67,14 +69,15 @@
                     <div class="d-flex justify-content-center">
                         <canvas id="signatureCanvas"></canvas>
                     </div>
-                    
+
                     <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
                         <button id="clearSignatureBtn" class="btn btn-secondary">Limpiar</button>
                         <button id="saveSignatureBtn" class="btn btn-primary">Guardar Firma</button>
                     </div>
 
                     <div class="signature-alternatives w-100 mt-4 pt-3 border-top border-secondary">
-                        <h3 class="text-xl font-weight-bold mb-4 text-center text-dark">Opciones de Firma Alternativas</h3>
+                        <h3 class="text-xl font-weight-bold mb-4 text-center text-dark">Opciones de Firma Alternativas
+                        </h3>
 
                         <div class="text-signature-option mb-3 p-3 border border-secondary rounded bg-light">
                             <h4 class="text-lg font-weight-semibold mb-3 text-dark">1. Firma por Texto</h4>
@@ -90,8 +93,7 @@
                                 <label for="fontSelector"
                                     class="form-label text-sm font-weight-medium text-dark mb-1">Seleccione un
                                     estilo de fuente:</label>
-                                <select id="fontSelector"
-                                    class="form-select text-dark">
+                                <select id="fontSelector" class="form-select text-dark">
                                     <option value="Dancing Script">Dancing Script</option>
                                     <option value="Pacifico">Pacifico</option>
                                     <option value="Great Vibes">Great Vibes</option>
@@ -133,20 +135,43 @@
                 </section>
                 { /if }
                 { /if }
-                
-               
+
+
                 { if $STATUS === 'signed' }
                 <section class="signed-area text-center mt-4">
                     <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">Documento Firmado</h1>
-                    <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=Fit" class="w-100 h-600px border border-secondary rounded mb-3"
-                        title="Documento Firmado"></iframe>
-                    <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Descargar
+                    <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=Fit"
+                        class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe>
+                    <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank"
+                        rel="noopener noreferrer">Descargar
                         Documento Firmado</a>
                 </section>
                 { /if }
 
+                { if $SHOW_LOGS === true }
+                <section class="logs-area mt-5">
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">Registro de acciones</h2>
 
-               
+                    { if isset($SIGNER_LOG) && !empty($SIGNER_LOG) }
+                    <div class="mb-5">
+                        <h3 class="text-xl font-weight-semibold mb-3 text-dark">Acciones del Firmante</h3>
+                        <ul class="list-group">
+                            { foreach from=$SIGNER_LOG item=logEntry }
+                            <li class="list-group-item">
+                                <strong>{$logEntry.date}</strong> - {$logEntry.action}
+                                { if !empty($logEntry.description) }
+                                <i class="fw-bold text-primary bi bi-info-circle float-end" title="{$logEntry.description}"></i>
+                                {/if}
+                            </li>
+                            { /foreach }
+                        </ul>
+                    </div>
+                    { /if }
+
+                </section>
+                { /if }
+
+
                 {$JAVASCRIPT}
                 {/if}
 
@@ -180,8 +205,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
-                            <button type="submit"
-                                class="btn btn-primary py-2 px-3 mt-3 mt-lg-0 ml-lg-3">
+                            <button type="submit" class="btn btn-primary py-2 px-3 mt-3 mt-lg-0 ml-lg-3">
                                 Comprobar código
                             </button>
                         </div>
@@ -199,7 +223,8 @@
     </main>
     <footer class="p-4 mt-4 text-center text-sm text-white" style="background-color: {$HEADER_COLOR};">
         Portal de firmas electrónicas de
-        <a href="https://sinergiacrm.org" target="_blank" class="font-weight-bold text-white text-decoration-none">SinergiaCRM</a>
+        <a href="https://sinergiacrm.org" target="_blank"
+            class="font-weight-bold text-white text-decoration-none">SinergiaCRM</a>
     </footer>
 </body>
 

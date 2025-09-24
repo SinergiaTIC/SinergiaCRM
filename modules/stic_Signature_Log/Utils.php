@@ -28,6 +28,16 @@
 class stic_SignatureLogUtils
 {
 
+    /**
+     * Logs an action related to a signature or signer.
+     *
+     * @param string $action The action performed (e.g., 'SIGNATURE_CREATED', 'SIGNER_ADDED').
+     * @param string $id The ID of the signature or signer related to the action.
+     * @param string $idType The type of ID provided ('SIGNER' or 'SIGNATURE').
+     * @param string $extraInfo Optional additional information to include in the log.
+     *
+     * @return void
+     */
     public static function logSignatureAction($action, $id, $idType, $extraInfo = '')
     {
 
@@ -69,4 +79,75 @@ class stic_SignatureLogUtils
         }
 
     }
+
+    /**
+     * Retrieves the signature log actions related to a specific signer or signature.
+     *
+     * @param string $id The ID of the signature or signer.
+     * @param string $idType The type of ID provided ('SIGNER' or 'SIGNATURE').
+     * @param array $exclude Optional array of action types to exclude from the results.
+     *
+     * @return array|false An array of log entries or false on error.
+     */
+    public static function getSignatureLogActions($id, $idType, $exclude=[])
+    {
+
+        if ($idType != 'SIGNER' && $idType != 'SIGNATURE') {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " idType must be SIGNER or SIGNATURE.");
+            return false;
+        }
+
+if (!empty($exclude) && is_array($exclude)) {
+    $excludeList = "'" . implode("','", array_map('addslashes', $exclude)) . "'";
+    $excludeCondition = " AND l.action NOT IN ({$excludeList}) ";
+} else {
+    $excludeCondition = '';
+}
+
+        global $db;
+        $logs = [];
+        switch ($idType) {
+            case 'SIGNER':
+                $query = "SELECT l.* FROM stic_signature_log l
+                        INNER JOIN stic_signers_stic_signature_log_c sl ON l.id = sl.stic_signers_stic_signature_logtic_signature_log_idb
+                        WHERE sl.stic_signers_stic_signature_logtic_signers_ida  = '{$id}'
+                        {$excludeCondition}
+                        ORDER BY l.date DESC";
+
+                if (!$db->query($query)) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Error executing query: {$query}");
+                } else {
+                    $result = $db->query($query);
+                    while ($row = $db->fetchByAssoc($result)) {
+                        $logs[] = $row;
+                    }
+                }
+
+                break;
+
+            case 'SIGNATURE':
+                $query = "SELECT l.* FROM stic_signature_log l
+                        INNER JOIN stic_signatures_stic_signature_log_c sl ON l.id = sl.stic_signatures_stic_signature_logtic_signature_logs_idb
+                        WHERE sl.stic_signatures_stic_signature_logtic_signatures_ida  = '{$id}'
+                        {$excludeCondition}
+                        ORDER BY l.date DESC";
+                if (!$db->query($query)) {
+                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Error executing query: {$query}");
+                } else {
+                    $result = $db->query($query);
+                    while ($row = $db->fetchByAssoc($result)) {
+                        $logs[] = $row;
+                    }
+                }
+
+                break;
+
+            default:
+                # code...
+                break;
+        }
+
+        return $logs;
+    }
+
 }
