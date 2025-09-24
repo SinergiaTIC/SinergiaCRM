@@ -171,7 +171,7 @@
         <div id="createdSection" class="section-content">
             <div id="createdRecordsContainer" class="recordsContainer">
                 <div style="font-weight:bold"> 
-                    <span class='row'>{$MOD.LBL_MODULE_NAME</span>
+                    <span class='row'>{$MOD.LBL_MODULE_NAME}</span>
                     <span class='row'>{$MOD.LBL_START_DATE}</span>
                     <span class='row'>{$MOD.LBL_END_DATE}</span>
                     <span class='row'>{$MOD.LBL_RESOURCES}</span>
