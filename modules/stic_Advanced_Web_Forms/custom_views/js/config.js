@@ -39,6 +39,9 @@ class AWF_DataBlock {
     return utils.getModuleInformation(this.module);
   }
 
+  getTextDescription() {
+    return `${utils.translateForFieldLabel('LBL_MODULE')} ${this.getModuleInformation().text}`;
+  }
 
   /**
    * Add a Field to the DataBlock, from a FieldInformation (the summarized field definition in vardefs)
@@ -113,8 +116,8 @@ class AWF_Field {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      name: "",                // Nombre de la columna
-      label: "",               // Etiqueta que aparecerá con la columna
+      name: "",                // Nombre del campo
+      label: "",               // Etiqueta que aparecerá con el campo
       required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
       required_in_form: false, // Indica si el campo será obligado en el formulario
       in_form: true,           // Indica si el campo estará en el formulario
@@ -494,23 +497,6 @@ class AWF_Configuration {
     });
     return allRelationships;
   }
-
-  /**
-   * Gets all DataBlock relationships related to current DataBlock
-   * @param {string} datablockId 
-   * @returns {array} array with DataBlock relationships related to current DataBlock
-   * DataBlockRelationship: { name, text, module_orig, field_orig, relationship, module_dest, datablock, module, textExtended, datablock_orig, datablock_dest }
-   */
-  getAvailableRelationships(datablockId) {
-    return this.getAllDataBlockRelationships()[datablockId]
-      .filter(r => r.datablock_orig == "" && r.datablock_dest == "");
-  }
-
-  getDatablockRelationships(datablockId) {
-    return this.getAllDataBlockRelationships()[datablockId]
-      .filter(r => r.datablock_orig != "" && r.datablock_dest != "");
-  }
-
 
   /**
    * Gets the module related with relationship in current DataBlock

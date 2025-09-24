@@ -36,163 +36,276 @@
   </div>
   <!-- Data Blocks -->
   <div x-init="step2.loadDatablockRelationships();">
-    <h3 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')+':'"></h3>
+    <h2 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')"></h2>
     <div class="flex-fill border rounded p-2 overflow-auto">
       <!-- Main Content -->
       <template x-for="(item, key) in formConfig.data_blocks">
-        <div class="card">
+        <div class="card datablock">
+          <!-- DataBlock header -->
+          <div class="card-header d-flex flex-column">
+            <template x-if="item.module">
+              <div class="d-flex justify-content-start datablock-module"> 
+                <span class="mb-0 text-muted small" x-text="item.getTextDescription()"></span>
+              </div>
+            </template>
+            <div class="d-flex justify-content-between align-items-center">
+              <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" 
+                  x-init="sticControls.editableText($el);"></h3>
+              <span class="btn suitepicon suitepicon-action-delete" x-show="!item.required" @click="deleteDataBlock(key);"></span>
+            </div>
+          </div>
+          <!-- DataBlock body -->
           <div class="card-body">
-            <div class="card-title">
-              <div class="d-flex justify-content-between">
-                <h4 :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h4>
-                <template x-if="'required' in item && typeof item.required === 'function' && !item.required()">
-                  <span class="btn suitepicon suitepicon-action-delete" @click="deleteDataBlock(key);"></span>
-                </template>
+            <!-- Fields Definition -->
+            <div :id="`dataBlockFields${item.id}`">
+              [Los campos del Bloque de datos]
+              <!-- Fields Details -->
+              <div x-data="{ showDataFieldsTable: false}">
+                <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
+                      data-model="showDataFieldsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                <div class="card p-2 overflow-auto" x-show="showDataFieldsTable">
+                  <div class="mt-3" :id="`dataFieldsTable${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
+                </div>
               </div>
-              <template x-if="item.module">
-                <h5 class="text-muted" x-text="utils.getModuleInformation(item.module).text + ' (' + item.id + ')'"></h5>
-              </template>
-            </div>
+              <div x-effect="item.checkDataBlock()"></div>
+              <!-- Add Field -->
+              <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
+                creatingField: false, 
+                showAllFields: false,
+                availableFields: [],
+                newField: new AWF_Field(),
 
-            <div class="card-text">
-              <!-- Fields Definition -->
-              <div :id="`dataBlockFields${item.id}`">
-                [Los campos del Bloque de datos]
-                <!-- Fields Details -->
-                <div x-data="{ showDataFieldsTable: false}">
-                  <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
-                       data-model="showDataFieldsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
-                  <div class="card p-2 overflow-auto" x-show="showDataFieldsTable">
-                    <div class="mt-3" :id="`dataFieldsTable${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
+                async loadFields() {
+                  this.availableFields = [];//step2.unusedDatablockRelationships(item.id);
+                  // this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
+                  // this.availableDataBlocks = [];
+                  // this.selectedDataBlockId = '';
+                  this.creatingField = !this.creatingField;
+                  // this.handleFieldChange();
+                },
+                async handleFieldChange(){
+                },
+                async handleCreateField(){
+                  // formConfig.addDataBlockRelationship(item.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
+                  // step2.loadDatablockRelationships();
+                  this.creatingField = false;
+                },
+                }">
+                <div class="row">
+                  <button type="button" class="btn w-auto" x-show="!creatingField" @click="loadFields()">
+                    [Añadir Campo]
+                  </button>
+                  <h4 x-show="creatingField">[Añadir Campo]</h4>
+                </div>
+                <div class="row align-items-end" x-show="creatingField">
+                  <!-- Field -->
+                  <div class="col-3">
+                    <label :for="`dataBlockFieldEdit${item.id}_Field_select`" class="form-label"
+                      x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
+                    <div class="text-muted form-check form-switch small" :id="`dataBlockFieldAll${item.id}`" 
+                      data-model="showAllFields" data-label="LBL_FIELDS_SHOW_ALL" x-init="sticControls.fieldCheckbox($el);"></div>
+                    <select :id="`dataBlockFieldEdit${item.id}_Field_select`" class="form-select" x-model="newField.name" @change="handleFieldChange()">
+                      <!--
+                      <template x-for="relation in availableRels" :key="relation.name">
+                        <option :value="relation.name" x-text="relation.textExtended"></option>
+                      </template>
+                      -->
+                    </select> 
+                  </div>
+                  <!-- Label -->
+                  <div class="col-3">
+                    <label :for="`dataBlockFieldEdit${item.id}_Label_input`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
+                    <input :id="`dataBlockFieldEdit${item.id}_Label_input`" type="text" class="form-control" x-model="newField.label" >
+                  </div>
+                  <!-- Required in form -->
+                  <div class="col-2 form-switch">
+                    <label :for="`dataBlockFieldEdit${item.id}_ReqF_check`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
+                    <input class="form-check-input form-switch" type="checkbox" role="switch" 
+                           :id="`dataBlockFieldEdit${item.id}_ReqF_check`" x-model="newField.required_in_form"/>
+                  </div>
+                  <!-- Value type -->
+                  <div class="col-3">
+                    <label :for="`dataBlockFieldEdit${item.id}_ValueType_select`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
+                    <select :id="`dataBlockFieldEdit${item.id}_ValueType_select`" class="form-select" x-model="newField.value_type" @change="handleFieldChange()">
+                      <!--
+                      <template x-for="relation in availableRels" :key="relation.name">
+                        <option :value="relation.name" x-text="relation.textExtended"></option>
+                      </template>
+                      -->
+                    </select> 
+                  </div>
+                  <!-- Type in form -->
+                  <div class="col-3">
+                    <label :for="`dataBlockFieldEdit${item.id}_TypeF_select`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
+                    <select :id="`dataBlockFieldEdit${item.id}_TypeF_select`" class="form-select" x-model="newField.type_in_form" @change="handleFieldChange()">
+                      <!--
+                      <template x-for="relation in availableRels" :key="relation.name">
+                        <option :value="relation.name" x-text="relation.textExtended"></option>
+                      </template>
+                      -->
+                    </select> 
+                  </div>
+                  <!-- Value options -->
+                  <div class="col-3">
+                    <label :for="`dataBlockFieldEdit${item.id}_ValueOptions_select`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')"></label>
+                    <select :id="`dataBlockFieldEdit${item.id}_ValueOptions_select`" class="form-select" x-model="newField.value_options" @change="handleFieldChange()">
+                      <!--
+                      <template x-for="relation in availableRels" :key="relation.name">
+                        <option :value="relation.name" x-text="relation.textExtended"></option>
+                      </template>
+                      -->
+                    </select> 
+                  </div>
+                  <!-- Value -->
+                  <div class="col-3">
+                    <label :for="`dataBlockFieldEdit${item.id}_Value_text`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                    <input :id="`dataBlockFieldEdit${item.id}_Value_text`" type="text" class="form-control" x-model="newField.value" >
+                  </div>
+                  <!-- Value Text-->
+                  <div class="col-3">
+                    <label :for="`dataBlockFieldEdit${item.id}_ValueText_text`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TEXT')"></label>
+                    <input :id="`dataBlockFieldEdit${item.id}_ValueText_text`" type="text" class="form-control" x-model="newField.value_text" >
+                  </div>
+                  <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
+                    <span class="suitepicon suitepicon-action-confirm"></span>
+                  </button>
+                  <button type="button" class="btn w-32px mb-1px" @click="creatingField = false;">
+                    <span class="suitepicon suitepicon-action-clear"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Duplicate Definition -->
+            <template x-if="item.module">
+              <div :id="`dataBlockDuplicates${item.id}`">
+                <div class="row">
+                  <!-- Action -->
+                  <div class="col-3" :id="`duplicateAction${item.id}`" :data-model="'item.duplicate_detection.on_duplicate'" data-label="LBL_ONDUPLICATE_ACTION"
+                        :data-map="utils.getList('stic_advanced_web_forms_datablocks_duplicate_action_list', true)" x-init="sticControls.fieldSelect($el)"></div>
+                  <!-- Fields -->
+                  <div class="col-9" :id="`duplicateFields${item.id}`" :data-model="'item.duplicate_detection.fields'" data-label="LBL_DUPLICATE_FIELDS"
+                        :data-map="`utils.getModuleInformation('${item.module}').fields`" data-map-property="text" data-multiple 
+                        x-init="sticControls.fieldSelect($el)"></div>
+                </div>
+              </div>
+            </template>
+            <!-- Relationships Definition -->
+            <template x-if="item.module">
+              <div :id="`dataBlockRels${item.id}`">
+                [Las relaciones del Bloque de datos]
+                  <!-- Relationships Details -->
+                <div x-data="{ showRelationshipsTable: false}">
+                  <div class="text-muted form-check form-switch mt-3" :id="`dataRelationshipsDetails${item.id}`" 
+                        data-model="showRelationshipsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                  <div class="card p-2 overflow-auto" x-show="showRelationshipsTable">
+                    <div class="mt-3" :id="`dataBlockRelsTable${item.id}`" 
+                          :data-objects="`step2.usedDatablockRelationships('${item.id}')`" x-init="sticControls.elemTableObjects($el);"></div>
                   </div>
                 </div>
-                <div x-effect="item.checkDataBlock()"></div>
-              </div>
-              <!-- Duplicate Definition -->
-              <template x-if="item.module">
-                <div :id="`dataBlockDuplicates${item.id}`">
+                <!-- Add Relationship -->
+                <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
+                  creatingRelDataBlock: false, 
+                  availableRels: [],
+                  selectedRelName:'',
+                  availableDataBlocks: [],
+                  selectedDataBlockId:'',
+                  newDataBlockText:'',
+                  relNewDataBlock:false,
+
+                  async loadRelations() {
+                    this.availableRels = step2.unusedDatablockRelationships(item.id);
+                    this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
+                    this.availableDataBlocks = [];
+                    this.selectedDataBlockId = '';
+                    this.creatingRelDataBlock = !this.creatingRelDataBlock;
+                    this.handleRelationChange();
+                  },
+                  async handleRelationChange() {
+                    this.availableDataBlocks = formConfig.getAvailableDataBlocksForRelationship(item.id, this.selectedRelName);
+                    this.selectedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
+                    this.handleDataBlockChange();
+                  },
+                  async handleDataBlockChange() {
+                    this.newDataBlockText = '';
+                    this.relNewDataBlock = this.selectedDataBlockId == -1;
+                    if (this.relNewDataBlock) {
+                      this.newDataBlockText = formConfig.suggestDataBlockText(formConfig.getRelationshipModule(item.id, this.selectedRelName));
+                    }
+                  },
+                  async handleCreateRelationship(){
+                    formConfig.addDataBlockRelationship(item.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
+                    step2.loadDatablockRelationships();
+                    this.creatingRelDataBlock = false;
+                  },
+                  }">
                   <div class="row">
-                    <!-- Action -->
-                    <div class="col-3" :id="`duplicateAction${item.id}`" :data-model="'item.duplicate_detection.on_duplicate'" data-label="LBL_ONDUPLICATE_ACTION"
-                         :data-map="utils.getList('stic_advanced_web_forms_datablocks_duplicate_action_list', true)" x-init="sticControls.fieldSelect($el)"></div>
-                    <!-- Fields -->
-                    <div class="col-9" :id="`duplicateFields${item.id}`" :data-model="'item.duplicate_detection.fields'" data-label="LBL_DUPLICATE_FIELDS"
-                         :data-map="`utils.getModuleInformation('${item.module}').fields`" data-map-property="text" data-multiple 
-                         x-init="sticControls.fieldSelect($el)"></div>
+                    <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()">
+                      [Añadir Relación con otro Bloque de Datos]
+                    </button>
+                    <h4 x-show="creatingRelDataBlock">[Añadir Relación con otro Bloque de Datos]</h4>
+                  </div>
+                  <div class="row align-items-end" x-show="creatingRelDataBlock">
+                    <!-- Relationship -->
+                    <div class="col-3">
+                      <label :for="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-label"
+                            x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP')"></label>
+                      <select :id="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-select" x-model="selectedRelName" @change="handleRelationChange()">
+                        <template x-for="relation in availableRels" :key="relation.name">
+                          <option :value="relation.name" x-text="relation.textExtended"></option>
+                        </template>
+                      </select>
+                    </div>
+                    <!-- Data Block -->
+                    <div class="col-3">
+                      <label :for="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-label"
+                            x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></label>
+                      <select :id="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-select" x-model="selectedDataBlockId" @change="handleDataBlockChange()">
+                        <template x-for="dataBlock in availableDataBlocks" :key="dataBlock.id">
+                          <option :value="dataBlock.id" x-text="dataBlock.text"></option>
+                        </template>
+                      </select>
+                    </div>
+                    <!-- New Data Block -->
+                    <div class="col-3" x-show="relNewDataBlock">
+                      <label :for="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" class="form-label"
+                              x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK_NAME')"></label>
+                      <input :id="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" type="text" class="form-control" x-model="newDataBlockText" >
+                    </div>
+                    <button type="button" class="btn w-32px mb-1px" @click="handleCreateRelationship();">
+                      <span class="suitepicon suitepicon-action-confirm"></span>
+                    </button>
+                    <button type="button" class="btn w-32px mb-1px" @click="creatingRelDataBlock = false;">
+                      <span class="suitepicon suitepicon-action-clear"></span>
+                    </button>
                   </div>
                 </div>
-              </template>
-              <!-- Relationships Definition -->
-              <template x-if="item.module">
-                <div :id="`dataBlockRels${item.id}`">
-                  [Las relaciones del Bloque de datos]
-                   <!-- Relationships Details -->
-                  <div x-data="{ showRelationshipsTable: false}">
-                    <div class="text-muted form-check form-switch mt-3" :id="`dataRelationshipsDetails${item.id}`" 
-                         data-model="showRelationshipsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
-                    <div class="card p-2 overflow-auto" x-show="showRelationshipsTable">
-                      <div class="mt-3" :id="`dataBlockRelsTable${item.id}`" 
-                           :data-objects="`step2.usedDatablockRelationships('${item.id}')`" x-init="sticControls.elemTableObjects($el);"></div>
-                    </div>
-                  </div>
-                  <!-- Add Relationship -->
-                  <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
-                    creatingRelDataBlock: false, 
-                    availableRels: [],
-                    selectedRelName:'',
-                    availableDataBlocks: [],
-                    selectedDataBlockId:'',
-                    newDataBlockText:'',
-                    relNewDataBlock:false,
+              </div>
+            </template>
 
-                    async loadRelations() {
-                      this.availableRels = step2.unusedDatablockRelationships(item.id);
-                      this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
-                      this.availableDataBlocks = [];
-                      this.selectedDataBlockId = '';
-                      this.creatingRelDataBlock = !this.creatingRelDataBlock;
-                      this.handleRelationChange();
-                    },
-                    async handleRelationChange() {
-                      this.availableDataBlocks = formConfig.getAvailableDataBlocksForRelationship(item.id, this.selectedRelName);
-                      this.selectedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
-                      this.handleDataBlockChange();
-                    },
-                    async handleDataBlockChange() {
-                      this.newDataBlockText = '';
-                      this.relNewDataBlock = this.selectedDataBlockId == -1;
-                      if (this.relNewDataBlock) {
-                        this.newDataBlockText = formConfig.suggestDataBlockText(formConfig.getRelationshipModule(item.id, this.selectedRelName));
-                      }
-                    },
-                    async handleCreateRelationship(){
-                      formConfig.addDataBlockRelationship(item.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
-                      step2.loadDatablockRelationships();
-                      this.creatingRelDataBlock = false;
-                    },
-                    }">
-                    <div class="row">
-                      <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()">
-                        [Añadir Relación con otro Bloque de Datos]
-                      </button>
-                      <h4 x-show="creatingRelDataBlock">[Añadir Relación con otro Bloque de Datos]</h4>
-                    </div>
-                    <div :id="`dataBlockRelsEdit${item.id}`" class="row align-items-end" x-show="creatingRelDataBlock">
-                      <!-- Relationship -->
-                      <div class="col-3" :id="`dataBlockRelsEdit${item.id}_Rel`">
-                        <label :id="`dataBlockRelsEdit${item.id}_Rel_label`" :for="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP')"></label>
-                        <select :id="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-select" x-model="selectedRelName" @change="handleRelationChange()">
-                          <template x-for="relation in availableRels" :key="relation.name">
-                            <option :value="relation.name" x-text="relation.textExtended"></option>
-                          </template>
-                        </select>
-                      </div>
-                      <!-- Data Block -->
-                      <div class="col-3" :id="`dataBlockRelsEdit${item.id}_DataBlock`">
-                        <label :id="`dataBlockRelsEdit${item.id}_DataBlock_label`" :for="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></label>
-                        <select :id="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-select" x-model="selectedDataBlockId" @change="handleDataBlockChange()">
-                          <template x-for="dataBlock in availableDataBlocks" :key="dataBlock.id">
-                            <option :value="dataBlock.id" x-text="dataBlock.text"></option>
-                          </template>
-                        </select>
-                      </div>
-                      <!-- New Data Block -->
-                      <div class="col-3" :id="`dataBlockRelsEdit${item.id}_NewDatBlock`" x-show="relNewDataBlock">
-                        <label :id="`dataBlockRelsEdit${item.id}_NewDataBlock_label`" :for="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" class="form-label"
-                               x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK_NAME')"></label>
-                        <input :id="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" type="text" class="form-control" x-model="newDataBlockText" >
-                      </div>
-                      <button type="button" class="btn w-32px mb-1px" @click="handleCreateRelationship();">
-                        <span class="suitepicon suitepicon-action-confirm"></span>
-                      </button>
-                      <button type="button" class="btn w-32px mb-1px" @click="creatingRelDataBlock = false;">
-                        <span class="suitepicon suitepicon-action-clear"></span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </template>
-
-              <!-- Accordion Headers -->
-              <template x-if="item.module">
-                <div :id="`dataDef_${item.id}`"
-                     :data-sections="JSON.stringify([
-                                      {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                                      {headerText:`utils.translate('LBL_DUPLICATE_CHECK') + ' ('+item.duplicate_detection.fields.length+' - '+item.duplicate_detection.on_duplicate+')'`, selected:false, contentId:'dataBlockDuplicates'+item.id},
-                                      {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
-                                    ]);"
-                     x-init="sticControls.accordion($el)"></div>
-              </template>
-              <template x-if="!item.module">
-                <div :id="`dataDef_${item.id}`"
-                     :data-sections="JSON.stringify([
-                                      {headerText:`utils.translate('LBL_FIELDS') + ' (' + item.fields.length +')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                                    ]);"
-                     x-init="sticControls.accordion($el)"></div>
-              </template>
-            </div>
+            <!-- Accordion Headers -->
+            <template x-if="item.module">
+              <div :id="`dataDef_${item.id}`"
+                    :data-sections="JSON.stringify([
+                                    {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                                    {headerText:`utils.translate('LBL_DUPLICATE_CHECK') + ' ('+item.duplicate_detection.fields.length+' - '+item.duplicate_detection.on_duplicate+')'`, selected:false, contentId:'dataBlockDuplicates'+item.id},
+                                    {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
+                                  ]);"
+                    x-init="sticControls.accordion($el)"></div>
+            </template>
+            <template x-if="!item.module">
+              <div :id="`dataDef_${item.id}`"
+                    :data-sections="JSON.stringify([
+                                    {headerText:`utils.translate('LBL_FIELDS') + ' (' + item.fields.length +')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                                  ]);"
+                    x-init="sticControls.accordion($el)"></div>
+            </template>
           </div>
         </div>
       </template>

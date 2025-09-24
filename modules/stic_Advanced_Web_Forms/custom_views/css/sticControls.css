@@ -22,6 +22,14 @@
   cursor: not-allowed;
 }
 
+.card .datablock {
+  border-width: medium;
+}
+
+.datablock-module {
+  margin: -5px 0px -5px -6px;
+}
+
 /* [required] + label::after {
   content: " *";
   color: red;
