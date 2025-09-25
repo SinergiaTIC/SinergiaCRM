@@ -4,7 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SticSign - Portal de Firmas Electrónicas</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="modules/stic_Signatures/SignaturePortal/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="modules/stic_Signatures/SignaturePortal/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="modules/stic_Signatures/SignaturePortal/favicon/favicon-16x16.png">
+    <link rel="manifest" href="modules/stic_Signatures/SignaturePortal/favicon/site.webmanifest">
+    <title>SinergiaCRM - Portal de Firmas Electrónicas</title>
     {$BOOTSTRAP_CSS}
     {$BOOTSTRAP_JS}
     {$BOOTSTRAP_ICONS}
@@ -22,9 +26,9 @@
             </div>
             <div class="w-100 w-sm-50 d-flex flex-column  align-items-sm-start text-center">
                 <h2 class="text-white fs-5 text-base font-weight-bold tracking-tight mb-0">Portal de firmas</h2>
-                    { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
+                { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
                 <h3 class="text-white fs-6 font-weight-bold tracking-tight mt-1 mb-0">
-                        {$ORGANIZATION_NAME}
+                    {$ORGANIZATION_NAME}
                 </h3>
                 {/if}
             </div>
@@ -163,7 +167,7 @@
                             <li class="list-group-item">
                                 <strong>{$logEntry.date}</strong> - {$logEntry.action}
                                 { if !empty($logEntry.description) }
-                                
+
                                 <div class="text-secondary small ">
                                     {$logEntry.description}
                                 </div>

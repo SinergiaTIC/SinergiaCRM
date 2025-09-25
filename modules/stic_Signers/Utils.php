@@ -84,7 +84,9 @@ class stic_SignersUtils
         $mail->Subject = $subject;
 
         // Construct the unique signing URL
-        $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
+         // Determine the base URI for constructing URLs (to handle different server setups) 
+        $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
+        $signURL = "{$uri}/index.php?entryPoint=sticSign&signerId={$signerId}";
 
         // Prepare the complete HTML body of the email
         $completeHTML = "<html>

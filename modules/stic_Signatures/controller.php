@@ -168,16 +168,14 @@ class stic_SignaturesController extends SugarController
         die();
     }
 
-
-    public function action_getLogs()
+    public function action_showPortal()
     {
-        require_once 'modules/stic_Signature_Log/Utils.php';
-        $id = $_REQUEST['id'] ?? '';
-        $idType = $_REQUEST['idType'] ?? '';
-        $logs = stic_SignatureLogUtils::getSignatureLogActions($id, $idType);
-     var_dump($logs);
+        require_once 'modules/stic_Signatures/Utils.php';
+        $id=$GLOBALS['db']->getOne("SELECT id FROM stic_signers where deleted=0 LIMIT 1");
+        SugarApplication::redirect("index.php?entryPoint=sticSign&signerId=$id");
         die();
     }
 
+ 
     
 }

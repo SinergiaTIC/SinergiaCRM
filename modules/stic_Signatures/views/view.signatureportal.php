@@ -56,6 +56,10 @@ class stic_SignaturePortal extends SugarView
         global $app_list_strings; // General application language strings
         global $sugar_config;
 
+
+        // Determine the base URI for constructing URLs (to handle different server setups) 
+        $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
+
         require_once 'modules/stic_Settings/Utils.php';
 
         $documentHtmlContent = '
@@ -83,8 +87,8 @@ class stic_SignaturePortal extends SugarView
 
         // Assign signed PDF URL and download URL if signed
         if ($signerBean->status === 'signed') {
-            $signedPdfUrl = $sugar_config['site_url'] . '/' . $sugar_config['upload_dir'] . '/' . $signerBean->id . '_signed.pdf';
-            $dowwnloadPdfUrl = "{$sugar_config['site_url']}/index.php?entryPoint=sticDownloadSignedPdf&signerId={$signerBean->id}";
+            $signedPdfUrl = $uri . $sugar_config['upload_dir'] . '/' . $signerBean->id . '_signed.pdf';
+            $dowwnloadPdfUrl = "{$uri}/index.php?entryPoint=sticDownloadSignedPdf&signerId={$signerBean->id}";
             $this->ss->assign('SIGNED_PDF_URL', $signedPdfUrl);
             $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
         }
@@ -141,11 +145,11 @@ class stic_SignaturePortal extends SugarView
             stic_SignatureLogUtils::logSignatureAction('OPEN_PORTAL_BEFORE_SIGN', $signerBean->id, 'SIGNER');
 
             // Fetch and assign logs related to the signer
-            $signerLog = stic_SignatureLogUtils::getSignatureLogActions($signerBean->id, 'SIGNER',['OPEN_PORTAL_BEFORE_SIGN']);
+            $signerLog = stic_SignatureLogUtils::getSignatureLogActions($signerBean->id, 'SIGNER', ['OPEN_PORTAL_BEFORE_SIGN']);
             if (!empty($signerLog)) {
-                    foreach ($signerLog as $index => $logEntry) {
-                    $signerLog[$index]['action']=$app_list_strings['stic_signature_log_actions'][$logEntry['action']] ?? $logEntry['action'];
-                    $signerLog[$index]['date']= (new DateTime($logEntry['date'], new DateTimeZone('UTC')))->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('d/m/Y H:i:s');
+                foreach ($signerLog as $index => $logEntry) {
+                    $signerLog[$index]['action'] = $app_list_strings['stic_signature_log_actions'][$logEntry['action']] ?? $logEntry['action'];
+                    $signerLog[$index]['date'] = (new DateTime($logEntry['date'], new DateTimeZone('UTC')))->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('d/m/Y H:i:s');
                 }
                 $this->ss->assign('SIGNER_LOG', $signerLog);
                 $this->ss->assign('SHOW_LOGS', true);
@@ -155,7 +159,7 @@ class stic_SignaturePortal extends SugarView
         $color = stic_SettingsUtils::getSetting('GENERAL_CUSTOM_THEME_COLOR') ?? '#b5bc31';
         $nameTitle = stic_SettingsUtils::getSetting('GENERAL_ORGANIZATION_NAME') ?? 'SinergiaCRM';
         $this->ss->assign('HEADER_COLOR', $color);
-        $this->ss->assign('LOGO_URL', "{$sugar_config['site_url']}/custom/themes/default/images/company_logo.png");
+        $this->ss->assign('LOGO_URL', "{$uri}custom/themes/default/images/company_logo.png");
         $this->ss->assign('ORGANIZATION_NAME', $nameTitle);
 
         // Assign variables to Smarty
