@@ -2645,7 +2645,7 @@ $dictionary['Contact']['fields']['do_not_call']['massupdate'] = '1';
 // Many to Many filter fields
 $dictionary['Contact']['fields']['stic_prospect_lists_contacts_name']= array(
     'name' => 'stic_prospect_lists_contacts_name',
-    'vname' => 'LBL_PROSPECT_LIST_CONTACTS_NAME',
+    'vname' => 'LBL_STIC_PROSPECT_LIST_CONTACTS_NAME',
     'query_type' => 'default',
     'source' => 'non-db',
     'type' => 'relate',

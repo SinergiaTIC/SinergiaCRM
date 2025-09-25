@@ -237,4 +237,4 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competències';
 
 // Many to Many filter fields
-$mod_strings['LBL_PROSPECT_LIST_CONTACTS_NAME'] = 'Llista de públic objectiu';
+$mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Llista de públic objectiu';
