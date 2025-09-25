@@ -35,7 +35,6 @@ switch (sticViewType) {
   case "popup":
     $(document).ready(function() {
       setAutofill(["name"]);
-      debugger;
       state = $('#status').val();
       addEditCreateTemplateLinks();
       if ($('#EditView input[name="record"]').val()) {

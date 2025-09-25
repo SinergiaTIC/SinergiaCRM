@@ -21,7 +21,7 @@
  */
 
 var module = 'stic_Messages';
-if (!$("#mass_ids") || $("#mass_ids").val() == ''){
+if (!($("#mass_ids").length > 0) || $("#mass_ids").val() == ''){
   addToValidateCallback(
     getFormName(),
     "parent_id",
@@ -159,9 +159,6 @@ function checkStatus() {
 YAHOO.util.Event.addListener('parent_id','change',parentIdChanged);
 
 function parentIdChanged() {
-  console.log('parentIdChanged');
-  debugger;
-  
   let parentId = $('#parent_id').val();
   let parentType = $('#parent_type').val();
 
@@ -172,7 +169,6 @@ function parentIdChanged() {
 }
 
 function applyParent(parentData) {
-  debugger;
   if(parentData!= null) {
     $('#phone').val(parentData['phone']);
   }
@@ -188,7 +184,6 @@ function getParentAsync(parentId, parentType, callbackFunction) {
       "parentType": parentType
     },
     success: function(resultado) {
-      debugger;
       if (resultado.code == 'OK') {
         callbackFunction(resultado.data);
       }
