@@ -167,35 +167,28 @@ $searchdefs['ProspectLists'] = array(
                 'default' => true,
                 'name' => 'date_modified',
             ),
-            6 => array (
-                'name' => 'stic_prospect_lists_contacts_name',
-                'label' => 'LBL_CONTACT',
-                'width' => '10%',
-                'link' => true,
-                'default' => true,
-            ),
-            7 => array(
+            6 => array(
                 'type' => 'assigned_user_name',
                 'label' => 'LBL_CREATED',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'created_by',
             ),
-            8 => array(
+            7 => array(
                 'type' => 'assigned_user_name',
                 'label' => 'LBL_MODIFIED',
                 'width' => '10%',
                 'default' => true,
                 'name' => 'modified_user_id',
             ),
-            9 => array(
+            8 => array(
                 'name' => 'current_user_only',
                 'label' => 'LBL_CURRENT_USER_FILTER',
                 'type' => 'bool',
                 'default' => true,
                 'width' => '10%',
             ),
-            10 => array(
+            9 => array(
                 'name' => 'favorites_only',
                 'label' => 'LBL_FAVORITES_FILTER',
                 'type' => 'bool',

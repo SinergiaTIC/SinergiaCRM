@@ -265,42 +265,28 @@ $searchdefs['Documents'] = array(
               'default' => true,
               'name' => 'date_modified',
           ),
-          10 => array (
-              'name' => 'stic_documents_accounts_name',
-              'label' => 'LBL_ACCOUNTS',
-              'width' => '10%',
-              'link' => true,
-              'default' => true,
-          ),
-          11 => array (
-            'name' => 'stic_documents_contacts_name',
-            'label' => 'LBL_CONTACTS',
-            'width' => '10%',
-            'link' => true,
-            'default' => true,
-          ),
-          12 => array(
+          10 => array(
               'type' => 'assigned_user_name',
               'label' => 'LBL_CREATED',
               'width' => '10%',
               'default' => true,
               'name' => 'created_by',
           ),
-          13 => array(
+          11 => array(
               'type' => 'assigned_user_name',
               'label' => 'LBL_MODIFIED',
               'width' => '10%',
               'default' => true,
               'name' => 'modified_user_id',
           ),
-          14 => array(
+          12 => array(
               'name' => 'current_user_only',
               'label' => 'LBL_CURRENT_USER_FILTER',
               'type' => 'bool',
               'default' => true,
               'width' => '10%',
           ),
-          15 => array(
+          13 => array(
               'name' => 'favorites_only',
               'label' => 'LBL_FAVORITES_FILTER',
               'type' => 'bool',
