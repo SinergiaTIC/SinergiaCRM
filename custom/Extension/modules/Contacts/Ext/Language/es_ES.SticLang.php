@@ -238,3 +238,4 @@ $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competencias'
 
 // Many to Many filter fields
 $mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Lista de público objectivo';
+$mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';

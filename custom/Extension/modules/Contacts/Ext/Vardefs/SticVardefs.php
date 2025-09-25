@@ -2658,3 +2658,20 @@ $dictionary['Contact']['fields']['stic_prospect_lists_contacts_name']= array(
     'id_name' => 'prospect_list_id',
     'module' => 'ProspectLists',
 );
+
+// Many to Many filter fields
+$dictionary['Contact']['fields']['stic_current_projects_contacts_name']= array(
+    'name' => 'stic_current_projects_contacts_name',
+    'vname' => 'LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME',
+    'query_type' => 'default',
+    'source' => 'non-db',
+    'type' => 'relate',
+    'width' => '10%',
+    'default' => true,
+    'studio' => array(
+        'searchview' => true, // To appear in the filter view layout editor
+        'visible' => false // To avoid appear in the record view layout editor
+    ),
+    'id_name' => 'project_id', // This field just need to be filled with any value
+    'module' => 'Project',
+);

@@ -445,5 +445,17 @@ $searchFields['Contacts'] = array (
           0 => 'id',
       ),
     ),
+    'stic_current_projects_contacts_name' => array (
+      'query_type' => 'format',
+      'operator' => 'subquery',
+      'subquery' => 'SELECT scrcc.stic_contacts_relationships_contactscontacts_ida FROM stic_contacts_relationships_contacts_c scrcc
+          INNER JOIN stic_contacts_relationships_project_c scrpc ON scrpc.stic_conta0d5aonships_idb = scrcc.stic_contae394onships_idb AND scrpc.deleted = 0
+          INNER JOIN stic_contacts_relationships scr ON scr.id = scrcc.stic_contae394onships_idb AND scr.deleted = 0
+          INNER JOIN project p ON p.id = scrpc.stic_contacts_relationships_projectproject_ida AND p.deleted = 0
+          WHERE scrcc.deleted = 0 AND scr.active = 1 AND p.name  LIKE \'{0}\'',
+      'db_field' => array (
+          0 => 'id',
+      ),
+    ),
 );
 // END STIC-Custom 
