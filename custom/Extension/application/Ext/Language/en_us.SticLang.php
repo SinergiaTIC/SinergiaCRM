@@ -3715,4 +3715,4 @@ $app_list_strings['stic_history']['Meetings'] = 'Meetings';
 $app_list_strings['stic_history']['Calls'] = 'Calls';
 $app_list_strings['stic_history']['Notes'] = 'Notes';
 $app_list_strings['stic_history']['Emails'] = 'Emails';
-$app_list_strings['stic_history']['stic_messages'] = 'Messages';
+$app_list_strings['stic_history']['stic_Messages'] = 'Messages';
