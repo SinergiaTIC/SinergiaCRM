@@ -49,9 +49,8 @@
             <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_END}:</td>
             <td width="37.5%" valign="top">
                 <div>
-                    <input type="radio" name="repeat_end_type" value="count" id="repeat_count_radio" 
-                           {if $selected_repeat_end_type eq 'count' or $selected_repeat_end_type eq '' or not $selected_repeat_end_type}checked{/if}
-                           onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
+                	<input type="radio" name="repeat_end_type" value="number" id="repeat_count_radio" checked
+							onclick="toggle_repeat_end();" style="position: relative; top: -5px;">
                     {$MOD.LBL_REPEAT_END_AFTER}
                     <input type="number" size="3" name="repeat_count" value="{$selected_repeat_count|default:'1'}"> {$MOD.LBL_REPEAT_OCCURRENCES}
                 </div>
@@ -190,6 +189,31 @@ $(document).ready(function() {
     
     $('#repeat_options').show();
     
+    // Set the repeat_end_type radio button based on session data
+    {/literal}
+    {if $selected_repeat_end_type eq 'until'}
+    {literal}
+    $('#repeat_until_radio').prop('checked', true);
+    $('#repeat_count_radio').prop('checked', false);
+    {/literal}
+    {else}
+    {literal}
+    $('#repeat_count_radio').prop('checked', true);
+    $('#repeat_until_radio').prop('checked', false);
+    {/literal}
+    {/if}
+    {literal}
+    
+    // Set the repeat_until input value
+    {/literal}
+    {if $selected_repeat_until}
+    {literal}
+    $('#repeat_until_input').val('{/literal}{$selected_repeat_until}{literal}');
+    {/literal}
+    {/if}
+    {literal}
+    
+    // Call the toggle functions to set up the UI properly
     if (typeof toggle_repeat_type === 'function') {
         toggle_repeat_type();
     }
@@ -197,6 +221,19 @@ $(document).ready(function() {
     if (typeof toggle_repeat_end === 'function') {
         toggle_repeat_end();
     }
+    
+    // Set day of week checkboxes for weekly repeats
+    {/literal}
+    {if $selected_repeat_type eq 'Weekly'}
+    {foreach from=$selected_repeat_dow key=index item=value}
+    {if $value}
+    {literal}
+    $('#repeat_dow_{/literal}{$index}{literal}').prop('checked', true);
+    {/literal}
+    {/if}
+    {/foreach}
+    {/if}
+    {literal}
     {/literal}
     {/if}
     {literal}
