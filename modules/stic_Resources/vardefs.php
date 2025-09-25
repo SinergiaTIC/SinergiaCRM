@@ -408,7 +408,7 @@ $dictionary['stic_Resources'] = array(
                 'searchview' => true, // To appear in the filter view layout editor
                 'visible' => false // To avoid appear in the record view layout editor
             ),
-            'id_name' => true,
+            'id_name' => 'stic_resources_stic_bookingsstic_bookings_idb',
             'module' => 'stic_Bookings',
         ),
         'stic_resources_stic_centers' => array(
