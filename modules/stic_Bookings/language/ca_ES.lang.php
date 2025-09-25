@@ -127,7 +127,7 @@ $mod_strings = array(
     'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Tarifa de copagament',
 
     // Reserves periòdiques
-    'LNK_CREATE_PERIODIC_RECORDS' => 'Crea els registres periòdics',
+    'LNK_CREATE_PERIODIC_RECORDS' => 'Crea la reserva periòdica',
     'LBL_CANCEL_BUTTON' => 'Cancel·la',
     'LBL_REPEAT_DOW' => 'Dia de la setmana',
     'LBL_REPEAT_END_AFTER' => 'Després de',
