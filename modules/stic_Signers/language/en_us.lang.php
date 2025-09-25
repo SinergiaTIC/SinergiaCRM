@@ -77,7 +77,10 @@ $mod_strings = array(
     'LBL_ON_BEHALF_OF_ID' => 'Authorized to sign on behalf of (ID)',
 
     'LBL_SIGNER_PREVIEW' => 'Signer Preview',
-    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Send to sign by email',
+    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Request signature by email to',
+    'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Go to signing portal',
+    'LBL_SIGNER_COPY_PORTAL_URL' => 'Copy portal URL',
+    'LBL_SIGNER_PORTAL_URL_COPIED' => 'Portal URL copied to clipboard',
     'LBL_SIGNER_EMAIL_SUBJECT' => 'You have a document to sign',
     'LBL_SIGNER_EMAIL_BODY' => 'Please click the following link to sign the document:',
     'LBL_SIGNER_EMAIL_ERROR' => 'Error sending email to signer',

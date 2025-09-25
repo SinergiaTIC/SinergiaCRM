@@ -49,17 +49,29 @@ switch (viewType()) {
     // No specific custom logic for edit, quickcreate, or popup views in this section.
     break;
   case "detail":
-    // For the detail view, create a "Send to Sign" button dynamically.
+    // CReate buttons for the detail view of the stic_Signers module.
     var buttons = {
       sendToSign: {
-        id: "bt_send_to_sign", // HTML ID for the button
-        title: SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL"), // Localized button title
-        // JavaScript function to execute on click: redirects to the sendToSign action
+        id: "bt_send_to_sign", 
+        title: "✉️ " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL") + " " + STIC.record.email_address, // Localized button title with email emoji   
         onclick: "window.location='index.php?module=stic_Signers&action=sendToSign&signerId=" + STIC.record.id + "'"
+      },
+      rediretToSingPortal: {
+        id: "bt_redirect_to_portal", 
+        title:  "🔗 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_REDIRECT_TO_PORTAL") , // Localized button title with link emoji 
+        onclick: "window.location='index.php?entryPoint=sticSign&signerId=" + STIC.record.id + "'"
+      },
+      copyPortalUrl: {
+        id: "bt_copy_portal_url", 
+        title: "📋 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_COPY_PORTAL_URL") , // Localized button title with clipboard emoji
+        onclick: "navigator.clipboard.writeText('" + window.location.origin + "/index.php?entryPoint=sticSign&signerId=" + STIC.record.id + "'); alert(SUGAR.language.get('stic_Signers', 'LBL_SIGNER_PORTAL_URL_COPIED'));"
       }
     };
     // Add the defined button to the detail view.
     createDetailViewButton(buttons.sendToSign);
+    createDetailViewButton(buttons.rediretToSingPortal);
+    createDetailViewButton(buttons.copyPortalUrl);
+
     break;
   case "list":
     // No specific custom logic for list view in this section.

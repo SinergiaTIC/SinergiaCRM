@@ -78,7 +78,10 @@ $mod_strings = array(
 
 
     'LBL_SIGNER_PREVIEW' => 'Vista previa do firmante',
-    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Enviar para firmar por correo electrónico',
+    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar sinatura por correo electrónico a',  
+    'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Ir ao portal de sinatura',
+    'LBL_SIGNER_COPY_PORTAL_URL' => 'Copiar URL do portal',
+    'LBL_SIGNER_PORTAL_URL_COPIED' => 'URL do portal copiada ao porta-recopiadora',
     'LBL_SIGNER_EMAIL_SUBJECT' => 'Ten un documento para firmar',
     'LBL_SIGNER_EMAIL_BODY' => 'Por favor, faga clic na seguinte ligazón para firmar o documento:',
     'LBL_SIGNER_EMAIL_ERROR' => 'Erro ao enviar o correo electrónico ao firmante', 
