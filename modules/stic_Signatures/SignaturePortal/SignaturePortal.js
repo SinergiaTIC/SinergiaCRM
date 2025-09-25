@@ -105,32 +105,23 @@ document.addEventListener('DOMContentLoaded', () => {
          * and makes it responsive.
          */
         function resizeCanvas() {
-            // Fija la altura del canvas
-            const calculatedHeightCSS = 250;
-            const aspectRatio = 16 / 9;
-            const calculatedWidthCSS = calculatedHeightCSS * aspectRatio;
+            const rect = signatureCanvas.getBoundingClientRect();
+            const calculatedWidthCSS = rect.width;
+            const calculatedHeightCSS = Math.min(250, window.innerHeight * 0.4);
 
             signatureCanvas.style.width = `${calculatedWidthCSS}px`;
             signatureCanvas.style.height = `${calculatedHeightCSS}px`;
 
-            signatureCanvas.width = calculatedWidthCSS * window.devicePixelRatio;
-            signatureCanvas.height = calculatedHeightCSS * window.devicePixelRatio;
+            signatureCanvas.width = calculatedWidthCSS;
+            signatureCanvas.height = calculatedHeightCSS;
 
             ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2;
             ctx.strokeStyle = '#333';
-
-            if (initialCanvasData === null || initialCanvasData === 'reset') {
-                const originalImageData = ctx.getImageData(0, 0, signatureCanvas.width, signatureCanvas.height);
-                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
-                initialCanvasData = signatureCanvas.toDataURL('image/png');
-                ctx.putImageData(originalImageData, 0, 0);
-            }
         }
+
 
         // Initialize canvas
         resizeCanvas();
@@ -420,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // acceptDocument action
     function acceptDocument() {
-        
+
         // if (currentCanvasData !== initialCanvasData) {
         const urlParams = new URLSearchParams(window.location.search);
         const url = 'index.php';
@@ -477,8 +468,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // }
     }
-    
-    
+
+
     // Disable areas initially if they exist
     if (signatureCanvas) {
         signatureCanvas.classList.add('canvas-disabled');
@@ -491,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (acceptDocumentBtn) {
         acceptDocumentBtn.disabled = true;
     }
-    
+
     // Initialize all common elements
     if (documentContentDiv) {
         documentContentDiv.addEventListener('scroll', checkScrollPosition);
