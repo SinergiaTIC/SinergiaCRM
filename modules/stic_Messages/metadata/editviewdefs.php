@@ -57,9 +57,9 @@ array(
                         'label' => 'LBL_LIST_RELATED_TO',
                     ),
                     1 => array (
-                      'name' => 'template_id',
-                      'studio' => 'visible',
-                      'label' => 'LBL_TEMPLATE',
+                        'name' => 'phone',
+                        'studio' => 'visible',
+                        'label' => 'LBL_PHONE',
                     ),
                 ),
                 2 => array(
@@ -69,9 +69,9 @@ array(
                         'label' => 'LBL_SENDER',
                     ),
                     1 => array(
-                        'name' => 'phone',
+                        'name' => 'template_id',
                         'studio' => 'visible',
-                        'label' => 'LBL_PHONE',
+                        'label' => 'LBL_TEMPLATE',
                     ),
                 ),
                 3 => array(
@@ -88,17 +88,16 @@ array(
                         'label' => 'LBL_TYPE',
                     ),
                     1 => array(
-                        'name' => 'direction',
-                        'studio' => 'visible',
-                        'label' => 'LBL_DIRECTION',
-                    ),
-                ),
-                5 => array(
-                    0 => array(
                         'name' => 'status',
                         'studio' => 'visible',
                         'label' => 'LBL_STATUS',
                     ),
+                ),
+                5 => array(
+                    0 => array(
+
+                    ),
+                    1 => array(),
                 ),
             ),
         ),
