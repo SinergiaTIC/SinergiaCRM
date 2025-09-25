@@ -41,3 +41,6 @@ $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
 $mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizaciones';
 $mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Personas';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
+
+// Many to Many filter fields
+$mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Persona';

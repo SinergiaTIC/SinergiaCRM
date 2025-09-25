@@ -70,4 +70,7 @@ $mod_strings = array(
     'LBL_OWNER_CONTACT' => 'Persona propietaria',
     'LBL_OWNER_ACCOUNT' => 'Organización propietaria',
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE' => 'Reservas',
+
+    // Many to Many filter fields
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Reserva',
 );

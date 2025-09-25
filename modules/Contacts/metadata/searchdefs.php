@@ -608,6 +608,13 @@ array(
                 'default' => true,
                 'name' => 'date_modified',
             ),
+            'stic_prospect_lists_contacts_name' => array (
+                'name' => 'stic_prospect_lists_contacts_name',
+                'label' => 'LBL_PROSPECT_LIST_CONTACTS_NAME',
+                'width' => '10%',
+                'link' => true,
+                'default' => true,
+              ),
             'current_user_only' => array(
                 'label' => 'LBL_CURRENT_USER_FILTER',
                 'type' => 'bool',

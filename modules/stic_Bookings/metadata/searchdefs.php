@@ -78,6 +78,13 @@ array(
                 'default' => true,
                 'name' => 'stic_bookings_contacts_name',
             ),
+            'stic_resources_stic_bookings_name' => array (
+                'name' => 'stic_resources_stic_bookings_name',
+                'label' => 'LBL_RESOURCE',
+                'width' => '10%',
+                'link' => true,
+                'default' => true,
+            ),
             'assigned_user_id' => array(
                 'name' => 'assigned_user_id',
                 'label' => 'LBL_ASSIGNED_TO',

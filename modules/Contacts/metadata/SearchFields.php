@@ -434,5 +434,16 @@ $searchFields['Contacts'] = array (
       'query_type' => 'default',
       'enable_range_search' => true,
     ),
+    'stic_prospect_lists_contacts_name' => array (
+      'query_type' => 'format',
+      'operator' => 'subquery',
+      'subquery' => 'SELECT plp.related_id 
+          FROM prospect_lists_prospects plp 
+          INNER JOIN prospect_lists pl ON pl.id = plp.prospect_list_id AND pl.deleted = 0
+          WHERE plp.deleted = 0 AND plp.related_type = \'Contacts\' AND pl.name LIKE \'{0}\'',
+      'db_field' => array (
+          0 => 'id',
+      ),
+    ),
 );
 // END STIC-Custom 

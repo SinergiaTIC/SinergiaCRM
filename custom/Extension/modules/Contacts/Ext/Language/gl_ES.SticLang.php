@@ -235,3 +235,6 @@ $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'
 
 // Cadenas Competencias
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competencias';
+
+// Many to Many filter fields
+$mod_strings['LBL_PROSPECT_LIST_CONTACTS_NAME'] = 'Lista de público objectivo';

@@ -85,4 +85,7 @@ $mod_strings = array(
     'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No es pot canviar el tipus de recurs perquè té reserves associades.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Cal que indiqueu un centre',
     'LBL_PLACES' => 'Places',
+
+    // Many to Many filter fields
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Reserva',
 );

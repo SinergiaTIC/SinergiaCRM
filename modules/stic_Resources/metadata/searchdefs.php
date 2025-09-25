@@ -271,6 +271,19 @@ array(
                 'default' => true,
                 'name' => 'description',
             ),
+            'stic_resources_stic_bookings_name' => array (
+                'name' => 'stic_resources_stic_bookings_name',
+                'label' => 'LBL_BOOKING',
+                'width' => '10%',
+                'default' => true,
+                'type' => 'relate',
+                'studio' => array(
+                    'searchview' => true, // To appear in the filter view layout editor
+                    'visible' => false // To avoid appear in the record view layout editor
+                ),
+                'id_name' => true,
+                'module' => 'stic_Bookings',
+            ),
             'created_by' => array(
                 'type' => 'assigned_user_name',
                 'label' => 'LBL_CREATED',

@@ -126,6 +126,23 @@ class SearchForm
 
     public function setup($searchdefs, $searchFields = array(), $tpl = 'SubpanelSearchFormGeneric.tpl', $displayView = 'basic_search', $listViewDefs = array())
     {
+        // STIC-Custom AAM 20250925 - Many to Many Security Suite filter field
+        // Add securitygroups_name to searchFields if defined in searchdefs
+        // TODO: Refactor to avoid modifying input parameter and integrate many-to-many fields generically
+        if (isset($searchdefs[$this->module]['layout']['advanced_search']['securitygroups_name'])) {
+            $searchFields[$this->module]['securitygroups_name'] = array(
+                'query_type' => 'format',
+                'operator' => 'subquery',
+                'subquery' => 'SELECT sgr.record_id 
+                    FROM securitygroups_records sgr 
+                    INNER JOIN securitygroups sg ON sg.id = sgr.securitygroup_id AND sg.deleted = 0
+                    WHERE sgr.deleted = 0 AND sgr.module = \''.$this->module.'\' AND sg.name LIKE \'{0}\'',
+                'db_field' => array(
+                    0 => 'id',
+                ),
+            );
+        }
+        // END STIC-Custom
         $this->searchdefs = isset($searchdefs[$this->module]) ? $searchdefs[$this->module] : null;
 
         // STIC Custom 20250528 JBL - Show options list in "Modified By" and "Created By" filters 

@@ -259,6 +259,13 @@ array(
                 'default' => true,
                 'name' => 'description',
             ),
+            'stic_meetings_contacts_name' => array (
+                'name' => 'stic_meetings_contacts_name',
+                'label' => 'LBL_CONTACT',
+                'width' => '10%',
+                'link' => true,
+                'default' => true,
+            ),
             'created_by' => array(
                 'type' => 'assigned_user_name',
                 'label' => 'LBL_CREATED',

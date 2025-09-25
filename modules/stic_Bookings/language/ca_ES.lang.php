@@ -131,4 +131,7 @@ $mod_strings = array(
 
     // Tooltips help
     'LBL_ALL_DAY_HELP' => 'Si la casella està marcada la reserva es fa en dies complets. Si està desmarcada poden indicar-se les hores inicial i final.',
+
+    // Many to Many filter fields
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Recurs',
 );
