@@ -397,7 +397,7 @@ class Popup_Picker
         // STIC Custom 20240909 EPS - SMS Messages
         // Retrieve messages for summary
         require_once 'modules/stic_Messages/Utils.php';
-        $messagesSql = stic_MessagesUtils::get_stic_messages_summary(array('status' => "'sent', 'error'"));
+        $messagesSql = stic_MessagesUtils::get_stic_messages(array('status' => "'sent', 'error'"));
         $db = DBManagerFactory::getInstance();
         $result = $db->query($messagesSql);
         if (!$result) {
