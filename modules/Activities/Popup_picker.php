@@ -77,6 +77,11 @@ class Popup_Picker
         global $app_strings;
         global $app_list_strings;
         global $timedate;
+        // STIC Custom 20240909 EPS - SMS Messages
+        // Retrieve messages for summary
+        global $current_user;
+        global $moduleList;
+        // END STIC Custom
 
         $sugar_config = $sugar_config ?? [];
 
@@ -392,7 +397,7 @@ class Popup_Picker
         // STIC Custom 20240909 EPS - SMS Messages
         // Retrieve messages for summary
         require_once 'modules/stic_Messages/Utils.php';
-        $messagesSql = stic_MessagesUtils::get_stic_messages_summary();
+        $messagesSql = stic_MessagesUtils::get_stic_messages_summary(array('status' => "'sent', 'error'"));
         $db = DBManagerFactory::getInstance();
         $result = $db->query($messagesSql);
         if (!$result) {
@@ -400,24 +405,29 @@ class Popup_Picker
         }
         else {
             while($row = $result->fetch_assoc()) {
-
-                if ($row['status'] === 'sent') {
-                    $ts = $timedate->fromDb($row['sent_date']);
+                $message = BeanFactory::getBean('stic_Messages', $row['id']);
+                if (!$message->ACLAccess('list')) {
+                    continue;
+                }
+                if ($message->status === 'sent') {
+                    $ts = $timedate->fromDb($message->fetched_row['sent_date']);
+                    $sortValue = $ts->ts;
                 }
                 else {
-                    $ts = $timedate->fromDb($row['date_modified']);
+                    $ts = $timedate->fromDb($message->fetched_row['date_modified']);
+                    $sortValue = $ts->ts;
                 }
 
-                $summary_list[] = array('name' => $row['name'],
+                $summary_list[] = array('name' => $message->name,
                     'id' => $row['id'],
-                    'type' => "stic_Messages",
+                    'type' => $app_list_strings['moduleList']['stic_Messages'],
                     'direction' => '',
                     'module' => "stic_Messages",
-                    'status' => $app_list_strings['stic_messages_status_list'][$row['status']],
-                    'parent_id' => $row['parent_id'],
-                    'parent_type' => $row['parent_type'],
-                    'parent_name' => $row['parent_name'],
-                    'sort_value' => $ts,
+                    'status' => $app_list_strings['stic_messages_status_list'][$message->status],
+                    'parent_id' => $message->parent_id,
+                    'parent_type' => $message->parent_type,
+                    'date_modified' => $timedate->asUser($ts, $current_user),
+                    'sort_value' => $sortValue,
                 );
             }
         }
@@ -438,8 +448,10 @@ class Popup_Picker
                     $emails_list[] = $list;
                 } elseif ($list['module'] === 'Notes') {
                     $notes_list[] = $list;
+                // STIC Custom 20240909 EPS - SMS Messages
                 } elseif ($list['module'] === 'stic_Messages') {
                     $messages_list[] = $list;
+                // END STIC Custom
                 }
             }
         }
@@ -458,7 +470,9 @@ class Popup_Picker
         $template->assign('callsList', $calls_list);
         $template->assign('emailsList', $emails_list);
         $template->assign('notesList', $notes_list);
+        // STIC Custom 20240909 EPS - SMS Messages
         $template->assign('messagesList', $messages_list);
+        // END STIC Custom
         $ieCompatMode = false;
         if (isset($sugar_config['meta_tags']) && isset($sugar_config['meta_tags']['ieCompatMode'])) {
             $ieCompatMode = $sugar_config['meta_tags']['ieCompatMode'];

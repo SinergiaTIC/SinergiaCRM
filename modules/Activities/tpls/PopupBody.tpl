@@ -39,7 +39,6 @@
  */
 *}
 {sugar_include type="smarty" file="modules/Activities/tpls/PopupHeader.tpl"}
-TTTTT
 <div class="content">
     <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
@@ -56,8 +55,10 @@ TTTTT
         </li>
         <li role="presentation"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">{$mod.LBL_NOTES}</a>
         </li>
+        {* STIC Custom 20240909 EPS - SMS Messages *}
         <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">{$mod.LBL_Messages}</a>
         </li>
+        {* END STIC Custom *}
     </ul>
 
     <div class="tab-content">
@@ -346,7 +347,7 @@ TTTTT
             </table>
 
         </div>
-
+{*  STIC Custom 20240909 EPS - SMS Messages *}
         <div role="tabpanel" class="tab-pane" id="messages">
             <table class="list view table-responsive subpanel-table">
                 <thead>
@@ -369,9 +370,9 @@ TTTTT
                             <span class="suitepicon suitepicon-module-{$activity.module|lower|replace:'_':'-'}"></span>
                         </td>
                         <td>{$activity.name} {$activity.attachment}</td>
-                        <td>{$activity.type} {$activity.status}</td>
+                        <td>{$activity.status}</td>
                         <td>{$activity.contact_name}</td>
-                        <td>{$activity.ts} </td>
+                        <td>{$activity.date_modified} </td>
                     </tr>
                     <!--  BEGIN: description -->
                     <tr>
@@ -394,6 +395,7 @@ TTTTT
             </table>
 
         </div>
+    {* END STIC Custom*}
     </div>
 </div>
 
