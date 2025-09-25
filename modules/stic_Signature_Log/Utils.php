@@ -40,6 +40,7 @@ class stic_SignatureLogUtils
      */
     public static function logSignatureAction($action, $id, $idType, $extraInfo = '')
     {
+        global $app_list_strings;
 
         if ($idType != 'SIGNER' && $idType != 'SIGNATURE') {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " idType must be SIGNER or SIGNATURE.");
@@ -52,7 +53,7 @@ class stic_SignatureLogUtils
         }
 
         $logBean = BeanFactory::newBean('stic_Signature_Log');
-        $logBean->name = $action . ' - ' . TimeDate::getInstance()->nowDb();
+        $logBean->name = $app_list_strings['stic_signature_log_actions'][$action] . ' - ' . new Datetime()->format('Y-m-d H:i:s (\U\T\C P)');
         $logBean->action = $action;
         $logBean->ip_address = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         $logBean->user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
@@ -89,7 +90,7 @@ class stic_SignatureLogUtils
      *
      * @return array|false An array of log entries or false on error.
      */
-    public static function getSignatureLogActions($id, $idType, $exclude=[])
+    public static function getSignatureLogActions($id, $idType, $exclude = [])
     {
 
         if ($idType != 'SIGNER' && $idType != 'SIGNATURE') {
@@ -97,12 +98,12 @@ class stic_SignatureLogUtils
             return false;
         }
 
-if (!empty($exclude) && is_array($exclude)) {
-    $excludeList = "'" . implode("','", array_map('addslashes', $exclude)) . "'";
-    $excludeCondition = " AND l.action NOT IN ({$excludeList}) ";
-} else {
-    $excludeCondition = '';
-}
+        if (!empty($exclude) && is_array($exclude)) {
+            $excludeList = "'" . implode("','", array_map('addslashes', $exclude)) . "'";
+            $excludeCondition = " AND l.action NOT IN ({$excludeList}) ";
+        } else {
+            $excludeCondition = '';
+        }
 
         global $db;
         $logs = [];
