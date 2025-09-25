@@ -39,8 +39,24 @@ class AWF_DataBlock {
     return utils.getModuleInformation(this.module);
   }
 
+  /**
+   * Gets the text to show in the description of this DataBlock
+   * @returns {string}
+   */
   getTextDescription() {
     return `${utils.translateForFieldLabel('LBL_MODULE')} ${this.getModuleInformation().text}`;
+  }
+
+  /**
+   * Gets all fields available to be setted in this DataBlock
+   * @returns {array} FieldInformation
+   * FieldInformation: { name, text, type, required, options, inViews }
+   */
+  getAvailableFieldsInformation() {
+    let allFieldsInfo = this.getModuleInformation().fields;
+    // FieldInformation: { name, text, type, required, options, inViews }
+
+    return Object.values(allFieldsInfo).filter(fi => !this.fields.some(f => f.name == fi.name) );
   }
 
   /**
@@ -122,6 +138,7 @@ class AWF_Field {
       required_in_form: false, // Indica si el campo será obligado en el formulario
       in_form: true,           // Indica si el campo estará en el formulario
       type_in_form: 'text',    // Tipo de editor en el formulario: text, dropdown, check, date
+      type: '',                // Tipo de datos del campo
       value_type: 'editable',  // Tipo de valor: fixed, editable, selectable, dataBlock
       value_options: [],       // Las opciones para el valor del campo
       value: "",               // El valor del campo
@@ -133,6 +150,80 @@ class AWF_Field {
 
     // 3. Map sub-objects and arrays to their classes
     this.value_options = (data.value_options || this.value_options).map(d => new AWF_ValueOption(d));
+  }
+
+  /**
+   * Updates current Field with FieldInformation
+   * @param {object} fieldInfo FieldInformation
+   * FieldInformation: { name, text, type, required, options, inViews }
+   */
+  updateWithFieldInformation(fieldInfo) {
+    // FieldInformation: { name, text, type, required, options, inViews }
+    if (!fieldInfo){
+      return;
+    }
+    this.name = fieldInfo.name;
+    this.label = utils.toFieldLabelText(fieldInfo.text);
+    this.required = fieldInfo.required;
+    this.required_in_form = fieldInfo.required;
+    this.type = fieldInfo.type;
+
+    this.value_options = [];
+    if (fieldInfo.options && 
+        fieldInfo.type != "relate" && 
+        fieldInfo.type != "date" && fieldInfo.type != "datetime" && fieldInfo.type != "datetimecombo") {
+      this.value_options = utils.getList(fieldInfo.options);
+    }
+    if (this.type == "bool") {
+      this.value_options = utils.getList("stic_boolean_list");
+    }
+    this.value = this.value_options[0]?.id ?? "";
+
+    this.type_in_form = this.getAvailableTypesInForm()[0]?.id;
+    this.value_type = this.getAvailableValueTypes()[0]?.id;
+  }
+
+  mustInForm() {
+    return this.value_type != "" && this.value_type != "fixed" && this.value_type != "dataBlock";
+  }
+
+  getAvailableValueTypes() {
+    let valueTypes = AWF_Field.value_typeList();
+    return valueTypes.filter(t => {
+      if (t.id == "editable") {
+        return this.type != "relate" && this.type != "enum" && this.type != "multienum";
+      }
+      if (t.id == "dataBlock") {
+        return this.type == "relate";
+      }
+      return true;
+    })
+  }
+
+  getAvailableTypesInForm() {
+    let formTypes = AWF_Field.type_in_formList();
+    return formTypes.filter(t => {
+      if (this.value_type == "fixed" || this.value_type == "dataBlock") {
+        return false;
+      }
+      if (this.value_type == "selectable") {
+        return t.id == "dropdown";
+      }
+      
+      if(t.id == "dropdown") {
+        return this.value_type == "selectable";
+      }
+      if (t.id == "date") {
+        return this.type == "date" || this.type == "datetime" || this.type == "datetimecombo";
+      }
+      if (t.id == "check") {
+        return this.type == "bool";
+      }
+      if (t.id == "text") {
+        return this.type != "bool"
+      }
+      return true;
+    });
   }
 
   static type_in_formList(asString = false){

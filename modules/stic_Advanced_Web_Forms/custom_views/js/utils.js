@@ -13,20 +13,29 @@ class utils {
   /**
    * Trenslate current label to current user language to put it in a label for a field
    * @param {string} label The label to be translated
-   * @returns Translated label
+   * @returns {string} Translated label
    */
   static translateForFieldLabel(label) {
     let translated = utils.translate(label).trim();
-    if (!translated.endsWith(":")) {
-      translated += ":";
+    return utils.toFieldLabelText(translated);
+  }
+
+  /**
+   * Ensures the text hs : at the end, to put in a label for a field
+   * @param {string} text 
+   * @returns  {string}
+   */
+  static toFieldLabelText(text) {
+    if (!text.endsWith(":")) {
+      text += ":";
     }
-    return translated;
+    return text;
   }
 
   /**
    * Decode string with html entities (&quot; &lbrace; ...)
    * @param {string} string The string with HTML entities
-   * @returns Decoded string
+   * @returns {string} Decoded string
    */
   static decodeHTMLString(string) {
     const parser = new DOMParser();

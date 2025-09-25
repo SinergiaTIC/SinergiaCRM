@@ -3691,14 +3691,14 @@ $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['s
 $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['error'] = 'Error';
 
 // Tipo de campo en un Formulario Web Avanzado
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['date'] = 'Fecha';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['check'] = 'Casilla de selección';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['text'] = 'Texto';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['dropdown'] = 'Desplegable';
-$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['check'] = 'Casilla de selección';
-$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['date'] = 'Fecha';
 
 // Tipo de valor de un campo en un Formulario Web Avanzado
-$app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['fixed'] = 'Valor fijo';
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['editable'] = 'Editable';
+$app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['fixed'] = 'Valor fijo';
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['selectable'] = 'Seleccionable';
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['dataBlock'] = 'Bloque de Datos';
 

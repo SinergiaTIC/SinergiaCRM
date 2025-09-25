@@ -320,3 +320,5 @@ VardefManager::createVardef('stic_Advanced_Web_Forms', 'stic_Advanced_Web_Forms'
 
 // Set special values for SuiteCRM base fields
 $dictionary['stic_Advanced_Web_Forms']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
+$dictionary['stic_Advanced_Web_Forms']['fields']['assigned_user_id']['required'] = 1;
+$dictionary['stic_Advanced_Web_Forms']['fields']['assigned_user_id']['massupdate'] = 1;

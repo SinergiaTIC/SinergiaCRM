@@ -78,7 +78,12 @@ function getModuleInformation($moduleName, $availableModules){
                     continue;
                 }
                 // Exclude non procesable field types
-                if ($arr['type'] == "wysiwyg" || $arr['type'] == "iframe" || $arr['type'] == "image" || $arr['type'] == "parent") {
+                // Tipus especials o widgets UI: html, iframe, image, file, phone, email, url, address, name, fullname, …
+                if ($arr['type'] == "html" || $arr['type'] == "iframe" || $arr['type'] == "image" || 
+                    $arr['type'] == "file" || $arr['type'] == "attachment" || $arr['type'] == "address" || $arr['type'] == "wysiwyg" || 
+                    $arr['type'] == "parent" || $arr['type'] == "parent_type" || 
+                    $arr['type'] == "team_id" || $arr['type'] == "team_set_id" || $arr['type'] == "team_list" || $arr['type'] == "team_count" || 
+                    $arr['type'] == "wysiwyg") {
                     continue;
                 }
 

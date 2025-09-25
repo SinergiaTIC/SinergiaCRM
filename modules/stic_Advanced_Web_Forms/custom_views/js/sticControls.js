@@ -135,10 +135,12 @@ class sticControls {
     let fieldToNameArray = $el.dataset.fieldToNameArray ?? "";
     let fieldToNameArrayStr = fieldToNameArray != "" ? `'field_to_name_array':${fieldToNameArray}` : "";
     let mode = $el.dataset.mode ?? "single"; // single / MultiSelect
+    let isRequired = $el.hasAttribute("required");
+    let required = isRequired ? " required" : "";
 
     let html = `
     <div class="input-group">
-      <input class="form-control" type="text" id="${idName}" x-model="${modelName}" autocomplete="off" />
+      <input class="form-control" type="text" id="${idName}" ${required} x-model="${modelName}" autocomplete="off" />
       <input type="hidden" id="${idId}" x-model="${modelId}" />
       <button class="btn" type="button" 
         @click="open_popup('${module}', 600, 400, '', true, false, {${callBackFunctionStr},${fieldToNameArrayStr}},'${mode}', true);">
@@ -364,7 +366,7 @@ class sticControls {
   }
 
   static fieldPopup($el) {
-    sticControls._insertComponent($el, sticControls._label($el, false) + sticControls._popup($el));
+    sticControls._insertComponent($el, sticControls._label($el, false) + sticControls._required($el) + sticControls._popup($el));
   }
 
   static elemTableObjects($el) {
