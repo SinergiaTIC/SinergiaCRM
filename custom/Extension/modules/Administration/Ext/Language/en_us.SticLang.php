@@ -99,7 +99,6 @@ $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Set the email template that will be sent when the system generates the password of a new user.';
 
 // OAuth authentication
-$mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth Authentication';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth Authentication';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "If you enable this option, users will be able to authenticate using OAuth 2.0, in addition to using a username and password. After enabling this option, at least one of the external providers must be configured. For more information, consult the <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentation</a>.";
-
+$mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth authentication';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth authentication';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'When enabling this option users will be able to authenticate using OAuth 2.0, in addition to using a username and password. After enabling it at least one of the external providers must be configured. For more information, see the <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentation</a>.";
