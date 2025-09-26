@@ -74,6 +74,7 @@ $mod_strings = array(
     'LBL_ERROR_STATUS_DURATION' => "Si l'Estat és Sí o Parcial cal indicar la Durada.",
     'LBL_DURATION_INFO' => "La Durada s'estableix en hores i admet decimals. Si a Estat no s'hi ha seleccionat cap valor i la Durada és buida, l'assistència heretarà la Durada de la sessió a la qual pertany. Si a Estat s'hi ha indicat Sí o Parcial, llavors caldrà emplenar explícitament la Durada.",
     'LBL_AMOUNT_INFO' => "Si al crear una assistència aquest camp es deixa buit, s'omplirà automàticament amb el valor del camp 'Import de la sessió' de la inscripció relacionada.",
-    // Many to Many filter fields
-    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Esdeveniment (relacionat via Inscripció)',
+
+    // Camps de filtre en relacions molts a molts
+    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Esdeveniment (via Inscripcions)',
 );
