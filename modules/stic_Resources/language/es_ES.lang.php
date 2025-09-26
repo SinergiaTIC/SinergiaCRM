@@ -86,6 +86,6 @@ $mod_strings = array(
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
     'LBL_PLACES' => 'Plazas',
 
-    // Many to Many filter fields
+    // Campos de filtro en relaciones muchos a muchos
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Reserva',
 );
