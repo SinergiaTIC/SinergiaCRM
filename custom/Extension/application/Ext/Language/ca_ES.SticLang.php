@@ -88,7 +88,7 @@ $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 // Enviament massiu de correus
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
 
-// Many to Many filter fields
+// Camps de filtre en relacions molts a molts
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grup de seguretat';
 
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
