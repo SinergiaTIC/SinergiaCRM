@@ -98,7 +98,7 @@ $mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Registro de las sesiones de usuario 
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Accións de Administración';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de correo que se enviará ao crear un usuario.';
 
-// OAuth authentication
+// Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activa esta opción, los usuarios podrán autenticarse mediante OAuth 2.0, además de hacerlo con usuario y contraseña. Después de activar esta opción se deberá configurar, como mínimo, uno de los proveedores externos. Para más información, consulte la <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentación</a>.";
+$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Al activar esta opción los usuarios podrán autenticarse mediante OAuth 2.0, además de hacerlo con usuario y contraseña. Después de activarla se deberá configurar por lo menos uno de los proveedores externos. Para más información, consulte la <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
