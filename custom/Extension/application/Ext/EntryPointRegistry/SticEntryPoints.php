@@ -30,7 +30,7 @@ $entry_point_registry['stic_Web_Forms_paypal_response'] = array('file' => 'modul
 $entry_point_registry['stic_Web_Forms_stripe_response'] = array('file' => 'modules/stic_Web_Forms/Entrypoints/StripeResponse.php', 'auth' => false);
 $entry_point_registry['stic_Web_Forms_attachment_limits_response'] = array('file' => 'modules/stic_Web_Forms/Entrypoints/AttachmentLimitsResponse.php', 'auth' => false);
 
-// These entry points are used by the SuiteCRM native web forms 
+// These entry points are used by the SuiteCRM native web forms
 $entry_point_registry['WebToPersonCapture'] = array('file' => 'custom/modules/Campaigns/WebToPersonCapture.php', 'auth' => false);
 
 // Runs the function cleanCode in SticIncludes/CleanConfig.php
@@ -49,6 +49,7 @@ $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/Co
 // Signatures module
 $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/stic_Signatures/SignatureSignersSelect.php', 'auth' => false);
 $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
-$entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
+// $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
 $entry_point_registry['sticDownloadSignedPdf'] = array('file' => 'modules/stic_Signatures/sticDownloadSignedPdf.php', 'auth' => false);
-
+$entry_point_registry['sticViewSignedPdf'] = array('file' => 'custom/modules/stic_Signatures/SignaturePortal/getSignedPdf.php', 'auth' => true,
+);

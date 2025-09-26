@@ -56,8 +56,7 @@ class stic_SignaturePortal extends SugarView
         global $app_list_strings; // General application language strings
         global $sugar_config;
 
-
-        // Determine the base URI for constructing URLs (to handle different server setups) 
+        // Determine the base URI for constructing URLs (to handle different server setups)
         $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
 
         require_once 'modules/stic_Settings/Utils.php';
@@ -85,12 +84,14 @@ class stic_SignaturePortal extends SugarView
 
         $this->ss->assign('STATUS', $signerBean->status);
 
-        // Assign signed PDF URL and download URL if signed
+// Asignar una URL al visor de PDF.js para que cargue el documento directamente
         if ($signerBean->status === 'signed') {
-            $signedPdfUrl = $uri . $sugar_config['upload_dir'] . '/' . $signerBean->id . '_signed.pdf';
-            $dowwnloadPdfUrl = "{$uri}/index.php?entryPoint=sticDownloadSignedPdf&signerId={$signerBean->id}";
-            $this->ss->assign('SIGNED_PDF_URL', $signedPdfUrl);
-            $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
+            $pdfUrlForViewer = "{$uri}/index.php?entryPoint=sticViewSignedPdf&signerId={$signerBean->id}";
+            $this->ss->assign('PDF_URL_FOR_VIEWER', $pdfUrlForViewer);
+
+            // Asignar la URL para la descarga del PDF
+            $downloadPdfUrl = "{$uri}/index.php?entryPoint=sticDownloadSignedPdf&signerId={$signerBean->id}";
+            $this->ss->assign('DOWNLOAD_URL', $downloadPdfUrl);
         }
 
         $this->ss->assign('SIGNATURE_MODE', $signatureBean->signature_mode ?? 'handwritten');

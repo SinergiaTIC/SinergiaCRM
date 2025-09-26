@@ -147,8 +147,9 @@
                 { if $STATUS === 'signed' }
                 <section class="signed-area text-center mt-4">
                     <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">Documento Firmado</h1>
-                    <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
-                        class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe>
+                    <iframe id="pdf-frame" src="modules/stic_Signatures/pdfjs/web/viewer.html?file={$PDF_URL_FOR_VIEWER}"></iframe>
+                    <!-- <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
+                        class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe> -->
                     <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank"
                         rel="noopener noreferrer">Descargar
                         Documento Firmado</a>
