@@ -57,7 +57,7 @@ class MicrosoftUtils
      */
     public static function getAdminParams($providerSettings) {
         $backendParams = [
-            // 'clientSecret' => $providerSettings['clientSecret'] ?? '',
+            // We let this available in case it's necessary for future backend calls
         ];
         return array_merge(self::getLoginParams($providerSettings), $backendParams);
     }

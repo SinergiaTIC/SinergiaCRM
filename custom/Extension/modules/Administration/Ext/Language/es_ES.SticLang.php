@@ -101,4 +101,4 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de 
 // OAuth authentication
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Si activa esta opción, los usuarios podrán autenticarse mediante OAuth, además de usar el sistema de autenticación estándar de SinergiaCRM. Tenga en cuenta que, una vez activada esta opción, los usuarios que no tengan configurada la autenticación OAuth no podrán iniciar sesión.';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activa esta opción, los usuarios podrán autenticarse mediante OAuth 2.0, además de hacerlo con usuario y contraseña. Después de activar esta opción se deberá configurar, como mínimo, uno de los proveedores externos. Para más información, consulte la <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentación</a>.";

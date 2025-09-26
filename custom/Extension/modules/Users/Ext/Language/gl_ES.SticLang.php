@@ -60,22 +60,22 @@ $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' no pertenece a ningún us
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Iniciar sesión con Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_TITLE'] = 'Google';
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE'] = 'Habilitar autenticación con Google';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = 'Esta opción habilita la autenticación con Google. Más información en: https://developers.google.com/identity/protocols/oauth2';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_ENABLE_HELP'] = "Esta opción habilita la autenticación con Google. Más información en: <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>https://developers.google.com/identity/protocols/oauth2</a>";
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID'] = 'ID de cliente';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = 'ID de la aplicación registrada en Google API Console. Más información en: https://developers.google.com/identity/protocols/oauth2';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_ID_HELP'] = "ID de la aplicación registrada en Google API Console. Más información en: <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>https://developers.google.com/identity/protocols/oauth2</a>";
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET'] = 'Secreto de cliente';
-$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = 'Secreto de la aplicación registrada en Google API Console. Más información en: https://developers.google.com/identity/protocols/oauth2';
+$mod_strings['LBL_OAUTH_AUTH_GOOGLE_CLIENT_SECRET_HELP'] = "Secreto de la aplicación registrada en Google API Console. Más información en: <a href='https://developers.google.com/identity/protocols/oauth2' target='_blank'>https://developers.google.com/identity/protocols/oauth2</a>";
 
 // Autenticación OAuth - Microsoft
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT'] = 'Iniciar sesión con Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TITLE'] = 'Microsoft';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE'] = 'Habilitar autenticación con Microsoft';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = 'Esta opción habilita la autenticación con Microsoft. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_ENABLE_HELP'] = "Esta opción habilita la autenticación con Microsoft. Más información en: <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow</a>";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID'] = 'ID de cliente';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = 'ID de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_CLIENT_ID_HELP'] = "ID de la aplicación registrada en Microsoft Azure Portal. Más información en: <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow</a>";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID'] = 'ID de tenant';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = 'ID de tenant de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_TENANT_ID_HELP'] = "ID de tenant de la aplicación registrada en Microsoft Azure Portal. Más información en: <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow</a>";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'URI de redirección';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = 'URI de redirección de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = "URI de redirección de la aplicación registrada en Microsoft Azure Portal. Más información en: <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow</a>";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Ámbitos';
-$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = 'Ámbitos de la aplicación registrada en Microsoft Azure Portal. Más información en: https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent';
+$mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbitos de la aplicación registrada en Microsoft Azure Portal. Más información en: <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent' target='_blank'>https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent</a>";

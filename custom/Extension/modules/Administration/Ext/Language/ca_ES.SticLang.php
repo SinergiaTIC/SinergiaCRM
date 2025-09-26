@@ -101,4 +101,4 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = "Indiqueu la plantilla de cor
 // OAuth authentication
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticació OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticació OAuth';
-$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Si activeu aquesta opció, els usuaris podran autenticar-se mitjançant OAuth 2.0, a més de fer-ho amb usuari i contrasenya. Per a més informació, consulteu la <a href="https://docs.sinergiacrm.org/en/latest/administering/system-configuration/oauth-authentication.html" target="_blank">documentació</a>.';
+$mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activeu aquesta opció, els usuaris podran autenticar-se mitjançant OAuth 2.0, a més de fer-ho amb usuari i contrasenya. Després d'activar aquesta opció s'haura de configurar, com a mínim, un dels proveïdors extens. Per a més informació, consulteu la <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentació</a>.";

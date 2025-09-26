@@ -341,7 +341,7 @@
 												{* STIC-Custom AAM 20250825 - Adding OAuth Authentication providers *}
 												{* https://github.com/SinergiaTIC/SinergiaCRM/pull/552 *}
 												{* </td><td valign='middle'><input name="system_ldap_enabled" id="system_ldap_enabled" class="checkbox"  type="checkbox" {$system_ldap_enabled_checked} onclick='toggleDisplay("ldap_display");enableDisablePasswordTable("system_ldap_enabled");'></td><td>&nbsp;</td><td>&nbsp;</td></tr> *}
-												</td><td valign='middle'><input name="system_ldap_enabled" id="system_ldap_enabled" class="checkbox"  type="checkbox" {$system_ldap_enabled_checked} onclick='toggleDisplay("ldap_display");enableDisablePasswordTable("system_ldap_enabled");disabledOauthChecbox();'></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+												</td><td valign='middle'><input name="system_ldap_enabled" id="system_ldap_enabled" class="checkbox"  type="checkbox" {$system_ldap_enabled_checked} onclick='toggleDisplay("ldap_display");enableDisablePasswordTable("system_ldap_enabled");disabledOauthCheckbox();'></td><td>&nbsp;</td><td>&nbsp;</td></tr>
 												{* END STIC-Custom *}
 											<tr>
 												<td colspan='4'>
@@ -496,7 +496,7 @@
 									{* STIC-Custom AAM 20250825 - Adding OAuth Authentication providers *}
 									{* https://github.com/SinergiaTIC/SinergiaCRM/pull/552 *}
                                        {* onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");'> *}
-                                       onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");disabledOauthChecbox();'>
+                                       onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");disabledOauthCheckbox();'>
 									   {* END STIC-Custom *}
                                     </td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                  <tr>
@@ -562,7 +562,7 @@
 					oauthCheckbox.addEventListener("change", toggleOauthTables);
 
 				});
-				function disabledOauthChecbox() {
+				function disabledOauthCheckbox() {
 						document.getElementById('oauth_auth_enabled').checked = false;
 						toggleOauthTables();
 				}
