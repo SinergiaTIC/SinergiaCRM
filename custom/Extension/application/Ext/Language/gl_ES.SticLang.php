@@ -88,7 +88,7 @@ $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 // Envío masivo de correos
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicará aos rexistros da páxina actual. Para envíos masivos recoméndase utilizar o módulo Campañas.';
 
-// Many to Many filter fields
+// Campos de filtro en relaciones muchos a muchos
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grupo de seguridad';
 
 // Módulos propios de SinergiaCRM e módulos de SuiteCRM renombrados
