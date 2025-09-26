@@ -75,13 +75,13 @@ class ExternalReporting
         'stic_Custom_Views',
     ];
 
-    // Autorelationships that we always exclude. 
+    // Autorelationships that we always exclude.
     // We use the module && field name instead of the relationship name, because the iteration is done through the fields and not through the relationships
 
     private $evenExcludedAutoRelationships = [
         'Contacts:reports_to_link',
         'Users:reports_to_link',
-        
+
     ];
     // Autorleationships that we always include
 
@@ -331,7 +331,7 @@ class ExternalReporting
                 // To avoid exceptional cases where the table name is defined in uppercase
                 // (like in the relationship between Contacts and Cases) we convert the table name to lowercase
                 $fieldV['table'] = strtolower($fieldV['table'] ?? '');
-                
+
                 $fieldName = $fieldV['name'];
 
                 $fieldPrefix = ($fieldV['source'] ?? null) == 'custom_fields' ? 'c' : 'm';
@@ -440,7 +440,7 @@ class ExternalReporting
 
                                 // Check if the relationship is an autorelationship & prepare autorelationship data for use later
                                 if (($fieldV['module'] ?? null) == $moduleName) {
-                                    
+
                                     // Check if the autorelationship is excluded & skip it if it is
                                     if(in_array("{$fieldV['module']}:{$fieldV['link']}", $this->evenExcludedAutoRelationships)){
                                         continue 2;
@@ -887,7 +887,7 @@ class ExternalReporting
                     } else {
                         $qualifiedLabel = "{$txModuleName} ({$value['label']})";
                     }
-                    
+
                     $this->addMetadataRecord(
                         'sda_def_tables',
                         [
@@ -906,7 +906,7 @@ class ExternalReporting
                 || (!empty($this->sdaSettings['publishAsTable'][0]) && $this->sdaSettings['publishAsTable'][0] == '1')
             ) {
                 $tableMode = 'table';
-                $createViewQueryHeader = " CREATE OR REPLACE TABLE {$viewName} ENGINE=InnoDB AS SELECT ";
+                $createViewQueryHeader = " CREATE OR REPLACE TABLE {$viewName} ENGINE=MYISAM AS SELECT ";
             } else {
                 $tableMode = 'view';
                 $createViewQueryHeader = " CREATE OR REPLACE VIEW {$viewName} AS SELECT ";
@@ -1019,6 +1019,28 @@ class ExternalReporting
                     $this->info .= '<div style="font-size:80%"><b>Listas creadas:</b> ' . join(' | ', array_unique($listNames)) . '</div>';
                 };
             }
+
+            // Create indexes only if it is a table
+            if ($tableMode == 'table') {
+                foreach ($indexesToCreate as $indexColumn) {
+                    $indexName = $this->truncateStringMiddle($this->sanitizeText("idx_{$viewName}_{$indexColumn}"), 64);
+                    if($indexColumn == 'id'){
+                        $indexSql = "ALTER TABLE {$viewName} ADD UNIQUE {$indexName}  ({$indexColumn}) USING BTREE";
+                    }else{
+                        $indexSql = "ALTER TABLE {$viewName} ADD INDEX  {$indexName} ({$indexColumn}) USING BTREE";
+                    }
+                    
+                    if (!$db->query($indexSql)) {
+                        $lastSQLError = array_pop(explode(':', $db->last_error));
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$indexSql}]");
+                        $this->info .= "<div class='error' style='color:red;'>ERROR: <textarea style='width:100%;height:100px;border:1px solid red;'> {$indexSql} </textarea>  ({$lastSQLError})</div>";
+                        $this->info .= "[FATAL: Unable to create index {$indexName} on view $viewName]";
+                    } else {
+                        $this->info .= "<div style='color:green;'>OK: <textarea style='width:100%;height:100px;border:1px solid green;'>{$indexSql}</textarea>  </div>";
+                    };
+                }
+            }
+
             $this->info .= "<h2>Base fields</h2>";
             $this->info .= print_r($fieldList['base'] ?? '', true);
             $this->info .= "<h2>Custom fields</h2>";
@@ -1203,7 +1225,7 @@ class ExternalReporting
      * it creates a LEFT JOIN based on whether the current module is the left or right side of the relationship.
      * If no join table is used, it checks if the relationship is a one-to-many relationship for the
      * current table and builds the join accordingly. If no suitable relationship is found, it does not return a join.
-     * 
+     *
      *
      * @param array $field The field array containing information about the current field
      * @param string $tableName The name of the table being processed
@@ -2179,7 +2201,7 @@ class ExternalReporting
             $query = "SELECT * FROM sda_def_columns WHERE `table` = '{$this->viewPrefix}_{$relationship['table']}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
-                $row['table'] = $this->truncateStringMiddle("{$this->viewPrefix}_{$relationship['table']}_{$relationship['link']}",64);
+                $row['table'] = $this->truncateStringMiddle("{$this->viewPrefix}_{$relationship['table']}_{$relationship['link']}", 64);
                 $this->addMetadataRecord('sda_def_columns', $row);
             }
         }
@@ -2334,6 +2356,3 @@ function groupHasAccess($group_name, $userId, $category, $action, $type = 'modul
     // ACL_ALLOW_GROUP should be defined elsewhere in the system
     return $highestAccess >= ACL_ALLOW_GROUP;
 }
-
-
-
