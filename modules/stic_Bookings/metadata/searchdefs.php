@@ -35,8 +35,8 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'recursive_code' => array(
-                'name' => 'recursive_code',
+            'periodic_code' => array(
+                'name' => 'periodic_code',
                 'default' => true,
                 'width' => '10%',
             ),
@@ -122,8 +122,8 @@ array(
                 'default' => true,
                 'width' => '10%',
             ),
-            'recursive_code' => array(
-                'name' => 'recursive_code',
+            'periodic_code' => array(
+                'name' => 'periodic_code',
                 'default' => true,
                 'width' => '10%',
             ),

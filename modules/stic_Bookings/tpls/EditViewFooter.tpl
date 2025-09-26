@@ -25,7 +25,7 @@
 
 <div class="right-aligned-container">
   <div id="repeat_options" style="display: none;">
-    <h2 id="resourcesTitle">{$MOD.LBL_RECURSIVE_BOOKING}</h2>
+    <h2 id="resourcesTitle">{$MOD.LBL_PERIODIC_BOOKING}</h2>
     <table class="BookingRepeatForm" width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
             <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
@@ -184,7 +184,7 @@ $(document).ready(function() {
     console.log('Loading from session with repeat data');
     
     if (!typeFieldDisabled) {
-        $('#recursive_booking').prop('checked', true);
+        $('#periodic_booking').prop('checked', true);
     }
     
     $('#repeat_options').show();
@@ -363,7 +363,7 @@ $(document).ready(function() {
 
     // Function to toggle repeat options based on repeat_booking checkbox
     window.toggle_repeat_booking = function() {
-        var repeatBookingCheckbox = document.getElementById('recursive_booking');
+        var repeatBookingCheckbox = document.getElementById('periodic_booking');
         var repeatOptionsDiv = document.getElementById('repeat_options');
         
         if (!repeatBookingCheckbox || !repeatOptionsDiv) {
@@ -526,7 +526,7 @@ function setHoursInfo() {
 
 document.addEventListener('DOMContentLoaded', function () {
   // Make sure all the form elements exist before trying to access them
-    var repeatBookingCheckbox = document.getElementById('recursive_booking');
+    var repeatBookingCheckbox = document.getElementById('periodic_booking');
     if (repeatBookingCheckbox) {
         repeatBookingCheckbox.addEventListener('change', toggle_repeat_booking);
         
@@ -676,7 +676,7 @@ if (form) {
   form.addEventListener('submit', function(e) {
     e.preventDefault();
       // Check if this is a periodic booking
-      var repeatBookingCheckbox = document.getElementById('recursive_booking');
+      var repeatBookingCheckbox = document.getElementById('periodic_booking');
       var repeatType = document.getElementById('repeat_type');
       var isPeriodic = repeatBookingCheckbox && repeatBookingCheckbox.checked  && repeatType && repeatType.value && repeatType.value !== "" && repeatType.value.toLowerCase() !== "none";
       

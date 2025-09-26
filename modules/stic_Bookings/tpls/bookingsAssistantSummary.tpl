@@ -156,8 +156,8 @@
 
 <div class="layer">
     <span>{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED} = {$DATA.totalRecordsProcessed}</span>
-    <br /><span class="available-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_CREATED} = {$DATA.totalRecordsCreated|default:0}</span>
-    <br /><span class="unavailable-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED} = {$DATA.totalRecordsNotCreated}</span>
+    <br /><span class="available-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE} = {$DATA.totalRecordsCreated|default:0}</span>
+    <br /><span class="unavailable-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE} = {$DATA.totalRecordsNotCreated}</span>
 </div>
 <br />
 
@@ -165,7 +165,7 @@
     <div class="records-section created">
         <h4 class="section-toggle" onclick="toggleSection('created')">
             <span class="toggle-icon" id="created-icon">▼</span>
-            <span class="available-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_CREATED}</span> 
+            <span class="available-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE}</span> 
             (<span id="createdRecordsCount">0</span>)
         </h4>
         <div id="createdSection" class="section-content">
@@ -187,14 +187,12 @@
     <div class="records-section not-created">
         <h4 class="section-toggle" onclick="toggleSection('notCreated')">
             <span class="toggle-icon" id="notCreated-icon">▼</span>
-            <span class="unavailable-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED}</span> 
+            <span class="unavailable-resources">{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE}</span> 
             (<span id="notCreatedRecordsCount">0</span>)
         </h4>
         <div id="notCreatedSection" class="section-content">
             <div id="notCreatedRecordsContainer" class="recordsContainer">
-                <span>{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT}</span>
-                <br>
-                <span>{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_CREATED_TEXT2}</span>
+                <span>{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT}</span>
                 <br /><br />
                 
                 <div style="font-weight:bold">                    
@@ -215,7 +213,7 @@
 <div style="display: flex; gap: 1em; margin-bottom: 2em;">
     <form action="index.php?module=stic_Bookings&action=confirmPeriodicBookings" method="POST" style="margin: 0;">
         <input type="hidden" name="confirm" value="1">
-        <button type="submit" class="button">{$MOD.LNK_CREATE_PERIODIC_RECORDS}</button>
+        <button type="submit" class="button">{$MOD.LBL_CREATE_PERIODIC_RECORDS}</button>
     </form>
 
     <a href="index.php?module=stic_Bookings&action=EditView&loadFromSession=true">

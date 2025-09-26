@@ -53,7 +53,7 @@ class stic_Bookings extends Basic
     public $parent_id;
     public $total_amount;
     public $copayment_amount;
-    public $recursive_code;
+    public $periodic_code;
 
     // Flag to prevent infinite loop
     private $isCalculatingAmounts = false;

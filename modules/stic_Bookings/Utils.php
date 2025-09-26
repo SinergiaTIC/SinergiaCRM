@@ -495,7 +495,7 @@ class stic_BookingsUtils
             'end_date_display' => $timedate->asUser($endDateObj, $currentUser),
             'all_day' => $requestData['all_day'] ?? '0',
             'status' => $requestData['status'] ?? null,
-            'recursive_booking' => $requestData['recursive_booking'] ?? null,
+            'periodic_booking' => $requestData['periodic_booking'] ?? null,
             'repeat_type' => $requestData['repeat_type'] ?? null,
             'place_booking' => $requestData['place_booking'] ?? '0',
             'description' => $requestData['description'] ?? '',
@@ -504,7 +504,7 @@ class stic_BookingsUtils
             'resourceIds' => $resourceIds,
             'allResourcesAvailable' => $allResourcesAvailable,
             'name' => $bookingName,
-            'recursive_code' => $firstBookingCode,
+            'periodic_code' => $firstBookingCode,
             'resource_names' => array_values($resourceNames)
         ];
     }
@@ -657,11 +657,11 @@ class stic_BookingsUtils
                 $bookingBean->end_date = $booking_info['end_date_db'];
                 $bookingBean->all_day = $booking_info['all_day'];
                 $bookingBean->status = $booking_info['status'];
-                $bookingBean->recursive_booking = $booking_info['recursive_booking'];
+                $bookingBean->periodic_booking = $booking_info['periodic_booking'];
                 $bookingBean->repeat_type = $booking_info['repeat_type'];
                 $bookingBean->place_booking = $booking_info['place_booking'];
                 $bookingBean->description = $booking_info['description'];
-                $bookingBean->recursive_code = $booking_info['recursive_code'];
+                $bookingBean->periodic_code = $booking_info['periodic_code'];
 
                 if (!empty($booking_info['parent_id']) && !empty($booking_info['parent_type'])) {
                     $bookingBean->parent_id = $booking_info['parent_id'];

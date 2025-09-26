@@ -356,7 +356,7 @@ SCRIPT;
         SticViews::display($this);
 
         $loadFromSession = isset($_REQUEST['loadFromSession']) && $_REQUEST['loadFromSession'] === 'true';
-        $recursiveBookingEnabled = $this->bean->recursive_booking ?? false;
+        $recursiveBookingEnabled = $this->bean->periodic_booking ?? false;
         
         if ($loadFromSession && $recursiveBookingEnabled) {
             echo <<<SCRIPT
@@ -371,7 +371,7 @@ SCRIPT;
                 }
                 
                 if (!typeFieldDisabled) {
-                    $('#recursive_booking').prop('checked', true);
+                    $('#periodic_booking').prop('checked', true);
                 }
             });
             </script>
@@ -385,9 +385,9 @@ SCRIPT;
             echo <<<SCRIPT
             <script>
             $(document).ready(function() {
-                // Disable the recursive_booking checkbox
-                $('#recursive_booking').prop('disabled', true);
-                $('#recursive_booking').css('cursor', 'not-allowed');
+                // Disable the periodic_booking checkbox
+                $('#periodic_booking').prop('disabled', true);
+                $('#periodic_booking').css('cursor', 'not-allowed');
                 
                 // Disable the repeat_type field dropdown
                 $('#repeat_type').prop('disabled', true);
@@ -419,8 +419,8 @@ SCRIPT;
                 }).off('click');
                 
                 // Add a hidden input to preserve the current repeat_booking value
-                var repeatBookingValue = $('#recursive_booking').is(':checked') ? '1' : '0';
-                $('#recursive_booking').after('<input type="hidden" name="recursive_booking" value="' + repeatBookingValue + '" />');
+                var repeatBookingValue = $('#periodic_booking').is(':checked') ? '1' : '0';
+                $('#periodic_booking').after('<input type="hidden" name="periodic_booking" value="' + repeatBookingValue + '" />');
                 
                 // Add a hidden input to preserve the current repeat_type value
                 var repeatTypeValue = $('#repeat_type').val();

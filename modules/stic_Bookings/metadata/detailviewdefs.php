@@ -67,7 +67,7 @@ array(
                         'name' => 'code',
                     ),
                     1 => array(
-                        'name' => 'recursive_code',
+                        'name' => 'periodic_code',
                     ),
                 ),
                 2 => array(
@@ -131,7 +131,7 @@ array(
                     0 => 'description',
                 ),
                 9 => array(
-                    0 => 'recursive_booking',
+                    0 => 'periodic_booking',
                 ),
             ),
             'lbl_detailview_panel1' => array(

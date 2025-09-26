@@ -391,7 +391,7 @@ class stic_BookingsController extends SugarController
     }
 
     public function action_save() {
-        if (isset($_REQUEST['recursive_booking']) && $_REQUEST['recursive_booking'] == '1' && 
+        if (isset($_REQUEST['periodic_booking']) && $_REQUEST['periodic_booking'] == '1' && 
             isset($_REQUEST['repeat_type']) && !empty($_REQUEST['repeat_type'])) {
             
             $resource_type_validation = $this->checkResourceTypes();

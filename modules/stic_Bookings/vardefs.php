@@ -179,10 +179,10 @@ $dictionary['stic_Bookings'] = array(
                 'quickcreate' => false,
             ),
         ),
-        'recursive_code' => array(
+        'periodic_code' => array(
             'required' => false,
-            'name' => 'recursive_code',
-            'vname' => 'LBL_RECURSIVE_CODE',
+            'name' => 'periodic_code',
+            'vname' => 'LBL_PERIODIC_CODE',
             'type' => 'int',
             'massupdate' => '1',
             'no_default' => false,
@@ -338,10 +338,10 @@ $dictionary['stic_Bookings'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_RESOURCES_TITLE',
         ),
-        'recursive_booking' => array(
+        'periodic_booking' => array(
             'required' => false,
-            'name' => 'recursive_booking',
-            'vname' => 'LBL_RECURSIVE_BOOKING',
+            'name' => 'periodic_booking',
+            'vname' => 'LBL_PERIODIC_BOOKING',
             'type' => 'bool',
             'no_default' => false,
             'massupdate' => 0,
