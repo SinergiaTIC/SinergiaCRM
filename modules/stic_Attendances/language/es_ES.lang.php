@@ -74,6 +74,7 @@ $mod_strings = array (
     'LBL_ERROR_STATUS_DURATION' => 'Si el Estado es Sí o Parcial es necesario indicar la Duración.',
     'LBL_DURATION_INFO' => 'La Duración se establece en horas y admite decimales. Si en Estado no se ha seleccionado ningún valor y la Duración está vacía, la asistencia heredará la Duración de la sesión a la que pertenece. Si en Estado se ha indicado Sí o Parcial, entonces será necesario rellanar explícitamente la Duración.',
     'LBL_AMOUNT_INFO' => 'Si al crear una asistencia este campo se deja vacío, se rellenará automáticamente con el valor del campo "Importe de la sesión" de la inscripción relacionada.',
-    // Many to Many filter fields
-    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Evento (relacionado vía Inscripción)',
+
+    // Campos de filtro en relaciones muchos a muchos
+    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Evento (vía Inscripciones)',
 );
