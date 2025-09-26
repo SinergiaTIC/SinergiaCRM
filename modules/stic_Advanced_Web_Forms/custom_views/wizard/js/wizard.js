@@ -89,7 +89,7 @@ class WizardNavigation {
   static next() {
     if (WizardNavigation.enabled("next")) {
       let allOk = true;
-      document.querySelectorAll("#wizard-step-container form").forEach(function (f) {
+      document.querySelectorAll("#wizard-step-container form.needs-validation").forEach(function (f) {
         allOk &= f.reportValidity();
       });
       if (allOk) {
