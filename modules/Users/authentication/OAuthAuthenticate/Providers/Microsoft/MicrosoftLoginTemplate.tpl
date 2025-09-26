@@ -28,7 +28,7 @@
             <rect x="13" y="13" width="11" height="11" fill="#FFBA08" />
         </svg>
     </span>
-    {$OAUTH_LANG.LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT}
+    {$OAUTH_LANG.LBL_OAUTH_AUTH_MICROSOFT_AUTHENTICATION_TEXT}
 </button>
 
 <input type="hidden" id="microsoft_credentials" name="microsoft_credentials" />
