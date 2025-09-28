@@ -126,19 +126,23 @@ if (!($("#mass_ids").length > 0) || $("#mass_ids").val() == ''){
 
   $.fn.stic_MessagesComposeView.onParentSelect = function (args) {
     set_return(args);
-    if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
-      $("#phone").val(args.name_to_value_array.phone_mobile);  
-    }
-    if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
-      $("#phone").val(args.name_to_value_array.phone_office);  
+    if ($("#status").val() == 'draft') {
+      if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
+        $("#phone").val(args.name_to_value_array.phone_mobile);  
+      }
+      if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
+        $("#phone").val(args.name_to_value_array.phone_office);  
+      }
     }
   };
   $.fn.stic_MessagesComposeView.onParentChange = function (args) {
-    if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
-      $("#phone").val(args.name_to_value_array.phone_mobile);  
-    }
-    if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
-      $("#phone").val(args.name_to_value_array.phone_office);  
+    if ($("#status").val() == 'draft') {
+      if (args.name_to_value_array.phone_mobile && args.name_to_value_array.phone_mobile !== 'undefined' && args.name_to_value_array.phone_mobile !== '') {
+        $("#phone").val(args.name_to_value_array.phone_mobile);  
+      }
+      if (args.name_to_value_array.phone_office && args.name_to_value_array.phone_office !== 'undefined' && args.name_to_value_array.phone_office !== '') {
+        $("#phone").val(args.name_to_value_array.phone_office);  
+      }
     }
   };
 
@@ -169,7 +173,7 @@ function parentIdChanged() {
 }
 
 function applyParent(parentData) {
-  if(parentData!= null) {
+  if(parentData!= null && $("#status").val() === 'draft') {
     $('#phone').val(parentData['phone']);
   }
 }
