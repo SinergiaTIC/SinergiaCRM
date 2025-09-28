@@ -147,7 +147,7 @@ if (!($("#mass_ids").length > 0) || $("#mass_ids").val() == ''){
   };
 
 function checkStatus() {
-  if($('#status').val() === 'sent') {
+  if($('#status').val() === 'sent' && !$('#EditView input[name="record"]').val()) {
     $('input.button.primary').val(SUGAR.language.get('app_strings', 'LBL_EMAIL_SEND'));
   } 
   else {
