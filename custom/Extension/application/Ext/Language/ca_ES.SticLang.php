@@ -3743,7 +3743,7 @@ $app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
-// Elements added to History panel
+// Elements afegits a l'Historial
 $app_list_strings['stic_history']['Tasks'] = 'Tasques';
 $app_list_strings['stic_history']['Meetings'] = 'Reunions';
 $app_list_strings['stic_history']['Calls'] = 'Trucades';
