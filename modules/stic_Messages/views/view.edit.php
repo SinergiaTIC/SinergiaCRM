@@ -49,6 +49,7 @@ class stic_MessagesViewEdit extends ViewEdit
 
     public function preDisplay()
     {
+        global $app_list_strings;
         parent::preDisplay();
 
         SticViews::preDisplay($this);
@@ -61,6 +62,11 @@ class stic_MessagesViewEdit extends ViewEdit
         $this->bean->fill_in_additional_parent_fields();
 
         $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
+
+        if (!$this->bean->fetched_row) {
+            unset($app_list_strings['stic_messages_status_list']['error']);
+        }
+
         // Write here you custom code
 
     }
