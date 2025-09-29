@@ -173,7 +173,7 @@ function parentIdChanged() {
 }
 
 function applyParent(parentData) {
-  if(parentData!= null && $("#status").val() === 'draft') {
+  if(parentData!= null && ($("#status").val() === 'draft' || !$('#EditView input[name="record"]').val())) {
     $('#phone').val(parentData['phone']);
   }
 }
