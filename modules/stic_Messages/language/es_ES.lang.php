@@ -80,4 +80,8 @@ $mod_strings = array (
   'LBL_CHECK_STATUS' => 'Mensajes enviados. Comprobar el estado',
   'LBL_ALREADY_SENT' => 'Mensaje ya enviado',
   'LBL_SENT_DATE' => 'Fecha de envío',
+  'LBL_LIST_CONTACT' => 'Contacto',
+  'LBL_LIST_DATE_MODIFIED' => 'Fecha de Modificación',
+  'LBL_LIST_STATUS' => 'Estado',
+  'LBL_LIST_SUBJECT' => 'Asunto',
 );
