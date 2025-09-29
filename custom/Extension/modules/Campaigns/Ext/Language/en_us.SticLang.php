@@ -76,6 +76,6 @@ $mod_strings['LBL_NOTIFICATION_INBOUND_EMAIL_ID_HELP'] = "Mailbox to receive err
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'When saving the notification the emails to be sent will be automatically added to the sending queue.';
 
-$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'New template section line';
-$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'View template section lines';
+$mod_strings['LNK_NEW_TEMPLATE_SECTION_LINE'] = 'New template section';
+$mod_strings['LNK_TEMPLATE_SECTION_LINE_LIST'] = 'View template sections';
 $mod_strings['LBL_CONVERT_LINKS_TO_TRACKING_URLS'] = 'Convert message links to trackers';
