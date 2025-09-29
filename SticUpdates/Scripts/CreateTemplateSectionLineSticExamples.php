@@ -288,7 +288,7 @@ if ($db instanceof DBManager)
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
-                    <td style="padding:10px;" align="center"><a href="https://tuservidor.com/video.mp4"> <img style="border:0;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/video_player_256px.png" /> </a></td>
+                    <td style="padding:10px;" align="center"><a href="https://tuservidor.com/video.mp4"> <img style="border:0;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/video_player.png" /> </a></td>
                 </tr>
             </tbody>
         </table>
