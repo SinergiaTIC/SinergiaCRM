@@ -36,14 +36,12 @@ function displayLoginOAuthAuthentication() {
             $providersContent = "<div id='oauth_providers' name='oauth_providers' class='oauth-providers-container'><span id='label_oauth_providers'>".translate('LBL_OAUTH_AUTH_LOGIN_CONTAINER', "Users")."</span>";
             $providersContent .= "<input type='hidden' id='oauth_provider' name='oauth_provider' />";
 
-            
-
             foreach($providers as $provider) {
                 $providerOAuthClass = new $oAuthClass($provider);
                 $providersContent .= $providerOAuthClass->getLoginTemplate($providersContentTemplate);
             }
 
-            // TODO ADD optin to hide basic form
+            // TODO ADD option to hide basic form
             if (!empty($providersContent)) {
                 // return '';
             }

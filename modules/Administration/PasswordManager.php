@@ -216,7 +216,7 @@ $sugar_smarty->assign("TMPL_DRPDWN_FACTOR", $TMPL_DRPDWN_FACTOR);
 
 // STIC-Custom AAM 20250825 - Adding OAuth Authentication providers
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/552
-require('include/utils/authentication_oauth_providers_utils.php');
+require('modules/Users/authentication/OAuthAuthenticate/OAuthAuthenticateUtils.php');
 $sugar_smarty->assign("OAUTH_AUTHENTICATION_PROVIDERS", displayAdminAuthenticationOAuthProviders());
 // END STIC-Custom
 

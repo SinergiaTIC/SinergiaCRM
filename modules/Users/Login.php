@@ -164,7 +164,7 @@ $sugar_smarty->assign('CAPTCHA', displayRecaptcha());
 // STIC-Custom AAM 20250825 - Adding OAuth Authentication providers
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/552
 // OAuth authentication
-require_once __DIR__.'/../../include/utils/authentication_oauth_providers_utils.php';
+require_once 'modules/Users/authentication/OAuthAuthenticate/OAuthAuthenticateUtils.php';
 $sugar_smarty->assign('OAUTH_AUTHENTICATION', displayLoginOAuthAuthentication());
 // END STIC-Custom
 
