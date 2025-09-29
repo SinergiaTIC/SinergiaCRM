@@ -129,7 +129,7 @@ class SearchForm
         // STIC-Custom AAM 20250925 - Many to Many Security Suite filter field
         // Add securitygroups_name to searchFields if defined in searchdefs
         // TODO: Refactor to avoid modifying input parameter and integrate many-to-many fields generically
-        if (isset($searchdefs[$this->module]['layout']['advanced_search']['securitygroups_name']) || isset($searchdefs[$this->module]['layout']['advanced_search']['basic_search'])) {
+        if (isset($searchdefs[$this->module]['layout']['advanced_search']['securitygroups_name']) || isset($searchdefs[$this->module]['layout']['basic_search']['securitygroups_name'])) {
             $searchFields[$this->module]['securitygroups_name'] = array(
                 'query_type' => 'format',
                 'operator' => 'subquery',
