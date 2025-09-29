@@ -142,6 +142,7 @@ $mod_strings = array(
     'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Resum:',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Registres processats',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Registres que es crearan',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT' => 'Reserves creats amb èxit',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Registres que no es crearan',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT' => 'No es crearan noves reserves amb els següents recursos a causa de solapaments amb altres reserves existents.',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Ves al calendari de reserves',

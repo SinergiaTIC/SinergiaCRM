@@ -142,6 +142,7 @@ $mod_strings = array(
     'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Summary:',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Number of records processed',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Number of records to create',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT' => 'Bookings created successfully.',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Number of records not to create',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT' => 'Following bookings will not be created for the listed resources due to overlaps with existing bookings.',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Go to Booking calendar',

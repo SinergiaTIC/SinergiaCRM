@@ -149,6 +149,10 @@
     let notCreatedRecords = [];
     let currentCreatedPage = 1;
     let currentNotCreatedPage = 1;
+
+    const noCreatedRecordsMsg = '{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_NO_RECORDS_CREATED}';
+    const allRecordsCreatedMsg = '{$MOD.LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT}';
+
 </script>
 
 <h1>{$MOD.LBL_PERIODIC_BOOKINGS_BUTTON}</h1>
@@ -264,7 +268,7 @@
             const recordsList = document.getElementById('createdRecordsList');
             
             if (!records || records.length === 0) {
-                recordsList.innerHTML = '<div class="no-records">No se crearon registros.</div>';
+                recordsList.innerHTML = '<div class="no-records">' + noCreatedRecordsMsg + '</div>';
                 document.getElementById('createdPagination').innerHTML = '';
                 return;
             }
@@ -284,7 +288,7 @@
                     const bookingLink = document.createElement('a');
                     bookingLink.href = `index.php?module=stic_Bookings&action=DetailView&record=${record.bookingId}`;
                     bookingLink.className = 'booking-link';
-                    bookingLink.textContent = record.bookingName || `Booking ${record.bookingId}`;
+                    bookingLink.textContent = record.bookingName || `${record.bookingId}`;
                     bookingSpan.appendChild(bookingLink);
                 } else {
                     bookingSpan.textContent = record.bookingName;
@@ -316,7 +320,7 @@
             const recordsList = document.getElementById('notCreatedRecordsList');
             
             if (!records || records.length === 0) {
-                recordsList.innerHTML = '<div class="no-records">Todos los registros se crearon exitosamente.</div>';
+                recordsList.innerHTML = '<div class="no-records">' + allRecordsCreatedMsg + '</div>';
                 document.getElementById('notCreatedPagination').innerHTML = '';
                 return;
             }
@@ -404,14 +408,14 @@
                     return date.toLocaleDateString('es-ES');
                 }
             } catch (e) {
-                console.log('Error formateando fecha:', e);
+                console.log(e);
             }
             
             return dateString;
         }
 
         function formatUnavailableResources(unavailableResources) {
-            if (!unavailableResources || unavailableResources.length === 0) return 'Ninguno';
+            if (!unavailableResources || unavailableResources.length === 0) return '';
             return unavailableResources.join(', ');
         }
         
