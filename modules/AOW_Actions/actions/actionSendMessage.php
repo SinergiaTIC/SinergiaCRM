@@ -63,6 +63,9 @@ class actionSendMessage extends actionBase
             unset($app_list_strings['aow_message_type_list']['Related Field']);
         }
 
+        // Error status not allowed on message creation
+        unset($app_list_strings['stic_messages_status_list']['error']);
+
         $html = '<input type="hidden" name="aow_message_type_list" id="aow_message_type_list" value="'.get_select_options_with_id($app_list_strings['aow_message_type_list'], '').'">';
 
         $html .= "<table border='0' cellpadding='0' cellspacing='0' width='100%' data-workflow-action='send-message'>";
