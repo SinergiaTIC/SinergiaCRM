@@ -140,7 +140,6 @@ $mod_strings = array(
     'LBL_SAVE_BUTTON' => 'Save',
     'LBL_UNAVAILABLE_RESOURCES' => 'Unavailable resources',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Summary:',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE_BY_RESOURCE' => 'Summary by resource',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Number of records processed',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Number of records to create',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Number of records not to create',
