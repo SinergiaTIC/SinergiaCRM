@@ -140,7 +140,6 @@ $mod_strings = array(
     'LBL_SAVE_BUTTON' => 'Desa',
     'LBL_UNAVAILABLE_RESOURCES' => 'Recursos no disponibles',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Resum:',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE_BY_RESOURCE' => 'Resum per recurs',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Registres processats',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Registres que es crearan',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Registres que no es crearan',
