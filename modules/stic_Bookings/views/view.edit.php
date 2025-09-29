@@ -356,9 +356,9 @@ SCRIPT;
         SticViews::display($this);
 
         $loadFromSession = isset($_REQUEST['loadFromSession']) && $_REQUEST['loadFromSession'] === 'true';
-        $recursiveBookingEnabled = $this->bean->periodic_booking ?? false;
+        $periodicBookingEnabled = $this->bean->periodic_booking ?? false;
         
-        if ($loadFromSession && $recursiveBookingEnabled) {
+        if ($loadFromSession && $periodicBookingEnabled) {
             echo <<<SCRIPT
             <script>
             $(document).ready(function() {

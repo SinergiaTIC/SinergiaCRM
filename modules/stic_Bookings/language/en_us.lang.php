@@ -63,11 +63,11 @@ $mod_strings = array(
     'LBL_MODULE_NAME_SINGULAR' => 'Booking',
 
     'LBL_CODE' => 'Code',
-    'LBL_PERIODIC_CODE' => 'Recursive booking code',
+    'LBL_PERIODIC_CODE' => 'Periodic booking code',
     'LBL_STATUS' => 'Status',
     'LBL_ALL_DAY' => 'All day',
     'LBL_PLACE_BOOKING' => 'Place booking',
-    'LBL_PERIODIC_BOOKING' => 'Recursive booking',
+    'LBL_PERIODIC_BOOKING' => 'Periodic booking',
     'LBL_START_DATE' => 'Start date',
     'LBL_END_DATE' => 'End date',
     'LBL_PLANNED_START_DATE' => 'Planned start date',
