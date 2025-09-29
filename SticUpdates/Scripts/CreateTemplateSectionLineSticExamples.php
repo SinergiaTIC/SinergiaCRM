@@ -263,17 +263,17 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_250px.png" />
                         <h3>Lorem ipsum 1</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_250px.png" />
                         <h3>Lorem ipsum 2</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>
                     <td style="padding:10px;text-align: center; vertical-align: middle;" align="center">
-                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_350px.png" />
+                        <img src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/stic_image_250px.png" />
                         <h3>Lorem ipsum 3</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer dolor purus, dapibus quis tempor aliquet, pellentesque vel magna. Suspendisse quis leo a elit tincidunt tincidunt. Aliquam rhoncus semper tempor. Nunc porta ultricies neque, ut blandit libero dictum at. Sed non elementum lacus. Sed a finibus sapien. Morbi feugiat eget lectus porttitor vehicula. Maecenas condimentum turpis sit amet mi vestibulum, eget volutpat lectus tincidunt. Nunc nec mauris orci. Fusce tempor ut ante id tempus. Proin nisi nunc, egestas et fringilla ut, consectetur et sem. Nunc finibus nunc mi, suscipit sagittis orci lacinia eget. Phasellus in orci id ante tincidunt laoreet vitae nec diam.</p>                    
                     </td>                
@@ -288,7 +288,7 @@ if ($db instanceof DBManager)
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
-                    <td style="padding:10px;" align="center"><a href="https://tuservidor.com/video.mp4"> <img style="border:0;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/reproductor_video_600px.jpg" alt="Ver video" width="500" height="333" /> </a></td>
+                    <td style="padding:10px;" align="center"><a href="https://tuservidor.com/video.mp4"> <img style="border:0;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/video_player_256px.png" /> </a></td>
                 </tr>
             </tbody>
         </table>
@@ -325,12 +325,12 @@ if ($db instanceof DBManager)
             <tbody>
                 <tr>
                     <td style="padding:10px;" align="center">
-                        <a href="https://www.twitter.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/twitter_64px.png" alt="Twitter" width="24" /></a> 
+                        <a href="https://www.youtube.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/youtube_64px.png" alt="YouTube" width="24" /></a> 
                         <a href="https://www.facebook.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/facebook_64px.png" alt="Facebook" width="24" /></a> 
                         <a href="https://www.instagram.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/instagram_64px.png" alt="Instagram" width="24" /></a> 
-                        <a href="https://www.youtube.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/youtube_64px.png" alt="YouTube" width="24" /></a> 
+                        <a href="https://www.x.com/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/twitter_64px.png" alt="Twitter" width="24" /></a> 
                         <a href="https://es.linkedin.com/company/entidad"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/linkedin_64px.png" alt="Linkedin" width="24" /></a> 
-                        <a><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/web_64px.png" alt="Web" width="24" /></a> 
+                        <a href="https://tu_web.org/"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/web_64px.png" alt="Web" width="24" /></a> 
                         <a href="mailto:info@entidad.org"><img style="margin:0 5px;" src="{$site_url}/custom/modules/TemplateSectionLine/stic_images_files/Images/email_64px.png" alt="Correo electrónico" width="24" /></a></td>
                 </tr>
             </tbody>
