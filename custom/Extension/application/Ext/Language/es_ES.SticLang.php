@@ -3744,9 +3744,10 @@ $app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
 // Elementos añadidos al Historial
-$app_list_strings['stic_history']['Tasks'] = 'Tareas';
-$app_list_strings['stic_history']['Meetings'] = 'Reuniones';
-$app_list_strings['stic_history']['Calls'] = 'Llamadas';
-$app_list_strings['stic_history']['Notes'] = 'Notas';
-$app_list_strings['stic_history']['Emails'] = 'Correos';
-$app_list_strings['stic_history']['stic_Messages'] = 'Mensajes';
+$app_list_strings['collection_temp_list'] = array();
+$app_list_strings['collection_temp_list']['Tasks'] = 'Tareas';
+$app_list_strings['collection_temp_list']['Meetings'] = 'Reuniones';
+$app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
+$app_list_strings['collection_temp_list']['Notes'] = 'Notas';
+$app_list_strings['collection_temp_list']['Emails'] = 'Correos';
+$app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
