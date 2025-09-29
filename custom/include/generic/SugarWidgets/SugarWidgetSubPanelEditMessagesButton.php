@@ -77,7 +77,7 @@ class SugarWidgetSubPanelEditMessagesButton extends SugarWidgetSubPanelTopButton
         $controller = new TabController();
         $currentTabs = $controller->get_system_tabs();
 
-        if (!$currentTabs['stic_Messages']){
+        if (!isset($currentTabs['stic_Messages']) || !$currentTabs['stic_Messages']){
             return '';
         }
 
