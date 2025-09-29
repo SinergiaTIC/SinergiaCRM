@@ -111,7 +111,7 @@ if ($db instanceof DBManager)
 
     $insertQueries = array (
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000caa-7105-eef5-ad4a-68a414181198', '{$recordsName[0]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000caa-7105-eef5-ad4a-68a414181198', '{$recordsName[0]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#ffffff;" width="100%">
             <tbody>
                 <tr>
@@ -123,7 +123,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000946-dbcc-c8ba-9c16-68a41426bf4e', '{$recordsName[1]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000946-dbcc-c8ba-9c16-68a41426bf4e', '{$recordsName[1]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -135,7 +135,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000050-98e6-6f0d-04c0-68a4143f6d6c', '{$recordsName[2]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000050-98e6-6f0d-04c0-68a4143f6d6c', '{$recordsName[2]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -149,7 +149,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('0000006d-a721-a6c5-9df6-68a414b67f90', '{$recordsName[3]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('0000006d-a721-a6c5-9df6-68a414b67f90', '{$recordsName[3]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -161,7 +161,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000fbe-4fbd-9659-bd90-68a31e6c9225', '{$recordsName[4]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000fbe-4fbd-9659-bd90-68a31e6c9225', '{$recordsName[4]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -175,7 +175,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('000004dd-964f-9c67-1993-68a3289ad277', '{$recordsName[5]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('000004dd-964f-9c67-1993-68a3289ad277', '{$recordsName[5]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -189,7 +189,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000fc7-4281-5d09-45f3-68a415cd2a79', '{$recordsName[6]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000fc7-4281-5d09-45f3-68a415cd2a79', '{$recordsName[6]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -201,7 +201,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('d3b49c38-eeba-b910-2590-5b4069caaac1', '{$recordsName[7]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('d3b49c38-eeba-b910-2590-5b4069caaac1', '{$recordsName[7]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table width="100%" style="background-color:white">
             <tbody>
                 <tr>
@@ -219,7 +219,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('dba65685-d26f-6ecd-802c-5b406983c9b5', '{$recordsName[8]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('dba65685-d26f-6ecd-802c-5b406983c9b5', '{$recordsName[8]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table width="100%" style="background-color:white">
             <tbody>
                 <tr>
@@ -237,7 +237,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('52cdc554-bd90-f8f9-e2e0-66d718ae8fe9', '{$recordsName[9]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('52cdc554-bd90-f8f9-e2e0-66d718ae8fe9', '{$recordsName[9]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table width="100%" style="background-color:white">
             <tbody>
                 <tr>
@@ -258,7 +258,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('9f118e85-13f2-baa9-4ee3-66d80c674dea', '{$recordsName[10]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('9f118e85-13f2-baa9-4ee3-66d80c674dea', '{$recordsName[10]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table width="100%" style="background-color:white">
             <tbody>
                 <tr>
@@ -284,7 +284,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000f55-0165-c6f0-d49e-68a31f58ce3f', '{$recordsName[11]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000f55-0165-c6f0-d49e-68a31f58ce3f', '{$recordsName[11]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -296,7 +296,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('000009b2-a259-4b41-df58-68a31fdc03aa', '{$recordsName[12]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('000009b2-a259-4b41-df58-68a31fdc03aa', '{$recordsName[12]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF; width:100%;">
             <tbody>
                 <tr>
@@ -312,7 +312,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('0000021e-291a-84c6-8641-68a323ea5043', '{$recordsName[13]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('0000021e-291a-84c6-8641-68a323ea5043', '{$recordsName[13]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <br /><br />
             <hr />
         <br /><br />
@@ -320,7 +320,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000138-07eb-c36d-1c5f-68a325bf884c', '{$recordsName[14]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000138-07eb-c36d-1c5f-68a325bf884c', '{$recordsName[14]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -339,7 +339,7 @@ if ($db instanceof DBManager)
         SQL
         ,
         <<<SQL
-        INSERT INTO templatesectionline VALUES('00000ec2-1b97-6474-0aa2-68a3254bbb85', '{$recordsName[15]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
+        REPLACE INTO templatesectionline VALUES('00000ec2-1b97-6474-0aa2-68a3254bbb85', '{$recordsName[15]}', UTC_TIMESTAMP(), UTC_TIMESTAMP(), '1', '1', '
         <table style="background-color:#FFFFFF;" width="100%">
             <tbody>
                 <tr>
@@ -365,7 +365,7 @@ if ($db instanceof DBManager)
     $res = $db->query($query);
     
     while ($row = $db->fetchByAssoc($res)) {
-        $insertQuery = 'INSERT INTO templatesectionline_cstm (id_c, htmlcode_c) VALUES("' . $row['id'] . '", "' . $row['description'] . '")';
+        $insertQuery = 'REPLACE INTO templatesectionline_cstm (id_c, htmlcode_c) VALUES("' . $row['id'] . '", "' . $row['description'] . '")';
         if ($db->query($insertQuery)) {
             $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':' . "The description of example record with ID = " . $rows['id'] . "' has been copied in the htmlcode_c field.");
         } else {
