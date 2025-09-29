@@ -181,7 +181,6 @@ $(document).ready(function() {
     {/literal}
     {if $is_session_reload}
     {literal}
-    console.log('Loading from session with repeat data');
     
     if (!typeFieldDisabled) {
         $('#periodic_booking').prop('checked', true);
@@ -482,54 +481,109 @@ $(document).ready(function() {
     }
     };
 
-function setHoursInfo() {
-  try {
-  var startDayInput = document.getElementById('start_date_date');
-  var finalDayInput = document.getElementById('end_date_date');
-  var startHour = document.querySelector('[name=start_date_hours]');
-  var startMinute = document.querySelector('[name=start_date_minutes]');
-  var finalHour = document.querySelector('[name=end_date_hours]');
-  var finalMinute = document.querySelector('[name=end_date_minutes]');
-  if (!startDayInput || !finalDayInput || !startHour || !startMinute || !finalHour || !finalMinute) {
-  return;
-  }
-  // Parse date parts
-  var start = startDayInput.value + '/' + startHour.value + '/' + startMinute.value;
-  var final = finalDayInput.value + '/' + finalHour.value + '/' + finalMinute.value;
-  start = start.split('/');
-  final = final.split('/');
-  // Create date objects - adapted to DD/MM/YYYY format
-  var startDate = new Date(
-  parseInt(start[2]), // year
-  parseInt(start[1]) - 1, // month (0-indexed)
-  parseInt(start[0]), // day
-  parseInt(start[3]), // hour
-  parseInt(start[4])  // minute
-  );
-  var finalDate = new Date(
-  parseInt(final[2]), // year
-  parseInt(final[1]) - 1, // month (0-indexed)
-  parseInt(final[0]), // day
-  parseInt(final[3]), // hour
-  parseInt(final[4])  // minute
-  );
+window.toggle_repeat_booking = function() {
+    var repeatBookingCheckbox = document.getElementById('periodic_booking');
+    var repeatOptionsDiv = document.getElementById('repeat_options');
+    
+    if (!repeatBookingCheckbox || !repeatOptionsDiv) {
+        return;
+    }
+    
+    if (repeatBookingCheckbox.checked) {
+        repeatOptionsDiv.style.display = '';
+        var repeatType = document.getElementById('repeat_type');
+        if (repeatType && !repeatType.value) {
+            repeatType.value = '';
+            toggle_repeat_type();
+        } else if (repeatType && repeatType.value) {
+            toggle_repeat_type();
+        }
+    } else {
+        repeatOptionsDiv.style.display = 'none';
+        var repeatType = document.getElementById('repeat_type');
+        if (repeatType) {
+            repeatType.value = '';
+        }
+    }
+};
 
-  var minutes = Math.round(difference / 60000);
-  var hours = Math.floor((parseInt(minutes) / 60));
-  minutes = (parseInt(minutes) % 60);
-  hours = parseInt(hours) < 10 ? '0' + hours : hours;
-  minutes = parseInt(minutes) < 10 ? '0' + minutes : minutes;
-  } catch (e) {
-  console.error("Error calculating hours info:", e);
-  }
-}
+window.toggle_repeat_type = function() {
+    var repeatVal = document.getElementById('repeat_type').value;
+
+    var repeatIntervalRow = document.getElementById("repeat_interval_row");
+    var repeatEndRow = document.getElementById("repeat_end_row");
+    var repeatDowRow = document.getElementById("repeat_dow_row");
+    
+    if (repeatVal == "") {
+        if (repeatIntervalRow) repeatIntervalRow.style.display = "none";
+        if (repeatEndRow) repeatEndRow.style.display = "none";
+        if (repeatDowRow) repeatDowRow.style.display = "none";
+    } else {
+        if (repeatIntervalRow) repeatIntervalRow.style.display = "";
+        if (repeatEndRow) repeatEndRow.style.display = "";
+        toggle_repeat_end();
+        
+        if (repeatVal == "Weekly") {
+            if (repeatDowRow) repeatDowRow.style.display = "";
+        } else {
+            if (repeatDowRow) repeatDowRow.style.display = "none";
+        }
+    }
+
+    var intervalTextElm = document.getElementById('repeat-interval-text');
+    if (intervalTextElm && typeof SUGAR.language.languages.app_list_strings['repeat_intervals'] != 'undefined') {
+        intervalTextElm.innerHTML = SUGAR.language.languages.app_list_strings['repeat_intervals'][repeatVal];
+    }
+};
+
+window.toggle_repeat_end = function() {
+    var repeatCountRadio = document.getElementById("repeat_count_radio");
+    var repeatUntilRadio = document.getElementById("repeat_until_radio");
+    var repeatUntilInput = document.getElementById("repeat_until_input");
+    var repeatCountInput = document.querySelector("input[name='repeat_count']");
+    var repeatUntilTrigger = document.getElementById("repeat_until_trigger");
+
+    if (!repeatCountRadio || !repeatUntilRadio || !repeatUntilInput || !repeatCountInput || !repeatUntilTrigger) {
+        return;
+    }
+
+    if (repeatCountRadio.checked) {
+        repeatUntilInput.disabled = true;
+        repeatCountInput.disabled = false;
+        repeatUntilTrigger.style.display = "none";
+
+        if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
+            removeFromValidate('EditView', 'repeat_until');
+        }
+        if (typeof addToValidateMoreThan === 'function') {
+            addToValidateMoreThan('EditView', 'repeat_count', 'int', true, 'Repeat Count', 1);
+        }
+    } else if (repeatUntilRadio.checked) {
+        repeatCountInput.disabled = true;
+        repeatUntilInput.disabled = false;
+        repeatUntilTrigger.style.display = "";
+
+        if (typeof validate != "undefined" && typeof validate['EditView'] != "undefined") {
+            removeFromValidate('EditView', 'repeat_count');
+        }
+        if (typeof addToValidate === 'function') {
+            addToValidate('EditView', 'repeat_until', 'date', true, 'Repeat Until');
+        }
+    }
+
+    var editContainer = document.getElementById('cal-edit_c');
+    if (editContainer) {
+        var pickerContainer = document.getElementById('container_repeat_until_trigger_c');
+        if (pickerContainer) {
+            pickerContainer.style.zIndex = editContainer.style.zIndex + 1;
+        }
+    }
+};
 
 document.addEventListener('DOMContentLoaded', function () {
-  // Make sure all the form elements exist before trying to access them
     var repeatBookingCheckbox = document.getElementById('periodic_booking');
     if (repeatBookingCheckbox) {
         repeatBookingCheckbox.addEventListener('change', toggle_repeat_booking);
-        
         toggle_repeat_booking();
     }
     
@@ -539,258 +593,104 @@ document.addEventListener('DOMContentLoaded', function () {
         toggle_repeat_type();
     }
     
-    var repeatOptions = document.getElementById('repeat_options');
     var form = document.getElementById('EditView');
-    var type = document.getElementById("type");
-    var previousType = type ? type.value : '';
-    var previousStartDateHours = "09";
-    var previousStartDateMinutes = "00";
-    var previousEndDateHours = "18";
-    var previousEndDateMinutes = "00";
-
-/**
-Handler for changes to the event type
-*/
-if (type) {
-type.addEventListener("change", function() {
-var repeatStartHour = document.getElementById('repeat_start_hour');
-var repeatStartMinute = document.getElementById('repeat_start_minute');
-var repeatFinalHour = document.getElementById('repeat_final_hour');
-var repeatFinalMinute = document.getElementById('repeat_final_minute');
-if (!repeatStartHour || !repeatStartMinute || !repeatFinalHour || !repeatFinalMinute) {
-return;
-}
-if (!allDayTypes.includes(type.value)) {
-if (allDayTypes.includes(previousType)) {
-// Recover previous values
-repeatStartHour.value = previousStartDateHours;
-repeatStartMinute.value = previousStartDateMinutes;
-repeatFinalHour.value = previousEndDateHours;
-repeatFinalMinute.value = previousEndDateMinutes;
- // Show fields necessary with timed type records
- repeatStartHour.style.display = 'inline-block';
- repeatStartMinute.style.display = 'inline-block';
- 
- var repeatHoursText = document.getElementById('repeat-hours-text');
- var endDateRow = document.getElementById('endDateRow');
- 
- if (repeatHoursText) repeatHoursText.style.display = 'inline-block';
- if (endDateRow) endDateRow.style.display = 'table-row';
-}
-} else {
-if (!allDayTypes.includes(previousType)) {
-// Store in previous values
-previousStartDateHours = repeatStartHour.value;
-previousStartDateMinutes = repeatStartMinute.value;
-previousEndDateHours = repeatFinalHour.value;
-previousEndDateMinutes = repeatFinalMinute.value;
- // Set all day values
- repeatStartHour.value = '0';
- repeatStartMinute.value = '0';
- repeatFinalHour.value = '0';
- repeatFinalMinute.value = '0';
- 
- // Hide fields not necessary with all day type records
- repeatStartHour.style.display = 'none';
- repeatStartMinute.style.display = 'none';
- 
- var repeatHoursText = document.getElementById('repeat-hours-text');
- var endDateRow = document.getElementById('endDateRow');
- 
- if (repeatHoursText) repeatHoursText.style.display = 'none';
- if (endDateRow) endDateRow.style.display = 'none';
-}
-}
-previousType = type.value;
-// Update duration if needed
-setHoursInfo();
-});
-}
-
-// Initialize repeat options when page loads
-if (repeatType && repeatOptions) {
-repeatType.addEventListener('change', toggle_repeat_type);
-// Setup initial display state
-function toggleRepeatOptions() {
-  const value = repeatType.value.toLowerCase();
-  if (['daily', 'weekly', 'monthly', 'yearly'].includes(value)) {
-    repeatOptions.style.display = '';
-  } else {
-    repeatOptions.style.display = 'none';
-  }
-}
-
-toggleRepeatOptions(); // Initial setup
-repeatType.addEventListener('change', toggleRepeatOptions);
-
-// Initialize repeat end options
-var repeatUntilRadio = document.getElementById("repeat_until_radio");
-var repeatCountRadio = document.getElementById("repeat_count_radio");
-
-if (repeatUntilRadio) {
-  repeatUntilRadio.addEventListener('change', toggle_repeat_end);
-}
-
-if (repeatCountRadio) {
-  repeatCountRadio.addEventListener('change', toggle_repeat_end);
-  toggle_repeat_end(); // Initial state setup
-}
-}
-// Add event listeners for duration calculation inputs
-var startHour = document.querySelector('[name=repeat_start_hour]');
-var startMinute = document.querySelector('[name=repeat_start_minute]');
-var finalHour = document.querySelector('[name=repeat_final_hour]');
-var finalMinute = document.querySelector('[name=repeat_final_minute]');
-var startDayInput = document.getElementById('repeat_start_day_input');
-var finalDayInput = document.getElementById('repeat_final_day_input');
-if (startHour) startHour.addEventListener('change', setHoursInfo);
-if (startMinute) startMinute.addEventListener('change', setHoursInfo);
-if (finalHour) finalHour.addEventListener('change', setHoursInfo);
-if (finalMinute) finalMinute.addEventListener('change', setHoursInfo);
-if (startDayInput) startDayInput.addEventListener('change', setHoursInfo);
-if (finalDayInput) finalDayInput.addEventListener('change', setHoursInfo);
-// Set default dates if needed
-if (startDayInput && !startDayInput.value) {
-startDayInput.value = new Date().toLocaleDateString();
-}
-if (finalDayInput && !finalDayInput.value) {
-finalDayInput.value = new Date().toLocaleDateString();
-}
-// Initial duration calculation
-if (startDayInput && finalDayInput) {
-setHoursInfo();
-}
-// Handle calendar picker events
-document.body.addEventListener('click', function(event) {
-if (event.target.closest('#container_repeat_start_day_trigger a')) {
-if (finalDayInput && startDayInput) {
-finalDayInput.value = startDayInput.value;
-setHoursInfo();
-}
-} else if (event.target.closest('#container_repeat_final_day_trigger a')) {
-setHoursInfo();
-}
-});
-// Form submission handling with resource collection
-if (form) {
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-      // Check if this is a periodic booking
-      var repeatBookingCheckbox = document.getElementById('periodic_booking');
-      var repeatType = document.getElementById('repeat_type');
-      var isPeriodic = repeatBookingCheckbox && repeatBookingCheckbox.checked  && repeatType && repeatType.value && repeatType.value !== "" && repeatType.value.toLowerCase() !== "none";
-      
-      // Process resource lines
-      var resourceLines = document.querySelectorAll('#resourceLine tr.resource_row');
-      if (resourceLines.length > 0) {
-        resourceLines.forEach(function(row, index) {
-          var resourceId = row.getAttribute('data-id');
-          var resourceName = row.querySelector('.resource_name input').value;
-          
-          // Add hidden inputs for each resource
-          if (!document.getElementById('resource_id_' + index)) {
-            var hiddenIdInput = document.createElement('input');
-            hiddenIdInput.type = 'hidden';
-            hiddenIdInput.name = 'resource_ids[]';
-            hiddenIdInput.id = 'resource_id_' + index;
-            hiddenIdInput.value = resourceId;
-            form.appendChild(hiddenIdInput);
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            var hiddenNameInput = document.createElement('input');
-            hiddenNameInput.type = 'hidden';
-            hiddenNameInput.name = 'resource_names[]';
-            hiddenNameInput.id = 'resource_name_' + index;
-            hiddenNameInput.value = resourceName;
-            form.appendChild(hiddenNameInput);
-          }
+            if (typeof check_form === 'function') {
+                var validationResult = check_form('EditView');
+                
+                if (!validationResult) {
+                    return false;
+                }
+            } else {
+                console.error('check_form no está disponible');
+            }
+            
+            var repeatBookingCheckbox = document.getElementById('periodic_booking');
+            var repeatType = document.getElementById('repeat_type');
+            var isPeriodic = repeatBookingCheckbox && 
+                             repeatBookingCheckbox.checked && 
+                             repeatType && 
+                             repeatType.value && 
+                             repeatType.value !== "" && 
+                             repeatType.value.toLowerCase() !== "none";
+            
+            
+            var resourceLines = document.querySelectorAll('#resourceLine tr.resource_row');
+            if (resourceLines.length > 0) {
+                resourceLines.forEach(function(row, index) {
+                    var resourceId = row.getAttribute('data-id');
+                    var resourceName = row.querySelector('.resource_name input').value;
+                    
+                    if (!document.getElementById('resource_id_' + index)) {
+                        var hiddenIdInput = document.createElement('input');
+                        hiddenIdInput.type = 'hidden';
+                        hiddenIdInput.name = 'resource_ids[]';
+                        hiddenIdInput.id = 'resource_id_' + index;
+                        hiddenIdInput.value = resourceId;
+                        form.appendChild(hiddenIdInput);
+                        
+                        var hiddenNameInput = document.createElement('input');
+                        hiddenNameInput.type = 'hidden';
+                        hiddenNameInput.name = 'resource_names[]';
+                        hiddenNameInput.id = 'resource_name_' + index;
+                        hiddenNameInput.value = resourceName;
+                        form.appendChild(hiddenNameInput);
+                    }
+                });
+            }
+            
+            if (isPeriodic) {
+                
+                if (!document.querySelector('input[name="action"][value="editview"]')) {
+                    $('<input>').attr({type: 'hidden', name: 'action', value: 'editview'}).appendTo(form);
+                    $('<input>').attr({type: 'hidden', name: 'module', value: 'stic_Bookings'}).appendTo(form);
+                    $('<input>').attr({type: 'hidden', name: 'periodic_action', value: 'createPeriodicBookingsRecords'}).appendTo(form);
+                }
+                
+                if (document.getElementById('repeat_count_radio') && document.getElementById('repeat_count_radio').checked) {
+                    var repeatCount = document.querySelector('input[name="repeat_count"]');
+                    if (repeatCount && !document.querySelector('input[name="repeat_count_hidden"]')) {
+                        $('<input>').attr({type: 'hidden', name: 'repeat_count_hidden', value: repeatCount.value}).appendTo(form);
+                    }
+                }
+                
+                if (document.getElementById('repeat_until_radio') && document.getElementById('repeat_until_radio').checked) {
+                    var repeatUntil = document.querySelector('input[name="repeat_until"]');
+                    if (repeatUntil && !document.querySelector('input[name="repeat_until_hidden"]')) {
+                        $('<input>').attr({type: 'hidden', name: 'repeat_until_hidden', value: repeatUntil.value}).appendTo(form);
+                    }
+                }
+                
+                var repeatIntervalSelect = document.querySelector('select[name="repeat_interval"]');
+                if (repeatIntervalSelect && !document.querySelector('input[name="repeat_interval_hidden"]')) {
+                    $('<input>').attr({type: 'hidden', name: 'repeat_interval_hidden', value: repeatIntervalSelect.value}).appendTo(form);
+                }
+                
+                if (repeatType.value === 'Weekly') {
+                    var dowCheckboxes = document.querySelectorAll('input[id^="repeat_dow_"]');
+                    dowCheckboxes.forEach(function(checkbox) {
+                        if (checkbox.checked) {
+                            var dowIndex = checkbox.id.replace('repeat_dow_', '');
+                            if (!document.querySelector('input[name="repeat_dow_' + dowIndex + '_hidden"]')) {
+                                $('<input>').attr({type: 'hidden', name: 'repeat_dow_' + dowIndex + '_hidden', value: '1'}).appendTo(form);
+                            }
+                        }
+                    });
+                }
+                
+                if (!document.querySelector('input[name="repeat_type_hidden"]')) {
+                    $('<input>').attr({type: 'hidden', name: 'repeat_type_hidden', value: repeatType.value}).appendTo(form);
+                }
+            }
+            
+            form.removeEventListener('submit', arguments.callee);
+            HTMLFormElement.prototype.submit.call(form);
         });
-  }
-  
-  // Handle periodic booking form fields
-  if (isPeriodic) {
-    console.log("Processing periodic booking fields");
-    
-    // Add proper form parameters for periodic booking
-    $('<input>').attr({
-      type: 'hidden',
-      name: 'action',
-      value: 'editview'
-    }).appendTo(form);
-    
-    $('<input>').attr({
-      type: 'hidden',
-      name: 'module',
-      value: 'stic_Bookings'
-    }).appendTo(form);
-    
-    $('<input>').attr({
-      type: 'hidden',
-      name: 'periodic_action',
-      value: 'createPeriodicBookingsRecords'
-    }).appendTo(form);
-    
-    // Process repeat count
-    if (document.getElementById('repeat_count_radio') && document.getElementById('repeat_count_radio').checked) {
-      var repeatCount = document.querySelector('input[name="repeat_count"]');
-      if (repeatCount && !document.querySelector('input[name="repeat_count_hidden"]')) {
-        $('<input>').attr({
-          type: 'hidden',
-          name: 'repeat_count_hidden',
-          value: repeatCount.value
-        }).appendTo(form);
-      }
     }
-    
-    // Process repeat until
-    if (document.getElementById('repeat_until_radio') && document.getElementById('repeat_until_radio').checked) {
-      var repeatUntil = document.querySelector('input[name="repeat_until"]');
-      if (repeatUntil && !document.querySelector('input[name="repeat_until_hidden"]')) {
-        $('<input>').attr({
-          type: 'hidden',
-          name: 'repeat_until_hidden',
-          value: repeatUntil.value
-        }).appendTo(form);
-      }
-    }
-    
-    // Process repeat interval
-    var repeatIntervalSelect = document.querySelector('select[name="repeat_interval"]');
-    if (repeatIntervalSelect && !document.querySelector('input[name="repeat_interval_hidden"]')) {
-      $('<input>').attr({
-        type: 'hidden',
-        name: 'repeat_interval_hidden',
-        value: repeatIntervalSelect.value
-      }).appendTo(form);
-    }
-    
-    // Process weekly day selections
-    if (repeatType.value === 'Weekly') {
-      var dowCheckboxes = document.querySelectorAll('input[id^="repeat_dow_"]');
-      if (dowCheckboxes.length > 0) {
-        dowCheckboxes.forEach(function(checkbox) {
-          if (checkbox.checked) {
-            var dowIndex = checkbox.id.replace('repeat_dow_', '');
-            $('<input>').attr({
-              type: 'hidden',
-              name: 'repeat_dow_' + dowIndex + '_hidden',
-              value: '1'
-            }).appendTo(form);
-          }
-        });
-      }
-    }
-    
-    // Add repeat_type value as hidden input
-    $('<input>').attr({
-      type: 'hidden',
-      name: 'repeat_type_hidden',
-      value: repeatType.value
-    }).appendTo(form);
-  }
-    
-  form.submit();
-});
-}
 });
 </script>
 {/literal}
