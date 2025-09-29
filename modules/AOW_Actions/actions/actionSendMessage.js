@@ -99,7 +99,6 @@ function edit_email_template_form(ln) {
 }
 
 function show_PhoneField(ln, cln, value){
-    debugger;
     if (typeof value === 'undefined') { value = ''; }
 
     flow_module = document.getElementById('flow_module').value;
@@ -126,14 +125,12 @@ function show_PhoneField(ln, cln, value){
 }
 
 function load_phoneline(ln, type, value){
-    debugger;
     cln = add_phoneLine(ln);
     document.getElementById("aow_actions_param"+ln+"_phone_target_type"+cln).value = type;
     show_PhoneField(ln, cln, value);
 }
 
 function add_phoneLine(ln){
-    debugger;
     var aow_phone_type_list = document.getElementById("aow_message_type_list").value;
 
     if(phoneln[ln] == null){phoneln[ln] = 0}
