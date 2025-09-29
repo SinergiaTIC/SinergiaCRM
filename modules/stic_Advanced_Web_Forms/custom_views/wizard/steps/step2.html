@@ -151,12 +151,14 @@
                 creatingField: false, 
                 showAllFields: false,
                 availableFields: [],
+                selectedFieldInfo: {},
                 newField: new AWF_Field(),
                 availableValueTypes: [],
                 availableTypesInForm: [],
                 mustInForm: false,
-                fixedValue:false,
+                fixedValue: false,
                 fixedValueOfOptions: false,
+                fixedValueOfRelated: false,
                 fixedType: 'text',
 
                 async loadFields() {
@@ -164,35 +166,41 @@
                   this.creatingField = !this.creatingField;
                 },
                 async reloadFields() {
-                  this.newField = new AWF_Field();
-
                   if (this.showAllFields) {
                     this.availableFields = item.getAvailableFieldsInformation();
                   } else {
                     this.availableFields = (item.getAvailableFieldsInformation().filter(f => f.inViews));
                   }
+
                   this.newField.name = this.availableFields[0]?.name;
                   this.handleFieldChange();
                 },
                 async handleFieldChange(){
-                  let selectedFieldInfo = this.availableFields.find(f => f.name == this.newField.name);
-                  this.newField.updateWithFieldInformation(selectedFieldInfo);
+                  this.selectedFieldInfo = this.availableFields.find(f => f.name == this.newField.name);
+                  this.newField = new AWF_Field();
+                  this.newField.name = this.selectedFieldInfo?.name;
+                  this.newField.updateWithFieldInformation(this.selectedFieldInfo);
+
                   this.availableValueTypes = this.newField.getAvailableValueTypes();
                   this.newField.value_type = this.availableValueTypes[0]?.id;
                   this.handleValueTypeChange();
                 },
                 async handleValueTypeChange() {
                   this.availableTypesInForm = this.newField.getAvailableTypesInForm();
+
                   this.fixedValue = this.newField.value_type == 'fixed';
                   this.fixedValueOfOptions = this.fixedValue && this.newField.value_options.length > 0;
+                  this.fixedValueOfRelated = this.fixedValue && this.selectedFieldInfo.type == 'relate';
+                  
                   if(this.newField.type == 'date' || this.newField.type == 'datetime' || this.newField.type == 'datetimecombo') {
                     this.fixedType = 'date';
                   } else {
                     this.fixedType = 'text';
                   }
+                  
                   this.mustInForm = this.newField.mustInForm();
-
                   this.newField.type_in_form = this.availableTypesInForm[0]?.id;
+                  this.handleTypeInFormChange();
                 },
                 async handleTypeInFormChange() {
 
@@ -207,15 +215,20 @@
                   item.fields.push(this.newField);
                   this.creatingField = false;
                 },
-                async openPopUp(idBase){
-                  debugger;
-                  open_popup('Contacts', 600, 400, '', true, false, 
-                             { 'form_name': `dataBlockFieldEditForm${item.id}`,
-                               'field_to_name_array': {'id':`${idBase}_id${item.id}`, 'name':`${idBase}_name${item.id}`},
-                               'call_back_function': 'handle_open_popup' },
-                             'MultiSelect', true);
+                async openPopUp(idBase, single=true) {
+                  let mode = 'single';
+                  if (single!=true) {
+                    mode = 'MultiSelect';
+                  }
+                  let destModule = this.formConfig.getRelationshipModule(item.id, this.selectedFieldInfo.options);
+                  open_popup(destModule, 600, 400, '', true, false, 
+                              { 
+                                'form_name': `dataBlockFieldEditForm${item.id}`,
+                                'field_to_name_array': {'id':`${idBase}_id${item.id}`, 'name':`${idBase}_name${item.id}`},
+                                'call_back_function': 'handle_open_popup' 
+                              }, mode, true);
                 }
-                }">
+              }">
                 <div class="row">
                   <button type="button" class="btn w-auto" x-show="!creatingField" @click="loadFields()">
                     [Añadir Campo]
@@ -265,7 +278,7 @@
                       <!-- Value (fixed value of enum) -->
                       <div class="col-3" x-show="fixedValueOfOptions">
                         <label :for="`dbField_ValFixOptions${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                               x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
                         <select :id="`dbField_ValFixOptions${item.id}`" class="form-select" x-model="newField.value" @change="handleValueChange()">
                           <template x-for="option in newField.value_options" :key="option.id">
                             <option :value="option.id" x-text="option.text"></option>
@@ -273,22 +286,23 @@
                         </select>
                       </div>
                       <!-- Value (fixed value of related) -->
-                      <div class="col-3 input-group">
+                      <div class="col-3" x-show="fixedValueOfRelated">
                         <label :for="`dbField_ValFixRel_name${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <input class="form-control" type="text" :id="`dbField_ValFixRel_name${item.id}`" :name="`dbField_ValFixRel_name${item.id}`" 
-                              x-model="newField.value_text" 
-                              autocomplete="off" @change="handleValueChange()" readonly/>
-                        <input type="hidden" :id="`dbField_ValFixRel_id${item.id}`" :name="`dbField_ValFixRel_id${item.id}`" x-model="newField.value" />
-                        <button class="btn" type="button" @click="openPopUp('dbField_ValFixRel')">
-                          <span class="suitepicon suitepicon-action-select"></span>
-                        </button>
-                        <button class="btn" type="button" @click="newField.value='';newField.value_text='';">
-                          <span class="suitepicon suitepicon-action-clear"></span>
-                        </button>
+                                x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                        <div class="input-group">
+                          <input class="form-control" type="text" :id="`dbField_ValFixRel_name${item.id}`" x-model="newField.value_text" 
+                                 autocomplete="off" @change="handleValueChange()" readonly style="background-color:rgb(255, 255, 255);" />
+                          <input type="hidden" :id="`dbField_ValFixRel_id${item.id}`" x-model="newField.value" />
+                          <button class="btn" type="button" @click="openPopUp('dbField_ValFixRel')">
+                            <span class="suitepicon suitepicon-action-select"></span>
+                          </button>
+                          <button class="btn" type="button" @click="newField.value='';newField.value_text='';">
+                            <span class="suitepicon suitepicon-action-clear"></span>
+                          </button>
+                        </div>
                       </div>
                       <!-- Value (fixed value) -->
-                      <div class="col-3" x-show="fixedValue && !fixedValueOfOptions">
+                      <div class="col-3" x-show="fixedValue && !fixedValueOfOptions && !fixedValueOfRelated">
                         <label :for="`dbField_ValFixDate${item.id}`" class="form-label"
                               x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
                         <input :id="`dbField_ValFixDate${item.id}`" :type="fixedType" class="form-control" x-model="newField.value" autocomplete="off" @change="handleValueChange()"/>

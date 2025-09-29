@@ -153,7 +153,6 @@ function set_wizard_assigned_user(popup_reply_data) {
 }
 
 function handle_open_popup(popup_reply_data) {
-  debugger;
   if (popup_reply_data.name_to_value_array) {
     Object.entries(popup_reply_data.name_to_value_array).forEach(el => {
       $(`#${el[0]}`).val(el[1]);

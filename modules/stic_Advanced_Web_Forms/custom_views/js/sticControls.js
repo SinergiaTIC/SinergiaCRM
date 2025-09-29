@@ -140,7 +140,7 @@ class sticControls {
 
     let html = `
     <div class="input-group">
-      <input class="form-control" type="text" id="${idName}" ${required} x-model="${modelName}" autocomplete="off" />
+      <input class="form-control" type="text" id="${idName}" ${required} x-model="${modelName}" autocomplete="off" readonly style="background-color:rgb(255, 255, 255);" />
       <input type="hidden" id="${idId}" x-model="${modelId}" />
       <button class="btn" type="button" 
         @click="open_popup('${module}', 600, 400, '', true, false, {${callBackFunctionStr},${fieldToNameArrayStr}},'${mode}', true);">

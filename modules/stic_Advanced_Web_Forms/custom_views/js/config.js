@@ -168,6 +168,8 @@ class AWF_Field {
     this.required_in_form = fieldInfo.required;
     this.type = fieldInfo.type;
 
+    // IEPA!!
+    // Les opcions només si calen finalment: Per a l'editor, que es busquin d'una altra forma
     this.value_options = [];
     if (fieldInfo.options && 
         fieldInfo.type != "relate" && 
