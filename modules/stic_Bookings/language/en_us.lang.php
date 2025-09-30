@@ -126,7 +126,7 @@ $mod_strings = array(
     'LBL_TOTAL_AMOUNT' => 'Total fee',
     'LBL_TOTAL_COPAYMENT_AMOUNT' => 'Total copayment fee',
 
-    //Repeat section
+    // Periodic bookings
     'LBL_CREATE_PERIODIC_RECORDS' => 'Create periodic records',
     'LBL_CANCEL_BUTTON' => 'Cancel',
     'LBL_REPEAT_DOW' => 'Day of week',
@@ -142,13 +142,12 @@ $mod_strings = array(
     'LBL_PERIODIC_BOOKINGS_SUMMARY_TITLE' => 'Summary:',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_PROCESSED' => 'Number of records processed',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE' => 'Number of records to create',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT' => 'Bookings created successfully.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_TO_CREATE_TEXT' => 'There are no incompatibilities with existing bookings, all requested records will be created.',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE' => 'Number of records not to create',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT' => 'Following bookings will not be created for the listed resources due to overlaps with existing bookings.',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Go to Booking calendar',
-    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => 'Go to Places calendar',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_RECORDS_NOT_TO_CREATE_TEXT' => 'The following records will not be created due to incompatibility with other existing bookings.',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Go to Bookings Calendar',
+    'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => 'Go to Places Calendar',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Go to Bookings',
-
     'LBL_PERIODIC_BOOKING_ERROR' => 'Periodic bookings error.',
     'LBL_PERIODIC_BOOKING_COUNT_REQUIRED' => 'Number of bookings is required.',
     'LBL_PERIODIC_BOOKING_UNTIL_REQUIRED' => 'End date is required.',
