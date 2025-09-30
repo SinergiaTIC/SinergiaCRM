@@ -128,9 +128,19 @@ array(
                     ),
                 ),
                 8 => array(
-                    0 => 'description',
+                    0 => array(
+                        'name' => 'total_amount',
+                        'label' => 'LBL_TOTAL_AMOUNT',
+                    ),
+                    1 => array(
+                        'name' => 'copayment_amount',
+                        'label' => 'LBL_TOTAL_COPAYMENT_AMOUNT',
+                    ),
                 ),
                 9 => array(
+                    0 => 'description',
+                ),     
+                10 => array(
                     0 => 'periodic_booking',
                 ),
             ),

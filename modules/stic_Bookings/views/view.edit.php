@@ -336,7 +336,7 @@ class stic_BookingsViewEdit extends ViewEdit
                     break;
                 }
             }
-            if ($isPlaceBooking && !$_REQUEST['loadFromSession']) {
+            if ($isPlaceBooking && (!isset($_REQUEST['loadFromSession']) || !$_REQUEST['loadFromSession'])) {
                 $this->bean->place_booking = true; 
             }
         }
