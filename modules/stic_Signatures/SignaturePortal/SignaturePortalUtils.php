@@ -92,12 +92,12 @@ class stic_SignaturePortalUtils
     public static function sendOtpToSigner($signerBean, $method = 'email',  $forceSend = false)
     {
         
-        $otpDatetime = $signerBean->db->getOne("SELECT verification_code_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
+        $otpDatetime = $signerBean->db->getOne("SELECT otp_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
         
       
         
         // if OTP was sent and not expired yet, do not send another one
-        if(!$forceSend && !empty($signerBean->verification_code_expiration) && $otpDatetime > date('Y-m-d H:i:s')) {
+        if(!$forceSend && !empty($signerBean->otp_expiration) && $otpDatetime > date('Y-m-d H:i:s')) {
             return ['success' => false, 'message' => 'OTP code already sent and not expired yet'];
         }
         
@@ -109,8 +109,8 @@ class stic_SignaturePortalUtils
         
         $maskedEmail = preg_replace('/(?<=.).(?=[^@]*?@)/', '*', $email);
         $otpCode = rand(100000, 999999);
-        $signerBean->verification_code = $otpCode;
-        $signerBean->verification_code_expiration = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+        $signerBean->otp = $otpCode;
+        $signerBean->otp_expiration = date('Y-m-d H:i:s', strtotime('+10 minutes'));
         $signerBean->save();
         // send email
         require_once 'modules/stic_Signers/Utils.php';
@@ -144,8 +144,8 @@ class stic_SignaturePortalUtils
     public static function verifyOtpCode($signerBean, $otpCode)
     {
         
-        $expireDatetime = $signerBean->db->getOne("SELECT verification_code_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
-        if ($signerBean->verification_code === $otpCode && $expireDatetime >= date('Y-m-d H:i:s')) {
+        $expireDatetime = $signerBean->db->getOne("SELECT otp_expiration FROM stic_signers WHERE id = '{$signerBean->id}'");
+        if ($signerBean->otp === $otpCode && $expireDatetime >= date('Y-m-d H:i:s')) {
             return true;
         } else {
             return false;

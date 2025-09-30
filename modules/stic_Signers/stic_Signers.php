@@ -56,7 +56,7 @@ class stic_Signers extends Basic
     public $unique_link;
     public $pdf_document;
     public $signature_date;
-    public $verification_code;
+    public $otp;
     public $signature_image;
     public $variables;
     public $rejection_reason;

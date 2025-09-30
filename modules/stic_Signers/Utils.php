@@ -200,7 +200,7 @@ class stic_SignersUtils
                             </head>
                             <body style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333;\">
 
-                            <h2>El código de verificación es {$signerBean->verification_code}</h2>
+                            <h2>El código de verificación es {$signerBean->otp}</h2>
                             <p style=\"margin-top: 20px;\">Este código es válido por 10 minutos.</p>
                             <p style=\"margin-top: 20px;\">Para completar el proceso, por favor, vuelve al portal de firmas e introduce el código en el campo correspondiente
                             </body>
