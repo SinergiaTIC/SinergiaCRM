@@ -148,7 +148,6 @@ $mod_strings = array(
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS_CALENDAR' => 'Ves al calendari de reserves',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => "Ves al calendari d'espais",
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Ves a les reserves',
-
     'LBL_PERIODIC_BOOKING_ERROR' => 'Error en reserves periòdiques.',
     'LBL_PERIODIC_BOOKING_COUNT_REQUIRED' => 'El nombre de reserves és obligatori.',
     'LBL_PERIODIC_BOOKING_UNTIL_REQUIRED' => 'La data de finalització és obligatòria.',
