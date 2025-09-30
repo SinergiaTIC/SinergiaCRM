@@ -80,14 +80,14 @@ class stic_Work_Calendar extends Basic
             $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
             $typeLabel = $app_list_strings['stic_work_calendar_types_list'][$this->type];
             $startDateInUTC = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
-            
+            $startDateInUserFormat = clone $startDateInUTC;
             if ($_REQUEST["action"] && $_REQUEST["action"] != "Save") // MassUpdate, API, Import..
             {
                 // Disable disable date_format so that $timedate object calculates start and end dates in user format when the action does not come from the user interface
                 $GLOBALS['disable_date_format'] = false;
-                $startDateInUserFormat = $timedate->asUser($startDateInUTC, $current_user);
+                $startDateInUserFormat = $timedate->asUser($startDateInUserFormat, $current_user);
             } else {
-                $startDateInUserFormat = $timedate->asUser($startDateInUTC, $current_user);
+                $startDateInUserFormat = $timedate->asUser($startDateInUserFormat, $current_user);
             }
 
             if (!in_array($this->type, self::ALL_DAY_TYPES)) {
@@ -98,7 +98,7 @@ class stic_Work_Calendar extends Basic
                 // If it is a new record or the type before the modification was not an all-day one
                 if (!isset($this->fetched_row['type']) || !in_array($this->fetched_row['type'], self::ALL_DAY_TYPES)) 
                 {
-                    $auxStartDate = $startDateInUTC;
+                    $auxStartDate = clone $startDateInUTC;
                     if ($_REQUEST["action"] != "Save")
                     {
                         // Convert $auxStartDate to UTC
@@ -141,7 +141,7 @@ class stic_Work_Calendar extends Basic
             }      
 
             // Set weekday field
-            if (isset($this->fetched_row['start_date']) && $this->start_date != $this->fetched_row['start_date']) {
+            if (!isset($this->fetched_row['start_date']) || $this->start_date != $this->fetched_row['start_date']) {
                 $this->weekday = date('w', strtotime($startDateInUTC));
             }
         }
