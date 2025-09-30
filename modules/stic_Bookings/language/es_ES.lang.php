@@ -149,8 +149,7 @@ $mod_strings = array(
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => 'Ir al calendario de espacios',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Ir a reservas',    
 
-    'LBL_PERIODIC_BOOKING_ERROR' => 'Error en el tipo de repetición.',
-    'LBL_PERIODIC_BOOKING_TYPE_REQUIRED' => 'El tipo de repetición es obligatorio para las reservas periódicas.',
+    'LBL_PERIODIC_BOOKING_ERROR' => 'Error en reservas periódicas.',
     'LBL_PERIODIC_BOOKING_COUNT_REQUIRED' => 'El número de reservas es obligatorio.',
     'LBL_PERIODIC_BOOKING_UNTIL_REQUIRED' => 'La fecha de finalización es obligatoria.',
 

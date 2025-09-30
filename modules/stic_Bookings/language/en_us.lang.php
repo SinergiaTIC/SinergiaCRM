@@ -149,8 +149,7 @@ $mod_strings = array(
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_PLACES_CALENDAR' => 'Go to Places calendar',
     'LBL_PERIODIC_BOOKINGS_SUMMARY_BUTTON_BOOKINGS' => 'Go to Bookings',
 
-    'LBL_PERIODIC_BOOKING_ERROR' => 'Repetition type error.',
-    'LBL_PERIODIC_BOOKING_TYPE_REQUIRED' => 'Repetition type is required for periodic bookings.',
+    'LBL_PERIODIC_BOOKING_ERROR' => 'Periodic bookings error.',
     'LBL_PERIODIC_BOOKING_COUNT_REQUIRED' => 'Number of bookings is required.',
     'LBL_PERIODIC_BOOKING_UNTIL_REQUIRED' => 'End date is required.',
     
