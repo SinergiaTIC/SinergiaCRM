@@ -38,3 +38,6 @@ $mod_strings['LBL_NAME'] = 'Name';
 $mod_strings['LBL_LIST_PROSPECT_LIST_NAME'] = 'Name';
 $mod_strings['LBL_OVERVIEW_PANEL'] = 'Overview';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
+
+// Many to Many filter fields
+$mod_strings['LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME'] = 'Contact';

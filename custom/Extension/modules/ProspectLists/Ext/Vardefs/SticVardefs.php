@@ -32,3 +32,20 @@ $dictionary['ProspectList']['fields']['name']['massupdate'] = false;
 $dictionary['ProspectList']['fields']['description']['rows'] = 2;
 
 $dictionary['ProspectList']['unified_search_default_enabled'] = false;
+
+// Many to Many filter fields
+$dictionary['ProspectList']['fields']['stic_prospect_lists_contacts_name']= array(
+    'name' => 'stic_prospect_lists_contacts_name',
+    'vname' => 'LBL_STIC_PROSPECT_LISTS_CONTACTS_NAME',
+    'query_type' => 'default',
+    'source' => 'non-db',
+    'type' => 'relate',
+    'width' => '10%',
+    'default' => true,
+    'studio' => array(
+        'searchview' => true, // To appear in the filter view layout editor
+        'visible' => false // To avoid appear in the record view layout editor
+    ),
+    'id_name' => 'related_id',
+    'module' => 'Contacts',
+);

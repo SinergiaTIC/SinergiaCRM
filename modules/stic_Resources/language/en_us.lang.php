@@ -85,4 +85,7 @@ $mod_strings = array(
     'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'The resource type cannot be changed because it has related bookings.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'A center is required',
     'LBL_PLACES' => 'Places',
+
+    // Many to Many filter fields
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Booking',
 );

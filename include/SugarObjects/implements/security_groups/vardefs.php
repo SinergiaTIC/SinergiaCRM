@@ -51,6 +51,23 @@ $vardefs = array(
             'source' => 'non-db',
             'vname' => 'LBL_SECURITYGROUPS',
         ),
+        // STIC-Custom AAM 20250925 - Many to Many Security Suite filter field
+        // Add securitygroups_name to searchFields if defined in searchdefs
+        'securitygroups_name' => array (
+            'name' => 'securitygroups_name',
+            'label' => 'LBL_SECURITYGROUPS_NAME',
+            'width' => '10%',
+            'default' => true,
+            'type' => 'relate',
+            'source' => 'non-db',
+            'studio' => array(
+                'searchview' => true, // To appear in the filter view layout editor
+                'visible' => false // To avoid appear in the record view layout editor
+            ),
+            'id_name' => true,
+            'module' => 'SecurityGroups',
+        ),
+        // END STIC-Custom
     ),
 
     'relationships' => array(
