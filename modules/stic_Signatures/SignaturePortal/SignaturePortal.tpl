@@ -4,9 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon" sizes="180x180" href="modules/stic_Signatures/SignaturePortal/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="modules/stic_Signatures/SignaturePortal/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="modules/stic_Signatures/SignaturePortal/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="modules/stic_Signatures/SignaturePortal/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="modules/stic_Signatures/SignaturePortal/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="modules/stic_Signatures/SignaturePortal/favicon/favicon-16x16.png">
     <link rel="manifest" href="modules/stic_Signatures/SignaturePortal/favicon/site.webmanifest">
     <title>SinergiaCRM - Portal de Firmas Electrónicas</title>
     {$BOOTSTRAP_CSS}
@@ -146,21 +149,25 @@
 
                 { if $STATUS === 'signed' }
                 <section class="signed-area text-center mt-4">
-                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">Documento firmado</h1> 
-                        <div class="text-center mb-4"><i class="bi bi-check-circle-fill text-success text-center" style="font-size: 4rem;"></i></div>
+                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">Documento firmado</h1>
+                    <div class="text-center mb-4"><i class="bi bi-check-circle-fill text-success text-center"
+                            style="font-size: 4rem;"></i></div>
                     <!-- <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
                         class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe> -->
-                    <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank"
-                        rel="noopener noreferrer"><i class="bi bi-cloud-download-fill"></i> Descargar
+                    <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank" rel="noopener noreferrer"><i
+                            class="bi bi-cloud-download-fill"></i> Descargar
                         documento firmado</a>
-                    <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank"
-                        rel="noopener noreferrer"><i class="bi bi-envelope-at-fill"></i> Enviame una copia por correo</a>
+                    <button id="send-signed-pdf-by-email" class="btn btn-primary"><i
+                            class="bi bi-envelope-at-fill"></i> Enviame una copia por correo</button>
                     <p class="text-sm text-secondary mt-3">
-                        El documento ha sido firmado electrónicamente. Puede copiar el siguiente código de verificación para 
+                        El documento ha sido firmado electrónicamente. Puede copiar el siguiente código de verificación
+                        para
                         comprobar en el futuro la validez de la firma:
                     </p>
                     <div class="verification-code bg-light p-2 rounded mt-2 d-inline-block">
-                        <code class="font-monospace">{$SIGNER_VERIFICATION_CODE}</code> <i class="bi bi-clipboard" onclick="navigator.clipboard.writeText('{$SIGNER_VERIFICATION_CODE}');alert('Texto copiado');" style="cursor: pointer;" title="Copiar al portapapeles"></i>
+                        <code class="font-monospace">{$SIGNER_VERIFICATION_CODE}</code> <i class="bi bi-clipboard"
+                            onclick="navigator.clipboard.writeText('{$SIGNER_VERIFICATION_CODE}');alert('Texto copiado');"
+                            style="cursor: pointer;" title="Copiar al portapapeles"></i>
                     </div>
 
 

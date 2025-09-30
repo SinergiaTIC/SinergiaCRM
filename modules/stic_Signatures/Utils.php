@@ -625,4 +625,6 @@ class stic_SignaturesUtils
         // Return the Base64-encoded image data
         return 'data:image/png;base64,' . base64_encode($imgData);
     }
+
+
 }

@@ -3746,3 +3746,5 @@ $app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = 'Codi de un so
 $app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = 'Correu electrònic enviat al signant';
 $app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'Portal de signatura obert pel signant';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'PDF signat descarregat pel signant';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'PDF signat enviat al signant';  
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signatura vençuda';

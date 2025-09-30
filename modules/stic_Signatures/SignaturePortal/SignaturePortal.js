@@ -489,5 +489,67 @@ document.addEventListener('DOMContentLoaded', () => {
         checkScrollPosition();
     }
 
+    
+    // --- Lógica para enviar el PDF firmado por correo ---
+    const sendEmailBtn = document.getElementById('send-signed-pdf-by-email');
+    if (sendEmailBtn) {
+        sendEmailBtn.addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const url = 'index.php';
+            const signerId = urlParams.get('signerId');
+            const data = {
+                module: "stic_Signers",
+                action: "sendSignedPdfByEmail",
+                signerId: signerId,
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data),
+            }).then(response => {
+                if (!response.ok) throw new Error('Network or server error');
+                return response.json();
+            }).then(data => {
+                console.log('Request to send signed PDF by email was successful:', data);
+                const successMessage = document.createElement('div');
+                successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                successMessage.innerHTML = `
+                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                            <h3 class="fs-4 fw-bold text-success mb-3">Correo enviado</h3>
+                            <p class="text-secondary mb-4">El documento firmado ha sido enviado a su correo electrónico.</p>
+                            <button id="closeMessageBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                        </div>
+                    `;
+
+                document.body.appendChild(successMessage);
+                document.getElementById('closeMessageBtn').addEventListener('click', () => {
+                    successMessage.remove();
+                });
+
+            }).catch(error => {
+                console.error('Error sending request to send signed PDF by email:', error);
+                const warningMessage = document.createElement('div');
+                warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                warningMessage.innerHTML = `
+                        <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                            <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
+                            <p class="text-secondary mb-4">Ha habido un error al enviar el documento firmado por correo electrónico.</p>
+                            <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                        </div>
+                    `;
+                document.body.appendChild(warningMessage);
+                document.getElementById('closeWarningBtn').addEventListener('click', () => {
+                    warningMessage.remove();
+                });
+            });
+        });
+    }
+   
+
+   
 
 });

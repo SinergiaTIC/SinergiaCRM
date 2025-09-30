@@ -88,4 +88,9 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Correu electrònic enviat correctament al firmant',
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Anar al document',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Si té problemes per accedir a l\'enllaç, copiï i enganxi\'l al seu navegador',
+    'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Còpia del seu document signat',
+    'LBL_SIGNED_PDF_EMAIL_BODY' => 'Adjunt trobarà una còpia del document que ha signat electrònicament. A continuació es mostra el codi de verificació del document signat per a la seva comprovació posterior:',
+    'LBL_SIGNED_PDF_REOPEN_PORTAL' => 'Pot tornar a accedir al portal de signatura utilitzant l\'enllaç següent:',
+
+    
 );

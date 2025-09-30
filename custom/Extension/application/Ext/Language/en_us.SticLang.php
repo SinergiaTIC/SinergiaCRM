@@ -3712,3 +3712,5 @@ $app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] =  'One-Time Pas
 $app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] =  'Email sent to signer';
 $app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] =  'Signer accessed the signing portal before signing';
 $app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'Signed document downloaded by signer';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = 'Signed document sent to signer by email';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'Signature process expired';

@@ -91,4 +91,8 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_OTP_SUBJECT' => 'Tu código OTP para firmar el documento',
     'LBL_OTP_SENT_SUCCESS' => 'El código OTP ha sido enviado a la dirección de correo electrónico del firmante.',
     'LBL_OTP_SENT_ERROR' => 'Error al enviar el código OTP al correo electrónico del firmante. Por favor, inténtalo de nuevo.',
+    'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copia de su documento firmado',
+    'LBL_SIGNED_PDF_EMAIL_BODY' => 'Adjunto encontrará una copia del documento que ha firmado electrónicamente. A continuación se muestra el código de verificación del documento firmado para su comprobación posterior:',
+    'LBL_SIGNED_PDF_REOPEN_PORTAL' => 'Puede volver a acceder al portal de firmas utilizando el siguiente enlace:',
+    
 );

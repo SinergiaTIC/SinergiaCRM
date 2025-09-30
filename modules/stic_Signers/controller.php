@@ -45,4 +45,28 @@ class stic_SignersController extends SugarController
         // Terminate script execution after sending or if signerId is empty
         die();
     }
+
+
+     /**
+     * Action to send the signed PDF document to the signer via email.
+     * It checks for the presence of the signer ID in the request and calls
+     * the utility function to send the email.
+     *
+     * @return void
+     */
+    public function action_sendSignedPdfByEmail()
+    {
+        require_once 'modules/stic_Signers/Utils.php';
+        if (!empty($_REQUEST['signerId'])) {
+            $result = stic_SignersUtils::sendSignedPdfByEmail($_REQUEST['signerId']);
+        } else {
+            $result = [
+                'success' => false,
+                'message' => 'No data provided',
+            ];
+        }
+        echo json_encode($result);
+        die();
+    }
+
 }

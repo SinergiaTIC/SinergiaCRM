@@ -146,6 +146,9 @@ class stic_SignaturesController extends SugarController
         die();
     }
 
+
+
+   
     /**
      * Action to accept the document by the signer in button mode.
      * It checks for the presence of the signer ID in the request and calls
@@ -168,14 +171,7 @@ class stic_SignaturesController extends SugarController
         die();
     }
 
-    public function action_showPortal()
-    {
-        require_once 'modules/stic_Signatures/Utils.php';
-        $id=$GLOBALS['db']->getOne("SELECT id FROM stic_signers where deleted=0 LIMIT 1");
-        SugarApplication::redirect("index.php?entryPoint=sticSign&signerId=$id");
-        die();
-    }
-
+    
  
     
 }
