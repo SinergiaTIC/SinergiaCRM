@@ -179,6 +179,7 @@ class Surveys extends Basic
                     $question = BeanFactory::newBean('SurveyQuestions');
                 }
                 $question->name = $val;
+                $question->required = isset($_POST['survey_questions_required'][$key]) ? 1 : 0;
                 $question->type = $_REQUEST['survey_questions_types'][$key];
                 $question->sort_order = $_REQUEST['survey_questions_sortorder'][$key];
                 $question->survey_id = $this->id;

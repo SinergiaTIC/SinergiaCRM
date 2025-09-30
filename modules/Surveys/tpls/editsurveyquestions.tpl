@@ -9,6 +9,9 @@
             {$MOD.LBL_SURVEY_TEXT}
           </th>
           <th>
+            {$MOD.LBL_SURVEY_REQUIRED}
+          </th>
+          <th>
             {$MOD.LBL_SURVEY_TYPE}
           </th>
             <th>{$MOD.LBL_SURVEY_ACTIONS}</th>
@@ -122,6 +125,7 @@
         + "<input type='hidden' class='surveyQuestionSortOrder' name='survey_questions_sortorder[" + createQuestion.questionCount + "]' value='" + createQuestion.questionCount + "'> "
         + "</td>";
       newRow += "<td><input class='surveyQuestionName' name='survey_questions_names[" + createQuestion.questionCount + "]' type='text'></td>";
+      newRow += "<td><input class='surveyQuestionRequired' name='survey_questions_required[" + createQuestion.questionCount + "]' type='checkbox'></td>";
       newRow += "<td><select class='surveyQuestionType' name='survey_questions_types[" + createQuestion.questionCount + "]'>{/literal}{$question_type_options}{literal}</select></td>";
       newRow += "<td>";
 
@@ -132,6 +136,8 @@
       newRow += "</td>";
       newRow += "</tr>";
       newRow += "<tr class='questionOptions' style='display: none;'>";
+      newRow += "<td>";
+      newRow += "</td>";
       newRow += "<td>";
       newRow += "</td>";
       newRow += "<td>";
@@ -149,6 +155,10 @@
       newRow = $(newRow);
       if (existing) {
         newRow.find('.surveyQuestionName').val(data.name);
+        console.log(data);
+        if (data.required === "1" || data.required === 1 || data.required === true) {
+            newRow.find('.surveyQuestionRequired').prop('checked', true);
+        }
         newRow.find('.surveyQuestionType').val(data.type);
         newRow.find('.surveyQuestionId').val(data.id);
       }
