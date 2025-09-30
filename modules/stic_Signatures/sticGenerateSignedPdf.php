@@ -302,5 +302,6 @@ class sticGenerateSignedPdf
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
             sugar_die("Error al generar o guardar el PDF: " . $e->getMessage());
         }
+        return $filePath;
     }
 }

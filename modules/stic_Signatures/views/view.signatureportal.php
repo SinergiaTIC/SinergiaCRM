@@ -140,7 +140,8 @@ class stic_SignaturePortal extends SugarView
             $documentHtmlContent = $stic_SignaturePortalUtils->getHtmlFromSigner();
             $this->ss->assign('SHOW_PORTAL', true);
             $this->ss->assign('SIGNER_NAME', $signerBean->parent_name);
-
+            
+            $this->ss->assign('SIGNER_VERIFICATION_CODE', $signerBean->verification_code);
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('OPEN_PORTAL_BEFORE_SIGN', $signerBean->id, 'SIGNER');
 

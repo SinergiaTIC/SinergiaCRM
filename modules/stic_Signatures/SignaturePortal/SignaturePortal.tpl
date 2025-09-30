@@ -146,12 +146,24 @@
 
                 { if $STATUS === 'signed' }
                 <section class="signed-area text-center mt-4">
-                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">Documento Firmado</h1>
-                    <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
-                        class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe>
+                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">Documento firmado</h1> 
+                        <div class="text-center mb-4"><i class="bi bi-check-circle-fill text-success text-center" style="font-size: 4rem;"></i></div>
+                    <!-- <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
+                        class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe> -->
                     <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank"
-                        rel="noopener noreferrer">Descargar
-                        Documento Firmado</a>
+                        rel="noopener noreferrer"><i class="bi bi-cloud-download-fill"></i> Descargar
+                        documento firmado</a>
+                    <a href="{$DOWNLOAD_URL}" class="btn btn-primary" target="_blank"
+                        rel="noopener noreferrer"><i class="bi bi-envelope-at-fill"></i> Enviame una copia por correo</a>
+                    <p class="text-sm text-secondary mt-3">
+                        El documento ha sido firmado electrónicamente. Puede copiar el siguiente código de verificación para 
+                        comprobar en el futuro la validez de la firma:
+                    </p>
+                    <div class="verification-code bg-light p-2 rounded mt-2 d-inline-block">
+                        <code class="font-monospace">{$SIGNER_VERIFICATION_CODE}</code> <i class="bi bi-clipboard" onclick="navigator.clipboard.writeText('{$SIGNER_VERIFICATION_CODE}');alert('Texto copiado');" style="cursor: pointer;" title="Copiar al portapapeles"></i>
+                    </div>
+
+
                 </section>
                 { /if }
 

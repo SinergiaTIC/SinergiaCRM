@@ -442,8 +442,9 @@ class stic_SignaturesUtils
             } else {
                 require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
                 // Generate the signed PDF after saving the signature
-                sticGenerateSignedPdf::generateSignedPdf('handwritten');
-
+                $savedFile = sticGenerateSignedPdf::generateSignedPdf('handwritten');
+                $signerBean->verification_code = self::getVerificationCodeForSignedPdf($savedFile);
+                $signerBean->save();
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
                 require_once 'modules/stic_Signature_Log/Utils.php';
                 stic_SignatureLogUtils::logSignatureAction('SIGNED_HANDWRITTEN_MODE', $signerBean->id, 'SIGNER');
@@ -451,6 +452,25 @@ class stic_SignaturesUtils
             }
         }
         return ['success' => false, 'message' => 'Error saving signature data.'];
+    }
+
+    /**
+     * Generates a verification code for a signed PDF associated with a given signer ID.
+     * The verification code is created by computing the SHA-256 hash of the signed PDF file.
+     *
+     * @param string $signerId The ID of the signer whose signed PDF is to be verified.
+     * @return string The SHA-256 hash of the signed PDF file, or an empty string if the file does not exist or the signer ID is invalid.
+     */
+    public static function getVerificationCodeForSignedPdf($pdfPath)
+    {
+
+        if (!file_exists($pdfPath)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signed PDF file does not exist for Signer ID: {$signerBean->id}");
+            return '';
+        }
+        $verificationCode = hash_file('sha256', $pdfPath);
+        return $verificationCode;
+
     }
 
     /**
@@ -541,7 +561,7 @@ class stic_SignaturesUtils
 
         // Check if the background image exists
         if (!file_exists($background_image_path)) {
-            // If the background image does not exist, create a simple placeholder image with an error message 
+            // If the background image does not exist, create a simple placeholder image with an error message
             $width = 200;
             $height = 50;
             $image = imagecreatetruecolor($width, $height);
@@ -549,7 +569,7 @@ class stic_SignaturesUtils
             imagefill($image, 0, 0, $bg_color);
             $text_color = imagecolorallocate($image, 255, 0, 0); // Texto rojo
             imagestring($image, 3, 10, 10, "Error: Fondo no encontrado!", $text_color);
-            imagestring($image, 3, 10, 30, join(' ',$lines), $text_color);
+            imagestring($image, 3, 10, 30, join(' ', $lines), $text_color);
         } else {
             //  create the image from the background PNG file
             $image = imagecreatefrompng($background_image_path);
@@ -570,7 +590,7 @@ class stic_SignaturesUtils
             // Check if the font file exists
             if (!file_exists($font_path)) {
                 // If the font file does not exist, use a built-in font
-                imagestring($image, 5, 5, 15, join(' ',$lines), $text_color);
+                imagestring($image, 5, 5, 15, join(' ', $lines), $text_color);
             } else {
                 // If the font file exists, use TrueType fonts for better quality
                 $font_size = 9;
@@ -602,7 +622,7 @@ class stic_SignaturesUtils
         // Free up memory
         imagedestroy($image);
 
-        // Return the Base64-encoded image data 
+        // Return the Base64-encoded image data
         return 'data:image/png;base64,' . base64_encode($imgData);
     }
 }

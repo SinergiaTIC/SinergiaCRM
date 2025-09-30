@@ -84,6 +84,7 @@ array(
                         'studio' => 'visible',
                         'label' => 'LBL_ON_BEHALF_OF_ID',
                     ),
+                  
                 ),
                 5 => array(
                     0 => 'description',
@@ -91,7 +92,14 @@ array(
                         'name' => 'stic_signatures_stic_signers_name',
                     ),
                 ),
+                6 => array(
+                    0 => array(
+                        'name' => 'verification_code',
+                        'label' => 'LBL_VERIFICATION_CODE',
+                    ),
+                    1 => '',
             ),
         ),
+    ),
     ),
 );
