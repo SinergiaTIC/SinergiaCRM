@@ -79,7 +79,7 @@ $mod_strings = array(
     'LBL_STIC_BOOKINGS_STIC_FAMILIES_FROM_STIC_FAMILIES_TITLE' => 'Unitat familiar que reserva',
     'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromís de pagament',
 
-    // Cadenes de la secció "Afegeix recursos"
+    // Recursos de la reserva
     'LBL_RESOURCES' => 'Recursos',
     'LBL_PLACES' => 'Places',
     'LBL_RESOURCES_NAME' => 'Nom',
