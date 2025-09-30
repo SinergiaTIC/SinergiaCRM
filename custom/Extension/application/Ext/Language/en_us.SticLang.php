@@ -96,6 +96,9 @@ $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'New message';
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
 
+// Many to Many filter fields
+$app_strings['LBL_SECURITYGROUPS_NAME'] = 'Security Group';
+
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';
 $app_list_strings['moduleList']['Contacts'] = 'Contacts';

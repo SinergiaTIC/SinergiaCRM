@@ -37,22 +37,30 @@ class stic_Personal_EnvironmentLogicHooks {
             $name = '';
             if (!empty($bean->stic_families_stic_personal_environmentstic_families_ida)) {
                     $relatedBean = SticUtils::getRelatedBeanObject($bean, 'stic_families_stic_personal_environment');
-                    $name = $relatedBean->name;
+                    if($relatedBean) {
+                        $name = $relatedBean->name;
+                    }
             } elseif (!empty($bean->stic_personal_environment_contactscontacts_ida)) {
                     $relatedBean = SticUtils::getRelatedBeanObject($bean, 'stic_personal_environment_contacts');
-                    $name = $relatedBean->first_name . ' ' . $relatedBean->last_name;
+                    if($relatedBean) {
+                        $name = $relatedBean->first_name . ' ' . $relatedBean->last_name;
+                    }
             }
 
             if (!empty($bean->stic_personal_environment_contacts_1contacts_ida)) {
                 $relatedContactBean = SticUtils::getRelatedBeanObject($bean, 'stic_personal_environment_contacts_1');
-                $concat_field_1 = $relatedContactBean->first_name . " " . $relatedContactBean->last_name;
+                if($relatedContactBean) {
+                    $concatField1 = $relatedContactBean->first_name . " " . $relatedContactBean->last_name;
+                }
             } else if (!empty($bean->stic_personal_environment_accountsaccounts_ida)) {
                 $relatedAccountBean = SticUtils::getRelatedBeanObject($bean, 'stic_personal_environment_accounts');
-                $concat_field_1 = $relatedAccountBean->name;
+                if($relatedAccountBean) {
+                    $concatField1 = $relatedAccountBean->name;
+                }
             }
 
-            $concat_field_2 = $app_list_strings['stic_personal_environment_relationships_list'][$bean->relationship_type];
-            $bean->name = $concat_field_1 . " - " . $concat_field_2 . " - " . $name;
+            $concatField2 = $app_list_strings['stic_personal_environment_relationships_list'][$bean->relationship_type];
+            $bean->name = $concatField1 . " - " . $concatField2 . " - " . $name;
         }
     }
 }
