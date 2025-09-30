@@ -38,3 +38,6 @@ $mod_strings['LBL_STIC_REGISTRATIONS_MEETINGS_FROM_STIC_REGISTRATIONS_TITLE'] = 
 $mod_strings['LBL_MEETING_INFORMATION'] = 'Overview';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Record details';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
+
+// Many to Many filter fields
+$mod_strings['LBL_STIC_MEETINGS_CONTACTS_NAME'] = 'Contact';

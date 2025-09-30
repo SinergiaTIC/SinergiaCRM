@@ -89,6 +89,9 @@ $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 // Mass emailing
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
 
+// Many to Many filter fields
+$app_strings['LBL_SECURITYGROUPS_NAME'] = 'Security Group';
+
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';
 $app_list_strings['moduleList']['Contacts'] = 'Contacts';
@@ -3714,3 +3717,4 @@ $app_list_strings['stic_advanced_web_forms_action_type_list']['group'] = 'Agrupa
 $app_list_strings['stic_advanced_web_forms_sections_type_list']['panel'] = 'Panel';
 $app_list_strings['stic_advanced_web_forms_sections_type_list']['tab'] = 'Pestaña';
 $app_list_strings['stic_advanced_web_forms_sections_type_list']['accordion'] = 'Acordeón';
+

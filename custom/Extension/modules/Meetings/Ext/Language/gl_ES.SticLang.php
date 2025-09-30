@@ -38,3 +38,6 @@ $mod_strings['LBL_STIC_REGISTRATIONS_MEETINGS_FROM_STIC_REGISTRATIONS_TITLE'] = 
 $mod_strings['LBL_MEETING_INFORMATION'] = 'Datos xerais';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles do rexistro';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
+
+// Campos de filtro en relaciones muchos a muchos
+$mod_strings['LBL_STIC_MEETINGS_CONTACTS_NAME'] = 'Persona';
