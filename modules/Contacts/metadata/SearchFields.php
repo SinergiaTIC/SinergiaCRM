@@ -434,5 +434,28 @@ $searchFields['Contacts'] = array (
       'query_type' => 'default',
       'enable_range_search' => true,
     ),
+    'stic_prospect_lists_contacts_name' => array (
+      'query_type' => 'format',
+      'operator' => 'subquery',
+      'subquery' => 'SELECT plp.related_id 
+          FROM prospect_lists_prospects plp 
+          INNER JOIN prospect_lists pl ON pl.id = plp.prospect_list_id AND pl.deleted = 0
+          WHERE plp.deleted = 0 AND plp.related_type = \'Contacts\' AND pl.name LIKE \'{0}\'',
+      'db_field' => array (
+          0 => 'id',
+      ),
+    ),
+    'stic_current_projects_contacts_name' => array (
+      'query_type' => 'format',
+      'operator' => 'subquery',
+      'subquery' => 'SELECT scrcc.stic_contacts_relationships_contactscontacts_ida FROM stic_contacts_relationships_contacts_c scrcc
+          INNER JOIN stic_contacts_relationships_project_c scrpc ON scrpc.stic_conta0d5aonships_idb = scrcc.stic_contae394onships_idb AND scrpc.deleted = 0
+          INNER JOIN stic_contacts_relationships scr ON scr.id = scrcc.stic_contae394onships_idb AND scr.deleted = 0
+          INNER JOIN project p ON p.id = scrpc.stic_contacts_relationships_projectproject_ida AND p.deleted = 0
+          WHERE scrcc.deleted = 0 AND scr.active = 1 AND p.name  LIKE \'{0}\'',
+      'db_field' => array (
+          0 => 'id',
+      ),
+    ),
 );
 // END STIC-Custom 
