@@ -3740,7 +3740,6 @@ $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campaña';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correo electrónico';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
-$app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
 // Elementos añadidos al Historial

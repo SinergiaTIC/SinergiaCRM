@@ -3740,7 +3740,6 @@ $app_list_strings['emailTemplates_type_list']['campaign'] = 'Campanya';
 $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificació';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
-$app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
 // Elements afegits a l'Historial
