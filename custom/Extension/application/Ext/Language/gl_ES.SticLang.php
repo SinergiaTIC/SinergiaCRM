@@ -3742,7 +3742,6 @@ $app_list_strings['emailTemplates_type_list']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
 
 // Elementos añadidos al Historial
-$app_list_strings['collection_temp_list'] = array();
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tarefas';
 $app_list_strings['collection_temp_list']['Meetings'] = 'Reunións';
 $app_list_strings['collection_temp_list']['Calls'] = 'Chamadas';
