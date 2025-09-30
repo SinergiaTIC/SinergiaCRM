@@ -58,3 +58,20 @@ $dictionary['Meeting']['fields']['outlook_id']['massupdate'] = 0;
 $dictionary['Meeting']['fields']['parent_name']['massupdate']='1';
 $dictionary['Meeting']['fields']['status']['massupdate']='1';
 $dictionary['Meeting']['fields']['date_start']['massupdate']='1';
+
+// Many to Many filter fields
+$dictionary['Meeting']['fields']['stic_meetings_contacts_name']= array(
+    'name' => 'stic_meetings_contacts_name',
+    'vname' => 'LBL_STIC_MEETINGS_CONTACTS_NAME',
+    'query_type' => 'default',
+    'source' => 'non-db',
+    'type' => 'relate',
+    'width' => '10%',
+    'default' => true,
+    'studio' => array(
+        'searchview' => true, // To appear in the filter view layout editor
+        'visible' => false // To avoid appear in the record view layout editor
+    ),
+    'id_name' => 'contact_id',
+    'module' => 'Contacts',
+);

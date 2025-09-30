@@ -44,6 +44,17 @@ array(
     'range_end_date' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
     'start_range_end_date' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
     'end_range_end_date' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'stic_resources_stic_bookings_name' => array (
+        'query_type' => 'format',
+        'operator' => 'subquery',
+        'subquery' => 'SELECT rsbk.stic_resources_stic_bookingsstic_bookings_idb 
+            FROM stic_resources_stic_bookings_c rsbk 
+            INNER JOIN stic_resources rs ON rs.id = rsbk.stic_resources_stic_bookingsstic_resources_ida AND rs.deleted = 0
+            WHERE rsbk.deleted = 0 AND rs.name LIKE \'{0}\'',
+        'db_field' => array (
+            0 => 'id',
+        ),
+    ),
     //Range Search Support
     'favorites_only' => array(
         'query_type' => 'format',

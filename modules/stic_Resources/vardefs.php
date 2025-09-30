@@ -396,6 +396,21 @@ $dictionary['stic_Resources'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_STIC_RESOURCES_STIC_BOOKINGS_FROM_STIC_BOOKINGS_TITLE',
         ),
+        // Many to Many filter fields
+        'stic_resources_stic_bookings_name' => array (
+            'name' => 'stic_resources_stic_bookings_name',
+            'label' => 'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME',
+            'width' => '10%',
+            'default' => true,
+            'type' => 'relate',
+            'source' => 'non-db',
+            'studio' => array(
+                'searchview' => true, // To appear in the filter view layout editor
+                'visible' => false // To avoid appear in the record view layout editor
+            ),
+            'id_name' => 'stic_resources_stic_bookingsstic_bookings_idb',
+            'module' => 'stic_Bookings',
+        ),
         'stic_resources_stic_centers' => array(
             'name' => 'stic_resources_stic_centers',
             'type' => 'link',

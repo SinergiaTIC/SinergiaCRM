@@ -160,4 +160,7 @@ $mod_strings = array(
 
     // Tooltips help
     'LBL_ALL_DAY_HELP' => 'Se a casilla está marcada, a reserva  efectuarase en días completos. Se está desmarcada, poden establecerse as horas de inicio e fin.',
+
+    // Campos de filtro en relaciones muchos a muchos
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Recurso',
 );
