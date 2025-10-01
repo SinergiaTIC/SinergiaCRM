@@ -106,6 +106,11 @@ $mod_strings = array (
   'LBL_DUPLICATE_CHECK' => 'Detección de duplicados',
   'LBL_RELATIONSHIPS' => 'Relaciones',
 
+  'LBL_ADD_FIELD_FORM' => 'Añadir campo en el formulario',
+  'LBL_ADD_FIELD_UNLINKED' => 'Añadir campo no enlazado en el formulario',
+  'LBL_ADD_FIELD_HIDDEN' => 'Añadir valor fijo',
+
+  
   'LBL_FIELD' => 'Campo',
   'LBL_FIELDS_SHOW_ALL' => 'Mostrar todos los campos',
   'LBL_FIELD_LABEL' => 'Etiqueta',
@@ -124,6 +129,7 @@ $mod_strings = array (
 
   'LBL_RELATIONSHIP' => 'Relación',
   'LBL_MODULE' => 'Módulo',
+  'LBL_MODULE_RELATED' => 'Sin módulo relacionado',
   'LBL_DATABLOCK' => 'Bloque de datos',
   'LBL_NEW_DATABLOCK_NAME' => 'Nuevo Bloque de datos',
 

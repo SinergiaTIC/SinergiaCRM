@@ -45,7 +45,10 @@ class AWF_DataBlock {
    * @returns {string}
    */
   getTextDescription() {
-    return `${utils.translateForFieldLabel('LBL_MODULE')} ${this.getModuleInformation().text}`;
+    if (this.module) {
+      return `${utils.translateForFieldLabel('LBL_MODULE')} ${this.getModuleInformation().text}`;
+    }
+    return utils.translate('LBL_MODULE_RELATED');
   }
 
   /**
@@ -54,7 +57,10 @@ class AWF_DataBlock {
    * FieldInformation: { name, text, type, required, options, inViews }
    */
   getAvailableFieldsInformation() {
-    let allFieldsInfo = this.getModuleInformation().fields;
+    let allFieldsInfo = this.getModuleInformation()?.fields;
+    if (!allFieldsInfo) {
+      return [];
+    }
     // FieldInformation: { name, text, type, required, options, inViews }
 
     return Object.values(allFieldsInfo).filter(fi => !this.fields.some(f => f.name == fi.name) );
@@ -195,8 +201,26 @@ class AWF_Field {
     return this.value_type == "editable" || this.value_type == "selectable";
   }
 
-  getAvailableValueTypes() {
+  getAvailableValueTypes(type) {
     let valueTypes = AWF_Field.value_typeList();
+    if (type == 'unlinked') {
+      return valueTypes.filter(t => t.id == 'fixed');
+    } 
+    if (type == 'form') {
+      if (this.type != 'relate' && this.type != 'enum' && this.type != 'multienum') {
+        return valueTypes.filter(t => t.id == 'editable');
+      } else {
+        return valueTypes.filter(t => t.id == 'selectable');
+      }
+    }
+    if (type == 'hidden') {
+      let types = valueTypes.filter(t => t.id == 'fixed');
+      if (this.type == 'relate') {
+        types.push(valueTypes.find(t => t.id == 'dataBlock'));
+      }
+      return types;
+    }
+
     return valueTypes.filter(t => {
       if (t.id == "editable") {
         return this.type != "relate" && this.type != "enum" && this.type != "multienum";

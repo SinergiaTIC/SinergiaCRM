@@ -12,7 +12,7 @@ function wizardForm(readOnly) {
     step1: {},
     step2: {
       allDatablockRelationships: {},
-      loadDatablockRelationships() {
+      async loadDatablockRelationships() {
         this.allDatablockRelationships = window.alpineComponent.formConfig.getAllDataBlockRelationships();
       },
       usedDatablockRelationships(datablockId) {
