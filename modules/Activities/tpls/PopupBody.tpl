@@ -39,7 +39,6 @@
  */
 *}
 {sugar_include type="smarty" file="modules/Activities/tpls/PopupHeader.tpl"}
-
 <div class="content">
     <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
@@ -56,6 +55,10 @@
         </li>
         <li role="presentation"><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">{$mod.LBL_NOTES}</a>
         </li>
+        {* STIC Custom 20240909 EPS - SMS Messages *}
+        <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">{$mod.LBL_Messages}</a>
+        </li>
+        {* END STIC Custom *}
     </ul>
 
     <div class="tab-content">
@@ -344,6 +347,55 @@
             </table>
 
         </div>
+{*  STIC Custom 20240909 EPS - SMS Messages *}
+        <div role="tabpanel" class="tab-pane" id="messages">
+            <table class="list view table-responsive subpanel-table">
+                <thead>
+                <tr class="footable-header">
+                    <th>
+                        <img class="blank-space" src="include/images/blank.gif">
+                    </th>
+                    <th>{$mod.LBL_LIST_SUBJECT}</th>
+                    <th>{$mod.LBL_LIST_STATUS}</th>
+                    <th>{$mod.LBL_LIST_CONTACT}</th>
+                    <th>{$mod.LBL_LIST_DATE}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach from=$messagesList key=k item=activity}
+
+                    <!-- BEGIN: row -->
+                    <tr>
+                        <td>
+                            <span class="suitepicon suitepicon-module-{$activity.module|lower|replace:'_':'-'}"></span>
+                        </td>
+                        <td>{$activity.name} {$activity.attachment}</td>
+                        <td>{$activity.status}</td>
+                        <td>{$activity.contact_name}</td>
+                        <td>{$activity.date_modified} </td>
+                    </tr>
+                    <!--  BEGIN: description -->
+                    <tr>
+                        <td colspan="1"></td>
+                        <td colspan="4">
+                            <table>
+                                <tr>
+                                    <td>{$activity.description}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <!--  END: description -->
+
+
+                {/foreach}
+
+                </tbody>
+                <!-- END: row -->
+            </table>
+
+        </div>
+    {* END STIC Custom*}
     </div>
 </div>
 
