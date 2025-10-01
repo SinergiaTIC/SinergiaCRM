@@ -209,3 +209,4 @@ $dictionary['Document']['fields']['selected_revision_filename']['massupdate'] = 
 $dictionary['Document']['fields']['aos_contracts']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_shared_document_link_c']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_sessions_documents_name']['massupdate'] = 0;
+

@@ -42,6 +42,7 @@ $mod_strings = array(
     'LBL_DELETED' => 'Eliminado',
     'LBL_NAME' => 'Nome',
     'LBL_LIST_NAME' => 'Nome',
+    'LBL_LIST_CLOSE' => 'Cerrar',
     'LBL_EDIT_BUTTON' => 'Editar',
     'LBL_REMOVE' => 'Desvincular',
     'LBL_ASCENDING' => 'Ascendente',
@@ -85,4 +86,7 @@ $mod_strings = array(
     'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No se puede cambiar el tipo de recurso porque tiene reservas asociadas.',
     'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
     'LBL_PLACES' => 'Plazas',
+
+    // Campos de filtro en relaciones muchos a muchos
+    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Reserva',
 );

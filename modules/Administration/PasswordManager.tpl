@@ -338,7 +338,11 @@
 											<tr>
 												<td width="25%" scope="row" valign='middle'>
 													{$MOD.LBL_LDAP_ENABLE}{sugar_help text=$MOD.LBL_LDAP_HELP_TXT}
-												</td><td valign='middle'><input name="system_ldap_enabled" id="system_ldap_enabled" class="checkbox"  type="checkbox" {$system_ldap_enabled_checked} onclick='toggleDisplay("ldap_display");enableDisablePasswordTable("system_ldap_enabled");'></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+												{* STIC-Custom AAM 20250825 - Adding OAuth Authentication providers *}
+												{* https://github.com/SinergiaTIC/SinergiaCRM/pull/552 *}
+												{* </td><td valign='middle'><input name="system_ldap_enabled" id="system_ldap_enabled" class="checkbox"  type="checkbox" {$system_ldap_enabled_checked} onclick='toggleDisplay("ldap_display");enableDisablePasswordTable("system_ldap_enabled");'></td><td>&nbsp;</td><td>&nbsp;</td></tr> *}
+												</td><td valign='middle'><input name="system_ldap_enabled" id="system_ldap_enabled" class="checkbox"  type="checkbox" {$system_ldap_enabled_checked} onclick='toggleDisplay("ldap_display");enableDisablePasswordTable("system_ldap_enabled");disabledOauthCheckbox();'></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+												{* END STIC-Custom *}
 											<tr>
 												<td colspan='4'>
 													<table  cellspacing='0' cellpadding='1' id='ldap_display' style='display:{$ldap_display}' width='100%'>
@@ -489,7 +493,11 @@
                                     <input name="authenticationClass" id="system_saml_enabled" class="checkbox"
                                        value="SAML2Authenticate" type="checkbox"
                                        {if $saml_enabled_checked}checked="1"{/if}
-                                       onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");'>
+									{* STIC-Custom AAM 20250825 - Adding OAuth Authentication providers *}
+									{* https://github.com/SinergiaTIC/SinergiaCRM/pull/552 *}
+                                       {* onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");'> *}
+                                       onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");disabledOauthCheckbox();'>
+									   {* END STIC-Custom *}
                                     </td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                  <tr>
                                     <td colspan='4'>
@@ -521,6 +529,61 @@
 					</td>
 				</tr>
 			</table>
+			{* STIC-Custom AAM 20250825 - Adding OAuth Authentication providers *}
+			{* https://github.com/SinergiaTIC/SinergiaCRM/pull/552 *}
+			<table id='oauth_table' class="edit view" w width="100%" border="0" cellspacing="1" cellpadding="0">
+				<tr>
+					<th align="left" scope="row" colspan='2'>
+						<h4>{$MOD.LBL_OAUTH_AUTHENTICATION_TITLE}</h4>
+					</th>
+				</tr>
+				<tr>
+					<td width="25%" scope="row" valign='middle'>{$MOD.LBL_OAUTH_AUTH_ENABLE}
+						{sugar_help text=$MOD.LBL_OAUTH_AUTH_ENABLE_HELP}
+					</td>
+					{if !empty($config.authenticationClass)
+						&& $config.authenticationClass == 'OAuthAuthenticate'}
+						{assign var='oauth_auth_enabled_checked' value='CHECKED'}
+					{else}
+						{assign var='oauth_auth_enabled_checked' value=''}
+					{/if}
+					<td>
+						<input name="authenticationClass" id="oauth_auth_enabled" class="checkbox"
+							value="OAuthAuthenticate" type="checkbox" {$oauth_auth_enabled_checked}>
+					</td>
+				</tr>
+			</table>
+			{$OAUTH_AUTHENTICATION_PROVIDERS}
+			{literal}
+			<script>
+				const oauthCheckbox = document.getElementById("oauth_auth_enabled");
+				document.addEventListener("DOMContentLoaded", () => {
+					toggleOauthTables();
+					oauthCheckbox.addEventListener("change", toggleOauthTables);
+
+				});
+				function disabledOauthCheckbox() {
+						document.getElementById('oauth_auth_enabled').checked = false;
+						toggleOauthTables();
+				}
+				function toggleOauthTables() {
+					document.querySelectorAll('table[name="oauth_auth_provider"]').forEach(tbl => {
+						tbl.style.display = oauthCheckbox.checked ? "table" : "none";
+					});
+					if (oauthCheckbox.checked) {
+						if (document.getElementById('system_saml_enabled').checked) {
+							document.getElementById('system_saml_enabled').checked = '';
+							toggleDisplay("saml_display");
+						}
+						if (document.getElementById('system_ldap_enabled').checked) {
+							document.getElementById('system_ldap_enabled').checked = '';
+							toggleDisplay("ldap_display");
+						}
+					}
+				}
+			</script>
+			{/literal}
+			{* END STIC-Custom *}
 			<div style="padding-top: 2px;">
                      <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" id="btn_save" type="submit" onclick="addcheck(form);return check_form('ConfigurePasswordSettings');" name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" />
                      &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" />
