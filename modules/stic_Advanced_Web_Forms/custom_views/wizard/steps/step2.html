@@ -39,426 +39,530 @@
     <h2 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')"></h2>
     <div class="flex-fill border rounded p-2 overflow-auto">
       <!-- Main Content -->
-      <!-- Dettached DataBlocks -->
-      <template x-for="(item, key) in formConfig.data_blocks.filter(d => !d.module)">
-        <div class="card datablock">
-          <!-- DataBlock header -->
-          <div class="card-header d-flex flex-column">
-            <div class="d-flex justify-content-between align-items-center">
-              <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" 
-                  x-init="sticControls.editableText($el);"></h3>
-              <span class="btn suitepicon suitepicon-action-delete" x-show="!item.required" @click="deleteDataBlock(key);"></span>
-            </div>
-          </div>
-          <!-- DataBlock body -->
-          <div class="card-body">
-            <!-- Fields Definition -->
-            <div :id="`dataBlockFields${item.id}`">
-              [Los campos del Bloque de datos]
-              <!-- Fields Details -->
-              <div x-data="{ showDataFieldsTable: false}">
-                <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
-                      data-model="showDataFieldsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
-                <div class="card p-2 overflow-auto" x-show="showDataFieldsTable">
-                  <div class="mt-3" :id="`dataFieldsTable${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
+
+      <!-- DataBlocks -->
+      <template x-for="(item, key) in formConfig.data_blocks">
+        <div x-data="{
+          async openPopUp(idBase, single=true) {
+            let mode = 'single';
+            if (single!=true) {
+              mode = 'MultiSelect';
+            }
+            let destModule = this.formConfig.getRelationshipModule(item.id, this.selectedFieldInfo.options);
+            open_popup(destModule, 600, 400, '', true, false, 
+                        { 
+                          'field_to_name_array': {'id':`${idBase}_id${item.id}`, 'name':`${idBase}_name${item.id}`},
+                          'call_back_function': 'handle_open_popup' 
+                        }, mode, true);
+          }
+        }">
+          <!-- Dettached DataBlocks -->
+          <template x-if="!item.module">
+            <div class="card datablock">
+              <!-- DataBlock header -->
+              <div class="card-header d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" 
+                      x-init="sticControls.editableText($el);"></h3>
+                  <span class="btn suitepicon suitepicon-action-delete" x-show="!item.required" @click="deleteDataBlock(key);"></span>
                 </div>
               </div>
-              <div x-effect="item.checkDataBlock()"></div>
-              <!-- Add Field -->
-              <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
-                creatingField: false, 
-                newField: new AWF_Field(),
-
-                async startAddField() {
-                  this.creatingField = true;
-                },
-
-                async handleCreateField() {
-                  // item.fields.push(this.newField);
-                  this.creatingField = false;
-                },
-                }">
-                <div class="row">
-                  <button type="button" class="btn w-auto" x-show="!creatingField" @click="startAddField()">
-                    [Añadir Campo]
-                  </button>
-                  <h4 x-show="creatingField">[Añadir Campo]</h4>
-                </div>
-                <div x-show="creatingField">
-                  <form :id="`dataBlockFieldEditForm${item.id}`" :name="`dataBlockFieldEditForm${item.id}`">
-                    <div class="row align-items-end">
-                      <!-- Field -->
-                      <!-- Value type -->
-                      <!-- Type in form -->
-                      <!-- Value (fixed value of enum) -->
-                      <!-- Value (fixed value of related) -->
-                      <!-- Value (fixed value) -->
-                      <!-- Value options -->
-                      <!-- Value Text-->
-                      <!-- Label -->
-                      <!-- Required in form -->
-                      <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
-                        <span class="suitepicon suitepicon-action-confirm"></span>
-                      </button>
-                      <button type="button" class="btn w-32px mb-1px" @click="creatingField = false;">
-                        <span class="suitepicon suitepicon-action-clear"></span>
-                      </button>
+              <!-- DataBlock body -->
+              <div class="card-body">
+                <!-- Fields in Form Definition -->
+                <div :id="`dataBlockFields${item.id}`">
+                  [Los campos del Bloque de datos]
+                  <!-- Fields Details -->
+                  <div x-data="{ showDataFieldsTable: false}">
+                    <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
+                          data-model="showDataFieldsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                    <div class="card p-2 overflow-auto" x-show="showDataFieldsTable">
+                      <div class="mt-3" :id="`dataFieldsTable${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
                     </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-
-            <!-- Accordion Headers -->
-            <div :id="`dataDef_${item.id}`"
-                 :data-sections="JSON.stringify([
-                                 {headerText:`utils.translate('LBL_FIELDS') + ' (' + item.fields.length +')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                                ]);"
-                 x-init="sticControls.accordion($el)"></div>
-          </div>
-        </div>
-      </template>      
-      <!-- Attached DataBlocks -->
-      <template x-for="(item, key) in formConfig.data_blocks.filter(d => d.module)">
-        <div class="card datablock">
-          <!-- DataBlock header -->
-          <div class="card-header d-flex flex-column">
-            <div class="d-flex justify-content-start datablock-module"> 
-              <span class="mb-0 text-muted small" x-text="item.getTextDescription()"></span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center">
-              <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" 
-                  x-init="sticControls.editableText($el);"></h3>
-              <span class="btn suitepicon suitepicon-action-delete" x-show="!item.required" @click="deleteDataBlock(key);"></span>
-            </div>
-          </div>
-          <!-- DataBlock body -->
-          <div class="card-body">
-            <!-- Fields Definition -->
-            <div :id="`dataBlockFields${item.id}`">
-              [Los campos del Bloque de datos]
-              <!-- Fields Details -->
-              <div x-data="{ showDataFieldsTable: false}">
-                <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
-                      data-model="showDataFieldsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
-                <div class="card p-2 overflow-auto" x-show="showDataFieldsTable">
-                  <div class="mt-3" :id="`dataFieldsTable${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
-                </div>
-              </div>
-              <div x-effect="item.checkDataBlock()"></div>
-              <!-- Add Field -->
-              <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
-                creatingField: false, 
-                showAllFields: false,
-                availableFields: [],
-                selectedFieldInfo: {},
-                newField: new AWF_Field(),
-                availableValueTypes: [],
-                availableTypesInForm: [],
-                mustInForm: false,
-                fixedValue: false,
-                fixedValueOfOptions: false,
-                fixedValueOfRelated: false,
-                fixedType: 'text',
-
-                async loadFields() {
-                  this.reloadFields();
-                  this.creatingField = !this.creatingField;
-                },
-                async reloadFields() {
-                  if (this.showAllFields) {
-                    this.availableFields = item.getAvailableFieldsInformation();
-                  } else {
-                    this.availableFields = (item.getAvailableFieldsInformation().filter(f => f.inViews));
-                  }
-
-                  this.newField.name = this.availableFields[0]?.name;
-                  this.handleFieldChange();
-                },
-                async handleFieldChange(){
-                  this.selectedFieldInfo = this.availableFields.find(f => f.name == this.newField.name);
-                  this.newField = new AWF_Field();
-                  this.newField.name = this.selectedFieldInfo?.name;
-                  this.newField.updateWithFieldInformation(this.selectedFieldInfo);
-
-                  this.availableValueTypes = this.newField.getAvailableValueTypes();
-                  this.newField.value_type = this.availableValueTypes[0]?.id;
-                  this.handleValueTypeChange();
-                },
-                async handleValueTypeChange() {
-                  this.availableTypesInForm = this.newField.getAvailableTypesInForm();
-
-                  this.fixedValue = this.newField.value_type == 'fixed';
-                  this.fixedValueOfOptions = this.fixedValue && this.newField.value_options.length > 0;
-                  this.fixedValueOfRelated = this.fixedValue && this.selectedFieldInfo.type == 'relate';
-                  
-                  if(this.newField.type == 'date' || this.newField.type == 'datetime' || this.newField.type == 'datetimecombo') {
-                    this.fixedType = 'date';
-                  } else {
-                    this.fixedType = 'text';
-                  }
-                  
-                  this.mustInForm = this.newField.mustInForm();
-                  this.newField.type_in_form = this.availableTypesInForm[0]?.id;
-                  this.handleTypeInFormChange();
-                },
-                async handleTypeInFormChange() {
-
-                },
-                async handleValueOptionsChange() {
-                  this.newField.value_text = this.newField.value_options.find(o => o.id == this.newField.value)?.text ?? '';
-                },
-                async handleValueChange() {
-
-                },
-                async handleCreateField() {
-                  item.fields.push(this.newField);
-                  this.creatingField = false;
-                },
-                async openPopUp(idBase, single=true) {
-                  let mode = 'single';
-                  if (single!=true) {
-                    mode = 'MultiSelect';
-                  }
-                  let destModule = this.formConfig.getRelationshipModule(item.id, this.selectedFieldInfo.options);
-                  open_popup(destModule, 600, 400, '', true, false, 
-                              { 
-                                'form_name': `dataBlockFieldEditForm${item.id}`,
-                                'field_to_name_array': {'id':`${idBase}_id${item.id}`, 'name':`${idBase}_name${item.id}`},
-                                'call_back_function': 'handle_open_popup' 
-                              }, mode, true);
-                }
-              }">
-                <div class="row">
-                  <button type="button" class="btn w-auto" x-show="!creatingField" @click="loadFields()">
-                    [Añadir Campo]
-                  </button>
-                  <h4 x-show="creatingField">[Añadir Campo]</h4>
-                </div>
-                <div x-show="creatingField">
-                  <form :id="`dataBlockFieldEditForm${item.id}`" :name="`dataBlockFieldEditForm${item.id}`">
-                    <div class="row align-items-end">
-                      <!-- Field -->
-                      <div class="col-3">
-                        <label :for="`dbField_field${item.id}`" class="form-label"
-                          x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
-                        <!-- Show all fields -->
-                        <div class="text-muted form-check form-switch small">
-                          <label :for="`dbField_field_allcheck${item.id}`" class="form-label"
-                                  x-text="utils.translateForFieldLabel('LBL_FIELDS_SHOW_ALL')"></label>
-                          <input class="form-check-input form-switch" type="checkbox" role="switch"
-                                  :id="`dbField_field_allcheck${item.id}`" x-model="showAllFields" @change="reloadFields()"/>
-                        </div>
-                        <select :id="`dbField_field${item.id}`" class="form-select" x-model="newField.name" @change="handleFieldChange()">
-                          <template x-for="field in availableFields" :key="field.name">
-                            <option :value="field.name" x-text="field.text"></option>
-                          </template>
-                        </select>
-                      </div>
-                      <!-- Value type -->
-                      <div class="col-3">
-                        <label :for="`dbField_ValueType${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
-                        <select :id="`dbField_ValueType${item.id}`" class="form-select" x-model="newField.value_type" @change="handleValueTypeChange()">
-                          <template x-for="type in availableValueTypes" :key="type.id">
-                            <option :value="type.id" x-text="type.text"></option>
-                          </template>
-                        </select>
-                      </div>
-                      <!-- Type in form -->
-                      <div class="col-3" x-show="availableTypesInForm.length > 1">
-                        <label :for="`dbField_TypeForm${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
-                        <select :id="`dbField_TypeForm${item.id}`" class="form-select" x-model="newField.type_in_form" @change="handleTypeInFormChange()">
-                          <template x-for="type in availableTypesInForm" :key="type.id">
-                            <option :value="type.id" x-text="type.text"></option>
-                          </template>
-                        </select>
-                      </div>
-                      <!-- Value (fixed value of enum) -->
-                      <div class="col-3" x-show="fixedValueOfOptions">
-                        <label :for="`dbField_ValFixOptions${item.id}`" class="form-label"
-                               x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <select :id="`dbField_ValFixOptions${item.id}`" class="form-select" x-model="newField.value" @change="handleValueChange()">
-                          <template x-for="option in newField.value_options" :key="option.id">
-                            <option :value="option.id" x-text="option.text"></option>
-                          </template>
-                        </select>
-                      </div>
-                      <!-- Value (fixed value of related) -->
-                      <div class="col-3" x-show="fixedValueOfRelated">
-                        <label :for="`dbField_ValFixRel_name${item.id}`" class="form-label"
-                                x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <div class="input-group">
-                          <input class="form-control" type="text" :id="`dbField_ValFixRel_name${item.id}`" x-model="newField.value_text" 
-                                 autocomplete="off" @change="handleValueChange()" readonly style="background-color:rgb(255, 255, 255);" />
-                          <input type="hidden" :id="`dbField_ValFixRel_id${item.id}`" x-model="newField.value" />
-                          <button class="btn" type="button" @click="openPopUp('dbField_ValFixRel')">
-                            <span class="suitepicon suitepicon-action-select"></span>
+                  </div>
+                  <div x-effect="item.checkDataBlock()"></div>
+                  <!-- Add Field -->
+                  <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
+                    creatingField: false, 
+                    newField: new AWF_Field(),
+    
+                    async startAddField() {
+                      this.creatingField = true;
+                    },
+    
+                    async handleCreateField() {
+                      item.addField(this.newField);
+                      this.creatingField = false;
+                    },
+                    }">
+                    <div class="row">
+                      <button type="button" class="btn w-auto" x-show="!creatingField" @click="startAddField()">
+                        [Añadir Campo]
+                      </button>
+                      <h4 x-show="creatingField">[Añadir Campo]</h4>
+                    </div>
+                    <div x-show="creatingField">
+                      <form :id="`dataBlockFieldEditForm${item.id}`" :name="`dataBlockFieldEditForm${item.id}`">
+                        <div class="row align-items-end">
+                          <!-- Field -->
+                          <!-- Value type -->
+                          <!-- Type in form -->
+                          <!-- Value (fixed value of enum) -->
+                          <!-- Value (fixed value of related) -->
+                          <!-- Value (fixed value) -->
+                          <!-- Value options -->
+                          <!-- Value Text-->
+                          <!-- Label -->
+                          <!-- Required in form -->
+                          <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
+                            <span class="suitepicon suitepicon-action-confirm"></span>
                           </button>
-                          <button class="btn" type="button" @click="newField.value='';newField.value_text='';">
+                          <button type="button" class="btn w-32px mb-1px" @click="creatingField = false;">
                             <span class="suitepicon suitepicon-action-clear"></span>
                           </button>
                         </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+    
+                <!-- Accordion Headers -->
+                <div :id="`dataDef_${item.id}`"
+                    :data-sections="JSON.stringify([
+                                    {headerText:`utils.translate('LBL_FIELDS_FORM') + ' (' + item.fields.length +')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                                    ]);"
+                    x-init="sticControls.accordion($el)"></div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Attached DataBlocks -->
+          <template x-if="item.module">
+            <div class="card datablock">
+              <!-- DataBlock header -->
+              <div class="card-header d-flex flex-column">
+                <div class="d-flex justify-content-start datablock-module"> 
+                  <span class="mb-0 text-muted small" x-text="item.getTextDescription()"></span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" 
+                      x-init="sticControls.editableText($el);"></h3>
+                  <span class="btn suitepicon suitepicon-action-delete" x-show="!item.required" @click="deleteDataBlock(key);"></span>
+                </div>
+              </div>
+              <!-- DataBlock body -->
+              <div class="card-body">
+                <!-- Fields Definition -->
+                <div :id="`dataBlockFields${item.id}`"x-data="{ 
+                  creatingFieldForm: false,
+                  creatingFieldValue: false,
+
+                  async loadFields(inForm) {
+                    this.creatingFieldForm = inForm;
+                    this.creatingFieldValue = !inForm;
+                  },
+                }">
+                  <div class="border-bottom ps-3 pt-3 mb-2 bg-light">
+                    <!-- Buttons -->
+                    <div class="row">
+                      <button type="button" class="btn w-auto" x-show="!creatingFieldForm && !creatingFieldValue" @click="loadFields(true)">
+                        [Añadir Campo en el Formulario]
+                      </button>
+                      <h4 x-show="creatingFieldForm">[Añadir Campo en el Formulario]</h4>
+                      <button type="button" class="btn w-auto" x-show="!creatingFieldForm && !creatingFieldValue" @click="loadFields(false)">
+                        [Añadir Valor fijo]
+                      </button>
+                      <h4 x-show="creatingFieldValue">[Añadir Valor fijo]</h4>
+                    </div>
+
+                    <!-- Add Field in Form -->
+                    <!-- IEPA!! 
+                      Afegir a Field is_fixed o is_editable => Per crear un Field així i que es filtrin els tipus possibles!
+                     -->
+                    <!-- Add Hidden Field -->
+                  </div>
+
+                  <!-- Add Field -->
+                  <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
+                    creatingField: false, 
+                    showAllFields: false,
+                    availableFields: [],
+                    selectedFieldInfo: {},
+                    optionValues: [],
+                    newField: new AWF_Field(),
+                    availableValueTypes: [],
+                    availableTypesInForm: [],
+                    mustInForm: false,
+                    fixedValue: false,
+                    fixedValueOfOptions: false,
+                    fixedValueOfRelated: false,
+                    fixedValueOfDate: false,
+                    valueToday: false,
+    
+                    async loadFields() {
+                      this.reloadFields();
+                      this.creatingField = !this.creatingField;
+                    },
+                    async reloadFields() {
+                      this.newField = new AWF_Field();
+                      if (this.showAllFields) {
+                        this.availableFields = item.getAvailableFieldsInformation();
+                      } else {
+                        this.availableFields = (item.getAvailableFieldsInformation().filter(f => f.inViews));
+                      }
+    
+                      this.newField.name = this.availableFields[0]?.name;
+                      this.handleFieldChange();
+                    },
+                    async handleFieldChange(){
+                      this.selectedFieldInfo = this.availableFields.find(f => f.name == this.newField.name);
+                      this.optionValues = utils.getFieldOptions(this.selectedFieldInfo);
+                      this.newField = new AWF_Field();
+                      this.newField.name = this.selectedFieldInfo?.name;
+                      this.newField.updateWithFieldInformation(this.selectedFieldInfo);
+    
+                      this.availableValueTypes = this.newField.getAvailableValueTypes();
+                      this.newField.value_type = this.availableValueTypes[0]?.id;
+                      this.handleValueTypeChange();
+                    },
+                    async handleValueTypeChange() {
+                      this.availableTypesInForm = this.newField.getAvailableTypesInForm();
+    
+                      this.fixedValue = this.newField.value_type == 'fixed';
+                      this.fixedValueOfOptions = this.fixedValue && this.optionValues.length > 0;
+                      this.fixedValueOfRelated = this.fixedValue && this.selectedFieldInfo.type == 'relate';
+                      this.fixedValueOfDate = this.fixedValue && (this.newField.type == 'date' || this.newField.type == 'datetime' || this.newField.type == 'datetimecombo');
+                      this.valueToday = false;
+                      
+                      this.mustInForm = this.newField.mustInForm();
+                      this.newField.type_in_form = this.availableTypesInForm[0]?.id;
+                      this.handleValueChange();
+                      this.handleTypeInFormChange();
+                    },
+    
+                    async handleValueChange() {
+                      if (this.fixedValue) {
+                        if (this.fixedValueOfOptions) {
+                          this.newField.value_text = this.optionValues.find(o => o.id == this.newField.value)?.text ?? '';
+                        } else if(this.fixedValueOfDate) {
+                          if (this.valueToday) {
+                            this.newField.value_text = utils.translate('LBL_FIELD_VALUE_TODAY');
+                          } else {
+                            this.newField.value_text = '';
+                            if (this.newField.value) {
+                              const dateObj = new Date(this.newField.value);
+                              this.newField.value_text = new Intl.DateTimeFormat(undefined, {year:'numeric',month:'2-digit',day:'2-digit'}).format(dateObj);
+                            }
+                          }
+                        }
+                      }
+                    },
+    
+                    async handleTypeInFormChange() {
+    
+                    },
+                    async handleValueOptionsChange() {
+                      this.newField.value_text = this.optionValues.find(o => o.id == this.newField.value)?.text ?? '';
+                    },
+                    async handleCreateField() {
+                      item.addField(this.newField);
+                      this.creatingField = false;
+                    },
+                  }">
+                    <div class="row">
+                      <button type="button" class="btn w-auto" x-show="!creatingField" @click="loadFields()">
+                        [Añadir Campo]
+                      </button>
+                      <h4 x-show="creatingField">[Añadir Campo]</h4>
+                    </div>
+                    <div x-show="creatingField">
+                      <form :id="`dataBlockFieldEditForm${item.id}`" :name="`dataBlockFieldEditForm${item.id}`">
+                        <div class="row align-items-end">
+                          <!-- Field -->
+                          <div class="col-3">
+                            <label :for="`dbField_field${item.id}`" class="form-label"
+                              x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
+                            <!-- Show all fields -->
+                            <div class="text-muted form-check form-switch small">
+                              <label :for="`dbField_field_allcheck${item.id}`" class="form-label"
+                                      x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
+                              <input class="form-check-input form-switch" type="checkbox" role="switch"
+                                      :id="`dbField_field_allcheck${item.id}`" x-model="showAllFields" @change="reloadFields()"/>
+                            </div>
+                            <select :id="`dbField_field${item.id}`" class="form-select" x-model="newField.name" @change="handleFieldChange()">
+                              <template x-for="field in availableFields" :key="field.name">
+                                <option :value="field.name" x-text="field.text"></option>
+                              </template>
+                            </select>
+                          </div>
+                          <!-- Value type -->
+                          <div class="col-3">
+                            <label :for="`dbField_ValueType${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
+                            <select :id="`dbField_ValueType${item.id}`" class="form-select" x-model="newField.value_type" @change="handleValueTypeChange()">
+                              <template x-for="type in availableValueTypes" :key="type.id">
+                                <option :value="type.id" x-text="type.text"></option>
+                              </template>
+                            </select>
+                          </div>
+                          <!-- Value (fixed value of enum) -->
+                          <div class="col-3" x-show="fixedValueOfOptions">
+                            <label :for="`dbField_ValFixOptions${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                            <select :id="`dbField_ValFixOptions${item.id}`" class="form-select" x-model="newField.value" @change="handleValueChange()">
+                              <template x-for="option in optionValues" :key="option.id">
+                                <option :value="option.id" x-text="option.text"></option>
+                              </template>
+                            </select>
+                          </div>
+                          <!-- Value (fixed value of related) -->
+                          <div class="col-3" x-show="fixedValueOfRelated">
+                            <label :for="`dbField_ValFixRel_name${item.id}`" class="form-label"
+                                  x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')"></label>
+                            <div class="input-group">
+                              <input class="form-control" type="text" :id="`dbField_ValFixRel_name${item.id}`" x-model="newField.value_text" 
+                                    autocomplete="off" @change="handleValueChange()" readonly style="background-color:rgb(255, 255, 255);" />
+                              <input type="hidden" :id="`dbField_ValFixRel_id${item.id}`" x-model="newField.value" />
+                              <button class="btn" type="button" @click="openPopUp('dbField_ValFixRel')">
+                                <span class="suitepicon suitepicon-action-select"></span>
+                              </button>
+                              <button class="btn" type="button" @click="newField.value='';newField.value_text='';">
+                                <span class="suitepicon suitepicon-action-clear"></span>
+                              </button>
+                            </div>
+                          </div>
+                          <!-- Value (fixed value of date) -->
+                          <div class="col-3" x-show="fixedValueOfDate">
+                            <label :for="`dbField_ValFixDate${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                            <div class="form-switch">
+                              <label :for="`dbField_ValFixDate_Today${item.id}`" class="form-label"
+                                      x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TODAY')"></label>
+                              <input class="form-check-input form-switch" type="checkbox" role="switch"
+                                    :id="`dbField_ValFixDate_Today${item.id}`" x-model="valueToday" @change="handleValueChange()"/>
+                            </div>
+                            <input :id="`dbField_ValFixDate${item.id}`" type="date" class="form-control" autocomplete="off" 
+                                  :disabled="valueToday" x-model="newField.value" @change="handleValueChange()"/>
+                          </div>
+                          <!-- Value (fixed value) -->
+                          <div class="col-3" x-show="fixedValue && !fixedValueOfOptions && !fixedValueOfRelated && !fixedValueOfDate">
+                            <label :for="`dbField_ValFixText${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                            <input :id="`dbField_ValFixText${item.id}`" type="text" class="form-control"  autocomplete="off"
+                                  x-model="newField.value" @change="handleValueChange()"/>
+                          </div>
+                          <!-- Type in form -->
+                          <div class="col-3" x-show="!fixedValue && availableTypesInForm.length > 1">
+                            <label :for="`dbField_TypeForm${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
+                            <select :id="`dbField_TypeForm${item.id}`" class="form-select" x-model="newField.type_in_form" @change="handleTypeInFormChange()">
+                              <template x-for="type in availableTypesInForm" :key="type.id">
+                                <option :value="type.id" x-text="type.text"></option>
+                              </template>
+                            </select>
+                          </div>
+                          <!-- Value options -->
+                          <!-- <div class="col-3" x-show="newField.type_in_form == 'dropdown' && !fixedValueOfOptions">
+                            <label :for="`dbField_ValOptions${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')"></label>
+                            <select :id="`dbField_ValOptions${item.id}`" class="form-select" x-model="newField.value" @change="handleValueOptionsChange()">
+                              <template x-for="option in optionValues" :key="option.id">
+                                <option :value="option.id" x-text="option.text"></option>
+                              </template>
+                            </select>
+                          </div> -->
+                          <!-- Value Text-->
+                          <!-- <div class="col-3" x-show="mustInForm && !fixedValueOfOptions">
+                            <label :for="`dbField_ValText${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TEXT')"></label>
+                            <input :id="`dbField_ValText${item.id}`" type="text" class="form-control" x-model="newField.value_text" >
+                          </div> -->
+                          <!-- Label -->
+                          <div class="col-3" x-show="mustInForm">
+                            <label :for="`dbField_Label${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
+                            <input :id="`dbField_Label${item.id}`" type="text" class="form-control" x-model="newField.label" >
+                          </div>
+                          <!-- Required in form -->
+                          <div class="col-2 form-switch" x-show="mustInForm">
+                            <label :for="`dbField_ReqForm${item.id}`" class="form-label"
+                                  x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
+                            <input class="form-check-input form-switch" type="checkbox" role="switch"
+                                  :id="`dbField_ReqForm${item.id}`" x-model="newField.required_in_form"/>
+                          </div>
+                          <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
+                            <span class="suitepicon suitepicon-action-confirm"></span>
+                          </button>
+                          <button type="button" class="btn w-32px mb-1px" @click="creatingField = false;">
+                            <span class="suitepicon suitepicon-action-clear"></span>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>                  
+                  <!-- Fields summary Tabs -->
+                  <div>
+                    <!-- All Fields -->
+                    <div :id="`dataBlockFieldsAll${item.id}`">
+                      [Todos los campos del Bloque de datos]
+                      <!-- Fields Details -->
+                      <div x-data="{ showdataFieldsTableAll: false}">
+                        <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
+                              data-model="showdataFieldsTableAll" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                        <div class="card p-2 overflow-auto" x-show="showdataFieldsTableAll">
+                          <div class="mt-3" :id="`dataFieldsTableAll${item.id}`" :data-objects="'item.fields'" x-init="sticControls.elemTableObjects($el);"></div>
+                        </div>
                       </div>
-                      <!-- Value (fixed value) -->
-                      <div class="col-3" x-show="fixedValue && !fixedValueOfOptions && !fixedValueOfRelated">
-                        <label :for="`dbField_ValFixDate${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <input :id="`dbField_ValFixDate${item.id}`" :type="fixedType" class="form-control" x-model="newField.value" autocomplete="off" @change="handleValueChange()"/>
-                      </div>                    
-                      <!-- Value options -->
-                      <!-- <div class="col-3" x-show="newField.type_in_form == 'dropdown' && !fixedValueOfOptions">
-                        <label :for="`dbField_ValOptions${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')"></label>
-                        <select :id="`dbField_ValOptions${item.id}`" class="form-select" x-model="newField.value" @change="handleValueOptionsChange()">
-                          <template x-for="option in newField.value_options" :key="option.id">
-                            <option :value="option.id" x-text="option.text"></option>
+                    </div>
+                    <!-- Fields in Form -->
+                    <div :id="`dataBlockFieldsForm${item.id}`">
+                      [Los campos en el formulario del Bloque de datos] 
+                      <!-- Fields Details -->
+                      <div x-data="{ showDataFieldsTableForm: false}">
+                        <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
+                              data-model="showDataFieldsTableForm" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                        <div class="card p-2 overflow-auto" x-show="showDataFieldsTableForm">
+                          <div class="mt-3" :id="`dataFieldsTableForm${item.id}`" :data-objects="'item.fields.filter(f => f.isFieldInForm())'" x-init="sticControls.elemTableObjects($el);"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Hidden Fields -->
+                    <div :id="`dataBlockFieldsHidden${item.id}`">
+                      [Los campos fijos del Bloque de datos] 
+                      <!-- Fields Details -->
+                      <div x-data="{ showDataFieldsTableHidden: false}">
+                        <div class="text-muted form-check form-switch mt-3" :id="`dataFieldsDetails${item.id}`" 
+                              data-model="showDataFieldsTableHidden" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                        <div class="card p-2 overflow-auto" x-show="showDataFieldsTableHidden">
+                          <div class="mt-3" :id="`dataFieldsTableHidden${item.id}`" :data-objects="'item.fields.filter(f => !f.isFieldInForm())'" x-init="sticControls.elemTableObjects($el);"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Tab Headers -->
+                    <div :id="`dataBlockFieldsTabs${item.id}`"
+                         :data-sections="JSON.stringify([
+                                        {headerText:`utils.translate('LBL_FIELDS_ALL') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFieldsAll'+item.id},
+                                        {headerText:`utils.translate('LBL_FIELDS_FORM') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'`, selected:false, contentId:'dataBlockFieldsForm'+item.id},
+                                        {headerText:`utils.translate('LBL_FIELDS_HIDDEN') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'`, selected:false, contentId:'dataBlockFieldsHidden'+item.id},
+                                        ]);"
+                        x-init="sticControls.tabs($el)">
+                    </div>
+                  </div>
+                </div>
+                <!-- Duplicate Definition -->
+                <div :id="`dataBlockDuplicates${item.id}`">
+                  <div class="row">
+                    <!-- Action -->
+                    <div class="col-3" :id="`duplicateAction${item.id}`" :data-model="'item.duplicate_detection.on_duplicate'" data-label="LBL_ONDUPLICATE_ACTION"
+                          :data-map="utils.getList('stic_advanced_web_forms_datablocks_duplicate_action_list', true)" x-init="sticControls.fieldSelect($el)"></div>
+                    <!-- Fields -->
+                    <div class="col-9" :id="`duplicateFields${item.id}`" :data-model="'item.duplicate_detection.fields'" data-label="LBL_DUPLICATE_FIELDS"
+                          :data-map="`utils.getModuleInformation('${item.module}').fields`" data-map-property="text" data-multiple
+                          x-init="sticControls.fieldSelect($el)"></div>
+                  </div>
+                </div>
+                <!-- Relationships Definition -->
+                <div :id="`dataBlockRels${item.id}`">
+                  [Las relaciones del Bloque de datos]
+                    <!-- Relationships Details -->
+                  <div x-data="{ showRelationshipsTable: false}">
+                    <div class="text-muted form-check form-switch mt-3" :id="`dataRelationshipsDetails${item.id}`"
+                          data-model="showRelationshipsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
+                    <div class="card p-2 overflow-auto" x-show="showRelationshipsTable">
+                      <div class="mt-3" :id="`dataBlockRelsTable${item.id}`"
+                            :data-objects="`step2.usedDatablockRelationships('${item.id}')`" x-init="sticControls.elemTableObjects($el);"></div>
+                    </div>
+                  </div>
+                  <!-- Add Relationship -->
+                  <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
+                    creatingRelDataBlock: false,
+                    availableRels: [],
+                    selectedRelName:'',
+                    availableDataBlocks: [],
+                    selectedDataBlockId:'',
+                    newDataBlockText:'',
+                    relNewDataBlock:false,
+    
+                    async loadRelations() {
+                      this.availableRels = step2.unusedDatablockRelationships(item.id);
+                      this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
+                      this.availableDataBlocks = [];
+                      this.selectedDataBlockId = '';
+                      this.creatingRelDataBlock = !this.creatingRelDataBlock;
+                      this.handleRelationChange();
+                    },
+                    async handleRelationChange() {
+                      this.availableDataBlocks = formConfig.getAvailableDataBlocksForRelationship(item.id, this.selectedRelName);
+                      this.selectedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
+                      this.handleDataBlockChange();
+                    },
+                    async handleDataBlockChange() {
+                      this.newDataBlockText = '';
+                      this.relNewDataBlock = this.selectedDataBlockId == -1;
+                      if (this.relNewDataBlock) {
+                        this.newDataBlockText = formConfig.suggestDataBlockText(formConfig.getRelationshipModule(item.id, this.selectedRelName));
+                      }
+                    },
+                    async handleCreateRelationship(){
+                      formConfig.addDataBlockRelationship(item.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
+                      step2.loadDatablockRelationships();
+                      this.creatingRelDataBlock = false;
+                    },
+                    }">
+                    <div class="row">
+                      <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()">
+                        [Añadir Relación con otro Bloque de Datos]
+                      </button>
+                      <h4 x-show="creatingRelDataBlock">[Añadir Relación con otro Bloque de Datos]</h4>
+                    </div>
+                    <div class="row align-items-end" x-show="creatingRelDataBlock">
+                      <!-- Relationship -->
+                      <div class="col-3">
+                        <label :for="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-label"
+                              x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP')"></label>
+                        <select :id="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-select" x-model="selectedRelName" @change="handleRelationChange()">
+                          <template x-for="relation in availableRels" :key="relation.name">
+                            <option :value="relation.name" x-text="relation.textExtended"></option>
                           </template>
                         </select>
-                      </div> -->
-                      <!-- Value Text-->
-                      <!-- <div class="col-3" x-show="mustInForm && !fixedValueOfOptions">
-                        <label :for="`dbField_ValText${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TEXT')"></label>
-                        <input :id="`dbField_ValText${item.id}`" type="text" class="form-control" x-model="newField.value_text" >
-                      </div> -->
-                      <!-- Label -->
-                      <div class="col-3" x-show="mustInForm">
-                        <label :for="`dbField_Label${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
-                        <input :id="`dbField_Label${item.id}`" type="text" class="form-control" x-model="newField.label" >
                       </div>
-                      <!-- Required in form -->
-                      <div class="col-2 form-switch" x-show="mustInForm">
-                        <label :for="`dbField_ReqForm${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
-                        <input class="form-check-input form-switch" type="checkbox" role="switch"
-                              :id="`dbField_ReqForm${item.id}`" x-model="newField.required_in_form"/>
+                      <!-- Data Block -->
+                      <div class="col-3">
+                        <label :for="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-label"
+                              x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></label>
+                        <select :id="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-select" x-model="selectedDataBlockId" @change="handleDataBlockChange()">
+                          <template x-for="dataBlock in availableDataBlocks" :key="dataBlock.id">
+                            <option :value="dataBlock.id" x-text="dataBlock.text"></option>
+                          </template>
+                        </select>
                       </div>
-                      <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
+                      <!-- New Data Block -->
+                      <div class="col-3" x-show="relNewDataBlock">
+                        <label :for="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" class="form-label"
+                                x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK_NAME')"></label>
+                        <input :id="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" type="text" class="form-control" x-model="newDataBlockText" >
+                      </div>
+                      <button type="button" class="btn w-32px mb-1px" @click="handleCreateRelationship();">
                         <span class="suitepicon suitepicon-action-confirm"></span>
                       </button>
-                      <button type="button" class="btn w-32px mb-1px" @click="creatingField = false;">
+                      <button type="button" class="btn w-32px mb-1px" @click="creatingRelDataBlock = false;">
                         <span class="suitepicon suitepicon-action-clear"></span>
                       </button>
                     </div>
-                  </form>
+                  </div>
                 </div>
+    
+                <!-- Accordion Headers -->
+                <div :id="`dataDef_${item.id}`"
+                    :data-sections="JSON.stringify([
+                                    {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                                    {headerText:`utils.translate('LBL_DUPLICATE_CHECK') + ' ('+item.duplicate_detection.fields.length+' - '+item.duplicate_detection.on_duplicate+')'`, selected:false, contentId:'dataBlockDuplicates'+item.id},
+                                    {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
+                                    ]);"
+                    x-init="sticControls.accordion($el)"></div>
               </div>
             </div>
-            <!-- Duplicate Definition -->
-            <div :id="`dataBlockDuplicates${item.id}`">
-              <div class="row">
-                <!-- Action -->
-                <div class="col-3" :id="`duplicateAction${item.id}`" :data-model="'item.duplicate_detection.on_duplicate'" data-label="LBL_ONDUPLICATE_ACTION"
-                      :data-map="utils.getList('stic_advanced_web_forms_datablocks_duplicate_action_list', true)" x-init="sticControls.fieldSelect($el)"></div>
-                <!-- Fields -->
-                <div class="col-9" :id="`duplicateFields${item.id}`" :data-model="'item.duplicate_detection.fields'" data-label="LBL_DUPLICATE_FIELDS"
-                      :data-map="`utils.getModuleInformation('${item.module}').fields`" data-map-property="text" data-multiple
-                      x-init="sticControls.fieldSelect($el)"></div>
-              </div>
-            </div>
-            <!-- Relationships Definition -->
-            <div :id="`dataBlockRels${item.id}`">
-              [Las relaciones del Bloque de datos]
-                <!-- Relationships Details -->
-              <div x-data="{ showRelationshipsTable: false}">
-                <div class="text-muted form-check form-switch mt-3" :id="`dataRelationshipsDetails${item.id}`"
-                      data-model="showRelationshipsTable" data-label-text="[Mostrar Detalles]" x-init="sticControls.fieldCheckbox($el);"></div>
-                <div class="card p-2 overflow-auto" x-show="showRelationshipsTable">
-                  <div class="mt-3" :id="`dataBlockRelsTable${item.id}`"
-                        :data-objects="`step2.usedDatablockRelationships('${item.id}')`" x-init="sticControls.elemTableObjects($el);"></div>
-                </div>
-              </div>
-              <!-- Add Relationship -->
-              <div class="border-bottom ps-3 pt-3 mb-2 bg-light" x-data="{
-                creatingRelDataBlock: false,
-                availableRels: [],
-                selectedRelName:'',
-                availableDataBlocks: [],
-                selectedDataBlockId:'',
-                newDataBlockText:'',
-                relNewDataBlock:false,
-
-                async loadRelations() {
-                  this.availableRels = step2.unusedDatablockRelationships(item.id);
-                  this.selectedRelName = this.availableRels.length > 0 ? this.availableRels[0].name : '';
-                  this.availableDataBlocks = [];
-                  this.selectedDataBlockId = '';
-                  this.creatingRelDataBlock = !this.creatingRelDataBlock;
-                  this.handleRelationChange();
-                },
-                async handleRelationChange() {
-                  this.availableDataBlocks = formConfig.getAvailableDataBlocksForRelationship(item.id, this.selectedRelName);
-                  this.selectedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
-                  this.handleDataBlockChange();
-                },
-                async handleDataBlockChange() {
-                  this.newDataBlockText = '';
-                  this.relNewDataBlock = this.selectedDataBlockId == -1;
-                  if (this.relNewDataBlock) {
-                    this.newDataBlockText = formConfig.suggestDataBlockText(formConfig.getRelationshipModule(item.id, this.selectedRelName));
-                  }
-                },
-                async handleCreateRelationship(){
-                  formConfig.addDataBlockRelationship(item.id, this.selectedRelName, this.selectedDataBlockId, this.newDataBlockText);
-                  step2.loadDatablockRelationships();
-                  this.creatingRelDataBlock = false;
-                },
-                }">
-                <div class="row">
-                  <button type="button" class="btn w-auto" x-show="!creatingRelDataBlock" @click="loadRelations()">
-                    [Añadir Relación con otro Bloque de Datos]
-                  </button>
-                  <h4 x-show="creatingRelDataBlock">[Añadir Relación con otro Bloque de Datos]</h4>
-                </div>
-                <div class="row align-items-end" x-show="creatingRelDataBlock">
-                  <!-- Relationship -->
-                  <div class="col-3">
-                    <label :for="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-label"
-                          x-text="utils.translateForFieldLabel('LBL_RELATIONSHIP')"></label>
-                    <select :id="`dataBlockRelsEdit${item.id}_Rel_select`" class="form-select" x-model="selectedRelName" @change="handleRelationChange()">
-                      <template x-for="relation in availableRels" :key="relation.name">
-                        <option :value="relation.name" x-text="relation.textExtended"></option>
-                      </template>
-                    </select>
-                  </div>
-                  <!-- Data Block -->
-                  <div class="col-3">
-                    <label :for="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-label"
-                          x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></label>
-                    <select :id="`dataBlockRelsEdit${item.id}_DataBlock_select`" class="form-select" x-model="selectedDataBlockId" @change="handleDataBlockChange()">
-                      <template x-for="dataBlock in availableDataBlocks" :key="dataBlock.id">
-                        <option :value="dataBlock.id" x-text="dataBlock.text"></option>
-                      </template>
-                    </select>
-                  </div>
-                  <!-- New Data Block -->
-                  <div class="col-3" x-show="relNewDataBlock">
-                    <label :for="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" class="form-label"
-                            x-text="utils.translateForFieldLabel('LBL_NEW_DATABLOCK_NAME')"></label>
-                    <input :id="`dataBlockRelsEdit${item.id}_NewDataBlock_input`" type="text" class="form-control" x-model="newDataBlockText" >
-                  </div>
-                  <button type="button" class="btn w-32px mb-1px" @click="handleCreateRelationship();">
-                    <span class="suitepicon suitepicon-action-confirm"></span>
-                  </button>
-                  <button type="button" class="btn w-32px mb-1px" @click="creatingRelDataBlock = false;">
-                    <span class="suitepicon suitepicon-action-clear"></span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Accordion Headers -->
-            <div :id="`dataDef_${item.id}`"
-                 :data-sections="JSON.stringify([
-                                 {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                                 {headerText:`utils.translate('LBL_DUPLICATE_CHECK') + ' ('+item.duplicate_detection.fields.length+' - '+item.duplicate_detection.on_duplicate+')'`, selected:false, contentId:'dataBlockDuplicates'+item.id},
-                                 {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
-                                ]);"
-                 x-init="sticControls.accordion($el)"></div>
-          </div>
+          </template>
         </div>
       </template>
     </div>

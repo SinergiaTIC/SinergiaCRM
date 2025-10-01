@@ -90,22 +90,22 @@ $mod_strings = array (
   'LBL_WIZARD_PREVIOUS' => '<< Anterior',
   'LBL_WIZARD_NEXT' => 'Siguiente >>',
   'LBL_WIZARD_FINISH' => 'Finalizar',
-
+  
   'LBL_WIZARD_TITLE_STEP1' => 'Información general',
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
 
-  'LBL_SHOW_ALL_MODULES' => 'Mostrar todos los módulos',
   'LBL_DATABLOCKS' => 'Bloques de datos',
-  'LBL_DATABLOCK' => 'Bloque de datos',
-  'LBL_NEW_DATABLOCK_NAME' => 'Nuevo Bloque de datos',
   'LBL_DATABLOCK_DETACHED' => 'Datos no enlazados',
-  'LBL_RELATIONSHIPS' => 'Relaciones',
-  'LBL_RELATIONSHIP' => 'Relación',
-  'LBL_MODULES' => 'Módulos',
-  'LBL_MODULE' => 'Módulo',
+
   'LBL_FIELDS' => 'Campos',
+  'LBL_FIELDS_ALL' => 'Todos',
+  'LBL_FIELDS_FORM' => 'En el formulario',
+  'LBL_FIELDS_HIDDEN' => 'Valores fijos',
+  'LBL_DUPLICATE_CHECK' => 'Detección de duplicados',
+  'LBL_RELATIONSHIPS' => 'Relaciones',
+
   'LBL_FIELD' => 'Campo',
   'LBL_FIELDS_SHOW_ALL' => 'Mostrar todos los campos',
   'LBL_FIELD_LABEL' => 'Etiqueta',
@@ -116,10 +116,17 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_TYPE' => 'Tipo de valor',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE' => 'Valor',
+  'LBL_FIELD_VALUE_TODAY' => 'Fecha actual',
   'LBL_FIELD_VALUE_TEXT' => 'Valor mostrado',
-  'LBL_DUPLICATE_CHECK' => 'Detección de duplicados',
+
   'LBL_DUPLICATE_FIELDS' => 'Campos a verificar',
   'LBL_ONDUPLICATE_ACTION' => 'Acción en caso de duplicado',
+
+  'LBL_RELATIONSHIP' => 'Relación',
+  'LBL_MODULE' => 'Módulo',
+  'LBL_DATABLOCK' => 'Bloque de datos',
+  'LBL_NEW_DATABLOCK_NAME' => 'Nuevo Bloque de datos',
+
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
   'LBL_ACTIONS' => 'Acciones',

@@ -11,7 +11,7 @@ class utils {
   }
 
   /**
-   * Trenslate current label to current user language to put it in a label for a field
+   * Translate current label to current user language to put it in a label for a field
    * @param {string} label The label to be translated
    * @returns {string} Translated label
    */
@@ -26,7 +26,7 @@ class utils {
    * @returns  {string}
    */
   static toFieldLabelText(text) {
-    if (!text.endsWith(":")) {
+    if (text && !text.endsWith(":")) {
       text += ":";
     }
     return text;
@@ -54,6 +54,23 @@ class utils {
       return `SUGAR.language.languages.app_list_strings.${listName}`;
     }
     return Object.entries(SUGAR.language.languages.app_list_strings[listName]).map(([k, v]) => ({ id: k, text: v }));
+  }
+
+  /**
+   * Get options for a field
+   * @param {FieldInformation} fieldInfo 
+   * @returns array of options [id, text]
+   */
+  static getFieldOptions(fieldInfo) {
+    if (fieldInfo.type == "bool") {
+      return utils.getList("stic_boolean_list");
+    }
+    if (fieldInfo.options && 
+        fieldInfo.type != "relate" && 
+        fieldInfo.type != "date" && fieldInfo.type != "datetime" && fieldInfo.type != "datetimecombo") {
+      return utils.getList(fieldInfo.options);
+    }
+    return [];
   }
 
   static _cachedModules = {};

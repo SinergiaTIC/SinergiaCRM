@@ -14,6 +14,7 @@ class AWF_DataBlock {
       name: "",                 // Nombre interno (identificador en UI) del Bloque de Datos
       text: "",                 // Texto a mostrar para el Bloque de Datos
       editable_text: true,      // Indica si el texto se puede modificar
+      order: 0,                 // Orden del Bloque de datos
       module: "",               // Nombre del módulo
       required: false,          // Indica si es obligado (interno, no se puede eliminar)
       fields: [],               // Campos del Bloque de Datos
@@ -70,14 +71,9 @@ class AWF_DataBlock {
 
     let field = this.fields.find((f) => f.name === moduleField.name);
     if (!field) {
-      field = new AWF_Field({
-        name: moduleField.name,
-        label: moduleField.text,
-        required: moduleField.required,
-        required_in_form: moduleField.required,
-        // value_options: moduleField.options, // IEPA!!
-      })
-      this.fields.push(field);
+      field = new AWF_Field();
+      field.updateWithFieldInformation(moduleField);
+      field = this.addField(field);
     }
     // Update field info
     field.required = moduleField.required;
@@ -98,6 +94,19 @@ class AWF_DataBlock {
     if (!this.duplicate_detection.fields.find(f => f === field.name)) {
       this.duplicate_detection.fields.push(field.name);
     }
+
+    return field;
+  }
+
+  addField(field) {
+    let order = 0;
+    if (this.fields.length > 0) {
+      order = this.fields.reduce((max, db) => { return Math.max(max, db.order); }, 0);
+      order++;
+    }
+    field.order = order;
+    this.fields.push(field);
+    this.fields.sort((a, b) => a.order - b.order);
 
     return field;
   }
@@ -134,12 +143,13 @@ class AWF_Field {
     Object.assign(this, {
       name: "",                // Nombre del campo
       label: "",               // Etiqueta que aparecerá con el campo
+      order: 0,                // Orden del campo en el bloque de datos
       required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
       required_in_form: false, // Indica si el campo será obligado en el formulario
       in_form: true,           // Indica si el campo estará en el formulario
       type_in_form: 'text',    // Tipo de editor en el formulario: text, dropdown, check, date
       type: '',                // Tipo de datos del campo
-      value_type: 'editable',  // Tipo de valor: fixed, editable, selectable, dataBlock
+      value_type: 'editable',  // Tipo de valor: editable, selectable, fixed, dataBlock
       value_options: [],       // Las opciones para el valor del campo
       value: "",               // El valor del campo
       value_text: ""           // El texto a mostrar para el valor del campo
@@ -167,26 +177,22 @@ class AWF_Field {
     this.required = fieldInfo.required;
     this.required_in_form = fieldInfo.required;
     this.type = fieldInfo.type;
-
-    // IEPA!!
-    // Les opcions només si calen finalment: Per a l'editor, que es busquin d'una altra forma
     this.value_options = [];
-    if (fieldInfo.options && 
-        fieldInfo.type != "relate" && 
-        fieldInfo.type != "date" && fieldInfo.type != "datetime" && fieldInfo.type != "datetimecombo") {
-      this.value_options = utils.getList(fieldInfo.options);
-    }
-    if (this.type == "bool") {
-      this.value_options = utils.getList("stic_boolean_list");
-    }
-    this.value = this.value_options[0]?.id ?? "";
+    this.value = "";
+    this.value_text = "";
 
     this.type_in_form = this.getAvailableTypesInForm()[0]?.id;
     this.value_type = this.getAvailableValueTypes()[0]?.id;
+
+    return this;
   }
 
   mustInForm() {
-    return this.value_type != "" && this.value_type != "fixed" && this.value_type != "dataBlock";
+    return this.isFieldInForm();
+  }
+
+  isFieldInForm() {
+    return this.value_type == "editable" || this.value_type == "selectable";
   }
 
   getAvailableValueTypes() {
@@ -454,9 +460,16 @@ class AWF_Configuration {
       name = AWF_Configuration.cleanName(text);
     }
 
+    let order = 0;
+    if (this.data_blocks.length > 0) {
+      order = this.data_blocks.reduce((max, db) => { return Math.max(max, db.order); }, 0);
+      order++;
+    }
+
     dataBlock = new AWF_DataBlock({
       name: name,
       text: text,
+      order: order,
       module: moduleName,
     });
 
@@ -469,6 +482,7 @@ class AWF_Configuration {
     }
 
     this.data_blocks.push(dataBlock);
+    this.data_blocks.sort((a, b) => a.order - b.order);
 
     return dataBlock;
   }

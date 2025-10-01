@@ -3698,8 +3698,8 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['dropdown']
 
 // Tipo de valor de un campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['editable'] = 'Editable';
-$app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['fixed'] = 'Valor fijo';
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['selectable'] = 'Seleccionable';
+$app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['fixed'] = 'Valor fijo';
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['dataBlock'] = 'Bloque de Datos';
 
 // Tipos de acciones para los Formularios Web Avanzados
