@@ -154,7 +154,7 @@
                             style="font-size: 4rem;"></i></div>
                     <!-- <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
                         class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe> -->
-                    <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}"  target="_blank" rel="noopener noreferrer"><i
+                    <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}" target="_blank" rel="noopener noreferrer"><i
                             class="bi bi-cloud-download-fill"></i> Descargar
                         documento firmado</a>
                     <button id="send-signed-pdf-by-email" class="btn btn-primary mt-3"><i
@@ -165,7 +165,8 @@
                         comprobar en el futuro la validez de la firma:
                     </p>
                     <div class="verification-code bg-light p-2 rounded mt-2 d-inline-block">
-                        <code class="text-break font-monospace">{$SIGNER_VERIFICATION_CODE}</code> <i class="bi bi-clipboard"
+                        <code class="text-break font-monospace">{$SIGNER_VERIFICATION_CODE}</code> <i
+                            class="bi bi-clipboard"
                             onclick="navigator.clipboard.writeText('{$SIGNER_VERIFICATION_CODE}');alert('Texto copiado');"
                             style="cursor: pointer;" title="Copiar al portapapeles"></i>
                     </div>

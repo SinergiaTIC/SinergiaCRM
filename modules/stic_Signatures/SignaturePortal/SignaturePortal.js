@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Variable para controlar si el área de firma/aceptación está activa
     let isAcceptanceAreaEnabled = false;
+    let initialCanvasData = null;
 
     /**
      * Enables the signature or acceptance area after the user scrolls to the bottom.
@@ -98,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let isDrawing = false;
         let lastX = 0;
         let lastY = 0;
-        let initialCanvasData = null;
 
         /**
          * Adjusts the canvas size for sharp rendering on high-density screens
@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.lineJoin = 'round';
             ctx.lineWidth = 2;
             ctx.strokeStyle = '#333';
+            initialCanvasData = signatureCanvas.toDataURL('image/png');
         }
 
 
@@ -341,31 +342,51 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save function for canvas
         function saveSignature() {
             const currentCanvasData = signatureCanvas.toDataURL('image/png');
-            if (currentCanvasData !== initialCanvasData) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const url = 'index.php';
-                const signerId = urlParams.get('signerId');
-                const data = {
-                    module: "stic_Signatures",
-                    action: "saveSignature",
-                    signerId: signerId,
-                    signatureData: currentCanvasData,
-                };
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams(data),
-                }).then(response => {
-                    if (!response.ok) throw new Error('Network or server error');
-                    return response.json();
-                }).then(data => {
-                    console.log('Signature data sent successfully:', data);
-                    const successMessage = document.createElement('div');
-                    successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                    successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                    successMessage.innerHTML = `
+            if (currentCanvasData === initialCanvasData) {
+                const warningMessage = document.createElement('div');
+                warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                warningMessage.innerHTML = `
+                    <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
+                        <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
+                        <p class="text-secondary mb-4">Por favor, dibuje su firma o use una opción alternativa antes de guardar.</p>
+                        <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
+                    </div>
+                `;
+                document.body.appendChild(warningMessage);
+                document.getElementById('closeWarningBtn').addEventListener('click', () => {
+                    warningMessage.remove();
+                });
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const url = 'index.php';
+            const signerId = urlParams.get('signerId');
+            const data = {
+                module: "stic_Signatures",
+                action: "saveSignature",
+                signerId: signerId,
+                signatureData: currentCanvasData,
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data),
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Server response was not ok:', response.status, response.statusText);
+                    throw new Error('Network or server error');
+                }
+                return response.json();
+            }).then(data => {
+                console.log('Signature data sent successfully:', data);
+                const successMessage = document.createElement('div');
+                successMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                successMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                successMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
                             <h3 class="fs-4 fw-bold text-success mb-3">Firma guardada</h3>
                             <p class="text-secondary mb-4">La firma se ha guardado correctamente.</p>
@@ -373,30 +394,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     `;
 
-                    document.body.appendChild(successMessage);
-                    document.getElementById('closeMessageBtn').addEventListener('click', () => {
-                        successMessage.remove();
-                        window.location.reload();
-                    });
+                document.body.appendChild(successMessage);
+                document.getElementById('closeMessageBtn').addEventListener('click', () => {
+                    successMessage.remove();
+                    window.location.reload();
+                });
 
-                }).catch(error => {
-                    console.error('Error sending signature data:', error);
-                    const warningMessage = document.createElement('div');
-                    warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
-                    warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                    warningMessage.innerHTML = `
+            }).catch(error => {
+                console.error('Error sending signature data:', error);
+                const warningMessage = document.createElement('div');
+                warningMessage.className = 'fixed inset-0 d-flex justify-content-center align-items-center z-50';
+                warningMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                warningMessage.innerHTML = `
                         <div class="bg-white p-4 rounded-3 shadow-lg text-center mx-4">
                             <h3 class="fs-4 fw-bold text-warning mb-3">Atención</h3>
-                            <p class="text-secondary mb-4">Por favor, dibuje su firma o use una opción alternativa antes de guardar.</p>
+                            <p class="text-secondary mb-4">Ha ocurrido un error inesperado al guardar la firma. Por favor, inténtelo de nuevo.</p>
                             <button id="closeWarningBtn" class="btn btn-primary fw-semibold">Cerrar</button>
                         </div>
                     `;
-                    document.body.appendChild(warningMessage);
-                    document.getElementById('closeWarningBtn').addEventListener('click', () => {
-                        warningMessage.remove();
-                    });
+                document.body.appendChild(warningMessage);
+                document.getElementById('closeWarningBtn').addEventListener('click', () => {
+                    warningMessage.remove();
                 });
-            }
+            });
         }
 
 
@@ -489,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkScrollPosition();
     }
 
-    
+
     // --- Lógica para enviar el PDF firmado por correo ---
     const sendEmailBtn = document.getElementById('send-signed-pdf-by-email');
     if (sendEmailBtn) {
@@ -548,8 +568,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-   
 
-   
+
+
 
 });
