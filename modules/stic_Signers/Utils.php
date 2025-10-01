@@ -289,7 +289,7 @@ class stic_SignersUtils
 
         // Construct the signed PDF URL
         // Determine the base URI for constructing URLs (to handle different server setups)
-        $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}";
+        $signURL = "{$sugar_config['site_url']}/index.php?entryPoint=sticSign&signerId={$signerId}&otp-code={$signerBean->otp}";
 
 
         // Prepare the complete HTML body of the email
