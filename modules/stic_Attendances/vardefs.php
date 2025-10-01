@@ -244,23 +244,6 @@ $dictionary['stic_Attendances'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_PAYMENTS_STIC_ATTENDANCES_FROM_STIC_ATTENDANCES_TITLE',
         ),
-
-        // Many to Many filter fields
-        'stic_attendances_stic_registrations_stic_events_name'=> array(
-            'name' => 'stic_attendances_stic_registrations_stic_events_name',
-            'vname' => 'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME',
-            'query_type' => 'default',
-            'source' => 'non-db',
-            'type' => 'relate',
-            'width' => '10%',
-            'default' => true,
-            'studio' => array(
-                'searchview' => true, // To appear in the filter view layout editor
-                'visible' => false // To avoid appear in the record view layout editor
-            ),
-            'id_name' => 'id',
-            'module' => 'stic_Events',
-        ),
     ),
     'relationships' => array(
     ),

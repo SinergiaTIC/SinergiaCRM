@@ -91,19 +91,6 @@ $searchFields['stic_Resources'] = array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
-    // Filter field for many to many relationship
-    'stic_resources_stic_bookings_name' => array (
-        'query_type' => 'format',
-        'operator' => 'subquery',
-        'subquery' => 'SELECT rsbk.stic_resources_stic_bookingsstic_resources_ida 
-            FROM stic_resources_stic_bookings_c rsbk 
-            INNER JOIN stic_bookings bk ON bk.id = rsbk.stic_resources_stic_bookingsstic_bookings_idb AND bk.deleted = 0
-            WHERE rsbk.deleted = 0 AND bk.name LIKE \'{0}\'',
-        'db_field' => array (
-            0 => 'id',
-        ),
-
-    ),
     'favorites_only' => array(
         'query_type' => 'format',
         'operator' => 'subquery',
