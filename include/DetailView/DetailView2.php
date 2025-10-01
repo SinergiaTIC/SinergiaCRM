@@ -112,6 +112,16 @@ class DetailView2 extends EditView
                 formLetter::DVPopupHtml($this->module);
             }
             // END STIC-Custom            
+            
+            // STIC-Custom 20250716 JCH - Show the Add Signature button and popupHTML in detail view
+            // // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+            if (!in_array($this->module, $excludedModules)){
+                $viewdefs[$this->module][$this->view]['templateMeta']['form']['buttons']['SIGNATURE'] = array ('customCode' => '<input type="button" class="button" onClick="showPopupSignature(\'popup-div-signature\');" value="{$APP.LBL_ADD_TO_SIGNATURE_PROCESS}">');
+                require_once('modules/stic_Signatures/SignaturePopup.php');
+                SelectSignatureTemplate::DVPopupHtml($this->module);
+            }
+            // END STIC-Custom
+
         } else {
             //If file doesn't exist we create a best guess
             if (!file_exists("modules/$this->module/metadata/$metadataFileName.php") &&
