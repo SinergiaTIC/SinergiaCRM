@@ -118,15 +118,4 @@ $searchFields['stic_Attendances'] = array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
-    'stic_attendances_stic_registrations_stic_events_name' => array (
-        'query_type' => 'format',
-        'operator' => 'subquery',
-        'subquery' => 'SELECT sasrc.stic_attendances_stic_registrationsstic_attendances_idb FROM stic_attendances_stic_registrations_c sasrc 
-            INNER JOIN stic_registrations_stic_events_c srsec ON srsec.stic_registrations_stic_eventsstic_registrations_idb = sasrc.stic_attendances_stic_registrationsstic_registrations_ida AND srsec.deleted = 0
-            INNER JOIN stic_events se ON se.id = srsec.stic_registrations_stic_eventsstic_events_ida AND se.deleted = 0
-            WHERE sasrc.deleted = 0 AND se.name LIKE \'{0}\'',
-        'db_field' => array (
-            0 => 'id',
-        ),
-    ),
 );

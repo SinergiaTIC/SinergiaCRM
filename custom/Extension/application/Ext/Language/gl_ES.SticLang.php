@@ -95,9 +95,6 @@ $app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nuevo mensaje';
 // Envío masivo de correos
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicará aos rexistros da páxina actual. Para envíos masivos recoméndase utilizar o módulo Campañas.';
 
-// Campos de filtro en relaciones muchos a muchos
-$app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grupo de seguridad';
-
 // Módulos propios de SinergiaCRM e módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizacións';
 $app_list_strings['moduleList']['Contacts'] = 'Persoas';

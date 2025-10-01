@@ -159,7 +159,4 @@ $mod_strings = array(
 
     // Tooltips help
     'LBL_ALL_DAY_HELP' => "If checked, the booking's duration is set to all-day. If unchecked, start and ending hours can be set.",
-    
-    // Many to Many filter fields
-    'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Resource',
 );

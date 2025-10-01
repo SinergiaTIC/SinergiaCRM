@@ -209,36 +209,3 @@ $dictionary['Document']['fields']['selected_revision_filename']['massupdate'] = 
 $dictionary['Document']['fields']['aos_contracts']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_shared_document_link_c']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_sessions_documents_name']['massupdate'] = 0;
-
-// Many to Many filter fields
-$dictionary['Document']['fields']['stic_documents_accounts_name']= array(
-    'name' => 'stic_documents_accounts_name',
-    'vname' => 'LBL_STIC_DOCUMENTS_ACCOUNTS_NAME',
-    'query_type' => 'default',
-    'source' => 'non-db',
-    'type' => 'relate',
-    'width' => '10%',
-    'default' => true,
-    'studio' => array(
-        'searchview' => true, // To appear in the filter view layout editor
-        'visible' => false // To avoid appear in the record view layout editor
-    ),
-    'id_name' => 'account_id',
-    'module' => 'Accounts',
-);
-
-$dictionary['Document']['fields']['stic_documents_contacts_name']= array(
-    'name' => 'stic_documents_contacts_name',
-    'vname' => 'LBL_STIC_DOCUMENTS_CONTACTS_NAME',
-    'query_type' => 'default',
-    'source' => 'non-db',
-    'type' => 'relate',
-    'width' => '10%',
-    'default' => true,
-    'studio' => array(
-        'searchview' => true, // To appear in the filter view layout editor
-        'visible' => false // To avoid appear in the record view layout editor
-    ),
-    'id_name' => 'contact_id',
-    'module' => 'Contacts',
-);
