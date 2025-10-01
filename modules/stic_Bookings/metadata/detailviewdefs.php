@@ -67,6 +67,7 @@ array(
                         'name' => 'code',
                     ),
                     1 => array(
+                        'name' => 'periodic_code',
                     ),
                 ),
                 2 => array(
@@ -138,6 +139,9 @@ array(
                 ),
                 9 => array(
                     0 => 'description',
+                ),     
+                10 => array(
+                    0 => 'periodic_booking',
                 ),
             ),
             'lbl_detailview_panel1' => array(
