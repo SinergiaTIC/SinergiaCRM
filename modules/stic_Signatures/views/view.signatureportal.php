@@ -52,7 +52,6 @@ class stic_SignaturePortal extends SugarView
     public function display()
     {
         global $smarty;
-        global $mod_strings; // Load module-specific language strings if available
         global $app_list_strings; // General application language strings
         global $sugar_config;
 
@@ -75,10 +74,8 @@ class stic_SignaturePortal extends SugarView
         // Get beans
         $signatureBean = $stic_SignaturePortalUtils->getSignatureBeans()['signature'];
         $signerBean = $stic_SignaturePortalUtils->getSignatureBeans()['signer'];
-        // $pdfTemplateBean = $stic_SignaturePortalUtils->getSignatureBeans()['pdfTemplate'];
-        // $sourceModuleBean = $stic_SignaturePortalUtils->getSignatureBeans()['sourceModule'];
 
-        $this->ss->assign('MOD', $mod_strings);
+        $this->ss->assign('MODS', return_module_language($GLOBALS['current_language'], 'stic_Signatures'));
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('APP_LIST_STRINGS', $app_list_strings);
 

@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16"
         href="modules/stic_Signatures/SignaturePortal/favicon/favicon-16x16.png">
     <link rel="manifest" href="modules/stic_Signatures/SignaturePortal/favicon/site.webmanifest">
-    <title>SinergiaCRM - Portal de Firmas Electrónicas</title>
+    <title>{$MODS.LBL_PORTAL_TITLE_PAGE}</title>
     {$BOOTSTRAP_CSS}
     {$BOOTSTRAP_JS}
     {$BOOTSTRAP_ICONS}
@@ -24,11 +24,11 @@
         <div class="container-fluid d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
             <div class="w-100 w-sm-100 text-center mb-2 mb-sm-0" style="max-height: 50%;">
                 { if isset($LOGO_URL) && !empty($LOGO_URL) }
-                <img src="{$LOGO_URL}" alt="Logo de la organización" class="w-auto" style="max-height: 50px;">
+                <img src="{$LOGO_URL}" alt="{$MODS.LBL_PORTAL_ORG_LOGO_ALT}" class="w-auto" style="max-height: 50px;">
                 {/if}
             </div>
             <div class="w-100 w-sm-50 d-flex flex-column  align-items-sm-start text-center">
-                <h2 class="text-white fs-5 text-base font-weight-bold tracking-tight mb-0">Portal de firmas</h2>
+                <h2 class="text-white fs-5 text-base font-weight-bold tracking-tight mb-0">{$MODS.LBL_PORTAL_SIGNATURES}</h2>
                 { if isset($ORGANIZATION_NAME) && !empty($ORGANIZATION_NAME) }
                 <h3 class="text-white fs-6 font-weight-bold tracking-tight mt-1 mb-0">
                     {$ORGANIZATION_NAME}
@@ -41,15 +41,15 @@
         { if isset($ERROR_MSG) && !empty($ERROR_MSG) }
         <div class="stic-container container mt-4 mx-auto">
             <section class="error-area">
-                <h1 class="text-3xl font-weight-bold mb-4 text-center text-danger">Error</h1>
+                <h1 class="text-3xl font-weight-bold mb-4 text-center text-danger">{$MODS.LBL_PORTAL_ERROR}</h1>
                 <div class="alert alert-danger" role="alert">
-                    <strong>Error:</strong> {$ERROR_MSG}
+                    <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$ERROR_MSG}
                 </div>
                 <p class="text-center">
-                    Por favor, inténtelo de nuevo o contacte al soporte técnico si el problema persiste.
+                    {$MODS.LBL_PORTAL_ERROR_MSG}
                 </p>
                 <div class="text-center mt-3">
-                    <a href="javascript:history.back()" class="btn btn-secondary">Volver</a>
+                    <a href="javascript:history.back()" class="btn btn-secondary">{$MODS.LBL_PORTAL_BTN_BACK}</a>
                 </div>
             </section>
             {else}
@@ -57,23 +57,21 @@
                 { if $SHOW_PORTAL === true }
                 { if $STATUS === 'pending' }
                 <section class="document-area">
-                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-primary">Documento para Firma</h1>
+                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-primary">{$MODS.LBL_PORTAL_DOC_SIGNATURE}</h1>
                     <div id="documentContent" class="document-scroll-content">
                         {$DOCUMENT_HTML_CONTENT}
                     </div>
                     <div id="scrollInstructionMessage"
                         class="scroll-instruction-message alert alert-info mt-3 text-center">
-                        <span class="d-block d-sm-inline">Por favor, desplácese hasta el final del documento para
-                            habilitar
-                            el área de firma.</span>
+                        <span class="d-block d-sm-inline">{$MODS.LBL_PORTAL_SCROLL_INFO}</span>
                     </div>
                 </section>
 
                 { if $SIGNATURE_MODE === 'handwritten' }
                 <section class="signature-area mt-4">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">Área de Firma</h2>
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_SIGNATURE_AREA}</h2>
                     <p class="text-sm text-secondary mb-3 text-center">
-                        Por favor, dibuje su firma en el recuadro de abajo o use las opciones alternativas.
+                        {$MODS.LBL_PORTAL_HANDWRITTEN_INSTRUCTION}
                     </p>
 
                     <div class="d-flex justify-content-center">
@@ -81,28 +79,25 @@
                     </div>
 
                     <div class="action-buttons d-flex justify-content-center gap-2 mt-3">
-                        <button id="clearSignatureBtn" class="btn btn-secondary">Limpiar</button>
-                        <button id="saveSignatureBtn" class="btn btn-primary">Guardar Firma</button>
+                        <button id="clearSignatureBtn" class="btn btn-secondary">{$MODS.LBL_PORTAL_BTN_CLEAR}</button>
+                        <button id="saveSignatureBtn" class="btn btn-primary">{$MODS.LBL_PORTAL_BTN_SAVE_SIGNATURE}</button>
                     </div>
 
                     <div class="signature-alternatives w-100 mt-4 pt-3 border-top border-secondary">
-                        <h3 class="text-xl font-weight-bold mb-4 text-center text-dark">Opciones de Firma Alternativas
+                        <h3 class="text-xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ALTERNATIVE_OPTIONS}
                         </h3>
 
                         <div class="text-signature-option mb-3 p-3 border border-secondary rounded bg-light">
-                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">1. Firma por Texto</h4>
+                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">{$MODS.LBL_PORTAL_TEXT_SIGNATURE_TITLE}</h4>
                             <div class="mb-3">
                                 <label for="textSignatureInput"
-                                    class="form-label text-sm font-weight-medium text-dark mb-1">Escriba
-                                    su
-                                    nombre completo:</label>
-                                <input type="text" id="textSignatureInput" placeholder="Ej: Juan Pérez"
+                                    class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FULL_NAME}:</label>
+                                <input type="text" id="textSignatureInput" placeholder="{$MODS.LBL_PORTAL_NAME_EXAMPLE}"
                                     class="form-control text-dark" value="{$SIGNER_NAME}">
                             </div>
                             <div class="mb-3">
                                 <label for="fontSelector"
-                                    class="form-label text-sm font-weight-medium text-dark mb-1">Seleccione un
-                                    estilo de fuente:</label>
+                                    class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_FONT_STYLE}:</label>
                                 <select id="fontSelector" class="form-select text-dark">
                                     <option value="Dancing Script">Dancing Script</option>
                                     <option value="Pacifico">Pacifico</option>
@@ -111,21 +106,18 @@
                                     <option value="Indie Flower">Indie Flower</option>
                                 </select>
                             </div>
-                            <button id="renderTextSignatureBtn" class="btn btn-secondary w-100">Renderizar Firma de
-                                Texto</button>
+                            <button id="renderTextSignatureBtn" class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_RENDER_TEXT_SIGNATURE}</button>
                         </div>
 
                         <div class="image-signature-option p-3 border border-secondary rounded bg-light">
-                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">2. Subir Firma como Imagen</h4>
+                            <h4 class="text-lg font-weight-semibold mb-3 text-dark">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_TITLE}</h4>
                             <div class="mb-3">
                                 <label for="imageSignatureInput"
-                                    class="form-label text-sm font-weight-medium text-dark mb-1">Seleccione
-                                    un archivo de imagen (PNG/JPG):</label>
+                                    class="form-label text-sm font-weight-medium text-dark mb-1">{$MODS.LBL_PORTAL_IMAGE_FILE_SELECTION}:</label>
                                 <input type="file" id="imageSignatureInput" accept="image/png, image/jpeg"
                                     class="form-control text-dark">
                             </div>
-                            <button id="uploadImageSignatureBtn" class="btn btn-secondary w-100">Subir Imagen de
-                                Firma</button>
+                            <button id="uploadImageSignatureBtn" class="btn btn-secondary w-100">{$MODS.LBL_PORTAL_UPLOAD_IMAGE_SIGNATURE}</button>
                         </div>
                     </div>
                 </section>
@@ -133,14 +125,13 @@
 
                 { if $SIGNATURE_MODE === 'button' }
                 <section id="buttonAcceptationArea" class="mt-4">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">Área de Aceptación</h2>
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ACCEPTANCE_AREA}</h2>
                     <p class="text-sm text-secondary mb-3 text-center">
-                        Para aceptar el documento, haga clic en el botón de abajo.
+                        {$MODS.LBL_PORTAL_ACCEPTANCE_INSTRUCTION}
                     </p>
 
                     <div class="action-buttons d-flex justify-content-center mt-3">
-                        <button id="acceptDocumentBtn" class="btn btn-primary w-100 max-w-sm" disabled>Aceptar y Firmar
-                            Documento</button>
+                        <button id="acceptDocumentBtn" class="btn btn-primary w-100 max-w-sm" disabled>{$MODS.LBL_PORTAL_ACCEPT_AND_SIGN_BTN}</button>
                     </div>
                 </section>
                 { /if }
@@ -149,25 +140,21 @@
 
                 { if $STATUS === 'signed' }
                 <section class="signed-area text-center mt-4">
-                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">Documento firmado</h1>
+                    <h1 class="text-3xl font-weight-bold mb-4 text-center text-success">{$MO.LBL_PORTAL_DOCUMENT_SIGNED}</h1>
                     <div class="text-center mb-4"><i class="bi bi-check-circle-fill text-success text-center"
                             style="font-size: 4rem;"></i></div>
-                    <!-- <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
-                        class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe> -->
                     <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}" target="_blank" rel="noopener noreferrer"><i
-                            class="bi bi-cloud-download-fill"></i> Descargar documento firmado</a>
+                            class="bi bi-cloud-download-fill"></i> {$MODS.LBL_PORTAL_DOWNLOAD_SIGNED_DOC}</a>
                     <button id="send-signed-pdf-by-email" class="btn btn-primary mt-3"><i
-                            class="bi bi-envelope-at-fill"></i> Enviame una copia por correo</button>
+                            class="bi bi-envelope-at-fill"></i> {$MODS.LBL_PORTAL_SEND_COPY_EMAIL}</button>
                     <p class="text-sm text-secondary mt-3">
-                        El documento ha sido firmado electrónicamente. Puede copiar el siguiente código de verificación
-                        para
-                        comprobar en el futuro la validez de la firma:
+                        {$MODS.LBL_PORTAL_VERIFICATION_CODE_INFO} 
                     </p>
                     <div class="verification-code bg-light p-2 rounded mt-2 d-inline-block">
                         <code class="text-break font-monospace">{$SIGNER_VERIFICATION_CODE}</code> <i
                             class="bi bi-clipboard"
-                            onclick="navigator.clipboard.writeText('{$SIGNER_VERIFICATION_CODE}');alert('Texto copiado');"
-                            style="cursor: pointer;" title="Copiar al portapapeles"></i>
+                            onclick="navigator.clipboard.writeText('{$SIGNER_VERIFICATION_CODE}');alert('{$MODS.LBL_PORTAL_TEXT_COPIED}');"
+                            style="cursor: pointer;" title="{$MODS.LBL_PORTAL_COPY_TO_CLIPBOARD}"></i>
                     </div>
 
 
@@ -176,11 +163,11 @@
 
                 { if $SHOW_LOGS === true }
                 <section class="logs-area mt-5">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">Registro de acciones</h2>
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_ACTIONS_LOG}</h2>
 
                     { if isset($SIGNER_LOG) && !empty($SIGNER_LOG) }
                     <div class="mb-5">
-                        <h3 class="text-xl font-weight-semibold mb-3 text-dark">Acciones del Firmante</h3>
+                        <h3 class="text-xl font-weight-semibold mb-3 text-dark">{$MODS.LBL_PORTAL_SIGNER_ACTIONS}</h3>
                         <ul class="list-group">
                             { foreach from=$SIGNER_LOG item=logEntry }
                             <li class="list-group-item">
@@ -205,15 +192,14 @@
 
                 { if $OTP_REQUIRED === true && $SHOW_PORTAL !== true }
                 <section class="otp-area max-w-md mx-auto mt-4">
-                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">Código de verificación</h2>
+                    <h2 class="text-2xl font-weight-bold mb-4 text-center text-dark">{$MODS.LBL_PORTAL_VERIFICATION_CODE}</h2>
                     { if isset($OTP_ERROR_MSG) && !empty($OTP_ERROR_MSG) }
                     <p class="alert alert-danger mb-4">
-                        <strong>Error:</strong> {$OTP_ERROR_MSG}
+                        <strong>{$MODS.LBL_PORTAL_ERROR}:</strong> {$OTP_ERROR_MSG}
                     </p>
                     {/if}
                     <p class="text-sm text-secondary mb-3 text-center">
-                        Por favor, para continuar indique el código de verificación de un solo uso de 6 dígitos ha sido
-                        enviado a su correo <strong>{$OTP_MASKED_EMAIL}</strong>.
+                        {$MODS.LBL_PORTAL_OTP_INSTRUCTION} <strong>{$OTP_MASKED_EMAIL}</strong>.
                     </p>
                     <form id="otpForm" method="post" action="">
                         <div class="mb-3">
@@ -234,13 +220,13 @@
                         </div>
                         <div class="d-flex justify-content-center align-items-center">
                             <button type="submit" class="btn btn-primary py-2 px-3 mt-3 mt-lg-0 ml-lg-3">
-                                Comprobar código
+                                {$MODS.LBL_PORTAL_CHECK_CODE_BTN}
                             </button>
                         </div>
                     </form>
                     <div class="mt-3 text-center">
                         <button id="resend-otp-btn" class="btn btn-link">
-                            ¿No ha recibido el código? Reenviar
+                            {$MODS.LBL_PORTAL_RESEND_CODE}
                         </button>
                     </div>
                 </section>
@@ -250,7 +236,7 @@
             {/if}
     </main>
     <footer class="p-4 mt-4 text-center text-sm text-white" style="background-color: {$HEADER_COLOR};">
-        Portal de firmas electrónicas de
+        {$MODS.LBL_PORTAL_FOOTER}
         <a href="https://sinergiacrm.org" target="_blank"
             class="font-weight-bold text-white text-decoration-none">SinergiaCRM</a>
     </footer>
