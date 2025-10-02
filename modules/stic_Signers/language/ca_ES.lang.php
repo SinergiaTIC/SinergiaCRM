@@ -79,6 +79,8 @@ $mod_strings = array(
 
     'LBL_SIGNER_PREVIEW' => 'Vista prèvia del firmant',
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Sol·licitar signatura per correu electrònic a',
+    'LBL_SIGNER_SEND_TO_SIGN_MASSIVE' => 'Sol·licitar signatura per correu electrònic',
+    'LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT' => 'Si us plau, selecciona un màxim de 20 firmants per enviar sol·licituds de signatura massives.',
     'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Anar al portal de signatura',
     'LBL_SIGNER_COPY_PORTAL_URL' => 'Copia l\'URL del portal',
     'LBL_SIGNER_PORTAL_URL_COPIED' => 'URL del portal copiada al porta-retalls',

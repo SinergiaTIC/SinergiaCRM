@@ -78,6 +78,8 @@ $mod_strings = array(
 
     'LBL_SIGNER_PREVIEW' => 'Signer Preview',
     'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Request signature by email to',
+    'LBL_SIGNER_SEND_TO_SIGN_MASSIVE' => 'Request signature by email',
+    'LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT' => 'Please select a maximum of 20 signers to send massive signature requests.',
     'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Go to signing portal',
     'LBL_SIGNER_COPY_PORTAL_URL' => 'Copy portal URL',
     'LBL_SIGNER_PORTAL_URL_COPIED' => 'Portal URL copied to clipboard',

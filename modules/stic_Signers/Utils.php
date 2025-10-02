@@ -129,8 +129,7 @@ class stic_SignersUtils
             stic_SignatureLogUtils::logSignatureAction('EMAIL_SENT', $signerId, 'SIGNER', $destAddress);
         }
 
-        // Redirect back to the signer's detail view
-        SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerId);
+        
     }
 
     /**

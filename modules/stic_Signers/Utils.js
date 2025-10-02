@@ -52,19 +52,19 @@ switch (viewType()) {
     // CReate buttons for the detail view of the stic_Signers module.
     var buttons = {
       sendToSign: {
-        id: "bt_send_to_sign", 
+        id: "bt_send_to_sign",
         title: "✉️ " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL") + " " + STIC.record.email_address, // Localized button title with email emoji   
         onclick: "window.location='index.php?module=stic_Signers&action=sendToSign&signerId=" + STIC.record.id + "'"
       },
       rediretToSingPortal: {
-        id: "bt_redirect_to_portal", 
-        title:  "🔗 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_REDIRECT_TO_PORTAL") , // Localized button title with link emoji 
+        id: "bt_redirect_to_portal",
+        title: "🔗 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_REDIRECT_TO_PORTAL"), // Localized button title with link emoji 
         onclick: "window.location='index.php?entryPoint=sticSign&signerId=" + STIC.record.id + "'"
       },
       copyPortalUrl: {
-        id: "bt_copy_portal_url", 
-        title: "📋 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_COPY_PORTAL_URL") , // Localized button title with clipboard emoji
-        onclick: "navigator.clipboard.writeText('" + window.location.origin+window.location.pathname + "?entryPoint=sticSign&signerId=" + STIC.record.id + "'); alert(SUGAR.language.get('stic_Signers', 'LBL_SIGNER_PORTAL_URL_COPIED'));"
+        id: "bt_copy_portal_url",
+        title: "📋 " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_COPY_PORTAL_URL"), // Localized button title with clipboard emoji
+        onclick: "navigator.clipboard.writeText('" + window.location.origin + window.location.pathname + "?entryPoint=sticSign&signerId=" + STIC.record.id + "'); alert(SUGAR.language.get('stic_Signers', 'LBL_SIGNER_PORTAL_URL_COPIED'));"
       }
     };
     // Add the defined button to the detail view.
@@ -74,7 +74,16 @@ switch (viewType()) {
 
     break;
   case "list":
-    // No specific custom logic for list view in this section.
+    // selectRemittanceAlert = SUGAR.language.get("stic_Payments", "LBL_ADD_PAYMENTS_TO_REMITTANCE_INFO_ALERT");
+    sendMailMassive = SUGAR.language.languages.app_strings.LBL_LISTVIEW_NO_SELECTED;
+    button = {
+      id: "send-to-sign-massive",
+      text: "✉️ " + SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_MASSIVE"),
+      onclick: "sendToSign()"
+    };
+
+    createListViewButton(button);
+
     break;
   default:
     // Default case for any other view types not explicitly handled.
@@ -110,4 +119,24 @@ function previewSignature() {
       console.error("Request error:", status, error);
     }
   });
+}
+
+
+
+function sendToSign() {
+
+  sugarListView.get_checks();
+  if (sugarListView.get_checks_count() < 1) {
+    alert(alertListView);
+    return false;
+  }
+
+  if(sugarListView.get_checks_count() > 20){
+    alert( SUGAR.language.get("stic_Signers", "LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT") );
+    return false;
+  }
+  document.MassUpdate.action.value='sendToSign';
+  document.MassUpdate.module.value='stic_Signers';
+  document.MassUpdate.submit();
+
 }

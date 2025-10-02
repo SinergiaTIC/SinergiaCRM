@@ -28,26 +28,52 @@
 class stic_SignersController extends SugarController
 {
     /**
-     * Handles the 'sendToSign' action.
-     * This action retrieves the signer ID from the request and
-     * calls the utility function to send the signature request email.
+     * Action to send a signature request email to one or more signers.
+     * It checks for the presence of signer IDs in the request and calls
+     * the utility function to send the emails.
      *
+     * @param string|null $signerId Optional single signer ID. If not provided, it will look for 'uid' in the request.
+     * @throws Exception If no signer ID is provided or if the signer ID type is invalid.
      * @return void
      */
-    public function action_sendToSign()
+    public function action_sendToSign($signerId = null)
     {
-        require_once 'modules/stic_Signers/Utils.php';
-        $signerId = $_REQUEST['signerId'] ?? '';
-        if (!empty($signerId)) {
-            // Call the utility function to send the signature email
-            stic_SignersUtils::sendToSign($signerId);
+        // Determine the signer IDs to process
+        if ($signerId === null) {
+            if (empty($_REQUEST['uid'])) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'No signer ID provided in request.');
+                throw new Exception("No signer ID provided.");
+            }
+            $signersIds = explode(',', $_REQUEST['uid']);
+        } else {
+            if (!is_string($signerId)) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Invalid signer ID type. Expected string.');
+                throw new Exception("Invalid signer ID type.");
+            }
+            $signersIds = [$signerId];
         }
-        // Terminate script execution after sending or if signerId is empty
-        die();
+
+        // Get the number of signers to determine redirection logic
+        $lenght = count($signersIds);
+
+        require_once 'modules/stic_Signers/Utils.php';
+
+        // Loop through each signer ID and send the signature email
+        foreach ($signersIds as $signerId) {
+            if (!empty($signerId)) {
+                // Call the utility function to send the signature email
+                stic_SignersUtils::sendToSign($signerId);
+            }
+
+        }
+        if ($lenght == 1) {
+            SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerId);
+        } else {
+            SugarApplication::redirect('index.php?module=stic_Signers&action=index');
+        }
     }
 
-
-     /**
+    /**
      * Action to send the signed PDF document to the signer via email.
      * It checks for the presence of the signer ID in the request and calls
      * the utility function to send the email.
