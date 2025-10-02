@@ -3752,10 +3752,26 @@ $app_list_strings['stic_advanced_web_forms_field_type_list']['form'] = 'Formular
 $app_list_strings['stic_advanced_web_forms_field_type_list']['hidden'] = 'Valor fijo';
 
 // Tipo de campo en un Formulario Web Avanzado
-$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['date'] = 'Fecha';
-$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['check'] = 'Casilla de selección';
-$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['text'] = 'Texto';
-$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['dropdown'] = 'Desplegable';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['text'] = '➖ Entrada de texto';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['textarea'] = '☰ Entrada larga';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['number'] = '#️⃣ Entrada numérica';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['date'] = '🗓️ Selección de tiempo';
+$app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['select'] = '▼ Opciones cerradas';
+
+// Subtipo de campo en un Formulario Web Avanzado
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text'] = '🔤 Texto simple';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_email'] = '📧 Email';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_tel'] = '📞 Teléfono';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_password'] = '🔒 Contraseña';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['textarea'] = '📃 Párrafo';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['number'] = '🔢 Numérico';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['date'] = '📅 Fecha';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['date_time'] = '⏱️ Hora';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['date_datetime'] = '📅⏱️ Fecha y hora';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select'] = '🔻 Desplegable';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_multiple'] = '☑️ Selección múltiple';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_radio'] = '⏺︎ Selección de opción';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_check'] = '✔️ Casilla de selección';
 
 // Tipo de valor de un campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['editable'] = 'Editable';

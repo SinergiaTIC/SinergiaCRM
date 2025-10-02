@@ -72,6 +72,10 @@
               optionValues: [],
 
               get availableValueTypes() { return this.newField?.getAvailableValueTypes() ?? []; },
+              get availableTypesInForm() { return this.newField?.getAvailableTypesInForm() ?? []; },
+              get availableSubtypesInForm() { return this.newField?.getAvailableSubtypesInForm() ?? []; },
+
+              get isValid() { return this.newField?.isValid() == true; },
 
               init() {
                 this.$watch('availableFields', (newArray) => {
@@ -96,6 +100,12 @@
                 });
                 this.$watch('availableValueTypes', (newArray) => {
                   this.newField.value_type = newArray[0]?.id ?? '';
+                });
+                this.$watch('availableTypesInForm', (newArray) => {
+                  this.newField.type_in_form = newArray[0]?.id ?? '';
+                });
+                this.$watch('availableSubtypesInForm', (newArray) => {
+                  this.newField.subtype_in_form = newArray[0]?.id ?? '';
                 });
                 this.$watch('newField.value_type', (newType, oldType) => {
                   if (newType != 'fixed') {
@@ -122,10 +132,11 @@
                             }, mode, true);
               },
 
-              handleStartAddField(type) {
-                this.creatingFieldUnlinked = type=='unlinked';
-                this.creatingFieldForm = type=='form';
-                this.creatingFieldHidden = type=='hidden';
+              handleStartAddField(typeField) {
+                this.newField = new AWF_Field({ type_field: typeField });
+                this.creatingFieldUnlinked = typeField=='unlinked';
+                this.creatingFieldForm = typeField=='form';
+                this.creatingFieldHidden = typeField=='hidden';
               },
    
               handleCreateField() {
@@ -180,18 +191,19 @@
                       <!-- Value Text-->
                       <!-- Label -->
                       <div class="col-3">
-                        <label :for="`dbField_Label${item.id}`" class="form-label"
+                        <label :for="`dbFieldU_Label${item.id}`" class="form-label"
                               x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
-                        <input :id="`dbField_Label${item.id}`" type="text" class="form-control" x-model="newField.label" >
+                        <input :id="`dbFieldU_Label${item.id}`" type="text" class="form-control" x-model="newField.label" >
                       </div>
                       <!-- Required in form -->
                       <div class="col-2 form-switch">
-                        <label :for="`dbField_ReqForm${item.id}`" class="form-label"
+                        <label :for="`dbFieldU_ReqForm${item.id}`" class="form-label"
                               x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
                         <input class="form-check-input form-switch" type="checkbox" role="switch"
-                              :id="`dbField_ReqForm${item.id}`" x-model="newField.required_in_form"/>
+                              :id="`dbFieldU_ReqForm${item.id}`" x-model="newField.required_in_form"/>
                       </div>
-                      <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
+                      <!-- Buttons -->
+                      <button type="button" class="btn w-32px mb-1px" x-bind:disabled="!isValid" @click="handleCreateField();">
                         <span class="suitepicon suitepicon-action-confirm"></span>
                       </button>
                       <button type="button" class="btn w-32px mb-1px" @click="handleCancel();">
@@ -205,24 +217,61 @@
                 <div x-show="creatingFieldForm">
                   <form :id="`dataBlockFieldForm${item.id}`">
                     <div class="row align-items-end">
-                      <!-- Value type -->
+                      <!-- Field -->
+                      <div class="col-3">
+                        <label :for="`dbFieldF_field${item.id}`" class="form-label"
+                          x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
+                        <!-- Show all fields -->
+                        <div class="text-muted form-check form-switch small">
+                          <label :for="`dbFieldF_field_allcheck${item.id}`" class="form-label"
+                                  x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch"
+                                  :id="`dbFieldF_field_allcheck${item.id}`" x-model="showAllFields"/>
+                        </div>
+                        <select :id="`dbFieldF_field${item.id}`" class="form-select" x-model="newField.name">
+                          <template x-for="field in availableFields" :key="field.name">
+                            <option :value="field.name" x-text="field.text"></option>
+                          </template>
+                        </select>
+                      </div>                      
                       <!-- Type in form -->
+                      <div class="col-2">
+                        <label :for="`dbFieldF_TypeInForm${item.id}`" class="form-label"
+                               x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
+                        <select :id="`dbFieldF_TypeInForm${item.id}`" class="form-select" x-model="newField.type_in_form">
+                          <template x-for="type in availableTypesInForm" :key="type.id">
+                            <option :value="type.id" x-text="type.text"></option>
+                          </template>
+                        </select>
+                      </div>
+                      <!-- Subtype in form -->
+                      <div class="col-2">
+                        <label :for="`dbFieldF_SubtypeInForm${item.id}`" class="form-label"
+                               x-text="utils.translateForFieldLabel('LBL_FIELD_SUBTYPE_IN_FORM')"></label>
+                        <select :id="`dbFieldF_SubtypeInForm${item.id}`" class="form-select" x-model="newField.subtype_in_form">
+                          <template x-for="type in availableSubtypesInForm" :key="type.id">
+                            <option :value="type.id" x-text="type.text"></option>
+                          </template>
+                        </select>
+                      </div>                      
                       <!-- Value options -->
-                      <!-- Value Text-->
+                    </div>
+                    <div class="row align-items-end">
                       <!-- Label -->
                       <div class="col-3">
-                        <label :for="`dbField_Label${item.id}`" class="form-label"
+                        <label :for="`dbFieldF_Label${item.id}`" class="form-label"
                               x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
-                        <input :id="`dbField_Label${item.id}`" type="text" class="form-control" x-model="newField.label" >
+                        <input :id="`dbFieldF_Label${item.id}`" type="text" class="form-control" x-model="newField.label" >
                       </div>
                       <!-- Required in form -->
                       <div class="col-2 form-switch">
-                        <label :for="`dbField_ReqForm${item.id}`" class="form-label"
+                        <label :for="`dbFieldF_ReqForm${item.id}`" class="form-label"
                               x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
                         <input class="form-check-input form-switch" type="checkbox" role="switch"
-                              :id="`dbField_ReqForm${item.id}`" x-model="newField.required_in_form"/>
+                              :id="`dbFieldF_ReqForm${item.id}`" x-model="newField.required_in_form"/>
                       </div>
-                      <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
+                      <!-- Buttons -->
+                      <button type="button" class="btn w-32px mb-1px" x-bind:disabled="!isValid" @click="handleCreateField();">
                         <span class="suitepicon suitepicon-action-confirm"></span>
                       </button>
                       <button type="button" class="btn w-32px mb-1px" @click="handleCancel();">
@@ -246,11 +295,14 @@
                     this.$watch('newField.value_type', (newType, oldType) => {
                       this.valueToday = false;
                     });
+                    this.$watch('valueToday', (newValue, oldValue) => {
+                      this.newField.value = newValue ? 'today' : '';
+                    });
                     this.$watch('newField.value', (newValue, oldValue) => {
                       if (this.hasOptions) {
                         this.newField.value_text = this.optionValues.find(o => o.id == newValue)?.text ?? '';
                       } else if(this.isDate) {
-                        if (this.valueToday) {
+                        if (newValue == 'today') {
                           this.newField.value_text = utils.translate('LBL_FIELD_VALUE_TODAY');
                         } else {
                           this.newField.value_text = '';
@@ -259,7 +311,7 @@
                             this.newField.value_text = new Intl.DateTimeFormat(undefined, {year:'numeric',month:'2-digit',day:'2-digit'}).format(dateObj);
                           }
                         }
-                      } else {
+                      } else if(!this.isRelated) {
                         this.newField.value_text = newValue;
                       }
                     });
@@ -270,26 +322,26 @@
                     <div class="row align-items-end">
                       <!-- Field -->
                       <div class="col-3">
-                        <label :for="`dbField_field${item.id}`" class="form-label"
+                        <label :for="`dbFieldH_field${item.id}`" class="form-label"
                           x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
                         <!-- Show all fields -->
                         <div class="text-muted form-check form-switch small">
-                          <label :for="`dbField_field_allcheck${item.id}`" class="form-label"
+                          <label :for="`dbFieldH_field_allcheck${item.id}`" class="form-label"
                                   x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
                           <input class="form-check-input form-switch" type="checkbox" role="switch"
-                                  :id="`dbField_field_allcheck${item.id}`" x-model="showAllFields"/>
+                                  :id="`dbFieldH_field_allcheck${item.id}`" x-model="showAllFields"/>
                         </div>
-                        <select :id="`dbField_field${item.id}`" class="form-select" x-model="newField.name">
+                        <select :id="`dbFieldH_field${item.id}`" class="form-select" x-model="newField.name">
                           <template x-for="field in availableFields" :key="field.name">
                             <option :value="field.name" x-text="field.text"></option>
                           </template>
                         </select>
                       </div>
                       <!-- Value type -->
-                      <div class="col-3">
-                        <label :for="`dbField_ValueType${item.id}`" class="form-label"
+                      <div class="col-2">
+                        <label :for="`dbFieldH_ValueType${item.id}`" class="form-label"
                               x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
-                        <select :id="`dbField_ValueType${item.id}`" class="form-select" x-model="newField.value_type">
+                        <select :id="`dbFieldH_ValueType${item.id}`" class="form-select" x-model="newField.value_type">
                           <template x-for="type in availableValueTypes" :key="type.id">
                             <option :value="type.id" x-text="type.text"></option>
                           </template>
@@ -297,10 +349,10 @@
                       </div>
                       <!-- Value (fixed value of enum) -->
                       <template x-if="hasOptions">
-                        <div class="col-3" x-show="hasOptions">
-                          <label :for="`dbField_ValFixOptions${item.id}`" class="form-label"
+                        <div class="col-3">
+                          <label :for="`dbFieldH_ValFixOptions${item.id}`" class="form-label"
                                 x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                          <select :id="`dbField_ValFixOptions${item.id}`" class="form-select" x-model="newField.value">
+                          <select :id="`dbFieldH_ValFixOptions${item.id}`" class="form-select" x-model="newField.value">
                             <template x-for="option in optionValues" :key="option.id">
                               <option :value="option.id" x-text="option.text"></option>
                             </template>
@@ -308,14 +360,14 @@
                         </div>
                       </template>
                       <!-- Value (fixed value of related) -->
-                      <template x-if="isRelated">
-                        <div class="col-3" x-show="isRelated">
-                          <label :for="`dbField_ValFixRel_name${item.id}`" class="form-label"
+                      <template x-if="isRelated && newField.value_type=='fixed'">
+                        <div class="col-3">
+                          <label :for="`dbFieldH_ValFixRel_name${item.id}`" class="form-label"
                                 x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')"></label>
                           <div class="input-group">
-                            <input class="form-control" type="text" :id="`dbField_ValFixRel_name${item.id}`" x-model="newField.value_text" 
+                            <input class="form-control" type="text" :id="`dbFieldH_ValFixRel_name${item.id}`" x-model="newField.value_text" 
                                   autocomplete="off" readonly style="background-color:rgb(255, 255, 255);" />
-                            <input type="hidden" :id="`dbField_ValFixRel_id${item.id}`" x-model="newField.value" />
+                            <input type="hidden" :id="`dbFieldH_ValFixRel_id${item.id}`" x-model="newField.value" />
                             <button class="btn" type="button" @click="openPopUp('dbField_ValFixRel')">
                               <span class="suitepicon suitepicon-action-select"></span>
                             </button>
@@ -327,31 +379,31 @@
                       </template>
                       <!-- Value (fixed value of date) -->
                       <template x-if="isDate">
-                        <div class="col-3" x-show="isDate">
-                          <label :for="`dbField_ValFixDate${item.id}`" class="form-label"
+                        <div class="col-3">
+                          <label :for="`dbFieldH_ValFixDate${item.id}`" class="form-label"
                                 x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
                           <div class="form-switch">
-                            <label :for="`dbField_ValFixDate_Today${item.id}`" class="form-label"
+                            <label :for="`dbFieldH_ValFixDate_Today${item.id}`" class="form-label"
                                     x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TODAY')"></label>
                             <input class="form-check-input form-switch" type="checkbox" role="switch"
-                                  :id="`dbField_ValFixDate_Today${item.id}`" x-model="valueToday"/>
+                                  :id="`dbFieldH_ValFixDate_Today${item.id}`" x-model="valueToday"/>
                           </div>
-                          <input :id="`dbField_ValFixDate${item.id}`" type="date" class="form-control" autocomplete="off" 
+                          <input :id="`dbFieldH_ValFixDate${item.id}`" type="date" class="form-control" autocomplete="off" 
                                 :disabled="valueToday" x-model="newField.value"/>
                         </div>
                       </template>
                       <!-- Value (fixed value) -->
                       <template x-if="!hasOptions && !isRelated && !isDate">
                         <div class="col-3">
-                          <label :for="`dbField_ValFixText${item.id}`" class="form-label"
+                          <label :for="`dbFieldH_ValFixText${item.id}`" class="form-label"
                                 x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                          <input :id="`dbField_ValFixText${item.id}`" type="text" class="form-control"  autocomplete="off"
+                          <input :id="`dbFieldH_ValFixText${item.id}`" type="text" class="form-control"  autocomplete="off"
                                 x-model="newField.value"/>
                         </div>
                       </template>
 
                       <!-- Buttons -->
-                      <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">
+                      <button type="button" class="btn w-32px mb-1px" x-bind:disabled="!isValid" @click="handleCreateField();">
                         <span class="suitepicon suitepicon-action-confirm"></span>
                       </button>
                       <button type="button" class="btn w-32px mb-1px" @click="handleCancel();">
@@ -360,9 +412,10 @@
                     </div>
                   </form>
                 </div>
+
+                <div class="mt-3" :id="`dataFieldnewField${item.id}`" data-model="newField" x-init="sticControls.elemTableObject($el);"></div>
               </div>
 
-              
               <!-- Fields summary Tabs -->
               <!-- Fields Details -->
               <div>

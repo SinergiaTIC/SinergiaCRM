@@ -158,10 +158,12 @@ class AWF_Field {
       type_field: 'form',      // Tipo de campo: unlinked, form, hidden
       required_in_form: false, // Indica si el campo será obligado en el formulario
       in_form: true,           // Indica si el campo estará en el formulario
-      type_in_form: 'text',    // Tipo de editor en el formulario: text, dropdown, check, date
+      type_in_form: 'text',    // Tipo de editor en el formulario: text, textarea, number, date, select
+      subtype_in_form: 'text', // SubTipo de editor en el formulario: text, text_email, text_tel, text_password, textarea, number, data, date_time, date_datetime...
       type: '',                // Tipo de datos del campo
       value_type: 'editable',  // Tipo de valor: editable, selectable, fixed, dataBlock
       value_options: [],       // Las opciones para el valor del campo
+      placeholder: '',         // El placeholder o texto de fondo en el editor
       value: "",               // El valor del campo
       value_text: ""           // El texto a mostrar para el valor del campo
     });
@@ -215,6 +217,24 @@ class AWF_Field {
     return this.type_field != 'hidden';
   }
 
+  isValid() {
+    if ((this.name??"").trim()=='')  return false;
+
+    if (this.isFieldInForm()) {
+      if (this.label.trim() == '') return false;
+      // if (this.order < 0) return false;
+      if (this.type_in_form == '') return false;
+      if (this.value_type == 'fixed' || this.value_type == 'dataBlock') return false;
+      if (this.value_type == 'selectable' && this.value_options.length == 0) return false;
+      return true;
+    } else {
+      // if (this.order >= 0) return false;
+      if (this.value_type == 'editable' || this.value_type == 'selectable') return false;
+      if (this.value == '') return false;
+      return true;
+    }
+  }
+
   getAvailableValueTypes() {
     if (this.type_field == 'hidden') {
       if (this.type == 'relate') {
@@ -232,20 +252,81 @@ class AWF_Field {
   }
 
   getAvailableTypesInForm() {
-    if (this.type_field != 'form') {
+    if (!this.isFieldInForm()) {
       return [];
     }
-    
-    if (this.value_type == "selectable") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "dropdown");
+    if (this.type_field == 'unlinked') {
+      return AWF_Field.type_in_formList();
     }
-    if (this.type == "date" || this.type == "datetime" || this.type == "datetimecombo") {
+    
+    // text, textarea, number, date, select
+    if (this.type == "enum" || this.type == "radioenum" || this.type == "multienum" || this.type == "bool" || this.type == "checkbox") {
+      return AWF_Field.type_in_formList().filter(t => t.id == "select");
+    }
+    if (this.type == "relate") {
+      return AWF_Field.type_in_formList().filter(t => t.id == "select");
+    }
+    if (this.type == "date" || this.type == "time" || this.type == "datetime" || this.type == "datetimecombo") {
       return AWF_Field.type_in_formList().filter(t => t.id == "date");
     }
-    if (this.type == "bool") {
-      return AWF_Field.type_in_formList().filter(t => t.id == "check" || t.id == "dropdown");
+    if (this.type == "int" || this.type == "float" || this.type == "double" || this.type == "decimal") {
+      return AWF_Field.type_in_formList().filter(t => t.id == "number");
     }
-    return AWF_Field.type_in_formList().filter(t => t.id == "text");
+    if (this.type == "json") {
+      return AWF_Field.type_in_formList().filter(t => t.id == "textarea");
+    }
+    if (this.type == "name" || this.type == "phone" || this.type == "email" || this.type == "url" || 
+        this.type == "password" || this.type == "encrypt") {
+      return AWF_Field.type_in_formList().filter(t => t.id == "text");
+    }
+    return AWF_Field.type_in_formList().filter(t => t.id == "text" || t.id == "textarea" || t.id == "number");
+  }
+
+  getAvailableSubtypesInForm() {
+    debugger;
+    if (!this.isFieldInForm()) {
+      return [];
+    }
+    if (this.type_in_form = "") {
+      return [];
+    }
+
+    let base_subtypes = AWF_Field.subtype_in_formList().filter(s => s.id.startsWith(this.type_in_form));
+
+    if (base_subtypes.length <= 1) {
+      return base_subtypes;
+    }
+    if (this.type == "phone") {
+      return base_subtypes.filter(s => s.id == "text" || s.id == "text_tel");
+    }
+    if (this.type == "email") {
+      return base_subtypes.filter(s => s.id == "text" || s.id == "text_email");
+    }
+    if (this.type == "password" || this.type == "encrypt") {
+      return base_subtypes.filter(s => s.id == "text" || s.id == "text_password");
+    }
+
+    if (this.type == "date") {
+      return base_subtypes.filter(s => s.id == "date");
+    }
+    if (this.type == "time") {
+      return base_subtypes.filter(s => s.id == "date_time");
+    }
+    if (this.type == "datetime" || this.type == "datetimecombo") {
+      return base_subtypes.filter(s => s.id == "date" || s.id == "date_datetime");
+    }
+
+    if (this.type == "enum" || this.type == "radioenum" || this.type == "relate") {
+      return base_subtypes.filter(s => s.id == "select" || s.id == "select_radio");
+    }
+    if (this.type == "bool" || this.type == "check") {
+      return base_subtypes.filter(s => s.id == "select" || s.id == "select_radio" || s.id == "select_check");
+    }
+    if (this.type == "multienum") {
+      return base_subtypes.filter(s => s.id == "select" || s.id == "select_multiple" || s.id == "select_radio");
+    }
+
+    return base_subtypes;
   }
 
   static type_fieldList(asString = false) {
@@ -260,6 +341,12 @@ class AWF_Field {
   }
   type_in_formText(){
     return AWF_Field.type_in_formList()[this.type_in_form];  
+  }
+  static subtype_in_formList(asString = false){
+    return utils.getList("stic_advanced_web_forms_field_in_form_subtype_list", asString);
+  }
+  subtype_in_formText(){
+    return AWF_Field.subtype_in_formList()[this.subtype_in_form];  
   }
 
   static value_typeList(asString = false){
