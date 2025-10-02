@@ -91,4 +91,11 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Signers added successfully',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Signers not added, already exist or an error occurred',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'The following record is skipped because no signers were found',
+
+    // Portal messages
+    'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copy of your signed document',
+    'LBL_SIGNED_PDF_EMAIL_BODY' => 'Attached you will find a copy of the document you have signed electronically. Below is the verification code of the signed document for your later verification:',
+    'LBL_SIGNED_PDF_REOPEN_PORTAL' => 'You can re-access the signing portal using the following link:',
+    'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Go to the signing portal',
+    
 );

@@ -58,7 +58,8 @@ class stic_SignaturePortal extends SugarView
 
 
         // Determine the base URI for constructing URLs (to handle different server setups) 
-        $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
+        // $uri = str_replace('index.php', '', $_SERVER['DOCUMENT_URI']) ?? '';
+        $uri = rtrim($sugar_config['site_url'], '/') . '/';
 
         require_once 'modules/stic_Settings/Utils.php';
 
@@ -88,7 +89,7 @@ class stic_SignaturePortal extends SugarView
         // Assign signed PDF URL and download URL if signed
         if ($signerBean->status === 'signed') {
             $signedPdfUrl = $uri . $sugar_config['upload_dir'] . '/' . $signerBean->id . '_signed.pdf';
-            $dowwnloadPdfUrl = "{$uri}/index.php?entryPoint=sticDownloadSignedPdf&signerId={$signerBean->id}";
+            $dowwnloadPdfUrl = "{$uri}/index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$signerBean->id}";
             $this->ss->assign('SIGNED_PDF_URL', $signedPdfUrl);
             $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
         }

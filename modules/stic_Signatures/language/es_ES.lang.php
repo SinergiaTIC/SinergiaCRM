@@ -91,7 +91,14 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Firmantes añadidos correctamente',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos, ya existen o se ha producido un error',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes',
-
-
     'LBL_NO_SIGNERS_ERROR' => 'No se han encontrado firmantes. Añade al menos un firmante para continuar.',
+    
+    
+    // Portal messages
+    'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copia de su documento firmado',
+    'LBL_SIGNED_PDF_EMAIL_BODY' => 'Adjunto encontrará una copia del documento que ha firmado electrónicamente. A continuación se muestra el código de verificación del documento firmado para su comprobación posterior:',
+    'LBL_SIGNED_PDF_REOPEN_PORTAL' => 'Puede volver a acceder al portal de firmas utilizando el siguiente enlace:',
+    'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Ir al portal de firma',
+
+
 );

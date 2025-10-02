@@ -364,8 +364,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = 'index.php';
             const signerId = urlParams.get('signerId');
             const data = {
-                module: "stic_Signatures",
-                action: "saveSignature",
+                entryPoint: "sticSign",
+                signatureAction: "saveSignature",
                 signerId: signerId,
                 signatureData: currentCanvasData,
             };
@@ -437,8 +437,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = 'index.php';
         const signerId = urlParams.get('signerId');
         const data = {
-            module: "stic_Signatures",
-            action: "acceptDocument",
+            entryPoint: "sticSign",
+            signatureAction: "acceptDocument",
             signerId: signerId,
         };
         fetch(url, {
@@ -518,8 +518,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const url = 'index.php';
             const signerId = urlParams.get('signerId');
             const data = {
-                module: "stic_Signers",
-                action: "sendSignedPdfByEmail",
+                entryPoint: "sticSign",
+                signatureAction: "sendSignedPdfByEmail",
                 signerId: signerId,
             };
             fetch(url, {

@@ -92,4 +92,10 @@ $mod_strings = array(
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes non engadidos, xa existen ou ocorreu un erro',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Omítese o seguinte rexistro porque non se atoparon firmantes',
 
+    // Portal messages
+    'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copia do seu documento asinado',
+    'LBL_SIGNED_PDF_EMAIL_BODY' => 'Adxunto atopará unha copia do documento que asinou electronicamente . A continuación móstrase o código de verificación do documento asinado para a súa comprobación posterior:',
+    'LBL_SIGNED_PDF_REOPEN_PORTAL' => 'Pode volver acceder ao portal de sinaturas utilizando a seguinte ligazón:',
+    'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Ir ao portal de sinatura',
+
 );

@@ -91,4 +91,11 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'Firmants afegits correctament',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmants no afegits, ja existeixen o s\'ha produït un error',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Es omet el següent registre perquè no s\'han trobat firmants',
+
+    // Portal messages
+    'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Còpia del seu document signat',
+    'LBL_SIGNED_PDF_EMAIL_BODY' => 'Adjunt trobarà una còpia del document que ha signat electrònicament. A continuació es mostra el codi de verificació del document signat per a la seva comprovació posterior:',
+    'LBL_SIGNED_PDF_REOPEN_PORTAL' => 'Pot tornar a accedir al portal de signatura utilitzant l\'enllaç següent:',
+    'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Anar al portal de signatura'
+
 );

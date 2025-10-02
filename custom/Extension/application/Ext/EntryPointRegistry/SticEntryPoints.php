@@ -50,5 +50,6 @@ $entry_point_registry['removeme'] = array('file' => 'custom/modules/Campaigns/Co
 $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/stic_Signatures/SignatureSignersSelect.php', 'auth' => false);
 $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
 $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
-$entry_point_registry['sticDownloadSignedPdf'] = array('file' => 'modules/stic_Signatures/sticDownloadSignedPdf.php', 'auth' => false);
+
+
 

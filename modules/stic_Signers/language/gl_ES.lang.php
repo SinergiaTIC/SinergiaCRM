@@ -88,7 +88,4 @@ $mod_strings = array(
     'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente ao firmante', 
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Ir ao documento',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Se ten problemas para acceder á ligazón, cópiela e péguena no seu navegador',
-    'LBL_SIGNED_PDF_EMAIL_SUBJECT' => 'Copia do seu documento asinado',
-    'LBL_SIGNED_PDF_EMAIL_BODY' => 'Adxunto atopará unha copia do documento que asinou electronicamente . A continuación móstrase o código de verificación do documento asinado para a súa comprobación posterior:',
-    'LBL_SIGNED_PDF_REOPEN_PORTAL' => 'Pode volver acceder ao portal de sinaturas utilizando a seguinte ligazón:',
 );

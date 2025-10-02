@@ -422,37 +422,7 @@ class stic_SignaturesUtils
         // return "{$header}{$converted}{$footer}";
         return ['header' => $header, 'converted' => $converted, 'footer' => $footer];
     }
-    /**
-     * Saves the signature data for a given signer.
-     *
-     * @param array $data An associative array containing 'signerId' and 'signatureData'.
-     * @return array An associative array indicating success or failure and relevant messages.
-     */
-    public static function saveSignature($data = '')
-    {
-        $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
 
-        if ($signerBean && !empty($signerBean->id)) {
-            $signerBean->signature_image = $data['signatureData'];
-            $signerBean->status = 'signed';
-            $signerBean->signature_date = gmdate("Y-m-d H:i:s");
-            if (!$signerBean->save()) {
-                return ['success' => false, 'message' => 'Failed to save signature data.'];
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to save signature data for Signer ID: {$signerBean->id}");
-            } else {
-                require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
-                // Generate the signed PDF after saving the signature
-                $savedFile = sticGenerateSignedPdf::generateSignedPdf('handwritten');
-                $signerBean->verification_code = self::getVerificationCodeForSignedPdf($savedFile);
-                $signerBean->save();
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Signature data saved for Signer ID: {$signerBean->id}");
-                require_once 'modules/stic_Signature_Log/Utils.php';
-                stic_SignatureLogUtils::logSignatureAction('SIGNED_HANDWRITTEN_MODE', $signerBean->id, 'SIGNER');
-                return ['success' => true, 'message' => 'Signature data saved successfully.'];
-            }
-        }
-        return ['success' => false, 'message' => 'Error saving signature data.'];
-    }
 
     /**
      * Generates a verification code for a signed PDF associated with a given signer ID.
@@ -471,36 +441,6 @@ class stic_SignaturesUtils
         $verificationCode = hash_file('sha256', $pdfPath);
         return $verificationCode;
 
-    }
-
-    /**
-     * Accepts the document for a given signer in button mode.
-     *
-     * @param array $data An associative array containing 'signerId'.
-     * @return array An associative array indicating success or failure and relevant messages.
-     */
-    public static function acceptDocument($data = '')
-    {
-        $signerBean = BeanFactory::getBean('stic_Signers', $data['signerId'] ?? '');
-
-        if ($signerBean && !empty($signerBean->id)) {
-            $signerBean->status = 'signed';
-            $signerBean->signature_image = ''; // No signature image in button mode
-            $signerBean->signature_date = gmdate("Y-m-d H:i:s");
-            if (!$signerBean->save()) {
-                return ['success' => false, 'message' => 'Failed to accept document.'];
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Failed to accept document for Signer ID: {$signerBean->id}");
-            } else {
-                require_once 'modules/stic_Signatures/sticGenerateSignedPdf.php';
-                // Generate the signed PDF after saving the signature
-                sticGenerateSignedPdf::generateSignedPdf('button');
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . " Document accepted for Signer ID: {$signerBean->id}");
-                require_once 'modules/stic_Signature_Log/Utils.php';
-                stic_SignatureLogUtils::logSignatureAction('SIGNED_BUTTON_MODE', $signerBean->id, 'SIGNER');
-                return ['success' => true, 'message' => 'Document accepted successfully.'];
-            }
-        }
-        return ['success' => false, 'message' => 'Error accepting document.'];
     }
 
     /**

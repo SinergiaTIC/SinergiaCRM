@@ -46,8 +46,8 @@ function resendOtp() {
     const signerId = urlParams.get('signerId');
 
     const data = {
-        module: "stic_Signatures",
-        action: "resendOtpCode",
+        entryPoint: "sticSign",
+        signatureAction: "resendOtpCode",
         signerId: signerId,
     };
 
@@ -79,53 +79,3 @@ function resendOtp() {
 }
 
 
-// function sendOtpCodeForCheck() {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const url = 'index.php';
-//     const signerId = urlParams.get('signerId');
-//     const otpCode = Array.from(inputs).map(input => input.value).join('');
-//     console.log(otpCode)
-//     // check if otpCode  is 6 digits
-//     if (otpCode.length !== 6 || isNaN(otpCode)) {
-//         alert('Por favor, introduce un código de verificación válido de 6 dígitos.');
-//         return;
-//     }
-
-//     const data = {
-//         module: "stic_Signatures",
-//         action: "verifyOtpCode",
-//         signerId: signerId,
-//         otpCode: otpCode
-//     };
-
-//     fetch(url, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded',
-//         },
-//         body: new URLSearchParams(data),
-//     }).then(response => {
-
-//         // Manage the response
-//         if (!response.ok) {
-//             throw new Error('Error de red o del servidor');
-//         }
-//         return response.json();
-//         // Parsea la respuesta como JSON
-//     }
-//     ).then(data => {
-//         console.log('Respuesta de verificación OTP:', data);
-//         if (data == true) {
-//             console.log('Código OTP verificado correctamente. Procediendo a la firma del documento.');
-//             // Redirigir o proceder con la firma
-//         } else {
-//             alert('Código OTP incorrecto. Por favor, inténtelo de nuevo.');
-//         }
-//     }
-//     ).catch(error => {
-//         console.error('Error al verificar OTP:', error);
-//         alert('Ha ocurrido un error al verificar el código OTP.');
-//     }
-//     );
-
-// }

@@ -155,8 +155,7 @@
                     <!-- <iframe src="{$SIGNED_PDF_URL}#toolbar=0&navpanes=0&statusbar=0&messages=0&view=FitH"
                         class="w-100 h-600px border border-secondary rounded mb-3" title="Documento Firmado"></iframe> -->
                     <a class="btn btn-primary mt-3" href="{$DOWNLOAD_URL}" target="_blank" rel="noopener noreferrer"><i
-                            class="bi bi-cloud-download-fill"></i> Descargar
-                        documento firmado</a>
+                            class="bi bi-cloud-download-fill"></i> Descargar documento firmado</a>
                     <button id="send-signed-pdf-by-email" class="btn btn-primary mt-3"><i
                             class="bi bi-envelope-at-fill"></i> Enviame una copia por correo</button>
                     <p class="text-sm text-secondary mt-3">
