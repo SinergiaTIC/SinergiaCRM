@@ -3779,6 +3779,11 @@ $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['e
 $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['skip'] = 'Ignorar';
 $app_list_strings['stic_advanced_web_forms_datablocks_duplicate_action_list']['error'] = 'Error';
 
+// Tipo de campo de Bloque de datos de un Formulario Web Avanzado
+$app_list_strings['stic_advanced_web_forms_field_type_list']['unlinked'] = 'No enlazado';
+$app_list_strings['stic_advanced_web_forms_field_type_list']['form'] = 'Formulario';
+$app_list_strings['stic_advanced_web_forms_field_type_list']['hidden'] = 'Valor fijo';
+
 // Tipo de campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['date'] = 'Fecha';
 $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['check'] = 'Casilla de selección';

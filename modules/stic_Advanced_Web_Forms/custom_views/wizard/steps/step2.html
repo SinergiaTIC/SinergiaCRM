@@ -62,6 +62,7 @@
               creatingFieldUnlinked: false,
               creatingFieldForm: false,
               creatingFieldHidden: false,
+              typeField: 'form',
 
               showAllFields: false,
               get availableFields() { return this.showAllFields ? item.getAvailableFieldsInformation() : item.getAvailableFieldsInformation().filter(f => f.inViews); },
@@ -70,14 +71,41 @@
               newField: new AWF_Field(),
               optionValues: [],
 
+              get availableValueTypes() { return this.newField?.getAvailableValueTypes() ?? []; },
+
               init() {
                 this.$watch('availableFields', (newArray) => {
-                  this.newField = new AWF_Field({ name: newArray[0]?.name ?? '' });
+                  this.newField = new AWF_Field({ name: newArray[0]?.name ?? '', type_field: this.newField?.type_field});
+                });
+                this.$watch('typeField', (newType, oldType) => {
+                  this.newField = new AWF_Field({ name: this.newField?.name ?? '', type_field: newType});
+                  this.newField.in_form = this.newField.isFieldInForm();
+                  if (!this.newField.isFieldInForm()) {
+                    this.newField.label = '';
+                    this.required_in_form = false;
+                    this.newField.type_in_form = '';
+                    this.newField.value_options = [];
+                  }
                 });
                 this.$watch('newField.name', (newName, oldName) => {
                   this.selectedFieldInfo = this.availableFields.find(f => f.name == newName);
-                  this.newField.updateWithFieldInformation(this.selectedFieldInfo)
-                  this.optionValues = utils.getFieldOptions(this.selectedFieldInfo);
+                });
+                this.$watch('selectedFieldInfo', (newFieldInfo, oldFieldInfo) => {
+                  this.newField.updateWithFieldInformation(newFieldInfo)
+                  this.optionValues = utils.getFieldOptions(newFieldInfo);
+                });
+                this.$watch('availableValueTypes', (newArray) => {
+                  this.newField.value_type = newArray[0]?.id ?? '';
+                });
+                this.$watch('newField.value_type', (newType, oldType) => {
+                  if (newType != 'fixed') {
+                    this.newField.value = '';
+                  }
+                });
+                this.$watch('optionValues', (newArray) => {
+                  if (this.newField.value_type == 'fixed') {
+                    this.newField.value = newArray[0]?.id ?? '';
+                  }
                 });
               },
 
@@ -206,21 +234,15 @@
 
                 <!-- Add Hidden Field -->
                 <div x-show="creatingFieldHidden" x-data="{
-                  get availableValueTypes() { return this.newField.getAvailableValueTypes('hidden'); },
-
                   get hasOptions() { return this.optionValues.length > 0; },
-                  get isRelated() { return this.selectedFieldInfo.type == 'relate'; },
-                  get isDate() { return this.newField.type == 'date' || this.newField.type == 'datetime' || this.newField.type == 'datetimecombo'; },
+                  get isRelated() { return this.newField?.type == 'relate'; },
+                  get isDate() { return this.newField?.type == 'date' || this.newField?.type == 'datetime' || this.newField?.type == 'datetimecombo'; },
 
                   valueToday: false,
 
                   init() {
-                    this.$watch('newField.name', (newName, oldName) => {
-                      this.newField.type_in_form = '';
-                    });
-                    this.$watch('availableValueTypes', (newArray) => {
-                      this.newField.value_type = newArray[0]?.id ?? '';
-                    });
+                    this.typeField = 'hidden';
+
                     this.$watch('newField.value_type', (newType, oldType) => {
                       this.valueToday = false;
                     });
@@ -274,51 +296,59 @@
                         </select>
                       </div>
                       <!-- Value (fixed value of enum) -->
-                      <div class="col-3" x-show="hasOptions">
-                        <label :for="`dbField_ValFixOptions${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <select :id="`dbField_ValFixOptions${item.id}`" class="form-select" x-model="newField.value">
-                          <template x-for="option in optionValues" :key="option.id">
-                            <option :value="option.id" x-text="option.text"></option>
-                          </template>
-                        </select>
-                      </div>
+                      <template x-if="hasOptions">
+                        <div class="col-3" x-show="hasOptions">
+                          <label :for="`dbField_ValFixOptions${item.id}`" class="form-label"
+                                x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                          <select :id="`dbField_ValFixOptions${item.id}`" class="form-select" x-model="newField.value">
+                            <template x-for="option in optionValues" :key="option.id">
+                              <option :value="option.id" x-text="option.text"></option>
+                            </template>
+                          </select>
+                        </div>
+                      </template>
                       <!-- Value (fixed value of related) -->
-                      <div class="col-3" x-show="isRelated">
-                        <label :for="`dbField_ValFixRel_name${item.id}`" class="form-label"
-                              x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')"></label>
-                        <div class="input-group">
-                          <input class="form-control" type="text" :id="`dbField_ValFixRel_name${item.id}`" x-model="newField.value_text" 
-                                autocomplete="off" readonly style="background-color:rgb(255, 255, 255);" />
-                          <input type="hidden" :id="`dbField_ValFixRel_id${item.id}`" x-model="newField.value" />
-                          <button class="btn" type="button" @click="openPopUp('dbField_ValFixRel')">
-                            <span class="suitepicon suitepicon-action-select"></span>
-                          </button>
-                          <button class="btn" type="button" @click="newField.value='';newField.value_text='';">
-                            <span class="suitepicon suitepicon-action-clear"></span>
-                          </button>
+                      <template x-if="isRelated">
+                        <div class="col-3" x-show="isRelated">
+                          <label :for="`dbField_ValFixRel_name${item.id}`" class="form-label"
+                                x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')"></label>
+                          <div class="input-group">
+                            <input class="form-control" type="text" :id="`dbField_ValFixRel_name${item.id}`" x-model="newField.value_text" 
+                                  autocomplete="off" readonly style="background-color:rgb(255, 255, 255);" />
+                            <input type="hidden" :id="`dbField_ValFixRel_id${item.id}`" x-model="newField.value" />
+                            <button class="btn" type="button" @click="openPopUp('dbField_ValFixRel')">
+                              <span class="suitepicon suitepicon-action-select"></span>
+                            </button>
+                            <button class="btn" type="button" @click="newField.value='';newField.value_text='';">
+                              <span class="suitepicon suitepicon-action-clear"></span>
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      </template>
                       <!-- Value (fixed value of date) -->
-                      <div class="col-3" x-show="isDate">
-                        <label :for="`dbField_ValFixDate${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <div class="form-switch">
-                          <label :for="`dbField_ValFixDate_Today${item.id}`" class="form-label"
-                                  x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TODAY')"></label>
-                          <input class="form-check-input form-switch" type="checkbox" role="switch"
-                                :id="`dbField_ValFixDate_Today${item.id}`" x-model="valueToday"/>
+                      <template x-if="isDate">
+                        <div class="col-3" x-show="isDate">
+                          <label :for="`dbField_ValFixDate${item.id}`" class="form-label"
+                                x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                          <div class="form-switch">
+                            <label :for="`dbField_ValFixDate_Today${item.id}`" class="form-label"
+                                    x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TODAY')"></label>
+                            <input class="form-check-input form-switch" type="checkbox" role="switch"
+                                  :id="`dbField_ValFixDate_Today${item.id}`" x-model="valueToday"/>
+                          </div>
+                          <input :id="`dbField_ValFixDate${item.id}`" type="date" class="form-control" autocomplete="off" 
+                                :disabled="valueToday" x-model="newField.value"/>
                         </div>
-                        <input :id="`dbField_ValFixDate${item.id}`" type="date" class="form-control" autocomplete="off" 
-                              :disabled="valueToday" x-model="newField.value"/>
-                      </div>
+                      </template>
                       <!-- Value (fixed value) -->
-                      <div class="col-3" x-show="!hasOptions && !isRelated && !isDate">
-                        <label :for="`dbField_ValFixText${item.id}`" class="form-label"
-                              x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                        <input :id="`dbField_ValFixText${item.id}`" type="text" class="form-control"  autocomplete="off"
-                              x-model="newField.value"/>
-                      </div>
+                      <template x-if="!hasOptions && !isRelated && !isDate">
+                        <div class="col-3">
+                          <label :for="`dbField_ValFixText${item.id}`" class="form-label"
+                                x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                          <input :id="`dbField_ValFixText${item.id}`" type="text" class="form-control"  autocomplete="off"
+                                x-model="newField.value"/>
+                        </div>
+                      </template>
 
                       <!-- Buttons -->
                       <button type="button" class="btn w-32px mb-1px" @click="handleCreateField();">

@@ -62,12 +62,13 @@ class utils {
    * @returns array of options [id, text]
    */
   static getFieldOptions(fieldInfo) {
+    if (fieldInfo == undefined) {
+      return [];
+    }
     if (fieldInfo.type == "bool") {
       return utils.getList("stic_boolean_list");
     }
-    if (fieldInfo.options && 
-        fieldInfo.type != "relate" && 
-        fieldInfo.type != "date" && fieldInfo.type != "datetime" && fieldInfo.type != "datetimecombo") {
+    if (fieldInfo.options && (fieldInfo.type == "enum" || fieldInfo.type == "multienum")) {
       return utils.getList(fieldInfo.options);
     }
     return [];
