@@ -214,14 +214,14 @@ class OAuthAuthenticate extends SugarAuthenticate
                 }
                 $this->userAuthenticate->loadUserOnSession($userBean->id);
 
-	            $this->postLoginAuthenticate();
+	            return $this->postLoginAuthenticate();
 
             } else {
                 $_SESSION['login_error'] = $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_TOKEN'];
                 return false;
             }
         } else {
-            parent::loginAuthenticate($username, $password, $fallback, $PARAMS);
+           return parent::loginAuthenticate($username, $password, $fallback, $PARAMS);
         }
     }
 }
