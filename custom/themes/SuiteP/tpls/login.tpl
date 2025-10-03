@@ -45,10 +45,10 @@
 
 *}
 <script type='text/javascript'>
-    var LBL_LOGIN_SUBMIT = '{sugar_translate module="Users" label="LBL_LOGIN_SUBMIT"}';
-    var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUBMIT"}';
-    var LBL_SHOWOPTIONS = '{sugar_translate module="Users" label="LBL_SHOWOPTIONS"}';
-    var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}';
+    const LBL_LOGIN_SUBMIT = '{sugar_translate module="Users" label="LBL_LOGIN_SUBMIT"}';
+    const LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUBMIT"}';
+    const LBL_SHOWOPTIONS = '{sugar_translate module="Users" label="LBL_SHOWOPTIONS"}';
+    const LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}';
 </script>
 
 <!-- Start login container -->
@@ -120,9 +120,10 @@
                  onclick='toggleDisplay("forgot_password_dialog");'>
                 <a href='javascript:void(0)'>{sugar_translate module="Users" label="LBL_LOGIN_FORGOT_PASSWORD"}</a>
             </div>
+            {$OAUTH_AUTHENTICATION}
         </form>
         
-        <form class="form-signin passform" role="form" action="index.php" method="post" name="DetailView" id="form" name="fp_form" id="fp_form" autocomplete="off">
+        <form class="form-signin passform" role="form" action="index.php" method="post" name="DetailView" name="fp_form" id="fp_form" autocomplete="off">
             <div id="forgot_password_dialog" style="display:none">
                 <input type="hidden" name="entryPoint" value="GeneratePassword">
                 <div id="generate_success" class='error' style="display:inline;"></div>

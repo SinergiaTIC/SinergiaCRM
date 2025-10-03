@@ -94,6 +94,10 @@ if (!empty($_REQUEST['members'])) {
 ///////////////////////////////////////////////////////////////////////////////
 ////	BUILD THE EXPORT FILE
 
+// Stic-Custom MHP 20250912 - https://github.com/SinergiaTIC/SinergiaCRM/pull/789
+// Add a suffix to the name of the exported file to prevent the export process from generating files with the same name as a previous export.
+$filename .= '_' . date("ymd_His");
+// END Stic-Custom 
 ob_clean();
 printCSV($content, $filename);
 sugar_cleanup(true);
