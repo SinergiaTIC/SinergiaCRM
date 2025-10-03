@@ -78,6 +78,24 @@ $layout_defs["Leads"]["subpanel_setup"]['leads_documents_1'] = array(
     ),
 );
 
+// New collection in activities/history
+$layout_defs['Leads']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+$layout_defs['Leads']['subpanel_setup']['history']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
+$layout_defs['Leads']['subpanel_setup']['activities']['collection_list']['stic_Messages'] = array(
+    'module' => 'stic_Messages',
+    'subpanel_name' => 'ForHistory',
+    'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
+    'generate_select' => true,
+    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'draft'"),
+);
+$layout_defs['Leads']['subpanel_setup']['history']['collection_list']['stic_Messages'] = array(
+    'module' => 'stic_Messages',
+    'subpanel_name' => 'ForHistory',
+    'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
+    'generate_select' => true,
+    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'sent', 'error'"),
+);
+
 // Subpanels default sorting
 $layout_defs['Leads']['subpanel_setup']['activities']['sort_order'] = 'asc';
 $layout_defs['Leads']['subpanel_setup']['activities']['sort_by'] = 'date_due';

@@ -74,4 +74,7 @@ $mod_strings = array (
     'LBL_ERROR_STATUS_DURATION' => 'Se o Estado é Si ou Parcial, é necesario indicar a Duración.',
     'LBL_DURATION_INFO' => 'A Duración establécese en horas e admite decimais. Se en Estado non se seleccionou ningún valor e a Duración está baleira, a asistencia herdará a Duración da sesión á que pertence. Se en Estado se indicou Si ou Parcial, entón será necesario reencher explicitamente a Duración.',
     'LBL_AMOUNT_INFO' => 'Se ao crear unha asistencia este campo se deixa baleiro, reencherase automaticamente co valor do campo "Importe da sesión" da inscrición relacionada.',
+
+    // Campos de filtro en relaciones muchos a muchos
+    'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Evento (vía Inscripciones)',
 );

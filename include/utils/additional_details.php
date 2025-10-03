@@ -87,6 +87,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
         $templateBody = new Sugar_Smarty();
         $templateBody->assign('APP', $app_list_strings);
+        // STIC Custom 20240909 EPS - SMS Messages
+        // APP_LIST added to available variables to be able to show related modules names correctly
+        $templateBody->assign('APP_LIST', $app_list_strings);
+        // ENS STIC Custom
         $templateBody->assign('MOD', $mod_strings);
         $templateBody->assign('FIELD', $fields);
         $templateBody->assign('ACL_EDIT_VIEW', $bean->ACLAccess('EditView'));

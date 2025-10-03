@@ -471,7 +471,7 @@ function viewType() {
     return "list";
   } else if ($(".sub-panel .quickcreate form").length == 1) {
     return "quickcreate";
-  } else if ($(".detail-view").length == 1) {
+  } else if ($(".detail-view").length == 1 || $("form[name=DetailView]").length == 1) {
     return "detail";
   } else if ($("form[name=EditView]").length == 1) {
     return "edit";

@@ -103,7 +103,17 @@ addToValidateCallback(
   true,
   SUGAR.language.get(module, "LBL_RESOURCES_STATUS_ERROR"),
   function () {
-    return JSON.parse(isResourceAvailable());
+    var repeatBookingCheckbox = document.getElementById('periodic_booking');
+    var repeatType = document.getElementById('repeat_type');
+    var isPeriodic = repeatBookingCheckbox && repeatBookingCheckbox.checked && repeatType && repeatType.value && repeatType.value !== "" && repeatType.value.toLowerCase() !== "none";
+    
+    if (!isPeriodic) {
+      var isAvailable = JSON.parse(isResourceAvailable());
+      if (!isAvailable) {
+         return false;
+      }
+    }
+    return true;
   }
 );
 addToValidateCallback(
@@ -125,6 +135,52 @@ addToValidateCallback(
     }
   }
 );
+
+addToValidateCallback(
+  getFormName(),
+  "repeat_type",
+  "enum",
+  false,
+  SUGAR.language.get(module, "LBL_PERIODIC_BOOKING_ERROR"), 
+  function (formName, fieldName, fieldElement) {
+   
+    var repeatBookingCheckbox = document.getElementById('periodic_booking');
+    var repeatType = document.getElementById('repeat_type');
+   
+    if (!repeatBookingCheckbox || !repeatBookingCheckbox.checked) {
+      return true;
+    }
+   
+    if (!repeatType || !repeatType.value || repeatType.value === "" || repeatType.value.toLowerCase() === "none") {
+     return false; 
+    }
+      
+    var repeatCountRadio = document.getElementById('repeat_count_radio');
+    var repeatUntilRadio = document.getElementById('repeat_until_radio');
+   
+    if (repeatCountRadio && repeatCountRadio.checked) {
+      var repeatCount = document.querySelector('input[name="repeat_count"]');
+      
+      if (!repeatCount || !repeatCount.value || parseInt(repeatCount.value) < 1) {
+        add_error_style(formName, 'repeat_count', SUGAR.language.get(module, "LBL_PERIODIC_BOOKING_COUNT_REQUIRED"));
+        return false;
+      }
+
+    } else if (repeatUntilRadio && repeatUntilRadio.checked) {
+      var repeatUntil = document.querySelector('input[name="repeat_until"]');
+      
+      if (!repeatUntil || !repeatUntil.value || repeatUntil.value.trim() === '') {
+        add_error_style(formName, 'repeat_until', SUGAR.language.get(module, "LBL_PERIODIC_BOOKING_UNTIL_REQUIRED"));
+        return false;
+      }
+
+    } else {
+      add_error_style(formName, fieldName, SUGAR.language.get(module, "LBL_PERIODIC_BOOKING_COUNT_REQUIRED"));
+      return false;
+    }
+     return true;
+    }
+  );
 
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
@@ -579,11 +635,28 @@ function insertResourceLine() {
     false,
     SUGAR.language.get(module, "LBL_RESOURCES_ERROR"),
     function (formName, resourceElement) {
-      return isResourceAvailable(resourceElement.replace("name", "id"));
+      return validateIndividualResource(resourceElement);
     }
   );
   resourceMaxCount++;
 }
+
+function validateIndividualResource(resourceElement) {
+  
+  var repeatBookingCheckbox = document.getElementById('periodic_booking');
+  var repeatType = document.getElementById('repeat_type');
+  var isPeriodic = repeatBookingCheckbox && repeatBookingCheckbox.checked && repeatType && repeatType.value && repeatType.value !== "" && repeatType.value.toLowerCase() !== "none";
+  
+  
+  if (!isPeriodic) {
+    var resourceId = resourceElement.replace("name", "id");
+    var result = JSON.parse(isResourceAvailable(resourceId));
+    return result;
+  }
+  return true;
+}
+
+
 function resourceLineWithData(resourcesCount) {
   for (var i = 0; i <= resourceMaxCount; i++) {
     if ($("#resource_id" + i).length && $("#resource_id" + i).val()) {

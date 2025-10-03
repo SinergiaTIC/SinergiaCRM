@@ -244,6 +244,7 @@ $dictionary['stic_Attendances'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_PAYMENTS_STIC_ATTENDANCES_FROM_STIC_ATTENDANCES_TITLE',
         ),
+
     ),
     'relationships' => array(
     ),
