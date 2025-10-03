@@ -908,6 +908,17 @@ class KReportQuery {
                      $this->whereString .= ' AND ' . $group_where;
                   }
                }
+               // STIC Custom 20251003 EPS - Fixing behaviour when Nothing selected in role
+               $actionPermission = $_SESSION['ACL'][$current_user->id][$root_bean->module_dir]['module'][$access_check]['aclaccess'] ?? ACL_ALLOW_NONE; 
+               if ($actionPermission == ACL_ALLOW_NONE) {
+                   if (empty($this->whereString)) {
+                        $this->whereString = " ( 0 = 1 ) ";
+                     } else {
+                        $this->whereString .= " AND ( 0 = 1) ";
+                     }
+               }
+               // END STIC Custom
+
                break;
          }
       }
