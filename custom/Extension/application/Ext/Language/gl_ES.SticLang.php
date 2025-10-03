@@ -3793,7 +3793,7 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_type_list']['select'] =
 
 // Subtipo de campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text'] = '🔤 Texto simple';
-$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_email'] = '📧 Email';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_email'] = '✉️ Email';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_tel'] = '📞 Teléfono';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['text_password'] = '🔒 Contraseña';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['textarea'] = '📃 Párrafo';
@@ -3802,9 +3802,10 @@ $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['date'] 
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['date_time'] = '⏱️ Hora';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['date_datetime'] = '📅⏱️ Fecha y hora';
 $app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select'] = '🔻 Desplegable';
-$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_multiple'] = '☑️ Selección múltiple';
-$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_radio'] = '⏺︎ Selección de opción';
-$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_check'] = '✔️ Casilla de selección';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_multiple'] = '📑 Desplegable múltiple';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_checkbox_list'] = '☑️ Selección múltiple';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_radio'] = '🔘 Selección de opción';
+$app_list_strings['stic_advanced_web_forms_field_in_form_subtype_list']['select_checkbox'] = '◻️ Casilla de selección';
 
 // Tipo de valor de un campo en un Formulario Web Avanzado
 $app_list_strings['stic_advanced_web_forms_field_in_form_value_type_list']['editable'] = 'Editable';

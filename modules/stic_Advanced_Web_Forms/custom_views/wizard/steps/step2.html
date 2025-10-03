@@ -52,7 +52,30 @@
             <div class="d-flex justify-content-between align-items-center">
               <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" 
                   x-init="sticControls.editableText($el);"></h3>
-              <span class="btn suitepicon suitepicon-action-delete" x-show="!item.required" @click="deleteDataBlock(key);"></span>
+              <div x-data="{
+                get canMoveUp() { return item.order>0; },
+                get canMoveDown() { return item.order<formConfig.data_blocks.length-1;  },
+                get canRemove() { return !item.required;  },
+              }">
+                <div class="input-group">
+                  <button type="button" class="button btn w-32px p-0 d-flex justify-content-center align-items-center" 
+                          x-bind:disabled="!canMoveUp" @click="formConfig.setDataBlockOrder(item, item.order-1);">
+                    <span class="suitepicon suitepicon-action-move-up"></span>
+                  </button>
+                  <button type="button" class="button btn w-32px p-0 d-flex justify-content-center align-items-center" 
+                          x-bind:disabled="!canMoveDown" @click="formConfig.setDataBlockOrder(item, item.order+1);">
+                    <span class="suitepicon suitepicon-action-move-down"></span>
+                  </button>
+                  <button type="button" class="button btn w-32px p-0 d-flex justify-content-center align-items-center" 
+                          x-bind:disabled="!canRemove" @click="deleteDataBlock(key);">
+                    <span class="suitepicon suitepicon-action-delete"></span>
+                  </button>
+                </div>
+                <!-- <span class="btn suitepicon suitepicon-action-move-up" x-bind:disabled="!canMoveUp" @click="formConfig.setDataBlockOrder(item, item.order-1);"></span> -->
+                <!-- <span class="btn suitepicon suitepicon-action-move-down" x-bind:disabled="!canMoveDown" @click="formConfig.setDataBlockOrder(item, item.order+1);"></span> -->
+                <!-- <span class="btn suitepicon suitepicon-action-delete" x-bind:disabled="!canRemove" @click="deleteDataBlock(key);"></span> -->
+                <!-- <p x-text="`Order: ${item.order}; CanMoveUp: ${canMoveUp}; CanMoveDown: ${canMoveDown}`"></p> -->
+              </div>
             </div>
           </div>
           <!-- DataBlock body -->
@@ -263,6 +286,16 @@
                               x-text="utils.translateForFieldLabel('LBL_FIELD_LABEL')"></label>
                         <input :id="`dbFieldF_Label${item.id}`" type="text" class="form-control" x-model="newField.label" >
                       </div>
+
+                      <!-- Placeholder -->
+                      <template x-if="newField.acceptPlaceholder()">
+                        <div class="col-3">
+                          <label :for="`dbFieldF_Placeholder${item.id}`" class="form-label"
+                                x-text="utils.translateForFieldLabel('LBL_FIELD_PLACEHOLDER')"></label>
+                          <input :id="`dbFieldF_Placeholder${item.id}`" type="text" class="form-control" x-model="newField.placeholder" >
+                        </div>
+                      </template>
+
                       <!-- Required in form -->
                       <div class="col-2 form-switch">
                         <label :for="`dbFieldF_ReqForm${item.id}`" class="form-label"

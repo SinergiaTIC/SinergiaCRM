@@ -151,8 +151,8 @@ class AWF_Field {
   constructor(data = {}) {
     // 1. Set default values
     Object.assign(this, {
-      name: "",                // Nombre del campo
-      label: "",               // Etiqueta que aparecerá con el campo
+      name: '',                // Nombre del campo
+      label: '',               // Etiqueta que aparecerá con el campo
       order: 0,                // Orden del campo en el bloque de datos
       required: false,         // Indica si el campo es obligado en el bloque de datos (no se puede eliminar)
       type_field: 'form',      // Tipo de campo: unlinked, form, hidden
@@ -164,8 +164,8 @@ class AWF_Field {
       value_type: 'editable',  // Tipo de valor: editable, selectable, fixed, dataBlock
       value_options: [],       // Las opciones para el valor del campo
       placeholder: '',         // El placeholder o texto de fondo en el editor
-      value: "",               // El valor del campo
-      value_text: ""           // El texto a mostrar para el valor del campo
+      value: '',               // El valor del campo
+      value_text: ''           // El texto a mostrar para el valor del campo
     });
 
     // 2. Overwrite with provided data
@@ -236,6 +236,9 @@ class AWF_Field {
   }
 
   getAvailableValueTypes() {
+    if (this.name == "") {
+      return [];
+    }
     if (this.type_field == 'hidden') {
       if (this.type == 'relate') {
         return AWF_Field.value_typeList().filter(t => t.id == 'fixed' || t.id == 'dataBlock');
@@ -252,6 +255,9 @@ class AWF_Field {
   }
 
   getAvailableTypesInForm() {
+    if (this.name == "") {
+      return [];
+    }
     if (!this.isFieldInForm()) {
       return [];
     }
@@ -283,50 +289,77 @@ class AWF_Field {
   }
 
   getAvailableSubtypesInForm() {
-    debugger;
+    if (this.name == "") {
+      return [];
+    }
     if (!this.isFieldInForm()) {
       return [];
     }
-    if (this.type_in_form = "") {
+    if (this.type_in_form == "") {
       return [];
     }
 
-    let base_subtypes = AWF_Field.subtype_in_formList().filter(s => s.id.startsWith(this.type_in_form));
+    let base_subtypes = AWF_Field.subtype_in_formList().filter(s => s.id == this.type_in_form || s.id.startsWith(this.type_in_form + '_'));
 
     if (base_subtypes.length <= 1) {
       return base_subtypes;
     }
+
+    let list = [];
     if (this.type == "phone") {
-      return base_subtypes.filter(s => s.id == "text" || s.id == "text_tel");
+      list.push(base_subtypes.find(s => s.id == "text_tel"));
+      list.push(base_subtypes.find(s => s.id == "text"));
+      return list;
     }
     if (this.type == "email") {
-      return base_subtypes.filter(s => s.id == "text" || s.id == "text_email");
+      list.push(base_subtypes.find(s => s.id == "text_email"));
+      list.push(base_subtypes.find(s => s.id == "text"));
+      return list;
     }
     if (this.type == "password" || this.type == "encrypt") {
-      return base_subtypes.filter(s => s.id == "text" || s.id == "text_password");
+      list.push(base_subtypes.find(s => s.id == "text_password"));
+      list.push(base_subtypes.find(s => s.id == "text"));
+      return list;
     }
 
     if (this.type == "date") {
-      return base_subtypes.filter(s => s.id == "date");
+      list.push(base_subtypes.find(s => s.id == "date"));
+      return list;
     }
     if (this.type == "time") {
-      return base_subtypes.filter(s => s.id == "date_time");
+      list.push(base_subtypes.find(s => s.id == "date_time"));
+      return list;
     }
     if (this.type == "datetime" || this.type == "datetimecombo") {
-      return base_subtypes.filter(s => s.id == "date" || s.id == "date_datetime");
+      list.push(base_subtypes.find(s => s.id == "date_datetime"));
+      list.push(base_subtypes.find(s => s.id == "date"));
+      return list;
     }
 
     if (this.type == "enum" || this.type == "radioenum" || this.type == "relate") {
-      return base_subtypes.filter(s => s.id == "select" || s.id == "select_radio");
+      list.push(base_subtypes.find(s => s.id == "select"));
+      list.push(base_subtypes.find(s => s.id == "select_radio"));
+      return list
     }
     if (this.type == "bool" || this.type == "check") {
-      return base_subtypes.filter(s => s.id == "select" || s.id == "select_radio" || s.id == "select_check");
+      list.push(base_subtypes.find(s => s.id == "select_checkbox"));
+      list.push(base_subtypes.find(s => s.id == "select"));
+      list.push(base_subtypes.find(s => s.id == "select_radio"));
+      return list
     }
     if (this.type == "multienum") {
-      return base_subtypes.filter(s => s.id == "select" || s.id == "select_multiple" || s.id == "select_radio");
+      list.push(base_subtypes.find(s => s.id == "select_multiple"));
+      list.push(base_subtypes.find(s => s.id == "select_checkbox_list"));
+      list.push(base_subtypes.find(s => s.id == "select"));
+      list.push(base_subtypes.find(s => s.id == "select_radio"));
+      return list
     }
 
     return base_subtypes;
+  }
+
+  acceptPlaceholder() {
+    return this.type_in_form == "text" || this.type_in_form == "textarea" || this.type_in_form == "number";
   }
 
   static type_fieldList(asString = false) {
@@ -467,6 +500,9 @@ class AWF_Configuration {
     this._ensureDefaultDataBlocks();
     this._ensureDefaultFlows();
     this._ensureDefaultLayout();
+
+    // 5. Sort datablocks
+    this.sortDataBlocks();
   }
   static fromJSON(jsonString){
     return new AWF_Configuration(JSON.parse(jsonString));
@@ -493,6 +529,10 @@ class AWF_Configuration {
     // Check exists OnError Flow
   }
   _ensureDefaultLayout() {}
+
+  sortDataBlocks() {
+    return this.data_blocks.sort((a, b) => a.order - b.order)
+  }
 
   /**
    * Gets a suggested text for a new DataBlock for a module
@@ -590,7 +630,7 @@ class AWF_Configuration {
     }
 
     this.data_blocks.push(dataBlock);
-    this.data_blocks.sort((a, b) => a.order - b.order);
+    this.sortDataBlocks();
 
     return dataBlock;
   }
@@ -743,5 +783,36 @@ class AWF_Configuration {
     dataBlocks.push({ id: -1, text: utils.translate("[< Nuevo Bloque de Datos >]") });
 
     return dataBlocks;
+  }
+
+  setDataBlockOrder(datablock, newOrder) {
+    if (!datablock) {
+      return -1;
+    }
+    let oldOrder = datablock.order;
+    if (newOrder < 0 || newOrder >= this.data_blocks.length || newOrder == oldOrder) {
+      return oldOrder;
+    }
+
+    if (newOrder < oldOrder) {
+      let prevItem = this.data_blocks.find(db => db.order == datablock.order-1);
+      if (prevItem) {
+        // Change previous item with current
+        prevItem.order++;
+        datablock.order--;
+      }
+    }
+    if (newOrder > oldOrder) {
+      let nexItem = this.data_blocks.find(db => db.order == datablock.order+1);
+      if (nexItem) {
+        // Change next item with current
+        nexItem.order--;
+        datablock.order++;
+      }
+    }
+    this.setDataBlockOrder(datablock, newOrder);
+
+    this.sortDataBlocks();
+    return datablock.order;
   }
 }

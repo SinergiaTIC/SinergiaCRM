@@ -117,6 +117,7 @@ $mod_strings = array (
   'LBL_FIELD_IN_FORM' => 'En el formulario',
   'LBL_FIELD_TYPE_IN_FORM' => 'Tipo de entrada',
   'LBL_FIELD_SUBTYPE_IN_FORM' => 'Tipo de editor',
+  'LBL_FIELD_PLACEHOLDER' => 'Texto de fondo',
   'LBL_FIELD_VALUE_TYPE' => 'Tipo de valor',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE' => 'Valor',
