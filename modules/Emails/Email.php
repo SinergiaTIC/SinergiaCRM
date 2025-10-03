@@ -3045,14 +3045,27 @@ class Email extends Basic
                 isValidEmailAddress($this->from_addr);
             }
             // FROM NAME
+            // STIC-Custom 20250923 MHP - Check if the smtp_from_name is configured in the selected outbound email account
+            // 
+            // if (!empty($this->from_name)) {
+            //     $mail->FromName = $this->from_name;
+            // } elseif (!empty($this->from_addr_name)) {
+            //     $mail->FromName = $this->from_addr_name;
+            // } else {
+            //     $mail->FromName = $current_user->getPreference('mail_fromname');
+            //     $this->from_name = $mail->FromName;
+            // }
             if (!empty($this->from_name)) {
                 $mail->FromName = $this->from_name;
             } elseif (!empty($this->from_addr_name)) {
                 $mail->FromName = $this->from_addr_name;
+            } elseif (!empty($mail->oe->smtp_from_name)) {
+                $mail->FromName = $mail->oe->smtp_from_name;
             } else {
                 $mail->FromName = $current_user->getPreference('mail_fromname');
                 $this->from_name = $mail->FromName;
             }
+            // END STIC-Custom
 
             //Reply to information for case create and autoreply.
             if (!empty($this->reply_to_name)) {
