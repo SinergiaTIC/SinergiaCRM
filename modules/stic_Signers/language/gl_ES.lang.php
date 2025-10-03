@@ -1,25 +1,25 @@
 <?php
 /**
-* This file is part of SinergiaCRM.
-* SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
-* Copyright (C) 2013 - 2023 SinergiaTIC Association
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU Affero General Public License version 3 as published by the
-* Free Software Foundation.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
-* details.
-*
-* You should have received a copy of the GNU Affero General Public License along with
-* this program; if not, see http://www.gnu.org/licenses or write to the Free
-* Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-* 02110-1301 USA.
-*
-* You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
-*/
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 $mod_strings = array(
     'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
@@ -70,15 +70,16 @@ $mod_strings = array(
     'LBL_PDF_DOCUMENT' => 'Documento PDF',
     'LBL_SIGNATURE_DATE' => 'Data da sinatura',
     'LBL_VERIFICATION_CODE' => 'Código de verificación',
+    'LBL_OTP' => 'Contrasinal de un só uso (OTP)',
+    'LBL_OTP_EXPIRATION' => 'Data de expiración de OTP',
     'LBL_IP_ADDRESS' => 'Enderezo IP',
     'LBL_SIGNATURE_IMAGE' => 'Imaxe da sinatura',
     'LBL_VARIABLES' => 'Variables',
     'LBL_REJECTION_REASON' => 'Motivo de rexeitamento',
     'LBL_ON_BEHALF_OF_ID' => 'Autorizado a asinar en nome de (ID)',
 
-
     'LBL_SIGNER_PREVIEW' => 'Vista previa do firmante',
-    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar sinatura por correo electrónico a',  
+    'LBL_SIGNER_SEND_TO_SIGN_BY_EMAIL' => 'Solicitar sinatura por correo electrónico a',
     'LBL_SIGNER_SEND_TO_SIGN_MASSIVE' => 'Solicitar sinatura por correo electrónico',
     'LBL_SIGNER_SEND_TO_SIGN_MASSIVE_LIMIT_ALERT' => 'Por favor, selecciona un máximo de 20 firmantes para enviar solicitudes de sinatura masivas.',
     'LBL_SIGNER_REDIRECT_TO_PORTAL' => 'Ir ao portal de sinatura',
@@ -86,8 +87,8 @@ $mod_strings = array(
     'LBL_SIGNER_PORTAL_URL_COPIED' => 'URL do portal copiada ao porta-recopiadora',
     'LBL_SIGNER_EMAIL_SUBJECT' => 'Ten un documento para firmar',
     'LBL_SIGNER_EMAIL_BODY' => 'Por favor, faga clic na seguinte ligazón para firmar o documento:',
-    'LBL_SIGNER_EMAIL_ERROR' => 'Erro ao enviar o correo electrónico ao firmante', 
-    'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente ao firmante', 
+    'LBL_SIGNER_EMAIL_ERROR' => 'Erro ao enviar o correo electrónico ao firmante',
+    'LBL_SIGNER_EMAIL_SUCCESS' => 'Correo electrónico enviado correctamente ao firmante',
     'LBL_SIGNER_EMAIL_BUTTON_TEXT' => 'Ir ao documento',
     'LBL_SIGNER_EMAIL_LINK_PROBLEM' => 'Se ten problemas para acceder á ligazón, cópiela e péguena no seu navegador',
 );
