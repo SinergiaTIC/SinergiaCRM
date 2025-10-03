@@ -517,3 +517,10 @@ $javascript->setFormName('EditView');
 $javascript->setSugarBean($focus);
 $javascript->addAllFields('');
 echo $javascript->getScript();
+
+// STIC Custom 20240909 EPS - SMS messages
+echo getVersionedScript("SticInclude/js/Utils.js");
+echo getVersionedScript("custom/modules/EmailTemplates/SticUtils.js");
+// END STIC Custom
+
+

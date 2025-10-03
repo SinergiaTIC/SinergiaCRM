@@ -938,10 +938,10 @@ $app_list_strings = array(
 
     'repeat_intervals' => array(
         '' => '',
-        'Daily' => 'die(s)',
-        'Weekly' => 'setmana(es)',
-        'Monthly' => 'mes(os)',
-        'Yearly' => 'any(s)',
+        'Daily' => 'dies',
+        'Weekly' => 'setmanes',
+        'Monthly' => 'mesos',
+        'Yearly' => 'anys',
     ),
 
     'duration_dom' => array(

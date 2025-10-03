@@ -611,9 +611,9 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '2.2.2', 
-    'js_custom_version' => 19,
-    'stic_show_update_alert' => 0,
+    'sinergiacrm_version' => '2.3.0', 
+    'js_custom_version' => 20,
+    'stic_show_update_alert' => 1,
     // END STIC
 
     // STIC-Custom 20240117 JCH - Security Groups Module Rules activation config
@@ -651,4 +651,23 @@ $sugar_config = array(
     // Delete from the tracker table the records of the days prior to the ones configured in config
     'tracker_prune_interval' => 90,
     // END STIC Custom
+
+    // STIC-Custom AAM 20250825 - Adding OAuth Authentication providers
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/552
+    'authenticationOauthProviders' => array(
+        'Google' =>
+            array(
+                'enabled' => 'false',
+                'clientId' => '',
+                'clientSecret' => '',
+            ),
+        'Microsoft' => array(
+                'enabled' => 'false',
+                'clientId' => '',
+                'tenantId' => '',
+                'redirectUri' => '',
+                'scopes' => '',
+            ),
+    )
+    // END STIC-Custom
 );
