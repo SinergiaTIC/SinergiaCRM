@@ -45,3 +45,7 @@ $mod_strings['LBL_STIC_JOB_OFFERS_DOCUMENTS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofer
 $mod_strings['LBL_PROSPECTS_DOCUMENTS_1_FROM_PROSPECTS_TITLE'] = 'Públic Objectiu';
 $mod_strings['LBL_STIC_FAMILIES_DOCUMENTS_FROM_STIC_FAMILIES_TITLE'] = 'Unitats familiars';
 $mod_strings['LBL_STIC_GROUP_OPPORTUNITIES_DOCUMENTS_1_FROM_STIC_GROUP_OPPORTUNITIES_TITLE'] = 'Organitzacions subvencionades';
+
+// Camps de filtre en relacions molts a molts
+$mod_strings['LBL_STIC_DOCUMENTS_ACCOUNTS_NAME'] = 'Organització';
+$mod_strings['LBL_STIC_DOCUMENTS_CONTACTS_NAME'] = 'Persona';

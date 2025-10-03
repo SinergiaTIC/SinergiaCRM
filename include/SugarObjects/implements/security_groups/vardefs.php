@@ -52,7 +52,6 @@ $vardefs = array(
             'vname' => 'LBL_SECURITYGROUPS',
         ),
     ),
-
     'relationships' => array(
         'securitygroups_' . strtolower($module) =>
             array(
