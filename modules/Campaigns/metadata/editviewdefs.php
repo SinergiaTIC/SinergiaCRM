@@ -337,10 +337,19 @@ function ConvertItems(id)  {ldelim}
         ),
         1 => 
         array (
-          'name' => 'status',
-        ),
+          'name' => 'survey_name',
+          'label' => 'LBL_CAMPAIGN_SURVEYS',
+        ),        
       ),
       2 => 
+      array (
+        0 => 
+        array (
+          'name' => 'status',
+        ),
+        1 => '',
+      ),      
+      3 => 
       array (
         0 => 
         array (
@@ -360,7 +369,7 @@ function ConvertItems(id)  {ldelim}
           ),
         ),
       ),
-      3 => 
+      4 => 
       array (
         0 => 
         array (
@@ -370,7 +379,7 @@ function ConvertItems(id)  {ldelim}
         ),
         1 => '',
       ),
-      4 => 
+      5 => 
       array (
         0 => 
         array (
